@@ -1,0 +1,111 @@
+body {
+ margin-top:0.1cm;
+}
+
+h1,h2,h3,td,th,p,body {
+  font-family: Oxygen, Helvetica, Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+@media screen and (min-resolution: 75dpi) {
+  img {
+    height: 1em;
+  }
+}  
+@media screen and (min-resolution: 150dpi) {
+  h1,h2,h3,td,th,body,input {
+    font-size: 1.5em;
+  }
+  input,select {
+    font-size: 1.1em;
+  }
+  img {
+    height: 1em;
+  }
+}  
+@media screen and (min-resolution: 250dpi) {
+  h1,h2,h3,td,th,body {
+    font-size: 2em;
+  }
+  input,select {
+    font-size: 1.2em;
+  }
+  img {
+    height: 1em;
+  }
+}
+@media screen and (min-resolution: 350dpi) {
+  h1,h2,h3,td,th,body {
+    font-size: 3em;
+  }
+  input,select {
+    font-size: 1.3em;
+  }
+  img {
+    height: 1em;
+  }
+}
+
+/*
+body {
+    background-image: url("/images/logo_xxs.jpg");
+    background-repeat: no-repeat;
+}
+*/
+.center_form {
+  text-align: center;
+  background-image: none;
+}
+
+/* the history of the changes is grey, because it is usually less important */
+.change_hist {
+  color: #A9A9A9;
+}
+
+.footer {
+  text-align: center;
+  font-size: 8pt;
+}
+
+.resizedTextbox {
+  width: 80%
+}
+
+a:link {
+  text-decoration:none;
+  color: #161650;
+}
+
+a:visited {
+  text-decoration:none;
+  color: #323250;
+}
+
+a.grey:link {
+  text-decoration:none;
+  color: #A9A9A9;
+}
+
+a.grey:visited {
+  text-decoration:none;
+  color: #A9A9A9;
+}
+
+/* to display values which are influenced by the user configuration */
+.user_specific {
+  color: #0e3e15;
+}
+
+a.user_specific:link {
+  text-decoration:none;
+  color: #0e3e15;
+}
+
+a.user_specific:visited {
+  text-decoration:none;
+  color: #0e3e15;
+}
+

@@ -1,0 +1,112 @@
+<?php 
+
+/*
+
+  login.php - display the login form
+  ---------
+  
+  This file is part of zukunft.com - calc with words
+
+  zukunft.com is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of
+  the License, or (at your option) any later version.
+  zukunft.com is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+  
+  To contact the authors write to:
+  Timon Zielonka <timon@zukunft.com>
+  
+  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Heang Lor <heang@zukunft.com>
+  
+  http://zukunft.com
+  
+*/
+
+// standard zukunft header for callable php files to allow debugging and lib loading
+if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
+include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+
+// open database 
+$link = zu_start("login", "center_form", $debug);
+
+  // load the session user parameters
+  $usr = New user;
+  $result .= $usr->get($debug-1);
+
+  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  if ($usr->id > 0) {
+
+    $result = ''; // reset the html code var
+    $msg = ''; 
+
+    $_SESSION['logged'] = FALSE; 
+    // the original calling page that should be shown after the login is finished
+    if (isset($_POST['back'])) { 
+      $back = $_POST['back']; 
+    } else { 
+      $back = $_GET['back']; 
+    } 
+
+    if (isset($_POST['submit'])) { 
+        
+      // Lets search the databse for the user name and password
+      // don't use the sf shortcut here!
+      $usr = mysql_real_escape_string($_POST['username']); 
+      $pw_hash = hash('sha256', mysql_real_escape_string($_POST['password'])); 
+      $sql = "SELECT * FROM users  
+              WHERE user_name='$usr'
+                AND password='$pw_hash'
+                    LIMIT 1"; 
+      $sql_result = mysql_query($sql); 
+      if(mysql_num_rows($sql_result) == 1){ 
+        $row = mysql_fetch_array($sql_result); 
+        session_start(); 
+        $_SESSION['usr_id'] = $row['user_id']; 
+        $_SESSION['user_name'] = $row['user_name']; 
+        $_SESSION['logged'] = TRUE; 
+        // to do: ask if cockies are allowed: if yes, the session id does not need to be forwarded
+        // if no, use the session id
+        if ($back <> '') {
+          header("Location: ".$back); 
+        } else {  
+          header("Location: ../view.php"); 
+        }
+        //header("Location: ../view.php?sid=".SID.""); 
+        exit; 
+      } else {
+        $msg .= '<font color="red">Login failed. <a href="/http/login_reset.php" title="Send a new password via email.">Forgot password?</a></font><br><br>'; 
+      }  
+    }  
+  }  
+
+  if (!$_SESSION['logged']) {
+    $result .= '<div class="center_form">'; 
+    $result .= '<a href="../http/view.php" title="zukunft.com Logo">'; 
+    $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;" >'; 
+    $result .= '</a><br><br>'; 
+    $result .= '<form action="login.php" method="post">'; 
+    $result .= '  User Name:<br> '; 
+    $result .= '  <input type="text" name="username"><br><br> '; 
+    $result .= '  password:<br> '; 
+    $result .= '  <input type="password" name="password"><br><br> '; 
+    $result .= '  <input type="hidden" name="back" value="'.$back.'"> '; 
+    $result .= $msg; 
+    $result .= '  <input type="submit" name="submit" value="Login"> '; 
+    $result .= '</form>   ';
+    $result .= '</div>   ';
+  }
+
+  // display the view
+  echo $result;
+
+// close the database  
+zu_end($link, $debug);
+
+?>

@@ -1,6 +1,5 @@
 zukunft.com
-===========
 
-Calculating with RDF data. 
+Calculating with RDF data.
 
-This program will probably be published in Q3 2018.
+The roadmap and issue handling is at the moment at https://zukunft.com/mantisbt . 
