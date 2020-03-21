@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -117,7 +117,7 @@ class formula_value_list {
                        ".$sql_group." 
               ORDER BY last_update DESC 
                   LIMIT ".$limit.";";
-        zu_debug('formula_value_list->load sql '.$sql.'.', $debug-10);      
+        zu_debug('formula_value_list->load sql '.$sql, $debug-10);      
         $db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $val_rows = $db_con->get($sql, $debug-5);  
@@ -236,7 +236,7 @@ class formula_value_list {
 
     // prepare to show where the user uses different word than a normal viewer
     //$row_nbr = 0;
-    $result .= '<table class="change_hist">';
+    $result .= dsp_tbl_start_half ();
     foreach ($this->lst AS $fv) {
       //$row_nbr++;
       $result .= '<tr>';
@@ -255,7 +255,7 @@ class formula_value_list {
       $result .= '<td>'.$fv->display_linked($back, $debug).'</td>';
       $result .= '</tr>';
     }
-    $result .= '</table>';
+    $result .= dsp_tbl_end ();
 
     zu_debug("fv_lst->display -> done", $debug-1);
     return $result;
@@ -492,21 +492,21 @@ class formula_value_list {
     // combine all used predefined phrases/formulas
     $phr_lst_preset = $phr_lst_preset_following;
     $frm_lst_preset = $frm_lst_preset_following;
-    if (!empty($phr_lst_preset->lst)) { zu_debug('predefined are '.$phr_lst_preset->name().'.', $debug-3); }
+    if (!empty($phr_lst_preset->lst)) { zu_debug('predefined are '.$phr_lst_preset->name(), $debug-3); }
     
     // exclude the special elements from the phrase list to avoid double usage 
     $phr_lst_frm_used->diff($phr_lst_preset, $debug);
-    if ($phr_lst_preset->name() <> '""') { zu_debug('Excluding the predefined phrases '.$phr_lst_preset->name().' the formula uses '.$phr_lst_frm_used->name().'.', $debug-4); }
+    if ($phr_lst_preset->name() <> '""') { zu_debug('Excluding the predefined phrases '.$phr_lst_preset->name().' the formula uses '.$phr_lst_frm_used->name(), $debug-4); }
 
     // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "Year"
     foreach ($frm_lst_preset_following->lst AS $frm_special) {
       $frm_special->load($debug-1);
-      zu_debug('fv_lst->frm_upd_lst -> get preset phrases for formula '.$frm_special->dsp_id().' and phrases '.$phr_lst_frm_assigned->name().'.', $debug-16);
+      zu_debug('fv_lst->frm_upd_lst -> get preset phrases for formula '.$frm_special->dsp_id().' and phrases '.$phr_lst_frm_assigned->name(), $debug-16);
       $phr_lst_preset = $frm_special->special_phr_lst ($phr_lst_frm_assigned, $debug-1);
-      zu_debug('fv_lst->frm_upd_lst -> got phrases '.$phr_lst_preset->dsp_id().'.', $debug-14);
+      zu_debug('fv_lst->frm_upd_lst -> got phrases '.$phr_lst_preset->dsp_id(), $debug-14);
     }
-    zu_debug('the used '.$phr_lst_frm_used->name_linked().' are taken from '.$this->frm->usr_text.'.', $debug-6);
-    if ($phr_lst_preset->name() <> '""') { zu_debug('the used predefined formulas '.$frm_lst_preset->name().' leading to '.$phr_lst_preset->name().'.', $debug-5); }
+    zu_debug('the used '.$phr_lst_frm_used->name_linked().' are taken from '.$this->frm->usr_text, $debug-6);
+    if ($phr_lst_preset->name() <> '""') { zu_debug('the used predefined formulas '.$frm_lst_preset->name().' leading to '.$phr_lst_preset->name(), $debug-5); }
     
     // get the formula phrase name and the formula result phrases to exclude them already in the result phrase selection to avoid loops
     // e.g. to calculate the "increase" of "ABB,Sales" the formula results for "ABB,Sales,increase" should not be used 
@@ -530,7 +530,7 @@ class formula_value_list {
     // 3. aggregate the word list for all values
     // this is a kind of word group list, where for each word group list several results are possible,
     // because there may be one value and several formula values for the same word group
-    zu_debug('get all values used in the formula '.$this->frm->usr_text.' that are related to one of the phrases assigned '.$phr_lst_frm_assigned->name().'.', $debug-6);
+    zu_debug('get all values used in the formula '.$this->frm->usr_text.' that are related to one of the phrases assigned '.$phr_lst_frm_assigned->name(), $debug-6);
     $phr_grp_lst_val = New phrase_group_list;
     $phr_grp_lst_val->usr = $this->usr; // by default the calling user is used, but if needed the value for other users also needs to be updated
     $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv, $debug-1);      
@@ -606,7 +606,7 @@ class formula_value_list {
 
   // add one phrase to the phrase list, but only if it is not yet part of the phrase list
   function add($fv_to_add, $debug) {
-    zu_debug('phrase_list->add '.$fv_to_add->dsp_id().'.', $debug-10);
+    zu_debug('phrase_list->add '.$fv_to_add->dsp_id(), $debug-10);
     if (!in_array($fv_to_add->id, $this->ids)) {
       if ($fv_to_add->id <> 0) {
         $this->lst[] = $fv_to_add;
@@ -618,14 +618,14 @@ class formula_value_list {
   
   // combine two calculation queues
   function merge($lst_to_merge, $debug) {
-    zu_debug('fv_lst->merge '.$lst_to_merge->dsp_id().' to '.$this->dsp_id().'.', $debug-12);        
+    zu_debug('fv_lst->merge '.$lst_to_merge->dsp_id().' to '.$this->dsp_id(), $debug-12);        
     if (isset($lst_to_merge->lst)) {
       foreach ($lst_to_merge->lst AS $new_fv) {
-        zu_debug('fv_lst->merge add '.$new_fv->dsp_id().'.', $debug-18);
+        zu_debug('fv_lst->merge add '.$new_fv->dsp_id(), $debug-18);
         $this->add($new_fv, $debug-1);
       }
     }
-    zu_debug('fv_lst->merge -> to '.$this->dsp_id().'.', $debug-14); 
+    zu_debug('fv_lst->merge -> to '.$this->dsp_id(), $debug-14); 
     return $this;
   }
   

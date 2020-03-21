@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -46,14 +46,16 @@ class word_dsp extends word {
       
       $is_part_of = $this->is_mainly($debug-1);
       $default_view_id = cl(SQL_VIEW_WORD);
-      $result .= '<h2>';
-      //$result .= '<a href="/http/view.php?words='.$this->id.'&view='.$default_view_id.'" title="'.$this->description.'">'.$this->name.'</a>';
-      $result .= $this->name;
+      $title = '';
+      //$title .= '<a href="/http/view.php?words='.$this->id.'&view='.$default_view_id.'" title="'.$this->description.'">'.$this->name.'</a>';
+      $title .= $this->name;
       if ($is_part_of->name <> '' and $is_part_of->name <> 'not set') {
-        $result .= ' (<a href="/http/view.php?words='.$is_part_of->id.'">'.$is_part_of->name.'</a>)';
+        $title .= ' (<a href="/http/view.php?words='.$is_part_of->id.'">'.$is_part_of->name.'</a>)';
       }
-      $result .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>';
-      $result .= '</h2>'; 
+/*      $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>'; */
+      $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><span class="glyphicon glyphicon-pencil"></a>';
+      $title .= '</h2>'; 
+      $result .= dsp_text_h1 ($title, '');
     }
       
     return $result;
@@ -75,8 +77,8 @@ class word_dsp extends word {
   // simply to display a single word in a table as a header
   function dsp_tbl_head_right ($debug) {
     zu_debug('word_dsp->dsp_tbl_head_right', $debug-10);
-    $result  = '    <th>'."\n";
-    $result .= '      <p align="right">'.$this->dsp_link($debug-1).'</p>'."\n";
+    $result  = '    <th align="right">'."\n";
+    $result .= '      '.$this->dsp_link($debug-1)."\n";
     $result .= '    </th>'."\n";
     return $result;
   }
@@ -129,14 +131,14 @@ class word_dsp extends word {
   }
 
   //
-  function dsp_selector ($type, $form_name, $pos, $back, $debug) {
+  function dsp_selector ($type, $form_name, $pos, $class, $back, $debug) {
     $phr = $this->phrase();
-    return $phr->dsp_selector ($type, $form_name, $pos, $back, $debug) ;
+    return $phr->dsp_selector ($type, $form_name, $pos, $class, $back, $debug) ;
   }
   
   // create a selector that contains the time words
   function dsp_time_selector ($type, $form_name, $pos, $back, $debug) {
-    zu_debug('word_dsp->dsp_selector -> for form '.$form_name.''.$pos.'.', $debug-10);
+    zu_debug('word_dsp->dsp_selector -> for form '.$form_name.''.$pos, $debug-10);
     $result = '';
     
     if ($pos > 0) {
@@ -159,7 +161,7 @@ class word_dsp extends word {
                         AND l.verb_id = ".cl(SQL_LINK_TYPE_IS)."              
                         AND l.to_phrase_id = ".$type->id."            
                    GROUP BY name) AS s
-            WHERE excluded <> 1                                    
+            WHERE (excluded <> 1 OR excluded is NULL)                                    
           ORDER BY name;";
     } else {
       $sql = "SELECT id, name 
@@ -171,7 +173,7 @@ class word_dsp extends word {
                                         AND u.user_id = ".$this->usr->id."
                       WHERE w.word_type_id = ".cl(SQL_WORD_TYPE_TIME)."
                    GROUP BY name) AS s
-            WHERE excluded <> 1                                    
+            WHERE (excluded <> 1 OR excluded is NULL)                                   
           ORDER BY name;";
     }               
     $sel = New selector;
@@ -234,7 +236,7 @@ class word_dsp extends word {
 
   // list of related words and values filtered by a link type
   function dsp_val_list ($col_wrd, $back, $debug) {
-    zu_debug('word_dsp->dsp_val_list for "'.$this->name.'" with "'.$col_wrd->name.'" columns for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word_dsp->dsp_val_list for '.$this->dsp_id().' with "'.$col_wrd->name.'" columns for user '.$this->usr->name, $debug-10);
     $result = '';
     
     $result .= $this->dsp_header ($debug-1);
@@ -257,8 +259,7 @@ class word_dsp extends word {
 
     // display the words
     $row_nbr = 0;
-    //$result .= '<table style="width:50%">';
-    $result .= '<table style="width:50rem">';
+    $result .= dsp_tbl_start();
     foreach ($row_lst->lst AS $row_phr) {
       // display the column headers
       // not needed any more if wrd lst is created based on word_display elements
@@ -330,7 +331,7 @@ class word_dsp extends word {
     // display an add button to offer the user to add one row
     $result .= '<tr><td>'.$this->btn_add($back, $debug-1).'</td></tr>';
     
-    $result .= '</table>';
+    $result .= dsp_tbl_end ();
     
     return $result;
   }
@@ -340,7 +341,7 @@ class word_dsp extends word {
   // database link must be open
   // ??? identical to word_list ???
   function dsp_graph ($direction, $debug) {
-    zu_debug('word_dsp->dsp_graph of '.$this->name.' '.$direction.' for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word_dsp->dsp_graph of '.$this->dsp_id().' '.$direction.' for user '.$this->usr->name, $debug-10);
     $result  = '';
 
     // get the link types related to the word
@@ -348,7 +349,7 @@ class word_dsp extends word {
     
     // loop over the link types
     foreach ($vrb_lst->lst AS $vrb) {
-      zu_debug('word_dsp->dsp_graph verb '.$vrb->name.'.', $debug-14);
+      zu_debug('word_dsp->dsp_graph verb '.$vrb->name, $debug-14);
 
       // show the RDF graph for this verb
       $graph = New word_link_list;
@@ -382,8 +383,10 @@ class word_dsp extends word {
     $sel->usr        = $this->usr;
     $sel->form       = $form;
     $sel->name       = 'add';  
+    $sel->label      = "Word:";  
+    $sel->bs_class   = $class;  
     $sel->sql        = sql_lst_usr("word", $this->usr, $debug-1);
-    $sel->selected   = 0;
+    $sel->selected   = $id;
     $sel->dummy_text = '... or select an existing word to link it';
     $result .= $sel->display ($debug-1);
 
@@ -416,7 +419,7 @@ class word_dsp extends word {
   // database link must be open
   // todo: similar to verb->dsp_selector maybe combine???
   function selector_link ($id, $form, $back, $debug) {
-    zu_debug('word_dsp->selector_link ... verb id '.$id.'.', $debug-10);
+    zu_debug('word_dsp->selector_link ... verb id '.$id, $debug-10);
     $result = '';
     
     $sql = "SELECT * FROM (
@@ -472,27 +475,43 @@ class word_dsp extends word {
     return $result;
   }
 
+  // 
+  private function dsp_type_selector ($script, $class, $debug) {
+    $result = '';
+    $sel = New selector;
+    $sel->usr        = $this->usr;
+    $sel->form       = $script;
+    $sel->name       = 'type';  
+    $sel->label      = "Word type:";  
+    $sel->bs_class   = $class;  
+    $sel->sql        = sql_lst("word_type", $debug-1);
+    $sel->selected   = $this->type_id;
+    $sel->dummy_text = '';
+    $result .= $sel->display ($debug-1);
+    return $result;
+  }
+  
   // HTML code to edit all word fields
   function dsp_add ($wrd_id, $wrd_to, $vrb_id, $back, $debug) {
-    zu_debug('word_dsp->dsp_add "'.$this->name.'" (type '.$this->type_id.') or link the existing word with id '.$wrd_id.' to '.$wrd_to.' by verb '.$vrb_id.' for user '.$this->usr->name.' (called by '.$back.').', $debug-10);
+    zu_debug('word_dsp->dsp_add '.$this->dsp_id().' (type '.$this->type_id.') or link the existing word with id '.$wrd_id.' to '.$wrd_to.' by verb '.$vrb_id.' for user '.$this->usr->name.' (called by '.$back.').', $debug-10);
     $result = '';
   
     $form = "word_add";
-    $result .= dsp_text_h2('Add ');
+    $result .= dsp_text_h2('Add a new word');
     $result .= dsp_form_start($form);
-    $result .= 'Enter the new word name <input type="text" name="word_name" value="'.$this->name.'">';
-    $result .= ' (as a '.$this->selector_type ($this->type_id, $form, $debug-1).')';
-    $result .= '<br>';
+    $result .= dsp_form_hidden ("back",    $back);
+    $result .= dsp_form_hidden ("confirm", '1');
+    $result .= '<div class="form-row">';
+    $result .= dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
+    $result .= $this->dsp_type_selector ($form, "col-sm-4", $debug-1);
     $result .= $this->selector_add ($wrd_id, $form, $debug-1).' ';
-    $result .= '<br><br>';
+    $result .= '</div>';
     $result .= 'which ';
+    $result .= '<div class="form-row">';
     $result .= $this->selector_link ($vrb_id, $form, $back, $debug-1);
     $result .= $this->selector_word ($wrd_to, 0, $form, $debug-1);
-    if (trim($back) <> '') {
-      $result .= '  <input type="hidden" name="back" value="'.$back.'">';
-    }
-    $result .= '  <input type="hidden" name="confirm" value="1">';
-    $result .= dsp_form_end();
+    $result .= '</div>';
+    $result .= dsp_form_end('', $back);
 
     zu_debug('word_dsp->dsp_add ... done.', $debug-10);
     return $result;
@@ -500,15 +519,17 @@ class word_dsp extends word {
   
   // HTML code to edit all word fields
   function dsp_edit ($back, $debug) {
-    zu_debug('word_dsp->dsp_edit "'.$this->name.'" for user '.$this->usr->name.' (called from '.$back.').', $debug-10);
+    zu_debug('word_dsp->dsp_edit '.$this->dsp_id(), $debug-10);
     $result = '';
     
     if ($this->id > 0) {
       $form = "word_edit";
-      $result .= dsp_text_h2('Change word "'.$this->name.'"');
+      $result .= dsp_text_h2('Change "'.$this->name.'"');
       $result .= dsp_form_start($form);
-      $result .= dsp_form_hidden ("id", $this->id);
-      $result .= dsp_form_hidden ("back", $back);
+      $result .= dsp_form_hidden ("id",      $this->id);
+      $result .= dsp_form_hidden ("back",    $back);
+      $result .= dsp_form_hidden ("confirm", '1');
+      $result .= '<div class="form-row">';
       if ($this->type_id == cl (SQL_WORD_TYPE_FORMULA_LINK)) {
         $result .= dsp_form_hidden ("name", $this->name);
         $result .= '  to change the name of "'.$this->name.'" rename the ';
@@ -516,29 +537,21 @@ class word_dsp extends word {
         $result .= $frm->name_linked($back, $debug-1);
         $result .= '.<br> ';
       } else {
-        $result .= '  rename to:<input type="text" name="name" value="'.$this->name.'">';
+        $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-4");
       }
-      $result .= '  plural:<input type="text" name="plural" value="'.$this->plural.'">';
+      $result .= dsp_form_text("plural", $this->plural, "Plural:", "col-sm-4");
       if ($this->type_id == cl (SQL_WORD_TYPE_FORMULA_LINK)) {
         $result .= ' type: '.$this->type_name;
       } else {
-        $sel = New selector;
-        $sel->usr        = $this->usr;
-        $sel->form       = 'word_edit';
-        $sel->name       = 'type';  
-        $sel->sql        = sql_lst("word_type", $debug-1);
-        $sel->selected   = $this->type_id;
-        $sel->dummy_text = '';
-        $result .= $sel->display ($debug-1);
+        $result .= $this->dsp_type_selector ('word_edit', "col-sm-4", $debug-1);
       }
+      $result .= '</div>';
       $result .= '<br>';
-      $result .= '  description:        <input type="text" name="description" class="resizedTextbox" value="'.$this->description.'"><br>';
-      $result .= '  wikipedia url:      <input type="text" name="url1"        class="resizedTextbox" value="'.$this->ref_1.'"><br>';
-      $result .= '  other reference url:<input type="text" name="url2"        class="resizedTextbox" value="'.$this->ref_2.'"><br>';
-      $result .= '  <input type="hidden" name="confirm" value="1">';
-      $result .= dsp_form_end();
+      $result .= dsp_form_text("description", $this->description, "Description:");
+      $result .= dsp_form_text("url1",        $this->ref_1,       "Wikipedia url:");
+      $result .= dsp_form_text("url2",        $this->ref_2,       "Other reference url:");
+      $result .= dsp_form_end('', $back);
       $result .= '<br>';
-      $result .= btn_back($back);
       $result .= $this->dsp_graph ("up",   $debug-1);
       $result .= $this->dsp_graph ("down", $debug-1);
     }

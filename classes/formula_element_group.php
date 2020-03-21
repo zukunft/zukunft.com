@@ -32,7 +32,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -140,18 +140,18 @@ class formula_element_group {
   // set the time phrase based on a predefined formula such as "prior" or "next"
   // e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
   private function set_formula_time_phrase($frm_elm, $val_phr_lst, $debug) {
-    zu_debug('formula_element_group->set_formula_time_phrase for '.$frm_elm->dsp_id().' and '.$val_phr_lst->dsp_id().'.', $debug-10);
+    zu_debug('formula_element_group->set_formula_time_phrase for '.$frm_elm->dsp_id().' and '.$val_phr_lst->dsp_id(), $debug-10);
     // guess the time word if needed
     if (isset($this->time_phr)) {
       if ($this->time_phr->id == 0) {
-        zu_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id().'.', $debug-14);
+        zu_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id(), $debug-14);
         $val_time_phr = $val_phr_lst->assume_time($debug-1); 
         if (isset($val_time_phr)) {
           $this->time_phr = $val_time_phr; 
         }
       } 
     } else {
-      zu_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id().'.', $debug-14);
+      zu_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id(), $debug-14);
       $val_time_phr = $val_phr_lst->assume_time($debug-1); 
       if (isset($val_time_phr)) {
         $this->time_phr = $val_time_phr; 
@@ -184,7 +184,7 @@ class formula_element_group {
     }
     
     if (isset($val_time_phr)) {
-      zu_debug('formula_element_group->set_formula_time_phrase -> got '.$val_time_phr->dsp_id().'.', $debug-12);
+      zu_debug('formula_element_group->set_formula_time_phrase -> got '.$val_time_phr->dsp_id(), $debug-12);
     }
     
     return $val_time_phr;
@@ -200,7 +200,7 @@ class formula_element_group {
          if the last share price is from 2016 and CHF is the most important (used) currency
   */
   function figures ($debug) {
-    zu_debug('formula_element_group->figures '.$this->dsp_id().'.', $debug-10);
+    zu_debug('formula_element_group->figures '.$this->dsp_id(), $debug-10);
     
     // init the resulting figure list 
     $fig_lst = New figure_list;
@@ -214,6 +214,9 @@ class formula_element_group {
       // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
       $val_phr_lst = clone $this->phr_lst;
       $val_time_phr = $this->time_phr;
+      if (isset($val_time_phr)) {
+        zu_debug('formula_element_group->figures -> for time '.$val_time_phr->dsp_id(), $debug-9);
+      }
 
       // build the symbol for the number replacement before adding the formula elements
       if ($this->symbol == '') {
@@ -235,6 +238,9 @@ class formula_element_group {
         // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
         if ($frm_elm->obj->is_special($debug-1)) {
           $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst, $debug-1);
+          if (isset($val_time_phr)) {
+            zu_debug('formula_element_group->figures -> adjusted time '.$val_time_phr->dsp_id(), $debug-9);
+          }
         } else {
           if ($frm_elm->wrd_id > 0) {
             $val_phr_lst->add($frm_elm->wrd_obj, $debug-1);
@@ -255,12 +261,16 @@ class formula_element_group {
       if (isset($val_phr_lst)) { usort($val_phr_lst, array("phrase", "cmp")); }
       //asort($val_phr_lst);
       $val_phr_grp = $val_phr_lst->get_grp ($debug-10);
-      zu_debug('formula_element_group->figures -> words group for "'.$val_phr_lst->name($debug-1).'" = '.$val_phr_grp->id.'.', $debug-10);
+      zu_debug('formula_element_group->figures -> words group for "'.$val_phr_lst->name($debug-1).'" = '.$val_phr_grp->id, $debug-10);
 
       // try to get a normal value set by the user directly for the phrase list
       // display the word group value and offer the user to change it
       // e.g. if the user has overwritten a formula value use the user overwrite
-      zu_debug('formula_element_group->figures -> load word value for '.$val_phr_lst->dsp_id().'.', $debug-10);
+      if (isset($val_time_phr)) {
+        zu_debug('formula_element_group->figures -> load word value for '.$val_phr_grp->dsp_id().' and '.$val_time_phr->dsp_id(), $debug-10);
+      } else {  
+        zu_debug('formula_element_group->figures -> load word value for '.$val_phr_lst->dsp_id(), $debug-10);
+      }
       $wrd_val = New value;
       $wrd_val->grp_id  = $val_phr_grp->id;
       $wrd_val->time_id = $val_time_phr->id;
@@ -283,7 +293,7 @@ class formula_element_group {
         }
 
         // get the word group result, which means a formula result
-        zu_debug('formula_element_group->figures -> load formula value for '.$val_phr_lst->name($debug-1).'.', $debug-8);
+        zu_debug('formula_element_group->figures -> load formula value for '.$val_phr_lst->name($debug-1), $debug-8);
         $grp_fv = New formula_value;
         $grp_fv->phr_grp_id = $val_phr_grp->id;
         $grp_fv->time_id    = $val_time_phr->id;
@@ -296,7 +306,7 @@ class formula_element_group {
           $fig->symbol = $this->symbol;
           $fig_lst->lst[] = $fig;
 
-          zu_debug('formula_element_group->figures -> formula value for '.$val_phr_lst->name($debug-1).', time '.$val_time_phr->name.'" (word group '.$val_phr_grp->id.', user '.$this->usr->id.') = '.$grp_fv->value.'.', $debug-9);
+          zu_debug('formula_element_group->figures -> formula value for '.$val_phr_lst->name($debug-1).', time '.$val_time_phr->name.'" (word group '.$val_phr_grp->id.', user '.$this->usr->id.') = '.$grp_fv->value, $debug-9);
         } else {     
           // if there is also not a formula result at least one number of the formula is not valid
           $fig_lst->fig_missing = True;

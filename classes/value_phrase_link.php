@@ -29,7 +29,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -76,9 +76,9 @@ class val_lnk {
       $db_con = new mysql;         
       $db_con->usr_id = $this->usr->id;         
       $db_val = $db_con->get1($sql, $debug-5);  
-      $this->id     = $db_wrd['value_phrase_link_id'];
-      $this->val_id = $db_wrd['value_id'];
-      $this->wrd_id = $db_wrd['phrase_id'];
+      $this->id     = $db_val['value_phrase_link_id'];
+      $this->val_id = $db_val['value_id'];
+      $this->wrd_id = $db_val['phrase_id'];
     } else {
       zu_err("Cannot find value word link, because neither the id nor the value and word are set","val_lnk->load");
     }
@@ -92,14 +92,14 @@ class val_lnk {
     if (isset($this->val)) {
       zu_debug('val_lnk->used check if value with id '.$this->val->id.' has never been used.', $debug-14);  
       $result = $this->val->used($debug-1);
-      zu_debug('val_lnk->used for id '.$this->val->id.' is '.zu_dsp_bool($result).'.', $debug-12);  
+      zu_debug('val_lnk->used for id '.$this->val->id.' is '.zu_dsp_bool($result), $debug-12);  
     }
     return $result;
   }
 
   // set the log entry parameter for a new value word link
   private function log_add($debug) {
-    zu_debug('val_lnk->log_add for "'.$this->wrd->id.' to '.$this->val->id.'.', $debug-10);  
+    zu_debug('val_lnk->log_add for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -115,7 +115,7 @@ class val_lnk {
   // set the main log entry parameters for updating one value word link
   // e.g. if the entered the number for "interest income", but see that he has used the word "interest cost" and changes it to "interest income"
   private function log_upd($db_rec, $debug) {
-    zu_debug('val_lnk->log_upd for "'.$this->wrd->id.' to '.$this->val->id.'.', $debug-10);  
+    zu_debug('val_lnk->log_upd for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'update';
@@ -132,7 +132,7 @@ class val_lnk {
 
   // set the log entry parameter to remove a value word link
   private function log_del($debug) {
-    zu_debug('val_lnk->log_del for "'.$this->wrd->id.' to '.$this->val->id.'.', $debug-10);  
+    zu_debug('val_lnk->log_del for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -166,7 +166,8 @@ class val_lnk {
              WHERE value_id = ".$this->val->id." 
                AND phrase_id  = ".$this->wrd->id." 
                AND value_phrase_link_id <> ".$this->id.";";
-    $this->id = $db_con->get1($sql, $debug-1);
+    $db_row = $db_con->get1($sql, $debug-1);
+    $this->id = $db_row['value_phrase_link_id'];
     if ($this->id > 0) {
       //$result = $db_con->delete(array('value_id','phrase_id','value_phrase_link_id'), array($this->val->id,$this->wrd->id,$this->id), $debug-1);
       $sql_del = "DELETE FROM value_phrase_links 
@@ -174,7 +175,8 @@ class val_lnk {
                       AND phrase_id  = ".$this->wrd->id." 
                       AND value_phrase_link_id <> ".$this->id.";";
       $sql_result = $db_con->exe($sql_del, $this->usr->id, DBL_SYSLOG_ERROR, "val_lnk->update", (new Exception)->getTraceAsString(), $debug-1);
-      $this->id = $db_con->get1($sql, $debug-1);
+      $db_row = $db_con->get1($sql, $debug-1);
+      $this->id = $db_row['value_phrase_link_id'];
       if ($this->id > 0) {
         zu_err("Dublicate words (".$wrd_old_id.") for value ".$this->val_id." found and the automatic removal failed.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
@@ -218,7 +220,7 @@ class val_lnk {
         // log the insert attempt first
         $log = $this->log_add($debug-1);
         if ($log->id > 0) {
-          // insert the new view_component_link
+          // insert the new value_phrase_link
           $this->id = $db_con->insert(array("value_id","word_id"), array($this->val->id,$this->wrd->id), $debug-1);
           if ($this->id > 0) {
             // update the id in the log

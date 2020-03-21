@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -49,7 +49,7 @@ $link = zu_start("formula_result", "", $debug);
     $dsp->usr = $session_usr;
     $dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
-    $result .= $dsp->top_right($debug-1);
+    $result .= $dsp->dsp_navbar($back, $debug-1);
     
     // get the parameters
     $frm_val_id   = $_GET['id'];      // id of the formula result if known already

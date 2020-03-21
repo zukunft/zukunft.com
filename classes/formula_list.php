@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -61,8 +61,15 @@ class formula_list {
         $sql_from = 'formula_links l, formulas f';
         $sql_where = 'l.phrase_id = '.$this->wrd->id.' AND l.formula_id = f.formula_id';
       } elseif (isset($this->phr_lst)) {
-        $sql_from = 'formula_links l, formulas f';
-        $sql_where = 'l.phrase_id IN ('.$this->phr_lst->ids_txt().') AND l.formula_id = f.formula_id';
+        if ($this->phr_lst->ids_txt() <> '') {
+          $sql_from = 'formula_links l, formulas f';
+          $sql_where = 'l.phrase_id IN ('.$this->phr_lst->ids_txt().') AND l.formula_id = f.formula_id';
+        } else {
+          zu_err("A phrase list is set (".$this->phr_lst->dsp_id()."), but the id list is ".$this->phr_lst->ids_txt().".", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        
+          $sql_from = 'formula_links l, formulas f';
+          $sql_where = 'l.formula_id = f.formula_id';
+        }
       } else {
         // load all formulas to check all formula results
         $sql_from = 'formulas f';
@@ -136,11 +143,6 @@ class formula_list {
     }  
   }
   
-  function name ($debug) {
-    $result = implode(",",$this->names($debug-1));
-    return $result;
-  }
-  
   function names ($debug) {
     $result = array();
     foreach ($this->lst AS $frm) {
@@ -149,9 +151,23 @@ class formula_list {
     return $result;
   }
   
+  function name ($debug) {
+    $result = implode(",",$this->names($debug-1));
+    return $result;
+  }
+  
+  // rename the name function to be inline with the other classes
+  function dsp_id ($debug) {
+    $result = $this->name($debug-1);
+    if ($result <> '') {
+      $result = '"'.$result.'"';
+    }
+    return $result;
+  }
+  
   // lists all formulas with results related to a word
   function display($back, $debug) {
-    zu_debug("formula_list->display (".$this->name.")", $debug-10);
+    zu_debug('formula_list->display '.$this->dsp_id(), $debug-10);
     $result = '';
 
     $type = 'short';

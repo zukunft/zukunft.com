@@ -1,0 +1,1652 @@
+{
+  "version": "0.0.1",
+  "time": "2020-03-10 23:38:05",
+  "user": "timon",
+  "selection": [
+    "Nestlé"
+  ],
+  "words": [
+    {
+      "name": "2019",
+      "type": "time"
+    },
+    {
+      "name": "2018",
+      "type": "time"
+    },
+    {
+      "name": "2017",
+      "type": "time"
+    },
+    {
+      "name": "2016",
+      "type": "time"
+    },
+    {
+      "name": "2015",
+      "type": "time"
+    },
+    {
+      "name": "2014",
+      "type": "time"
+    },
+    {
+      "name": "2013",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "Current assets",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Non-current assets",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Total assets",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Current liabilities",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Non-current liabilities",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Equity attributable to shareholders of the parent",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Non-controlling interests",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Net financial debt",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Operating cash flow",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Free cash flow",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Capital additions",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Sales",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Underlying Trading operating profit",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Trading operating profit",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Taxes",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Profit for the year attributable to shareholders of the parent (Net profit)",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Total amount of dividend",
+      "verb": "is part of",
+      "to": "Annual Report"
+    },
+    {
+      "from": "Depreciation of property, plant and equipment",
+      "verb": "is part of",
+      "to": "Annual Report"
+    }
+  ],
+  "formulas": [],
+  "sources": [
+    {
+      "name": "Nestlé Annual Report 2019",
+      "url": "https://www.nestle.com/sites/default/files/2020-02/2019-financial-statements-en.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2019",
+      "number": "35663",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2019",
+      "number": "92277",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2019",
+      "number": "127940",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2019",
+      "number": "41615",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2019",
+      "number": "33463",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2019",
+      "number": "52035",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2019",
+      "number": "827",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2019",
+      "number": "27138",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2019",
+      "number": "15850",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2019",
+      "number": "11934",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2019",
+      "number": "5482",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2019",
+      "number": "92568",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2019",
+      "number": "16260",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2019",
+      "number": "13674",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2019",
+      "number": "3159",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2019",
+      "number": "12609",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2019",
+      "number": "7795",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2019",
+      "number": "3488",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2018",
+      "number": "41003",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2018",
+      "number": "96012",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2018",
+      "number": "137015",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2018",
+      "number": "43030",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2018",
+      "number": "35582",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2018",
+      "number": "57363",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2018",
+      "number": "1040",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2018",
+      "number": "30330",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2018",
+      "number": "15398",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2018",
+      "number": "10765",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2018",
+      "number": "14711",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2018",
+      "number": "91439",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2018",
+      "number": "15521",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2018",
+      "number": "13789",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2018",
+      "number": "3439",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2018",
+      "number": "10135",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2018",
+      "number": "7230",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2018",
+      "number": "3604",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2017",
+      "number": "31884",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2017",
+      "number": "101326",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2017",
+      "number": "133210",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2017",
+      "number": "38189",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2017",
+      "number": "32792",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2017",
+      "number": "60956",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2017",
+      "number": "1273",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2017",
+      "number": "21369",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2017",
+      "number": "14199",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2017",
+      "number": "9358",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2017",
+      "number": "6569",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2017",
+      "number": "89590",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2017",
+      "number": "14771",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2017",
+      "number": "13277",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2017",
+      "number": "2773",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2017",
+      "number": "7156",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2017",
+      "number": "7124",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2017",
+      "number": "3560",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2016",
+      "number": "32042",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2016",
+      "number": "99859",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2016",
+      "number": "131901",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2016",
+      "number": "37517",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2016",
+      "number": "28403",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2016",
+      "number": "64590",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2016",
+      "number": "1391",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2016",
+      "number": "13913",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2016",
+      "number": "15582",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2016",
+      "number": "10108",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2016",
+      "number": "5462",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2016",
+      "number": "89469",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2016",
+      "number": "14307",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2016",
+      "number": "13693",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2016",
+      "number": "4413",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2016",
+      "number": "8531",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2016",
+      "number": "7126",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2016",
+      "number": "2795",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2015",
+      "number": "29434",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2015",
+      "number": "94558",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2015",
+      "number": "123992",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2015",
+      "number": "33321",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2015",
+      "number": "26685",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2015",
+      "number": "62338",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2015",
+      "number": "1648",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2015",
+      "number": "15425",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2015",
+      "number": "14302",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2015",
+      "number": "9945",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2015",
+      "number": "4883",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2015",
+      "number": "88785",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2015",
+      "number": "14032",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2015",
+      "number": "13382",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2015",
+      "number": "3305",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2015",
+      "number": "9066",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2015",
+      "number": "6937",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2015",
+      "number": "2861",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2014",
+      "number": "33961",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2014",
+      "number": "99489",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2014",
+      "number": "133450",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2014",
+      "number": "32895",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2014",
+      "number": "28671",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2014",
+      "number": "70130",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2014",
+      "number": "1754",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2014",
+      "number": "12325",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2014",
+      "number": "14700",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2014",
+      "number": "14137",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2014",
+      "number": "3914",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2014",
+      "number": "91612",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2014",
+      "number": "14816",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2014",
+      "number": "14019",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2014",
+      "number": "3367",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2014",
+      "number": "14456",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2014",
+      "number": "6950",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2014",
+      "number": "2782",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current assets"
+      ],
+      "time": "2013",
+      "number": "30066",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current assets"
+      ],
+      "time": "2013",
+      "number": "90376",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total assets"
+      ],
+      "time": "2013",
+      "number": "120442",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Current liabilities"
+      ],
+      "time": "2013",
+      "number": "32917",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-current liabilities"
+      ],
+      "time": "2013",
+      "number": "23386",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Equity attributable to shareholders of the parent"
+      ],
+      "time": "2013",
+      "number": "62575",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Non-controlling interests"
+      ],
+      "time": "2013",
+      "number": "1564",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Net financial debt"
+      ],
+      "time": "2013",
+      "number": "14690",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Operating cash flow"
+      ],
+      "time": "2013",
+      "number": "14992",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Free cash flow"
+      ],
+      "time": "2013",
+      "number": "10486",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Capital additions"
+      ],
+      "time": "2013",
+      "number": "4928",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Sales"
+      ],
+      "time": "2013",
+      "number": "92158",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Underlying Trading operating profit"
+      ],
+      "time": "2013",
+      "number": "14892",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Trading operating profit"
+      ],
+      "time": "2013",
+      "number": "14047",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Taxes"
+      ],
+      "time": "2013",
+      "number": "3256",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Profit for the year attributable to shareholders of the parent (Net profit)"
+      ],
+      "time": "2013",
+      "number": "10015",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Total amount of dividend"
+      ],
+      "time": "2013",
+      "number": "6863",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    },
+    {
+      "words": [
+        "Nestlé",
+        "CHF",
+        "million",
+        "Depreciation of property, plant and equipment"
+      ],
+      "time": "2013",
+      "number": "2864",
+      "protection": "admin_protection",
+      "source": "Nestlé Annual Report 2019"
+    }
+  ],
+  "views": []
+}

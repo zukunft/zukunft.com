@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -45,14 +45,20 @@ class button {
     return $result;
   }
 
+  // same as html but the bootstrap version
+  private function html_fa ($icon) {
+    $result = '<a href="'.$this->call.'" title="'.$this->title.'"><i class="far '.$icon.'"></i></a>';
+    return $result;
+  }
+
   // button function to keep the image call on one place
-  function add      () { return $this->html(ZUH_IMG_ADD      ); } // an add button to create a new entry
-  function edit     () { return $this->html(ZUH_IMG_EDIT     ); } // an edit button to adjust an entry
-  function del      () { return $this->html(ZUH_IMG_DEL      ); } // an delete button to remove an entry
-  function undo     () { return $this->html(ZUH_IMG_UNDO     ); } // an undo button to undo an change (not only the last)
-  function find     () { return $this->html(ZUH_IMG_FIND     ); } // a find button to search for a word
-  function unfilter () { return $this->html(ZUH_IMG_UNFILTER ); } // button to remove a filter
-  function back     () { return $this->html(ZUH_IMG_BACK     ); } // button to go back to the original calling page
+  function add      () { return $this->html_fa(ZUH_IMG_ADD_FA      ); } // an add button to create a new entry
+  function edit     () { return $this->html_fa(ZUH_IMG_EDIT_FA     ); } // an edit button to adjust an entry
+  function del      () { return $this->html_fa(ZUH_IMG_DEL_FA      ); } // an delete button to remove an entry
+  function undo     () { return $this->html   (ZUH_IMG_UNDO        ); } // an undo button to undo an change (not only the last)
+  function find     () { return $this->html   (ZUH_IMG_FIND        ); } // a find button to search for a word
+  function unfilter () { return $this->html   (ZUH_IMG_UNFILTER    ); } // button to remove a filter
+  function back     () { return $this->html   (ZUH_IMG_BACK        ); } // button to go back to the original calling page
 
   // display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
   function go_back ($back) {
@@ -60,10 +66,10 @@ class button {
       $back = 1; // temp solution
     }
     $this->title = 'back';
-    if (is_int($back)) {
-      $this->call  = '/http/view.php?words='.$back;
+    if (is_numeric($back)) {
+      $this->call = '/http/view.php?words='.$back;
     } else {
-      $this->call  = $back;
+      $this->call = $back;
     }
     $result = $this->back();
     return $result;
@@ -107,7 +113,7 @@ class button {
         } else {
           $this->title = "add new value";
         }  
-        $url_phr = $phr_lst->id_url();
+        $url_phr = $phr_lst->id_url_long();
       }
     }  
     
@@ -119,6 +125,64 @@ class button {
 
     $this->call  = '/http/value_add.php?back='.$back.$url_phr.$url_type;
     $result = $this->add();
+    
+    zu_debug("button->add_value -> (".$result.")", $debug-16);
+    return $result;
+  }
+
+  // similar to btn_add_value, but uses a simple modal box
+  function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug) {
+    zu_debug("button->add_value", $debug-18);
+    $result .= '';
+    
+    // group the modal box with the button
+    $result .= '<div class="container">';
+    
+    // build the phrase list for the modal box header
+    $phr_time = $phr_lst->time_lst($debug-1);
+    $common_lst_ex_main = clone $common_lst;
+    $common_lst_ex_main->del($phr_main, $debug-1);
+    $phr_lst_header = clone $phr_lst;
+    $phr_lst_header->diff($common_lst_ex_main, $debug-1);
+    $phr_lst_header->diff($phr_time, $debug-1);
+    
+
+    // the button to call the modal box
+    $result .= '  <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#val_add'.$modal_nbr.'">';
+    $result .= '    ';
+    $result .= '  </button>';
+    // the modal box itself
+    $form_name = '/http/value_add';
+    $result .= '  <div class="modal" id="val_add'.$modal_nbr.'">';
+    $result .= '    <div class="modal-dialog">';
+    $result .= '      <div class="modal-content">';
+    $result .= '        <div class="modal-header">';
+    $result .= '          <h4 class="modal-title">';
+    $result .= '            '.$phr_lst_header->name_dsp();
+    $result .= '          </h4>';
+    $result .= '          <button type="button" class="save" data-dismiss="modal">&times;</button>';
+    $result .= '        </div>';
+    $result .= '        <div class="modal-body">';
+    $result .= dsp_form_start ($form_name);
+    $result .= '            '.$phr_time->name_dsp();
+    $result .= '            <input type="hidden" name="phrases" value="'.implode(",",$phr_lst->ids()).'">';
+    $result .= '            <input type="hidden" name="back" value="'.$back.'">';
+    $result .= '            <input type="hidden" name="confirm" value="1">';
+    $result .= '            <input type="text" name="value" value="0">';
+    $result .= '            '.$common_lst_ex_main->name_dsp();
+    $result .= '          </form>';
+    $result .= '        </div>';
+    $result .= '        <div class="modal-footer">';
+    //$result .= dsp_form_end ('', $back);
+    $result .= '          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>';
+    $result .= '          <button type="submit" class="btn btn-outline-success"   data-dismiss="modal">Save</button>';
+    $result .= '        </div>';
+    $result .= '      </div>';
+    $result .= '    </div>';
+    $result .= '  </div>';
+    
+    // close the modal group
+    $result .= '</div>';
     
     zu_debug("button->add_value -> (".$result.")", $debug-16);
     return $result;
@@ -175,7 +239,12 @@ function btn_add_value ($phr_lst, $type_ids, $back, $debug) {
   return $result;
 }
 
-
+// similar to btn_add_value, but uses a simple modal box
+function btn_add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug) {
+  $b = New button;
+  $result = $b->add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug-1);
+  return $result;
+}
 
 
 

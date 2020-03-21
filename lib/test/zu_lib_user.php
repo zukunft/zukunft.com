@@ -51,7 +51,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -297,7 +297,7 @@ function zuu_dsp_sandbox_val ($user_id, $back_link, $debug) {
                       FROM user_values u
                      WHERE u.user_id <> ".$user_id."
                        AND u.value_id = ".$wrd_row[2]."
-                       AND u.excluded <> 1;";
+                       AND (u.excluded <> 1 OR u.excluded is NULL);";
     $usr_val_lst =zu_sql_get_lst($sql_usr_val, $debug-1);
     foreach (array_keys($usr_val_lst) AS $usr_val_id) {
       $result .= '<a href="/http/user_value.php?id='.$usr_val_id.'&back='.$back_link.'">'.$usr_val_lst[$usr_val_id].'</a> ';

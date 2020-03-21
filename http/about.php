@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -38,10 +38,9 @@ $link = zu_start("about", "center_form", $debug);
 
   $result = ''; // reset the html code var
 
-  $result .= '<div class="center_form">'; 
-  $result .= '<a href="/http/view.php" title="zukunft.com Logo">'; 
-  $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;" >'; 
-  $result .= '</a><br><br>'; 
+  $result .= dsp_form_center(); 
+  $result .= dsp_logo_big(); 
+  $result .= '<br><br>'; 
   $result .= 'is sponsored by <br><br>'; 
   $result .= 'zukunft.com AG<br>'; 
   $result .= 'Blumentalstrasse 15<br>'; 

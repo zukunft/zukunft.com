@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -46,7 +46,7 @@ class dsp_list {
     zu_debug("zu_id_to_edit(".$this->id_field.")", $debug-10);
     $result = zu_str_left_of($this->id_field, "_id")."_edit.php";
     // todo: cleanup
-    if ($result == 'view_entry_edit.php') { $result = 'view_component_edit.php'; }
+    if ($result == 'view_component_edit.php') { $result = 'view_component_edit.php'; }
     return $result;
   }
 
@@ -55,10 +55,11 @@ class dsp_list {
     $result  = '';
     
     // set the default values
-
     $row_nbr = 0;
     $num_rows = count($this->lst);
     foreach ($this->lst AS $entry) {
+      if (UI_USE_BOOTSTRAP) { $result .= '<tr><td>'; }    
+      
       // list of all possible view components
       $row_nbr = $row_nbr + 1;
       $edit_script = $this->id_to_edit($debug-1);
@@ -72,8 +73,10 @@ class dsp_list {
       if ($row_nbr < $num_rows) {
         $result .= '<a href="/http/'.$this->script_name.'?id='.$this->script_parameter.'&move_down='.$entry->id.'">down</a>';
       }
+      if (UI_USE_BOOTSTRAP) { $result .= '</td><td>'; }    
       $result .= ' ';
       $result .= btn_del ('Delete '.zu_str_left_of($this->id_field, "_id"), $this->script_name.'?id='.$this->script_parameter.'&del='.$entry->id);
+      if (UI_USE_BOOTSTRAP) { $result .= '</td></tr>'; }    
       $result .= '<br>';
     }
 

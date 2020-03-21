@@ -33,7 +33,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -79,7 +79,7 @@ class term {
     $wrd->usr  = $this->usr;
     $wrd->load($debug-1);
     if ($wrd->id > 0) {
-      zu_debug('term->load word type is "'.$wrd->type_id.'" and the formula type is '.cl(SQL_WORD_TYPE_FORMULA_LINK).'.', $debug-16);
+      zu_debug('term->load word type is "'.$wrd->type_id.'" and the formula type is '.cl(SQL_WORD_TYPE_FORMULA_LINK), $debug-16);
       if ($wrd->type_id == cl(SQL_WORD_TYPE_FORMULA_LINK)) {
         $this->load_frm($debug-1);
       } else {
@@ -113,7 +113,7 @@ class term {
         }
       }
     }  
-    zu_debug('term->load loaded id "'.$this->id.'" for '.$this->name.'.', $debug-16);
+    zu_debug('term->load loaded id "'.$this->id.'" for '.$this->name, $debug-16);
     
     return $result;    
   }

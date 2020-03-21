@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -92,7 +92,7 @@ class verb {
         $this->frm_name     = $db_lnk['formula_name'];
         $this->description  = $db_lnk['description'];
       } 
-      zu_debug('verb->load ('.$this->name.')', $debug-12);
+      zu_debug('verb->load ('.$this->dsp_id().')', $debug-12);
     }  
     return $result;
   }
@@ -108,15 +108,15 @@ class verb {
     $result = ''; 
 
     if ($this->name <> '') {
-      $result .= $this->name.' '; 
+      $result .= '"'.$this->name.'"'; 
       if ($this->id > 0) {
-        $result .= '('.$this->id.')';
+        $result .= ' ('.$this->id.')';
       }  
     } else {
       $result .= $this->id;
     }
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
   }
@@ -129,7 +129,7 @@ class verb {
 
   // returns the html code to select a word link type
   // database link must be open
-  function dsp_selector ($side, $form, $back, $debug) {
+  function dsp_selector ($side, $form, $class, $back, $debug) {
     zu_debug('verb->dsp_selector -> for verb id '.$this->id, $debug-10);
     $result = '';
     
@@ -158,6 +158,8 @@ class verb {
     $sel->usr        = $this->usr;
     $sel->form       = $form;
     $sel->name       = 'verb';  
+    $sel->label      = "Verb:";  
+    $sel->bs_class   = $class;  
     $sel->sql        = $sql;
     $sel->selected   = $this->id;
     $sel->dummy_text = '';
@@ -178,7 +180,7 @@ class verb {
 
   // show the html form to add or edit a new verb 
   function dsp_edit ($back, $debug) {
-    zu_debug('verb->dsp_edit '.$this->name.'.', $debug-10);
+    zu_debug('verb->dsp_edit '.$this->dsp_id(), $debug-10);
     $result = '';
     
     if ($this->id <= 0) {
@@ -259,7 +261,8 @@ class verb {
              WHERE verb_id = ".$this->id.";";
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
-    $used_by_words = $db_con->get1($sql, $debug-5);  
+    $db_row = $db_con->get1($sql, $debug-5);  
+    $used_by_words = $db_row['words'];
     if ($used_by_words > 0) {
       $result = false;
     }
@@ -278,7 +281,7 @@ class verb {
               FROM user_verbs 
              WHERE verb_id = ".$this->id."
                AND user_id <> ".$this->owner_id."
-               AND excluded <> 1";
+               AND (excluded <> 1 OR excluded is NULL)";
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
     $change_user_id = $db_con->get1($sql, $debug-5);  
@@ -287,13 +290,13 @@ class verb {
     }
     */
     
-    zu_debug('verb->not_changed for '.$this->id.' is '.zu_dsp_bool($result).'.', $debug-10);  
+    zu_debug('verb->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
     return $result;
   }
 
   // true if noone else has used the verb
   function can_change($debug) {
-    zu_debug('verb->can_change '.$this->id.'.', $debug-10);  
+    zu_debug('verb->can_change '.$this->id, $debug-10);  
     $can_change = false;
     if ($this->not_used AND $this->not_changed) {
       $can_change = true;
@@ -305,7 +308,7 @@ class verb {
 
   // set the log entry parameter for a new verb
   private function log_add($debug) {
-    zu_debug('verb->log_add "'.$this->name.'".', $debug-10);
+    zu_debug('verb->log_add '.$this->dsp_id(), $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -321,7 +324,7 @@ class verb {
   
   // set the main log entry parameters for updating one verb field
   private function log_upd($debug) {
-    zu_debug('verb->log_upd "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('verb->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id = $this->usr->id;  
     $log->action = 'update';
@@ -332,7 +335,7 @@ class verb {
   
   // set the log entry parameter to delete a verb
   private function log_del($debug) {
-    zu_debug('verb->log_del "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('verb->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -448,7 +451,7 @@ class verb {
     $result .= $this->save_field_reverse     ($db_con, $db_rec, $debug-1);
     $result .= $this->save_field_rev_plural  ($db_con, $db_rec, $debug-1);
     $result .= $this->save_field_description ($db_con, $db_rec, $debug-1);
-    zu_debug('verb->save_fields all fields for "'.$this->name.'" has been saved.', $debug-12);
+    zu_debug('verb->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
     return $result;
   }
   
@@ -459,12 +462,12 @@ class verb {
     todo:
     if ($db_rec->name <> $this->name) {
       // check if target link already exists
-      zu_debug('verb->save_id_if_updated check if target link already exists "'.$this->dsp_id().'" (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('verb->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
       if ($db_chk->id > 0) {
-        if (UI_CAN_CHANGE_VIEW_ENTRY_NAME) {
+        if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
           // ... if yes request to delete or exclude the record with the id parameters before the change
           $to_del = clone $db_rec;
           $result .= $to_del->del($debug-20);        
@@ -475,14 +478,14 @@ class verb {
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
-          zu_debug('verb->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add "'.$this->dsp_id().'".', $debug-14);
+          zu_debug('verb->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add '.$this->dsp_id(), $debug-14);
         } else {
           $result .= 'A view component with the name "'.$this->name.'" already exists. Please use another name.';
         }  
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('verb->save_id_if_updated change the existing display component link "'.$this->dsp_id().'" (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('verb->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -496,18 +499,18 @@ class verb {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add "'.$this->dsp_id().'" (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
         }
       }
     }  
 */
-    zu_debug('verb->save_id_if_updated for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('verb->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
   // create a new verb
   private function add($db_con, $debug) {
-    zu_debug('verb->add the verb "'.$this->name.'".', $debug-12);
+    zu_debug('verb->add the verb '.$this->dsp_id(), $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -536,7 +539,7 @@ class verb {
   
   // add or update a verb in the database (or create a user verb if the program settings allow this)
   function save($debug) {
-    zu_debug('verb->save "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('verb->save '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $result = '';
     
     // build the database object because the is anyway needed
@@ -552,7 +555,7 @@ class verb {
         $result .= $trm->id_used_msg($debug-1);
       } else {
         $this->id = $trm->id;
-        zu_debug('verb->save adding verb name "'.$this->name.'" is OK.', $debug-14);
+        zu_debug('verb->save adding verb name '.$this->dsp_id().' is OK.', $debug-14);
       }
     }  
       
@@ -600,7 +603,7 @@ class verb {
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
-      zu_debug('verb->del "'.$this->name.'".', $debug-14);
+      zu_debug('verb->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1)) {
         $log = $this->log_del($debug-1);
         if ($log->id > 0) {

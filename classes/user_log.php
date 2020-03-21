@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -69,7 +69,7 @@ class user_log {
   
   // to save database space the table name is saved as a reference id in the log table
   private function set_table($debug) {
-    zu_debug('user_log->set_table "'.$this->table.'" for '.$this->usr_id.'.', $debug-10);
+    zu_debug('user_log->set_table "'.$this->table.'" for '.$this->usr_id, $debug-10);
     
     // check parameter
     if ($this->table == "") { zu_err("missing table name","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
@@ -93,7 +93,7 @@ class user_log {
   }
 
   private function set_field($debug) {
-    zu_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr_id.'.', $debug-10);
+    zu_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr_id, $debug-10);
     
     // check parameter
     if ($this->table_id <= 0) { zu_err("missing table_id","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
@@ -117,7 +117,7 @@ class user_log {
   }
 
   private function set_action($debug) {
-    zu_debug('user_log->set_action "'.$this->action.'" for '.$this->usr_id.'.', $debug-10);
+    zu_debug('user_log->set_action "'.$this->action.'" for '.$this->usr_id, $debug-10);
     
     // check parameter
     if ($this->action == "") { zu_err("missing action name","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
@@ -185,11 +185,11 @@ class user_log {
   
   // log a user change of a word, value or formula
   function add($debug) {
-    zu_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id.' and for user '.$this->usr_id.'.', $debug-10);
+    zu_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id.' and for user '.$this->usr_id, $debug-10);
 
-    $this->set_table($debug-1);
-    $this->set_field($debug-1);
-    $this->set_action($debug-1);
+    $this->set_table($debug-10);
+    $this->set_field($debug-10);
+    $this->set_action($debug-10);
     
     $sql_fields = array();
     $sql_values = array();
@@ -218,7 +218,7 @@ class user_log {
     $db_con = new mysql;         
     $db_con->type = "change";         
     $db_con->usr_id = $this->usr_id;         
-    $log_id = $db_con->insert($sql_fields, $sql_values, $debug-1);
+    $log_id = $db_con->insert($sql_fields, $sql_values, $debug-10);
 
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters has caused the error

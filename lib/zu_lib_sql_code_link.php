@@ -39,7 +39,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -57,155 +57,175 @@ define("DBL_FIELD", "code_id");
 
 // link to the predefined edit views
 // the code ids must unique over all types 
-define("SQL_VIEW_START",                  "dsp_start");   
-define("SQL_VIEW_WORD",                   "word_dsp");   
-define("SQL_VIEW_WORD_ADD",               "word_add");   
-define("SQL_VIEW_WORD_EDIT",              "word_edit");  
-define("SQL_VIEW_WORD_FIND",              "word_find");  
-define("SQL_VIEW_WORD_DEL",               "word_del");  
-define("SQL_VIEW_VALUE_ADD",              "value_add");   
-define("SQL_VIEW_VALUE_EDIT",             "value_edit");  
-define("SQL_VIEW_VALUE_DEL",              "value_del");   
-define("SQL_VIEW_VALUE_DISPLAY",          "value_display");   
-define("SQL_VIEW_FORMULA_ADD",            "formula_add"); 
-define("SQL_VIEW_FORMULA_EDIT",           "formula_edit");
-define("SQL_VIEW_FORMULA_DEL",            "formula_del");
-define("SQL_VIEW_FORMULA_EXPLAIN",        "formula_explain");
-define("SQL_VIEW_FORMULA_TEST",           "formula_test");
-define("SQL_VIEW_SOURCE_ADD",             "source_add"); 
-define("SQL_VIEW_SOURCE_EDIT",            "source_edit");
-define("SQL_VIEW_SOURCE_DEL",             "source_del");
-define("SQL_VIEW_VERBS",                  "verbs");
-define("SQL_VIEW_VERB_ADD",               "verb_add");
-define("SQL_VIEW_VERB_EDIT",              "verb_edit");
-define("SQL_VIEW_VERB_DEL",               "verb_del");
-define("SQL_VIEW_LINK_ADD",               "triple_add");
-define("SQL_VIEW_LINK_EDIT",              "triple_edit");
-define("SQL_VIEW_LINK_DEL",               "triple_del");
-define("SQL_VIEW_USER",                   "user");
-define("SQL_VIEW_ERR_LOG",                "error_log");
-define("SQL_VIEW_ERR_UPD",                "error_update");
-// views to edit views
-define("SQL_VIEW_ADD",                    "view_add");   
-define("SQL_VIEW_EDIT",                   "view_edit");  
-define("SQL_VIEW_DEL",                    "view_del");  
-define("SQL_VIEW_ENTRY_ADD",              "view_enty_add");   
-define("SQL_VIEW_ENTRY_EDIT",             "view_enty_edit");  
-define("SQL_VIEW_ENTRY_DEL",              "view_enty_del");  
+define("SQL_VIEW_START",                    "dsp_start");   
+define("SQL_VIEW_WORD",                     "word_dsp");   
+define("SQL_VIEW_WORD_ADD",                 "word_add");   
+define("SQL_VIEW_WORD_EDIT",                "word_edit");  
+define("SQL_VIEW_WORD_FIND",                "word_find");  
+define("SQL_VIEW_WORD_DEL",                 "word_del");  
+define("SQL_VIEW_VALUE_ADD",                "value_add");   
+define("SQL_VIEW_VALUE_EDIT",               "value_edit");  
+define("SQL_VIEW_VALUE_DEL",                "value_del");   
+define("SQL_VIEW_VALUE_DISPLAY",            "value_display");   
+define("SQL_VIEW_FORMULA_ADD",              "formula_add"); 
+define("SQL_VIEW_FORMULA_EDIT",             "formula_edit");
+define("SQL_VIEW_FORMULA_DEL",              "formula_del");
+define("SQL_VIEW_FORMULA_EXPLAIN",          "formula_explain");
+define("SQL_VIEW_FORMULA_TEST",             "formula_test");
+define("SQL_VIEW_SOURCE_ADD",               "source_add"); 
+define("SQL_VIEW_SOURCE_EDIT",              "source_edit");
+define("SQL_VIEW_SOURCE_DEL",               "source_del");
+define("SQL_VIEW_VERBS",                    "verbs");
+define("SQL_VIEW_VERB_ADD",                 "verb_add");
+define("SQL_VIEW_VERB_EDIT",                "verb_edit");
+define("SQL_VIEW_VERB_DEL",                 "verb_del");
+define("SQL_VIEW_LINK_ADD",                 "triple_add");
+define("SQL_VIEW_LINK_EDIT",                "triple_edit");
+define("SQL_VIEW_LINK_DEL",                 "triple_del");
+define("SQL_VIEW_USER",                     "user");
+define("SQL_VIEW_ERR_LOG",                  "error_log");
+define("SQL_VIEW_ERR_UPD",                  "error_update");
+define("SQL_VIEW_IMPORT",                   "import");
+// views to edit views                     
+define("SQL_VIEW_ADD",                      "view_add");   
+define("SQL_VIEW_EDIT",                     "view_edit");  
+define("SQL_VIEW_DEL",                      "view_del");  
+define("SQL_VIEW_COMPONENT_ADD",            "view_enty_add");   
+define("SQL_VIEW_COMPONENT_EDIT",           "view_enty_edit");  
+define("SQL_VIEW_COMPONENT_DEL",            "view_enty_del");  
 // views types; using view type instead of a single view, because there maybe several default views for words
-define("SQL_VIEW_TYPE_DEFAULT",           "view_type_default");  
-define("SQL_VIEW_TYPE_ENTRY",             "entry");  
-define("SQL_VIEW_TYPE_WORD_DEFAULT",      "word_default");  
+define("SQL_VIEW_TYPE_DEFAULT",             "view_type_default");  
+define("SQL_VIEW_TYPE_ENTRY",               "entry");  
+define("SQL_VIEW_TYPE_WORD_DEFAULT",        "word_default");  
+                                          
+// views component types                  
+define("SQL_VIEW_COMPONENT_TEXT",           "text");   
+define("SQL_VIEW_TYPE_WORD",                "fixed");   
+define("SQL_VIEW_TYPE_WORDS_UP",            "word_list_up");   
+define("SQL_VIEW_TYPE_WORDS_DOWN",          "word_list_down");  
+define("SQL_VIEW_TYPE_WORD_NAME",           "word_name");  
+define("SQL_VIEW_TYPE_WORD_VALUE",          "word_value_list"); // a list of
+define("SQL_VIEW_TYPE_VALUES_ALL",          "values_all");  
+define("SQL_VIEW_TYPE_VALUES_RELATED",      "values_related");  
+define("SQL_VIEW_TYPE_FORMULAS",            "formula_list");  
+define("SQL_VIEW_TYPE_FORMULA_RESULTS",     "formula_results");  
+define("SQL_VIEW_TYPE_JSON_EXPORT",         "json_export");  
+define("SQL_VIEW_TYPE_XML_EXPORT",          "xml_export");  
+define("SQL_VIEW_TYPE_CSV_EXPORT",          "csv_export");  
+                                          
+define("SQL_WORD_TYPE_NORMAL",              "default");  
+define("SQL_WORD_TYPE_TIME",                "time");  
+define("SQL_WORD_TYPE_MEASURE",             "measure");  
+define("SQL_WORD_TYPE_TIMEJUMP",            "timejump");  
+define("SQL_WORD_TYPE_PERCENT",             "percent");  
+define("SQL_WORD_TYPE_MEASURE",             "measure");  
+define("SQL_WORD_TYPE_SCALING",             "scaling");  
+define("SQL_WORD_TYPE_SCALING_HIDDEN",      "scaling_hidden");  
+define("SQL_WORD_TYPE_SCALING_PCT",         "scaling_percent");  
+define("SQL_WORD_TYPE_SCALED_MEASURE",      "scaled_measure");  
+define("SQL_WORD_TYPE_FORMULA_LINK",        "formula_link");  
+define("SQL_WORD_TYPE_OTHER",               "type_other");  
+define("SQL_WORD_TYPE_NEXT",                "next");  
+define("SQL_WORD_TYPE_THIS",                "this");  
+define("SQL_WORD_TYPE_PREV",                "previous");  
+                                          
+define("SQL_FORMULA_TYPE_NEXT",             "time_next");  
+define("SQL_FORMULA_TYPE_THIS",             "time_this");  
+define("SQL_FORMULA_TYPE_PREV",             "time_prior");  
+                                          
+define("SQL_FORMULA_PART_TYPE_WORD",        "word");  
+define("SQL_FORMULA_PART_TYPE_VERB",        "word_link");  
+define("SQL_FORMULA_PART_TYPE_FORMULA",     "formula");  
+                                          
+// predefined word link types or verbs    
+define("SQL_LINK_TYPE_IS",                  "is");  
+define("SQL_LINK_TYPE_CONTAIN",             "contains");  
+define("SQL_LINK_TYPE_FOLLOW",              "follow");  
+define("SQL_LINK_TYPE_DIFFERANTIATOR",      "can_contain");  
+                                          
+// predefined words                       
+define("SQL_WORD_OTHER",                    "other");  // replaced by a word type
+                                          
+// share types                            
+define("DBL_SHARE_PUBLIC",                  "public");  
+define("DBL_SHARE_PERSONAL",                "personal");  
+define("DBL_SHARE_GROUP",                   "group");  
+define("DBL_SHARE_PRIVATE",                 "private");  
+                                          
+// protection types                            
+define("DBL_PROTECT_NO",                    "no_protection");  
+define("DBL_PROTECT_USER",                  "user_protection");  
+define("DBL_PROTECT_ADMIN",                 "admin_protection");  
+define("DBL_PROTECT_NO_CHANGE",             "no_change");  
+                                          
+// user profiles                          
+define("SQL_USER_ADMIN",                    "admin");  
+define("SQL_USER_DEV",                      "dev");  
+                                          
+// single special users                   
+define("SQL_USER_SYSTEM",                   "system");  
+                                          
+// system log stati                       
+define("DBL_ERR_NEW",                       "new");  
+define("DBL_ERR_ASSIGNED",                  "assigned");  
+define("DBL_ERR_RESOLVED",                  "resolved");  
+define("DBL_ERR_CLOSED",                    "closed");  
+                                          
+// system log types                       
+define("DBL_SYSLOG_INFO",                   "info");  
+define("DBL_SYSLOG_WARNING",                "warning");  
+define("DBL_SYSLOG_ERROR",                  "error");  
+define("DBL_SYSLOG_FATAL_ERROR",            "fatal");  
 
-// views entry types
-define("SQL_VIEW_ENTRY_TEXT",             "text");   
-define("SQL_VIEW_TYPE_WORD",              "fixed");   
-define("SQL_VIEW_TYPE_WORDS_UP",          "word_list_up");   
-define("SQL_VIEW_TYPE_WORDS_DOWN",        "word_list_down");  
-define("SQL_VIEW_TYPE_WORD_NAME",         "word_name");  
-define("SQL_VIEW_TYPE_WORD_VALUE",        "word_value_list"); // a list of
-define("SQL_VIEW_TYPE_VALUES_ALL",        "values_all");  
-define("SQL_VIEW_TYPE_VALUES_RELATED",    "values_related");  
-define("SQL_VIEW_TYPE_FORMULAS",          "formula_list");  
-define("SQL_VIEW_TYPE_FORMULA_RESULTS",   "formula_results");  
-define("SQL_VIEW_TYPE_XML_EXPORT",        "xml_export");  
-define("SQL_VIEW_TYPE_CSV_EXPORT",        "csv_export");  
+define("DBL_SYSLOG_TBL_USR",                "users");  
+define("DBL_SYSLOG_TBL_VALUE",              "values");  
+define("DBL_SYSLOG_TBL_VALUE_USR",          "user_values");  
+define("DBL_SYSLOG_TBL_VALUE_LINK",         "value_links");  
+define("DBL_SYSLOG_TBL_WORD",               "words");  
+define("DBL_SYSLOG_TBL_WORD_USR",           "user_words");  
+define("DBL_SYSLOG_TBL_WORD_LINK",          "word_links");  
+define("DBL_SYSLOG_TBL_WORD_LINK_USR",      "user_word_links");  
+define("DBL_SYSLOG_TBL_FORMULA",            "formulas");  
+define("DBL_SYSLOG_TBL_FORMULA_USR",        "user_formulas");  
+define("DBL_SYSLOG_TBL_FORMULA_LINK",       "formula_links");  
+define("DBL_SYSLOG_TBL_FORMULA_LINK_USR",   "user_formula_links");  
+define("DBL_SYSLOG_TBL_VIEW",               "views");  
+define("DBL_SYSLOG_TBL_VIEW_USR",           "user_views");  
+define("DBL_SYSLOG_TBL_VIEW_LINK",          "view_component_links");  
+define("DBL_SYSLOG_TBL_VIEW_LINK_USR",      "user_view_component_links");  
+define("DBL_SYSLOG_TBL_VIEW_COMPONENT",     "view_components");  
+define("DBL_SYSLOG_TBL_VIEW_COMPONENT_USR", "user_view_components");  
 
-define("SQL_WORD_TYPE_NORMAL",            "default");  
-define("SQL_WORD_TYPE_TIME",              "time");  
-define("SQL_WORD_TYPE_MEASURE",           "measure");  
-define("SQL_WORD_TYPE_TIMEJUMP",          "timejump");  
-define("SQL_WORD_TYPE_PERCENT",           "percent");  
-define("SQL_WORD_TYPE_MEASURE",           "measure");  
-define("SQL_WORD_TYPE_SCALING",           "scaling");  
-define("SQL_WORD_TYPE_SCALING_HIDDEN",    "scaling_hidden");  
-define("SQL_WORD_TYPE_SCALING_PCT",       "scaling_percent");  
-define("SQL_WORD_TYPE_FORMULA_LINK",      "formula_link");  
-define("SQL_WORD_TYPE_OTHER",             "type_other");  
-define("SQL_WORD_TYPE_NEXT",              "next");  
-define("SQL_WORD_TYPE_THIS",              "this");  
-define("SQL_WORD_TYPE_PREV",              "previous");  
-
-define("SQL_FORMULA_TYPE_NEXT",           "time_next");  
-define("SQL_FORMULA_TYPE_THIS",           "time_this");  
-define("SQL_FORMULA_TYPE_PREV",           "time_prior");  
-
-define("SQL_FORMULA_PART_TYPE_WORD",      "word");  
-define("SQL_FORMULA_PART_TYPE_VERB",      "word_link");  
-define("SQL_FORMULA_PART_TYPE_FORMULA",   "formula");  
-
-// predefined word link types or verbs
-define("SQL_LINK_TYPE_IS",                "is");  
-define("SQL_LINK_TYPE_CONTAIN",           "contains");  
-define("SQL_LINK_TYPE_FOLLOW",            "follow");  
-define("SQL_LINK_TYPE_DIFFERANTIATOR",    "can_contain");  
-
-// predefined words
-define("SQL_WORD_OTHER",                  "other");  // replaced by a word type
-
-// user profiles
-define("SQL_USER_ADMIN",                  "admin");  
-define("SQL_USER_DEV",                    "dev");  
-
-// single special users
-define("SQL_USER_SYSTEM",                "system");  
-
-// system log stati
-define("DBL_ERR_NEW",                     "new");  
-define("DBL_ERR_ASSIGNED",                "assigned");  
-define("DBL_ERR_RESOLVED",                "resolved");  
-define("DBL_ERR_CLOSED",                  "closed");  
-
-// system log types
-define("DBL_SYSLOG_INFO",                 "info");  
-define("DBL_SYSLOG_WARNING",              "warning");  
-define("DBL_SYSLOG_ERROR",                "error");  
-define("DBL_SYSLOG_FATAL_ERROR",          "fatal");  
-
-define("DBL_SYSLOG_TBL_USR",              "users");  
-define("DBL_SYSLOG_TBL_VALUE",            "values");  
-define("DBL_SYSLOG_TBL_VALUE_USR",        "user_values");  
-define("DBL_SYSLOG_TBL_VALUE_LINK",       "value_links");  
-define("DBL_SYSLOG_TBL_WORD",             "words");  
-define("DBL_SYSLOG_TBL_WORD_USR",         "user_words");  
-define("DBL_SYSLOG_TBL_WORD_LINK",        "word_links");  
-define("DBL_SYSLOG_TBL_WORD_LINK_USR",    "user_word_links");  
-define("DBL_SYSLOG_TBL_FORMULA",          "formulas");  
-define("DBL_SYSLOG_TBL_FORMULA_USR",      "user_formulas");  
-define("DBL_SYSLOG_TBL_FORMULA_LINK",     "formula_links");  
-define("DBL_SYSLOG_TBL_FORMULA_LINK_USR", "user_formula_links");  
-define("DBL_SYSLOG_TBL_VIEW",             "views");  
-define("DBL_SYSLOG_TBL_VIEW_USR",         "user_views");  
-define("DBL_SYSLOG_TBL_VIEW_LINK",        "view_entry_links");  
-define("DBL_SYSLOG_TBL_VIEW_LINK_USR",    "user_view_entry_links");  
-define("DBL_SYSLOG_TBL_VIEW_ENTRY",       "view_entries");  
-define("DBL_SYSLOG_TBL_VIEW_ENTRY_USR",   "user_view_entries");  
-
-define("DBL_SYSLOG_STATUS_CLOSE",         "closed");  
+define("DBL_SYSLOG_STATUS_CLOSE",           "closed");  
 
 // the batch job types to keep the dependencies updated and the database clean
-define("DBL_JOB_VALUE_UPDATE",            "job_value_update");  
-define("DBL_JOB_VALUE_ADD",               "job_value_add");  
-define("DBL_JOB_VALUE_DEL",               "job_value_del");  
-define("DBL_JOB_FORMULA_UPDATE",          "job_formula_update");  
-define("DBL_JOB_FORMULA_ADD",             "job_formula_add");  
-define("DBL_JOB_FORMULA_DEL",             "job_formula_del");  
-define("DBL_JOB_FORMULA_LINK",            "job_formula_link");  
-define("DBL_JOB_FORMULA_UNLINK",          "job_formula_unlink");  
-define("DBL_JOB_WORD_LINK",               "job_word_link");  
-define("DBL_JOB_WORD_UNLINK",             "job_word_unlink");  
-
+define("DBL_JOB_VALUE_UPDATE",              "job_value_update");  
+define("DBL_JOB_VALUE_ADD",                 "job_value_add");  
+define("DBL_JOB_VALUE_DEL",                 "job_value_del");  
+define("DBL_JOB_FORMULA_UPDATE",            "job_formula_update");  
+define("DBL_JOB_FORMULA_ADD",               "job_formula_add");  
+define("DBL_JOB_FORMULA_DEL",               "job_formula_del");  
+define("DBL_JOB_FORMULA_LINK",              "job_formula_link");  
+define("DBL_JOB_FORMULA_UNLINK",            "job_formula_unlink");  
+define("DBL_JOB_WORD_LINK",                 "job_word_link");  
+define("DBL_JOB_WORD_UNLINK",               "job_word_unlink");  
+                                           
 // fixed settings without code id for the tripple links
-define("DBL_TRIPPLE_LINK_IS_WORD",         1);  
-define("DBL_TRIPPLE_LINK_IS_TRIPPLE",      2);  
-define("DBL_TRIPPLE_LINK_IS_GROUP",        3);  
+define("DBL_TRIPPLE_LINK_IS_WORD",           1);  
+define("DBL_TRIPPLE_LINK_IS_TRIPPLE",        2);  
+define("DBL_TRIPPLE_LINK_IS_GROUP",          3);  
 
 // table fields where the change should be encoded before shown to the user
 // e.g. the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
-define("DBL_FLD_FORMULA_ALL_NEEDED",      "all_values_needed");  
-define("DBL_FLD_FORMULA_TYPE",            "frm_type");  
+define("DBL_FLD_FORMULA_ALL_NEEDED",        "all_values_needed");  
+define("DBL_FLD_FORMULA_TYPE",              "frm_type");  
 // e.g. the formula field "ref_txt" is more a internal field, which should not be shown to the user (only to an admin for debugging)
-define("DBL_FLD_FORMULA_REF_TEXT",        "ref_text");  
+define("DBL_FLD_FORMULA_REF_TEXT",          "ref_text");  
+
+
+// global list of database values that cannot be changed by the user 
+// these need to be loaded only once to the frontend because only a system upgrade can change them
+$dbl_protection_types = array();
 
 
 // returns the pk / row_id for a given code_id
@@ -244,6 +264,7 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == SQL_VIEW_USER
    OR $code_id == SQL_VIEW_ERR_LOG
    OR $code_id == SQL_VIEW_ERR_UPD
+   OR $code_id == SQL_VIEW_IMPORT
    OR $code_id == SQL_VIEW_ADD
    OR $code_id == SQL_VIEW_EDIT
    OR $code_id == SQL_VIEW_DEL) {
@@ -254,7 +275,7 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == SQL_VIEW_TYPE_WORD_DEFAULT) {
     $db_type = "view_type";
   }
-  if ($code_id == SQL_VIEW_ENTRY_TEXT
+  if ($code_id == SQL_VIEW_COMPONENT_TEXT
    OR $code_id == SQL_VIEW_TYPE_WORD
    OR $code_id == SQL_VIEW_TYPE_WORDS_UP
    OR $code_id == SQL_VIEW_TYPE_WORDS_DOWN
@@ -264,9 +285,10 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == SQL_VIEW_TYPE_VALUES_RELATED
    OR $code_id == SQL_VIEW_TYPE_FORMULAS
    OR $code_id == SQL_VIEW_TYPE_FORMULA_RESULTS
+   OR $code_id == SQL_VIEW_TYPE_JSON_EXPORT
    OR $code_id == SQL_VIEW_TYPE_XML_EXPORT
    OR $code_id == SQL_VIEW_TYPE_CSV_EXPORT) {
-    $db_type = "view_entry_type";
+    $db_type = "view_component_type";
   }
   if ($code_id == SQL_WORD_TYPE_NORMAL
    OR $code_id == SQL_WORD_TYPE_TIME
@@ -284,6 +306,21 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == SQL_WORD_TYPE_PREV) {
     $db_type = "word_type";
   }
+
+  if ($code_id == DBL_SHARE_PUBLIC
+   OR $code_id == DBL_SHARE_PERSONAL
+   OR $code_id == DBL_SHARE_GROUP
+   OR $code_id == DBL_SHARE_PRIVATE) {
+    $db_type    = "share_type";
+  }
+
+  if ($code_id == DBL_PROTECT_NO
+   OR $code_id == DBL_PROTECT_USER
+   OR $code_id == DBL_PROTECT_ADMIN
+   OR $code_id == DBL_PROTECT_NO_CHANGE) {
+    $db_type    = "protection_type";
+  }
+
   if ($code_id == SQL_FORMULA_TYPE_NEXT
    OR $code_id == SQL_FORMULA_TYPE_THIS
    OR $code_id == SQL_FORMULA_TYPE_PREV) {
@@ -333,8 +370,8 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == DBL_SYSLOG_TBL_VIEW_USR
    OR $code_id == DBL_SYSLOG_TBL_VIEW_LINK
    OR $code_id == DBL_SYSLOG_TBL_VIEW_LINK_USR
-   OR $code_id == DBL_SYSLOG_TBL_VIEW_ENTRY
-   OR $code_id == DBL_SYSLOG_TBL_VIEW_ENTRY_USR) {
+   OR $code_id == DBL_SYSLOG_TBL_view_component
+   OR $code_id == DBL_SYSLOG_TBL_view_component_USR) {
     $db_type = "change_table";
   }
 
@@ -383,7 +420,12 @@ function sql_code_link($code_id, $description, $debug) {
 
     // insert the missing row if needed
     if ($row_id <= 0) {
-      $result .= $db_con->insert(DBL_FIELD, $code_id, $debug-14);
+      $row_id = $db_con->get_id_from_code($code_id, $debug-14);
+      if ($db_type == 'view') {
+        $result .= $db_con->insert(array(DBL_FIELD, 'user_id'), array($code_id, SYSTEM_USER_ID), $debug-14);
+      } else {  
+        $result .= $db_con->insert(DBL_FIELD, $code_id, $debug-14);
+      }  
       zu_debug ('inserted '.$code_id.'<br>', $debug-14);
       // get the id of the inserted row
       $row_id = $db_con->get_id_from_code($code_id, $debug-14);

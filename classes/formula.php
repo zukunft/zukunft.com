@@ -22,28 +22,30 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
 */
 
-class formula {
+class formula extends user_sandbox  {
 
+  /*
   // database fields
   public $id           = NULL;  // the database id of the formula, which is the same for the standard and the user specific formula
   public $usr_cfg_id   = NULL;  // the database id if there is alrady some user specific configuration for this formula
   public $usr          = NULL;  // if 0 (not NULL) the standard formula, otherwise the user specific formula
   public $owner_id     = NULL;  // the user id of the person who created the formula, which is the default formula
   public $name         = '';    // simply the formula name, which cannot be empty
+  public $excluded     = NULL;  // for this object the excluded field is handled as a normal user sandbox field, but for the list excluded row are like deleted
+  */
   public $ref_text     = '';    // the formula expression with the names replaced by database references
   public $usr_text     = '';    // the formula expression in the user format
   public $description  = '';    // describes to the user what this formula is doing
   public $type_id      = NULL;  // the formula type to link special behavier to special formulas like "this" or "next"
   public $need_all_val = false; // calculate and save the result only if all used values are not null
   public $last_update  = NULL;  // the time of the last update of fields that may influence the calculated results
-  public $excluded     = NULL;  // for this object the excluded field is handled as a normal user sandbox field, but for the list excluded row are like deleted
 
   // in memory only fields
   public $type_cl      = '';    // the code id of the formula type 
@@ -53,8 +55,39 @@ class formula {
   public $needs_fv_upd = false; // true if the formula results needs to be updated
   public $ref_text_r   = '';    // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
   
+  function __construct() {
+    $this->type      = 'named';
+    $this->obj_name  = 'formula';
+
+    $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
+  }
+    
+  function reset($debug) {
+    $this->id           = NULL;
+    $this->usr_cfg_id   = NULL;
+    $this->usr          = NULL;
+    $this->owner_id     = NULL;
+    $this->excluded     = NULL;
+    
+    $this->name         = '';
+
+    $this->ref_text     = '';    
+    $this->usr_text     = '';    
+    $this->description  = '';    
+    $this->type_id      = NULL;  
+    $this->need_all_val = false; 
+    $this->last_update  = NULL;  
+
+    $this->type_cl      = '';    
+    $this->type_name    = '';    
+    $this->name_wrd     = NULL;  
+                                
+    $this->needs_fv_upd = false; 
+    $this->ref_text_r   = '';    
+  }
+
   // load the corresponding name word for the formula name
-  private function load_wrd($debug) {
+  function load_wrd($debug) {
     $do_load = true;
     if (isset($this->name_wrd)) {
       if ($this->name_wrd->name == $this->name) {
@@ -62,7 +95,7 @@ class formula {
       }
     }
     if ($do_load) {
-      zu_debug('formula->load_wrd load "'.$this->name.'".', $debug-12);
+      zu_debug('formula->load_wrd load '.$this->dsp_id(), $debug-12);
       $name_wrd = new word_dsp;
       $name_wrd->name = $this->name;
       $name_wrd->usr  = $this->usr;
@@ -75,8 +108,8 @@ class formula {
   
   
   // create the corresponding name word for the formula name
-  private function create_wrd($debug) {
-    zu_debug('formula->create_wrd create formula linked word "'.$this->name.'".', $debug-6);
+  function create_wrd($debug) {
+    zu_debug('formula->create_wrd create formula linked word '.$this->dsp_id(), $debug-6);
     // if the formula word is missing, try a word creating as a kind of auto recovery
     $name_wrd = new word_dsp;
     $name_wrd->name    = $this->name;
@@ -92,7 +125,7 @@ class formula {
   }
   
   // load the formula parameters for all users
-  private function load_standard($debug) {
+  function load_standard($debug) {
     $result = '';
     
     // set the where clause depending on the values given
@@ -123,7 +156,9 @@ class formula {
       $db_con = new mysql;         
       $db_con->usr_id = $this->usr->id;         
       $db_rec = $db_con->get1($sql, $debug-5);  
-      if ($db_rec['formula_id'] > 0) {
+      if ($db_rec['formula_id'] <= 0) {
+        $this->reset($debug-1);
+      } else {
         $this->id           = $db_rec['formula_id'];
         $this->owner_id     = $db_rec['user_id'];
         $this->name         = $db_rec['formula_name'];
@@ -148,6 +183,9 @@ class formula {
           $usr->load_test_user($debug-1);
           $this->usr = $usr; 
         } else {
+          // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
+          $sql_set = "UPDATE formulas SET user_id = ".$this->usr->id." WHERE formula_id = ".$this->id.";";
+          $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "formula->load_standard", (new Exception)->getTraceAsString(), $debug-10);
           //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
         }  
 
@@ -203,38 +241,39 @@ class formula {
         $db_con = new mysql;         
         $db_con->usr_id = $this->usr->id;         
         $db_frm = $db_con->get1($sql, $debug-5);  
-        //if (is_null($db_frm['excluded']) OR $db_frm['excluded'] == 0) {
-        $this->id           = $db_frm['formula_id'];
-        $this->usr_cfg_id   = $db_frm['user_formula_id'];
-        $this->owner_id     = $db_frm['user_id'];
-        $this->name         = $db_frm['formula_name'];
-        $this->ref_text     = $db_frm['formula_text'];
-        $this->usr_text     = $db_frm['resolved_text'];
-        $this->description  = $db_frm['description'];
-        $this->type_id      = $db_frm['formula_type_id'];
-        $this->type_cl      = $db_frm['code_id'];
-        $this->last_update  = new DateTime($db_frm['last_update']);
-        //zu_debug('formula->load -> formula update time of '.$this->dsp_id().' is '.$this->last_update->format('Y-m-d H:i:s').'.', $debug-13);
-        $this->excluded     = $db_frm['excluded'];
-        if ($db_frm['all_values_needed'] == 1) {
-          $this->need_all_val = true;
+        if ($db_frm['formula_id'] <= 0) {
+          $this->reset($debug-1);
         } else {
-          $this->need_all_val = false;
-        }
-        zu_debug('formula->load '.$this->dsp_id().' not excluded.', $debug-10);
+          $this->id           = $db_frm['formula_id'];
+          $this->usr_cfg_id   = $db_frm['user_formula_id'];
+          $this->owner_id     = $db_frm['user_id'];
+          $this->name         = $db_frm['formula_name'];
+          $this->ref_text     = $db_frm['formula_text'];
+          $this->usr_text     = $db_frm['resolved_text'];
+          $this->description  = $db_frm['description'];
+          $this->type_id      = $db_frm['formula_type_id'];
+          $this->type_cl      = $db_frm['code_id'];
+          $this->last_update  = new DateTime($db_frm['last_update']);
+          $this->excluded     = $db_frm['excluded'];
+          if ($db_frm['all_values_needed'] == 1) {
+            $this->need_all_val = true;
+          } else {
+            $this->need_all_val = false;
+          }
+          zu_debug('formula->load '.$this->dsp_id().' not excluded.', $debug-10);
 
-        // load the formula name word object
-        if ($this->id > 0 AND is_null($this->name_wrd)) {
-          $this->load_wrd($debug-1);
+          // load the formula name word object
+          if ($this->id > 0 AND is_null($this->name_wrd)) {
+            $this->load_wrd($debug-1);
+          }
         }
-        //}
       }
     }  
-    zu_debug('formula->load -> done '.$this->dsp_id().'.', $debug-10);
+    zu_debug('formula->load -> done '.$this->dsp_id(), $debug-10);
   }
 
   // 
-  private function formula_type_name($debug) {
+  function formula_type_name($debug) {
     zu_debug('formula->formula_type_name do.', $debug-16);
     if ($this->type_id > 0) {
       $sql = "SELECT name, description
@@ -245,7 +284,7 @@ class formula {
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['name'];
     }
-    zu_debug('formula->formula_type_name done '.$this->type_name.'.', $debug-16);
+    zu_debug('formula->formula_type_name done '.$this->type_name, $debug-16);
     return $this->type_name;    
   }
   
@@ -255,7 +294,7 @@ class formula {
     $result = false;
     if ($this->type_cl <> "") {
       $result = true;
-      zu_debug('formula->is_special -> '.$this->dsp_id().'.', $debug-8);
+      zu_debug('formula->is_special -> '.$this->dsp_id(), $debug-8);
     }  
     return $result;
   }
@@ -324,14 +363,14 @@ class formula {
       }
     }
 
-    zu_debug('formula->special_time_phr got '.$result->dsp_id().'.', $debug-12);
+    zu_debug('formula->special_time_phr got '.$result->dsp_id(), $debug-12);
     return $result;
   }
   
   // get all phrases included by a special formula element for a list of phrases
   // e.g. if the list of phrases is "2016" and "2017" and the special formulas are "prior" and "next" the result should be "2015", "2016","2017" and "2018"
   function special_phr_lst ($phr_lst, $debug) {
-    zu_debug('formula->special_phr_lst for '.$phr_lst->dsp_id().'.', $debug-12);
+    zu_debug('formula->special_phr_lst for '.$phr_lst->dsp_id(), $debug-12);
     $result = clone $phr_lst;
     
     foreach ($phr_lst->lst AS $phr) {
@@ -343,16 +382,16 @@ class formula {
       $time_phr = $this->special_time_phr ($phr, $debug-1);
       if (isset($time_phr)) {
         $result->add($time_phr, $debug-1);
-        zu_debug('formula->special_phr_lst -> added time '.$time_phr->dsp_id().' to '.$result->dsp_id().'.', $debug-18);
+        zu_debug('formula->special_phr_lst -> added time '.$time_phr->dsp_id().' to '.$result->dsp_id(), $debug-18);
       }
     }
     
-    zu_debug('formula->special_phr_lst -> '.$result->dsp_id().'.', $debug-10);
+    zu_debug('formula->special_phr_lst -> '.$result->dsp_id(), $debug-10);
     return $result;
   }
   
   // lists of all words directly assigned to a formula and where the formula should be used 
-  private function assign_phr_glst_direct($sbx, $debug) {
+  function assign_phr_glst_direct($sbx, $debug) {
     $phr_lst = Null;
     
     if ($this->id > 0 AND isset($this->usr)) {
@@ -391,18 +430,18 @@ class formula {
 
   // returns a list of all words that the formula is assigned to
   // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the word list
-  private function assign_phr_glst($sbx, $debug) {
+  function assign_phr_glst($sbx, $debug) {
     $phr_lst = New phrase_list;
     $phr_lst->usr = $this->usr;
 
     if ($this->id > 0 AND isset($this->usr)) {
       $direct_phr_lst = $this->assign_phr_glst_direct($sbx, $debug-1);
       if (count($direct_phr_lst->lst) > 0) {
-        zu_debug('formula->assign_phr_glst -> '.$this->dsp_id.' direct assigned words and triples '.$direct_phr_lst->dsp_id().'.', $debug-10);
+        zu_debug('formula->assign_phr_glst -> '.$this->dsp_id.' direct assigned words and triples '.$direct_phr_lst->dsp_id(), $debug-10);
 
         //$indirect_phr_lst = $direct_phr_lst->is($debug-1);
         $indirect_phr_lst = $direct_phr_lst->are($debug-1);
-        zu_debug('formula->assign_phr_glst -> indirect assigned words and triples '.$indirect_phr_lst->dsp_id().'.', $debug-10);
+        zu_debug('formula->assign_phr_glst -> indirect assigned words and triples '.$indirect_phr_lst->dsp_id(), $debug-10);
 
         // merge direct and indirect assigns (maybe later using phrase_list->merge)
         $phr_ids = array_merge($direct_phr_lst->ids, $indirect_phr_lst->ids);
@@ -412,7 +451,7 @@ class formula {
         $phr_lst->load($debug-1);
         zu_debug('formula->assign_phr_glst -> number of words and triples '. count ($phr_lst->lst), $debug-14);
       } else {
-        zu_debug('formula->assign_phr_glst -> no words are assigned to '.$this->dsp_id.'.', $debug-14);
+        zu_debug('formula->assign_phr_glst -> no words are assigned to '.$this->dsp_id, $debug-14);
       }
     } else {
       zu_err('The user id must be set to list the formula links.', 'formula->assign_phr_glst', '', (new Exception)->getTraceAsString(), $this->usr);
@@ -455,7 +494,7 @@ class formula {
   // fill the formula in the reference format with numbers
   // to do: verbs
   function to_num($phr_lst, $debug) {
-    zu_debug('get numbers for '.$this->name_linked($back, $debug-1).' and '.$phr_lst->name_linked().'.', $debug-4);
+    zu_debug('get numbers for '.$this->name_linked($back, $debug-1).' and '.$phr_lst->name_linked(), $debug-4);
     
     // check 
     if ($this->ref_text_r == '' AND $this->ref_text <> '') {
@@ -471,7 +510,7 @@ class formula {
     if (isset($time_wrd)) { $time_phr = $time_wrd->phrase($debug-1); }
     $phr_lst_ex = clone $phr_lst; 
     $phr_lst_ex->ex_time($debug-10); 
-    zu_debug('formula->to_num -> the phrases excluded time are '.$phr_lst_ex->dsp_id().'.', $debug-10);
+    zu_debug('formula->to_num -> the phrases excluded time are '.$phr_lst_ex->dsp_id(), $debug-10);
 
     // create the formula value list
     $fv_lst = New formula_value_list;
@@ -511,7 +550,7 @@ class formula {
       $elm_grp->build_symbol($debug-1);
       $fig_lst = $elm_grp->figures($debug-1);
       zu_debug('formula->to_num -> figures ', $debug-8);
-      zu_debug('formula->to_num -> figures '.$fig_lst->dsp_id().' ('.count($fig_lst->lst).') for '.$elm_grp->dsp_id().'.', $debug-8);
+      zu_debug('formula->to_num -> figures '.$fig_lst->dsp_id().' ('.count($fig_lst->lst).') for '.$elm_grp->dsp_id(), $debug-8);
 
       // fill the figure into the formula text and create as much formula values / results as needed
       if (count($fig_lst->lst) == 1) {
@@ -607,7 +646,7 @@ class formula {
         }
       } else {
         // if not figure found remember to switch off the result if needed
-        zu_debug('formula->to_num -> no figures found for '.$elm_grp->dsp_id().' and '.$phr_lst_ex->dsp_id().'.', $debug-8);
+        zu_debug('formula->to_num -> no figures found for '.$elm_grp->dsp_id().' and '.$phr_lst_ex->dsp_id(), $debug-8);
         $all_elm_grp_filled = false;
       }
     }  
@@ -618,7 +657,7 @@ class formula {
       if ($all_elm_grp_filled) {
         zu_debug('formula->to_num -> for '.$phr_lst_ex->dsp_id().' all value are filled.', $debug-18);
       } else {
-        zu_debug('formula->to_num -> some needed values missing for '.$phr_lst_ex->dsp_id().'.', $debug-16);
+        zu_debug('formula->to_num -> some needed values missing for '.$phr_lst_ex->dsp_id(), $debug-16);
         foreach ($fv_lst->lst AS $fv) {
           zu_debug('formula->to_num -> some needed values missing for '.$fv->dsp_id().' so switch off.', $debug-8);
           $fv->val_missing = True;
@@ -640,17 +679,17 @@ class formula {
           if ($this->need_all_val) {
             zu_debug('calculate '.$this->name_linked($back, $debug-1).' only if all numbers are given.', $debug-8);
             if ($fv->val_missing) {
-              zu_debug('got some numbers for '.$this->name_linked($back, $debug-1).' and '.implode(",",$fv->wrd_ids).'.', $debug-2);
+              zu_debug('got some numbers for '.$this->name_linked($back, $debug-1).' and '.implode(",",$fv->wrd_ids), $debug-2);
             } else {
               if ($fv->is_std) {
-                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked().': '.$fv->num_text.'.', $debug-2);
+                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked().': '.$fv->num_text, $debug-2);
               } else {
                 zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked().': '.$fv->num_text.' (user specific).', $debug-2);
               }  
               $can_calc = true;
             }
           } else {
-            zu_debug('always calculate '.$this->name.'.', $debug-8);
+            zu_debug('always calculate '.$this->dsp_id(), $debug-8);
             $can_calc = true;
           }
           if ($can_calc == true AND isset($time_wrd)) {
@@ -668,7 +707,7 @@ class formula {
   
   // create the calculation request for one formula and one usr
   /*
-  private function calc_requests($phr_lst, $debug) {
+  function calc_requests($phr_lst, $debug) {
     $result = array();
 
     $calc_request = New batch_job;
@@ -698,7 +737,7 @@ class formula {
     if (!isset($phr_lst)) {
       zu_warning('The calculation context for '.$this->dsp_id().' is empty.', 'formula->calc', '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
-      zu_debug('formula->calc '.$this->dsp_id().' for '.$phr_lst->dsp_id().'.', $debug-9);
+      zu_debug('formula->calc '.$this->dsp_id().' for '.$phr_lst->dsp_id(), $debug-9);
 
       // check if an update of the result is needed
       /*
@@ -725,7 +764,7 @@ class formula {
       if (isset($fv_add_phr_lst)) { zu_debug('formula->calc -> use words '.$fv_add_phr_lst->dsp_id().' for the result.', $debug-12); }
       // use only the part right of the equation sign for the result calculation
       $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part($debug-1);
-      zu_debug('formula->calc got result words of '.$this->ref_text_r.'.', $debug-12);
+      zu_debug('formula->calc got result words of '.$this->ref_text_r, $debug-12);
 
       // get the list of the numeric results
       // $fv_lst is a list of all results saved in the database
@@ -736,7 +775,7 @@ class formula {
       foreach ($fv_lst->lst AS $fv) {
         if ($fv->val_missing) {
           // check if fv needs to be remove from the database
-          zu_debug('some values missing for '.$fv->dsp_id().'.', $debug-6);
+          zu_debug('some values missing for '.$fv->dsp_id(), $debug-6);
         } else {
           if ($fv->is_updated) {
             zu_debug('formula result '.$fv->dsp_id().' is updated.', $debug-6);
@@ -747,28 +786,28 @@ class formula {
               foreach ($fv_add_phr_lst->lst AS $frm_result_wrd) {
                 $fv->phr_lst->add($frm_result_wrd, $debug-1);
               }
-              zu_debug('formula->calc -> added words '.$fv_add_phr_lst->dsp_id().' to the result '.$fv->phr_lst->dsp_id().'.', $debug-14);
+              zu_debug('formula->calc -> added words '.$fv_add_phr_lst->dsp_id().' to the result '.$fv->phr_lst->dsp_id(), $debug-14);
             }  
 
             // make common assumtions on the word list    
             
             // apply general rules to the result words
             if (isset($fv_add_phr_lst)) {
-              zu_debug('formula->calc -> result words "'.$fv_add_phr_lst->dsp_id().'" defined for '.$fv->phr_lst->dsp_id().'.', $debug-10);
+              zu_debug('formula->calc -> result words "'.$fv_add_phr_lst->dsp_id().'" defined for '.$fv->phr_lst->dsp_id(), $debug-10);
               $fv_add_wrd_lst = $fv_add_phr_lst->wrd_lst_all($debug-1);
 
               // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
               if ($fv_add_wrd_lst->has_percent($debug-1)) {
                 zu_debug('formula->calc -> has percent.', $debug-8);
                 $fv->phr_lst->ex_measure($debug-1);
-                zu_debug('formula->calc -> measure words removed from '.$fv->phr_lst->dsp_id().'.', $debug-8);
+                zu_debug('formula->calc -> measure words removed from '.$fv->phr_lst->dsp_id(), $debug-8);
               }  
 
               // if in the formula is defined, that the result is in percent 
               // and the values used are in millions, the result is only in percent, but not in millions
               if ($fv_add_wrd_lst->has_percent($debug-1)) {
                 $fv->phr_lst->ex_scaling($debug-1);
-                zu_debug('formula->calc -> scaling words removed from '.$fv->phr_lst->dsp_id().'.', $debug-9);
+                zu_debug('formula->calc -> scaling words removed from '.$fv->phr_lst->dsp_id(), $debug-9);
                 // maybe add the scaling word to the result words to remember based on which words the result has been created, 
                 // but probably this is not needed, because the source words are also savef
                 //$scale_wrd_lst = $fv_add_wrd_lst->scaling_lst ($debug-1);
@@ -801,8 +840,33 @@ class formula {
     $exp->ref_text = $this->ref_text;
     $exp->usr_text = $this->usr_text;
     $exp->usr      = $this->usr;
-    zu_debug('formula->expression '.$exp->ref_text.' for user '.$exp->usr->name.'.', $debug-10);
+    zu_debug('formula->expression '.$exp->ref_text.' for user '.$exp->usr->name, $debug-10);
     return $exp;
+  }
+  
+  // create an object for the export
+  function export_obj ($debug) {
+    zu_debug('formula->export_obj', $debug-10);
+    $result = Null;
+
+    if ($this->name <> '')        { $result->name        = $this->name; }
+    if ($this->usr_text <> '')    { $result->expression  = $this->usr_text; }
+    if ($this->description <> '') { $result->description = $this->description; }
+    $phr_lst = $this->assign_phr_lst_direct();
+    foreach ($phr_lst->lst AS $phr) {
+      if ($phr->id > 0) {
+        $result->assigned_word   = $phr->name();
+      } else {
+        $result->assigned_triple = $phr->name();
+      }
+    }
+
+    zu_debug('formula->export_obj -> '.json_encode($result), $debug-18);
+    return $result;
+  }
+  
+  // import a view from an object
+  function import_obj ($debug) {
   }
   
   /*
@@ -823,7 +887,7 @@ class formula {
     } else {
       $result .= $this->id;
     }
-    /* the user is no most cases no extra info
+    /* the user is in most cases no extra info
     if (isset($this->usr)) {
       $result .= ' for user "'.$this->usr->name.'"';
     }
@@ -861,7 +925,7 @@ class formula {
 
   // display the most interesting formula result for one word
   function dsp_result ($wrd, $back, $debug) {
-    zu_debug('formula->dsp_result for "'.$wrd->name.'" and formula "'.$this->name.'".', $debug-14);
+    zu_debug('formula->dsp_result for "'.$wrd->name.'" and formula '.$this->dsp_id(), $debug-14);
     $fv = New formula_value;
     $fv->frm  = $this;
     $fv->wrd  = $wrd;
@@ -886,11 +950,27 @@ class formula {
   }
 
   // allow the user to unlick a word
-  private function dsp_unlink_phr ($phr_id, $back, $debug) {
+  function dsp_unlink_phr ($phr_id, $back, $debug) {
     zu_debug('formula->dsp_unlink_phr('.$link_id.')', $debug-10);
     $result  = '    <td>'."\n";
     $result .= btn_del ("unlink word", "/http/formula_edit.php?id=".$this->id."&unlink_phrase=".$phr_id."&back=".$back);
     $result .= '    </td>'."\n";
+    return $result;
+  }
+
+  // display the formula type selector
+  function dsp_type_selector($script, $class, $debug) {
+    $result = ''; 
+    $sel = New selector;
+    $sel->usr        = $this->usr;
+    $sel->form       = $script;
+    $sel->name       = "type";  
+    $sel->label      = "Formula type:";  
+    $sel->bs_class   = $class;  
+    $sel->sql        = sql_lst ("formula_type", $this->usr, $debug-1);
+    $sel->selected   = $this->type_id;
+    $sel->dummy_text = 'select a predefined type if needed';
+    $result .= $sel->display ($debug-1).' ';
     return $result;
   }
 
@@ -932,89 +1012,31 @@ class formula {
     return $result;
   }
 
-  // create the HTML code for the form to adjust a formula
-  // $add is the number of new words to be linked
-  // $wrd is the word that should be linked (used for a new formula)
-  function dsp_edit ($add, $wrd, $back, $debug) {
-    zu_debug("formula->dsp_edit ".$this->ref_text." for ".$wrd->name.",back:".$back." and user ".$this->usr->name.".", $debug-10);
-    $result = '';
+  // list all words linked to the formula and allow to unlink or add new words
+  function dsp_used4words ($add, $wrd, $back, $debug) {
+    zu_debug("formula->dsp_used4words ".$this->ref_text." for ".$wrd->name.",back:".$back." and user ".$this->usr->name.".", $debug-10);
+    $result = ''; 
     
-    $resolved_text = str_replace('"','&quot;', $this->usr_text);
-
-    if ($this->id <= 0) {
-      $script = "formula_add";
-      $result .= dsp_text_h2('Add new formula for '.$wrd->dsp_tbl_row($debug-1).' ');
-      $result .= dsp_form_start($script);
-    } else {
-      $script = "formula_edit";
-      $result .= dsp_text_h2('Formula "'.$this->name.'"');
-      $result .= dsp_form_start($script);
-    }
-
-    $result .= '<form action="'.$script.'.php" id="'.$script.'">';
-    $result .= '  <input type="hidden" name="id" value="'.$this->id.'">';
-    if (trim($back) <> '') {
-      $result .= '  <input type="hidden" name="back" value="'.$back.'">';
-    }
-    $result .= '  <input type="hidden" name="confirm" value="1">';
-    $result .= '  change name to <input type="text" name="formula_name" value="'.$this->name.'">';
+    $phr_lst = $this->assign_phr_ulst_direct($debug-1);
+    zu_debug("formula->dsp_used4words words linked loaded", $debug-10);
     
-    // formula type
-    $sel = New selector;
-    $sel->usr        = $this->usr;
-    $sel->form       = $script;
-    $sel->name       = "type";  
-    $sel->sql        = sql_lst ("formula_type", $this->usr, $debug-1);
-    $sel->selected   = $this->type_id;
-    $sel->dummy_text = 'select a predefined type if needed';
-    $result .= ' type '.$sel->display ($debug-1).' ';
-    
-    $result .= '<br><br> ';
-    
-    $result .= ' description <input type="text" name="description" style="width: 80%;" value="'.$this->description.'"><br><br> ';
-    
-    // predefined formulas like "this" or "next" should only be changed by an admin
-    $frm_type_code_id = "";
-    if ($frm_type_code_id == "") {
-      $result .= '  change expression to <input type="text" name="formula_text" style="width: 80%;" value="'.$resolved_text.'"><br><br>';
-    }
-
-    $result .= '  <input type="checkbox" name="need_all_val" ';
-    if ($this->need_all_val) {
-      $result .= 'checked';
-    }
-    $result .= '>calculate only if all values used in the formula exist<br><br>';
-    
-
-    $result .= dsp_form_end();
-
-    $result .= '<br>';
-
-    zu_debug("formula->dsp_edit words linked", $debug-10);
-    if ($this->id > 0) {
-      // list all words linked to the formula and allow to unlink or add new words
-      $phr_lst = $this->assign_phr_ulst_direct($debug-1);
-      zu_debug("formula->dsp_edit words linked loaded", $debug-10);
-      
-      // list all linked words
-      $result .= dsp_text_h3('Used for words: ');
-      $result .= '<table style="width:300px">';
-      foreach ($phr_lst->lst AS $phr_linked) {
-        $result .= '  <tr>'."\n";
-        $result .= $phr_linked->dsp_tbl(0, $debug-1);
-        $result .= $this->dsp_unlink_phr ($phr_linked->id, $back, $debug-1);
-        $result .= '  </tr>'."\n";
-      }
+    // list all linked words
+    $result .= dsp_tbl_start_half ();
+    foreach ($phr_lst->lst AS $phr_linked) {
+      $result .= '  <tr>'."\n";
+      $result .= $phr_linked->dsp_tbl(0, $debug-1);
+      $result .= $this->dsp_unlink_phr ($phr_linked->id, $back, $debug-1);
+      $result .= '  </tr>'."\n";
     }
 
     // give the user the possibility to add a simular word
-    zu_debug("formula->dsp_edit user", $debug-10);
+    zu_debug("formula->dsp_used4words user", $debug-10);
     $result .= '  <tr>';
     $result .= '    <td>';
     if ($add == 1 OR $wrd->id > 0) {
       $sel = New selector;
       $sel->usr        = $this->usr;
-      $sel->form       = $script;
+      $sel->form       = "formula_edit"; // ??? to review
       $sel->name       = 'link_phrase';  
       $sel->dummy_text = 'select a word where the formula should also be used';
       $sel->sql        = sql_lst_usr("word", $this->usr, $debug-1);
@@ -1024,57 +1046,125 @@ class formula {
         $sel->selected   = 0;
       }
       $result .= $sel->display ($debug-1);
-      //$result .= zuh_selector("link_phrase", "formula_edit", "SELECT word_id, word_name FROM words ORDER BY word_name;", 0, "select a word where the formula should also be used", $debug-1);
     } else {
       if ($this->id > 0) {
-        $result .= '      '.btn_add ('add new', '/http/'.$script.'.php?id='.$this->id.'&add_link=1&back='.$back);
+        $result .= '      '.btn_add ('add new', '/http/formula_edit.php?id='.$this->id.'&add_link=1&back='.$back);
       }
     }
     $result .= '    </td>';
     $result .= '  </tr>';
 
-    $result .= '</table><br> ';
+    $result .= dsp_tbl_end ();
+      
+    zu_debug("formula->dsp_used4words -> done", $debug-1);
+    return $result;
+  }
+  
+  // allow to test and refresh the formula and show some sample values
+  function dsp_test_and_samples ($back, $debug) {
+    zu_debug("formula->dsp_test_and_samples ".$this->ref_text.".", $debug-10);
+    $result = '<br>'; 
+    
+    $result .= dsp_btn_text ("Test",            '/http/formula_test.php?id='.$this->id.'&user='.$this->usr->id.'&back='.$back);
+    $result .= dsp_btn_text ("Refresh results", '/http/formula_test.php?id='.$this->id.'&user='.$this->usr->id.'&back='.$back.'&refresh=1');
 
-    // allow to test and refresh the formula
-    $result .= '<br><a href="/http/formula_test.php?id='.$this->id.'&user='.$this->usr->id.'&back='.$back.'">Test</a>';
-    $result .= '<br><a href="/http/formula_test.php?id='.$this->id.'&user='.$this->usr->id.'&back='.$back.'&refresh=1">Refresh results</a>';
-
-    $result .= '<br><br><a href="/http/view.php?words='.$back.'"><img src="'.ZUH_IMG_BACK.'" alt="back"></a>';
+    $result .= '<br><br>';
 
     // display some sample values
-    if ($this->id > 0) {
-      zu_debug("formula->dsp_edit value list", $debug-10);
-      $fv_lst = New formula_value_list;
-      $fv_lst->frm_id = $this->id;
-      $fv_lst->usr    = $this->usr;
-      zu_debug("formula->dsp_edit load results for formula id (".$fv_lst->frm_id.")", $debug-12);
-      $fv_lst->load (SQL_ROW_LIMIT, $debug-1);
-      $sample_val = $fv_lst->display($back, $debug-1);
-      if (trim($sample_val) <> "") {
-        // just the be on the save side load the related word and create it if needed
-        $this->load_wrd($debug-1); 
-        if (!isset($this->name_wrd)) {
-          $this->create_wrd($debug-1); 
-        }
-        
-        $result .= dsp_text_h3("Results for ".$this->name_wrd->dsp_link($debug-1), "change_hist");
-        $result .= $sample_val;
+    zu_debug("formula->dsp_test_and_samples value list", $debug-10);
+    $fv_lst = New formula_value_list;
+    $fv_lst->frm_id = $this->id;
+    $fv_lst->usr    = $this->usr;
+    zu_debug("formula->dsp_test_and_samples load results for formula id (".$fv_lst->frm_id.")", $debug-12);
+    $fv_lst->load (SQL_ROW_LIMIT, $debug-1);
+    $sample_val = $fv_lst->display($back, $debug-1);
+    if (trim($sample_val) <> "") {
+      // just the be on the save side load the related word and create it if needed
+      $this->load_wrd($debug-1); 
+      if (!isset($this->name_wrd)) {
+        $this->create_wrd($debug-1); 
       }
+      
+      $result .= dsp_text_h3("Results for ".$this->name_wrd->dsp_link($debug-1), "change_hist");
+      $result .= $sample_val;
     }
+    
+    zu_debug("formula->dsp_test_and_samples -> done", $debug-1);
+    return $result;
+  }
+  
+  // create the HTML code for the form to adjust a formula
+  // $add is the number of new words to be linked
+  // $wrd is the word that should be linked (used for a new formula)
+  function dsp_edit ($add, $wrd, $back, $debug) {
+    zu_debug("formula->dsp_edit ".$this->ref_text." for ".$wrd->name.", back:".$back." and user ".$this->usr->name.".", $debug-10);
+    $result = '';
+    
+    $resolved_text = str_replace('"','&quot;', $this->usr_text);
 
+    // add new or change an existing formula
+    if ($this->id <= 0) {
+      $script = "formula_add";
+      $result .= dsp_text_h2('Add new formula for '.$wrd->dsp_tbl_row($debug-1).' ');
+    } else {
+      $script = "formula_edit";
+      $result .= dsp_text_h2('Formula "'.$this->name.'"');
+    }
+    $result .= '<div class="row">';
+
+    // when changing a view show the fields only on the left side
     if ($this->id > 0) {
+      $result .= '<div class="col-sm-7">';
+    }  
+
+    // formula fields
+    $result .= dsp_form_start($script);
+    $result .= dsp_form_hidden ("id", $this->id);
+    $result .= dsp_form_hidden ("word", $wrd->id);
+    $result .= dsp_form_hidden ("confirm", 1);
+    if (trim($back) <> '') { $result .= dsp_form_hidden ("back", $back); }
+    $result .= '<div class="form-row">';
+    $result .= dsp_form_fld ("formula_name", $this->name, "Formula name:", "col-sm-8");
+    $result .= $this->dsp_type_selector($script, "col-sm-4", $debug);    
+    $result .= '</div>';
+    $result .= dsp_form_fld ("description", $this->description, "Description:");
+    // predefined formulas like "this" or "next" should only be changed by an admin
+    if (!$this->is_special ($debug-1) OR $this->is_admin($debug-1)) {
+      $result .= dsp_form_fld ("formula_text", $resolved_text, "Expression:");
+    }
+    $result .= dsp_form_fld_checkbox ("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
+    $result .= '<br><br>';
+    $result .= dsp_form_end('', $back);
+
+    // list the assigned words
+    if ($this->id > 0) {
+      $result .= '</div>';
+      
+      // list all words linked to the formula and allow to unlink or add new words
+      $comp_html = $this->dsp_used4words ($add, $wrd, $back, $debug);
+      // allow to test and refresh the formula and show some sample values
+      $nbrs_html = $this->dsp_test_and_samples ($back, $debug);
       // display the user changes 
       $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back, $debug-1);
       if (trim($changes) <> "") {
-        $result .= dsp_text_h3("Latest changes of this formula", "change_hist");
-        $result .= $changes;
+        $hist_html = $changes;
+      } else {
+        $hist_html = 'Nothing changed yet.';
       }
       $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back, $debug-1);
       if (trim($changes) <> "") {
-        $result .= dsp_text_h3("Latest link changes related to this formula", "change_hist");
-        $result .= $changes;
+        $link_html = $changes;
+      } else {
+        $link_html = 'No word have been added or removed yet.';
       }
+      $result .= dsp_link_hist_box ('Usage',        $comp_html,
+                                    'Test',         $nbrs_html,
+                                    'Changes',      $hist_html,
+                                    'Link changes', $link_html, $debug-1);
     }
+    
+    $result .= '</div>';   // of row
+    $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
 
     zu_debug("formula->dsp_edit -> done.", $debug-10);
     return $result;    
@@ -1087,7 +1177,7 @@ class formula {
   */
   
   // returns a positive word id if the formula string in the database format contains a word link
-  private function get_word ($formula, $debug) {
+  function get_word ($formula, $debug) {
     zu_debug("formula->get_word (".$formula.")", $debug-10);
     $result = 0;
 
@@ -1107,7 +1197,7 @@ class formula {
     return $result;
   }
 
-  private function get_formula ($formula, $debug) {
+  function get_formula ($formula, $debug) {
     zu_debug("formula->get_formula (".$formula.")", $debug-10);
     $result = 0;
 
@@ -1128,7 +1218,7 @@ class formula {
   }
 
   // extracts an array with the word ids from a given formula text
-  private function wrd_ids ($frm_text, $user_id, $debug) {
+  function wrd_ids ($frm_text, $user_id, $debug) {
     zu_debug('formula->wrd_ids ('.$frm_text.',u'.$user_id.')', $debug-5);
     $result = array();
 
@@ -1147,7 +1237,7 @@ class formula {
   }
 
   // extracts an array with the formula ids from a given formula text
-  private function frm_ids ($frm_text, $user_id, $debug) {
+  function frm_ids ($frm_text, $user_id, $debug) {
     zu_debug('formula->ids ('.$frm_text.',u'.$user_id.')', $debug-5);
     $result = array();
 
@@ -1167,7 +1257,7 @@ class formula {
 
   // update formula links
   // part of element_refresh for one element type and one user
-  private function element_refresh_type ($frm_text, $element_type, $frm_usr_id, $db_usr_id, $debug) {
+  function element_refresh_type ($frm_text, $element_type, $frm_usr_id, $db_usr_id, $debug) {
     zu_debug('formula->element_refresh_type (f'.$this->id.''.$frm_text.','.$element_type.',u'.$frm_usr_id.')', $debug-5);
     $result = '';
 
@@ -1264,7 +1354,7 @@ class formula {
       if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, SQL_FORMULA_PART_TYPE_FORMULA, $db_row['user_id'], $this->usr->id, $debug-1); }
     }
     
-    zu_debug('formula->element_refresh -> done'.$result.'.', $debug-1);
+    zu_debug('formula->element_refresh -> done'.$result, $debug-1);
     return $result; 
   }
   
@@ -1279,11 +1369,11 @@ class formula {
   function link_phr($phr, $debug) {
     $result = '';
     if (isset($phr) AND isset($this->usr)) {
-      zu_debug('formula->link_phr link "'.$this->name.'" to "'.$phr->name.'" for user "'.$this->usr->name.'".', $debug-12);
+      zu_debug('formula->link_phr link '.$this->dsp_id().' to "'.$phr->name.'" for user "'.$this->usr->name.'".', $debug-12);
       $frm_lnk = New formula_link;
       $frm_lnk->usr = $this->usr;
-      $frm_lnk->frm = $this;
-      $frm_lnk->phr = $phr;
+      $frm_lnk->fob = $this;
+      $frm_lnk->tob = $phr;
       $result = $frm_lnk->save ($debug-1);
     }
     return $result; 
@@ -1293,12 +1383,14 @@ class formula {
   function unlink_phr($phr, $debug) {
     $result = '';
     if (isset($phr) AND isset($this->usr)) {
-      zu_debug('formula->unlink_phr unlink "'.$this->name.'" from "'.$phr->name.'" for user "'.$this->usr->name.'".', $debug-12);
+      zu_debug('formula->unlink_phr unlink '.$this->dsp_id().' from "'.$phr->name.'" for user "'.$this->usr->name.'".', $debug-12);
       $frm_lnk = New formula_link;
       $frm_lnk->usr = $this->usr;
-      $frm_lnk->frm = $this;
-      $frm_lnk->phr = $phr;
+      $frm_lnk->fob = $this;
+      $frm_lnk->tob = $phr;
       $result = $frm_lnk->del ($debug-1);
+    } else {  
+      $result .= zu_err("Cannot unlink formula, phrase is not set.", "formula.php", '', (new Exception)->getTraceAsString(), $usr);  
     }
     return $result; 
   }
@@ -1310,7 +1402,7 @@ class formula {
   */
   
   // update the database reference text based on the user text
-  private function set_ref_text($debug) {
+  function set_ref_text($debug) {
     $result = '';
     $exp = New expression;
     $exp->usr_text = $this->usr_text;
@@ -1324,7 +1416,7 @@ class formula {
     return !$this->not_used($debug-1);
   }
   
-  private function not_used($debug) {
+  function not_used($debug) {
     zu_debug('formula->not_used ('.$this->id.')', $debug-10);  
     $result = true;
     
@@ -1334,7 +1426,7 @@ class formula {
               FROM user_formulas 
              WHERE formula_id = ".$this->id."
                AND user_id <> ".$this->owner_id."
-               AND excluded <> 1";
+               AND (excluded <> 1 OR excluded is NULL)";
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
     $change_user_id = $db_con->get1($sql, $debug-5);  
@@ -1346,7 +1438,7 @@ class formula {
 
   // true if no other user has modified the formula
   // assuming that in this case not confirmation from the other users for a formula rename is needed
-  private function not_changed($debug) {
+  function not_changed($debug) {
     zu_debug('formula->not_changed ('.$this->id.')', $debug-10);  
     $result = true;
     
@@ -1355,12 +1447,12 @@ class formula {
                 FROM user_formulas 
               WHERE formula_id = ".$this->id."
                 AND user_id <> ".$this->owner_id."
-                AND excluded <> 1";
+                AND (excluded <> 1 OR excluded is NULL)";
     } else {
       $sql = "SELECT user_id 
                 FROM user_formulas 
               WHERE formula_id = ".$this->id."
-                AND excluded <> 1";
+                AND (excluded <> 1 OR excluded is NULL)";
     }
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
@@ -1368,14 +1460,14 @@ class formula {
     if ($db_row['user_id'] > 0) {
       $result = false;
     }
-    zu_debug('formula->not_changed for '.$this->id.' is '.zu_dsp_bool($result).'.', $debug-10);  
+    zu_debug('formula->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
     return $result;
   }
 
   // true if the user is the owner and noone else has changed the formula
   // because if another user has changed the formula and the original value is changed, maybe the user formula also needs to be updated
-  private function can_change($debug) {
-    zu_debug('formula->can_change "'.$this->name.'" by user "'.$this->usr->name.'".', $debug-12);  
+  function can_change($debug) {
+    zu_debug('formula->can_change '.$this->dsp_id().' by user "'.$this->usr->name.'".', $debug-12);  
     $can_change = false;
     if ($this->owner_id == $this->usr->id OR $this->owner_id <= 0) {
       $can_change = true;
@@ -1385,7 +1477,7 @@ class formula {
   }
 
   // true if a record for a user specific configuration already exists in the database
-  private function has_usr_cfg($debug) {
+  function has_usr_cfg($debug) {
     $has_cfg = false;
     if ($this->usr_cfg_id > 0) {
       $has_cfg = true;
@@ -1394,11 +1486,11 @@ class formula {
   }
 
   // create a database record to save user specific settings for this formula
-  private function add_usr_cfg($debug) {
+  function add_usr_cfg($debug) {
     $result = false;
 
     if (!$this->has_usr_cfg) {
-      zu_debug('formula->add_usr_cfg for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+      zu_debug('formula->add_usr_cfg for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
       $sql = "SELECT formula_id FROM `user_formulas` WHERE formula_id = ".$this->id." AND user_id = ".$this->usr->id.";";
@@ -1418,9 +1510,9 @@ class formula {
   }
 
   // check if the database record for the user specific settings can be removed
-  private function del_usr_cfg_if_not_needed($debug) {
+  function del_usr_cfg_if_not_needed($debug) {
     $result = '';
-    zu_debug('formula->del_usr_cfg_if_not_needed pre check for "'.$this->name.' und user '.$this->usr->name.'.', $debug-12);
+    zu_debug('formula->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
 
     // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
     $sql = "SELECT formula_id,
@@ -1437,7 +1529,7 @@ class formula {
     $db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $usr_cfg = $db_con->get1($sql, $debug-5);  
-    zu_debug('formula->del_usr_cfg_if_not_needed check for "'.$this->name.' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+    zu_debug('formula->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
     if ($usr_cfg['formula_id'] > 0) {
       if ($usr_cfg['formula_text']      == ''
       AND $usr_cfg['resolved_text']     == ''
@@ -1446,10 +1538,10 @@ class formula {
       AND $usr_cfg['all_values_needed'] == Null
       AND $usr_cfg['excluded'] == Null) {
         // delete the entry in the user sandbox
-        zu_debug('formula->del_usr_cfg_if_not_needed any more for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+        zu_debug('formula->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       } else {
-        zu_debug('formula->del_usr_cfg_if_not_needed not true for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+        zu_debug('formula->del_usr_cfg_if_not_needed not true for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
       }
     }  
 
@@ -1457,7 +1549,7 @@ class formula {
   }
 
   // simply remove a user adjustment without check
-  private function del_usr_cfg_exe($db_con, $debug) {
+  function del_usr_cfg_exe($db_con, $debug) {
     $result = '';
 
     $db_con->type = 'formula_element';         
@@ -1476,7 +1568,7 @@ class formula {
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
-      zu_debug('formula->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name.'.', $debug-12);
+      zu_debug('formula->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
       $db_type = 'user_formula';
       $log = $this->log_del($debug-1);
@@ -1494,8 +1586,8 @@ class formula {
   }
 
   // set the log entry parameter for a new formula
-  private function log_add($debug) {
-    zu_debug('formula->log_add "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+  function log_add($debug) {
+    zu_debug('formula->log_add '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -1505,14 +1597,14 @@ class formula {
     $log->new_value = $this->name;
     $log->row_id    = 0; 
     $log->add($debug-1);
-    zu_debug('formula->log_add adding formula "'.$this->name.'" has been logged.', $debug-14);
+    zu_debug('formula->log_add adding formula '.$this->dsp_id().' has been logged.', $debug-14);
     
     return $log;    
   }
   
   // set the main log entry parameters for updating one formula field
-  private function log_upd($debug) {
-    zu_debug('formula->log_upd "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+  function log_upd($debug) {
+    zu_debug('formula->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'update';
@@ -1526,8 +1618,8 @@ class formula {
   }
   
   // set the log entry parameter to delete a formula
-  private function log_del($debug) {
-    zu_debug('formula->log_del "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+  function log_del($debug) {
+    zu_debug('formula->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -1542,7 +1634,7 @@ class formula {
   }
   
   // actually update a formula field in the main database record or the user sandbox
-  private function save_field_do($db_con, $log, $debug) {
+  function save_field_do($db_con, $log, $debug) {
     $result = '';
     if ($log->new_id > 0) {
       $new_value = $log->new_id;
@@ -1569,7 +1661,7 @@ class formula {
   }
   
   // update the time stamp to trigger an update of the depending results
-  private function save_field_trigger_update($db_con, $debug) {
+  function save_field_trigger_update($db_con, $debug) {
     $this->last_update = new DateTime(); 
     $result .= $db_con->update($this->id, 'last_update', 'Now()', $debug-1);
     zu_debug('formula->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'".', $debug-18);
@@ -1578,7 +1670,7 @@ class formula {
   }
   
   // set the update parameters for the formula text as written by the user if needed
-  private function save_field_usr_text($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_usr_text($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->usr_text <> $this->usr_text) {
       $this->needs_fv_upd = true;
@@ -1594,7 +1686,7 @@ class formula {
   }
   
   // set the update parameters for the formula in the database reference format
-  private function save_field_ref_text($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_ref_text($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->ref_text <> $this->ref_text) {
       $this->needs_fv_upd = true;
@@ -1612,7 +1704,7 @@ class formula {
   }
   
   // set the update parameters for the formula description
-  private function save_field_description($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_description($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->description <> $this->description) {
       $log = $this->log_upd($debug-1);
@@ -1628,7 +1720,7 @@ class formula {
   
   // set the update parameters for the formula type
   // todo: save the refrence also in the log
-  private function save_field_type($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_type($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->type_id <> $this->type_id) {
       $this->needs_fv_upd = true;
@@ -1647,7 +1739,7 @@ class formula {
   }
   
   // set the update parameters that define if all formula values are needed to calculate a result
-  private function save_field_need_all($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_need_all($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->need_all_val <> $this->need_all_val) {
       $this->needs_fv_upd = true;
@@ -1665,7 +1757,7 @@ class formula {
   }
   
   // set the update parameters for the formula word link excluded
-  private function save_field_excluded($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_excluded($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->excluded <> $this->excluded) {
       $this->needs_fv_upd = true;
@@ -1698,7 +1790,7 @@ class formula {
   }
   
   // save all updated formula fields
-  private function save_fields($db_con, $db_rec, $std_rec, $debug) {
+  function save_fields($db_con, $db_rec, $std_rec, $debug) {
     $result = ''; // to set result to a string so that each update adds '1' to '1' which gives '11' instead of 2
     $result .= $this->save_field_usr_text   ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_ref_text   ($db_con, $db_rec, $std_rec, $debug-1);
@@ -1711,10 +1803,10 @@ class formula {
   }
   
   // set the update parameters for the formula text as written by the user if needed
-  private function save_field_name($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_name($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->name <> $this->name) {
-      zu_debug('formula->save_field_name to "'.$this->name.'" from "'.$db_rec->name.'".', $debug-12);
+      zu_debug('formula->save_field_name to '.$this->dsp_id().' from "'.$db_rec->name.'".', $debug-12);
       $this->needs_fv_upd = true;
       if ($this->can_change($debug-1) AND $this->not_changed($debug-1)) {      
         $log = $this->log_upd($debug-1);
@@ -1743,7 +1835,7 @@ class formula {
   
   // updated the view component name (which is the id field)
   // should only be called if the user is the owner and nobody has used the display component link
-  private function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
+  function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->name <> $this->name) {
       zu_debug('formula->save_id_fields to '.$this->dsp_id().' from '.$db_rec->dsp_id().' (standard '.$std_rec->dsp_id().').', $debug-10);
@@ -1754,7 +1846,7 @@ class formula {
       $wrd->load($debug-1);
       $wrd->name = $this->name;
       $result .= $wrd->save($debug-1);
-      zu_debug('formula->save_id_fields word "'.$db_rec->name.'" renamed to '.$wrd->dsp_id().'.', $debug-10);
+      zu_debug('formula->save_id_fields word "'.$db_rec->name.'" renamed to '.$wrd->dsp_id(), $debug-10);
 
       // change the formula name  
       $log = $this->log_upd($debug-1);
@@ -1768,13 +1860,13 @@ class formula {
                                               array($this->name), $debug-1);
       }
     }
-    zu_debug('formula->save_id_fields for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('formula->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
   // get the term corresponding to this formula name
   // so in this case, if a word or verb with the same name already exists, get it
-  private function term($debug) {
+  function term($debug) {
     $trm = New term;
     $trm->name = $this->name;
     $trm->usr  = $this->usr;
@@ -1784,8 +1876,8 @@ class formula {
   }
 
   // check if the id parameters are supposed to be changed 
-  private function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
-    zu_debug('formula->save_id_if_updated has name changed from "'.$db_rec->name.'" to "'.$this->name.'".', $debug-14);
+  function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
+    zu_debug('formula->save_id_if_updated has name changed from "'.$db_rec->name.'" to '.$this->dsp_id(), $debug-14);
     $result = '';
     
     // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
@@ -1803,8 +1895,8 @@ class formula {
         $db_chk->id = 0; // to force the load by the id fields
         $db_chk->load_standard($debug-10);
         if ($db_chk->id > 0) {
-          zu_debug('formula->save_id_if_updated target formula name already exists '.$db_chk->dsp_id().'.', $debug-14);
-          if (UI_CAN_CHANGE_VIEW_ENTRY_NAME) {
+          zu_debug('formula->save_id_if_updated target formula name already exists '.$db_chk->dsp_id(), $debug-14);
+          if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
             // ... if yes request to delete or exclude the record with the id parameters before the change
             $to_del = clone $db_rec;
             $result .= $to_del->del($debug-20);        
@@ -1815,15 +1907,15 @@ class formula {
             $this->excluded = Null;
             $db_rec->excluded = '1';
             $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
-            zu_debug('formula->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add "'.$this->dsp_id().'".', $debug-14);
+            zu_debug('formula->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add '.$this->dsp_id(), $debug-14);
           } else {
             $result .= 'A view component with the name "'.$this->name.'" already exists. Please use another name.';
           }  
         } else {
-          zu_debug('formula->save_id_if_updated target formula name does not yet exists '.$db_chk->dsp_id().'.', $debug-14);
+          zu_debug('formula->save_id_if_updated target formula name does not yet exists '.$db_chk->dsp_id(), $debug-14);
           if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
             // in this case change is allowed and done
-            zu_debug('formula->save_id_if_updated change the existing display component link "'.$this->dsp_id().'" (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+            zu_debug('formula->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
             //$this->load_objects($debug-1);
             $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
           } else {
@@ -1837,19 +1929,19 @@ class formula {
             $this->id = 0;
             $this->owner_id = $this->usr->id;
             $result .= $this->add($db_con, $debug-20);
-            zu_debug('formula->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add "'.$this->dsp_id().'" (standard "'.$std_rec->dsp_id().'").', $debug-14);
+            zu_debug('formula->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
           }
         }
       }
     }  
 
-    zu_debug('formula->save_id_if_updated for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('formula->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
   // create a new formula
-  private function add($db_con, $debug) {
-    zu_debug('formula->add the formula "'.$this->name.'".', $debug-12);
+  function add($db_con, $debug) {
+    zu_debug('formula->add the formula '.$this->dsp_id(), $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -1858,7 +1950,7 @@ class formula {
       // insert the new formula
       $this->id = $db_con->insert(array("formula_name","user_id","last_update"), array($this->name,$this->usr->id,"Now()"), $debug-1);
       if ($this->id > 0) {
-        zu_debug('formula->add formula "'.$this->name.'" has been added as '.$this->id.'.', $debug-12);
+        zu_debug('formula->add formula '.$this->dsp_id().' has been added as '.$this->id, $debug-12);
         // update the id in the log for the correct reference
         $result .= $log->add_ref($this->id, $debug-1);
         // create the related formula word
@@ -1881,7 +1973,7 @@ class formula {
   
   // add or update a formula in the database or create a user formula
   function save($debug) {
-    zu_debug('formula->save >'.$this->usr_text.'< (id '.$this->id.') as "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('formula->save >'.$this->usr_text.'< (id '.$this->id.') as '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $result = '';
     
     // build the database object because the is anyway needed
@@ -1892,14 +1984,14 @@ class formula {
     // check if a new formula is supposed to be added
     if ($this->id <= 0) {
       // check if a verb, formula or word with the same name is already in the database
-      zu_debug('formula->save -> add "'.$this->name.'".', $debug-10);
+      zu_debug('formula->save -> add '.$this->dsp_id(), $debug-10);
       $trm = $this->term($debug-1);      
       if ($trm->id > 0) {
         if ($trm->type <> 'formula') {
           $result .= $trm->id_used_msg($debug-1);
         } else {
           $this->id = $trm->id;
-          zu_debug('formula->save adding formula name "'.$this->name.'" is OK.', $debug-14);
+          zu_debug('formula->save adding formula name '.$this->dsp_id().' is OK.', $debug-14);
         }  
       }
     }  
@@ -1911,7 +2003,7 @@ class formula {
         
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('formula->save -> update '.$this->id.'.', $debug-10);
+      zu_debug('formula->save -> update '.$this->id, $debug-10);
       // read the database values to be able to check if something has been changed; done first, 
       // because it needs to be done for user and general formulas
       $db_rec = New formula;
@@ -1920,7 +2012,8 @@ class formula {
       $db_rec->load($debug-10);
       zu_debug('formula->save -> database formula "'.$db_rec->name.'" ('.$db_rec->id.') loaded.', $debug-14);
       $std_rec = New formula;
-      $std_rec->id = $this->id;
+      $std_rec->id  = $this->id;
+      $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-10);
       zu_debug('formula->save -> standard formula "'.$std_rec->name.'" ('.$std_rec->id.') loaded.', $debug-14);
       
@@ -1954,58 +2047,14 @@ class formula {
 
   }
   
-  // user specific???
-  private function del_links($db_con, $debug) {
+  // TODO user specific???
+  function del_links($db_con, $debug) {
     $result = '';
     $frm_lnk_lst = New formula_link_list;
     $frm_lnk_lst->usr = $this->usr;         
     $frm_lnk_lst->frm = $this;         
     $frm_lnk_lst->load($debug-1);        
     $result .= $frm_lnk_lst->del_without_log($debug-1);        
-    return $result;    
-  }
-
-  // delete the complete formula (the calling function del must have checked that no one uses this formula)
-  private function del_exe($debug) {
-    zu_debug('formula->del_exe.', $debug-16);
-    $result = '';
-
-    $log = $this->log_del($debug-1);
-    if ($log->id > 0) {
-      $db_con = new mysql;         
-      $db_con->usr_id = $this->usr->id;         
-      $result .= $this->del_links($db_con, $debug-1);
-      $db_con->type = 'formula_element';         
-      $result .= $db_con->delete('formula_id', $this->id, $debug-1);
-      // delete first all user configuration that have also been excluded
-      $db_con->type = 'user_formula';
-      $result .= $db_con->delete(array('formula_id','excluded'), array($this->id,'1'), $debug-1);
-      // to delete exclude null rows should not be needed, but del_usr_cfg_if_not_needed seems to have a bug
-      //$result .= $db_con->delete(array('formula_id'), array($this->id), $debug-1);
-      $db_con->type = 'formula';         
-      $result .= $db_con->delete('formula_id', $this->id, $debug-1);
-      // and the corresponding word name
-      $db_con->type = 'word';         
-      $result .= $db_con->delete('word_name', $this->name, $debug-1);
-    }
-    
-    return $result;    
-  }
-  
-  // exclude or delete a formula
-  function del($debug) {
-    zu_debug('formula->del.', $debug-16);
-    $result = '';
-    $result .= $this->load($debug-1);
-    if ($this->id > 0 AND $result == '') {
-      zu_debug('formula->del "'.$this->name.'".', $debug-14);
-      if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
-        $result .= $this->del_exe($debug-1);
-      } else {
-        $this->excluded = 1;
-        $result .= $this->save($debug-1);        
-      }
-    }
     return $result;    
   }
   

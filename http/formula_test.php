@@ -16,7 +16,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ $link = zu_start("start formula_test.php", "", $debug-10);
     $dsp->usr = $session_usr;
     $dsp->id = cl(SQL_VIEW_FORMULA_TEST);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
-    echo $dsp->top_right($debug-1);
+    echo $dsp->dsp_navbar($back, $debug-1);
 
     // get all parameters
     $frm_id      = $_GET['id'];
@@ -71,7 +71,8 @@ $link = zu_start("start formula_test.php", "", $debug-10);
     }
 
     if ($frm_id == '') {
-      echo "<h2>Please select a formula.</h2><br>";
+      echo dsp_text_h2("Please select a formula");
+      echo "<br>";
     } else {
 
       // if the user clicks on "more details" the debug level is increased
@@ -88,7 +89,7 @@ $link = zu_start("start formula_test.php", "", $debug-10);
 
       // delete all formula results if requested
       if ($refresh == 1) {
-        zu_debug('refresh all formula results for '.$frm1->id.'.', $debug-8);
+        zu_debug('refresh all formula results for '.$frm1->id, $debug-8);
         $frm1->fv_del($debug-1);
         zu_debug('old formula results for '.$frm_id.' deleted.', $debug-9);
       }
@@ -106,8 +107,8 @@ $link = zu_start("start formula_test.php", "", $debug-10);
           $dsp_lst = "for ".$phr_lst->name_linked()." ";
         }
       }
-      echo '<h2>Calculate the '.$frm1->name_linked($back, $debug-1).' '.$dsp_lst;
-      echo '</h2><br>';
+      dsp_text_h2('Calculate the '.$frm1->name_linked($back, $debug-1).' '.$dsp_lst);
+      echo '<br>';
 
       // if a single calculation is selected by the user, show only this
       if (!empty($phr_ids)) {

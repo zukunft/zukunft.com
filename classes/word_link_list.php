@@ -2,8 +2,12 @@
 
 /*
 
-  word_link_list.php - a list of word link, mainly used to build a RDF graph
+  word_link_list.php - a list of word links, mainly used to build a RDF graph
   ------------------
+  
+  example:
+  for company the list of linked words should contain "... has a balance sheet" and "... has a cash flow statement"
+  
   
   This file is part of zukunft.com - calc with words
 
@@ -22,7 +26,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -109,7 +113,7 @@ class word_link_list {
           $sql_wrd2_fields  = $this->load_wrd_fields('2', $debug-1);
           $sql_wrd2_from    = $this->load_wrd_from  ('2', $debug-1);
           $sql_wrd2         = 'l.to_phrase_id = t2.word_id';
-          zu_debug('word_link_list->load where ids '.$sql_where.'.', $debug-18);
+          zu_debug('word_link_list->load where ids '.$sql_where, $debug-18);
         }
       }  
       if ($sql_where == '') {
@@ -123,7 +127,7 @@ class word_link_list {
             $sql_where = 'l.to_phrase_id   = '.$this->wrd->id;
             $sql_wrd2  = 'l.from_phrase_id = t2.word_id';
           }
-          zu_debug('word_link_list->load where wrd '.$sql_where.'.', $debug-18);
+          zu_debug('word_link_list->load where wrd '.$sql_where, $debug-18);
         }  
       }
       if ($sql_where == '') {
@@ -145,7 +149,7 @@ class word_link_list {
             $sql_wrd1  = 'AND l.to_phrase_id   = t.word_id';
             $sql_wrd2  = 'l.from_phrase_id = t2.word_id';
           }
-          zu_debug('word_link_list->load where wrd in '.$sql_where.'.', $debug-18);
+          zu_debug('word_link_list->load where wrd in '.$sql_where, $debug-18);
         }  
       }  
       if (isset($this->vrb)) {
@@ -283,6 +287,17 @@ class word_link_list {
     }  
   }
   
+  // add one triple to the triple list, but only if it is not yet part of the list
+  function add($lnk_to_add, $debug) {
+    zu_debug('word_link_list->add '.$lnk_to_add->dsp_id(), $debug-30);
+    if (!in_array($lnk_to_add->id, $this->ids)) {
+      if ($lnk_to_add->id > 0) {
+        $this->lst[] = $lnk_to_add;
+        $this->ids[] = $lnk_to_add->id;
+      }
+    }
+  }
+  
   /*
   
   display functions
@@ -336,7 +351,7 @@ class word_link_list {
       zu_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
       if (isset($this->wrd)) {
-        zu_debug('graph->display for '.$this->wrd->name.' '.$this->direction.' and user '.$this->usr->name.'.', $debug-10);
+        zu_debug('graph->display for '.$this->wrd->name.' '.$this->direction.' and user '.$this->usr->name, $debug-10);
       }  
       $result  = '';
       $prev_verb_id  = 0;
@@ -378,12 +393,12 @@ class word_link_list {
               $result .= " " . $lnk->link_type->name;
             }
           }
-          $result .= '<table style="width:300px">';
+          $result .= dsp_tbl_start_half();
           $prev_verb_id = $lnk->verb_id;
         }  
 
         // display the word
-        zu_debug('word->dsp_graph display word '.$lnk->from->name.'.', $debug-16);
+        zu_debug('word->dsp_graph display word '.$lnk->from->name, $debug-16);
         $result .= '  <tr>'."\n";
         $result .= $lnk->to->dsp_tbl_cell (0, $debug-1);
         $result .= $lnk->dsp_btn_edit ($lnk->from, $debug-1);
@@ -414,7 +429,8 @@ class word_link_list {
           $result .= '    </td>';
           $result .= '  </tr>';
 
-          $result .= '</table><br> ';
+          $result .= dsp_tbl_end ();
+          $result .= '<br>';
         }
       }
     }

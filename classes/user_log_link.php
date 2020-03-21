@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -91,7 +91,7 @@ class user_log_link {
   
   // identical to the functions in user_log (maybe move to a common object??)
   private function set_table($debug) {
-    zu_debug('user_log_link->set_table "'.$this->table.'" for '.$this->usr_id.'.', $debug-10);
+    zu_debug('user_log_link->set_table "'.$this->table.'" for '.$this->usr_id, $debug-10);
     
     // check parameter
     if ($this->table == "") { zu_err("missing table name","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
@@ -115,7 +115,7 @@ class user_log_link {
   }
 
   private function set_action($debug) {
-    zu_debug('user_log_link->set_action "'.$this->action.'" for '.$this->usr_id.'.', $debug-10);
+    zu_debug('user_log_link->set_action "'.$this->action.'" for '.$this->usr_id, $debug-10);
     
     // check parameter
     if ($this->action == "") { zu_err("missing action name","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
@@ -140,17 +140,17 @@ class user_log_link {
 
   // functions used until each call is done with the object instead of the id
   private function set_usr($debug) {
-    zu_debug('user_log_link->set_usr for '.$this->usr_id.'.', $debug-12);
+    zu_debug('user_log_link->set_usr for '.$this->usr_id, $debug-12);
     if (!isset($this->usr)) {
       $usr = New user;
       $usr->id = $this->usr_id;
       $usr->load_test_user($debug-1);
       $this->usr = $usr;
-      zu_debug('user_log_link->set_usr got '.$this->usr->name.'.', $debug-14);
+      zu_debug('user_log_link->set_usr got '.$this->usr->name, $debug-14);
     }
   }
   private function word_name($id, $debug) {
-    zu_debug('user_log_link->word_name for '.$id.'.', $debug-12);
+    zu_debug('user_log_link->word_name for '.$id, $debug-12);
     $result = '';
     if ($id > 0) {
       $this->set_usr($debug-1);
@@ -159,7 +159,7 @@ class user_log_link {
       $wrd->usr = $this->usr;
       $wrd->load($debug-1);
       $result = $wrd->name;
-      zu_debug('user_log_link->word_name got '.$result.'.', $debug-14);
+      zu_debug('user_log_link->word_name got '.$result, $debug-14);
     }
     return $result;
   }
@@ -301,7 +301,7 @@ class user_log_link {
   // similar to add_link, but additional fix the references as a text for fast displaying
   // $link_text is used for fixed links such as the source for values
   function add($debug) {
-    zu_debug('user_log_link->add do "'.$this->action.'" of "'.$this->table.'" for user '.$this->usr_id.'.', $debug-10); 
+    zu_debug('user_log_link->add do "'.$this->action.'" of "'.$this->table.'" for user '.$this->usr_id, $debug-10); 
 
     $this->set_table($debug-1);
     $this->set_action($debug-1);
@@ -327,7 +327,7 @@ class user_log_link {
         $this->old_to_id     = $this->old_to->id; 
       }
     }
-    if ($this->table == "view_entry_links" 
+    if ($this->table == "view_component_links" 
      OR $this->table == "value_phrase_links" 
      OR $this->table == "formula_links") {
       if ($this->action == "add" OR $this->action == "update") {

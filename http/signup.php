@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -117,12 +117,11 @@ $link = zu_start("signup", "center_form", $debug);
     $result .=  $error; 
     unset($error); 
   } 
-  $result .= '<div class="center_form">'; 
-  $result .= '<a href="/http/view.php" title="zukunft.com Logo">'; 
-  $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;" >'; 
-  $result .= '</a><br><br>'; 
+  $result .= dsp_form_center(); 
+  $result .= dsp_logo_big(); 
+  $result .= '<br><br>'; 
   $result .= '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>'; 
-  $result .= '<p><font color="red">Be aware that during this phase your <b>data may get lost</b> or changed due to program errors or updates.</font></p>'; 
+  $result .= '<p>'.dsp_err ('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.').'</p>'; 
   $result .= '<form action="'.$_SERVER['PHP_SELF'].'" method="post"> ';
   $result .= '<p>User Name:<br><input type="text" name="user_name" value="'.$_POST['user_name'].'"></p> '; 
   $result .= '<p>Email:<br><input type="text" name="email" value="'.$_POST['email'].'"></p>  ';

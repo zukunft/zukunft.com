@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -111,14 +111,14 @@ $link = zu_start("login_activate", "center_form", $debug);
         header("Location: view.php"); 
         exit; 
       } else {
-        $msg .= '<font color="red">'.$error.'</font><br>'; 
+        $msg .= dsp_err ($error).'<br>'; 
       }  
     } else {
       if ($db_key <> "") {
-        //$msg .= '<font color="red">Error: activation key ('.$db_key.'/'.$_POST['key'].' for '.$usr_id.') does not match. Please request the password reset again.</font><br>'; 
-        $msg .= '<font color="red">Error: activation key does not match. Please request the password reset again.</font><br>'; 
+        //$msg .= dsp_err ('Error: activation key ('.$db_key.'/'.$_POST['key'].' for '.$usr_id.') does not match. Please request the password reset again.').'<br>'; 
+        $msg .= dsp_err ('Error: activation key does not match. Please request the password reset again.').'<br>'; 
       } else {
-        $msg .= '<font color="red">Activation key is not valid any more. Please request the password reset again.</font><br>'; 
+        $msg .= dsp_err ('Activation key is not valid any more. Please request the password reset again.').'<br>'; 
       }
     }  
   }  
@@ -131,8 +131,8 @@ $link = zu_start("login_activate", "center_form", $debug);
       }
     }  
     if ($usr_id > 0) {
-      $result .= '<div class="center_form">'; 
-      $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;" >'; 
+      $result .= dsp_form_center(); 
+      $result .= dsp_logo_big(); 
       $result .= '<br><br>'; 
       $result .= '<form action="login_activate.php" method="post">'; 
       $result .= '<input type="hidden" name="id" value="'.$usr_id.'">';

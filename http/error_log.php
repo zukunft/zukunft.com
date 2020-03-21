@@ -16,7 +16,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ $link = zu_start("error_log", "", $debug);
       $dsp = new view_dsp;
       $dsp->usr = $usr;
       $dsp->id = cl(SQL_VIEW_ERR_LOG);
-      $result .= $dsp->top_right($wrd, $debug-1);
+      $result .= $dsp->dsp_navbar($back, $debug-1);
       //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
       $result .= err_dsp($err_id, $usr->id, $debug-1);
     }

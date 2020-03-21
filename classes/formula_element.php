@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -87,7 +87,7 @@ class formula_element {
           $this->frm_type = $frm->type_cl;
         }
       }
-      zu_debug("formula_element->load got ".$this->name." (".$this->symbol.").", $debug-10);
+      zu_debug("formula_element->load got ".$this->dsp_id()." (".$this->symbol.").", $debug-10);
     }  
   }  
   
@@ -109,7 +109,7 @@ class formula_element {
     } 
     $result .= '('.$this->id.')';
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
 
     return $result;

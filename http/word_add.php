@@ -23,7 +23,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -86,13 +86,9 @@ $link = zu_start("word_add", "", $debug);
     // if the user has pressed "save" it is 1
     if ($_GET['confirm'] > 0) {
     
-      // check parameters
+      // check if either a new word text is entered by the user or the user as selected an existing word to link 
       if ($wrd->name == "" AND $wrd_id <= 0) {
-        if ($vrb_id > 0) {
-          $msg .= 'Either enter a name for the new word or select an existing word to link. ';
-        } else {
-          $msg .= 'Please enter a name for the new word.';
-        }
+        $msg .= 'Either enter a name for the new word or select an existing word to link.';
       }
       /*
       For easy adding of new words it is no longer needed to link a word to an existing word. Instead a special page with the unlinked words should be added.
@@ -131,57 +127,70 @@ $link = zu_start("word_add", "", $debug);
       
       } elseif ($wrd_id > 0) {
         // check link of the existing word already exists
-        $lnk = New word_link;
-        $lnk->usr     = $usr;
-        $lnk->from_id = $wrd_id;
-        $lnk->verb_id = $vrb_id;
-        $lnk->to_id   = $wrd_to;
-        $lnk->load($debug-1);
-        if ($lnk->id > 0) {
-          $lnk->load_objects($debug-1);
-          $msg .= '"'.$lnk->from_name.' '.$lnk->verb_name.' '.$lnk->to_name.'" already exists. ';
+        $lnk_test = New word_link;
+        $lnk_test->usr     = $usr;
+        $lnk_test->from_id = $wrd_id;
+        $lnk_test->verb_id = $vrb_id;
+        $lnk_test->to_id   = $wrd_to;
+        $lnk_test->load($debug-1);
+        if ($lnk_test->id > 0) {
+          $lnk_test->load_objects($debug-1);
+          zu_debug('word_add -> check forward link '.$wrd_id.' '.$vrb_id.' '.$wrd_to.'', $debug-1);
+          $msg .= '"'.$lnk_test->from_name.' '.$lnk_test->verb_name.' '.$lnk_test->to_name.'" already exists. ';
         }
-        $lnk->from_id = $wrd_to;
-        $lnk->verb_id = $vrb_id;
-        $lnk->to_id   = $wrd_id;
-        $lnk->load($debug-1);
-        if ($lnk->id > 0) {
-          $lnk->load_objects($debug-1);
-          $msg .= 'The reverse of "'.$lnk->from_name.' '.$lnk->verb_name.' '.$lnk->to_name.'" already exists. Do you really want to add both sides? ';
+        $lnk_rev = New word_link;
+        $lnk_rev->usr     = $usr;
+        $lnk_rev->from_id = $wrd_to;
+        $lnk_rev->verb_id = $vrb_id;
+        $lnk_rev->to_id   = $wrd_id;
+        $lnk_rev->load($debug-1);
+        if ($lnk_rev->id > 0) {
+          $lnk_rev->load_objects($debug-1);
+          $msg .= 'The reverse of "'.$lnk_rev->from_name.' '.$lnk_rev->verb_name.' '.$lnk_rev->to_name.'" already exists. Do you really want to add both sides? ';
         }
       }
       
       // if the parameters are fine ...
       if ($msg == '') {
+        zu_debug('word_add -> no msg', $debug);
+        $add_result = '';
         // ... add the new word to the database
         if ($wrd->name <> "") {
-          $msg .= $wrd->save($debug-1);
+          $add_result .= $wrd->save($debug-1);
         } else {
           $wrd->id = $wrd_id;
           $wrd->load($debug-1);
         }
-        if ($wrd->id > 0 AND $vrb_id > 0 AND $wrd_to > 0) {
+        zu_debug('word_add -> test word', $debug);
+        if ($wrd->id > 0 AND $vrb_id <> 0 AND $wrd_to > 0) {
           // ... and link it to an existing word
+          zu_debug('word_add -> word ' + $wrd->id + ' linked via ' + $vrb_id + ' to ' + $wrd_to + ': ' + $add_result, $debug-1);
           $lnk = New word_link;
           $lnk->usr     = $usr;
           $lnk->from_id = $wrd->id;
           $lnk->verb_id = $vrb_id;
           $lnk->to_id   = $wrd_to;
-          $lnk->save($debug-1);
+          $add_result .= $lnk->save($debug-1);
         }  
 
-        // if word has been added or linked succesfully, go back
-        if ($wrd->id > 0 AND $lnk->id <> 0 ) {
+        // if adding was successful ...
+        if (str_replace ('1','',$add_result) == '') {
+          // if word has been added or linked succesfully, go back
+          //if ($wrd->id > 0 AND $lnk->id <> 0 ) {
           // display the calling view
-          $result .= dsp_go_back($back, $usr, $debug-1);
-        }  
+          //$result .= dsp_go_back($back, $usr, $debug-1);
+          //}  
+        } else {
+          // ... or in case of a problem prepare to show the message
+          $msg .= $add_result;
+        }
       }  
     }  
 
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
       // display the add view again
-      $result .= $dsp->top_right($debug-1);
+      $result .= $dsp->dsp_navbar($back, $debug-1);
       $result .= dsp_err($msg);
 
       $result .= $wrd->dsp_add ($wrd_id, $wrd_to, $vrb_id, $back, $debug-1);

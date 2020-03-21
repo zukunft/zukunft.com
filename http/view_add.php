@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -86,7 +86,7 @@ $link = zu_start("view_add", "", $debug);
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
       // show the header )in view edit views the view cannot be changed)
-      $result .= $dsp->top_right_no_view($dsp->id, $wrd->id, $debug-1);
+      $result .= $dsp->dsp_navbar_no_view($wrd->id, $debug-1);
       $result .= dsp_err($msg);
 
       // sample word that is used to simulate the view changes

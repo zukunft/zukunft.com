@@ -1,11 +1,6 @@
 -- phpMyAdmin SQL Dump
 -- version 4.2.12deb2+deb8u3
 -- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Sep 08, 2018 at 12:43 PM
--- Server version: 5.5.60-0+deb8u1
--- PHP Version: 5.6.37-0+deb8u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -223,17 +218,49 @@ INSERT INTO `languages_forms` (`languages_form_id`, `languages_form_name`, `code
 (1, 'plural', 'plural', 1);
 
 --
--- Dumping data for table `sources`
+-- Dumping data for table `protection_types`
 --
 
-INSERT INTO `sources` (`source_id`, `user_id`, `source_name`, `url`, `comment`, `source_type_id`, `code_id`, `excluded`) VALUES
-(1, NULL, 'NestlÃ© Financial Statement 2016', '', NULL, NULL, NULL, NULL),
-(2, NULL, 'NestlÃ© Annual Review 2016', '', NULL, NULL, NULL, NULL),
-(3, NULL, 'Danone  Financial Statement 2016', 'http://danone-danonecom-prod.s3.amazonaws.com/user_upload/Investisseurs/DDR_2017/ANG/Danone_-_DDR_2016_-_VENG.pdf', NULL, NULL, NULL, NULL),
-(4, NULL, '"Population estimates, July 1, 2017, (V2017)". US Census Bureau.', 'https://www.census.gov/datasets/2017/demo/popest/nation=total.html', NULL, NULL, NULL, NULL),
-(5, NULL, '"World Economic Outlook Database, October 2017 â€“ Report for Selected Countries and Subjects". International Monetary Fund (IMF). Retrieved 1 October 2017.', 'https://www.imf.org/external/pubs/ft/weo/2017/02/weodata/weorept.aspx?pr.x=30&pr.y=13&sy=2018&ey=2018&scsm=1&ssd=1&sort=country&ds=.&br=1&c=111&s=NGDPD%2CPPPGDP%2CNGDPDPC%2CPPPPC&grp=0&a=', NULL, NULL, NULL, NULL),
-(6, NULL, 'Consolidated  Financial  Statements  of the NestlÃ©  Group 2016', 'https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf', NULL, NULL, NULL, NULL),
-(7, NULL, 'Transparency International', 'www.transparency.org/cpi', NULL, NULL, NULL, NULL),
+INSERT INTO `protection_types` (`protection_type_id`, `protection_type_name`, `code_id`, `description`) VALUES
+(1, 'no protection', 'no_protection', 'anyone can take the ownership '),
+(2, 'user', 'user_protection', 'only users with a login and a confirmed email can take over the ownership'),
+(3, 'admin', 'admin_protection', 'only user with admin permission can take the ownership'),
+(4, 'no change', 'no_change', 'no change of the ownership is allowed');
+
+
+--
+-- Dumping data for table `ref_types`
+--
+
+INSERT INTO `ref_types` (`ref_type_id`, `ref_type_name`, `code_id`, `description`, `base_url`) VALUES
+(1, 'wikipedia', 'wikipedia', 'wikipedia', 'https://en.wikipedia.org/wiki/'),
+(2, 'wikidata', 'wikidata', 'wikidata', 'https://www.wikidata.org/wiki/');
+
+-- --------------------------------------------------------
+
+
+--
+-- Dumping data for table `share_types`
+--
+
+INSERT INTO `share_types` (`share_type_id`, `share_type_name`, `code_id`, `description`) VALUES
+(1, 'public', 'public', 'value can be seen and used by everyone (default)'),
+(2, 'personal', 'personal', 'value can be seen by everyone, but is linked to the user'),
+(3, 'group', 'group', 'only a closed group of users can seen and use the values'),
+(4, 'private', 'private', 'only the user itself can see und use the value');
+
+-- --------------------------------------------------------
+
+
+--
+-- Dumping data for table `source_types`
+--
+
+INSERT INTO `source_types` (`source_type_id`, `source_type_name`, `code_id`) VALUES
+(1, 'XML', 'xml'),
+(2, 'XBRL', 'xbrl'),
+(3, 'CSV', 'csv'),
+(4, 'PDF', 'pdf');
 
 --
 -- Dumping data for table `sys_log_status`
@@ -353,18 +380,33 @@ INSERT INTO `views` (`view_id`, `user_id`, `view_name`, `comment`, `view_type_id
 (37, 1, 'Delete triple', 'Exclude or delete a triple', NULL, 'triple_del', NULL);
 
 --
--- Dumping data for table `view_entry_position_types`
+-- Dumping data for table `view_components`
 --
 
-INSERT INTO `view_entry_position_types` (`view_entry_position_type_id`, `type_name`, `description`) VALUES
+INSERT INTO `view_components` (`view_component_id`, `user_id`, `view_component_name`, `comment`, `view_component_type_id`, `word_id_row`, `formula_id`, `word_id_col`, `word_id_col2`, `excluded`, `linked_view_component_id`, `view_component_link_type_id`, `link_type_id`) VALUES
+(1, 14, 'Name', NULL, 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 14, 'Cash Flow Statement', NULL, 11, 4, NULL, 141, NULL, NULL, NULL, NULL, NULL),
+(4, 14, 'Words related', NULL, 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 4, 'formulas', NULL, 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 4, 'calculated results', NULL, 6, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 4, 'XML Export', NULL, 14, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 4, 'Display Name', NULL, 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 997, 'Company with ratios', NULL, 13, 1, NULL, 175, NULL, NULL, NULL, NULL, NULL),
+(10, 1572, 'JSON Export', NULL, 16, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+--
+-- Dumping data for table `view_component_position_types`
+--
+
+INSERT INTO `view_component_position_types` (`view_component_position_type_id`, `type_name`, `description`) VALUES
 (1, 'below', ''),
 (2, 'Right', 'is right of the privous entry');
 
 --
--- Dumping data for table `view_entry_types`
+-- Dumping data for table `view_component_types`
 --
 
-INSERT INTO `view_entry_types` (`view_entry_type_id`, `type_name`, `description`, `code_id`) VALUES
+INSERT INTO `view_component_types` (`view_component_type_id`, `view_component_type_name`, `description`, `code_id`) VALUES
 (1, 'word selector', '', 'word_select'),
 (2, 'view selector', 'to select an existing mask e.g. to set the default view', 'view_select'),
 (3, 'text', 'simply to display a variable text', 'text'),
@@ -377,7 +419,10 @@ INSERT INTO `view_entry_types` (`view_entry_type_id`, `type_name`, `description`
 (10, 'all relations', 'show the complete list of all relations', 'values_all'),
 (11, 'values related to', 'display all values that are related to a defined term', 'values_related'),
 (12, 'formulas', 'show all related formulas', 'formula_list'),
-(13, 'word value list', 'A list of words with some key values e.g. a company list with the PE ratio', 'word_value_list');
+(13, 'word value list', 'A list of words with some key values e.g. a company list with the PE ratio', 'word_value_list'),
+(14, 'XML export', 'offer to configure and start the XML export of a phrase and all related words, numbers and formulas', 'xml_export'),
+(15, 'CSV export', 'to define the main phrase, the column and row for the CSV export', 'csv_export'),
+(16, 'JSON Export', 'To start or configure the JSON export', 'json_export');
 
 --
 -- Dumping data for table `view_link_types`
@@ -394,7 +439,8 @@ INSERT INTO `view_types` (`view_type_id`, `type_name`, `description`, `code_id`)
 (1, 'entry view', 'These masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'entry'),
 (2, 'presentation view', '', NULL),
 (3, 'detail view', 'the standard mask without additional functionalities', 'mask_type_default'),
-(4, 'word default', 'A default mask for new words', 'word_default');
+(4, 'word default', 'A default mask for new words', 'word_default'),
+(5, '', '', 'view_type_default');
 
 --
 -- Dumping data for table `word_types`
@@ -415,7 +461,8 @@ INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`,
 (12, 'this', 'not sure, why this is needed', 'this', NULL, ''),
 (13, 'next', 'not sure, why this is needed', 'next', NULL, ''),
 (14, 'prior', 'not sure, why this is needed', 'previous', NULL, ''),
-(15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%');
+(15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%'),
+(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

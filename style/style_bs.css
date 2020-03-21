@@ -1,0 +1,54 @@
+
+/* the history of the changes is grey, because it is usually less important */
+.change_hist {
+  color: #A9A9A9;
+}
+
+.navbar {
+  opacity: 0.8
+}
+
+.btn-space {
+  margin-right: 5px;
+}
+
+a:link {
+  text-decoration:none;
+  color: #161650; 
+}
+
+/* looks like in bootstrp version 4.1.3 btn-outline-danger is handled differently from btn-outline-success and in Firefox it is still not working, but in Chromium it is fine */
+/*a.btn-outline-danger:link {
+  color: #dc3545;
+} */
+
+a:visited {
+  text-decoration:none;
+  color: #323250;
+}
+
+a.grey:link {
+  text-decoration:none;
+  color: #A9A9A9;
+}
+
+a.grey:visited {
+  text-decoration:none;
+  color: #A9A9A9;
+}
+
+/* to display values which are influenced by the user configuration */
+.user_specific {
+  color: #0e3e15;
+}
+
+a.user_specific:link {
+  text-decoration:none;
+  color: #0e3e15;
+}
+
+a.user_specific:visited {
+  text-decoration:none;
+  color: #0e3e15;
+}
+

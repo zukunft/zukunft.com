@@ -55,7 +55,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -129,9 +129,9 @@ function zuh_footer($no_about, $empty) {
 function zuh_top_right_user($view_id, $view_name, $word_id, $debug) {
   zu_debug('zuh_top_right_user('.$view_id.','.$view_name.')', $debug);
   $result  = '';
-  $result .= '<table style="width:100%"><tr><td>';
-  //$result .= '<a href="/view.php"><img src="../../images/logo_xxs.jpg" alt="zukunft.com"></a>'; 
-  $result .= '<a href="/http/view.php"><img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 5em;"></a>'; 
+  $result .= '<table style="width:100%">';
+  $result .= '<tr><td>';
+  $result .= dsp_logo(); 
   $result .= '</td><td align="right">';
   //$result  = '<div align="right">';
   if ($_SESSION['logged']) { 
@@ -258,13 +258,19 @@ function zuh_btn ($icon, $title, $call) {
   return $result;
 }
 
+// display a bootstrap button
+function zuh_btn_fa ($icon, $title, $call) {
+  $result = '<a href="/http/'.$call.'" title="'.$title.'"><i class="far '.$icon.'"></i></a>';
+  return $result;
+}
+
 // button function to keep the image call on one place
-function zuh_btn_add      ($title, $call) { return zuh_btn(ZUH_IMG_ADD,      $title, $call); } // an add button to create a new entry
-function zuh_btn_edit     ($title, $call) { return zuh_btn(ZUH_IMG_EDIT,     $title, $call); } // an edit button to adjust an entry
-function zuh_btn_del      ($title, $call) { return zuh_btn(ZUH_IMG_DEL,      $title, $call); } // an delete button to remove an entry
-function zuh_btn_undo     ($title, $call) { return zuh_btn(ZUH_IMG_UNDO,     $title, $call); } // an undo button to undo an change (not only the last)
-function zuh_btn_find     ($title, $call) { return zuh_btn(ZUH_IMG_FIND,     $title, $call); } // a find button to search for a word
-function zuh_btn_unfilter ($title, $call) { return zuh_btn(ZUH_IMG_UNFILTER, $title, $call); } // button to remove a filter
+function zuh_btn_add      ($title, $call) { return zuh_btn_fa(ZUH_IMG_ADD_FA,      $title, $call); } // an add button to create a new entry
+function zuh_btn_edit     ($title, $call) { return zuh_btn_fa(ZUH_IMG_EDIT_FA,     $title, $call); } // an edit button to adjust an entry
+function zuh_btn_del      ($title, $call) { return zuh_btn_fa(ZUH_IMG_DEL_FA,      $title, $call); } // an delete button to remove an entry
+function zuh_btn_undo     ($title, $call) { return zuh_btn   (ZUH_IMG_UNDO,        $title, $call); } // an undo button to undo an change (not only the last)
+function zuh_btn_find     ($title, $call) { return zuh_btn   (ZUH_IMG_FIND,        $title, $call); } // a find button to search for a word
+function zuh_btn_unfilter ($title, $call) { return zuh_btn   (ZUH_IMG_UNFILTER,    $title, $call); } // button to remove a filter
 
 
 function zuh_btn_back ($back_link) {

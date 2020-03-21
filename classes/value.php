@@ -33,48 +33,80 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
 */
 
-class value {
+class value extends user_sandbox_display {
 
-  // database fields
-  public $id           = NULL; // the primary database id of the numeric value, which is the same for the standard and the user specific value
-  public $usr_cfg_id   = NULL; // the database id if there is alrady some user specific value 
-  public $usr          = NULL; // the user of the person for whom the value is loaded, so to say the viewer
-  public $owner_id     = NULL; // the user id of the person who created the value, which is the default value
-  public $number       = NULL; // simply the numric value
-  public $source_id    = NULL; // the id of source where the value is comming from
-  public $grp_id       = NULL; // id of the group of pharses that are linked to this value for fast selections
-  public $time_id      = NULL; // id of the main time period word for fast time seres creation selections
-  public $time_stamp   = NULL; // the time stamp for this value (if this is set, the time wrd is supposed to be empty)
-  public $last_update  = NULL; // the time of the last update of fields that may influence the calculated results
-  public $excluded     = NULL; // when loading the value and saving the excluded field is handled as a normal user sandbox field, 
-                               // but for calculation, use and display an excluded should not be used
+  // database fields additional to the user sandbox fields for the value object
+  public $number        = NULL; // simply the numeric value
+  public $source_id     = NULL; // the id of source where the value is comming from
+  public $grp_id        = NULL; // id of the group of pharses that are linked to this value for fast selections
+  public $time_id       = NULL; // id of the main time period word for fast time seres creation selections
+  public $time_stamp    = NULL; // the time stamp for this value (if this is set, the time wrd is supposed to be empty)
+  public $last_update   = NULL; // the time of the last update of fields that may influence the calculated results
 
   // derived database fields for fast selection (needs to be verified from time to time to check the database consistency and detect program errors)
   // field set by the front end scripts such as value_add.php or value_edit.php
-  public $ids          = NULL; // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
-  public $phr_lst      = NULL; // the phrase object list for this value
-  //public $phr_ids      = NULL; // the phrase id list for this value loaded directly from the group
-  public $wrd_lst      = NULL; // the word object list for this value
-  public $wrd_ids      = NULL; // the word id list for this value loaded directly from the group
-  public $lnk_lst      = NULL; // the triple object list  for this value
-  public $lnk_ids      = NULL; // the triple id list  for this value loaded directly from the group
+  public $ids           = NULL; // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
+  public $phr_lst       = NULL; // the phrase object list for this value
+  //public $phr_ids       = NULL; // the phrase id list for this value loaded directly from the group
+  public $wrd_lst       = NULL; // the word object list for this value
+  public $wrd_ids       = NULL; // the word id list for this value loaded directly from the group
+  public $lnk_lst       = NULL; // the triple object list  for this value
+  public $lnk_ids       = NULL; // the triple id list  for this value loaded directly from the group
   // public $phr_all_lst  = NULL; // $phr_lst including the time wrd
   // public $phr_all_ids  = NULL; // $phr_ids including the time id
-  public $grp          = NULL; // phares (word or triple) group object for this value
-  public $time_phr     = NULL; // the time (period) word object for this value
-  public $update_time  = NULL; // time of the last update, which could also be taken from the change log
-  public $source       = NULL; // the source object
+  public $grp           = NULL; // phares (word or triple) group object for this value
+  public $time_phr      = NULL; // the time (period) word object for this value
+  public $update_time   = NULL; // time of the last update, which could also be taken from the change log
+  public $source        = NULL; // the source object
 
   // field for user interaction
-  public $usr_value    = '';    // the raw value as the user has entered it including formatting chars such as the thousand seperator
+  public $usr_value     = '';    // the raw value as the user has entered it including formatting chars such as the thousand seperator
   
+  
+  function __construct() {
+    $this->type      = 'value';
+    $this->obj_name  = 'value';
+
+    $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
+  } 
+  
+  function reset($debug) {
+    $this->id            = NULL;
+    $this->usr_cfg_id    = NULL;
+    $this->usr           = NULL;
+    $this->owner_id      = NULL;
+    $this->excluded      = NULL;
+                        
+    $this->number        = NULL; 
+    $this->source_id     = NULL; 
+    $this->grp_id        = NULL; 
+    $this->time_id       = NULL; 
+    $this->time_stamp    = NULL; 
+    $this->last_update   = NULL; 
+                        
+    $this->ids           = NULL; 
+    $this->phr_lst       = NULL; 
+    $this->wrd_lst       = NULL; 
+    $this->wrd_ids       = NULL; 
+    $this->lnk_lst       = NULL; 
+    $this->lnk_ids       = NULL; 
+    $this->grp           = NULL; 
+    $this->time_phr      = NULL; 
+    $this->update_time   = NULL; 
+    $this->source        = NULL; 
+    $this->share_id      = NULL; 
+    $this->protection_id = NULL; 
+
+    $this->usr_value     = '';   
+  }
+
 
   /*
   
@@ -90,19 +122,25 @@ class value {
                      v.word_value,
                      v.source_id,
                      v.last_update,
-                     v.excluded
+                     v.excluded,
+                     v.protection_type_id
                 FROM `values` v 
                WHERE v.value_id = ".$this->id.";";
       $db_con = new mysql;         
       $db_con->usr_id = $this->usr->id;         
       $db_val = $db_con->get1($sql, $debug-5);  
-      if ($db_val['value_id'] > 0) {
-        $this->id          = $db_val['value_id'];
-        $this->owner_id    = $db_val['user_id'];
-        $this->number      = $db_val['word_value'];
-        $this->source_id   = $db_val['source_id'];
-        $this->last_update = new DateTime($db_val['last_update']);
-        $this->excluded    = $db_val['excluded'];
+      if ($db_val['value_id'] <= 0) {
+        $this->reset($debug-1);
+      } else {
+        $this->id            = $db_val['value_id'];
+        $this->owner_id      = $db_val['user_id'];
+        $this->number        = $db_val['word_value'];
+        $this->source_id     = $db_val['source_id'];
+        $this->last_update   = new DateTime($db_val['last_update']);
+        $this->excluded      = $db_val['excluded'];
+        $this->protection_id = $db_val['protection_type_id'];
+        $this->share_id      = cl(DBL_SHARE_PUBLIC);
+        $this->protection_id = cl(DBL_PROTECT_NO);
 
         // to review: try to avoid using load_test_user
         if ($this->owner_id > 0) {
@@ -111,6 +149,9 @@ class value {
           $usr->load_test_user($debug-1);
           $this->usr = $usr; 
         } else {
+          // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
+          $sql_set = "UPDATE `values` SET user_id = ".$this->usr->id." WHERE value_id = ".$this->id.";";
+          $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "value->load_standard", (new Exception)->getTraceAsString(), $debug-10);
           //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       } 
@@ -119,16 +160,18 @@ class value {
   
   // load the record from the database
   // in a seperate function, because this can be called twice from the load function
-  private function load_rec($sql_where, $debug) {
+  function load_rec($sql_where, $debug) {
     $sql = 'SELECT v.value_id,
                     u.value_id AS user_value_id,
                     v.user_id,
                     v.phrase_group_id,
                     v.time_word_id,
-                    IF(u.user_value IS NULL,    v.word_value,    u.user_value)    AS word_value,
-                    IF(u.source_id IS NULL,     v.source_id,     u.source_id)     AS source_id,
-                    IF(u.last_update IS NULL,   v.last_update,   u.last_update)   AS last_update,
-                    IF(u.excluded IS NULL,      v.excluded,      u.excluded)      AS excluded
+                    u.share_type_id,
+                    IF(u.user_value IS NULL,         v.word_value,         u.user_value)         AS word_value,
+                    IF(u.source_id IS NULL,          v.source_id,          u.source_id)          AS source_id,
+                    IF(u.last_update IS NULL,        v.last_update,        u.last_update)        AS last_update,
+                    IF(u.excluded IS NULL,           v.excluded,           u.excluded)           AS excluded,
+                    IF(u.protection_type_id IS NULL, v.protection_type_id, u.protection_type_id) AS protection_type_id
               FROM `values` v 
           LEFT JOIN user_values u ON u.value_id = v.value_id 
                                 AND u.user_id = '.$this->usr->id.' 
@@ -137,18 +180,22 @@ class value {
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
     $db_val = $db_con->get1($sql, $debug-5);  
-    //if (is_null($db_val['excluded']) OR $db_val['excluded'] == 0) {
-    $this->id          = $db_val['value_id'];
-    $this->usr_cfg_id  = $db_val['user_value_id'];
-    $this->owner_id    = $db_val['user_id'];
-    $this->number      = $db_val['word_value'];
-    $this->source_id   = $db_val['source_id'];
-    $this->grp_id      = $db_val['phrase_group_id'];
-    $this->time_id     = $db_val['time_word_id'];
-    $this->last_update = new DateTime($db_val['last_update']);
-    $this->excluded    = $db_val['excluded'];
-    zu_debug('value->load -> got id '.$this->id.'.', $debug-14);      
-    //} 
+    if ($db_val['value_id'] <= 0) {
+      $this->reset($debug-1);
+    } else {
+      $this->id            = $db_val['value_id'];
+      $this->usr_cfg_id    = $db_val['user_value_id'];
+      $this->owner_id      = $db_val['user_id'];
+      $this->number        = $db_val['word_value'];
+      $this->source_id     = $db_val['source_id'];
+      $this->share_id      = $db_val['share_type_id'];
+      $this->protection_id = $db_val['protection_type_id'];
+      $this->grp_id        = $db_val['phrase_group_id'];
+      $this->time_id       = $db_val['time_word_id'];
+      $this->last_update   = new DateTime($db_val['last_update']);
+      $this->excluded      = $db_val['excluded'];
+      zu_debug('value->load -> got id '.$this->id, $debug-14);      
+    } 
   }
   
   // load the missing value parameters from the database
@@ -248,7 +295,7 @@ class value {
   // e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
   //      because most values for "ABB", "Sales" are in ,"million","CHF"
   function load_best($debug) {
-    zu_debug('value->load_best for '.$this->dsp_id().'.', $debug-10);
+    zu_debug('value->load_best for '.$this->dsp_id(), $debug-10);
     $this->load($debug-10);
     // if not found try without scaling
     if ($this->id <= 0) {
@@ -259,7 +306,7 @@ class value {
         // try to get a value with another scaling 
         $phr_lst_unscaled = clone $this->phr_lst;
         $phr_lst_unscaled->ex_scaling($debug-10);
-        zu_debug('value->load_best try unscaled with '.$phr_lst_unscaled->dsp_id().'.', $debug-10);
+        zu_debug('value->load_best try unscaled with '.$phr_lst_unscaled->dsp_id(), $debug-10);
         $grp_unscale = $phr_lst_unscaled->get_grp($debug-1);
         $this->grp_id = $grp_unscale->id;
         $this->load($debug-1);
@@ -268,7 +315,7 @@ class value {
           // try to get a value with another measure 
           $phr_lst_converted = clone $phr_lst_unscaled;
           $phr_lst_converted->ex_measure($debug-10);
-          zu_debug('value->load_best try converted with '.$phr_lst_converted->dsp_id().'.', $debug-10);
+          zu_debug('value->load_best try converted with '.$phr_lst_converted->dsp_id(), $debug-10);
           $grp_unscale = $phr_lst_converted->get_grp($debug-1);
           $this->grp_id = $grp_unscale->id;
           $this->load($debug-1);
@@ -279,7 +326,7 @@ class value {
         }
       }
     }
-    zu_debug('value->load_best got '.$this->number.' for '.$this->dsp_id().'.', $debug-12);
+    zu_debug('value->load_best got '.$this->number.' for '.$this->dsp_id(), $debug-12);
   }
   
   /*
@@ -291,19 +338,56 @@ class value {
   // load the phrase objects for this value if needed
   // not included in load, because sometimes loading of the word objects is not needed
   // maybe rename to load_objects
+  // NEVER call the dsp_id function from this function or any called function, because this would lead to an endless loop
   function load_phrases($debug) {
-    zu_debug('value->load_phrases.', $debug-18);
+    zu_debug('value->load_phrases', $debug-18);
     // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
     if ($this->grp_id > 0) {
       $this->load_grp_by_id($debug-1);
     }
-    zu_debug('value->load_phrases load time.', $debug-18);
+    zu_debug('value->load_phrases load time', $debug-18);
     $this->load_time_phrase($debug-1);
     zu_debug('value->load_phrases -> done ('.(new Exception)->getTraceAsString().').', $debug-16);
   }
   
+  // load the source object
+  // what happens if a source is updated
+  function load_source($debug) {
+    $src = Null;
+    zu_debug('value->load_source for '.$this->dsp_id($debug-1), $debug-10);
+    
+    $do_load = false;
+    if (isset($this->source)) {
+      if ($this->source_id == $this->source->id) {
+        $src = $this->source;
+      } else {
+        $do_load = true;
+      }
+    } else {
+      $do_load = true;
+    }
+    if ($do_load) {
+      if ($this->source_id > 0) {
+        $src = New source;
+        $src->id  = $this->source_id;
+        $src->usr = $this->usr;
+        $src->load($debug-1); 
+        $this->source = $src;
+      } else {
+        $this->source = Null;
+      }
+    }
+    
+    if (isset($src)) {
+      zu_debug('value->load_source -> '.$src->dsp_id($debug-1), $debug-10);
+    } else {
+      zu_debug('value->load_source done', $debug-10);
+    }
+    return $src;
+  }
+  
   // rebuild the word and triple list based on the group id
-  private function load_grp_by_id($debug) {
+  function load_grp_by_id($debug) {
     // if the group object is missing
     if (!isset($this->grp)) {
       if ($this->grp_id > 0) {
@@ -311,10 +395,10 @@ class value {
         $grp = New phrase_group;
         $grp->id  = $this->grp_id;
         $grp->usr = $this->usr; // in case the word names and word links can be user specific maybe the owner should be used here
-        $grp->get_id($debug-1); 
+        $grp->get($debug-1); 
         $grp->load_lst($debug-1); // to make sure that the word and triple object lists are loaded
         if ($grp->id > 0) {
-          $this->grp     = $grp;
+          $this->grp = $grp;
         }  
       }
     }  
@@ -347,7 +431,7 @@ class value {
 
   // set the list objects based on the loaded phrase group
   // function to set depending objects based on loaded objects
-  private function set_lst_by_grp($debug) {
+  function set_lst_by_grp($debug) {
     if (isset($this->grp)) {
       $this->grp_id  = $this->grp->id;
       if (!isset($this->phr_lst)) { $this->phr_lst = $this->grp->phr_lst; }
@@ -358,28 +442,44 @@ class value {
   }
   
   // just load the time word object based on the id loaded from the database
-  private function load_time_phrase($debug) {
-    if (!isset($this->time_phr)) {
+  function load_time_phrase($debug) {
+    zu_debug('value->load_time_phrase', $debug-1);
+    $do_load = false;
+    
+    if (isset($this->time_phr)) {
+      if ($this->time_phr->id <> $this->time_id) {
+        $do_load = true;
+      }
+    } else {
+      $do_load = true;
+    }
+    if ($do_load) {
       if ($this->time_id <> 0) {
+        zu_debug('value->load_time_phrase -> load', $debug-1);
         $time_phr = new phrase;
         $time_phr->id  = $this->time_id;
         $time_phr->usr = $this->usr; 
         $time_phr->load($debug-1);
         $this->time_phr = $time_phr;
+        zu_debug('value->load_time_phrase -> got '.$time_phr->dsp_id($debug-1), $debug-1);
+      } else {
+        $this->time_phr = null;
       }
     }
+    zu_debug('value->load_time_phrase done', $debug-1);
   }
   
   // load the source and return the source name
-  private function source_name($debug) {
+  function source_name($debug) {
     $result = '';
+    zu_debug('value->source_name', $debug-10);
+    zu_debug('value->source_name for '.$this->dsp_id($debug-1), $debug-10);
+
     if ($this->source_id > 0) {
-      $src = New source;
-      $src->id  = $this->source_id;
-      $src->usr = $this->usr;
-      $src->load($debug-1); 
-      $this->source = $src;
-      $result = $src->name;
+      $this->load_source($debug-1);
+      if (isset($this->source)) {
+        $result = $this->source->name;
+      }  
     }
     return $result;    
   }
@@ -391,18 +491,18 @@ class value {
   */
   
   // 
-  private function set_grp_and_time_by_ids($debug) {
+  function set_grp_and_time_by_ids($debug) {
     // 1. load the phrases parameters based on the ids
     $result .= $this->set_phr_lst_by_ids($debug-1);
     // 2. extract the time from the phrase list
     $result .= $this->set_time_by_phr_lst($debug-10);
     // 3. get the group based on the phrase list
     $result .= $this->set_grp_by_ids($debug-1);
-    zu_debug('value->set_grp_and_time_by_ids "'.implode(",",$this->ids).'" to "'.$this->grp_id.'" and '.$this->time_id.'.', $debug-16);
+    zu_debug('value->set_grp_and_time_by_ids "'.implode(",",$this->ids).'" to "'.$this->grp_id.'" and '.$this->time_id, $debug-16);
   }
   
   // rebuild the phrase list based on the phrase ids
-  private function set_phr_lst_by_ids($debug) {
+  function set_phr_lst_by_ids($debug) {
     zu_debug('value->set_phr_lst_by_ids for ids "'.implode(",",$this->ids).'" for "'.$this->usr->name.'".', $debug-16);
     $result = '';
     if (!isset($this->phr_lst)) {
@@ -418,10 +518,10 @@ class value {
   }
 
   // get the time based on the phrase id list
-  private function set_time_by_phr_lst($debug) {
+  function set_time_by_phr_lst($debug) {
     $result = '';
     if (isset($this->phr_lst)) {
-      zu_debug('value->set_time_by_phr_lst from '.$this->phr_lst->name().'.', $debug-16);
+      zu_debug('value->set_time_by_phr_lst from '.$this->phr_lst->name(), $debug-16);
       if (!isset($this->time_id)) {
         if (isset($this->time_phr)) {
           $this->time_id = $this->time_phr->id;
@@ -429,7 +529,7 @@ class value {
           $wrd_lst = $this->phr_lst->wrd_lst_all($debug-1);
           $this->time_phr = $wrd_lst->assume_time($debug-1);
           $this->time_id = $this->time_phr->id;
-          zu_debug('value->set_time_by_phr_lst got '.$this->time_phr->name.' for user '.$this->time_phr->usr->name.'.', $debug-14);
+          zu_debug('value->set_time_by_phr_lst got '.$this->time_phr->name.' for user '.$this->time_phr->usr->name, $debug-14);
         }  
       }
     }  
@@ -438,14 +538,14 @@ class value {
   
   // rebuild the word and triple list based on the word and triple ids
   // add set the time_id if needed
-  private function set_grp_by_ids($debug) {
+  function set_grp_by_ids($debug) {
     zu_debug('value->set_grp_by_ids for ids "'.implode(",",$this->ids).'" for "'.$this->usr->name.'".', $debug-16);
     if (!isset($this->grp)) {
       if (!empty($this->ids)) {
         $grp = New phrase_group;
         $grp->ids = $this->ids;
         $grp->usr = $this->usr; // in case the word names and word links can be user specific maybe the owner should be used here
-        $grp->get_id($debug-1);
+        $grp->get($debug-1);
         if ($grp->id > 0) {
           $this->grp    = $grp;
           $this->grp_id = $grp->id;
@@ -458,11 +558,11 @@ class value {
         }  
       }
     }  
-    zu_debug('value->set_grp_by_ids -> group set to id '.$this->grp_id.'.', $debug-16);
+    zu_debug('value->set_grp_by_ids -> group set to id '.$this->grp_id, $debug-16);
   }
 
   // exclude the time period word from the phrase list
-  private function set_phr_lst_ex_time($debug) {
+  function set_phr_lst_ex_time($debug) {
     zu_debug('value->set_phr_lst_ex_time for "'.$this->phr_lst->name($debug-1).'" for "'.$this->usr->name.'".', $debug-16);
     $this->phr_lst->ex_time($debug);
   }
@@ -489,7 +589,7 @@ class value {
         if (isset($this->ids)) {
           zu_debug('value->load_wrd_lst by ids do.', $debug-14);
           $this->set_grp_by_ids($debug-1);
-          zu_debug('value->load_phrases '.$this->wrd_lst->name($debug-1).'" by ids '.$this->ids.' for "'.$this->usr->name.'".', $debug-10);
+          zu_debug('value->load_wrd_lst '.$this->wrd_lst->name($debug-1).'" by ids '.$this->ids.' for "'.$this->usr->name.'".', $debug-10);
         } else {
           if ($this->id > 0) {
             // rebuild word ids based on the link table
@@ -554,7 +654,7 @@ class value {
   function check($debug) {
 
     // reload the value to include all changes
-    zu_debug('value->check id '.$this->id.', for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('value->check id '.$this->id.', for user '.$this->usr->name, $debug-10);
     $this->load($debug-1);
     zu_debug('value->check load pharses.', $debug-10);
     $this->load_phrases($debug-1);
@@ -572,7 +672,7 @@ class value {
   //      if the target words are empty convert "2.1 mio" to "2'100'000"
   // once this is working switch on the call in word_list->value_scaled
   function scale ($target_wrd_lst, $debug) {
-    zu_debug('value->scale '.$this->number.'.', $debug-12);
+    zu_debug('value->scale '.$this->number, $debug-12);
     // fallback value
     $result = $this->number;
     
@@ -607,7 +707,7 @@ class value {
                 zu_warning('No scaling formula defined for "'.$scale_wrd->name.'".', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
               } else {
                 $formula_text = $frm->ref_text;
-                zu_debug('value->scale -> scaling formula "'.$frm->name.'" ('.$frm->id.'): '.$formula_text.'.', $debug-12);
+                zu_debug('value->scale -> scaling formula "'.$frm->name.'" ('.$frm->id.'): '.$formula_text, $debug-12);
                 if ($formula_text <> "") {
                   $l_part = zu_str_left_of($formula_text, ZUP_CHAR_CALC);
                   $r_part = zu_str_right_of($formula_text, ZUP_CHAR_CALC);
@@ -654,6 +754,172 @@ class value {
     return $result;
   }
   
+  // create an object for the export
+  function export_obj ($debug) {
+    zu_debug('value->export_obj', $debug-10);
+    $result = Null;
+
+    // reload the value parameters
+    $this->load($debug-10);
+    zu_debug('value->export_obj load phrases', $debug-18);
+    $this->load_phrases($debug-10);
+
+    // add the words
+    zu_debug('value->export_obj get words', $debug-18);
+    $wrd_lst = array();
+    foreach ($this->wrd_lst->lst AS $wrd) {
+      $wrd_lst[] = $wrd->name();
+    }
+    if (count($wrd_lst) > 0) {
+      $result->words = $wrd_lst;
+    }
+
+    // add the triples
+    $triples_lst = array();
+    foreach ($this->lnk_lst->lst AS $lnk) {
+      $triples_lst[] = $lnk->name();
+    }
+    if (count($triples_lst) > 0) {
+      $result->triples = $triples_lst;
+    }  
+    
+    // add the time
+    if (isset($this->time_phr)) {
+      $phr = New phrase;
+      $phr->usr = $this->usr;
+      $phr->id  = $this->time_id;
+      $phr->load($debug-1);
+      $result->time = $phr->name; 
+      zu_debug('value->export_obj got time '.$this->time_phr->dsp_id($debug-1), $debug-18);
+    }
+
+    // add the value itself
+    $result->number = $this->number;
+
+    // add the share type
+    zu_debug('value->export_obj get share', $debug-18);
+    if ($this->share_id > 0 and $this->share_id <> cl(DBL_SHARE_PUBLIC)) {
+      $result->share = $this->share_type_code_id($debug-1);
+    }  
+
+    // add the protection type
+    zu_debug('value->export_obj get protection', $debug-18);
+    if ($this->protection_id > 0 and $this->protection_id <> cl(DBL_PROTECT_NO)) {
+      $result->protection = $this->protection_type_code_id($debug-1);
+    }  
+
+    // add the source
+    zu_debug('value->export_obj get source', $debug-18);
+    if ($this->source_id > 0) {
+      $result->source = $this->source_name($debug-1);
+    }
+    
+    zu_debug('value->export_obj -> '.json_encode($result), $debug-18);
+    return $result;
+  }
+  
+  // import a value from an external object
+  function import_obj ($json_obj, $debug) {
+    zu_debug('value->import_obj', $debug-10);
+    $result = '';
+    
+    $get_ownership = false;
+    foreach ($json_obj AS $key => $value) {
+
+      if ($key == 'words') {
+        $phr_lst = New phrase_list;
+        $phr_lst->usr = $this->usr;
+        foreach ($value AS $phr_name) {
+          $phr = New phrase;
+          $phr->name = $phr_name;
+          $phr->usr  = $this->usr;
+          $phr->load($debug-1);
+          if ($phr->id == 0) {
+            $wrd = New word;
+            $wrd->name = $phr_name;
+            $wrd->usr  = $this->usr;
+            $wrd->load($debug-1);
+            if ($wrd->id == 0) {
+              $wrd->name = $phr_name;
+              $wrd->type_id = cl(SQL_WORD_TYPE_NORMAL);
+              $wrd->save($debug-1);
+            }
+            if ($wrd->id == 0) {
+              zu_err('Cannot add word "'.$phr_name.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+            } else {
+              $phr_lst->add($wrd, $debug-1);
+            }
+          } else {         
+            $phr_lst->add($phr, $debug-1);
+          }  
+        }  
+        zu_debug('value->import_obj got words '.$phr_lst->dsp_id(), $debug-16);
+        $phr_grp = $phr_lst->get_grp($debug-1);
+        zu_debug('value->import_obj got word group '.$phr_grp->dsp_id(), $debug-18);
+        $this->grp = $phr_grp; 
+        $this->grp_id = $phr_grp->id; 
+        $this->phr_lst = $phr_lst; 
+        zu_debug('value->import_obj set grp id to '.$this->grp_id, $debug-14);
+      }
+      
+      if ($key == 'time') {
+        $phr = New phrase;
+        $phr->name = $value;
+        $phr->usr  = $this->usr;
+        $phr->load($debug-1);
+        if ($phr->id == 0) {
+          $wrd = New word;
+          $wrd->name = $value;
+          $wrd->usr  = $this->usr;
+          $wrd->load($debug-1);
+          if ($wrd->id == 0) {
+            $wrd->name = $value;
+            $wrd->type_id = cl(SQL_WORD_TYPE_TIME);
+            $wrd->save($debug-1);
+          }
+          if ($wrd->id == 0) {
+            zu_err('Cannot add time word "'.$value.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+          } else {
+            $this->time_phr = $wrd->pharse($debug-1); 
+            $this->time_id  = $wrd->id; 
+          }
+        } else {         
+          $this->time_phr = $phr; 
+          $this->time_id  = $phr->id; 
+        }  
+      }
+      
+      if ($key == 'number') {
+        $this->number  = $value; 
+      }
+
+      if ($key == 'share') {
+        $this->share_id  = cl($value); 
+      }
+
+      if ($key == 'protection') {
+        $this->protection_id  = cl($value);
+        if ($value <> DBL_PROTECT_NO) {
+          $get_ownership = true;
+        }  
+      }
+    }
+    
+    if ($result == '') {
+      $this->save($debug-1);
+      zu_debug('value->import_obj -> '.$this->dsp_id(), $debug-18);
+    } else {
+      zu_debug('value->import_obj -> '.$result, $debug-18);
+    }
+    
+    // try to get the ownership if requested
+    if ($get_ownership) {
+      $this->take_ownership($debug-1);
+    }
+
+    return $result;
+  }
+  
   /*
   
   display functions
@@ -661,18 +927,29 @@ class value {
   */
   
   // create and return the description for this value for debugging
+  // TODO seems to crash if value is only partly loaded
   function dsp_id($debug) {
     $result = '';
+    zu_debug('value->dsp_id', $debug-28);
     
-    $this->load_phrases($debug-1);
+    //$this->load_phrases($debug-1);
     if (isset($this->grp)) {
-      $result .= $this->grp->dsp_id($debug-1);
+      zu_debug('value->dsp_id group', $debug-8);
+      $result .= $this->grp->dsp_id();
     }
     if (isset($this->time_phr)) {
       if ($result <> '') { $result .= '@'; }
-      $result .= $this->time_phr->dsp_id($debug-1);
+      zu_debug('value->dsp_id time', $debug-8);
+      //zu_debug('value->dsp_id time for '.$this->time_phr, $debug-8);
+      zu_debug('value->dsp_id time of type '.gettype($this->time_phr), $debug-8);
+      if (gettype($this->time_phr) <> 'object') {
+        zu_err('Cannot show time phrase "'.$this->time_phr.'" because is of type '.gettype($this->time_phr), 'value->dsp_id', '', (new Exception)->getTraceAsString(), $this->usr);
+      } else {
+        $result .= $this->time_phr->dsp_id($debug-1);
+      }
     }
 
+    zu_debug('value->dsp_id done', $debug-28);
     return $result;
   }
   
@@ -739,7 +1016,7 @@ class value {
       } else {
         $val_btn_title = "add new value";
       }  
-      $url_phr = $this->phr_lst->id_url();
+      $url_phr = $this->phr_lst->id_url_long();
     }  
     
     $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
@@ -920,7 +1197,7 @@ class value {
     $row_nbr = 0;
     $value_id = 0;
     $word_names = "";
-    $result .= '<table class="change_hist">';
+    $result .= dsp_tbl_start_hist ();
     foreach ($db_lst AS $db_row) {
       // display the headline first if there is at least on entry
       if ($row_nbr == 0) {
@@ -960,12 +1237,24 @@ class value {
       $result .= '<td>'.$word_names.'</td>';
       $result .= '</tr>';
     }
-    $result .= '</table>';
+    $result .= dsp_tbl_end ();
     
     zu_debug("value->dsp_samples -> done.", $debug-16);
     return $result;
   }  
 
+  // simple modal box to add a value
+  function dsp_add_fast($back, $debug) {
+    $result = '';
+
+    $result .= '  <h2>Modal Example</h2>';
+    $result .= '  <!-- Button to Open the Modal -->';
+    //$result .= '  <a href="/http/value_add.php?back=2" title="add"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
+    $result .= '';  
+
+    return $result;  
+  }
+  
   // lists all phrases related to a given value except the given phrase
   // and offer to add a formula to the value as an alternative
   // $wrd_add is onöy optional to display the last added phrase at the end
@@ -986,16 +1275,16 @@ class value {
       $result .= dsp_text_h3("Change value for"); 
       if (count($this->ids) <= 0) {
         $this->load_phrases($debug-1);
-        zu_debug('value->dsp_edit id '.$this->id.' with "'.$this->grp->name().'"@"'.$this->time_phr->name.'"and user '.$this->usr->id.'.', $debug-10);
+        zu_debug('value->dsp_edit id '.$this->id.' with "'.$this->grp->name().'"@"'.$this->time_phr->name.'"and user '.$this->usr->id, $debug-10);
       } else {  
         $this->load_time_phrase($debug-1);
-        zu_debug('value->dsp_edit id '.$this->id.' with phrase ids '.implode(',',$this->ids).' and user '.$this->usr->id.'.', $debug-10);
+        zu_debug('value->dsp_edit id '.$this->id.' with phrase ids '.implode(',',$this->ids).' and user '.$this->usr->id, $debug-10);
       }
     }
     $this_url = '/http/'.$script.'.php?id='.$this->id.'&back='.$back; // url to call this display again to display the user changes
     
     // display the words and triples
-    $result .= dsp_tbl_start_half();
+    $result .= dsp_tbl_start_select();
     if (count($this->ids) > 0) {
       $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
       // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
@@ -1050,7 +1339,7 @@ class value {
           $phr->is_wrd = $phr->is_mainly($debug-1);
           if ($phr->is_wrd->id > 0) {
             $phr->is_wrd_id = $phr->is_wrd->id;
-            zu_debug('value->dsp_edit -> guessed type for '.$phr->name.': '.$phr->is_wrd->name.'.', $debug-10);
+            zu_debug('value->dsp_edit -> guessed type for '.$phr->name.': '.$phr->is_wrd->name, $debug-10);
           }  
         }
       }
@@ -1127,7 +1416,7 @@ class value {
               /*if (!empty($phr_lst_sel->lst)) {
                 $result .= '      '.$phr_lst_sel->dsp_selector("phrase".$url_pos, $script, $phr->id, $debug-1);
               } else {  */
-              $result .= '      '.$phr->dsp_selector ($phr->is_wrd, $script, $url_pos, $back, $debug-1);
+              $result .= '      '.$phr->dsp_selector ($phr->is_wrd, $script, $url_pos, '', $back, $debug-1);
               //}
               $url_pos++;
               
@@ -1146,7 +1435,7 @@ class value {
               }
               //$result .= '    <input type="hidden" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
               $result .= '    <td colspan="2">';
-              $result .= '      '.$phr->dsp_selector (0, $script, $url_pos, $back, $debug-1);
+              $result .= '      '.$phr->dsp_selector (0, $script, $url_pos, '', $back, $debug-1);
               $url_pos++;
               
               $result .= '    </td>';
@@ -1161,14 +1450,14 @@ class value {
       } 
 
       // show the time word
-      zu_debug('value->dsp_edit -> show time.', $debug-18);
+      zu_debug('value->dsp_edit -> show time', $debug-18);
       if ($this->time_id > 0) {
         if (isset($this->time_phr)) {
           $result .= '  <tr>';
           if ($phr_id == 0) {
             $result .= '    <td colspan="2">';
 
-            zu_debug('value->dsp_edit -> show time selector.', $debug-18);
+            zu_debug('value->dsp_edit -> show time selector', $debug-18);
             $result .= $this->time_phr->dsp_time_selector (0, $script, $url_pos, $back, $debug-1) ;
             $url_pos++;
             
@@ -1180,7 +1469,7 @@ class value {
       }  
       
       // show the new phrases
-      zu_debug('value->dsp_edit -> show new phrases.', $debug-18);
+      zu_debug('value->dsp_edit -> show new phrases', $debug-18);
       foreach ($this->ids AS $phr_id) {
         $result .= '  <tr>';
         if ($phr_id == 0) {
@@ -1188,7 +1477,7 @@ class value {
 
           $phr_new = New phrase;
           $phr_new->usr = $this->usr;
-          $result .= $phr_new->dsp_selector (0, $script, $url_pos, $back, $debug-1) ;
+          $result .= $phr_new->dsp_selector (0, $script, $url_pos, '', $back, $debug-1) ;
           $url_pos++;
           
           $result .= '    </td>';
@@ -1198,8 +1487,9 @@ class value {
       }  
     }
 
-    $result .= '</table> ';
+    $result .= dsp_tbl_end ();
 
+    zu_debug('value->dsp_edit -> table ended', $debug-18);
     $phr_ids_new    = $this->ids;
     //$phr_ids_new[]  = $new_phrase_default;
     $phr_ids_new[]  = 0;
@@ -1217,14 +1507,24 @@ class value {
     }
     $result .= dsp_form_end("Save");
     $result .= '<br><br>';
-    $src = New source;
-    $src->id = $this->source_id;
-    $src->usr = $this->usr;
-    $result .= $src->dsp_select($script, $back, $debug-1);
-    $result .= '<br><br>';
+    zu_debug('value->dsp_edit -> load source', $debug-18);
+    $src = $this->load_source($debug-1);
+    if (isset($src)) {
+      $result .= $src->dsp_select($script, $back, $debug-1);
+      $result .= '<br><br>';
+    }
+    
+    // display the share type
+    $result .= $this->dsp_share($script, $back, $debug-1);
+
+    // display the protection type
+    $result .= $this->dsp_protection($script, $back, $debug-1);
+    
+    $result .= '<br>';
     $result .= btn_back($back);
     
     // display the user changes 
+    zu_debug('value->dsp_edit -> user changes', $debug-18);
     if ($this->id > 0) { 
       $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back, $debug-1);
       if (trim($changes) <> "") {
@@ -1319,33 +1619,45 @@ class value {
   }
 
   // true if no other user has modified the value
-  private function not_changed($debug) {
+  function not_changed($debug) {
     zu_debug('value->not_changed id '.$this->id.' by someone else than the onwer ('.$this->owner_id.').', $debug-10);  
     $result = true;
     
     $change_user_id = 0;
     if ($this->owner_id > 0) {
-      $sql = "SELECT value_id 
+      $sql = "SELECT user_id 
                 FROM user_values 
                WHERE value_id = ".$this->id."
                  AND user_id <> ".$this->owner_id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     } else {
-      $sql = "SELECT value_id 
+      $sql = "SELECT user_id 
                 FROM user_values 
                WHERE value_id = ".$this->id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     }
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
-    $change_user_id = $db_con->get1($sql, $debug-5);  
+    $db_row = $db_con->get1($sql, $debug-5);  
+    $change_user_id = $db_row['user_id'];
     if ($change_user_id > 0) {
       $result = false;
     }
-    zu_debug('value->not_changed for '.$this->id.' is '.zu_dsp_bool($result).'.', $debug-10);  
+    zu_debug('value->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
     return $result;
   }
 
+  // search for the median (not average) value
+  function get_std($debug) {
+  }
+  
+  // this value object is defined as the standard value
+  function set_std($debug) {
+    // if a user has been using the standard value until now, just create a message, that the standard value has been changes and offer him to use the old standard value also in the future
+    // delete all user values that are matching the new standard
+    // save the new standard value in the database
+  }
+  
   // true if the loaded value is not user specific
   // todo: check the difference between is_std and can_change
   function is_std($debug) {
@@ -1360,7 +1672,7 @@ class value {
   
   // true if the user is the owner and noone else has changed the value
   function can_change($debug) {
-    zu_debug('value->can_change id '.$this->id.' by user '.$this->usr->name.'.', $debug-10);  
+    zu_debug('value->can_change id '.$this->id.' by user '.$this->usr->name, $debug-10);  
     $can_change = false;
     zu_debug('value->can_change id '.$this->id.' owner '.$this->owner_id.' = '.$this->usr->id.'?', $debug-14);  
     if ($this->owner_id == $this->usr->id OR $this->owner_id <= 0) {
@@ -1372,7 +1684,7 @@ class value {
   }
 
   // true if a record for a user specific configuration already exists in the database
-  private function has_usr_cfg($debug) {
+  function has_usr_cfg($debug) {
     $has_cfg = false;
     if ($this->usr_cfg_id > 0) {
       $has_cfg = true;
@@ -1381,17 +1693,21 @@ class value {
   }
 
   // create a database record to save a user specific value
-  private function add_usr_cfg($debug) {
+  function add_usr_cfg($debug) {
     $result = '';
 
     if (!$this->has_usr_cfg) {
-      zu_debug('value->add_usr_cfg for "'.$this->id.' und user '.$this->usr->name.'.', $debug-10);
+      zu_debug('value->add_usr_cfg for "'.$this->id.' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
-      $sql = "SELECT value_id FROM `user_values` WHERE value_id = ".$this->id." AND user_id = ".$this->usr->id.";";
+      $sql = 'SELECT user_id 
+                FROM user_values
+               WHERE value_id = '.$this->id.' 
+                 AND user_id = '.$this->usr->id.';';
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
-      $usr_db_id = $db_con->get1($sql, $debug-5);  
+      $db_row = $db_con->get1($sql, $debug-5);  
+      $usr_db_id = $db_row['user_id'];
       if ($usr_db_id <= 0) {
         // create an entry in the user sandbox
         $db_con->type = 'user_value';
@@ -1406,9 +1722,9 @@ class value {
 
   // check if the database record for the user specific settings can be removed 
   // exposed at the moment to user_display.php for consistency check, but this hsould not be needed
-  private function del_usr_cfg_if_not_needed($debug) {
+  function del_usr_cfg_if_not_needed($debug) {
     $result = '';
-    zu_debug('value->del_usr_cfg_if_not_needed pre check for "'.$this->id.' und user '.$this->usr->name.'.', $debug-12);
+    zu_debug('value->del_usr_cfg_if_not_needed pre check for "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
     // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
     $sql = "SELECT value_id,
@@ -1427,7 +1743,7 @@ class value {
       AND $usr_cfg['source_id']  == Null
       AND $usr_cfg['excluded'] == Null) {
         // delete the entry in the user sandbox
-        zu_debug('value->del_usr_cfg_if_not_needed any more for "'.$this->id.' und user '.$this->usr->name.'.', $debug-10);
+        zu_debug('value->del_usr_cfg_if_not_needed any more for "'.$this->id.' und user '.$this->usr->name, $debug-10);
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
     }  
@@ -1436,7 +1752,7 @@ class value {
   }
 
   // simply remove a user adjustment without check
-  private function del_usr_cfg_exe($db_con, $debug) {
+  function del_usr_cfg_exe($db_con, $debug) {
     $result = '';
 
     $db_con->type = 'user_value';         
@@ -1453,7 +1769,7 @@ class value {
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
-      zu_debug('value->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name.'.', $debug-12);
+      zu_debug('value->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
       $db_type = 'user_value';
       $log = $this->log_del($db_type, $debug-1);
@@ -1471,8 +1787,8 @@ class value {
   }
 
   // set the log entry parameter for a new value
-  private function log_add($debug) {
-    zu_debug('value->log_add "'.$this->number.'" for user '.$this->usr->id.'.', $debug-10);
+  function log_add($debug) {
+    zu_debug('value->log_add "'.$this->number.'" for user '.$this->usr->id, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -1487,8 +1803,8 @@ class value {
   }
   
   // set the log entry parameters for a value update
-  private function log_upd($db_number, $debug) {
-    zu_debug('value->log_upd "'.$this->number.'" for user '.$this->usr->id.'.', $debug-10);
+  function log_upd($db_number, $debug) {
+    zu_debug('value->log_upd "'.$this->number.'" for user '.$this->usr->id, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'update';
@@ -1502,8 +1818,8 @@ class value {
   }
   
   // set the log entry parameter to delete a value
-  private function log_del($db_type, $debug) {
-    zu_debug('value->log_del "'.$this->id.'" for user '.$this->usr->name.'.', $debug-10);
+  function log_del($db_type, $debug) {
+    zu_debug('value->log_del "'.$this->id.'" for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -1518,7 +1834,10 @@ class value {
   }
   
   // update the phrase links to the value based on the group and time for faster searching
-  private function upd_phr_links($debug) {
+  // e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lins to all phrases to the value are in the database 
+  //      to be able to search the value by a single phrase
+  // to do: make it user specific!
+  function upd_phr_links($debug) {
     zu_debug('value->upd_phr_links', $debug-10);
     $result = '';
     
@@ -1539,21 +1858,28 @@ class value {
       $db_ids[] = $grp_lnk_row[$field_name];
     }
 
-    zu_debug('value->upd_phr_links -> found '.implode(",",$db_ids).'.', $debug-12);
+    zu_debug('value->upd_phr_links -> links found in database '.implode(",",$db_ids), $debug-12);
     
     // add the time phrase to the target link list
     if (!isset($this->phr_lst)) { $this->load_phrases($debug-1); }
-    $phr_ids_used = $this->phr_lst->ids();
-    if ($this->time_id <> 0) {
-      if (!in_array($this->time_id, $phr_ids_used)) {
-        $phr_ids_used[] = $this->time_id;
+    if (!isset($this->phr_lst)) {
+      // zu_err('Cannot load phrases for group "'.$this->phr_grp_id.'".', "value->upd_phr_links", '', (new Exception)->getTraceAsString(), $this->usr);
+    } else {
+      $phr_ids_used = $this->phr_lst->ids();
+      if ($this->time_id <> 0) {
+        if (!in_array($this->time_id, $phr_ids_used)) {
+          $phr_ids_used[] = $this->time_id;
+        }
       }
     }
+    zu_debug('value->upd_phr_links -> phrases loaded based on value '.implode(",",$phr_ids_used), $debug-12);
     
     // get what needs added or removed
-    zu_debug('value->upd_phr_links -> should have phrase ids '.implode(",",$phr_ids_used).'.', $debug-12);
+    zu_debug('value->upd_phr_links -> should have phrase ids '.implode(",",$phr_ids_used), $debug-12);
     $add_ids = array_diff($phr_ids_used, $db_ids);
     $del_ids = array_diff($db_ids, $phr_ids_used);
+    zu_debug('value->upd_phr_links -> add ids '.implode(",",$add_ids), $debug-12);
+    zu_debug('value->upd_phr_links -> del ids '.implode(",",$del_ids), $debug-12);
     
     // add the missing links
     if (count($add_ids) > 0) {
@@ -1571,6 +1897,7 @@ class value {
           }
         }
       }
+      zu_debug('value->upd_phr_links -> add sql.', $debug-12);
       if ($sql <> '') { 
         $sql_result = $db_con->exe($sql, DBL_SYSLOG_ERROR, "value->upd_phr_links", (new Exception)->getTraceAsString(), $debug-5);
         if ($sql_result === False) {
@@ -1578,7 +1905,7 @@ class value {
         }
       }
     }  
-    zu_debug('value->upd_phr_links -> added links "'.implode(',',$add_ids).'" lead to '.implode(",",$db_ids).'.', $debug-14);
+    zu_debug('value->upd_phr_links -> added links "'.implode(',',$add_ids).'" lead to '.implode(",",$db_ids), $debug-14);
     
     // remove the links not needed any more
     if (count($del_ids) > 0) {
@@ -1592,15 +1919,16 @@ class value {
         $result .= 'Error removing group links "'.implode(',',$del_ids).'" from '.$this->id.'.';
       }
     }  
-    zu_debug('value->upd_phr_links -> deleted links "'.implode(',',$del_ids).'" lead to '.implode(",",$db_ids).'.', $debug-14);
+    zu_debug('value->upd_phr_links -> deleted links "'.implode(',',$del_ids).'" lead to '.implode(",",$db_ids), $debug-14);
     
+    zu_debug('value->upd_phr_links -> done.', $debug-12);
     return $result;    
   }
   
   /*
   // set the parameter for the log entry to link a word to value
-  private function log_add_link($wrd_id, $debug) {
-    zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id.'.', $debug-10);
+  function log_add_link($wrd_id, $debug) {
+    zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id, $debug-10);
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -1615,8 +1943,8 @@ class value {
   }
   
   // set the parameter for the log entry to unlink a word to value
-  private function log_del_link($wrd_id, $debug) {
-    zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id.'.', $debug-10);
+  function log_del_link($wrd_id, $debug) {
+    zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id, $debug-10);
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -1657,7 +1985,7 @@ class value {
 
   // unlink a phrase from the value
   function del_wrd($wrd, $debug) {
-    zu_debug('value->del_wrd from id '.$this->id.' the phrase "'.$wrd->name.'" by user '.$this->usr->name.'.', $debug-10);   
+    zu_debug('value->del_wrd from id '.$this->id.' the phrase "'.$wrd->name.'" by user '.$this->usr->name, $debug-10);   
     $result = '';
 
     if ($this->can_change($debug-1)) {
@@ -1679,7 +2007,7 @@ class value {
   */
 
   // actually update a value field in the main database record or the user sandbox
-  private function save_field_do($db_con, $log, $debug) {
+  function save_field_do($db_con, $log, $debug) {
     $result = '';
     if ($log->new_id > 0) {
       $new_value = $log->new_id;
@@ -1710,7 +2038,7 @@ class value {
   }
   
   // update the time stamp to trigger an update of the depending results
-  private function save_field_trigger_update($db_con, $debug) {
+  function save_field_trigger_update($db_con, $debug) {
     $this->last_update = new DateTime(); 
     $result .= $db_con->update($this->id, 'last_update', 'Now()', $debug-1);
     zu_debug('value->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'".', $debug-18);
@@ -1730,7 +2058,7 @@ class value {
   }
   
   // set the update parameters for the number
-  private function save_field_number($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_number($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->number <> $this->number) {
       $log = $this->log_upd($debug-1);
@@ -1748,7 +2076,7 @@ class value {
   }
   
   // set the update parameters for the source link
-  private function save_field_source($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_source($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->source_id <> $this->source_id) {
       $log = $this->log_upd($debug-1);
@@ -1766,7 +2094,7 @@ class value {
   }
 
   // set the update parameters for the value excluded
-  private function save_field_excluded($db_con, $db_rec, $std_rec, $debug) {
+  function save_field_excluded($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->excluded <> $this->excluded) {
       if ($this->excluded == 1) {
@@ -1798,18 +2126,20 @@ class value {
   }
   
   // save the value number and the source
-  private function save_fields($db_con, $db_rec, $std_rec, $debug) {
+  function save_fields($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
-    $result .= $this->save_field_number   ($db_con, $db_rec, $std_rec, $debug-1);
-    $result .= $this->save_field_source   ($db_con, $db_rec, $std_rec, $debug-1);
-    $result .= $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-1);
+    $result .= $this->save_field_number     ($db_con, $db_rec, $std_rec, $debug-1);
+    $result .= $this->save_field_source     ($db_con, $db_rec, $std_rec, $debug-1);
+    $result .= $this->save_field_share      ($db_con, $db_rec, $std_rec, $debug-1);
+    $result .= $this->save_field_protection ($db_con, $db_rec, $std_rec, $debug-1);
+    $result .= $this->save_field_excluded   ($db_con, $db_rec, $std_rec, $debug-1);
     zu_debug('value->save_fields all fields for "'.$this->id.'" has been saved.', $debug-12);
     return $result;
   }
     
   // updated the view component name (which is the id field)
   // should only be called if the user is the owner and nobody has used the display component link
-  private function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
+  function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
     zu_debug('value->save_id_fields.', $debug-18);
     $result = '';
 
@@ -1819,7 +2149,7 @@ class value {
     $std_rec->load_phrases($debug-1);
       
     if ($db_rec->grp_id <> $this->grp_id) {
-      zu_debug('value->save_id_fields to "'.$this->dsp_id().'" from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
       
       $log = $this->log_upd($debug-1);
       if (isset($db_rec->grp))  { $log->old_value = $db_rec->grp->name($debug-1); }
@@ -1835,10 +2165,10 @@ class value {
                                               array($this->grp_id), $debug-1);
       }
     }
-    zu_debug('value->save_id_fields group updated for '.$this->dsp_id().'.', $debug-12);
+    zu_debug('value->save_id_fields group updated for '.$this->dsp_id(), $debug-12);
     
     if ($db_rec->time_id <> $this->time_id) {
-      zu_debug('value->save_id_fields to "'.$this->dsp_id().'" from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->time_phr->name($debug-1);
       $log->old_id    = $db_rec->time_id;
@@ -1853,7 +2183,7 @@ class value {
                                               array($this->time_id), $debug-1);
       }
     }
-    zu_debug('value->save_id_fields time updated for '.$this->dsp_id().'.', $debug-12);
+    zu_debug('value->save_id_fields time updated for '.$this->dsp_id(), $debug-12);
     
     // update the phrase links for fast searching
     $result .=$this->upd_phr_links($debug-1);
@@ -1861,7 +2191,7 @@ class value {
     // not yet active
     /*
     if ($db_rec->time_stamp <> $this->time_stamp) {
-      zu_debug('value->save_id_fields to "'.$this->dsp_id().'" from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->time_stamp;
       $log->new_value = $this->time_stamp;
@@ -1874,13 +2204,13 @@ class value {
       }
     }
     */
-    zu_debug('value->save_id_fields time updated for '.$this->dsp_id().'.', $debug-12);
+    zu_debug('value->save_id_fields time updated for '.$this->dsp_id(), $debug-12);
     
     return $result;
   }
   
   // check if the id parameters are supposed to be changed 
-  private function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
+  function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
     zu_debug('value->save_id_if_updated has name changed from "'.$db_rec->dsp_id($debug-1).'" to "'.$this->dsp_id($debug-1).'".', $debug-14);
     $result = '';
     
@@ -1898,13 +2228,13 @@ class value {
         // if the target value is already in the database combine the user changes with this values
         $this->id = $chk_val->id;
         $result .= $this->save($debug-1);
-        zu_debug('value->save_id_if_updated update the existing '.$chk_val->dsp_id().'.', $debug-14);
+        zu_debug('value->save_id_if_updated update the existing '.$chk_val->dsp_id(), $debug-14);
       } else {
         
-        zu_debug('value->save_id_if_updated target value name does not yet exists for '.$this->dsp_id().'.', $debug-14);
+        zu_debug('value->save_id_if_updated target value name does not yet exists for '.$this->dsp_id(), $debug-14);
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('value->save_id_if_updated change the existing display component link "'.$this->dsp_id().'" (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('value->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-1);
         } else {
@@ -1918,20 +2248,20 @@ class value {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('value->save_id_if_updated recreate the value "'.$db_rec->dsp_id().'" as "'.$this->dsp_id().'" (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('value->save_id_if_updated recreate the value "'.$db_rec->dsp_id().'" as '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
         }
       }
     } else {
       zu_debug('value->save_id_if_updated no id field updated (group '.$db_rec->grp_id.'='.$this->grp_id.', time '.$db_rec->time_id.'='.$this->time_id.').', $debug-14);
     }
 
-    zu_debug('value->save_id_if_updated for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('value->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
   // create a new value
-  private function add($db_con, $debug) {
-    zu_debug('value->add the value "'.$this->name.'".', $debug-12);
+  function add($db_con, $debug) {
+    zu_debug('value->add the value '.$this->dsp_id(), $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -1966,7 +2296,7 @@ class value {
   
   // insert or update a number in the database or save a user specific number
   function save($debug) {
-    zu_debug('value->save "'.$this->number.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
     $result = "";
     
     // build the database object because the is anyway needed
@@ -2002,7 +2332,7 @@ class value {
 
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('value->save update id '.$this->id.' to save "'.$this->number.'" for user '.$this->usr->id.'.', $debug-10);
+      zu_debug('value->save update id '.$this->id.' to save "'.$this->number.'" for user '.$this->usr->id, $debug-10);
       // update a value
       // todo: if noone else has ever changed the value, change to default value, else create a user overwrite
 
@@ -2015,6 +2345,7 @@ class value {
       zu_debug("value->save -> old database value loaded (".$db_rec->number.") with group ".$db_rec->grp_id.".", $debug-10);
       $std_rec = New value;
       $std_rec->id = $this->id;
+      $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-1);
       zu_debug("value->save -> standard value settings loaded (".$std_rec->number.")", $debug-14);
 
@@ -2041,7 +2372,7 @@ class value {
 
       
   // delete the complete value (the calling function del must have checked that no one uses this value)
-  private function del_exe($debug) {
+  function del_exe($debug) {
     zu_debug('value->del_exe.', $debug-16);
     $result = '';
 
@@ -2060,13 +2391,14 @@ class value {
     return $result;    
   }
   
+  /*
   // exclude or delete a value
   function del($debug) {
     zu_debug('value->del.', $debug-16);
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
-      zu_debug('value->del id '.$this->id.'.', $debug-14);
+      zu_debug('value->del id '.$this->id, $debug-14);
       if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
         $result .= $this->del_exe($debug-1);
       } else {
@@ -2076,7 +2408,7 @@ class value {
     }
     return $result;    
   }
-  
+  */
   
 }
 

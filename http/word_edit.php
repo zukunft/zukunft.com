@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -95,7 +95,7 @@ $link = zu_start("word_edit", "", $debug);
       // if nothing yet done display the edit view (and any message on the top)
       if ($result == '')  {
         // show the header
-        $result .= $dsp->top_right($wrd, $debug-1);
+        $result .= $dsp->dsp_navbar($back, $debug-1);
         $result .= dsp_err($msg);
 
         // show the word and its relations, so that the user can change it

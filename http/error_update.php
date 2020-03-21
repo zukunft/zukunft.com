@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ $link = zu_start("error_update", "", $debug);
     $dsp = new view_dsp;
     $dsp->usr = $usr;
     $dsp->id = cl(SQL_VIEW_ERR_UPD);
-    $result .= $dsp->top_right($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back, $debug-1);
     
     if ($usr->id > 0 AND $usr->profile_id == cl(SQL_USER_ADMIN)) {
       // update the error if requested
@@ -64,6 +64,8 @@ $link = zu_start("error_update", "", $debug);
       $err_lst = New system_error_log_list;
       $err_lst->usr      = $usr;
       $err_lst->dsp_type = "all";
+      $err_lst->page     = 1;
+      $err_lst->size     = 20;
       $err_lst->back     = $back;
       $errors_all .= $err_lst->display($debug-1);
       //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back, $debug-1);

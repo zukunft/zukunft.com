@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -40,7 +40,7 @@ class word_link {
   public $usr         = NULL; // the user object of the person for whom the triple is loaded, so to say the viewer
   public $owner_id    = NULL; // the user id of the person who created the link, so if another user wants to change it, a user specific record is created
   public $from_id     = NULL; // the id of the first phrase (a positive id is a word and a negative a triple)
-  public $verb_id     = NULL; // the id of the link_type
+  public $verb_id     = NULL; // the id of the link_type (negative of only the reverse link is valid)
   public $to_id       = NULL; // the id of the second phrase (a positive id is a word and a negative a triple)
   public $description = '';   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company)
                               // if the description is empty the generic created name is used
@@ -74,19 +74,19 @@ class word_link {
   // e.g. "Cask Flow Statement" "contains" "Taxes" instead of "Taxes" "is part of" "Cask Flow Statement"
   private function check_order($debug) {
     if ($this->verb_id <  0 ) {
-      $from            = $this->from;
-      $from_id         = $this->from_id;
-      $from_name       = $this->from_name;
-      $this->to        = $this->from;
-      $this->to_id     = $this->from_id;
-      $this->to_name   = $this->from_name;
-      $this->verb_id   = $this->verb_id * - 1;
+      $to            = $this->to;
+      $to_id         = $this->to_id;
+      $to_name       = $this->to_name;
+      $this->to      = $this->from;
+      $this->to_id   = $this->from_id;
+      $this->to_name = $this->from_name;
+      $this->verb_id = $this->verb_id * - 1;
       if (isset($this->verb)) {
         $this->verb_name = $this->verb->reverse;
       }
-      $this->from      = $this->to;
-      $this->from_id   = $this->to_id;
-      $this->from_name = $this->to_name;
+      $this->from      = $to;
+      $this->from_id   = $to_id;
+      $this->from_name = $to_name;
       zu_debug('word_link->check_order -> reversed.', $debug-9);
     }
   }
@@ -94,7 +94,7 @@ class word_link {
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
   // similar to term->load, but with adiffrent use of verbs
   function load_objects($debug) {
-    zu_debug('word_link->load_objects.', $debug-7);
+    zu_debug('word_link->load_objects.'.$this->from_id.' '.$this->verb_id.' '.$this->to_id.'', $debug-7);
     
     // after every load call from outside the class the order should be check and reversed if needen
     $this->check_order($debug-1);
@@ -125,7 +125,7 @@ class word_link {
         $phr->usr = $this->usr;
         $this->from = $phr;
       }
-      zu_debug('word_link->load_objects -> from '.$this->from_name.'.', $debug-7);
+      zu_debug('word_link->load_objects -> from '.$this->from_name, $debug-7);
     } else {
       if (!isset($this->from)) {
         zu_err("The word (".$this->from_id.") must be set before it can be loaded.", "word_link->load_objects", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -140,7 +140,7 @@ class word_link {
       $vrb->load($debug-1);
       $this->verb = $vrb;
       $this->verb_name = $vrb->name;
-      zu_debug('word_link->load_objects -> verb '.$this->verb_name.'.', $debug-7);
+      zu_debug('word_link->load_objects -> verb '.$this->verb_name, $debug-7);
     } else {
       if (!isset($this->verb)) {
         zu_err("The verb (".$this->verb_id.") must be set before it can be loaded.", "word_link->load_objects", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -150,13 +150,13 @@ class word_link {
     // load word to
     if (!isset($this->to) AND $this->to_id <> 0 AND !is_null($this->usr->id)) {
       if ($this->to_id > 0) {
-        $wrd = new word_dsp;
-        $wrd->id  = $this->to_id;
-        $wrd->usr = $this->usr;
-        $wrd->load($debug-1);
-        if ($wrd->name <> '') {
-          $this->to = $wrd;
-          $this->to_name = $wrd->name;
+        $wrd_to = new word_dsp;
+        $wrd_to->id  = $this->to_id;
+        $wrd_to->usr = $this->usr;
+        $wrd_to->load($debug-1);
+        if ($wrd_to->name <> '') {
+          $this->to = $wrd_to;
+          $this->to_name = $wrd_to->name;
         }
       } elseif ($this->to_id < 0) {
         $lnk = New word_link;
@@ -169,11 +169,11 @@ class word_link {
         }
       } else {
         // if type is not (yet) set, create a dummy object to enable the selection
-        $phr = New phrase;
-        $phr->usr = $this->usr;
-        $this->to = $phr;
+        $phr_to = New phrase;
+        $phr_to->usr = $this->usr;
+        $this->to = $phr_to;
       }
-      zu_debug('word_link->load_objects -> to '.$this->to_name.'.', $debug-7);
+      zu_debug('word_link->load_objects -> to '.$this->to_name, $debug-7);
     } else {
       if (!isset($this->to)) {
         if ($this->to_id == 0) {
@@ -244,13 +244,16 @@ class word_link {
           $usr->load_test_user($debug-1);
           $this->usr = $usr; 
         } else {
+          // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
+          $sql_set = "UPDATE word_links SET user_id = ".$this->usr->id." WHERE word_link_id = ".$this->id.";";
+          $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "word_link->load_standard", (new Exception)->getTraceAsString(), $debug-10);
           //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
         }
 
         // automatically update the generic name
         $this->load_objects($debug-1);  
         $new_name = $this->name($debug-1);
-        zu_debug('word_link->load_standard check if name "'.$this->name.'" needs to be updated to "'.$new_name.'".', $debug-10);
+        zu_debug('word_link->load_standard check if name '.$this->dsp_id().' needs to be updated to "'.$new_name.'".', $debug-10);
         if ($new_name <> $this->name) {
           $db_con->type = 'word_link';         
           $db_con->update($this->id, 'name', $new_name, $debug-1); 
@@ -263,6 +266,8 @@ class word_link {
   
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
   function load($debug) {
+    zu_debug('word_link->load.'.$this->from_id.' '.$this->verb_id.' '.$this->to_id.'', $debug-7);
+
     // after every load call from outside the class the order should be check and reversed if needen
     $this->check_order($debug-1);
     
@@ -338,7 +343,7 @@ class word_link {
         // automatically update the generic name
         $this->load_objects($debug-1);  
         $new_name = $this->name($debug-1);
-        zu_debug('word_link->load check if name "'.$this->name.'" needs to be updated to "'.$new_name.'".', $debug-10);
+        zu_debug('word_link->load check if name '.$this->dsp_id().' needs to be updated to "'.$new_name.'".', $debug-10);
         if ($new_name <> $this->name) {
           $db_con->type = 'word_link';         
           $db_con->update($this->id, 'name', $new_name, $debug-1); 
@@ -351,7 +356,7 @@ class word_link {
       
   // recursive function to include the foaf words for this triple
   function wrd_lst ($debug) {
-    zu_debug('word_link->wrd_lst.', $debug-7);
+    zu_debug('word_link->wrd_lst '.$this->dsp_id(), $debug-10);
     $wrd_lst = New word_list;
     $wrd_lst->usr = $this->usr;    
 
@@ -365,7 +370,7 @@ class word_link {
           $wrd_lst->add($wrd, $debug-1);
         }
       } else {
-        // should never happen
+        zu_err('The from phrase '.$this->from->dsp_id().' should not have the id 0','word_link->wrd_lst', '', (new Exception)->getTraceAsString(), $this->usr); 
       }
     }
 
@@ -379,7 +384,7 @@ class word_link {
           $wrd_lst->add($wrd, $debug-1);
         }
       } else {
-        // should never happen
+        zu_err('The to phrase '.$this->to->dsp_id().' should not have the id 0','word_link->wrd_lst', '', (new Exception)->getTraceAsString(), $this->usr); 
       }
     }
     
@@ -388,6 +393,111 @@ class word_link {
   }
   
       
+  // create an object for the export
+  function export_obj ($debug) {
+    zu_debug('word_link->export_obj', $debug-10);
+    $result = Null;
+
+    if ($this->name <> '')        { $result->name        = $this->name;        }
+    if ($this->description <> '') { $result->description = $this->description; }
+    $result->from = $this->from_name;
+    $result->verb = $this->link_type->name;
+    $result->to   = $this->to_name;
+
+    zu_debug('word_link->export_obj -> '.json_encode($result), $debug-18);
+    return $result;
+  }
+  
+  // import a view from an object
+  function import_obj ($json_obj, $debug) {
+    zu_debug('word_link->import_obj', $debug-10);
+    $result = '';
+    
+    foreach ($json_obj AS $key => $value) {
+      if ($key == 'name')        { $this->name        = $value; }
+      if ($key == 'description') { $this->description = $value; }
+      if ($key == 'from')        {
+        $phr_from = New phrase;
+        $phr_from->name = $value;
+        $phr_from->usr  = $this->usr;
+        $phr_from->load($debug-1);
+        if ($phr_from->id == 0) {
+          $wrd = New word;
+          $wrd->name = $value;
+          $wrd->usr  = $this->usr;
+          $wrd->load($debug-1);
+          if ($wrd->id == 0) {
+            $wrd->name = $value;
+            $wrd->type_id = cl(SQL_WORD_TYPE_NORMAL);
+            $wrd->save($debug-1);
+          }
+          if ($wrd->id == 0) {
+            zu_err('Cannot add from word "'.$value.'" when importing '.$this->dsp_id(), 'word_link->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+          } else {
+            $this->from      = $wrd; 
+            $this->from_id   = $wrd->id; 
+            $this->from_name = $wrd->name; 
+          }
+        } else {         
+          $this->from      = $phr_from; 
+          $this->from_id   = $phr_from->id; 
+          $this->from_name = $phr_from->name; 
+        }  
+      }
+      if ($key == 'to')          {
+        $phr_to = New phrase;
+        $phr_to->name = $value;
+        $phr_to->usr  = $this->usr;
+        $phr_to->load($debug-1);
+        if ($phr_to->id == 0) {
+          $wrd = New word;
+          $wrd->name = $value;
+          $wrd->usr  = $this->usr;
+          $wrd->load($debug-1);
+          if ($wrd->id == 0) {
+            $wrd->name = $value;
+            $wrd->type_id = cl(SQL_WORD_TYPE_NORMAL);
+            $wrd->save($debug-1);
+          }
+          if ($wrd->id == 0) {
+            zu_err('Cannot add to word "'.$value.'" when importing '.$this->dsp_id(), 'word_link->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+          } else {
+            $this->to      = $wrd; 
+            $this->to_id   = $wrd->id; 
+            $this->to_name = $wrd->name; 
+          }
+        } else {         
+          $this->to      = $phr_to; 
+          $this->to_id   = $phr_to->id; 
+          $this->to_name = $phr_to->name; 
+        }  
+      }
+      if ($key == 'verb') { 
+        $vrb = New verb;
+        $vrb->name   = $value;
+        $vrb->usr_id = $this->usr->id;
+        $vrb->load($debug-1);
+        if ($vrb->id <= 0) {
+            // TODO add an error message
+          $result .= ' verb "'.$value.'" not found';
+          if ($this->name <> '') { $result .= ' for triple "'.$this->name.'"'; }
+        } else {         
+          $this->verb      = $vrb; 
+          $this->verb_id   = $vrb->id; 
+          $this->verb_name = $vrb->name; 
+        }  
+      }
+    }
+    if ($result == '') {
+      $this->save($debug-1);
+      zu_debug('word_link->import_obj -> '.$this->dsp_id(), $debug-18);
+    } else {
+      zu_debug('word_link->import_obj -> '.$result, $debug-18);
+    }
+
+    return $result;
+  }
+  
   /*
   
   display functions
@@ -403,15 +513,15 @@ class word_link {
       // use the user defined description
       if ($this->description <> '') {
         $result = $this->description;
-        zu_debug('word_link->name using description '.$result.'.', $debug-17);
+        zu_debug('word_link->name using description '.$result, $debug-17);
       // or use special verb based generic description
       } elseif ($this->verb_id == cl(SQL_LINK_TYPE_IS)) {
         $result = $this->from_name.' ('.$this->to_name.')';
-        zu_debug('word_link->name is '.$result.'.', $debug-17);
+        zu_debug('word_link->name is '.$result, $debug-17);
       // or use the standard generic description
       } else {
         $result = $this->from_name.' '.$this->verb_name.' '.$this->to_name;
-        zu_debug('word_link->name using combination '.$result.'.', $debug-17);
+        zu_debug('word_link->name using combination '.$result, $debug-17);
       }
     }
     
@@ -476,7 +586,7 @@ class word_link {
       $result .= ' -> '.$this->id.')';
     }  
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
   }
@@ -507,15 +617,16 @@ class word_link {
     //$result .= 'Create a combined word (semantic triple):<br>';
     $result .= '<br>Define a new relation for <br><br>';
     $result .= '<b>'.$this->from_name.'</b> ';
-    $result .= '<form action="'.$form_name.'.php" id="'.$form_name.'">';
-    $result .= '  <input type="hidden" name="confirm" value="1">';
-    $result .= '  <input type="hidden" name="back" value="'.$back.'">';
-    $result .= '  <input type="hidden" name="from" value="'.$this->from_id.'">';
-    if (isset($this->verb)) { $result .= $this->verb->dsp_selector('both', $form_name, $back, $debug-1);  }
-    if (isset($this->to))   { $result .= $this->to->dsp_selector(0, $form_name, 0, $back, $debug-1); }
-    $result .= '  <br><br>';
-    $result .= '  <input type="submit">';
-    $result .= '</form>';
+    $result .= dsp_form_start($form_name);
+    $result .= dsp_form_hidden ("back", $back);
+    $result .= dsp_form_hidden ("confirm", '1');
+    $result .= dsp_form_hidden ("from", $this->from_id);
+    $result .= '<div class="form-row">';
+    if (isset($this->verb)) { $result .= $this->verb->dsp_selector('both', $form_name,    "col-sm-6", $back, $debug-1); }
+    if (isset($this->to))   { $result .= $this->to->dsp_selector  (0,      $form_name, 0, "col-sm-6", $back, $debug-1); }
+    $result .= '</div>';
+    $result .= '<br>';
+    $result .= dsp_form_end('', $back);
 
     return $result;
   }
@@ -535,19 +646,15 @@ class word_link {
       $form_name = 'link_edit';
       $result .= dsp_text_h2('Change "'.$this->from_name.' '.$this->verb_name.' '.$this->to_name.'" to ');
       $result .= dsp_form_start($form_name);
-      $result .= '  <input type="hidden" name="id" value="'.$this->id.'">';
-      $result .= '  <input type="hidden" name="back" value="'.$back.'">';
-      $result .= '  <input type="hidden" name="confirm" value="1">';
-      zu_debug("word_link->dsp_edit id ".$this->id." show from.", $debug-10);
-      if (isset($this->from))   { $result .= $this->from->dsp_selector(0, $form_name, 1, $back, $debug-1); }
-      $result .= '<br>';
-      zu_debug("word_link->dsp_edit id ".$this->id." show verb.", $debug-10);
-      if (isset($this->verb)) { $result .= $this->verb->dsp_selector('forward', $form_name, $back, $debug-1);  }
-      $result .= '<br>';
-      zu_debug("word_link->dsp_edit id ".$this->id." show to.", $debug-10);
-      if (isset($this->to))   { $result .= $this->to->dsp_selector(0, $form_name, 2, $back, $debug-1); }
-      $result .= '<br><br>';
-      $result .= dsp_form_end();
+      $result .= dsp_form_hidden ("back", $back);
+      $result .= dsp_form_hidden ("confirm", '1');
+      $result .= dsp_form_hidden ("id", $this->id);
+      $result .= '<div class="form-row">';
+      if (isset($this->from)) { $result .= $this->from->dsp_selector(0,         $form_name, 1, "col-sm-4", $back, $debug-1); }
+      if (isset($this->verb)) { $result .= $this->verb->dsp_selector('forward', $form_name,    "col-sm-4", $back, $debug-1); }
+      if (isset($this->to))   { $result .= $this->to->dsp_selector  (0,         $form_name, 2, "col-sm-4", $back, $debug-1); }
+      $result .= '</div>';
+      $result .= dsp_form_end('', $back);
       $result .= '<br>';
     }
 
@@ -604,7 +711,7 @@ class word_link {
     $phr->id   = $this->id;
     $phr->name = $this->name;
     $phr->obj  = $this;
-    zu_debug('word_link->phrase of '.$this->name.'.', $debug-12);
+    zu_debug('word_link->phrase of '.$this->dsp_id(), $debug-12);
     return $phr;
   }
 
@@ -634,12 +741,12 @@ class word_link {
                 FROM user_word_links 
                WHERE word_link_id = ".$this->id."
                  AND user_id <> ".$this->owner_id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     } else {
       $sql = "SELECT user_id 
                 FROM user_word_links 
                WHERE word_link_id = ".$this->id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     }
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
@@ -647,14 +754,14 @@ class word_link {
     if ($db_row['user_id'] > 0) {
       $result = false;
     }
-    zu_debug('word_link->not_changed for '.$this->id.' is '.zu_dsp_bool($result).'.', $debug-10);  
+    zu_debug('word_link->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
     return $result;
   }
 
   // true if the user is the owner and noone else has changed the word_link
   // because if another user has changed the word_link and the original value is changed, maybe the user word_link also needs to be updated
   private function can_change($debug) {
-    zu_debug('word_link->can_change "'.$this->dsp_id().'" by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.').', $debug-12);  
+    zu_debug('word_link->can_change '.$this->dsp_id().' by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.').', $debug-12);  
     $can_change = false;
     if ($this->owner_id == $this->usr->id OR $this->owner_id <= 0) {
       $can_change = true;
@@ -706,7 +813,7 @@ class word_link {
   // check if the database record for the user specific settings can be removed
   private function del_usr_cfg_if_not_needed($debug) {
     $result = '';
-    zu_debug('word_link->del_usr_cfg_if_not_needed pre check for "'.$this->name.' und user '.$this->usr->name.'.', $debug-12);
+    zu_debug('word_link->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
 
     //if ($this->has_usr_cfg) {
 
@@ -721,13 +828,13 @@ class word_link {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('word_link->del_usr_cfg_if_not_needed check for "'.$this->name.' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('word_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
       if ($usr_cfg['word_link_id'] > 0) {
         if ($usr_cfg['name']         == Null
         AND $usr_cfg['description']  == Null
         AND $usr_cfg['excluded']     == Null) {
           // delete the entry in the user sandbox
-          zu_debug('word_link->del_usr_cfg_if_not_needed any more for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+          zu_debug('word_link->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
           $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
         }  
       }  
@@ -753,7 +860,7 @@ class word_link {
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
-      zu_debug('word_link->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name.'.', $debug-12);
+      zu_debug('word_link->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
       $db_type = 'user_word_link';
       $log = $this->log_del($debug-1);
@@ -773,7 +880,7 @@ class word_link {
   // set the log entry parameter for a new value
   // e.g. that the user can see "added ABB is a Company"
   private function log_add($debug) {
-    zu_debug('word_link->log_add for "'.$this->name.'" by user "'.$this->usr->name.'".', $debug-10);  
+    zu_debug('word_link->log_add for '.$this->dsp_id().' by user "'.$this->usr->name.'".', $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -804,7 +911,7 @@ class word_link {
   // set the log entry parameter to delete a triple
   // e.g. that the user can see "ABB is a Company not any more"
   private function log_del($debug) {
-    zu_debug('word_link->log_del for "'.$this->name.'" by user "'.$this->usr->name.'".', $debug-10);  
+    zu_debug('word_link->log_del for '.$this->dsp_id().' by user "'.$this->usr->name.'".', $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -936,7 +1043,7 @@ class word_link {
     $result .= $this->save_field_description ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded    ($db_con, $db_rec, $std_rec, $debug-1);
     //$result .= $this->save_field_type     ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('word_link->save_fields all fields for "'.$this->name.'" has been saved.', $debug-12);
+    zu_debug('word_link->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
     return $result;
   }
   
@@ -965,7 +1072,7 @@ class word_link {
                                               array($this->from->id,$this->verb->id, $this->to->id), $debug-1);
       }
     }
-    zu_debug('word_link->save_id_fields for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('word_link->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
@@ -978,7 +1085,7 @@ class word_link {
      OR $db_rec->to_id   <> $this->to_id) {
       $this->reset_objects($debug-1);
       // check if target link already exists
-      zu_debug('word_link->save_id_if_updated check if target link already exists "'.$this->dsp_id().'" (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('word_link->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
@@ -993,11 +1100,11 @@ class word_link {
         $this->excluded = Null;
         $db_rec->excluded = '1';
         $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
-        zu_debug('word_link->save_id_if_updated found a triple with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add "'.$this->dsp_id().'".', $debug-14);
+        zu_debug('word_link->save_id_if_updated found a triple with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add '.$this->dsp_id(), $debug-14);
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('word_link->save_id_if_updated change the existing triple "'.$this->dsp_id().'" (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('word_link->save_id_if_updated change the existing triple '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
           $this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -1011,12 +1118,12 @@ class word_link {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('word_link->save_id_if_updated recreate the triple del "'.$db_rec->dsp_id().'" add "'.$this->dsp_id().'" (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('word_link->save_id_if_updated recreate the triple del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
         }
       }
     }  
 
-    zu_debug('word_link->save_id_if_updated for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('word_link->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
@@ -1055,8 +1162,8 @@ class word_link {
   
   // update a triple in the database or create a user triple
   function save($debug) {
-    zu_debug('word_link->save "'.$this->description.'" for user '.$this->usr->id.'.', $debug-10);
-    $result = "";
+    zu_debug('word_link->save "'.$this->description.'" for user '.$this->usr->id, $debug-10);
+    $result = '';
 
     // build the database object because the is anyway needed
     $db_con = new mysql;         
@@ -1070,14 +1177,14 @@ class word_link {
     if ($this->id <= 0) {
       zu_debug('word_link->save check if a new word_link for "'.$this->from->name.'" and "'.$this->to->name.'" needs to be created.', $debug-12);
       // check if the same triple is already in the database
-      $db_chk = clone $this;
-      $db_chk->from    = $this->to;
-      $db_chk->from_id = $this->to_id;
-      $db_chk->to      = $this->from;
-      $db_chk->to_id   = $this->from_id;
-      $db_chk->load_standard($debug-1);
-      if ($db_chk->id > 0) {
-        $this->id = $db_chk->id;
+      $db_chk_rev = clone $this;
+      $db_chk_rev->from    = $this->to;
+      $db_chk_rev->from_id = $this->to_id;
+      $db_chk_rev->to      = $this->from;
+      $db_chk_rev->to_id   = $this->from_id;
+      $db_chk_rev->load_standard($debug-1);
+      if ($db_chk_rev->id > 0) {
+        $this->id = $db_chk_rev->id;
         $result .= dsp_err('The reverse of "'.$this->from->name.' '.$this->verb->name.' '.$this->to->name.'" already exists. Do you really want to create both sides?');
       }
     }  
@@ -1109,6 +1216,7 @@ class word_link {
         zu_debug('word_link->save -> database triple "'.$db_rec->name.'" ('.$db_rec->id.') loaded.', $debug-14);
         $std_rec = New word_link;
         $std_rec->id = $this->id;
+        $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
         $std_rec->load_standard($debug-1);
         zu_debug('word_link->save -> standard triple settings for "'.$std_rec->name.'" ('.$std_rec->id.') loaded.', $debug-14);
         
@@ -1157,7 +1265,7 @@ class word_link {
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
-      zu_debug('word_link->del "'.$this->name.'".', $debug-14);
+      zu_debug('word_link->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
         $result .= $this->del_exe($debug-1);
       } else {

@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -50,7 +50,8 @@ class phrase {
   
   //  load either a word or triple
   function load ($debug) {
-    zu_debug('phrase->load '.$this->dsp_id().'.', $debug-10);
+    zu_debug('phrase->load '.$this->dsp_id(), $debug-10);
+    $result = '';
     if ($this->id < 0) {
       $lnk = New word_link;
       $lnk->id  = $this->id * -1;
@@ -58,7 +59,7 @@ class phrase {
       $lnk->load($debug-1);
       $this->obj  = $lnk;
       $this->name = $lnk->name; // is this really useful? better save exetime and have longer code using ->obj->name
-      zu_debug('phrase->loaded triple '.$this->dsp_id().'.', $debug-14);
+      zu_debug('phrase->loaded triple '.$this->dsp_id(), $debug-14);
     } elseif ($this->id > 0) {
       $wrd = New word_dsp;
       $wrd->id  = $this->id;
@@ -66,7 +67,7 @@ class phrase {
       $wrd->load($debug-1);
       $this->obj  = $wrd;
       $this->name = $wrd->name;
-      zu_debug('phrase->loaded word '.$this->dsp_id().'.', $debug-14);
+      zu_debug('phrase->loaded word '.$this->dsp_id(), $debug-14);
     } elseif ($this->name <> '') {
       // add to load word link
       $trm = New term;
@@ -89,19 +90,20 @@ class phrase {
         }
       } else {
         if ($this->type == '') {
-          zu_err('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          // TODO check that this is never used for an error detection
+          //zu_err('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         } else {  
           zu_err('"'.$this->name.'" has the type '.$this->type.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         }
       }
     }
-    zu_debug('phrase->load done '.$this->dsp_id().'.', $debug-14);
-    return $this;
+    zu_debug('phrase->load done '.$this->dsp_id(), $debug-14);
+    return $result;
   }
   
   // 
   function main_word ($debug) {
-    zu_debug('phrase->main_word '.$this->dsp_id().'.', $debug-10);
+    zu_debug('phrase->main_word '.$this->dsp_id(), $debug-10);
     $result = Null;
 
     if ($this->id == 0 OR $this->name == '') {
@@ -116,18 +118,18 @@ class phrase {
     } else {
       zu_err('"'.$this->name.'" has the type '.$this->type.' which is not expected for a phrase.', "phrase->main_word", '', (new Exception)->getTraceAsString(), $this->usr);
     }
-    zu_debug('phrase->main_word done '.$result->dsp_id().'.', $debug-14);
+    zu_debug('phrase->main_word done '.$result->dsp_id(), $debug-14);
     return $result;
   }
   
   function type_id ($debug) {
-    zu_debug('phrase->type_id '.$this->dsp_id().'.', $debug-10);
+    zu_debug('phrase->type_id '.$this->dsp_id(), $debug-10);
     $result = Null;
 
     $wrd = $this->main_word($debug-1);
     $result = $wrd->type_id;
     
-    zu_debug('phrase->type_id for '.$this->dsp_id().' is '.$result.'.', $debug-10);
+    zu_debug('phrase->type_id for '.$this->dsp_id().' is '.$result, $debug-10);
     return $result;
   }
   
@@ -139,13 +141,13 @@ class phrase {
   
   // get a list of all values related to this phrase
   function val_lst ($debug) {
-    zu_debug('phrase->val_lst for "'.$this->name.'" and user "'.$this->usr->name.'".', $debug-12);
+    zu_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'".', $debug-12);
     $val_lst = New value_list;
     $val_lst->usr = $this->usr;
     $val_lst->phr = $this;
     $val_lst->page_size = SQL_ROW_MAX;
     $val_lst->load($debug-1);
-    zu_debug('phrase->val_lst -> got '.count($val_lst->lst).'.', $debug-14);
+    zu_debug('phrase->val_lst -> got '.count($val_lst->lst), $debug-14);
     return $val_lst;    
   }
   
@@ -168,14 +170,14 @@ class phrase {
       $result .= $this->id;
     }
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
   }
 
   function dsp_tbl ($debug) {
     if (!isset($this->obj)) { $this->load($debug-1); }
-    zu_debug('phrase->dsp_tbl for "'.$this->name.'".', $debug-10);
+    zu_debug('phrase->dsp_tbl for '.$this->dsp_id(), $debug-10);
     // the function dsp_tbl should exists for words and triples
     $result .= $this->obj->dsp_tbl($debug-1);
     return $result;
@@ -226,7 +228,7 @@ class phrase {
     $phr_lst = New phrase_list;
     $phr_lst->usr = $this->usr;
     $phr_lst->add($this, $debug-1);
-    zu_debug('phrase->lst -> '.$phr_lst->name($debug-1).'.', $debug-18);
+    zu_debug('phrase->lst -> '.$phr_lst->name($debug-1), $debug-18);
     return $phr_lst;
   }
 
@@ -235,7 +237,7 @@ class phrase {
     $this_lst = $this->lst($debug-1);
     $phr_lst = $this_lst->is($debug-1);
     //$phr_lst->add($this,$debug-1);
-    zu_debug('phrase->is -> '.$this->name.' is a '.$phr_lst->name($debug-1).'.', $debug-8);
+    zu_debug('phrase->is -> '.$this->dsp_id().' is a '.$phr_lst->name($debug-1), $debug-8);
     return $phr_lst;
   }
 
@@ -250,14 +252,14 @@ class phrase {
     } else {
     }
 
-    zu_debug('phrase->is -> '.$this->name.' is a '.$wrd_lst->name($debug-1).'.', $debug-8);
+    zu_debug('phrase->is -> '.$this->dsp_id().' is a '.$wrd_lst->name($debug-1), $debug-8);
     return $wrd_lst;
   } */
 
   // true if the word id has a "is a" relation to the related word
   // e.g.for the given word string
   function is_a ($related_phrase, $debug) {
-    zu_debug('phrase->is_a ('.$this->name.','.$related_phrase->name.')', $debug-10);
+    zu_debug('phrase->is_a ('.$this->dsp_id().','.$related_phrase->name.')', $debug-10);
 
     $result = false;
     $is_phrases = $this->is($debug-1); // should be taken from the original array to increase speed
@@ -306,7 +308,7 @@ class phrase {
                                                 AND u.user_id = '.$this->usr->id.'
                          WHERE l.to_phrase_id = '.$type->id.' 
                            AND l.verb_id = '.cl(SQL_LINK_TYPE_IS).' ) AS a 
-                         WHERE excluded <> 1 ';
+                         WHERE (excluded <> 1 OR excluded is NULL) ';
 
         // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
         $sql_wrd_other = 'SELECT from_phrase_id FROM (
@@ -320,7 +322,7 @@ class phrase {
                              AND l.verb_id = '.cl(SQL_LINK_TYPE_IS).'
                              AND l.from_phrase_id IN ('.$sql_wrd_all.')  
                         GROUP BY l.from_phrase_id ) AS o 
-                           WHERE excluded <> 1 ';
+                           WHERE (excluded <> 1 OR excluded is NULL) ';
 
         // if a word has no other type, use the word                
         $sql_words = 'SELECT id, name, excluded FROM (
@@ -334,7 +336,7 @@ class phrase {
                        WHERE w.word_id NOT IN ( '.$sql_wrd_other.')                                        
                          AND w.word_id = a.from_phrase_id    
                     GROUP BY name ) AS w 
-                       WHERE excluded <> 1 ';
+                       WHERE (excluded <> 1 OR excluded is NULL) ';
                         
         // if a word has another type, use the triple
         $sql_triples = 'SELECT id, name, excluded FROM (
@@ -349,7 +351,7 @@ class phrase {
                            AND l.verb_id = '.cl(SQL_LINK_TYPE_IS).'
                            AND l.to_phrase_id = '.$type->id.'  
                       GROUP BY name ) AS t 
-                         WHERE excluded <> 1 ';
+                         WHERE (excluded <> 1 OR excluded is NULL) ';
         /*                
         $sql_type_from = ', word_links t LEFT JOIN user_word_links ut ON ut.word_link_id = t.word_link_id 
                                                                      AND ut.user_id = '.$this->usr->id.'';
@@ -385,7 +387,7 @@ class phrase {
              WHERE p.excluded = 0
           GROUP BY p.name
           ORDER BY p.name;';
-    zu_debug('phrase->sql_list -> '.$sql.'.', $debug-10);
+    zu_debug('phrase->sql_list -> '.$sql, $debug-10);
     return $sql;
   }
   
@@ -398,8 +400,8 @@ class phrase {
   // create a selector that contains the words and triples
   // if one form contains more than one selector, $pos is used for identification
   // $type is a word to preselect the list to only those phrases matching this type
-  function dsp_selector ($type, $form_name, $pos, $back, $debug) {
-    zu_debug('phrase->dsp_selector -> type "'.$type->name.'" with id '.$this->id.' selected for form '.$form_name.''.$pos.'.', $debug-10);
+  function dsp_selector ($type, $form_name, $pos, $class, $back, $debug) {
+    zu_debug('phrase->dsp_selector -> type "'.$type->name.'" with id '.$this->id.' selected for form '.$form_name.''.$pos, $debug-10);
     $result = '';
     
     if ($pos > 0) {
@@ -411,6 +413,18 @@ class phrase {
     $sel->usr        = $this->usr;
     $sel->form       = $form_name;
     $sel->name       = $field_name;  
+    if ($form_name == "value_add" or $form_name == "value_edit") {
+      $sel->label    = "";  
+    } else {
+      if ($pos == 1) {
+        $sel->label    = "From:";  
+      } elseif ($pos == 2) {
+        $sel->label    = "To:";  
+      } else {
+        $sel->label    = "Word:";  
+      }
+    }
+    $sel->bs_class   = $class;  
     $sel->sql        = $this->sql_list ($type, $debug-1);
     $sel->selected   = $this->id;
     $sel->dummy_text = '... please select';
@@ -445,7 +459,7 @@ class phrase {
     if (count($is_wrd_lst->lst) >= 1) {
       $result = $is_wrd_lst->lst[0];
     }
-    zu_debug('phrase->is_mainly -> ('.$this->name.' is a '.$result->name.')', $debug-8);
+    zu_debug('phrase->is_mainly -> ('.$this->dsp_id().' is a '.$result->name.')', $debug-8);
     return $result;
   }
   

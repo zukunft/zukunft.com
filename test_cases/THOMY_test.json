@@ -1,0 +1,105 @@
+{
+  "version": "0.0.1",
+  "pod": "zukunft.com",
+  "time": "2020-02-22 14:25:52",
+  "user": "77.59.176.91",
+  "selection": [
+    "THOMY"
+  ],
+  "words": [
+    {
+      "name": "100ml",
+      "type": "scaled_measure"
+    },
+    {
+      "name": "gram",
+      "type": "measure"
+    }
+  ],
+  "triples": [
+    {
+      "name": "Nestlé (Company)",
+      "from": "Nestlé",
+      "verb": "is a",
+      "to": "Company"
+    },
+    {
+      "from": "Nestlé",
+      "verb": "uses",
+      "to": "Brand"
+    },
+    {
+      "from": "THOMY",
+      "verb": "issue",
+      "to": "Product"
+    },
+    {
+      "from": "Sauce Hollandaise",
+      "verb": "is a",
+      "to": "Product"
+    },
+    {
+      "from": "THOMY",
+      "verb": "has a",
+      "to": "Sauce Hollandaise"
+    },
+    {
+      "from": "THOMY",
+      "verb": "is part of",
+      "to": "Nestlé"
+    },
+    {
+      "name": "THOMY (Brand)",
+      "from": "THOMY",
+      "verb": "is a",
+      "to": "Brand"
+    }
+  ],
+  "formulas": [
+  ],
+  "values": [
+    {
+      "words": [
+        "Sauce Hollandaise",
+        "THOMY",
+        "vegan",
+        "fat",
+        "100ml",
+        "gram"
+      ],
+      "time": "2020",
+      "number": "22"
+    }
+  ],
+  "views": [
+    {
+      "name": "Food ingredients",
+      "comment": "List the ingredients of one product",
+      "type": "detail view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        },
+        {
+          "pos": "1",
+          "name": "ingredient list",
+          "code_id": "values_related",
+          "row": "ingredients",
+          "column": "food ingredient units"
+        },
+        {
+          "pos": "2",
+          "name": "formulas",
+          "code_id": "formula_list"
+        },
+        {
+          "pos": "3",
+          "name": "JSON Export",
+          "code_id": "json_export"
+        }
+      ]
+    }
+  ]
+} 

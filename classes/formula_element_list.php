@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -50,7 +50,7 @@ class formula_element_list {
       $result = ''.$id.'';
     }
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
 
     return $result;    

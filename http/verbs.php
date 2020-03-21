@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -53,7 +53,7 @@ $link = zu_start("verbs", $debug);
     $dsp->load($debug-1);
         
     // show the header
-    $result .= $dsp->top_right($debug-1);
+    $result .= $dsp->dsp_navbar($back, $debug-1);
 
     // display the verb list
     $result .= dsp_text_h2("Word link types");

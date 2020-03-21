@@ -40,7 +40,11 @@
                          or in the db (DataBase) format with database id references 
                          or in the math (MATHematical) format, which should contain only numeric values
   
-  vrb (VeRB)           - a predicate (mostly just a verb) that defines the type that links two words; verbs are also named as word_links
+  vrb (VeRB)           - a predicate (mostly just a verb) that defines the type that links two words; 
+                         by default a verb can be used forward and backward e.g. ABB is a conmpany and companies are ABB, ...
+                         if the reverse name is empty, the verb can only be used the forward way
+                         if a link should only be used one way for one phrase link, the negative verb is saved
+                         verbs are also named as word_links
   lnk (LiNK)           - a triple, so a word, connected to another word with a verb (word_link.php is the related class)
   phr (PHRase)         - either a word or triple mainly used for selection
   grp (GrouP)          - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
@@ -54,6 +58,7 @@
   src (SouRCe)         - url or description where a value is taken from
 
   sbx (SandBoX)        - the user sandbox tables where the adjustments of the users are saved
+  uso (User Sbx Object)- an object (word, value, formula, ...) that uses the user sandbox
 
   id (IDentifier)      - internal prime key of a database row
   ids (IDentifierS)    - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
@@ -65,6 +70,7 @@
 
   dsp (DiSPlay)        - a view (ex view) object or a function that return HTML code that can be displayed
   cmp (CoMPonent)      - one part of a view so a kind of view component (ex view entry)
+  dsl (DSp cmp Link)   - link of a view component to a view
   btn (BuTtoN)         - button
   tbl (TaBLe)          - HTML code for a table 
   
@@ -97,6 +103,9 @@
   
   all classes should have these functions: 
   
+  load           - based on given id setting load an existing object; if no object is found, return null
+  get            - based on given id setting load an existing object; if not found in database create it
+  save           - update all changes in the database; if not found in database create it
   name           - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
   dsp_id         - like name, but with some ids for better debugging
   name_linked    - like name, but with HTML link to the single objects
@@ -141,24 +150,106 @@
   dsp_id      - the name including the database id for debugging
   zu_dsp_bool - 
   
-
   
+  testing
+  - create base import files to test the system setup
+  - add a "test_all" function to each object to run all test functions
+  - add a test_... function to each function to test it
+  - move the test functions to the classes
 
-  the main TO DOs:
-  - remove all old zu_ function calls
+  admin
+  - aline the github zukunft_structure.sql with the actual database structure e.g. add the share_type table and the related fields
+  - move the database creation class to a *_db (e.g. word_db.php) class
+  - move the db create and test functions to class named similar to the main class
+  - remove all SQL funtions from the object classes to prepare for something like liquidbase
+  - if the owner is an admin, no normal user can take the ownership
+  - the admin should see a list of values, where he blocks users to set a new standard
+  - update the database sql statement for the view_entry to view_component rename
+  - allow the admin user to set the default value
+  - create a daily? task that finds the median value, sets it as the default and recreate the user values
+  - add median_user and set_owner to all user sandbox objects
+  - check which functions can be private in the user_sandbox
+  - use private zukunft data to manage the zukunft payments for keeping data private and 
+  - don't check ip adress if someone is trying to login
+
+  Technical
+  - move the JSON object creation to the classes
+  - use the SQL LIMIT clause in all SQL statements and ...
+  - ... auto page if result size is above the limit
+  - capsule all function so that all parameters are checked before the start
+  
+  usability
+  - add a view element that show the value differences related to a word; e.g. where other user use other values and formula results for ABB
+
+  UI
+  - review UI concept: click only for view, double click for change and right click for more related change functions (or three line menu)
+
+  view
+  - move the edit and add view to the change view mask instead show a pencil to edit the view
+  - add a select box the the view name in the page header e.g. select box to select the view with a line to add a new view 
+  - add for values, words, formulas, ... the tab "compare" aditional to "Changes"
+  
+  Table view
+  - a table headline should show a mouseover message e.g. the "not unhappy ratio" should show explain what it is if the mouse is moved over the word
+  - allow to add a subrow to the table view and allow to select a formula for the subrow
+
+  value view
+  - when displaying a value allow several display formats (template formatting including ...
+  - ... subvalues for related formula result
+  - ... other user plus minus indicator
+  - ... other user range chart)
+  - show the values of other users also if the user has just an IP
+
+  word view
+  - set and compare the default view for words e.g. the view for company should be company list
+  - in link_edit.php?id=313 allow to change the name for the phrase and show the history
+  - rename word_links to phrase links, because it should always be possible to link a phrase
+  
+  formula
+  
+  log
+  - add paging to the log view
+  - combine changes and changes usage to one list
+  - allow also to see the log of deleted words, values and formulas
+  - in the log view show in an mondial view the details of the change
+  - move the undo button in the formula log view to the row
   - display the changes on display elements
-  - review the user sandbox for values
-  - include values in test.php
-  - review the database indices and the foreign keys
-  - review user autentification
+  
+  export
+  - export yaml
+  - for xml export use the parameters: standard values, your values or values of all users; topic word or all words
+  
+  import
+  - if an admin does the import he has the possibility to be the owner for all imported values
+
+  features
+  - allow paying users to protect thier values and offer them to a group of users
+    - the user can set the default to open or closed 
+    - the user can open or close all values related to a word
+  - each user can define uo to 100 users as "prefered trust"  
   - for each user show all values, formulas, words where the user has different settings than the other users and allow to move back to the standard
+  - it should be possible to link an existing formula to a word/phrase (plus on formula should allow also to link an existing formula)
+  - make the phrase to value links for fast searching user specific 
+  - allow to undo just von change or to revert all changes (of this formulas or all formulas, words, values) up to this point of time
+  - display in the formula (value, word) the values of other users
+  - check the correct usage of verbs (see definition)
   - for the speed check use the speed log table with the url and the execution time if above a threshold
   - for wishes use the github issue tracker
-  - don't write the same log message several times during the same call
-  - don't write too many log message in on php script call
-  - for xml export use the parameters: standard values, your value or values of all users ; topic word or all words
   - base increase (this, prior) on the default time jumpt (e.g. for turnover the time jump would be "yoy")
 
+  Bugs
+  - bug: display linked words does not display the downward words e.g. "Company main ratio" does not show "Target Price"
+  - don't write the same log message several times during the same call
+  - don't write too many log message in on php script call
+  - fix error when linking an existing formula to a phase
+  - review the user sandbox for values
+  - remove all old zu_ function calls
+
+
+  prio 2:
+  - review user autentification (use fidoalliance.org/fido2/)
+  - review the database indices and the foreign keys
+  - include a list of basic values in test.php e.g. CO2 of rice
   
 
   This file is part of zukunft.com - calc with words
@@ -178,7 +269,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -194,6 +285,8 @@ include_once '../classes/user_list.php';                  if ($debug > 9) { echo
 include_once '../classes/user_log.php';                   if ($debug > 9) { echo 'class user log loaded<br>'; }
 include_once '../classes/user_log_link.php';              if ($debug > 9) { echo 'class user log reference loaded<br>'; }
 include_once '../classes/user_log_display.php';           if ($debug > 9) { echo 'class user log display loaded<br>'; }
+include_once '../classes/user_sandbox.php';               if ($debug > 9) { echo 'class user sandbox loaded<br>'; }
+include_once '../classes/user_sandbox_display.php';       if ($debug > 9) { echo 'class user sandbox display loaded<br>'; }
 include_once '../classes/system_error_log.php';           if ($debug > 9) { echo 'class system error log loaded<br>'; }
 include_once '../classes/system_error_log_list.php';      if ($debug > 9) { echo 'class system error log list loaded<br>'; }
 include_once '../classes/display_button.php';             if ($debug > 9) { echo 'class display button loaded<br>'; }
@@ -237,12 +330,15 @@ include_once '../classes/view_display.php';               if ($debug > 9) { echo
 include_once '../classes/view_component.php';             if ($debug > 9) { echo 'class view component loaded<br>'; }
 include_once '../classes/view_component_dsp.php';         if ($debug > 9) { echo 'class view component display loaded<br>'; }
 include_once '../classes/view_component_link.php';        if ($debug > 9) { echo 'class view component link loaded<br>'; }
+include_once '../classes/export.php';                     if ($debug > 9) { echo 'class export loaded<br>'; }
+include_once '../classes/json.php';                       if ($debug > 9) { echo 'class json loaded<br>'; }
 include_once '../classes/xml.php';                        if ($debug > 9) { echo 'class xml loaded<br>'; }
+include_once '../classes/import.php';                     if ($debug > 9) { echo 'class import loaded<br>'; }
 
 // include all other libraries that are usually needed
 include_once '../db_link/zu_lib_sql_link.php';            if ($debug > 9) { echo 'lib sql link loaded<br>'; }
 include_once '../lib/zu_lib_sql_code_link.php';           if ($debug > 9) { echo 'lib sql code link loaded<br>'; }
-include_once '../lib/zu_lib_config.php';                  if ($debug > 9) { echo 'lib config loaded<br>'; }
+include_once '../lib/config.php';                  if ($debug > 9) { echo 'lib config loaded<br>'; }
 
 // used at the moment, but to be replaced with R-Project call
 include_once '../lib/zu_lib_calc_math.php';               if ($debug > 9) { echo 'lib calc math loaded<br>'; }
@@ -250,7 +346,7 @@ include_once '../lib/zu_lib_calc_math.php';               if ($debug > 9) { echo
 // libraries that may be useful in the future
 /*
 include_once '../lib/test/zu_lib_auth.php';               if ($debug > 9) { echo 'user authentication loaded<br>'; }
-include_once '../lib/test/zu_lib_config.php';             if ($debug > 9) { echo 'configuration loaded<br>'; }
+include_once '../lib/test/config.php';             if ($debug > 9) { echo 'configuration loaded<br>'; }
 */
 
 // libraries that can be dismissed, but still used for regression testing (using test.php)
@@ -289,13 +385,29 @@ The beta test is expected to start with version 0.7
 define("PRG_VERSION", "0.0.1"); // to detect the correct update script and to mark the data export
 
 // global code settings
+define("UI_USE_BOOTSTRAP", 1);  // IF FALSE a simple HTML frontend without javascript is used
 define("UI_MIN_RESPONSE_TIME", 2); // mininal time after that the user user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
-define("UI_CAN_CHANGE_VIEW_NAME",       TRUE); // if true renaming a view may switch to a view with the new name; if false the user gets an error message
-define("UI_CAN_CHANGE_VIEW_ENTRY_NAME", TRUE); // dito for view components
-define("UI_CAN_CHANGE_WORD_NAME",       TRUE); // dito for words
-define("UI_CAN_CHANGE_FORMULA_NAME",    TRUE); // dito for formulas
-define("UI_CAN_CHANGE_VERB_NAME",       TRUE); // dito for verbs
-define("UI_CAN_CHANGE_SOURCE_NAME",     TRUE); // dito for sources
+
+/*
+if UI_CAN_CHANGE_... setting is true renaming an object may switch to an object with the new name
+if false the user gets an error message that the object with the new name exists already
+
+e.g. if this setting is true
+     user 1 creates     "Nestle" with id 1
+     and user 2 creates "Nestlé" with id 2
+     now the user 1 changes "Nestle" to "Nestlé"
+     1. "Nestle" will be deleted, because it is not used any more
+     2. "Nestlé" with id 2 will not be excluded any more
+     
+*/
+define("UI_CAN_CHANGE_VALUE",               TRUE); 
+define("UI_CAN_CHANGE_VIEW_NAME",           TRUE); 
+define("UI_CAN_CHANGE_VIEW_COMPONENT_NAME", TRUE); // dito for view components
+define("UI_CAN_CHANGE_VIEW_COMPONENT_LINK", TRUE); // dito for view component links
+define("UI_CAN_CHANGE_WORD_NAME",           TRUE); // dito for words
+define("UI_CAN_CHANGE_FORMULA_NAME",        TRUE); // dito for formulas
+define("UI_CAN_CHANGE_VERB_NAME",           TRUE); // dito for verbs
+define("UI_CAN_CHANGE_SOURCE_NAME",         TRUE); // dito for sources
 
 define("CFG_SITE_NAME", 'site_name'); // the name of the pod
 
@@ -373,13 +485,19 @@ define("ZUH_IMG_UNFILTER", "../images/button_filter_off.svg");
 define("ZUH_IMG_BACK",     "../images/button_back.svg");
 define("ZUH_IMG_LOGO",     "../images/ZUKUNFT_logo.svg");
 
-
+define("ZUH_IMG_ADD_FA",   "fa-plus-square");
+define("ZUH_IMG_EDIT_FA",  "fa-edit");
+define("ZUH_IMG_DEL_FA",   "fa-times-circle");
 
 // for internal functions debugging
 // each complex function should call this at the beginning with the paramters and with -1 at the end with the result
 // called function should use $debug-1
 function zu_debug($msg_text, $debug) {
-  if ($debug > 0) { echo $msg_text."<br>" ; }
+  if ($debug > 0) { 
+    echo $msg_text.'.<br>' ; 
+    ob_flush();
+    flush();
+  }
 }
 
 // for system messages no debug calls to avoid loops
@@ -439,7 +557,7 @@ function zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $func
       }
     } else {
       $dsp = new view_dsp;
-      $result .= $dsp->top();
+      $result .= $dsp->dsp_navbar_simple();
       $result .= $msg_text." (by ".$function_name.").<br><br>";
     }
   }
@@ -550,7 +668,7 @@ function zu_end($db_con, $debug) {
 function zu_end_about($link, $debug) {
   global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-  echo zuh_footer(true);
+  echo dsp_footer(true);
   
   // Closing connection
   zu_sql_close($link, $debug-1);
@@ -565,11 +683,10 @@ function zu_end_about($link, $debug) {
 }
 
 // special page closing of api pages
+// for the api e.g. the csv export no footer should be shown
 function zu_end_api($link, $debug) {
   global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-  echo zuh_footer(true, true);
-  
   // Closing connection
   zu_sql_close($link, $debug-1);
 
@@ -660,6 +777,21 @@ function zu_str_is_left($text, $maker) {
   return $result;
 }
 
+/*
+function str_diff($text, $compare) {
+  $result = '';
+  $next = 0;
+  for ($pos=0; $pos<strlen($text); $pos++) {
+    if ($text[$i] == $compare[$i]) {
+      $next = $next + 1;
+    } else {  
+      $result .= ' at '+ $pos + ': ';      
+      $result .= $compare[$i] + ' instead of ' + $text[$i];      
+    }
+  }  
+  return $result;
+}
+*/
 
 /*
 

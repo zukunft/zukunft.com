@@ -62,7 +62,7 @@ include_once 'zu_lib_passwords.php';
   zu_sql_word_values     - get only the values related to one word
   zu_sql_word_lst_value  - 
   zu_sql_value_lst_words - get all words related to a value list
-  zu_sql_view_entries    - all parts of a view 
+  zu_sql_view_components    - all parts of a view 
   zu_sql_verbs           - get all possible word link types
   
 
@@ -81,7 +81,7 @@ include_once 'zu_lib_passwords.php';
   zu_sql_views           - zu_sql_views
   zu_sql_views_user      - returns all non internal views
   zu_sql_view_types
-  zu_sql_view_entry_types - returns all view entry types 
+  zu_sql_view_component_types - returns all view entry types 
   
   
   
@@ -89,7 +89,7 @@ include_once 'zu_lib_passwords.php';
   ----------
 
   zu_sql_words - 
-  zu_sql_views, zu_sql_view_types, zu_sql_view_entry_types
+  zu_sql_views, zu_sql_view_types, zu_sql_view_component_types
   
   code ids
   preset records that are linked to the program code
@@ -101,7 +101,7 @@ include_once 'zu_lib_passwords.php';
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1188,29 +1188,29 @@ function zu_sql_value_lst_common_words($value_lst, $debug) {
 }
 
 // returns all parts of a view 
-function zu_sql_view_entries($view_id, $user_id, $debug) {
-  zu_debug('zu_sql_view_entries('.$view_id.')', $debug-10);  
+function zu_sql_view_components($view_id, $user_id, $debug) {
+  zu_debug('zu_sql_view_components('.$view_id.')', $debug-10);  
 
-  $sql = " SELECT e.view_entry_name, e.word_id_row, e.link_type_id, e.view_entry_type_id, e.formula_id, e.view_entry_id, t.code_id, e.word_id_col 
-               FROM view_entries e, view_entry_links l, view_entry_types t 
+  $sql = " SELECT e.view_component_name, e.word_id_row, e.link_type_id, e.view_component_type_id, e.formula_id, e.view_component_id, t.code_id, e.word_id_col 
+               FROM view_components e, view_component_links l, view_component_types t 
               WHERE l.view_id = ".$view_id." 
-                AND l.view_entry_id = e.view_entry_id 
-                AND e.view_entry_type_id = t.view_entry_type_id 
+                AND l.view_component_id = e.view_component_id 
+                AND e.view_component_type_id = t.view_component_type_id 
            ORDER BY l.order_nbr;";
-  zu_debug("zu_sql_view_entries ... ".$sql, $debug-12);
+  zu_debug("zu_sql_view_components ... ".$sql, $debug-12);
   $result = zu_sql_get_all($sql, $debug-1);
 
-  zu_debug("zu_sql_view_entries ... done", $debug-10);
+  zu_debug("zu_sql_view_components ... done", $debug-10);
 
   return $result;
 }
 
 // returns the next free order number for a new view entry
-function zu_sql_view_entry_next_nbr($view_id, $user_id, $debug) {
-  zu_debug('zu_sql_view_entry_next_nbr('.$view_id.')', $debug-10);  
+function zu_sql_view_component_next_nbr($view_id, $user_id, $debug) {
+  zu_debug('zu_sql_view_component_next_nbr('.$view_id.')', $debug-10);  
 
   $query = "   SELECT max(l.order_nbr) 
-                 FROM view_entry_links l 
+                 FROM view_component_links l 
                 WHERE l.view_id = ".$view_id." 
              ORDER BY l.order_nbr;";
   $result = zu_sql_get1($query, $debug-1);
@@ -1220,7 +1220,7 @@ function zu_sql_view_entry_next_nbr($view_id, $user_id, $debug) {
     $result = 1;
   }
 
-  zu_debug("zu_sql_view_entry_next_nbr -> (".$result.")", $debug-10);
+  zu_debug("zu_sql_view_component_next_nbr -> (".$result.")", $debug-10);
 
   return $result;
 }
@@ -1381,16 +1381,16 @@ function zu_sql_view_types($debug) {
 }
 
 // returns all view entry types 
-function zu_sql_view_entry_types($debug) {
-  $query = "SELECT view_entry_type_id, type_name "
-         . "  FROM view_entry_types;";
+function zu_sql_view_component_types($debug) {
+  $query = "SELECT view_component_type_id, view_component_type_name "
+         . "  FROM view_component_types;";
   return $query;
 }
 
 // returns all view entries 
-function zu_sql_view_entry_lst($debug) {
-  $query = "SELECT view_entry_id, view_entry_name "
-         . "  FROM view_entries;";
+function zu_sql_view_component_lst($debug) {
+  $query = "SELECT view_component_id, view_component_name "
+         . "  FROM view_components;";
   return $query;
 }
 

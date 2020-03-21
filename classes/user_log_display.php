@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -37,14 +37,24 @@ class user_log_display {
   public $usr         = NULL; // the user of the person for whom the value is loaded, so to say the viewer
   public $type        = '';   // either "word", "phrase", "value" or "formula" to select the object to display
   public $page        = NULL; // the page to display
+  public $condensed   = True; // display the changes in a few columns with reduced details
   public $size        = NULL; // the page size
   public $call        = '';   // the html page which has call the hist display object
   public $back        = '';   // 
   
   // display the history of a word, phrase, value or formula
   function dsp_hist($debug) {
-    zu_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back.'.', $debug-10);
+    zu_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
     $result = ''; // reset the html code var
+    
+    // set default values
+    if (!isset($this->size)) {
+      $this->size = SQL_ROW_LIMIT;
+    } else {  
+      if ($this->size <= 0) {
+        $this->size = SQL_ROW_LIMIT;
+      }  
+    }  
     
     // select the change table to use
     $sql_where     = '';
@@ -76,9 +86,9 @@ class user_log_display {
                      OR f.table_id = ".cl(DBL_SYSLOG_TBL_VIEW_USR).") AND ";
       $sql_row   = 'AND c.row_id  = '.$this->id.' ';
       $sql_user  =     'c.user_id = u.user_id';
-    } elseif ($this->type == 'view_entry') {
-      $sql_where =   " (f.table_id = ".cl(DBL_SYSLOG_TBL_VIEW_ENTRY)." 
-                     OR f.table_id = ".cl(DBL_SYSLOG_TBL_VIEW_ENTRY_USR).") AND ";
+    } elseif ($this->type == 'view_component') {
+      $sql_where =   " (f.table_id = ".cl(DBL_SYSLOG_TBL_view_component)." 
+                     OR f.table_id = ".cl(DBL_SYSLOG_TBL_view_component_USR).") AND ";
       $sql_row   = 'AND c.row_id  = '.$this->id.' ';
       $sql_user  =     'c.user_id = u.user_id';
     }
@@ -110,32 +120,38 @@ class user_log_display {
                      ".$sql_row." 
             ORDER BY c.change_time DESC
                LIMIT ".$this->size.";";
-      zu_debug('user_log_display->dsp_hist '.$sql.'.', $debug-14);
+      zu_debug('user_log_display->dsp_hist '.$sql, $debug-14);
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-5);  
 
       // prepare to show where the user uses different word than a normal viewer
       $row_nbr = 0;
-      $result .= '<table class="change_hist">';
+      $result .= dsp_tbl_start_hist ();
       foreach ($db_lst AS $db_row) {
         // display the row only if the field is not an "admin only" field
         if ($db_row["code_id"] <> DBL_FLD_FORMULA_REF_TEXT) {
           $row_nbr++;
           $result .= '<tr>';
           if ($row_nbr == 1) {
-            $result .= '<th>time</th>';
-            if ($this->type <> 'user') { $result .= '<th>user</th>'; }
-            $result .= '<th>field</th>';
-            $result .= '<th>from</th>';
-            $result .= '<th>to</th>';
-            $result .= '<th></th>'; // extra column for the undo icon
+            if ($this->condensed) {
+              $result .= '<th>time</th>';
+              $result .= '<th>changed to</th>';
+            } else {
+              $result .= '<th>time</th>';
+              if ($this->type <> 'user') { $result .= '<th>user</th>'; }
+              $result .= '<th>field</th>';
+              $result .= '<th>from</th>';
+              $result .= '<th>to</th>';
+              $result .= '<th></th>'; // extra column for the undo icon
+            }
           }
           $result .= '</tr><tr>';
-          $result .= '<td>'.$db_row["time"].'</td>';
-          if ($this->type <> 'user') { $result .= '<td>'.$db_row["user"].'</td>'; }  
+          
+          // pick the useful field name
+          $txt_fld = '';
           if ($db_row['code_id'] == "value") {
-            $result .= '<td>'.$db_row['type'].' value</td>';
+            $txt_fld .= $db_row['type'].' value';
             /* because changing the words creates a new value there is no need to display the words here
             if ($db_row['row_id'] > 0) {
               $val = New value;
@@ -143,22 +159,23 @@ class user_log_display {
               $val->usr = $this;
               $val->load($debug-1);
               $val->load_phrases($debug-1);
-              $result .= '<td>';
+              $txt_fld .= '<td>';
               if (isset($val->wrd_lst)) {
-                $result .= implode(",",$val->wrd_lst->names_linked($debug-1));
+                $txt_fld .= implode(",",$val->wrd_lst->names_linked($debug-1));
               }
-              $result .= '</td>';
+              $txt_fld .= '</td>';
             } else {
-              $result .= '<td>'.$db_row['type'].' value</td>';
+              $txt_fld .= '<td>'.$db_row['type'].' value</td>';
             } 
             */
           } elseif ($this->type <> 'user') { 
-              $result .= '<td>'.$db_row['type_field'].'</td>';
-              // probably not needed to display the action, because this can be seen by the change itself
-              // $result .= '<td>'.$db_row['type'].' '.$db_row['type_field'].'</td>';
+            $txt_fld .= $db_row['type_field'];
+            // probably not needed to display the action, because this can be seen by the change itself
+            // $result .= $db_row['type'].' '.$db_row['type_field'];
           } else {
-              $result .= '<td>'.$db_row['type_table'].' '.$db_row['type_field'].'</td>';
+            $txt_fld .= $db_row['type_table'].' '.$db_row['type_field'];
           }
+
           // create the description for the old and new field value for the user
           $txt_old = $db_row["old"];
           $txt_new = $db_row["new"];
@@ -173,12 +190,25 @@ class user_log_display {
             if ($txt_new <> "") { $txt_new = 'type '.$txt_new; }
           }
           */
-          // display the change
-          $result .= '<td>'.$txt_old.'</td>';
-          $result .= '<td>'.$txt_new.'</td>';
-          // switched of because "less seems to be more"
-          //if ($txt_old == "") { $result .= '<td>'.$db_row["type"].'</td>'; } else { $result .= '<td>'.$txt_old.'</td>'; }  
-          //if ($txt_new == "") { $result .= '<td>'.$db_row["type"].'</td>'; } else { $result .= '<td>'.$txt_new.'</td>'; }  
+          
+          if ($this->condensed) {
+            $result .= '<td>'.$db_row["time"];
+            if ($this->type <> 'user') { $result .= ' by '.$db_row["user"]; }  
+            $result .= '</td>';
+            $result .= '<td>'.$txt_fld.': '.$txt_new.'</td>';
+          } else {
+            $result .= '<td>'.$db_row["time"].'</td>';
+            if ($this->type <> 'user') { $result .= '<td>'.$db_row["user"].'</td>'; }  
+
+            
+            // display the change
+            $result .= '<td>'.$txt_fld.'</td>';
+            $result .= '<td>'.$txt_old.'</td>';
+            $result .= '<td>'.$txt_new.'</td>';
+            // switched of because "less seems to be more"
+            //if ($txt_old == "") { $result .= '<td>'.$db_row["type"].'</td>'; } else { $result .= '<td>'.$txt_old.'</td>'; }  
+            //if ($txt_new == "") { $result .= '<td>'.$db_row["type"].'</td>'; } else { $result .= '<td>'.$txt_new.'</td>'; }  
+          }
 
           // encode the undo action 
           $undo_text = '';
@@ -202,12 +232,16 @@ class user_log_display {
             }  
           } 
           // display the undo button
-          if ($undo_call <> '') { $result .= '<td>'.$undo_btn.'</td>'; } else { $result .= '<td></td>'; }
+          if ($this->condensed) {
+            if ($undo_call <> '') { $result .= ' '.   $undo_btn.''; }      else { $result .= ''; }
+          } else {
+            if ($undo_call <> '') { $result .= '<td>'.$undo_btn.'</td>'; } else { $result .= '<td></td>'; }
+          }
           
           $result .= '</tr>';
         }
       }
-      $result .= '</table>';
+      $result .= dsp_tbl_end ();
     }
 
     zu_debug("user_log_display->dsp_hist -> done", $debug-12);
@@ -218,7 +252,7 @@ class user_log_display {
   // e.g. if a formula is linked to another word
   //   or if a component is added to a display view
   function dsp_hist_links($debug) {
-    zu_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back.'.', $debug-10);
+    zu_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
     $result = ''; // reset the html code var
 
     // select the change table to use
@@ -269,9 +303,9 @@ class user_log_display {
                     c.new_text_to AS new';
       $sql_row   =  ' (c.old_from_id = '.$this->id.' OR c.new_from_id = '.$this->id.') AND ';
       $sql_user  =  'c.user_id = u.user_id';
-    } elseif ($this->type == 'view_entry') {
-      $sql_where = " ( c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_ENTRY)." 
-                    OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_ENTRY_USR)." 
+    } elseif ($this->type == 'view_component') {
+      $sql_where = " ( c.change_table_id = ".cl(DBL_SYSLOG_TBL_view_component)." 
+                    OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_view_component_USR)." 
                     OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_LINK)." 
                     OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_LINK_USR)." ) AND ";
       $sql_field = 'c.old_text_from AS old, 
@@ -305,7 +339,7 @@ class user_log_display {
 
     // display the changes
     $row_nbr = 0;
-    $result .= '<table class="change_hist">';
+    $result .= dsp_tbl_start_hist ();
     foreach ($db_lst AS $db_row) {
       $row_nbr++;
       $result .= '<tr>';
@@ -338,7 +372,7 @@ class user_log_display {
       if ($undo_call <> '') { $result .= '<td>'.$undo_btn.'</td>'; } else { $result .= '<td></td>'; }
       $result .= '</tr>';
     }
-    $result .= '</table>';
+    $result .= dsp_tbl_end ();
 
     zu_debug("formula->dsp_hist_links -> done", $debug-1);
     return $result;

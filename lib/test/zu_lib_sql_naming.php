@@ -21,7 +21,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ function zu_sql_std_id_field ($type, $debug) {
   $result = $type.'_id';
   // exceptions for nice english
   if ($type == 'view_entrie') {
-    $result = 'view_entry_id';
+    $result = 'view_component_id';
   }
 
   zu_debug("zu_sql_std_id_field -> (".$result.")", $debug);

@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -81,16 +81,15 @@ $link = zu_start("login", "center_form", $debug);
         //header("Location: ../view.php?sid=".SID.""); 
         exit; 
       } else {
-        $msg .= '<font color="red">Login failed. <a href="/http/login_reset.php" title="Send a new password via email.">Forgot password?</a></font><br><br>'; 
+        $msg .= dsp_err ('Login failed. <a href="/http/login_reset.php" title="Send a new password via email.">Forgot password?</a>'); 
       }  
     }  
   }  
 
   if (!$_SESSION['logged']) {
-    $result .= '<div class="center_form">'; 
-    $result .= '<a href="../http/view.php" title="zukunft.com Logo">'; 
-    $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;" >'; 
-    $result .= '</a><br><br>'; 
+    $result .= dsp_form_center(); 
+    $result .= dsp_logo_big(); 
+    $result .= '<br><br>'; 
     $result .= '<form action="login.php" method="post">'; 
     $result .= '  User Name:<br> '; 
     $result .= '  <input type="text" name="username"><br><br> '; 
@@ -103,6 +102,9 @@ $link = zu_start("login", "center_form", $debug);
     $result .= '</div>   ';
   }
 
+  // seperate the footer, because this is a short page
+  $result .= '<br><br>'; 
+  
   // display the view
   echo $result;
 

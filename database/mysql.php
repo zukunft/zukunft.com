@@ -170,7 +170,7 @@ class mysql {
       $msg_text .= " (".$sql.")";
       $msg_type_id = cl($log_level);
       $result = zu_msg($msg_text, $msg_text.' from '.$function_name, $msg_type_id, $function_name, $function_trace, $this->usr_id);
-      zu_debug("mysql->exe -> error (".$result.")", $debug-1);
+      zu_debug("mysql->exe -> error (".$result.")", $debug-10);
     }
 
     return $result;
@@ -206,9 +206,9 @@ class mysql {
   function get1($sql, $debug) {
     $result = false;
     if ($debug > 20) {
-      zu_debug("mysql->get1 (".$sql.")", $debug-20);
+      zu_debug("mysql->get1 (".$sql.")", $debug-30);
     } else {
-      zu_debug("mysql->get1 (".substr($sql,0,100)." ... )", $debug-10);
+      zu_debug("mysql->get1 (".substr($sql,0,100)." ... )", $debug-20);
     }
     
     // optimise the sql statement
@@ -224,14 +224,14 @@ class mysql {
       $result = mysql_fetch_array($sql_result, MYSQL_ASSOC);
     }
     
-    zu_debug("mysql->get1 -> done", $debug-10);
+    zu_debug("mysql->get1 -> done", $debug-20);
     return $result;
   }
 
   // returns first value of a simple SQL query 
   function get_value ($field_name, $id_name, $id, $debug) {
     $result = ''; 
-    zu_debug('mysql->get_value '.$field_name.' from '.$this->type.' where '.$id_name.' = '.sf($id).'.', $debug-20);
+    zu_debug('mysql->get_value '.$field_name.' from '.$this->type.' where '.$id_name.' = '.sf($id), $debug-20);
 
     if ($this->type <> '') {
       $this->set_table      ($debug-1);
@@ -261,7 +261,7 @@ class mysql {
   // similar to mysql->get_value, but for two key fields
   function get_value_2key ($field_name, $id1_name, $id1, $id2_name, $id2, $debug) {
     $result = ''; 
-    zu_debug('mysql->get_value_2key '.$field_name.' from '.$this->type.' where '.$id1_name.' = '.$id1.' and '.$id2_name.' = '.$id2.'.', $debug-20);
+    zu_debug('mysql->get_value_2key '.$field_name.' from '.$this->type.' where '.$id1_name.' = '.$id1.' and '.$id2_name.' = '.$id2, $debug-20);
 
     $this->set_table      ($debug-1);
     $sql = "SELECT ".$field_name." FROM ".$this->table." WHERE ".$id1_name." = '".$id1."' AND ".$id2_name." = '".$id2."' LIMIT 1;";
@@ -377,6 +377,35 @@ class mysql {
     return $sql;
   }
 
+  // return all database ids, where the owner is not yet set
+  function missing_owner ($debug) {
+    zu_debug("mysql->missing_owner (".$this->type.")", $debug);
+    $result = Null;
+    
+    $this->set_table      ($debug-1);
+    $this->set_id_field   ($debug-1);
+    $sql = "SELECT ".$this->id_field." AS id
+              FROM ".$this->table."
+             WHERE user_id IS NULL;";
+    
+    $result = $db_con->get($sql, $debug-5);
+    return $result;
+  }
+
+  // return all database ids, where the owner is not yet set
+  function set_default_owner ($debug) {
+    zu_debug("mysql->set_default_owner (".$this->type.")", $debug);
+    $result = Null;
+    
+    $this->set_table      ($debug-1);
+    $sql = "UPDATE ".$this->table."
+               SET user_id = 1
+             WHERE user_id IS NULL;";
+    
+    $result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->set_default_owner", (new Exception)->getTraceAsString(), $debug-1);
+    return $result;
+  }
+
   /*
   
     technical function to finally update data in the MySQL database
@@ -391,7 +420,7 @@ class mysql {
     $this->set_table      ($debug-1);
 
     if (is_array($fields)) {
-      zu_debug('mysql->insert into "'.$this->type.'" SET "'.implode('","',$fields).'" WITH "'.implode('","',$values).'" for user '.$this->usr_id.'.', $debug-10);
+      zu_debug('mysql->insert into "'.$this->type.'" SET "'.implode('","',$fields).'" WITH "'.implode('","',$values).'" for user '.$this->usr_id, $debug-10);
       if (count($fields) <> count($values)) {
         zu_fatal('MySQL insert call with different number of fields ('.count($fields).': '.implode(',',$fields).') and values ('.count($values).': '.implode(',',$values).').',"user_log->add", (new Exception)->getTraceAsString(), $this->usr);
       } else {
@@ -403,7 +432,7 @@ class mysql {
                                       VALUES ('.implode(',',$values).');';
       }
     } else {
-      zu_debug('mysql->insert into "'.$this->type.'" SET "'.$fields.'" WITH "'.$values.'" for user '.$this->usr_id.'.', $debug-10);
+      zu_debug('mysql->insert into "'.$this->type.'" SET "'.$fields.'" WITH "'.$values.'" for user '.$this->usr_id, $debug-10);
       $sql = 'INSERT INTO '.$this->table.' ('.$fields.') 
                                  VALUES ('.sf($values).');';
     }
@@ -412,14 +441,14 @@ class mysql {
       $sql_result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->insert", (new Exception)->getTraceAsString(), $debug-1);
       if ($sql_result) {
         $result = mysql_insert_id();
-        zu_debug('mysql->insert -> done "'.$result.'".', $debug-12);
+        zu_debug('mysql->insert -> done "'.$result.'"', $debug-12);
       } else {
         $result = -1;
-        zu_debug('mysql->insert -> failed ('.$sql.').', $debug-12);
+        zu_debug('mysql->insert -> failed ('.$sql.')', $debug-12);
       }
     } else {
       $result = -1;
-      zu_debug('mysql->insert -> failed ('.$sql.').', $debug-12);
+      zu_debug('mysql->insert -> failed ('.$sql.')', $debug-12);
     }
 
     return $result;
@@ -428,7 +457,7 @@ class mysql {
 
   // add a new unique text to the database and return the id (similar to get_id)
   function add_id ($name, $debug) {
-    zu_debug('mysql->add_id '.$name.' to '.$this->type.'.', $debug-10);
+    zu_debug('mysql->add_id '.$name.' to '.$this->type, $debug-10);
 
     $this->set_table      ($debug-1);
     $this->set_name_field ($debug-1);
@@ -440,7 +469,7 @@ class mysql {
 
   // similar to zu_sql_add_id, but using a second ID field
   function add_id_2key ($name, $field2_name, $field2_value, $debug) {
-    zu_debug('mysql->add_id_2key '.$name.','.$field2_name.','.$field2_value.' to '.$this->type.'.', $debug-10);
+    zu_debug('mysql->add_id_2key '.$name.','.$field2_name.','.$field2_value.' to '.$this->type, $debug-10);
 
     $this->set_table      ($debug-1);
     $this->set_name_field ($debug-1);
@@ -453,7 +482,7 @@ class mysql {
 
   // update some values in a table
   function update($id, $fields, $values, $debug) {
-    zu_debug('mysql->update of '.$this->type.' row '.$id.' '.$fields.' with "'.$values.'" for user '.$this->usr_id.'.', $debug-10);
+    zu_debug('mysql->update of '.$this->type.' row '.$id.' '.$fields.' with "'.$values.'" for user '.$this->usr_id, $debug-10);
     
     // check parameter
     $par_ok = true;
@@ -510,7 +539,7 @@ class mysql {
 
   // call the MySQL delete action
   function delete($id_fields, $id_values, $debug) {
-    zu_debug('mysql->delete in "'.$this->type.'" WHERE "'.implode(",",$id_fields).'" IS "'.implode(",",$id_values).'" for user '.$this->usr_id.'.', $debug-10);
+    zu_debug('mysql->delete in "'.$this->type.'" WHERE "'.implode(",",$id_fields).'" IS "'.implode(",",$id_values).'" for user '.$this->usr_id, $debug-10);
 
     $this->set_table      ($debug-1);
 

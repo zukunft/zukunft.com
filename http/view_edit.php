@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -98,10 +98,10 @@ $link = zu_start("view_edit", "", $debug);
       }
       
       // check if a existing view element should be added
-      if (isset($_GET['add_view_entry'])) {
-        if ($_GET['add_view_entry'] > 0) {
+      if (isset($_GET['add_view_component'])) {
+        if ($_GET['add_view_component'] > 0) {
           $cmp = new view_component;
-          $cmp->id   = $_GET['add_view_entry']; 
+          $cmp->id   = $_GET['add_view_component']; 
           $cmp->usr  = $usr;
           $cmp->load($debug-1);
           $order_nbr = $cmp->next_nbr($dsp_edit->id, $debug-1);
@@ -152,7 +152,7 @@ $link = zu_start("view_edit", "", $debug);
       // if nothing yet done display the add view (and any message on the top)
       if ($result == '')  {
         // in view edit views the view cannot be changed
-        $result .= $dsp->top_right_no_view($wrd, $debug-1);
+        $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
         $result .= dsp_err($msg);
 
         // get parameters that change only dsp_edit

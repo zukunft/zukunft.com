@@ -43,7 +43,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -160,7 +160,8 @@ function zut_dsp_header ($wrd_id, $user_id, $debug) {
     if ($is_part_of <> '' and $is_part_of <> 'not set') {
       $result .= ' (<a href="/http/view.php?words='.zut_is_id($wrd_id).'">'.$is_part_of.'</a>)';
     }
-    $result .= '  '.'<a href="/http/word_edit.php?id='.$wrd_id.'&back='.$wrd_id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>';
+/*    $result .= '  '.'<a href="/http/word_edit.php?id='.$wrd_id.'&back='.$wrd_id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>'; */
+    $result .= '  '.'<a href="/http/word_edit.php?id='.$wrd_id.'&back='.$wrd_id.'" title="Rename word"><span class="glyphicon glyphicon-pencil"></span></a>';
     $result .= '</h2>';
   }
     
@@ -252,9 +253,9 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
     zu_debug('zut_html_list_related link done', $debug);
     
     // display the words
-    $result .= '<table style="width:300px">';
+    $result .= '<table class="table col-sm-5 table-borderless">';
     while ($word_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
-      $result .= '  <tr>'."\n";
+      $result .= '  <tbody><tr>'."\n";
       $result .= zut_html_tbl($word_entry[0], $word_entry[1], $debug-1);
       zu_debug('zut_html_list_related btn link', $debug);
       $result .= zutl_btn_edit ($word_entry[3], $id, $debug-1);
@@ -262,6 +263,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
       $result .= zut_unlink_html ($word_entry[3], $id, $debug-1);
       zu_debug('zut_html_list_related btn unlink done', $debug);
       $result .= '  </tr>'."\n";
+      $result .= '  </tbody>'."\n";
       //$result .= zut_html($word_entry[0], $word_entry[1], $debug);
       // use the last word as a sample for the new word type
       $word_type_id = $word_entry[2];

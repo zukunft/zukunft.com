@@ -28,6 +28,7 @@ sql_code_link(SQL_VIEW_FORMULA_ADD,  "Add new formula", $debug);
 sql_code_link(SQL_VIEW_FORMULA_EDIT, "Formula Edit", $debug);
 sql_code_link(SQL_VIEW_ADD,          "Add new view", $debug);
 sql_code_link(SQL_VIEW_EDIT,         "view Edit", $debug);
+sql_code_link(SQL_VIEW_IMPORT,       "Import", $debug);
 
 sql_code_link(SQL_WORD_TYPE_TIME,    "Time Word", $debug);
 sql_code_link(SQL_LINK_TYPE_IS,      "is a", $debug);
@@ -40,7 +41,7 @@ sql_code_link(SQL_LINK_TYPE_IS,      "is a", $debug);
 create the database using zukunft_structure.sql
 set the database user
 load the coded linked database rows with zukunft_init_data.sql
-import the inital usr data with XML
+import the inital usr data with JSON
 
 */
 

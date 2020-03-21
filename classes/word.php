@@ -5,6 +5,8 @@
   word.php - the main word object
   --------
   
+  TODO move plural to a linked word?
+  
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -22,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -105,6 +107,9 @@ class word {
           $usr->load_test_user($debug-1);
           $this->usr = $usr; 
         } else {
+          // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
+          $sql_set = "UPDATE words SET user_id = ".$this->usr->id." WHERE word_id = ".$this->id.";";
+          $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "word->load_standard", (new Exception)->getTraceAsString(), $debug-10);
           //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       } 
@@ -171,7 +176,7 @@ class word {
           $this->excluded     = $db_wrd['excluded'];
           $this->type_name($debug-1);
         } 
-        zu_debug('word->loaded '.$this->dsp_id().'.', $debug-12);
+        zu_debug('word->loaded '.$this->dsp_id(), $debug-12);
       }  
     }  
   }
@@ -184,10 +189,10 @@ class word {
       zu_debug('word->main_wrd_from_txt check if "'.$wrd_ids[0].'" is a number.', $debug-12);
       if (is_numeric($wrd_ids[0])) {
         $this->id = $wrd_ids[0];
-        zu_debug('word->main_wrd_from_txt from "'.$id_txt.'" got id '.$this->id.'.', $debug-14);
+        zu_debug('word->main_wrd_from_txt from "'.$id_txt.'" got id '.$this->id, $debug-14);
       } else {
         $this->name = $wrd_ids[0];
-        zu_debug('word->main_wrd_from_txt from "'.$id_txt.'" got name '.$this->name.'.', $debug-14);
+        zu_debug('word->main_wrd_from_txt from "'.$id_txt.'" got name '.$this->name, $debug-14);
       }
       $this->load($debug-1);
     }  
@@ -199,9 +204,28 @@ class word {
   
   */
   
-  // get the view used by most users for this word
+  // get the view object for this word
+  function view ($debug) {
+    zu_debug('word->view for '.$this->dsp_id(), $debug-10);
+    $result = Null;
+
+    $this->load($debug-1);
+    if ($this->view_id > 0) {
+      zu_debug('word->view got id '.$this->view_id, $debug-18);
+      $result = New view;
+      $result->usr = $this->usr;
+      $result->id  = $this->view_id;
+      $result->load($debug-1);
+      zu_debug('word->view for '.$this->dsp_id().' is '.$result->dsp_id(), $debug-16);
+    }
+
+    zu_debug('word->view done', $debug-10);
+    return $result;    
+  }
+
+  // TODO review, because is it needed? get the view used by most users for this word
   function view_id ($debug) {
-    zu_debug('word->view_id for '.$this->name.'.', $debug-10);
+    zu_debug('word->view_id for '.$this->dsp_id(), $debug-10);
 
     $view_id = 0;
     $sql = "SELECT view_id
@@ -218,40 +242,104 @@ class word {
       $view_id = $db_row['view_id'];  
     }
 
-    zu_debug('word->view_id for '.$this->name.' got '.$view_id.'.', $debug-12);
+    zu_debug('word->view_id for '.$this->dsp_id().' got '.$view_id, $debug-12);
     return $view_id;    
   }
 
   // get a list of all values related to this word
   function val_lst ($debug) {
-    zu_debug('word->val_lst for "'.$this->name.'" and user "'.$this->usr->name.'".', $debug-12);
+    zu_debug('word->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'".', $debug-12);
     $val_lst = New value_list;
     $val_lst->usr = $this->usr;
     $val_lst->phr = $this->phrase($debug-1);
     $val_lst->page_size = SQL_ROW_MAX;
     $val_lst->load($debug-1);
-    zu_debug('word->val_lst -> got '.count($val_lst->lst).'.', $debug-14);
+    zu_debug('word->val_lst -> got '.count($val_lst->lst), $debug-14);
     return $val_lst;    
   }
   
   // if there is just one formula linked to the word, get it
   function formula ($debug) {
-    zu_debug('word->formula for "'.$this->name.'" and user "'.$this->usr->name.'".', $debug-10);
+    zu_debug('word->formula for '.$this->dsp_id().' and user "'.$this->usr->name.'".', $debug-10);
 
     $sql = "SELECT formula_id
               FROM formula_links
               WHERE phrase_id = ".$this->id.";";
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
-    $frm_id = $db_con->get1($sql, $debug-5);  
-    $frm = New formula;
-    $frm->id = $frm_id['formula_id'];         
-    $frm->usr = $this->usr;         
-    $frm->load($debug-1);       
+    $db_row = $db_con->get1($sql, $debug-5);  
+    if (isset($db_row)) {
+      if ($db_row['formula_id'] > 0) {
+        $frm = New formula;
+        $frm->id = $db_row['formula_id'];         
+        $frm->usr = $this->usr;         
+        $frm->load($debug-1);
+      }
+    }
 
     return $frm;    
   }
 
+  // create a word object for the export
+  function export_obj ($debug) {
+    zu_debug('word->export_obj', $debug-10);
+    $result = Null;
+
+    if ($this->name <> '')        { $result->name        = $this->name;        }
+    if ($this->plural <> '')      { $result->plural      = $this->plural;      }
+    if ($this->description <> '') { $result->description = $this->description; }
+    if ($this->ref_1 <> '')       { $result->ref_1       = $this->ref_1;       }
+    if ($this->ref_2 <> '')       { $result->ref_2       = $this->ref_2;       }
+    if (isset($this->type_id)) { 
+      if ($this->type_id <> cl(SQL_WORD_TYPE_NORMAL)) { 
+        $result->type        = $this->type_code_id($debug-1); 
+      }
+    }
+    if ($this->view_id > 0) {
+      $wrd_view = $this->view($debug-1);
+      if (isset($wrd_view)) {
+        $result->view = $wrd_view->name;
+      }
+    }  
+
+    zu_debug('word->export_obj -> '.json_encode($result), $debug-18);
+    return $result;
+  }
+  
+  // import a view from a imported word object
+  function import_obj ($json_obj, $debug) {
+    zu_debug('word->import_obj', $debug-10);
+    $result = '';
+    
+    foreach ($json_obj AS $key => $value) {
+      if ($key == 'name')        { $this->name        = $value;     }
+      if ($key == 'plural')      { $this->plural      = $value;     }
+      if ($key == 'description') { $this->description = $value;     }
+      if ($key == 'type')        { $this->type_id     = cl($value); }
+      if ($key == 'ref_1')       { $this->ref_1       = $value;     }
+      if ($key == 'ref_2')       { $this->ref_2       = $value;     }
+      if ($key == 'view')        {
+        $wrd_view = New view;
+        $wrd_view->name = $value;
+        $wrd_view->usr  = $this->usr;
+        $wrd_view->load($debug-1);
+        if ($wrd_view->id == 0) {
+          zu_err('Cannot find view "'.$value.'" when importing '.$this->dsp_id(), 'word->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+        } else {  
+          $this->view_id = $wrd_view->id ;
+        }  
+      }
+    }
+    if ($result == '') {
+      $this->save($debug-1);
+      zu_debug('word->import_obj -> '.$this->dsp_id(), $debug-18);
+    } else {
+      zu_debug('word->import_obj -> '.$result, $debug-18);
+    }
+
+    return $result;
+  }
+  
   /*
   
   display functions
@@ -263,15 +351,15 @@ class word {
     $result = ''; 
 
     if ($this->name <> '') {
-      $result .= $this->name.' '; 
+      $result .= '"'.$this->name.'"'; 
       if ($this->id > 0) {
-        $result .= '('.$this->id.')';
+        $result .= ' ('.$this->id.')';
       }  
     } else {
       $result .= $this->id;
     }
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
   }
@@ -289,10 +377,16 @@ class word {
   }
 
   // offer the user to export the word and the relations as an xml file
+  function config_json_export ($back, $debug) {
+    $result  = '';
+    $result .= 'Export as <a href="/http/get_json.php?words='.$this->name.'&back='.$back.'">JSON</a>';
+    return $result;    
+  }
+
+  // offer the user to export the word and the relations as an xml file
   function config_xml_export ($back, $debug) {
     $result  = '';
-    $result .= '<h3>Create an XML file with all '.$this->name.' related values</h3>';
-    $result .= '<a href="/http/get_xml.php?words='.$this->name.'&back='.$back.'">get XML</a>';
+    $result .= 'Export as <a href="/http/get_xml.php?words='.$this->name.'&back='.$back.'">XML</a>';
     return $result;    
   }
 
@@ -327,14 +421,28 @@ class word {
     return $this->type_name;    
   }
   
+  function type_code_id($debug) {
+    $result = '';
+    if ($this->type_id > 0) {
+      $sql = "SELECT type_name, description, code_id
+                FROM word_types
+               WHERE word_type_id = ".$this->type_id.";";
+      $db_con = new mysql;         
+      $db_con->usr_id = $this->usr->id;         
+      $db_type = $db_con->get1($sql, $debug-5);  
+      $result = $db_type['code_id'];
+    }
+    return $result;    
+  }
+  
   // return true if the word has the given type
   function is_type ($type, $debug) {
-    zu_debug('word->is_type ('.$this->name.' is '.$type.')', $debug-10);
+    zu_debug('word->is_type ('.$this->dsp_id().' is '.$type.')', $debug-10);
 
     $result = false;
     if ($this->type_id == cl($type)) {
       $result = true;
-      zu_debug('word->is_type ('.$this->name.' is '.$type.')', $debug-12);
+      zu_debug('word->is_type ('.$this->dsp_id().' is '.$type.')', $debug-12);
     }
     return $result;    
   }
@@ -349,7 +457,7 @@ class word {
   // in case of a devision, these words are excluded from the result
   // in case of add, it is checked that the added value does not have a different measure
   function is_measure ($debug) {
-    zu_debug('word->is_measure '.$this->dsp_id().'.', $debug-10);
+    zu_debug('word->is_measure '.$this->dsp_id(), $debug-10);
     $result = false;
     if ($result = $this->is_type (SQL_WORD_TYPE_MEASURE, $debug-1)) {
       $result = true;
@@ -431,10 +539,10 @@ class word {
 
   // returns a list of words that are related to this word e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich"
   function parents ($debug) {
-    zu_debug('word->parents for '.$this->name.' and user '.$this->usr->id.'.', $debug-12);
+    zu_debug('word->parents for '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
     $wrd_lst = $this->lst($debug-1);
     $parent_wrd_lst = $wrd_lst->foaf_parents (cl(SQL_LINK_TYPE_IS), $debug-1);
-    zu_debug('word->parents are '.$parent_wrd_lst->name($debug-1).' for '.$this->name.'.', $debug-10);
+    zu_debug('word->parents are '.$parent_wrd_lst->name($debug-1).' for '.$this->dsp_id(), $debug-10);
     return $parent_wrd_lst;
   }
   
@@ -442,7 +550,7 @@ class word {
   function is ($debug) {
     $wrd_lst = $this->parents($debug-1);
     //$wrd_lst->add($this,$debug-1);
-    zu_debug('word->is -> '.$this->name.' is a '.$wrd_lst->name($debug-1).'.', $debug-8);
+    zu_debug('word->is -> '.$this->dsp_id().' is a '.$wrd_lst->name($debug-1), $debug-8);
     return $wrd_lst;
   }
 
@@ -453,16 +561,16 @@ class word {
     if (count($is_wrd_lst->lst) >= 1) {
       $result = $is_wrd_lst->lst[0];
     }
-    zu_debug('word->is_mainly -> ('.$this->name.' is a '.$result->name.')', $debug-8);
+    zu_debug('word->is_mainly -> ('.$this->dsp_id().' is a '.$result->name.')', $debug-8);
     return $result;
   }
   
   // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and others, but not "Company"
   function childs ($debug) {
-    zu_debug('word->childs for '.$this->name.' and user '.$this->usr->id.'.', $debug-12);
+    zu_debug('word->childs for '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
     $wrd_lst = $this->lst($debug-1);
     $child_wrd_lst = $wrd_lst->foaf_childs (cl(SQL_LINK_TYPE_IS), $debug-1);
-    zu_debug('word->childs are '.$child_wrd_lst->name($debug-1).' for '.$this->name.'.', $debug-10);
+    zu_debug('word->childs are '.$child_wrd_lst->name($debug-1).' for '.$this->dsp_id(), $debug-10);
     return $child_wrd_lst;
   }
   
@@ -475,7 +583,7 @@ class word {
 
   // makes sure that all combinations of "are" and "conatins" are included
   function are_and_contains ($debug) {
-    zu_debug('word->are_and_contains for '.$this->name.'.', $debug-18);
+    zu_debug('word->are_and_contains for '.$this->dsp_id(), $debug-18);
 
     // this first time get all related items
     $wrd_lst = $this->lst();
@@ -485,24 +593,24 @@ class word {
     // ... and after that get only for the new
     if (count($added_lst->lst) > 0) {
       $loops = 0;
-      zu_debug('word->are_and_contains -> added '.$added_lst->name().' to '.$wrd_lst->name().'.', $debug-18);
+      zu_debug('word->are_and_contains -> added '.$added_lst->name().' to '.$wrd_lst->name(), $debug-18);
       do {
         $next_lst  = clone $added_lst;
         $next_lst  = $next_lst->are     ($debug-1);
         $next_lst  = $next_lst->contains($debug-1);
         $added_lst = $next_lst->diff($wrd_lst, $debug-1);
-        if (count($added_lst->lst) > 0) { zu_debug('word->are_and_contains -> add '.$added_lst->name().' to '.$wrd_lst->name().'.', $debug-18); }  
+        if (count($added_lst->lst) > 0) { zu_debug('word->are_and_contains -> add '.$added_lst->name().' to '.$wrd_lst->name(), $debug-18); }  
         $wrd_lst->merge($added_lst, $debug-1);
         $loops++;
       } while (count($added_lst->lst) > 0 AND $loops < MAX_LOOP);
     }
-    zu_debug('word->are_and_contains -> '.$this->name.' are_and_contains '.$wrd_lst->name().'.', $debug-8);
+    zu_debug('word->are_and_contains -> '.$this->dsp_id().' are_and_contains '.$wrd_lst->name(), $debug-8);
     return $wrd_lst;
   }
   
   // return the follow word id based on the predefined verb following
   function next ($debug) {
-    zu_debug('word->next '.$this->name.' and user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word->next '.$this->dsp_id().' and user '.$this->usr->name, $debug-10);
     $result = New word_dsp;
     $link_id = cl(SQL_LINK_TYPE_FOLLOW);
     $db_con = new mysql;         
@@ -518,7 +626,7 @@ class word {
     
   // return the follow word id based on the predefined verb following
   function prior ($debug) {
-    zu_debug('word->prior('.$this->name.',u'.$this->usr->id.')', $debug-10);
+    zu_debug('word->prior('.$this->dsp_id().',u'.$this->usr->id.')', $debug-10);
     $result = New word_dsp;
     $link_id = cl(SQL_LINK_TYPE_FOLLOW);
     $db_con = new mysql;         
@@ -537,18 +645,18 @@ class word {
   // for the value selection this should be tested level by level
   // to use by default the most specific value
   function is_part ($debug) {
-    zu_debug('word->is('.$this->name.', user '.$this->usr->id.')', $debug-10);
+    zu_debug('word->is('.$this->dsp_id().', user '.$this->usr->id.')', $debug-10);
     $link_type_id = cl(SQL_LINK_TYPE_CONTAIN);
     $wrd_lst = $this->lst($debug-1);
     $is_wrd_lst = $wrd_lst->foaf_parents ($link_type_id, $debug-1);
 
-    zu_debug('word->is -> ('.$this->name.' is a '.$is_wrd_lst->name($debug-1).')', $debug-8);
+    zu_debug('word->is -> ('.$this->dsp_id().' is a '.$is_wrd_lst->name($debug-1).')', $debug-8);
     return $is_wrd_lst;
   }
   
   // returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
   function link_types ($direction, $debug) {
-    zu_debug('word->link_types '.$this->name.' and user '.$this->usr->id.'.', $debug-12);
+    zu_debug('word->link_types '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
     $vrb_lst = New verb_list;
     $vrb_lst->wrd       = clone $this;
     $vrb_lst->usr       = $this->usr;
@@ -557,6 +665,42 @@ class word {
     return $vrb_lst;
   }
   
+  // true if the word has any none default settings such as a special type
+  function has_cfg($debug) {
+    $has_cfg = false;
+    if (isset($this->plural)) {
+      if ($this->plural <> '') {
+        $has_cfg = true;
+      }  
+    }  
+    if (isset($this->description)) {
+      if ($this->description <> '') {
+        $has_cfg = true;
+      }  
+    }  
+    if (isset($this->type_id)) {
+      if ($this->type_id <> cl(SQL_WORD_TYPE_NORMAL)) {
+        $has_cfg = true;
+      }  
+    }  
+    if (isset($this->ref_1)) {
+      if ($this->ref_1 <> '') {
+        $has_cfg = true;
+      }  
+    }  
+    if (isset($this->ref_2)) {
+      if ($this->ref_2 <> '') {
+        $has_cfg = true;
+      }  
+    }  
+    if (isset($this->view_id)) {
+      if ($this->view_id > 0) {
+        $has_cfg = true;
+      }  
+    }  
+    return $has_cfg;
+  }
+
   /*
   
   convert functions
@@ -570,7 +714,7 @@ class word {
     $phr->id   = $this->id;
     $phr->name = $this->name;
     $phr->obj  = $this;
-    zu_debug('word->phrase of '.$this->name.'.', $debug-12);
+    zu_debug('word->phrase of '.$this->dsp_id(), $debug-12);
     return $phr;
   }
 
@@ -590,7 +734,7 @@ class word {
               FROM user_words 
              WHERE word_id = ".$this->id."
                AND user_id <> ".$this->owner_id."
-               AND excluded <> 1";
+               AND (excluded <> 1 OR excluded is NULL)";
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
     $change_user_id = $db_con->get1($sql, $debug-5);  
@@ -612,20 +756,21 @@ class word {
                 FROM user_words 
                WHERE word_id = ".$this->id."
                  AND user_id <> ".$this->owner_id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     } else {
       $sql = "SELECT user_id 
                 FROM user_words 
                WHERE word_id = ".$this->id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     }
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
-    $change_user_id = $db_con->get1($sql, $debug-5);  
+    $db_row = $db_con->get1($sql, $debug-5);  
+    $change_user_id = $db_row['user_id'];
     if ($change_user_id > 0) {
       $result = false;
     }
-    zu_debug('word->not_changed for '.$this->id.' is '.zu_dsp_bool($result).'.', $debug-10);  
+    zu_debug('word->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
     return $result;
   }
 
@@ -638,10 +783,11 @@ class word {
     $sql = "SELECT user_id 
               FROM user_words 
              WHERE word_id = ".$this->id."
-               AND excluded <> 1";
+               AND (excluded <> 1 OR excluded is NULL)";
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
-    $user_id = $db_con->get1($sql, $debug-5);  
+    $db_row = $db_con->get1($sql, $debug-5);  
+    $user_id = $db_row['user_id'];
     return $user_id;
   }
 
@@ -675,13 +821,17 @@ class word {
     $result = false;
 
     if (!$this->has_usr_cfg) {
-      zu_debug('word->add_usr_cfg for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+      zu_debug('word->add_usr_cfg for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
-      $sql = "SELECT word_id FROM `user_words` WHERE word_id = ".$this->id." AND user_id = ".$this->usr->id.";";
+      $sql = 'SELECT user_id 
+                FROM user_words
+               WHERE word_id = '.$this->id.'
+                 AND user_id = '.$this->usr->id.';';
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
-      $usr_wrd_id = $db_con->get1($sql, $debug-5);  
+      $db_row = $db_con->get1($sql, $debug-5);  
+      $usr_wrd_id = $db_row['user_id'];
       if ($usr_wrd_id <= 0) {
         // create an entry in the user sandbox
         $db_con->type = 'user_word';
@@ -697,7 +847,7 @@ class word {
   // check if the database record for the user specific settings can be removed
   private function del_usr_cfg_if_not_needed($debug) {
     $result = '';
-    zu_debug('word->del_usr_cfg_if_not_needed pre check for "'.$this->name.' und user '.$this->usr->name.'.', $debug-12);
+    zu_debug('word->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
 
     //if ($this->has_usr_cfg) {
 
@@ -716,7 +866,7 @@ class word {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_wrd_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('word->del_usr_cfg_if_not_needed check for "'.$this->name.' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('word->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
       if ($usr_wrd_cfg['word_id'] > 0) {
         if ($usr_wrd_cfg['plural']       == ''
         AND $usr_wrd_cfg['description']  == ''
@@ -725,7 +875,7 @@ class word {
         AND $usr_wrd_cfg['word_type_id'] == Null
         AND $usr_wrd_cfg['view_id']      == Null) {
           // delete the entry in the user sandbox
-          zu_debug('word->del_usr_cfg_if_not_needed any more for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+          zu_debug('word->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
           $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
         }  
       }  
@@ -751,7 +901,7 @@ class word {
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
-      zu_debug('word->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name.'.', $debug-12);
+      zu_debug('word->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
       $db_type = 'user_word';
       $log = $this->log_del($debug-1);
@@ -770,7 +920,7 @@ class word {
 
   // set the log entry parameter for a new value
   private function log_add($debug) {
-    zu_debug('word->log_add "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word->log_add '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -786,7 +936,7 @@ class word {
   
   // set the main log entry parameters for updating one word field
   private function log_upd($debug) {
-    zu_debug('word->log_upd "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'update';
@@ -801,7 +951,7 @@ class word {
   
   // set the log entry parameter to delete a word
   private function log_del($debug) {
-    zu_debug('word->log_del "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -817,7 +967,7 @@ class word {
   
   // set the log entry parameters for a value update
   private function log_upd_view($view_id, $debug) {
-    zu_debug('word->log_upd "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     if ($this->view_id > 0) {
       $dsp_old = new view_dsp;
       $dsp_old->id = $this->view_id;
@@ -853,7 +1003,7 @@ class word {
   // each user can define set the view individually, so this is user specific
   function save_view($view_id, $debug) {
     if ($this->id > 0 AND $view_id > 0 AND $view_id <> $this->view_id) {
-      zu_debug('word->save_view '.$view_id.' for "'.$this->name.'" and user '.$this->usr->id.'.', $debug-10);
+      zu_debug('word->save_view '.$view_id.' for '.$this->dsp_id().' and user '.$this->usr->id, $debug-10);
       if ($this->log_upd_view($view_id, $debug-1) > 0 ) {
         $db_con = new mysql;         
         $db_con->usr_id = $this->usr->id;         
@@ -1028,7 +1178,7 @@ class word {
     $result .= $this->save_field_type        ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_view        ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded    ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('word->save_fields all fields for "'.$this->name.'" has been saved.', $debug-12);
+    zu_debug('word->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
     return $result;
   }
   
@@ -1036,10 +1186,10 @@ class word {
   // otherwise create a new word and request to delete the old word
   private function save_field_name($db_con, $db_rec, $debug) {
     $result = '';
-    zu_debug('word->save_field_name change name from "'.$db_rec->name.'" to "'.$this->name.'"?', $debug-14);
+    zu_debug('word->save_field_name change name from "'.$db_rec->name.'" to '.$this->dsp_id().'?', $debug-14);
     if ($db_rec->name <> $this->name) {
       if ($this->can_change($debug-1) AND $this->not_changed($debug-1)) {      
-        zu_debug('word->save_field_name change name to "'.$this->name.'".', $debug-12);
+        zu_debug('word->save_field_name change name to '.$this->dsp_id(), $debug-12);
         $log = $this->log_upd($debug-1);
         $log->old_value = $db_rec->name;
         $log->new_value = $this->name;
@@ -1060,7 +1210,7 @@ class word {
   private function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->name <> $this->name) {
-      zu_debug('word->save_id_fields to "'.$this->dsp_id().'" from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('word->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->name;
       $log->new_value = $this->name;
@@ -1072,7 +1222,7 @@ class word {
                                               array($this->name), $debug-1);
       }
     }
-    zu_debug('word->save_id_fields for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('word->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
@@ -1092,12 +1242,12 @@ class word {
     
     if ($db_rec->name <> $this->name) {
       // check if target link already exists
-      zu_debug('word->save_id_if_updated check if target link already exists "'.$this->dsp_id().'" (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('word->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
       if ($db_chk->id > 0) {
-        if (UI_CAN_CHANGE_VIEW_ENTRY_NAME) {
+        if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
           // ... if yes request to delete or exclude the record with the id parameters before the change
           $to_del = clone $db_rec;
           $result .= $to_del->del($debug-20);        
@@ -1108,14 +1258,14 @@ class word {
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
-          zu_debug('word->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add "'.$this->dsp_id().'".', $debug-14);
+          zu_debug('word->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add '.$this->dsp_id(), $debug-14);
         } else {
           $result .= 'A view component with the name "'.$this->name.'" already exists. Please use another name.';
         }  
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('word->save_id_if_updated change the existing display component link "'.$this->dsp_id().'" (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('word->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -1129,18 +1279,18 @@ class word {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('word->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add "'.$this->dsp_id().'" (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('word->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
         }
       }
     }  
 
-    zu_debug('word->save_id_if_updated for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('word->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
   // create a new word
   private function add($db_con, $debug) {
-    zu_debug('word->add the word "'.$this->name.'".', $debug-12);
+    zu_debug('word->add the word '.$this->dsp_id(), $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -1149,7 +1299,7 @@ class word {
       // insert the new word
       $this->id = $db_con->insert(array("word_name","user_id"), array($this->name,$this->usr->id), $debug-1);
       if ($this->id > 0) {
-        zu_debug('word->save word "'.$this->name.'" has been added as '.$this->id.'.', $debug-12);
+        zu_debug('word->save word '.$this->dsp_id().' has been added as '.$this->id, $debug-12);
         // update the id in the log
         $result .= $log->add_ref($this->id, $debug-1);
 
@@ -1187,7 +1337,7 @@ class word {
   
   // add or update a word in the database (or create a user word if the program settings allow this)
   function save($debug) {
-    zu_debug('word->save "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('word->save '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $result = '';
     
     // build the database object because the is anyway needed
@@ -1197,7 +1347,7 @@ class word {
     
     // check if a new word is supposed to be added
     if ($this->id <= 0) {
-      zu_debug('word->save add new word "'.$this->name.'".', $debug-12);
+      zu_debug('word->save add new word '.$this->dsp_id(), $debug-12);
       // check if a word, formula or verb with the same name is already in the database
       // but not if the formula linked word is supposed to be created
       $trm_id = 0;
@@ -1210,10 +1360,10 @@ class word {
           $result .= $trm->id_used_msg($debug-1);
         } else {
           $this->id = $trm->id;
-          zu_debug('word->save adding word name "'.$this->name.'" is OK.', $debug-14);
+          zu_debug('word->save adding word name '.$this->dsp_id().' is OK.', $debug-14);
         }  
       } else {      
-        zu_debug('word->save no msg for "'.$this->name.'".', $debug-12);
+        zu_debug('word->save no msg for '.$this->dsp_id(), $debug-12);
       }  
     }  
       
@@ -1231,6 +1381,7 @@ class word {
       zu_debug('word->save -> database word "'.$db_rec->name.'" ('.$db_rec->id.') loaded.', $debug-14);
       $std_rec = New word_dsp;
       $std_rec->id = $this->id;
+      $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-1);
       zu_debug('word->save -> standard word settings for "'.$std_rec->name.'" ('.$std_rec->id.') loaded.', $debug-14);
       
@@ -1280,7 +1431,7 @@ class word {
       $db_con->type = 'user_word';
       $result .= $db_con->delete(array('word_id','excluded'), array($this->id,'1'), $debug-1);
       $db_con->type   = 'word';         
-      zu_debug('word->del do delete "'.$this->name.'".', $debug-14);
+      zu_debug('word->del do delete '.$this->dsp_id(), $debug-14);
       $result .= $db_con->delete('word_id', $this->id, $debug-1);
     }
     
@@ -1293,9 +1444,9 @@ class word {
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
-      zu_debug('word->del "'.$this->name.'".', $debug-14);
+      zu_debug('word->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
-        zu_debug('word->del can delete "'.$this->name.'".', $debug-14);
+        zu_debug('word->del can delete '.$this->dsp_id(), $debug-14);
         $result .= $this->del_exe($debug-1);
       } else {
         $this->excluded = 1;

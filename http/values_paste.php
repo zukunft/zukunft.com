@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -107,7 +107,7 @@ $link = zu_start("values_paste", "", $debug);
       $result .= dsp_go_back($back, $usr, $debug-1);
     } else {
       // display the view header
-      $result .= $dsp->top_right($debug-1);
+      $result .= $dsp->dsp_navbar($back, $debug-1);
 
       $result .= zuv_dsp_edit_or_add (0, $wrd_ids, $type_ids, $db_ids, $src_id, $back, $usr->id, $debug-1);
       

@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -37,6 +37,9 @@ class selector {
   public $usr        = Null; // if 0 (not NULL) for standard values, otherwise for a user specific values
   public $name       = '';   // the HMTL form field name
   public $form       = '';   // the name of the HMTL form
+  public $label      = '';   // the label of the HMTL form
+  public $bs_class   = '';   // to add addition class information for the bootstrap version
+  public $attribute  = '';   // to add addition attribute information for the bootstrap version e.g. display an disabled selector
   public $sql        = '';   // query to select the items
   public $lst        = Null; // list of objects from which the user can select
   public $selected   = Null; // id of the selected object
@@ -46,7 +49,7 @@ class selector {
     zu_debug('selector->display ('.$this->name.','.$this->form.','.$this->sql.',s'.$this->selected.','.$this->dummy_text.')', $debug-10);
     $result  = '';
 
-    $result .= '<select name="'.$this->name.'" form="'.$this->form.'">';
+    $result .= dsp_form_fld_select ($this->form, $this->name, $this->label, $this->bs_class, $this->attribute);
     
     if ($this->dummy_text == '') {
       $this->dummy_text == 'please select ...';
@@ -68,7 +71,7 @@ class selector {
       $result .= '<option value="'.$db_entry['id'].'"'.$row_option.'>'.$db_entry['name'].'</option>';
     }
 
-    $result .= '</select>';
+    $result .= dsp_form_fld_select_end();
 
     zu_debug('selector->display ... done.', $debug-14);
     return $result;

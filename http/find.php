@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,16 +47,18 @@ $link = zu_start("find", "", $debug);
     $dsp = new view_dsp;
     $dsp->usr = $usr;
     $dsp->id = cl(SQL_VIEW_WORD_FIND);
-    $result .= $dsp->top_right($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back, $debug-1);
 
     $find_str = $_GET['pattern'];
 
     $result .= dsp_text_h2('Find word');
 
     // show a search field
+    /* replaced by the navbar form
     $result .= dsp_form_start("find");
     $result .= dsp_form_fld('pattern', $find_str);
     $result .= dsp_form_end();
+    */
 
     // show the matching words to select
     $wrd_lst = New word_list;

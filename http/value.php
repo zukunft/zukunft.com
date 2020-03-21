@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -56,7 +56,7 @@ $link = zu_start("value", "", $debug);
     $dsp->load($debug-1);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
         
-    $result .= $dsp->top_right($debug-1);
+    $result .= $dsp->dsp_navbar($back, $debug-1);
 
     if ($wrd_names <> '') {
 

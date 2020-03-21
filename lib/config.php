@@ -2,9 +2,11 @@
 
 /*
 
-  zu_lib_config.php - functions to handle the database based system configuration
-  __________
+  /lib/config.php - functions to handle the database based system configuration
+  ---------------
 
+  the values in the config table can only be changed by the system admin
+  
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -22,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com

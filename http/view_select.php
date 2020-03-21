@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -50,8 +50,8 @@ $link = zu_start("view_select", "", $debug);
     $dsp = new view_dsp;
     $dsp->usr = $usr;
     //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
-    $result .= $dsp->top_right_no_view($debug-1);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
+    $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
     
     // get the view id used until now and the word id
     if (isset($_GET['id'])) {
@@ -62,11 +62,15 @@ $link = zu_start("view_select", "", $debug);
     }
 
     // show the word name
-    $wrd = New word_dsp;
-    $wrd->usr = $usr;
-    $wrd->id  = $word_id;   
-    $wrd->load($debug-1);
-    $result .= dsp_text_h2 ('Select the display format for "'.$wrd->name.'"');
+    if ($word_id > 0) {  
+      $wrd = New word_dsp;
+      $wrd->usr = $usr;
+      $wrd->id  = $word_id;   
+      $wrd->load($debug-1);
+      $result .= dsp_text_h2 ('Select the display format for "'.$wrd->name.'"');
+    } else {  
+      $result .= dsp_text_h2 ('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
+    }
 
     // allow to change to type
     $dsp = new view;

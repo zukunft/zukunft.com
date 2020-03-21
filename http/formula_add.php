@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -53,7 +53,7 @@ $link = zu_start("formula_add", "", $debug);
     $dsp->id = cl(SQL_VIEW_FORMULA_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
-    $back    = $_GET['back'];
+    $back = $_GET['back'];
         
     // init the formula object
     $frm = New formula;
@@ -80,6 +80,7 @@ $link = zu_start("formula_add", "", $debug);
     
     // if the user has requested to add a new formula
     if ($_GET['confirm'] > 0) {
+      zu_debug('formula_add->check ', $debug-14);
 
       // check parameters
       if (!isset($wrd)) {
@@ -95,13 +96,18 @@ $link = zu_start("formula_add", "", $debug);
       }
       
       // check if a word, verb or formula with the same name already exists
+      zu_debug('formula_add->check word ', $debug-14);
       $trm = $frm->term($debug-1);      
-      if ($trm->id > 0) {
-        $msg .= $trm->id_used_msg($debug-1);
+      if (isset($trm)) {
+        if ($trm->id > 0) {
+          $msg .= $trm->id_used_msg($debug-1);
+        }
       }
+      zu_debug('formula_add->checked ', $debug-14);
       
       // if the parameters are fine
       if ($msg == '') {
+        zu_debug('formula_add->do ', $debug-14);
     
         // add to db
         $add_result .= $frm->save($debug-1);
@@ -132,7 +138,7 @@ $link = zu_start("formula_add", "", $debug);
     // if nothing yet done display the edit view (and any message on the top)
     if ($result == '')  {
       // show the header
-      $result .= $dsp->top_right($debug-1);
+      $result .= $dsp->dsp_navbar($back, $debug-1);
       $result .= dsp_err($msg);
 
       $result .= $frm->dsp_edit (0, $wrd, $back, $debug);

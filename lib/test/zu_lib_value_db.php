@@ -19,7 +19,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ function zuv_changer($val_id, $debug) {
   $sql = "SELECT user_id 
             FROM user_values 
            WHERE value_id = ".$val_id."
-             AND excluded <> 1";
+             AND (excluded <> 1 OR excluded is NULL)";
   $user_id = zu_sql_get1($sql, $debug-1);
   return $user_id;
 }

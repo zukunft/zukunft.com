@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -50,16 +50,17 @@ class value_list_dsp extends value_list {
       
       // init the display vars
       $val_main = Null; // the "main" value used as a sample for a new value
+      $modal_nbr = 1;   // to create a unique id for each modal form; the total number of modal boxes will not get too high, because the user will only see a limited number of values at once
 
       // create the table headline e.g. cash flow statement
-      zu_debug('value_list_dsp->dsp_table all pre head: '.$phr_row->name.'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table all pre head: '.$phr_row->name, $debug-4);
       $result .= $phr_row->dsp_tbl_row($debug-1);
-      zu_debug('value_list_dsp->dsp_table all head: '.$phr_row->name.'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table all head: '.$phr_row->name, $debug-4);
       $result .= '<br>';
 
       // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
       $val_lst = $this->phr->val_lst($debug-1);
-      zu_debug('value_list_dsp->dsp_table all values: '.count($val_lst->lst).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table all values: '.count($val_lst->lst), $debug-4);
 
       //$val_lst->load_phrases($debug-1);    
       /*foreach ($val_lst->lst AS $val) {
@@ -68,45 +69,45 @@ class value_list_dsp extends value_list {
 
       // get all words related to the value list to be able to define the column and the row names
       $phr_lst_all = $val_lst->phr_lst($debug-1);
-      zu_debug('value_list_dsp->dsp_table all words: '.$phr_lst_all->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table all words: '.$phr_lst_all->name($debug-1), $debug-4);
 
       // get the time words for the column heads
       $all_time_lst = $val_lst->time_lst($debug-1);
-      zu_debug('value_list_dsp->dsp_table times: '.$all_time_lst->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table times: '.$all_time_lst->name($debug-1), $debug-4);
 
       // adjust the time words to display
       $time_lst = $all_time_lst->time_useful($debug-1);
-      zu_debug('value_list_dsp->dsp_table times sorted: '.$time_lst->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table times sorted: '.$time_lst->name($debug-1), $debug-4);
           
       // filter the value list by the time words used
       $used_value_lst = $val_lst->filter_by_time($time_lst, $debug-1);
-      zu_debug('value_list_dsp->dsp_table values in the time period: '.count($used_value_lst->lst).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table values in the time period: '.count($used_value_lst->lst), $debug-4);
       
       // get the word tree for the left side of the table
       $row_wrd_lst = $phr_row->are_and_contains($debug-1);
-      zu_debug('value_list_dsp->dsp_table row words: '.$row_wrd_lst->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table row words: '.$row_wrd_lst->name($debug-1), $debug-4);
 
       // add potential differentiators to the word tree
       $word_incl_differentiator_lst = $row_wrd_lst->differentiators_filtered($phr_lst_all, $debug-1);
-      zu_debug('value_list_dsp->dsp_table differentiator words: '.$word_incl_differentiator_lst->name($debug-1).'.', $debug-4);
-      zu_debug('value_list_dsp->dsp_table row words after differentiators added: '.$row_wrd_lst->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table differentiator words: '.$word_incl_differentiator_lst->name($debug-1), $debug-4);
+      zu_debug('value_list_dsp->dsp_table row words after differentiators added: '.$row_wrd_lst->name($debug-1), $debug-4);
 
       // filter the value list by the row words used
       $row_phr_lst_incl = $row_wrd_lst->phrase_lst($debug-1);
-      zu_debug('value_list_dsp->dsp_table row phrase list: '.$row_phr_lst_incl->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table row phrase list: '.$row_phr_lst_incl->name($debug-1), $debug-4);
       $used_value_lst = $used_value_lst->filter_by_phrase_lst($row_phr_lst_incl, $debug-1);
-      zu_debug('value_list_dsp->dsp_table used values for all rows: '.count($used_value_lst->lst).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table used values for all rows: '.count($used_value_lst->lst), $debug-4);
       
       // get the common words
       $common_lst = $used_value_lst->common_phrases($debug-1);
-      zu_debug('value_list_dsp->dsp_table common: '.$common_lst->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table common: '.$common_lst->name($debug-1), $debug-4);
 
       // get all words not yet part of the table rows, columns or common words
       $xtra_phrases = clone $phr_lst_all;
       if (isset($word_incl_differentiator_lst)) { $xtra_phrases->not_in($word_incl_differentiator_lst, $debug-1); }
       $xtra_phrases->not_in($common_lst, $debug-1);
       $xtra_phrases->not_in($time_lst->phrase_lst($debug-1), $debug-1);
-      zu_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: '.$xtra_phrases->name($debug-1).'.', $debug-4);
+      zu_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: '.$xtra_phrases->name($debug-1), $debug-4);
 
       // display the common words 
       // to do: sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
@@ -134,12 +135,7 @@ class value_list_dsp extends value_list {
       $result .= '  <tr>'."\n";
       $result .= '    <th></th>'."\n";
       foreach ($time_lst->lst AS $time_word) {
-        $aline = '';
-        if (count($time_lst->lst <= 5)) {
-          $result .= dsp_tbl_head_right($time_word->display($back, $debug-1), $debug-1);
-        } else {
-          $result .= dsp_tbl_head($time_word->display($back, $debug-1), $debug-1);
-        }
+        $result .= dsp_tbl_head_right($time_word->display($back, $debug-1), $debug-1);
       }
       $result .= '  </tr>'."\n";
 
@@ -190,10 +186,10 @@ class value_list_dsp extends value_list {
           
             $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd, $debug-1);
             if ($tbl_value->number == "") {
-              $result .= '      <td><div>'."\n";
+              $result .= '      <td align="right">'."\n";
 
               // to review
-              $add_phr_lst = $common_lst;
+              $add_phr_lst = clone $common_lst;
               $add_phr_ids = $common_lst->ids;
               $type_ids  = array();
               foreach ($add_phr_lst->ids AS $pos) {
@@ -212,8 +208,11 @@ class value_list_dsp extends value_list {
                 $type_ids[] = 0;
               }
               
-              $result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back, $debug-10);
-              $result .= '      </div></td>'."\n";
+              //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back, $debug-1);
+              $result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back, $debug-10);
+              $modal_nbr++;
+              //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back, $debug-10);
+              $result .= '      </td>'."\n";
             } else {  
               $result .= $tbl_value->dsp_tbl($back, $debug-1);
               // maybe display the extra words of this value
@@ -289,7 +288,7 @@ class value_list_dsp extends value_list {
               
                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd, $debug-1);
                 if ($tbl_value->number == "") {
-                  $result .= '      <td><div>'."\n";
+                  $result .= '      <td align="right">'."\n";
 
                   // to review
                   $add_phr_lst = $common_lst;
@@ -317,7 +316,7 @@ class value_list_dsp extends value_list {
                   }  
             
                   $result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back, $debug-10);
-                  $result .= '      </div></td>'."\n";
+                  $result .= '      </td>'."\n";
                 } else {  
                   $result .= $tbl_value->dsp_tbl($back, $debug-1);
                   // maybe display the extra words of this value
@@ -329,7 +328,7 @@ class value_list_dsp extends value_list {
           // add a new part value for the sub_word
           if (!empty($differantiator_phrases)) {
             $result .= '  <tr>'."\n";
-            $result .= '      <td><div>'."\n";
+            $result .= '      <td align="right">'."\n";
 
             // to review
             $add_phr_ids = $common_lst->ids;
@@ -346,7 +345,7 @@ class value_list_dsp extends value_list {
             $type_ids[] = $type_phr->id;
             
             $result .= '      &nbsp;&nbsp;'.btn_add_value ($add_phr_ids, $type_ids, $back, $debug-10);
-            $result .= '      </div></td>'."\n";
+            $result .= '      </td>'."\n";
             $result .= '  </tr>'."\n";
           }
         }
@@ -380,7 +379,7 @@ class value_list_dsp extends value_list {
       $result .= '  </tr>'."\n";
         
       $result .= '    </tbody>'."\n"; 
-      $result .= '  </table> ';
+      $result .= dsp_tbl_end ();
       
       $result .= '<br><br>';
 

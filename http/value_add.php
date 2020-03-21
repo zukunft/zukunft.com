@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -76,6 +76,13 @@ $link = zu_start("value_add", "", $debug);
       zu_debug("value_add -> phrases ".implode(",",$phr_ids) .".", $debug-12);
       zu_debug("value_add -> types "  .implode(",",$type_ids).".", $debug-12);
       $val->ids = $phr_ids;
+    } elseif (isset($_GET['phrases'])) {
+      $phr_ids = array();
+      if ($_GET['phrases'] <> '') {
+        $phr_ids = explode(",",$_GET['phrases']);
+      }
+      zu_debug("value_add -> phrases ".implode(",",$phr_ids) .".", $debug-12);
+      $val->ids = $phr_ids;
     }
 
     // get the essential parameters for adding a value
@@ -116,7 +123,7 @@ $link = zu_start("value_add", "", $debug);
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
       // display the view header
-      $result .= $dsp->top_right($debug-1);
+      $result .= $dsp->dsp_navbar($back, $debug-1);
       $result .= dsp_err($msg);
 
       $result .= $val->dsp_edit($type_ids, $back, $debug-1);

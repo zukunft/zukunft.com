@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -128,9 +128,14 @@ $link = zu_start("user", "", $debug);
       $cmp_lnk->del_usr_cfg($debug-1);
     }
     
-    $result .= $dsp->top_right($debug-1);
+    $result .= $dsp->dsp_navbar($back, $debug-1);
     $result .= $dsp_usr->dsp_edit($debug-1);
 
+    // allow to import data
+    if ($usr->can_import($debug-1)) {
+      $result .= dsp_text_h3('<br>Import <a href="/http/import.php">JSON</a><br>');
+    }
+    
     // display the user sandbox if there is something in
     $sandbox = $dsp_usr->dsp_sandbox ($back, $debug-1);
     if (trim($sandbox) <> "") {

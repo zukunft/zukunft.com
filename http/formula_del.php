@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -69,7 +69,7 @@ $link = zu_start("formula_del", "", $debug);
         $result .= dsp_go_back($back, $usr, $debug-1);
       } else {  
         // display the view header
-        $result .= $dsp->top_right($debug-1);
+        $result .= $dsp->dsp_navbar($back, $debug-1);
 
         if ($frm->is_used($debug-1)) {
           $result .= btn_yesno("Exclude \"".$frm->name."\" ", "/http/formula_del.php?id=".$formula_id."&back=".$back);

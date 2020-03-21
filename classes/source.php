@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -42,7 +42,7 @@ class source {
   public $code_id     = '';   // to select internal predefined sources
   
   // in memory only fields
-  public $type_name    = '';   // 
+  public $type_name   = '';   // 
   public $back        = NULL;   // the calling stack
   
   // load the source parameters for all users
@@ -81,13 +81,16 @@ class source {
         $this->type_id      = $db_src['source_type_id'];
         $this->code_id      = $db_src['code_id'];
 
-        // to review: try to avoid using load_test_user
+        // TODO: try to avoid using load_test_user
         if ($this->owner_id > 0) {
           $usr = New user;
           $usr->id = $this->owner_id;
           $usr->load_test_user($debug-1);
           $this->usr = $usr; 
         } else {
+          // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
+          $sql_set = "UPDATE sources SET user_id = ".$this->usr->id." WHERE source_id = ".$this->id.";";
+          $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "source->load_standard", (new Exception)->getTraceAsString(), $debug-10);
           //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       } 
@@ -143,7 +146,7 @@ class source {
           $this->type_id    = $db_source['source_type_id'];
           $this->code_id    = $db_source['code_id'];
         } 
-        zu_debug('source->load ('.$this->name.')', $debug-10);
+        zu_debug('source->load ('.$this->dsp_id().')', $debug-10);
       }  
     }  
   }
@@ -161,6 +164,49 @@ class source {
       $this->type_name = $db_type['type_name'];
     }
     return $this->type_name;    
+  }
+  
+  // create an object for the export
+  function export_obj ($debug) {
+    zu_debug('source->export_obj', $debug-10);
+    $result = Null;
+
+    // add the source parameters
+    $result->name    = $this->name;
+    if ($this->url <> '')                 { $result->url     = $this->url;                 }
+    if ($this->comment <> '')             { $result->comment = $this->comment;             }
+    if ($this->type_name($debug-1) <> '') { $result->type    = $this->type_name($debug-1); }
+    if ($this->code_id <> '')             { $result->code_id = $this->code_id;             }
+
+    zu_debug('source->export_obj -> '.json_encode($result), $debug-18);
+    return $result;
+  }
+  
+  // import a source from an object
+  function import_obj ($json_obj, $debug) {
+    zu_debug('source->import_obj', $debug-10);
+    $result = '';
+    
+    foreach ($json_obj AS $key => $value) {
+
+      if ($key == 'name')    { $this->name    = $value; }
+      if ($key == 'url')     { $this->url    = $value; }
+      if ($key == 'comment') { $this->comment = $value; }
+      /* TODO
+      if ($key == 'type')    { $this->type_id = cl($value); }
+      if ($key == 'code_id') {
+      }
+      */
+    }
+    
+    if ($result == '') {
+      $this->save($debug-1);
+      zu_debug('source->import_obj -> '.$this->dsp_id(), $debug-18);
+    } else {
+      zu_debug('source->import_obj -> '.$result, $debug-18);
+    }
+
+    return $result;
   }
   
   /*
@@ -182,7 +228,7 @@ class source {
       $result .= $this->id;
     }
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
   }
@@ -198,7 +244,7 @@ class source {
   // source_type_id is used to .... remove???
   // word_id - id of the starting word to display; can be a single word, a comma seperated list of word ids, a word group or a word tripple
   function display ($wrd, $debug) {
-    zu_debug('source->display "'.$wrd->name.'" with the view "'.$this->name.'" (type '.$this->type_id.')  for user "'.$this->usr->name.'".', $debug-10);
+    zu_debug('source->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'".', $debug-10);
     $result = '';
 
     if ($this->id <= 0) {
@@ -206,7 +252,7 @@ class source {
     } else {
       // display always the source name in the top right corner and allow the user to edit the source
       $result .= $this->dsp_type_open($debug-1);
-      $result .= $this->top_right($wrd, $debug-1);
+      $result .= $this->dsp_navbar($wrd->id, $debug-1);
       $result .= $this->dsp_entries($wrd, $debug-1);
       $result .= $this->dsp_type_close($debug-1);
     }
@@ -217,8 +263,7 @@ class source {
   
   // display a selector for the value source
   function dsp_select($form_name, $back, $debug) {
-    zu_debug("source->dsp_select (".$this->id.",".$form_name.",b".$back." and user ".$this->usr->name.")", $debug-10);
-
+    zu_debug('source->dsp_select '.$this->dsp_id(), $debug-10);
     $result = ''; // reset the html code var
 
     // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
@@ -259,7 +304,7 @@ class source {
 
   // display a html view to change the source name and url
   function dsp_edit ($back, $debug) {
-    zu_debug('source->dsp_edit '.$this->name.' by user '.$this->usr->name.'.', $debug-10);
+    zu_debug('source->dsp_edit '.$this->dsp_id().' by user '.$this->usr->name, $debug-10);
     $result = '';
     
     if ($this->id <= 0) {
@@ -270,16 +315,16 @@ class source {
       $result .= dsp_text_h2('Edit source "'.$this->name.'"');
     }  
     $result .= dsp_form_start($script);
-    $result .= '<table>';
-    $result .= '  <input type="hidden" name="id" value="'.$this->id.'">';
-    $result .= '  <input type="hidden" name="back" value="'.$back.'">';
-    $result .= '  <input type="hidden" name="confirm" value="1">';
-    $result .= '<tr><td>name   </td><td><input type="text" name="name"    size="100" value="'.$this->name.   '"></td></tr>';
-    $result .= '<tr><td>type   </td><td>'.$this->dsp_select_type($script, $back, $debug-1).                    '</td></tr>';
-    $result .= '<tr><td>url    </td><td><input type="text" name="url"     size="100" value="'.$this->url.    '"></td></tr>';
-    $result .= '<tr><td>comment</td><td><input type="text" name="comment" size="100" value="'.$this->comment.'"></td></tr>';
-    $result .= '</table>';
-    $result .= dsp_form_end();
+    //$result .= dsp_tbl_start();
+    $result .= dsp_form_hidden ("id",      $this->id);
+    $result .= dsp_form_hidden ("back",    $back);
+    $result .= dsp_form_hidden ("confirm", 1);
+    $result .= dsp_form_fld    ("name",    $this->name,    "Source name:");
+    $result .= '<tr><td>type   </td><td>'. $this->dsp_select_type($script, $back, $debug-1).                    '</td></tr>';
+    $result .= dsp_form_fld    ("url",     $this->url,     "URL:");
+    $result .= dsp_form_fld    ("comment", $this->comment, "Comment:");
+    //$result .= dsp_tbl_end ();
+    $result .= dsp_form_end('', $back);
 
     zu_debug('source->dsp_edit -> done.', $debug-1);
     return $result;
@@ -312,20 +357,21 @@ class source {
                 FROM user_sources 
                WHERE source_id = ".$this->id."
                  AND user_id <> ".$this->owner_id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     } else {
       $sql = "SELECT user_id 
                 FROM user_sources 
                WHERE source_id = ".$this->id."
-                 AND excluded <> 1";
+                 AND (excluded <> 1 OR excluded is NULL)";
     }
     $db_con = new mysql;         
     $db_con->usr_id = $this->usr->id;         
-    $change_user_id = $db_con->get1($sql, $debug-5);  
+    $db_row = $db_con->get1($sql, $debug-5);  
+    $change_user_id = $db_row['user_id'];
     if ($change_user_id > 0) {
       $result = false;
     }
-    zu_debug('source->not_changed for '.$this->id.' is '.zu_dsp_bool($result).'.', $debug-10);  
+    zu_debug('source->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
     return $result;
   }
 
@@ -356,13 +402,14 @@ class source {
     $result = '';
 
     if (!$this->has_usr_cfg) {
-      zu_debug('source->add_usr_cfg for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+      zu_debug('source->add_usr_cfg for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
       $sql = "SELECT source_id FROM `user_sources` WHERE source_id = ".$this->id." AND user_id = ".$this->usr->id.";";
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
-      $usr_db_id = $db_con->get1($sql, $debug-5);  
+      $db_row = $db_con->get1($sql, $debug-5);  
+      $usr_db_id = $db_row['user_id'];
       if ($usr_db_id <= 0) {
         // create an entry in the user sandbox
         $db_con->type = 'user_source';
@@ -378,7 +425,7 @@ class source {
   // check if the database record for the user specific settings can be removed
   private function del_usr_cfg_if_not_needed($debug) {
     $result = '';
-    zu_debug('source->del_usr_cfg_if_not_needed pre check for "'.$this->name.' und user '.$this->usr->name.'.', $debug-12);
+    zu_debug('source->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
 
     //if ($this->has_usr_cfg) {
 
@@ -393,12 +440,12 @@ class source {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_wrd_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('source->del_usr_cfg_if_not_needed check for "'.$this->name.' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('source->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
       if ($usr_wrd_cfg['source_id'] > 0) {
         if ($usr_wrd_cfg['comment']      == ''
         AND $usr_wrd_cfg['source_type_id'] == Null) {
           // delete the entry in the user sandbox
-          zu_debug('source->del_usr_cfg_if_not_needed any more for "'.$this->name.' und user '.$this->usr->name.'.', $debug-10);
+          zu_debug('source->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
           $db_con->type = 'user_source';
           $result .= $db_con->delete(array('source_id','user_id'), array($this->id,$this->usr->id), $debug-1);
           if (str_replace('1','',$result) <> '') {
@@ -412,7 +459,7 @@ class source {
 
   // set the log entry parameter for a new value
   private function log_add($debug) {
-    zu_debug('source->log_add "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('source->log_add '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -428,7 +475,7 @@ class source {
   
   // set the main log entry parameters for updating one source field
   private function log_upd($debug) {
-    zu_debug('source->log_upd "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('source->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'update';
@@ -443,7 +490,7 @@ class source {
   
   // set the log entry parameter to delete a source
   private function log_del($debug) {
-    zu_debug('source->log_del "'.$this->name.'" for user '.$this->usr->name.'.', $debug-10);
+    zu_debug('source->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -569,7 +616,7 @@ class source {
     $result .= $this->save_field_comment($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_type   ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('source->save_fields all fields for "'.$this->name.'" has been saved.', $debug-12);
+    zu_debug('source->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
     return $result;
   }
   
@@ -578,7 +625,7 @@ class source {
   private function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->name <> $this->name) {
-      zu_debug('source->save_id_fields to "'.$this->dsp_id().'" from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('source->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->name;
       $log->new_value = $this->name;
@@ -590,7 +637,7 @@ class source {
                                               array($this->name), $debug-1);
       }
     }
-    zu_debug('source->save_id_fields for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('source->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
@@ -600,12 +647,12 @@ class source {
     
     if ($db_rec->name <> $this->name) {
       // check if target link already exists
-      zu_debug('source->save_id_if_updated check if target link already exists "'.$this->dsp_id().'" (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('source->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
       if ($db_chk->id > 0) {
-        if (UI_CAN_CHANGE_VIEW_ENTRY_NAME) {
+        if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
           // ... if yes request to delete or exclude the record with the id parameters before the change
           $to_del = clone $db_rec;
           $result .= $to_del->del($debug-20);        
@@ -616,14 +663,14 @@ class source {
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
-          zu_debug('source->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add "'.$this->dsp_id().'".', $debug-14);
+          zu_debug('source->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add '.$this->dsp_id(), $debug-14);
         } else {
           $result .= 'A source with the name "'.$this->name.'" already exists. Please use another name.';
         }  
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('source->save_id_if_updated change the existing display component link "'.$this->dsp_id().'" (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('source->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -637,18 +684,18 @@ class source {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('source->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add "'.$this->dsp_id().'" (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('source->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
         }
       }
     }  
 
-    zu_debug('source->save_id_if_updated for "'.$this->name.'" has been done.', $debug-12);
+    zu_debug('source->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
     return $result;
   }
   
   // create a new source
   private function add($db_con, $debug) {
-    zu_debug('source->add the source "'.$this->name.'".', $debug-12);
+    zu_debug('source->add the source '.$this->dsp_id(), $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -678,7 +725,7 @@ class source {
   
   // update a source in the database or create a user source
   function save($debug) {
-    zu_debug('source->save "'.$this->name.'" for user '.$this->usr->id.'.', $debug-10);
+    zu_debug('source->save '.$this->dsp_id().' for user '.$this->usr->id, $debug-10);
     $result = "";
     
     // build the database object because the is anyway needed
@@ -689,7 +736,7 @@ class source {
     // check if a new value is supposed to be added
     if ($this->id <= 0) {
       // check if a source with the same name is already in the database
-      zu_debug('source->save check if a source named "'.$this->name.'" already exists.', $debug-12);
+      zu_debug('source->save check if a source named '.$this->dsp_id().' already exists.', $debug-12);
       $db_chk = New source;
       $db_chk->name = $this->name;
       $db_chk->usr  = $this->usr;
@@ -713,6 +760,7 @@ class source {
       zu_debug('source->save -> database source "'.$db_rec->name.'" ('.$db_rec->id.') loaded.', $debug-14);
       $std_rec = New source;
       $std_rec->id = $this->id;
+      $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-1);
       zu_debug('source->save -> standard source settings for "'.$std_rec->name.'" ('.$std_rec->id.') loaded.', $debug-14);
       
@@ -759,7 +807,7 @@ class source {
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
-      zu_debug('source->del "'.$this->name.'".', $debug-14);
+      zu_debug('source->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
         $result .= $this->del_exe($debug-1);
       } else {

@@ -35,7 +35,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -69,7 +69,7 @@ class user {
     $sql_where = '';
     if ($this->id > 0) {
       $sql_where = "u.user_id = ".$this->id;
-      zu_debug('user->load user id '.$this->id.'.', $debug-15);
+      zu_debug('user->load user id '.$this->id, $debug-15);
     } elseif ($this->code_id > 0) {
       $sql_where = "u.code_id = ".$this->code_id;
     } elseif ($this->name <> '') {
@@ -106,7 +106,9 @@ class user {
   private function load($debug) {
     $db_usr = $this->load_db($debug-1);
     if (isset($db_usr)) {
-      if ($db_usr['user_id'] > 0) {
+      if ($db_usr['user_id'] <= 0) {
+        $this->id           = 0;
+      } else {
         $this->id           = $db_usr['user_id'];
         $this->code_id      = $db_usr['code_id'];
         $this->name         = $db_usr['user_name'];
@@ -125,12 +127,18 @@ class user {
   }
   
   // special function to exposed the user loading for simulating test users for the automatic system test
+  // TODO used also in the user sandbox: check if this is correct
   function load_test_user($debug) {
     return $this->load($debug-1);
   }  
   
   private function ip_in_range($min, $max) {
-    return (ip2long($min) <= ip2long($this->ip_addr) && ip2long($this->ip_addr) <= ip2long($max));
+    $result = false;
+    if(inet_pton($this->ip_addr)>=inet_pton($min) && inet_pton($this->ip_addr)<=inet_pton($max)) {
+        return true;
+    }
+    return $result;     
+    
   }  
   
   // return the message, why the if is not permitted
@@ -212,6 +220,18 @@ class user {
     return $result;
   }
 
+  // true if the user has the right to import data
+  function can_import ($debug) {
+    zu_debug('user->can_import ('.$this->id.')', $debug-10);
+    $result = false;
+
+    if (!isset($this->profile_id)) { $this->load($debug-1); }
+    if ($this->profile_id == cl(SQL_USER_ADMIN)) {
+      $result = true;
+    }  
+    return $result;
+  }
+
   // load the last word used by the user
   function last_wrd ($debug) {
     if ($this->wrd_id <= 0) {
@@ -258,7 +278,7 @@ class user {
 
   // set the main log entry parameters for updating one word field
   private function log_upd($debug) {
-    zu_debug('user->log_upd user '.$this->name.'.', $debug-10);
+    zu_debug('user->log_upd user '.$this->name, $debug-10);
     $log = New user_log;
     $log->usr_id    = $this->id;  
     $log->action    = 'update';
@@ -308,6 +328,12 @@ class user {
     return $result;
   }
 
+  // if at least one other user has switched off all changes from this user
+  // all changes of this user should be excluded from the standard values
+  // e.g. a user has a
+  function exclude_from_standard ($debug) {
+  }
+  
   // create a new user or update the existing
   function save ($debug) {
     $result = '';

@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2018 by zukunft.com AG, Zurich
+copyright 1995-2020 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,11 +41,12 @@ $link = zu_start_api("get_xml", "", $debug);
   // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
   if ($usr->id > 0) {
 
-    // sample "Nestlé%2Ccountryweight"
+    // get the words that are supposed to be exported, sample "Nestlé%2Ccountryweight"
     $phrases = $_GET['words'];
     zu_debug("get_xml(".$phrases.")", $debug);
     $word_names = explode(",",$phrases);
     
+    // get all related Phrases
     $phr_lst = New phrase_list;
     $phr_lst->usr = $usr;
     foreach ($word_names AS $wrd_name) {
@@ -58,7 +59,7 @@ $link = zu_start_api("get_xml", "", $debug);
       $phr_lst = $phr_lst->are($debug-1);
     
       zu_debug("get_xml.php ... phrase loaded.", $debug-10);
-      $xml_export = New xml_export;
+      $xml_export = New xml_io;
       $xml_export->usr     = $usr;
       $xml_export->phr_lst = $phr_lst;
       $xml = $xml_export->export($debug-1);
@@ -71,7 +72,7 @@ $link = zu_start_api("get_xml", "", $debug);
   if ($result <> '') {
     echo $result;
   } else { 
-    print($xml->asXML()); 
+    print($xml); 
   }
 
 // Closing connection

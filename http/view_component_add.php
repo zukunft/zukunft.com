@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -48,7 +48,7 @@ $link = zu_start("view_component_add", "", $debug);
 
     // init the display object to show the standard elements such as the header
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_ENTRY_ADD);
+    $dsp->id = cl(SQL_VIEW_COMPONENT_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     // the calling stack to move back to page where the user has come from after adding the view component is done
@@ -121,7 +121,7 @@ $link = zu_start("view_component_add", "", $debug);
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
       // in view add views the view cannot be changed
-      $result .= $dsp->top_right_no_view($wrd, $debug-1);
+      $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
       $result .= dsp_err($msg);
 
       // if the user has requested to use this display component also in another view, $add_link is greater than 0

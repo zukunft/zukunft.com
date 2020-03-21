@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -95,23 +95,35 @@ class batch_job {
     zu_debug('batch_job->add.', $debug-18);      
     // create first the database entry to make sure the update is done
     if ($this->type <= 0) {
+      // invalid type?
     } else {
-      if (isset($this->obj)) {
-        if (!isset($this->usr)) { $this->usr = $this->obj->usr; }
-        $this->row_id = $this->obj->id;
-        zu_debug('batch_job->add connect.', $debug-18);      
-        $db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;         
-        $db_con->type = 'calc_and_cleanup_task';         
-        $job_id = $db_con->insert(array('user_id','request_time','calc_and_cleanup_task_type_id','row_id'), 
-                                  array($this->usr->id, 'Now()', $this->type, $this->row_id), $debug-1);
-        $this->request_time = new DateTime();
-        
-        // execute the job if possible
-        if ($job_id > 0) {
-          $this->id = $job_id;
-          $this->exe($debug-1);
-          $result = $job_id;
+      zu_debug('batch_job->type ok.', $debug-18);      
+      if ($this->row_id <= 0) {
+        if (isset($this->obj)) {
+          $this->row_id = $this->obj->id;
+        }  
+      } 
+      if ($this->row_id <= 0) {
+        // row_id missing
+      } else {
+        zu_debug('batch_job->row_id ok.', $debug-18);      
+        if (isset($this->obj)) {
+          if (!isset($this->usr)) { $this->usr = $this->obj->usr; }
+          $this->row_id = $this->obj->id;
+          zu_debug('batch_job->add connect.', $debug-18);      
+          $db_con = New mysql;
+          $db_con->usr_id = $this->usr->id;         
+          $db_con->type = 'calc_and_cleanup_task';         
+          $job_id = $db_con->insert(array('user_id','request_time','calc_and_cleanup_task_type_id','row_id'), 
+                                    array($this->usr->id, 'Now()', $this->type, $this->row_id), $debug-1);
+          $this->request_time = new DateTime();
+          
+          // execute the job if possible
+          if ($job_id > 0) {
+            $this->id = $job_id;
+            $this->exe($debug-1);
+            $result = $job_id;
+          }
         }
       }
     }
@@ -124,12 +136,12 @@ class batch_job {
     zu_debug('batch_job->exe_val_upd ...', $debug-18);      
     // load all depending formula results
     if (isset($this->obj)) {
-      zu_debug('batch_job->exe_val_upd -> get list for user '.$this->obj->usr->name.'.', $debug-16);      
+      zu_debug('batch_job->exe_val_upd -> get list for user '.$this->obj->usr->name, $debug-16);      
       $fv_lst = $this->obj->fv_lst_depending($debug-1);
       if (isset($fv_lst)) {
-        zu_debug('batch_job->exe_val_upd -> got '.$fv_lst->dsp_id().'.', $debug-14);      
+        zu_debug('batch_job->exe_val_upd -> got '.$fv_lst->dsp_id(), $debug-14);      
         foreach ($fv_lst->lst AS $fv) {
-          zu_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id().'.', $debug-12);      
+          zu_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id(), $debug-12);      
           $fv->update($debug-1);
           zu_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id().' done.', $debug-12);      
         }
@@ -151,7 +163,7 @@ class batch_job {
     $db_con->type = 'calc_and_cleanup_task';         
     $result .= $db_con->update($this->id, 'start_time', 'Now()', $debug-1);
       
-    zu_debug('batch_job->exe -> '.$this->type.'.', $debug-14);      
+    zu_debug('batch_job->exe -> '.$this->type, $debug-14);      
     if ($this->type == cl(DBL_JOB_VALUE_UPDATE)) {
       $this->exe_val_upd($debug-1);
     } else {
@@ -186,7 +198,7 @@ class batch_job {
       $result .= ' ('.$this->id.')';
     }
     if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->name;
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
   }

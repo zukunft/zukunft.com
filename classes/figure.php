@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -61,12 +61,12 @@ class figure {
     zu_debug('figure->display_linked.', $debug-10);
     $result = '';
 
-    zu_debug('figure->display_linked -> type '.$this->type.'.', $debug-10);
+    zu_debug('figure->display_linked -> type '.$this->type, $debug-10);
     if ($this->type == 'value') {
-      zu_debug('figure->display_linked -> value '.$this->number.'.', $debug-10);
+      zu_debug('figure->display_linked -> value '.$this->number, $debug-10);
       $result .= $this->obj->display_linked($back, $debug-1);
     } elseif ($this->type == 'result') {
-      zu_debug('figure->display_linked -> result '.$this->number.'.', $debug-10);
+      zu_debug('figure->display_linked -> result '.$this->number, $debug-10);
       $result .= $this->obj->display_linked($back, $debug-1);
     }
     

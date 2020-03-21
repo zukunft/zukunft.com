@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -124,7 +124,7 @@ $link = zu_start("view_component_edit", "", $debug);
       // if nothing yet done display the add view (and any message on the top)
       if ($result == '')  {
         // in view edit views the view cannot be changed
-        $result .= $dsp->top_right_no_view($wrd, $debug-1);
+        $result .= $dsp->dsp_navbar_no_view($wrd->id, $debug-1);
         $result .= dsp_err($msg);
 
         // if the user has requested to use this display component also in another view, $add_link is greater than 0

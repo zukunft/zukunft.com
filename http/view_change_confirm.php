@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -57,7 +57,8 @@ $link = zu_start("view_confirm", "", $debug);
     $dsp = new view_dsp;
     //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
     $dsp->usr = $usr;
-    $result .= $dsp->top_right_no_view($debug-1);
+    $back = $word_id;
+    $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
     
     // show the word name
     $wrd = New word;

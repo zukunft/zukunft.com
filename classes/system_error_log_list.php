@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -35,6 +35,8 @@ class system_error_log_list {
   public $lst         = NULL;  // a list of system error objects
   public $usr         = NULL;  // the user who wants to see the errors
   public $dsp_type    = '';  // 
+  public $page        = '';  // 
+  public $size        = '';  // 
   public $back        = '';  // 
   
   // display the error that are related to the user, so that he can track when they are closed
@@ -43,6 +45,15 @@ class system_error_log_list {
   function display ($debug) {
     zu_debug('system_error_log_list->display for user "'.$this->usr->name.'".', $debug-10);
     $result = ''; // reset the html code var
+    
+    // set default values
+    if (!isset($this->size)) {
+      $this->size = SQL_ROW_LIMIT;
+    } else {  
+      if ($this->size <= 0) {
+        $this->size = SQL_ROW_LIMIT;
+      }  
+    }  
     
     // set the filter for the requested display type
     if ($this->dsp_type == "all") {
@@ -74,7 +85,9 @@ class system_error_log_list {
          LEFT JOIN users a             ON l.solver_id           = a.user_id
          LEFT JOIN sys_log_functions f ON l.sys_log_function_id = f.sys_log_function_id
              WHERE ".$user_sql." 
-                  (l.sys_log_status_id <> ".cl(DBL_SYSLOG_STATUS_CLOSE)." OR l.sys_log_status_id IS NULL);";
+                  (l.sys_log_status_id <> ".cl(DBL_SYSLOG_STATUS_CLOSE)." OR l.sys_log_status_id IS NULL)
+          ORDER BY l.sys_log_time DESC
+             LIMIT ".$this->size.";";
     $db_con = New mysql;
     $db_con->usr_id = $this->id;         
     $db_lst = $db_con->get($sql, $debug-5);  
@@ -84,7 +97,7 @@ class system_error_log_list {
       // prepare to show the word link
       $db_row = $db_lst[0];
       if ($db_row["sys_log_time"] <> '') {
-        $result .= '<table style="width:100%">';
+        $result .= dsp_tbl_start();
         $row_nbr = 0;
         foreach ($db_lst AS $db_row) {
           $row_nbr++;
@@ -112,7 +125,7 @@ class system_error_log_list {
 
           $result .= '</tr>';
         }
-        $result .= '</table>';
+        $result .= dsp_tbl_end ();
       }
     }
     

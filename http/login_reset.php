@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -111,10 +111,9 @@ $link = zu_start("login_reset", "center_form", $debug);
   }  
 
   if (!$_SESSION['logged']) {
-    $result .= '<div class="center_form">'; 
-    $result .= '<a href="/http/view.php" title="zukunft.com Logo">'; 
-    $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;" >'; 
-    $result .= '</a><br><br>'; 
+    $result .= dsp_form_center(); 
+    $result .= dsp_logo_big(); 
+    $result .= '<br><br>'; 
     $result .= '<form action="login_reset.php" method="post">'; 
     $result .= dsp_text_h2('Reset password<br>'); 
     $result .= 'Fill in one of the fields to receive a temporary password via email:<br><br> '; 

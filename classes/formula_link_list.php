@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
+  Copyright (c) 1995-2020 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -105,7 +105,7 @@ class formula_link_list {
       }  
     }
     
-    zu_debug('formula_link_list->ids -> got '.count($result).'.', $debug-16);
+    zu_debug('formula_link_list->ids -> got '.count($result), $debug-16);
     return $result;    
   }
   

@@ -1,0 +1,120 @@
+{
+  "version": "0.0.1",
+  "time": "2020-03-08 10:55:00",
+  "user": "timon",
+  "selection": [
+    "climate gas emission"
+  ],
+  "words": [
+    {
+      "name": "2019",
+      "type": "time"
+    },
+    {
+      "name": "kWh",
+      "type": "measure"
+    },
+    {
+      "name": "per kWh",
+      "type": "measure devisor"
+    }
+  ],
+  "triples": [
+    {
+      "name": "electricity consumption",
+      "from": "electricity",
+      "verb": "can be",
+      "to": "consumed"
+    }
+  ],
+  "formulas": [],
+  "sources": [
+    {
+      "name": "Umweltbilanz Strommix Schweiz 2014 (treeze im Auftrag des BAFU)",
+      "url": "https://treeze.ch/fileadmin/user_upload/downloads/589-Umweltbilanz-Strommix-Schweiz-2014-v3.0.pdf"
+    },
+    {
+      "name": "STROMMIX 2018 (energiestiftung.ch)",
+      "url": "https://www.energiestiftung.ch/files/energiestiftung/publikationen/Strommix%202018/19_06_Kurzstudie_Strommix_2018.pdf"
+    },
+    {
+      "name": "Renewable and Sustainable Energy Reviews Volume 42, February 2015, Pages 1113-1122",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1364032114009071?via%3Dihub"
+    },
+    {
+      "name": "Photovoltaik (AWEL 2020)",
+      "url": "https://awel.zh.ch/internet/baudirektion/awel/de/energie_radioaktive_abfaelle/veroeffentlichungen/_jcr_content/contentPar/publication/publicationitems/titel_wird_aus_dam_e_0/download.spooler.download.1581412474812.pdf/PV_AWEL_Broschur+Photovoltaik_2019+-+WEB.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "electricity",
+        "kWh"
+      ],
+      "time": "2019",
+      "number": "7305",
+      "share": "personal"
+    },
+    {
+      "words": [
+        "electricity",
+        "kWh",
+        "Solar power"
+      ],
+      "time": "2019",
+      "number": "5740",
+      "share": "personal"
+    },
+    {
+      "words": [
+        "electricity",
+        "kWh",
+        "Swiss hydropower"
+      ],
+      "time": "2019",
+      "number": "2305",
+      "share": "personal"
+    },
+    {
+      "words": [
+        "gram",
+        "CO2",
+        "per kWh",
+        "Solar power"
+      ],
+      "time": "2019",
+      "number": "54",
+      "share": "public",
+      "protection": "admin_protection",
+      "source": "Renewable and Sustainable Energy Reviews 42, (2015)"
+    },
+    {
+      "words": [
+        "gram",
+        "CO2",
+        "per kWh",
+        "Swiss hydropower"
+      ],
+      "time": "2019",
+      "number": "14.4",
+      "share": "public",
+      "protection": "admin_protection",
+      "source": "Strommix 2018 - Schweizerische Energie-Stiftung"
+    }
+  ],
+  "views": [
+    {
+      "name": "personal climate gas emission",
+      "comment": "overview over the climate gas emissions of the current user",
+      "type": "detail view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    }
+  ]
+}
