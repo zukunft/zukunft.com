@@ -94,39 +94,39 @@ class phrase_group {
         $this->lnk_ids[] = $id * -1;
       }
     }
-    zu_debug('phrase_group->set_ids_to_wrd_or_lnk_ids splitted "'.implode(",",$this->ids).'" to "'.implode(",",$this->wrd_ids).'" and "'.implode(",",$this->lnk_ids).'".', $debug-16);
+    zu_debug('phrase_group->set_ids_to_wrd_or_lnk_ids splitted "'.implode(",",$this->ids).'" to "'.implode(",",$this->wrd_ids).'" and "'.implode(",",$this->lnk_ids).'"', $debug-16);
   }
   
   // the opposide of set_ids_to_wrd_or_lnk_ids
   private function set_ids_from_wrd_or_lnk_ids($debug) {
-    zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "'.implode(",",$this->wrd_ids).'".', $debug-18);
+    zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "'.implode(",",$this->wrd_ids).'"', $debug-18);
     if (isset($this->wrd_ids)) {
       $this->ids = zu_ids_not_zero($this->wrd_ids, $debug-1);
     } else {
       $this->ids = array();
     }
-    zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids done words "'.implode(",",$this->ids).'".', $debug-18);
+    zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids done words "'.implode(",",$this->ids).'"', $debug-18);
     if (isset($this->lnk_ids)) {
-      zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triples "'.implode(",",$this->lnk_ids).'".', $debug-18);
+      zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triples "'.implode(",",$this->lnk_ids).'"', $debug-18);
       foreach ($this->lnk_ids AS $id) {
         if (trim($id) <> '') {
-          zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triple "'.$id.'".', $debug-18);
+          zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triple "'.$id.'"', $debug-18);
           if ($id == 0) {
             zu_warning('Zero triple id excluded in phrase group "'.$this->auto_name.'" (id '.$this->id.').', "phrase_group->set_ids_from_wrd_or_lnk_ids", '', (new Exception)->getTraceAsString(), $this->usr);
           } else {
-            zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids add triple "'.$id.'".', $debug-18);
+            zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids add triple "'.$id.'"', $debug-18);
             $this->ids[] = $id * -1;
           }
         }
       }
     }
-    zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "'.implode(",",$this->wrd_ids).'" done.', $debug-18);
+    zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "'.implode(",",$this->wrd_ids).'" done', $debug-18);
   }
   
   // load the word list based on the word id array
   private function set_wrd_lst($debug) {
     if (isset($this->wrd_ids)) {
-      zu_debug('phrase_group->set_wrd_lst for "'.implode(",",$this->wrd_ids).'".', $debug-18);
+      zu_debug('phrase_group->set_wrd_lst for "'.implode(",",$this->wrd_ids).'"', $debug-18);
       
       // ignore double word entries
       $this->wrd_ids = array_unique($this->wrd_ids);
@@ -157,7 +157,7 @@ class phrase_group {
   // load the triple list based on the triple id array
   private function set_lnk_lst($debug) {    
     if (isset($this->lnk_ids)) {
-      zu_debug('phrase_group->set_lnk_lst for "'.implode(",",$this->lnk_ids).'".', $debug-18);
+      zu_debug('phrase_group->set_lnk_lst for "'.implode(",",$this->lnk_ids).'"', $debug-18);
       
       // ignore double word entries
       $this->lnk_ids = array_unique($this->lnk_ids);
@@ -187,38 +187,38 @@ class phrase_group {
   
   // create the wrd_id_txt based on the wrd_ids
   private function set_wrd_id_txt($debug) {
-    zu_debug('phrase_group->set_wrd_id_txt for "'.implode(",",$this->wrd_ids).'".', $debug-18);
+    zu_debug('phrase_group->set_wrd_id_txt for "'.implode(",",$this->wrd_ids).'"', $debug-18);
 
     // make sure that the ids have always the same order
     asort($this->wrd_ids);
     
     $wrd_id_txt = implode(",",$this->wrd_ids);
-    zu_debug('phrase_group->set_wrd_id_txt test text "'.$wrd_id_txt.'".', $debug-22);
+    zu_debug('phrase_group->set_wrd_id_txt test text "'.$wrd_id_txt.'"', $debug-22);
     
     if (strlen($wrd_id_txt) > 255) {
       zu_err('Too many words assigned to one value ("'.$wrd_id_txt.'" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       $this->wrd_id_txt = implode(",",$this->wrd_ids);
     }  
-    zu_debug('phrase_group->set_wrd_id_txt to "'.$this->wrd_id_txt.'".', $debug-16);
+    zu_debug('phrase_group->set_wrd_id_txt to "'.$this->wrd_id_txt.'"', $debug-16);
   }
   
   // create the lnk_id_txt based on the lnk_ids
   private function set_lnk_id_txt($debug) {
-    zu_debug('phrase_group->set_lnk_id_txt for "'.implode(",",$this->lnk_ids).'".', $debug-18);
+    zu_debug('phrase_group->set_lnk_id_txt for "'.implode(",",$this->lnk_ids).'"', $debug-18);
 
     // make sure that the ids have always the same order
     asort($this->lnk_ids);
     
     $lnk_id_txt = implode(",",$this->lnk_ids);
-    zu_debug('phrase_group->set_lnk_id_txt test text "'.$lnk_id_txt.'".', $debug-22);
+    zu_debug('phrase_group->set_lnk_id_txt test text "'.$lnk_id_txt.'"', $debug-22);
     
     if (strlen($lnk_id_txt) > 255) {
       zu_err('Too many triples assigned to one value ("'.$lnk_id_txt.'" is longer than the db size of 255).', "phrase_group->set_lnk_id_txt", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       $this->lnk_id_txt = implode(",",$this->lnk_ids);
     }  
-    zu_debug('phrase_group->set_lnk_id_txt to "'.$this->lnk_id_txt.'".', $debug-16);
+    zu_debug('phrase_group->set_lnk_id_txt to "'.$this->lnk_id_txt.'"', $debug-16);
   }
 
   private function set_ids_from_wrd_or_lnk_lst($debug) {
@@ -244,7 +244,7 @@ class phrase_group {
       }
     }
     if (isset($this->lnk_lst)) {
-      zu_debug('phrase_group->set_ids_from_wrd_or_lnk_lst lnk ids.', $debug-14);
+      zu_debug('phrase_group->set_ids_from_wrd_or_lnk_lst lnk ids', $debug-14);
       // reload the words if needed
       //$this->lnk_lst->load($debug-1);
       if (count($this->lnk_lst->ids) > 0) {
@@ -450,7 +450,7 @@ class phrase_group {
     
     // load only if needed
     if ($this->wrd_id_txt <> '') {
-      zu_debug('phrase_group->load_lst words for "'.$this->wrd_id_txt.'".', $debug-16);
+      zu_debug('phrase_group->load_lst words for "'.$this->wrd_id_txt.'"', $debug-16);
       if ($this->wrd_ids <> explode(",",$this->wrd_id_txt) 
       OR !isset($this->wrd_lst)) {
         $this->wrd_ids = explode(",",$this->wrd_id_txt);
@@ -471,7 +471,7 @@ class phrase_group {
     }
 
     if ($this->lnk_id_txt <> '') {
-      zu_debug('phrase_group->load_lst triples for "'.$this->lnk_id_txt.'".', $debug-16);
+      zu_debug('phrase_group->load_lst triples for "'.$this->lnk_id_txt.'"', $debug-16);
       if ($this->lnk_ids <> explode(",",$this->lnk_id_txt) 
       OR !isset($this->lnk_lst)) {
         $this->lnk_ids = explode(",",$this->lnk_id_txt);
@@ -490,7 +490,7 @@ class phrase_group {
         }
       }
     }
-    zu_debug('phrase_group->load_lst ... done.', $debug-16);
+    zu_debug('phrase_group->load_lst ... done', $debug-16);
   }
   
   // internal function for testing the link for fast search
@@ -675,7 +675,7 @@ class phrase_group {
 
   // return a string with the group name
   function name($debug) {
-    zu_debug('phrase_group->name.', $debug-14);
+    zu_debug('phrase_group->name', $debug-14);
     $result = '';
     
     if ($this->grp_name <> '') {
@@ -691,7 +691,7 @@ class phrase_group {
   
   // return a list of the word and triple names
   function names($debug) {
-    zu_debug('phrase_group->names.', $debug-14);
+    zu_debug('phrase_group->names', $debug-14);
 
     // if not yet done, load, the words and triple list
     $this->load_lst($debug-1);
@@ -833,7 +833,7 @@ class phrase_group {
   // create the HTML code to select a phrase group be selecting a combination of words and triples
   private function selector ($debug) {
     $result = '';
-    zu_debug('phrase_group->selector for '.$this->id.' and user "'.$this->usr->name.'".', $debug-12);
+    zu_debug('phrase_group->selector for '.$this->id.' and user "'.$this->usr->name.'"', $debug-12);
     
     /*
     new function: load_main_type to load all word and phrase types with one query

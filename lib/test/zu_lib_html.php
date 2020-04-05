@@ -386,7 +386,7 @@ function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
 
   $result .= '</select>';
 
-  zu_debug('zuh_selector ... done.', $debug-1);
+  zu_debug('zuh_selector ... done', $debug-1);
   return $result;
 }
 
@@ -408,7 +408,7 @@ function zuh_selector_lst ($name, $form, $word_lst, $selected, $debug) {
 
   $result .= '</select>';
 
-  zu_debug('zuh_selector_lst ... done.', $debug-1); 
+  zu_debug('zuh_selector_lst ... done', $debug-1); 
   return $result;
 }
 

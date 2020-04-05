@@ -136,7 +136,7 @@ function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reve
   $result .= zuh_tbl_end();
   $result .= zuh_form_end();
 
-  zu_debug('zul_dsp_add ... done.', $debug);
+  zu_debug('zul_dsp_add ... done', $debug);
   return $result;
 }
 

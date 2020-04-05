@@ -579,5 +579,16 @@ function dsp_form_file_select () {
   return $result;
 }
 
+/*
+
+display functions for the unit and integration tests
+
+*/
+
+// display the ĥeader for each unit test
+function dsp_test_header ($headline) {
+  echo '<br><br><h2>'.$headline.'</h2><br>';
+}
+
 
 ?>

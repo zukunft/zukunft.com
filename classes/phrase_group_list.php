@@ -100,7 +100,7 @@ class phrase_group_list {
     if ($id <> '') {
       zu_debug('phrase_group_list->add_with_time is id '.$id.' in '.implode(",",$this->grp_time_ids), $debug-12);
       if (!in_array($id, $this->grp_time_ids)) {
-        zu_debug('phrase_group_list->add_with_time id '.$id.' add.', $debug-12);
+        zu_debug('phrase_group_list->add_with_time id '.$id.' add', $debug-12);
         $this->grp_time_ids[] = $id;
         if (isset($grp)) {
           $this->lst[]        = $grp;
@@ -190,7 +190,7 @@ class phrase_group_list {
   // query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
   // e.g. which value that have "Sales" and "2016"?
   private function get_grp_by_phr($type, $phr_linked, $phr_used, $debug) {
-    zu_debug('get values because formula is assigned to phrases '.$phr_linked->name().' and phrases '.$phr_used->name().' are used in the formula.', $debug-3);
+    zu_debug('get values because formula is assigned to phrases '.$phr_linked->name().' and phrases '.$phr_used->name().' are used in the formula', $debug-3);
     $result = Null;
 
     // seperate the time words from the phrases
@@ -271,7 +271,7 @@ class phrase_group_list {
       }
     }
     
-    zu_debug('phr_grp_lst->get_grp_by_phr -> sql "'.$sql.'".', $debug-14);
+    zu_debug('phr_grp_lst->get_grp_by_phr -> sql "'.$sql.'"', $debug-14);
     $db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $result = $db_con->get($sql, $debug-10); 
@@ -320,7 +320,7 @@ class phrase_group_list {
         // add the group to the calculation list if the group is not yet in the list
         $grp_to_add = $used_phr_lst->get_grp($debug-10-$changed);
         if ($grp_to_add->id <> $val_grp->id) {
-          zu_debug('phr_grp_lst->add_grp_by_phr -> group '.$grp_to_add->dsp_id().' used instead of '.$val_grp->dsp_id().' because '.$phr_frm->dsp_id().' and  '.$phr_lst_fv_name.' are part of the formula and have been remove from the phrase group selection.', $debug-10-$changed);
+          zu_debug('phr_grp_lst->add_grp_by_phr -> group '.$grp_to_add->dsp_id().' used instead of '.$val_grp->dsp_id().' because '.$phr_frm->dsp_id().' and  '.$phr_lst_fv_name.' are part of the formula and have been remove from the phrase group selection', $debug-10-$changed);
           $changed++;
         }
         if ($this->add_grp_time_id($grp_to_add->id, $val_row['time_word_id'], $debug-$added)) {
@@ -331,7 +331,7 @@ class phrase_group_list {
       }        
     }
 
-    zu_debug($added.' '.$type.'s selected for update because the formula is assigned '.$frm_linked->name().' and uses '.$frm_used->name().' (adding up to "'.$this->name().'").', $debug-1);
+    zu_debug($added.' '.$type.'s selected for update because the formula is assigned '.$frm_linked->name().' and uses '.$frm_used->name().' (adding up to "'.$this->name().'")', $debug-1);
     return $added;
   }
   
@@ -379,7 +379,7 @@ class phrase_group_list {
   
   // return all phrases that are part of each phrase group of the list
   function common_phrases($debug) {
-    zu_debug('phrase_group_list->common_phrases.', $debug-14);
+    zu_debug('phrase_group_list->common_phrases', $debug-14);
     $result = New phrase_list;
     $result->usr = $this->usr;
     $pos = 0;

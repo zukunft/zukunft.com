@@ -46,7 +46,7 @@ class value_list {
   function load($debug) {
     // the id and the user must be set
     if ($this->phr->id > 0 AND !is_null($this->usr->id)) {
-      zu_debug('value_list->load for "'.$this->phr->name.'".', $debug-10);
+      zu_debug('value_list->load for "'.$this->phr->name.'"', $debug-10);
       $limit = $this->page_size;
       if ($limit <= 0) {
         $limit = SQL_ROW_LIMIT;
@@ -102,7 +102,7 @@ class value_list {
     $sql_where = '';
     // the id and the user must be set
     if ($this->phr->id > 0 AND !is_null($this->usr->id)) {
-      zu_debug('value_list->load for "'.$this->phr->name.'".', $debug-10);
+      zu_debug('value_list->load for "'.$this->phr->name.'"', $debug-10);
       if ($limit <= 0) {
         $limit = SQL_ROW_LIMIT;
       }
@@ -192,7 +192,7 @@ class value_list {
         zu_debug('value_list->load_all ('.count($this->lst).')', $debug-10);
       }  
     }
-    zu_debug('value_list->load_all -> done.', $debug-14);
+    zu_debug('value_list->load_all -> done', $debug-14);
   }
 
   // load a list of values that are related to all words of the list
@@ -288,7 +288,7 @@ class value_list {
   
   // get a list with all unique phrase used in the complete value list
   function phr_lst($debug) {
-    zu_debug('value_list->phr_lst by ids (needs review).', $debug-4);
+    zu_debug('value_list->phr_lst by ids (needs review)', $debug-4);
     $phr_lst = New phrase_list;
     $phr_lst->usr = $this->usr;
 
@@ -367,7 +367,7 @@ class value_list {
   
   // return a value list object that contains only values that match the time word list
   function filter_by_time($time_lst, $debug) {
-    zu_debug('value_list->filter_by_time.', $debug-14);
+    zu_debug('value_list->filter_by_time', $debug-14);
     $val_lst = array();
     foreach ($this->lst AS $val) {
       // only include time specific value
@@ -377,10 +377,10 @@ class value_list {
           $val_lst[] = $val;
           zu_debug('value_list->filter_by_time include '.$val->name(), $debug-18);
         } else {
-          zu_debug('value_list->filter_by_time excluded '.$val->name().' because outside the specifid time periods.', $debug-16);
+          zu_debug('value_list->filter_by_time excluded '.$val->name().' because outside the specifid time periods', $debug-16);
         }
       } else {
-        zu_debug('value_list->filter_by_time excluded '.$val->name().' because this is not time specific.', $debug-14);
+        zu_debug('value_list->filter_by_time excluded '.$val->name().' because this is not time specific', $debug-14);
       }
     }
     $result = clone $this;
@@ -400,7 +400,7 @@ class value_list {
       if (isset($val_phr_lst)) {
         zu_debug('value_list->filter_by_phrase_lst val phrase list '.$val_phr_lst->name(), $debug-14);
       } else {
-        zu_debug('value_list->filter_by_phrase_lst val no value pharse list.', $debug-14);
+        zu_debug('value_list->filter_by_phrase_lst val no value pharse list', $debug-14);
       }
       $found = false;
       foreach ($val_phr_lst->lst AS $phr) {
@@ -409,7 +409,7 @@ class value_list {
           if (isset($val_phr_lst)) {
             zu_debug('value_list->filter_by_phrase_lst val phrase list '.$val_phr_lst->name().' is found in '.$phr_lst->name(), $debug-14);
           } else {
-            zu_debug('value_list->filter_by_phrase_lst val found, but no value pharse list.', $debug-14);
+            zu_debug('value_list->filter_by_phrase_lst val found, but no value pharse list', $debug-14);
           }  
           $found = true; // to make sure that each value is only added once; an improval could be to stop searching after a phrase is found
         }
@@ -483,11 +483,11 @@ class value_list {
           }
           if (isset($val->grp)) {  
             if ($row < 6) {
-              zu_debug('value_list->get_by_grp -> check if all of '.$grp->name($debug-1).' are in '.$val->grp->name($debug-1).' and value should be used.', $debug-12);
+              zu_debug('value_list->get_by_grp -> check if all of '.$grp->name($debug-1).' are in '.$val->grp->name($debug-1).' and value should be used', $debug-12);
             }  
             if ($val->grp->has_all_phrases_of($grp, $debug-1) 
             AND $val->time_id == $time->id) {
-              zu_debug('value_list->get_by_grp -> all of '.$grp->name($debug-1).' are in '.$val->grp->name($debug-1).' so value is used.', $debug-12);
+              zu_debug('value_list->get_by_grp -> all of '.$grp->name($debug-1).' are in '.$val->grp->name($debug-1).' so value is used', $debug-12);
               $found = true;
               $result = $val;
             }
@@ -680,7 +680,7 @@ class value_list {
       zu_debug('value_list->html loaded', $debug-10);
       $val_phr_lst = $val->phr_lst;
       if (count($val_phr_lst) > 0) {
-        zu_debug('value_list->html -> get words '.$val->phr_lst->dsp_id().' for "'.$val->number.'" ('.$val->id.').', $debug-14);
+        zu_debug('value_list->html -> get words '.$val->phr_lst->dsp_id().' for "'.$val->number.'" ('.$val->id.')', $debug-14);
         if (empty($common_phr_ids)) {
           $common_phr_ids = $val_phr_lst->ids;
         } else {  
@@ -689,7 +689,7 @@ class value_list {
       }
     }
 
-    zu_debug('value_list->html common .', $debug-10);
+    zu_debug('value_list->html common ', $debug-10);
     $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id));  // exclude the list word
     $common_phr_ids = array_values($common_phr_ids);            // cleanup the array
     
@@ -758,14 +758,14 @@ class value_list {
           $result .= '    <td>';
           zu_debug('value_list->html -> linked words '.$val->id, $debug-10);
           $result .= '      '.$dsp_phr_lst->name_linked().' <a href="/http/value_edit.php?id='.$val->id.'&back='.$this->phr->id.'">'.$val->val_formatted($debug-1).'</a>';
-          zu_debug('value_list->html -> linked words '.$val->id.' done.', $debug-16);
+          zu_debug('value_list->html -> linked words '.$val->id.' done', $debug-16);
           // to review
           // list the related formula values
           $fv_lst = New formula_value_list;
           $fv_lst->usr = $this->usr;
           $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, $val->time_id, $debug-1);
           $result .= '    </td>';
-          zu_debug('value_list->html -> formula results '.$val->id.' loaded.', $debug-18);
+          zu_debug('value_list->html -> formula results '.$val->id.' loaded', $debug-18);
 
           if ($last_phr_lst != $val_phr_lst) {
             $last_phr_lst = $val_phr_lst;

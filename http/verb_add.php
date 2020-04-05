@@ -44,7 +44,7 @@ $link = zu_start("link_type_add", "", $debug);
   $usr = New user;
   echo $usr->get($debug-1); // if the usr identification fails, show any message immediately because this should never happen
 
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
 
     // prepare the display

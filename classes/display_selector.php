@@ -73,7 +73,7 @@ class selector {
 
     $result .= dsp_form_fld_select_end();
 
-    zu_debug('selector->display ... done.', $debug-14);
+    zu_debug('selector->display ... done', $debug-14);
     return $result;
   }
 

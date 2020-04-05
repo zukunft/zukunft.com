@@ -100,20 +100,6 @@ function zut_names ($word_list, $user_id, $debug) {
   return $word_description;
 }
 
-// return the wikipedia reference, which is not user specific
-function zut_url_1 ($wrd_id, $debug) {
-  $result = zu_sql_get_field ('word', $wrd_id, 'ref_url_1', $debug-10);
-  zu_debug('zut_url_1 ('.$wrd_id.'->'.$result.')', $debug);
-  return $result;
-}
-
-// return the second reference, which is also not user specific
-function zut_url_2 ($wrd_id, $debug) {
-  $result = zu_sql_get_field ('word', $wrd_id, 'ref_url_2', $debug-10);
-  zu_debug('zut_url_2 ('.$wrd_id.'->'.$result.')', $debug);
-  return $result;
-}
-
 // return the word type
 function zut_type ($wrd_id, $user_id, $debug) {
   zu_debug('zut_type ('.$wrd_id.',u'.$user_id.')', $debug);

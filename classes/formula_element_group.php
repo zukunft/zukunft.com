@@ -90,9 +90,9 @@ class formula_element_group {
 
   // show the element group name to the user in the most simple form (without any ids)
   function name ($debug) {
-    zu_debug('formula_element_group->name get name.', $debug-10);
+    zu_debug('formula_element_group->name get name', $debug-10);
     $result = implode(",",$this->names($debug-1));  
-    zu_debug('formula_element_group->name got name.', $debug-10);
+    zu_debug('formula_element_group->name got name', $debug-10);
     return $result;
   }
   
@@ -164,13 +164,13 @@ class formula_element_group {
         // switched off because it is not working for "this"
         //zu_err('No time found for "'.$frm_elm->obj->name.'".', 'formula_element_group->figures', '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
-        zu_debug('formula_element_group->set_formula_time_phrase -> get predefined time result.', $debug-14);
+        zu_debug('formula_element_group->set_formula_time_phrase -> get predefined time result', $debug-14);
         if (isset($frm_elm->obj)) {
           $val_time = $frm_elm->obj->special_time_phr ($this->time_phr, $debug-1);
           if ($val_time->id > 0) {
             $val_time_phr = $val_time;
             if ($val_time_phr->id == 0 OR $val_time_phr->name == '') { $val_time_phr->load($debug-1); }
-            zu_debug('formula_element_group->set_formula_time_phrase -> add element word for special formula result '.$val_phr_lst->dsp_id().' taken from the result.', $debug-24);
+            zu_debug('formula_element_group->set_formula_time_phrase -> add element word for special formula result '.$val_phr_lst->dsp_id().' taken from the result', $debug-24);
           }
         }
       }
@@ -223,13 +223,13 @@ class formula_element_group {
         $this->build_symbol($debug-1);
       }
 
-      zu_debug('formula_element_group->figures -> use element '.$frm_elm->dsp_id().' also for value selection.', $debug-9);
+      zu_debug('formula_element_group->figures -> use element '.$frm_elm->dsp_id().' also for value selection', $debug-9);
       
       // get the element word to be able to add it later to the value selection (differs for the element type)
       if ($frm_elm->type == 'word') {
         if ($frm_elm->id > 0) {
           $val_phr_lst->add($frm_elm->obj, $debug-1);
-          zu_debug('formula_element_group->figures -> include '.$frm_elm->dsp_id().' in value selection.', $debug-8);
+          zu_debug('formula_element_group->figures -> include '.$frm_elm->dsp_id().' in value selection', $debug-8);
         }
       }
 
@@ -282,7 +282,7 @@ class formula_element_group {
         $fig = $wrd_val->figure($debug-10);
         $fig->symbol = $frm_elm->symbol;
         $fig_lst->lst[] = $fig;
-        zu_debug('formula_element_group->figures -> value result for '.$val_phr_lst->dsp_id().' = '.$wrd_val->number.' (symbol '.$fig->symbol.').', $debug-8);
+        zu_debug('formula_element_group->figures -> value result for '.$val_phr_lst->dsp_id().' = '.$wrd_val->number.' (symbol '.$fig->symbol.')', $debug-8);
       } else {     
         // if there is no number that the user has entered for the word list, try to get the most useful formula result
       
@@ -310,29 +310,29 @@ class formula_element_group {
         } else {     
           // if there is also not a formula result at least one number of the formula is not valid
           $fig_lst->fig_missing = True;
-          zu_debug('formula_element_group->figures -> figure missing.', $debug-8);
+          zu_debug('formula_element_group->figures -> figure missing', $debug-8);
         }
       }
     }
     
-    zu_debug('formula_element_group->figures -> '.count($fig_lst->lst).' found.', $debug-10);
+    zu_debug('formula_element_group->figures -> '.count($fig_lst->lst).' found', $debug-10);
     return $fig_lst;
   }
 
   // the HTML code to display a figure list
   function dsp_values ($back, $time_default, $debug) {
-    zu_debug('formula_element_group->dsp_values.', $debug-10);
+    zu_debug('formula_element_group->dsp_values', $debug-10);
 
     $result = '';
     
     $fig_lst = $this->figures($debug-1);
-    zu_debug('formula_element_group->dsp_values -> got figures.', $debug-10);
+    zu_debug('formula_element_group->dsp_values -> got figures', $debug-10);
     
     // show the time if adjusted by a special formula element
     if (isset($fig_lst)) {   
       // build the html code to display the value with the link
       foreach ($fig_lst->lst AS $fig) {
-        zu_debug('formula_element_group->dsp_values -> display figure.', $debug-10);
+        zu_debug('formula_element_group->dsp_values -> display figure', $debug-10);
         $result .= $fig->display_linked($back, $debug-1);
       }
 
@@ -347,7 +347,7 @@ class formula_element_group {
 
     }
     
-    zu_debug('formula_element_group->dsp_values -> result "'.$result.'".', $debug-10);
+    zu_debug('formula_element_group->dsp_values -> result "'.$result.'"', $debug-10);
     return $result;
   }  
 

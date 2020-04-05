@@ -327,6 +327,24 @@ class user_log_link {
         $this->old_to_id     = $this->old_to->id; 
       }
     }
+    if ($this->table == "refs") {
+      if ($this->action == "add" OR $this->action == "update") {
+        $this->new_text_from = $this->new_from->name; 
+        $this->new_text_link = $this->new_link->name; 
+        $this->new_text_to   = $this->new_to->external_key; 
+        $this->new_from_id   = $this->new_from->id; 
+        $this->new_link_id   = $this->new_link->id; 
+        $this->new_to_id     = $this->new_to->id; 
+      }
+      if ($this->action == "del" OR $this->action == "update") {
+        $this->old_text_from = $this->old_from->name; 
+        $this->old_text_link = $this->old_link->name; 
+        $this->old_text_to   = $this->old_to->external_key; 
+        $this->old_from_id   = $this->old_from->id; 
+        $this->old_link_id   = $this->old_link->id; 
+        $this->old_to_id     = $this->old_to->id; 
+      }
+    }
     if ($this->table == "view_component_links" 
      OR $this->table == "value_phrase_links" 
      OR $this->table == "formula_links") {
@@ -395,7 +413,7 @@ class user_log_link {
     $log_id = $db_con->insert($sql_fields, $sql_values, $debug-1);
 
     if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters has caused the error
+      // write the error message in steps to get at least some message if the parameters causes an additional the error
       zu_fatal("Insert to change link log failed.","user_log_link->add");
       zu_fatal("Insert to change link log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->link_text.")","user_log_link->add", '', (new Exception)->getTraceAsString(), $this->usr);
       zu_fatal("Insert to change link log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->link_text.",".$this->old_to.",".$this->new_to.",".$this->row_id.")","user_log_link->add", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -419,7 +437,7 @@ class user_log_link {
     $db_con->usr_id = $this->usr_id;         
     $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
     if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters has caused the error
+      // write the error message in steps to get at least some message if the parameters causes an additional the error
       zu_fatal("Update of reference in the change log failed.","user_log_link->add_ref");
       zu_fatal("Update of reference in the change log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->field.")","user_log_link->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
       zu_fatal("Update of reference in the change log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log_link->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);

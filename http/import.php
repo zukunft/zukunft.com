@@ -39,7 +39,7 @@ $link = zu_start("import", "", $debug);
   $usr = New user;
   $result .= $usr->get($debug-1);
 
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   zu_debug('import.php check user ', $debug-10);
   if ($usr->id > 0) {
 

@@ -76,7 +76,7 @@
   
   cl (Code Link)       - a text used to identify one predefined database entry that triggers to use of some program code
   sf (Sql Format)      - to convert a text for the database
-    
+  
   
   database change setup
   ---------------------
@@ -103,14 +103,21 @@
   
   all classes should have these functions: 
   
-  load           - based on given id setting load an existing object; if no object is found, return null
-  get            - based on given id setting load an existing object; if not found in database create it
-  save           - update all changes in the database; if not found in database create it
-  name           - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
-  dsp_id         - like name, but with some ids for better debugging
-  name_linked    - like name, but with HTML link to the single objects
-  display        - the result and the name of the object e.g. ABB, Sales: 46'000
-  display_linked - like display, but with HTML links to the related objects
+  load                  - based on given id setting load an existing object; if no object is found, return null
+  load_*_types          - load all types once from the database, because types are supposed to change almost never or with a program version change
+                          e.g. the global function load_ref_types load all possible reference type to external databases
+  get                   - based on given id setting load an existing object; if not found in database create it
+  get_*_type            - get a type object by the id
+  get_*_type_by_name    - get a type object by the code id
+  get_*_type_by_code_id - get a type object by the code id
+  save                  - update all changes in the database; if not found in database create it
+  name                  - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
+  dsp_id                - like name, but with some ids for better debugging
+  name_linked           - like name, but with HTML link to the single objects
+  display               - the result and the name of the object e.g. ABB, Sales: 46'000
+  display_linked        - like display, but with HTML links to the related objects
+
+  *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is testet by prg_version_is_older_test
   
   todo
   rename dsp_text in formula to display
@@ -151,20 +158,8 @@
   zu_dsp_bool - 
   
   
-  testing
-  - create base import files to test the system setup
-  - add a "test_all" function to each object to run all test functions
-  - add a test_... function to each function to test it
-  - move the test functions to the classes
-
   admin
-  - aline the github zukunft_structure.sql with the actual database structure e.g. add the share_type table and the related fields
-  - move the database creation class to a *_db (e.g. word_db.php) class
-  - move the db create and test functions to class named similar to the main class
-  - remove all SQL funtions from the object classes to prepare for something like liquidbase
-  - if the owner is an admin, no normal user can take the ownership
-  - the admin should see a list of values, where he blocks users to set a new standard
-  - update the database sql statement for the view_entry to view_component rename
+  - use once loaded arrays for all tables that are never expected to be changed like the type tables
   - allow the admin user to set the default value
   - create a daily? task that finds the median value, sets it as the default and recreate the user values
   - add median_user and set_owner to all user sandbox objects
@@ -238,6 +233,8 @@
   - base increase (this, prior) on the default time jumpt (e.g. for turnover the time jump would be "yoy")
 
   Bugs
+  - solve the view sorting issue by combining the user settings for view, link and components
+    e.g. if a user chages the mask, he probably wants that the complete mask is unchanged
   - bug: display linked words does not display the downward words e.g. "Company main ratio" does not show "Target Price"
   - don't write the same log message several times during the same call
   - don't write too many log message in on php script call
@@ -310,6 +307,8 @@ include_once '../classes/value_list.php';                 if ($debug > 9) { echo
 include_once '../classes/value_list_display.php';         if ($debug > 9) { echo 'class value list display loaded<br>'; }
 include_once '../classes/value_phrase_link.php';          if ($debug > 9) { echo 'class value word link loaded<br>'; }
 include_once '../classes/source.php';                     if ($debug > 9) { echo 'class source loaded<br>'; }
+include_once '../classes/ref.php';                        if ($debug > 9) { echo 'class external reference loaded<br>'; }
+include_once '../classes/ref_type.php';                   if ($debug > 9) { echo 'class external reference types loaded<br>'; }
 include_once '../classes/expression.php';                 if ($debug > 9) { echo 'class expression loaded<br>'; }
 include_once '../classes/formula.php';                    if ($debug > 9) { echo 'class formula loaded<br>'; }
 include_once '../classes/formula_list.php';               if ($debug > 9) { echo 'class formula list loaded<br>'; }
@@ -338,7 +337,7 @@ include_once '../classes/import.php';                     if ($debug > 9) { echo
 // include all other libraries that are usually needed
 include_once '../db_link/zu_lib_sql_link.php';            if ($debug > 9) { echo 'lib sql link loaded<br>'; }
 include_once '../lib/zu_lib_sql_code_link.php';           if ($debug > 9) { echo 'lib sql code link loaded<br>'; }
-include_once '../lib/config.php';                  if ($debug > 9) { echo 'lib config loaded<br>'; }
+include_once '../lib/config.php';                         if ($debug > 9) { echo 'lib config loaded<br>'; }
 
 // used at the moment, but to be replaced with R-Project call
 include_once '../lib/zu_lib_calc_math.php';               if ($debug > 9) { echo 'lib calc math loaded<br>'; }
@@ -382,7 +381,8 @@ The beta test is expected to start with version 0.7
 
 */
 
-define("PRG_VERSION", "0.0.1"); // to detect the correct update script and to mark the data export
+define("PRG_VERSION",  "0.0.2"); // to detect the correct update script and to mark the data export
+define("NEXT_VERSION", "0.0.3"); // to prevent importing imcompatible data
 
 // global code settings
 define("UI_USE_BOOTSTRAP", 1);  // IF FALSE a simple HTML frontend without javascript is used
@@ -489,6 +489,27 @@ define("ZUH_IMG_ADD_FA",   "fa-plus-square");
 define("ZUH_IMG_EDIT_FA",  "fa-edit");
 define("ZUH_IMG_DEL_FA",   "fa-times-circle");
 
+# list of all static import files for testing the system consistency
+define ("TEST_IMPORT_FILE_LIST", serialize (array ('companies.json', 
+                                                   'ABB_2017.json', 
+                                                   'ABB_2019.json', 
+                                                   'NESN_2019.json', 
+                                                   'countries.json', 
+                                                   'real_estate.json', 
+                                                   'Ultimatum_game.json', 
+                                                   'COVID-19.json', 
+                                                   'personal_climate_gas_emissions_timon.json', 
+                                                   'THOMY_test.json')));
+
+# list of import files for quick win testing
+/*
+define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('COVID-19.json',
+                                                         'countries.json', 
+                                                         'real_estate.json', 
+                                                         'Ultimatum_game.json')));
+*/                                                         
+define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('work.json')));
+
 // for internal functions debugging
 // each complex function should call this at the beginning with the paramters and with -1 at the end with the result
 // called function should use $debug-1
@@ -592,7 +613,7 @@ function zu_fatal($msg_text, $function_name, $msg_description, $function_trace, 
 function zu_start($code_name, $style, $debug) {
   global $sys_time_start, $sys_script;
   
-  zu_debug ($code_name.' ...', $debug);
+  zu_debug ($code_name.' ..', $debug);
   
   $sys_time_start = time();
   $sys_script = $code_name;
@@ -617,7 +638,7 @@ function zu_start($code_name, $style, $debug) {
 function zu_start_api($code_name, $style, $debug) {
   global $sys_time_start, $sys_script;
   
-  zu_debug ($code_name.' ...', $debug);
+  zu_debug ($code_name.' ..', $debug);
   
   $sys_time_start = time();
   $sys_script = $code_name;
@@ -651,6 +672,9 @@ function zu_end($db_con, $debug) {
     $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('".date ("Y-m-d H:i:s", $sys_time_start)."',".$sys_script_id.",".sf($_SERVER[REQUEST_URI]).");";
     $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString(), $debug-10);
   }
+
+  // Free resultset
+  //mysql_free_result($result);
 
   // Closing connection
   $db_con->close($debug-1);
@@ -717,6 +741,61 @@ function zu_dsp_bool($bool_var) {
 
 /*
 
+version control functions
+
+*/
+
+
+// returns true if the version to check is older than this program version
+// used e.g. for import to allow importing of files of an older version without warning
+function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION) {
+  $is_newer = false;
+  
+  $this_prg_version_parts = explode(".", $this_version);
+  $to_check = explode(".", $prg_version_to_check);
+  $is_older = false;
+  foreach ($this_prg_version_parts AS $key => $this_part) {
+    if (!$is_newer and !$is_older) {
+      if ($this_part < $to_check[$key]) {
+        $is_newer = true;
+      } else {  
+        if ($this_part > $to_check[$key]) {
+          $is_older = true;
+        }
+      }
+    }
+  }
+
+  return $is_newer;
+}
+
+// unit_test for prg_version_is_newer
+function prg_version_is_newer_test($debug) {
+  global $exe_start_time;
+  
+  global $error_counter;
+  global $timeout_counter;
+  global $total_tests;
+
+  $result = zu_dsp_bool(prg_version_is_newer('0.0.1')); 
+  $target = 'false';
+  $exe_start_time = test_show_result(', prg_version 0.0.1 is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION)); 
+  $target = 'false';
+  $exe_start_time = test_show_result(', prg_version '.PRG_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION)); 
+  $target = 'true';
+  $exe_start_time = test_show_result(', prg_version '.NEXT_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9')); 
+  $target = 'true';
+  $exe_start_time = test_show_result(', prg_version 0.1.0 is newer than 0.0.9', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1')); 
+  $target = 'false';
+  $exe_start_time = test_show_result(', prg_version 0.2.3 is newer than 1.1.1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+}
+
+/*
+
 string functions
 
 */
@@ -745,12 +824,12 @@ function zu_str_right_of($text, $maker) {
 }
 
 function zu_str_between($text, $maker_start, $maker_end, $debug) {
-  zu_debug('zu_str_between "'.$text.'", start "'.$maker_start.'" end "'.$maker_end.'".', $debug-10);
+  zu_debug('zu_str_between "'.$text.'", start "'.$maker_start.'" end "'.$maker_end.'"', $debug-10);
   $result = '';
   $result = zu_str_right_of($text, $maker_start);
-  zu_debug('zu_str_between -> "'.$result.'" is right of "'.$maker_start.'".', $debug-10);
+  zu_debug('zu_str_between -> "'.$result.'" is right of "'.$maker_start.'"', $debug-10);
   $result = zu_str_left_of($result, $maker_end);
-  zu_debug('zu_str_between -> "'.$result.'".', $debug-10);
+  zu_debug('zu_str_between -> "'.$result.'"', $debug-10);
   return $result;
 }
 
@@ -1063,5 +1142,15 @@ function zu_lst_merge_with_key($lst_1, $lst_2, $debug) {
   return $result;
 }
 
+/*
+
+unit test functions 
+
+*/
+
+// run all unit tests of the lib library
+function run_lib_tests ($debug) {
+  prg_version_is_newer_test($debug);
+}
 
 ?>

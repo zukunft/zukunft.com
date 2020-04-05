@@ -44,7 +44,7 @@ function import_file ($filename, $debug) {
   return $msg;
 }
   
-function run_import_test ($debug) {
+function run_import_test ($file_list, $debug) {
 
   global $usr;
   global $usr2;
@@ -60,10 +60,6 @@ function run_import_test ($debug) {
   
   $import_path = '../test_cases/';
   
-  $file_list = array('companies.json', 
-                     'ABB_2019.json', 
-                     'personal_climate_gas_emissions_timon.json', 
-                     'THOMY_test.json');
   foreach ($file_list AS $json_test_filename) {                               
     $result = import_file($import_path.$json_test_filename, $debug-1); 
     $target = 'done';

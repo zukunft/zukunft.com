@@ -110,10 +110,10 @@ CREATE TABLE IF NOT EXISTS `change_links` (
   `old_text_to` text,
   `new_from_id` int(11) DEFAULT NULL,
   `new_link_id` int(11) DEFAULT NULL,
-  `new_to_id` int(11) DEFAULT NULL,
+  `new_to_id` int(11) DEFAULT NULL COMMENT 'either internal row id or the ref type id of the external system e.g. 2 for wikidata',
   `new_text_from` text,
   `new_text_link` text,
-  `new_text_to` text,
+  `new_text_to` text COMMENT 'the fixed text to display to the user or the external referenz id e.g. Q1 (for universe) in case of wikidata',
   `row_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -378,7 +378,7 @@ CREATE TABLE IF NOT EXISTS `protection_types` (
 CREATE TABLE IF NOT EXISTS `refs` (
 `ref_id` int(11) NOT NULL,
   `phrase_id` int(11) NOT NULL,
-  `ref_url` varchar(250) NOT NULL,
+  `external_key` varchar(250) NOT NULL,
   `ref_type_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -840,8 +840,6 @@ CREATE TABLE IF NOT EXISTS `user_words` (
   `word_name` varchar(200) DEFAULT NULL,
   `plural` varchar(200) DEFAULT NULL,
   `description` text,
-  `ref_url_1` text,
-  `ref_url_2` text,
   `word_type_id` int(11) DEFAULT NULL,
   `view_id` int(11) DEFAULT NULL,
   `excluded` tinyint(4) DEFAULT NULL
@@ -1122,8 +1120,6 @@ CREATE TABLE IF NOT EXISTS `words` (
   `word_name` varchar(200) NOT NULL,
   `plural` varchar(200) NOT NULL COMMENT 'to be replaced by a language form entry',
   `description` text COMMENT 'to be replaced by a language form entry',
-  `ref_url_1` text NOT NULL COMMENT 'not user specific, because wikipedia is also not and does not influence the calculation',
-  `ref_url_2` text NOT NULL,
   `word_type_id` int(11) DEFAULT NULL,
   `view_id` int(11) DEFAULT NULL COMMENT 'the default mask for this term',
   `values` int(11) DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
@@ -1370,7 +1366,7 @@ ALTER TABLE `protection_types`
 -- Indexes for table `refs`
 --
 ALTER TABLE `refs`
- ADD PRIMARY KEY (`ref_id`), ADD UNIQUE KEY `phrase_id` (`phrase_id`,`ref_type_id`), ADD KEY `ref_type_id` (`ref_type_id`);
+ ADD PRIMARY KEY (`ref_id`), ADD UNIQUE KEY `phrase_id` (`phrase_id`,`ref_type_id`), ADD UNIQUE KEY `phrase_id_2` (`phrase_id`,`ref_type_id`), ADD KEY `ref_type_id` (`ref_type_id`);
 
 --
 -- Indexes for table `ref_types`
@@ -1693,6 +1689,311 @@ ALTER TABLE `word_types`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT for table `calc_and_cleanup_tasks`
+--
+ALTER TABLE `calc_and_cleanup_tasks`
+MODIFY `calc_and_cleanup_task_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `calc_and_cleanup_task_types`
+--
+ALTER TABLE `calc_and_cleanup_task_types`
+MODIFY `calc_and_cleanup_task_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `changes`
+--
+ALTER TABLE `changes`
+MODIFY `change_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `change_actions`
+--
+ALTER TABLE `change_actions`
+MODIFY `change_action_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `change_fields`
+--
+ALTER TABLE `change_fields`
+MODIFY `change_field_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `change_links`
+--
+ALTER TABLE `change_links`
+MODIFY `change_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `change_tables`
+--
+ALTER TABLE `change_tables`
+MODIFY `change_table_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `comments`
+--
+ALTER TABLE `comments`
+MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formulas`
+--
+ALTER TABLE `formulas`
+MODIFY `formula_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formula_elements`
+--
+ALTER TABLE `formula_elements`
+MODIFY `formula_element_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formula_element_types`
+--
+ALTER TABLE `formula_element_types`
+MODIFY `formula_element_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formula_links`
+--
+ALTER TABLE `formula_links`
+MODIFY `formula_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formula_link_types`
+--
+ALTER TABLE `formula_link_types`
+MODIFY `formula_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formula_types`
+--
+ALTER TABLE `formula_types`
+MODIFY `formula_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `formula_values`
+--
+ALTER TABLE `formula_values`
+MODIFY `formula_value_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `import_source`
+--
+ALTER TABLE `import_source`
+MODIFY `import_source_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `languages`
+--
+ALTER TABLE `languages`
+MODIFY `language_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `languages_forms`
+--
+ALTER TABLE `languages_forms`
+MODIFY `languages_form_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `phrase_groups`
+--
+ALTER TABLE `phrase_groups`
+MODIFY `phrase_group_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `phrase_group_triple_links`
+--
+ALTER TABLE `phrase_group_triple_links`
+MODIFY `phrase_group_triple_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `phrase_group_word_links`
+--
+ALTER TABLE `phrase_group_word_links`
+MODIFY `phrase_group_word_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `protection_types`
+--
+ALTER TABLE `protection_types`
+MODIFY `protection_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `refs`
+--
+ALTER TABLE `refs`
+MODIFY `ref_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `ref_types`
+--
+ALTER TABLE `ref_types`
+MODIFY `ref_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sessions`
+--
+ALTER TABLE `sessions`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `share_types`
+--
+ALTER TABLE `share_types`
+MODIFY `share_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sources`
+--
+ALTER TABLE `sources`
+MODIFY `source_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `source_types`
+--
+ALTER TABLE `source_types`
+MODIFY `source_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sys_log`
+--
+ALTER TABLE `sys_log`
+MODIFY `sys_log_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sys_log_functions`
+--
+ALTER TABLE `sys_log_functions`
+MODIFY `sys_log_function_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sys_log_status`
+--
+ALTER TABLE `sys_log_status`
+MODIFY `sys_log_status_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sys_log_types`
+--
+ALTER TABLE `sys_log_types`
+MODIFY `sys_log_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `sys_scripts`
+--
+ALTER TABLE `sys_scripts`
+MODIFY `sys_script_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_attempts`
+--
+ALTER TABLE `user_attempts`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_blocked_ips`
+--
+ALTER TABLE `user_blocked_ips`
+MODIFY `user_blocked_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_official_types`
+--
+ALTER TABLE `user_official_types`
+MODIFY `user_official_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_profiles`
+--
+ALTER TABLE `user_profiles`
+MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_requests`
+--
+ALTER TABLE `user_requests`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_types`
+--
+ALTER TABLE `user_types`
+MODIFY `user_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `values`
+--
+ALTER TABLE `values`
+MODIFY `value_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `value_formula_links`
+--
+ALTER TABLE `value_formula_links`
+MODIFY `value_formula_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `value_phrase_links`
+--
+ALTER TABLE `value_phrase_links`
+MODIFY `value_phrase_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `value_relations`
+--
+ALTER TABLE `value_relations`
+MODIFY `value_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `value_time_series`
+--
+ALTER TABLE `value_time_series`
+MODIFY `value_time_serie_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `verbs`
+--
+ALTER TABLE `verbs`
+MODIFY `verb_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `verb_usages`
+--
+ALTER TABLE `verb_usages`
+MODIFY `verb_usage_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `views`
+--
+ALTER TABLE `views`
+MODIFY `view_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_components`
+--
+ALTER TABLE `view_components`
+MODIFY `view_component_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_component_links`
+--
+ALTER TABLE `view_component_links`
+MODIFY `view_component_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_component_link_types`
+--
+ALTER TABLE `view_component_link_types`
+MODIFY `view_component_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_component_position_types`
+--
+ALTER TABLE `view_component_position_types`
+MODIFY `view_component_position_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_component_types`
+--
+ALTER TABLE `view_component_types`
+MODIFY `view_component_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_link_types`
+--
+ALTER TABLE `view_link_types`
+MODIFY `view_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_types`
+--
+ALTER TABLE `view_types`
+MODIFY `view_type_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `view_word_links`
+--
+ALTER TABLE `view_word_links`
+MODIFY `view_term_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `words`
+--
+ALTER TABLE `words`
+MODIFY `word_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `word_del_requests`
+--
+ALTER TABLE `word_del_requests`
+MODIFY `word_del_request_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `word_links`
+--
+ALTER TABLE `word_links`
+MODIFY `word_link_id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `word_types`
+--
+ALTER TABLE `word_types`
+MODIFY `word_type_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for table `changes`

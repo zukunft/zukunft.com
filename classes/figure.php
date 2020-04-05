@@ -44,7 +44,7 @@ class figure {
   // return the html code to display a value
   // this is the opposite of the convert function 
   function display ($back, $debug) {
-    zu_debug('figure->display.', $debug-10);
+    zu_debug('figure->display', $debug-10);
     $result = '';
 
     if ($this->type == 'value') {
@@ -58,7 +58,7 @@ class figure {
 
   // html code to show the value with the possibility to click for the result explaination
   function display_linked($back, $debug) {
-    zu_debug('figure->display_linked.', $debug-10);
+    zu_debug('figure->display_linked', $debug-10);
     $result = '';
 
     zu_debug('figure->display_linked -> type '.$this->type, $debug-10);

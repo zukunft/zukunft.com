@@ -43,7 +43,7 @@ $link = zu_start("word_edit", "", $debug);
   $usr = New user;
   $result .= $usr->get($debug-1);
 
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
 
     // prepare the display
@@ -67,8 +67,6 @@ $link = zu_start("word_edit", "", $debug);
       if (isset($_GET['name']))        { $wrd->name        = $_GET['name']; } // 
       if (isset($_GET['plural']))      { $wrd->plural      = $_GET['plural']; } // 
       if (isset($_GET['description'])) { $wrd->description = $_GET['description']; } // 
-      if (isset($_GET['url1']))        { $wrd->ref_1       = $_GET['url1']; }        // 
-      if (isset($_GET['url2']))        { $wrd->ref_2       = $_GET['url2']; }        // 
       if (isset($_GET['type']))        { $wrd->type_id     = $_GET['type']; }        // any functional code for special word is defined with the code_id of the word type
 
       // if the save botton has been pressed 

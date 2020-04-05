@@ -77,16 +77,16 @@ class phrase {
       if ($trm->type == 'word') {
         $this->obj = $trm->obj;
         $this->id  = $trm->id;
-        zu_debug('phrase->loaded word '.$this->dsp_id().' by name.', $debug-14);
+        zu_debug('phrase->loaded word '.$this->dsp_id().' by name', $debug-14);
       } elseif ($trm->type == 'triple') {
         $this->obj = $trm->obj;
         $this->id  = $trm->id * -1;
-        zu_debug('phrase->loaded triple '.$this->dsp_id().' by name.', $debug-14);
+        zu_debug('phrase->loaded triple '.$this->dsp_id().' by name', $debug-14);
       } elseif ($trm->type == 'formula') {
         if (isset($trm->obj->name_wrd)) {
           $this->obj = $trm->obj->name_wrd;
           $this->id  = $trm->obj->name_wrd->id;
-          zu_debug('phrase->loaded formula '.$this->dsp_id().' by name.', $debug-14);
+          zu_debug('phrase->loaded formula '.$this->dsp_id().' by name', $debug-14);
         }
       } else {
         if ($this->type == '') {
@@ -141,7 +141,7 @@ class phrase {
   
   // get a list of all values related to this phrase
   function val_lst ($debug) {
-    zu_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'".', $debug-12);
+    zu_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-12);
     $val_lst = New value_list;
     $val_lst->usr = $this->usr;
     $val_lst->phr = $this;
@@ -273,7 +273,7 @@ class phrase {
 
   // SQL to list the user phrases (related to a type if needed)
   function sql_list ($type, $debug) {
-    zu_debug('phrase->sql_list.', $debug-10);
+    zu_debug('phrase->sql_list', $debug-10);
         
     $sql_type_from  = '';
     $sql_type_where = '';

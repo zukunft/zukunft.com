@@ -1,0 +1,41 @@
+{
+  "version": "0.0.2",
+  "time": "2020-04-05 17:11:00",
+  "user": "timon",
+  "selection": [
+    "Real Estate"
+  ],
+  "words": [
+    {
+      "name": "Real Estate",
+    },
+    {
+      "name": "square metre",
+      "refs": [
+        {
+          "name": "Square_metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "district",
+      "refs": [
+        {
+          "name": "Bezirk",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+  ],
+  "formulas": [
+  ],
+  "sources": [
+  ],
+  "values": [
+  ],
+  "views": [
+  ]
+}

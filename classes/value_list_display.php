@@ -46,7 +46,7 @@ class value_list_dsp extends value_list {
        
     // if parameters are fine display the table
     if ($result == '') {
-      zu_debug('value_list_dsp->dsp_table "'.$phr_row->name.'" for "'.$this->phr->name.'" and user "'.$this->usr->name.'".', $debug-2);
+      zu_debug('value_list_dsp->dsp_table "'.$phr_row->name.'" for "'.$this->phr->name.'" and user "'.$this->usr->name.'"', $debug-2);
       
       // init the display vars
       $val_main = Null; // the "main" value used as a sample for a new value
@@ -64,7 +64,7 @@ class value_list_dsp extends value_list {
 
       //$val_lst->load_phrases($debug-1);    
       /*foreach ($val_lst->lst AS $val) {
-        zu_debug('value_list_dsp->dsp_table value: '.$val->number.' (group '.$val->grp_id.' and time '.$val->time_id.').', $debug-4);
+        zu_debug('value_list_dsp->dsp_table value: '.$val->number.' (group '.$val->grp_id.' and time '.$val->time_id.')', $debug-4);
       }*/
 
       // get all words related to the value list to be able to define the column and the row names
@@ -165,7 +165,7 @@ class value_list_dsp extends value_list {
         }
         
         if (!$row_has_value) {
-          zu_debug('value_list_dsp->dsp_table no value found for '.$grp->name($debug-1).' skip row.', $debug-4);
+          zu_debug('value_list_dsp->dsp_table no value found for '.$grp->name($debug-1).' skip row', $debug-4);
         } else {
           $result .= '  <tr>'."\n";
           $result .= $sub_wrd->dsp_tbl(0, $debug-1);

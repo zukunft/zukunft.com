@@ -42,7 +42,7 @@ $link = zu_start("logoff", "center_form", $debug);
   $usr = New user;
   $result .= $usr->get($debug-1); // to check from which ip the user has logged in
 
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
     $db_con = new mysql;         
     $db_con->type = "user";         

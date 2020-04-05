@@ -44,7 +44,7 @@ $link = zu_start("start formula_test.php", "", $debug-10);
   $session_usr = New user;
   $result .= $session_usr->get($debug-1);
 
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($session_usr->id > 0) {
 
     // show the header even if all parameters are wrong
@@ -91,7 +91,7 @@ $link = zu_start("start formula_test.php", "", $debug-10);
       if ($refresh == 1) {
         zu_debug('refresh all formula results for '.$frm1->id, $debug-8);
         $frm1->fv_del($debug-1);
-        zu_debug('old formula results for '.$frm_id.' deleted.', $debug-9);
+        zu_debug('old formula results for '.$frm_id.' deleted', $debug-9);
       }
       
       // if only one result is selected, display the selected result words

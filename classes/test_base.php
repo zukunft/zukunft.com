@@ -50,6 +50,7 @@ include_once '../classes/test_phrase.php';                if ($debug > 9) { echo
 include_once '../classes/test_phrase_list.php';           if ($debug > 9) { echo 'phrase list test loaded<br>'; }
 include_once '../classes/test_phrase_group.php';          if ($debug > 9) { echo 'phrase group test loaded<br>'; }
 include_once '../classes/test_phrase_group_list.php';     if ($debug > 9) { echo 'phrase group list test loaded<br>'; }
+include_once '../classes/ref_test.php';                   if ($debug > 9) { echo 'ref test loaded<br>'; }
 include_once '../classes/test_graph.php';                 if ($debug > 9) { echo 'graph test loaded<br>'; }
 include_once '../classes/test_verb.php';                  if ($debug > 9) { echo 'verb test loaded<br>'; }
 include_once '../classes/test_term.php';                  if ($debug > 9) { echo 'term test loaded<br>'; }
@@ -149,6 +150,10 @@ define("TP_ZH_CANTON", "Zurich (Canton)");
 define("TP_ZH_CITY",   "Zurich (City)");  
 define("TP_ZH_INS",    "Zurich Insurance");  
 
+// some external references used for testing
+define("TR_WIKIDATA_ABB", "Q52825");   
+define("TRT_WIKIDATA",    "wikidata");   
+
 // some formula parameter used for testing
 define("TF_INCREASE"  ,"increase");   
 define("TF_PE"        ,"Price Earning ratio");   
@@ -193,7 +198,7 @@ define("TIMEOUT_LIMIT_PAGE_LONG",1.2);  // time limit for complete webpage
 define("TIMEOUT_LIMIT_DB",       0.2);  // time limit for database modification functions
 define("TIMEOUT_LIMIT_DB_MULTI", 0.9);  // time limit for many database modifications
 define("TIMEOUT_LIMIT_LONG",     3);    // time limit for complex functions
-define("TIMEOUT_LIMIT_IMPORT",   4);    // time limit for complex import tests
+define("TIMEOUT_LIMIT_IMPORT",   12);   // time limit for complex import tests in seconds
 
 // views used for testing
 define("TD_COMPLETE",      "complete");                      // the default and base view for all words

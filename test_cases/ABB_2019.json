@@ -7,6 +7,50 @@
   ],
   "words": [
     {
+      "name": "ABB",
+      "refs": [
+        {
+          "name": "ABB_Group",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "CHF",
+      "refs": [
+        {
+          "name": "Swiss_franc",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cash flow statement",
+      "refs": [
+        {
+          "name": "Cash_flow_statement",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cash flow statement investing activity",
+      "refs": [
+        {
+          "name": "Cash_flow_statement#Investing_activities",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "2019",
       "type": "time"
     },

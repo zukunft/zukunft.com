@@ -278,7 +278,7 @@ class view extends user_sandbox {
   
   // return the html code of all view components
   function dsp_entries($wrd, $back, $debug) {
-    zu_debug('view->dsp_entries "'.$wrd->name.'" with the view '.$this->dsp_id().' for user "'.$this->usr->name.'".', $debug-10);
+    zu_debug('view->dsp_entries "'.$wrd->name.'" with the view '.$this->dsp_id().' for user "'.$this->usr->name.'"', $debug-10);
 
     $result = '';
     $word_array = array();
@@ -323,7 +323,7 @@ class view extends user_sandbox {
   // view_type_id is used to .... remove???
   // word_id - id of the starting word to display; can be a single word, a comma seperated list of word ids, a word group or a word tripple
   function display ($wrd, $back, $debug) {
-    zu_debug('view->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'".', $debug-10);
+    zu_debug('view->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'"', $debug-10);
     $result = '';
     
     // check and correct the parameters
@@ -497,7 +497,7 @@ class view extends user_sandbox {
       $result .= '<br>';
     }
 
-    zu_debug('view->selector_page ... done.', $debug-1);
+    zu_debug('view->selector_page ... done', $debug-1);
     return $result;
   }
 
@@ -562,7 +562,7 @@ class view extends user_sandbox {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('view->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('view->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
       if ($usr_cfg['view_id'] > 0) {
         if ($usr_cfg['comment']      == ''
         AND $usr_cfg['view_type_id'] == Null
@@ -615,7 +615,7 @@ class view extends user_sandbox {
     $result .= $this->save_field_comment  ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_type     ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('view->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
+    zu_debug('view->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
     return $result;
   }
   

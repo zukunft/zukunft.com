@@ -119,9 +119,9 @@ class word_list {
         $wrd_grp = New phrase_group;
         $wrd_grp->usr = $this->usr;         
         $wrd_grp->ids = $this->ids;         
-        zu_debug('word_list->load -> get group for ('.implode(",",$this->ids).').', $debug-14);
+        zu_debug('word_list->load -> get group for ('.implode(",",$this->ids).')', $debug-14);
         $this->grp_id = $wrd_grp->get_id($debug-1); // get or even create the word group if needed
-        zu_debug('word_list->load -> got group id ('.$this->grp_id.') for words ('.$this->name().').', $debug-12);
+        zu_debug('word_list->load -> got group id ('.$this->grp_id.') for words ('.$this->name().')', $debug-12);
       } 
       */
       zu_debug('word_list->load ('.count($this->lst).')', $debug-10);
@@ -247,28 +247,28 @@ class word_list {
 
   // build one level of a word tree
   private function foaf_level ($level, $added_wrd_lst, $verb_id, $direction, $max_level, $debug) {
-    zu_debug('word_list->foaf_level (type id '.$verb_id.' level '.$level.' '.$direction.' added '.$added_wrd_lst->name().').', $debug-10);
+    zu_debug('word_list->foaf_level (type id '.$verb_id.' level '.$level.' '.$direction.' added '.$added_wrd_lst->name().')', $debug-10);
     if ($max_level > 0) {
       $max_loops = $max_level;
     } else {
       $max_loops = MAX_RECURSIVE;
     }
     $loops = 0;
-    zu_debug('word_list->foaf_level loop.', $debug-14);
+    zu_debug('word_list->foaf_level loop', $debug-14);
     do {
       $loops = $loops + 1;
       $additional_added = New word_list; // list of the added word ids
       $additional_added->usr = $this->usr;    
-      zu_debug('word_list->foaf_level add.', $debug-14);
+      zu_debug('word_list->foaf_level add', $debug-14);
       $additional_added = $this->add_by_type($additional_added, $verb_id, $direction, $debug-1);
-      zu_debug('word_list->foaf_level merge.', $debug-14);
+      zu_debug('word_list->foaf_level merge', $debug-14);
       $added_wrd_lst->merge($additional_added, $debug-1);
 
       if ($loops >= MAX_RECURSIVE) {
         zu_fatal("max number (".$loops.") of loops for word ".$word_id." reached.","word_list->tree_up_level", '', (new Exception)->getTraceAsString(), $this->usr);
       }
     } while (!empty($additional_added->lst) AND $loops < $max_loops);
-    zu_debug('word_list->foaf_level done.', $debug-14);
+    zu_debug('word_list->foaf_level done', $debug-14);
     return $added_wrd_lst;    
   }
 
@@ -582,7 +582,7 @@ class word_list {
 
     $result .= '</select>';
 
-    zu_debug('word_list->dsp_selector ... done.', $debug-12); 
+    zu_debug('word_list->dsp_selector ... done', $debug-12); 
     return $result;
   }
 
@@ -1008,7 +1008,7 @@ class word_list {
 
   // filter the time words out of the list of words
   function time_lst ($debug) {
-    zu_debug('word_list->time_lst for words "'.$this->name().'".', $debug-10);
+    zu_debug('word_list->time_lst for words "'.$this->name().'"', $debug-10);
 
     $result = New word_list;
     $result->usr = $this->usr;
@@ -1160,7 +1160,7 @@ class word_list {
       $pos++;
     }
     asort($name_lst);
-    zu_debug('word_list->wlsort names sorted "'.implode('","',$name_lst).'" ('.implode(',',array_keys($name_lst)).').', $debug-14);
+    zu_debug('word_list->wlsort names sorted "'.implode('","',$name_lst).'" ('.implode(',',array_keys($name_lst)).')', $debug-14);
     foreach (array_keys($name_lst) AS $sorted_id) {
       zu_debug('word_list->wlsort get '.$sorted_id, $debug-10);
       $wrd_to_add = $this->lst[$sorted_id];
@@ -1342,9 +1342,9 @@ class word_list {
     }
 
     if (isset($result)) {
-      zu_debug('word_list->assume_time -> time used "'.$result->name.'" ('.$result->id.').', $debug-10);
+      zu_debug('word_list->assume_time -> time used "'.$result->name.'" ('.$result->id.')', $debug-10);
     } else {
-      zu_debug('word_list->assume_time -> no time found.', $debug-10);
+      zu_debug('word_list->assume_time -> no time found', $debug-10);
     }
     return $result;    
   }
@@ -1379,7 +1379,7 @@ class word_list {
         */
       }
     }  
-    zu_debug('word_list->phrase_lst -> done ('.$grp->id.').', $debug-18);
+    zu_debug('word_list->phrase_lst -> done ('.$grp->id.')', $debug-18);
     return $grp;
   }
 
@@ -1392,7 +1392,7 @@ class word_list {
       $phr_lst->lst[] = $wrd->phrase($debug-1);
     }
     $phr_lst->ids();
-    zu_debug('word_list->phrase_lst -> done ('.count($phr_lst->lst).').', $debug-18);
+    zu_debug('word_list->phrase_lst -> done ('.count($phr_lst->lst).')', $debug-18);
     return $phr_lst;
   }
 

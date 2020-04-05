@@ -230,7 +230,7 @@ class verb {
     $result .= dsp_tbl_end();
     $result .= dsp_form_end();
 
-    zu_debug('verb->dsp_edit ... done.', $debug-10);
+    zu_debug('verb->dsp_edit ... done', $debug-10);
     return $result;
   }
 
@@ -272,7 +272,7 @@ class verb {
 
   // true if no other user has modified the verb
   private function not_changed($debug) {
-    zu_debug('verb->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.').', $debug-10);  
+    zu_debug('verb->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
     $result = true;
     
     /*
@@ -451,7 +451,7 @@ class verb {
     $result .= $this->save_field_reverse     ($db_con, $db_rec, $debug-1);
     $result .= $this->save_field_rev_plural  ($db_con, $db_rec, $debug-1);
     $result .= $this->save_field_description ($db_con, $db_rec, $debug-1);
-    zu_debug('verb->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
+    zu_debug('verb->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
     return $result;
   }
   
@@ -462,7 +462,7 @@ class verb {
     todo:
     if ($db_rec->name <> $this->name) {
       // check if target link already exists
-      zu_debug('verb->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('verb->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
@@ -485,7 +485,7 @@ class verb {
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('verb->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('verb->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'")', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -499,12 +499,12 @@ class verb {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")', $debug-14);
         }
       }
     }  
 */
-    zu_debug('verb->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
+    zu_debug('verb->save_id_if_updated for '.$this->dsp_id().' has been done', $debug-12);
     return $result;
   }
   
@@ -555,7 +555,7 @@ class verb {
         $result .= $trm->id_used_msg($debug-1);
       } else {
         $this->id = $trm->id;
-        zu_debug('verb->save adding verb name '.$this->dsp_id().' is OK.', $debug-14);
+        zu_debug('verb->save adding verb name '.$this->dsp_id().' is OK', $debug-14);
       }
     }  
       
@@ -563,7 +563,7 @@ class verb {
     if ($this->id <= 0) {
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('verb->save update "'.$this->id.'".', $debug-12);
+      zu_debug('verb->save update "'.$this->id.'"', $debug-12);
       // read the database values to be able to check if something has been changed; done first, 
       // because it needs to be done for user and general formulas
       $db_rec = New verb;
@@ -599,7 +599,7 @@ class verb {
 
   // exclude or delete a verb
   function del($debug) {
-    zu_debug('verb->del.', $debug-16);
+    zu_debug('verb->del', $debug-16);
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {

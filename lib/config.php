@@ -33,7 +33,7 @@
 
 // get a config value from the database table
 function cfg_get($code_id, $usr, $debug) {
-  zu_debug('cfg_get for "'.$code_id.'".', $debug-12);
+  zu_debug('cfg_get for "'.$code_id.'"', $debug-12);
   $result = '';
   
   $sql = "SELECT `value` 

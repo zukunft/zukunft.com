@@ -127,7 +127,7 @@ class formula_value {
         $sql_where = "formula_value_id = ".$this->id;
       } else {
         // prepare the search by getting the word group based on the word list
-        zu_debug('formula_value->load not by id.', $debug-14);
+        zu_debug('formula_value->load not by id', $debug-14);
 
         // assume the source time if the source list is set, but not the source time
         if ($this->src_time_id <= 0 AND is_null($this->src_time_phr) AND !empty($this->src_phr_lst)) {
@@ -194,7 +194,7 @@ class formula_value {
           }
           if (isset($phr_lst)) {
             $this->phr_lst = $phr_lst;
-            zu_debug('formula_value->load get group for '.$phr_lst->name().' (including formula name).', $debug-12);
+            zu_debug('formula_value->load get group for '.$phr_lst->name().' (including formula name)', $debug-12);
             $phr_grp = $phr_lst->get_grp($debug-1);
             if (isset($phr_grp)) {
               if ($phr_grp->id > 0) {
@@ -277,12 +277,12 @@ class formula_value {
         // if no general value can be found, test if a more specific value can be found in the database
         // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
         // similar to the selection in value->load: maybe combine?
-        zu_debug('formula_value->load check best guess.', $debug-10);
+        zu_debug('formula_value->load check best guess', $debug-10);
         if ($this->id <= 0) {
           if (!isset($phr_lst)) {
-            zu_debug('formula_value->no formula value found for '.$sql_where.', but phrase list is also not set.', $debug-10);
+            zu_debug('formula_value->no formula value found for '.$sql_where.', but phrase list is also not set', $debug-10);
           } else {
-            zu_debug('formula_value->load try best guess.', $debug-10);
+            zu_debug('formula_value->load try best guess', $debug-10);
             if (count($phr_lst->lst) > 0) {
               // the phrase groups with the least number of additional words that have at least one formula value
               $sql_grp_from = '';
@@ -310,7 +310,7 @@ class formula_value {
               $sql_val = "SELECT formula_value_id 
                             FROM formula_values
                           WHERE phrase_group_id IN (".$sql_grp.") ".$sql_time.";";
-              zu_debug('formula_value->load sql val "'.$sql_val.'".', $debug-12);
+              zu_debug('formula_value->load sql val "'.$sql_val.'"', $debug-12);
               $db_con = new mysql;         
               $db_con->usr_id = $this->usr->id;         
               $val_ids_rows = $db_con->get($sql_val, $debug-5);  
@@ -320,14 +320,14 @@ class formula_value {
                 if ($this->id > 0) {
                   $sql_where = "formula_value_id = ".$this->id;
                   $this->load_rec($sql_where, $debug);
-                  zu_debug('formula_value->load best gues id ('.$this->id.').', $debug-10);
+                  zu_debug('formula_value->load best gues id ('.$this->id.')', $debug-10);
                 }
               }
             } 
           }
         }
 
-        zu_debug('formula_value->load words.', $debug-10);      
+        zu_debug('formula_value->load words', $debug-10);      
         $this->load_phrases($debug-1);
       }  
       zu_debug('formula_value->load got id '.$this->id.': '.$this->value, $debug-10);
@@ -342,7 +342,7 @@ class formula_value {
   // update the word list based on the source word group id ($this->phr_lst)
   private function load_phr_lst_src($debug) {
     if ($this->src_phr_grp_id > 0) {
-      zu_debug('formula_value->load_phr_lst_src for source group "'.$this->src_phr_grp_id.'".', $debug-12);
+      zu_debug('formula_value->load_phr_lst_src for source group "'.$this->src_phr_grp_id.'"', $debug-12);
       // to review to reduce the number of loads AND check if load is really needed correctly
       //if (!isset($this->src_phr_lst)) {
         $do_load = false;
@@ -353,7 +353,7 @@ class formula_value {
         $phr_grp->load_lst($debug-1);
         if (isset($phr_grp->phr_lst)) {
           $this->src_phr_lst = $phr_grp->phr_lst;
-          zu_debug('formula_value->load_phr_lst_src source words '.$this->src_phr_lst->name().' loaded.', $debug-10);
+          zu_debug('formula_value->load_phr_lst_src source words '.$this->src_phr_lst->name().' loaded', $debug-10);
         } else {
           zu_debug('formula_value->load_phr_lst_src no source words found for '.$this->dsp_id(), $debug-10);
         }
@@ -367,7 +367,7 @@ class formula_value {
   // update the word list based on the word group id ($this->phr_lst)
   private function load_phr_lst($debug) {
     if ($this->phr_grp_id > 0) {
-      zu_debug('formula_value->load_phr_lst for group "'.$this->phr_grp_id.'".', $debug-12);
+      zu_debug('formula_value->load_phr_lst for group "'.$this->phr_grp_id.'"', $debug-12);
       //if (!isset($this->phr_lst)) {
         $phr_grp = New phrase_group;
         $phr_grp->id  = $this->phr_grp_id;
@@ -376,7 +376,7 @@ class formula_value {
         $phr_grp->load_lst($debug-1);
         if (isset($phr_grp->phr_lst)) {
           $this->phr_lst = $phr_grp->phr_lst;
-          zu_debug('formula_value->load_phr_lst words '.$this->phr_lst->name().' loaded.', $debug-10);
+          zu_debug('formula_value->load_phr_lst words '.$this->phr_lst->name().' loaded', $debug-10);
           // to be dimissed
           $this->wrd_ids = $phr_grp->phr_lst->ids;
         } else {
@@ -391,8 +391,8 @@ class formula_value {
   
   // update the source time word object based on the source time word id ($this->src_time_phr)
   private function load_time_wrd_src($debug) {
-    if ($this->src_time_id > 0) {
-      zu_debug('formula_value->load_time_wrd_src for source time "'.$this->src_time_id.'".', $debug-12);
+    if ($this->src_time_id <> 0) {
+      zu_debug('formula_value->load_time_wrd_src for source time "'.$this->src_time_id.'"', $debug-12);
       //if (!isset($this->src_time_phr)) {
         $time_phr = new phrase;
         $time_phr->id  = $this->src_time_id;
@@ -402,7 +402,7 @@ class formula_value {
           $this->src_time_phr = $time_phr;
           if (isset($this->src_phr_lst)) {
             $this->src_phr_lst->add($time_phr, $debug-1);
-            zu_debug('formula_value->load_time_wrd_src source time word "'.$time_phr->name.'" added.', $debug-10);
+            zu_debug('formula_value->load_time_wrd_src source time word "'.$time_phr->name.'" added', $debug-10);
           }
         }
       //}
@@ -411,8 +411,8 @@ class formula_value {
   
   // update the time word object based on the time word id ($this->time_phr)
   private function load_time_wrd($debug) {
-    if ($this->time_id > 0) {
-      zu_debug('formula_value->load_phr_lst for time "'.$this->time_id.'".', $debug-12);
+    if ($this->time_id <> 0) {
+      zu_debug('formula_value->load_phr_lst for time "'.$this->time_id.'"', $debug-12);
       //if (!isset($this->time_phr)) {
         $time_phr = new phrase;
         $time_phr->id  = $this->time_id;
@@ -422,7 +422,7 @@ class formula_value {
           $this->time_phr = $time_phr;
           if (isset($this->phr_lst)) {
             $this->phr_lst->add($time_phr, $debug-1);
-            zu_debug('formula_value->load_time_wrd time word "'.$time_phr->name.'" added.', $debug-10);
+            zu_debug('formula_value->load_time_wrd time word "'.$time_phr->name.'" added', $debug-10);
           }
         }
       //}
@@ -556,10 +556,10 @@ class formula_value {
     $result = '';
 
     if (!is_null($this->value)) {
-      zu_debug('formula_value->val_formatted.', $debug-12);
+      zu_debug('formula_value->val_formatted', $debug-12);
       if (!isset($this->phr_lst)) {
         $this->load($debug-1);
-        zu_debug('formula_value->val_formatted loaded.', $debug-12);
+        zu_debug('formula_value->val_formatted loaded', $debug-12);
       }
       zu_debug('formula_value->val_formatted check '.$this->dsp_id(), $debug-12);
       if ($this->phr_lst->has_percent($debug-1)) {
@@ -567,15 +567,15 @@ class formula_value {
         zu_debug('formula_value->val_formatted percent of '.$this->value, $debug-12);
       } else {
         if ($this->value >= 1000 OR $this->value <= -1000) {
-          zu_debug('formula_value->val_formatted format.', $debug-12);
+          zu_debug('formula_value->val_formatted format', $debug-12);
           $result .= number_format($this->value,0,$this->usr->dec_point,$this->usr->thousand_sep);
         } else {  
-          zu_debug('formula_value->val_formatted round.', $debug-12);
+          zu_debug('formula_value->val_formatted round', $debug-12);
           $result = round($this->value,2);
         }
       } 
     }
-    zu_debug('formula_value->val_formatted done.', $debug-12);
+    zu_debug('formula_value->val_formatted done', $debug-12);
     return $result; 
   }
   
@@ -615,7 +615,7 @@ class formula_value {
   }
 
   function name($back, $debug) {
-    zu_debug('formula_value->name .', $debug-10);
+    zu_debug('formula_value->name ', $debug-10);
     $result = ''; 
 
     if (isset($this->phr_lst)) {
@@ -625,12 +625,12 @@ class formula_value {
       $result .= '@'.$this->time_phr->name($debug-1);
     }
     
-    zu_debug('formula_value->name done.', $debug-10);
+    zu_debug('formula_value->name done', $debug-10);
     return $result;
   }
   
   function name_linked($back, $debug) {
-    zu_debug('formula_value->name_linked .', $debug-10);
+    zu_debug('formula_value->name_linked ', $debug-10);
     $result = ''; 
 
     if (isset($this->phr_lst)) {
@@ -640,7 +640,7 @@ class formula_value {
       $result .= '@'.$this->time_phr->name_linked($debug-1);
     }
     
-    zu_debug('formula_value->name done.', $debug-10);
+    zu_debug('formula_value->name done', $debug-10);
     return $result;
   }
   
@@ -740,7 +740,7 @@ class formula_value {
 
         // display the formula element names and create the element group object
         $result .= $elm_grp->dsp_names($back, $debug-1).' ';
-        zu_debug('formula_value->explain -> elm grp name "'.$elm_grp->dsp_names($back, $debug-1).'" with back "'.$back.'".', $debug-10);
+        zu_debug('formula_value->explain -> elm grp name "'.$elm_grp->dsp_names($back, $debug-1).'" with back "'.$back.'"', $debug-10);
       
 
         // exclude the formula word from the words used to select the formula element values
@@ -755,25 +755,25 @@ class formula_value {
         if ($this->src_time_id <= 0) {
           if ($this->time_id > 0) {
             $elm_time_phr = $this->time_phr; 
-            zu_debug('formula_value->explain -> time '.$this->time_phr->name.' taken from the result.', $debug-3);
+            zu_debug('formula_value->explain -> time '.$this->time_phr->name.' taken from the result', $debug-3);
           } else {  
             $elm_time_phr = $src_phr_lst->assume_time($debug-1); 
-            zu_debug('formula_value->explain -> time '.$elm_time_phr->name.' assumed.', $debug-3);
+            zu_debug('formula_value->explain -> time '.$elm_time_phr->name.' assumed', $debug-3);
           }  
         } else {
           $elm_time_phr = $this->src_time_phr; 
-          zu_debug('formula_value->explain -> time '.$elm_time_phr->name.' taken from the source.', $debug-3);
+          zu_debug('formula_value->explain -> time '.$elm_time_phr->name.' taken from the source', $debug-3);
         }
         
         $elm_grp->phr_lst  = $src_phr_lst;
         $elm_grp->time_phr = $elm_time_phr;
         $elm_grp->usr      = $this->usr;
-        zu_debug('formula_value->explain -> words set '.$elm_grp->phr_lst->name($debug-1).' taken from the source and user "'.$elm_grp->usr->name.'".', $debug-3);
+        zu_debug('formula_value->explain -> words set '.$elm_grp->phr_lst->name($debug-1).' taken from the source and user "'.$elm_grp->usr->name.'"', $debug-3);
         
         // finaly display the value used in the formula
         $result .= ' = '.$elm_grp->dsp_values($back, $this->time_phr, $debug-1);
         $result .= '</br>';
-        zu_debug('formula_value->explain -> next element.', $debug-5);
+        zu_debug('formula_value->explain -> next element', $debug-5);
         $elm_nbr++;
       }
     }  
@@ -847,7 +847,7 @@ class formula_value {
       $frm->calc($phr_lst, $debug-1);
 
       //$this->save_if_updated ($debug-1);
-      zu_debug('formula_value->update '.$this->dsp_id().' to '.$this->value.' done.', $debug-10);
+      zu_debug('formula_value->update '.$this->dsp_id().' to '.$this->value.' done', $debug-10);
     }
   }
   
@@ -862,7 +862,7 @@ class formula_value {
         if (isset($this->last_val_update) AND isset($this->last_update)) {
           zu_debug('formula_value->save_if_updated -> '.$this->dsp_id().' not saved because the result has been calculated at '.$this->last_update->format('Y-m-d H:i:s').' and after the last parameter update '.$this->last_val_update->format('Y-m-d H:i:s'), $debug-13);
         } else {
-          zu_debug('formula_value->save_if_updated -> '.$this->dsp_id().' not saved because the result has been calculated after the last parameter update .', $debug-13);
+          zu_debug('formula_value->save_if_updated -> '.$this->dsp_id().' not saved because the result has been calculated after the last parameter update ', $debug-13);
         }  
         //zu_debug('formula_value->save_if_updated -> save '.$this->dsp_id().' not saved because the result has been calculated at '.$this->last_update.' which is after the last parameter update at '.$this->last_update, $debug-13);
       } else {
@@ -873,7 +873,7 @@ class formula_value {
             zu_debug('formula_value->save_if_updated -> save '.$this->dsp_id().' and result update time is set to '.$this->last_val_update->format('Y-m-d H:i:s'), $debug-13);
             $this->last_update = $this->last_val_update;
           } else {
-            zu_debug('formula_value->save_if_updated -> save '.$this->dsp_id().' but times are missing.', $debug-13);
+            zu_debug('formula_value->save_if_updated -> save '.$this->dsp_id().' but times are missing', $debug-13);
           }  
         }
         // check the formula result consistency
@@ -941,7 +941,7 @@ class formula_value {
             if (!$this->is_std) {
               $debug_txt .= ' for user "'.$this->usr->name.'"';
             }
-            zu_debug($debug_txt.'.', $debug);
+            zu_debug($debug_txt.'', $debug);
           }  
         }
       }

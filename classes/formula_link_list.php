@@ -83,14 +83,14 @@ class formula_link_list {
           $frm_lnk->excluded      = $db_row['excluded'];
           $this->lst[] = $frm_lnk;
         }
-        zu_debug('formula_link_list->load -> '.count($this->lst).' links loaded.', $debug-10); 
+        zu_debug('formula_link_list->load -> '.count($this->lst).' links loaded', $debug-10); 
       }  
     }  
   }
     
   // get an array with all phrases linked of this list e.g. linked to one formula
   function phrase_ids($sbx, $debug) {
-    zu_debug('formula_link_list->ids.', $debug-18);
+    zu_debug('formula_link_list->ids', $debug-18);
     $result = array();
     
     foreach ($this->lst AS $frm_lnk) {
@@ -112,7 +112,7 @@ class formula_link_list {
   // delete all links without log because this is used only when deleteing a formula
   // and the main event of deleting the formula is already logged
   function del_without_log($debug) {
-    zu_debug('formula_link_list->del_without_log.', $debug-16);
+    zu_debug('formula_link_list->del_without_log', $debug-16);
     $result = '';
     
     foreach ($this->lst AS $frm_lnk) {
@@ -129,7 +129,7 @@ class formula_link_list {
       }
     }
     
-    zu_debug('formula_link_list->del_without_log -> done.', $debug-16);
+    zu_debug('formula_link_list->del_without_log -> done', $debug-16);
     return $result;    
   }
   

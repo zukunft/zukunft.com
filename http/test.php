@@ -125,90 +125,105 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 1) { echo 'lib loaded<br>'; }
 $link = zu_start("start test.php", "", $debug-10);
 
-// load the testing functions
-include_once '../classes/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
+// open database
+$link = zu_start("test_quick", "", $debug);
 
-// ---------------
-// prepare testing
-// ---------------
-  
-// system test user to simulate the user sandbox
-// e.g. a value owned by the first user cannot be adjusted by the second user
-// instead a user specific value is created
-$usr = New user_dsp;
-$usr->id = TEST_USER_ID;
-$usr->load_test_user($debug-1);
+// load the session user parameters
+$usr = New user;
+$result .= $usr->get($debug-1);
 
-$usr2 = New user_dsp;
-$usr2->id = TEST_USER_ID2;
-$usr2->load_test_user($debug-1);
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+  if ($usr->is_admin($debug)) {
 
-$start_time = microtime(true);
-$exe_start_time = $start_time;
+    // load the testing functions
+    include_once '../classes/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
 
-$error_counter = 0;
-$timeout_counter = 0;
-$total_tests = 0;
+    // ---------------
+    // prepare testing
+    // ---------------
+      
+    // system test user to simulate the user sandbox
+    // e.g. a value owned by the first user cannot be adjusted by the second user
+    // instead a user specific value is created
+    $usr = New user_dsp;
+    $usr->id = TEST_USER_ID;
+    $usr->load_test_user($debug-1);
 
-// --------------------------------------
-// start testing the system functionality 
-// --------------------------------------
-  
-run_system_test ($debug);
-run_user_test ($debug);
+    $usr2 = New user_dsp;
+    $usr2->id = TEST_USER_ID2;
+    $usr2->load_test_user($debug-1);
 
-create_base_words ($debug);
-create_base_phrases ($debug);
-create_base_times ($debug);
-create_base_formulas ($debug);
-create_base_formula_links ($debug);
-create_base_views ($debug);
+    $start_time = microtime(true);
+    $exe_start_time = $start_time;
 
-run_db_link_test ($debug);
-run_lib_test ($debug);
-run_math_test ($debug);
-run_word_test ($debug);
-run_word_ui_test ($debug);
-run_word_display_test ($debug);
-run_word_list_test ($debug);
-run_word_link_test ($debug);
-run_phrase_test ($debug);
-run_phrase_group_test ($debug);
-run_phrase_group_list_test ($debug);
-run_graph_test ($debug);
-run_verb_test ($debug);
-run_term_test ($debug);
-run_value_test ($debug);
-run_value_ui_test ($debug);
-run_source_test ($debug);
-run_expression_test ($debug);
-run_formula_test ($debug);
-run_formula_list_test ($debug);
-run_formula_ui_test ($debug);
-run_formula_link_test ($debug);
-run_formula_link_list_test ($debug);
-run_formula_trigger_test ($debug);
-run_formula_value_test ($debug);
-run_formula_value_list_test ($debug);
-run_formula_element_test ($debug);
-run_formula_element_list_test ($debug);
-run_formula_element_group_test ($debug);
-run_batch_job_test ($debug);
-run_batch_job_list_test ($debug);
-run_view_test ($debug);
-run_view_component_test ($debug);
-run_view_component_link_test ($debug);
-//run_display_test ($debug);
-run_export_test ($debug);
-//run_permission_test ($debug);
-run_legacy_test ($debug);
-run_test_cleanup ($debug);
+    $error_counter = 0;
+    $timeout_counter = 0;
+    $total_tests = 0;
 
-// display the test results
-zu_test_dsp_result();
+    // --------------------------------------
+    // start testing the system functionality 
+    // --------------------------------------
+      
+    run_system_test ($debug);
+    run_user_test ($debug);
 
-// Free resultset
-mysql_free_result($result);
+    create_base_words ($debug);
+    create_base_phrases ($debug);
+    create_base_times ($debug);
+    create_base_formulas ($debug);
+    create_base_formula_links ($debug);
+    create_base_views ($debug);
+
+    run_db_link_test ($debug);
+    //run_lib_test ($debug);
+    run_lib_test_old ($debug); // test functions not yet splited into single unit tests
+    run_math_test ($debug);
+    run_word_test ($debug);
+    run_word_ui_test ($debug);
+    run_word_display_test ($debug);
+    run_word_list_test ($debug);
+    run_word_link_test ($debug);
+    run_ref_test ($debug);
+    run_phrase_test ($debug);
+    run_phrase_group_test ($debug);
+    run_phrase_group_list_test ($debug);
+    run_graph_test ($debug);
+    run_verb_test ($debug);
+    run_term_test ($debug);
+    run_value_test ($debug);
+    run_value_ui_test ($debug);
+    run_source_test ($debug);
+    run_expression_test ($debug);
+    run_formula_test ($debug);
+    run_formula_list_test ($debug);
+    run_formula_ui_test ($debug);
+    run_formula_link_test ($debug);
+    run_formula_link_list_test ($debug);
+    run_formula_trigger_test ($debug);
+    run_formula_value_test ($debug);
+    run_formula_value_list_test ($debug);
+    run_formula_element_test ($debug);
+    run_formula_element_list_test ($debug);
+    run_formula_element_group_test ($debug);
+    run_batch_job_test ($debug);
+    run_batch_job_list_test ($debug);
+    run_view_test ($debug);
+    run_view_component_test ($debug);
+    run_view_component_link_test ($debug);
+    //run_display_test ($debug);
+    run_export_test ($debug);
+    //run_permission_test ($debug);
+    run_legacy_test ($debug);
+    run_test_cleanup ($debug);
+
+    // load the the base data 
+    run_import_test (unserialize (TEST_IMPORT_FILE_LIST), $debug);
+
+    // display the test results
+    zu_test_dsp_result();
+  }
+}
 
 // Closing connection
 zu_end($link, $debug);

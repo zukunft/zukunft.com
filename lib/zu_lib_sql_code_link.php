@@ -20,6 +20,8 @@
   -----
   
   DBL - DataBase Link: link to the database over the special field code_id
+  
+  TODO change the naming to DBL
 
 
   This file is part of zukunft.com - calc with words
@@ -157,6 +159,10 @@ define("DBL_PROTECT_NO",                    "no_protection");
 define("DBL_PROTECT_USER",                  "user_protection");  
 define("DBL_PROTECT_ADMIN",                 "admin_protection");  
 define("DBL_PROTECT_NO_CHANGE",             "no_change");  
+                                          
+// links to external systems
+define("DBL_REF_WIKIPEDIA",                 "ref_wikipedia");  
+define("DBL_REF_WIKIDATA",                  "ref_wikidata");  
                                           
 // user profiles                          
 define("SQL_USER_ADMIN",                    "admin");  
@@ -319,6 +325,11 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == DBL_PROTECT_ADMIN
    OR $code_id == DBL_PROTECT_NO_CHANGE) {
     $db_type    = "protection_type";
+  }
+
+  if ($code_id == DBL_REF_WIKIPEDIA
+   OR $code_id == DBL_REF_WIKIDATA) {
+    $db_type    = "ref_type";
   }
 
   if ($code_id == SQL_FORMULA_TYPE_NEXT

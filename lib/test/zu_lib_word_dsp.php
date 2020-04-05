@@ -522,7 +522,7 @@ function zut_dsp ($id, $user_id, $debug) {
   $view_id = zum_default_id($user_id, $id, $debug-1);
   $result .= zum_html($view_id, $id, 0, $debug-1);
 
-  zu_debug('zut_dsp ... done.', $debug-1);
+  zu_debug('zut_dsp ... done', $debug-1);
   return $result;
 }
 
@@ -548,7 +548,7 @@ function zut_dsp_add ($in_word, $in_link, $in_type, $user_id, $back_id, $debug) 
   }
   $result .= zuh_form_end();
 
-  zu_debug('zut_dsp_add ... done.', $debug);
+  zu_debug('zut_dsp_add ... done', $debug);
   return $result;
 }
 
@@ -561,8 +561,6 @@ function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
   $wrd_name        = zut_name        ($wrd_id, $user_id, $debug-1);
   $wrd_plural      = zut_plural      ($wrd_id, $user_id, $debug-1);
   $wrd_description = zut_description ($wrd_id, $user_id, $debug-1);
-  $wrd_url1        = zut_url_1       ($wrd_id,           $debug-1);
-  $wrd_url2        = zut_url_2       ($wrd_id,           $debug-1);
   $wrd_type        = zut_type        ($wrd_id, $user_id, $debug-1);
 
   if ($wrd_id > 0) {
@@ -587,8 +585,6 @@ function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
     }
     $result .= '<br>';
     $result .= '  description:        <input type="text" name="description" class="resizedTextbox" value="'.$wrd_description.'"><br>';
-    $result .= '  wikipedia url:      <input type="text" name="url1"        class="resizedTextbox" value="'.$wrd_url1.'"><br>';
-    $result .= '  other reference url:<input type="text" name="url2"        class="resizedTextbox" value="'.$wrd_url2.'"><br>';
     $result .= zuh_form_end();
     $result .= '<br>';
     $result .= zut_html_list_related ($wrd_id, "up",   $user_id, $debug-1);
@@ -607,7 +603,7 @@ function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
     $result .= $changes;
   }
 
-  zu_debug('zut_dsp_edit -> done.', $debug-1);
+  zu_debug('zut_dsp_edit -> done', $debug-1);
   return $result;
 }
 

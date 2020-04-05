@@ -71,7 +71,7 @@ class view_component_dsp extends view_component {
   function table($phr, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_VALUES_RELATED)) {
-      zu_debug('view_component_dsp->table of view component '.$this->dsp_id().' for "'.$phr->name.'" with columns "'.$this->wrd_row->name.'" and user "'.$this->usr->name.'".', $debug-10);
+      zu_debug('view_component_dsp->table of view component '.$this->dsp_id().' for "'.$phr->name.'" with columns "'.$this->wrd_row->name.'" and user "'.$this->usr->name.'"', $debug-10);
       $val_lst = New value_list_dsp;
       $val_lst->phr = $phr;
       $val_lst->usr = $this->usr;
@@ -237,7 +237,7 @@ class view_component_dsp extends view_component {
       $val_lst = New value_list;
       $val_lst->phr = $phr;
       $val_lst->usr = $this->usr;
-      zu_debug('view_component_dsp->all load values for word "'.$phr->name.'" and user "'.$this->usr->name.'".', $debug-10);
+      zu_debug('view_component_dsp->all load values for word "'.$phr->name.'" and user "'.$this->usr->name.'"', $debug-10);
       $val_lst->load_by_phr($debug-1);
       $result .= $val_lst->html($back, $debug-1);
     }
@@ -408,7 +408,7 @@ class view_component_dsp extends view_component {
 
   // HTML code to edit all word fields
   function dsp_edit ($add_link, $wrd, $back, $debug) {
-    zu_debug('view_component_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.').', $debug-10);
+    zu_debug('view_component_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.')', $debug-10);
     $result = '';
     
     // show the view component name

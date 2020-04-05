@@ -78,7 +78,7 @@ class user {
       $sql_where = "u.ip_address = ".sf($this->ip_addr);
     }  
 
-    zu_debug('user->load search by "'.$sql_where.'".', $debug-14);
+    zu_debug('user->load search by "'.$sql_where.'"', $debug-14);
     if ($sql_where == '') {
       zu_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
@@ -317,14 +317,14 @@ class user {
     $db_usr = New user;
     $db_usr->id  = $this->id;
     $db_row = $db_usr->load_db($debug-1);
-    zu_debug('user->save -> database user loaded "'.$db_row['name'].'".', $debug-14);
+    zu_debug('user->save -> database user loaded "'.$db_row['name'].'"', $debug-14);
     
     $this->upd_par ($db_con, $usr_par, $db_row, "user_name",  'name',  $debug-1);
     $this->upd_par ($db_con, $usr_par, $db_row, "email",      'email', $debug-1);
     $this->upd_par ($db_con, $usr_par, $db_row, "first_name", 'fname', $debug-1);
     $this->upd_par ($db_con, $usr_par, $db_row, "last_name",  'lname', $debug-1);
       
-    zu_debug('user->upd_pars -> done.', $debug-1);
+    zu_debug('user->upd_pars -> done', $debug-1);
     return $result;
   }
 

@@ -394,7 +394,7 @@ function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $
   if (count($word_lst) > 0) {
     zu_debug('zut_db_differantiator_words_filtered ... words linked ('.implode(",",$word_lst).')', $debug-5);  
   } else {  
-    zu_debug('zut_db_differantiator_words_filtered ... no words linked.', $debug-5);  
+    zu_debug('zut_db_differantiator_words_filtered ... no words linked', $debug-5);  
   }
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
@@ -549,19 +549,17 @@ function zut_db_usr_check ($wrd_id, $user_id, $debug) {
 // can not the owner change the word type? Yes
 // what if the user changes the name back to the original name?
 // if a user (not the owner) adds a description, it should be changed in the original record
-function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_description, $wrd_url1, $wrd_url2, $user_id, $debug) {
-  zu_debug("zut_db_upd (t".$wrd_id.",".$wrd_name.",".$wrd_plural.",".substr($wrd_description,0,50).",".substr($wrd_url1,0,50).",".substr($wrd_url2,0,50).",".$wrd_type.",u".$user_id.")", $debug);
+function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_description, $user_id, $debug) {
+  zu_debug("zut_db_upd (t".$wrd_id.",".$wrd_name.",".$wrd_plural.",".substr($wrd_description,0,50).",".$wrd_type.",u".$user_id.")", $debug);
   $result = "";
   
   // read the database values to be able to check if something has been changed; done first, because it needs to be done for user and general words
   $old_name        = zut_name        ($wrd_id, $user_id, $debug-1);
   $old_plural      = zut_plural      ($wrd_id, $user_id, $debug-1);
   $old_description = zut_description ($wrd_id, $user_id, $debug-1);
-  $old_url1        = zut_url_1       ($wrd_id,           $debug-1);
-  $old_url2        = zut_url_2       ($wrd_id,           $debug-1);
   $old_type        = zut_type        ($wrd_id, $user_id, $debug-1);
-  $old_type_name   = zut_type_name ($old_type, $debug-1);
-  $new_type_name   = zut_type_name ($wrd_type, $debug-1);
+  $old_type_name   = zut_type_name   ($old_type, $debug-1);
+  $new_type_name   = zut_type_name   ($wrd_type, $debug-1);
 
   // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
   if ($old_name <> $wrd_name AND strtoupper($old_name) <> strtoupper($wrd_name)) {
@@ -630,20 +628,6 @@ function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_descriptio
           // check if the user sandbox is still needed for this word
           $result = zut_db_usr_check ($wrd_id, $user_id, $debug);
         }
-      }
-    }  
-          
-    // update wikipedia reference if needed
-    if ($old_url1 <> $wrd_url1) {
-      if (zu_log($user_id, "update", "words", "ref_url_1", $old_url1, $wrd_url1, $wrd_id, $debug-1) > 0 ) {
-        $result = zu_sql_update("words", $wrd_id, "ref_url_1", sf($wrd_url1), $user_id, $debug-1);
-      }
-    }  
-          
-    // update second reference if needed
-    if ($old_url2 <> $wrd_url2) {
-      if (zu_log($user_id, "update", "words", "ref_url_2", $old_url2, $wrd_url2, $wrd_id, $debug-1) > 0 ) {
-        $result = zu_sql_update("words", $wrd_id, "ref_url_2", sf($wrd_url2), $user_id, $debug-1);
       }
     }  
           

@@ -53,7 +53,7 @@ class formula_value_list {
   // load formula results from the database related to one formula or one word
   // similar to load of the formula_value object, but to load many results at once
   function load ($limit, $debug) {
-    zu_debug('formula_value_list->load.', $debug-18);      
+    zu_debug('formula_value_list->load', $debug-18);      
 
     // check the minimal input parameters
     if (!isset($this->usr)) {
@@ -133,7 +133,7 @@ class formula_value_list {
           $fv->value          = $val_row['formula_value'];
           $fv->usr_id         = $val_row['user_id'];
 
-          zu_debug('formula_value_list->load_frm get words.', $debug-10);      
+          zu_debug('formula_value_list->load_frm get words', $debug-10);      
           $fv->load_phrases($debug-1);
 
           $this->lst[] = $fv;
@@ -476,14 +476,14 @@ class formula_value_list {
     // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
     // check in frm_upd_lst_usr only if the user has done any modifications that may incluence the word list
     $phr_lst_frm_assigned = $this->frm->assign_phr_lst($debug-1);
-    zu_debug('formula "'.$this->frm->name.'" is assigned to '.$phr_lst_frm_assigned->name().' for user '.$phr_lst_frm_assigned->usr->name.'.', $debug);
+    zu_debug('formula "'.$this->frm->name.'" is assigned to '.$phr_lst_frm_assigned->name().' for user '.$phr_lst_frm_assigned->usr->name.'', $debug);
 
     // get a list of all words, triples, formulas and verbs used in the formula
     // e.g. for the formula "net proft" the word "Sales" & "cost of sales" is used
     // for formulas the formula word is used
     $exp = $this->frm->expression($debug-1);
     $phr_lst_frm_used = $exp->phr_verb_lst($back, $debug-1);
-    zu_debug('formula "'.$this->frm->name.'" uses '.$phr_lst_frm_used->name_linked().' (taken from '.$this->frm->usr_text.').', $debug-1);
+    zu_debug('formula "'.$this->frm->name.'" uses '.$phr_lst_frm_used->name_linked().' (taken from '.$this->frm->usr_text.')', $debug-1);
     
     // get the list of predefined "following" phrases/formulas like "prior" or "next"
     $phr_lst_preset_following = $exp->element_special_following($back, $debug-1);  
@@ -515,12 +515,12 @@ class formula_value_list {
     // get the phrase name of the formula e.g. "increase"
     if (!isset($this->frm->name_wrd)) { $this->frm->load_wrd($debug-1); }
     $phr_frm = $this->frm->name_wrd; 
-    zu_debug('For '.$this->frm->usr_text.' formula results with the name '.$phr_frm->name().' should not be used for calculation to avoid loops.', $debug-5);
+    zu_debug('For '.$this->frm->usr_text.' formula results with the name '.$phr_frm->name().' should not be used for calculation to avoid loops', $debug-5);
 
     // get the phrase name of the formula e.g. "percent"
     $exp = $this->frm->expression($debug-1); 
     $phr_lst_fv = $exp->fv_phr_lst($debug-1); 
-    if (isset($phr_lst_fv)) { zu_debug('For '.$this->frm->usr_text.' formula results with the result phrases '.$phr_lst_fv->name().' should not be used for calculation to avoid loops.', $debug-5); }
+    if (isset($phr_lst_fv)) { zu_debug('For '.$this->frm->usr_text.' formula results with the result phrases '.$phr_lst_fv->name().' should not be used for calculation to avoid loops', $debug-5); }
     
     // depending on the formula setting (all words or at least one word)
     // create a formula value list with all needed word combinations
@@ -612,7 +612,7 @@ class formula_value_list {
         $this->lst[] = $fv_to_add;
       }
     } else {
-      zu_debug('phrase_list->add '.$fv_to_add->dsp_id().' not added, because it is already in the list.', $debug-10);
+      zu_debug('phrase_list->add '.$fv_to_add->dsp_id().' not added, because it is already in the list', $debug-10);
     }
   }
   

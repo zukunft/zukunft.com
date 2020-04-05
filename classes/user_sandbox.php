@@ -942,7 +942,7 @@ class user_sandbox {
       zu_debug($this->obj_name.'->save check possible dublicates before adding '.$this->dsp_id(), $debug-12);
       $similar = $this->get_similar($debug-1);
       if (isset($similar)) {
-        if ($similar-> id <> 0) {
+        if ($similar->id <> 0) {
           $this->id = $similar->id;
         }
       }

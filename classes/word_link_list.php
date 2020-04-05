@@ -86,7 +86,7 @@ class word_link_list {
   
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
   function load($debug) {
-    zu_debug('word_link_list->load.', $debug-18);
+    zu_debug('word_link_list->load', $debug-18);
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
@@ -132,14 +132,14 @@ class word_link_list {
       }
       if ($sql_where == '') {
         if (isset($this->wrd_lst)) {
-          zu_debug('word_link_list->load based on word list.', $debug-20);
+          zu_debug('word_link_list->load based on word list', $debug-20);
           $sql_wrd1_fields = $this->load_wrd_fields('', $debug-1);
           $sql_wrd1_from   = $this->load_wrd_from  ('', $debug-1);
           $sql_wrd1_fields .= ', ';
           $sql_wrd1_from   .= ', ';
           $sql_wrd2_fields = $this->load_wrd_fields('2', $debug-1);
           $sql_wrd2_from   = $this->load_wrd_from  ('2', $debug-1);
-          zu_debug('word_link_list->load based on word list loaded.', $debug-20);
+          zu_debug('word_link_list->load based on word list loaded', $debug-20);
           if ($this->direction == 'up') {
             $sql_where = 'l.from_phrase_id IN ('.$this->wrd_lst->ids_txt($debug-1).')';
             $sql_wrd1  = 'AND l.from_phrase_id = t.word_id';
@@ -204,7 +204,7 @@ class word_link_list {
         $db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_lst = $db_con->get($sql, $debug-10);  
-        zu_debug('word_link_list->load ... sql "'.$sql.'".', $debug-15);
+        zu_debug('word_link_list->load ... sql "'.$sql.'"', $debug-15);
         $this->lst = array();
         $this->ids = array();
         foreach ($db_lst AS $db_lnk) {
@@ -251,7 +251,7 @@ class word_link_list {
                 $new_link->from_name    = $new_word->name;
               } else {
                 if (isset($this->wrd)) {
-                  zu_debug('word_link_list->load ... use "'.$this->wrd->name.'" as from.', $debug-15);
+                  zu_debug('word_link_list->load ... use "'.$this->wrd->name.'" as from', $debug-15);
                   $new_link->from      = $this->wrd;
                   $new_link->from_name = $this->wrd->name;
                 }
@@ -335,7 +335,7 @@ class word_link_list {
         if ($lnk->name <> '') { 
           $result[] = $lnk->name;
         }
-        zu_debug('word_link_list->names ... added "'.$lnk->name.'".', $debug-14);
+        zu_debug('word_link_list->names ... added "'.$lnk->name.'"', $debug-14);
       }
     }
     zu_debug('word_link_list->names ... done ('.count($result).')', $debug-12);
@@ -368,7 +368,7 @@ class word_link_list {
         
         // display type header
         if ($lnk->verb_id <> $prev_verb_id) {
-          zu_debug('graph->display type "'.$lnk->link_type->name.'".', $debug-12);
+          zu_debug('graph->display type "'.$lnk->link_type->name.'"', $debug-12);
 
           // select the same side of the verb
           if ($this->direction == "down") {

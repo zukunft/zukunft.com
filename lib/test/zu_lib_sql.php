@@ -354,7 +354,6 @@ function sql_set_no_log($table, $id_field, $id_value, $value_field, $new_value, 
   return $new_value;
 }
 
-
 // returns all results of an SQL query 
 function zu_sql_get_all($sql, $debug) {
   if ($debug > 10) {

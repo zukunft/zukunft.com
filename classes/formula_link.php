@@ -213,7 +213,7 @@ class formula_link extends user_sandbox {
       }
     }
     if (!isset($this->tob)) {
-      if ($this->phrase_id > 0) {
+      if ($this->phrase_id <> 0) {
         $phr = new phrase;
         $phr->id  = $this->phrase_id;
         $phr->usr = $this->usr;
@@ -226,7 +226,7 @@ class formula_link extends user_sandbox {
   
   // 
   function link_type_name($debug) {
-    zu_debug('formula_link->link_type_name do.', $debug-16);
+    zu_debug('formula_link->link_type_name do', $debug-16);
     if ($this->type_id > 0 AND $this->link_name == '') {
       $sql = "SELECT type_name, description
                 FROM formula_link_types
@@ -236,7 +236,7 @@ class formula_link extends user_sandbox {
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->link_name = $db_type['type_name'];
     }
-    zu_debug('formula_link->link_type_name done.', $debug-16);
+    zu_debug('formula_link->link_type_name done', $debug-16);
     return $this->link_name;    
   }
   
@@ -305,7 +305,7 @@ class formula_link extends user_sandbox {
 
   // true if no other user has modified the formula
   function not_changed($debug) {
-    zu_debug('formula_link->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.').', $debug-10);  
+    zu_debug('formula_link->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
     $result = true;
     
     if ($this->owner_id > 0) {
@@ -334,9 +334,9 @@ class formula_link extends user_sandbox {
   // because if another user has changed the formula_link and the original value is changed, maybe the user formula_link also needs to be updated
   function can_change($debug) {
     if (isset($this->fob) AND isset($this->tob)) {
-      zu_debug('formula_link->can_change "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.').', $debug-12);  
+      zu_debug('formula_link->can_change "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.')', $debug-12);  
     } else {
-      zu_debug('formula_link->can_change "'.$this->id.'" by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.').', $debug-12);  
+      zu_debug('formula_link->can_change "'.$this->id.'" by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.')', $debug-12);  
     }
     $can_change = false;
     if ($this->owner_id == $this->usr->id OR $this->owner_id <= 0) {
@@ -361,9 +361,9 @@ class formula_link extends user_sandbox {
 
     if (!$this->has_usr_cfg) {
       if (isset($this->fob) AND isset($this->tob)) {
-        zu_debug('formula_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'".', $debug-10);  
+        zu_debug('formula_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
       } else {
-        zu_debug('formula_link->add_usr_cfg for "'.$this->id.'" and user "'.$this->usr->name.'".', $debug-10);  
+        zu_debug('formula_link->add_usr_cfg for "'.$this->id.'" and user "'.$this->usr->name.'"', $debug-10);  
       }
 
       // check again if there ist not yet a record
@@ -403,7 +403,7 @@ class formula_link extends user_sandbox {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
-      zu_debug('formula_link->del_usr_cfg_if_not_needed check for '.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('formula_link->del_usr_cfg_if_not_needed check for '.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
       if ($db_row['formula_link_id'] > 0) {
         if ($db_row['link_type_id'] == Null
         AND $db_row['excluded']     == Null) {
@@ -454,7 +454,7 @@ class formula_link extends user_sandbox {
   // set the log entry parameter for a new value
   // e.g. that the user can see "added formula list to phrase view"
   function log_add($debug) {
-    zu_debug('formula_link->log_add for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'".', $debug-10);  
+    zu_debug('formula_link->log_add for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -486,7 +486,7 @@ class formula_link extends user_sandbox {
   // set the log entry parameter to delete a formula
   // e.g. that the user can see "removed formula list from word view"
   function log_del($debug) {
-    zu_debug('formula_link->log_del for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'".', $debug-10);  
+    zu_debug('formula_link->log_del for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
     $log = New user_log_link;
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -518,7 +518,7 @@ class formula_link extends user_sandbox {
   // actually update a formula field in the main database record or the user sandbox
   function save_field_do($db_con, $log, $debug) {
     $result = '';
-    zu_debug('formula_link->save_field_do .', $debug-16);
+    zu_debug('formula_link->save_field_do ', $debug-16);
     if ($log->new_id > 0) {
       $new_value = $log->new_id;
       $std_value = $log->std_id;
@@ -540,7 +540,7 @@ class formula_link extends user_sandbox {
         $result .= $this->del_usr_cfg_if_not_needed($debug-1);
       }
     }
-    zu_debug('formula_link->save_field_do done.', $debug-16);
+    zu_debug('formula_link->save_field_do done', $debug-16);
     return $result;
   }
   
@@ -597,7 +597,7 @@ class formula_link extends user_sandbox {
     // link type not used at the moment
     //$result .= $this->save_field_type     ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('formula_link->save_fields all fields for "'.$this->fob->name.'" to "'.$this->tob->name.'" has been saved.', $debug-12);
+    zu_debug('formula_link->save_fields all fields for "'.$this->fob->name.'" to "'.$this->tob->name.'" has been saved', $debug-12);
     return $result;
   }
   
@@ -607,7 +607,7 @@ class formula_link extends user_sandbox {
     $result = '';
     if ($db_rec->fob->id <> $this->fob->id 
      OR $db_rec->tob->id <> $this->tob->id) {
-      zu_debug('formula_link->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('formula_link->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().')', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_from = $db_rec->fob;
       $log->new_from = $this->fob;
@@ -621,7 +621,7 @@ class formula_link extends user_sandbox {
                                               array($this->fob->id,$this->tob->id), $debug-1);
       }
     }
-    zu_debug('formula_link->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
+    zu_debug('formula_link->save_id_fields for '.$this->dsp_id().' has been done', $debug-12);
     return $result;
   }
   
@@ -633,7 +633,7 @@ class formula_link extends user_sandbox {
      OR $db_rec->tob->id <> $this->tob->id) {
       $this->reset_objects($debug-1);
       // check if target link already exists
-      zu_debug('formula_link->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('formula_link->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
@@ -652,7 +652,7 @@ class formula_link extends user_sandbox {
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('formula_link->save_id_if_updated change the existing formula link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('formula_link->save_id_if_updated change the existing formula link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'")', $debug-14);
           $this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -666,18 +666,18 @@ class formula_link extends user_sandbox {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('formula_link->save_id_if_updated recreate the formula link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('formula_link->save_id_if_updated recreate the formula link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")', $debug-14);
         }
       }
     }  
 
-    zu_debug('formula_link->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
+    zu_debug('formula_link->save_id_fields for '.$this->dsp_id().' has been done', $debug-12);
     return $result;
   }
   
   // link the formula to another word
   function add($db_con, $debug) {
-    zu_debug('formula_link->add new link from "'.$this->fob->name.'" to "'.$this->tob->name.'".', $debug-12);
+    zu_debug('formula_link->add new link from "'.$this->fob->name.'" to "'.$this->tob->name.'"', $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -725,7 +725,7 @@ class formula_link extends user_sandbox {
     
     // check if a new value is supposed to be added
     if ($this->id <= 0) {
-      zu_debug('formula_link->save check if a new formula_link for "'.$this->fob->name.'" and "'.$this->tob->name.'" needs to be created.', $debug-12);
+      zu_debug('formula_link->save check if a new formula_link for "'.$this->fob->name.'" and "'.$this->tob->name.'" needs to be created', $debug-12);
       // check if a formula_link with the same formula and word is already in the database
       $db_chk = New formula_link;
       $db_chk->fob = $this->fob;
@@ -738,10 +738,10 @@ class formula_link extends user_sandbox {
     }  
       
     if ($this->id <= 0) {
-      zu_debug('formula_link->save new link from "'.$this->fob->name.'" to "'.$this->tob->name.'".', $debug-12);
+      zu_debug('formula_link->save new link from "'.$this->fob->name.'" to "'.$this->tob->name.'"', $debug-12);
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('formula_link->save update "'.$this->id.'".', $debug-12);
+      zu_debug('formula_link->save update "'.$this->id.'"', $debug-12);
       // read the database values to be able to check if something has been changed; done first, 
       // because it needs to be done for user and general formulas
       $db_rec = New formula_link;

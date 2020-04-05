@@ -54,7 +54,7 @@ class term {
   
   // simply load a formula (seperate function, because used twice)
   private function load_frm ($debug) {
-    zu_debug('term->load_frm for "'.$this->name.'".', $debug-16);
+    zu_debug('term->load_frm for "'.$this->name.'"', $debug-16);
     $frm = New formula;
     $frm->name = $this->name;
     $frm->usr  = $this->usr;
@@ -65,12 +65,12 @@ class term {
       $this->obj = $frm;
       $result = $frm->id;
     }
-    zu_debug('term->load_frm loaded id "'.$this->id.'".', $debug-16);
+    zu_debug('term->load_frm loaded id "'.$this->id.'"', $debug-16);
   }
   
   // test if the name is used already
   function load ($debug) {
-    zu_debug('term->load ('.$this->name.').', $debug-10);
+    zu_debug('term->load ('.$this->name.')', $debug-10);
     $result = NULL;
 
     // test the word

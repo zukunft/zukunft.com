@@ -1,0 +1,1159 @@
+{
+  "version": "0.0.1",
+  "time": "2020-03-28 00:57:29",
+  "user": "timon",
+  "selection": [
+    "COVID-19"
+  ],
+  "words": [
+    {
+      "name": "Switzerland",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q39",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Canton",
+      "refs": [
+        {
+          "name": "canton of Switzerland",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q23058",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Ticino",
+      "refs": [
+        {
+          "name": "Ticino",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Geneva",
+      "refs": [
+        {
+          "name": "Geneva",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Grisons",
+      "refs": [
+        {
+          "name": "Grisons",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Aargau",
+      "refs": [
+        {
+          "name": "Aargau",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Zürich",
+      "refs": [
+        {
+          "name": "Zürich",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Vaud",
+      "refs": [
+        {
+          "name": "Vaud",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Basel-Stadt",
+      "refs": [
+        {
+          "name": "Basel-Stadt",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Bern",
+      "refs": [
+        {
+          "name": "Bern",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Basel-Landschaft",
+      "refs": [
+        {
+          "name": "Basel-Landschaft",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Valais",
+      "refs": [
+        {
+          "name": "Valais",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Fribourg",
+      "refs": [
+        {
+          "name": "Fribourg",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Neuchâtel",
+      "refs": [
+        {
+          "name": "Neuchâtel",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Schwyz",
+      "refs": [
+        {
+          "name": "Schwyz",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Zug",
+      "refs": [
+        {
+          "name": "Zug",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "St. Gallen",
+      "refs": [
+        {
+          "name": "St. Gallen",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Lucerne",
+      "refs": [
+        {
+          "name": "Lucerne",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Appenzell Ausserrhoden",
+      "refs": [
+        {
+          "name": "Appenzell Ausserrhoden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Jura",
+      "refs": [
+        {
+          "name": "Jura",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Thurgau",
+      "refs": [
+        {
+          "name": "Thurgau",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Schaffhausen",
+      "refs": [
+        {
+          "name": "Schaffhausen",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Solothurn",
+      "refs": [
+        {
+          "name": "Solothurn",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Nidwalden",
+      "refs": [
+        {
+          "name": "Nidwalden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Glarus",
+      "refs": [
+        {
+          "name": "Glarus",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Appenzell Innerrhoden",
+      "refs": [
+        {
+          "name": "Appenzell Innerrhoden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Obwalden",
+      "refs": [
+        {
+          "name": "Obwalden",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Uri",
+      "refs": [
+        {
+          "name": "Uri",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "SARS-CoV-2",
+      "refs": [
+        {
+          "name": "SARS-CoV-2",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82069695",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "RT-PCR",
+      "refs": [
+        {
+          "name": "Reverse-Transkriptase-Polymerase-Kettenreaktion",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q169526",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "sample",
+      "refs": [
+        {
+          "name": "Sample (statistics)",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "result",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "positive",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "negative",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Hospital",
+      "refs": [
+        {
+          "name": "Hospital",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q16917",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ICU",
+      "refs": [
+        {
+          "name": "Intensive care unit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5094647",
+          "type": "wikidata"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Mechanical ventilator",
+      "refs": [
+        {
+          "name": "Ventilator",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Health",
+      "refs": [
+        {
+          "name": "Health",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Death",
+      "refs": [
+        {
+          "name": "Death",
+          "type": "wikipedia"
+        }
+      ],
+      "protection": "admin_protection"
+    }
+  ],
+  "triples": [
+    {
+      "from": "Ticino",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Ticino",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "TI",
+      "verb": "is an acronym for",
+      "to": "Ticino"
+    },
+    {
+      "from": "Geneva",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Geneva",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "GE",
+      "verb": "is an acronym for",
+      "to": "Geneva"
+    },
+    {
+      "from": "Grisons",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Grisons",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "GR",
+      "verb": "is an acronym for",
+      "to": "Grisons"
+    },
+    {
+      "from": "Aargau",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Aargau",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "AG",
+      "verb": "is an acronym for",
+      "to": "Aargau"
+    },
+    {
+      "from": "Zürich",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Zürich",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "ZU",
+      "verb": "is an acronym for",
+      "to": "Zürich"
+    },
+    {
+      "from": "Vaud",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Vaud",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "VD",
+      "verb": "is an acronym for",
+      "to": "Vaud"
+    },
+    {
+      "from": "Basel-Stadt",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Basel-Stadt",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "BS",
+      "verb": "is an acronym for",
+      "to": "Basel-Stadt"
+    },
+    {
+      "from": "Bern",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Bern",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "BE",
+      "verb": "is an acronym for",
+      "to": "Bern"
+    },
+    {
+      "from": "Basel-Landschaft",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Basel-Landschaft",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "BL",
+      "verb": "is an acronym for",
+      "to": "Basel-Landschaft"
+    },
+    {
+      "from": "Valais",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Valais",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "VS",
+      "verb": "is an acronym for",
+      "to": "Valais"
+    },
+    {
+      "from": "Fribourg",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Fribourg",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "FR",
+      "verb": "is an acronym for",
+      "to": "Fribourg"
+    },
+    {
+      "from": "Neuchâtel",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Neuchâtel",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "NE",
+      "verb": "is an acronym for",
+      "to": "Neuchâtel"
+    },
+    {
+      "from": "Schwyz",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Schwyz",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "SZ",
+      "verb": "is an acronym for",
+      "to": "Schwyz"
+    },
+    {
+      "from": "Zug",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Zug",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "ZU",
+      "verb": "is an acronym for",
+      "to": "Zug"
+    },
+    {
+      "from": "St. Gallen",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "St. Gallen",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "SG",
+      "verb": "is an acronym for",
+      "to": "St. Gallen"
+    },
+    {
+      "from": "Lucerne",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Lucerne",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "LU",
+      "verb": "is an acronym for",
+      "to": "Lucerne"
+    },
+    {
+      "from": "Appenzell Ausserrhoden",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Appenzell Ausserrhoden",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "AR",
+      "verb": "is an acronym for",
+      "to": "Appenzell Ausserrhoden"
+    },
+    {
+      "from": "Jura",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Jura",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "JU",
+      "verb": "is an acronym for",
+      "to": "Jura"
+    },
+    {
+      "from": "Thurgau",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Thurgau",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "TG",
+      "verb": "is an acronym for",
+      "to": "Thurgau"
+    },
+    {
+      "from": "Schaffhausen",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Schaffhausen",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "SH",
+      "verb": "is an acronym for",
+      "to": "Schaffhausen"
+    },
+    {
+      "from": "Solothurn",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Solothurn",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "SO",
+      "verb": "is an acronym for",
+      "to": "Solothurn"
+    },
+    {
+      "from": "Nidwalden",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Nidwalden",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "NW",
+      "verb": "is an acronym for",
+      "to": "Nidwalden"
+    },
+    {
+      "from": "Glarus",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Glarus",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "GL",
+      "verb": "is an acronym for",
+      "to": "Glarus"
+    },
+    {
+      "from": "Appenzell Innerrhoden",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Appenzell Innerrhoden",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "AI",
+      "verb": "is an acronym for",
+      "to": "Appenzell Innerrhoden"
+    },
+    {
+      "from": "Obwalden",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Obwalden",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "OW",
+      "verb": "is an acronym for",
+      "to": "Obwalden"
+    },
+    {
+      "from": "Uri",
+      "verb": "is a",
+      "to": "Canton"
+    },
+    {
+      "from": "Uri",
+      "verb": "is part of",
+      "to": "Switzerland"
+    },
+    {
+      "from": "UR",
+      "verb": "is an acronym for",
+      "to": "Uri"
+    }
+  ],
+  "formulas": [],
+  "sources": [
+    {
+      "name": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)",
+      "url": "https://github.com/openZH/covid_19"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "VD"
+      ],
+      "timestamp": "2020-03-26",
+      "number": "2532",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "GE"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "1924",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "TI"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "1688",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "ZH"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "1578",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "VS"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "808",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "BE"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "718",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "BS"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "534",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "BL"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "466",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "GR"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "409",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "FR"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "369",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "AG"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "364",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "SG"
+      ],
+      "timestamp": "2020-03-26",
+      "number": "306",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "LU"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "287",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "NE"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "287",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "SO"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "157",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "SZ"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "119",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "TG"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "117",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "JU"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "112",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "ZG"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "101",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "FL"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "60",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "NW"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "54",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "AR"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "44",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "GL"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "44",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "UR"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "40",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "OW"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "37",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "SH"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "36",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    },
+    {
+      "words": [
+        "COVID-19",
+        "Switzerland",
+        "RT-PCR",
+        "positive",
+        "AI"
+      ],
+      "timestamp": "2020-03-27",
+      "number": "12",
+      "protection": "admin_protection",
+      "source": "Statistisches Amt - Kanton Zürich: SARS-CoV-2 Cases communicated by Swiss Cantons and Principality of Liechtenstein (FL)"
+    }
+  ],
+  "views": []
+}

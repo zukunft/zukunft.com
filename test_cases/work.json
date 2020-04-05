@@ -1,0 +1,62 @@
+{
+  "version": "0.0.1",
+  "time": "2020-03-09 22:07:23",
+  "user": "timon",
+  "selection": [
+    "ABB"
+  ],
+  "words": [
+    {
+      "name": "ABB",
+      "refs": [
+        {
+          "name": "ABB_Group",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "CHF",
+      "refs": [
+        {
+          "name": "Swiss_franc",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "cash flow statement",
+      "refs": [
+        {
+          "name": "Cash_flow_statement",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cash flow statement investing activity",
+      "refs": [
+        {
+          "name": "Cash_flow_statement#Investing_activities",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "formulas": [
+  ],
+  "sources": [
+  ],
+  "values": [
+  ],
+  "views": [
+  ]
+}

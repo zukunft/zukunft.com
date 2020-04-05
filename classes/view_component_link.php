@@ -289,7 +289,7 @@ class view_component_link extends user_sandbox {
 
   // 
   private function pos_type_name($debug) {
-    zu_debug('view_component_link->pos_type_name do.', $debug-16);
+    zu_debug('view_component_link->pos_type_name do', $debug-16);
     if ($this->type_id > 0) {
       $sql = "SELECT type_name, description
                 FROM view_component_position_types
@@ -299,7 +299,7 @@ class view_component_link extends user_sandbox {
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
     }
-    zu_debug('view_component_link->pos_type_name done.', $debug-16);
+    zu_debug('view_component_link->pos_type_name done', $debug-16);
     return $this->type_name;    
   }
   
@@ -449,9 +449,9 @@ class view_component_link extends user_sandbox {
 
     if (!$this->has_usr_cfg) {
       if (isset($this->fob) AND isset($this->tob)) {
-        zu_debug('view_component_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'".', $debug-10);  
+        zu_debug('view_component_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
       } else {
-        zu_debug('view_component_link->add_usr_cfg for "'.$this->id.'" and user "'.$this->usr->name.'".', $debug-10);  
+        zu_debug('view_component_link->add_usr_cfg for "'.$this->id.'" and user "'.$this->usr->name.'"', $debug-10);  
       }
 
       // check again if there ist not yet a record
@@ -492,7 +492,7 @@ class view_component_link extends user_sandbox {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('view_component_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' with ('.$sql.').', $debug-12);
+      zu_debug('view_component_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' with ('.$sql.')', $debug-12);
       if ($usr_cfg['view_component_link_id'] > 0) {
         if ($usr_cfg['order_nbr']     == Null
         AND $usr_cfg['position_type'] == Null

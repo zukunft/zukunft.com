@@ -324,8 +324,6 @@ function run_word_test ($debug) {
   // check if the word parameters can be added
   $wrd_renamed->plural      = TW_ADD_RENAMED.'s';
   $wrd_renamed->description = TW_ADD_RENAMED.' description';
-  $wrd_renamed->ref_1       = TW_ADD_RENAMED.' ref_1';
-  $wrd_renamed->ref_2       = TW_ADD_RENAMED.' ref_2';
   $wrd_renamed->type_id     = cl(SQL_WORD_TYPE_OTHER);
   $result = $wrd_renamed->save($debug-1);
   $target = '11111';
@@ -339,12 +337,6 @@ function run_word_test ($debug) {
   $result = $wrd_reloaded->description;
   $target = TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_reloaded->ref_1;
-  $target = TW_ADD_RENAMED.' ref_1';
-  $exe_start_time = test_show_result(', word->load ref_1 for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_reloaded->ref_2;
-  $target = TW_ADD_RENAMED.' ref_2';
-  $exe_start_time = test_show_result(', word->load ref_2 for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_reloaded->type_id;
   $target = cl(SQL_WORD_TYPE_OTHER);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -362,13 +354,6 @@ function run_word_test ($debug) {
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added '.TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $log->field = 'ref_url_1';
-  $result = $log->dsp_last(true, $debug-1);
-  $target = 'zukunft.com system batch job added '.TW_ADD_RENAMED.' ref_1';
-  $exe_start_time = test_show_result(', word->load ref_1 for "'.TW_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $log->field = 'ref_url_2';
-  $result = $log->dsp_last(true, $debug-1);
-  $target = 'zukunft.com system batch job added '.TW_ADD_RENAMED.' ref_2';
   $exe_start_time = test_show_result(', word->load ref_2 for "'.TW_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $log->field = 'word_type_id';
   $result = $log->dsp_last(true, $debug-1);
@@ -382,8 +367,6 @@ function run_word_test ($debug) {
   $wrd_usr2->load($debug-1);
   $wrd_usr2->plural      = TW_ADD_RENAMED.'s2';
   $wrd_usr2->description = TW_ADD_RENAMED.' description2';
-  $wrd_usr2->ref_1       = TW_ADD_RENAMED.' ref_3';
-  $wrd_usr2->ref_2       = TW_ADD_RENAMED.' ref_4';
   $wrd_usr2->type_id     = cl(SQL_WORD_TYPE_TIME);
   $result = $wrd_usr2->save($debug-1);
   $target = '11111';
@@ -400,12 +383,6 @@ function run_word_test ($debug) {
   $result = $wrd_usr2_reloaded->description;
   $target = TW_ADD_RENAMED.' description2';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_usr2_reloaded->ref_1;
-  $target = TW_ADD_RENAMED.' ref_3';
-  $exe_start_time = test_show_result(', word->load ref_1 for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_usr2_reloaded->ref_2;
-  $target = TW_ADD_RENAMED.' ref_4';
-  $exe_start_time = test_show_result(', word->load ref_2 for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_usr2_reloaded->type_id;
   $target = cl(SQL_WORD_TYPE_TIME);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -418,12 +395,6 @@ function run_word_test ($debug) {
   $result = $wrd_reloaded->description;
   $target = TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_reloaded->ref_1;
-  $target = TW_ADD_RENAMED.' ref_1';
-  $exe_start_time = test_show_result(', word->load ref_1 for "'.TW_ADD_RENAMED.'" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_reloaded->ref_2;
-  $target = TW_ADD_RENAMED.' ref_2';
-  $exe_start_time = test_show_result(', word->load ref_2 for "'.TW_ADD_RENAMED.'" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_reloaded->type_id;
   $target = cl(SQL_WORD_TYPE_OTHER);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -435,8 +406,6 @@ function run_word_test ($debug) {
   $wrd_usr2->load($debug-1);
   $wrd_usr2->plural      = TW_ADD_RENAMED.'s';
   $wrd_usr2->description = TW_ADD_RENAMED.' description';
-  $wrd_usr2->ref_1       = TW_ADD_RENAMED.' ref_1';
-  $wrd_usr2->ref_2       = TW_ADD_RENAMED.' ref_2';
   $wrd_usr2->type_id     = cl(SQL_WORD_TYPE_OTHER);
   $result = $wrd_usr2->save($debug-1);
   $target = '111111';
@@ -453,12 +422,6 @@ function run_word_test ($debug) {
   $result = $wrd_usr2_reloaded->description;
   $target = TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_usr2_reloaded->ref_1;
-  $target = TW_ADD_RENAMED.' ref_1';
-  $exe_start_time = test_show_result(', word->load ref_1 for "'.TW_ADD_RENAMED.'" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = $wrd_usr2_reloaded->ref_2;
-  $target = TW_ADD_RENAMED.' ref_2';
-  $exe_start_time = test_show_result(', word->load ref_2 for "'.TW_ADD_RENAMED.'" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_usr2_reloaded->type_id;
   $target = cl(SQL_WORD_TYPE_OTHER);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

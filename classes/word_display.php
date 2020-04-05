@@ -493,7 +493,7 @@ class word_dsp extends word {
   
   // HTML code to edit all word fields
   function dsp_add ($wrd_id, $wrd_to, $vrb_id, $back, $debug) {
-    zu_debug('word_dsp->dsp_add '.$this->dsp_id().' (type '.$this->type_id.') or link the existing word with id '.$wrd_id.' to '.$wrd_to.' by verb '.$vrb_id.' for user '.$this->usr->name.' (called by '.$back.').', $debug-10);
+    zu_debug('word_dsp->dsp_add '.$this->dsp_id().' (type '.$this->type_id.') or link the existing word with id '.$wrd_id.' to '.$wrd_to.' by verb '.$vrb_id.' for user '.$this->usr->name.' (called by '.$back.')', $debug-10);
     $result = '';
   
     $form = "word_add";
@@ -513,7 +513,7 @@ class word_dsp extends word {
     $result .= '</div>';
     $result .= dsp_form_end('', $back);
 
-    zu_debug('word_dsp->dsp_add ... done.', $debug-10);
+    zu_debug('word_dsp->dsp_add ... done', $debug-10);
     return $result;
   }
   
@@ -548,8 +548,6 @@ class word_dsp extends word {
       $result .= '</div>';
       $result .= '<br>';
       $result .= dsp_form_text("description", $this->description, "Description:");
-      $result .= dsp_form_text("url1",        $this->ref_1,       "Wikipedia url:");
-      $result .= dsp_form_text("url2",        $this->ref_2,       "Other reference url:");
       $result .= dsp_form_end('', $back);
       $result .= '<br>';
       $result .= $this->dsp_graph ("up",   $debug-1);
@@ -568,7 +566,7 @@ class word_dsp extends word {
       $result .= $changes;
     }
 
-    zu_debug('word_dsp->dsp_edit -> done.', $debug-1);
+    zu_debug('word_dsp->dsp_edit -> done', $debug-1);
     return $result;
   }
 

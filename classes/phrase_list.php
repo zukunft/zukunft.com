@@ -488,7 +488,7 @@ class phrase_list {
   function btn_add_value ($back, $debug) {
     $result = btn_add_value($this, Null, $back, $debug-1);
     /*
-    zu_debug('phrase_list->btn_add_value.', $debug-19);
+    zu_debug('phrase_list->btn_add_value', $debug-19);
     $val_btn_title = '';
     $url_phr = '';
     if (!empty($this->lst)) {
@@ -500,7 +500,7 @@ class phrase_list {
     
     $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
     $result .= btn_add ($val_btn_title, $val_btn_call); 
-    zu_debug('phrase_list->btn_add_value -> done.', $debug-19);
+    zu_debug('phrase_list->btn_add_value -> done', $debug-19);
     */
     return $result;    
   }
@@ -543,7 +543,7 @@ class phrase_list {
         }
       }
     }
-    zu_debug('phrase_list->add -> done.', $debug-16);
+    zu_debug('phrase_list->add -> done', $debug-16);
   }
   
   // add one phrase by the id to the phrase list, but only if it is not yet part of the phrase list
@@ -563,7 +563,7 @@ class phrase_list {
   
   // add one phrase to the phrase list defined by the phrase name
   function add_name($phr_name_to_add, $debug) {
-    zu_debug('phrase_list->add_name "'.$phr_name_to_add.'".', $debug-10);
+    zu_debug('phrase_list->add_name "'.$phr_name_to_add.'"', $debug-10);
     if (is_null($this->usr->id)) {
       zu_err("The user must be set.", "phrase_list->add_name", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
@@ -578,7 +578,7 @@ class phrase_list {
         zu_err('"'.$phr_name_to_add.'" not found.', "phrase_list->add_name", '', (new Exception)->getTraceAsString(), $this->usr);
       }
     }
-    zu_debug('phrase_list->add_name -> added "'.$phr_name_to_add.'" to '.$this->dsp_id().').', $debug-10);
+    zu_debug('phrase_list->add_name -> added "'.$phr_name_to_add.'" to '.$this->dsp_id().')', $debug-10);
   }
   
   // del one phrase to the phrase list, but only if it is not yet part of the phrase list
@@ -599,12 +599,12 @@ class phrase_list {
   function merge($new_phr_lst, $debug) {
     zu_debug('phrase_list->merge '.$new_phr_lst->dsp_id().' to '.$this->dsp_id(), $debug-8);        
     if (isset($new_phr_lst->lst)) {
-      zu_debug('phrase_list->merge -> do.', $debug-8);        
+      zu_debug('phrase_list->merge -> do', $debug-8);        
       foreach ($new_phr_lst->lst AS $new_phr) {
-        zu_debug('phrase_list->merge -> add.', $debug-8);        
+        zu_debug('phrase_list->merge -> add', $debug-8);        
         zu_debug('phrase_list->merge add '.$new_phr->dsp_id(), $debug-12);
         $this->add($new_phr, $debug-1);
-        zu_debug('phrase_list->merge -> added.', $debug-8);        
+        zu_debug('phrase_list->merge -> added', $debug-8);        
       }
     }
     zu_debug('phrase_list->merge -> to '.$this->dsp_id(), $debug-8); 
@@ -689,7 +689,7 @@ class phrase_list {
   // keep only those phrases in the list that are not in the list to delete
   // e.g. for "2014", "2015", "2016", "2017" and the exclude list of "2016", "2017","2018" the result is "2014", "2015"
   function not_in($del_phr_lst, $debug) {
-    zu_debug('phrase_list->not_in.', $debug-14);
+    zu_debug('phrase_list->not_in', $debug-14);
     foreach ($this->lst AS $phr) {
       if ($phr->id <> 0) {
         if (in_array($phr->id, $del_phr_lst->ids)) {
@@ -847,7 +847,7 @@ class phrase_list {
 
     $wrd_lst = $this->wrd_lst_all ($debug-1);
     $time_wrds = $wrd_lst->time_lst ($debug-1);
-    zu_debug('phrase_list->time_useful times .', $debug-14);
+    zu_debug('phrase_list->time_useful times ', $debug-14);
     zu_debug('phrase_list->time_useful times '.implode(",",$time_wrds->ids), $debug-14);
     $result = Null; 
     foreach ($time_wrds->ids AS $time_id) {
@@ -904,7 +904,7 @@ class phrase_list {
     foreach ($this->lst as $phr) {
       if (get_class($phr) <> 'phrase' AND get_class($phr) <> 'word' AND get_class($phr) <> 'word_dsp') {
         zu_warning('The phrase list contains '.$this->dsp_id.' of type '.get_class($phr).', which is not supoosed to be in the list.', 'phrase_list->measure_lst', '', (new Exception)->getTraceAsString(), $this->usr);
-        zu_debug('phrase_list->measure_lst contains object '.get_class($phr).', which is not a phrase.', $debug-10);
+        zu_debug('phrase_list->measure_lst contains object '.get_class($phr).', which is not a phrase', $debug-10);
       } else {
         if ($phr->type_id($debug-1) == $measure_type) { 
           $result->add($phr, $debug-10);
@@ -945,21 +945,21 @@ class phrase_list {
     $del_phr_lst = $this->time_lst ($debug-12);
     $this->diff($del_phr_lst, $debug-1);
     //$this->diff_by_ids($del_phr_lst->ids, $debug-12);
-    zu_debug('phrase_list->ex_time '.$this->name().' (exclude times '.$del_phr_lst->name().').', $debug-12);
+    zu_debug('phrase_list->ex_time '.$this->name().' (exclude times '.$del_phr_lst->name().')', $debug-12);
   }
 
   // Exclude all measure phrases out of the list of phrases
   function ex_measure ($debug) {
     $del_phr_lst = $this->measure_lst ($debug-1);
     $this->diff($del_phr_lst, $debug-1);
-    zu_debug('phrase_list->ex_measure '.$this->name().' (exclude measure '.$del_phr_lst->name().').', $debug-10);
+    zu_debug('phrase_list->ex_measure '.$this->name().' (exclude measure '.$del_phr_lst->name().')', $debug-10);
   }
 
   // Exclude all scaling phrases out of the list of phrases
   function ex_scaling ($debug) {
     $del_phr_lst = $this->scaling_lst ($debug-1);
     $this->diff($del_phr_lst, $debug-1);
-    zu_debug('phrase_list->ex_scaling '.$this->name().' (exclude scaling '.$del_phr_lst->name().').', $debug-10);
+    zu_debug('phrase_list->ex_scaling '.$this->name().' (exclude scaling '.$del_phr_lst->name().')', $debug-10);
   }
 
   // sort the phrase object list by name
@@ -973,7 +973,7 @@ class phrase_list {
       $pos++;
     }
     asort($name_lst);
-    zu_debug('phrase_list->wlsort names sorted "'.implode('","',$name_lst).'" ('.implode(',',array_keys($name_lst)).').', $debug-14);
+    zu_debug('phrase_list->wlsort names sorted "'.implode('","',$name_lst).'" ('.implode(',',array_keys($name_lst)).')', $debug-14);
     foreach (array_keys($name_lst) AS $sorted_id) {
       zu_debug('phrase_list->wlsort get '.$sorted_id, $debug-10);
       $phr_to_add = $this->lst[$sorted_id];
@@ -1059,7 +1059,7 @@ class phrase_list {
 
   // combine two phrase lists 
   function concat_unique($join_phr_lst, $debug) {
-    zu_debug('phrase_list->concat_unique.', $debug-14);
+    zu_debug('phrase_list->concat_unique', $debug-14);
     $result = clone $this;
     if (isset($join_phr_lst->lst) AND isset($result->lst)) {
       foreach ($join_phr_lst->lst as $phr) {

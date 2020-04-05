@@ -1,0 +1,32 @@
+{
+  "version": "0.0.2",
+  "time": "2020-04-05 17:11:00",
+  "user": "timon",
+  "selection": [
+    "Countries"
+  ],
+  "words": [
+    {
+      "name": "Country",
+    },
+    {
+      "name": "purchasing power parity",
+      "refs": [
+        {
+          "name": "Purchasing_power_parity",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+  ],
+  "formulas": [
+  ],
+  "sources": [
+  ],
+  "values": [
+  ],
+  "views": [
+  ]
+}

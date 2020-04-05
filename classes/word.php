@@ -39,11 +39,9 @@ class word {
   public $usr          = NULL; // the person for whom the word is loaded, so to say the viewer
   public $owner_id     = NULL; // the user id of the person who created the word, which is the default word
   public $name         = '';   // simply the word name, which cannot be empty
-  public $plural       = '';   // the english plural name as a kind of shortcut
-  public $description  = '';   // the word description that is shown as a mouseover explain to the user
+  public $plural       = NULL; // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+  public $description  = NULL; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
   public $type_id      = NULL; // the id of the word type
-  public $ref_1        = '';   // the external link to wikipedia to explain the word further
-  public $ref_2        = '';   // the external link to another external source to explain the word further
   public $view_id      = NULL; // defines the default view for this word
   public $values       = NULL; // the total number of values linked to this word as an indication how common the word is and to sort the words
   public $excluded     = NULL; // the user sandbox for words is implimented, but can be switched off for the complete instance 
@@ -57,6 +55,27 @@ class word {
   public $dsp_pos      = NULL; // position of the word on the screen
   public $dsp_lnk_id   = NULL; // position or link id based on which to item is displayed on the screen
   public $link_type_id = NULL; // used in the word list to know based on which relation the word was added to the list
+
+  function reset($debug) {
+    $this->id           = NULL; 
+    $this->usr_cfg_id   = NULL; 
+    $this->usr          = NULL; 
+    $this->owner_id     = NULL; 
+    $this->name         = '';   
+    $this->plural       = NULL;   
+    $this->description  = NULL; 
+    $this->type_id      = NULL; 
+    $this->view_id      = NULL; 
+    $this->values       = NULL; 
+    $this->excluded     = NULL; 
+
+    $this->type_name    = '';   
+    $this->is_wrd       = NULL; 
+    $this->is_wrd_id    = NULL; 
+    $this->dsp_pos      = NULL; 
+    $this->dsp_lnk_id   = NULL; 
+    $this->link_type_id = NULL; 
+  }
 
   // load the word parameters for all users
   private function load_standard($debug) {
@@ -78,8 +97,6 @@ class word {
                      word_name,
                      plural,
                      description,
-                     ref_url_1,
-                     ref_url_2,
                      word_type_id,
                      view_id,
                      excluded
@@ -94,8 +111,6 @@ class word {
         $this->name         = $db_wrd['word_name'];
         $this->plural       = $db_wrd['plural'];
         $this->description  = $db_wrd['description'];
-        $this->ref_1        = $db_wrd['ref_url_1'];
-        $this->ref_2        = $db_wrd['ref_url_2'];
         $this->type_id      = $db_wrd['word_type_id'];
         $this->view_id      = $db_wrd['view_id'];
         $this->excluded     = $db_wrd['excluded'];
@@ -148,8 +163,6 @@ class word {
                        IF(u.word_name IS NULL,     w.word_name,     u.word_name)     AS word_name,
                        IF(u.plural IS NULL,        w.plural,        u.plural)        AS plural,
                        IF(u.description IS NULL,   w.description,   u.description)   AS description,
-                       IF(u.ref_url_1 IS NULL,     w.ref_url_1,     u.ref_url_1)     AS ref_url_1,
-                       IF(u.ref_url_2 IS NULL,     w.ref_url_2,     u.ref_url_2)     AS ref_url_2,
                        IF(u.word_type_id IS NULL,  w.word_type_id,  u.word_type_id)  AS word_type_id,
                        IF(u.view_id IS NULL,       w.view_id,       u.view_id)       AS view_id,
                        w.values,
@@ -168,8 +181,6 @@ class word {
           $this->name         = $db_wrd['word_name'];
           $this->plural       = $db_wrd['plural'];
           $this->description  = $db_wrd['description'];
-          $this->ref_1        = $db_wrd['ref_url_1'];
-          $this->ref_2        = $db_wrd['ref_url_2'];
           $this->type_id      = $db_wrd['word_type_id'];
           $this->values       = $db_wrd['values'];
           $this->view_id      = $db_wrd['view_id'];
@@ -184,9 +195,9 @@ class word {
   // return the main word object based on a id text e.g. used in view.php to get the word to display
   function main_wrd_from_txt ($id_txt, $debug) {
     if ($id_txt <> '') {
-      zu_debug('word->main_wrd_from_txt from "'.$id_txt.'".', $debug-12);
+      zu_debug('word->main_wrd_from_txt from "'.$id_txt.'"', $debug-12);
       $wrd_ids = explode(",",$id_txt);
-      zu_debug('word->main_wrd_from_txt check if "'.$wrd_ids[0].'" is a number.', $debug-12);
+      zu_debug('word->main_wrd_from_txt check if "'.$wrd_ids[0].'" is a number', $debug-12);
       if (is_numeric($wrd_ids[0])) {
         $this->id = $wrd_ids[0];
         zu_debug('word->main_wrd_from_txt from "'.$id_txt.'" got id '.$this->id, $debug-14);
@@ -248,7 +259,7 @@ class word {
 
   // get a list of all values related to this word
   function val_lst ($debug) {
-    zu_debug('word->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'".', $debug-12);
+    zu_debug('word->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-12);
     $val_lst = New value_list;
     $val_lst->usr = $this->usr;
     $val_lst->phr = $this->phrase($debug-1);
@@ -260,7 +271,7 @@ class word {
   
   // if there is just one formula linked to the word, get it
   function formula ($debug) {
-    zu_debug('word->formula for '.$this->dsp_id().' and user "'.$this->usr->name.'".', $debug-10);
+    zu_debug('word->formula for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-10);
 
     $sql = "SELECT formula_id
               FROM formula_links
@@ -288,8 +299,6 @@ class word {
     if ($this->name <> '')        { $result->name        = $this->name;        }
     if ($this->plural <> '')      { $result->plural      = $this->plural;      }
     if ($this->description <> '') { $result->description = $this->description; }
-    if ($this->ref_1 <> '')       { $result->ref_1       = $this->ref_1;       }
-    if ($this->ref_2 <> '')       { $result->ref_2       = $this->ref_2;       }
     if (isset($this->type_id)) { 
       if ($this->type_id <> cl(SQL_WORD_TYPE_NORMAL)) { 
         $result->type        = $this->type_code_id($debug-1); 
@@ -306,18 +315,20 @@ class word {
     return $result;
   }
   
-  // import a view from a imported word object
+  // import a word from a json data word object
   function import_obj ($json_obj, $debug) {
     zu_debug('word->import_obj', $debug-10);
     $result = '';
     
+    // set the all parameters for the word object excluding the usr
+    $usr = $this->usr;
+    $this->reset($debug-1);
+    $this->usr = $usr;
     foreach ($json_obj AS $key => $value) {
-      if ($key == 'name')        { $this->name        = $value;     }
-      if ($key == 'plural')      { $this->plural      = $value;     }
-      if ($key == 'description') { $this->description = $value;     }
-      if ($key == 'type')        { $this->type_id     = cl($value); }
-      if ($key == 'ref_1')       { $this->ref_1       = $value;     }
-      if ($key == 'ref_2')       { $this->ref_2       = $value;     }
+      if ($key == 'name')        { $this->name    = $value;     }
+      if ($key == 'type')        { $this->type_id = cl($value); }
+      if ($key == 'plural')      { if ($value <> '') { $this->plural      = $value; } }
+      if ($key == 'description') { if ($value <> '') { $this->description = $value; } } 
       if ($key == 'view')        {
         $wrd_view = New view;
         $wrd_view->name = $value;
@@ -330,13 +341,37 @@ class word {
         }  
       }
     }
+
+    // save the word in the database
     if ($result == '') {
+      // set the default type if no type is specified
+      if ($this->type_id == 0) {
+        $this->type_id = cl(SQL_WORD_TYPE_NORMAL);
+      }
       $this->save($debug-1);
       zu_debug('word->import_obj -> '.$this->dsp_id(), $debug-18);
     } else {
       zu_debug('word->import_obj -> '.$result, $debug-18);
     }
 
+    // add related  parameters to the word object
+    if ($this->id <= 0) {
+      zu_err('Word '.$this->dsp_id().' cannot be saved', 'word->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+    } else {
+      foreach ($json_obj AS $key => $value) {
+        if ($key == 'refs') {
+          foreach ($value AS $ref_data) {
+            $ref_obj = New ref;
+            $ref_obj->usr    = $this->usr;
+            $ref_obj->phr_id = $this->id;
+            $ref_obj->phr    = $this->phrase($debug-1);
+            $import_result = $ref_obj->import_obj($ref_data, $debug-1);
+            $result .= $import_result;
+          }
+        }  
+      }
+    }
+    
     return $result;
   }
   
@@ -683,16 +718,6 @@ class word {
         $has_cfg = true;
       }  
     }  
-    if (isset($this->ref_1)) {
-      if ($this->ref_1 <> '') {
-        $has_cfg = true;
-      }  
-    }  
-    if (isset($this->ref_2)) {
-      if ($this->ref_2 <> '') {
-        $has_cfg = true;
-      }  
-    }  
     if (isset($this->view_id)) {
       if ($this->view_id > 0) {
         $has_cfg = true;
@@ -747,7 +772,7 @@ class word {
   // true if no other user has modified the word
   // assuming that in this case not confirmation from the other users for a word rename is needed
   private function not_changed($debug) {
-    zu_debug('word->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.').', $debug-10);  
+    zu_debug('word->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
     $result = true;
     
     $change_user_id = 0;
@@ -856,8 +881,6 @@ class word {
                      word_name,
                      plural,
                      description,
-                     ref_url_1,
-                     ref_url_2,
                      word_type_id,
                      view_id
                 FROM user_words
@@ -866,12 +889,10 @@ class word {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_wrd_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('word->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('word->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
       if ($usr_wrd_cfg['word_id'] > 0) {
         if ($usr_wrd_cfg['plural']       == ''
         AND $usr_wrd_cfg['description']  == ''
-        AND $usr_wrd_cfg['ref_url_1']    == ''
-        AND $usr_wrd_cfg['ref_url_2']    == ''
         AND $usr_wrd_cfg['word_type_id'] == Null
         AND $usr_wrd_cfg['view_id']      == Null) {
           // delete the entry in the user sandbox
@@ -1052,14 +1073,17 @@ class word {
   // set the update parameters for the word plural
   private function save_field_plural($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
-    if ($db_rec->plural <> $this->plural) {
-      $log = $this->log_upd($debug-1);
-      $log->old_value = $db_rec->plural;
-      $log->new_value = $this->plural;
-      $log->std_value = $std_rec->plural;
-      $log->row_id    = $this->id; 
-      $log->field     = 'plural';
-      $result .= $this->save_field_do($db_con, $log, $debug-1);
+    // if the plural is not set, don't overwrite any db entry
+    if ($this->plural <> Null) {
+      if ($this->plural <> $db_rec->plural) {
+        $log = $this->log_upd($debug-1);
+        $log->old_value = $db_rec->plural;
+        $log->new_value = $this->plural;
+        $log->std_value = $std_rec->plural;
+        $log->row_id    = $this->id; 
+        $log->field     = 'plural';
+        $result .= $this->save_field_do($db_con, $log, $debug-1);
+      }
     }
     return $result;
   }
@@ -1067,44 +1091,17 @@ class word {
   // set the update parameters for the word description
   private function save_field_description($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
-    if ($db_rec->description <> $this->description) {
-      $log = $this->log_upd($debug-1);
-      $log->old_value = $db_rec->description;
-      $log->new_value = $this->description;
-      $log->std_value = $std_rec->description;
-      $log->row_id    = $this->id; 
-      $log->field     = 'description';
-      $result .= $this->save_field_do($db_con, $log, $debug-1);
-    }
-    return $result;
-  }
-  
-  // set the update parameters for the word ref_url_1
-  private function save_field_ref_url_1($db_con, $db_rec, $std_rec, $debug) {
-    $result = '';
-    if ($db_rec->ref_1 <> $this->ref_1) {
-      $log = $this->log_upd($debug-1);
-      $log->old_value = $db_rec->ref_1;
-      $log->new_value = $this->ref_1;
-      $log->std_value = $std_rec->ref_1;
-      $log->row_id    = $this->id; 
-      $log->field     = 'ref_url_1';
-      $result .= $this->save_field_do($db_con, $log, $debug-1);
-    }
-    return $result;
-  }
-  
-  // set the update parameters for the word ref_url_2
-  private function save_field_ref_url_2($db_con, $db_rec, $std_rec, $debug) {
-    $result = '';
-    if ($db_rec->ref_2 <> $this->ref_2) {
-      $log = $this->log_upd($debug-1);
-      $log->old_value = $db_rec->ref_2;
-      $log->new_value = $this->ref_2;
-      $log->std_value = $std_rec->ref_2;
-      $log->row_id    = $this->id; 
-      $log->field     = 'ref_url_2';
-      $result .= $this->save_field_do($db_con, $log, $debug-1);
+    // if the description is not set, don't overwrite any db entry
+    if ($this->description <> Null) {
+      if ($this->description <> $db_rec->description) {
+        $log = $this->log_upd($debug-1);
+        $log->old_value = $db_rec->description;
+        $log->new_value = $this->description;
+        $log->std_value = $std_rec->description;
+        $log->row_id    = $this->id; 
+        $log->field     = 'description';
+        $result .= $this->save_field_do($db_con, $log, $debug-1);
+      }
     }
     return $result;
   }
@@ -1124,7 +1121,7 @@ class word {
       $log->row_id    = $this->id; 
       $log->field     = 'word_type_id';
       $result .= $this->save_field_do($db_con, $log, $debug-1);
-      zu_debug('word->save_field_type changed type to "'.$log->new_value.'" ('.$log->new_id.').', $debug-12);
+      zu_debug('word->save_field_type changed type to "'.$log->new_value.'" ('.$log->new_id.')', $debug-12);
     }
     return $result;
   }
@@ -1173,12 +1170,10 @@ class word {
     $result = '';
     $result .= $this->save_field_plural      ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_description ($db_con, $db_rec, $std_rec, $debug-1);
-    $result .= $this->save_field_ref_url_1   ($db_con, $db_rec, $std_rec, $debug-1);
-    $result .= $this->save_field_ref_url_2   ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_type        ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_view        ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded    ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('word->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
+    zu_debug('word->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
     return $result;
   }
   
@@ -1210,7 +1205,7 @@ class word {
   private function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->name <> $this->name) {
-      zu_debug('word->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().').', $debug-10);
+      zu_debug('word->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().')', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->name;
       $log->new_value = $this->name;
@@ -1222,7 +1217,7 @@ class word {
                                               array($this->name), $debug-1);
       }
     }
-    zu_debug('word->save_id_fields for '.$this->dsp_id().' has been done.', $debug-12);
+    zu_debug('word->save_id_fields for '.$this->dsp_id().' has been done', $debug-12);
     return $result;
   }
   
@@ -1242,7 +1237,7 @@ class word {
     
     if ($db_rec->name <> $this->name) {
       // check if target link already exists
-      zu_debug('word->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'").', $debug-14);
+      zu_debug('word->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")', $debug-14);
       $db_chk = clone $this;
       $db_chk->id = 0; // to force the load by the id fields
       $db_chk->load_standard($debug-10);
@@ -1265,7 +1260,7 @@ class word {
       } else {
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('word->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('word->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'")', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-20);
         } else {
@@ -1279,12 +1274,12 @@ class word {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('word->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'").', $debug-14);
+          zu_debug('word->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")', $debug-14);
         }
       }
     }  
 
-    zu_debug('word->save_id_if_updated for '.$this->dsp_id().' has been done.', $debug-12);
+    zu_debug('word->save_id_if_updated for '.$this->dsp_id().' has been done', $debug-12);
     return $result;
   }
   
@@ -1360,7 +1355,7 @@ class word {
           $result .= $trm->id_used_msg($debug-1);
         } else {
           $this->id = $trm->id;
-          zu_debug('word->save adding word name '.$this->dsp_id().' is OK.', $debug-14);
+          zu_debug('word->save adding word name '.$this->dsp_id().' is OK', $debug-14);
         }  
       } else {      
         zu_debug('word->save no msg for '.$this->dsp_id(), $debug-12);
@@ -1371,19 +1366,19 @@ class word {
     if ($this->id <= 0) {
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('word->save update "'.$this->id.'".', $debug-12);
+      zu_debug('word->save update "'.$this->id.'"', $debug-12);
       // read the database values to be able to check if something has been changed; done first, 
       // because it needs to be done for user and general formulas
       $db_rec = New word_dsp;
       $db_rec->id  = $this->id;
       $db_rec->usr = $this->usr;
       $db_rec->load($debug-1);
-      zu_debug('word->save -> database word "'.$db_rec->name.'" ('.$db_rec->id.') loaded.', $debug-14);
+      zu_debug('word->save -> database word "'.$db_rec->name.'" ('.$db_rec->id.') loaded', $debug-14);
       $std_rec = New word_dsp;
       $std_rec->id = $this->id;
       $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-1);
-      zu_debug('word->save -> standard word settings for "'.$std_rec->name.'" ('.$std_rec->id.') loaded.', $debug-14);
+      zu_debug('word->save -> standard word settings for "'.$std_rec->name.'" ('.$std_rec->id.') loaded', $debug-14);
       
       // for a correct user word detection (function can_change) set the owner even if the word has not been loaded before the save 
       if ($this->owner_id <= 0) {
@@ -1420,7 +1415,7 @@ class word {
 
   // delete the complete word (the calling function del must have checked that no one uses this word)
   private function del_exe($debug) {
-    zu_debug('word->del_exe.', $debug-16);
+    zu_debug('word->del_exe', $debug-16);
     $result = '';
 
     $log = $this->log_del($debug-1);
@@ -1440,7 +1435,7 @@ class word {
   
   // exclude or delete a word
   function del($debug) {
-    zu_debug('word->del.', $debug-16);
+    zu_debug('word->del', $debug-16);
     $result = '';
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {

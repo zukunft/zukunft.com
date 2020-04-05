@@ -107,7 +107,7 @@ function run_formula_value_test ($debug) {
   $mio_val->ids = $wrd_lst->ids;
   $mio_val->usr = $usr;
   $mio_val->load($debug-1);
-  zu_debug('value->scale value loaded.', $debug-1);
+  zu_debug('value->scale value loaded', $debug-1);
   //$result = $mio_val->check($debug-1);
   $result = $mio_val->scale($dest_wrd_lst, $debug-1);
   $target = '46000000000';

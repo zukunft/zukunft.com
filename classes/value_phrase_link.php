@@ -90,7 +90,7 @@ class val_lnk {
     $result = true;
     
     if (isset($this->val)) {
-      zu_debug('val_lnk->used check if value with id '.$this->val->id.' has never been used.', $debug-14);  
+      zu_debug('val_lnk->used check if value with id '.$this->val->id.' has never been used', $debug-14);  
       $result = $this->val->used($debug-1);
       zu_debug('val_lnk->used for id '.$this->val->id.' is '.zu_dsp_bool($result), $debug-12);  
     }
@@ -216,7 +216,7 @@ class val_lnk {
       }  
         
       if ($this->id <= 0) {
-        zu_debug('val_lnk->save add new value_phrase_link of "'.$this->wrd->name.'" to "'.$this->val->id.'".', $debug-12);
+        zu_debug('val_lnk->save add new value_phrase_link of "'.$this->wrd->name.'" to "'.$this->val->id.'"', $debug-12);
         // log the insert attempt first
         $log = $this->log_add($debug-1);
         if ($log->id > 0) {
@@ -230,7 +230,7 @@ class val_lnk {
           }
         }  
       } else {
-        zu_debug('val_lnk->save update "'.$this->id.'".', $debug-12);
+        zu_debug('val_lnk->save update "'.$this->id.'"', $debug-12);
         // read the database values to be able to check if something has been changed; done first, 
         // because it needs to be done for user and general formulas
         $db_rec = New val_lnk;

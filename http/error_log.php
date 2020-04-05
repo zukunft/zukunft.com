@@ -80,7 +80,7 @@ $link = zu_start("error_log", "", $debug);
   $wrd->id = $back;  
   $wrd->load($debug-1);
   
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
     if ($err_id > 0) {
       zu_debug("error_log -> (".$err_id.")", $debug-1);

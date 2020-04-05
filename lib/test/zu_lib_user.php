@@ -177,7 +177,7 @@ function zuu_dsp_par ($user_id, $debug) {
   $result .= '</table>';
   $result .= zuh_form_end();
   
-  zu_debug('zuu_dsp_par -> done.', $debug-1);
+  zu_debug('zuu_dsp_par -> done', $debug-1);
   return $result;
 }
 
@@ -213,7 +213,7 @@ function zuu_dsp_sandbox_wrd ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_sandbox_wrd -> done.', $debug-1);
+  zu_debug('zuu_dsp_sandbox_wrd -> done', $debug-1);
   return $result;
 }
 
@@ -255,7 +255,7 @@ function zuu_dsp_sandbox_frm ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_sandbox_frm -> done.', $debug-1);
+  zu_debug('zuu_dsp_sandbox_frm -> done', $debug-1);
   return $result;
 }
 
@@ -310,7 +310,7 @@ function zuu_dsp_sandbox_val ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_sandbox_val -> done.', $debug-1);
+  zu_debug('zuu_dsp_sandbox_val -> done', $debug-1);
   return $result;
 }
 
@@ -382,7 +382,7 @@ function zuu_dsp_changes ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_changes -> done.', $debug-1);
+  zu_debug('zuu_dsp_changes -> done', $debug-1);
   return $result;
 }
 
@@ -459,7 +459,7 @@ function zuu_dsp_errors ($user_id, $user_profile, $dsp_type, $back, $debug) {
     $result .= '</table>';
   }
   
-  zu_debug('zuu_dsp_errors -> done.', $debug-1);
+  zu_debug('zuu_dsp_errors -> done', $debug-1);
   return $result;
 }
 
@@ -486,7 +486,7 @@ function zuu_upd_pars ($user_id, $usr_par, $debug) {
   zuu_upd_par ($user_id, $usr_par, $usr_row, 2, "first_name", 'fname', $debug);
   zuu_upd_par ($user_id, $usr_par, $usr_row, 3, "last_name",  'lname', $debug);
     
-  zu_debug('zuu_upd_pars -> done.', $debug-1);
+  zu_debug('zuu_upd_pars -> done', $debug-1);
   return $result;
 }
 ?>

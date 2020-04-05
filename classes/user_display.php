@@ -49,7 +49,7 @@ class user_dsp extends user {
     $result .= dsp_tbl_end ();
     $result .= dsp_form_end();
     
-    zu_debug('user_dsp->dsp_edit -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_edit -> done', $debug-1);
     return $result;
   }
 
@@ -69,7 +69,7 @@ class user_dsp extends user {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist($debug-1);
     
-    zu_debug('user_dsp->dsp_changes -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_changes -> done', $debug-1);
     return $result;
   }
 
@@ -86,7 +86,7 @@ class user_dsp extends user {
     $err_lst->back     = $back;
     $result = $err_lst->display($debug-1);
     
-    zu_debug('user_dsp->dsp_errors -> done.', $debug-12);
+    zu_debug('user_dsp->dsp_errors -> done', $debug-12);
     return $result;
   }
 
@@ -124,7 +124,7 @@ class user_dsp extends user {
     }
     $result .= dsp_tbl_end ();
     
-    zu_debug('user_dsp->dsp_sandbox_wrd -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_wrd -> done', $debug-1);
     return $result;
   }
 
@@ -268,7 +268,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_wrd_link -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_wrd_link -> done', $debug-1);
     return $result;
   }
 
@@ -312,7 +312,7 @@ class user_dsp extends user {
     }
     $result .= dsp_tbl_end ();
     
-    zu_debug('user_dsp->dsp_sandbox_frm -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_frm -> done', $debug-1);
     return $result;
   }
 
@@ -456,7 +456,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_frm_link -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_frm_link -> done', $debug-1);
     return $result;
   }
 
@@ -606,7 +606,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_val -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_val -> done', $debug-1);
     return $result;
   }
 
@@ -754,7 +754,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_view -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_view -> done', $debug-1);
     return $result;
   }
 
@@ -902,7 +902,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_view_component -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_view_component -> done', $debug-1);
     return $result;
   }
 
@@ -1049,7 +1049,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_view_link -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_view_link -> done', $debug-1);
     return $result;
   }
 
@@ -1204,7 +1204,7 @@ class user_dsp extends user {
       $result .= dsp_tbl_end ();
     }
     
-    zu_debug('user_dsp->dsp_sandbox_source -> done.', $debug-1);
+    zu_debug('user_dsp->dsp_sandbox_source -> done', $debug-1);
     return $result;
   }
 

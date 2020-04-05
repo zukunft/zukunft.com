@@ -62,8 +62,8 @@ class file_import {
     $json_array = json_decode($this->json_str, true);
     foreach ($json_array AS $key => $json_obj) {
       if ($key == 'version') {
-        if ($json_obj <> PRG_VERSION) {
-          $result .= 'Import file has been created with version '.$json_obj.' but this is '.PRG_VERSION.' ';
+        if (prg_version_is_newer($json_obj)) {
+          $result .= 'Import file has been created with version '.$json_obj.', which is newer than this, which is '.PRG_VERSION.' ';
         }
       } elseif ($key == 'pod') {
       } elseif ($key == 'time') {

@@ -1,0 +1,38 @@
+{
+  "version": "0.0.2",
+  "time": "2020-04-05 17:11:00",
+  "user": "timon",
+  "selection": [
+    "Ultimatum Game"
+  ],
+  "words": [
+    {
+      "name": "Ultimatum Game",
+      "refs": [
+        {
+          "name": "Ultimatum_game",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Ultimatum Game average offer",
+      "refs": [
+        {
+          "name": "12805551",
+          "type": "pubmed"
+        }
+      ]
+    }
+  ],
+  "triples": [
+  ],
+  "formulas": [
+  ],
+  "sources": [
+  ],
+  "values": [
+  ],
+  "views": [
+  ]
+}

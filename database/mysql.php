@@ -278,54 +278,54 @@ class mysql {
   // $name is the unique text that indentifies one row e.g. for the $name "Company" the word id "1" is returned
   function get_id ($name, $debug) {
     $result = ''; 
-    zu_debug('mysql->get_id for "'.$name.'" of the db object "'.$this->type.'".', $debug-12);
+    zu_debug('mysql->get_id for "'.$name.'" of the db object "'.$this->type.'"', $debug-12);
 
     $this->set_table      ($debug-1);
     $this->set_id_field   ($debug-1);
     $this->set_name_field ($debug-1);
     $result = $this->get_value ($this->id_field, $this->name_field, $name, $debug-1);
 
-    zu_debug('mysql->get_id is "'.$result.'".', $debug-15);
+    zu_debug('mysql->get_id is "'.$result.'"', $debug-15);
     return $result;
   }
 
   function get_id_from_code ($code_id, $debug) {
     $result = ''; 
-    zu_debug('mysql->get_id_from_code for "'.$code_id.'" of the db object "'.$this->type.'".', $debug-12);
+    zu_debug('mysql->get_id_from_code for "'.$code_id.'" of the db object "'.$this->type.'"', $debug-12);
 
     $this->set_table      ($debug-1);
     $this->set_id_field   ($debug-1);
     $result = $this->get_value ($this->id_field, DBL_FIELD, $code_id, $debug-1);
 
-    zu_debug('mysql->get_id_from_code is "'.$result.'".', $debug-15);
+    zu_debug('mysql->get_id_from_code is "'.$result.'"', $debug-15);
     return $result;
   }
 
   // similar to get_id, but the other way round
   function get_name ($id, $debug) {
     $result = ''; 
-    zu_debug('mysql->get_name for "'.$id.'" of the db object "'.$this->type.'".', $debug-12);
+    zu_debug('mysql->get_name for "'.$id.'" of the db object "'.$this->type.'"', $debug-12);
 
     $this->set_table      ($debug-1);
     $this->set_id_field   ($debug-1);
     $this->set_name_field ($debug-1);
     $result = $this->get_value ($this->name_field, $this->id_field, $id, $debug-1);
 
-    zu_debug('mysql->get_name is "'.$result.'".', $debug-15);
+    zu_debug('mysql->get_name is "'.$result.'"', $debug-15);
     return $result;
   }
 
   // similar to zu_sql_get_id, but using a second ID field
   function get_id_2key ($name, $field2_name, $field2_value, $debug) {
     $result = ''; 
-    zu_debug('mysql->get_id_2key for "'.$name.','.$field2_name.','.$field2_value.'" of the db object "'.$this->type.'".', $debug-12);
+    zu_debug('mysql->get_id_2key for "'.$name.','.$field2_name.','.$field2_value.'" of the db object "'.$this->type.'"', $debug-12);
 
     $this->set_table      ($debug-1);
     $this->set_id_field   ($debug-1);
     $this->set_name_field ($debug-1);
     $result = $this->get_value_2key ($this->id_field, $this->name_field, $name, $field2_name, $field2_value, $debug-1);
 
-    zu_debug('mysql->get_id_2key is "'.$result.'".', $debug-15);
+    zu_debug('mysql->get_id_2key is "'.$result.'"', $debug-15);
     return $result;
   }
 
@@ -463,7 +463,7 @@ class mysql {
     $this->set_name_field ($debug-1);
     $result = $this->insert($this->name_field, sf($name), $debug-1);
 
-    zu_debug('mysql->add_id is "'.$result.'".', $debug-12);
+    zu_debug('mysql->add_id is "'.$result.'"', $debug-12);
     return $result;
   }
 
@@ -473,10 +473,10 @@ class mysql {
 
     $this->set_table      ($debug-1);
     $this->set_name_field ($debug-1);
-    //zu_debug('mysql->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'".', $debug-12);
+    //zu_debug('mysql->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"', $debug-12);
     $result = $this->insert(array($this->name_field, $field2_name), array($name, $field2_value), $debug-1);
 
-    zu_debug('mysql->add_id_2key is "'.$result.'".', $debug-12);
+    zu_debug('mysql->add_id_2key is "'.$result.'"', $debug-12);
     return $result;
   }
 
@@ -523,7 +523,7 @@ class mysql {
         $sql_set .= ' SET '.$fields.' = '.sf($values);
       }
       $sql = $sql_upd.$sql_set.$sql_where.';';
-      zu_debug('mysql->update sql "'.$sql.'".', $debug-14);
+      zu_debug('mysql->update sql "'.$sql.'"', $debug-14);
       $result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->update", (new Exception)->getTraceAsString(), $debug-1);
     }
 
@@ -564,19 +564,50 @@ class mysql {
       $sql = 'DELETE FROM '.$this->table.' WHERE '.$id_fields.' = '.sf($id_values).';';
     }
 
-    zu_debug('mysql->delete sql "'.$sql.'".', $debug-14);
+    zu_debug('mysql->delete sql "'.$sql.'"', $debug-14);
     $sql_result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->delete", (new Exception)->getTraceAsString(), $debug-1);
     if ($sql_result) {
       $result = $sql_result;
-      zu_debug('mysql->delete -> done "'.$result.'".', $debug-12);
+      zu_debug('mysql->delete -> done "'.$result.'"', $debug-12);
     } else {
       $result = -1;
-      zu_debug('mysql->delete -> failed ('.$sql.').', $debug-12);
+      zu_debug('mysql->delete -> failed ('.$sql.')', $debug-12);
     }
 
     return $result;
   }
  
+  /*
+  
+    list functions to finally get data from the MySQL database
+  
+  */
+
+  // load all types of a type/table at once
+  function load_types($table, $additional_field_lst, $debug) {
+    zu_debug('mysql->load_types', $debug-10);
+
+    $additional_fields = '';
+    if (count($additional_field_lst) > 0) {
+      foreach ($additional_field_lst AS $additional_field) {
+        $additional_fields .= ', ';
+        $additional_fields .= $additional_field;
+      }
+    }
+    
+    $sql = 'SELECT '.$table.'_id,
+                   '.$table.'_name,
+                   code_id,
+                   description
+                   '.$additional_fields.'
+              FROM '.$table.'s 
+          ORDER BY '.$table.'_id;';
+    $result = $this->get($sql, $debug-1);  
+
+    zu_debug('mysql->load_types -> got '.count($result), $debug-10);
+    return $result;
+  }
+
 }
 
 // formats one value for the sql statement

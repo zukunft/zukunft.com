@@ -214,7 +214,7 @@ class view_component extends user_sandbox {
           $this->word_id_col2 = $db_item['word_id_col2'];
           $this->excluded     = $db_item['excluded'];
           $this->load_phrases($debug-1);
-          zu_debug('view_component->load of '.$this->dsp_id().' done.', $debug-16); 
+          zu_debug('view_component->load of '.$this->dsp_id().' done', $debug-16); 
         } else {  
           // TODO add this part to all load functions
           // if the database object is not found any more, reset the object
@@ -222,7 +222,7 @@ class view_component extends user_sandbox {
         }
       }  
     }  
-    zu_debug('view_component->load of '.$this->dsp_id().' quit.', $debug-14); 
+    zu_debug('view_component->load of '.$this->dsp_id().' quit', $debug-14); 
   }
   
   // load the related word and formula objects
@@ -295,7 +295,7 @@ class view_component extends user_sandbox {
     $result = array();
 
     if ($this->id > 0 AND isset($this->usr)) {
-      zu_debug('view_component->assign_dsp_ids for view_component "'.$this->id.'" and user "'.$this->usr->name.'".', $debug-12);
+      zu_debug('view_component->assign_dsp_ids for view_component "'.$this->id.'" and user "'.$this->usr->name.'"', $debug-12);
       // this sql is similar to the load statement in view_links.php, maybe combine
       $sql = "SELECT l.view_component_link_id,
                      u.view_component_link_id AS user_link_id,
@@ -421,7 +421,7 @@ class view_component extends user_sandbox {
   
   // returns the next free order number for a new view component
   function next_nbr($view_id, $debug) {
-    zu_debug('view_component->next_nbr for view "'.$view_id.'".', $debug-10);  
+    zu_debug('view_component->next_nbr for view "'.$view_id.'"', $debug-10);  
 
     If ($view_id == '' OR $view_id == Null OR $view_id == 0) {
       zu_err('Cannot get the next position, because the view_id is not set','view_component->next_nbr', '', (new Exception)->getTraceAsString(), $this->usr);
@@ -505,7 +505,7 @@ class view_component extends user_sandbox {
     $result = '';
     
     if (isset($dsp) AND isset($this->usr)) {
-      zu_debug('view_component->unlink '.$this->dsp_id().' from "'.$dsp->name.'" ('.$dsp->id.').', $debug-10);
+      zu_debug('view_component->unlink '.$this->dsp_id().' from "'.$dsp->name.'" ('.$dsp->id.')', $debug-10);
       $dsp_lnk = new view_component_link;
       $dsp_lnk->fob       = $dsp;
       $dsp_lnk->tob       = $this;
@@ -570,7 +570,7 @@ class view_component extends user_sandbox {
       $db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('view_component->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.').', $debug-12);
+      zu_debug('view_component->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
       if ($usr_cfg['view_component_id'] > 0) {
         if ($usr_cfg['comment']            == ''
         AND $usr_cfg['view_component_type_id'] == Null
@@ -706,7 +706,7 @@ class view_component extends user_sandbox {
     $result .= $this->save_field_wrd_col2 ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_formula  ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('view_component->save_fields all fields for '.$this->dsp_id().' has been saved.', $debug-12);
+    zu_debug('view_component->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
     return $result;
   }
   

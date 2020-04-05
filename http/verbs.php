@@ -43,7 +43,7 @@ $link = zu_start("verbs", $debug);
   $usr = New user;
   $result .= $usr->get($debug-1);
 
-  // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
 
     // prepare the display

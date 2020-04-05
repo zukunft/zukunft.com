@@ -53,7 +53,7 @@ class system_error_log {
       $sql_where = "l.sys_log_id = ".$this->id;
     } 
     
-    zu_debug('system_error_log->load search by "'.$sql_where.'".', $debug-14);
+    zu_debug('system_error_log->load search by "'.$sql_where.'"', $debug-14);
     if ($sql_where == '') {
       zu_err("The database ID must be set for loading a error entry.", "system_error_log->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
@@ -87,13 +87,13 @@ class system_error_log {
         $this->status_id     = $db_row['sys_log_status_id'];
         $this->status_name   = $db_row['sys_log_status_name'];
       } 
-      zu_debug('system_error_log->load done.', $debug-12);
+      zu_debug('system_error_log->load done', $debug-12);
     }  
   }
 
   // set the main log entry parameters for updating one error field
   private function log_upd($debug) {
-    zu_debug('system_error_log->log_upd.', $debug-10);
+    zu_debug('system_error_log->log_upd', $debug-10);
     $log = New user_log;
     $log->usr_id = $this->usr->id;  
     $log->action = 'update';
@@ -104,18 +104,18 @@ class system_error_log {
   
   // actually update a error field in the main database record or the user sandbox
   private function save_field_do($db_con, $log, $debug) {
-    zu_debug('system_error_log->save_field_do.', $debug-10);
+    zu_debug('system_error_log->save_field_do', $debug-10);
     $result = '';
     if ($log->add($debug-1)) {
       $result .= $db_con->update($this->id, $log->field, $log->new_id, $debug-1);
     }
-    zu_debug('system_error_log->save_field_do -> done.', $debug-10);
+    zu_debug('system_error_log->save_field_do -> done', $debug-10);
     return $result;
   }
   
   // set the update parameters for the error status
   private function save_field_status($db_con, $db_rec, $debug) {
-    zu_debug('system_error_log->save_field_status.', $debug-10);
+    zu_debug('system_error_log->save_field_status', $debug-10);
     $result = '';
     if ($db_rec->status_id <> $this->status_id) {
       $log = $this->log_upd($debug-1);

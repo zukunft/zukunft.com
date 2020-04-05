@@ -43,7 +43,7 @@ class batch_job_list {
   // add another job to the list, but only if needed
   function add($job, $debug) {
     $result = '';
-    zu_debug('batch_job_list->add.', $debug-18);    
+    zu_debug('batch_job_list->add', $debug-18);    
     
     // check if the job to add has all needed parameters
     if (!isset($job->frm)) {
@@ -73,7 +73,7 @@ class batch_job_list {
         $result = 1;
       }  
     }
-    zu_debug('batch_job_list->add done.', $debug-18);      
+    zu_debug('batch_job_list->add done', $debug-18);      
     return $result;
   }
     
