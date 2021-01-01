@@ -1,0 +1,44 @@
+{
+  "version": "0.0.1",
+  "time": "2020-03-09 22:51:23",
+  "user": "timon",
+  "selection": [
+    "ABB"
+  ],
+  "words": [
+    {
+      "name": "2013",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "Discrete Automation and Motion",
+      "verb": "is a",
+      "to": "Sector"
+    }
+  ],
+  "formulas": [],
+  "sources": [
+    {
+      "name": "ABB XBRL files for 2013",
+      "url": "https://new.abb.com/investorrelations/calendar-events-and-publications/financial-results-and-presentations/sec-filings/xbrl-2013"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "ABB",
+        "Sales",
+        "2013",
+        "CHF",
+        "million",
+        "Discrete Automation and Motion"
+      ],
+      "time": "2013",
+      "number": "9915",
+      "source": "ABB XBRL files for 2013"
+    }
+  ],
+  "views": []
+}

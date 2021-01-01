@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -45,7 +45,7 @@ class ref {
   public $phr      = NULL;     // the phrase object
   public $ref_type = NULL;     // the ref type object
   
-  function reset($debug) {
+  function reset() {
     $this->id            = NULL;
     $this->phr_id        = NULL;
     $this->external_key  = '';
@@ -160,6 +160,21 @@ class ref {
   
   */
   
+  // display the unique id fields
+  function dsp_id () {
+    $result = ''; 
+
+    $result .= $this->name(); 
+    if ($result <> '') {
+      if ($this->id > 0) {
+        $result .= ' ('.$this->id.')';
+      }  
+    } else {
+      $result .= $this->id;
+    }
+    return $result;
+  }
+
   // create the unique name
   function name ($debug) {
     $result = ''; 
@@ -181,21 +196,6 @@ class ref {
           $result .= 'to type id '.$this->ref_type_id.' '; 
         }
       }
-    }
-    return $result;
-  }
-
-  // display the unique id fields
-  function dsp_id ($debug) {
-    $result = ''; 
-
-    $result .= $this->name(); 
-    if ($result <> '') {
-      if ($this->id > 0) {
-        $result .= ' ('.$this->id.')';
-      }  
-    } else {
-      $result .= $this->id;
     }
     return $result;
   }
@@ -327,8 +327,8 @@ class ref {
     
     // check if the external reference is supposed to be added
     if ($this->id <= 0) {
-      // check possible dublicates before adding
-      zu_debug('ref->save check possible dublicates before adding '.$this->dsp_id(), $debug-12);
+      // check possible duplicates before adding
+      zu_debug('ref->save check possible duplicates before adding '.$this->dsp_id(), $debug-12);
       $similar = $this->get_similar($debug-1);
       if (isset($similar)) {
         if ($similar->id <> 0) {

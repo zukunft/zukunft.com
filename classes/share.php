@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -36,7 +36,7 @@ $share_types = array();
 class share_type {
 
   // database fields
-  public $id          = NULL; // the database id of the shate type
+  public $id          = NULL; // the database id of the state type
   public $name        = NULL; // the person who wants to see something
   public $comment     = '';   // the source description that is shown as a mouseover explain to the user
   public $code_id     = '';   // to trigger the code functions linked to this share type
@@ -45,7 +45,7 @@ class share_type {
   public $type_name    = '';   // 
   
   // true if the user is allow to see the value or formulas
-  function can_read($debug) {
+  function can_read() {
     $result = '';
     
     return $result;

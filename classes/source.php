@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -233,16 +233,20 @@ class source {
     return $result;
   }
 
+  function name ($debug) {
+    return $this->name;    
+  }
+
   // return the html code to display a source name with the link
   function name_linked ($wrd, $back, $debug) {
     $result = '<a href="/http/source_edit.php?id='.$this->id.'&word='.$wrd->id.'&back='.$back.'">'.$this->name.'</a>';
     return $result;    
   }
 
-  // returns the hmtl code for a source: this is the main function of this lib 
-  // source_id is used to force the dislay to a set form; e.g. display the sectors of a company instead of the balance sheet
+  // returns the html code for a source: this is the main function of this lib
+  // source_id is used to force the display to a set form; e.g. display the sectors of a company instead of the balance sheet
   // source_type_id is used to .... remove???
-  // word_id - id of the starting word to display; can be a single word, a comma seperated list of word ids, a word group or a word tripple
+  // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
   function display ($wrd, $debug) {
     zu_debug('source->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'"', $debug-10);
     $result = '';
@@ -336,7 +340,7 @@ class source {
   
   */
 
-  // true if noone has used this source
+  // true if no one has used this source
   private function not_used($debug) {
     zu_debug('source->not_used ('.$this->id.')', $debug-10);  
     $result = true;
@@ -348,7 +352,7 @@ class source {
 
   // true if no other user has modified the source
   private function not_changed($debug) {
-    zu_debug('source->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
+    zu_debug('source->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
     $result = true;
     
     $change_user_id = 0;
@@ -375,7 +379,7 @@ class source {
     return $result;
   }
 
-  // true if the user is the owner and noone else has changed the source
+  // true if the user is the owner and no one else has changed the source
   // because if another user has changed the source and the original value is changed, maybe the user source also needs to be updated
   function can_change($debug) {
     zu_debug('source->can_change ('.$this->id.',u'.$this->usr->id.')', $debug-10);  
@@ -659,7 +663,7 @@ class source {
           // .. and use it for the update
           $this->id = $db_chk->id;
           $this->owner_id = $db_chk->owner_id;
-          // force the reinclude
+          // force the include again
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);

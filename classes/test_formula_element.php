@@ -118,7 +118,7 @@ function run_formula_element_list_test ($debug) {
   $elm_lst = $exp->element_lst ($back, $debug-1);
 
   if (isset($elm_lst)) {
-    $result = $elm_lst->dsp_id($debug-1);
+    $result = $elm_lst->dsp_id();
     $target = 'Sales can be used as a differentiator for Sector Total Sales';
     $exe_start_time = test_show_contains(', formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   } else {

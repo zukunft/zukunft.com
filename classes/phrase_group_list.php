@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -85,7 +85,7 @@ class phrase_group_list {
       $time->id  = $time_id;
       $time->usr = $this->usr;
       $time->load($debug-1);
-      zu_debug('phrase_group_list->add_grp_time_id -> found time '.$time->dsp_id($debug-1), $debug-18);
+      zu_debug('phrase_group_list->add_grp_time_id -> found time '.$time->dsp_id(), $debug-18);
     }
     $result = $this->add_with_time($grp, $time, $debug-1);
     return $result;
@@ -154,10 +154,10 @@ class phrase_group_list {
   - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
   
   the function is assuming that the "view" table "value_phrase_links" is up to date
-  including the user specific execptions based on the formula expression
+  including the user specific exceptions based on the formula expression
 
   used to request an update for a formula result for each phrase group
-  e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calulated
+  e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calculated
        so "Sales" and "Cost" are words of the formula
        if "Sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
        the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
@@ -168,8 +168,8 @@ class phrase_group_list {
        4. calculate "operating income" for "ABB", "CHF" and "2017"
        
   time words and normal words and triples should be treated the same way, 
-  but to reduce the number of phrase groups for value and formula result saving they are seperated
-  this implies that in the query the selection needs to be seperated by time and normal words and triples
+  but to reduce the number of phrase groups for value and formula result saving they are separated
+  this implies that in the query the selection needs to be separated by time and normal words and triples
   
   cases: 
   - if a formula is only uses time   words e.g. "increase"             only the time  selection should be used and all groups         should be included
@@ -193,7 +193,7 @@ class phrase_group_list {
     zu_debug('get values because formula is assigned to phrases '.$phr_linked->name().' and phrases '.$phr_used->name().' are used in the formula', $debug-3);
     $result = Null;
 
-    // seperate the time words from the phrases
+    // separate the time words from the phrases
     $time_linked  = $phr_linked->time_lst($debug-1);
     zu_debug('phr_grp_lst->get_grp_by_phr -> time words linked '.$time_linked->name(), $debug-12);
     $time_used    = $phr_used->time_lst($debug-1);
@@ -410,12 +410,11 @@ class phrase_group_list {
   */
 
   // display the unique id fields
-  // TODO check if endless loops can be created due to the call of time_lst
   function dsp_id ($debug) {
     $result = '';
     // check the object setup
     if (count($this->lst) <> count($this->time_lst)) { 
-      zu_err('The number of groups ('.count($this->lst).') are not equal the number of times ('.count($this->time_lst).').', "formula->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= 'The number of groups ('.count($this->lst).') are not equal the number of times ('.count($this->time_lst).') of this phrase group list';
     } else {  
       
       $pos = 0;
@@ -440,16 +439,6 @@ class phrase_group_list {
     return $result;
   }  
 
-  // return a list of the word names
-  function names($debug) {
-    $result = array();
-    foreach ($this->lst AS $phr_lst) {
-      $result[] = $phr_lst->name($debug-1);
-    }
-    zu_debug('phrase_group_list->names '.implode(" / ",$result), $debug-14);
-    return $result; 
-  }
-  
   // create a useful (but not unique!) name of the phrase group list mainly used for debugging
   function name($debug) {
     $result = '';
@@ -461,6 +450,16 @@ class phrase_group_list {
     } else {
       $result .= implode(" and ",$names);
     }
+    return $result; 
+  }
+  
+  // return a list of the word names
+  function names($debug) {
+    $result = array();
+    foreach ($this->lst AS $phr_lst) {
+      $result[] = $phr_lst->name($debug-1);
+    }
+    zu_debug('phrase_group_list->names '.implode(" / ",$result), $debug-14);
     return $result; 
   }
   

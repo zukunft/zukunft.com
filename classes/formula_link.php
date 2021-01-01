@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -34,7 +34,7 @@ class formula_link extends user_sandbox {
   public $formula_id    = NULL; // the id of the formula to which the word or triple should be linked
   public $phrase_id     = NULL; // the id of the linked word or triple
 
-  public $link_type_id  = NULL; // define a special behavier for this link (maybe not needed at the moment)
+  public $link_type_id  = NULL; // define a special behavior for this link (maybe not needed at the moment)
   public $link_name     = '';   // ???
               
   /*            
@@ -68,7 +68,7 @@ class formula_link extends user_sandbox {
   }
   
   // reset the in memory fields used e.g. if some ids are updated
-  private function reset_objects($debug) {
+  private function reset_objects() {
     $this->fob = NULL;
     $this->tob = NULL;
   }
@@ -269,13 +269,12 @@ class formula_link extends user_sandbox {
   */
   
   // display the unique id fields
-  // NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
   function dsp_id ($debug) {
     $result = ''; 
 
     if ($this->fob->name <> '' AND $this->tob->name <> '') {
       $result .= $this->fob->name.' '; // e.g. Company details
-      $result .= $this->tob->name;     // e.g. cash flow statment 
+      $result .= $this->tob->name;     // e.g. cash flow statement
     }
     $result .= ' ('.$this->fob->id.','.$this->tob->id;
     if ($this->id > 0) {
@@ -287,13 +286,27 @@ class formula_link extends user_sandbox {
     return $result;
   }
 
+  // return the html code to display the link name
+  function name($debug) {
+    $result = '';
+    
+    if (isset($this->fob)) {
+      $result = $this->fob->name($debug-1);
+    }
+    if (isset($this->tob)) {
+      $result = ' to '.$this->tob->name($debug-1);
+    }
+    
+    return $result;    
+  }
+  
   /*
   
   save functions
   
   */
   
-  // true if noone has used this formula
+  // true if no one has used this formula
   function not_used($debug) {
     zu_debug('formula_link->not_used ('.$this->id.')', $debug-10);  
     $result = true;
@@ -305,7 +318,7 @@ class formula_link extends user_sandbox {
 
   // true if no other user has modified the formula
   function not_changed($debug) {
-    zu_debug('formula_link->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
+    zu_debug('formula_link->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
     $result = true;
     
     if ($this->owner_id > 0) {
@@ -330,7 +343,7 @@ class formula_link extends user_sandbox {
     return $result;
   }
 
-  // true if the user is the owner and noone else has changed the formula_link
+  // true if the user is the owner and no one else has changed the formula_link
   // because if another user has changed the formula_link and the original value is changed, maybe the user formula_link also needs to be updated
   function can_change($debug) {
     if (isset($this->fob) AND isset($this->tob)) {
@@ -644,7 +657,7 @@ class formula_link extends user_sandbox {
         // .. and use it for the update
         $this->id = $db_chk->id;
         $this->owner_id = $db_chk->owner_id;
-        // force the reinclude
+        // force the include again
         $this->excluded = Null;
         $db_rec->excluded = '1';
         $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);

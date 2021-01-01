@@ -34,7 +34,7 @@ function create_base_formulas ($debug) {
   echo "<br><br>";
 }
 
-function run_formula_test ($debug) {
+function run_formula_test ($back, $debug) {
 
   global $usr;
   global $usr2;
@@ -145,7 +145,7 @@ function run_formula_test ($debug) {
   $phr_lst->load($debug-1);
 
   $frm = load_formula(TF_INCREASE, $debug-1);
-  $fv_lst = $frm->to_num($phr_lst, $debug-1);
+  $fv_lst = $frm->to_num($phr_lst, $back, $debug-1);
   if (isset($fv_lst->lst)) {
     $fv = $fv_lst->lst[0];
     $result = $fv->num_text;
@@ -163,7 +163,7 @@ function run_formula_test ($debug) {
     $exe_start_time = test_show_result(', formula_value->save_if_updated "'.$frm->name.'" for a tern list '.$phr_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   }
 
-  $fv_lst = $frm->calc($phr_lst, $debug-1);
+  $fv_lst = $frm->calc($phr_lst, $back, $debug-1);
   if (isset($fv_lst)) {
     $result = $fv_lst[0]->value;
   } else {
@@ -241,7 +241,7 @@ function run_formula_test ($debug) {
   $frm->name = TF_ADD;
   $frm->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
   $frm->usr = $usr;
-  $result = $frm->save($debug10);
+  $result = $frm->save($debug-10);
   if ($frm->id > 0) {
     $result = $frm->usr_text;
   }

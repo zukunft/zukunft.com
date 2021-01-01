@@ -5,7 +5,7 @@
   word_link.php - the object that links two words (an RDF triple)
   -------------
   
-  A link can also be used in replacemnt for a word 
+  A link can also be used in replacement for a word
   e.g. Zurich (Company) where the the link "Zurich is a company" is used 
   
   This file is part of zukunft.com - calc with words
@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -36,7 +36,7 @@ class word_link {
 
   // database fields
   public $id          = NULL; // the database id of the word link, which is the same for the standard and the user specific word link
-  public $usr_cfg_id  = NULL; // the database id if there is alrady some user specific configuration for this link otherwise zero
+  public $usr_cfg_id  = NULL; // the database id if there is already some user specific configuration for this link otherwise zero
   public $usr         = NULL; // the user object of the person for whom the triple is loaded, so to say the viewer
   public $owner_id    = NULL; // the user id of the person who created the link, so if another user wants to change it, a user specific record is created
   public $from_id     = NULL; // the id of the first phrase (a positive id is a word and a negative a triple)
@@ -44,7 +44,7 @@ class word_link {
   public $to_id       = NULL; // the id of the second phrase (a positive id is a word and a negative a triple)
   public $description = '';   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company)
                               // if the description is empty the generic created name is used
-  public $name        = '';   // the generic created name is saved in the database for faster check on dublicates
+  public $name        = '';   // the generic created name is saved in the database for faster check on duplicates
   public $excluded    = NULL; // for this object the excluded field is handled as a normal user sandbox field, but for the list excluded row are like deleted
 
   // in memory only fields
@@ -92,11 +92,11 @@ class word_link {
   }
   
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
-  // similar to term->load, but with adiffrent use of verbs
+  // similar to term->load, but with a different use of verbs
   function load_objects($debug) {
     zu_debug('word_link->load_objects.'.$this->from_id.' '.$this->verb_id.' '.$this->to_id.'', $debug-7);
     
-    // after every load call from outside the class the order should be check and reversed if needen
+    // after every load call from outside the class the order should be check and reversed if needed
     $this->check_order($debug-1);
     
     // load word from
@@ -504,24 +504,58 @@ class word_link {
   
   */
   
+  // display the unique id fields
+  // TODO check if $this->load_objects($debug-1); needs to be called from the calling function upfront
+  function dsp_id ($debug) {
+    $result = ''; 
+
+    if ($this->from_name <> '' AND $this->verb_name <> '' AND $this->to_name <> '') {
+      $result .= $this->from_name.' '; // e.g. Australia
+      $result .= $this->verb_name.' '; // e.g. is a
+      $result .= $this->to_name;       // e.g. Country 
+    }
+    $result .= ' ('.$this->from_id.','.$this->verb_id.','.$this->to_id;
+    if ($this->id > 0) {
+      $result .= ' -> '.$this->id.')';
+    }  
+    if (isset($this->usr)) {
+      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
+    }
+    return $result;
+  }
+
   // either the user edited description or the
+  // Australia is a Country
   function name($debug) {
-    zu_debug('word_link->name', $debug-19);
     $result = '';
 
     if ($this->excluded <> 1) {
       // use the user defined description
       if ($this->description <> '') {
         $result = $this->description;
-        zu_debug('word_link->name using description '.$result, $debug-17);
+      } else {
+        $result = $this->from_name.' '.$this->verb_name.' '.$this->to_name;
+      }
+    }
+    
+    return $result;
+  }
+      
+  // same as name, but only for non debug usage
+  // TODO check if name or name_usr should be used
+  function name_usr($debug) {
+    $result = '';
+
+    if ($this->excluded <> 1) {
+      // use the user defined description
+      if ($this->description <> '') {
+        $result = $this->description;
       // or use special verb based generic description
       } elseif ($this->verb_id == cl(SQL_LINK_TYPE_IS)) {
         $result = $this->from_name.' ('.$this->to_name.')';
-        zu_debug('word_link->name is '.$result, $debug-17);
       // or use the standard generic description
       } else {
         $result = $this->from_name.' '.$this->verb_name.' '.$this->to_name;
-        zu_debug('word_link->name using combination '.$result, $debug-17);
       }
     }
     
@@ -560,34 +594,6 @@ class word_link {
     $result .= $this->verb_name.' '; // e.g. are
     $result .= $this->from_name;     // e.g. Australia (and others) 
 
-    return $result;
-  }
-
-  /*
-  
-  display functions
-  
-  */
-  
-  // display the unique id fields
-  function dsp_id ($debug) {
-    $result = ''; 
-
-    // get the link from the database
-    $this->load_objects($debug-1);
-
-    if ($this->from_name <> '' AND $this->verb_name <> '' AND $this->to_name <> '') {
-      $result .= $this->from_name.' '; // e.g. Australia
-      $result .= $this->verb_name.' '; // e.g. is a
-      $result .= $this->to_name;       // e.g. Country 
-    }
-    $result .= ' ('.$this->from_id.','.$this->verb_id.','.$this->to_id;
-    if ($this->id > 0) {
-      $result .= ' -> '.$this->id.')';
-    }  
-    if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
-    }
     return $result;
   }
 

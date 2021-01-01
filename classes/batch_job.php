@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -46,11 +46,11 @@ To update the formula results the main actions are
   D) calculate und update the depending formula results
   
 A add, update or delete on an object always triggers all action from A) to D)
-  excecpt the update of a value, which for which A) is not needed
+  except the update of a value, which for which A) is not needed
   
 If the change influences the standard result additional to the user value the standard value needs to be updated
 If the user has done no modifications only the standard value needs to be updated
-Because the calculation dependencies can be complex always both cases (userspecific and standard) are calculated but onöy the result needed is saved
+Because the calculation dependencies can be complex always both cases (user specific and standard) are calculated but only the result needed is saved
 
 
 One Sample
@@ -63,7 +63,7 @@ A user updates a formula
       -> get all depending formulas
       -> based on the formula
       -> exclude / delete formula results????
-    -> create all depending calculatio requests
+    -> create all depending calculation requests
     -> sort the calculation request by dependency and priority
     -> execute the calculation requests
 
@@ -76,7 +76,7 @@ class batch_job {
   public $request_time = NULL;  // time when the job has been requested
   public $start_time   = NULL;  // start time of the job execution 
   public $end_time     = NULL;  // end time of the job execution 
-  public $usr          = NULL;  // the user who as done the request and whos data needs to be updated
+  public $usr          = NULL;  // the user who has done the request and whose data needs to be updated
   public $type         = NULL;  // "update value", "add formula" or ... reference to the type table
   public $row_id       = NULL;  // the id of the related object e.g. if a value has been updated the value_id
   
@@ -96,6 +96,7 @@ class batch_job {
     // create first the database entry to make sure the update is done
     if ($this->type <= 0) {
       // invalid type?
+      zu_debug('batch_job->type invalid', $debug-18);
     } else {
       zu_debug('batch_job->type ok', $debug-18);      
       if ($this->row_id <= 0) {
@@ -104,7 +105,7 @@ class batch_job {
         }  
       } 
       if ($this->row_id <= 0) {
-        // row_id missing
+        zu_debug('batch_job->add row id missing?', $debug-18);
       } else {
         zu_debug('batch_job->row_id ok', $debug-18);      
         if (isset($this->obj)) {
@@ -151,9 +152,9 @@ class batch_job {
     $db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type = 'calc_and_cleanup_task';         
-    $result .= $db_con->update($this->id, 'end_time', 'Now()', $debug-1);
+    $result = $db_con->update($this->id, 'end_time', 'Now()', $debug-1);
   
-    zu_debug('batch_job->exe_val_upd -> done', $debug-10);      
+    zu_debug('batch_job->exe_val_upd -> done with '.$result, $debug-10);
   }
   
   // execute all open requests
@@ -161,9 +162,9 @@ class batch_job {
     $db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type = 'calc_and_cleanup_task';         
-    $result .= $db_con->update($this->id, 'start_time', 'Now()', $debug-1);
+    $result = $db_con->update($this->id, 'start_time', 'Now()', $debug-1);
       
-    zu_debug('batch_job->exe -> '.$this->type, $debug-14);      
+    zu_debug('batch_job->exe -> '.$this->type.' with '.$result, $debug-14);
     if ($this->type == cl(DBL_JOB_VALUE_UPDATE)) {
       $this->exe_val_upd($debug-1);
     } else {
@@ -182,23 +183,51 @@ class batch_job {
   */
   
   // return best possible identification for this formula mainly used for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = $this->type; 
 
     if ($this->row_id > 0) {
       $result .= ' for id '.$this->row_id;
     }
     if (isset($this->frm)) {
-      $result .= ' '.$this->frm->dsp_id($debug-1);
+      if (get_class($this->frm) == 'formula') {
+        $result .= ' '.$this->frm->dsp_id();
+      } else {  
+        $result .= ' '.get_class($this->frm).' '.$this->frm->dsp_id();
+      }  
     }
     if (isset($this->phr_lst)) {
-      $result .= ' '.$this->phr_lst->dsp_id($debug-1);
+      if (get_class($this->phr_lst) == 'phrase_list') {
+        $result .= ' '.$this->phr_lst->dsp_id();
+      } else {
+        $result .= ' '.get_class($this->phr_lst).' '.$this->phr_lst->dsp_id();
+      }  
     }
     if ($this->id > 0) {
       $result .= ' ('.$this->id.')';
     }
     if (isset($this->usr)) {
       $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
+    }
+    return $result;
+  }
+
+  function name ($debug) {
+    $result = $this->type; 
+
+    if (isset($this->frm)) {
+      if (get_class($this->frm) == 'formula') {
+        $result .= $this->frm->name($debug);
+      } else {  
+        $result .= get_class($this->frm).' '.$this->frm->name($debug);
+      }  
+    }
+    if (isset($this->phr_lst)) {
+      if (get_class($this->phr_lst) == 'phrase_list') {
+        $result .= ' '.$this->phr_lst->name($debug);
+      } else {
+        $result .= ' '.get_class($this->phr_lst).' '.$this->phr_lst->name($debug);
+      }  
     }
     return $result;
   }

@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -35,9 +35,9 @@ class selector {
 
   // the parameters
   public $usr        = Null; // if 0 (not NULL) for standard values, otherwise for a user specific values
-  public $name       = '';   // the HMTL form field name
-  public $form       = '';   // the name of the HMTL form
-  public $label      = '';   // the label of the HMTL form
+  public $name       = '';   // the HTML form field name
+  public $form       = '';   // the name of the HTML form
+  public $label      = '';   // the label of the HTML form
   public $bs_class   = '';   // to add addition class information for the bootstrap version
   public $attribute  = '';   // to add addition attribute information for the bootstrap version e.g. display an disabled selector
   public $sql        = '';   // query to select the items

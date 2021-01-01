@@ -28,7 +28,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -97,11 +97,13 @@ class xml_io {
 
     zu_debug('xml_io->export xml string from '.json_encode($export_obj), $debug-16);
       
-    $xml_generater = new XMLSerializer; 
+    $xml_generator = new XMLSerializer;
     $std_class = json_decode(json_encode($export_obj)); 
-    $result = $xml_generater->generateValidXmlFromObj($std_class);
+    $result .= $xml_generator->generateValidXmlFromObj($std_class);
 
-    return $result;    
+    zu_debug('xml_io->export done with '.$result, $debug-16);
+
+    return $result;
   }
   
 

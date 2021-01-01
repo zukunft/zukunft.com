@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -69,7 +69,7 @@ $link = zu_start("word_edit", "", $debug);
       if (isset($_GET['description'])) { $wrd->description = $_GET['description']; } // 
       if (isset($_GET['type']))        { $wrd->type_id     = $_GET['type']; }        // any functional code for special word is defined with the code_id of the word type
 
-      // if the save botton has been pressed 
+      // if the save bottom has been pressed
       if ($_GET['confirm'] > 0) {
 
         // an empty word name should never be saved; instead the word should be deleted)  

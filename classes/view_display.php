@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -262,7 +262,7 @@ class view_dsp extends view {
   // the basic zukunft top elements that should be show always
   public function dsp_navbar_simple() {
     if (UI_USE_BOOTSTRAP) {
-      $result .= $this->dsp_navbar_bs(FALSE, 0, 0);
+      $result  = $this->dsp_navbar_bs(FALSE, 0, 0);
     } else {
       $result  = $this->html_navbar_start();
       $result .= $this->html_navbar_end();

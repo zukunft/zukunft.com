@@ -5,9 +5,9 @@
   phrase_group.php - a combination of a word list and a word_link_list
   ----------------
   
-  a kind of phrase list, but seperated into two different lists
+  a kind of phrase list, but separated into two different lists
   
-  word groups are not part of the user sandbox, because this is a kind of hidden layor
+  word groups are not part of the user sandbox, because this is a kind of hidden layer
   The main intention for word groups is to save space and execution time
   
   This file is part of zukunft.com - calc with words
@@ -27,7 +27,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -78,11 +78,11 @@ class phrase_group {
 
   /*
   
-  load functions - the set functions are used to defined the loading selection criterias
+  load functions - the set functions are used to defined the loading selection criteria
   
   */
 
-  // seperate the words from the triples (word_links)
+  // separate the words from the triples (word_links)
   // this also excludes automatically any empty ids
   private function set_ids_to_wrd_or_lnk_ids($debug) {
     $this->wrd_ids = array();
@@ -94,10 +94,10 @@ class phrase_group {
         $this->lnk_ids[] = $id * -1;
       }
     }
-    zu_debug('phrase_group->set_ids_to_wrd_or_lnk_ids splitted "'.implode(",",$this->ids).'" to "'.implode(",",$this->wrd_ids).'" and "'.implode(",",$this->lnk_ids).'"', $debug-16);
+    zu_debug('phrase_group->set_ids_to_wrd_or_lnk_ids split "'.implode(",",$this->ids).'" to "'.implode(",",$this->wrd_ids).'" and "'.implode(",",$this->lnk_ids).'"', $debug-16);
   }
   
-  // the opposide of set_ids_to_wrd_or_lnk_ids
+  // the opposite of set_ids_to_wrd_or_lnk_ids
   private function set_ids_from_wrd_or_lnk_ids($debug) {
     zu_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "'.implode(",",$this->wrd_ids).'"', $debug-18);
     if (isset($this->wrd_ids)) {
@@ -326,7 +326,7 @@ class phrase_group {
     return $sql_where;
   }
   
-  // set all parameters based on the seperate id lists
+  // set all parameters based on the separate id lists
   // used by the backend if the list object is not yet loaded
   private function load_by_wrd_or_lnk_ids($debug) {
     zu_debug('phrase_group->load_by_wrd_or_lnk_ids '.$this->dsp_id(), $debug-14);
@@ -511,7 +511,7 @@ class phrase_group {
     return $result;    
   }
   
-  // true if the currect phrase group contains at least all phrases of the given $grp
+  // true if the current phrase group contains at least all phrases of the given $grp
   // e.g. $this ($val->grp) has the "ABB, Sales, million, CHF" and the table row ($grp) has "ABB, Sales" than this (value) can be used for this row
   function has_all_phrases_of ($grp, $debug) {
     zu_debug("phrase_group->has_all_phrases_of", $debug-10);
@@ -659,11 +659,11 @@ class phrase_group {
         $result .= ' for word ids '.implode(",",$this->wrd_id_txt);
       }  
       if (isset($this->lnk_lst)) {
-        $result .= ', tripples '.$this->lnk_lst->dsp_id();
+        $result .= ', triples '.$this->lnk_lst->dsp_id();
       } elseif (count($this->lnk_ids) > 0) {
-        $result .= ', tripple ids '.implode(",",$this->lnk_ids);
+        $result .= ', triple ids '.implode(",",$this->lnk_ids);
       } elseif ($this->lnk_id_txt <> '') {
-        $result .= ', tripple ids '.implode(",",$this->lnk_id_txt);
+        $result .= ', triple ids '.implode(",",$this->lnk_id_txt);
       }  
     }
     if (isset($this->usr)) {
@@ -675,7 +675,6 @@ class phrase_group {
 
   // return a string with the group name
   function name($debug) {
-    zu_debug('phrase_group->name', $debug-14);
     $result = '';
     
     if ($this->grp_name <> '') {
@@ -683,7 +682,10 @@ class phrase_group {
       $result = $this->grp_name;
     } else {
       // or use the standard generic description
-      $result = implode(",",$this->names($debug-1));
+      $name_lst = array();
+      if (isset($this->wrd_lst)) { $name_lst = array_merge($name_lst, $this->wrd_lst->names($debug-1)); }
+      if (isset($this->lnk_lst)) { $name_lst = array_merge($name_lst, $this->lnk_lst->names($debug-1)); }
+      $result = implode(",",$name_lst);
     }
     
     return $result;

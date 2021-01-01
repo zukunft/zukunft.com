@@ -5,8 +5,8 @@
   phrase.php - either a word or a triple
   ----------
   
-  this is not save in a seperate table
-  e.g. to build a selector the entries are catched either from the words or word_links table 
+  this is not save in a separate table
+  e.g. to build a selector the entries are caught either from the words or word_links table
   
   This file is part of zukunft.com - calc with words
 
@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -58,7 +58,7 @@ class phrase {
       $lnk->usr = $this->usr;
       $lnk->load($debug-1);
       $this->obj  = $lnk;
-      $this->name = $lnk->name; // is this really useful? better save exetime and have longer code using ->obj->name
+      $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
       zu_debug('phrase->loaded triple '.$this->dsp_id(), $debug-14);
     } elseif ($this->id > 0) {
       $wrd = New word_dsp;
@@ -135,7 +135,7 @@ class phrase {
   
   /*
   
-  data retrival functions
+  data retrieval functions
   
   */
   
@@ -158,7 +158,7 @@ class phrase {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {
@@ -175,24 +175,6 @@ class phrase {
     return $result;
   }
 
-  function dsp_tbl ($debug) {
-    if (!isset($this->obj)) { $this->load($debug-1); }
-    zu_debug('phrase->dsp_tbl for '.$this->dsp_id(), $debug-10);
-    // the function dsp_tbl should exists for words and triples
-    $result .= $this->obj->dsp_tbl($debug-1);
-    return $result;
-  }
-  
-  function dsp_tbl_row ($debug) {
-    // the function dsp_tbl_row should exists for words and triples
-    if (isset($this->obj)) {
-      $result .= $this->obj->dsp_tbl_row($debug-1);
-    } else {
-      zu_err('The phrase object is missing for '.$this->dsp_id($debug-1).'.', "formula_value->load", '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    return $result;
-  }
-
   // return the name (just because all objects should have a name function)
   function name ($debug) {
     //$result = $this->name;
@@ -205,6 +187,24 @@ class phrase {
     return $result;
   }
   
+  function dsp_tbl ($debug) {
+    if (!isset($this->obj)) { $this->load($debug-1); }
+    zu_debug('phrase->dsp_tbl for '.$this->dsp_id(), $debug-10);
+    // the function dsp_tbl should exists for words and triples
+    $result = $this->obj->dsp_tbl($debug-1);
+    return $result;
+  }
+  
+  function dsp_tbl_row ($debug) {
+    // the function dsp_tbl_row should exists for words and triples
+    if (isset($this->obj)) {
+      $result = $this->obj->dsp_tbl_row($debug-1);
+    } else {
+      zu_err('The phrase object is missing for '.$this->dsp_id().'.', "formula_value->load", '', (new Exception)->getTraceAsString(), $this->usr);
+    }
+    return $result;
+  }
+
   // return the html code to display a word
   function display ($debug) {
     $result = '<a href="/http/view.php?words='.$this->id.'">'.$this->name.'</a>';
@@ -476,7 +476,7 @@ class phrase {
   }
 
   // return true if the word has the type "measure" (e.g. "meter" or "CHF")
-  // in case of a devision, these words are excluded from the result
+  // in case of a division, these words are excluded from the result
   // in case of add, it is checked that the added value does not have a different measure
   function is_measure ($debug) {
     $wrd = $this->main_word ($debug-1);
@@ -499,7 +499,7 @@ class phrase {
   }
 
   // create a selector that contains the time words
-  // e.g. Q1 can be the first Quater of a year and in this case the four quarters of a year should be the default selection
+  // e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
   //      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection 
   //      if Q1 is a wikidata qualifier a general time selector should be shown
   function dsp_time_selector ($type, $form_name, $pos, $back, $debug) {

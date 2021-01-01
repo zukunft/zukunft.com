@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -36,7 +36,7 @@ class verb_list {
 
   // search and load fields
   public $wrd        = NULL;    // to load a list related to this word
-  public $direction  = '';      // "up" or "down" to select the parents or childs
+  public $direction  = '';      // "up" or "down" to select the parents or children
   
   // load the word parameters from the database for a list of words
   function load($debug) {
@@ -51,7 +51,7 @@ class verb_list {
 
       // set the where clause depending on the values given
       $sql_where = '';
-      if ($direction == "up") {
+      if ($this->direction == "up") {
         $sql_where = " AND l.to_phrase_id = ".$this->wrd->id;
       } else {  
         $sql_where = " AND l.from_phrase_id = ".$this->wrd->id;
@@ -92,7 +92,7 @@ class verb_list {
     }  
   }
         
-  // calulates how many times a word is used, because this can be helpful for sorting
+  // calculates how many times a word is used, because this can be helpful for sorting
   function calc_usage ($debug) {
     zu_debug('verb_list->calc_usage', $debug-10);
     
@@ -127,7 +127,7 @@ class verb_list {
 
   // display all verbs and allow an admin to change it
   function dsp_list ($debug) {
-    zu_debug('verb_list->dsp_list('.$user_id.')', $debug-10);
+    zu_debug('verb_list->dsp_list('.$this->usr.')', $debug-10);
     $result  = "";
 
     $result .= dsp_list($this->lst, "link_type", $debug-1);

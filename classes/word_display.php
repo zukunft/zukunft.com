@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -211,7 +211,7 @@ class word_dsp extends word {
   }
 
   // show the changes of the view
-  function dsp_log_view ($debug) {
+  function dsp_log_view ($back, $debug) {
     zu_debug('word_dsp->dsp_log_view ('.$this->id.')', $debug-10);
     $result  = '';
     
@@ -244,8 +244,8 @@ class word_dsp extends word {
     //$result .= $this->name."<br>";
     //$result .= $col_wrd->name."<br>";
     
-    $row_lst = $this->childs($debug-1);    // not $this->are($debug-1), because e.g. for "Company" the word "Company" itself should not be included in the list
-    $col_lst = $col_wrd->childs($debug-1);
+    $row_lst = $this->children($debug-1);    // not $this->are($debug-1), because e.g. for "Company" the word "Company" itself should not be included in the list
+    $col_lst = $col_wrd->children($debug-1);
     zu_debug('word_dsp->dsp_val_list -> columns '.$col_lst->name, $debug-10);
 
     $row_lst->wlsort($debug-1);
@@ -340,7 +340,7 @@ class word_dsp extends word {
   // returns the html code to select a word that can be edit
   // database link must be open
   // ??? identical to word_list ???
-  function dsp_graph ($direction, $debug) {
+  function dsp_graph ($direction, $back, $debug) {
     zu_debug('word_dsp->dsp_graph of '.$this->dsp_id().' '.$direction.' for user '.$this->usr->name, $debug-10);
     $result  = '';
 

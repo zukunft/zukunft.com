@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -234,13 +234,13 @@ class value_list_dsp extends value_list {
         //$differantiator_phrases = zu_lst_in($differantiator_phrases, $xtra_phrases);
         $differantiator_phrases = $differantiator_phrases->filter($xtra_phrases, $debug-1);
         
-        // find direct differantiator words
-        //$differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
-        zu_debug("value_list_dsp->dsp_table ... get differantiator type ".$differantiator_phrases->name($debug-1).".", $debug-6);
+        // find direct differentiator words
+        //$differentiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+        zu_debug("value_list_dsp->dsp_table ... get differentiator type ".$differantiator_phrases->name($debug-1).".", $debug-6);
         $type_phrases = $sub_phr_lst->differentiators($debug-1);
-        zu_debug("value_list_dsp->dsp_table -> differantiator types ".implode(",",$type_word_ids).".", $debug-12);
+        zu_debug("value_list_dsp->dsp_table -> differentiator types ".implode(",",$type_word_ids).".", $debug-12);
         
-        // if there is more than one type of differantiator group the differantiators by type
+        // if there is more than one type of differentiator group the differentiators by type
         // and add on each one an "other" line, if the sum is not 100%
 
         //foreach ($type_word_ids as $type_word_id) {

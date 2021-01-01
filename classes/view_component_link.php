@@ -28,7 +28,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -264,7 +264,7 @@ class view_component_link extends user_sandbox {
     if (isset($this->fob) AND isset($this->tob)) {
       if ($this->fob->name <> '' AND $this->tob->name <> '') {
         $result .= '"'.$this->tob->name.'" in "'; // e.g. Company details
-        $result .= $this->fob->name.'"';     // e.g. cash flow statment 
+        $result .= $this->fob->name.'"';     // e.g. cash flow statement
       }
       if ($this->fob->id <> 0 AND $this->tob->id <> 0) {
         $result .= ' ('.$this->fob->id.','.$this->tob->id;
@@ -274,7 +274,7 @@ class view_component_link extends user_sandbox {
         $result .= $this->fob->dsp_id().' to '.$this->tob->dsp_id(); 
       }
     } else {
-      $result .= 'objects not set'; 
+      $result .= 'view component objects not set'; 
     }
     if ($this->id > 0) {
       $result .= ' -> '.$this->id.')';
@@ -283,6 +283,20 @@ class view_component_link extends user_sandbox {
     }  
     if (isset($this->usr)) {
       $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
+    }
+    return $result;
+  }
+
+  function name ($debug) {
+    $result = ''; 
+
+    if (isset($this->fob) AND isset($this->tob)) {
+      if ($this->fob->name <> '' AND $this->tob->name <> '') {
+        $result .= '"'.$this->tob->name.'" in "'; // e.g. Company details
+        $result .= $this->fob->name.'"';     // e.g. cash flow statement
+      }
+    } else {
+      $result .= 'view component objects not set'; 
     }
     return $result;
   }
@@ -328,7 +342,7 @@ class view_component_link extends user_sandbox {
     } else {
       zu_debug('view_component_link->move '.$direction.' '.$this->dsp_id(), $debug-10);
 
-      // new reorder code that can create a seperate order for each user
+      // new reorder code that can create a separate order for each user
       if (!isset($this->fob) OR !isset($this->tob)) {
         zu_err("The view component and the view component cannot be loaded to move them.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
@@ -359,7 +373,7 @@ class view_component_link extends user_sandbox {
         if ($order_number_corrected) {
           zu_debug('view_component_link->move reload after correction', $debug-12);
           $this->fob->load_components($debug-1);
-          // check if correction was succesful
+          // check if correction was successful
           $order_nbr = 0;
           foreach ($this->fob->cmp_lst AS $entry) {
             $cmp_lnk = new view_component_link;
@@ -374,7 +388,7 @@ class view_component_link extends user_sandbox {
         }
         zu_debug('view_component_link->move order numbers checked for '.$this->fob->dsp_id(), $debug-10);
         
-        // actuelly move the selected component
+        // actually move the selected component
         // TODO what happens if the another user has deleted some components?
         $order_nbr = 0;
         $prev_entry = Null;

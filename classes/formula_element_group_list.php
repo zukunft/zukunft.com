@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -56,6 +56,19 @@ class formula_element_group_list {
     return $result;    
   }
   
+  // to show the element group list name to the user in the most simple form (without any ids)
+  function name ($debug) {
+    $lst = array();
+    foreach ($this->lst AS $elm_grp) {
+      if (isset($elm_grp)) {
+        $lst[] = $elm_grp->name($debug-1);
+      }
+    }
+    $result = implode(" / ",$lst);
+    return $result;    
+  }
+  
+  // this function is called from dsp_id, so no other call is allowed
   function ids ($debug) {
     $result = array();
     if (isset($this->lst)) {
@@ -69,21 +82,6 @@ class formula_element_group_list {
     return $result;
   }  
 
-  // to show the element group list name to the user in the most simple form (without any ids)
-  function name ($debug) {
-    zu_debug('formula_element_group_list->name', $debug-10);
-    $lst = array();
-    foreach ($this->lst AS $elm_grp) {
-      zu_debug('formula_element_group_list->name get name of type '.get_class($elm_grp), $debug-10);
-      if (isset($elm_grp)) {
-        $lst[] = $elm_grp->name($debug-1);
-        zu_debug('formula_element_group_list->name got name', $debug-10);
-      }
-    }
-    $result = implode(" / ",$lst);
-    return $result;    
-  }
-  
 }
 
 ?>

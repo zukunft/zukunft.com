@@ -44,7 +44,7 @@ function run_graph_test ($debug) {
   // step 1: define the phrase list e.g. in this case only word "Company"
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
-  $phr_lst->add_name(TEST_WORD);
+  $phr_lst->add_name(TEST_WORD, $debug);
   $phr_lst->load($debug-1);
 
   // step 2: get all values related to the phrases

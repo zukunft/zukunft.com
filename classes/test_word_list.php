@@ -98,22 +98,22 @@ function run_word_list_test ($debug) {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TEST_WORD);
   $wrd_lst->load($debug-1);
-  $wrd_lst->foaf_childs(cl(SQL_LINK_TYPE_IS), $debug-1);
+  $wrd_lst->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
   $ABB = load_word(TW_ABB, $debug-1);
   $result = $wrd_lst->does_contain($ABB, $debug-1);
   $target = true; 
-  $exe_start_time = test_show_result(', word_list->foaf_childs is "'.implode('","',$wrd_lst->names($debug-1)).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result(', word_list->foaf_children is "'.implode('","',$wrd_lst->names($debug-1)).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // test direct childs
+  // test direct children
   $wrd_lst = New word_list;
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TEST_WORD);
   $wrd_lst->load($debug-1);
-  $wrd_lst->childs(cl(SQL_LINK_TYPE_IS), $debug-1);
+  $wrd_lst->children(cl(SQL_LINK_TYPE_IS), $debug-1);
   $ABB = load_word(TW_ABB, $debug-1);
   $result = $wrd_lst->does_contain($ABB, $debug-1);
   $target = true; 
-  $exe_start_time = test_show_result(', word_list->childs is "'.implode('","',$wrd_lst->names($debug-1)).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result(', word_list->children is "'.implode('","',$wrd_lst->names($debug-1)).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test is
   $wrd_lst = New word_list;

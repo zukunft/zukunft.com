@@ -2,7 +2,7 @@
 
 /*
 
-  import.php - import data - take a prased object from a json, yaml or XML message and trigger the object saves  
+  import.php - import data - take a object from a json, yaml or XML message and trigger the object saves
   ----------
   
   if the user is an admin the import can force to set the standard
@@ -29,7 +29,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -121,7 +121,7 @@ class file_import {
           $result .= $import_result;
         }
       } else {
-        $result .= 'Unknow element '.$key.' ';
+        $result .= 'Unknown element '.$key.' ';
       }
     }
     

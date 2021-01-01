@@ -2,7 +2,7 @@
 
 /*
 
-  test_phrase_list.php - TESTing of the PHRASE LIST functions
+  phrase_list_test.php - PHRASE LIST function  unit TESTs
   --------------------
   
 
@@ -36,7 +36,7 @@ function run_phrase_list_test ($debug) {
   global $timeout_counter;
   global $total_tests;
 
-  echo "<br><br><h2>Test the pharse list class (classes/phrase_list.php)</h2><br>";
+  echo "<br><br><h2>Test the phrase list class (classes/phrase_list.php)</h2><br>";
 
   // test the phrase loading via id
   $wrd_lst = New word_list;

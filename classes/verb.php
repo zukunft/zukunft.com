@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -34,7 +34,7 @@ class verb {
   public $id           = NULL;  // the database id of the word link type (verb)
   public $usr_id       = NULL;  // not used at the moment, because there should not be any user specific verbs
                                 // otherwise if 0 (not NULL) the standard word link type, otherwise the user specific verb
-  public $code_id      = '';    // the main id to detect verbs that have a special behavier
+  public $code_id      = '';    // the main id to detect verbs that have a special behavior
   public $name         = '';    // the verb name to build the "sentence" for the user, which cannot be empty
   public $formula_name = '';    // short name of the verb for the use in formulas 
   public $plural       = '';    // name used if more than one word is shown
@@ -119,6 +119,10 @@ class verb {
       $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
     return $result;
+  }
+
+  function name ($debug) {
+    return $this->name;    
   }
 
   // create the HTML code to display the formula name with the HTML link
@@ -250,7 +254,7 @@ class verb {
   
   */
 
-  // true if noone has used this verb
+  // true if no one has used this verb
   private function not_used($debug) {
     zu_debug('verb->not_used ('.$this->id.')', $debug-10);  
     $result = true;
@@ -272,7 +276,7 @@ class verb {
 
   // true if no other user has modified the verb
   private function not_changed($debug) {
-    zu_debug('verb->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
+    zu_debug('verb->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
     $result = true;
     
     /*
@@ -294,7 +298,7 @@ class verb {
     return $result;
   }
 
-  // true if noone else has used the verb
+  // true if no one else has used the verb
   function can_change($debug) {
     zu_debug('verb->can_change '.$this->id, $debug-10);  
     $can_change = false;
@@ -474,7 +478,7 @@ class verb {
           // .. and use it for the update
           $this->id = $db_chk->id;
           $this->owner_id = $db_chk->owner_id;
-          // force the reinclude
+          // force the include again
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);

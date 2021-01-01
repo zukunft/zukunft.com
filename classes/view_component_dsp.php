@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -117,7 +117,7 @@ class view_component_dsp extends view_component {
   }
   
   // display all formulas related to the given word
-  function formulas($wrd, $debug) {
+  function formulas($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_FORMULAS)) {
       zu_debug('view_component_dsp->formulas in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
@@ -143,7 +143,7 @@ class view_component_dsp extends view_component {
   }
 
   // show a list of formula results related to a word
-  function formula_values($wrd, $debug) {
+  function formula_values($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_FORMULA_RESULTS)) {
       zu_debug('view_component_dsp->formula_values in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
@@ -160,11 +160,11 @@ class view_component_dsp extends view_component {
   // show all words that are based on the given start word
   // and related to the main word
   // later the start word should be selected automatically based on what most users has clicked on
-  function word_childs($wrd, $debug) {
+  function word_children($wrd, $debug) {
     $result = '';
 
     if ($this->type_id == cl(SQL_VIEW_TYPE_WORDS_DOWN)) {
-      zu_debug('view_component_dsp->word_childs in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      zu_debug('view_component_dsp->word_children in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= $wrd->dsp_graph ("down", $debug-1);
     }
     
@@ -224,8 +224,8 @@ class view_component_dsp extends view_component {
     if ($this->type_id == cl(SQL_VIEW_TYPE_VALUES_ALL)) {
       zu_debug('view_component_dsp->all in view '.$this->dsp_id().' for word '.$phr->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
-      $phrases_down .= $phr->dsp_graph ("down", $debug-1);
-      $phrases_up   .= $phr->dsp_graph ("up",   $debug-1);
+      $phrases_down = $phr->dsp_graph ("down", $debug-1);
+      $phrases_up   = $phr->dsp_graph ("up",   $debug-1);
       if ($phrases_down <> '' OR $phrases_up <> '') {
         $result .= $phrases_down.$phrases_up;
       } else {

@@ -2,7 +2,7 @@
 
 /*
 
-  test_phrase_group.php - TESTing of the PHRASE GROUP functions
+  phrase_group_test.php - PHRASE GROUP function unit TESTs
   ---------------------
   
 
@@ -36,7 +36,7 @@ function run_phrase_group_test ($debug) {
   global $timeout_counter;
   global $total_tests;
 
-  echo "<br><br><h2>Test the pharse group class (classes/phrase_group.php)</h2><br>";
+  echo "<br><br><h2>Test the phrase group class (classes/phrase_group.php)</h2><br>";
 
   // test getting the group id based on ids
   $wrd_lst = New word_list;

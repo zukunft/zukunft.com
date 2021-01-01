@@ -36,32 +36,25 @@ function run_test_cleanup ($debug) {
   global $timeout_counter;
   global $total_tests;
 
-  global $added_val_id;
-  global $added_val2_id;
+  global $test_val_lst;
 
   // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
   echo "<br><br><h2>Cleanup the test</h2><br>";
 
-  if ($added_val_id > 0) {
-    // request to delete the added test value
-    $added_val = New value;
-    $added_val->id = $added_val_id;
-    $added_val->usr = $usr;
-    $added_val->load($debug-1);
-    $result = $added_val->del($debug-1);
-    $target = '11';
-    $exe_start_time = test_show_result(', value->del test value for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
-  }
-
-  if ($added_val2_id > 0) {
-    // request to delete the added test value
-    $added_val2 = New value;
-    $added_val2->id = $added_val2_id;
-    $added_val2->usr = $usr;
-    $added_val2->load($debug-1);
-    $result = $added_val2->del($debug-1);
-    $target = '11';
-    $exe_start_time = test_show_result(', value->del test value for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  foreach ($test_val_lst AS $val_id) {
+    if ($val_id > 0) {
+      // request to delete the added test value
+      $val = New value;
+      $val->id = $val_id;
+      $val->usr = $usr;
+      $val->load($debug-1);
+      // check again, because some id may be added twice
+      if ($val->id > 0) {
+        $result = $val->del($debug-1);
+        $target = '11';
+        $exe_start_time = test_show_result(', value->del test value for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+      }
+    }  
   }
 
   // secure cleanup the test views
@@ -105,7 +98,7 @@ function run_test_cleanup ($debug) {
 
   // unlink the second component
   // error at the moment: if the second user is still using the link, 
-  // the seconde user does not get the owner 
+  // the second user does not get the owner
   // instead a foreign key error happens
   if ($dsp->id > 0 and $cmp2->id > 0) {
     $result = $cmp2->unlink($dsp, $debug-1);

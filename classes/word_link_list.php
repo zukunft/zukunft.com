@@ -26,7 +26,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -305,11 +305,11 @@ class word_link_list {
   */
   
   // description of the triple list for debugging
-  function dsp_id($debug) {
+  function dsp_id() {
     $result = '';
     
-    $id   = $implode(",",$this->ids);   
-    $name = $this->name($debug-1);
+    $id   = implode(",",$this->ids);
+    $name = $this->name(0);
     if ($name <> '') {
       $result = '"'.$name.'" ('.$id.')';
     } else {
@@ -321,24 +321,21 @@ class word_link_list {
   
   // description of the triple list for the user
   function name($debug) {
-    zu_debug('word_link_list->name', $debug-16);
-    $result = implode(",",$this->names($debug-1));      
+    $result = implode(",",$this->names($debug));      
     return $result;
   }
   
   // return a list of the triple names
+  // this function is called from dsp_id, so no other call is allowed
   function names($debug) {
-    zu_debug('word_link_list->names ... ', $debug-14);
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $lnk) {
         if ($lnk->name <> '') { 
           $result[] = $lnk->name;
         }
-        zu_debug('word_link_list->names ... added "'.$lnk->name.'"', $debug-14);
       }
     }
-    zu_debug('word_link_list->names ... done ('.count($result).')', $debug-12);
     return $result; 
   }
   
@@ -422,7 +419,7 @@ class word_link_list {
         }
           
         if ($lnk->verb_id <> $next_lnk->verb_id) {
-          // give the user the possibility to add a simular word
+          // give the user the possibility to add a similar word
           $result .= '  <tr>';
           $result .= '    <td>';
           $result .= '      '.btn_add ("Add similar word", '/http/word_add.php?verb='.$directional_link_type_id.'&word='.$start_id.'&type='.$lnk->to->type_id.'&back='.$start_id);

@@ -2,7 +2,7 @@
 
 /*
 
-  test_value_ui.php - TESTing of the VALUE User Interface class
+  value_test_ui.php - TESTing of the VALUE User Interface class
   -----------------
   
 

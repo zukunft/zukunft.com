@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_trigger_test ($debug) {
+function run_formula_trigger_test ($back, $debug) {
 
   global $usr;
   global $usr2;
@@ -100,7 +100,7 @@ function run_formula_trigger_test ($debug) {
   $exe_start_time = test_show_result(', value->check best value for "'.$phr_lst2->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
 
   // calculate the increase and check the result
-  $fv_lst = $frm->calc($phr_lst2, $debug-1);
+  $fv_lst = $frm->calc($phr_lst2, $back, $debug-1);
   if (count($fv_lst) > 0) {
     $fv = $fv_lst[0];
     $result = trim($fv->display($back, $debug-1));

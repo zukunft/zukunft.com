@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -42,7 +42,7 @@ class dsp_list {
   
   // converts a id field name to an edit php script name
   // assuming that ...
-  private function id_to_edit($field_name, $debug) {
+  private function id_to_edit($debug) {
     zu_debug("zu_id_to_edit(".$this->id_field.")", $debug-10);
     $result = zu_str_left_of($this->id_field, "_id")."_edit.php";
     // todo: cleanup

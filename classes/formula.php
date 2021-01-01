@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -34,7 +34,7 @@ class formula extends user_sandbox  {
   /*
   // database fields
   public $id           = NULL;  // the database id of the formula, which is the same for the standard and the user specific formula
-  public $usr_cfg_id   = NULL;  // the database id if there is alrady some user specific configuration for this formula
+  public $usr_cfg_id   = NULL;  // the database id if there is already some user specific configuration for this formula
   public $usr          = NULL;  // if 0 (not NULL) the standard formula, otherwise the user specific formula
   public $owner_id     = NULL;  // the user id of the person who created the formula, which is the default formula
   public $name         = '';    // simply the formula name, which cannot be empty
@@ -43,7 +43,7 @@ class formula extends user_sandbox  {
   public $ref_text     = '';    // the formula expression with the names replaced by database references
   public $usr_text     = '';    // the formula expression in the user format
   public $description  = '';    // describes to the user what this formula is doing
-  public $type_id      = NULL;  // the formula type to link special behavier to special formulas like "this" or "next"
+  public $type_id      = NULL;  // the formula type to link special behavior to special formulas like "this" or "next"
   public $need_all_val = false; // calculate and save the result only if all used values are not null
   public $last_update  = NULL;  // the time of the last update of fields that may influence the calculated results
 
@@ -437,7 +437,7 @@ class formula extends user_sandbox  {
     if ($this->id > 0 AND isset($this->usr)) {
       $direct_phr_lst = $this->assign_phr_glst_direct($sbx, $debug-1);
       if (count($direct_phr_lst->lst) > 0) {
-        zu_debug('formula->assign_phr_glst -> '.$this->dsp_id.' direct assigned words and triples '.$direct_phr_lst->dsp_id(), $debug-10);
+        zu_debug('formula->assign_phr_glst -> '.$this->dsp_id().' direct assigned words and triples '.$direct_phr_lst->dsp_id(), $debug-10);
 
         //$indirect_phr_lst = $direct_phr_lst->is($debug-1);
         $indirect_phr_lst = $direct_phr_lst->are($debug-1);
@@ -451,7 +451,7 @@ class formula extends user_sandbox  {
         $phr_lst->load($debug-1);
         zu_debug('formula->assign_phr_glst -> number of words and triples '. count ($phr_lst->lst), $debug-14);
       } else {
-        zu_debug('formula->assign_phr_glst -> no words are assigned to '.$this->dsp_id, $debug-14);
+        zu_debug('formula->assign_phr_glst -> no words are assigned to '.$this->dsp_id(), $debug-14);
       }
     } else {
       zu_err('The user id must be set to list the formula links.', 'formula->assign_phr_glst', '', (new Exception)->getTraceAsString(), $this->usr);
@@ -493,7 +493,7 @@ class formula extends user_sandbox  {
   
   // fill the formula in the reference format with numbers
   // to do: verbs
-  function to_num($phr_lst, $debug) {
+  function to_num($phr_lst, $back, $debug) {
     zu_debug('get numbers for '.$this->name_linked($back, $debug-1).' and '.$phr_lst->name_linked(), $debug-4);
     
     // check 
@@ -599,8 +599,8 @@ class formula extends user_sandbox  {
                       // $fig_std = ...;
                       $fv_std = clone $fv;
                       $fv_std->usr = 0;
-                      $fv_std->num_text = str_replace($fig_std->symbol, $fig_std->number, $fv_std->num_text);
-                      if ($fv_std->last_val_update < $fig_std->last_update) { $fv_std->last_val_update = $fig_std->last_update; }
+                      $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
+                      if ($fv_std->last_val_update < $fig->last_update) { $fv_std->last_val_update = $fig->last_update; }
                       zu_debug('formula->to_num -> one figure "'.$fig->number.'" for "'.$fig->symbol.'" in "'.$fv->num_text.'"', $debug-8);
                       $fv_lst->lst[] = $fv_std;
                       // ... and split into a user specific part
@@ -622,8 +622,8 @@ class formula extends user_sandbox  {
                       // $fig_std = ...;
                       $fv_std = clone $fv_master;
                       $fv_std->usr = 0;
-                      $fv_std->num_text = str_replace($fig_std->symbol, $fig_std->number, $fv_std->num_text);
-                      if ($fv_std->last_val_update < $fig_std->last_update) { $fv_std->last_val_update = $fig_std->last_update; }
+                      $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
+                      if ($fv_std->last_val_update < $fig->last_update) { $fv_std->last_val_update = $fig->last_update; }
                       zu_debug('formula->to_num -> one figure "'.$fig->number.'" for "'.$fig->symbol.'" in "'.$fv->num_text.'"', $debug-8);
                       $fv_lst->lst[] = $fv_std;
                       // ... and split into a user specific part
@@ -730,7 +730,7 @@ class formula extends user_sandbox  {
   // todo: check if calculation is really needed
   //       if one of the result words is a scaling word, remove all value scaling words
   //       always create a default result (for the user 0)
-  function calc($phr_lst, $debug) {
+  function calc($phr_lst, $back, $debug) {
     $result = Null;
     
     // check the parameters
@@ -768,7 +768,7 @@ class formula extends user_sandbox  {
 
       // get the list of the numeric results
       // $fv_lst is a list of all results saved in the database
-      $fv_lst = $this->to_num ($phr_lst, $debug-1);
+      $fv_lst = $this->to_num ($phr_lst, $back, $debug-1);
       if (isset($fv_add_phr_lst)) { zu_debug('formula->calc -> '.count($fv_lst->lst).' formula results to save', $debug-8); }
 
       // save the numeric results
@@ -876,7 +876,7 @@ class formula extends user_sandbox  {
   */
   
   // return best possible identification for this formula mainly used for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {
@@ -951,7 +951,7 @@ class formula extends user_sandbox  {
 
   // allow the user to unlick a word
   function dsp_unlink_phr ($phr_id, $back, $debug) {
-    zu_debug('formula->dsp_unlink_phr('.$link_id.')', $debug-10);
+    zu_debug('formula->dsp_unlink_phr('.$phr_id.')', $debug-10);
     $result  = '    <td>'."\n";
     $result .= btn_del ("unlink word", "/http/formula_edit.php?id=".$this->id."&unlink_phrase=".$phr_id."&back=".$back);
     $result .= '    </td>'."\n";
@@ -1304,7 +1304,7 @@ class formula extends user_sandbox  {
       $field_values[] =             $elm_type_id;
       $field_names[]  =     'ref_id';
       $field_values[] = $elm_add_id;
-      $add_result .= $db_con->insert($field_names, $field_values, $debug-1);
+      $add_result = $db_con->insert($field_names, $field_values, $debug-1);
       // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
       if ($add_result > 0) { $result .= '1'; } 
     }
@@ -1390,7 +1390,7 @@ class formula extends user_sandbox  {
       $frm_lnk->tob = $phr;
       $result = $frm_lnk->del ($debug-1);
     } else {  
-      $result .= zu_err("Cannot unlink formula, phrase is not set.", "formula.php", '', (new Exception)->getTraceAsString(), $usr);  
+      $result .= zu_err("Cannot unlink formula, phrase is not set.", "formula.php", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     return $result; 
   }
@@ -1663,8 +1663,8 @@ class formula extends user_sandbox  {
   // update the time stamp to trigger an update of the depending results
   function save_field_trigger_update($db_con, $debug) {
     $this->last_update = new DateTime(); 
-    $result .= $db_con->update($this->id, 'last_update', 'Now()', $debug-1);
-    zu_debug('formula->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'"', $debug-18);
+    $result = $db_con->update($this->id, 'last_update', 'Now()', $debug-1);
+    zu_debug('formula->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'" with '.$result, $debug-18);
     
     // save the pending update to the database for the batch calculation
   }

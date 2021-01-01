@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -35,7 +35,7 @@ class word {
 
   // database fields
   public $id           = NULL; // the database id of the word, which is the same for the standard and the user specific word
-  public $usr_cfg_id   = NULL; // the database id if there is alrady some user specific configuration for this word
+  public $usr_cfg_id   = NULL; // the database id if there is already some user specific configuration for this word
   public $usr          = NULL; // the person for whom the word is loaded, so to say the viewer
   public $owner_id     = NULL; // the user id of the person who created the word, which is the default word
   public $name         = '';   // simply the word name, which cannot be empty
@@ -44,7 +44,7 @@ class word {
   public $type_id      = NULL; // the id of the word type
   public $view_id      = NULL; // defines the default view for this word
   public $values       = NULL; // the total number of values linked to this word as an indication how common the word is and to sort the words
-  public $excluded     = NULL; // the user sandbox for words is implimented, but can be switched off for the complete instance 
+  public $excluded     = NULL; // the user sandbox for words is implemented, but can be switched off for the complete instance
                                // when loading the word and saving the excluded field is handled as a normal user sandbox field, 
                                // but for calculation, use and display an excluded should not be used
   
@@ -211,7 +211,7 @@ class word {
 
   /*
   
-  data retrival functions
+  data retrieval functions
   
   */
   
@@ -382,7 +382,7 @@ class word {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {
@@ -400,45 +400,45 @@ class word {
   }
 
   // return the name (just because all objects should have a name function)
-  function name ($debug) {
+  function name () {
     $result = $this->name;
     return $result;    
   }
 
   // return the html code to display a word
-  function display ($back, $debug) {
+  function display ($back) {
     $result = '<a href="/http/view.php?words='.$this->id.'&back='.$back.'">'.$this->name.'</a>';
     return $result;    
   }
 
   // offer the user to export the word and the relations as an xml file
-  function config_json_export ($back, $debug) {
+  function config_json_export ($back) {
     $result  = '';
     $result .= 'Export as <a href="/http/get_json.php?words='.$this->name.'&back='.$back.'">JSON</a>';
     return $result;    
   }
 
   // offer the user to export the word and the relations as an xml file
-  function config_xml_export ($back, $debug) {
+  function config_xml_export ($back) {
     $result  = '';
     $result .= 'Export as <a href="/http/get_xml.php?words='.$this->name.'&back='.$back.'">XML</a>';
     return $result;    
   }
 
   // offer the user to export the word and the relations as an xml file
-  function config_csv_export ($back, $debug) {
+  function config_csv_export ($back) {
     $result = '<a href="/http/get_csv.php?words='.$this->name.'&back='.$back.'">CSV</a>';
     return $result;    
   }
 
   // to add a word linked to this word
   // e.g. if this word is "Company" to add another company
-  function btn_add ($back, $debug) {
+  function btn_add ($back) {
     $vrb_is = cl(SQL_LINK_TYPE_IS);
     $wrd_type = cl(SQL_WORD_TYPE_NORMAL); // maybe base it on the other linked words
     $wrd_add_title = "add a new ".$this->name;
     $wrd_add_call = "/http/word_add.php?verb=".$vrb_is."&word=".$this->id."&type=".$wrd_type."&back=".$back."";
-    $result .= btn_add ($wrd_add_title, $wrd_add_call); 
+    $result = btn_add ($wrd_add_title, $wrd_add_call);
     return $result;    
   }
   
@@ -489,7 +489,7 @@ class word {
   }
 
   // return true if the word has the type "measure" (e.g. "meter" or "CHF")
-  // in case of a devision, these words are excluded from the result
+  // in case of a division, these words are excluded from the result
   // in case of add, it is checked that the added value does not have a different measure
   function is_measure ($debug) {
     zu_debug('word->is_measure '.$this->dsp_id(), $debug-10);
@@ -531,26 +531,26 @@ class word {
     
     Overview for words, triples and phrases and it's lists
     
-               childs and            parents return the direct parents and childs   without the original phrase(s)
-          foaf_childs and       foaf_parents return the    all parents and childs   without the original phrase(s)
-                  are and                 is return the    all parents and childs including the original phrase(s) for the specific verb "is a"
-             contains                        return the    all             childs including the original phrase(s) for the specific verb "contains" 
-                                  is part of return the    all parents              without the original phrase(s) for the specific verb "contains" 
-                 next and              prior return the direct parents and childs   without the original phrase(s) for the specific verb "follows"
-          followed_by and        follower_of return the    all parents and childs   without the original phrase(s) for the specific verb "follows"
-    differentiated_by and differentiator_for return the    all parents and childs   without the original phrase(s) for the specific verb "can_contain"
+             children and            parents return the direct parents and children   without the original phrase(s)
+        foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
+                  are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
+             contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
+                                  is part of return the    all parents                without the original phrase(s) for the specific verb "contains"
+                 next and              prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
+          followed_by and        follower_of return the    all parents and children   without the original phrase(s) for the specific verb "follows"
+    differentiated_by and differentiator_for return the    all parents and children   without the original phrase(s) for the specific verb "can_contain"
         
     Samples
     
-    the      parents of  "ABB" can be "public limited company"
-    the foaf_parents of  "ABB" can be "public limited company" and "company"
-                "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
-    the       childs for "company" can include "public limited company"
-    the  foaf_childs for "company" can include "public limited company" and "ABB"
-               "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
+    the        parents of  "ABB" can be "public limited company"
+    the   foaf_parents of  "ABB" can be "public limited company" and "company"
+                  "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
+    the       children for "company" can include "public limited company"
+    the  foaf_children for "company" can include "public limited company" and "ABB"
+                 "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
 
-          "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
-        "is part of" for "assets" is "balance sheet" but not "assets" 
+            "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
+          "is part of" for "assets" is "balance sheet" but not "assets"
 
               "next" for "2016" is "2017" 
              "prior" for "2017" is "2016" 
@@ -601,22 +601,22 @@ class word {
   }
   
   // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and others, but not "Company"
-  function childs ($debug) {
-    zu_debug('word->childs for '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
+  function children ($debug) {
+    zu_debug('word->children for '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
     $wrd_lst = $this->lst($debug-1);
-    $child_wrd_lst = $wrd_lst->foaf_childs (cl(SQL_LINK_TYPE_IS), $debug-1);
-    zu_debug('word->childs are '.$child_wrd_lst->name($debug-1).' for '.$this->dsp_id(), $debug-10);
+    $child_wrd_lst = $wrd_lst->foaf_children (cl(SQL_LINK_TYPE_IS), $debug-1);
+    zu_debug('word->children are '.$child_wrd_lst->name($debug-1).' for '.$this->dsp_id(), $debug-10);
     return $child_wrd_lst;
   }
   
   // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and "Company"
   function are ($debug) {
-    $wrd_lst = $this->childs($debug-1);
+    $wrd_lst = $this->children($debug-1);
     $wrd_lst->add($this,$debug-1);
     return $wrd_lst;
   }
 
-  // makes sure that all combinations of "are" and "conatins" are included
+  // makes sure that all combinations of "are" and "contains" are included
   function are_and_contains ($debug) {
     zu_debug('word->are_and_contains for '.$this->dsp_id(), $debug-18);
 
@@ -772,7 +772,7 @@ class word {
   // true if no other user has modified the word
   // assuming that in this case not confirmation from the other users for a word rename is needed
   private function not_changed($debug) {
-    zu_debug('word->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
+    zu_debug('word->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
     $result = true;
     
     $change_user_id = 0;
@@ -816,7 +816,7 @@ class word {
     return $user_id;
   }
 
-  // true if the user is the owner and noone else has changed the word
+  // true if the user is the owner and no one else has changed the word
   // because if another user has changed the word and the original value is changed, maybe the user word also needs to be updated
   function can_change($debug) {
     zu_debug('word->can_change ('.$this->id.',u'.$this->usr->id.')', $debug-10);  
@@ -1249,7 +1249,7 @@ class word {
           // .. and use it for the update
           $this->id = $db_chk->id;
           $this->owner_id = $db_chk->owner_id;
-          // force the reinclude
+          // force the include again
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
@@ -1324,7 +1324,7 @@ class word {
  verbs needs a confirmation for creation (but the name can be reserved)
  all other parameters beside the word/verb name can be user specific
 
- time words are seperated from the word groups to reduce the number of word groups
+ time words are separated from the word groups to reduce the number of word groups
  for daily data or shorter a normal date or time field is used
  a time word can also describe a period
  

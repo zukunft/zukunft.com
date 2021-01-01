@@ -1291,7 +1291,7 @@ function zuc_frm($frm_id, $frm_text, $wrd_ids, $time_word_id, $user_id, $debug) 
 // similar to zuc_frm_upd below, but with a filter on the values
 // $val_wrd_lst - list of words that is related to the value update; only results linked to these word needs to be updated
 // returns a list of formula results that needs to be updated
-function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back_link, $debug) {
+function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back, $debug) {
   zu_debug("zuc_val_frm_upd (t".implode(",",$val_wrd_lst).",f".implode(",",$frm_ids).",u".$usr_id.")", $debug-1);
   $result = array();
   
@@ -1313,7 +1313,7 @@ function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back_link, $debug) {
     $frm->id = $r['frm_id'];
     $frm->ref_text = $r['frm_text'];
     $frm->usr = $usr;
-    $fv_lst = $frm->calc($r['wrd_ids'], 0, $debug-1);
+    $fv_lst = $frm->calc($r['wrd_ids'], $back, $debug-1);
     $result = array_merge($result, $fv_lst);
     //$in_result = $frm->calc($r['wrd_ids'], 0, $debug-1);
     //$in_result = zuc_frm($r['frm_id'], $r['frm_text'], $r['wrd_ids'], 0, $r['usr_id'], $debug);
@@ -1350,7 +1350,7 @@ function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back_link, $debug) {
 }
 
 // if a list of formulas needs to updated the results, calculate all the depending values
-function zuc_frm_upd($frm_ids_updated, $usr_id, $back_link, $debug) {
+function zuc_frm_upd($frm_ids_updated, $usr_id, $back, $debug) {
   ob_implicit_flush(true);
   ob_end_flush();
 
@@ -1371,7 +1371,7 @@ function zuc_frm_upd($frm_ids_updated, $usr_id, $back_link, $debug) {
     $wrd_lst->ids = $r['wrd_ids'];
     $wrd_lst->usr_id = $usr;
     $wrd_lst->load($debug-1);
-    $fv_lst = $frm->calc($wrd_lst, 0, $debug-1);
+    $fv_lst = $frm->calc($wrd_lst, $back, $debug-1);
     zu_debug('zuc_frm_upd -> done ('.$frm->name.' - '.$frm->id.')', $debug-10);
     $fv = $fv_lst[0];
     $val_result = $fv->value;
@@ -1403,7 +1403,7 @@ function zuc_frm_upd($frm_ids_updated, $usr_id, $back_link, $debug) {
   }
   ob_end_flush();
 
-  $result .= zuh_go_back($back_link, $usr_id, $debug-1);
+  $result .= zuh_go_back($back, $usr_id, $debug-1);
 }
 
 
@@ -1411,7 +1411,7 @@ function zuc_frm_upd($frm_ids_updated, $usr_id, $back_link, $debug) {
 // to be splitted into two parts:
 // 1. build the calculation list
 // 2. Execute the calculation list
-function zuc_batch_all($debug) {
+function zuc_batch_all($back, $debug) {
   zu_debug('zuc_batch_all()', $debug);
   
   zuf_check();
@@ -1447,7 +1447,7 @@ function zuc_batch_all($debug) {
         $frm->id = $frm_id;
         $frm->ref_text = $frm_row['formula_text'];
         $frm->usr = $usr;
-        $frm->calc($wrd_ids, 0, $debug-1);
+        $frm->calc($wrd_ids, $back, $debug-1);
         //zuc_frm($frm_id, $frm_row['formula_text'], $wrd_ids, $user_id, $debug);
         $result_nbr++;
       }

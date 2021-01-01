@@ -2,7 +2,7 @@
 
 /*
 
-  test_phrase.php - TESTing of the PHRASE class
+  phrase_test.php - PHRASE class unit TESTs
   ---------------
   
 
@@ -33,7 +33,7 @@ function create_base_phrases ($debug) {
   test_word_link(TW_ZH, SQL_LINK_TYPE_IS, TEST_WORD, true, TP_ZH_INS);
   echo "<br><br>";
 
-  echo "<h2>Check if all base pharses are correct</h2><br>";
+  echo "<h2>Check if all base phrases are correct</h2><br>";
   test_phrase(TP_ZH_INS);
   echo "<br><br>";
 }
@@ -57,7 +57,7 @@ function run_phrase_test ($debug) {
 
 
 
-  echo "<br><br><h2>Test the pharse class (classes/phrase.php)</h2><br>";
+  echo "<br><br><h2>Test the phrase class (classes/phrase.php)</h2><br>";
 
   // prepare the Insurance Zurich
   $wrd_zh     = load_word(TW_ZH, $debug-1);

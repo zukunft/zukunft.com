@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -34,7 +34,7 @@
 // the general html header
 function dsp_header($title, $style) {
   $result  = '<!DOCTYPE html>';
-  $result .= '<html lang="en">'; // todo: to be adjusted depending on the display lunguage
+  $result .= '<html lang="en">'; // todo: to be adjusted depending on the display language
   $result .= '<head>';
   if ($title <> "") {
     $result .= '  <title>'.$title.' (zukunft.com)</title>';
@@ -241,7 +241,7 @@ function dsp_btn_text ($btn_name, $call) {
   return $result;
 }
 
-// simply to display an error text interactivly to the user; use this function always for easy redesign of the error messages
+// simply to display an error text interactively to the user; use this function always for easy redesign of the error messages
 function dsp_err ($err_text) {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
@@ -480,7 +480,7 @@ function dsp_form_text_big ($field, $txt_value, $label, $class, $attribute) {
 function dsp_form_fld ($field, $txt_value, $label, $class, $attribute) {
   $result = '';
   if ($label == '') {
-    $label == $field;
+    $label = $field;
   }
   if (UI_USE_BOOTSTRAP) {
     $result .= '<div class="form-group '.$class.'">';
@@ -497,7 +497,7 @@ function dsp_form_fld ($field, $txt_value, $label, $class, $attribute) {
 function dsp_form_fld_checkbox ($field, $is_checked, $label) {
   $result = '';
   if ($label == '') {
-    $label == $field;
+    $label = $field;
   }
   if (UI_USE_BOOTSTRAP) {
     $result .= '<div class="form-check-inline">';
@@ -542,7 +542,7 @@ function dsp_form_fld_select ($form, $field, $label, $class, $attribute) {
 
 // to end a selector field
 function dsp_form_fld_select_end () {
-  $result .= '</select>';
+  $result = '</select>';
   if (UI_USE_BOOTSTRAP) {
     $result .= '</div>';
   }

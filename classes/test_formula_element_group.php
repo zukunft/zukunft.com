@@ -64,7 +64,7 @@ function run_formula_element_group_test ($debug) {
   // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
   $elm_grp_lst = $exp->element_grp_lst ($back, $debug-1);
 
-  $result = $elm_grp_lst->dsp_id($debug-1);
+  $result = $elm_grp_lst->dsp_id();
   $target = 'this / prior';
   $exe_start_time = test_show_contains(', formula_element_group_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -77,7 +77,7 @@ function run_formula_element_group_test ($debug) {
     $elm_grp->phr_lst  = clone $phr_lst;
     
     // test debug id first
-    $result = $elm_grp->dsp_id($debug-1);
+    $result = $elm_grp->dsp_id();
     $target = '"this" (3) and "ABB","Sales","CHF","million","2015"';
     $exe_start_time = test_show_result(', formula_element_group->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

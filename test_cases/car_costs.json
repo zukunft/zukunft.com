@@ -1,0 +1,575 @@
+{
+  "version": "0.0.1",
+  "time": "2020-07-21 10:57:32",
+  "user": "timon",
+  "selection": [
+    "car cost calculation sample"
+  ],
+  "words": [
+    {
+      "name": "2020",
+      "type": "time",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "costs"
+    },
+    {
+      "name": "per day",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "CHF",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "currency",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "metre",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilometre",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "km",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per km",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per 100 km",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kWh",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per kWh",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "CO2",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "emission",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "insurance",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Insurance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "tax",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "car maintenance",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Service_(motor_vehicle)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fuel",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "diesel",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "consumption",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Consumption_(economics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kilogram",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kilogram",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kg",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gram",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "g",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "tonne",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "t",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per t",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "litre",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Litre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "l",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per l",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "production",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "car",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "luxury hybrid car"
+    },
+    {
+      "name": "electric car"
+    },
+    {
+      "name": "at purchase"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "per year"
+    },
+    {
+      "name": "min"
+    },
+    {
+      "name": "max"
+    },
+    {
+      "name": "min to max factor"
+    },
+    {
+      "name": "per kWh",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "product lifetime",
+      "refs": [
+        {
+          "name": "Product_lifetime",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "name": "",
+      "from": "CHF",
+      "verb": "is a",
+      "to": "currency"
+    },
+    {
+      "name": "electricity consumption",
+      "from": "electricity",
+      "verb": "can be",
+      "to": "consumed"
+    },
+    {
+      "name": "km",
+      "from": "km",
+      "verb": "is alias of",
+      "to": "kilometre"
+    },
+    {
+      "name": "t",
+      "from": "t",
+      "verb": "is alias of",
+      "to": "tonne"
+    },
+    {
+      "name": "",
+      "from": "luxury hybrid car",
+      "verb": "is a",
+      "to": "car"
+    },
+    {
+      "name": "",
+      "from": "electric car",
+      "verb": "is a",
+      "to": "car"
+    },
+    {
+      "name": "",
+      "from": "diesel",
+      "verb": "is a",
+      "to": "fuel"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale km to metre",
+      "expression": "\"metre\" = \"km\" * 1000",
+      "assigned_word": "kilometre"
+    },
+    {
+      "name": "scale km to 100 km",
+      "expression": "\"100 km\" = \"km\" * 100",
+      "assigned_word": "kilometre"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Life cycle environmental and cost comparison of current and future passenger cars under different energy scenarios",
+      "url": "https://www.sciencedirect.com/science/article/pii/S030626192030533X"
+    },
+    {
+      "name": "personal agreement",
+      "url": ""
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "car",
+        "production",
+        "CO2",
+        "emission",
+        "t",
+        "luxury hybrid car"
+      ],
+      "time": "2013",
+      "number": "8",
+      "share": "public",
+      "source": "Life cycle environmental and cost comparison of current and future passenger cars under different energy scenarios"
+    },
+    {
+      "words": [
+        "car",
+        "production",
+        "CO2",
+        "emission",
+        "t",
+        "electric car"
+      ],
+      "time": "2015",
+      "number": "5",
+      "share": "public",
+      "source": "Life cycle environmental and cost comparison of current and future passenger cars under different energy scenarios"
+    },
+    {
+      "words": [
+        "car",
+        "product lifetime",
+        "km"
+      ],
+      "time": "2013",
+      "number": "150000",
+      "share": "public"
+    },
+    {
+      "words": [
+        "car",
+        "km",
+        "at purchase"
+      ],
+      "time": "2014",
+      "number": "11,000",
+      "share": "public"
+    },
+    {
+      "words": [
+        "car",
+        "CHF",
+        "at purchase"
+      ],
+      "time": "2014",
+      "number": "41,000",
+      "share": "public"
+    },
+    {
+      "words": [
+        "car",
+        "product lifetime",
+        "year"
+      ],
+      "time": "2013",
+      "number": "10",
+      "share": "public"
+    },
+    {
+      "words": [
+        "car",
+        "km",
+        "per year",
+        "min"
+      ],
+      "time": "2020",
+      "number": "4,000",
+      "share": "public"
+    },
+    {
+      "words": [
+        "car",
+        "km",
+        "per year",
+        "min to max factor"
+      ],
+      "time": "2020",
+      "number": "3",
+      "share": "public"
+    },
+    {
+      "words": [
+        "car",
+        "CO2",
+        "emission",
+        "g",
+        "per km"
+      ],
+      "time": "2020",
+      "number": "157",
+      "share": "public"
+    },
+    {
+      "words": [
+        "costs",
+        "CHF",
+        "CO2",
+        "emission",
+        "per t"
+      ],
+      "time": "2020",
+      "number": "1,100",
+      "share": "public"
+    },
+    {
+      "words": [
+        "luxury hybrid car",
+        "costs",
+        "insurance",
+        "per year",
+        "CHF"
+      ],
+      "time": "2020",
+      "number": "1,800",
+      "share": "public"
+    },
+    {
+      "words": [
+        "luxury hybrid car",
+        "tax",
+        "per year",
+        "CHF"
+      ],
+      "time": "2020",
+      "number": "800",
+      "share": "public"
+    },
+    {
+      "words": [
+        "luxury hybrid car",
+        "costs",
+        "car maintenance",
+        "per year",
+        "CHF"
+      ],
+      "time": "2020",
+      "number": "1,500",
+      "share": "public"
+    },
+    {
+      "words": [
+        "luxury hybrid car",
+        "diesel",
+        "consumption",
+        "l",
+        "per 100 km"
+      ],
+      "time": "2020",
+      "number": "6",
+      "share": "public"
+    },
+    {
+      "words": [
+        "electric car",
+        "costs",
+        "insurance",
+        "per year",
+        "CHF"
+      ],
+      "time": "2020",
+      "number": "800",
+      "share": "public"
+    },
+    {
+      "words": [
+        "electric car",
+        "tax",
+        "per year",
+        "CHF"
+      ],
+      "time": "2020",
+      "number": "400",
+      "share": "public"
+    },
+    {
+      "words": [
+        "electric car",
+        "costs",
+        "car maintenance",
+        "per year",
+        "CHF"
+      ],
+      "time": "2020",
+      "number": "500",
+      "share": "public"
+    },
+    {
+      "words": [
+        "electric car",
+        "kWh",
+        "per 100 km"
+      ],
+      "time": "2020",
+      "number": "16.00",
+      "share": "public"
+    },
+    {
+      "words": [
+        "diesel",
+        "CHF",
+        "per litre"
+      ],
+      "time": "2020",
+      "number": "1.50",
+      "share": "public"
+    },
+    {
+      "words": [
+        "diesel",
+        "CO2",
+        "emission",
+        "pre litre"
+      ],
+      "time": "2020",
+      "number": "157",
+      "share": "public"
+    },
+    {
+      "words": [
+        "costs",
+        "per day",
+        "CHF",
+        "luxury hybrid car"
+      ],
+      "time": "2020",
+      "number": "10",
+      "share": "personal",
+      "source": "personal agreement"
+    },
+    {
+      "words": [
+        "costs",
+        "per km",
+        "CHF",
+        "luxury hybrid car"
+      ],
+      "time": "2020",
+      "number": "0.7",
+      "share": "personal",
+      "source": "personal agreement"
+    }
+  ],
+  "views": [
+    {
+      "name": "car cost agreement",
+      "comment": "view the cost agreement of car usage",
+      "type": "detail view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    }
+  ]
+}

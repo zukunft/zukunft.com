@@ -932,7 +932,11 @@ CREATE TABLE IF NOT EXISTS `value_time_series` (
 `value_time_serie_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `source_id` int(11) DEFAULT NULL,
-  `phrase_group_id` int(11) NOT NULL
+  `phrase_group_id` int(11) NOT NULL,
+  `excluded` tinyint(4) DEFAULT NULL,
+  `share_type_id` int(11) DEFAULT NULL,
+  `protection_type_id` int(11) NOT NULL,
+  `last_update` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='common parameters for a list of intraday values';
 
 -- --------------------------------------------------------

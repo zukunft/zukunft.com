@@ -46,16 +46,16 @@ include_once '../classes/test_word_ui.php';               if ($debug > 9) { echo
 include_once '../classes/test_word_display.php';          if ($debug > 9) { echo 'word display test loaded<br>'; }
 include_once '../classes/test_word_list.php';             if ($debug > 9) { echo 'word list test loaded<br>'; }
 include_once '../classes/test_word_link.php';             if ($debug > 9) { echo 'word link test loaded<br>'; }
-include_once '../classes/test_phrase.php';                if ($debug > 9) { echo 'phrase test loaded<br>'; }
-include_once '../classes/test_phrase_list.php';           if ($debug > 9) { echo 'phrase list test loaded<br>'; }
-include_once '../classes/test_phrase_group.php';          if ($debug > 9) { echo 'phrase group test loaded<br>'; }
-include_once '../classes/test_phrase_group_list.php';     if ($debug > 9) { echo 'phrase group list test loaded<br>'; }
+include_once '../classes/phrase_test.php';                if ($debug > 9) { echo 'phrase test loaded<br>'; }
+include_once '../classes/phrase_list_test.php';           if ($debug > 9) { echo 'phrase list test loaded<br>'; }
+include_once '../classes/phrase_group_test.php';          if ($debug > 9) { echo 'phrase group test loaded<br>'; }
+include_once '../classes/phrase_group_list_test.php';     if ($debug > 9) { echo 'phrase group list test loaded<br>'; }
 include_once '../classes/ref_test.php';                   if ($debug > 9) { echo 'ref test loaded<br>'; }
 include_once '../classes/test_graph.php';                 if ($debug > 9) { echo 'graph test loaded<br>'; }
 include_once '../classes/test_verb.php';                  if ($debug > 9) { echo 'verb test loaded<br>'; }
 include_once '../classes/test_term.php';                  if ($debug > 9) { echo 'term test loaded<br>'; }
-include_once '../classes/test_value.php';                 if ($debug > 9) { echo 'value test loaded<br>'; }
-include_once '../classes/test_value_ui.php';              if ($debug > 9) { echo 'value user interface test loaded<br>'; }
+include_once '../classes/value_test.php';                 if ($debug > 9) { echo 'value test loaded<br>'; }
+include_once '../classes/value_test_ui.php';              if ($debug > 9) { echo 'value user interface test loaded<br>'; }
 include_once '../classes/test_source.php';                if ($debug > 9) { echo 'source test loaded<br>'; }
 include_once '../classes/test_expression.php';            if ($debug > 9) { echo 'expression test loaded<br>'; }
 include_once '../classes/test_formula.php';               if ($debug > 9) { echo 'formula test loaded<br>'; }
@@ -75,7 +75,7 @@ include_once '../classes/test_export.php';                if ($debug > 9) { echo
 include_once '../classes/test_legacy.php';                if ($debug > 9) { echo 'test legacy loaded<br>'; }
 include_once '../classes/test_cleanup.php';               if ($debug > 9) { echo 'test cleanup loaded<br>'; }
 
-// libraries that can be dismissed, but still used to compare the result with the resault of the legacy funtion
+// libraries that can be dismissed, but still used to compare the result with the result of the legacy function
 include_once '../lib/test/zu_lib_word_dsp.php';   if ($debug > 9) { echo 'lib word display loaded<br>'; }
 include_once '../lib/test/zu_lib_sql.php';        if ($debug > 9) { echo 'lib sql loaded<br>'; }
 include_once '../lib/test/zu_lib_link.php';       if ($debug > 9) { echo 'lib link loaded<br>'; }
@@ -118,9 +118,12 @@ define("TW_ABB",       "ABB");
 define("TW_DAN",       "Danone");   
 define("TW_NESN",      "Nestlé");   
 define("TW_VESTAS",    "Vestas");  
+define("TW_USA",       "United States");   
 define("TW_ZH",        "Zurich");   
 define("TW_SALES",     "Sales");   
 define("TW_SALES2",    "Revenues");   
+define("TW_PRICE",     "Price");   
+define("TW_SHARE",     "Share");   
 define("TW_CHF",       "CHF");   
 define("TW_EUR",       "EUR");   
 define("TW_YEAR",      "Year");   
@@ -167,8 +170,10 @@ define("TV_TEST_SALES_2016",     1234);
 define("TV_TEST_SALES_2017",     2345);   
 define("TV_ABB_SALES_2013",      45548);   
 define("TV_ABB_SALES_2014",      46000);   
+define("TV_ABB_PRICE_20200515",  17.08);   
 define("TV_NESN_SALES_2016",     89469);   
 define("TV_ABB_SALES_AUTO_2013",  9915);   
+define("TV_DAN_SALES_USA_2016",  '11%');   
 
 define("TV_TEST_SALES_INCREASE_2017_FORMATTED", '90.03 %');   
 define("TV_NESN_SALES_2016_FORMATTED",          '89\'469');   
@@ -211,6 +216,92 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
 // ---------------------------
 
   // display the result of one test e.g. if adding a value has been successful
+  function test_dsp($msg, $target, $result, $exe_max_time, $comment, $test_type) {
+    global $error_counter;
+    global $timeout_counter;
+    global $total_tests;
+    global $exe_start_time;
+    
+    $txt = '';
+    $result = test_uncolor($result);
+    if (is_numeric($result) && is_numeric($target)) {
+      $result = round($result,7);
+      $target = round($target,7);
+    }
+    // check if executed in a reasonable time and if the result is fine
+    $new_start_time = microtime(true);
+    $since_start = $new_start_time - $exe_start_time;
+    if ($result == $target) {
+      if ($since_start > $exe_max_time) {
+        $txt .= "<font color=orange>TIMEOUT</font>" .$msg;
+        $timeout_counter++;
+      } else {
+        $txt .=  "<font color=green>OK</font>" .$msg;
+      }
+    } else {
+      $txt .=  "<font color=red>Error</font>".$msg;
+      $error_counter++;
+      // todo: create a ticket
+    }
+    if (is_array($target)) {
+      if ($test_type == 'contains') {
+        $txt .=  " should contain \"".implode(",",$target)."\"";
+      } else {
+        $txt .=  " should be \"".implode(",",$target)."\"";
+      }
+    } else {
+      if ($test_type == 'contains') {
+        $txt .=  " should contain \"".$target."\"";
+      } else {
+        $txt .=  " should be \"".$target."\"";
+      }
+    }
+    if ($result == $target) {
+      if ($test_type == 'contains') {
+        $txt .=  " and it contains ";
+      } else {
+        $txt .=  " and it is ";
+      }
+    } else {
+      if ($test_type == 'contains') {
+        $txt .=  ", but does not contain ";
+      } else {
+        $txt .=  ", but it is ";
+      }
+    }
+    if (is_array($result)) {
+      if (is_array($result[0])) {
+        $txt .=  "\"";
+        foreach ($result AS $result_item) {
+          if ($result_item <> $result[0]) {
+            $txt .=  ",";
+          }
+          $txt .=  implode(":",$result_item);
+        }
+        $txt .=  "\"";
+      } else {
+        $txt .=  "\"".implode(",",$result)."\"";
+      }
+    } else {
+      $txt .=  "\"".$result."\"";
+    }
+    if ($comment <> '') {
+      $txt .=  ' ('.$comment.')';
+    }
+    
+    // show the execution time
+    $txt .=  ', took ';
+    $txt .=  round($since_start,4).' seconds';
+
+    $txt .=  "<br>";
+    echo $txt;
+    flush();
+    $total_tests++;
+    $exe_start_time = $new_start_time;
+    return $new_start_time;
+  }
+  
+  // legacy function for test_dsp
   function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment, $test_type) {
     global $error_counter;
     global $timeout_counter;
@@ -291,7 +382,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     $total_tests++;
     return $new_start_time;
   }
-  
+
   // display the difference between strings excluding non display chars
   function test_show_diff($target, $result) {
     $diff_lst = str_diff($target, $result);
@@ -319,6 +410,11 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     }
     $new_start_time = test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment, 'contains');
     return $new_start_time;
+  }
+  
+  // the HTML code to display the he
+  function test_header($header_text) {
+    echo '<br><br><h2>'.$header_text.'</h2><br>';
   }
   
   // external string diff only for testing
@@ -388,11 +484,19 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
 
       return array('values' => $diffValues, 'view' => $diffMask);
   }  
+
+/*  
+  testing functions - to check the words, values and formulas that should always be in the system
+  -----------------
   
-// ---------------------------------------------------------------------------------------------
-// testing functions to check the words, values and formulas that should always be in the system
-// ---------------------------------------------------------------------------------------------
+  add_* to create an object and save it in the database to prepare the testing (not used for all classes)
+  load_* just load the object, but does not create the object
+  test_* additional creates the object if needed and checks if it has been presistet
   
+  * is for the name of the class, so the long name e.g. word not wrd
+  
+*/
+
   function load_word($wrd_name, $debug) {
     global $usr;
     $wrd = New word;
@@ -405,6 +509,10 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   function test_word($wrd_name, $debug) {
     global $exe_start_time;
     $wrd = load_word($wrd_name, $debug-1);
+    if ($wrd->id == 0) {
+      $wrd->name = $wrd_name;
+      $wrd->save($debug-1);
+    }
     $target = $wrd_name;
     $exe_start_time = test_show_result(', word', $target, $wrd->name, $exe_start_time, TIMEOUT_LIMIT);
     return $wrd;
@@ -442,6 +550,76 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     $target = $phr_name; 
     $exe_start_time = test_show_result(', phrase', $target, $phr->name, $exe_start_time, TIMEOUT_LIMIT);
     return $phr;
+  }
+
+  // create a phrase list object based on an array of strings
+  function load_word_list($array_of_word_str, $debug) {
+    global $usr;
+    $wrd_lst = New word_list;
+    $wrd_lst->usr = $usr;
+    foreach ($array_of_word_str as $word_str) {
+      $wrd_lst->add_name($word_str, $debug-1);
+    }
+    $wrd_lst->load($debug-1);
+    return $wrd_lst;
+  }
+
+  function test_word_list($array_of_word_str, $debug) {
+    $wrd_lst = load_word_list($array_of_word_str, $debug-1);
+    $target = '"'.implode('","', $array_of_word_str).'"';
+    $result = $wrd_lst->name();
+    test_dsp(', word list', $target, $result, TIMEOUT_LIMIT);
+    return $wrd_lst;
+  }
+
+  // create a phrase list object based on an array of strings
+  function load_phrase_list($array_of_word_str, $debug) {
+    global $usr;
+    $phr_lst = New phrase_list;
+    $phr_lst->usr = $usr;
+    foreach ($array_of_word_str as $word_str) {
+      $phr_lst->add_name($word_str, $debug-1);
+    }
+    $phr_lst->load($debug-1);
+    return $phr_lst;
+  }
+
+  function test_phrase_list($array_of_word_str, $debug) {
+    $phr_lst = load_phrase_list($array_of_word_str, $debug-1);
+    $target = '"'.implode('","', $array_of_word_str).'"';
+    $result = $phr_lst->name();
+    test_dsp(', phrase list', $target, $result, TIMEOUT_LIMIT);
+    return $phr_lst;
+  }
+
+  function load_value($array_of_word_str, $debug) {
+    global $usr;
+    $phr_lst = load_phrase_list($array_of_word_str, $debug-1);
+    $val = New value;
+    $val->ids = $phr_lst->ids;
+    $val->usr = $usr;
+    $val->load($debug-1);
+    return $val;
+  }
+
+  function test_value($array_of_word_str, $target, $debug) {
+    global $usr;
+    $phr_lst = load_phrase_list($array_of_word_str, $debug-1);
+    $val = load_value($array_of_word_str, $debug-1);
+    $result = $val->number;
+    test_dsp(', value->load for a phrase list '.$phr_lst->name(), $target, $result, TIMEOUT_LIMIT);
+    return $val;
+  }
+
+  function add_value($array_of_word_str, $target, $debug) {
+    global $usr;
+    $phr_lst = load_phrase_list($array_of_word_str, $debug-1);
+    $val = New value;
+    $val->ids = $phr_lst->ids;
+    $val->usr = $usr;
+    $val->number = $target;
+    $val->save($debug-1);
+    return $val;
   }
 
   function load_view($dsp_name, $debug) {
@@ -519,7 +697,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   }
 
   // check if a word link exists and if not and requested create it
-  function test_word_link($from, $verb, $to, $autocreate, $phrase_name) {
+  function test_word_link($from, $verb, $to, $autocreate, $phrase_name, $debug) {
     global $usr;
     global $exe_start_time;
     $wrd_from = load_word($from, $debug-1);

@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -52,6 +52,9 @@ class user_sandbox {
   // only used for objects that have a name
   public $name              = '';   // simply the object name, which cannot be empty if it is a named object
 
+  // only used for the value object
+  public $number            = NULL; // simply the numeric value
+
   // only used for objects that link two objects
   public $fob               = NULL; // the object from which this linked object is creating the connection
   public $tob               = NULL; // the object to   which this linked object is creating the connection
@@ -73,6 +76,8 @@ class user_sandbox {
     $this->excluded   = NULL;
 
     $this->name       = '';
+
+    $this->number     = NULL;
 
     $this->fob        = NULL;
     $this->tob        = NULL;
@@ -509,10 +514,17 @@ class user_sandbox {
       $log->field     = $this->obj_name.'_name';
       $log->old_value = '';
       $log->new_value = $this->name;
+    } elseif ($this->type == 'value') {
+      $log = New user_log;
+      $log->field     = 'word_value';
+      $log->old_value = '';
+      $log->new_value = $this->number;
     } elseif ($this->type == 'link') {
       $log = New user_log_link;
       $log->new_from  = $this->fob;
       $log->new_to    = $this->tob;
+    } else {  
+      zu_err('Unknown user sandbox type '.$this->type.' in '.$this->obj_name, $this->obj_name.'->log_add', '', (new Exception)->getTraceAsString(), $this->usr);
     }
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'add';
@@ -563,10 +575,17 @@ class user_sandbox {
       $log->field     = $this->obj_name.'_name';
       $log->old_value = $this->name;
       $log->new_value = '';
+    } elseif ($this->type == 'value') {
+      $log = New user_log;
+      $log->field     = 'word_value';
+      $log->old_value = $this->number;
+      $log->new_value = '';
     } elseif ($this->type == 'link') {
       $log = New user_log_link;
       $log->old_from  = $this->fob;
       $log->old_to    = $this->tob;
+    } else {  
+      zu_err('Unknown user sandbox type '.$this->type.' in '.$this->obj_name, $this->obj_name.'->log_del', '', (new Exception)->getTraceAsString(), $this->usr);
     }
     $log->usr_id    = $this->usr->id;  
     $log->action    = 'del';
@@ -713,6 +732,8 @@ class user_sandbox {
         $log->new_value = $this->name;
         $log->std_value = $std_rec->name;
         $log->field     = $this->obj_name.'_name';
+      } elseif ($this->type == 'value') {
+        zu_err('The user sandbox save_id_fields does not support '.$this->type.' for '.$this->obj_name, $this->obj_name.'->save_id_fields', '', (new Exception)->getTraceAsString(), $this->usr);
       } elseif ($this->type == 'link') {
         $log->old_from = $db_rec->fob;
         $log->new_from = $this->fob;
@@ -720,6 +741,8 @@ class user_sandbox {
         $log->old_to = $db_rec->tob;
         $log->new_to = $this->tob;
         $log->std_to = $std_rec->tob;
+      } else {  
+        zu_err('Unknown user sandbox type '.$this->type.' in '.$this->obj_name, $this->obj_name.'->save_id_fields', '', (new Exception)->getTraceAsString(), $this->usr);
       }
       $log->row_id    = $this->id; 
       if ($log->add($debug-1)) {
@@ -760,7 +783,7 @@ class user_sandbox {
   }
   
   // check if the id parameters are supposed to be changed 
-  private function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
+  public function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     zu_debug($this->obj_name.'->save_id_if_updated '.$this->dsp_id(), $debug-10);
     

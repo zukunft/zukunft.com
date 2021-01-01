@@ -35,6 +35,8 @@ function create_base_words ($debug) {
   test_word(TW_ZH);
   test_word(TW_SALES);
   test_word(TW_SALES2);
+  test_word(TW_PRICE);
+  test_word(TW_SHARE);
   test_word(TW_CHF);
   test_word(TW_EUR);
   test_word(TW_YEAR);
@@ -153,26 +155,26 @@ function run_word_test ($debug) {
   $result = $wrd_prior->name;
   $exe_start_time = test_show_result(', word->prior for '.TW_2014.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // word childs
+  // word children
   $wrd_company = test_word(TEST_WORD, $debug-1);
   $wrd_ABB = test_word(TW_ABB, $debug-1);
-  $wrd_lst = $wrd_company->childs($debug-1);
+  $wrd_lst = $wrd_company->children($debug-1);
   $target = $wrd_ABB->name;
   if ($wrd_lst->does_contain($wrd_ABB, $debug-1)) {
     $result = $wrd_ABB->name;
   } else {
     $result = '';
   }
-  $exe_start_time = test_show_result(', word->childs for "'.TEST_WORD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB, 'out of '.$wrd_lst->dsp_id().'');
+  $exe_start_time = test_show_result(', word->children for "'.TEST_WORD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB, 'out of '.$wrd_lst->dsp_id().'');
 
-  // ... word childs excluding the start word
+  // ... word children excluding the start word
   $target = '';
   if ($wrd_lst->does_contain($wrd_company, $debug-1)) {
     $result = $wrd_company->name;
   } else {
     $result = '';
   }
-  $exe_start_time = test_show_result(', word->childs for "'.TEST_WORD.'" excluding the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of '.$wrd_lst->dsp_id().'');
+  $exe_start_time = test_show_result(', word->children for "'.TEST_WORD.'" excluding the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of '.$wrd_lst->dsp_id().'');
 
   // word are
   $wrd_lst = $wrd_company->are($debug-1);

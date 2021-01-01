@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -45,7 +45,7 @@ class figure_list {
   // display the unique id fields
   function dsp_id ($debug) {
     $id = $this->ids_txt($debug-1);
-    $name = $this->display($debug-1);
+    $name = $this->display('',$debug-1);
     if ($name <> '""') {
       $result = ''.$name.' ('.$id.')';
     } else {
@@ -60,13 +60,24 @@ class figure_list {
     return $result;    
   }
   
+  function name ($debug) {
+    $result = '';
+    
+    foreach ($this->lst AS $fig) {
+      $result .= $fig->name($debug-1).' ';
+    }
+    
+    return $result;    
+  }
+
   // return a list of the figure list ids as an sql compatible text
   function ids_txt($debug) {
     $result = implode(',',$this->ids($debug-1));
     return $result; 
   }
   
-  function ids ($debug) {
+  // this function is called from dsp_id, so no other call is allowed
+  function ids () {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $fig) {
@@ -81,6 +92,7 @@ class figure_list {
 
   // return the html code to display a value
   // this is the opposite of the convert function 
+  // this function is called from dsp_id, so no other call is allowed
   function display ($back, $debug) {
     $result = '';
     

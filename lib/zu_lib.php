@@ -111,12 +111,14 @@
   get_*_type_by_name    - get a type object by the code id
   get_*_type_by_code_id - get a type object by the code id
   save                  - update all changes in the database; if not found in database create it
-  name                  - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
   dsp_id                - like name, but with some ids for better debugging
+  name                  - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
   name_linked           - like name, but with HTML link to the single objects
   display               - the result and the name of the object e.g. ABB, Sales: 46'000
   display_linked        - like display, but with HTML links to the related objects
 
+  All objects needs to have the functions dsp_id and name. These two functions should never all any debug functionality, because they can be called from the debug functions
+  
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is testet by prg_version_is_older_test
   
   todo
@@ -266,7 +268,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -491,6 +493,7 @@ define("ZUH_IMG_DEL_FA",   "fa-times-circle");
 
 # list of all static import files for testing the system consistency
 define ("TEST_IMPORT_FILE_LIST", serialize (array ('companies.json', 
+                                                   'ABB_2013.json', 
                                                    'ABB_2017.json', 
                                                    'ABB_2019.json', 
                                                    'NESN_2019.json', 
@@ -507,8 +510,9 @@ define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('COVID-19.json',
                                                          'countries.json', 
                                                          'real_estate.json', 
                                                          'Ultimatum_game.json')));
+define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('ABB_2013.json','work.json')));
 */                                                         
-define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('work.json')));
+define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('units.json','car_costs.json')));
 
 // for internal functions debugging
 // each complex function should call this at the beginning with the paramters and with -1 at the end with the result

@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -31,7 +31,7 @@
 
 class ref_link_wikidata {
 
-  // to import an entity from wikidate
+  // to import an entity from wikidata
   function read ($debug) {
     $result = '';
     zu_debug('ref_link_wikidata->read ... done', $debug-10);

@@ -38,6 +38,8 @@ function run_expression_test ($debug) {
 
   echo "<br><br><h2>Test the expression class (classes/expression.php)</h2><br>";
 
+  $back = '';
+
   // load formulas for expression testing
   $frm        = load_formula(TF_INCREASE, $debug-1);
   $frm_pe     = load_formula(TF_PE,       $debug-1);
@@ -104,7 +106,7 @@ function run_expression_test ($debug) {
   $exe_start_time = test_show_result(', expression->phr_lst for "'.$exp_pe->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and all elements used in the formula
-  $elm_lst = $exp_sector->element_lst ($back, $debug-1);
+  $elm_lst = $exp_sector->element_lst ($back,  $debug-1);
   $result = $elm_lst->name ($debug-1);
   $target = 'Sales can be used as a differentiator for Sector Total Sales ';
   $exe_start_time = test_show_result(', expression->element_lst for "'.$exp_sector->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT); 
@@ -123,13 +125,13 @@ function run_expression_test ($debug) {
   $exe_start_time = test_show_result(', expression->phr_verb_lst for "'.$exp_sector->ref_text.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test getting special phrases
-  $phr_lst = $exp->element_special_following ($debug-1);
+  $phr_lst = $exp->element_special_following ($back, $debug-1);
   $result = $phr_lst->name ($debug-1);
   $target = '"this","prior"';
   $exe_start_time = test_show_result(', expression->element_special_following for "'.$exp->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
 
   // test getting for special phrases the related formula 
-  $frm_lst = $exp->element_special_following_frm ($debug-1);
+  $frm_lst = $exp->element_special_following_frm ($back, $debug-1);
   $result = $frm_lst->name ($debug-1);
   $target = 'this,prior';
   $exe_start_time = test_show_result(', expression->element_special_following_frm for "'.$exp->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);

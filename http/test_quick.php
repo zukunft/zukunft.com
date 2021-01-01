@@ -70,6 +70,7 @@ if ($usr->id > 0) {
     // --------------------------------------
       
     run_import_test (unserialize (TEST_IMPORT_FILE_LIST_QUICK), $debug);
+    run_value_test ($debug);
     //run_view_test ($debug);
     //run_view_component_test ($debug);
     //run_view_component_link_test ($debug);

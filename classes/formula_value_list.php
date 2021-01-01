@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -182,6 +182,28 @@ class formula_value_list {
     return $result;
   }
 
+  // return one string with all names of the list
+  function name($debug) {
+
+    $name_lst = array();
+    if (isset($this->lst)) {
+      foreach ($this->lst AS $fv) {
+        $name_lst[] = $fv->name($debug-1);
+      }
+    }
+
+  if ($debug > 10) {
+      $result = '"'.implode('","',$name_lst.'"');
+    } else {
+      $result = '"'.implode('","',array_slice($name_lst, 0, 7));
+      if (count($name_lst) > 8) {
+        $result .= ' ... total '.count($this->lst);
+      }
+      $result .= '"';
+    }
+    return $result; 
+  }
+  
   // return a list of the formula result ids
   function ids($debug) {
     $result = array();
@@ -192,20 +214,6 @@ class formula_value_list {
           $result[] = $fv->id;
         }
       }
-    }
-    return $result; 
-  }
-  
-  // return one string with all names of the list
-  function name($debug) {
-    if ($debug > 10) {
-      $result = '"'.implode('","',$this->names($debug-1)).'"';
-    } else {
-      $result = '"'.implode('","',array_slice($this->names($debug-1), 0, 7));
-      if (count($this->names($debug-1)) > 8) {
-        $result .= ' ... total '.count($this->lst);
-      }
-      $result .= '"';
     }
     return $result; 
   }
@@ -274,7 +282,7 @@ class formula_value_list {
   // - the formula ($frm_row) to provide parameters, but not for selection
   // - the user ($this->usr->id) to filter the results
   // and request on formula result for each word group
-  // e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calulated
+  // e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
   //      so Sales and Cost are words of the formula
   //      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
   //      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
@@ -460,7 +468,7 @@ class formula_value_list {
   }
 
   // get the calculation requests if one formula has been updated
-  // returns a batch_job_list with allformula results that may needs to be updated if a formula is updated
+  // returns a batch_job_list with all formula results that may needs to be updated if a formula is updated
   // $frm - formulas that needs to be checked for update
   // $usr - to define which user view should be updated
   function frm_upd_lst($usr, $back, $debug) {
@@ -472,14 +480,14 @@ class formula_value_list {
     $result = Null;
     
     // get a list of all words and triples where the formula should be used (assigned words)
-    // including all child phrases that should also be included in the assingment e.g. for "Year" include "2018"
+    // including all child phrases that should also be included in the assignment e.g. for "Year" include "2018"
     // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
-    // check in frm_upd_lst_usr only if the user has done any modifications that may incluence the word list
+    // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
     $phr_lst_frm_assigned = $this->frm->assign_phr_lst($debug-1);
     zu_debug('formula "'.$this->frm->name.'" is assigned to '.$phr_lst_frm_assigned->name().' for user '.$phr_lst_frm_assigned->usr->name.'', $debug);
 
     // get a list of all words, triples, formulas and verbs used in the formula
-    // e.g. for the formula "net proft" the word "Sales" & "cost of sales" is used
+    // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
     // for formulas the formula word is used
     $exp = $this->frm->expression($debug-1);
     $phr_lst_frm_used = $exp->phr_verb_lst($back, $debug-1);
@@ -576,7 +584,7 @@ class formula_value_list {
     $time_phr->usr = $this->usr;
     $time_phr->id = $time_id;
     $time_phr->load($debug-1);
-    zu_debug("fv_lst->val_phr_lst ... for value ".$value_id, $debug-10);
+    zu_debug("fv_lst->val_phr_lst ... for value ".$val->id, $debug-10);
     $result = '';
 
     // list all related formula results

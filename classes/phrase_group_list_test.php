@@ -2,7 +2,7 @@
 
 /*
 
-  test_phrase_group_list.php - TESTing of the PHRASE GROUP LIST functions
+  phrase_group_list_test.php - PHRASE GROUP LIST function unit TESTs
   --------------------------
   
 
@@ -36,7 +36,7 @@ function run_phrase_group_list_test ($debug) {
   global $timeout_counter;
   global $total_tests;
 
-  echo "<br><br><h2>Test the pharse group list class (classes/phrase_group_list.php)</h2><br>";
+  echo "<br><br><h2>Test the phrase group list class (classes/phrase_group_list.php)</h2><br>";
 
   // define some phrase groups for testing
 

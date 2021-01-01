@@ -27,7 +27,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -36,8 +36,9 @@
 
 class batch_job_list {
 
-  public $lst          = array(); // list of the batch jobs e.g. calulation requests
-  public $cut_off_time = Null;    // 
+  public $lst          = array(); // list of the batch jobs e.g. calculation requests
+  public $usr          = NULL;  // the user who has done the request and whose data needs to be updated
+  public $cut_off_time = Null;    //
   
   
   // add another job to the list, but only if needed

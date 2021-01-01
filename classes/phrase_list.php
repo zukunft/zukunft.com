@@ -24,7 +24,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -46,29 +46,56 @@ class phrase_list {
     
   */
 
-  // load the phrases based on the id list
-  // TODO slow but working version of the load function
+  // load the phrases based on the id list or set the id list based on the objects
   function load($debug) {
-    $result = $this->lst; // to add to the existing list
-    foreach ($this->ids AS $phr_id) {
-      if ($phr_id <> 0) {
-        $phr = New phrase;
-        $phr->id  = $phr_id;
-        $phr->usr = $this->usr;
-        $phr->load($debug-1);
-        $result[] = $phr;
-        zu_debug('phrase_list->load -> add '.$phr->name.' for user '.$phr->usr->name, $debug-16);
+    zu_debug('phrase_list->load '.$this->dsp_id(), $debug-10);
+    
+    // check the parameters
+    if (empty($this->usr)) {
+      zu_err('User must be set to load '.$this->dsp_id(),'phrase_list->load', '', (new Exception)->getTraceAsString(), $this->usr); 
+
+    } elseif (empty($this->lst)) {
+      if (empty($this->ids)) {
+        zu_err('The id list must be set to load '.$this->dsp_id(),'phrase_list->load', '', (new Exception)->getTraceAsString(), $this->usr); 
+      } else {  
+    
+        // load objects by id 
+        // TODO speed up by loading all with one database statement
+        $this->lst = array(); 
+        foreach ($this->ids AS $phr_id) {
+          if ($phr_id <> 0) {
+            $phr = New phrase;
+            $phr->id  = $phr_id;
+            $phr->usr = $this->usr;
+            $phr->load($debug-1);
+            $this->lst[] = $phr;
+            zu_debug('phrase_list->load -> add '.$phr->dsp_id(), $debug-16);
+          }
+        }
+      }  
+
+    } elseif (empty($this->ids)) {
+      if (empty($this->lst)) {
+        zu_err('The phrase list must be set to load '.$this->dsp_id(),'phrase_list->load', '', (new Exception)->getTraceAsString(), $this->usr); 
+      } else {  
+
+        // refresh the id list
+        $this->ids($debug-1);
       }
     }
-    // refresh the ids and list
-    $this->ids($debug-1);
-    $this->lst = $result;
+
+    // check the consistency
+    if (count($this->ids) <> count($this->lst)) {
+      zu_err('Inconsistency when load '.$this->dsp_id(),'phrase_list->load', '', (new Exception)->getTraceAsString(), $this->usr); 
+    }
+    
+    $result = $this->lst;
     return $result; 
   }
   
   // build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
   function wrd_lst_all ($debug) {
-    zu_debug('phrase_list->wrd_lst_all for '.$this->dsp_id($debug-1), $debug-10);
+    zu_debug('phrase_list->wrd_lst_all for '.$this->dsp_id(), $debug-10);
 
     // check the basic settings
     if (!isset($this->lst)) {
@@ -105,13 +132,13 @@ class phrase_list {
       }
     }
 
-    zu_debug('phrase_list->wrd_lst_all -> '.$wrd_lst->dsp_id($debug-1), $debug-12);
+    zu_debug('phrase_list->wrd_lst_all -> '.$wrd_lst->dsp_id(), $debug-12);
     return $wrd_lst;
   }
   
   // get a word list from the phrase list
   function wrd_lst ($debug) {
-    zu_debug('phrase_list->wrd_lst for '.$this->dsp_id($debug-1), $debug-10);
+    zu_debug('phrase_list->wrd_lst for '.$this->dsp_id(), $debug-10);
     $wrd_lst = New word_list;
     $wrd_lst->usr = $this->usr;    
     if (isset($this->lst)) {
@@ -123,13 +150,13 @@ class phrase_list {
         }
       }
     }
-    zu_debug('phrase_list->wrd_lst -> '.$wrd_lst->dsp_id($debug-1), $debug-12);
+    zu_debug('phrase_list->wrd_lst -> '.$wrd_lst->dsp_id(), $debug-12);
     return $wrd_lst;
   }
   
   // get a triple list from the phrase list
   function lnk_lst ($debug) {
-    zu_debug('phrase_list->lnk_lst for '.$this->dsp_id($debug-1), $debug-10);
+    zu_debug('phrase_list->lnk_lst for '.$this->dsp_id(), $debug-10);
     $lnk_lst = New word_link_list;
     $lnk_lst->usr = $this->usr;    
     if (isset($this->lst)) {
@@ -141,13 +168,13 @@ class phrase_list {
         }
       }
     }
-    zu_debug('phrase_list->lnk_lst -> '.$lnk_lst->dsp_id($debug-1), $debug-12);
+    zu_debug('phrase_list->lnk_lst -> '.$lnk_lst->dsp_id(), $debug-12);
     return $lnk_lst;
   }
   
   // collect all triples from the phrase list
   function wrd_lnk_lst ($debug) {
-    //zu_debug('phrase_list->wrd_lnk_lst for '.$this->dsp_id($debug-1), $debug-10);
+    //zu_debug('phrase_list->wrd_lnk_lst for '.$this->dsp_id(), $debug-10);
 
     $lnk_lst = New word_link_list;
     $lnk_lst->wrd_lst   = $this;
@@ -155,7 +182,7 @@ class phrase_list {
     $lnk_lst->direction = 'up';
     $lnk_lst->load($debug-1);
 
-    //zu_debug('phrase_list->wrd_lnk_lst -> '.$lnk_lst->dsp_id($debug-1), $debug-12);
+    //zu_debug('phrase_list->wrd_lnk_lst -> '.$lnk_lst->dsp_id(), $debug-12);
     return $lnk_lst;
   }
 
@@ -165,22 +192,22 @@ class phrase_list {
     
     Overview for words, triples and phrases and it's lists
     
-               childs and            parents return the direct parents and childs   without the original phrase(s)
-          foaf_childs and       foaf_parents return the    all parents and childs   without the original phrase(s)
-                  are and                 is return the    all parents and childs including the original phrase(s) for the specific verb "is a"
-             contains                        return the    all             childs including the original phrase(s) for the specific verb "contains" 
+               children and            parents return the direct parents and children   without the original phrase(s)
+          foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
+                  are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
+             contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
                                   is part of return the    all parents              without the original phrase(s) for the specific verb "contains" 
-                 next and              prior return the direct parents and childs   without the original phrase(s) for the specific verb "follows"
-          followed_by and        follower_of return the    all parents and childs   without the original phrase(s) for the specific verb "follows"
-    differentiated_by and differentiator_for return the    all parents and childs   without the original phrase(s) for the specific verb "can_contain"
+                 next and              prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
+          followed_by and        follower_of return the    all parents and children   without the original phrase(s) for the specific verb "follows"
+    differentiated_by and differentiator_for return the    all parents and children   without the original phrase(s) for the specific verb "can_contain"
         
     Samples
     
     the      parents of  "ABB" can be "public limited company"
     the foaf_parents of  "ABB" can be "public limited company" and "company"
                 "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
-    the       childs for "company" can include "public limited company"
-    the  foaf_childs for "company" can include "public limited company" and "ABB"
+    the       children for "company" can include "public limited company"
+    the  foaf_children for "company" can include "public limited company" and "ABB"
                "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
 
           "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
@@ -225,16 +252,16 @@ class phrase_list {
 
   // similar to foaf_parent, but the other way round e.g. for "Companies" it will return "ABB Ltd." and others if the link type is "are"
   // ex foaf_child
-  function foaf_childs ($verb_id, $debug) {
-    zu_debug('phrase_list->foaf_childs type '.$verb_id.'', $debug-10);
+  function foaf_children ($verb_id, $debug) {
+    zu_debug('phrase_list->foaf_children type '.$verb_id.'', $debug-10);
     $added_phr_lst = Null;
 
     if ($verb_id > 0) {
       $wrd_lst = $this->wrd_lst_all($debug-1);
-      $added_wrd_lst = $wrd_lst->foaf_childs ($verb_id, $debug-1);
+      $added_wrd_lst = $wrd_lst->foaf_children ($verb_id, $debug-1);
       $added_phr_lst = $added_wrd_lst->phrase_lst($debug-1);
 
-      zu_debug('phrase_list->foaf_childs -> ('.$added_phr_lst->name().')', $debug-7);
+      zu_debug('phrase_list->foaf_children -> ('.$added_phr_lst->name().')', $debug-7);
     }
     return $added_phr_lst;
   }
@@ -242,13 +269,13 @@ class phrase_list {
   // similar to foaf_child, but for only one level
   // $level is the number of levels that should be looked into
   // ex foaf_child_step
-  function childs ($verb_id, $level, $debug) {
-    zu_debug('phrase_list->childs type '.$verb_id.'', $debug-10);
+  function children ($verb_id, $level, $debug) {
+    zu_debug('phrase_list->children type '.$verb_id.'', $debug-10);
     $wrd_lst = $this->wrd_lst_all($debug-1);
-    $added_wrd_lst = $wrd_lst->childs ($verb_id, $level, $debug-1);
+    $added_wrd_lst = $wrd_lst->children ($verb_id, $level, $debug-1);
     $added_phr_lst = $added_wrd_lst->phrase_lst($debug-1);
 
-    zu_debug('phrase_list->childs -> ('.$added_phr_lst->name().')', $debug-7);
+    zu_debug('phrase_list->children -> ('.$added_phr_lst->name().')', $debug-7);
     return $added_phr_lst;
   }
  
@@ -263,7 +290,7 @@ class phrase_list {
   // e.g. to get all related values
   function are ($debug) {
     zu_debug('phrase_list->are -> '.$this->dsp_id(), $debug-16);
-    $phr_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_IS), $debug-1);
+    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
     zu_debug('phrase_list->are -> '.$this->dsp_id().' are '.$phr_lst->dsp_id(), $debug-12);
     $phr_lst->merge($this, $debug-1);
     zu_debug('phrase_list->are -> '.$this->dsp_id().' merged into '.$phr_lst->dsp_id(), $debug-8);
@@ -272,13 +299,13 @@ class phrase_list {
 
   // returns a list of phrases that are related to this phrase list 
   function contains ($debug) {
-    $phr_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
+    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
     $phr_lst->merge($this, $debug-1);
     zu_debug('phrase_list->contains -> ('.$this->name().' contains '.$phr_lst->name().')', $debug-8);
     return $phr_lst;
   }
 
-  // makes sure that all combinations of "are" and "conatins" are included
+  // makes sure that all combinations of "are" and "contains" are included
   function are_and_contains ($debug) {
     zu_debug('phrase_list->are_and_contains for '.$this->name(), $debug-18);
 
@@ -308,7 +335,7 @@ class phrase_list {
   // add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
   function differentiators ($debug) {
     zu_debug('phrase_list->differentiators for '.$this->name(), $debug-18);
-    $phr_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
     zu_debug('phrase_list->differentiators merge '.$this->name(), $debug-18);
     $this->merge($phr_lst, $debug-1);
     zu_debug('phrase_list->differentiators -> '.$phr_lst->name().' for '.$this->name(), $debug-8);
@@ -320,7 +347,7 @@ class phrase_list {
     zu_debug('phrase_list->differantiators_all for '.$this->name(), $debug-18);
     // this first time get all related items
     $phr_lst = clone $this;
-    $phr_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
     $phr_lst = $phr_lst->are     ($debug-1);
     $phr_lst = $phr_lst->contains($debug-1);
     $added_lst = $phr_lst->diff($this, $debug-1);
@@ -329,7 +356,7 @@ class phrase_list {
       $loops = 0;
       zu_debug('phrase_list->differentiators -> added '.$added_lst->name().' to '.$phr_lst->name(), $debug-18);
       do {
-        $next_lst  = $added_lst->foaf_childs(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+        $next_lst  = $added_lst->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
         $next_lst  = $next_lst->are     ($debug-1);
         $next_lst  = $next_lst->contains($debug-1);
         $added_lst = $next_lst->diff($phr_lst, $debug-1);
@@ -400,18 +427,23 @@ class phrase_list {
   /*
     display functions
     -----------------
+    
+    the functions dsp_id and name should exist for all objects
+    these function should never call any other function especially not debug functions, 
+    because only these two functions can be called from debug statements 
+    
   */
 
   // return best possible id for this element mainly used for debugging
-  function dsp_id ($debug) {
-    $id = $this->ids_txt();
+  function dsp_id () {
     $name = $this->name();
     if ($name <> '""') {
-      $result = ''.$name.' ('.$id.')';
+      $result = $name.' ('.implode(',',$this->ids).')';
     } else {
-      $result = ''.$id.'';
+      $result = implode(',',$this->ids);
     }
-    /* the user is no most cases no extra info
+    
+    /* the user is in most cases no extra info
     if (isset($this->usr)) {
       $result .= ' for user '.$this->usr->name;
     }
@@ -420,19 +452,22 @@ class phrase_list {
     return $result;
   }
 
-  // return a list of the phrase ids as an sql compatible text
-  function ids_txt($debug) {
-    $result = implode(',',$this->ids($debug-1));
-    return $result; 
-  }
-  
   // return one string with all names of the list
+  // this function is called from dsp_id, so no other call is allowed
   function name($debug) {
+
+    $name_lst = array();
+    if (isset($this->lst)) {
+      foreach ($this->lst AS $phr) {
+        $name_lst[] = $phr->name;
+      }
+    }
+
     if ($debug > 10) {
-      $result = '"'.implode('","',$this->names($debug-1)).'"';
+      $result = '"'.implode('","',$name_lst).'"';
     } else {
-      $result = '"'.implode('","',array_slice($this->names($debug-1), 0, 7));
-      if (count($this->names($debug-1)) > 8) {
+      $result = '"'.implode('","',array_slice($name_lst, 0, 7));
+      if (count($name_lst) > 8) {
         $result .= ' ... total '.count($this->lst);
       }
       $result .= '"';
@@ -440,20 +475,6 @@ class phrase_list {
     return $result; 
   }
   
-  // return one string with all names of the list without hiquotes for the user, but not nessesary as a unique text
-  // e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
-  //      but this "short" form probably confuses the user less and 
-  //      if the user cannot change the tags anyway the saving of a related value is possible
-  function name_dsp($debug) {
-    $result = implode(' ',$this->names($debug-1));
-    return $result; 
-  }
-  
-  // return one string with all names of the list with the link
-  function name_linked($debug) {
-    $result = implode(',',$this->names_linked($debug-1));
-    return $result; 
-  }
   
   // return a list of the phrase names
   function names($debug) {
@@ -480,6 +501,27 @@ class phrase_list {
       $result[] = $phr->display ($debug-1);
     }
     zu_debug('phrase_list->names_linked ('.implode(",",$result).')', $debug-19);
+    return $result; 
+  }
+  
+  // return a list of the phrase ids as an sql compatible text
+  function ids_txt($debug) {
+    $result = implode(',',$this->ids($debug-1));
+    return $result; 
+  }
+  
+  // return one string with all names of the list without hiquotes for the user, but not nessesary as a unique text
+  // e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
+  //      but this "short" form probably confuses the user less and 
+  //      if the user cannot change the tags anyway the saving of a related value is possible
+  function name_dsp($debug) {
+    $result = implode(' ',$this->names($debug-1));
+    return $result; 
+  }
+  
+  // return one string with all names of the list with the link
+  function name_linked($debug) {
+    $result = implode(',',$this->names_linked($debug-1));
     return $result; 
   }
   
@@ -520,17 +562,18 @@ class phrase_list {
   
   // add one phrase to the phrase list, but only if it is not yet part of the phrase list
   function add($phr_to_add, $debug) {
+    zu_debug('phrase_list->add '.$phr_to_add->dsp_id(), $debug-10);
     // check parameters
     if (isset($phr_to_add)) {
       // autocorrect word to phrase
       if (get_class($phr_to_add) == 'word' OR get_class($phr_to_add) == 'word_dsp') {
+        zu_debug('phrase_list->add change '.$phr_to_add->dsp_id().' to phrase', $debug-16);
         $phr_to_add = $phr_to_add->phrase($debug-1);
       }
       if (get_class($phr_to_add) <> 'phrase') {
         zu_err("Object to add must be of type phrase, but it is ".get_class($phr_to_add).".", "phrase_list->add", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
         if ($phr_to_add->id <> 0 AND isset($this->ids)) {
-          zu_debug('phrase_list->add '.$phr_to_add->dsp_id(), $debug-14);
           if (!in_array($phr_to_add->id, $this->ids)) {
             if ($phr_to_add->id <> 0) {
               $this->lst[] = $phr_to_add;
@@ -543,7 +586,6 @@ class phrase_list {
         }
       }
     }
-    zu_debug('phrase_list->add -> done', $debug-16);
   }
   
   // add one phrase by the id to the phrase list, but only if it is not yet part of the phrase list

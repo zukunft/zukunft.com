@@ -34,7 +34,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -71,7 +71,7 @@ class export {
       $val_lst = $this->phr_lst->val_lst($debug-1);
       
       // 3. get all words and triples needed for the values that should be exported
-      //    e.g. carrots, climate gas emission (CO2, methan), weight, percent
+      //    e.g. carrots, climate gas emission (CO2, methane), weight, percent
       zu_debug('export->get words and triples', $debug-16);
       $this->phr_lst->merge($val_lst->phr_lst_all($debug-1), $debug-1);
       $wrd_lst = $this->phr_lst->wrd_lst_all($debug-1);
@@ -153,7 +153,7 @@ class export {
       $export_obj->values = $exp_values;
       
       // 9. add all views and view components to the export object
-      // TODO create an array add function that does not add dublicates
+      // TODO create an array add function that does not add duplicates
       zu_debug('export->get views', $debug-16);
       //$wrd_lst = $phr_lst_used->wrd_lst_all($debug-1);
       $view_lst = $wrd_lst->view_lst($debug-1);

@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -143,10 +143,11 @@ class formula_list {
     }  
   }
   
-  function names ($debug) {
-    $result = array();
-    foreach ($this->lst AS $frm) {
-      $result[] = $frm->name;
+  // rename the name function to be inline with the other classes
+  function dsp_id ($debug) {
+    $result = $this->name($debug-1);
+    if ($result <> '') {
+      $result = '"'.$result.'"';
     }
     return $result;
   }
@@ -156,11 +157,11 @@ class formula_list {
     return $result;
   }
   
-  // rename the name function to be inline with the other classes
-  function dsp_id ($debug) {
-    $result = $this->name($debug-1);
-    if ($result <> '') {
-      $result = '"'.$result.'"';
+  // this function is called from dsp_id, so no other call is allowed
+  function names ($debug) {
+    $result = array();
+    foreach ($this->lst AS $frm) {
+      $result[] = $frm->name;
     }
     return $result;
   }

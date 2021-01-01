@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -39,7 +39,7 @@ class formula_element {
   public $back     = '';   // link ti what should be display after this action is finished
   public $symbol   = '';   // the database reference symbol for formula expressions
   public $obj      = NULL; // the word, verb or formula object
-  public $wrd_id   = NULL; // in case of a formula the corresponding word id (maybe a dublicate of the wrd_obj of the formula)
+  public $wrd_id   = NULL; // in case of a formula the corresponding word id (maybe a duplicate of the wrd_obj of the formula)
   public $wrd_obj  = NULL; // in case of a formula the corresponding word object  
   public $frm_type = NULL; // in case of a special formula the predefined formula type
 
@@ -98,12 +98,12 @@ class formula_element {
   */
   
   // return best possible id for this element mainly used for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = '';
     if ($this->type <> '') {
       $result .= $this->type.' ';
     }
-    $name = $this->name($debug-1);
+    $name = $this->name(0);
     if ($name <> '') {
       $result .= '"'.$name.'" ';
     } 
@@ -126,11 +126,9 @@ class formula_element {
         } else {
           $result = $this->name;
         }
-      }
-      if ($this->type == 'verb') {
+      } elseif ($this->type == 'verb') {
         $result = $this->name;
-      }
-      if ($this->type == 'formula') {
+      } elseif ($this->type == 'formula') {
         if (isset($this->obj)) {
           $result = $this->obj->name($debug-1);
         } else {  

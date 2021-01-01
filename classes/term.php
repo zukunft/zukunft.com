@@ -9,7 +9,7 @@
   a term must be unique for word, verb and triple e.g. "Company" is a word "is a" is a verb and "Kanton Zurich" is a triple
   all terms are the same for each user
   if a user changes a term and it has been used already
-  a new term is created and the deletion of the exsiting term is requested
+  a new term is created and the deletion of the existing term is requested
   if all user have confirmed the deletion, the term is finally deleted
   each user can have its own language translation which must be unique only for one user
   so one user may use "Zurich" in US English for "Kanton Zurich"
@@ -33,14 +33,14 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
   
   todo: load formula word
         check triple
-        shoul
+        should
   
 */
 
@@ -52,7 +52,7 @@ class term {
   public $name  = '';   // the name used (must be unique for words, verbs and formulas)
   public $obj   = NULL; // the word, verb or formula object
   
-  // simply load a formula (seperate function, because used twice)
+  // simply load a formula (separate function, because used twice)
   private function load_frm ($debug) {
     zu_debug('term->load_frm for "'.$this->name.'"', $debug-16);
     $frm = New formula;

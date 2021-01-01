@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -36,7 +36,7 @@ class view_component extends user_sandbox {
   public $order_nbr      = NULL; // the position in the linked view
   public $type_id        = NULL; // the predefined entry type e.g. "formula results"
   public $word_id_row    = NULL; // if the view component uses a related word tree this is the start node 
-                                 // e.g. for "company" the start node could be "cash flow statment" to show the cash flow for any company
+                                 // e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
   public $link_type_id   = NULL; // the word link type used to build the word tree started with the $start_word_id
   public $formula_id     = NULL; // to select a formula (no used case at the moment)
   public $word_id_col    = NULL; // for a table to defined which columns should be used (if not defined by the calling word)
@@ -382,7 +382,7 @@ class view_component extends user_sandbox {
   */
 
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {
@@ -396,6 +396,11 @@ class view_component extends user_sandbox {
     if (isset($this->usr)) {
       $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
+    return $result;
+  }
+
+  function name ($debug) {
+    $result = '"'.$this->name.'"';
     return $result;
   }
 
@@ -512,7 +517,7 @@ class view_component extends user_sandbox {
       $dsp_lnk->usr       = $this->usr;
       $result .= $dsp_lnk->del($debug-1);
     } else {  
-      $result .= zu_err("Cannot unlink view component, because view is not set.", "view_component.php", '', (new Exception)->getTraceAsString(), $usr);  
+      $result .= zu_err("Cannot unlink view component, because view is not set.", "view_component.php", '', (new Exception)->getTraceAsString(), $this->usr);
     }
 
     return $result;

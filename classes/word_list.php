@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -30,6 +30,8 @@
 */
 
 class word_list {
+
+  // todo: check the consistence usage of the parameter $back
 
   public $lst          = array(); // array of the loaded word objects 
                                   // (key is at the moment the database id, but it looks like this has no advantages, 
@@ -51,7 +53,7 @@ class word_list {
     $sql_where = '';
 
     // fix ids if needed
-    $this->ids = zu_ids_not_empty($this->ids);
+    $this->ids = zu_ids_not_empty($this->ids, $debug);
     
     // set the where clause depending on the values given
     if (!empty($this->ids) AND !is_null($this->usr->id)) {
@@ -98,7 +100,7 @@ class word_list {
       $this->lst = array();
       $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
       foreach ($db_wrd_lst AS $db_wrd) {
-        if (is_null($db_frm['excluded']) OR $db_frm['excluded'] == 0) {
+        if (is_null($db_wrd['excluded']) OR $db_wrd['excluded'] == 0) {
           $new_word = New word_dsp;
           $new_word->id           = $db_wrd['word_id'];
           $new_word->usr          = $this->usr;
@@ -182,7 +184,7 @@ class word_list {
       $db_wrd_lst = $db_con->get($sql, $debug-10);  
       zu_debug('word_list->add_by_type -> got '.count($db_wrd_lst), $debug-8);
       foreach ($db_wrd_lst AS $db_wrd) {
-        if (is_null($db_frm['excluded']) OR $db_frm['excluded'] == 0) {
+        if (is_null($db_wrd['excluded']) OR $db_wrd['excluded'] == 0) {
           if ($db_wrd['word_id'] > 0 AND !in_array($db_wrd['word_id'], $this->ids)) {
             $new_word = New word_dsp;
             $new_word->id           = $db_wrd['word_id'];
@@ -300,14 +302,14 @@ class word_list {
 
   // similar to foaf_parent, but the other way round e.g. for "Companies" it will return "ABB Ltd." and others if the link type is "are"
   // ex foaf_child
-  function foaf_childs ($verb_id, $debug) {
-    zu_debug('word_list->foaf_childs type '.$verb_id.'', $debug-10);
+  function foaf_children ($verb_id, $debug) {
+    zu_debug('word_list->foaf_children type '.$verb_id.'', $debug-10);
     $level = 0;
     $added_wrd_lst = New word_list; // list of the added word ids
     $added_wrd_lst->usr = $this->usr;    
     $added_wrd_lst = $this->foaf_level ($level, $added_wrd_lst, $verb_id, 'down', 0, $debug-1);
 
-    zu_debug('word_list->foaf_childs -> ('.$added_wrd_lst->name().')', $debug-7);
+    zu_debug('word_list->foaf_children -> ('.$added_wrd_lst->name().')', $debug-7);
     return $added_wrd_lst;
   }
 
@@ -335,7 +337,7 @@ class word_list {
   // e.g. to get all related values
   function are ($debug) {
     zu_debug('word_list->are for '.$this->name(), $debug-8);
-    $wrd_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_IS), $debug-1);
+    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
     $wrd_lst->merge($this, $debug-1);
     zu_debug('word_list->are -> ('.$this->name().' are '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
@@ -343,7 +345,7 @@ class word_list {
 
   // returns a list of words that are related to this word list 
   function contains ($debug) {
-    $wrd_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
+    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
     $wrd_lst->merge($this, $debug-1);
     zu_debug('word_list->contains -> ('.$this->name().' contains '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
@@ -379,7 +381,7 @@ class word_list {
   // add all potential differentiator words of the word lst e.g. get "energy" for "sector"
   function differentiators ($debug) {
     zu_debug('word_list->differentiators for '.$this->name(), $debug-18);
-    $wrd_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
     $wrd_lst->merge($this, $debug-1);
     zu_debug('word_list->differentiators -> '.$wrd_lst->name().' for '.$this->name(), $debug-8);
     return $wrd_lst;
@@ -390,7 +392,7 @@ class word_list {
     zu_debug('word_list->differantiators_all for '.$this->name(), $debug-18);
     // this first time get all related items
     $wrd_lst = clone $this; // clone to copy the word list settings
-    $wrd_lst = $this->foaf_childs(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-20); 
+    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-20);
     zu_debug('word_list->differentiators -> childs '.$wrd_lst->name(), $debug-8);
     if (count($wrd_lst->lst) > 0) {
       $wrd_lst = $wrd_lst->are     ($debug-20);
@@ -407,7 +409,7 @@ class word_list {
       $loops = 0;
       zu_debug('word_list->differentiators -> added '.$added_lst->name().' to '.$wrd_lst->name(), $debug-8);
       do {
-        $next_lst  = $added_lst->foaf_childs(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-10);
+        $next_lst  = $added_lst->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-10);
         zu_debug('word_list->differentiators -> sub childs '.$wrd_lst->name(), $debug-8);
         if (count($next_lst->lst) > 0) {
           $next_lst  = $next_lst->are     ($debug-20);
@@ -460,11 +462,10 @@ class word_list {
   */
 
   // return best possible id for this element mainly used for debugging
-  function dsp_id ($debug) {
-    $id = $this->ids_txt($debug-1);
-    $name = $this->name($debug-1);
-    if ($name <> '""') {
-      $result = ''.$name.' ('.$id.')';
+  function dsp_id () {
+    $id = $this->ids_txt();
+    if ($this->name(0) <> '""') {
+      $result = ''.$this->name(0).' ('.$id.')';
     } else {
       $result = ''.$id.'';
     }
@@ -493,19 +494,8 @@ class word_list {
     return $result; 
   }
   
-  // return one string with all names of the list with the link
-  function name_linked($debug) {
-    $result = ''.implode(',',$this->names_linked($debug-1)).'';
-    return $result; 
-  }
-  
-  // return a list of the word ids as an sql compatible text
-  function ids_txt($debug) {
-    $result = implode(',',$this->ids($debug-1));
-    return $result; 
-  }
-  
   // return a list of the word names
+  // this function is called from dsp_id, so no other call is allowed
   function names($debug) {
     $result = array();
     if (isset($this->lst)) {
@@ -515,6 +505,18 @@ class word_list {
         }  
       }
     }
+    return $result; 
+  }
+  
+  // return one string with all names of the list with the link
+  function name_linked($debug) {
+    $result = ''.implode(',',$this->names_linked($debug-1)).'';
+    return $result; 
+  }
+  
+  // return a list of the word ids as an sql compatible text
+  function ids_txt($debug) {
+    $result = implode(',',$this->ids($debug-1));
     return $result; 
   }
   
@@ -590,7 +592,7 @@ class word_list {
   // list of related words filtered by a link type
   // returns the html code
   // database link must be open
-  function name_table ($word_id, $verb_id, $direction, $user_id, $debug) {
+  function name_table ($word_id, $verb_id, $direction, $user_id, $back, $debug) {
     zu_debug('word_list->name_table (t'.$word_id.',v'.$verb_id.','.$direction.',u'.$user_id.')', $debug-10);
     $result = '';
     
@@ -1441,7 +1443,7 @@ class word_list {
       $db_con->usr_id = $this->usr->id;         
       $db_wrd_lst = $db_con->get($sql, $debug-10);  
       foreach ($db_wrd_lst AS $db_wrd) {
-        if (is_null($db_frm['excluded']) OR $db_frm['excluded'] == 0) {
+        if (is_null($db_wrd['excluded']) OR $db_wrd['excluded'] == 0) {
           if ($db_wrd['word_id'] > 0 AND !in_array($db_wrd['word_id'], $this->ids)) {
             $new_word = New word_dsp;
             $new_word->id          = $db_wrd['word_id'];

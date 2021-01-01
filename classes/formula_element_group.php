@@ -32,7 +32,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -46,7 +46,7 @@ class formula_element_group {
   public $time_phr = NULL; // the time word for the element number selection
   public $usr      = NULL; // the formula values can differ for each user; this is the user who wants to see the result
 
-  public $symbol   = NULL; // the formula refence text for this element group; used to fill in the numbers into the formula
+  public $symbol   = NULL; // the formula reference text for this element group; used to fill in the numbers into the formula
   
   /*
   
@@ -55,10 +55,10 @@ class formula_element_group {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
-    $id = implode(",",$this->ids($debug-1));
-    $name = implode(",",$this->names($debug-1));
-    $phr_name  = ''; if (isset($this->phr_lst))  { $phr_name  = $this->phr_lst->name($debug-1); }
+  function dsp_id () {
+    $id = implode(",",$this->ids(0));
+    $name = implode(",",$this->names(0));
+    $phr_name  = ''; if (isset($this->phr_lst))  { $phr_name  = $this->phr_lst->name(0); }
     $time_name = ''; if (isset($this->time_phr)) { $time_name = $this->time_phr->name; }
     if ($name <> '') {
       $result = '"'.$name.'" ('.$id.')';
@@ -75,6 +75,25 @@ class formula_element_group {
     return $result;
   }  
 
+  // show the element group name to the user in the most simple form (without any ids)
+  function name ($debug) {
+    $result = implode(",",$this->names($debug-1));  
+    return $result;
+  }
+  
+  // list of the formula element names independent from the element type
+  // this function is called from dsp_id, so no other call is allowed
+  private function names ($debug) {
+    $result = array();
+
+    foreach ($this->lst AS $frm_elm) {
+      // display the formula element name
+      $result[] .= $frm_elm->name;
+    }      
+
+    return $result;
+  }  
+
   private function ids ($debug) {
     $result = array();
     if (isset($this->lst)) {
@@ -85,26 +104,6 @@ class formula_element_group {
         }      
       }      
     }      
-    return $result;
-  }  
-
-  // show the element group name to the user in the most simple form (without any ids)
-  function name ($debug) {
-    zu_debug('formula_element_group->name get name', $debug-10);
-    $result = implode(",",$this->names($debug-1));  
-    zu_debug('formula_element_group->name got name', $debug-10);
-    return $result;
-  }
-  
-  // list of the formula element names independent from the element type
-  private function names ($debug) {
-    $result = array();
-
-    foreach ($this->lst AS $frm_elm) {
-      // display the formula element name
-      $result[] .= $frm_elm->name;
-    }      
-
     return $result;
   }  
 

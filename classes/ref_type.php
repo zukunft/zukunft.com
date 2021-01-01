@@ -23,7 +23,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -46,7 +46,7 @@ class ref_type {
   public $usr      = NULL;     // just needed for logging the changes
     
   // display the unique id fields
-  public function dsp_id ($debug) {
+  public function dsp_id () {
     $result = ''; 
 
     $result .= $this->name; 
@@ -58,6 +58,10 @@ class ref_type {
       $result .= $this->id;
     }
     return $result;
+  }
+
+  public function name () {
+    return $this->name;
   }
 
 }
@@ -102,6 +106,7 @@ function load_ref_types($debug) {
 function get_ref_type($id, $debug) {
   zu_debug('ref_type->get_ref_type', $debug-10);
 
+  global $usr;
   global $ref_type_lst;
   
   $result = NULL;
@@ -120,6 +125,7 @@ function get_ref_type($id, $debug) {
 function get_ref_type_by_name($name, $debug) {
   zu_debug('ref_type->get_ref_type_by_name', $debug-10);
 
+  global $usr;
   global $ref_type_name_lst;
   
   $result = NULL;

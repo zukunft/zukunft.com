@@ -38,7 +38,7 @@ function run_batch_job_test ($debug) {
 
   echo "<br><br><h2>Test the batch job class (classes/batch_job.php)</h2><br>";
 
-  // preparetest adding a batch job via a list
+  // prepare test adding a batch job via a list
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
   $phr_lst->add_name(TW_ABB);

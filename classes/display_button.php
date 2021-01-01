@@ -25,7 +25,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -75,9 +75,9 @@ class button {
     return $result;
   }
 
-  // ask a yes/no question with the defaut calls
+  // ask a yes/no question with the default calls
   function confirm ($title, $description, $call) {
-    $result = dsp_text_h3($title);
+    $result = dsp_text_h3($title, "");
     $result .= $description.'<br><br>';
     $result .= '<a href="'.$call.'&confirm=1" title="Yes">Yes</a> / <a href="'.$call.'&confirm=-1" title="No">No</a>';
     //$result = $title.'<a href="'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$call.'&confirm=-1" title="No">No</a>';
@@ -90,7 +90,7 @@ class button {
   function yesno () {
     //zu_debug("button->yesno ".$this->title.".", 10);
     
-    $result = dsp_text_h3($this->title);
+    $result = dsp_text_h3($this->title, "");
     $result .= '<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
     //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
     //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';
@@ -106,14 +106,14 @@ class button {
     $url_phr = '';
     if (isset($phr_lst)) {
       if (get_class($phr_lst) <> 'phrase_list') {
-        zu_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value", '', (new Exception)->getTraceAsString(), $this->usr);
+        zu_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value", '', (new Exception)->getTraceAsString(), null);
       } else {
         if (!empty($phr_lst->ids)) {
-          $this->title = "add new value similar to ".$phr_lst->name();
+          $this->title = "add new value similar to ".$phr_lst->name($debug);
         } else {
           $this->title = "add new value";
         }  
-        $url_phr = $phr_lst->id_url_long();
+        $url_phr = $phr_lst->id_url_long($debug);
       }
     }  
     
@@ -133,7 +133,7 @@ class button {
   // similar to btn_add_value, but uses a simple modal box
   function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug) {
     zu_debug("button->add_value", $debug-18);
-    $result .= '';
+    $result = '';
     
     // group the modal box with the button
     $result .= '<div class="container">';

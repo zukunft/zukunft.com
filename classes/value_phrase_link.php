@@ -29,7 +29,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -178,9 +178,9 @@ class val_lnk {
       $db_row = $db_con->get1($sql, $debug-1);
       $this->id = $db_row['value_phrase_link_id'];
       if ($this->id > 0) {
-        zu_err("Dublicate words (".$wrd_old_id.") for value ".$this->val_id." found and the automatic removal failed.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
+        zu_err("Duplicate words (".$wrd_old_id.") for value ".$this->val_id." found and the automatic removal failed.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
-        zu_warning("Dublicate words (".$wrd_old_id.") for value ".$this->val_id." found, but they have been removed automatically.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
+        zu_warning("Duplicate words (".$wrd_old_id.") for value ".$this->val_id." found, but they have been removed automatically.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
       } 
     }  
     return $result;
@@ -224,7 +224,7 @@ class val_lnk {
           $this->id = $db_con->insert(array("value_id","word_id"), array($this->val->id,$this->wrd->id), $debug-1);
           if ($this->id > 0) {
             // update the id in the log
-            $result .= $log->add_ref($this->id, $debug-1);
+            $result = $log->add_ref($this->id, $debug-1);
           } else {
             zu_err("Adding value_phrase_link ".$this->val->id." failed.", "val_lnk->save");
           }
@@ -240,7 +240,7 @@ class val_lnk {
         zu_debug("val_lnk->save -> database value_phrase_link loaded (".$db_rec->id.")", $debug-14);
 
         // update the linked word
-        $result .= $this->save_field_wrd ($db_con, $db_rec, $debug-1);
+        $result = $this->save_field_wrd ($db_con, $db_rec, $debug-1);
 
         // check for dublicates and remove them
         $result .= $this->cleanup ($db_con, $debug-1);

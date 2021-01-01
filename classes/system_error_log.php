@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -34,11 +34,11 @@ class system_error_log {
 
   public $id            = NULL;  // the database id of the log entry 
   public $usr           = NULL;  // the user who wants to see the error
-  public $usr_id        = NULL;  // the user id who was logged in when the error happend
+  public $usr_id        = NULL;  // the user id who was logged in when the error happened
   public $solver_id     = NULL;  // the admin id who has solved the problem
   public $log_time      = NULL;  // timestamp when the issue appeared
   public $type_id       = NULL;  // type of the error
-  public $function_id   = NULL;  // the program function where the issue happend
+  public $function_id   = NULL;  // the program function where the issue happened
   public $log_text      = '';    // the description of the problem
   public $log_trace     = '';    // the system trace
   public $status_id     = NULL;  // the status of the error

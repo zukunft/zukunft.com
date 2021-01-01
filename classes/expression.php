@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -120,7 +120,7 @@ class expression {
     $phr_lst = Null;
     $wrd_ids = array();
     
-    // create a local copy of the reference text not to moditfy the original text
+    // create a local copy of the reference text not to modify the original text
     $ref_text = $this->fv_part($debug-1);
 
     if ($ref_text <> "") {
@@ -137,7 +137,7 @@ class expression {
       $phr_lst->ids = $wrd_ids;
       $phr_lst->usr = $this->usr;
       $phr_lst->load($debug-10);
-      zu_debug('expression->fv_phr_lst -> '.$phr_lst->name(), $debug-9);
+      zu_debug('expression->fv_phr_lst -> '.$phr_lst->name($debug-9), $debug-9);
     }
 
     zu_debug('expression->fv_phr_lst -> done', $debug-19);
@@ -151,8 +151,8 @@ class expression {
     $phr_lst = Null;
     $wrd_ids = array();
     
-    // create a local copy of the reference text not to moditfy the original text
-    $ref_text = $this->r_part();
+    // create a local copy of the reference text not to modify the original text
+    $ref_text = $this->r_part($debug-1);
 
     if ($ref_text <> "") {
       // add words to selection
@@ -175,7 +175,7 @@ class expression {
       }
     }
 
-    zu_debug('expression->phr_lst -> '.$phr_lst->name(), $debug-7);
+    zu_debug('expression->phr_lst -> '.$phr_lst->name($debug-9), $debug-7);
     $this->phr_lst = $phr_lst;
     return $phr_lst;
   }
@@ -204,6 +204,7 @@ class expression {
 
     if ($work == '') {
       // zu_warning ???
+      zu_warning('expression->element_lst_all -> work is empty','',' work is empty', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       // loop over the formula text and replace ref by ref from left to right
       $found = true;
@@ -213,7 +214,7 @@ class expression {
         $found = false;
 
         // $pos is the position von the next element
-        // to list the elements from left to right, set it to the right most postion at the beginning of each replacement
+        // to list the elements from left to right, set it to the right most position at the beginning of each replacement
         $pos = strlen($work); 
         
         // find the next word reference
@@ -327,7 +328,7 @@ class expression {
                 $txt_between_elm = str_replace('"','',$txt_between_elm);
                 $txt_between_elm = trim($txt_between_elm);
               }
-              // check if the references does not have any math symbol in between and therefor are use to retrieve one value
+              // check if the references does not have any math symbol in between and therefore are use to retrieve one value
               if (strlen($txt_between_elm) > 0 OR $next_pos == strlen($work)) {
                 $lst[]  = $elm_grp;
                 zu_debug('expression->element_lst_all -> group finished with '.$elm->name, $debug-10);
@@ -384,7 +385,7 @@ class expression {
           $phr_lst->lst[] = $phr;
           $phr_lst->ids[] = $phr->id;
         } else {  
-          $result .= zu_err('Word missing for formula element '.$elm->dsp_id.'.', 'expression->phr_verb_lst', '', (new Exception)->getTraceAsString(), $this->usr);
+          $result = zu_err('Word missing for formula element '.$elm->dsp_id.'.', 'expression->phr_verb_lst', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       } else {  
         $phr_lst->lst[] = $elm;
@@ -496,11 +497,11 @@ class expression {
     zu_debug('expression->get_usr_text >'.$this->ref_text.'< and user '.$this->usr->name, $debug-10);
     $result = '';
 
-    // check the formula indicator "=" and convert the left and right part seperately
+    // check the formula indicator "=" and convert the left and right part separately
     $pos = strpos($this->ref_text, ZUP_CHAR_CALC);
     if ($pos > 0) {
-      $left_part  = $this->fv_part();
-      $right_part = $this->r_part();
+      $left_part  = $this->fv_part($debug-1);
+      $right_part = $this->r_part($debug-1);
       zu_debug('expression->get_usr_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-1);
       $left_part  = $this->get_usr_part($left_part, $debug-1);
       $right_part = $this->get_usr_part($right_part, $debug-1);
@@ -592,18 +593,18 @@ class expression {
     zu_debug('expression->get_ref_text '.$this->dsp_id(), $debug-12);
     $result = '';
 
-    // check the formula indicator "=" and convert the left and right part seperately
+    // check the formula indicator "=" and convert the left and right part separately
     $pos = strpos($this->usr_text, ZUP_CHAR_CALC);
     if ($pos >= 0) {
-      $left_part  = $this->fv_part_usr();
-      $right_part = $this->r_part_usr();
+      $left_part  = $this->fv_part_usr($debug-1);
+      $right_part = $this->r_part_usr($debug-1);
       zu_debug('expression->get_ref_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-14);
       $left_part  = $this->get_ref_part($left_part, $debug-1);
       $right_part = $this->get_ref_part($right_part, $debug-1);
       $result = $left_part . ZUP_CHAR_CALC . $right_part;
     }
 
-    // remove all spaces because they are not relevent for calculation and to avoid too much recalculation
+    // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
     $result = str_replace(" ","",$result);
     
     zu_debug('expression->get_ref_text -> done "'.$result.'"', $debug-10);
@@ -616,8 +617,9 @@ class expression {
     $result = false;
 
     if ($this->get_wrd_id($this->ref_text, $debug-1) > 0 
-     OR $this->get_frm_id($this->ref_text, $debug-1) > 0 
-     OR $this->get_ref_id($this->ref_text, $debug-1) > 0) {
+     OR $this->get_frm_id($this->ref_text, $debug-1) > 0
+     OR $this->get_ref_id($this->ref_text, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END, $debug-1) > 0
+     OR $this->get_ref_id($this->ref_text, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END, $debug-1) > 0) {
       $result = true;
     }
 
@@ -632,11 +634,16 @@ class expression {
   */
   
   // format the expression name to use it for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = '"'.$this->usr_text.'" ('.$this->ref_text.')';
     /* the user is no most cases no extra info
     $result .= ' for user '.$this->usr->name.'';
     */
+    return $result;
+  }
+
+  function name ($debug) {
+    $result = $this->usr_text;
     return $result;
   }
 

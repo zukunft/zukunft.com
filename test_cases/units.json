@@ -1,0 +1,1216 @@
+{
+  "version": "0.0.1",
+  "time": "2020-07-23 18:07:26",
+  "user": "timon",
+  "selection": [
+    "the base measure definitions"
+  ],
+  "words": [
+    {
+      "name": "SI base unit",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "SI_base_unit",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "s",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "metre",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kilogram",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kilogram",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kg",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ampere",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Ampere",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "A",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kelvin",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kelvin",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "K",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "mole",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mole (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mol",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "candela",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Candela",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cd",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "named SI derived unit",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "SI_derived_unit#Derived units with special names",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hertz",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hertz",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Hz",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "radian",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Radian",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rad",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "steradian",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Steradian",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "sr",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "newton",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Newton (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "N",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "pascal",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Pascal (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Pa",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "joule",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Joule",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "J",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "watt",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Watt",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "W",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "coulomb",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Coulomb",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "C",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "volt",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Volt",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "V",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "weber",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Weber (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Wb",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "tesla",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Tesla (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "T",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "farad",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Farad",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "F",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "ohm",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Ohm",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Ω",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "siemens",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Siemens (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "S",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "henry",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Henry (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "H",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "celsius",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Celsius",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "°C",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "lumen",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Lumen (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lm",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "lux",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Lux",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lx",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "becquerel",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Becquerel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Bq",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "gray",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Gray (unit)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gy",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "sievert",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Sievert",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Sv",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "katal",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Katal",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kat",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kinematic SI derived units",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "speed",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Speed",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "metre per second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Metre per second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m/s",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "acceleration",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Acceleration",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "metre per second squared",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Metre per second squared",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m/s2",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "jerk (physics)",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Jerk (physics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "metre per second cubed",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "m/s3",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "angular velocity",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Angular velocity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "radian per second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Radian per second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rad/s ",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "angular acceleration",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Angular acceleration",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "radian per second squared",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "rad/s2",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "frequency drift",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Frequency drift",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hertz per second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Hz/s ",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "volumetric flow rate",
+      "type": "ha",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Volumetric flow rate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cubic metre per second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cubic metre per second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m3/s ",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "time",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Time",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "minute",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Minute",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hour",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "day",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Day",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "week",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Week",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "month",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Month",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Mechanical SI derived units",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "distance",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Distance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kilometre",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "km",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "area",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Area",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "square metre",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Square metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m2",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hectare",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hectare",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ha",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "volume",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Volume",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cubic metre",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cubic metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m3",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "litre",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Litre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "l",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kWh",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "gram",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "g",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "tonne",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "t",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per day",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per km",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per 100 km",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per kWh",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per t",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per l",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per year",
+      "type": "measure divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hyperfine",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hyperfine structure",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "frequency",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Frequency standard",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Caesium-133",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Isotopes_of_caesium#Caesium-133",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hyperfine transition frequency of Cs",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Caesium standard",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "name": "",
+      "from": "second",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "",
+      "from": "metre",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "",
+      "from": "kilogram",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "",
+      "from": "ampere",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "",
+      "from": "kelvin",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "",
+      "from": "mole",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "",
+      "from": "candela",
+      "verb": "is a",
+      "to": "SI base unit"
+    },
+    {
+      "name": "s",
+      "from": "s",
+      "verb": "is alias of",
+      "to": "second"
+    },
+    {
+      "name": "m",
+      "from": "m",
+      "verb": "is alias of",
+      "to": "metre"
+    },
+    {
+      "name": "kg",
+      "from": "kg",
+      "verb": "is alias of",
+      "to": "kilogram"
+    },
+    {
+      "name": "A",
+      "from": "A",
+      "verb": "is alias of",
+      "to": "ampere"
+    },
+    {
+      "name": "K",
+      "from": "kg",
+      "verb": "is alias of",
+      "to": "kelvin"
+    },
+    {
+      "name": "mol",
+      "from": "mol",
+      "verb": "is alias of",
+      "to": "mole"
+    },
+    {
+      "name": "cd",
+      "from": "cd",
+      "verb": "is alias of",
+      "to": "candela"
+    },
+    {
+      "name": "l",
+      "from": "l",
+      "verb": "is alias of",
+      "to": "litre"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "definition of joule",
+      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / \"second\" * \"second\"",
+      "assigned_word": "joule"
+    },
+    {
+      "name": "scale minute to sec",
+      "expression": "\"second\" = \"minute\" * 60",
+      "assigned_word": "minute"
+    },
+    {
+      "name": "scale hour to sec",
+      "expression": "\"second\" = \"hour\" * 3600",
+      "assigned_word": "hour"
+    },
+    {
+      "name": "scale day to hour",
+      "expression": "\"hour\" = \"day\" * 24",
+      "assigned_word": "day"
+    },
+    {
+      "name": "scale day to sec",
+      "expression": "\"second\" = \"day\" * 86400",
+      "assigned_word": "day"
+    },
+    {
+      "name": "scale week to day",
+      "expression": "\"day\" = \"week\" * 7",
+      "assigned_word": "week"
+    },
+    {
+      "name": "scale year to month",
+      "expression": "\"month\" = \"year\" * 12",
+      "assigned_word": "year"
+    },
+    {
+      "name": "scale year to second",
+      "expression": "\"second\" = \"year\" * 31557600",
+      "assigned_word": "year"
+    },
+    {
+      "name": "scale litre to m3",
+      "expression": "\"m3\" = \"litre\" / 1000",
+      "assigned_word": "litre"
+    },
+    {
+      "name": "scale gram to kg",
+      "expression": "\"kg\" = \"gram\" / 1000",
+      "assigned_word": "gram"
+    },
+    {
+      "name": "scale tonne to kg",
+      "expression": "\"kg\" = \"tonne\" * 1000",
+      "assigned_word": "tonne"
+    },
+    {
+      "name": "scale kWh to joule",
+      "expression": "\"joule\" = \"kWh* 3600000",
+      "assigned_word": "kWh"
+    },
+    {
+      "name": "scale km to metre",
+      "expression": "\"metre\" = \"km\" / 100",
+      "assigned_word": "kilometre"
+    },
+    {
+      "name": "scale km to 100 km",
+      "expression": "\"100 km\" = \"km\" * 100",
+      "assigned_word": "kilometre"
+    }
+  ],
+  "sources": [
+    {
+      "name": "The International System of Units",
+      "url": "https://www.bipm.org/utils/common/pdf/si_brochure_8_en.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "hyperfine transition frequency of Cs”,”Hz"
+      ],
+      "time": "1967",
+      "number": "9192631770",
+      "share": "public",
+      "source": "The International System of Units"
+    },
+    {
+      "words": [
+        "speed of light”,”m/s"
+      ],
+      "time": "1983",
+      "number": "299792458",
+      "share": "public",
+      "source": "The International System of Units"
+    },
+    {
+      "words": [
+        "Planck constant”,”J⋅s"
+      ],
+      "time": "2019",
+      "number": "6.62607015E-34",
+      "share": "public",
+      "source": "The International System of Units"
+    },
+    {
+      "words": [
+        "elementary charge”,”C"
+      ],
+      "time": "2019",
+      "number": "1.602176634E-19",
+      "share": "public",
+      "source": "The International System of Units"
+    },
+    {
+      "words": [
+        "Boltzmann constant”,”J/K"
+      ],
+      "time": "2019",
+      "number": "1.380649E-23",
+      "share": "public",
+      "source": "The International System of Units"
+    },
+    {
+      "words": [
+        "Avogadro constant”,”mol−1"
+      ],
+      "time": "2019",
+      "number": "6.02214076E+023",
+      "share": "public",
+      "source": "The International System of Units"
+    },
+    {
+      "words": [
+        "luminous efficacy”,”lm/W"
+      ],
+      "time": "1979",
+      "number": "683",
+      "share": "public",
+      "source": "The International System of Units"
+    }
+  ],
+  "views": [
+    {
+      "name": "base units",
+      "comment": "view the base units with the formulas",
+      "type": "detail view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    }
+  ]
+}

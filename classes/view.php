@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -289,11 +289,11 @@ class view extends user_sandbox {
       // list of all possible view components
       $result .= $cmp->text            ($debug-1);        // just to display a simple text
       $result .= $cmp->word_name       ($wrd, $debug-1); // show the word name and give the user the possibility to change the word name
-      $result .= $cmp->table           ($wrd, $debug-1); // display a table (e.g. ABB as first word, Cash Flow Statment as second word)
+      $result .= $cmp->table           ($wrd, $debug-1); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
       $result .= $cmp->num_list        ($wrd, $back, $debug-1); // a word list with some key numbers e.g. all companies with the PE ratio
       $result .= $cmp->formulas        ($wrd, $debug-1); // display all formulas related to the given word
       $result .= $cmp->formula_values  ($wrd, $debug-1); // show a list of formula results related to a word
-      $result .= $cmp->word_childs     ($wrd, $debug-1); // show all words that are based on the given start word
+      $result .= $cmp->word_children     ($wrd, $debug-1); // show all words that are based on the given start word
       $result .= $cmp->word_parents    ($wrd, $debug-1); // show all word that this words is based on
       $result .= $cmp->json_export     ($wrd, $back, $debug-1); // offer to configure and create an JSON file
       $result .= $cmp->xml_export      ($wrd, $back, $debug-1); // offer to configure and create an XML file
@@ -318,10 +318,10 @@ class view extends user_sandbox {
     return $result;    
   }
 
-  // returns the hmtl code for a view: this is the main function of this lib 
-  // view_id is used to force the dislay to a set form; e.g. display the sectors of a company instead of the balance sheet
+  // returns the html code for a view: this is the main function of this lib
+  // view_id is used to force the display to a set form; e.g. display the sectors of a company instead of the balance sheet
   // view_type_id is used to .... remove???
-  // word_id - id of the starting word to display; can be a single word, a comma seperated list of word ids, a word group or a word tripple
+  // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
   function display ($wrd, $back, $debug) {
     zu_debug('view->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'"', $debug-10);
     $result = '';
@@ -403,7 +403,7 @@ class view extends user_sandbox {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {
@@ -417,6 +417,11 @@ class view extends user_sandbox {
     if (isset($this->usr)) {
       $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
     }
+    return $result;
+  }
+
+  function name ($debug) {
+    $result = '"'.$this->name.'"'; 
     return $result;
   }
 

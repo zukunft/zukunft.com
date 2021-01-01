@@ -218,7 +218,7 @@ if ($usr->id > 0) {
     run_test_cleanup ($debug);
 
     // load the the base data 
-    run_import_test (unserialize (TEST_IMPORT_FILE_LIST), $debug);
+    //run_import_test (unserialize (TEST_IMPORT_FILE_LIST), $debug);
 
     // display the test results
     zu_test_dsp_result();

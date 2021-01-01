@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -109,7 +109,7 @@ class formula_link_list {
     return $result;    
   }
   
-  // delete all links without log because this is used only when deleteing a formula
+  // delete all links without log because this is used only when deleting a formula
   // and the main event of deleting the formula is already logged
   function del_without_log($debug) {
     zu_debug('formula_link_list->del_without_log', $debug-16);

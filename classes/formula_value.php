@@ -33,7 +33,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -48,7 +48,7 @@ class formula_value {
   public $frm_id          = NULL;  // the formula database id used to calculate this result
   public $usr             = NULL;  // the user who wants to see the result because the formula and values can differ for each user; this is 
   public $owner_id        = NULL;  // the user for whom the result has been calculated; if Null the result is the standard result
-  public $is_std          = True;  // true as long as no user specific value, formula or assignemend is used for this result
+  public $is_std          = True;  // true as long as no user specific value, formula or assignment is used for this result
   public $src_phr_grp_id  = NULL;  // the word group used for calculating the result
   public $src_time_id     = NULL;  // the time word id for calculating the result
   public $phr_grp_id      = NULL;  // the result word group as saved in the database
@@ -76,7 +76,7 @@ class formula_value {
   public $wrd_ids        = array(); // a array of word ids filled while loading the formula value to the memory
   
   // load the record from the database
-  // in a seperate function, because this can be called twice from the load function
+  // in a separate function, because this can be called twice from the load function
   private function load_rec($sql_where, $debug) {
     $sql = "SELECT formula_value_id,
                     user_id,
@@ -225,7 +225,7 @@ class formula_value {
             $sql_src_wrd = "";
           }
         }
-        // and include the result words in the search, becaue one source word list can result to two result word 
+        // and include the result words in the search, because one source word list can result to two result word
         // e.g. one time specific and one general
         if ($this->time_id > 0) {
           $sql_time = " time_word_id = ".$this->time_id." ";
@@ -268,7 +268,7 @@ class formula_value {
         }
       }
 
-      // check if a valid indentification is given and load the result
+      // check if a valid identification is given and load the result
       if ($sql_where == '') {
         zu_err("Either the database ID (".$this->id.") or the source or result words or word group and the user (".$this->usr->id.") must be set to load a result.", "formula_value->load", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
@@ -320,7 +320,7 @@ class formula_value {
                 if ($this->id > 0) {
                   $sql_where = "formula_value_id = ".$this->id;
                   $this->load_rec($sql_where, $debug);
-                  zu_debug('formula_value->load best gues id ('.$this->id.')', $debug-10);
+                  zu_debug('formula_value->load best guess id ('.$this->id.')', $debug-10);
                 }
               }
             } 
@@ -377,7 +377,7 @@ class formula_value {
         if (isset($phr_grp->phr_lst)) {
           $this->phr_lst = $phr_grp->phr_lst;
           zu_debug('formula_value->load_phr_lst words '.$this->phr_lst->name().' loaded', $debug-10);
-          // to be dimissed
+          // to be dismissed
           $this->wrd_ids = $phr_grp->phr_lst->ids;
         } else {
           zu_debug('formula_value->load_phr_lst no result words found for '.$this->dsp_id(), $debug-10);
@@ -440,7 +440,7 @@ class formula_value {
     }
   }
   
-  // update the formuls objects based on the id
+  // update the formulas objects based on the id
   private function load_formula($debug) {
     if ($this->frm_id > 0) {
       zu_debug('formula_value->load_formula for user '.$this->usr->name, $debug-14);
@@ -462,7 +462,7 @@ class formula_value {
     if (isset($this->src_phr_lst)) {
       $this->src_phr_lst->load($debug-1);
       // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
-      // seperate the time word if not done already to reduce the number of word groups created and increase the request speed
+      // separate the time word if not done already to reduce the number of word groups created and increase the request speed
       $time_phr_lst = $this->src_phr_lst->time_lst ($debug-1);
       if (count($time_phr_lst->lst) > 1) {
         zu_warning('More than one time word is not yet supported '.$time_phr_lst->name().' ('.$this->id.') is empty.', 'formula_value->save_prepare_phr_lst_src', '', (new Exception)->getTraceAsString(), $this->usr);
@@ -496,7 +496,7 @@ class formula_value {
   private function save_prepare_phr_lst($debug) {
     if (isset($this->phr_lst)) {
       // remember the time if needed (but don't assume the time, because a value can be saved without timestamp)
-      // seperate the time word if not done already to reduce the number of word groups created and increase the request speed
+      // separate the time word if not done already to reduce the number of word groups created and increase the request speed
       $time_phr_lst = $this->phr_lst->time_lst ($debug-1);
       if (count($time_phr_lst->lst) > 1) {
         zu_warning('More than one time word is not yet supported '.$time_phr_lst->name().' ('.$this->id.') is empty.', 'formula_value->save_prepare_phr_lst', '', (new Exception)->getTraceAsString(), $this->usr);
@@ -520,7 +520,7 @@ class formula_value {
       $grp->ids = $this->phr_lst->ids;
       $this->phr_grp_id = $grp->get_id ($debug-1);
       zu_debug("formula_value->save_prepare_phr_lst -> group id ".$this->phr_grp_id." for ".$this->phr_lst->name($debug-1).".", $debug-10);
-      // to be dimissed
+      // to be dismissed
       $this->wrd_ids = $this->phr_lst->ids;
     }
   }
@@ -599,10 +599,15 @@ class formula_value {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
-    $result = ''; 
+  function dsp_id () {
+    $result = '';
 
-    $result .= $this->name($debug-1);
+    if (isset($this->phr_lst)) {
+      $result .= $this->phr_lst->dsp_id();
+    }
+    if (isset($this->time_phr)) {
+      $result .= '@'.$this->time_phr->dsp_id();
+    }
     if ($result <> '') {
       $result .= ' ('.$this->id.')';
     } else {
@@ -614,8 +619,8 @@ class formula_value {
     return $result;
   }
 
+  // this function is called from dsp_id, so no other call is allowed
   function name($back, $debug) {
-    zu_debug('formula_value->name ', $debug-10);
     $result = ''; 
 
     if (isset($this->phr_lst)) {
@@ -625,7 +630,6 @@ class formula_value {
       $result .= '@'.$this->time_phr->name($debug-1);
     }
     
-    zu_debug('formula_value->name done', $debug-10);
     return $result;
   }
   
@@ -657,7 +661,7 @@ class formula_value {
     return $result; 
   }
   
-  // html code to show the value with the possibility to click for the result explaination
+  // html code to show the value with the possibility to click for the result explanation
   function display_linked($back, $debug) {
     if (!is_null($this->value)) {
       $num_text = $this->val_formatted($debug-1);
@@ -675,7 +679,7 @@ class formula_value {
   // explain a formula result to the user
   // create a HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
   function explain($lead_phr_id, $back, $debug) {
-    zu_debug('formula_value->explain '.$this->dsp_id($debug-1).' for user '.$this->usr->name, $debug-10);
+    zu_debug('formula_value->explain '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $result = '';
     
     // display the leading word
@@ -732,7 +736,7 @@ class formula_value {
 
     // check the element consistency and if it fails, create a warning
     if (!isset($this->src_phr_lst)) {
-      zu_warning("Missing source words for the calculated value ".$frm_elm->type." ".$frm_elm->id,"formula_value->explain", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_warning("Missing source words for the calculated value ".$this->dsp_id(),"formula_value->explain", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       $elm_nbr = 0;
@@ -770,7 +774,7 @@ class formula_value {
         $elm_grp->usr      = $this->usr;
         zu_debug('formula_value->explain -> words set '.$elm_grp->phr_lst->name($debug-1).' taken from the source and user "'.$elm_grp->usr->name.'"', $debug-3);
         
-        // finaly display the value used in the formula
+        // finally display the value used in the formula
         $result .= ' = '.$elm_grp->dsp_values($back, $this->time_phr, $debug-1);
         $result .= '</br>';
         zu_debug('formula_value->explain -> next element', $debug-5);
@@ -820,8 +824,8 @@ class formula_value {
         $fv_upd->usr = $this->usr;
         $fv_upd->id = $val_row['formula_value_id'];
         $fv_upd->load($debug-1);
-        $fv_upd->update();
-        // if the value is realy updated, remember the value is to check if this triggers more updates
+        $fv_upd->update($debug-1);
+        // if the value is really updated, remember the value is to check if this triggers more updates
         $result[] = $fv_upd->save($debug-1);
       }
     }
@@ -881,7 +885,7 @@ class formula_value {
         if (!isset($this->src_phr_lst)) { zu_warning('The source phrases for '.$this->dsp_id().' are missing.', 'formula_value->save_if_updated', '', (new Exception)->getTraceAsString(), $this->usr); }
         
         // add the formula name word
-        // e.g. if the formula "countryweight" is calculated the word "countryweight" should be added to the result values
+        // e.g. if the formula "country weight" is calculated the word "country weight" should be added to the result values
         zu_debug('formula_value->save_if_updated -> add the formula name '.$this->frm->dsp_id().' to the result phrases '.$this->phr_lst->dsp_id(), $debug-13);
         $this->phr_lst->add($this->frm->name_wrd->phrase($debug-1), $debug-1);
 
@@ -978,7 +982,7 @@ class formula_value {
       $db_con->usr_id = $this->usr->id;         
       $db_con->type   = 'formula_value';         
       
-      // build the word list if needed to seperate the time word from the word list
+      // build the word list if needed to separate the time word from the word list
       $this->save_prepare_wrds($debug-1);
       zu_debug("formula_value->save -> word list prepared (group id ".$this->phr_grp_id." and source group id ".$this->src_phr_grp_id.")", $debug-15);
 

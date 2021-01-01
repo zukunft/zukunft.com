@@ -120,7 +120,7 @@ function run_display_test ($debug) {
   } else {
     $result = '';
   }
-  // about does not return a page for unknow reasons at the moment
+  // about does not return a page for unknown reasons at the moment
   //$exe_start_time = test_show_contains(', frontend about.php '.$result.' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   $result = file_get_contents('https://zukunft.com/http/privacy_policy.html');

@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2020 zukunft.com AG, Zurich
+  Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -56,6 +56,19 @@ class formula_element_list {
     return $result;    
   }
   
+  // to show the element name to the user in the most simple form (without any ids)
+  // this function is called from dsp_id, so no other call is allowed
+  function name ($debug) {
+    $result = '';
+    if (isset($this->lst)) {
+      foreach ($this->lst AS $elm) {
+        $result .= $elm->name($debug-1).' ';
+      }
+    }
+    return $result;    
+  }
+  
+  // this function is called from dsp_id, so no other call is allowed
   function ids ($debug) {
     $result = array();
     if (isset($this->lst)) {
@@ -69,17 +82,6 @@ class formula_element_list {
     return $result;
   }  
 
-  // to show the element name to the user in the most simple form (without any ids)
-  function name ($debug) {
-    $result = '';
-    if (isset($this->lst)) {
-      foreach ($this->lst AS $elm) {
-        $result .= $elm->name($debug-1).' ';
-      }
-    }
-    return $result;    
-  }
-  
 }
 
 ?>
