@@ -1325,8 +1325,10 @@ class word {
   // create a new word
   private function add($db_con, $debug) {
     zu_debug('word->add the word '.$this->dsp_id(), $debug-12);
+
     $result = '';
-    
+    $db_con->type   = 'word';
+
     // log the insert attempt first
     $log = $this->log_add($debug-1);
     if ($log->id > 0) {

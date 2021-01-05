@@ -426,6 +426,8 @@ function sql_code_link($code_id, $description, $debug = 0) {
   } else {
     $result = '';
     //$db_con = new mysql;
+    // remember the db_type
+    $db_value_type = $db_con->type;
     $db_con->usr_id = SYSTEM_USER_ID;         
     $db_con->type = $db_type;         
       
@@ -456,6 +458,8 @@ function sql_code_link($code_id, $description, $debug = 0) {
         $result .= $db_con->update_name($row_id, $description, $debug-14);
       }
     }
+    // restore the db_type
+    $db_con->type = $db_value_type;
   }
 
   zu_debug("sql_code_link ... done", $debug-14);

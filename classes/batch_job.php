@@ -116,6 +116,7 @@ class batch_job {
           $this->row_id = $this->obj->id;
           zu_debug('batch_job->add connect', $debug-18);      
           //$db_con = New mysql;
+          $db_type = $db_con->type;
           $db_con->usr_id = $this->usr->id;         
           $db_con->type = 'calc_and_cleanup_task';         
           $job_id = $db_con->insert(array('user_id','request_time','calc_and_cleanup_task_type_id','row_id'), 
@@ -128,6 +129,7 @@ class batch_job {
             $this->exe($debug-1);
             $result = $job_id;
           }
+          $db_con->type = $db_type;
         }
       }
     }
@@ -155,10 +157,12 @@ class batch_job {
     }
     
     //$db_con = New mysql;
-    $db_con->usr_id = $this->usr->id;         
+    $db_type = $db_con->type;
+    $db_con->usr_id = $this->usr->id;
     $db_con->type = 'calc_and_cleanup_task';         
     $result = $db_con->update($this->id, 'end_time', 'Now()', $debug-1);
-  
+    $db_con->type = $db_type;
+
     zu_debug('batch_job->exe_val_upd -> done with '.$result, $debug-10);
   }
   
@@ -166,7 +170,8 @@ class batch_job {
   function exe($debug) {
     global $db_con;
     //$db_con = New mysql;
-    $db_con->usr_id = $this->usr->id;         
+    $db_type = $db_con->type;
+    $db_con->usr_id = $this->usr->id;
     $db_con->type = 'calc_and_cleanup_task';         
     $result = $db_con->update($this->id, 'start_time', 'Now()', $debug-1);
       
@@ -176,6 +181,7 @@ class batch_job {
     } else {
       zu_err('Job type "'.$this->type.'" not defined.','batch_job->exe', '', (new Exception)->getTraceAsString(), $this->usr);
     }
+    $db_con->type = $db_type;
   }
   
   // remove the old requests from the database if they are closed since a while

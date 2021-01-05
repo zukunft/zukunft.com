@@ -79,7 +79,8 @@ class user_log {
     
     // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
     //$db_con = new mysql;
-    $db_con->type = "change_table";         
+    $db_type = $db_con->type;
+    $db_con->type = "change_table";
     $db_con->usr_id = $this->usr->id;
     $table_id = $db_con->get_id($this->table, $debug-1);
 
@@ -92,6 +93,8 @@ class user_log {
     } else {
       zu_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
+    // restore the type before saving the log
+    $db_con->type = $db_type;
   }
 
   private function set_field($debug) {
@@ -105,7 +108,8 @@ class user_log {
     if ($this->usr->id <= 0)   { zu_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
 
     //$db_con = new mysql;
-    $db_con->type = "change_field";         
+    $db_type = $db_con->type;
+    $db_con->type = "change_field";
     $db_con->usr_id = $this->usr->id;
     $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id, $debug-1);
 
@@ -118,6 +122,8 @@ class user_log {
     } else {
       zu_fatal("Insert to change log failed due to field id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
+    // restore the type before saving the log
+    $db_con->type = $db_type;
   }
 
   private function set_action($debug) {
@@ -131,7 +137,8 @@ class user_log {
     
     // if e.g. the action is "add" the reference 1 is saved in the log table to save space
     //$db_con = new mysql;
-    $db_con->type = "change_action";         
+    $db_type = $db_con->type;
+    $db_con->type = "change_action";
     $db_con->usr_id = $this->usr->id;
     $action_id = $db_con->get_id($this->action, $debug-1);
 
@@ -144,6 +151,8 @@ class user_log {
     } else {
       zu_fatal("Insert to change log failed due to action id failure.","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
     }
+    // restore the type before saving the log
+    $db_con->type = $db_type;
   }
 
   // display the last change related to one object (word, formula, value, verb, ...)
