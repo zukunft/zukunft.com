@@ -33,17 +33,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_user_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
   // test the user display after the word changes to have a sample case
   echo "<br><br><h2>Test the user display class (classes/user_display.php)</h2><br>";
 
-  $result = $usr->dsp_edit($back, $debug-1);
+  $result = $usr->dsp_edit($debug-1);
   $target = TEST_USER_NAME;
   $exe_start_time = test_show_contains(', user_display->dsp_edit', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

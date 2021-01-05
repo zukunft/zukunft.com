@@ -404,7 +404,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the default view
 
   // similar to test_show_result, but the target only needs to be part of the result
   // e.g. "ABB" is part of the company word list
-  function test_show_contains($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment) {
+  function test_show_contains($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = '') {
     if (strpos($result, $target) === false) {
       $result = $target.' not found in '.$result;
     } else {
@@ -753,8 +753,8 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the default view
           // refresh the given name if needed
           if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description <> $phrase_name) {
             $lnk_test->description = $phrase_name;
-            $lnk_test->save($debug+10);
-            $lnk_test->load($debug+10);
+            $lnk_test->save($debug-1);
+            $lnk_test->load($debug-1);
             $result = $lnk_test;
           }
         }

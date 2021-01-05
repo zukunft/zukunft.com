@@ -249,7 +249,7 @@ function run_word_test ($debug) {
   $wrd_new = New word;
   $wrd_new->name = TEST_WORD;
   $wrd_new->usr = $usr;
-  $result = $wrd_new->save($debug+20);
+  $result = $wrd_new->save($debug-1);
   //$target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
   $target = '';
   $exe_start_time = test_show_result(', word->save for "'.TEST_WORD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);

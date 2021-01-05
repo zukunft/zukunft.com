@@ -207,8 +207,8 @@ function run_view_component_link_test ($debug) {
   $cmp_lnk->tob = $cmp2;
   $cmp_lnk->load($debug-1);
   if (isset($cmp_lnk)) {
-    $result = $cmp_lnk->move_up($debug+20); // TODO force to reload the entry list
-    //$result = $cmp_lnk->move_up($debug+20); // TODO force to reload the entry list
+    $result = $cmp_lnk->move_up($debug-1); // TODO force to reload the entry list
+    //$result = $cmp_lnk->move_up($debug-1); // TODO force to reload the entry list
     $target = '1';
     $exe_start_time = test_show_result(', view component order changed for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
   }

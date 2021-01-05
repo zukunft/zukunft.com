@@ -170,7 +170,8 @@ class user_log {
           ORDER BY c.change_id DESC;";
     zu_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
     //$db_con = new mysql;
-    $db_con->type = "change";         
+    $db_type = $db_con->type;
+    $db_con->type = "change";
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if (!$ex_time) {
@@ -188,6 +189,8 @@ class user_log {
     } else {
       $result .= 'added '.$db_row['new_value'];
     }
+    // restore the type before saving the log
+    $db_con->type = $db_type;
     return $result;
   }
   
@@ -226,6 +229,7 @@ class user_log {
     $sql_values[] = $this->row_id;
     
     //$db_con = new mysql;
+    $db_type = $db_con->type;
     $db_con->type = "change";         
     $db_con->usr_id = $this->usr->id;
     $log_id = $db_con->insert($sql_fields, $sql_values, $debug-10);
@@ -238,6 +242,8 @@ class user_log {
       $result = False;
     } else {
       $this->id = $log_id;
+      // restore the type before saving the log
+      $db_con->type = $db_type;
       $result = True;
     }
     
@@ -251,7 +257,8 @@ class user_log {
     zu_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
     global $db_con;
     //$db_con = new mysql;
-    $db_con->type = "change";         
+    $db_type = $db_con->type;
+    $db_con->type = "change";
     $db_con->usr_id = $this->usr->id;
     $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
     if ($log_id <= 0) {
@@ -262,6 +269,8 @@ class user_log {
       $result = False;
     } else {
       $this->id = $log_id;
+      // restore the type before saving the log
+      $db_con->type = $db_type;
       $result = True;
     }
     return $result;

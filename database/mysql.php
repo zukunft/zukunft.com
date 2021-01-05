@@ -636,6 +636,8 @@ class mysql
     {
         zu_debug('mysql->update of ' . $this->type . ' row ' . $id . ' ' . $fields . ' with "' . $values . '" for user ' . $this->usr_id, $debug - 10);
 
+        $result = '';
+
         // check parameter
         $par_ok = true;
         $this->set_table($debug - 1);
