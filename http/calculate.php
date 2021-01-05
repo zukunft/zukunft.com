@@ -32,67 +32,63 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("calculate", "", $debug);
+$db_con = zu_start("calculate", "", $debug);
 
   // load the requesting user
   $usr = New user;
   $usr_id    = $_GET['user']; // to force another user view for testing the formula calculation
-  if ($usr_id <= 0) {
-    echo $usr->get($debug-1);
-  }
-  if ($usr_id <= 0) {
-    $usr->id = TEST_USER_ID; // fallback user
-    echo $usr->get($debug-1);
-  }
 
-  // start displaying while calculating
-  $calc_pos = 0;
-  $last_msg_time = time();
-  ob_implicit_flush(true);
-  ob_end_flush();
-  zu_debug("create the calculation queue ... ", $debug-1);
-    
-  // load the formulas to calculate
-  $frm_lst = New formula_list;
-  $frm_lst->usr = $usr;
-  $frm_lst->load($debug-10);
-  echo "Calculate ".count($frm_lst->lst)." formulas<br>";
-  
-  foreach ($frm_lst AS $frm_request) {
+  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+  if ($usr->id > 0) {
+    $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
-    // build the calculation queue
-    $calc_fv_lst = New formula_value_list;
-    $calc_fv_lst->usr = $usr;
-    $calc_fv_lst->frm = $frm_request;
-    $calc_lst = $calc_fv_lst->frm_upd_lst($frm_request, $usr, $back, $debug-2);
-    zu_debug("calculate queue is build (number of values to check: ".count($calc_lst->lst).")", $debug-1);
-      
-    // execute the queue
-    foreach ($calc_lst->lst AS $r) {
+    // start displaying while calculating
+    $calc_pos = 0;
+    $last_msg_time = time();
+    ob_implicit_flush();
+    ob_end_flush();
+    zu_debug("create the calculation queue ... ", $debug - 1);
 
-      // calculate one formula result
-      $frm = clone $r->frm;
-      $fv_lst = $frm->calc($r->wrd_lst, $debug-1);
+    // load the formulas to calculate
+    $frm_lst = new formula_list;
+    $frm_lst->usr = $usr;
+    $frm_lst->load($debug - 10);
+    echo "Calculate " . count($frm_lst->lst) . " formulas<br>";
 
-      // show the user the progress every two seconds
-      if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
-        $calc_pct = ($calc_pos/sizeof($calc_lst->lst)) * 100;
-        echo "".round($calc_pct,2)."% calculated (".$r->frm->name." for ".$r->wrd_lst->name_linked()." = ".$fv->display_linked($back, $debug-1).")<br>";
-        ob_flush();
-        flush();       
-        $last_msg_time = time();
+    foreach ($frm_lst as $frm_request) {
+
+      // build the calculation queue
+      $calc_fv_lst = new formula_value_list;
+      $calc_fv_lst->usr = $usr;
+      $calc_fv_lst->frm = $frm_request;
+      $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back, $debug - 2);
+      zu_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")", $debug - 1);
+
+      // execute the queue
+      foreach ($calc_lst->lst as $r) {
+
+        // calculate one formula result
+        $frm = clone $r->frm;
+        $fv_lst = $frm->calc($r->wrd_lst, $debug - 1);
+
+        // show the user the progress every two seconds
+        if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
+          $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
+          echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names($debug - 1) . ")<br>";
+          ob_flush();
+          flush();
+          $last_msg_time = time();
+        }
+
+        $calc_pos++;
       }
-            
-      $calc_pos++;
     }
+    ob_end_flush();
+
+    // display the finish message
+    echo "<br>";
+    echo "calculation finished.";
   }
-
-  ob_end_flush();
-
-  // display the finish message
-  echo "<br>";
-  echo "calculation finished.";
 
 // Closing connection
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

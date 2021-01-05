@@ -38,7 +38,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php';  if ($debug > 9) { echo 'lib loaded<br>'; }
 
 // open database
-$link = zu_start("start formula_test.php", "", $debug-10);
+$db_con = zu_start("start formula_test.php", "", $debug-10);
 
   // load the session user parameters
   $session_usr = New user;
@@ -230,5 +230,5 @@ $link = zu_start("start formula_test.php", "", $debug-10);
   }
 
 // Closing connection
-zu_end($link, $debug-10);
+zu_end($db_con, $debug-10);
 ?>

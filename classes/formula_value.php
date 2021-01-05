@@ -78,6 +78,8 @@ class formula_value {
   // load the record from the database
   // in a separate function, because this can be called twice from the load function
   private function load_rec($sql_where, $debug) {
+    global $db_con;
+
     $sql = "SELECT formula_value_id,
                     user_id,
                     formula_id,
@@ -90,7 +92,7 @@ class formula_value {
               FROM formula_values 
               WHERE ".$sql_where.";";
     zu_debug('formula_value->load ('.$sql.' for user '.$this->usr->id.')', $debug-10);
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $val_rows = $db_con->get($sql, $debug-5);  
     if (count($val_rows) > 0) {
@@ -115,6 +117,8 @@ class formula_value {
   // load the missing formula parameters from the database
   // to do: load user specific values
   function load($debug) {
+
+    global $db_con;
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
@@ -311,7 +315,7 @@ class formula_value {
                             FROM formula_values
                           WHERE phrase_group_id IN (".$sql_grp.") ".$sql_time.";";
               zu_debug('formula_value->load sql val "'.$sql_val.'"', $debug-12);
-              $db_con = new mysql;         
+              //$db_con = new mysql;
               $db_con->usr_id = $this->usr->id;         
               $val_ids_rows = $db_con->get($sql_val, $debug-5);  
               if (count($val_ids_rows) > 0) {
@@ -701,7 +705,7 @@ class formula_value {
     $title .= ': ';
     // add the value  to the title
     $title .= $this->display($back, $debug-1);
-    $result .= dsp_text_h1 ($title, '');
+    $result .= dsp_text_h1 ($title);
     zu_debug('formula_value->explain -> explain the value for '.$val_phr_lst->name().' based on '.$this->src_phr_lst->name(), $debug-1);
 
     // display the measure and scaling of the value
@@ -717,7 +721,7 @@ class formula_value {
     $frm->id  = $this->frm_id;
     $frm->usr = $this->usr;
     $frm->load($debug-1);
-    $result .= ' based on</br>'.$frm->name_linked($back, $debug-1);
+    $result .= ' based on</br>'.$frm->name_linked($back);
     $result .= ' '.$frm->dsp_text($back, $debug-1)."\n";
     $result .= ' '.$frm->btn_edit($back, $debug-1)."\n";
     $result .= '</br></br>'."\n";
@@ -792,6 +796,8 @@ class formula_value {
   //      based on the frm id and the word group
   function update_depending($debug) {
     zu_debug("formula_value->update_depending (f".$this->frm_id.",t".implode(",",$this->wrd_ids).",tt".$this->time_id.",v".$this->value." and user ".$this->usr->name.")", $debug-10);
+
+    global $db_con;
     $result = array();
     
     // get depending formulas
@@ -801,7 +807,7 @@ class formula_value {
               FROM formula_elements 
              WHERE ref_id = ".$this->frm_id."
                AND formula_element_type_id = ".$frm_elm_type.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $frm_rows = $db_con->get($sql, $debug-5);  
     foreach ($frm_rows AS $frm_row) {
@@ -815,7 +821,7 @@ class formula_value {
                  AND phrase_group_id = ".$this->phr_grp_id."
                  AND time_word_id    = ".$this->time_id."
                  AND user_id         = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $val_rows = $db_con->get($sql, $debug-5);  
       foreach ($val_rows AS $val_row) {
@@ -956,6 +962,9 @@ class formula_value {
   // save the formula result to the database
   // for the word selection the id list is the lead, not the object list and not the group
   function save($debug) {
+
+    global $db_con;
+
     // check the parameters e.g. a result must always be linked to a formula
     if ($this->frm_id <= 0 ) {
       zu_err("Formula id missing.","formula_value->save", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -978,7 +987,7 @@ class formula_value {
       $result = 0;
     
       // build the database object because the is anyway needed
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_con->type   = 'formula_value';         
       

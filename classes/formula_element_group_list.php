@@ -42,7 +42,7 @@ class formula_element_group_list {
   
   // return best possible identification for this element group list mainly used for debugging
   function dsp_id ($debug) {
-    $id = implode(",",$this->ids($debug-1));
+    $id = implode(",",$this->ids());
     $name = $this->name($debug-1);
     if ($name <> '""') {
       $result = ''.$name.' ('.$id.')';
@@ -69,7 +69,7 @@ class formula_element_group_list {
   }
   
   // this function is called from dsp_id, so no other call is allowed
-  function ids ($debug) {
+  function ids () {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $elm_grp) {

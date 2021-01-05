@@ -34,7 +34,7 @@ function create_base_formulas ($debug) {
   echo "<br><br>";
 }
 
-function run_formula_test ($back, $debug) {
+function run_formula_test ($debug) {
 
   global $usr;
   global $usr2;
@@ -259,7 +259,7 @@ function run_formula_test ($back, $debug) {
   $log->table = 'formulas';
   $log->field = 'formula_name';
   $log->row_id = $frm->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Test Formula';
   $exe_start_time = test_show_result(', formula->save adding logged for "'.TF_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -307,7 +307,7 @@ function run_formula_test ($back, $debug) {
   $log->table = 'formulas';
   $log->field = 'formula_name';
   $log->row_id = $frm_renamed->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job changed Test Formula to Formula Test';
   $exe_start_time = test_show_result(', formula->save rename logged for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -344,7 +344,7 @@ function run_formula_test ($back, $debug) {
   $log->table = 'formulas';
   $log->field = 'resolved_text';
   $log->row_id = $frm_reloaded->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   // use the next line if system config is non standard
   $target = 'zukunft.com system batch job changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';

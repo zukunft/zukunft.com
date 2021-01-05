@@ -61,7 +61,7 @@ function run_formula_link_test ($debug) {
   $log->table = 'formula_links';
   $log->new_from_id = $frm->id;
   $log->new_to_id = $phr->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job linked Formula Test to '.TW_ADD_RENAMED.'';
   $exe_start_time = test_show_result(', formula_link->link_phr logged for "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -126,7 +126,7 @@ function run_formula_link_test ($debug) {
   $log->table = 'formula_links';
   $log->old_from_id = $frm->id;
   $log->old_to_id = $phr->id;
-  $log->usr_id = $usr2->id;
+  $log->usr = $usr2;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system test unlinked Formula Test from '.TW_ADD_RENAMED.'';
   $exe_start_time = test_show_result(', formula_link->unlink_phr logged for "'.$phr->name.'" to "'.$frm->name.'" and user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -164,7 +164,7 @@ function run_formula_link_test ($debug) {
   $log->table = 'formula_links';
   $log->old_from_id = $frm->id;
   $log->old_to_id = $phr->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job unlinked Formula Test from '.TW_ADD_RENAMED.'';
   $exe_start_time = test_show_result(', formula_link->unlink_phr logged of "'.$phr->name.'" from "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

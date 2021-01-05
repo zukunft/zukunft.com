@@ -6,9 +6,9 @@
   --------
 
   if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
-  if a user has added 3 values and at least one is accpected by another user, he can add words and formula and he must have a valid email
-  if a user has added 2 formula and both are accpected by at least one other user and noone has complained, he can change formulas and words, including linking of words
-  if a user has linked a 10 words and all got accepted by one other user and noone has complained, he can request new verbs and he must have an validated address
+  if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
+  if a user has added 2 formula and both are accepted by at least one other user and no one has complained, he can change formulas and words, including linking of words
+  if a user has linked a 10 words and all got accepted by one other user and no one has complained, he can request new verbs and he must have an validated address
 
   if a user got 10 pending word or formula discussion, he can no longer add words or formula until the open discussions are less than 10
   if a user got 5 pending word or formula discussion, he can no longer change words or formula until the open discussions are less than 5
@@ -52,18 +52,23 @@ class user {
   public $first_name   = '';    // 
   public $last_name    = '';    // 
   public $code_id      = '';    // the main id to detect system users
-  public $thousand_sep = '';    // the thousand seperator user for this user
+  public $dec_point    = '';    // the decimal point char for this user
+  public $thousand_sep = '';    // the thousand separator user for this user
   public $profile_id   = NULL;  // id of the user profile
   public $source_id    = NULL;  // id of the last source used by the user
 
   // user setting parameters
   public $wrd_id      = '';    // id of the last word viewed by the user
-  
+  public $vrb_id      = '';    // id of the last verb used by the user
+
   // in memory only fields 
   public $wrd         = NULL;    // the last word viewed by the user
   
   //   
   private function load_db($debug) {
+
+    global $db_con;
+
     $db_usr = Null;
     // select the user either by id, code_id, name or ip
     $sql_where = '';
@@ -80,7 +85,7 @@ class user {
 
     zu_debug('user->load search by "'.$sql_where.'"', $debug-14);
     if ($sql_where == '') {
-      zu_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this);
     } else {
       $sql = "SELECT u.user_id,
                      u.code_id,
@@ -94,8 +99,7 @@ class user {
                      u.user_profile_id
                 FROM users u 
               WHERE ".$sql_where.";";
-      $db_con = New mysql;
-      $db_con->usr_id = $this->id;         
+      $db_con->usr_id = $this->id;
       $db_usr = $db_con->get1($sql, $debug-14);  
     }   
     return $db_usr;
@@ -104,6 +108,7 @@ class user {
   // load the missing user parameters from the database
   // private because the loading should be done via the get method
   private function load($debug) {
+    $result = '';
     $db_usr = $this->load_db($debug-1);
     if (isset($db_usr)) {
       if ($db_usr['user_id'] <= 0) {
@@ -123,7 +128,8 @@ class user {
         $this->thousand_sep = DEFAULT_THOUSAND_SEP;
       } 
       zu_debug('user->load ('.$this->name.')', $debug-12);
-    }  
+    }
+    return $result;
   }
   
   // special function to exposed the user loading for simulating test users for the automatic system test
@@ -144,14 +150,16 @@ class user {
   // return the message, why the if is not permitted
   private function ip_check ($debug) {
     zu_debug('user->ip_check ('.$this->ip_addr.')', $debug-10);
+
+    global $db_con;
+
     $msg = '';
     $sql = "SELECT ip_from,
                    ip_to,
                    reason
               FROM user_blocked_ips 
              WHERE isactive = 1;";
-    $db_con = New mysql;
-    $db_con->usr_id = $this->id;         
+    $db_con->usr_id = $this->id;
     $ip_lst = $db_con->get($sql, $debug-10);  
     foreach ($ip_lst AS $ip_range) {
       zu_debug('user->ip_check range ('.$ip_range['ip_from'].' to '.$ip_range['ip_to'].')', $debug-10);
@@ -164,9 +172,12 @@ class user {
     return $msg;
   }
 
-  // get the ip adress of the active user
-  private function get_ip ($debug) {
+  // get the ip address of the active user
+  private function get_ip () {
     $this->ip_addr = $_SERVER['REMOTE_ADDR'];
+    if ($this->ip_addr == null) {
+        $this->ip_addr = 'localhost';
+    }
     return $this->ip_addr;
   }
 
@@ -174,14 +185,14 @@ class user {
   function get ($debug) {
     $result = ''; // for the result message e.g. if the user is blocked
 
-    // test first if the IP is blockeed
+    // test first if the IP is blocked
     if ($this->ip_addr == '') {
-      $this->get_ip($debug-1);
+      $this->get_ip();
     } else {
       zu_debug('user->get ('.$this->ip_addr.')', $debug-10);
     }
     // even if the user has an open session, but the ip is blocked, drop the user
-    $result = $this->ip_check($debug-10);
+    $result .= $this->ip_check($debug-10);
 
     if ($result == '') {
       // if the user has logged in use the logged in account
@@ -190,13 +201,13 @@ class user {
         $this->load($debug-1);
         zu_debug('user->get -> use ('.$this->id.')', $debug-10);
       } else {
-        // else use the IP adress (for testing don't overwrite any testing ip)
-        $this->get_ip($debug-1);
+        // else use the IP address (for testing don't overwrite any testing ip)
+        $this->get_ip();
         $this->load($debug-1);
         if ($this->id <= 0) {
           // use the ip address as the user name and add the user
           $this->name = $this->ip_addr;
-          $upd_result .= $this->save($debug-1);
+          $upd_result = $this->save($debug-1);
           // adding a new user automatically is normal, so the result does not need to be shown to the user
           if (str_replace ('1','',$upd_result) <> '') {
             $result = $upd_result;
@@ -246,12 +257,17 @@ class user {
   }
   
   // set the parameters for the virtual user that represents the standard view for all users
-  function dummy_all ($debug) {
+  function dummy_all () {
     $this->id          = 0;
     $this->code_id     = 'all';
     $this->name        = 'standard user view for all users';
   }
-  
+
+  //
+  function dsp_id () {
+    return $this->name.' ('.$this->id.')';
+  }
+
   // create the display user object based on the object (no needed any more if always the display user object is used)
   function dsp_user ($debug) {
     $dsp_user = New user_dsp;
@@ -261,7 +277,7 @@ class user {
   }
 
   // create the HTML code to display the user name with the HTML link
-  function display ($debug) {
+  function display () {
     $result = '<a href="/http/user.php?id='.$this->id.'">'.$this->name.'</a>';
     return $result;    
   }
@@ -269,26 +285,41 @@ class user {
   // remember the last source that the user has used
   function set_source ($source_id, $debug) {
     zu_debug('user->set_source('.$this->id.',s'.$source_id.')', $debug-10);
-    $db_con = new mysql;         
+    global $db_con;
+    //$db_con = new mysql;
     $db_con->usr_id = $this->id;         
     $db_con->type   = 'user';         
-    $result .= $db_con->update($this->id, 'source_id', $source_id, $debug-1);
+    $result = $db_con->update($this->id, 'source_id', $source_id, $debug-1);
     return $result;
   }
 
-  // set the main log entry parameters for updating one word field
+  // remember the last source that the user has used
+  // todo add the database field
+  function set_verb ($vrb_id, $debug) {
+    zu_debug('user->set_verb('.$this->id.',s'.$vrb_id.')', $debug-10);
+    global $db_con;
+    //$db_con = new mysql;
+    $db_con->usr_id = $this->id;
+    $db_con->type   = 'user';
+    $result = '';
+    //$result = $db_con->update($this->id, 'verb_id', $vrb_id, $debug-1);
+    return $result;
+  }
+
+    // set the main log entry parameters for updating one word field
   private function log_upd($debug) {
     zu_debug('user->log_upd user '.$this->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->id;  
-    $log->action    = 'update';
-    $log->table     = 'users';
+    $log->usr    = $this;
+    $log->action = 'update';
+    $log->table  = 'users';
     
     return $log;    
   }
   
   // check and update a single user parameter
   private function upd_par ($db_con, $usr_par, $db_row, $fld_name, $par_name, $debug) {
+    $result = '';
     if ($usr_par[$par_name] <> $db_row[$fld_name]
     AND $usr_par[$par_name] <> "") {
       $log = $this->log_upd($debug-1);
@@ -297,7 +328,7 @@ class user {
       $log->row_id    = $this->id; 
       $log->field     = $fld_name;
       if ($log->add($debug-1)) {
-        $result .= $db_con->update($this->id, $log->field, $log->new_value, $debug-1);
+        $result = $db_con->update($this->id, $log->field, $log->new_value, $debug-1);
       }    
     }
     return $result;
@@ -307,11 +338,13 @@ class user {
   function upd_pars ($usr_par, $debug) {
     zu_debug('user->upd_pars', $debug-10);
     zu_debug('user->upd_pars(u'.$this->id.',p'.implode(",",$usr_par).')', $debug-10);
+
+    global $db_con;
+
     $result = ''; // reset the html code var
 
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
-    $db_con->usr_id = $this->id;         
+    $db_con->usr_id = $this->id;
     $db_con->type   = 'user';         
     
     $db_usr = New user;
@@ -336,10 +369,12 @@ class user {
   
   // create a new user or update the existing
   function save ($debug) {
+    global $db_con;
+
     $result = '';
 
-    // build the database object because the is anyway needed
-    $db_con = new mysql;         
+      // build the database object because the is anyway needed
+    //$db_con = new mysql;
     $db_con->usr_id = $this->id;         
     $db_con->type   = 'user';         
     
@@ -349,17 +384,16 @@ class user {
       $this->id = $db_con->insert("user_name", $this->name, $debug-1);
       // log the changes???
       if ($this->id > 0) {
-        // add the ip adress to the user
-        $result .= $db_con->update($this->id, "ip_address", $this->get_ip($debug-1), $debug-1);
+        // add the ip address to the user
+        $result .= $db_con->update($this->id, "ip_address", $this->get_ip(), $debug-1);
         zu_debug("user->save add ... done.".$result.".", $debug-10);
       } else {
         zu_debug("user->save add ... failed.".$result.".", $debug-10);
       }
     } else {
       // update the ip address and log the changes????
+      zu_warning('user->save method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
     }
     return $result;    
   }
 }
-
-?>

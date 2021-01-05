@@ -36,7 +36,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("formula_add", "", $debug);
+$db_con = zu_start("formula_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -71,8 +71,8 @@ $link = zu_start("formula_add", "", $debug);
     }
 
     // get the word to which the new formula should be linked to
+    $wrd = New word_dsp;
     if (isset($_GET['word'])) {
-      $wrd = New word_dsp;
       $wrd->id  = $_GET['word'];
       $wrd->usr = $usr;
       $wrd->load($debug-1);
@@ -110,7 +110,7 @@ $link = zu_start("formula_add", "", $debug);
         zu_debug('formula_add->do ', $debug-14);
     
         // add to db
-        $add_result .= $frm->save($debug-1);
+        $add_result = $frm->save($debug-1);
 
         // in case of a problem show the message
         if (str_replace ('1','',$add_result) <> '') {
@@ -150,5 +150,4 @@ $link = zu_start("formula_add", "", $debug);
     
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

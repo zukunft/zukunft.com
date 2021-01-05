@@ -55,7 +55,7 @@ class word_dsp extends word {
 /*      $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>'; */
       $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><span class="glyphicon glyphicon-pencil"></a>';
       $title .= '</h2>'; 
-      $result .= dsp_text_h1 ($title, '');
+      $result .= dsp_text_h1 ($title);
     }
       
     return $result;
@@ -550,8 +550,8 @@ class word_dsp extends word {
       $result .= dsp_form_text("description", $this->description, "Description:");
       $result .= dsp_form_end('', $back);
       $result .= '<br>';
-      $result .= $this->dsp_graph ("up",   $debug-1);
-      $result .= $this->dsp_graph ("down", $debug-1);
+      $result .= $this->dsp_graph ("up",   $back,$debug-1);
+      $result .= $this->dsp_graph ("down", $back,$debug-1);
     }
 
     // display the user changes 

@@ -55,8 +55,11 @@ class value_time_serie extends user_sandbox_display {
   
   // load the standard value use by most users
   function load_standard($debug) {
+
+    global $db_con;
+
     if ($this->id > 0) {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_con->type = 'value_time_serie';         
       $sql = 'SELECT v.value_time_serie_id,
@@ -99,7 +102,8 @@ class value_time_serie extends user_sandbox_display {
   // load the record from the database
   // in a separate function, because this can be called twice from the load function
   function load_rec($sql_where, $debug) {
-    $db_con = new mysql;         
+    global $db_con;
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type = 'value_time_serie';         
     $sql = 'SELECT v.value_time_serie_id,
@@ -138,10 +142,12 @@ class value_time_serie extends user_sandbox_display {
   // insert or update a number in the database or save a user specific number
   function save($debug) {
     zu_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
+
+    global $db_con;
     $result = "";
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;  
     $db_con->type = 'value_time_serie';         
     

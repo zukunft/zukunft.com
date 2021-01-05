@@ -1,10 +1,10 @@
 <?php 
 /*
 
-  ZUkunft.com setup
+  Zukunft.com setup
   
   should create the database
-  and add the defauld or code linked database records
+  and add the default or code linked database records
   
 */
 
@@ -12,14 +12,37 @@
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
-$link = zu_start("setup", $debug);
+/*
+
+The steps should be
+1. ask for the database connection and test it
+2. ask for the admin user and set the database user
+3. create the database using zukunft_structure.sql
+4. load the coded linked database rows with zukunft_init_data.sql
+5. import the initial usr data with JSON
+
+*/
+
+$db_con = zu_start("setup", "center_form", $debug);
+
+// load the coded linked database rows with zukunft_init_data.sql
+$sql = $db_con->sql_of_code_linked_db_rows();
+if ($sql == false) {
+    zu_err('Cannot read the initial database data file', 'setup');
+} else {
+    $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "setup");
+}
+
+
+
+
 
 // create all code linked records in the database
 // created in the database because on one hand, they can be used like all user added records
 // on the other side, these records have special function that are defined in the code
 // the code link always is done with the field "code_id"
 // this way the user can give the record another name without using the code link
-// maybe the code link shoud be shown to the user for 
+// maybe the code link should be shown to the user for
 sql_code_link(SQL_VIEW_WORD_ADD,     "Add new words", $debug);
 sql_code_link(SQL_VIEW_WORD_EDIT,    "Word Edit", $debug);
 sql_code_link(SQL_VIEW_VALUE_ADD,    "Add new values", $debug);
@@ -36,17 +59,7 @@ sql_code_link(SQL_LINK_TYPE_IS,      "is a", $debug);
 // create test records
 // these records are used for the test cases
 
-/*
-
-create the database using zukunft_structure.sql
-set the database user
-load the coded linked database rows with zukunft_init_data.sql
-import the inital usr data with JSON
-
-*/
-
 
 zu_debug ("setup ... done.", $debug);
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

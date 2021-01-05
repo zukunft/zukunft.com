@@ -254,7 +254,7 @@ function run_value_test ($debug) {
     $log->table = 'values';
     $log->field = 'word_value';
     $log->row_id = $add_val->id;
-    $log->usr_id = $usr->id;
+    $log->usr = $usr;
     $result = $log->dsp_last(true, $debug-1);
   }
   $target = 'zukunft.com system batch job added 123456789';
@@ -300,7 +300,7 @@ function run_value_test ($debug) {
     $log->table = 'values';
     $log->field = 'word_value';
     $log->row_id = $add_val2->id;
-    $log->usr_id = $usr->id;
+    $log->usr = $usr;
     $result = $log->dsp_last(true, $debug-1);
   }
   $target = 'zukunft.com system batch job added 234567890';
@@ -333,7 +333,7 @@ function run_value_test ($debug) {
     $log->table = 'values';
     $log->field = 'word_value';
     $log->row_id = $added_val->id;
-    $log->usr_id = $usr->id;
+    $log->usr = $usr;
     $result = $log->dsp_last(true, $debug-1);
   }
   $target = 'zukunft.com system batch job changed 123456789 to 987654321';
@@ -378,7 +378,7 @@ function run_value_test ($debug) {
     $log->table = 'user_values';
     $log->field = 'word_value';
     $log->row_id = $val_usr2->id;
-    $log->usr_id = $usr2->id;
+    $log->usr = $usr2;
     $result = $log->dsp_last(true, $debug-1);
   }
   $target = 'zukunft.com system test changed 987654321 to 23456';
@@ -422,7 +422,7 @@ function run_value_test ($debug) {
     $log->table = 'user_values';
     $log->field = 'word_value';
     $log->row_id = $val_usr2->id;
-    $log->usr_id = $usr2->id;
+    $log->usr = $usr2;
     $result = $log->dsp_last(true, $debug-1);
   }
   $target = 'zukunft.com system test changed 23456 to 987654321';

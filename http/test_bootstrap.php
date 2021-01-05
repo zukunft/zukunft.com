@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
-$link = zu_start("start test.php", "", $debug-10); 
+$db_con = zu_start("start test.php", "", $debug-10);
 
 /*
 
@@ -243,6 +243,6 @@ Test bootstrap
 mysql_free_result($result);
 
 // Closing connection
-zu_end($link, $debug);
+zu_end($db_con, $debug);
 
 ?>

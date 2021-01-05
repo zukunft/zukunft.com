@@ -176,13 +176,13 @@ class phrase {
   }
 
   // return the name (just because all objects should have a name function)
-  function name ($debug) {
+  function name () {
     //$result = $this->name;
     $result = '"'.$this->name.'"';
     return $result;    
   }
 
-  function name_linked ($debug) {
+  function name_linked () {
     $result = '<a href="/http/view.php?words='.$this->id.'" title="'.$this->description.'">'.$this->name.'</a>';
     return $result;
   }
@@ -206,19 +206,19 @@ class phrase {
   }
 
   // return the html code to display a word
-  function display ($debug) {
+  function display () {
     $result = '<a href="/http/view.php?words='.$this->id.'">'.$this->name.'</a>';
     return $result;    
   }
 
   // simply to display a single word or triple link
-  function dsp_link ($debug) {
+  function dsp_link () {
     $result = '<a href="/http/view.php?words='.$this->id.'" title="'.$this->description.'">'.$this->name.'</a>';
     return $result;
   }
 
   // similar to dsp_link 
-  function dsp_link_style ($style, $debug) {
+  function dsp_link_style ($style) {
     $result = '<a href="/http/view.php?words='.$this->id.'" title="'.$this->description.'" class="'.$style.'">'.$this->name.'</a>';
     return $result;
   }

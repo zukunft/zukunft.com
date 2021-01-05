@@ -34,10 +34,13 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("view_confirm", "", $debug);
+$db_con = zu_start("view_confirm", "", $debug);
 
   $result = ''; // reset the html code var
-  
+  $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
+  $word_id = $back;
+  $view_id = 0;
+
   // get the view id used until now and the word id
   if (isset($_GET['id'])) {
     $view_id = $_GET['id'];
@@ -54,28 +57,35 @@ $link = zu_start("view_confirm", "", $debug);
   if ($usr->id > 0) {
 
     // in view edit views the view cannot be changed
-    $dsp = new view_dsp;
-    //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
-    $dsp->usr = $usr;
-    $back = $word_id;
-    $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
-    
-    // show the word name
-    $wrd = New word;
-    $wrd->usr = $usr;
-    $wrd->id  = $word_id;   
-    $wrd->load($debug-1);
-    $result .= dsp_text_h2 ('Select the display format for "'.$wrd->name.'"');
+    if ($word_id <= 0) {
+      $result .= dsp_err('word not found');
+    } else {
+      $dsp = new view_dsp;
+      //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
+      $dsp->usr = $usr;
+      $back = $word_id;
+      $result .= $dsp->dsp_navbar_no_view($back, $debug - 1);
+
+      // show the word name
+      $wrd = new word;
+      $wrd->usr = $usr;
+      $wrd->id = $word_id;
+      $wrd->load($debug - 1);
+      $result .= dsp_text_h2('Select the display format for "' . $wrd->name . '"');
+    }
 
     // allow to change to type
-    $dsp = new view;
-    $dsp->usr = $usr;
-    $dsp->id  = $view_id;   
-    $result .= $dsp->selector_page ($word_id, $debug-1);
+    if ($view_id <= 0) {
+      $result .= dsp_err('view not found');
+    } else {
+      $dsp = new view;
+      $dsp->usr = $usr;
+      $dsp->id = $view_id;
+      $result .= $dsp->selector_page($word_id, $back, $debug - 1);
+    }
   }
 
   echo $result;
-  
-  zu_end($link, $debug);
 
-?>
+zu_end($db_con, $debug);
+

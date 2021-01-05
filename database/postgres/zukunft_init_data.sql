@@ -1,25 +1,12 @@
--- phpMyAdmin SQL Dump
--- version 4.2.12deb2+deb8u3
--- http://www.phpmyadmin.net
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
 --
--- Database: `zukunft` - loading of predefined code linked database records
+-- Database: 'zukunft' - loading of predefined code linked database records
 --
 
 --
--- Dumping data for table `calc_and_cleanup_task_types`
+-- Dumping data for table 'calc_and_cleanup_task_types'
 --
 
-INSERT INTO `calc_and_cleanup_task_types` (`calc_and_cleanup_task_type_id`, `calc_and_cleanup_task_type_name`, `description`, `code_id`) VALUES
+INSERT INTO calc_and_cleanup_task_types (calc_and_cleanup_task_type_id, calc_and_cleanup_task_type_name, description, code_id) VALUES
 (1, 'update value', 'if a value is updated all the depending formula values should be calculated again', 'job_value_update'),
 (2, 'add value', '1. check if used in formulas and if yes, create new formula results\r\n2. calculate the new formula results', 'job_value_add'),
 (3, 'exclude a value', 'check if used for a formula result and if yes either remove the formula result or update it', 'job_value_del'),
@@ -32,19 +19,19 @@ INSERT INTO `calc_and_cleanup_task_types` (`calc_and_cleanup_task_type_id`, `cal
 (10, 'unlink word', NULL, 'job_word_unlink');
 
 --
--- Dumping data for table `change_actions`
+-- Dumping data for table 'change_actions'
 --
 
-INSERT INTO `change_actions` (`change_action_id`, `change_action_name`, `code_id`) VALUES
+INSERT INTO change_actions (change_action_id, change_action_name, code_id) VALUES
 (1, 'add', ''),
 (2, 'del', ''),
 (3, 'update', '');
 
 --
--- Dumping data for table `change_fields`
+-- Dumping data for table 'change_fields'
 --
 
-INSERT INTO `change_fields` (`change_field_id`, `change_field_name`, `table_id`, `description`, `code_id`) VALUES
+INSERT INTO change_fields (change_field_id, change_field_name, table_id, description, code_id) VALUES
 (1, 'word_name', 2, 'name', ''),
 (3, 'word_value', 1, 'number', 'value'),
 (4, 'formula_text', 7, NULL, 'ref_text'),
@@ -71,7 +58,7 @@ INSERT INTO `change_fields` (`change_field_id`, `change_field_name`, `table_id`,
 (25, 'type_name', 17, 'type', ''),
 (26, 'name_plural', 17, 'plural', ''),
 (27, 'name_reverse', 17, 'name', ''),
-(28, 'name_plural_reverse', 17, 'plural opposide name', ''),
+(28, 'name_plural_reverse', 17, 'plural opposite name', ''),
 (29, 'description', 12, 'description', ''),
 (30, 'plural', 12, 'plural', ''),
 (31, 'mask_name', 18, 'name', ''),
@@ -127,10 +114,10 @@ INSERT INTO `change_fields` (`change_field_id`, `change_field_name`, `table_id`,
 (87, 'position_type', 40, NULL, '');
 
 --
--- Dumping data for table `change_tables`
+-- Dumping data for table 'change_tables'
 --
 
-INSERT INTO `change_tables` (`change_table_id`, `change_table_name`, `description`, `code_id`) VALUES
+INSERT INTO change_tables (change_table_id, change_table_name, description, code_id) VALUES
 (1, 'values', 'number', 'values'),
 (2, 'words', 'word', 'words'),
 (7, 'formulas', 'formula', 'formulas'),
@@ -170,27 +157,27 @@ INSERT INTO `change_tables` (`change_table_id`, `change_table_name`, `descriptio
 (42, '', '', 'user_view_entries');
 
 --
--- Dumping data for table `formula_element_types`
+-- Dumping data for table 'formula_element_types'
 --
 
-INSERT INTO `formula_element_types` (`formula_element_type_id`, `formula_element_type_name`, `code_id`, `description`) VALUES
+INSERT INTO formula_element_types (formula_element_type_id, formula_element_type_name, code_id, description) VALUES
 (1, 'word', 'word', 'a reference to a word'),
 (2, 'verb', 'term_link', 'a reference to a term link'),
 (3, 'formula', 'formula', 'a reference to a formula');
 
 --
--- Dumping data for table `formula_link_types`
+-- Dumping data for table 'formula_link_types'
 --
 
-INSERT INTO `formula_link_types` (`formula_link_type_id`, `type_name`, `code_id`, `formula_id`, `word_type_id`, `link_type_id`, `description`) VALUES
+INSERT INTO formula_link_types (formula_link_type_id, type_name, code_id, formula_id, word_type_id, link_type_id, description) VALUES
 (1, '', NULL, 0, 0, 0, 'default'),
 (2, '', NULL, 0, 4, 5, 'increase needs to know for which time period the increase should be calculated');
 
 --
--- Dumping data for table `formula_types`
+-- Dumping data for table 'formula_types'
 --
 
-INSERT INTO `formula_types` (`formula_type_id`, `name`, `description`, `code_id`) VALUES
+INSERT INTO formula_types (formula_type_id, name, description, code_id) VALUES
 (1, 'calc', 'a normal calculation formula', ''),
 (2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'),
 (3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'),
@@ -198,26 +185,26 @@ INSERT INTO `formula_types` (`formula_type_id`, `name`, `description`, `code_id`
 (5, 'const', 'used to define a const value that is not supposed to be changed like pi', '');
 
 --
--- Dumping data for table `languages`
+-- Dumping data for table 'languages'
 --
 
-INSERT INTO `languages` (`language_id`, `language_name`, `code_id`, `wikimedia_code`, `description`) VALUES
+INSERT INTO languages (language_id, language_name, code_id, wikimedia_code, description) VALUES
 (1, 'English', 'en', 'en', 'the system language, so each word must be unique for all users in this language'),
 (2, 'UK English', 'en_uk', '', 'the users can use this (and the other) languages to create its own namespace. So one user may use "Zurich" in UK English for "Kanton Zurich" and another user may use "Zurich" in UK English for "Zurich AG".'),
 (3, 'German', 'de', 'de', 'a normal translation to German');
 
 --
--- Dumping data for table `languages_forms`
+-- Dumping data for table 'languages_forms'
 --
 
-INSERT INTO `languages_forms` (`languages_form_id`, `languages_form_name`, `code_id`, `lanuages_id`) VALUES
+INSERT INTO languages_forms (languages_form_id, languages_form_name, code_id, lanuages_id) VALUES
 (1, 'plural', 'plural', 1);
 
 --
--- Dumping data for table `protection_types`
+-- Dumping data for table 'protection_types'
 --
 
-INSERT INTO `protection_types` (`protection_type_id`, `protection_type_name`, `code_id`, `description`) VALUES
+INSERT INTO protection_types (protection_type_id, protection_type_name, code_id, description) VALUES
 (1, 'no protection', 'no_protection', 'anyone can take the ownership '),
 (2, 'user', 'user_protection', 'only users with a login and a confirmed email can take over the ownership'),
 (3, 'admin', 'admin_protection', 'only user with admin permission can take the ownership'),
@@ -225,10 +212,10 @@ INSERT INTO `protection_types` (`protection_type_id`, `protection_type_name`, `c
 
 
 --
--- Dumping data for table `ref_types`
+-- Dumping data for table 'ref_types'
 --
 
-INSERT INTO `ref_types` (`ref_type_id`, `ref_type_name`, `code_id`, `description`, `base_url`) VALUES
+INSERT INTO ref_types (ref_type_id, ref_type_name, code_id, description, base_url) VALUES
 (1, 'wikipedia', 'wikipedia', 'wikipedia', 'https://en.wikipedia.org/wiki/'),
 (2, 'wikidata', 'wikidata', 'wikidata', 'https://www.wikidata.org/wiki/');
 
@@ -236,10 +223,10 @@ INSERT INTO `ref_types` (`ref_type_id`, `ref_type_name`, `code_id`, `description
 
 
 --
--- Dumping data for table `share_types`
+-- Dumping data for table 'share_types'
 --
 
-INSERT INTO `share_types` (`share_type_id`, `share_type_name`, `code_id`, `description`) VALUES
+INSERT INTO share_types (share_type_id, share_type_name, code_id, description) VALUES
 (1, 'public', 'public', 'value can be seen and used by everyone (default)'),
 (2, 'personal', 'personal', 'value can be seen by everyone, but is linked to the user'),
 (3, 'group', 'group', 'only a closed group of users can seen and use the values'),
@@ -249,30 +236,30 @@ INSERT INTO `share_types` (`share_type_id`, `share_type_name`, `code_id`, `descr
 
 
 --
--- Dumping data for table `source_types`
+-- Dumping data for table 'source_types'
 --
 
-INSERT INTO `source_types` (`source_type_id`, `source_type_name`, `code_id`) VALUES
+INSERT INTO source_types (source_type_id, source_type_name, code_id) VALUES
 (1, 'XML', 'xml'),
 (2, 'XBRL', 'xbrl'),
 (3, 'CSV', 'csv'),
 (4, 'PDF', 'pdf');
 
 --
--- Dumping data for table `sys_log_status`
+-- Dumping data for table 'sys_log_status'
 --
 
-INSERT INTO `sys_log_status` (`sys_log_status_id`, `sys_log_status_name`, `code_id`, `comment`, `action`) VALUES
+INSERT INTO sys_log_status (sys_log_status_id, sys_log_status_name, code_id, comment, action) VALUES
 (1, 'new', 'new', 'the error has just being logged and no one has yet looked at it ', NULL),
 (2, 'assigned', 'assigned', 'A developer is looking at the error.', 'assign to'),
 (3, 'resolved', 'resolved', 'the error is supposed to be corrected', 'resolve'),
 (4, 'closed', 'closed', 'a second person (other than the developer) has confirmed that the problem is solved.', 'close');
 
 --
--- Dumping data for table `sys_log_types`
+-- Dumping data for table 'sys_log_types'
 --
 
-INSERT INTO `sys_log_types` (`sys_log_type_id`, `type_name`, `code_id`) VALUES
+INSERT INTO sys_log_types (sys_log_type_id, type_name, code_id) VALUES
 (0, 'undefined', 'undefined'),
 (1, 'Info', 'info'),
 (2, 'Warning', 'warning'),
@@ -280,44 +267,44 @@ INSERT INTO `sys_log_types` (`sys_log_type_id`, `type_name`, `code_id`) VALUES
 (4, 'FATAL ERROR', 'fatal');
 
 --
--- Dumping data for table `users`
+-- Dumping data for table 'users'
 --
 
-INSERT INTO `users` (`user_id`, `user_name`, `code_id`, `password`, `email`, `email_verified`, `email_alternativ`, `ip_address`, `mobile_number`, `mobile_verified`, `first_name`, `last_name`, `street`, `place`, `country_id`, `post_verified`, `official_id`, `user_official_id_type_id`, `official_verified`, `user_type_id`, `last_word_id`, `last_mask_id`, `isactive`, `dt`, `last_logoff`, `user_profile_id`, `source_id`, `activation_key`, `activation_key_timeout`) VALUES
+INSERT INTO users (user_id, user_name, code_id, password, email, email_verified, email_alternativ, ip_address, mobile_number, mobile_verified, first_name, last_name, street, place, country_id, post_verified, official_id, user_official_id_type_id, official_verified, user_type_id, last_word_id, last_mask_id, isactive, dt, last_logoff, user_profile_id, source_id, activation_key, activation_key_timeout) VALUES
 (1, 'zukunft.com system batch job', 'system', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, '2018-02-05 08:32:36', NULL, NULL, NULL, NULL, NULL),
-(2, 'zukunft.com system test', 'systemtest', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2018-06-25 12:01:14', NULL, NULL, NULL, NULL, NULL),
+(2, 'zukunft.com system test', 'system_test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2018-06-25 12:01:14', NULL, NULL, NULL, NULL, NULL);
 
 --
--- Dumping data for table `user_official_types`
+-- Dumping data for table 'user_official_types'
 --
 
-INSERT INTO `user_official_types` (`user_official_type_id`, `type_name`, `code_id`, `comment`) VALUES
+INSERT INTO user_official_types (user_official_type_id, type_name, code_id, comment) VALUES
 (1, 'passport number', 'passport_nbr', NULL);
 
 --
--- Dumping data for table `user_profiles`
+-- Dumping data for table 'user_profiles'
 --
 
-INSERT INTO `user_profiles` (`profile_id`, `user_profile_name`, `code_id`, `comment`) VALUES
+INSERT INTO user_profiles (profile_id, user_profile_name, code_id, comment) VALUES
 (1, 'normal user', 'normal', NULL),
 (2, 'admin', 'admin', 'Administrator that can add and change verbs and sees the code_id'),
 (3, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production system');
 
 --
--- Dumping data for table `user_types`
+-- Dumping data for table 'user_types'
 --
 
-INSERT INTO `user_types` (`user_type_id`, `user_type`, `code_id`, `comment`) VALUES
+INSERT INTO user_types (user_type_id, user_type, code_id, comment) VALUES
 (1, 'Guest', 'guest', ''),
 (2, 'IP address', 'ip_address', ''),
 (3, 'Verified', 'verified', 'verified by email or mobile'),
 (4, 'Secured', 'secured', 'verified with a high security e.g. via passport of a trusted country');
 
 --
--- Dumping data for table `verbs`
+-- Dumping data for table 'verbs'
 --
 
-INSERT INTO `verbs` (`verb_id`, `verb_name`, `code_id`, `description`, `condition_type`, `formula_name`, `name_plural_reverse`, `name_plural`, `name_reverse`, `words`) VALUES
+INSERT INTO verbs (verb_id, verb_name, code_id, description, condition_type, formula_name, name_plural_reverse, name_plural, name_reverse, words) VALUES
 (0, 'not set', '', NULL, NULL, '', '', '', '', 0),
 (1, 'has a', '', NULL, 0, '', 'is used for', 'has', 'is used for', 27),
 (2, 'is a', 'is', NULL, 0, '', 'are', 'are', 'are', 113),
@@ -325,10 +312,10 @@ INSERT INTO `verbs` (`verb_id`, `verb_name`, `code_id`, `description`, `conditio
 (4, 'is term jump for', '', 'is the default term jump for', 1, '', '', '', '', 0),
 (5, 'term type needed', '', 'the formula needs the linked term type', NULL, '', '', '', '', 0),
 (6, 'is follower of', 'follow', 'is follower of', NULL, 'follower', 'is followed by', 'is follower of', 'is followed by', 17),
-(7, 'is part of', 'contains', 'if several simular term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statemanet are Financial Statements. Or Sectors and Regions are different splittings', NULL, NULL, 'contains', 'is part of', 'contains', 51),
+(7, 'is part of', 'contains', 'if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings', NULL, NULL, 'contains', 'is part of', 'contains', 51),
 (8, 'uses', '', NULL, NULL, NULL, 'are used by', 'uses', 'is used by', 7),
 (9, 'issue', '', NULL, NULL, NULL, 'are issued by', 'issues', 'is issued by', 3),
-(10, 'is measure type for', '', 'is the default measure type for', NULL, NULL, 'have the measury type', 'are measure type for', 'has the measure type', 9),
+(10, 'is measure type for', '', 'is the default measure type for', NULL, NULL, 'have the measure type', 'are measure type for', 'has the measure type', 9),
 (11, 'is an acronym for', '', 'is an acronym for', NULL, NULL, 'are an acronyms of', 'are an acronyms for', 'is an acronym of', 0),
 (12, 'can be used as a differentiator for', 'can_contain', 'similar to contains, but in a table view the row will not be shown if there is no corresponding value', NULL, 'differentiator', 'can be differentiated by', 'can be used as a differentiator for', 'can be differentiated by', 2),
 (13, 'influences', '', NULL, NULL, NULL, 'is influenced by', 'influences', 'is influenced by', 0),
@@ -336,10 +323,10 @@ INSERT INTO `verbs` (`verb_id`, `verb_name`, `code_id`, `description`, `conditio
 (15, 'can be', '', 'can be', NULL, NULL, 'can be', 'can be', 'can be', 2);
 
 --
--- Dumping data for table `views`
+-- Dumping data for table 'views'
 --
 
-INSERT INTO `views` (`view_id`, `user_id`, `view_name`, `comment`, `view_type_id`, `code_id`, `excluded`) VALUES
+INSERT INTO views (view_id, user_id, view_name, comment, view_type_id, code_id, excluded) VALUES
 (1, 1, 'Start view', 'A dynamic start mask that shows a interesting fact', 1, 'dsp_start', NULL),
 (2, 14, 'Company sheet', 'The income statement, balance sheet or cash flow sheet of a big company', 3, NULL, NULL),
 (3, 14, 'complete', 'Show a word, all related words to edit the word tree and the linked formulas with some results', 4, NULL, NULL),
@@ -376,10 +363,10 @@ INSERT INTO `views` (`view_id`, `user_id`, `view_name`, `comment`, `view_type_id
 (37, 1, 'Delete triple', 'Exclude or delete a triple', NULL, 'triple_del', NULL);
 
 --
--- Dumping data for table `view_components`
+-- Dumping data for table 'view_components'
 --
 
-INSERT INTO `view_components` (`view_component_id`, `user_id`, `view_component_name`, `comment`, `view_component_type_id`, `word_id_row`, `formula_id`, `word_id_col`, `word_id_col2`, `excluded`, `linked_view_component_id`, `view_component_link_type_id`, `link_type_id`) VALUES
+INSERT INTO view_components (view_component_id, user_id, view_component_name, comment, view_component_type_id, word_id_row, formula_id, word_id_col, word_id_col2, excluded, linked_view_component_id, view_component_link_type_id, link_type_id) VALUES
 (1, 14, 'Name', NULL, 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (2, 14, 'Cash Flow Statement', NULL, 11, 4, NULL, 141, NULL, NULL, NULL, NULL, NULL),
 (4, 14, 'Words related', NULL, 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -391,18 +378,18 @@ INSERT INTO `view_components` (`view_component_id`, `user_id`, `view_component_n
 (10, 1572, 'JSON Export', NULL, 16, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
--- Dumping data for table `view_component_position_types`
+-- Dumping data for table 'view_component_position_types'
 --
 
-INSERT INTO `view_component_position_types` (`view_component_position_type_id`, `type_name`, `description`) VALUES
+INSERT INTO view_component_position_types (view_component_position_type_id, type_name, description) VALUES
 (1, 'below', ''),
-(2, 'Right', 'is right of the privous entry');
+(2, 'Right', 'is right of the previous entry');
 
 --
--- Dumping data for table `view_component_types`
+-- Dumping data for table 'view_component_types'
 --
 
-INSERT INTO `view_component_types` (`view_component_type_id`, `view_component_type_name`, `description`, `code_id`) VALUES
+INSERT INTO view_component_types (view_component_type_id, view_component_type_name, description, code_id) VALUES
 (1, 'word selector', '', 'word_select'),
 (2, 'view selector', 'to select an existing mask e.g. to set the default view', 'view_select'),
 (3, 'text', 'simply to display a variable text', 'text'),
@@ -421,17 +408,17 @@ INSERT INTO `view_component_types` (`view_component_type_id`, `view_component_ty
 (16, 'JSON Export', 'To start or configure the JSON export', 'json_export');
 
 --
--- Dumping data for table `view_link_types`
+-- Dumping data for table 'view_link_types'
 --
 
-INSERT INTO `view_link_types` (`view_link_type_id`, `type_name`, `comment`) VALUES
+INSERT INTO view_link_types (view_link_type_id, type_name, comment) VALUES
 (1, '0', '');
 
 --
--- Dumping data for table `view_types`
+-- Dumping data for table 'view_types'
 --
 
-INSERT INTO `view_types` (`view_type_id`, `type_name`, `description`, `code_id`) VALUES
+INSERT INTO view_types (view_type_id, type_name, description, code_id) VALUES
 (1, 'entry view', 'These masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'entry'),
 (2, 'presentation view', '', NULL),
 (3, 'detail view', 'the standard mask without additional functionalities', 'mask_type_default'),
@@ -439,10 +426,10 @@ INSERT INTO `view_types` (`view_type_id`, `type_name`, `description`, `code_id`)
 (5, '', '', 'view_type_default');
 
 --
--- Dumping data for table `word_types`
+-- Dumping data for table 'word_types'
 --
 
-INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`, `scaling_factor`, `word_symbol`) VALUES
+INSERT INTO word_types (word_type_id, type_name, description, code_id, scaling_factor, word_symbol) VALUES
 (1, 'standard', 'for words that have need no special behaviour', 'default', NULL, ''),
 (2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'time', NULL, ''),
 (3, 'measure type', 'a measure word such as meter, kilogram, ...', 'measure', NULL, ''),
@@ -459,7 +446,3 @@ INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`,
 (14, 'prior', 'not sure, why this is needed', 'previous', NULL, ''),
 (15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%'),
 (16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, '');
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

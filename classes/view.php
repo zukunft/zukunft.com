@@ -48,7 +48,7 @@ class view extends user_sandbox {
     $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
   }
     
-  function reset($debug) {
+  function reset() {
     $this->id         = NULL;
     $this->usr_cfg_id = NULL;
     $this->usr        = NULL;
@@ -68,6 +68,8 @@ class view extends user_sandbox {
 
   // load the view parameters for all users
   function load_standard($debug) {
+
+    global $db_con;
     $result = '';
     
     // set the where clause depending on the values given
@@ -89,7 +91,7 @@ class view extends user_sandbox {
                      m.excluded
                 FROM views m 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_dsp = $db_con->get1($sql, $debug-5);  
       if ($db_dsp['view_id'] <= 0) {
@@ -122,6 +124,9 @@ class view extends user_sandbox {
   // load the missing view parameters from the database
   function load($debug) {
 
+    global $db_con;
+    $result = '';
+
     // check the all minimal input parameters
     if (!isset($this->usr)) {
       zu_err("The user id must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -153,7 +158,7 @@ class view extends user_sandbox {
              LEFT JOIN user_views u ON u.view_id = m.view_id 
                                    AND u.user_id = ".$this->usr->id." 
                  WHERE ".$sql_where.";";
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_view = $db_con->get1($sql, $debug-5);  
         if ($db_view['view_id'] <= 0) {
@@ -170,12 +175,15 @@ class view extends user_sandbox {
         } 
         zu_debug('view->load '.$this->dsp_id(), $debug-10);
       }  
-    }  
+    }
+    return $result;
   }
     
   // load all parts of this view for this user
   function load_components($debug) {
-    zu_debug('view->load_components for '.$this->dsp_id(), $debug-10);  
+    zu_debug('view->load_components for '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
 
     // TODO make the order user specific
     $sql = " SELECT e.view_component_id, 
@@ -204,7 +212,7 @@ class view extends user_sandbox {
                 AND l.view_component_id = e.view_component_id 
            ORDER BY IF(y.order_nbr IS NULL, l.order_nbr, y.order_nbr);";
     zu_debug("view->load_components ... ".$sql, $debug-12);
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-8);  
     $this->cmp_lst = array();
@@ -264,11 +272,14 @@ class view extends user_sandbox {
 
   // TODO review (get the object instead)
   function type_name($debug) {
+
+    global $db_con;
+
     if ($this->type_id > 0) {
       $sql = "SELECT type_name, description
                 FROM view_types
                WHERE view_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
@@ -472,6 +483,8 @@ class view extends user_sandbox {
   // create a selection page where the user can select a view that should be used for a word
   function selector_page ($wrd_id, $back, $debug) {
     zu_debug('view->selector_page ('.$this->id.','.$wrd_id.')', $debug-10);
+
+    global $db_con;
     $result  = '';
 
     /*
@@ -484,7 +497,7 @@ class view extends user_sandbox {
     $call = '/http/view.php?words='.$wrd_id;
     $field = 'new_id';
     
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $dsp_lst = $db_con->get($sql, $debug-5);  
     foreach ($dsp_lst AS $dsp) {
@@ -525,6 +538,8 @@ class view extends user_sandbox {
     $result = '';
     zu_debug('view->add_usr_cfg '.$this->dsp_id(), $debug-10);
 
+    global $db_con;
+
     if (!$this->has_usr_cfg) {
 
       // check again if there ist not yet a record
@@ -532,7 +547,7 @@ class view extends user_sandbox {
                 FROM user_views 
                WHERE view_id = '.$this->id.' 
                  AND user_id = '.$this->usr->id.';';
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       $usr_db_id = $db_row['user_id'];
@@ -550,8 +565,10 @@ class view extends user_sandbox {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    $result = false;
     zu_debug('view->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = false;
 
     //if ($this->has_usr_cfg) {
 
@@ -564,7 +581,7 @@ class view extends user_sandbox {
                 FROM user_views
                WHERE view_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
       zu_debug('view->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -585,7 +602,7 @@ class view extends user_sandbox {
   function save_field_comment($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->comment <> $this->comment) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->comment;
       $log->new_value = $this->comment;
       $log->std_value = $std_rec->comment;
@@ -600,7 +617,7 @@ class view extends user_sandbox {
   function save_field_type($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->type_id <> $this->type_id) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->type_name($debug-1);
       $log->old_id    = $db_rec->type_id;
       $log->new_value = $this->type_name($debug-1);

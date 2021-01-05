@@ -28,16 +28,17 @@
   http://zukunft.com
   
 */
-// ZUkunft.com verb list
+// Zukunft.com verb list
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("verbs", $debug);
+$db_con = zu_start("verbs", '', $debug);
 
   $result = ''; // reset the html code var
+  $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
 
   // load the session user parameters
   $usr = New user;
@@ -67,5 +68,4 @@ $link = zu_start("verbs", $debug);
   echo $result;
 
 // Closing connection
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

@@ -32,7 +32,7 @@
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
-$link = zu_start("formula_edit", "", $debug);
+$db_con = zu_start("formula_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -76,7 +76,7 @@ $link = zu_start("formula_edit", "", $debug);
         $phr->id  = $_GET['link_phrase'];
         $phr->usr = $usr;
         $phr->load($debug-1);
-        $upd_result .= $frm->link_phr($phr, $debug-1);
+        $upd_result = $frm->link_phr($phr, $debug-1);
       }
 
       // to unlink a word from the formula 
@@ -85,10 +85,10 @@ $link = zu_start("formula_edit", "", $debug);
         $phr->id  = $_GET['unlink_phrase'];
         $phr->usr = $usr;
         $phr->load($debug-1);
-        $upd_result .= $frm->unlink_phr($phr, $debug-1);
+        $upd_result = $frm->unlink_phr($phr, $debug-1);
       }
 
-      // if the save botton has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
+      // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
       if ($frm->usr_text <> '') {
 
         // update the formula if it has been changed
@@ -128,5 +128,4 @@ $link = zu_start("formula_edit", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

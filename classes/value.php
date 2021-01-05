@@ -61,7 +61,7 @@ class value extends user_sandbox_display {
   public $lnk_ids       = NULL; // the triple id list  for this value loaded directly from the group
   // public $phr_all_lst  = NULL; // $phr_lst including the time wrd
   // public $phr_all_ids  = NULL; // $phr_ids including the time id
-  public $grp           = NULL; // phares (word or triple) group object for this value
+  public $grp           = NULL; // phrases (word or triple) group object for this value
   public $time_phr      = NULL; // the time (period) word object for this value
   public $update_time   = NULL; // time of the last update, which could also be taken from the change log
   public $source        = NULL; // the source object
@@ -77,7 +77,7 @@ class value extends user_sandbox_display {
     $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
   } 
   
-  function reset($debug) {
+  function reset() {
     $this->id            = NULL;
     $this->usr_cfg_id    = NULL;
     $this->usr           = NULL;
@@ -116,8 +116,10 @@ class value extends user_sandbox_display {
   
   // load the standard value use by most users
   function load_standard($debug) {
+    global $db_con;
+
     if ($this->id > 0) {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_con->type = 'value';         
       $sql = 'SELECT v.value_id,
@@ -131,7 +133,7 @@ class value extends user_sandbox_display {
                WHERE v.value_id = '.$this->id.';';
       $db_val = $db_con->get1($sql, $debug-5);  
       if ($db_val['value_id'] <= 0) {
-        $this->reset($debug-1);
+        $this->reset();
       } else {
         $this->id            = $db_val['value_id'];
         $this->owner_id      = $db_val['user_id'];
@@ -162,7 +164,9 @@ class value extends user_sandbox_display {
   // load the record from the database
   // in a seperate function, because this can be called twice from the load function
   function load_rec($sql_where, $debug) {
-    $db_con = new mysql;         
+    global $db_con;
+
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type = 'value';         
     $sql = 'SELECT v.value_id,
@@ -202,6 +206,8 @@ class value extends user_sandbox_display {
   
   // load the missing value parameters from the database
   function load($debug) {
+
+    global $db_con;
     $result = '';
 
     // check the all minimal input parameters
@@ -280,7 +286,7 @@ class value extends user_sandbox_display {
                           WHERE phrase_group_id IN (".$sql_grp.") ".$sql_time.";";
             }             
             zu_debug('value->load sql val "'.$sql_val.'"', $debug-12);
-            $db_con = new mysql;         
+            //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;         
             $val_ids_rows = $db_con->get($sql_val, $debug-5);  
             if (count($val_ids_rows) > 0) {
@@ -601,6 +607,9 @@ class value extends user_sandbox_display {
   // to be dismissed, but used by value_list->html at the moment
   function load_wrd_lst($debug) {
     zu_debug('value->load_wrd_lst', $debug-12);
+
+    global $db_con;
+
     if ($this->wrd_lst == NUll) {
       // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
       if ($this->grp_id > 0) {
@@ -618,7 +627,7 @@ class value extends user_sandbox_display {
           if ($this->id > 0) {
             // rebuild word ids based on the link table
             $sql = "SELECT phrase_id FROM value_phrase_links WHERE value_id = ".$this->id." GROUP BY phrase_id;";
-            $db_con = new mysql;         
+            //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;         
             $wrd_lnk_lst = $db_con->get($sql, $debug-5); 
             $wrd_ids = array();
@@ -642,6 +651,8 @@ class value extends user_sandbox_display {
   // used by value_edit.php 
   function wrd_link_lst($debug) {
     zu_debug("value->wrd_link_lst (".$this->id." and user ".$this->usr->name.")", $debug-10);
+
+    global $db_con;
     $result = array();
 
     if ($this->id > 0) {
@@ -651,9 +662,9 @@ class value extends user_sandbox_display {
           LEFT JOIN words t      ON l.phrase_id = t.word_id  
           LEFT JOIN user_words u ON t.phrase_id = u.word_id AND u.user_id  = ".$this->usr->id."  
               WHERE l.value_id = ".$this->id." 
-            GROUP BY t.word_id
+            GROUP BY t.word_id, t.values, t.word_name
             ORDER BY t.values, t.word_name;";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-5);  
       foreach ($db_lst AS $db_row) {
@@ -689,7 +700,7 @@ class value extends user_sandbox_display {
     $result .= $this->upd_phr_links($debug-1);
   
     zu_debug('value->check done', $debug-18);
-    return $changes; 
+    return $result;
   }
   
   // scale a value for the target words
@@ -960,7 +971,7 @@ class value extends user_sandbox_display {
   */
   
   // create and return the description for this value for debugging
-  function dsp_id($debug) {
+  function dsp_id() {
     $result = '';
     
     //$this->load_phrases($debug-1);
@@ -1197,6 +1208,8 @@ class value extends user_sandbox_display {
   // with a preference of the start_word_ids
   function dsp_samples($wrd_id, $start_wrd_ids, $size, $back, $debug) {
     zu_debug("value->dsp_samples (".$wrd_id.",rt".implode(",",$start_wrd_ids).",size".$size.")", $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
     
     // get value changes by the user that are not standard
@@ -1216,7 +1229,7 @@ class value extends user_sandbox_display {
                AND lt.phrase_id = t.word_id
                AND (u.excluded IS NULL OR u.excluded = 0) 
              LIMIT ".$size.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-5);  
 
@@ -1648,6 +1661,8 @@ class value extends user_sandbox_display {
   // true if no other user has modified the value
   function not_changed($debug) {
     zu_debug('value->not_changed id '.$this->id.' by someone else than the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     $change_user_id = 0;
@@ -1663,7 +1678,7 @@ class value extends user_sandbox_display {
                WHERE value_id = ".$this->id."
                  AND (excluded <> 1 OR excluded is NULL)";
     }
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     $change_user_id = $db_row['user_id'];
@@ -1721,6 +1736,8 @@ class value extends user_sandbox_display {
 
   // create a database record to save a user specific value
   function add_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if (!$this->has_usr_cfg) {
@@ -1731,7 +1748,7 @@ class value extends user_sandbox_display {
                 FROM user_values
                WHERE value_id = '.$this->id.' 
                  AND user_id = '.$this->usr->id.';';
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       $usr_db_id = $db_row['user_id'];
@@ -1750,8 +1767,10 @@ class value extends user_sandbox_display {
   // check if the database record for the user specific settings can be removed 
   // exposed at the moment to user_display.php for consistency check, but this hsould not be needed
   function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('value->del_usr_cfg_if_not_needed pre check for "'.$this->id.' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = '';
 
     // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
     $sql = "SELECT value_id,
@@ -1761,7 +1780,7 @@ class value extends user_sandbox_display {
               FROM user_values
              WHERE value_id = ".$this->id." 
                AND user_id = ".$this->usr->id.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $usr_cfg = $db_con->get1($sql, $debug-5);  
     zu_debug('value->del_usr_cfg_if_not_needed check for "'.$this->id.' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -1793,6 +1812,8 @@ class value extends user_sandbox_display {
   
   // remove user adjustment and log it (used by user.php to undo the user changes)
   function del_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
@@ -1801,7 +1822,7 @@ class value extends user_sandbox_display {
       $db_type = 'user_value';
       $log = $this->log_del($db_type, $debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
@@ -1814,15 +1835,15 @@ class value extends user_sandbox_display {
   }
 
   // set the log entry parameters for a value update
-  function log_upd($db_number, $debug) {
+  function log_upd($debug) {
     zu_debug('value->log_upd "'.$this->number.'" for user '.$this->usr->id, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
-    $log->action    = 'update';
+    $log->usr    = $this->usr;
+    $log->action = 'update';
     if ($this->can_change($debug-1)) {
-      $log->table   = 'values';
+      $log->table = 'values';
     } else {  
-      $log->table   = 'user_values';
+      $log->table = 'user_values';
     }
     
     return $log;    
@@ -1833,7 +1854,7 @@ class value extends user_sandbox_display {
   function log_del($db_type, $debug) {
     zu_debug('value->log_del "'.$this->id.'" for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = $db_type;
     $log->field     = 'word_value';
@@ -1852,10 +1873,12 @@ class value extends user_sandbox_display {
   // to do: make it user specific!
   function upd_phr_links($debug) {
     zu_debug('value->upd_phr_links', $debug-10);
+
+    global $db_con;
     $result = '';
     
     // create the db link object for all actions
-    $db_con = New mysql;          
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
 
     $table_name = 'value_phrase_links'; 
@@ -1943,7 +1966,7 @@ class value extends user_sandbox_display {
   function log_add_link($wrd_id, $debug) {
     zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id, $debug-10);
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'value_phrase_links';
     $log->new_from  = $this->id;
@@ -1959,7 +1982,7 @@ class value extends user_sandbox_display {
   function log_del_link($wrd_id, $debug) {
     zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id, $debug-10);
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'value_phrase_links';
     $log->old_from  = $this->id;
@@ -2338,10 +2361,12 @@ class value extends user_sandbox_display {
   // insert or update a number in the database or save a user specific number
   function save($debug) {
     zu_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
+
+    global $db_con;
     $result = "";
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;  
     if (isset($this->time_stamp)) {
       $db_con->type = 'value_time_serie';         

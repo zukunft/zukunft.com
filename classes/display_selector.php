@@ -47,6 +47,8 @@ class selector {
   
   function display ($debug) {
     zu_debug('selector->display ('.$this->name.','.$this->form.','.$this->sql.',s'.$this->selected.','.$this->dummy_text.')', $debug-10);
+
+    global $db_con;
     $result  = '';
 
     $result .= dsp_form_fld_select ($this->form, $this->name, $this->label, $this->bs_class, $this->attribute);
@@ -59,7 +61,7 @@ class selector {
       $result .= '<option value="0" selected>'.$this->dummy_text.'</option>';
     }
 
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($this->sql, $debug-5);  
     foreach ($db_lst AS $db_entry) {

@@ -55,6 +55,9 @@ class val_lnk {
   
   // load the word to value link from the database
   function load($debug) {
+
+    global $db_con;
+
     $sql = '';
     // the id and the user must be set
     if ($this->id > 0) {
@@ -73,7 +76,7 @@ class val_lnk {
                  AND phrase_id = ".$this->wrd->id.";";
     }
     if ($sql <> '') {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_val = $db_con->get1($sql, $debug-5);  
       $this->id     = $db_val['value_phrase_link_id'];
@@ -101,7 +104,7 @@ class val_lnk {
   private function log_add($debug) {
     zu_debug('val_lnk->log_add for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'value_phrase_links';
     $log->new_from  = $this->val;
@@ -117,7 +120,7 @@ class val_lnk {
   private function log_upd($db_rec, $debug) {
     zu_debug('val_lnk->log_upd for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     $log->table     = 'value_phrase_links'; // no user sandbox for links, only the values itself can differ from user to user
     $log->field     = 'phrase_id';
@@ -134,7 +137,7 @@ class val_lnk {
   private function log_del($debug) {
     zu_debug('val_lnk->log_del for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'value_phrase_links';
     $log->old_from  = $this->val;
@@ -196,7 +199,8 @@ class val_lnk {
   function save($debug) {
     zu_debug("val_lnk->save link word id ".$this->wrd->name." to ".$this->val->id." (link id ".$this->id." for user ".$this->usr->id.").", $debug-10);
 
-    $db_con = new mysql;         
+    global $db_con;
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'value_phrase_link';         
 
@@ -257,13 +261,15 @@ class val_lnk {
   // the user id is the user who has requested the change,
   // but it is a parameter and not part of the object, because there are not user specific value word links
   function del($user_id, $debug) {
-    zu_debug("val_lnk->del (v".$this->val_id.",t".$this->wrd->id.",u".$user_id.")", $debug-10);   
+    zu_debug("val_lnk->del (v".$this->val_id.",t".$this->wrd->id.",u".$user_id.")", $debug-10);
+
+    global $db_con;
     $result = '';
 
     if (!$this->used($debug-1)) {
       $log = $this->log_add($debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_con->type   = 'value_phrase_link';         
         $result .= $db_con->delete(array('value_id','phrase_id'), array($this->val->id,$this->wrd->id), $debug-1);

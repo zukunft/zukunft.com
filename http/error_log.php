@@ -35,13 +35,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
   function err_dsp($err_id, $user_id, $debug) {
+
+    global $db_con;
     $result = "";
 
     $sql = "SELECT l.sys_log_text, l.sys_log_description, s.sys_log_status_name, l.sys_log_trace
               FROM sys_log l 
          LEFT JOIN sys_log_status s ON l.sys_log_status_id = s.sys_log_status_id
              WHERE l.sys_log_id = ".$err_id.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $user_id;         
     $db_err = $db_con->get1($sql, $debug-5);  
 
@@ -61,7 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
-$link = zu_start("error_log", "", $debug);
+$db_con = zu_start("error_log", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -97,5 +99,4 @@ $link = zu_start("error_log", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

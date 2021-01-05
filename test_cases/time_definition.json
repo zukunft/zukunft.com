@@ -1,0 +1,142 @@
+{
+  "version": "0.0.1",
+  "time": "2021-01-03 16:55:03",
+  "user": "timon",
+  "selection": [
+    "the base time definitions"
+  ],
+  "words": [
+    {
+      "name": "January",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "January",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "February",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "February",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "March",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "March",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "April",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "April",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "May",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "May",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "June",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "June",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Juli",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Juli",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "August",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "August",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "September",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "September",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "October",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "October",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "November",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "November",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "December",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "December",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ]
+}

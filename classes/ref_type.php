@@ -70,12 +70,13 @@ class ref_type {
 function load_ref_types($debug) {
   zu_debug('ref_type->load_ref_types', $debug-10);
 
+  global $db_con;
   global $usr;
   global $ref_type_lst;
   global $ref_type_name_lst;
   
   if (empty($ref_type_lst)) {
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $usr->id;         
     $db_lst = $db_con->load_types('ref_type', array('base_url'), $debug-14);  
     foreach ($db_lst AS $db_row) {

@@ -52,7 +52,7 @@ cache table, field and action id to speed up, because this will never change
 class user_log {
 
   public  $id          = NULL;  // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
-  public  $usr_id      = NULL;  // the user id who has done the change
+  public  $usr         = NULL;  // the user who has done the change
   public  $action      = '';    // text for the user action e.g. "add", "update" or "delete"
   private $action_id   = NULL;  // database id for the action text
   public  $table       = '';    // name of the table that has been updated
@@ -69,16 +69,18 @@ class user_log {
   
   // to save database space the table name is saved as a reference id in the log table
   private function set_table($debug) {
-    zu_debug('user_log->set_table "'.$this->table.'" for '.$this->usr_id, $debug-10);
-    
+    zu_debug('user_log->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
+
+    global $db_con;
+
     // check parameter
     if ($this->table == "") { zu_err("missing table name","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr_id <= 0) { zu_err("missing user","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0) { zu_err("missing user","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
     
     // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->type = "change_table";         
-    $db_con->usr_id = $this->usr_id;         
+    $db_con->usr_id = $this->usr->id;
     $table_id = $db_con->get_id($this->table, $debug-1);
 
     // add new table name if needed
@@ -93,16 +95,18 @@ class user_log {
   }
 
   private function set_field($debug) {
-    zu_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr_id, $debug-10);
-    
+    zu_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr->dsp_id(), $debug-10);
+
+    global $db_con;
+
     // check parameter
     if ($this->table_id <= 0) { zu_err("missing table_id","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
     if ($this->field == "")   { zu_err("missing field name","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr_id <= 0)   { zu_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0)   { zu_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
 
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->type = "change_field";         
-    $db_con->usr_id = $this->usr_id;         
+    $db_con->usr_id = $this->usr->id;
     $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id, $debug-1);
 
     // add new field name if needed
@@ -117,16 +121,18 @@ class user_log {
   }
 
   private function set_action($debug) {
-    zu_debug('user_log->set_action "'.$this->action.'" for '.$this->usr_id, $debug-10);
-    
+    zu_debug('user_log->set_action "'.$this->action.'" for '.$this->usr->id, $debug-10);
+
+    global $db_con;
+
     // check parameter
     if ($this->action == "") { zu_err("missing action name","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr_id <= 0)  { zu_err("missing user","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0)  { zu_err("missing user","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
     
     // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->type = "change_action";         
-    $db_con->usr_id = $this->usr_id;         
+    $db_con->usr_id = $this->usr->id;
     $action_id = $db_con->get_id($this->action, $debug-1);
 
     // add new action name if needed
@@ -144,6 +150,8 @@ class user_log {
   // mainly used for testing
   // to do: if changes on table values are requested include also the table "user_values"
   function dsp_last($ex_time, $debug) {
+
+    global $db_con;
     $result = '';
 
     $this->set_table($debug-1);
@@ -161,7 +169,7 @@ class user_log {
                AND c.user_id = u.user_id
           ORDER BY c.change_id DESC;";
     zu_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->type = "change";         
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
@@ -185,7 +193,9 @@ class user_log {
   
   // log a user change of a word, value or formula
   function add($debug) {
-    zu_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id.' and for user '.$this->usr_id, $debug-10);
+    zu_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id, $debug-10);
+
+    global $db_con;
 
     $this->set_table($debug-10);
     $this->set_field($debug-10);
@@ -194,7 +204,7 @@ class user_log {
     $sql_fields = array();
     $sql_values = array();
     $sql_fields[] =          "user_id";
-    $sql_values[] =     $this->usr_id;
+    $sql_values[] =    $this->usr->id;
     $sql_fields[] = "change_action_id";
     $sql_values[] =  $this->action_id;
     $sql_fields[] =  "change_field_id";
@@ -215,16 +225,16 @@ class user_log {
     $sql_fields[] =       "row_id";
     $sql_values[] = $this->row_id;
     
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->type = "change";         
-    $db_con->usr_id = $this->usr_id;         
+    $db_con->usr_id = $this->usr->id;
     $log_id = $db_con->insert($sql_fields, $sql_values, $debug-10);
 
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters has caused the error
-      zu_fatal("Insert to change log failed.","user_log->add");
-      zu_fatal("Insert to change log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->field.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
-      zu_fatal("Insert to change log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_fatal("Insert to change log failed.","user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString(), $this);
+      zu_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;
@@ -238,16 +248,17 @@ class user_log {
   // e.g. because the row id is know after the adding of the real record, 
   // but the log entry has been created upfront to make sure that logging is complete
   function add_ref($row_id, $debug) {
-    zu_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr_id.")", $debug-10);
-    $db_con = new mysql;         
+    zu_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
+    global $db_con;
+    //$db_con = new mysql;
     $db_con->type = "change";         
-    $db_con->usr_id = $this->usr_id;         
+    $db_con->usr_id = $this->usr->id;
     $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters has caused the error
-      zu_fatal("Update of reference in the change log failed.","user_log->add_ref");
-      zu_fatal("Update of reference in the change log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->field.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
-      zu_fatal("Update of reference in the change log failed with (".$this->usr_id.",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_fatal("Update of reference in the change log failed.","user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString(), $this);
+      zu_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;

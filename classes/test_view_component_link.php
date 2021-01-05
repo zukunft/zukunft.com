@@ -53,7 +53,7 @@ function run_view_component_link_test ($debug) {
   $log->table = 'view_component_links';
   $log->new_from_id = $dsp->id;
   $log->new_to_id = $cmp->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job linked Mask Test to Mask Component Test';
   $exe_start_time = test_show_result(', view component_link->link_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -89,7 +89,7 @@ function run_view_component_link_test ($debug) {
   $log->table = 'view_component_links';
   $log->old_from_id = $dsp->id;
   $log->old_to_id = $cmp->id;
-  $log->usr_id = $usr2->id;
+  $log->usr = $usr2;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system test unlinked Mask Test from Mask Component Test';
   $exe_start_time = test_show_result(', view component_link->unlink_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'" and user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -124,7 +124,7 @@ function run_view_component_link_test ($debug) {
   $log->table = 'view_component_links';
   $log->old_from_id = $dsp->id;
   $log->old_to_id = $cmp->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job unlinked Mask Test from Mask Component Test';
   $exe_start_time = test_show_result(', view component_link->unlink_dsp logged of "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

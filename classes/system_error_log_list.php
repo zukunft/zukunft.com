@@ -44,6 +44,8 @@ class system_error_log_list {
   // called also from user_display.php/dsp_errors
   function display ($debug) {
     zu_debug('system_error_log_list->display for user "'.$this->usr->name.'"', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
     
     // set default values
@@ -88,7 +90,7 @@ class system_error_log_list {
                   (l.sys_log_status_id <> ".cl(DBL_SYSLOG_STATUS_CLOSE)." OR l.sys_log_status_id IS NULL)
           ORDER BY l.sys_log_time DESC
              LIMIT ".$this->size.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     $db_lst = $db_con->get($sql, $debug-5);  
 

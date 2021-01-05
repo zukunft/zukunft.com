@@ -47,6 +47,9 @@ class system_error_log {
   public $status_name   = NULL;  // 
 
   private function load($debug) {
+
+    global $db_con;
+
     // at the moment it is only possible to select the error by the id
     $sql_where = '';
     if ($this->id > 0) {
@@ -72,7 +75,7 @@ class system_error_log {
            LEFT JOIN sys_log_status s    ON l.sys_log_status_id   = s.sys_log_status_id
            LEFT JOIN sys_log_functions f ON l.sys_log_function_id = f.sys_log_function_id
               WHERE ".$sql_where.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->id;         
       $db_row = $db_con->get1($sql, $debug-14);  
       if ($db_row['sys_log_id'] > 0) {
@@ -95,7 +98,7 @@ class system_error_log {
   private function log_upd($debug) {
     zu_debug('system_error_log->log_upd', $debug-10);
     $log = New user_log;
-    $log->usr_id = $this->usr->id;  
+    $log->usr    = $this->usr;
     $log->action = 'update';
     $log->table  = 'sys_log';
 
@@ -131,10 +134,12 @@ class system_error_log {
   }
   
   function save($debug) {
+
+    global $db_con;
     $result = "";
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'sys_log';         
     

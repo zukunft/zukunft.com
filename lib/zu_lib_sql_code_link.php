@@ -117,8 +117,7 @@ define("SQL_VIEW_TYPE_CSV_EXPORT",          "csv_export");
                                           
 define("SQL_WORD_TYPE_NORMAL",              "default");  
 define("SQL_WORD_TYPE_TIME",                "time");  
-define("SQL_WORD_TYPE_MEASURE",             "measure");  
-define("SQL_WORD_TYPE_TIMEJUMP",            "timejump");  
+define("SQL_WORD_TYPE_TIMEJUMP",            "timejump");
 define("SQL_WORD_TYPE_PERCENT",             "percent");  
 define("SQL_WORD_TYPE_MEASURE",             "measure");  
 define("SQL_WORD_TYPE_SCALING",             "scaling");  
@@ -237,11 +236,14 @@ $dbl_protection_types = array();
 // returns the pk / row_id for a given code_id
 // if the code_id does not exist the missing record is created
 // the code_id is always saved in the 20 char long field code_id
-function sql_code_link($code_id, $description, $debug) {
+function sql_code_link($code_id, $description, $debug = 0) {
   zu_debug("sql_code_link (".$code_id.",".$description.")", $debug-10);
 
-  // set the table name and the id field
+  global $db_con;
+
+    // set the table name and the id field
   $table_name = '';
+  $db_type = '';
   if ($code_id == SQL_VIEW_START
    OR $code_id == SQL_VIEW_WORD
    OR $code_id == SQL_VIEW_WORD_ADD
@@ -381,8 +383,8 @@ function sql_code_link($code_id, $description, $debug) {
    OR $code_id == DBL_SYSLOG_TBL_VIEW_USR
    OR $code_id == DBL_SYSLOG_TBL_VIEW_LINK
    OR $code_id == DBL_SYSLOG_TBL_VIEW_LINK_USR
-   OR $code_id == DBL_SYSLOG_TBL_view_component
-   OR $code_id == DBL_SYSLOG_TBL_view_component_USR) {
+   OR $code_id == DBL_SYSLOG_TBL_VIEW_COMPONENT
+   OR $code_id == DBL_SYSLOG_TBL_VIEW_COMPONENT_USR) {
     $db_type = "change_table";
   }
 
@@ -420,9 +422,10 @@ function sql_code_link($code_id, $description, $debug) {
   } */
 
   if ($table_name == '' AND $db_type == '') {
-    zu_debug('table name for code_id '.$code_id.' ('.$name_field.') not found <br>', $debug-14);
+    zu_debug('table name for code_id '.$code_id.' ('.$db_type.') not found <br>', $debug-14);
   } else {
-    $db_con = new mysql;         
+    $result = '';
+    //$db_con = new mysql;
     $db_con->usr_id = SYSTEM_USER_ID;         
     $db_con->type = $db_type;         
       

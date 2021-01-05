@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("view_edit", "", $debug);
+$db_con = zu_start("view_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -45,6 +45,7 @@ $link = zu_start("view_edit", "", $debug);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
+    $upd_result = '';
 
     // prepare the display to edit the view
     $dsp = new view_dsp;
@@ -73,7 +74,7 @@ $link = zu_start("view_edit", "", $debug);
       // save the direct changes
       // ... of the element list
       if (isset($_GET['move_up'])) {
-        $upd_result .= $dsp_edit->entry_up($_GET['move_up'], $debug-1);
+        $upd_result = $dsp_edit->entry_up($_GET['move_up'], $debug-1);
         if (str_replace ('1','',$upd_result) <> '') {
           // ... or in case of a problem prepare to show the message
           $msg .= $upd_result;
@@ -126,7 +127,7 @@ $link = zu_start("view_edit", "", $debug);
         }
       }
         
-      // if the save botton has been pressed (an empty view name should never be saved; instead the view should be deleted)
+      // if the save button has been pressed (an empty view name should never be saved; instead the view should be deleted)
       $dsp_name  = $_GET['name'];       
       if ($dsp_name <> '') {
 
@@ -168,5 +169,4 @@ $link = zu_start("view_edit", "", $debug);
 
   echo $result;
   
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

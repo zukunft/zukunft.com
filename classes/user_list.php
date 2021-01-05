@@ -36,10 +36,12 @@ class user_list {
   // return a list of all users that have done at least one modification compared to the standard
   function load_active ($debug) {
     zu_debug('user_list->load_active', $debug-10);
-    
+
+    global $db_con;
+
     // add a dummy user to calculate the standard results within the same loop
     $usr = New user;
-    $usr->dummy_all($debug-1);
+    $usr->dummy_all();
     $this->usr_lst[] = $usr;
     
     $sql = "SELECT u.user_id, u.user_name, u.code_id 
@@ -57,7 +59,7 @@ class user_list {
                   GROUP BY user_id ) AS c
             WHERE u.user_id = c.user_id
          ORDER BY u.user_id;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $usr->id;         
     $db_usr_lst = $db_con->get($sql, $debug-5);  
 
@@ -73,12 +75,12 @@ class user_list {
     return $this->usr_lst;
   }
 
-  function name ($debug) {
-    $result = implode(",",$this->names($debug-1));
+  function name () {
+    $result = implode(",",$this->names());
     return $result;
   }
   
-  function names ($debug) {
+  function names () {
     $result = array();
     foreach ($this->usr_lst AS $usr) {
       $result[] = $usr->name;

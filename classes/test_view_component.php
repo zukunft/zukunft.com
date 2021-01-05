@@ -91,7 +91,7 @@ function run_view_component_test ($debug) {
   $log->table = 'view_components';
   $log->field = 'view_component_name';
   $log->row_id = $cmp->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Test Mask Component';
   $exe_start_time = test_show_result(', view_component->save adding logged for "'.TC_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -135,7 +135,7 @@ function run_view_component_test ($debug) {
   $log->table = 'view_components';
   $log->field = 'view_component_name';
   $log->row_id = $cmp_renamed->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job changed Test Mask Component to Mask Component Test';
   $exe_start_time = test_show_result(', view_component->save rename logged for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -168,7 +168,7 @@ function run_view_component_test ($debug) {
   $log->table = 'view_components';
   $log->field = 'comment';
   $log->row_id = $cmp_reloaded->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view_component->load comment for "'.TC_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

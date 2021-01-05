@@ -30,16 +30,16 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("get_csv", "", $debug);
+$db_con = zu_start("get_csv", "", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result = $usr->get($debug-1);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
 
-    // sample "Nestlé%2Ccountryweight"
+    // sample "Nestlé 2 country weight"
     $words = $_GET['words'];
     zu_debug("get_csv(".$words.")", $debug);
     $word_names = explode(",",$words);
@@ -65,9 +65,10 @@ $link = zu_start("get_csv", "", $debug);
     zu_debug("get_csv -> other words (".implode(",",$word_names).")", $debug);
     
     // get formula
+    $frm = New formula;
     $formula_name = zut_get_formula ($word_names, $debug);
+    $formula_text = '';
     if ($formula_name <> '') {
-      $frm = New formula;
       $frm->usr = $usr;
       $frm->name = $formula_name;
       $frm->load($debug-1);
@@ -79,11 +80,11 @@ $link = zu_start("get_csv", "", $debug);
       zu_debug("get_csv -> formula used (".$formula_text.")", $debug);
     }
 
-    $word_lst = array_keys(zut_names_to_lst($word_names, $debug-1));
+    $word_lst = array_keys(zut_names_to_lst($word_names, $usr->id, $debug-1));
     zu_debug("get_csv -> words used (".implode(",",$word_lst).")", $debug);
     
     if ($formula_text <> '') {
-      $in_result = zuf_2num($formula_id,$formula_text, $word_lst, $time_word_id, $usr->id, $debug-1);
+      $in_result = $frm->to_num($word_lst, 0, $debug-1);
       $value_lst = $in_result[0];
       if (is_array($value_lst)) {
         $result .= $formula_name.',name'."\r\n<br>";
@@ -99,5 +100,4 @@ $link = zu_start("get_csv", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end_api($link, $debug);
-?>
+zu_end_api($db_con, $debug);

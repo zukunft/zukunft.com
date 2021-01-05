@@ -61,7 +61,7 @@ class view_component extends user_sandbox {
     $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
   }
     
-  function reset($debug) {
+  function reset() {
     $this->id         = NULL;
     $this->usr_cfg_id = NULL;
     $this->usr        = NULL;
@@ -90,6 +90,8 @@ class view_component extends user_sandbox {
 
   // load the view component parameters for all users
   function load_standard($debug) {
+
+    global $db_con;
     $result = '';
     
     // set the where clause depending on the values given
@@ -116,7 +118,7 @@ class view_component extends user_sandbox {
                      m.excluded
                 FROM view_components m 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_cmp = $db_con->get1($sql, $debug-5);  
       if ($db_cmp['view_component_id'] > 0) {
@@ -153,8 +155,11 @@ class view_component extends user_sandbox {
   
   // load the missing view component parameters from the database
   function load($debug) {
+    zu_debug('view_component->load', $debug);
 
-    zu_debug('view_component->load', $debug); 
+    global $db_con;
+    $result = '';
+
     // check the minimal input parameters
     if (!isset($this->usr)) {
       zu_err("The user id must be set to load a view component.", "view_component->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -194,7 +199,7 @@ class view_component extends user_sandbox {
              LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id
                  WHERE ".$sql_where.";";
         //zu_debug('view_component->load with "'.$sql.'"', $debug); 
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_item = $db_con->get1($sql, $debug-5);  
         //zu_debug('view_component->level-22 '.$debug.' done.', 10); 
@@ -222,7 +227,8 @@ class view_component extends user_sandbox {
         }
       }  
     }  
-    zu_debug('view_component->load of '.$this->dsp_id().' quit', $debug-14); 
+    zu_debug('view_component->load of '.$this->dsp_id().' quit', $debug-14);
+    return $result;
   }
   
   // load the related word and formula objects
@@ -292,6 +298,8 @@ class view_component extends user_sandbox {
   
   // list of all view ids that are directly assigned to this view component
   function assign_dsp_ids ($debug) {
+
+    global $db_con;
     $result = array();
 
     if ($this->id > 0 AND isset($this->usr)) {
@@ -309,7 +317,7 @@ class view_component extends user_sandbox {
            LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                             AND u.user_id = ".$this->usr->id."  
                WHERE l.view_component_id = ".$this->id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-9);
       foreach ($db_lst AS $db_row) {
@@ -338,11 +346,14 @@ class view_component extends user_sandbox {
   // 
   function type_name($debug) {
     zu_debug('view_component->type_name do', $debug-16);
+
+    global $db_con;
+
     if ($this->type_id > 0) {
       $sql = "SELECT view_component_type_name, description
                 FROM view_component_types
                WHERE view_component_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
@@ -426,7 +437,9 @@ class view_component extends user_sandbox {
   
   // returns the next free order number for a new view component
   function next_nbr($view_id, $debug) {
-    zu_debug('view_component->next_nbr for view "'.$view_id.'"', $debug-10);  
+    zu_debug('view_component->next_nbr for view "'.$view_id.'"', $debug-10);
+
+    global $db_con;
 
     If ($view_id == '' OR $view_id == Null OR $view_id == 0) {
       zu_err('Cannot get the next position, because the view_id is not set','view_component->next_nbr', '', (new Exception)->getTraceAsString(), $this->usr);
@@ -437,7 +450,7 @@ class view_component extends user_sandbox {
                     LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                                       AND u.user_id = ".$this->usr->id." 
                         WHERE l.view_id = ".$view_id." ) AS m;";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       $result = $db_row["max_order_nbr"];
@@ -458,7 +471,7 @@ class view_component extends user_sandbox {
   function log_link($dsp, $debug) {
     zu_debug('view_component->log_link '.$this->dsp_id().' to "'.$dsp->name.'"  for user '.$this->usr->id, $debug-10);
     $log = New user_log_link;
-    $log->usr_id   = $this->usr->id;  
+    $log->usr      = $this->usr;
     $log->action   = 'add';
     $log->table    = 'view_component_links';
     $log->new_from = clone $this;
@@ -474,7 +487,7 @@ class view_component extends user_sandbox {
   function log_unlink($dsp, $debug) {
     zu_debug('view_component->log_unlink '.$this->dsp_id().' from "'.$dsp->name.'" for user '.$this->usr->id, $debug-10);
     $log = New user_log_link;
-    $log->usr_id   = $this->usr->id;  
+    $log->usr      = $this->usr;
     $log->action   = 'del';
     $log->table    = 'view_component_links';
     $log->old_from = clone $this;
@@ -525,6 +538,8 @@ class view_component extends user_sandbox {
 
   // create a database record to save user specific settings for this view_component
   function add_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if (!$this->has_usr_cfg) {
@@ -535,7 +550,7 @@ class view_component extends user_sandbox {
                 FROM user_view_components
                WHERE view_component_id = '.$this->id.' 
                  AND user_id = '.$this->usr->id.';';
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-10);  
       $usr_db_id = $db_row['user_id']; 
@@ -553,8 +568,10 @@ class view_component extends user_sandbox {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('view_component->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = '';
 
     //if ($this->has_usr_cfg) {
 
@@ -572,7 +589,7 @@ class view_component extends user_sandbox {
                 FROM user_view_components
                WHERE view_component_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
       zu_debug('view_component->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -598,7 +615,7 @@ class view_component extends user_sandbox {
   function save_field_comment($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->comment <> $this->comment) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->comment;
       $log->new_value = $this->comment;
       $log->std_value = $std_rec->comment;
@@ -613,7 +630,7 @@ class view_component extends user_sandbox {
   function save_field_type($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->type_id <> $this->type_id) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->type_name($debug-1);
       $log->old_id    = $db_rec->type_id;
       $log->new_value = $this->type_name($debug-1);
@@ -631,7 +648,7 @@ class view_component extends user_sandbox {
   function save_field_wrd_row($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->word_id_row <> $this->word_id_row) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->load_wrd_row($debug-1);
       $log->old_id    = $db_rec->word_id_row;
       $log->new_value = $this->load_wrd_row($debug-1);
@@ -649,7 +666,7 @@ class view_component extends user_sandbox {
   function save_field_wrd_col($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->word_id_col <> $this->word_id_col) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->load_wrd_col($debug-1);
       $log->old_id    = $db_rec->word_id_col;
       $log->new_value = $this->load_wrd_col($debug-1);
@@ -667,7 +684,7 @@ class view_component extends user_sandbox {
   function save_field_wrd_col2($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->word_id_col2 <> $this->word_id_col2) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->load_wrd_col2($debug-1);
       $log->old_id    = $db_rec->word_id_col2;
       $log->new_value = $this->load_wrd_col2($debug-1);
@@ -685,7 +702,7 @@ class view_component extends user_sandbox {
   function save_field_formula($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->formula_id <> $this->formula_id) {
-      $log = $this->log_upd_field($debug-1);
+      $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->load_formula($debug-1);
       $log->old_id    = $db_rec->formula_id;
       $log->new_value = $this->load_formula($debug-1);

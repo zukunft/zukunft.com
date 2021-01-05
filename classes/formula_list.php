@@ -46,6 +46,8 @@ class formula_list {
   // todo: if this list contains already some formula, don't add them again!
   function load($debug) {
 
+    global $db_con;
+
     // check the all minimal input parameters
     if (!isset($this->usr)) {
       zu_err("The user id must be set to load a list of formulas.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -99,7 +101,7 @@ class formula_list {
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
                  WHERE ".$sql_where."
               GROUP BY f.formula_id;";
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_frm_lst = $db_con->get($sql, $debug-14);  
         foreach ($db_frm_lst AS $db_frm) {
@@ -144,21 +146,21 @@ class formula_list {
   }
   
   // rename the name function to be inline with the other classes
-  function dsp_id ($debug) {
-    $result = $this->name($debug-1);
+  function dsp_id () {
+    $result = $this->name();
     if ($result <> '') {
       $result = '"'.$result.'"';
     }
     return $result;
   }
   
-  function name ($debug) {
-    $result = implode(",",$this->names($debug-1));
+  function name () {
+    $result = implode(",",$this->names());
     return $result;
   }
   
   // this function is called from dsp_id, so no other call is allowed
-  function names ($debug) {
+  function names () {
     $result = array();
     foreach ($this->lst AS $frm) {
       $result[] = $frm->name;
@@ -167,7 +169,7 @@ class formula_list {
   }
   
   // lists all formulas with results related to a word
-  function display($back, $debug) {
+  function display($debug) {
     zu_debug('formula_list->display '.$this->dsp_id(), $debug-10);
     $result = '';
 

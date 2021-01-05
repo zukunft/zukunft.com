@@ -89,25 +89,25 @@ class expression {
 
   // find the position of the formula indicator "="
   // use the part left of it to add the words to the result
-  function fv_part ($debug) {
+  function fv_part () {
     $result = zu_str_left_of($this->ref_text, ZUP_CHAR_CALC);
     $result = trim($result);
     return $result;
   }
 
-  function fv_part_usr ($debug) {
+  function fv_part_usr () {
     $result = zu_str_left_of($this->usr_text, ZUP_CHAR_CALC);
     $result = trim($result);
     return $result;
   }
 
-  function r_part ($debug) {
+  function r_part () {
     $result = zu_str_right_of($this->ref_text, ZUP_CHAR_CALC);
     $result = trim($result);
     return $result;
   }
 
-  function r_part_usr ($debug) {
+  function r_part_usr () {
     $result = zu_str_right_of($this->usr_text, ZUP_CHAR_CALC);
     $result = trim($result);
     return $result;
@@ -121,7 +121,7 @@ class expression {
     $wrd_ids = array();
     
     // create a local copy of the reference text not to modify the original text
-    $ref_text = $this->fv_part($debug-1);
+    $ref_text = $this->fv_part();
 
     if ($ref_text <> "") {
       // add words to selection
@@ -152,7 +152,7 @@ class expression {
     $wrd_ids = array();
     
     // create a local copy of the reference text not to modify the original text
-    $ref_text = $this->r_part($debug-1);
+    $ref_text = $this->r_part();
 
     if ($ref_text <> "") {
       // add words to selection
@@ -197,7 +197,7 @@ class expression {
       $result = New formula_element_list;                 
     }
     $result->usr = $this->usr;
-    $work = $this->r_part($debug-1);
+    $work = $this->r_part();
     if (is_null($type) OR $type == "") {
       $type = EXP_ELM_SELECT_ALL;
     }
@@ -385,7 +385,7 @@ class expression {
           $phr_lst->lst[] = $phr;
           $phr_lst->ids[] = $phr->id;
         } else {  
-          $result = zu_err('Word missing for formula element '.$elm->dsp_id.'.', 'expression->phr_verb_lst', '', (new Exception)->getTraceAsString(), $this->usr);
+          zu_err('Word missing for formula element '.$elm->dsp_id.'.', 'expression->phr_verb_lst', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       } else {  
         $phr_lst->lst[] = $elm;
@@ -500,8 +500,8 @@ class expression {
     // check the formula indicator "=" and convert the left and right part separately
     $pos = strpos($this->ref_text, ZUP_CHAR_CALC);
     if ($pos > 0) {
-      $left_part  = $this->fv_part($debug-1);
-      $right_part = $this->r_part($debug-1);
+      $left_part  = $this->fv_part();
+      $right_part = $this->r_part();
       zu_debug('expression->get_usr_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-1);
       $left_part  = $this->get_usr_part($left_part, $debug-1);
       $right_part = $this->get_usr_part($right_part, $debug-1);
@@ -596,8 +596,8 @@ class expression {
     // check the formula indicator "=" and convert the left and right part separately
     $pos = strpos($this->usr_text, ZUP_CHAR_CALC);
     if ($pos >= 0) {
-      $left_part  = $this->fv_part_usr($debug-1);
-      $right_part = $this->r_part_usr($debug-1);
+      $left_part  = $this->fv_part_usr();
+      $right_part = $this->r_part_usr();
       zu_debug('expression->get_ref_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-14);
       $left_part  = $this->get_ref_part($left_part, $debug-1);
       $right_part = $this->get_ref_part($right_part, $debug-1);
@@ -642,7 +642,7 @@ class expression {
     return $result;
   }
 
-  function name ($debug) {
+  function name () {
     $result = $this->usr_text;
     return $result;
   }

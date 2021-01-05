@@ -61,6 +61,7 @@ class button {
   function back     () { return $this->html   (ZUH_IMG_BACK        ); } // button to go back to the original calling page
 
   // display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
+  // $back can be either the id of the last used word or the url path
   function go_back ($back) {
     if ($back == '') {
       $back = 1; // temp solution
@@ -77,7 +78,7 @@ class button {
 
   // ask a yes/no question with the default calls
   function confirm ($title, $description, $call) {
-    $result = dsp_text_h3($title, "");
+    $result = dsp_text_h3($title);
     $result .= $description.'<br><br>';
     $result .= '<a href="'.$call.'&confirm=1" title="Yes">Yes</a> / <a href="'.$call.'&confirm=-1" title="No">No</a>';
     //$result = $title.'<a href="'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$call.'&confirm=-1" title="No">No</a>';
@@ -90,7 +91,7 @@ class button {
   function yesno () {
     //zu_debug("button->yesno ".$this->title.".", 10);
     
-    $result = dsp_text_h3($this->title, "");
+    $result = dsp_text_h3($this->title);
     $result .= '<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
     //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
     //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';

@@ -61,7 +61,7 @@ class word_link {
 
   
   // reset the in memory fields used e.g. if some ids are updated
-  private function reset_objects($debug) {
+  private function reset_objects() {
     $this->from      = NULL;
     $this->from_name = '';
     $this->verb      = NULL;
@@ -117,7 +117,7 @@ class word_link {
         $lnk->load($debug-1);
         if ($lnk->id > 0) {
           $this->from = $lnk;
-          $this->from_name = $lnk->name($debug-1);
+          $this->from_name = $lnk->name();
         }
       } else {
         // if type is not (yet) set, create a dummy object to enable the selection
@@ -165,7 +165,7 @@ class word_link {
         $lnk->load($debug-1);
         if ($lnk->id > 0) {
           $this->to = $lnk;
-          $this->to_name = $lnk->name($debug-1);
+          $this->to_name = $lnk->name();
         }
       } else {
         // if type is not (yet) set, create a dummy object to enable the selection
@@ -187,7 +187,10 @@ class word_link {
   }
 
   function load_standard($debug) {
-    // after every load call from outside the class the order should be check and reversed if needen
+
+    global $db_con;
+
+    // after every load call from outside the class the order should be check and reversed if needed
     $this->check_order($debug-1);
     
     // set the where clause depending on the values given
@@ -200,7 +203,7 @@ class word_link {
       $sql_where  =      "l.from_phrase_id = ".sf($this->from_id)."
                       AND l.verb_id        = ".sf($this->verb_id)."
                       AND l.to_phrase_id   = ".sf($this->to_id);
-    // search for a backward link e.g. Cask Flow Statment contains Taxes
+    // search for a backward link e.g. Cask Flow Statement contains Taxes
     } elseif ($this->from_id <> 0 
           AND $this->verb_id <  0 
           AND $this->to_id   <> 0) {
@@ -224,7 +227,7 @@ class word_link {
                      l.excluded
                 FROM word_links l 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lnk = $db_con->get1($sql, $debug-5);  
       if ($db_lnk['word_link_id'] > 0) {
@@ -247,12 +250,14 @@ class word_link {
           // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
           $sql_set = "UPDATE word_links SET user_id = ".$this->usr->id." WHERE word_link_id = ".$this->id.";";
           $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "word_link->load_standard", (new Exception)->getTraceAsString(), $debug-10);
-          //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
+          if ($sql_result <> '') {
+            zu_err('Value owner has been missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
+          }
         }
 
         // automatically update the generic name
         $this->load_objects($debug-1);  
-        $new_name = $this->name($debug-1);
+        $new_name = $this->name();
         zu_debug('word_link->load_standard check if name '.$this->dsp_id().' needs to be updated to "'.$new_name.'"', $debug-10);
         if ($new_name <> $this->name) {
           $db_con->type = 'word_link';         
@@ -268,13 +273,15 @@ class word_link {
   function load($debug) {
     zu_debug('word_link->load.'.$this->from_id.' '.$this->verb_id.' '.$this->to_id.'', $debug-7);
 
-    // after every load call from outside the class the order should be check and reversed if needen
+    global $db_con;
+
+    // after every load call from outside the class the order should be check and reversed if needed
     $this->check_order($debug-1);
     
     // set the where clause depending on the values given
     if ($this->id > 0 AND !is_null($this->usr->id)) {
       $sql_where = "l.word_link_id = ".$this->id;
-    // search for a forward link e.g. Taxes is part of Cask Flow Statment
+    // search for a forward link e.g. Taxes is part of Cask Flow Statement
     } elseif ($this->from_id  <> 0 
           AND $this->verb_id   > 0 
           AND $this->to_id    <> 0 
@@ -282,7 +289,7 @@ class word_link {
       $sql_where  =      "l.from_phrase_id = ".sf($this->from_id)."
                       AND l.verb_id        = ".sf($this->verb_id)."
                       AND l.to_phrase_id   = ".sf($this->to_id);
-    // search for a backward link e.g. Cask Flow Statment contains Taxes
+    // search for a backward link e.g. Cask Flow Statement contains Taxes
     } elseif ($this->from_id  <> 0 
           AND $this->verb_id  <  0 
           AND $this->to_id    <> 0 
@@ -327,7 +334,7 @@ class word_link {
            LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                       AND u.user_id = ".$this->usr->id." 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lnk = $db_con->get1($sql, $debug-5);  
       if ($db_lnk['word_link_id'] > 0) {
@@ -342,7 +349,7 @@ class word_link {
         $this->excluded     = $db_lnk['excluded'];
         // automatically update the generic name
         $this->load_objects($debug-1);  
-        $new_name = $this->name($debug-1);
+        $new_name = $this->name();
         zu_debug('word_link->load check if name '.$this->dsp_id().' needs to be updated to "'.$new_name.'"', $debug-10);
         if ($new_name <> $this->name) {
           $db_con->type = 'word_link';         
@@ -388,7 +395,7 @@ class word_link {
       }
     }
     
-    zu_debug('word_link->wrd_lst -> ('.$wrd_lst->name().')', $debug-7);
+    zu_debug('word_link->wrd_lst -> ('.$wrd_lst->name($debug-1).')', $debug-7);
     return $wrd_lst;
   }
   
@@ -401,7 +408,7 @@ class word_link {
     if ($this->name <> '')        { $result->name        = $this->name;        }
     if ($this->description <> '') { $result->description = $this->description; }
     $result->from = $this->from_name;
-    $result->verb = $this->link_type->name;
+    $result->verb = $this->verb->name;
     $result->to   = $this->to_name;
 
     zu_debug('word_link->export_obj -> '.json_encode($result), $debug-18);
@@ -506,7 +513,7 @@ class word_link {
   
   // display the unique id fields
   // TODO check if $this->load_objects($debug-1); needs to be called from the calling function upfront
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->from_name <> '' AND $this->verb_name <> '' AND $this->to_name <> '') {
@@ -526,7 +533,7 @@ class word_link {
 
   // either the user edited description or the
   // Australia is a Country
-  function name($debug) {
+  function name() {
     $result = '';
 
     if ($this->excluded <> 1) {
@@ -543,7 +550,7 @@ class word_link {
       
   // same as name, but only for non debug usage
   // TODO check if name or name_usr should be used
-  function name_usr($debug) {
+  function name_usr() {
     $result = '';
 
     if ($this->excluded <> 1) {
@@ -597,7 +604,7 @@ class word_link {
     return $result;
   }
 
-  // display a botton to edit the word link in a table cell
+  // display a bottom to edit the word link in a table cell
   function dsp_btn_edit ($wrd, $debug) {
     zu_debug("word_link->dsp_btn_edit (".$this->id.",b".$wrd->id.")", $debug-10);
     $result = ''; // reset the html code var
@@ -727,7 +734,7 @@ class word_link {
   
   */
   
-  // true if noone has used this triple
+  // true if no one has used this triple
   private function not_used($debug) {
     zu_debug('word_link->not_used ('.$this->id.')', $debug-10);  
     $result = true;
@@ -739,7 +746,9 @@ class word_link {
 
   // true if no other user has modified the triple
   private function not_changed($debug) {
-    zu_debug('word_link->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
+    zu_debug('word_link->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     if ($this->owner_id > 0) {
@@ -754,7 +763,7 @@ class word_link {
                WHERE word_link_id = ".$this->id."
                  AND (excluded <> 1 OR excluded is NULL)";
     }
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if ($db_row['user_id'] > 0) {
@@ -764,7 +773,7 @@ class word_link {
     return $result;
   }
 
-  // true if the user is the owner and noone else has changed the word_link
+  // true if the user is the owner and no one else has changed the word_link
   // because if another user has changed the word_link and the original value is changed, maybe the user word_link also needs to be updated
   private function can_change($debug) {
     zu_debug('word_link->can_change '.$this->dsp_id().' by user "'.$this->usr->name.'" (id '.$this->usr->id.', owner id '.$this->owner_id.')', $debug-12);  
@@ -787,6 +796,8 @@ class word_link {
 
   // create a database record to save user specific settings for this word_link
   private function add_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if (!$this->has_usr_cfg) {
@@ -801,7 +812,7 @@ class word_link {
                 FROM user_word_links 
                WHERE word_link_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       if ($db_row['word_link_id'] <= 0) {
@@ -818,8 +829,10 @@ class word_link {
 
   // check if the database record for the user specific settings can be removed
   private function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('word_link->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = '';
 
     //if ($this->has_usr_cfg) {
 
@@ -831,7 +844,7 @@ class word_link {
                 FROM user_word_links
                WHERE word_link_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
       zu_debug('word_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -863,6 +876,8 @@ class word_link {
   
   // remove user adjustment and log it (used by user.php to undo the user changes)
   function del_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
@@ -871,7 +886,7 @@ class word_link {
       $db_type = 'user_word_link';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
@@ -888,7 +903,7 @@ class word_link {
   private function log_add($debug) {
     zu_debug('word_link->log_add for '.$this->dsp_id().' by user "'.$this->usr->name.'"', $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'word_links';
     $log->new_from  = $this->from;
@@ -903,7 +918,7 @@ class word_link {
   // set the main log entry parameters for updating the triple itself
   private function log_upd($debug) {
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table   = 'word_links';
@@ -919,7 +934,7 @@ class word_link {
   private function log_del($debug) {
     zu_debug('word_link->log_del for '.$this->dsp_id().' by user "'.$this->usr->name.'"', $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'word_links';
     $log->old_from  = $this->from;
@@ -934,7 +949,7 @@ class word_link {
   // set the main log entry parameters for updating one display word link field
   private function log_upd_field($debug) {
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table   = 'word_links';
@@ -978,7 +993,7 @@ class word_link {
   private function save_field_name($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     
-    // the name field is a generic created fiels, so update it before saving
+    // the name field is a generic created field, so update it before saving
     $db_rec->name  = $db_rec->name($debug-1);
     $this->name    = $this->name($debug-1);
     $std_rec->name = $std_rec->name($debug-1);
@@ -1102,7 +1117,7 @@ class word_link {
         // .. and use it for the update
         $this->id = $db_chk->id;
         $this->owner_id = $db_chk->owner_id;
-        // force the reinclude
+        // force the include again
         $this->excluded = Null;
         $db_rec->excluded = '1';
         $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
@@ -1159,7 +1174,7 @@ class word_link {
         $result .= $this->save_fields($db_con, $db_rec, $std_rec, $debug-1);
 
       } else {
-        zu_err("Adding word_link ".$this->name." failed.", "word_link->add");
+        zu_err("Adding word_link ".$this->name." failed", "word_link->add");
       }
     }  
     
@@ -1169,10 +1184,12 @@ class word_link {
   // update a triple in the database or create a user triple
   function save($debug) {
     zu_debug('word_link->save "'.$this->description.'" for user '.$this->usr->id, $debug-10);
+
+    global $db_con;
     $result = '';
 
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'word_link';         
     
@@ -1206,7 +1223,7 @@ class word_link {
       }
     }  
       
-    // try to save the link only if no qustion has been raised until now
+    // try to save the link only if no question has been raised until now
     if ($result == '') {
       // check if a new value is supposed to be added
       if ($this->id <= 0) {
@@ -1249,11 +1266,13 @@ class word_link {
   // delete the complete triple (the calling function del must have checked that no one uses this triple)
   private function del_exe($debug) {
     zu_debug('word_link->del_exe', $debug-16);
+
+    global $db_con;
     $result = '';
 
     $log = $this->log_del($debug-1);
     if ($log->id > 0) {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       // delete first the user configurations that have also been excluded to prevent problems with the foreign keys
       $db_con->type = 'user_word_link';
@@ -1269,7 +1288,7 @@ class word_link {
   function del($debug) {
     zu_debug('word_link->del', $debug-16);
     $result = '';
-    $result .= $this->load($debug-1);
+    $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
       zu_debug('word_link->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {

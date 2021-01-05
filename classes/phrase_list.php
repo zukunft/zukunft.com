@@ -80,7 +80,7 @@ class phrase_list {
       } else {  
 
         // refresh the id list
-        $this->ids($debug-1);
+        $this->ids();
       }
     }
 
@@ -282,7 +282,7 @@ class phrase_list {
   // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
   function is ($debug) {
     $phr_lst = $this->foaf_parents(cl(SQL_LINK_TYPE_IS), $debug-1);
-    zu_debug('phrase_list->is -> ('.$this->name().' is '.$phr_lst->name().')', $debug-8);
+    zu_debug('phrase_list->is -> ('.$this->dsp_id().' is '.$phr_lst->name().')', $debug-8);
     return $phr_lst;
   }
 
@@ -301,23 +301,24 @@ class phrase_list {
   function contains ($debug) {
     $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
     $phr_lst->merge($this, $debug-1);
-    zu_debug('phrase_list->contains -> ('.$this->name().' contains '.$phr_lst->name().')', $debug-8);
+    zu_debug('phrase_list->contains -> ('.$this->dsp_id().' contains '.$phr_lst->name().')', $debug-8);
     return $phr_lst;
   }
 
   // makes sure that all combinations of "are" and "contains" are included
   function are_and_contains ($debug) {
-    zu_debug('phrase_list->are_and_contains for '.$this->name(), $debug-18);
+    zu_debug('phrase_list->are_and_contains for '.$this->dsp_id(), $debug-18);
 
     // this first time get all related items
     $phr_lst = clone $this;
     $phr_lst   = $phr_lst->are     ($debug-1);
     $phr_lst   = $phr_lst->contains($debug-1);
-    $added_lst = $phr_lst->diff($this, $debug-1);
+    $added_lst  = clone $phr_lst;
+    $added_lst->diff($this, $debug-1);
     // ... and after that get only for the new
     if (count($added_lst->lst) > 0) {
       $loops = 0;
-      zu_debug('phrase_list->are_and_contains -> added '.$added_lst->name().' to '.$phr_lst->name(), $debug-18);
+      zu_debug('phrase_list->are_and_contains -> added '.$added_lst->dsp_id().' to '.$phr_lst->name(), $debug-18);
       do {
         $next_lst  = clone $added_lst;
         $next_lst  = $next_lst->are     ($debug-1);
@@ -328,23 +329,23 @@ class phrase_list {
         $loops++;
       } while (count($added_lst->lst) > 0 AND $loops < MAX_LOOP);
     }
-    zu_debug('phrase_list->are_and_contains -> '.$this->name().' are_and_contains '.$phr_lst->name(), $debug-8);
+    zu_debug('phrase_list->are_and_contains -> '.$this->dsp_id().' are_and_contains '.$phr_lst->name(), $debug-8);
     return $phr_lst;
   }
   
   // add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
   function differentiators ($debug) {
-    zu_debug('phrase_list->differentiators for '.$this->name(), $debug-18);
+    zu_debug('phrase_list->differentiators for '.$this->dsp_id(), $debug-18);
     $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
-    zu_debug('phrase_list->differentiators merge '.$this->name(), $debug-18);
+    zu_debug('phrase_list->differentiators merge '.$this->dsp_id(), $debug-18);
     $this->merge($phr_lst, $debug-1);
-    zu_debug('phrase_list->differentiators -> '.$phr_lst->name().' for '.$this->name(), $debug-8);
+    zu_debug('phrase_list->differentiators -> '.$phr_lst->dsp_id().' for '.$this->dsp_id(), $debug-8);
     return $phr_lst;
   }
 
   // same as differentiators, but including the sub types e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
   function differantiators_all($debug) {
-    zu_debug('phrase_list->differantiators_all for '.$this->name(), $debug-18);
+    zu_debug('phrase_list->differantiators_all for '.$this->dsp_id(), $debug-18);
     // this first time get all related items
     $phr_lst = clone $this;
     $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
@@ -354,7 +355,7 @@ class phrase_list {
     // ... and after that get only for the new
     if (count($added_lst->lst) > 0) {
       $loops = 0;
-      zu_debug('phrase_list->differentiators -> added '.$added_lst->name().' to '.$phr_lst->name(), $debug-18);
+      zu_debug('phrase_list->differentiators -> added '.$added_lst->dsp_id().' to '.$phr_lst->name(), $debug-18);
       do {
         $next_lst  = $added_lst->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
         $next_lst  = $next_lst->are     ($debug-1);
@@ -365,16 +366,16 @@ class phrase_list {
         $loops++;
       } while (count($added_lst->lst) > 0 AND $loops < MAX_LOOP);
     }
-    zu_debug('phrase_list->differentiators -> '.$phr_lst->name().' for '.$this->name(), $debug-8);
+    zu_debug('phrase_list->differentiators -> '.$phr_lst->name().' for '.$this->dsp_id(), $debug-8);
     return $phr_lst;
   }
 
   // similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
   function differentiators_filtered ($filter_lst, $debug) {
-    zu_debug('phrase_list->differentiators_filtered for '.$this->name(), $debug-18);
+    zu_debug('phrase_list->differentiators_filtered for '.$this->dsp_id(), $debug-18);
     $result = $this->differantiators_all($debug-1);
     $result = $result->filter($filter_lst, $debug-1);
-    zu_debug('phrase_list->differentiators_filtered -> '.$result->name(), $debug-1);
+    zu_debug('phrase_list->differentiators_filtered -> '.$result->dsp_id(), $debug-1);
     return $result;
   }
 
@@ -392,7 +393,7 @@ class phrase_list {
   }
   
   // return a list of the phrase ids
-  function ids($debug) {
+  function ids() {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $phr) {
@@ -454,7 +455,7 @@ class phrase_list {
 
   // return one string with all names of the list
   // this function is called from dsp_id, so no other call is allowed
-  function name($debug) {
+  function name($debug = 0) {
 
     $name_lst = array();
     if (isset($this->lst)) {
@@ -604,7 +605,7 @@ class phrase_list {
   }
   
   // add one phrase to the phrase list defined by the phrase name
-  function add_name($phr_name_to_add, $debug) {
+  function add_name($phr_name_to_add, $debug = 0) {
     zu_debug('phrase_list->add_name "'.$phr_name_to_add.'"', $debug-10);
     if (is_null($this->usr->id)) {
       zu_err("The user must be set.", "phrase_list->add_name", '', (new Exception)->getTraceAsString(), $this->usr);

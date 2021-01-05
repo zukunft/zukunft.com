@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("view_component_edit", "", $debug);
+$db_con = zu_start("view_component_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -45,6 +45,7 @@ $link = zu_start("view_component_edit", "", $debug);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
+    $upd_result = '';
 
     // get the view component id
     if (!isset($_GET['id'])) {
@@ -82,7 +83,7 @@ $link = zu_start("view_component_edit", "", $debug);
         $dsp_link->usr = $usr;
         $result .= $dsp_link->load($debug-1);
         $order_nbr = $cmp->next_nbr($dsp_link_id, $debug-1);
-        $upd_result .= $cmp->link($dsp_link, $order_nbr, $debug-1);
+        $upd_result = $cmp->link($dsp_link, $order_nbr, $debug-1);
       }
 
       $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view 
@@ -94,7 +95,7 @@ $link = zu_start("view_component_edit", "", $debug);
         $upd_result .= $cmp->unlink($dsp_unlink, $debug-1);
       }
 
-      // if the save botton has been pressed (an empty view component name should never be saved; instead the view should be deleted)
+      // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
       $cmp_name  = $_GET['name'];       
       if ($cmp_name <> '') {
 
@@ -139,6 +140,4 @@ $link = zu_start("view_component_edit", "", $debug);
   
   echo $result;
   
-  zu_end($link, $debug);
-
-?>
+zu_end($db_con, $debug);

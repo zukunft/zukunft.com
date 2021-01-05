@@ -34,11 +34,11 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
-$link = zu_start("login", "center_form", $debug);
+$db_con = zu_start("login", "center_form", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result = $usr->get($debug-1);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -56,7 +56,7 @@ $link = zu_start("login", "center_form", $debug);
 
     if (isset($_POST['submit'])) { 
         
-      // Lets search the databse for the user name and password
+      // Lets search the database for the user name and password
       // don't use the sf shortcut here!
       $usr = mysql_real_escape_string($_POST['username']); 
       $pw_hash = hash('sha256', mysql_real_escape_string($_POST['password'])); 
@@ -71,7 +71,7 @@ $link = zu_start("login", "center_form", $debug);
         $_SESSION['usr_id'] = $row['user_id']; 
         $_SESSION['user_name'] = $row['user_name']; 
         $_SESSION['logged'] = TRUE; 
-        // to do: ask if cockies are allowed: if yes, the session id does not need to be forwarded
+        // to do: ask if cookies are allowed: if yes, the session id does not need to be forwarded
         // if no, use the session id
         if ($back <> '') {
           header("Location: ".$back); 
@@ -102,13 +102,13 @@ $link = zu_start("login", "center_form", $debug);
     $result .= '</div>   ';
   }
 
-  // seperate the footer, because this is a short page
+  // separate the footer, because this is a short page
   $result .= '<br><br>'; 
   
   // display the view
   echo $result;
 
 // close the database  
-zu_end($link, $debug);
+zu_end($db_con, $debug);
 
 ?>

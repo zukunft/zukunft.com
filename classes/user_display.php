@@ -37,8 +37,8 @@ class user_dsp extends user {
     zu_debug('user_dsp->dsp_edit(u'.$this->id.')', $debug-10);
     $result = ''; // reset the html code var
 
-    // display the user fields using a table and not using px in css to be independend from any screen solution
-    $result .= dsp_text_h2('User "'.$this->name.'"');
+    // display the user fields using a table and not using px in css to be independent from any screen solution
+    $result .= dsp_text_h2('User "'.$this->name.'"', '');
     $result .= dsp_form_start("user");
     $result .= dsp_tbl_start();
     $result .=                             '<input type="hidden" name="id"    value="'.$this->id.'">';
@@ -54,7 +54,7 @@ class user_dsp extends user {
   }
 
   // display the latest changes by the user
-  function dsp_changes ($call, $back, $debug) {
+  function dsp_changes ($call, $size, $page, $back, $debug) {
     zu_debug('user_dsp->dsp_changes (u'.$this->id.',b'.$back.')', $debug-10);
     $result = ''; // reset the html code var
 
@@ -75,13 +75,13 @@ class user_dsp extends user {
 
   // display the error that are related to the user, so that he can track when they are closed
   // or display the error that are related to the user, so that he can track when they are closed
-  function dsp_errors ($page, $size, $dsp_type, $back, $debug) {
+  function dsp_errors ($dsp_type, $size, $page, $back, $debug) {
     zu_debug('user_dsp->dsp_errors '.$dsp_type.' errors for user '.$this->name, $debug-10);
 
     $err_lst = New system_error_log_list;
     $err_lst->usr      = $this;
-    $err_lst->page     = 1;
-    $err_lst->size     = 20;
+    $err_lst->page     = $page;
+    $err_lst->size     = $size;
     $err_lst->dsp_type = $dsp_type;
     $err_lst->back     = $back;
     $result = $err_lst->display($debug-1);
@@ -93,6 +93,8 @@ class user_dsp extends user {
   // display word changes by the user which are not (yet) standard 
   function dsp_sandbox_wrd ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_wrd(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // get word changes by the user that are not standard
@@ -103,7 +105,7 @@ class user_dsp extends user {
                    words t
              WHERE u.user_id = ".$this->id."
                AND u.word_id = t.word_id;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     $wrd_lst = $db_con->get($sql, $debug-5);  
 
@@ -118,7 +120,7 @@ class user_dsp extends user {
       }
       $result .= '<td>'.$wrd_row['usr_word_name'].'</td><td>'.$wrd_row['word_name'].'</td>';
       //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
-      $url = '/http/user.php?id='.$this->id.'&undo_word='.$wrd_row['word_id'].'&back='.$id.'';
+      $url = '/http/user.php?id='.$this->id.'&undo_word='.$wrd_row['word_id'].'&back='.$back.'';
       $result .= '<td>'.btn_del("Undo your change and use the standard word ".$wrd_row['word_name'], $url).'</td>';
       $result .= '</tr>';
     }
@@ -131,10 +133,12 @@ class user_dsp extends user {
   // display word_link changes by the user which are not (yet) standard 
   function dsp_sandbox_wrd_link ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_wrd_link(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard word_link
@@ -154,7 +158,7 @@ class user_dsp extends user {
     $sbx_lst = $db_con->get($sql, $debug-5);  
 
     if (count($sbx_lst) > 0) {
-      // prepare to show where the user uses different word_enty_link than a normal viewer
+      // prepare to show where the user uses different word_entry_link than a normal viewer
       $row_nbr = 0;
       $result .= dsp_tbl_start();
       foreach ($sbx_lst AS $sbx_row) {
@@ -195,14 +199,14 @@ class user_dsp extends user {
           if ($wrd_usr->excluded == 1) {
             $sandbox_usr_txt = "deleted";
           } else {
-            $sandbox_usr_txt = $wrd_usr->name($debug-1);
+            $sandbox_usr_txt = $wrd_usr->name();
           }
           
           // format the standard word_link
           if ($wrd_std->excluded == 1) {
             $sandbox_std_txt = "deleted";
           } else {
-            $sandbox_std_txt = $wrd_std->name($debug-1);
+            $sandbox_std_txt = $wrd_std->name();
           }
             
           // format the word_link of other users
@@ -233,12 +237,11 @@ class user_dsp extends user {
             if ($sandbox_other <> '') {
               $sandbox_other .= ',';
             }
-            $sandbox_other .= $wrd_lnk_other->name($debug-1);
+            $sandbox_other .= $wrd_lnk_other->name();
           }
           $sandbox_other = '<a href="/http/user_word_link.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_triple='.$sbx_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard word_link ".$sbx_row['std_word_link'], $url).'</td>';
           
@@ -275,6 +278,8 @@ class user_dsp extends user {
   // display formula changes by the user which are not (yet) standard 
   function dsp_sandbox_frm ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_frm(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // get word changes by the user that are not standard
@@ -286,7 +291,7 @@ class user_dsp extends user {
                   formulas f
             WHERE u.user_id = ".$this->id."
               AND u.formula_id = f.formula_id;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     $frm_lst = $db_con->get($sql, $debug-5);  
 
@@ -306,7 +311,7 @@ class user_dsp extends user {
       $result .= '<td>'.$frm_row['usr_formula_text'].'</td>';
       $result .= '<td>'.$frm_row['formula_text'].'</td>';
       //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row['formula_id'].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
-      $url = '/http/user.php?id='.$this->id.'&undo_formula='.$frm_row['formula_id'].'&back='.$id.'';
+      $url = '/http/user.php?id='.$this->id.'&undo_formula='.$frm_row['formula_id'].'&back='.$back.'';
       $result .= '<td>'.btn_del("Undo your change and use the standard formula ".$frm_row['formula_text'], $url).'</td>';
       $result .= '</tr>';
     }
@@ -319,10 +324,12 @@ class user_dsp extends user {
   // display formula_link changes by the user which are not (yet) standard 
   function dsp_sandbox_frm_link ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_frm_link(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard formula_link
@@ -341,7 +348,7 @@ class user_dsp extends user {
     $sbx_lst = $db_con->get($sql, $debug-5);  
 
     if (count($sbx_lst) > 0) {
-      // prepare to show where the user uses different formula_enty_link than a normal viewer
+      // prepare to show where the user uses different formula_entry_link than a normal viewer
       $row_nbr = 0;
       $result .= dsp_tbl_start();
       foreach ($sbx_lst AS $sbx_row) {
@@ -381,7 +388,7 @@ class user_dsp extends user {
           if ($frm_usr->excluded == 1) {
             $sandbox_usr_txt = "deleted";
           } else {
-            $sandbox_usr_txt = $frm_usr->wrd->dsp_link($debug-1);
+            $sandbox_usr_txt = $frm_usr->tob->dsp_link($debug-1);
             //$sandbox_usr_txt = $frm_usr->link_name;
           }
           
@@ -426,7 +433,6 @@ class user_dsp extends user {
           $sandbox_other = '<a href="/http/user_formula_link.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_formula_link='.$sbx_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard formula_link ".$sbx_row['std_formula_link'], $url).'</td>';
           
@@ -463,10 +469,12 @@ class user_dsp extends user {
   // display value changes by the user which are not (yet) standard 
   function dsp_sandbox_val ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_val(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard value
@@ -577,7 +585,6 @@ class user_dsp extends user {
           $sandbox_other = '<a href="/http/user_value.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_value='.$val_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard value ".$val_row['std_value'], $url).'</td>';
           
@@ -613,10 +620,12 @@ class user_dsp extends user {
   // display view changes by the user which are not (yet) standard 
   function dsp_sandbox_view ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_view(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard view
@@ -672,9 +681,6 @@ class user_dsp extends user {
           $dsp_usr->del_usr_cfg($debug-1);
         } else {
         
-          // prepare the row views
-          $sandbox_item_name = $dsp_usr->name;
-          
           // format the user view
           if ($dsp_usr->excluded == 1) {
             $sandbox_usr_txt = "deleted";
@@ -726,7 +732,6 @@ class user_dsp extends user {
           $sandbox_other = '<a href="/http/user_view.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_view='.$sbx_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard view ".$sbx_row['std_view'], $url).'</td>';
           
@@ -761,10 +766,12 @@ class user_dsp extends user {
   // display view_component changes by the user which are not (yet) standard 
   function dsp_sandbox_view_component ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_view_component(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard view_component
@@ -820,9 +827,6 @@ class user_dsp extends user {
           //$dsp_usr->del_usr_cfg($debug-1);
         } else {
         
-          // prepare the row view_components
-          $sandbox_item_name = $dsp_usr->name;
-          
           // format the user view_component
           if ($dsp_usr->excluded == 1) {
             $sandbox_usr_txt = "deleted";
@@ -874,7 +878,6 @@ class user_dsp extends user {
           $sandbox_other = '<a href="/http/user.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_view_component='.$sbx_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard view_component ".$sbx_row['std_view_component'], $url).'</td>';
           
@@ -909,10 +912,12 @@ class user_dsp extends user {
   // display view_component_link changes by the user which are not (yet) standard 
   function dsp_sandbox_view_link ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_view_link(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard view_component_link
@@ -933,7 +938,7 @@ class user_dsp extends user {
     $sbx_lst = $db_con->get($sql, $debug-5);  
 
     if (count($sbx_lst) > 0) {
-      // prepare to show where the user uses different view_enty_link than a normal viewer
+      // prepare to show where the user uses different view_entry_link than a normal viewer
       $row_nbr = 0;
       $result .= dsp_tbl_start();
       foreach ($sbx_lst AS $sbx_row) {
@@ -1019,7 +1024,6 @@ class user_dsp extends user {
           $sandbox_other = '<a href="/http/user_view_component_link.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_view_component_link='.$sbx_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard view_component_link ".$sbx_row['std_view_component_link'], $url).'</td>';
           
@@ -1056,10 +1060,12 @@ class user_dsp extends user {
   // display source changes by the user which are not (yet) standard 
   function dsp_sandbox_source ($back, $debug) {
     zu_debug('user_dsp->dsp_sandbox_source(u'.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // create the databased link
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->id;         
     
     // get all values changed by the user to a non standard source
@@ -1117,12 +1123,11 @@ class user_dsp extends user {
         AND $dsp_usr->comment  == $dsp_std->comment
         AND $dsp_usr->type_id  == $dsp_std->type_id
         AND $dsp_usr->excluded == $dsp_std->excluded) {
-          $dsp_usr->del_usr_cfg($debug-1);
+          // todo: add user config also to source?
+          //$dsp_usr->del_usr_cfg($debug-1);
+          $dsp_usr->del($debug-1);
         } else {
         
-          // prepare the row sources
-          $sandbox_item_name = $dsp_usr->name;
-          
           // format the user source
           if ($dsp_usr->excluded == 1) {
             $sandbox_usr_txt = "deleted";
@@ -1176,7 +1181,6 @@ class user_dsp extends user {
           $sandbox_other = '<a href="/http/user_source.php?id='.$this->id.'&back='.$back.'">'.$sandbox_other.'</a> ';
           
           // create the button
-          $sandbox_undo_btn = '';
           $url = '/http/user.php?id='.$this->id.'&undo_source='.$sbx_row['id'].'&back='.$back;
           $sandbox_undo_btn = '<td>'.btn_del("Undo your change and use the standard source ".$sbx_row['std_source'], $url).'</td>';
           

@@ -30,16 +30,16 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start_api("json_save", "", $debug);
+$db_con = zu_start_api("json_save", "", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result = $usr->get($debug-1);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
 
-    // get the words that are supposed to be exported, sample "Nestlé%2Ccountryweight"
+    // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET['words'];
     zu_debug("json_save(".$phrases.")", $debug);
     $word_names = explode(",",$phrases);
@@ -66,16 +66,14 @@ $link = zu_start_api("json_save", "", $debug);
       $result .= zu_info('No JSON can be created, because no word or triple is given.','', (new Exception)->getTraceAsString(), $this->usr);
     }
 
-  }
+    if ($result <> '') {
+      echo $result;
+    } else {
+      // TODO replace with proper error message
+      print(json_encode($phrases));
+    }
 
-  if ($result <> '') {
-    echo $result;
-  } else { 
-    // TODO replace with proper error message
-    print(json_encode($phrases)); 
   }
 
 // Closing connection
-zu_end_api($link, $debug); 
-
-?>
+zu_end_api($db_con, $debug);

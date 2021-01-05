@@ -56,9 +56,9 @@ class formula_element_group {
   
   // display the unique id fields
   function dsp_id () {
-    $id = implode(",",$this->ids(0));
-    $name = implode(",",$this->names(0));
-    $phr_name  = ''; if (isset($this->phr_lst))  { $phr_name  = $this->phr_lst->name(0); }
+    $id = implode(",",$this->ids());
+    $name = implode(",",$this->names());
+    $phr_name  = ''; if (isset($this->phr_lst))  { $phr_name  = $this->phr_lst->name(); }
     $time_name = ''; if (isset($this->time_phr)) { $time_name = $this->time_phr->name; }
     if ($name <> '') {
       $result = '"'.$name.'" ('.$id.')';
@@ -76,14 +76,14 @@ class formula_element_group {
   }  
 
   // show the element group name to the user in the most simple form (without any ids)
-  function name ($debug) {
-    $result = implode(",",$this->names($debug-1));  
+  function name () {
+    $result = implode(",",$this->names());
     return $result;
   }
   
   // list of the formula element names independent from the element type
   // this function is called from dsp_id, so no other call is allowed
-  private function names ($debug) {
+  private function names () {
     $result = array();
 
     foreach ($this->lst AS $frm_elm) {
@@ -94,7 +94,7 @@ class formula_element_group {
     return $result;
   }  
 
-  private function ids ($debug) {
+  private function ids () {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $frm_elm) {

@@ -45,6 +45,8 @@ class user_log_display {
   // display the history of a word, phrase, value or formula
   function dsp_hist($debug) {
     zu_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
     
     // set default values
@@ -87,8 +89,8 @@ class user_log_display {
       $sql_row   = 'AND c.row_id  = '.$this->id.' ';
       $sql_user  =     'c.user_id = u.user_id';
     } elseif ($this->type == 'view_component') {
-      $sql_where =   " (f.table_id = ".cl(DBL_SYSLOG_TBL_view_component)." 
-                     OR f.table_id = ".cl(DBL_SYSLOG_TBL_view_component_USR).") AND ";
+      $sql_where =   " (f.table_id = ".cl(DBL_SYSLOG_TBL_VIEW_COMPONENT)." 
+                     OR f.table_id = ".cl(DBL_SYSLOG_TBL_VIEW_COMPONENT_USR).") AND ";
       $sql_row   = 'AND c.row_id  = '.$this->id.' ';
       $sql_user  =     'c.user_id = u.user_id';
     }
@@ -121,7 +123,7 @@ class user_log_display {
             ORDER BY c.change_time DESC
                LIMIT ".$this->size.";";
       zu_debug('user_log_display->dsp_hist '.$sql, $debug-14);
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-5);  
 
@@ -222,7 +224,7 @@ class user_log_display {
             }  
           } elseif ($this->type == 'value') {
             if ($db_row['type'] == 'add') { 
-              $undo_btn = $this->obj->btn_undo_add_value ($back, $debug-1);
+              $undo_btn = $this->obj->btn_undo_add_value ($this->back, $debug-1);
             }  
           } elseif ($this->type == 'formula') {
             if ($db_row['type'] == 'update') { 
@@ -253,6 +255,8 @@ class user_log_display {
   //   or if a component is added to a display view
   function dsp_hist_links($debug) {
     zu_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
+
+    global $db_con;
     $result = ''; // reset the html code var
 
     // select the change table to use
@@ -304,8 +308,8 @@ class user_log_display {
       $sql_row   =  ' (c.old_from_id = '.$this->id.' OR c.new_from_id = '.$this->id.') AND ';
       $sql_user  =  'c.user_id = u.user_id';
     } elseif ($this->type == 'view_component') {
-      $sql_where = " ( c.change_table_id = ".cl(DBL_SYSLOG_TBL_view_component)." 
-                    OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_view_component_USR)." 
+      $sql_where = " ( c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_COMPONENT)." 
+                    OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_COMPONENT_USR)." 
                     OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_LINK)." 
                     OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VIEW_LINK_USR)." ) AND ";
       $sql_field = 'c.old_text_from AS old, 
@@ -333,7 +337,7 @@ class user_log_display {
                AND ".$sql_user." 
           ORDER BY c.change_time DESC
              LIMIT ".$this->size.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-5);  
 

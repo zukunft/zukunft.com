@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("view_add", "", $debug);
+$db_con = zu_start("view_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -69,7 +69,7 @@ $link = zu_start("view_add", "", $debug);
         $msg .= 'Name missing; Please press back and enter a name for the new view.';
       } else {
 
-        $add_result .= $dsp_add->save($debug-1);
+        $add_result = $dsp_add->save($debug-1);
         
         // if adding was successful ...
         if (str_replace ('1','',$add_result) == '') {
@@ -85,17 +85,17 @@ $link = zu_start("view_add", "", $debug);
 
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
-      // show the header )in view edit views the view cannot be changed)
-      $result .= $dsp->dsp_navbar_no_view($wrd->id, $debug-1);
-      $result .= dsp_err($msg);
-
       // sample word that is used to simulate the view changes
       $wrd = New word;
       $wrd->id      = $_GET['word'];
       $wrd->usr     = $usr;
       //$wrd->type_id = $view_type;
       if ($wrd->id > 0) { $wrd->load($debug-1); }
-        
+
+      // show the header (in view edit views the view cannot be changed)
+      $result .= $dsp->dsp_navbar_no_view($wrd->id, $debug-1);
+      $result .= dsp_err($msg);
+
       // show the form to create a new view
       $result .= $dsp_add->dsp_edit (0, $wrd, $back, $debug-1);
     }  
@@ -103,5 +103,4 @@ $link = zu_start("view_add", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

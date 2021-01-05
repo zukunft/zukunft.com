@@ -47,23 +47,23 @@ function getRandomKey($length = 20)
 
 
 // open database 
-$link = zu_start("login_reset", "center_form", $debug);
+$db_con = zu_start("login_reset", "center_form", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result = $usr->get($debug-1);
+  $msg = '';
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
 
     $result = ''; // reset the html code var
-    $msg = ''; 
 
     $_SESSION['logged'] = FALSE; 
 
     if(isset($_POST['submit'])){ 
         
-      // Lets search the databse for the user name and password
+      // Lets search the database for the user name and password
       // don't use the sf shortcut here!
       $usr_name = mysql_real_escape_string($_POST['username']); 
       $usr_mail = mysql_real_escape_string($_POST['email']); 
@@ -79,7 +79,7 @@ $link = zu_start("login_reset", "center_form", $debug);
 
         // save activation key
         $key = getRandomKey(20);
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->type = "user";         
         $db_con->usr_id = $usr->id;         
         $sql_result = $db_con->update($user_id, array("activation_key","activation_key_timeout"), array(sf($key),'NOW() + INTERVAL 1 DAY'), $debug-1);
@@ -99,13 +99,13 @@ $link = zu_start("login_reset", "center_form", $debug);
                         'Reply-To: admin@zukunft.com' . "\r\n" .
                         'X-Mailer: PHP/' . phpversion();
         mail($mail_to, $mail_subject, $mail_body, $mail_header);
-        // to do: ask if cockies are allowed: if yes, the session id does not need to be forwarded
+        // to do: ask if cookies are allowed: if yes, the session id does not need to be forwarded
         // if no, use the session id
         header("Location: http/login_activate.php?id=".$user_id.""); // Modify to go to the page you would like 
         //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like 
         exit; 
       } else {
-        $msg .= '<font color="red">Username and email no found. Please try again.</font><br>'; 
+        $msg .= '<p style="color:red">Username and email no found. Please try again.</p><br>';
       }  
     }  
   }  
@@ -131,6 +131,4 @@ $link = zu_start("login_reset", "center_form", $debug);
   echo $result;
 
 // close the database  
-zu_end($link, $debug);
-
-?>
+zu_end($db_con, $debug);

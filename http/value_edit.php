@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("value_edit", "", $debug);
+$db_con = zu_start("value_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -66,12 +66,12 @@ $link = zu_start("value_edit", "", $debug);
       // update the parameters on the object, so that the object save can update the database
       if (isset($_GET['value']))  { $val->usr_value = $_GET['value']; }  // the value as changed by the user
       if (isset($_GET['source'])) { $val->source_id = $_GET['source']; } // the source id as changed by the user
-      //if (isset($_GET['time']))   { $val->time_id   = $_GET['time']; }   // the time word seperate to the other phrases 
+      //if (isset($_GET['time']))   { $val->time_id   = $_GET['time']; }   // the time word separate to the other phrases
     
-      // before the value convertion, all phrases should be loaded to use the updated words for the conversion e.g. percent
+      // before the value conversion, all phrases should be loaded to use the updated words for the conversion e.g. percent
       // get the linked phrases from url
       $phr_ids  = array(); // suggested words for the new value that the user can change; a negative value links to a triple
-      $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word
+      $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
                             // if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
       if (isset($_GET['phrase1'])) {
         // ... either from the url to allow editing without saving to the database until the user confirmed
@@ -132,6 +132,4 @@ $link = zu_start("value_edit", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-
-?>
+zu_end($db_con, $debug);

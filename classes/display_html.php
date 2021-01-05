@@ -89,7 +89,7 @@ function dsp_header($title, $style) {
 }
 
 // the general html footer
-function dsp_footer($no_about) {
+function dsp_footer($no_about = false) {
   $result  = '';
   if (UI_USE_BOOTSTRAP) {
     $result  = '    </div>';
@@ -169,7 +169,7 @@ function dsp_line_small ($line_text) {
 // ------------------------
 
 // simply to display headline text
-function dsp_text_h1 ($title, $style) {
+function dsp_text_h1 ($title, $style = '') {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= "<h2>".$title."</h2>";
@@ -183,7 +183,7 @@ function dsp_text_h1 ($title, $style) {
   return $result;
 }
 
-function dsp_text_h2 ($title, $style) {
+function dsp_text_h2 ($title, $style = '') {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= "<h4>".$title."</h4>";
@@ -196,7 +196,7 @@ function dsp_text_h2 ($title, $style) {
   }  
   return $result;
 }
-function dsp_text_h3 ($title, $style) {
+function dsp_text_h3 ($title, $style = '') {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= "<h6>".$title."</h6>";

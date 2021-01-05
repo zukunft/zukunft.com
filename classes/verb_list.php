@@ -40,6 +40,9 @@ class verb_list {
   
   // load the word parameters from the database for a list of words
   function load($debug) {
+
+    global $db_con;
+
     // check the all minimal input parameters
     if (!isset($this->usr)) {
       zu_err("The user id must be set to load a list of verbs.", "verb_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -69,7 +72,7 @@ class verb_list {
                      ".$sql_where." 
             GROUP BY v.verb_id 
             ORDER BY v.verb_id;";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_vrb_lst = $db_con->get($sql, $debug-5);  
       $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
@@ -95,13 +98,15 @@ class verb_list {
   // calculates how many times a word is used, because this can be helpful for sorting
   function calc_usage ($debug) {
     zu_debug('verb_list->calc_usage', $debug-10);
-    
+
+    global $db_con;
+
     $sql = "UPDATE verbs l
                SET `words` = ( 
             SELECT COUNT(to_word_id) 
               FROM word_links t
              WHERE l.verb_id = t.verb_id);";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $result = $db_con->exe($sql, DBL_SYSLOG_ERROR, "verb_list->calc_usage", (new Exception)->getTraceAsString(), $debug-10);
     

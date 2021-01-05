@@ -34,12 +34,14 @@
 // get a config value from the database table
 function cfg_get($code_id, $usr, $debug) {
   zu_debug('cfg_get for "'.$code_id.'"', $debug-12);
+
+  global $db_con;
   $result = '';
   
   $sql = "SELECT `value` 
             FROM `config` 
            WHERE `code_id` = ".sf($code_id).";";
-  $db_con = new mysql;         
+  //$db_con = new mysql;
   $db_con->usr_id = $usr->id;         
   $db_row = $db_con->get1($sql, $debug-5);  
   $result = $db_row['value'];

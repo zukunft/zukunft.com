@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
-$link = zu_start("user", "", $debug);
+$db_con = zu_start("user", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -62,7 +62,7 @@ $link = zu_start("user", "", $debug);
     $dsp->load($debug-1);
         
     // do user changes
-    $result .= $usr->upd_pars ($_GET, $debug-1); 
+    $result .= $usr->upd_pars ($_GET, $debug-1);
     
     // undo user changes for values
     if ($undo_val > 0) {
@@ -144,14 +144,14 @@ $link = zu_start("user", "", $debug);
     }
 
     // display the user changes 
-    $changes = $dsp_usr->dsp_changes (0, SQL_ROW_LIMIT, '', $back, $debug-1)  ;
+    $changes = $dsp_usr->dsp_changes (0, SQL_ROW_LIMIT, 1, $back, $debug-1)  ;
     if (trim($changes) <> "") {
       $result .= dsp_text_h3("Your latest changes");
       $result .= $changes;
     }
 
     // display the program issues that the user has found if there are some
-    $errors = $dsp_usr->dsp_errors  ("", $back, $debug-1);
+    $errors = $dsp_usr->dsp_errors  ("", SQL_ROW_LIMIT, 1, $back, $debug-1);
     if (trim($errors) <> "") {
       $result .= dsp_text_h3("Program issues that you found, that have not yet been solved.");
       $result .= $errors;
@@ -159,7 +159,7 @@ $link = zu_start("user", "", $debug);
     
     // display all program issues if the user is an admin
     if ($usr->profile_id == cl(SQL_USER_ADMIN)) {
-      $errors_all = $dsp_usr->dsp_errors  ("other", $back, $debug-1);
+      $errors_all = $dsp_usr->dsp_errors  ("other", SQL_ROW_LIMIT, 1, $back, $debug-1);
       if (trim($errors_all) <> "") {
         $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
         $result .= $errors_all;
@@ -167,7 +167,7 @@ $link = zu_start("user", "", $debug);
     }
 
     if ($_SESSION['logged']) {
-      $result .= '<br><br><a href="/http/ogout.php">logout</a>';
+      $result .= '<br><br><a href="/http/logout.php">logout</a>';
     }  
   }
 
@@ -177,5 +177,4 @@ $link = zu_start("user", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

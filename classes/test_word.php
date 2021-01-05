@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_words ($debug) {
+function create_base_words () {
   echo "<br><br><h2>Check if all base words are correct</h2><br>";
   test_word(TW_ABB);
   test_word(TW_DAN);
@@ -65,10 +65,6 @@ function run_word_test ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
   echo "<br><br><h2>Test the word class (classes/word.php)</h2><br>";
 
   // check the first predefined word "Company"
@@ -95,7 +91,7 @@ function run_word_test ($debug) {
   // display
   $back = 1;
   $target = '<a href="/http/view.php?words='.TEST_WORD_ID.'&back=1">'.TEST_WORD.'</a>';
-  $result = $wrd_company->display ($back, $debug-1);
+  $result = $wrd_company->display ($back);
   $exe_start_time = test_show_result(', word->display "'.TEST_WORD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // word type
@@ -217,8 +213,6 @@ function run_word_test ($debug) {
   $exe_start_time = test_show_result(', word->parents for "'.TW_ABB.'" excluding the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of '.$wrd_lst->dsp_id().'');
 
   // word is
-  /*
-  to change this causes other problems at the moment. cleanup needed
   $wrd_ZH = test_word(TW_ZH, $debug-1);
   $wrd_canton = test_word(TW_CANTON, $debug-1);
   $target = $wrd_canton->name;
@@ -229,7 +223,6 @@ function run_word_test ($debug) {
     $result = '';
   }
   $exe_start_time = test_show_result(', word->is for "'.TW_ZH.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of '.$wrd_lst->dsp_id().'');
-  */
 
   // ... word is including the start word
   $target = $wrd_ZH->name;
@@ -256,8 +249,8 @@ function run_word_test ($debug) {
   $wrd_new = New word;
   $wrd_new->name = TEST_WORD;
   $wrd_new->usr = $usr;
-  $result = $wrd_new->save($debug-1);
-  $target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
+  $result = $wrd_new->save($debug+20);
+  //$target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
   $target = '';
   $exe_start_time = test_show_result(', word->save for "'.TEST_WORD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
@@ -277,7 +270,7 @@ function run_word_test ($debug) {
     $log->table = 'words';
     $log->field = 'word_name';
     $log->row_id = $wrd_add->id;
-    $log->usr_id = $usr->id;
+    $log->usr = $usr;
     $result = $log->dsp_last(true, $debug);
   }
   $target = 'zukunft.com system batch job added '.TW_ADD.'';
@@ -285,7 +278,7 @@ function run_word_test ($debug) {
 
   // ... test if the new word has been created
   $wrd_added = load_word(TW_ADD, $debug-1);
-  $result = $wrd_added->load($debug-1);
+  $wrd_added->load($debug-1);
   if ($result == '') {
     if ($wrd_added->id > 0) {
       $result = $wrd_added->name;
@@ -304,7 +297,7 @@ function run_word_test ($debug) {
   $wrd_renamed = New word;
   $wrd_renamed->name = TW_ADD_RENAMED;
   $wrd_renamed->usr = $usr;
-  $result = $wrd_renamed->load($debug-1);
+  $wrd_renamed->load($debug-1);
   if ($result == '') {
     if ($wrd_renamed->id > 0) {
       $result = $wrd_renamed->name;
@@ -318,7 +311,7 @@ function run_word_test ($debug) {
   $log->table = 'words';
   $log->field = 'word_name';
   $log->row_id = $wrd_renamed->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job changed '.TW_ADD.' to '.TW_ADD_RENAMED.'';
   $exe_start_time = test_show_result(', word->save rename logged for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -348,7 +341,7 @@ function run_word_test ($debug) {
   $log->table = 'words';
   $log->field = 'plural';
   $log->row_id = $wrd_reloaded->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added '.TW_ADD_RENAMED.'s';
   $exe_start_time = test_show_result(', word->load plural for "'.TW_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

@@ -30,7 +30,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("import", "", $debug);
+$db_con = zu_start("import", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -38,6 +38,7 @@ $link = zu_start("import", "", $debug);
   // load the session user parameters
   $usr = New user;
   $result .= $usr->get($debug-1);
+  $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   zu_debug('import.php check user ', $debug-10);
@@ -48,7 +49,6 @@ $link = zu_start("import", "", $debug);
     $dsp->id = cl(SQL_VIEW_IMPORT);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
-    $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
     // get the filepath of the data that are supposed to be imported
     $fileName = $_FILES["fileToUpload"]["name"];
@@ -94,7 +94,7 @@ $link = zu_start("import", "", $debug);
           $import = New file_import;
           $import->usr      = $usr;
           $import->json_str = $json_str;
-          $import_result .= $import->put($debug-1);
+          $import_result = $import->put($debug-1);
           if ($import_result == '') {
             $msg .= ' done ('.$import->words_done.' words, '.$import->triples_done.' triples, '.$import->formulas_done.' formulas, '.$import->sources_done.' sources, '.$import->values_done.' values, '.$import->views_done.' views loaded)';
           } else {
@@ -133,6 +133,6 @@ $link = zu_start("import", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end($link, $debug); 
+zu_end($db_con, $debug);
 
 ?>

@@ -35,7 +35,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /* open database */
-$link = zu_start("link_type_add", "", $debug);
+$db_con = zu_start("link_type_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -60,7 +60,7 @@ $link = zu_start("link_type_add", "", $debug);
 
       // create the object to store the parameters so that if the add form is shown again it is already filled
       $vrb = New verb;
-      $vrb->usr = $usr;
+      $vrb->usr_id = $usr->id;
     
       // load the parameters to the verb object to display it again in case of an error
       if (isset($_GET['name']))           { $vrb->name       = $_GET['name']; }
@@ -77,7 +77,7 @@ $link = zu_start("link_type_add", "", $debug);
 
           // check if a verb, formula or word with the same name is already in the database
           $trm = New term;
-          $trm->name = $verb_name;
+          $trm->name = $vrb->name;
           $trm->usr  = $usr;
           $trm->load($debug-1);
           if ($trm->id > 0) {
@@ -87,7 +87,7 @@ $link = zu_start("link_type_add", "", $debug);
           // if the parameters are fine
           if ($msg == '') {
             // add the new verb
-            $add_result .= $vrb->save($debug-1);
+            $add_result = $vrb->save($debug-1);
 
             // if adding was successful ...
             if (str_replace ('1','',$add_result) == '') {
@@ -115,5 +115,4 @@ $link = zu_start("link_type_add", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

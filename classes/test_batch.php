@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_batch_job_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
   global $error_counter;
@@ -81,6 +80,14 @@ function run_batch_job_list_test ($debug) {
 
   // prepare test adding a batch job via a list
   $frm = load_formula(TF_INCREASE, $debug-1);
+  $phr_lst = New phrase_list;
+  $phr_lst->usr = $usr;
+  $phr_lst->add_name(TW_ABB);
+  $phr_lst->add_name(TW_SALES);
+  $phr_lst->add_name(TW_CHF);
+  $phr_lst->add_name(TW_MIO);
+  $phr_lst->add_name(TW_2014);
+  $phr_lst->load($debug-1);
 
   // test adding a batch job via a list
   $job_lst = new batch_job_list;

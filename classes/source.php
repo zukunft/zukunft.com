@@ -48,7 +48,8 @@ class source {
   // load the source parameters for all users
   private function load_standard($debug) {
     $result = '';
-    
+    global $db_con;
+
     // set the where clause depending on the values given
     $sql_where = '';
     if ($this->id > 0) {
@@ -69,7 +70,7 @@ class source {
                      s.code_id
                 FROM sources s 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_src = $db_con->get1($sql, $debug-5);  
       if ($db_src['source_id'] > 0) {
@@ -100,6 +101,7 @@ class source {
   
   // load the missing source parameters from the database
   function load($debug) {
+    global $db_con;
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
@@ -133,7 +135,7 @@ class source {
              LEFT JOIN user_sources u ON u.source_id = s.source_id 
                                    AND u.user_id = ".$this->usr->id." 
                  WHERE ".$sql_where.";";
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_source = $db_con->get1($sql, $debug-5);  
         if ($db_source['source_id'] > 0) {
@@ -154,11 +156,13 @@ class source {
 
   // 
   private function type_name($debug) {
+    global $db_con;
+
     if ($this->type_id > 0) {
       $sql = "SELECT type_name, description
                 FROM source_types
                WHERE source_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
@@ -353,6 +357,9 @@ class source {
   // true if no other user has modified the source
   private function not_changed($debug) {
     zu_debug('source->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
+
     $result = true;
     
     $change_user_id = 0;
@@ -368,7 +375,7 @@ class source {
                WHERE source_id = ".$this->id."
                  AND (excluded <> 1 OR excluded is NULL)";
     }
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     $change_user_id = $db_row['user_id'];
@@ -403,6 +410,9 @@ class source {
 
   // create a database record to save user specific settings for this source
   private function add_usr_cfg($debug) {
+
+    global $db_con;
+
     $result = '';
 
     if (!$this->has_usr_cfg) {
@@ -410,7 +420,7 @@ class source {
 
       // check again if there ist not yet a record
       $sql = "SELECT source_id FROM `user_sources` WHERE source_id = ".$this->id." AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       $usr_db_id = $db_row['user_id'];
@@ -428,6 +438,9 @@ class source {
 
   // check if the database record for the user specific settings can be removed
   private function del_usr_cfg_if_not_needed($debug) {
+
+    global $db_con;
+
     $result = '';
     zu_debug('source->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
 
@@ -441,7 +454,7 @@ class source {
                 FROM user_sources
                WHERE source_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_wrd_cfg = $db_con->get1($sql, $debug-5);  
       zu_debug('source->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -465,7 +478,7 @@ class source {
   private function log_add($debug) {
     zu_debug('source->log_add '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'sources';
     $log->field     = 'source_name';
@@ -481,7 +494,7 @@ class source {
   private function log_upd($debug) {
     zu_debug('source->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table   = 'sources';
@@ -496,7 +509,7 @@ class source {
   private function log_del($debug) {
     zu_debug('source->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'sources';
     $log->field     = 'source_name';
@@ -730,10 +743,12 @@ class source {
   // update a source in the database or create a user source
   function save($debug) {
     zu_debug('source->save '.$this->dsp_id().' for user '.$this->usr->id, $debug-10);
+
+    global $db_con;
     $result = "";
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'source';         
     
@@ -789,11 +804,13 @@ class source {
   // delete the complete source (the calling function del must have checked that no one uses this source)
   private function del_exe($debug) {
     zu_debug('source->del_exe', $debug-16);
+
+    global $db_con;
     $result = '';
 
     $log = $this->log_del($debug-1);
     if ($log->id > 0) {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       // delete first all user configuration that have also been excluded
       $db_con->type = 'user_source';

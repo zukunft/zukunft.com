@@ -52,7 +52,7 @@ class formula_link extends user_sandbox {
     $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
   }
     
-  function reset($debug) {
+  function reset() {
     $this->id         = NULL;
     $this->usr_cfg_id = NULL;
     $this->usr        = NULL;
@@ -75,6 +75,8 @@ class formula_link extends user_sandbox {
   
   // load the formula parameters for all users
   function load_standard($debug) {
+
+    global $db_con;
     $result = '';
     
     // try to get the search values from the objects
@@ -105,7 +107,7 @@ class formula_link extends user_sandbox {
                      l.excluded
                 FROM formula_links l 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_frm = $db_con->get1($sql, $debug-5);  
       if ($db_frm['formula_link_id'] <= 0) {
@@ -138,6 +140,7 @@ class formula_link extends user_sandbox {
   
   // load the missing formula parameters from the database
   function load($debug) {
+    global $db_con;
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
@@ -181,7 +184,7 @@ class formula_link extends user_sandbox {
                LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
                                              AND u.user_id = ".$this->usr->id." 
                    WHERE ".$sql_where.";";
-          $db_con = new mysql;         
+          //$db_con = new mysql;
           $db_con->usr_id = $this->usr->id;         
           $db_row = $db_con->get1($sql, $debug-5);  
           if ($db_row['formula_link_id'] <= 0) {
@@ -227,11 +230,14 @@ class formula_link extends user_sandbox {
   // 
   function link_type_name($debug) {
     zu_debug('formula_link->link_type_name do', $debug-16);
+
+    global $db_con;
+
     if ($this->type_id > 0 AND $this->link_name == '') {
       $sql = "SELECT type_name, description
                 FROM formula_link_types
                WHERE formula_link_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->link_name = $db_type['type_name'];
@@ -269,7 +275,7 @@ class formula_link extends user_sandbox {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->fob->name <> '' AND $this->tob->name <> '') {
@@ -319,6 +325,8 @@ class formula_link extends user_sandbox {
   // true if no other user has modified the formula
   function not_changed($debug) {
     zu_debug('formula_link->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     if ($this->owner_id > 0) {
@@ -333,7 +341,7 @@ class formula_link extends user_sandbox {
                WHERE formula_link_id = ".$this->id."
                  AND (excluded <> 1 OR excluded is NULL)";
     }             
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if ($db_row['user_id'] > 0) {
@@ -370,6 +378,8 @@ class formula_link extends user_sandbox {
 
   // create a database record to save user specific settings for this formula_link
   function add_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if (!$this->has_usr_cfg) {
@@ -384,7 +394,7 @@ class formula_link extends user_sandbox {
                 FROM user_formula_links 
                WHERE formula_link_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       if ($db_row['formula_link_id'] <= 0) {
@@ -401,8 +411,10 @@ class formula_link extends user_sandbox {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('formula_link->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = '';
 
     //if ($this->has_usr_cfg) {
 
@@ -413,7 +425,7 @@ class formula_link extends user_sandbox {
                 FROM user_formula_links
                WHERE formula_link_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       zu_debug('formula_link->del_usr_cfg_if_not_needed check for '.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -444,6 +456,8 @@ class formula_link extends user_sandbox {
   
   // remove user adjustment and log it (used by user.php to undo the user changes)
   function del_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
@@ -452,7 +466,7 @@ class formula_link extends user_sandbox {
       $db_type = 'user_formula_link';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
@@ -469,7 +483,7 @@ class formula_link extends user_sandbox {
   function log_add($debug) {
     zu_debug('formula_link->log_add for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'formula_links';
     $log->new_from  = $this->fob;
@@ -485,7 +499,7 @@ class formula_link extends user_sandbox {
   function log_upd($debug) {
     // zu_debug('formula_link->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table   = 'formula_links';
@@ -501,7 +515,7 @@ class formula_link extends user_sandbox {
   function log_del($debug) {
     zu_debug('formula_link->log_del for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'formula_links';
     $log->old_from  = $this->fob;
@@ -517,7 +531,7 @@ class formula_link extends user_sandbox {
   function log_upd_field($debug) {
     // zu_debug('formula_link->log_upd_field '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table   = 'formula_links';
@@ -644,7 +658,7 @@ class formula_link extends user_sandbox {
     
     if ($db_rec->fob->id <> $this->fob->id 
      OR $db_rec->tob->id <> $this->tob->id) {
-      $this->reset_objects($debug-1);
+      $this->reset_objects();
       // check if target link already exists
       zu_debug('formula_link->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")', $debug-14);
       $db_chk = clone $this;
@@ -721,6 +735,10 @@ class formula_link extends user_sandbox {
   
   // update a formula_link in the database or create a user formula_link
   function save($debug) {
+
+    global $db_con;
+    $result = "";
+
     // check if the required parameters are set
     if (isset($this->fob) AND isset($this->tob)) {
       zu_debug('formula_link->save "'.$this->fob->name.'" to "'.$this->tob->name.'" (id '.$this->id.') for user '.$this->usr->name, $debug-10);
@@ -732,7 +750,7 @@ class formula_link extends user_sandbox {
     $result = "";
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'formula_link';         
     

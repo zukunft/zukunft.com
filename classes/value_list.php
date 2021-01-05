@@ -44,6 +44,9 @@ class value_list {
   
   // the general load function (either by word, word list, formula or group)
   function load($debug) {
+
+    global $db_con;
+
     // the id and the user must be set
     if ($this->phr->id > 0 AND !is_null($this->usr->id)) {
       zu_debug('value_list->load for "'.$this->phr->name.'"', $debug-10);
@@ -72,7 +75,7 @@ class value_list {
                                    GROUP BY value_id )
             ORDER BY v.phrase_group_id, v.time_word_id
                LIMIT ".$limit.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_val_lst = $db_con->get($sql, $debug-5);  
       foreach ($db_val_lst AS $db_val) {
@@ -99,7 +102,10 @@ class value_list {
 
   // load a list of values that are related to a phrase or a list of phrases
   function load_by_phr($debug) {
+
+    global $db_con;
     $sql_where = '';
+
     // the id and the user must be set
     if ($this->phr->id > 0 AND !is_null($this->usr->id)) {
       zu_debug('value_list->load for "'.$this->phr->name.'"', $debug-10);
@@ -124,7 +130,7 @@ class value_list {
                                    GROUP BY value_id )
             ORDER BY v.phrase_group_id, v.time_word_id
                LIMIT ".$limit.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_val_lst = $db_con->get($sql, $debug-5);  
       foreach ($db_val_lst AS $db_val) {
@@ -149,6 +155,9 @@ class value_list {
 
   // load a list of values that are related to one 
   function load_all($debug) {
+
+    global $db_con;
+
     // the id and the user must be set
     if (isset($this->phr_lst)) {
       if (count($this->phr_lst->ids) > 0 AND !is_null($this->usr->id)) {
@@ -170,7 +179,7 @@ class value_list {
                                         WHERE phrase_id IN (".implode(",",$this->phr_lst->ids()).")
                                     GROUP BY value_id )
               ORDER BY v.phrase_group_id, v.time_word_id;";
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_val_lst = $db_con->get($sql, $debug-5);  
         foreach ($db_val_lst AS $db_val) {
@@ -197,6 +206,9 @@ class value_list {
 
   // load a list of values that are related to all words of the list
   function load_by_phr_lst($debug) {
+
+    global $db_con;
+
     // the word list and the user must be set
     if (count($this->phr_lst->ids) > 0 AND !is_null($this->usr->id)) {
       // build the sql statement based in the number of words
@@ -233,7 +245,7 @@ class value_list {
                                               ".$sql_where." )
               ORDER BY v.phrase_group_id, v.time_word_id;";
         zu_debug('value_list->load_by_phr_lst sql ('.$sql.')', $debug-16);
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_val_lst = $db_con->get($sql, $debug-5);  
         foreach ($db_val_lst AS $db_val) {
@@ -544,11 +556,14 @@ class value_list {
   // so get the words and triples linked from the word group
   //    and update the slave table value_phrase_links (which should be renamed to value_phrase_links) 
   function check_all($debug) {
+
+    global $db_con;
     $result = '';
+
     // the id and the user must be set
     $sql = "SELECT value_id
               FROM `values` v;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_val_lst = $db_con->get($sql, $debug-5);  
     foreach ($db_val_lst AS $db_val) {
@@ -569,6 +584,8 @@ class value_list {
   // and the words used in the formula
   function load_frm_related($phr_id, $phr_ids, $user_id, $debug) {
     zu_debug("value_list->load_frm_related (".$phr_id.",ft".implode(",",$phr_ids).",u".$user_id.")", $debug-10);
+
+    global $db_con;
     $result = array();
 
     if ($phr_id > 0 AND !empty($phr_ids)) {
@@ -578,7 +595,7 @@ class value_list {
               WHERE l1.value_id = l2.value_id
                 AND l1.phrase_id = ".$phr_id."
                 AND l2.phrase_id IN (".implode(",",$phr_ids).");";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-10);  
       foreach ($db_lst AS $db_val) {
@@ -594,6 +611,8 @@ class value_list {
   // kind of similar to zu_sql_val_lst_wrd
   function load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id, $debug) {
     zu_debug("value_list->load_frm_related_grp_phrs_part (v".implode(",",$val_ids).",t".$phr_id.",ft".implode(",",$phr_ids).",u".$user_id.")", $debug-10);
+
+    global $db_con;
     $result = array();
 
     if ($phr_id > 0 AND !empty($phr_ids) AND !empty($val_ids)) {
@@ -611,7 +630,7 @@ class value_list {
                 AND l.value_id IN (".implode(",",$val_ids).")
                 AND (u.excluded IS NULL OR u.excluded = 0) 
             GROUP BY l.value_id, l.phrase_id;";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-10);  
       $value_id = -1; // set to an id that is never used to force the creation of a new entry at start

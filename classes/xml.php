@@ -35,16 +35,19 @@
   
 */
 
-class XMLSerializer {
+class XMLSerializer
+{
 
     // functions adopted from http://www.sean-barton.co.uk/2009/03/turning-an-array-or-object-into-xml-using-php/
 
-    public static function generateValidXmlFromObj(stdClass $obj, $node_block='nodes', $node_name='node') {
+    public static function generateValidXmlFromObj(stdClass $obj, $node_block = 'nodes', $node_name = 'node')
+    {
         $arr = get_object_vars($obj);
         return self::generateValidXmlFromArray($arr, $node_block, $node_name);
     }
 
-    public static function generateValidXmlFromArray($array, $node_block='nodes', $node_name='node') {
+    public static function generateValidXmlFromArray($array, $node_block = 'nodes', $node_name = 'node')
+    {
         $xml = '<?xml version="1.0" encoding="UTF-8" ?>';
 
         $xml .= '<' . $node_block . '>';
@@ -54,11 +57,12 @@ class XMLSerializer {
         return $xml;
     }
 
-    private static function generateXmlFromArray($array, $node_name) {
+    private static function generateXmlFromArray($array, $node_name)
+    {
         $xml = '';
 
         if (is_array($array) || is_object($array)) {
-            foreach ($array as $key=>$value) {
+            foreach ($array as $key => $value) {
                 if (is_numeric($key)) {
                     $key = $node_name;
                 }
@@ -74,40 +78,40 @@ class XMLSerializer {
 
 }
 
-class xml_io {
+class xml_io
+{
 
-  // parameters to filter the export
-  public $usr     = NULL; // the user who wants to im- or export
-  public $phr_lst = NULL; // to export all values related to this phrase
-  
-  
-  // to build the xml
-  //public $phr_lst_used = NULL; // all phrases used by the exported values
-  
-  // export zukunft.com data as xml
-  function export ($debug) {
-    zu_debug('xml_io->export', $debug-10);
-    $result = '';
+    // parameters to filter the export
+    public $usr = NULL; // the user who wants to im- or export
+    public $phr_lst = NULL; // to export all values related to this phrase
 
-    // get the export object
-    $export_instance          = New export; 
-    $export_instance->usr     = $this->usr; 
-    $export_instance->phr_lst = $this->phr_lst; 
-    $export_obj = $export_instance->get($debug-1); 
 
-    zu_debug('xml_io->export xml string from '.json_encode($export_obj), $debug-16);
-      
-    $xml_generator = new XMLSerializer;
-    $std_class = json_decode(json_encode($export_obj)); 
-    $result .= $xml_generator->generateValidXmlFromObj($std_class);
+    // to build the xml
+    //public $phr_lst_used = NULL; // all phrases used by the exported values
 
-    zu_debug('xml_io->export done with '.$result, $debug-16);
+    // export zukunft.com data as xml
+    function export($debug)
+    {
+        zu_debug('xml_io->export', $debug - 10);
+        $result = '';
 
-    return $result;
-  }
-  
+        // get the export object
+        $export_instance = new export;
+        $export_instance->usr = $this->usr;
+        $export_instance->phr_lst = $this->phr_lst;
+        $export_obj = $export_instance->get($debug - 1);
 
-  
+        zu_debug('xml_io->export xml string from ' . json_encode($export_obj), $debug - 16);
+
+        $xml_generator = new XMLSerializer;
+        $std_class = json_decode(json_encode($export_obj));
+        $result .= $xml_generator->generateValidXmlFromObj($std_class);
+
+        zu_debug('xml_io->export done with ' . $result, $debug - 16);
+
+        return $result;
+    }
+
+
 }
 
-?>

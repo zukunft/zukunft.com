@@ -51,7 +51,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /* open database */
-$link = zu_start("word_add", "", $debug);
+$db_con = zu_start("word_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -76,7 +76,7 @@ $link = zu_start("word_add", "", $debug);
       
     // update the parameters on the object, so that the object save can update the database
     if (isset($_GET['word_name'])) { $wrd->name    = $_GET['word_name']; } // the name that must be unique for words, triples, formulas and verbs
-    if (isset($_GET['type']))      { $wrd->type_id = $_GET['type']; }      // the type that adds special behavier to the word
+    if (isset($_GET['type']))      { $wrd->type_id = $_GET['type']; }      // the type that adds special behavior to the word
     
     // all words should be linked to an existing word, so collect the parameters for the word link now
     $wrd_id = $_GET['add'];  // id of an existing word that should be linked 
@@ -100,7 +100,7 @@ $link = zu_start("word_add", "", $debug);
       }
       */
       if ($wrd->type_id <= 0 AND $wrd->name <> "") {
-        $wrd_id = 0; // if new word in supposed to be added, but type is missing, do not add an existising word
+        $wrd_id = 0; // if new word in supposed to be added, but type is missing, do not add an existing word
         $msg .= 'Type missing; Please press back and select a word type. ';
       }
       
@@ -164,7 +164,7 @@ $link = zu_start("word_add", "", $debug);
         zu_debug('word_add -> test word', $debug);
         if ($wrd->id > 0 AND $vrb_id <> 0 AND $wrd_to > 0) {
           // ... and link it to an existing word
-          zu_debug('word_add -> word ' + $wrd->id + ' linked via ' + $vrb_id + ' to ' + $wrd_to + ': ' + $add_result, $debug-1);
+          zu_debug('word_add -> word '.$wrd->id.' linked via '.$vrb_id.' to '.$wrd_to.': '.$add_result, $debug-1);
           $lnk = New word_link;
           $lnk->usr     = $usr;
           $lnk->from_id = $wrd->id;
@@ -175,7 +175,7 @@ $link = zu_start("word_add", "", $debug);
 
         // if adding was successful ...
         if (str_replace ('1','',$add_result) == '') {
-          // if word has been added or linked succesfully, go back
+          // if word has been added or linked successfully, go back
           //if ($wrd->id > 0 AND $lnk->id <> 0 ) {
           // display the calling view
           //$result .= dsp_go_back($back, $usr, $debug-1);
@@ -199,5 +199,4 @@ $link = zu_start("word_add", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

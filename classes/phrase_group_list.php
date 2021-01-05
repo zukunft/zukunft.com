@@ -191,6 +191,8 @@ class phrase_group_list {
   // e.g. which value that have "Sales" and "2016"?
   private function get_grp_by_phr($type, $phr_linked, $phr_used, $debug) {
     zu_debug('get values because formula is assigned to phrases '.$phr_linked->name().' and phrases '.$phr_used->name().' are used in the formula', $debug-3);
+
+    global $db_con;
     $result = Null;
 
     // separate the time words from the phrases
@@ -272,7 +274,7 @@ class phrase_group_list {
     }
     
     zu_debug('phr_grp_lst->get_grp_by_phr -> sql "'.$sql.'"', $debug-14);
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $result = $db_con->get($sql, $debug-10); 
     return $result;

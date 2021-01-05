@@ -52,7 +52,7 @@ class formula_element {
         $wrd->usr       = $this->usr;
         $wrd->load($debug-1);
         $this->name     = $wrd->name; 
-        $this->dsp_name = $wrd->display($this->back, $debug-1); 
+        $this->dsp_name = $wrd->display($this->back);
         $this->symbol   = ZUP_CHAR_WORD_START.$wrd->id.ZUP_CHAR_WORD_END; 
         $this->obj      = $wrd; 
       }
@@ -62,7 +62,7 @@ class formula_element {
         $lnk->usr_id    = $this->usr->id;
         $lnk->load($debug-1);
         $this->name     = $lnk->name; 
-        $this->dsp_name = $lnk->display($this->back, $debug-1); 
+        $this->dsp_name = $lnk->display($this->back);
         $this->symbol   = ZUP_CHAR_LINK_START.$lnk->id.ZUP_CHAR_LINK_END; 
         $this->obj      = $lnk;
       }
@@ -72,7 +72,7 @@ class formula_element {
         $frm->usr       = $this->usr;
         $frm->load($debug-1);
         $this->name     = $frm->name; 
-        $this->dsp_name = $frm->name_linked($this->back, $debug-1); 
+        $this->dsp_name = $frm->name_linked($this->back);
         $this->symbol   = ZUP_CHAR_FORMULA_START.$frm->id.ZUP_CHAR_FORMULA_END; 
         $this->obj      = $frm; 
         // in case of a formula load also the corresponding word

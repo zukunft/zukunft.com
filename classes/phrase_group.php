@@ -385,6 +385,8 @@ class phrase_group {
   // load the phrase group from the database by the id, the word and triple ids or the list objects
   function load($debug) {
     zu_debug('phrase_group->load '.$this->dsp_id(), $debug-14);
+
+    global $db_con;
     $result = '';
     
         // check the all minimal input parameters
@@ -392,7 +394,7 @@ class phrase_group {
       zu_err("The user id must be set to load a phrase group.", "phrase_group->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
       // build the database object because the is anyway needed
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_con->type   = 'view';         
 
@@ -423,7 +425,7 @@ class phrase_group {
                        g.triple_ids
                   FROM phrase_groups g 
                  WHERE ".$sql_where.";";
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_grp = $db_con->get1($sql, $debug-5);  
         if ($db_grp['phrase_group_id'] <= 0) {
@@ -495,12 +497,14 @@ class phrase_group {
   
   // internal function for testing the link for fast search
   function load_link_ids($debug) {
+
+    global $db_con;
     $result = array();
 
     $sql = 'SELECT phrase_id 
               FROM phrase_group_phrase_links
              WHERE phrase_group_id = '.$this->id.';';
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $lnk_id_lst = $db_con->get($sql, $debug-5);  
     foreach ($lnk_id_lst AS $db_row) {
@@ -577,6 +581,8 @@ class phrase_group {
   // get the best matching group for a word list 
   // at the moment "best matching" is defined as the highest number of results
   private function get_by_wrd_lst ($debug) {
+
+    global $db_con;
     $result = Null;
     
     if (isset($this->wrd_lst)) {
@@ -604,7 +610,7 @@ class phrase_group {
                  WHERE ".$sql_where."
               GROUP BY l1.phrase_group_id;";
         zu_debug('phrase_group->get_by_wrd_lst sql '.$sql, $debug-12);
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_grp = $db_con->get1($sql, $debug-5);  
         $this->id = $db_grp['phrase_group_id'];
@@ -738,7 +744,9 @@ class phrase_group {
   // 
   function result($time_wrd_id, $debug) {
     zu_debug("phrase_group->result (".$this->id.",time".$time_wrd_id.",u".$this->usr->name.")", $debug-10);
-    $result = array(); 
+
+    global $db_con;
+    $result = array();
     
     if ($time_wrd_id > 0) {
       $sql_time = " time_word_id = ".$time_wrd_id." ";
@@ -746,7 +754,7 @@ class phrase_group {
       $sql_time = " (time_word_id IS NULL OR time_word_id = 0) ";
     }
 
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $sql = "SELECT formula_value_id AS id,
                    formula_value    AS num,
@@ -793,8 +801,10 @@ class phrase_group {
 
   // create the generic group name (and update the database record if needed and possible)
   private function generic_name ($debug) {
-    $result = '';
     zu_debug('phrase_group->generic_name', $debug-14);
+
+    global $db_con;
+    $result = '';
 
     // if not yet done, load, the words and triple list
     $this->load_lst($debug-1);
@@ -819,7 +829,7 @@ class phrase_group {
     if ($this->auto_name <> $group_name) {
       if ($this->id > 0) {
         // update the generic name in the database
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_con->type   = 'phrase_group';         
         $result .= $db_con->update($this->id, 'auto_description',$group_name, $debug-5);
@@ -869,13 +879,15 @@ Create a new value if needed, but ask the user: abb sales of 46000, is still use
   // create a new word group
   private function save_id ($debug) {
     zu_debug('phrase_group->save_id '.$this->dsp_id(), $debug-5);
-    
+
+    global $db_con;
+
     if ($this->id <= 0) {
       $this->generic_name($debug-1);
       
       // write new group
       if ($this->wrd_id_txt <> '' OR $this->lnk_id_txt <> '') {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_con->type   = 'phrase_group';         
         $this->id = $db_con->insert(array(     'word_ids',     'triple_ids',        'auto_description'),
@@ -898,10 +910,12 @@ Create a new value if needed, but ask the user: abb sales of 46000, is still use
   // word and triple links are saved in two different tables to be able use the database foreign keys
   private function save_phr_links ($type, $debug) {
     zu_debug('phrase_group->save_phr_links', $debug-10);
+
+    global $db_con;
     $result = '';
     
     // create the db link object for all actions
-    $db_con = New mysql;          
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
 
     // switch between the word and triple settings

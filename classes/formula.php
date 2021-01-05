@@ -62,7 +62,7 @@ class formula extends user_sandbox  {
     $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
   }
     
-  function reset($debug) {
+  function reset() {
     $this->id           = NULL;
     $this->usr_cfg_id   = NULL;
     $this->usr          = NULL;
@@ -126,6 +126,7 @@ class formula extends user_sandbox  {
   
   // load the formula parameters for all users
   function load_standard($debug) {
+    global $db_con;
     $result = '';
     
     // set the where clause depending on the values given
@@ -153,7 +154,7 @@ class formula extends user_sandbox  {
                 FROM formulas f
            LEFT JOIN formula_types t ON f.formula_type_id = t.formula_type_id 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_rec = $db_con->get1($sql, $debug-5);  
       if ($db_rec['formula_id'] <= 0) {
@@ -197,7 +198,8 @@ class formula extends user_sandbox  {
   
   // load the missing formula parameters from the database
   function load($debug) {
-    
+    global $db_con;
+
     // check the all minimal input parameters
     if (!isset($this->usr)) {
       zu_err("The user id must be set to load a formula.", "formula->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -238,7 +240,7 @@ class formula extends user_sandbox  {
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
                  WHERE ".$sql_where.";";
         zu_debug('formula->load sql "'.$sql.'"', $debug-18);
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_frm = $db_con->get1($sql, $debug-5);  
         if ($db_frm['formula_id'] <= 0) {
@@ -274,14 +276,15 @@ class formula extends user_sandbox  {
 
   // 
   function formula_type_name($debug) {
+    global $db_con;
+
     zu_debug('formula->formula_type_name do', $debug-16);
     if ($this->type_id > 0) {
       $sql = "SELECT name, description
                 FROM formula_types
                WHERE formula_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
-      $db_con->usr_id = $this->usr->id;         
-      $db_type = $db_con->get1($sql, $debug-5);  
+      //$db_con = new mysql;
+      $db_type = $db_con->get1($sql, $debug-5);
       $this->type_name = $db_type['name'];
     }
     zu_debug('formula->formula_type_name done '.$this->type_name, $debug-16);
@@ -482,8 +485,11 @@ class formula extends user_sandbox  {
   // delete all formula values (results) for this formula
   function fv_del($debug) {
     zu_debug("formula->fv_del (".$this->id.")", $debug-10);
+
+    global $db_con;
+
     $result = '';
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->type = 'formula_value';
     $db_con->usr_id = $this->usr->id;         
     $result .= $db_con->delete('formula_id', $this->id, $debug-5);  
@@ -501,7 +507,7 @@ class formula extends user_sandbox  {
       $exp = New expression;
       $exp->ref_text = $this->ref_text;
       $exp->usr      = $this->usr;
-      $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part($debug-1);    
+      $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part();
     }
 
     // guess the time if needed and exclude the time for consistent word groups
@@ -682,9 +688,9 @@ class formula extends user_sandbox  {
               zu_debug('got some numbers for '.$this->name_linked($back, $debug-1).' and '.implode(",",$fv->wrd_ids), $debug-2);
             } else {
               if ($fv->is_std) {
-                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked().': '.$fv->num_text, $debug-2);
+                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked($back, $debug-1).': '.$fv->num_text, $debug-2);
               } else {
-                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked().': '.$fv->num_text.' (user specific)', $debug-2);
+                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked($back, $debug-1).': '.$fv->num_text.' (user specific)', $debug-2);
               }  
               $can_calc = true;
             }
@@ -763,7 +769,7 @@ class formula extends user_sandbox  {
       $fv_add_phr_lst = $exp->fv_phr_lst($debug-1);
       if (isset($fv_add_phr_lst)) { zu_debug('formula->calc -> use words '.$fv_add_phr_lst->dsp_id().' for the result', $debug-12); }
       // use only the part right of the equation sign for the result calculation
-      $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part($debug-1);
+      $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part();
       zu_debug('formula->calc got result words of '.$this->ref_text_r, $debug-12);
 
       // get the list of the numeric results
@@ -852,7 +858,7 @@ class formula extends user_sandbox  {
     if ($this->name <> '')        { $result->name        = $this->name; }
     if ($this->usr_text <> '')    { $result->expression  = $this->usr_text; }
     if ($this->description <> '') { $result->description = $this->description; }
-    $phr_lst = $this->assign_phr_lst_direct();
+    $phr_lst = $this->assign_phr_lst_direct($debug-1);
     foreach ($phr_lst->lst AS $phr) {
       if ($phr->id > 0) {
         $result->assigned_word   = $phr->name();
@@ -896,13 +902,12 @@ class formula extends user_sandbox  {
   }
 
   // show the formula name to the user in the most simple form (without any ids)
-  function name ($debug) {
+  function name () {
     return $this->name;
   }
   
   // create the HTML code to display the formula name with the HTML link
-  function name_linked ($back, $debug) {
-    zu_debug("formula->name_linked", $debug-10);
+  function name_linked ($back = 0) {
     $result = '<a href="/http/formula_edit.php?id='.$this->id.'&back='.$back.'">'.$this->name.'</a>';
     return $result;    
   }
@@ -938,13 +943,13 @@ class formula extends user_sandbox  {
   }
 
   // create the HTML code for a button to change the formula
-  function btn_edit ($back, $debug) {
+  function btn_edit ($back) {
     $result = btn_edit ('Change formula '.$this->name, '/http/formula_edit.php?id='.$this->id.'&back='.$back);
     return $result; 
   }
 
   // create the HTML code for a button to change the formula
-  function btn_del ($back, $debug) {
+  function btn_del ($back) {
     $result = btn_del ('Delete formula '.$this->name, '/http/formula_del.php?id='.$this->id.'&back='.$back);
     return $result; 
   }
@@ -967,7 +972,7 @@ class formula extends user_sandbox  {
     $sel->name       = "type";  
     $sel->label      = "Formula type:";  
     $sel->bs_class   = $class;  
-    $sel->sql        = sql_lst ("formula_type", $this->usr, $debug-1);
+    $sel->sql        = sql_lst ("formula_type", $debug-1);
     $sel->selected   = $this->type_id;
     $sel->dummy_text = 'select a predefined type if needed';
     $result .= $sel->display ($debug-1).' ';
@@ -1259,6 +1264,8 @@ class formula extends user_sandbox  {
   // part of element_refresh for one element type and one user
   function element_refresh_type ($frm_text, $element_type, $frm_usr_id, $db_usr_id, $debug) {
     zu_debug('formula->element_refresh_type (f'.$this->id.''.$frm_text.','.$element_type.',u'.$frm_usr_id.')', $debug-5);
+
+    global $db_con;
     $result = '';
 
     // read the elements from the formula text
@@ -1277,7 +1284,7 @@ class formula extends user_sandbox  {
     } else {
       $sql = "SELECT ref_id FROM formula_elements WHERE formula_id = ".$this->id." AND formula_element_type_id = ".$elm_type_id.";";
     }
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'formula_element';         
     $db_lst = $db_con->get($sql, $debug-5);  
@@ -1335,6 +1342,8 @@ class formula extends user_sandbox  {
   // extracts an array with the word ids from a given formula text
   function element_refresh ($frm_text, $debug) {
     zu_debug('formula->element_refresh (f'.$this->id.''.$frm_text.',u'.$this->usr->id.')', $debug-5);
+
+    global $db_con;
     $result = '';
 
     // refresh the links for the standard formula used if the user has not changed the formula
@@ -1344,7 +1353,7 @@ class formula extends user_sandbox  {
 
     // refresh the links for the user specific formula
     $sql = "SELECT user_id FROM user_formulas WHERE formula_id = ".$this->id.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-5);  
     foreach ($db_lst AS $db_row) {
@@ -1417,7 +1426,9 @@ class formula extends user_sandbox  {
   }
   
   function not_used($debug) {
-    zu_debug('formula->not_used ('.$this->id.')', $debug-10);  
+    zu_debug('formula->not_used ('.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     $result = $this->not_changed($debug-1);
@@ -1427,7 +1438,7 @@ class formula extends user_sandbox  {
              WHERE formula_id = ".$this->id."
                AND user_id <> ".$this->owner_id."
                AND (excluded <> 1 OR excluded is NULL)";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $change_user_id = $db_con->get1($sql, $debug-5);  
     if ($change_user_id > 0) {
@@ -1439,7 +1450,9 @@ class formula extends user_sandbox  {
   // true if no other user has modified the formula
   // assuming that in this case not confirmation from the other users for a formula rename is needed
   function not_changed($debug) {
-    zu_debug('formula->not_changed ('.$this->id.')', $debug-10);  
+    zu_debug('formula->not_changed ('.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     if ($this->owner_id > 0) {
@@ -1454,7 +1467,7 @@ class formula extends user_sandbox  {
               WHERE formula_id = ".$this->id."
                 AND (excluded <> 1 OR excluded is NULL)";
     }
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if ($db_row['user_id'] > 0) {
@@ -1464,7 +1477,7 @@ class formula extends user_sandbox  {
     return $result;
   }
 
-  // true if the user is the owner and noone else has changed the formula
+  // true if the user is the owner and no one else has changed the formula
   // because if another user has changed the formula and the original value is changed, maybe the user formula also needs to be updated
   function can_change($debug) {
     zu_debug('formula->can_change '.$this->dsp_id().' by user "'.$this->usr->name.'"', $debug-12);  
@@ -1487,6 +1500,8 @@ class formula extends user_sandbox  {
 
   // create a database record to save user specific settings for this formula
   function add_usr_cfg($debug) {
+
+    global $db_con;
     $result = false;
 
     if (!$this->has_usr_cfg) {
@@ -1494,7 +1509,7 @@ class formula extends user_sandbox  {
 
       // check again if there ist not yet a record
       $sql = "SELECT formula_id FROM `user_formulas` WHERE formula_id = ".$this->id." AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       if ($db_row['formula_id'] <= 0) {
@@ -1511,8 +1526,11 @@ class formula extends user_sandbox  {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('formula->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = '';
+
 
     // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
     $sql = "SELECT formula_id,
@@ -1526,7 +1544,7 @@ class formula extends user_sandbox  {
               FROM user_formulas
              WHERE formula_id = ".$this->id." 
                AND user_id = ".$this->usr->id.";";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $usr_cfg = $db_con->get1($sql, $debug-5);  
     zu_debug('formula->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -1565,6 +1583,8 @@ class formula extends user_sandbox  {
   
   // remove user adjustment and log it (used by user.php to undo the user changes)
   function del_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
@@ -1573,7 +1593,7 @@ class formula extends user_sandbox  {
       $db_type = 'user_formula';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
@@ -1589,7 +1609,7 @@ class formula extends user_sandbox  {
   function log_add($debug) {
     zu_debug('formula->log_add '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'formulas';
     $log->field     = 'formula_name';
@@ -1606,7 +1626,7 @@ class formula extends user_sandbox  {
   function log_upd($debug) {
     zu_debug('formula->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table     = 'formulas';
@@ -1621,7 +1641,7 @@ class formula extends user_sandbox  {
   function log_del($debug) {
     zu_debug('formula->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'formulas';
     $log->field     = 'formula_name';
@@ -1974,10 +1994,12 @@ class formula extends user_sandbox  {
   // add or update a formula in the database or create a user formula
   function save($debug) {
     zu_debug('formula->save >'.$this->usr_text.'< (id '.$this->id.') as '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
+
+    global $db_con;
     $result = '';
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'formula';         
     

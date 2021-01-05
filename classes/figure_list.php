@@ -44,7 +44,7 @@ class figure_list {
   
   // display the unique id fields
   function dsp_id ($debug) {
-    $id = $this->ids_txt($debug-1);
+    $id = $this->ids_txt();
     $name = $this->display('',$debug-1);
     if ($name <> '""') {
       $result = ''.$name.' ('.$id.')';
@@ -71,8 +71,8 @@ class figure_list {
   }
 
   // return a list of the figure list ids as an sql compatible text
-  function ids_txt($debug) {
-    $result = implode(',',$this->ids($debug-1));
+  function ids_txt() {
+    $result = implode(',',$this->ids());
     return $result; 
   }
   

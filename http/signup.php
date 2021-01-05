@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
-$link = zu_start("signup", "center_form", $debug);
+$db_con = zu_start("signup", "center_form", $debug);
 
   $result = ''; // reset the html code var
 
@@ -91,7 +91,7 @@ $link = zu_start("signup", "center_form", $debug);
       // get user id
       $sql = "SELECT user_id FROM users  
               WHERE user_name='".$usr_name."' LIMIT 1"; 
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = SYSTEM_USER_ID;         
       $db_row = $db_con->get1($sql, $debug-5);  
       $usr_id = $db_row['user_id'];
@@ -135,6 +135,6 @@ $link = zu_start("signup", "center_form", $debug);
   echo $result;
 
 // close the database  
-zu_end($link, $debug);
+zu_end($db_con, $debug);
 
 ?>

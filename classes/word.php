@@ -56,7 +56,7 @@ class word {
   public $dsp_lnk_id   = NULL; // position or link id based on which to item is displayed on the screen
   public $link_type_id = NULL; // used in the word list to know based on which relation the word was added to the list
 
-  function reset($debug) {
+  function reset() {
     $this->id           = NULL; 
     $this->usr_cfg_id   = NULL; 
     $this->usr          = NULL; 
@@ -79,6 +79,8 @@ class word {
 
   // load the word parameters for all users
   private function load_standard($debug) {
+
+    global $db_con;
     $result = '';
     
     // set the where clause depending on the values given
@@ -102,7 +104,7 @@ class word {
                      excluded
                 FROM words
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_wrd = $db_con->get1($sql, $debug-5);  
       if ($db_wrd['word_id'] > 0) {
@@ -125,7 +127,9 @@ class word {
           // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
           $sql_set = "UPDATE words SET user_id = ".$this->usr->id." WHERE word_id = ".$this->id.";";
           $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "word->load_standard", (new Exception)->getTraceAsString(), $debug-10);
-          //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
+          if ($sql_result <> '1') {
+            zu_warning('Value owner missing for value '.$this->id.'.', 'value->load_standard', 'Value owner missing for value '.$this->id.'.', (new Exception)->getTraceAsString(), $this->usr);
+          }
         }
       } 
     }  
@@ -135,7 +139,10 @@ class word {
   // load the missing word parameters from the database
   function load($debug) {
 
-  // check the all minimal input parameters
+    global $db_con;
+    $result = '';
+
+    // check the all minimal input parameters
     if (!isset($this->usr)) {
       // don't use too specific error text, because for each unique error text a new message is created
       //zu_err('The user id must be set to load word '.$this->dsp_id().'.', "word->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -171,7 +178,7 @@ class word {
              LEFT JOIN user_words u ON u.word_id = w.word_id 
                                    AND u.user_id = ".$this->usr->id." 
                  WHERE ".$sql_where.";";
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_wrd = $db_con->get1($sql, $debug-5);  
         if (is_null($db_wrd['excluded']) OR $db_wrd['excluded'] == 0) {
@@ -189,7 +196,8 @@ class word {
         } 
         zu_debug('word->loaded '.$this->dsp_id(), $debug-12);
       }  
-    }  
+    }
+    return $result;
   }
     
   // return the main word object based on a id text e.g. used in view.php to get the word to display
@@ -238,6 +246,8 @@ class word {
   function view_id ($debug) {
     zu_debug('word->view_id for '.$this->dsp_id(), $debug-10);
 
+    global $db_con;
+
     $view_id = 0;
     $sql = "SELECT view_id
               FROM ( SELECT u.view_id, count(u.user_id) AS users
@@ -246,7 +256,7 @@ class word {
                       WHERE w.word_id = ".$this->id."
                    GROUP BY u.view_id ) as v
           ORDER BY users DESC;";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if (isset($db_row)) {
@@ -273,10 +283,12 @@ class word {
   function formula ($debug) {
     zu_debug('word->formula for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-10);
 
+    global $db_con;
+
     $sql = "SELECT formula_id
               FROM formula_links
               WHERE phrase_id = ".$this->id.";";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if (isset($db_row)) {
@@ -322,7 +334,7 @@ class word {
     
     // set the all parameters for the word object excluding the usr
     $usr = $this->usr;
-    $this->reset($debug-1);
+    $this->reset();
     $this->usr = $usr;
     foreach ($json_obj AS $key => $value) {
       if ($key == 'name')        { $this->name    = $value;     }
@@ -444,11 +456,14 @@ class word {
   
   // 
   private function type_name($debug) {
+
+    global $db_con;
+
     if ($this->type_id > 0) {
       $sql = "SELECT type_name, description
                 FROM word_types
                WHERE word_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
@@ -457,12 +472,15 @@ class word {
   }
   
   function type_code_id($debug) {
+
+    global $db_con;
     $result = '';
+
     if ($this->type_id > 0) {
       $sql = "SELECT type_name, description, code_id
                 FROM word_types
                WHERE word_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $result = $db_type['code_id'];
@@ -494,7 +512,7 @@ class word {
   function is_measure ($debug) {
     zu_debug('word->is_measure '.$this->dsp_id(), $debug-10);
     $result = false;
-    if ($result = $this->is_type (SQL_WORD_TYPE_MEASURE, $debug-1)) {
+    if ($this->is_type (SQL_WORD_TYPE_MEASURE, $debug-1)) {
       $result = true;
     }
     return $result;    
@@ -503,8 +521,8 @@ class word {
   // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
   function is_scaling ($debug) {
     $result = false;
-    if ($result = $this->is_type (SQL_WORD_TYPE_SCALING,        $debug-1)
-     OR $result = $this->is_type (SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1)) {
+    if ($this->is_type (SQL_WORD_TYPE_SCALING,        $debug-1)
+     OR $this->is_type (SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1)) {
       $result = true;
     }
     return $result;    
@@ -513,14 +531,14 @@ class word {
   // return true if the word has the type "scaling_percent" (e.g. "percent")
   function is_percent ($debug) {
     $result = false;
-    if ($result = $this->is_type (SQL_WORD_TYPE_SCALING_PCT, $debug-1)) {
+    if ($this->is_type (SQL_WORD_TYPE_SCALING_PCT, $debug-1)) {
       $result = true;
     }
     return $result;    
   }
 
   // just to fix a problem if a phrase list contains a word
-  function type_id ($debug) {
+  function type_id () {
     $result = $this->type_id;
     return $result;
   }
@@ -621,10 +639,10 @@ class word {
     zu_debug('word->are_and_contains for '.$this->dsp_id(), $debug-18);
 
     // this first time get all related items
-    $wrd_lst = $this->lst();
+    $wrd_lst = $this->lst($debug-1);
     $wrd_lst   = $wrd_lst->are     ($debug-1);
     $wrd_lst   = $wrd_lst->contains($debug-1);
-    $added_lst = $wrd_lst->diff($this->lst(), $debug-1);
+    $added_lst = $wrd_lst->diff($this->lst($debug-1), $debug-1);
     // ... and after that get only for the new
     if (count($added_lst->lst) > 0) {
       $loops = 0;
@@ -646,9 +664,12 @@ class word {
   // return the follow word id based on the predefined verb following
   function next ($debug) {
     zu_debug('word->next '.$this->dsp_id().' and user '.$this->usr->name, $debug-10);
+
+    global $db_con;
     $result = New word_dsp;
+
     $link_id = cl(SQL_LINK_TYPE_FOLLOW);
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'word_link';         
     $result->id = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id, $debug-1);
@@ -662,9 +683,12 @@ class word {
   // return the follow word id based on the predefined verb following
   function prior ($debug) {
     zu_debug('word->prior('.$this->dsp_id().',u'.$this->usr->id.')', $debug-10);
+
+    global $db_con;
     $result = New word_dsp;
+
     $link_id = cl(SQL_LINK_TYPE_FOLLOW);
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'word_link';         
     $result->id = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id, $debug-1);
@@ -701,7 +725,7 @@ class word {
   }
   
   // true if the word has any none default settings such as a special type
-  function has_cfg($debug) {
+  function has_cfg() {
     $has_cfg = false;
     if (isset($this->plural)) {
       if ($this->plural <> '') {
@@ -750,9 +774,9 @@ class word {
   */
   
   private function not_used($debug) {
-    zu_debug('word->not_used ('.$this->id.')', $debug-10);  
-    $result = true;
-    
+    zu_debug('word->not_used ('.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = $this->not_changed($debug-1);
 /*    $change_user_id = 0;
     $sql = "SELECT user_id 
@@ -760,7 +784,7 @@ class word {
              WHERE word_id = ".$this->id."
                AND user_id <> ".$this->owner_id."
                AND (excluded <> 1 OR excluded is NULL)";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $change_user_id = $db_con->get1($sql, $debug-5);  
     if ($change_user_id > 0) {
@@ -773,9 +797,10 @@ class word {
   // assuming that in this case not confirmation from the other users for a word rename is needed
   private function not_changed($debug) {
     zu_debug('word->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
-    $change_user_id = 0;
     if ($this->owner_id > 0) {
       $sql = "SELECT user_id 
                 FROM user_words 
@@ -788,7 +813,7 @@ class word {
                WHERE word_id = ".$this->id."
                  AND (excluded <> 1 OR excluded is NULL)";
     }
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     $change_user_id = $db_row['user_id'];
@@ -803,13 +828,15 @@ class word {
   // if the value has been changed by someone else than the owner the user id is returned
   // but only return the user id if the user has not also excluded it
   function changer($debug) {
-    zu_debug('word->changer ('.$this->id.')', $debug-10);  
-    
+    zu_debug('word->changer ('.$this->id.')', $debug-10);
+
+    global $db_con;
+
     $sql = "SELECT user_id 
               FROM user_words 
              WHERE word_id = ".$this->id."
                AND (excluded <> 1 OR excluded is NULL)";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     $user_id = $db_row['user_id'];
@@ -833,7 +860,7 @@ class word {
   }
 
   // true if a record for a user specific configuration already exists in the database
-  private function has_usr_cfg($debug) {
+  private function has_usr_cfg() {
     $has_cfg = false;
     if ($this->usr_cfg_id > 0) {
       $has_cfg = true;
@@ -845,15 +872,17 @@ class word {
   private function add_usr_cfg($debug) {
     $result = false;
 
-    if (!$this->has_usr_cfg) {
+    if (!$this->has_usr_cfg()) {
       zu_debug('word->add_usr_cfg for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
+
+      global $db_con;
 
       // check again if there ist not yet a record
       $sql = 'SELECT user_id 
                 FROM user_words
                WHERE word_id = '.$this->id.'
                  AND user_id = '.$this->usr->id.';';
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       $usr_wrd_id = $db_row['user_id'];
@@ -871,8 +900,10 @@ class word {
 
   // check if the database record for the user specific settings can be removed
   private function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('word->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+
+    global $db_con;
+    $result = '';
 
     //if ($this->has_usr_cfg) {
 
@@ -886,7 +917,7 @@ class word {
                 FROM user_words
                WHERE word_id = ".$this->id." 
                  AND user_id = ".$this->usr->id.";";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_wrd_cfg = $db_con->get1($sql, $debug-5);  
       zu_debug('word->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
@@ -919,16 +950,18 @@ class word {
   
   // remove user adjustment and log it (used by user.php to undo the user changes)
   function del_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
       zu_debug('word->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
-      $db_type = 'user_word';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
-        $db_con->usr_id = $this->usr->id;         
+        //$db_con = new mysql;
+        $db_con->type = 'user_word';
+        $db_con->usr_id = $this->usr->id;
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
 
@@ -943,7 +976,7 @@ class word {
   private function log_add($debug) {
     zu_debug('word->log_add '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'words';
     $log->field     = 'word_name';
@@ -959,7 +992,7 @@ class word {
   private function log_upd($debug) {
     zu_debug('word->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-1)) {
       $log->table     = 'words';
@@ -974,7 +1007,7 @@ class word {
   private function log_del($debug) {
     zu_debug('word->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'words';
     $log->field     = 'word_name';
@@ -1001,7 +1034,7 @@ class word {
     $dsp_new->load($debug-1);
     
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     $log->table     = 'words';
     $log->field     = 'view_id';
@@ -1023,23 +1056,28 @@ class word {
   // remember the word view, which means to save the view id for this word
   // each user can define set the view individually, so this is user specific
   function save_view($view_id, $debug) {
+
+    global $db_con;
+    $result = '';
+
     if ($this->id > 0 AND $view_id > 0 AND $view_id <> $this->view_id) {
       zu_debug('word->save_view '.$view_id.' for '.$this->dsp_id().' and user '.$this->usr->id, $debug-10);
       if ($this->log_upd_view($view_id, $debug-1) > 0 ) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         if ($this->can_change($debug-1)) {
-          $db_con->type   = 'word';         
-          $db_con->update($this->id, "view_id", $view_id, $debug-1);
+          $db_con->type = 'word';
+          $result .= $db_con->update($this->id, "view_id", $view_id, $debug-1);
         } else {
-          if (!$this->has_usr_cfg($debug-1)) {
+          if (!$this->has_usr_cfg()) {
             $this->add_usr_cfg($debug-1);
           }
-          $db_con->type   = 'user_word';         
-          $db_con->update($this->id, "view_id", $view_id, $debug-1);
+          $db_con->type = 'user_word';
+          $result .= $db_con->update($this->id, "view_id", $view_id, $debug-1);
         }
       }
     }
+    return $result;
   }
   
   // actually update a word field in the main database record or the user sandbox
@@ -1056,7 +1094,7 @@ class word {
       if ($this->can_change($debug-1)) {
         $result .= $db_con->update($this->id, $log->field, $new_value, $debug-1);
       } else {
-        if (!$this->has_usr_cfg($debug-1)) { $this->add_usr_cfg($debug-1); }
+        if (!$this->has_usr_cfg()) { $this->add_usr_cfg($debug-1); }
         $db_con->type = 'user_word';
         if ($new_value == $std_value) {
           zu_debug('word->save_field_do remove user change', $debug-14);
@@ -1152,7 +1190,7 @@ class word {
         $db_con->type = 'word';
         $result .= $db_con->update($this->id, $log->field, $new_value, $debug-1);
       } else {
-        if (!$this->has_usr_cfg($debug-1)) { $this->add_usr_cfg($debug-1); }
+        if (!$this->has_usr_cfg()) { $this->add_usr_cfg($debug-1); }
         $db_con->type = 'user_word';
         if ($new_value == $std_value) {
           $result .= $db_con->update($this->id, $log->field, Null, $debug-1);
@@ -1167,6 +1205,7 @@ class word {
   
   // save all updated word fields
   private function save_fields($db_con, $db_rec, $std_rec, $debug) {
+    zu_debug('word->save_fields', $debug-14);
     $result = '';
     $result .= $this->save_field_plural      ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_description ($db_con, $db_rec, $std_rec, $debug-1);
@@ -1333,10 +1372,12 @@ class word {
   // add or update a word in the database (or create a user word if the program settings allow this)
   function save($debug) {
     zu_debug('word->save '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
+
+    global $db_con;
     $result = '';
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'word';         
     
@@ -1406,7 +1447,7 @@ class word {
       // if a problem has appeared up to here, don't try to save the values
       // the problem is shown to the user by the calling interactive script
       if (str_replace ('1','',$result) == '') {
-        $result .= $this->save_fields     ($db_con, $db_rec, $std_rec, $debug-1);        
+        $result .= $this->save_fields ($db_con, $db_rec, $std_rec, $debug-1);
       }
     }
 
@@ -1416,11 +1457,13 @@ class word {
   // delete the complete word (the calling function del must have checked that no one uses this word)
   private function del_exe($debug) {
     zu_debug('word->del_exe', $debug-16);
+
+    global $db_con;
     $result = '';
 
     $log = $this->log_del($debug-1);
     if ($log->id > 0) {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       // delete first all user configuration that have also been excluded
       $db_con->type = 'user_word';
@@ -1437,7 +1480,7 @@ class word {
   function del($debug) {
     zu_debug('word->del', $debug-16);
     $result = '';
-    $result .= $this->load($debug-1);
+    $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
       zu_debug('word->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {

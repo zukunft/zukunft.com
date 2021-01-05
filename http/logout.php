@@ -36,15 +36,15 @@ include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 echo 'logging off ...'; // reset the html code var
 
 // open database 
-$link = zu_start("logoff", "center_form", $debug);
+$db_con = zu_start("logoff", "center_form", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1); // to check from which ip the user has logged in
+  $result = $usr->get($debug-1); // to check from which ip the user has logged in
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->type = "user";         
     $db_con->usr_id = $usr->id;         
     $sql_result = $db_con->update($usr->id, "last_logoff", "Now()", $debug-1);
@@ -54,12 +54,10 @@ $link = zu_start("logoff", "center_form", $debug);
   session_unset(); 
 
 // close the database  
-zu_end($link, $debug);
+zu_end($db_con, $debug);
 
 echo 'logoff done.'; // reset the html code var
 
 // show the main page without user being logged in
 header("Location: view.php");
-exit; 
-
-?>
+exit;

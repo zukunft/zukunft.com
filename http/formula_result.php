@@ -33,7 +33,7 @@
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
-$link = zu_start("formula_result", "", $debug);
+$db_con = zu_start("formula_result", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -56,7 +56,7 @@ $link = zu_start("formula_result", "", $debug);
     $frm_id       = $_GET['formula']; // id of the formula which values should be explained
     $phr_id       = $_GET['word'];    // id of the leading word used to order the result explaining
     //$wrd_group_id = $_GET['group'];   // id of the word group (excluding and time word)
-    $time_id      = $_GET['time'];    // id of the time word for which the value is valid (always the end of the period e.g. a vlaue for 2016 is valid at the end of the year)
+    $time_id      = $_GET['time'];    // id of the time word for which the value is valid (always the end of the period e.g. a value for 2016 is valid at the end of the year)
 
     // explain the result
     if ($frm_val_id > 0 OR $frm_id > 0) {
@@ -82,5 +82,4 @@ $link = zu_start("formula_result", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

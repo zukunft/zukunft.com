@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function run_test_cleanup ($debug) {
 
+  global $db_con;
+
   global $usr;
   global $usr2;
   global $exe_start_time;
@@ -191,7 +193,7 @@ function run_test_cleanup ($debug) {
   }
 
   // reset the auto increase id to avoid too high numbers just by testing
-  $db_con = new mysql;         
+  //$db_con = new mysql;
   $db_con->usr_id = $usr->id;         
 
   // for values

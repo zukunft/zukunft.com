@@ -275,6 +275,8 @@
 
 */
 
+global $debug;
+
 // database links
 include_once '../database/mysql.php';                     if ($debug > 9) { echo 'mysql link loaded<br>'; }
 // classes
@@ -515,37 +517,43 @@ define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('ABB_2013.json','work.j
 define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('units.json','car_costs.json')));
 
 // for internal functions debugging
-// each complex function should call this at the beginning with the paramters and with -1 at the end with the result
+// each complex function should call this at the beginning with the parameters and with -1 at the end with the result
 // called function should use $debug-1
 function zu_debug($msg_text, $debug) {
   if ($debug > 0) { 
     echo $msg_text.'.<br>' ; 
-    ob_flush();
-    flush();
+    //ob_flush();
+    //flush();
   }
 }
 
 // for system messages no debug calls to avoid loops
 // $msg_text is a short description that is used to group and limit the number of error messages
 // $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
-function zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $user_id) {
-  global $sys_log_msg_lst;
+function zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr) {
 
+  global $sys_log_msg_lst;
+  global $db_con;
   $result = '';
+
+  // fill up fields with default values
+  if ($msg_description == '') { $msg_description = $msg_text; }
+  if ($function_trace == '') { $function_trace = (new Exception)->getTraceAsString(); }
+  if (isset($usr)) { $user_id = $usr->id; } else { $user_id = $_SESSION['usr_id']; }
 
   // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
   $msg_type_text = $user_id.substr($msg_text,0,200);
   if (!in_array($msg_type_text, $sys_log_msg_lst)) {
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $user_id;         
     
     $sys_log_msg_lst[] = $msg_type_text;
     $log_level = cl(LOG_LEVEL);
     if ($msg_type_id > $log_level) {
       $db_con->type = "sys_log_function";         
-      $function_id = $db_con->get_id($function_name, $debug-5);  
+      $function_id = $db_con->get_id($function_name);
       if ($function_id <= 0) {
-        $function_id = $db_con->add_id($function_name, $debug-5);  
+        $function_id = $db_con->add_id($function_name);
       }
       $msg_text        = str_replace("'", "", $msg_text);
       $msg_description = str_replace("'", "", $msg_description);
@@ -588,41 +596,41 @@ function zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $func
   }
   return $result;
 }
-function zu_info($msg_text, $function_name, $msg_description, $function_trace, $usr) {
+function zu_info($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+  // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_INFO, "Info");
-  if (isset($usr)) { $user_id = $usr->id; } else { $user_id = $_SESSION['usr_id']; }
-  $result = zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $user_id);
-  return $result;
+  $msg_type_id = 1;
+  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function zu_warning($msg_text, $function_name, $msg_description, $function_trace, $usr) {
+function zu_warning($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+  // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning");
-  if (isset($usr)) { $user_id = $usr->id; } else { $user_id = $_SESSION['usr_id']; }
-  $result = zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $user_id);
-  return $result;
+  $msg_type_id = 2;
+  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function zu_err($msg_text, $function_name, $msg_description, $function_trace, $usr) {
+function zu_err($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+  // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_ERROR, "Error");
-  if (isset($usr)) { $user_id = $usr->id; } else { $user_id = $_SESSION['usr_id']; }
-  $result = zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $user_id);
-  return $result;
+  $msg_type_id = 3;
+  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function zu_fatal($msg_text, $function_name, $msg_description, $function_trace, $usr) {
+function zu_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+  // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR");
-  if (isset($usr)) { $user_id = $usr->id; } else { $user_id = $_SESSION['usr_id']; }
-  $result = zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $user_id);
-  return $result;
+  $msg_type_id = 4;
+  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
 
 // should be call from all code that can be accessed by an url
 function zu_start($code_name, $style, $debug) {
   global $sys_time_start, $sys_script;
-  
+
   zu_debug ($code_name.' ..', $debug);
   
   $sys_time_start = time();
   $sys_script = $code_name;
 
-  // resume session (based on cockies)
+  // resume session (based on cookies)
   session_start(); 
 
   // link to database
@@ -630,7 +638,7 @@ function zu_start($code_name, $style, $debug) {
   $db_con->open($debug-1);
   zu_debug ($code_name.' ... database link open', $debug-5);
   
-  // load defauld records
+  // load default records
   //verbs_load;
   
   // html header
@@ -666,8 +674,7 @@ function zu_end($db_con, $debug) {
   // write the execution time to the database if it is long
   $sys_time_end = time();
   if ($sys_time_end > $sys_time_limit) {
-    $db_con = new mysql;         
-    $db_con->usr_id = SYSTEM_USER_ID;         
+    $db_con->usr_id = SYSTEM_USER_ID;
     $db_con->type = "sys_script";         
     $sys_script_id = $db_con->get_id($sys_script, $debug-1);
     if ($sys_script_id <= 0) {
@@ -689,7 +696,7 @@ function zu_end($db_con, $debug) {
   unset($sys_time_limit);
   unset($sys_time_start);
   
-  zu_debug ($code_name.' ... database link closed', $debug-5);
+  zu_debug (' ... database link closed', $debug-5);
 }
 
 // special page closing only for the about page
@@ -707,7 +714,7 @@ function zu_end_about($link, $debug) {
   unset($sys_time_limit);
   unset($sys_time_start);
   
-  zu_debug ($code_name.' ... database link closed', $debug);
+  zu_debug (' ... database link closed', $debug);
 }
 
 // special page closing of api pages
@@ -724,7 +731,7 @@ function zu_end_api($link, $debug) {
   unset($sys_time_limit);
   unset($sys_time_start);
   
-  zu_debug ($code_name.' ... database link closed', $debug);
+  zu_debug (' ... database link closed', $debug);
 }
 
 /*
@@ -997,12 +1004,12 @@ function zu_ids_not_zero($old_ids, $debug) {
 // gets on id list with all word ids from the value list, that already contain the word ids for each value
 // no user id is needed because this is done already in the previous selection
 function zu_val_lst_get_wrd_ids($val_lst, $debug) {
-  //zu_debug("zu_lst_to_array", $debug-10);
+  //zu_debug("zu_val_lst_get_wrd_ids", $debug-10);
   $result = array();
   foreach ($val_lst as $val_entry) {
-    if (is_array($val_entry)) {
-      $wrd_ids = $lst_entry[1];
-      if (is_array($val_entry)) {
+    if (is_array($val_entry->wrd_lst)) {
+      $wrd_ids = $val_entry->wrd_lst->ids();
+      if (is_array($wrd_ids)) {
         foreach ($wrd_ids as $wrd_id) {
           $result[] = $wrd_id;
         }

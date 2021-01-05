@@ -59,7 +59,7 @@ class view_component_link extends user_sandbox {
     $this->tob = NULL; // the display component (view entry) object (used to save the correct name in the log) 
   }
   
-  function reset($debug) {
+  function reset() {
     $this->id         = NULL;
     $this->usr_cfg_id = NULL;
     $this->usr        = NULL;
@@ -90,6 +90,8 @@ class view_component_link extends user_sandbox {
   
   // load the view component parameters for all users
   function load_standard($debug) {
+
+    global $db_con;
     $result = '';
     
     // try to get the search values from the objects
@@ -121,7 +123,7 @@ class view_component_link extends user_sandbox {
                      l.excluded
                 FROM view_component_links l 
                WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_dsl = $db_con->get1($sql, $debug-5);  
       if ($db_dsl['view_component_link_id'] > 0) {
@@ -152,6 +154,8 @@ class view_component_link extends user_sandbox {
   
   // load the missing view component parameters from the database for the requesting user
   function load($debug) {
+
+    global $db_con;
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
@@ -196,7 +200,7 @@ class view_component_link extends user_sandbox {
                LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                                 AND u.user_id = ".$this->usr->id." 
                    WHERE ".$sql_where.";";
-          $db_con = new mysql;         
+          //$db_con = new mysql;
           $db_con->usr_id = $this->usr->id;         
           $db_item = $db_con->get1($sql, $debug-5);  
           //if (is_null($db_item['excluded']) OR $db_item['excluded'] == 0) {
@@ -258,7 +262,7 @@ class view_component_link extends user_sandbox {
   
   // display the unique id fields
   // NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if (isset($this->fob) AND isset($this->tob)) {
@@ -304,11 +308,14 @@ class view_component_link extends user_sandbox {
   // 
   private function pos_type_name($debug) {
     zu_debug('view_component_link->pos_type_name do', $debug-16);
+
+    global $db_con;
+
     if ($this->type_id > 0) {
       $sql = "SELECT type_name, description
                 FROM view_component_position_types
                WHERE view_component_position_type_id = ".$this->type_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
@@ -459,6 +466,8 @@ class view_component_link extends user_sandbox {
 
   // create a database record to save user specific settings for this view_component_link
   function add_usr_cfg($debug) {
+
+    global $db_con;
     $result = '';
 
     if (!$this->has_usr_cfg) {
@@ -473,7 +482,7 @@ class view_component_link extends user_sandbox {
                 FROM `user_view_component_links` 
                WHERE view_component_link_id = '.$this->id.' 
                  AND user_id = '.$this->usr->id.';';
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       if ($db_row['view_component_link_id'] <= 0) {
@@ -490,8 +499,10 @@ class view_component_link extends user_sandbox {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    $result = '';
     zu_debug('view_component_link->del_usr_cfg_if_not_needed pre check for '.$this->dsp_id(), $debug-12);
+
+    global $db_con;
+    $result = '';
 
     //if ($this->has_usr_cfg) {
 
@@ -503,7 +514,7 @@ class view_component_link extends user_sandbox {
                 FROM user_view_component_links
                WHERE view_component_link_id = '.$this->id.' 
                  AND user_id = '.$this->usr->id.';';
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
       zu_debug('view_component_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' with ('.$sql.')', $debug-12);

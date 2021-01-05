@@ -35,7 +35,7 @@ include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 
 // open database 
-$link = zu_start("login_activate", "center_form", $debug);
+$db_con = zu_start("login_activate", "center_form", $debug);
 
 
   $result = ''; // reset the html code var
@@ -165,6 +165,4 @@ $link = zu_start("login_activate", "center_form", $debug);
   echo $result;
 
 // close the database  
-zu_end($link, $debug);
-
-?>
+zu_end($db_con, $debug);

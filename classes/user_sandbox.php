@@ -68,7 +68,7 @@ class user_sandbox {
     
   // reset the the search values of this object
   // needed to search for the standard object, because the search is work, value, formula or ... specific 
-  function reset($debug) {
+  function reset() {
     $this->id         = NULL;
     $this->usr_cfg_id = NULL;
     $this->usr        = NULL;
@@ -92,9 +92,31 @@ class user_sandbox {
     function load($debug) {
     }
       
-    function dsp_id ($debug) {
-    }
   */
+
+  function dsp_id () {
+    $result = '';
+    if (isset($this->fob) OR isset($this->tob)) {
+      if (isset($this->fob)) {
+        $result .= 'from '.$this->fob->dsp_id().' ';
+      }
+      if (isset($this->tob)) {
+        $result .= 'to '.$this->tob->dsp_id();
+      }
+      $result .= ' of type ';
+    } else {
+      $result .= $this->name.' ('.$this->id.') of type ';
+    }
+    $result .= $this->obj_name.' '.$this->type;
+    return $result;
+  }
+
+  // todo What should be returned?
+  function id_used_msg ($debug) {
+    $result = '';
+    $result .= $this->dsp_id();
+    return $result;
+  }
 
   /*
   
@@ -108,6 +130,8 @@ class user_sandbox {
   //      if not changes of another can overwrite the standard and by that influence the setup of the creator
   function chk_owner ($type, $correct, $debug) {
     zu_debug($this->obj_name.'->chk_owner for '.$type, $debug-12);
+
+    global $db_con;
     $msg = '';
     
     // just to allow the call with one line
@@ -115,7 +139,7 @@ class user_sandbox {
       $this->obj_name = $type;
     }
     
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = $this->obj_name;         
       
@@ -146,23 +170,25 @@ class user_sandbox {
 
   // load the share type and return the share code id
   function share_type_code_id($debug) {
-    $result = '';
     zu_debug('value->share_type_code_id for '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+    $result = '';
 
     // use the default share type if not set
     if ($this->share_id <= 0) {
-      $result = DBL_SHARE_PUBLIC;
+      $result .= DBL_SHARE_PUBLIC;
     } else {    
       $sql = "SELECT code_id
                 FROM share_types 
               WHERE share_type_id = ".$this->share_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       if (isset($db_row)) {
-        $result = $db_row['code_id'];  
+        $result .= $db_row['code_id'];
       } else {    
-        $result = DBL_SHARE_PUBLIC;
+        $result .= DBL_SHARE_PUBLIC;
       }
     }
 
@@ -172,8 +198,10 @@ class user_sandbox {
   
   // load the share type and return the share code id
   function share_type_name($debug) {
-    $result = '';
     zu_debug('value->share_type_name for '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+    $result = '';
 
     // use the default share type if not set
     if ($this->share_id <= 0) {
@@ -183,7 +211,7 @@ class user_sandbox {
     $sql = "SELECT share_type_name 
               FROM share_types 
              WHERE share_type_id = ".$this->share_id.";";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if (isset($db_row)) {
@@ -196,8 +224,10 @@ class user_sandbox {
   
   // load the protection type and return the protection code id
   function protection_type_code_id($debug) {
-    $result = '';
     zu_debug('value->protection_type_code_id for '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+    $result = '';
 
     // use the default share type if not set
     if ($this->protection_id <= 0) {
@@ -206,13 +236,13 @@ class user_sandbox {
       $sql = "SELECT code_id
                 FROM protection_types 
               WHERE protection_type_id = ".$this->protection_id.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_row = $db_con->get1($sql, $debug-5);  
       if (isset($db_row)) {
-        $result = $db_row['code_id'];  
+        $result .= $db_row['code_id'];
       } else {    
-        $result = DBL_PROTECT_NO;
+        $result .= DBL_PROTECT_NO;
       }
     }
 
@@ -222,8 +252,10 @@ class user_sandbox {
   
   // load the protection type and return the protection code id
   function protection_type_name($debug) {
-    $result = '';
     zu_debug('value->protection_type_name for '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+    $result = '';
 
     // use the default share type if not set
     if ($this->protection_id <= 0) {
@@ -233,7 +265,7 @@ class user_sandbox {
     $sql = "SELECT protection_type_name
               FROM protection_types 
              WHERE protection_type_id = ".$this->protection_id.";";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if (isset($db_row)) {
@@ -253,8 +285,10 @@ class user_sandbox {
   // if the object has been changed by someone else than the owner the user id is returned
   // but only return the user id if the user has not also excluded it
   function changer($debug) {
-    zu_debug($this->obj_name.'->changer '.$this->dsp_id(), $debug-10);  
-    
+    zu_debug($this->obj_name.'->changer '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+
     if ($this->owner_id > 0) {
       $sql = 'SELECT user_id 
                 FROM user_'.$this->obj_name.'s 
@@ -267,7 +301,7 @@ class user_sandbox {
                WHERE '.$this->obj_name.'_id = '.$this->id.'
                  AND (excluded <> 1 OR excluded is NULL)';
     }
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-10);  
     $user_id = $db_row['user_id'];
@@ -280,14 +314,16 @@ class user_sandbox {
   // 
   // TODO review, because the median is not taking into account the number of standard used values
   function median_user($debug) {
+    zu_debug($this->obj_name.'->median_user '.$this->dsp_id().' beside the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
     $result = 0;
-    zu_debug($this->obj_name.'->median_user '.$this->dsp_id().' beside the onwer ('.$this->owner_id.')', $debug-10);  
-    
+
     $sql = 'SELECT user_id 
               FROM user_'.$this->obj_name.'s 
               WHERE '.$this->obj_name.'_id = '.$this->id.'
                 AND (excluded <> 1 OR excluded is NULL)';
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-1);  
     if ($db_row['user_id'] > 0) {
@@ -358,8 +394,10 @@ class user_sandbox {
   // and that all user values 
   // TODO review sql and object field compare of user and standard
   function set_owner($new_owner_id, $debug) {
+    zu_debug($this->obj_name.'->set_owner '.$this->dsp_id().' to '.$new_owner_id, $debug-10);
+
+    global $db_con;
     $result = '';
-    zu_debug($this->obj_name.'->set_owner '.$this->dsp_id().' to '.$new_owner_id, $debug-10);  
 
     if ($this->id > 0 AND $new_owner_id > 0) {
       // to recreate the calling object
@@ -367,7 +405,7 @@ class user_sandbox {
       $std->reset();
       $std->id = $this->id;
       $std->load_standard($debug-1);
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $sql_set = 'UPDATE `'.$this->obj_name.'s` 
                      SET user_id = '.$new_owner_id.'
@@ -388,7 +426,7 @@ class user_sandbox {
   // assuming that in this case no confirmation from the other users for an object change is needed
   function not_changed($debug) {
     $result = true;
-    zu_debug($this->obj_name.'->not_changed ('.$this->id.') by someone else than the onwer ('.$this->owner_id.')', $debug-10);  
+    zu_debug($this->obj_name.'->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
     
     $other_usr_id = $this->changer($debug-1);  
     if ($other_usr_id > 0) {
@@ -487,13 +525,15 @@ class user_sandbox {
   
   // remove user adjustment and log it (used by user.php to undo the user changes)
   function del_usr_cfg($debug) {
-    $result = '';
     zu_debug($this->obj_name.'->del_usr_cfg '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+    $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
@@ -526,47 +566,60 @@ class user_sandbox {
     } else {  
       zu_err('Unknown user sandbox type '.$this->type.' in '.$this->obj_name, $this->obj_name.'->log_add', '', (new Exception)->getTraceAsString(), $this->usr);
     }
-    $log->usr_id    = $this->usr->id;  
-    $log->action    = 'add';
-    $log->table     = $this->obj_name.'s';
-    $log->row_id    = 0; 
+    $log->usr    = $this->usr;
+    $log->action = 'add';
+    $log->table  = $this->obj_name.'s';
+    $log->row_id = 0;
     $log->add($debug-1);
     
     return $log;    
   }
-  
+
   // set the main log entry parameters for updating one field
-  function log_upd($log, $debug) {
-    zu_debug($this->obj_name.'->log_upd '.$this->dsp_id(), $debug-10);
-    $log->usr_id    = $this->usr->id;  
+  private function log_upd_common($log, $debug) {
+    zu_debug($this->obj_name.'->log_upd_common '.$this->dsp_id(), $debug-10);
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     if ($this->can_change($debug-10)) {
       $log->table   = $this->obj_name.'s';
-    } else {  
+    } else {
       $log->table   = 'user_'.$this->obj_name.'s';
     }
-    
-    return $log;    
+
+    return $log;
   }
-  
-  // log the update of link
-  function log_upd_link($debug) {
-    zu_debug($this->obj_name.'->log_upd_link '.$this->dsp_id(), $debug-18);
-    $log = New user_log_link;
-    $log = $this->log_upd($log, $debug-10);
-    
-    return $log;    
-  }
-  
-  // log the update of an object field
+
+  // create a log object for an update of an object field
   function log_upd_field($debug) {
     zu_debug($this->obj_name.'->log_upd_field '.$this->dsp_id(), $debug-18);
     $log = New user_log;
-    $log = $this->log_upd($log, $debug-10);
-    
-    return $log;    
+    $log = $this->log_upd_common($log, $debug-10);
+
+    return $log;
   }
-  
+
+  // create a log object for an update of link
+  function log_upd_link($debug) {
+    zu_debug($this->obj_name.'->log_upd_link '.$this->dsp_id(), $debug-18);
+    $log = New user_log_link;
+    $log = $this->log_upd_common($log, $debug-10);
+
+    return $log;
+  }
+
+  // create a log object for an update of an object field or an link
+  function log_upd($debug) {
+    zu_debug($this->obj_name.'->log_upd '.$this->dsp_id(), $debug-10);
+    if ($this->type == 'named') {
+      $log = $this->log_upd_field($debug);
+    } else {
+      $log = $this->log_upd_link($debug);
+    }
+    $log = $this->log_upd_common($log, $debug-10);
+
+    return $log;
+  }
+
   // set the log entry parameter to delete a object
   function log_del($debug) {
     zu_debug($this->obj_name.'->log_del '.$this->dsp_id(), $debug-10);
@@ -587,10 +640,10 @@ class user_sandbox {
     } else {  
       zu_err('Unknown user sandbox type '.$this->type.' in '.$this->obj_name, $this->obj_name.'->log_del', '', (new Exception)->getTraceAsString(), $this->usr);
     }
-    $log->usr_id    = $this->usr->id;  
-    $log->action    = 'del';
-    $log->table     = $this->obj_name.'s';
-    $log->row_id    = $this->id; 
+    $log->usr    = $this->usr;
+    $log->action = 'del';
+    $log->table  = $this->obj_name.'s';
+    $log->row_id = $this->id;
     $log->add($debug-1);
     
     return $log;    
@@ -665,7 +718,7 @@ class user_sandbox {
     zu_debug($this->obj_name.'->save_field_share '.$this->dsp_id(), $debug-10);
 
     if ($db_rec->share_id <> $this->share_id) {
-      $log = $this->log_upd($debug-1);
+      $log = $this->log_upd_field($debug-1);
       $log->old_value = $db_rec->share_type_name($debug-1);
       $log->old_id    = $db_rec->share_id;
       $log->new_value = $this->share_type_name($debug-1);
@@ -702,7 +755,7 @@ class user_sandbox {
     zu_debug($this->obj_name.'->save_field_protection '.$this->dsp_id(), $debug-10);
 
     if ($db_rec->protection_id <> $this->protection_id) {
-      $log = $this->log_upd($debug-1);
+      $log = $this->log_upd_field($debug-1);
       $log->old_value = $db_rec->protection_type_name($debug-1);
       $log->old_id    = $db_rec->protection_id;
       $log->new_value = $this->protection_type_name($debug-1);
@@ -880,10 +933,10 @@ class user_sandbox {
         $db_rec->usr  = $this->usr;
         $std_rec = clone $db_rec;
         // save the object fields
-        $result .= $this->save_fields($db_con, $db_rec, $std_rec, $debug-1);
+        $result .= $this->save_fields($db_con, $db_rec, $std_rec, $log, $debug-1);
 
       } else {
-        zu_err('Adding '.$this->type.' '.$this->dsp_id().' failed due to logging error.', 'user_sandbox->add');
+        zu_err('Adding failed', 'user_sandbox->add', 'Adding '.$this->type.' '.$this->dsp_id().' failed due to logging error.', (new Exception)->getTraceAsString(), $this->usr);
       }
     }  
     
@@ -951,11 +1004,13 @@ class user_sandbox {
   
   // add or update a user sandbox object (word, value, formula or ...) in the database
   function save($debug) {
-    $result = '';
     zu_debug($this->obj_name.'->save '.$this->dsp_id(), $debug-10);
-    
+
+    global $db_con;
+    $result = '';
+
     // build the database object because the is anyway needed (TODO get the global database connection)
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = $this->obj_name;         
 
@@ -1033,13 +1088,15 @@ class user_sandbox {
   
   // delete the complete object (the calling function del must have checked that no one uses this object)
   private function del_exe($debug) {
-    $result = '';
     zu_debug($this->obj_name.'->del_exe '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+    $result = '';
 
     // log the deletion request
     $log = $this->log_del($debug-1);
     if ($log->id > 0) {
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;  
       
       // for formulas first delete all links
@@ -1059,7 +1116,7 @@ class user_sandbox {
       $db_con->type = 'user_'.$this->obj_name;
       $result .= $db_con->delete(array($this->obj_name.'_id','excluded'), array($this->id,'1'), $debug-1);
       if (str_replace('1','',$result) <> '') {
-        zu_err('Delete failed, because removing the user settings for '.$this->obj_name.' '.$this->dsp_id().' returns '.$result, $this->obj_name.'->del');
+        zu_err('Delete failed for '.$this->obj_name, $this->obj_name.'->del_exe', 'Delete failed, because removing the user settings for '.$this->obj_name.' '.$this->dsp_id().' returns '.$result, (new Exception)->getTraceAsString(), $this->usr);
       } else {
         // finally delete the object
         $db_con->type   = $this->obj_name;         
@@ -1074,21 +1131,23 @@ class user_sandbox {
   // exclude or delete an object
   // TODO if the owner deletes it, change the owner to the new median user 
   // TODO check if all have deleted the object 
-  //      does not remove the user excluding if noone else is using it
+  //      does not remove the user excluding if no one else is using it
   function del($debug) {
-    $result = '';
     zu_debug($this->obj_name.'->del '.$this->dsp_id(), $debug-10);
-    
+
+    global $db_con;
+    $result = '';
+
     // refresh the object with the database to include all updates until now (TODO start of lock for commit here)
     // TODO it seems that the owner is not updated
     $result .= $this->load($debug-18);
     if ($result <> '') {
-      zu_warning('Reload of '.$this->obj_name.' '.$this->dsp_id().' for deletion or exclude has unexpectedly lead to '.$result.'.', $this->obj_name.'->del');
+      zu_warning('Reload of for deletion has lead to unexpected', $this->obj_name.'->del', 'Reload of '.$this->obj_name.' '.$this->dsp_id().' for deletion or exclude has unexpectedly lead to '.$result.'.', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       zu_debug($this->obj_name.'->del reloaded '.$this->dsp_id(), $debug-12);
       // check if the object is still valid
       if ($this->id <= 0) {
-        zu_warning('Delete failed, because it seems that the '.$this->obj_name.' '.$this->dsp_id().' has been deleted in the meantime.', $this->obj_name.'->del');
+        zu_warning('Delete failed', $this->obj_name.'->del', 'Delete failed, because it seems that the '.$this->obj_name.' '.$this->dsp_id().' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->usr);
       } else {
         // check if the object simply can be deleted, because it has never been used
         if (!$this->used_by_someon_else($debug-1)) {
@@ -1100,7 +1159,7 @@ class user_sandbox {
             // get median user
             $new_owner_id = $this->median_user($debug);
             if ($new_owner_id == 0) {
-              zu_err('Delete failed, because no median user found for '.$this->obj_name.' '.$this->dsp_id().' but change is nevertheless not allowed.', $this->obj_name.'->del');
+              zu_err('Delete failed', $this->obj_name.'->del', 'Delete failed, because no median user found for '.$this->obj_name.' '.$this->dsp_id().' but change is nevertheless not allowed.', (new Exception)->getTraceAsString(), $this->usr);
             } else {
               zu_debug($this->obj_name.'->del set owner for '.$this->dsp_id().' to user id "'.$new_owner_id.'"', $debug-8);
               
@@ -1112,7 +1171,7 @@ class user_sandbox {
               // delete all user records of the new owner
               // does not use del_usr_cfg because the deletion reqest has already been logged
               // TODO reduce the db connection opening
-              $db_con = new mysql;         
+              //$db_con = new mysql;
               $db_con->usr_id = $this->usr->id;         
               $this->del_usr_cfg_exe($db_con, $debug-1);
               
@@ -1128,7 +1187,7 @@ class user_sandbox {
             $this->excluded = 1;
             
             // simple version TODO combine with save function
-            $db_con = new mysql;         
+            //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;         
             
             $db_rec = clone $this;

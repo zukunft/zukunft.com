@@ -100,7 +100,7 @@ function run_view_test ($debug) {
   $log->table = 'views';
   $log->field = 'view_name';
   $log->row_id = $dsp->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Test Mask';
   $exe_start_time = test_show_result(', view->save adding logged for "'.TM_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -120,7 +120,7 @@ function run_view_test ($debug) {
   $dsp->usr = $usr;
   $dsp->load($debug-1);
   $dsp->name = TM_ADD_RENAMED;
-  $result = $dsp->save($debu-1);
+  $result = $dsp->save($debug-1);
   $target = '1';
   $exe_start_time = test_show_result(', view->save rename "'.TM_ADD.'" to "'.TM_ADD_RENAMED.'".', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -142,7 +142,7 @@ function run_view_test ($debug) {
   $log->table = 'views';
   $log->field = 'view_name';
   $log->row_id = $dsp_renamed->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job changed Test Mask to Mask Test';
   $exe_start_time = test_show_result(', view->save rename logged for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -171,7 +171,7 @@ function run_view_test ($debug) {
   $log->table = 'views';
   $log->field = 'comment';
   $log->row_id = $dsp_reloaded->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

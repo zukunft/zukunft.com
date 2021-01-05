@@ -35,36 +35,39 @@
   
 */
 
-class json_io {
+class json_io
+{
 
-  // parameters to filter the export
-  public $usr     = NULL; // the user who wants to im- or export
-  public $phr_lst = NULL; // to export all values related to this phrase
-  
-  // export zukunft.com data as json
-  function export ($debug) {
-    zu_debug('json_io->export', $debug-10);
-    $result = '';
+    // parameters to filter the export
+    public $usr = NULL; // the user who wants to im- or export
+    public $phr_lst = NULL; // to export all values related to this phrase
 
-    // get the export object
-    $export_instance          = New export; 
-    $export_instance->usr     = $this->usr; 
-    $export_instance->phr_lst = $this->phr_lst; 
-    $export_obj = $export_instance->get($debug-1); 
+    // export zukunft.com data as json
+    function export($debug)
+    {
+        zu_debug('json_io->export', $debug - 10);
+        $result = '';
 
-    zu_debug('json_io->export create json string', $debug-16);
-    $result = json_encode($export_obj);
+        // get the export object
+        $export_instance = new export;
+        $export_instance->usr = $this->usr;
+        $export_instance->phr_lst = $this->phr_lst;
+        $export_obj = $export_instance->get($debug - 1);
 
-    return $result;    
-  }
-  
-  // import zukunft.com data from json
-  function import ($debug) {
-    $result = '';
+        zu_debug('json_io->export create json string', $debug - 16);
+        $result .= json_encode($export_obj);
 
-    return $result;    
-  }
-  
+        return $result;
+    }
+
+    // import zukunft.com data from json
+    function import($debug)
+    {
+        $result = '';
+
+        return $result;
+    }
+
 }
 
 ?>

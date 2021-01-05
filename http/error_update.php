@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
-$link = zu_start("error_update", "", $debug);
+$db_con = zu_start("error_update", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -67,7 +67,7 @@ $link = zu_start("error_update", "", $debug);
       $err_lst->page     = 1;
       $err_lst->size     = 20;
       $err_lst->back     = $back;
-      $errors_all .= $err_lst->display($debug-1);
+      $errors_all = $err_lst->display($debug-1);
       //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back, $debug-1);
       if ($errors_all <> "") {
         $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
@@ -90,5 +90,4 @@ $link = zu_start("error_update", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

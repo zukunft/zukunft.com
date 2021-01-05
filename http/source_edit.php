@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("source_edit", "", $debug);
+$db_con = zu_start("source_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -63,7 +63,7 @@ $link = zu_start("source_edit", "", $debug);
       $result .= zu_err("No source found to change because the id is missing.", "source_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
-      // if the save botton has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
+      // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
       if ($_GET['name'] <> '') {
 
         // get the parameters (but if not set, use the database value)
@@ -77,7 +77,7 @@ $link = zu_start("source_edit", "", $debug);
         // if update was successful ...
         if (str_replace ('1','',$upd_result) == '') {
           // remember the source for the next values to add
-          $usr->set_source ($src_id, $debug-1);
+          $usr->set_source ($src->id, $debug-1);
 
           // ... and display the calling view
           $result .= dsp_go_back($back, $usr, $debug-1);
@@ -102,5 +102,4 @@ $link = zu_start("source_edit", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

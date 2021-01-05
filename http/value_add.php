@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("value_add", "", $debug);
+$db_con = zu_start("value_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -57,10 +57,10 @@ $link = zu_start("value_add", "", $debug);
     $val = New value;
     $val->usr = $usr;
           
-    // before the value convertion, all phrases should be loaded to use the updated words for the conversion e.g. percent
+    // before the value conversion, all phrases should be loaded to use the updated words for the conversion e.g. percent
     // get the linked phrases from url
     $phr_ids  = array(); // suggested word for the new value that the user can change
-    $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word
+    $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
                          // if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
     if (isset($_GET['phrase1'])) {
       $phr_pos  = 1;
@@ -132,5 +132,4 @@ $link = zu_start("value_add", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

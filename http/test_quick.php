@@ -30,11 +30,11 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 1) { echo 'lib loaded<br>'; }
 
 // open database
-$link = zu_start("test_quick", "", $debug);
+$db_con = zu_start("test_quick", "", $debug);
 
 // load the session user parameters
 $usr = New user;
-$result .= $usr->get($debug-1);
+$result = $usr->get($debug-1);
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
@@ -80,7 +80,7 @@ if ($usr->id > 0) {
     //run_permission_test ($debug);
     run_ref_test ($debug);
     run_lib_tests ($debug);
-    run_lib_test_old ($debug); // test functions not yet splited into single unit tests
+    run_lib_test_old ($debug); // test functions not yet split into single unit tests
 
     run_test_cleanup ($debug);
 
@@ -90,5 +90,4 @@ if ($usr->id > 0) {
 }
 
 // Closing connection
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

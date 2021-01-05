@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("view_select", "", $debug);
+$db_con = zu_start("view_select", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -52,7 +52,9 @@ $link = zu_start("view_select", "", $debug);
     //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
     $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
-    
+    $view_id = 0;
+    $word_id = $back;
+
     // get the view id used until now and the word id
     if (isset($_GET['id'])) {
       $view_id = $_GET['id'];
@@ -62,8 +64,8 @@ $link = zu_start("view_select", "", $debug);
     }
 
     // show the word name
-    if ($word_id > 0) {  
-      $wrd = New word_dsp;
+    $wrd = New word_dsp;
+    if ($word_id > 0) {
       $wrd->usr = $usr;
       $wrd->id  = $word_id;   
       $wrd->load($debug-1);
@@ -79,11 +81,9 @@ $link = zu_start("view_select", "", $debug);
     $result .= $dsp->selector_page ($word_id, $back, $debug-1);
 
     // show the changes
-    $result .= $wrd->dsp_log_view ($debug-1);
+    $result .= $wrd->dsp_log_view ($back, $debug-1);
   }
 
   echo $result;
   
-  zu_end($link, $debug);
-
-?>
+zu_end($db_con, $debug);

@@ -40,6 +40,8 @@ class formula_link_list {
   // load the missing formula parameters from the database
   function load($debug) {
 
+    global $db_con;
+
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
       zu_err("The user id must be set to load a list of formula links.", "formula_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -68,7 +70,7 @@ class formula_link_list {
              LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
                                                 AND u.user_id = ".$this->usr->id." 
                   WHERE ".$sql_where.";";
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_lst = $db_con->get($sql, $debug-5);  
         foreach ($db_lst AS $db_row) {
@@ -113,17 +115,19 @@ class formula_link_list {
   // and the main event of deleting the formula is already logged
   function del_without_log($debug) {
     zu_debug('formula_link_list->del_without_log', $debug-16);
+
+    global $db_con;
     $result = '';
     
     foreach ($this->lst AS $frm_lnk) {
       if ($frm_lnk->can_change($debug-1) > 0 AND $frm_lnk->not_used($debug-1)) {
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         // delete first all user configuration that have also been excluded
         $db_con->type = 'user_formula_link';
-        $result .= $db_con->delete(array('formula_link_id','excluded'), array($this->id,'1'), $debug-1);
+        $result .= $db_con->delete(array('formula_link_id','excluded'), array($frm_lnk->id,'1'), $debug-1);
         $db_con->type   = 'formula_link';         
-        $result .= $db_con->delete('formula_link_id', $this->id, $debug-1);
+        $result .= $db_con->delete('formula_link_id', $frm_lnk->id, $debug-1);
       } else {
         zu_err("Cannot delete a formula word link (id ".$frm_lnk->id."), which is used or created by another user.", "formula_link_list->del_without_log", '', (new Exception)->getTraceAsString(), $this->usr);
       }

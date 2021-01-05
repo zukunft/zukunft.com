@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `change_links` (
   `new_to_id` int(11) DEFAULT NULL COMMENT 'either internal row id or the ref type id of the external system e.g. 2 for wikidata',
   `new_text_from` text,
   `new_text_link` text,
-  `new_text_to` text COMMENT 'the fixed text to display to the user or the external referenz id e.g. Q1 (for universe) in case of wikidata',
+  `new_text_to` text COMMENT 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata',
   `row_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `table_id` int(100) NOT NULL,
   `row_id` int(11) NOT NULL,
   `comment` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='seperate table because it is expected that only a few record';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='separate table because it is expected that only a few record';
 
 -- --------------------------------------------------------
 
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `config` (
 --
 
 CREATE TABLE IF NOT EXISTS `formulas` (
-`formula_id` int(11) NOT NULL,
+  `formula_id` int(11) NOT NULL,
   `formula_name` varchar(100) NOT NULL COMMENT 'short name of the formula',
   `user_id` int(11) DEFAULT NULL,
   `formula_text` text NOT NULL COMMENT 'the coded formula; e.g. \\f1 for formula with ID1',
@@ -465,7 +465,7 @@ CREATE TABLE IF NOT EXISTS `source_values` (
   `source_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `source_value` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='one user can add differet value, which should be the same, but are different  ';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='one user can add different value, which should be the same, but are different  ';
 
 -- --------------------------------------------------------
 
@@ -654,7 +654,7 @@ CREATE TABLE IF NOT EXISTS `user_official_types` (
 `user_official_type_id` int(11) NOT NULL,
   `type_name` varchar(200) NOT NULL,
   `code_id` varchar(100) DEFAULT NULL,
-  `comment` int(200) DEFAULT NULL
+  `comment` text DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -855,7 +855,7 @@ CREATE TABLE IF NOT EXISTS `user_word_links` (
   `word_link_id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `description` text,
-  `name` varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlyings)',
+  `name` varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlying)',
   `excluded` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -867,7 +867,7 @@ CREATE TABLE IF NOT EXISTS `user_word_links` (
 
 CREATE TABLE IF NOT EXISTS `values` (
 `value_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL COMMENT 'the onwer / creator of the value',
+  `user_id` int(11) DEFAULT NULL COMMENT 'the owner / creator of the value',
   `word_value` double NOT NULL,
   `source_id` int(11) DEFAULT NULL,
   `phrase_group_id` int(11) DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
@@ -1016,7 +1016,7 @@ CREATE TABLE IF NOT EXISTS `view_components` (
   `word_id_col2` int(11) DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
   `excluded` tinyint(4) DEFAULT NULL,
   `linked_view_component_id` int(11) DEFAULT NULL COMMENT 'to link this mask entry to another mask entry',
-  `view_component_link_type_id` int(11) DEFAULT NULL COMMENT 'to define how thise ntry links to the other entry',
+  `view_component_link_type_id` int(11) DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
   `link_type_id` int(11) DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms'
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='the single components of a mask';
 
@@ -1175,7 +1175,7 @@ CREATE TABLE IF NOT EXISTS `word_links` (
   `word_link_condition_id` int(11) DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
   `word_link_condition_type_id` int(11) DEFAULT NULL COMMENT 'maybe not needed',
   `description` text,
-  `name` varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlyings)',
+  `name` varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlying)',
   `excluded` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -1695,7 +1695,7 @@ ALTER TABLE `word_types`
 --
 
 --
--- AUTO_INCREMENT für exportierte Tabellen
+-- AUTO_INCREMENT for exported tables
 --
 
 --
@@ -2003,226 +2003,226 @@ MODIFY `word_type_id` int(11) NOT NULL AUTO_INCREMENT;
 -- Constraints for table `changes`
 --
 ALTER TABLE `changes`
-ADD CONSTRAINT `changes_ibfk_1` FOREIGN KEY (`change_field_id`) REFERENCES `change_fields` (`change_field_id`),
-ADD CONSTRAINT `changes_ibfk_2` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
+ADD CONSTRAINT `changes_fk_1` FOREIGN KEY (`change_field_id`) REFERENCES `change_fields` (`change_field_id`),
+ADD CONSTRAINT `changes_fk_2` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
 
 --
 -- Constraints for table `change_fields`
 --
 ALTER TABLE `change_fields`
-ADD CONSTRAINT `change_fields_ibfk_1` FOREIGN KEY (`table_id`) REFERENCES `change_tables` (`change_table_id`);
+ADD CONSTRAINT `change_fields_fk_1` FOREIGN KEY (`table_id`) REFERENCES `change_tables` (`change_table_id`);
 
 --
 -- Constraints for table `change_links`
 --
 ALTER TABLE `change_links`
-ADD CONSTRAINT `change_links_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION,
-ADD CONSTRAINT `change_links_ibfk_2` FOREIGN KEY (`change_table_id`) REFERENCES `change_tables` (`change_table_id`),
-ADD CONSTRAINT `change_links_ibfk_3` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
+ADD CONSTRAINT `change_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE NO ACTION,
+ADD CONSTRAINT `change_links_fk_2` FOREIGN KEY (`change_table_id`) REFERENCES `change_tables` (`change_table_id`),
+ADD CONSTRAINT `change_links_fk_3` FOREIGN KEY (`change_action_id`) REFERENCES `change_actions` (`change_action_id`);
 
 --
 -- Constraints for table `formulas`
 --
 ALTER TABLE `formulas`
-ADD CONSTRAINT `formulas_ibfk_1` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
-ADD CONSTRAINT `formulas_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `formulas_ibfk_3` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
+ADD CONSTRAINT `formulas_fk_1` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
+ADD CONSTRAINT `formulas_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `formulas_fk_3` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
 
 --
 -- Constraints for table `formula_elements`
 --
 ALTER TABLE `formula_elements`
-ADD CONSTRAINT `formula_elements_ibfk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
-ADD CONSTRAINT `formula_elements_ibfk_2` FOREIGN KEY (`formula_element_type_id`) REFERENCES `formula_element_types` (`formula_element_type_id`) ON DELETE NO ACTION;
+ADD CONSTRAINT `formula_elements_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
+ADD CONSTRAINT `formula_elements_fk_2` FOREIGN KEY (`formula_element_type_id`) REFERENCES `formula_element_types` (`formula_element_type_id`) ON DELETE NO ACTION;
 
 --
 -- Constraints for table `formula_links`
 --
 ALTER TABLE `formula_links`
-ADD CONSTRAINT `formula_links_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `formula_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `formula_values`
 --
 ALTER TABLE `formula_values`
-ADD CONSTRAINT `formula_values_ibfk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
-ADD CONSTRAINT `formula_values_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `formula_values_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
+ADD CONSTRAINT `formula_values_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `phrase_group_triple_links`
 --
 ALTER TABLE `phrase_group_triple_links`
-ADD CONSTRAINT `phrase_group_triple_links_ibfk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
-ADD CONSTRAINT `phrase_group_triple_links_ibfk_2` FOREIGN KEY (`triple_id`) REFERENCES `word_links` (`word_link_id`);
+ADD CONSTRAINT `phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+ADD CONSTRAINT `phrase_group_triple_links_fk_2` FOREIGN KEY (`triple_id`) REFERENCES `word_links` (`word_link_id`);
 
 --
 -- Constraints for table `phrase_group_word_links`
 --
 ALTER TABLE `phrase_group_word_links`
-ADD CONSTRAINT `phrase_group_word_links_ibfk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`);
+ADD CONSTRAINT `phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`);
 
 --
 -- Constraints for table `refs`
 --
 ALTER TABLE `refs`
-ADD CONSTRAINT `refs_ibfk_1` FOREIGN KEY (`ref_type_id`) REFERENCES `ref_types` (`ref_type_id`);
+ADD CONSTRAINT `refs_fk_1` FOREIGN KEY (`ref_type_id`) REFERENCES `ref_types` (`ref_type_id`);
 
 --
 -- Constraints for table `source_values`
 --
 ALTER TABLE `source_values`
-ADD CONSTRAINT `source_values_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `source_values_ibfk_1` FOREIGN KEY (`value_id`) REFERENCES `values` (`value_id`),
-ADD CONSTRAINT `source_values_ibfk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`);
+ADD CONSTRAINT `source_values_fk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`value_id`) REFERENCES `values` (`value_id`),
+ADD CONSTRAINT `source_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`);
 
 --
 -- Constraints for table `sys_log`
 --
 ALTER TABLE `sys_log`
-ADD CONSTRAINT `sys_log_ibfk_1` FOREIGN KEY (`sys_log_status_id`) REFERENCES `sys_log_status` (`sys_log_status_id`),
-ADD CONSTRAINT `sys_log_ibfk_2` FOREIGN KEY (`sys_log_function_id`) REFERENCES `sys_log_functions` (`sys_log_function_id`),
-ADD CONSTRAINT `sys_log_ibfk_3` FOREIGN KEY (`sys_log_type_id`) REFERENCES `sys_log_types` (`sys_log_type_id`);
+ADD CONSTRAINT `sys_log_fk_1` FOREIGN KEY (`sys_log_status_id`) REFERENCES `sys_log_status` (`sys_log_status_id`),
+ADD CONSTRAINT `sys_log_fk_2` FOREIGN KEY (`sys_log_function_id`) REFERENCES `sys_log_functions` (`sys_log_function_id`),
+ADD CONSTRAINT `sys_log_fk_3` FOREIGN KEY (`sys_log_type_id`) REFERENCES `sys_log_types` (`sys_log_type_id`);
 
 --
 -- Constraints for table `sys_script_times`
 --
 ALTER TABLE `sys_script_times`
-ADD CONSTRAINT `sys_script_times_ibfk_1` FOREIGN KEY (`sys_script_id`) REFERENCES `sys_scripts` (`sys_script_id`);
+ADD CONSTRAINT `sys_script_times_fk_1` FOREIGN KEY (`sys_script_id`) REFERENCES `sys_scripts` (`sys_script_id`);
 
 --
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
-ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`user_type_id`) REFERENCES `user_types` (`user_type_id`);
+ADD CONSTRAINT `users_fk_1` FOREIGN KEY (`user_type_id`) REFERENCES `user_types` (`user_type_id`);
 
 --
 -- Constraints for table `user_formulas`
 --
 ALTER TABLE `user_formulas`
-ADD CONSTRAINT `user_formulas_ibfk_4` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
-ADD CONSTRAINT `user_formulas_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_formulas_ibfk_2` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
-ADD CONSTRAINT `user_formulas_ibfk_3` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
+ADD CONSTRAINT `user_formulas_fk_4` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
+ADD CONSTRAINT `user_formulas_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_formulas_fk_2` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
+ADD CONSTRAINT `user_formulas_fk_3` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
 
 --
 -- Constraints for table `user_formula_links`
 --
 ALTER TABLE `user_formula_links`
-ADD CONSTRAINT `user_formula_links_ibfk_1` FOREIGN KEY (`formula_link_id`) REFERENCES `formula_links` (`formula_link_id`),
-ADD CONSTRAINT `user_formula_links_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_formula_links_ibfk_3` FOREIGN KEY (`link_type_id`) REFERENCES `formula_link_types` (`formula_link_type_id`);
+ADD CONSTRAINT `user_formula_links_fk_1` FOREIGN KEY (`formula_link_id`) REFERENCES `formula_links` (`formula_link_id`),
+ADD CONSTRAINT `user_formula_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_formula_links_fk_3` FOREIGN KEY (`link_type_id`) REFERENCES `formula_link_types` (`formula_link_type_id`);
 
 --
 -- Constraints for table `user_phrase_groups`
 --
 ALTER TABLE `user_phrase_groups`
-ADD CONSTRAINT `user_phrase_groups_ibfk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
-ADD CONSTRAINT `user_phrase_groups_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `user_phrase_groups_fk_1` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+ADD CONSTRAINT `user_phrase_groups_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `user_phrase_group_triple_links`
 --
 ALTER TABLE `user_phrase_group_triple_links`
-ADD CONSTRAINT `user_phrase_group_triple_links_ibfk_1` FOREIGN KEY (`phrase_group_triple_link_id`) REFERENCES `phrase_group_triple_links` (`phrase_group_triple_link_id`),
-ADD CONSTRAINT `user_phrase_group_triple_links_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `user_phrase_group_triple_links_fk_1` FOREIGN KEY (`phrase_group_triple_link_id`) REFERENCES `phrase_group_triple_links` (`phrase_group_triple_link_id`),
+ADD CONSTRAINT `user_phrase_group_triple_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `user_phrase_group_word_links`
 --
 ALTER TABLE `user_phrase_group_word_links`
-ADD CONSTRAINT `user_phrase_group_word_links_ibfk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES `phrase_group_word_links` (`phrase_group_word_link_id`),
-ADD CONSTRAINT `user_phrase_group_word_links_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `user_phrase_group_word_links_fk_1` FOREIGN KEY (`phrase_group_word_link_id`) REFERENCES `phrase_group_word_links` (`phrase_group_word_link_id`),
+ADD CONSTRAINT `user_phrase_group_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `user_sources`
 --
 ALTER TABLE `user_sources`
-ADD CONSTRAINT `user_sources_ibfk_1` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-ADD CONSTRAINT `user_sources_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `user_sources_fk_1` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
+ADD CONSTRAINT `user_sources_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `user_values`
 --
 ALTER TABLE `user_values`
-ADD CONSTRAINT `user_values_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_values_ibfk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-ADD CONSTRAINT `user_values_ibfk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`);
+ADD CONSTRAINT `user_values_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
+ADD CONSTRAINT `user_values_fk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`);
 
 --
 -- Constraints for table `user_views`
 --
 ALTER TABLE `user_views`
-ADD CONSTRAINT `user_views_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_views_ibfk_2` FOREIGN KEY (`view_type_id`) REFERENCES `view_types` (`view_type_id`),
-ADD CONSTRAINT `user_views_ibfk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`);
+ADD CONSTRAINT `user_views_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_views_fk_2` FOREIGN KEY (`view_type_id`) REFERENCES `view_types` (`view_type_id`),
+ADD CONSTRAINT `user_views_fk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`);
 
 --
 -- Constraints for table `user_view_components`
 --
 ALTER TABLE `user_view_components`
-ADD CONSTRAINT `user_view_components_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_view_components_ibfk_2` FOREIGN KEY (`view_component_id`) REFERENCES `view_components` (`view_component_id`),
-ADD CONSTRAINT `user_view_components_ibfk_3` FOREIGN KEY (`view_component_type_id`) REFERENCES `view_component_types` (`view_component_type_id`);
+ADD CONSTRAINT `user_view_components_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_view_components_fk_2` FOREIGN KEY (`view_component_id`) REFERENCES `view_components` (`view_component_id`),
+ADD CONSTRAINT `user_view_components_fk_3` FOREIGN KEY (`view_component_type_id`) REFERENCES `view_component_types` (`view_component_type_id`);
 
 --
 -- Constraints for table `user_view_component_links`
 --
 ALTER TABLE `user_view_component_links`
-ADD CONSTRAINT `user_view_component_links_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_view_component_links_ibfk_2` FOREIGN KEY (`view_component_link_id`) REFERENCES `view_component_links` (`view_component_link_id`),
-ADD CONSTRAINT `user_view_component_links_ibfk_3` FOREIGN KEY (`position_type`) REFERENCES `view_component_position_types` (`view_component_position_type_id`);
+ADD CONSTRAINT `user_view_component_links_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_view_component_links_fk_2` FOREIGN KEY (`view_component_link_id`) REFERENCES `view_component_links` (`view_component_link_id`),
+ADD CONSTRAINT `user_view_component_links_fk_3` FOREIGN KEY (`position_type`) REFERENCES `view_component_position_types` (`view_component_position_type_id`);
 
 --
 -- Constraints for table `user_words`
 --
 ALTER TABLE `user_words`
-ADD CONSTRAINT `user_words_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `user_words_ibfk_2` FOREIGN KEY (`word_type_id`) REFERENCES `word_types` (`word_type_id`),
-ADD CONSTRAINT `user_words_ibfk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-ADD CONSTRAINT `user_words_ibfk_4` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
+ADD CONSTRAINT `user_words_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `user_words_fk_2` FOREIGN KEY (`word_type_id`) REFERENCES `word_types` (`word_type_id`),
+ADD CONSTRAINT `user_words_fk_3` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
+ADD CONSTRAINT `user_words_fk_4` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
 
 --
 -- Constraints for table `user_word_links`
 --
 ALTER TABLE `user_word_links`
-ADD CONSTRAINT `user_word_links_ibfk_1` FOREIGN KEY (`word_link_id`) REFERENCES `word_links` (`word_link_id`),
-ADD CONSTRAINT `user_word_links_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+ADD CONSTRAINT `user_word_links_fk_1` FOREIGN KEY (`word_link_id`) REFERENCES `word_links` (`word_link_id`),
+ADD CONSTRAINT `user_word_links_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `values`
 --
 ALTER TABLE `values`
-ADD CONSTRAINT `values_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-ADD CONSTRAINT `values_ibfk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
-ADD CONSTRAINT `values_ibfk_3` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
-ADD CONSTRAINT `values_ibfk_4` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
+ADD CONSTRAINT `values_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+ADD CONSTRAINT `values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
+ADD CONSTRAINT `values_fk_3` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
+ADD CONSTRAINT `values_fk_4` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
 
 --
 -- Constraints for table `view_components`
 --
 ALTER TABLE `view_components`
-ADD CONSTRAINT `view_components_ibfk_2` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
+ADD CONSTRAINT `view_components_fk_2` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
 
 --
 -- Constraints for table `view_component_links`
 --
 ALTER TABLE `view_component_links`
-ADD CONSTRAINT `view_component_links_ibfk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-ADD CONSTRAINT `view_component_links_ibfk_2` FOREIGN KEY (`position_type`) REFERENCES `view_component_position_types` (`view_component_position_type_id`),
-ADD CONSTRAINT `view_component_links_ibfk_3` FOREIGN KEY (`view_component_id`) REFERENCES `view_components` (`view_component_id`);
+ADD CONSTRAINT `view_component_links_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
+ADD CONSTRAINT `view_component_links_fk_2` FOREIGN KEY (`position_type`) REFERENCES `view_component_position_types` (`view_component_position_type_id`),
+ADD CONSTRAINT `view_component_links_fk_3` FOREIGN KEY (`view_component_id`) REFERENCES `view_components` (`view_component_id`);
 
 --
 -- Constraints for table `words`
 --
 ALTER TABLE `words`
-ADD CONSTRAINT `words_ibfk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
-ADD CONSTRAINT `words_ibfk_2` FOREIGN KEY (`word_type_id`) REFERENCES `word_types` (`word_type_id`);
+ADD CONSTRAINT `words_fk_1` FOREIGN KEY (`view_id`) REFERENCES `views` (`view_id`),
+ADD CONSTRAINT `words_fk_2` FOREIGN KEY (`word_type_id`) REFERENCES `word_types` (`word_type_id`);
 
 --
 -- Constraints for table `word_periods`
 --
 ALTER TABLE `word_periods`
-ADD CONSTRAINT `word_periods_ibfk_1` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
+ADD CONSTRAINT `word_periods_fk_1` FOREIGN KEY (`word_id`) REFERENCES `words` (`word_id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

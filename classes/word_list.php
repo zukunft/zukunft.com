@@ -50,6 +50,8 @@ class word_list {
   
   // load the word parameters from the database for a list of words
   function load($debug) {
+
+    global $db_con;
     $sql_where = '';
 
     // fix ids if needed
@@ -94,7 +96,7 @@ class word_list {
                                 AND u.user_id = ".$this->usr->id." 
               WHERE ".$sql_where."
           ORDER BY t.values DESC, word_name;";
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_wrd_lst = $db_con->get($sql, $debug-5);  
       $this->lst = array();
@@ -135,6 +137,8 @@ class word_list {
   // maybe reuse parts of word_link_list.php
   function add_by_type($added_wrd_lst, $verb_id, $direction, $debug) {
 
+    global $db_con;
+
     if (is_null($added_wrd_lst)) {
       $added_wrd_lst = New word_list; // list of the added word ids
       $added_wrd_lst->usr = $this->usr;    
@@ -148,10 +152,10 @@ class word_list {
       zu_warning("The word list is empty, so nothing could be found.", "word_list->add_by_type", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
       if ($direction == 'up') {
-        $sql_where = 'l.from_phrase_id IN ('.$this->ids_txt($debug-1).')';
+        $sql_where = 'l.from_phrase_id IN ('.$this->ids_txt().')';
         $sql_wrd   = 'l.to_phrase_id';
       } else {
-        $sql_where = 'l.to_phrase_id IN ('.$this->ids_txt($debug-1).')';
+        $sql_where = 'l.to_phrase_id IN ('.$this->ids_txt().')';
         $sql_wrd   = 'l.from_phrase_id';
       }
       // verbs can have a negative id for the reverse selection
@@ -176,13 +180,13 @@ class word_list {
                WHERE ".$sql_wrd." = t.word_id 
                  AND ".$sql_where."
                      ".$sql_type." 
-            GROUP BY t.word_id, l.verb_id
+            GROUP BY t.word_id, t.word_name, l.verb_id, t.values
             ORDER BY t.values DESC, t.word_name;";
       zu_debug('word_list->add_by_type -> add with "'.$sql, $debug-8);
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_wrd_lst = $db_con->get($sql, $debug-10);  
-      zu_debug('word_list->add_by_type -> got '.count($db_wrd_lst), $debug-8);
+      zu_debug('word_list->add_by_type -> got '.$db_wrd_lst, $debug-8);
       foreach ($db_wrd_lst AS $db_wrd) {
         if (is_null($db_wrd['excluded']) OR $db_wrd['excluded'] == 0) {
           if ($db_wrd['word_id'] > 0 AND !in_array($db_wrd['word_id'], $this->ids)) {
@@ -214,23 +218,23 @@ class word_list {
     
     Overview for words, triples and phrases and it's lists
     
-               childs and            parents return the direct parents and childs   without the original phrase(s)
-          foaf_childs and       foaf_parents return the    all parents and childs   without the original phrase(s)
-                  are and                 is return the    all parents and childs including the original phrase(s) for the specific verb "is a"
-             contains                        return the    all             childs including the original phrase(s) for the specific verb "contains" 
-                                  is part of return the    all parents              without the original phrase(s) for the specific verb "contains" 
-                 next and              prior return the direct parents and childs   without the original phrase(s) for the specific verb "follows"
-          followed_by and        follower_of return the    all parents and childs   without the original phrase(s) for the specific verb "follows"
-    differentiated_by and differentiator_for return the    all parents and childs   without the original phrase(s) for the specific verb "can_contain"
+             children and            parents return the direct parents and children   without the original phrase(s)
+        foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
+                  are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
+             contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
+                                  is part of return the    all parents                without the original phrase(s) for the specific verb "contains"
+                 next and              prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
+          followed_by and        follower_of return the    all parents and children   without the original phrase(s) for the specific verb "follows"
+    differentiated_by and differentiator_for return the    all parents and children   without the original phrase(s) for the specific verb "can_contain"
         
     Samples
     
-    the      parents of  "ABB" can be "public limited company"
-    the foaf_parents of  "ABB" can be "public limited company" and "company"
-                "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
-    the       childs for "company" can include "public limited company"
-    the  foaf_childs for "company" can include "public limited company" and "ABB"
-               "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
+    the        parents of  "ABB" can be "public limited company"
+    the   foaf_parents of  "ABB" can be "public limited company" and "company"
+                  "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
+    the       children for "company" can include "public limited company"
+    the  foaf_children for "company" can include "public limited company" and "ABB"
+                 "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
 
           "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
         "is part of" for "assets" is "balance sheet" but not "assets" 
@@ -267,7 +271,7 @@ class word_list {
       $added_wrd_lst->merge($additional_added, $debug-1);
 
       if ($loops >= MAX_RECURSIVE) {
-        zu_fatal("max number (".$loops.") of loops for word ".$word_id." reached.","word_list->tree_up_level", '', (new Exception)->getTraceAsString(), $this->usr);
+        zu_fatal("max number (".$loops.") of loops for word ".$verb_id." reached.","word_list->tree_up_level", '', (new Exception)->getTraceAsString(), $this->usr);
       }
     } while (!empty($additional_added->lst) AND $loops < $max_loops);
     zu_debug('word_list->foaf_level done', $debug-14);
@@ -316,30 +320,30 @@ class word_list {
   // similar to foaf_child, but for only one level
   // $level is the number of levels that should be looked into
   // ex foaf_child_step
-  function childs ($verb_id, $level, $debug) {
-    zu_debug('word_list->childs type '.$verb_id.'', $debug-10);
+  function children ($verb_id, $level, $debug) {
+    zu_debug('word_list->children type '.$verb_id.'', $debug-10);
     $added_wrd_lst = New word_list; // list of the added word ids
     $added_wrd_lst->usr = $this->usr;    
     $added_wrd_lst = $this->foaf_level ($level, $added_wrd_lst, $verb_id, 'down', $level, $debug-1);
 
-    zu_debug('word_list->childs -> ('.$added_wrd_lst->name().')', $debug-7);
+    zu_debug('word_list->children -> ('.$added_wrd_lst->name().')', $debug-7);
     return $added_wrd_lst;
   }
  
   // returns a list of words that are related to this word list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
   function is ($debug) {
     $wrd_lst = $this->foaf_parents(cl(SQL_LINK_TYPE_IS), $debug-1);
-    zu_debug('word_list->is -> ('.$this->name().' is '.$wrd_lst->name().')', $debug-8);
+    zu_debug('word_list->is -> ('.$this->dsp_id().' is '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
   }
 
   // returns a list of words that are related to this word list e.g. for "Company" it will return "ABB" and "Daimler" and "Company" 
   // e.g. to get all related values
   function are ($debug) {
-    zu_debug('word_list->are for '.$this->name(), $debug-8);
+    zu_debug('word_list->are for '.$this->dsp_id(), $debug-8);
     $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
     $wrd_lst->merge($this, $debug-1);
-    zu_debug('word_list->are -> ('.$this->name().' are '.$wrd_lst->name().')', $debug-8);
+    zu_debug('word_list->are -> ('.$this->dsp_id().' are '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
   }
 
@@ -347,19 +351,20 @@ class word_list {
   function contains ($debug) {
     $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
     $wrd_lst->merge($this, $debug-1);
-    zu_debug('word_list->contains -> ('.$this->name().' contains '.$wrd_lst->name().')', $debug-8);
+    zu_debug('word_list->contains -> ('.$this->dsp_id().' contains '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
   }
 
-  // makes sure that all combinations of "are" and "conatins" are included
+  // makes sure that all combinations of "are" and "contains" are included
   function are_and_contains ($debug) {
-    zu_debug('word_list->are_and_contains for '.$this->name(), $debug-18);
+    zu_debug('word_list->are_and_contains for '.$this->dsp_id(), $debug-18);
 
     // this first time get all related items
     $wrd_lst = clone $this;
     $wrd_lst   = $wrd_lst->are     ($debug-1);
     $wrd_lst   = $wrd_lst->contains($debug-1);
-    $added_lst = $wrd_lst->diff($this, $debug-1);
+    $added_lst  = clone $wrd_lst;
+    $added_lst->diff($this, $debug-1);
     // ... and after that get only for the new
     if (count($added_lst->lst) > 0) {
       $loops = 0;
@@ -374,47 +379,46 @@ class word_list {
         $loops++;
       } while (count($added_lst->lst) > 0 AND $loops < MAX_LOOP);
     }
-    zu_debug('word_list->are_and_contains -> '.$this->name().' are_and_contains '.$wrd_lst->name(), $debug-8);
+    zu_debug('word_list->are_and_contains -> '.$this->dsp_id().' are_and_contains '.$wrd_lst->name(), $debug-8);
     return $wrd_lst;
   }
   
   // add all potential differentiator words of the word lst e.g. get "energy" for "sector"
   function differentiators ($debug) {
-    zu_debug('word_list->differentiators for '.$this->name(), $debug-18);
+    zu_debug('word_list->differentiators for '.$this->dsp_id(), $debug-18);
     $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
     $wrd_lst->merge($this, $debug-1);
-    zu_debug('word_list->differentiators -> '.$wrd_lst->name().' for '.$this->name(), $debug-8);
+    zu_debug('word_list->differentiators -> '.$wrd_lst->dsp_id().' for '.$this->dsp_id(), $debug-8);
     return $wrd_lst;
   }
 
   // same as differentiators, but including the sub types e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
-  function differantiators_all($debug) {
-    zu_debug('word_list->differantiators_all for '.$this->name(), $debug-18);
+  function differentiators_all($debug) {
+    zu_debug('word_list->differentiators_all for '.$this->dsp_id(), $debug-18);
     // this first time get all related items
-    $wrd_lst = clone $this; // clone to copy the word list settings
     $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-20);
-    zu_debug('word_list->differentiators -> childs '.$wrd_lst->name(), $debug-8);
+    zu_debug('word_list->differentiators -> children '.$wrd_lst->dsp_id(), $debug-8);
     if (count($wrd_lst->lst) > 0) {
       $wrd_lst = $wrd_lst->are     ($debug-20);
-      zu_debug('word_list->differentiators -> contains '.$wrd_lst->name(), $debug-8);
+      zu_debug('word_list->differentiators -> contains '.$wrd_lst->dsp_id(), $debug-8);
       $wrd_lst = $wrd_lst->contains($debug-20);
-      zu_debug('word_list->differentiators -> incl. contains '.$wrd_lst->name(), $debug-8);
+      zu_debug('word_list->differentiators -> incl. contains '.$wrd_lst->dsp_id(), $debug-8);
     }
     $added_lst = clone $this;
     $added_lst->diff($wrd_lst, $debug-20);
     $wrd_lst->merge($added_lst, $debug-20);
-    zu_debug('word_list->differentiators -> added '.$added_lst->name(), $debug-8);
+    zu_debug('word_list->differentiators -> added '.$added_lst->dsp_id(), $debug-8);
     // ... and after that get only for the new
     if (count($added_lst->lst) > 0) {
       $loops = 0;
-      zu_debug('word_list->differentiators -> added '.$added_lst->name().' to '.$wrd_lst->name(), $debug-8);
+      zu_debug('word_list->differentiators -> added '.$added_lst->dsp_id().' to '.$wrd_lst->name(), $debug-8);
       do {
         $next_lst  = $added_lst->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-10);
-        zu_debug('word_list->differentiators -> sub childs '.$wrd_lst->name(), $debug-8);
+        zu_debug('word_list->differentiators -> sub children '.$wrd_lst->dsp_id(), $debug-8);
         if (count($next_lst->lst) > 0) {
           $next_lst  = $next_lst->are     ($debug-20);
           $next_lst  = $next_lst->contains($debug-20);
-          zu_debug('word_list->differentiators -> sub incl. contains '.$wrd_lst->name(), $debug-8);
+          zu_debug('word_list->differentiators -> sub incl. contains '.$wrd_lst->dsp_id(), $debug-8);
         }
         $added_lst = clone $next_lst;
         $added_lst->diff($wrd_lst, $debug-20);
@@ -425,16 +429,16 @@ class word_list {
     }
     // finally combine the list of new words with the original list
     $this->merge($wrd_lst, $debug-20);
-    zu_debug('word_list->differentiators -> '.$wrd_lst->name().' for '.$this->name(), $debug-8);
+    zu_debug('word_list->differentiators -> '.$wrd_lst->name().' for '.$this->dsp_id(), $debug-8);
     return $wrd_lst;
   }
 
   // similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
   function differentiators_filtered ($filter_lst, $debug) {
-    zu_debug('word_list->differentiators_filtered for '.$this->name(), $debug-18);
-    $result = $this->differantiators_all($debug-1);
+    zu_debug('word_list->differentiators_filtered for '.$this->dsp_id(), $debug-18);
+    $result = $this->differentiators_all($debug-1);
     $result = $result->filter($filter_lst, $debug-1);
-    zu_debug('word_list->differentiators_filtered -> '.$result->name(), $debug-12);
+    zu_debug('word_list->differentiators_filtered -> '.$result->dsp_id(), $debug-12);
     return $result;
   }
 
@@ -444,7 +448,7 @@ class word_list {
   */
 
   // return a list of the word ids
-  function ids($debug) {
+  function ids() {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $wrd) {
@@ -477,15 +481,15 @@ class word_list {
   }
 
   // return one string with all names of the list
-  function name($debug) {
+  function name($debug = 0) {
     $result = '';
     
     if (isset($this->lst)) {
       if ($debug > 10) {
-        $result .= '"'.implode('","',$this->names($debug-1)).'"';
+        $result .= '"'.implode('","',$this->names()).'"';
       } else {
-        $result .= '"'.implode('","',array_slice($this->names($debug-1), 0, 7));
-        if (count($this->names($debug-1)) > 8) {
+        $result .= '"'.implode('","',array_slice($this->names(), 0, 7));
+        if (count($this->names()) > 8) {
           $result .= ' ... total '.count($this->lst);
         }
         $result .= '"';
@@ -496,7 +500,7 @@ class word_list {
   
   // return a list of the word names
   // this function is called from dsp_id, so no other call is allowed
-  function names($debug) {
+  function names() {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $wrd) {
@@ -515,8 +519,8 @@ class word_list {
   }
   
   // return a list of the word ids as an sql compatible text
-  function ids_txt($debug) {
-    $result = implode(',',$this->ids($debug-1));
+  function ids_txt() {
+    $result = implode(',',$this->ids());
     return $result; 
   }
   
@@ -654,7 +658,7 @@ class word_list {
       }
     }
 
-    // give the user the possibility to add a simular word
+    // give the user the possibility to add a similar word
     $result .= '  <tr>';
     $result .= '    <td>';
     $result .= '      '.zuh_btn_add ("Add similar word", '/http/word_add.php?link='.$directional_verb_id.'&word='.$word_id.'&type='.$word_type_id.'&back='.$word_id);
@@ -671,6 +675,8 @@ class word_list {
   // display a list of words that match to the given pattern
   function dsp_like ($word_pattern, $user_id, $debug) {
     zu_debug('word_dsp->dsp_like ('.$word_pattern.',u'.$user_id.')', $debug-10);
+
+    global $db_con;
     $result  = '';
 
     $back = 1;
@@ -684,7 +690,7 @@ class word_list {
                 WHERE f.formula_name like '".$word_pattern."%' )
              ORDER BY name
                 LIMIT 200;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-5);  
 
@@ -703,7 +709,7 @@ class word_list {
         $frm->usr  = $this->usr;
         $frm->id   = $db_row['id'];
         $frm->name = $db_row['name'];
-        $result .= $frm->name_linked($back, $debug-1);
+        $result .= $frm->name_linked($back);
       }  
     }
 
@@ -724,7 +730,7 @@ class word_list {
 
   // get the "best" value for the word list and scale it e.g. convert "2.1 mio" to "2'100'000"
   function value_scaled($debug) {
-    zu_debug("word_list->value_scaled ".$this->name()." for ".$this->usr->name.".", $debug-10);
+    zu_debug("word_list->value_scaled ".$this->dsp_id()." for ".$this->usr->name.".", $debug-10);
 
     $val = New value;
     $val->ids = $this->ids;
@@ -733,7 +739,7 @@ class word_list {
     
     // get all words related to the value id; in many cases this does not match with the value_words there are use to get the word: it may contains additional word ids
     if ($val->id > 0) {
-      //zu_debug("word_list->value_scaled -> get word ids ".$this->name(), $debug-5);        
+      zu_debug("word_list->value_scaled -> get word ".$this->name(), $debug-5);
       //$val->load_phrases($debug-1);
       // switch on after value->scale is working fine
       //$val->number = $val->scale($val->wrd_lst, $debug-5);      
@@ -749,7 +755,7 @@ class word_list {
   }
   
   // true if the word is part of the word list
-  function does_contain($wrd_to_check, $debug) {
+  function does_contain($wrd_to_check) {
     $result = false; 
     
     foreach ($this->lst AS $wrd) {
@@ -788,7 +794,7 @@ class word_list {
   }
   
   // add one word to the word list defined by the word name
-  function add_name($wrd_name_to_add, $debug) {
+  function add_name($wrd_name_to_add, $debug = 0) {
     zu_debug('word_list->add_name ('.$wrd_name_to_add.')', $debug-30);
     if (is_null($this->usr->id)) {
       zu_err("The user must be set.", "word_list->add_name", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -804,7 +810,7 @@ class word_list {
   
   // merge as a function, because the array_merge does not create a object
   function merge($new_wrd_lst, $debug) {
-    zu_debug('word_list->merge '.$new_wrd_lst->name().' to '.$this->name().'"', $debug-8);        
+    zu_debug('word_list->merge '.$new_wrd_lst->name().' to '.$this->dsp_id().'"', $debug-8);
     foreach ($new_wrd_lst->lst AS $new_wrd) {
       zu_debug('word_list->merge add '.$new_wrd->name.' ('.$new_wrd->id.')', $debug-12);
       $this->add($new_wrd, $debug-1);
@@ -839,29 +845,21 @@ class word_list {
           }
         }  
         $result->lst = $wrd_lst;
-        $result->ids = $result->ids($debug-1);
+        $result->ids = $result->ids();
       }
       zu_debug('word_list->filter -> '.$result->dsp_id().')', $debug-10);
     }  
     return $result;
   }
   
-  // diff as a function, because the array_diff does not work for an object list
+  // diff as a function, because it seems the array_diff does not work for an object list
+  /*
+  $del_wrd_lst is the list of words that should be removed from this list object
+  e.g. if the the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
+   and the $del_wrd_lst is "May, June, Juli, August"
+   than $this->diff should be "January, February, March, April, September, October, November, December" and save to eat huîtres
+  */
   function diff($del_wrd_lst, $debug) {
-    /*
-    foreach ($del_wrd_lst->lst AS $del_wrd) {
-      if ($del_wrd->id > 0) {
-        zu_debug('word_list->diff '.$del_wrd->id, $debug-10);
-        if (in_array($del_wrd->id, $this->ids)) {
-          $del_pos = array_search($del_wrd->id, $this->ids);
-          zu_debug('word_list->diff -> exclude ('.$this->lst[$del_pos]->name.')', $debug-10);
-          unset ($this->lst[$del_pos]);
-        }
-      }
-    }
-    $this->ids = array_diff($this->ids, $del_wrd_lst->ids);
-    zu_debug('word_list->diff -> '.$this->name().' ('.implode(",",$this->ids).')', $debug-10);
-    */
     zu_debug('word_list->diff of '.$del_wrd_lst->dsp_id().' and '.$this->dsp_id(), $debug-10);
 
     // check an adjust the parameters
@@ -889,7 +887,7 @@ class word_list {
     zu_debug('word_list->diff -> '.$this->dsp_id(), $debug-12);
   }
   
-  // similar to diff, but using an id array to exclude instaed of a word list object
+  // similar to diff, but using an id array to exclude instead of a word list object
   function diff_by_ids($del_wrd_ids, $debug) {
     foreach ($del_wrd_ids AS $del_wrd_id) {
       if ($del_wrd_id > 0) {
@@ -902,12 +900,12 @@ class word_list {
       }
     }
     $this->ids = array_diff($this->ids, $del_wrd_ids);
-    zu_debug('word_list->diff_by_ids -> '.$this->name().' ('.implode(",",$this->ids).')', $debug-10);
+    zu_debug('word_list->diff_by_ids -> '.$this->dsp_id().' ('.implode(",",$this->ids).')', $debug-10);
   }
   
   // look at a word list and remove the general word, if there is a more specific word also part of the list e.g. remove "Country", but keep "Switzerland"
   function keep_only_specific ($debug) {
-    zu_debug('word_list->keep_only_specific ('.$this->name().')', $debug-10);
+    zu_debug('word_list->keep_only_specific ('.$this->dsp_id().')', $debug-10);
 
     $result = $this->ids;
     foreach ($this->lst AS $wrd) {
@@ -994,7 +992,7 @@ class word_list {
 
   // to be replaced by time_lst
   function time_lst_old ($debug) {
-    zu_debug('word_list->time_lst_old('.$this->name().')', $debug-10);
+    zu_debug('word_list->time_lst_old('.$this->dsp_id().')', $debug-10);
 
     $result = array();
     $time_type = cl(SQL_WORD_TYPE_TIME);
@@ -1010,7 +1008,7 @@ class word_list {
 
   // filter the time words out of the list of words
   function time_lst ($debug) {
-    zu_debug('word_list->time_lst for words "'.$this->name().'"', $debug-10);
+    zu_debug('word_list->time_lst for words "'.$this->dsp_id().'"', $debug-10);
 
     $result = New word_list;
     $result->usr = $this->usr;
@@ -1024,17 +1022,17 @@ class word_list {
         zu_debug('word_list->time_lst -> not found ('.$wrd->name.')', $debug-15);
       }
     }
-    if (count($result) < 10) {
+    if (count($result->lst) < 10) {
       zu_debug('word_list->time_lst -> total found '.$result->dsp_id(), $debug-10);
     } else {
-      zu_debug('word_list->time_lst -> total found: '.count($result).' ', $debug-10);
+      zu_debug('word_list->time_lst -> total found: '.count($result->lst).' ', $debug-10);
     }
     return $result;    
   }
 
   // create a useful list of time word
   function time_useful ($debug) {
-    zu_debug('word_list->time_useful for '.$this->name(), $debug-14);
+    zu_debug('word_list->time_useful for '.$this->dsp_id(), $debug-14);
 
     //$result = zu_lst_to_flat_lst($word_lst, $debug-1);
     $result = clone $this;
@@ -1050,17 +1048,17 @@ class word_list {
     // if nothing special is defined try to select 20 % outlook to the future
     // get latest time without estimate
     // check the number of none estimate results
-    // if the hist is longer than it should be dfine the start word
+    // if the hist is longer than it should be define the start word
     // fill from the start word the default number of words
 
     
-    zu_debug('word_list->time_useful -> '.$result->name(), $debug-12);
+    zu_debug('word_list->time_useful -> '.$result->dsp_id(), $debug-12);
     return $result;    
   }
 
   // filter the measure words out of the list of words
   function measure_lst ($debug) {
-    zu_debug('word_list->measure_lst('.$this->name().')', $debug-10);
+    zu_debug('word_list->measure_lst('.$this->dsp_id().')', $debug-10);
 
     $result = New word_list;
     $result->usr = $this->usr;
@@ -1075,13 +1073,13 @@ class word_list {
         zu_debug('word_list->measure_lst -> ('.$wrd->name.') is not measure', $debug-10);
       }
     }
-    zu_debug('word_list->measure_lst -> ('.count($result).')', $debug-10);
+    zu_debug('word_list->measure_lst -> ('.count($result->lst).')', $debug-10);
     return $result;    
   }
 
   // filter the scaling words out of the list of words
   function scaling_lst ($debug) {
-    zu_debug('word_list->scaling_lst('.$this->name().')', $debug-10);
+    zu_debug('word_list->scaling_lst('.$this->dsp_id().')', $debug-10);
 
     $result = New word_list;
     $result->usr = $this->usr;
@@ -1098,13 +1096,13 @@ class word_list {
         zu_debug('word_list->scaling_lst -> not found ('.$wrd->name.')', $debug-10);
       }
     }
-    zu_debug('word_list->scaling_lst -> ('.count($result).')', $debug-10);
+    zu_debug('word_list->scaling_lst -> ('.count($result->ids).')', $debug-10);
     return $result;    
   }
 
   // filter the percent words out of the list of words
   function percent_lst ($debug) {
-    zu_debug('word_list->percent_lst('.$this->name().')', $debug-10);
+    zu_debug('word_list->percent_lst('.$this->dsp_id().')', $debug-10);
 
     $result = New word_list;
     $result->usr = $this->usr;
@@ -1119,7 +1117,7 @@ class word_list {
         zu_debug('word_list->percent_lst -> ('.$wrd->name.') is not percent', $debug-10);
       }
     }
-    zu_debug('word_list->percent_lst -> ('.count($result).')', $debug-10);
+    zu_debug('word_list->percent_lst -> ('.count($result->ids).')', $debug-10);
     return $result;    
   }
 
@@ -1127,33 +1125,33 @@ class word_list {
   function ex_time ($debug) {
     $del_wrd_lst = $this->time_lst ($debug-1);
     $this->diff($del_wrd_lst, $debug-1);
-    zu_debug('word_list->ex_time -> '.$this->name(), $debug-10);
+    zu_debug('word_list->ex_time -> '.$this->dsp_id(), $debug-10);
   }
 
   // Exclude all measure words out of the list of words
   function ex_measure ($debug) {
     $del_wrd_lst = $this->measure_lst ($debug-1);
     $this->diff($del_wrd_lst, $debug-1);
-    zu_debug('word_list->ex_measure -> '.$this->name(), $debug-10);
+    zu_debug('word_list->ex_measure -> '.$this->dsp_id(), $debug-10);
   }
 
   // Exclude all scaling words out of the list of words
   function ex_scaling ($debug) {
     $del_wrd_lst = $this->scaling_lst ($debug-1);
     $this->diff($del_wrd_lst, $debug-1);
-    zu_debug('word_list->ex_scaling -> '.$this->name(), $debug-10);
+    zu_debug('word_list->ex_scaling -> '.$this->dsp_id(), $debug-10);
   }
 
   // remove the percent words from this word list
   function ex_percent ($debug) {
     $del_wrd_lst = $this->percent_lst ($debug-1);
     $this->diff($del_wrd_lst, $debug-1);
-    zu_debug('word_list->ex_percent -> '.$this->name(), $debug-10);
+    zu_debug('word_list->ex_percent -> '.$this->dsp_id(), $debug-10);
   }
 
   // sort a word list by name
   function wlsort ($debug) {
-    zu_debug('word_list->wlsort ('.$this->name().' and user '.$this->usr->name.')', $debug-12);
+    zu_debug('word_list->wlsort ('.$this->dsp_id().' and user '.$this->usr->name.')', $debug-12);
     $name_lst = array();
     $result   = array();
     $pos = 0;
@@ -1175,20 +1173,20 @@ class word_list {
     } else {
       $this->lst = $result;
     }  
-    zu_debug('word_list->wlsort sorted '.$this->name(), $debug-10);
+    zu_debug('word_list->wlsort sorted '.$this->dsp_id(), $debug-10);
     return $result;    
   }
   
   // this should create a value matrix
-  function val_matrix($col_lst, $user_id, $debug) {
-    zu_debug('word_list->val_matrix for '.$this->dsp_id(), $debug-10);
+  function val_matrix($col_lst, $usr, $debug) {
+    zu_debug('word_list->val_matrix for '.$this->dsp_id().' with '.$col_lst->dsp_id().' for user '.$usr->dsp_id(), $debug-10);
     $result = array();
     
     return $result;
   }
 
-  function dsp_val_matrix($val_matrix, $user_id, $debug) {
-    //zu_debug('word_list->dsp_val_matrix('.$val_matrix.','.$col_lst.')', $debug-10);
+  function dsp_val_matrix($val_matrix, $usr, $debug) {
+    zu_debug('word_list->dsp_val_matrix for '.$val_matrix->dsp_id().' for user '.$usr->dsp_id(), $debug-10);
     $result = '';
     
     return $result;
@@ -1227,13 +1225,13 @@ class word_list {
 
   /*
   
-  select functions - predefined data retrival 
+  select functions - predefined data retrieval
   
   */
 
   // get the last time word of the word list
   function max_time ($debug) {
-    zu_debug('word_list->max_time ('.$this->name().' and user '.$this->usr->name.')', $debug-10);
+    zu_debug('word_list->max_time ('.$this->dsp_id().' and user '.$this->usr->name.')', $debug-10);
     $max_wrd = new word_dsp; 
     $max_wrd->usr = $this->usr;
     if (count($this->lst) > 0) {
@@ -1250,7 +1248,7 @@ class word_list {
   
   // get the time of the last value related to a word and assigned to a word list
   function max_val_time ($debug) {
-    zu_debug('word_list->max_val_time '.$this->name($debug-1).' and user '.$this->usr->name.')', $debug-10);
+    zu_debug('word_list->max_val_time '.$this->dsp_id().' and user '.$this->usr->name.')', $debug-10);
     $wrd = Null;
 
     // load the list of all value related to the word list
@@ -1258,7 +1256,7 @@ class word_list {
     $val_lst->phr_lst = $this->phrase_lst($debug-1);
     $val_lst->usr     = $this->usr;
     $val_lst->load_by_phr_lst($debug-1);
-    zu_debug('word_list->max_val_time ... '.count($val_lst->lst).' values for '.$this->name($debug-1), $debug-10); 
+    zu_debug('word_list->max_val_time ... '.count($val_lst->lst).' values for '.$this->dsp_id(), $debug-10);
 
     $time_ids = array();
     foreach ($val_lst->lst AS $val) {
@@ -1283,7 +1281,7 @@ class word_list {
     }
     
     /*
-    // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
+    // get all values related to the selecting word, because this is probably strongest selection and to save time reduce the number of records asap
     $val = New value;
     $val->wrd_lst = $this;
     $val->usr = $this->usr;
@@ -1336,11 +1334,11 @@ class word_list {
           zu_warning("The word list contains more time word than supported by the program.","word_list->assume_time", '', (new Exception)->getTraceAsString(), $this->usr);
         }
       }
-      zu_debug('time '.$result->name.' assumed for '.$this->name_linked(), $debug-6);
+      zu_debug('time '.$result->name.' assumed for '.$this->name_linked($debug-1), $debug-6);
     } else {
       // get the time of the last "real" (reported) value for the word list
       $result = $this->max_val_time($debug-1); 
-      zu_debug('the assumed time "'.$result->name.'" is the last non estimated value of '.$this->names_linked(), $debug-6);
+      zu_debug('the assumed time "'.$result->name.'" is the last non estimated value of '.$this->names_linked($debug-1), $debug-6);
     }
 
     if (isset($result)) {
@@ -1381,7 +1379,7 @@ class word_list {
         */
       }
     }  
-    zu_debug('word_list->phrase_lst -> done ('.$grp->id.')', $debug-18);
+    zu_debug('word_list->phrase_lst -> done ('.$grp->id.') with '.$result, $debug-18);
     return $grp;
   }
 
@@ -1398,72 +1396,6 @@ class word_list {
     return $phr_lst;
   }
 
-  /*
-    deprecated function
-    -------------------
-  */
-
-  // load the word parameters from the database for a list of words
-  // similar to add_by_type and probably can be dismissed
-  private function add_wrd_by_type($wrd, $verb_id, $direction, $debug) {
-    $result = array(); // list of the added word ids
-    zu_debug('word_list->add_wrd_by_type type ('.$verb_id.')', $debug-12);
-    
-    if (!isset($this->usr)) {
-      $this->usr = $wrd->usr;
-    }
-    if (is_null($this->usr->id)) {
-      zu_err("The user must be set.", "word_list->add_wrd_by_type", '', (new Exception)->getTraceAsString(), $this->usr);
-    } else {
-      if ($direction == 'up') {
-        $sql_where = 'l.from_phrase_id = '.$wrd->id;
-        $sql_wrd   = 'l.to_phrase_id';
-      } else {
-        $sql_where = 'l.to_phrase_id = '.$wrd->id;
-        $sql_wrd   = 'l.from_phrase_id';
-      }
-      $sql = "SELECT t.word_id,
-                     IF(u.word_name IS NULL,     t.word_name,     u.word_name)     AS word_name,
-                     IF(u.plural IS NULL,        t.plural,        u.plural)        AS plural,
-                     IF(u.description IS NULL,   t.description,   u.description)   AS description,
-                     IF(u.word_type_id IS NULL,  t.word_type_id,  u.word_type_id)  AS word_type_id,
-                     IF(u.excluded IS NULL,      t.excluded,      u.excluded)      AS excluded,
-                     t.values
-                FROM word_links l, 
-                     words t 
-           LEFT JOIN user_words u ON u.word_id = t.word_id 
-                                 AND u.user_id = ".$this->usr->id." 
-               WHERE ".$sql_wrd." = t.word_id 
-                 AND ".$sql_where."
-                 AND l.verb_id = ".$verb_id." 
-            GROUP BY t.word_id
-            ORDER BY t.values DESC;";
-      zu_debug('word_list->add_wrd_by_type -> add with "'.$sql, $debug-8);
-      $db_con = New mysql;
-      $db_con->usr_id = $this->usr->id;         
-      $db_wrd_lst = $db_con->get($sql, $debug-10);  
-      foreach ($db_wrd_lst AS $db_wrd) {
-        if (is_null($db_wrd['excluded']) OR $db_wrd['excluded'] == 0) {
-          if ($db_wrd['word_id'] > 0 AND !in_array($db_wrd['word_id'], $this->ids)) {
-            $new_word = New word_dsp;
-            $new_word->id          = $db_wrd['word_id'];
-            $new_word->usr         = $this->usr;
-            $new_word->name        = $db_wrd['word_name'];
-            $new_word->plural      = $db_wrd['plural'];
-            $new_word->description = $db_wrd['description'];
-            $new_word->type_id     = $db_wrd['word_type_id'];
-            $this->lst[]           = $new_word;
-            $this->ids[]           = $new_word->id;
-            $result[]              = $new_word->id;
-            zu_debug('word_list->add_wrd_by_type -> add "'.$new_word->name.'" for verb ('.$verb_id.')', $debug-8);
-          }
-        } 
-      }
-      zu_debug('word_list->add_wrd_by_type -> added ('.count($result).')', $debug-7);
-    }  
-    return $result; 
-  }
-    
 }
 
 ?>

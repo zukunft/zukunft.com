@@ -91,6 +91,9 @@ class batch_job {
   
   // request a new calculation 
   function add($debug) {
+
+    global $db_con;
+
     $result = '';
     zu_debug('batch_job->add', $debug-18);      
     // create first the database entry to make sure the update is done
@@ -112,7 +115,7 @@ class batch_job {
           if (!isset($this->usr)) { $this->usr = $this->obj->usr; }
           $this->row_id = $this->obj->id;
           zu_debug('batch_job->add connect', $debug-18);      
-          $db_con = New mysql;
+          //$db_con = New mysql;
           $db_con->usr_id = $this->usr->id;         
           $db_con->type = 'calc_and_cleanup_task';         
           $job_id = $db_con->insert(array('user_id','request_time','calc_and_cleanup_task_type_id','row_id'), 
@@ -134,7 +137,9 @@ class batch_job {
   
   // update all result depending on one value
   function exe_val_upd($debug) {
-    zu_debug('batch_job->exe_val_upd ...', $debug-18);      
+    zu_debug('batch_job->exe_val_upd ...', $debug-18);
+    global $db_con;
+
     // load all depending formula results
     if (isset($this->obj)) {
       zu_debug('batch_job->exe_val_upd -> get list for user '.$this->obj->usr->name, $debug-16);      
@@ -149,7 +154,7 @@ class batch_job {
       }
     }
     
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type = 'calc_and_cleanup_task';         
     $result = $db_con->update($this->id, 'end_time', 'Now()', $debug-1);
@@ -159,7 +164,8 @@ class batch_job {
   
   // execute all open requests
   function exe($debug) {
-    $db_con = New mysql;
+    global $db_con;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type = 'calc_and_cleanup_task';         
     $result = $db_con->update($this->id, 'start_time', 'Now()', $debug-1);

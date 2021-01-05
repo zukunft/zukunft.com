@@ -46,7 +46,7 @@ class word_link_list {
   public $vrb_lst   = NULL;    // show the graph elements related to these verbs
   public $direction = 'down';  // either up, down or both
     
-  private function load_lnk_fields($pos, $debug) {
+  private function load_lnk_fields($pos) {
     $sql = "t".$pos.".word_id AS word_id".$pos.",
             t".$pos.".user_id AS user_id".$pos.",
             IF(u".$pos.".word_name IS NULL,     t".$pos.".word_name,     u".$pos.".word_name)     AS word_name".$pos.",
@@ -58,14 +58,14 @@ class word_link_list {
     return $sql; 
   }
   
-  private function load_lnk_from($pos, $debug) {
+  private function load_lnk_from($pos) {
     $sql = " words t".$pos." 
              LEFT JOIN user_words u".$pos." ON u".$pos.".word_id = t".$pos.".word_id 
                                            AND u".$pos.".user_id = ".$this->usr->id." ";
     return $sql; 
   }
   
-  private function load_wrd_fields($pos, $debug) {
+  private function load_wrd_fields($pos) {
     $sql = "t".$pos.".word_id AS word_id".$pos.",
             t".$pos.".user_id AS user_id".$pos.",
             IF(u".$pos.".word_name IS NULL,     t".$pos.".word_name,     u".$pos.".word_name)     AS word_name".$pos.",
@@ -77,7 +77,7 @@ class word_link_list {
     return $sql; 
   }
   
-  private function load_wrd_from($pos, $debug) {
+  private function load_wrd_from($pos) {
     $sql = " words t".$pos." 
              LEFT JOIN user_words u".$pos." ON u".$pos.".word_id = t".$pos.".word_id 
                                            AND u".$pos.".user_id = ".$this->usr->id." ";
@@ -87,6 +87,8 @@ class word_link_list {
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
   function load($debug) {
     zu_debug('word_link_list->load', $debug-18);
+
+    global $db_con;
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
@@ -105,21 +107,21 @@ class word_link_list {
         $id_txt = implode(",",$this->ids);
         if ($id_txt <> '') {
           $sql_where = 'l.word_link_id IN ('.implode(",",$this->ids).')';
-          $sql_wrd1_fields  = $this->load_wrd_fields('', $debug-1);
-          $sql_wrd1_from    = $this->load_wrd_from  ('', $debug-1);
+          $sql_wrd1_fields  = $this->load_wrd_fields('');
+          $sql_wrd1_from    = $this->load_wrd_from  ('');
           $sql_wrd1         = 'AND l.from_phrase_id = t.word_id';
           $sql_wrd1_fields .= ', ';
           $sql_wrd1_from   .= ', ';
-          $sql_wrd2_fields  = $this->load_wrd_fields('2', $debug-1);
-          $sql_wrd2_from    = $this->load_wrd_from  ('2', $debug-1);
+          $sql_wrd2_fields  = $this->load_wrd_fields('2');
+          $sql_wrd2_from    = $this->load_wrd_from  ('2');
           $sql_wrd2         = 'l.to_phrase_id = t2.word_id';
           zu_debug('word_link_list->load where ids '.$sql_where, $debug-18);
         }
       }  
       if ($sql_where == '') {
         if (isset($this->wrd)) {
-          $sql_wrd2_fields = $this->load_wrd_fields('2', $debug-1);
-          $sql_wrd2_from   = $this->load_wrd_from  ('2', $debug-1);
+          $sql_wrd2_fields = $this->load_wrd_fields('2');
+          $sql_wrd2_from   = $this->load_wrd_from  ('2');
           if ($this->direction == 'up') {
             $sql_where = 'l.from_phrase_id = '.$this->wrd->id;
             $sql_wrd2  = 'l.to_phrase_id = t2.word_id';
@@ -133,12 +135,12 @@ class word_link_list {
       if ($sql_where == '') {
         if (isset($this->wrd_lst)) {
           zu_debug('word_link_list->load based on word list', $debug-20);
-          $sql_wrd1_fields = $this->load_wrd_fields('', $debug-1);
-          $sql_wrd1_from   = $this->load_wrd_from  ('', $debug-1);
+          $sql_wrd1_fields = $this->load_wrd_fields('');
+          $sql_wrd1_from   = $this->load_wrd_from  ('');
           $sql_wrd1_fields .= ', ';
           $sql_wrd1_from   .= ', ';
-          $sql_wrd2_fields = $this->load_wrd_fields('2', $debug-1);
-          $sql_wrd2_from   = $this->load_wrd_from  ('2', $debug-1);
+          $sql_wrd2_fields = $this->load_wrd_fields('2');
+          $sql_wrd2_from   = $this->load_wrd_from  ('2');
           zu_debug('word_link_list->load based on word list loaded', $debug-20);
           if ($this->direction == 'up') {
             $sql_where = 'l.from_phrase_id IN ('.$this->wrd_lst->ids_txt($debug-1).')';
@@ -201,7 +203,7 @@ class word_link_list {
               GROUP BY t2.word_id, l.verb_id
               ORDER BY v.verb_id, t2.word_name;";
               // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_lst = $db_con->get($sql, $debug-10);  
         zu_debug('word_link_list->load ... sql "'.$sql.'"', $debug-15);
@@ -309,25 +311,25 @@ class word_link_list {
     $result = '';
     
     $id   = implode(",",$this->ids);
-    $name = $this->name(0);
+    $name = $this->name();
     if ($name <> '') {
-      $result = '"'.$name.'" ('.$id.')';
+      $result .= '"'.$name.'" ('.$id.')';
     } else {
-      $result = 'id ('.$id.')';
+      $result .= 'id ('.$id.')';
     }
 
     return $result;
   }
   
   // description of the triple list for the user
-  function name($debug) {
-    $result = implode(",",$this->names($debug));      
+  function name() {
+    $result = implode(",",$this->names());
     return $result;
   }
   
   // return a list of the triple names
   // this function is called from dsp_id, so no other call is allowed
-  function names($debug) {
+  function names() {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $lnk) {
@@ -342,6 +344,7 @@ class word_link_list {
   // shows all words the link to the given word
   // returns the html code to select a word that can be edit
   function display ($back, $debug) {
+    $result  = '';
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
@@ -350,7 +353,6 @@ class word_link_list {
       if (isset($this->wrd)) {
         zu_debug('graph->display for '.$this->wrd->name.' '.$this->direction.' and user '.$this->usr->name, $debug-10);
       }  
-      $result  = '';
       $prev_verb_id  = 0;
 
       // loop over the graph elements

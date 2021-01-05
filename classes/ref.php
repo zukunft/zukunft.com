@@ -59,6 +59,8 @@ class ref {
   // test if the name is used already
   public function load ($debug) {
     zu_debug('ref->load ('.$this->dsp_id().')', $debug-10);
+
+    global $db_con;
     $result = NULL;
 
     // check if the minimal input parameters are set
@@ -83,7 +85,7 @@ class ref {
                        ref_type_id
                   FROM refs 
                  WHERE '.$sql_where.';';
-        $db_con = new mysql;         
+        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_ref = $db_con->get1($sql, $debug-5);  
         if ($db_ref['ref_id'] <= 0) {
@@ -213,7 +215,7 @@ class ref {
     }
     
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'refs';
     // TODO review in log_link
@@ -231,7 +233,7 @@ class ref {
   function log_upd($db_rec, $debug) {
     zu_debug('ref->log_upd '.$this->dsp_id(), $debug-10);
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'update';
     $log->table     = 'refs';
     $log->old_from  = $db_rec->phr;
@@ -259,7 +261,7 @@ class ref {
     }
     
     $log = New user_log_link;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'refs';
     $log->old_from  = $this->phr;
@@ -274,6 +276,8 @@ class ref {
   // update a ref in the database or update the existing
   private function add($debug) {
     zu_debug('ref->add '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
     $result = '';
 
     // log the insert attempt first
@@ -281,7 +285,7 @@ class ref {
     if ($log->id > 0) {
       zu_debug('ref->add -> insert', $debug-10);
       // insert the new reference
-      $db_con = New mysql;
+      //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_con->type = 'ref';         
       $this->id = $db_con->insert(array('phrase_id','external_key','ref_type_id'),
@@ -318,10 +322,12 @@ class ref {
   // update a ref in the database or update the existing
   function save($debug) {
     zu_debug('ref->save '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
     $result = '';
 
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->id;         
     $db_con->type   = 'ref';         
     

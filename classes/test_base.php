@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+global $debug;
+
 include_once '../lib/config.php';   if ($debug > 9) { echo 'lib config loaded<br>'; }
 
 // load the testing functions
@@ -94,7 +96,7 @@ define("TEST_USER_ID",          "1");
 define("TEST_USER_NAME",        "zukunft.com system batch job");   
 define("TEST_USER_DESCRIPTION", "standard user view for all users");   
 define("TEST_USER_ID2",         "2");   
-define("TEST_USER_IP",          "66.249.64.95"); // used to check the blocking of an IP adress
+define("TEST_USER_IP",          "66.249.64.95"); // used to check the blocking of an IP address
 
 /*
 
@@ -207,16 +209,16 @@ define("TIMEOUT_LIMIT_IMPORT",   12);   // time limit for complex import tests i
 
 // views used for testing
 define("TD_COMPLETE",      "complete");                      // the default and base view for all words
-define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view for the company list
+define("TD_COMPANY_LIST",  "Company list with main ratios"); // the default view for the company list
 
 //define('ROOTPATH', __DIR__);
 
 // ---------------------------
-// function to suppurt testing
+// function to support testing
 // ---------------------------
 
   // display the result of one test e.g. if adding a value has been successful
-  function test_dsp($msg, $target, $result, $exe_max_time, $comment, $test_type) {
+  function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_type = '') {
     global $error_counter;
     global $timeout_counter;
     global $total_tests;
@@ -233,13 +235,13 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     $since_start = $new_start_time - $exe_start_time;
     if ($result == $target) {
       if ($since_start > $exe_max_time) {
-        $txt .= "<font color=orange>TIMEOUT</font>" .$msg;
+        $txt .= '<p style="color:orange">TIMEOUT' .$msg;
         $timeout_counter++;
       } else {
-        $txt .=  "<font color=green>OK</font>" .$msg;
+        $txt .=  '<p style="color:green">OK' .$msg;
       }
     } else {
-      $txt .=  "<font color=red>Error</font>".$msg;
+      $txt .=  '<p style="color:red">Error'.$msg;
       $error_counter++;
       // todo: create a ticket
     }
@@ -293,7 +295,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     $txt .=  ', took ';
     $txt .=  round($since_start,4).' seconds';
 
-    $txt .=  "<br>";
+    $txt .=  '</p>';
     echo $txt;
     flush();
     $total_tests++;
@@ -302,7 +304,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   }
   
   // legacy function for test_dsp
-  function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment, $test_type) {
+  function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = '', $test_type = '') {
     global $error_counter;
     global $timeout_counter;
     global $total_tests;
@@ -317,13 +319,13 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     $since_start = $new_start_time - $exe_start_time;
     if ($result == $target) {
       if ($since_start > $exe_max_time) {
-        echo "<font color=orange>TIMEOUT</font>" .$test_text;
+        echo '<p style="color:orange">TIMEOUT' .$test_text;
         $timeout_counter++;
       } else {
-        echo "<font color=green>OK</font>" .$test_text;
+        echo '<p style="color:green">OK' .$test_text;
       }
     } else {
-      echo "<font color=red>Error</font>".$test_text;
+      echo '<p style="color:red">Error'.$test_text;
       $error_counter++;
       // todo: create a ticket
     }
@@ -377,7 +379,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     echo ', took ';
     echo round($since_start,4).' seconds';
 
-    echo "<br>";
+    echo "</p>";
     flush();
     $total_tests++;
     return $new_start_time;
@@ -392,11 +394,11 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     echo '<br>';
   }
 
-  // remove color setting from the result to reduce confusion by missleading colors
+  // remove color setting from the result to reduce confusion by misleading colors
   function test_uncolor($result) {
-    $result = str_replace('<font color="red">', '', $result);
-    $result = str_replace('<font class="user_specific">', '', $result);
-    $result = str_replace('</font>', '', $result);
+    $result = str_replace('<p style="color:red">', '', $result);
+    $result = str_replace('<p class="user_specific">', '', $result);
+    $result = str_replace('</p>', '', $result);
     return $result;
   }
 
@@ -491,7 +493,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   
   add_* to create an object and save it in the database to prepare the testing (not used for all classes)
   load_* just load the object, but does not create the object
-  test_* additional creates the object if needed and checks if it has been presistet
+  test_* additional creates the object if needed and checks if it has been persistent
   
   * is for the name of the class, so the long name e.g. word not wrd
   
@@ -506,7 +508,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     return $wrd;
   }
 
-  function test_word($wrd_name, $debug) {
+  function test_word($wrd_name, $debug = 0) {
     global $exe_start_time;
     $wrd = load_word($wrd_name, $debug-1);
     if ($wrd->id == 0) {
@@ -587,7 +589,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   function test_phrase_list($array_of_word_str, $debug) {
     $phr_lst = load_phrase_list($array_of_word_str, $debug-1);
     $target = '"'.implode('","', $array_of_word_str).'"';
-    $result = $phr_lst->name();
+    $result = $phr_lst->name($debug-1);
     test_dsp(', phrase list', $target, $result, TIMEOUT_LIMIT);
     return $phr_lst;
   }
@@ -603,7 +605,6 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   }
 
   function test_value($array_of_word_str, $target, $debug) {
-    global $usr;
     $phr_lst = load_phrase_list($array_of_word_str, $debug-1);
     $val = load_value($array_of_word_str, $debug-1);
     $result = $val->number;
@@ -697,9 +698,14 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
   }
 
   // check if a word link exists and if not and requested create it
-  function test_word_link($from, $verb, $to, $autocreate, $phrase_name, $debug) {
+  // $phrase_name should be set if the standard name for the link should not be used
+  function test_word_link($from, $verb, $to, $autocreate, $phrase_name = '', $debug = 0) {
     global $usr;
     global $exe_start_time;
+
+    $target = '';
+    $result = '';
+
     $wrd_from = load_word($from, $debug-1);
     if ($wrd_from->id <= 0 and $autocreate) {
       $wrd_from->name= $from;
@@ -744,9 +750,12 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
           $lnk_test->to_id   = $wrd_from->id;
           $lnk_test->save($debug-1);
           $lnk_test->load($debug-1);
-          if ($lnk_test->id <> 0 and $phrase_name <> '') {
+          // refresh the given name if needed
+          if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description <> $phrase_name) {
             $lnk_test->description = $phrase_name;
-            $lnk_test->save($debug-1);
+            $lnk_test->save($debug+10);
+            $lnk_test->load($debug+10);
+            $result = $lnk_test;
           }
         }
       }
@@ -754,14 +763,17 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     if ($phrase_name <> '') {
       $target = $phrase_name;
     }
-    $exe_start_time = test_show_result(', word link', $target, $result->name, $exe_start_time, TIMEOUT_LIMIT_DB);
+    $exe_start_time = test_show_result(', word link', $target, $result->description, $exe_start_time, TIMEOUT_LIMIT_DB);
     return $result;
   }
 
 
-  function test_formula_link($formula_name, $word_name, $autocreate) {
+  function test_formula_link($formula_name, $word_name, $autocreate, $debug = 0) {
     global $usr;
     global $exe_start_time;
+
+    $result = '';
+
     $frm = New formula;
     $frm->usr = $usr;
     $frm->name = $formula_name;
@@ -780,7 +792,11 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
         $result = $frm_lnk->fob->name().' is linked to '.$frm_lnk->tob->name();
         $target = $formula_name.' is linked to '.$word_name; 
         $exe_start_time = test_show_result(', formula_link', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-      }  
+      } else {
+        if ($autocreate) {
+          $frm_lnk->save($debug-1);
+        }
+      }
     }  
     return $result;
   }
@@ -790,7 +806,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
 // testing functions to create the main time value
 // -----------------------------------------------
   
-  function zu_test_time_setup() {
+  function zu_test_time_setup($debug = 0) {
     global $usr;
     $result = '';
     $this_year = date('Y');
@@ -800,11 +816,11 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     $end_year = $this_year + $test_years;
     for ($year = $start_year; $year <= $end_year; $year++) {
       $this_year = $year;
-      $wrd = test_word(strval($this_year));
-      $wrd_lnk = test_word_link(TW_YEAR, SQL_LINK_TYPE_IS, $this_year, true);
+      test_word(strval($this_year));
+      $wrd_lnk = test_word_link(TW_YEAR, SQL_LINK_TYPE_IS, $this_year, true,  '', $debug-1);
       $result = $wrd_lnk->name;
       if ($prev_year <> '') {
-        test_word_link($prev_year, SQL_LINK_TYPE_FOLLOW, $this_year, true);
+        test_word_link($prev_year, SQL_LINK_TYPE_FOLLOW, $this_year, true, '', $debug-1);
       }
       $prev_year = $this_year;
     }
@@ -830,5 +846,3 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the defualt view
     echo '<br>';
     echo '<br>';
   }
-  
-?>

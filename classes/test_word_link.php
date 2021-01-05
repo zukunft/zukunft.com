@@ -111,7 +111,7 @@ function run_word_link_test ($debug) {
   $log->new_from_id = $wrd_added->id;
   $log->new_link_id = $vrb->id;
   $log->new_to_id = $wrd->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job linked '.TW_ADD_RENAMED.' to '.TEST_WORD.'';
   $exe_start_time = test_show_result(', triple->save logged for "'.$wrd_added->name.'" '.$vrb->name.' "'.$wrd->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -157,7 +157,7 @@ function run_word_link_test ($debug) {
   $log->old_from_id = $wrd_added->id;
   $log->old_link_id = $vrb->id;
   $log->old_to_id = $wrd->id;
-  $log->usr_id = $usr2->id;
+  $log->usr = $usr2;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system test unlinked '.TW_ADD_RENAMED.' from '.TEST_WORD.'';
   $exe_start_time = test_show_result(', triple->del logged for "'.$wrd_added->name.'" '.$vrb->name.' "'.$wrd->name.'" and user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -208,7 +208,7 @@ function run_word_link_test ($debug) {
   $log->old_from_id = $wrd_added->id;
   $log->old_link_id = $vrb->id;
   $log->old_to_id = $wrd->id;
-  $log->usr_id = $usr->id;
+  $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job unlinked '.TW_ADD_RENAMED.' from '.TEST_WORD.'';
   $exe_start_time = test_show_result(', triple->del logged for "'.$wrd_added->name.'" '.$vrb->name.' "'.$wrd->name.'" and user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

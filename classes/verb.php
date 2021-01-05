@@ -49,6 +49,8 @@ class verb {
   
   // load the missing verb parameters from the database
   function load($debug) {
+
+    global $db_con;
     $result = '';
     
     // set the where clause depending on the values given
@@ -78,7 +80,7 @@ class verb {
                      v.description
                 FROM verbs v 
               WHERE ".$sql_where.";";
-      $db_con = new mysql;         
+      //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lnk = $db_con->get1($sql, $debug-5);  
       if ($db_lnk['verb_id'] > 0) {
@@ -104,7 +106,7 @@ class verb {
   */
   
   // display the unique id fields (used also for debugging)
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {
@@ -126,7 +128,7 @@ class verb {
   }
 
   // create the HTML code to display the formula name with the HTML link
-  function display ($back, $debug) {
+  function display ($back) {
     $result = '<a href="/http/verb_edit.php?id='.$this->id.'&back='.$back.'">'.$this->name.'</a>';
     return $result;    
   }
@@ -256,14 +258,16 @@ class verb {
 
   // true if no one has used this verb
   private function not_used($debug) {
-    zu_debug('verb->not_used ('.$this->id.')', $debug-10);  
+    zu_debug('verb->not_used ('.$this->id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     // to review: additional check the database foreign keys
     $sql = "SELECT words 
               FROM verbs 
              WHERE verb_id = ".$this->id.";";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     $used_by_words = $db_row['words'];
@@ -277,6 +281,8 @@ class verb {
   // true if no other user has modified the verb
   private function not_changed($debug) {
     zu_debug('verb->not_changed ('.$this->id.') by someone else than the owner ('.$this->owner_id.')', $debug-10);
+
+    global $db_con;
     $result = true;
     
     /*
@@ -286,7 +292,7 @@ class verb {
              WHERE verb_id = ".$this->id."
                AND user_id <> ".$this->owner_id."
                AND (excluded <> 1 OR excluded is NULL)";
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $change_user_id = $db_con->get1($sql, $debug-5);  
     if ($change_user_id > 0) {
@@ -314,7 +320,7 @@ class verb {
   private function log_add($debug) {
     zu_debug('verb->log_add '.$this->dsp_id(), $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'add';
     $log->table     = 'verbs';
     $log->field     = 'verb_name';
@@ -330,7 +336,7 @@ class verb {
   private function log_upd($debug) {
     zu_debug('verb->log_upd '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id = $this->usr->id;  
+    $log->usr    = $this->usr;
     $log->action = 'update';
     $log->table  = 'verbs';
     
@@ -341,7 +347,7 @@ class verb {
   private function log_del($debug) {
     zu_debug('verb->log_del '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
     $log = New user_log;
-    $log->usr_id    = $this->usr->id;  
+    $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = 'verbs';
     $log->field     = 'verb_name';
@@ -544,10 +550,12 @@ class verb {
   // add or update a verb in the database (or create a user verb if the program settings allow this)
   function save($debug) {
     zu_debug('verb->save '.$this->dsp_id().' for user '.$this->usr->name, $debug-10);
+
+    global $db_con;
     $result = '';
     
     // build the database object because the is anyway needed
-    $db_con = new mysql;         
+    //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'verb';         
     
@@ -604,14 +612,17 @@ class verb {
   // exclude or delete a verb
   function del($debug) {
     zu_debug('verb->del', $debug-16);
+
+    global $db_con;
     $result = '';
+
     $result .= $this->load($debug-1);
     if ($this->id > 0 AND $result == '') {
       zu_debug('verb->del '.$this->dsp_id(), $debug-14);
       if ($this->can_change($debug-1)) {
         $log = $this->log_del($debug-1);
         if ($log->id > 0) {
-          $db_con = new mysql;         
+          //$db_con = new mysql;
           $db_con->usr_id = $this->usr->id;         
           $db_con->type   = 'verb';         
           $result .= $db_con->delete('verb_id', $this->id, $debug-1);

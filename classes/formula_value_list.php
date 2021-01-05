@@ -53,7 +53,9 @@ class formula_value_list {
   // load formula results from the database related to one formula or one word
   // similar to load of the formula_value object, but to load many results at once
   function load ($limit, $debug) {
-    zu_debug('formula_value_list->load', $debug-18);      
+    zu_debug('formula_value_list->load', $debug-18);
+
+    global $db_con;
 
     // check the minimal input parameters
     if (!isset($this->usr)) {
@@ -118,7 +120,7 @@ class formula_value_list {
               ORDER BY last_update DESC 
                   LIMIT ".$limit.";";
         zu_debug('formula_value_list->load sql '.$sql, $debug-10);      
-        $db_con = New mysql;
+        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $val_rows = $db_con->get($sql, $debug-5);  
         foreach ($val_rows AS $val_row) {
@@ -473,6 +475,7 @@ class formula_value_list {
   // $usr - to define which user view should be updated
   function frm_upd_lst($usr, $back, $debug) {
     zu_debug('add '.$this->frm->dsp_id($debug-5).' to queue ...', $debug-5);
+
     // to inform the user about the progress
     $last_msg_time = time(); // the start time
     $collect_pos = 0;        // to calculate the progress in percent
@@ -580,6 +583,8 @@ class formula_value_list {
   // to review
   // lists all formula values related to one value
   function val_phr_lst($val, $back, $phr_lst, $time_id, $debug) {
+    global $db_con;
+
     $time_phr = New phrase;
     $time_phr->usr = $this->usr;
     $time_phr->id = $time_id;
@@ -590,7 +595,7 @@ class formula_value_list {
     // list all related formula results
     $formula_links = '';
     $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = ".$val->id." AND l.formula_id = f.formula_id;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-10);  
     foreach ($db_lst AS $db_fv) {

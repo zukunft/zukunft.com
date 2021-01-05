@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("verb_edit", "", $debug);
+$db_con = zu_start("verb_edit", '', $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -48,7 +48,7 @@ $link = zu_start("verb_edit", "", $debug);
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_VEBR_EDIT);
+    $dsp->id = cl(SQL_VIEW_VERB_EDIT);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     $back = $_GET['back']; // the original calling page that should be shown after the change is finished
@@ -56,14 +56,14 @@ $link = zu_start("verb_edit", "", $debug);
     // create the verb object to have an place to update the parameters
     $vrb = New verb;
     $vrb->id  = $_GET['id'];
-    $vrb->usr = $usr;
+    $vrb->usr_id = $usr->id;
     $vrb->load($debug-1);
 
     if ($vrb->id <= 0) {
       $result .= zu_err("No verb found to change because the id is missing.", "verb_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
-      // if the save botton has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
+      // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
       if ($_GET['name'] <> '') {
 
         // get the parameters (but if not set, use the database value)
@@ -78,7 +78,7 @@ $link = zu_start("verb_edit", "", $debug);
         // if update was successful ...
         if (str_replace ('1','',$upd_result) == '') {
           // remember the verb for the next values to add
-          $usr->set_verb ($vrb_id, $debug-1);
+          $usr->set_verb ($vrb->id, $debug-1);
 
           // ... and display the calling view
           $result .= dsp_go_back($back, $usr, $debug-1);
@@ -103,5 +103,4 @@ $link = zu_start("verb_edit", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);

@@ -60,7 +60,7 @@ class view_component_dsp extends view_component {
     return $result;
   }
 
-  // display a table with the values of the first word, that are also linked to the second word (e.g. ABB as first word, Cash Flow Statment as second word)
+  // display a table with the values of the first word, that are also linked to the second word (e.g. ABB as first word, Cash Flow Statement as second word)
   // $wrd is the word that the user has selected to see e.g. "Company" to see a list of the main companies
   // $this->word_id_col is the related word defined on the view component e.g. "Company main ratio" to see a "word value list" with all word related to "Company main ratio"
 
@@ -263,6 +263,8 @@ class view_component_dsp extends view_component {
   // lists of all views where a view component is used
   private function linked_views($add_link, $wrd, $back, $debug) {
     zu_debug("view_component_dsp->linked_view componet id ".$this->id." and user ".$this->usr->id." (word ".$wrd->id.", add ".$add_link.").", $debug-10);
+
+    global $db_con;
     $result = '';
 
     if (UI_USE_BOOTSTRAP) { $result .= dsp_tbl_start_hist (); } else { $result .= dsp_tbl_start_half(); }
@@ -271,7 +273,7 @@ class view_component_dsp extends view_component {
               FROM view_component_links l, views m 
              WHERE l.view_component_id = ".$this->id." 
                AND l.view_id = m.view_id;";
-    $db_con = New mysql;
+    //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $view_lst = $db_con->get($sql, $debug-5);  
     foreach ($view_lst AS $view) {
@@ -406,6 +408,11 @@ class view_component_dsp extends view_component {
     return $result;
   }
 
+  // todo HTML code to add a view component
+  function dsp_add ($add_link, $wrd, $back, $debug) {
+    return $this->dsp_edit ($add_link, $wrd, $back, $debug);
+  }
+
   // HTML code to edit all word fields
   function dsp_edit ($add_link, $wrd, $back, $debug) {
     zu_debug('view_component_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.')', $debug-10);
@@ -444,7 +451,7 @@ class view_component_dsp extends view_component {
       if ($this->id > 0) {
         $result .= dsp_form_end('', $back, "/http/view_component_del.php?id=".$this->id."&back=".$back);
       } else {
-        $result .= dsp_form_end('', $back);
+        $result .= dsp_form_end('', $back, '');
       }
     }  
 

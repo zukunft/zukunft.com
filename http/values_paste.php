@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$link = zu_start("values_paste", "", $debug);
+$db_con = zu_start("values_paste", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -60,8 +60,8 @@ $link = zu_start("values_paste", "", $debug);
     // get the linked words from url
     $wrd_pos  = 1;
     $wrd_ids  = array(); // suggested word for the new value that the user can change
-    $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word; if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
-    $db_ids   = array(); // database id of the link to indentify link updates
+    $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word; if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
+    $db_ids   = array(); // database id of the link to identify link updates
     while (isset($_GET['word'.$wrd_pos])) {
       $wrd_ids[] = $_GET['word'.$wrd_pos];
       if (isset($_GET['type'.$wrd_pos])) {
@@ -97,7 +97,7 @@ $link = zu_start("values_paste", "", $debug);
       if ($val_id > 0) {
         // save the source
         if ($src_id > 0) {
-          zuvs_db_add($val_id, $src_id, $usr->id, $debug-1);
+          zuv_db_add($val_id, $src_id, $usr->id, $debug-1);
           zuu_set_source ($usr->id, $src_id, $debug-1);
         }
       } else {
@@ -116,5 +116,4 @@ $link = zu_start("values_paste", "", $debug);
 
   echo $result;
 
-zu_end($link, $debug);
-?>
+zu_end($db_con, $debug);
