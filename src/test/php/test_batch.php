@@ -31,11 +31,7 @@ function run_batch_job_test ($debug) {
   global $usr;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the batch job class (classes/batch_job.php)</h2><br>";
+  test_header('Test the batch job class (classes/batch_job.php)');
 
   // prepare test adding a batch job via a list
   $phr_lst = New phrase_list;
@@ -69,14 +65,9 @@ function run_batch_job_test ($debug) {
 function run_batch_job_list_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the batch job list class (classes/batch_job_list.php)</h2><br>";
+  test_header('Test the batch job list class (classes/batch_job_list.php)');
 
   // prepare test adding a batch job via a list
   $frm = load_formula(TF_INCREASE, $debug-1);
@@ -96,11 +87,11 @@ function run_batch_job_list_test ($debug) {
   $calc_request->usr     = $usr;
   $calc_request->phr_lst = $phr_lst;
   $result = $job_lst->add($calc_request, $debug-1);
+  // todo review
+  $target = 0;
   if ($result > 0) {
     $target = $result;
   }  
   $exe_start_time = test_show_result(', batch_job->add has number "'.$result.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
-  }
-
-?>
+}

@@ -56,7 +56,7 @@ class phrase_group {
   public $wrd_lst      = NULL;    // the word list object
   public $lnk_lst      = NULL;    // the triple (word_link) object 
   
-  private function reset($debug) {
+  private function reset() {
     $this->id           = NULL;
     $this->grp_name     = '';
     $this->auto_name    = '';
@@ -179,7 +179,7 @@ class phrase_group {
         } else {
           $this->phr_lst = $phr_lst;
         }
-        zu_debug('phrase_group->set_lnk_lst got '.$this->lnk_lst->name($debug-1), $debug-18);
+        zu_debug('phrase_group->set_lnk_lst got '.$this->lnk_lst->name(), $debug-18);
         zu_debug('phrase_group->set_wrd_lst got phrase '.$this->phr_lst->name($debug-1), $debug-18);
       }
     }  
@@ -638,11 +638,11 @@ class phrase_group {
   */
 
   // return best possible id for this element mainly used for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = '';
     
-    if ($this->name($debug-1) <> '') {
-      $result .= '"'.$this->name($debug-1).'" ('.$this->id.')';
+    if ($this->name(0) <> '') {
+      $result .= '"'.$this->name(0).'" ('.$this->id.')';
     } else {
       $result .= $this->id;
     }

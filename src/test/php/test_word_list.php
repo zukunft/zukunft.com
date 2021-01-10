@@ -34,8 +34,8 @@ function run_word_list_test ($debug) {
 
   global $usr;
   global $exe_start_time;
-  
-  echo "<br><br><h2>Test the word list class (classes/word_list.php)</h2><br>";
+
+  test_header('Test the word list class (classes/word_list.php)');
 
   // test load by word list by names
   $wrd_lst = New word_list;
@@ -95,7 +95,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->load($debug-1);
   $wrd_lst->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
   $ABB = load_word(TW_ABB, $debug-1);
-  $result = $wrd_lst->does_contain($ABB, $debug-1);
+  $result = $wrd_lst->does_contain($ABB);
   $target = true; 
   $exe_start_time = test_show_result(', word_list->foaf_children is "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -106,7 +106,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->load($debug-1);
   $wrd_lst->children(cl(SQL_LINK_TYPE_IS), 1,$debug-1);
   $ABB = load_word(TW_ABB, $debug-1);
-  $result = $wrd_lst->does_contain($ABB, $debug-1);
+  $result = $wrd_lst->does_contain($ABB);
   $target = true; 
   $exe_start_time = test_show_result(', word_list->children is "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_display_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the view_display class (classes/view_display.php)</h2><br>";
+  test_header('Test the view_display class (classes/view_display.php)');
 
   // test the usage of a view to create the HTML code
   $wrd     = load_word(TEST_WORD, $debug-1);
@@ -51,7 +46,7 @@ function run_display_test ($debug) {
 
 
 
-  echo "<br><br><h2>Test the view component display class (classes/view_component_dsp.php)</h2><br>";
+  test_header('Test the view component display class (classes/view_component_dsp.php)');
 
   // test if a simple text component can be created
   $cmp = new view_component_dsp;
@@ -64,7 +59,7 @@ function run_display_test ($debug) {
 
 
 
-  echo "<br><br><h2>Test the display button class (classes/display_button.php )</h2><br>";
+  test_header('Test the display button class (classes/display_button.php )');
 
   $target = '<a href="/http/view.php" title="Add test"><img src="../../../images/button_add.svg" alt="Add test"></a>';
   $target = '<a href="/http/view.php" title="Add test">';
@@ -102,7 +97,7 @@ function run_display_test ($debug) {
   $exe_start_time = test_show_result(", btn_back", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  echo "<br><br><h2>Test the display HTML class (classes/display_html.php )</h2><br>";
+  test_header('Test the display HTML class (classes/display_html.php )');
 
   $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../style/style.css" /> </head> <body class="center_form">'));
   $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
@@ -110,7 +105,7 @@ function run_display_test ($debug) {
   $exe_start_time = test_show_contains(", dsp_header", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  echo "<br><br><h2>Test general frontend scripts (e.g. /about.php)</h2><br>";
+  test_header('Test general frontend scripts (e.g. /about.php)');
 
   // check if the about page contains at least some basic keywords
   $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');

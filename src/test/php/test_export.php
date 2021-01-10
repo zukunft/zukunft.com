@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_export_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the xml export class (classes/xml.php)</h2><br>";
+  test_header('Test the xml export class (classes/xml.php)');
 
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
@@ -48,8 +43,8 @@ function run_export_test ($debug) {
   $result = $xml_export->export($debug-1);
   $target = 'Company has a balance sheet';
   $exe_start_time = test_show_contains(', xml->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
-  
-  echo "<br><br><h2>Test the json export class (classes/json.php)</h2><br>";
+
+  test_header('Test the json export class (classes/json.php)');
 
   $json_export = New json_io;
   $json_export->usr     = $usr;
@@ -59,5 +54,3 @@ function run_export_test ($debug) {
   $exe_start_time = test_show_contains(', json->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
   
 }
-
-?>

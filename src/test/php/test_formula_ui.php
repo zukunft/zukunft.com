@@ -28,15 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function run_formula_ui_test ($debug) {
 
-  global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the formula frontend scripts (e.g. /formula_add.php)</h2><br>";
+  test_header('Test the formula frontend scripts (e.g. /formula_add.php)');
 
   // call the add formula page and check if at least some keywords are returned
   $frm = load_formula(TF_INCREASE, $debug-1);
@@ -57,5 +51,3 @@ function run_formula_ui_test ($debug) {
   $exe_start_time = test_show_contains(', frontend formula_del.php '.$result.' contains at least '.$frm->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
 }
-
-?>

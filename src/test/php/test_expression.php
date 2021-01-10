@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_expression_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the expression class (classes/expression.php)</h2><br>";
+  test_header('Test the expression class (src/main/php/model/formula/expression.php)');
 
   $back = '';
 
@@ -67,10 +62,10 @@ function run_expression_test ($debug) {
 
   // test the expression processing of the user readable part
   $target = '"percent"';
-  $result = $exp->fv_part_usr ($debug-1);
+  $result = $exp->fv_part_usr ();
   $exe_start_time = test_show_result(', expression->fv_part_usr for "'.$frm->usr_text.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG); // ??? why???
   $target = '( "this" - "prior" ) / "prior"';
-  $result = $exp->r_part_usr ($debug-1);
+  $result = $exp->r_part_usr ();
   $exe_start_time = test_show_result(', expression->r_part_usr for "'.$frm->usr_text.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $target = 'true';
   $result = zu_dsp_bool($exp->has_ref ($debug-1));
@@ -84,10 +79,10 @@ function run_expression_test ($debug) {
   $exp_db->ref_text = '{t19} = ( is.numeric( {f3} ) & is.numeric( {f5} ) ) ( {f3} - {f5} ) / {f5}';
   $exp_db->usr = $usr;
   $target = '{t19}';
-  $result = $exp_db->fv_part ($debug-1);
+  $result = $exp_db->fv_part ();
   $exe_start_time = test_show_result(', expression->fv_part_usr for "'.$exp_db->ref_text.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $target = '( is.numeric( {f3} ) & is.numeric( {f5} ) ) ( {f3} - {f5} ) / {f5}';
-  $result = $exp_db->r_part ($debug-1);
+  $result = $exp_db->r_part ();
   $exe_start_time = test_show_result(', expression->r_part_usr for "'.$exp_db->ref_text.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';
   $result = $exp_db->get_usr_text ($debug-1);
@@ -132,10 +127,8 @@ function run_expression_test ($debug) {
 
   // test getting for special phrases the related formula 
   $frm_lst = $exp->element_special_following_frm ($back, $debug-1);
-  $result = $frm_lst->name ($debug-1);
+  $result = $frm_lst->name ();
   $target = 'this,prior';
   $exe_start_time = test_show_result(', expression->element_special_following_frm for "'.$exp->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
 
 }
-
-?>

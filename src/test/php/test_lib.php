@@ -26,17 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_lib_test_old ($debug) {
+function run_lib_test_old () {
 
-  global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the basic zukunft functions (zu_lib.php)</h2><br>";
+  test_header('Test the basic zukunft functions (zu_lib.php)');
 
   echo "<h3>strings</h3><br>";
   // test zu_str_left
@@ -105,5 +99,3 @@ function run_lib_test_old ($debug) {
   $exe_start_time = test_show_result(", zu_str_between: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

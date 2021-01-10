@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_ref_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  dsp_test_header ('Test the ref class (classes/ref.php)');
+  dsp_test_header ('Test the ref class (src/main/php/model/ref/ref.php)');
 
   // load by phrase and type
   $wrd_abb = load_word(TW_ABB, $debug-1);
@@ -51,7 +46,7 @@ function run_ref_test ($debug) {
   $exe_start_time = test_show_result(', ref->load "'.TW_ABB.'" in '.TRT_WIKIDATA, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
   
   if ($ref->id > 0) {
-    // load by id and test the loadinf of the objects
+    // load by id and test the loading of the objects
     $ref2 = New ref;
     $ref2->usr = $usr;
     $ref2->id  = $ref->id;
@@ -65,5 +60,3 @@ function run_ref_test ($debug) {
   }
 
 }
-
-?>

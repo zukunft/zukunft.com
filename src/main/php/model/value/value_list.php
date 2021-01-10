@@ -819,7 +819,7 @@ class value_list {
 
     $commen_phr_lst = $commen_phr_lst->phrase_lst($debug-1); 
     
-    // to review probably wrong call from /var/www/default/classes/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
+    // to review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
     if (get_class($this->phr) == 'word' or get_class($this->phr) == 'word_dsp') {
       $this->phr = $this->phr->phrase($debug-1);
     }

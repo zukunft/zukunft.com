@@ -34,11 +34,11 @@ function create_base_phrases ($debug) {
   echo "<br><br>";
 
   echo "<h2>Check if all base phrases are correct</h2><br>";
-  test_phrase(TP_ZH_INS);
+  test_phrase(TP_ZH_INS, $debug - 1);
   echo "<br><br>";
 }
 
-function create_base_times ($debug) {
+function create_base_times () {
   echo "<h2>Check if all base word links are correct</h2><br>";
   zu_test_time_setup();
   echo "<br><br>";
@@ -49,7 +49,7 @@ function run_phrase_test ($debug) {
   global $usr;
   global $exe_start_time;
 
-  echo "<br><br><h2>Test the phrase class (classes/phrase.php)</h2><br>";
+  test_header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
   // prepare the Insurance Zurich
   $wrd_zh     = load_word(TW_ZH, $debug-1);
@@ -74,7 +74,7 @@ function run_phrase_test ($debug) {
   $exe_start_time = test_show_result(', phrase->load word by id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $result = str_replace("  "," ",str_replace("\n","",$phr->dsp_tbl($debug-1)));
-  $target = ' <td> <a href="/http/view.php?words=1" title="">'.TEST_WORD.'</a> </td> ';
+  $target = ' <td> <a href="/http/view.php?words=1" title="">' .TEST_WORD.'</a> </td> ';
   $result = str_replace("<","&lt;",str_replace(">","&gt;",$result));
   $target = str_replace("<","&lt;",str_replace(">","&gt;",$target));
   // to overwrite any special char
@@ -91,7 +91,7 @@ function run_phrase_test ($debug) {
   $exe_start_time = test_show_result(', phrase->load triple by id '.$zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $result = str_replace("  "," ",str_replace("\n","",$phr->dsp_tbl($debug-1)));
-  $target = ' <td> <a href="/http/view.php?link=313" title="'.TP_ZH_INS.'">'.TP_ZH_INS.'</a> </td> ';
+  $target = ' <td> <a href="/http/view.php?link=313" title="' .TP_ZH_INS.'">'.TP_ZH_INS.'</a> </td> ';
   $result = str_replace("<","&lt;",str_replace(">","&gt;",$result));
   $target = str_replace("<","&lt;",str_replace(">","&gt;",$target));
   // to overwrite any special char
@@ -132,5 +132,3 @@ function run_phrase_test ($debug) {
   $exe_start_time = test_show_result(', phrase->is_mainly for '.$phr->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

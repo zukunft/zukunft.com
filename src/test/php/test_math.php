@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_math_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the internal math function (which should be replaced by RESTful R-Project call)</h2><br>";
+  test_header('Test the internal math function (which should be replaced by RESTful R-Project call)');
 
 
   // calculate the target price for nestle: 
@@ -47,7 +42,7 @@ function run_math_test ($debug) {
 
 
 
-  // test zuc_has_braket
+  // test zuc_has_bracket
   $math_text = "(-10744--10744)/-10744";
   $target = 0;
   $result = zuc_math_parse($math_text, array(), Null, $debug);
@@ -66,39 +61,39 @@ function run_math_test ($debug) {
   // test zuc_is_text_only 
   $formula = "\"this is just a text\"";
   $target = true;
-  $result = zuc_is_text_only($formula);
+  $result = zuc_is_text_only($formula, $debug);
   $exe_start_time = test_show_result(", zuc_is_text_only: a text like ".$formula, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // test zuc_pos_seperator 
+  // test zuc_pos_separator
   $formula = "1+(2-1)";
-  $seperator = "+";
+  $separator = "+";
   $target = 1;
-  $result = zuc_pos_seperator($formula, $seperator);
-  $exe_start_time = test_show_result(", zuc_pos_seperator: seperator ".$seperator." is in ".$formula." at ", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = zuc_pos_seperator($formula, $separator, 0, $debug);
+  $exe_start_time = test_show_result(", zuc_pos_separator: separator ".$separator." is in ".$formula." at ", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // test zuc_has_braket
+  // test zuc_has_bracket
   $math_text = "(2 - 1) * 2";
   $target = true;
-  $result = zuc_has_braket($math_text);
-  $exe_start_time = test_show_result(", zuc_has_braket: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = zuc_has_braket($math_text, $debug);
+  $exe_start_time = test_show_result(", zuc_has_bracket: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_has_formula
   $formula = "{f4} / {f5}";
   $target = true;
-  $result = zuc_has_formula($formula, ZUP_RESULT_TYPE_VALUE, 0);
+  $result = zuc_has_formula($formula, $debug-1);
   $exe_start_time = test_show_result(", zuc_has_formula: the result for formula \"".$formula."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_is_date
   $date_text = "01.02.2013";
   $target = true;
-  $result = zuc_is_date($date_text);
+  $result = zuc_is_date($date_text, $debug);
   $exe_start_time = test_show_result(", zuc_is_date: the result for \"".$date_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   // test zuc_pos_word
   $formula_text = "{t6}";
   $target = "0";
-  $result = zuc_pos_word($formula_text);
+  $result = zuc_pos_word($formula_text, $debug);
   $exe_start_time = test_show_result(", zuc_pos_word: the result for formula \"".$formula_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zut_keep_only_specific
@@ -112,35 +107,42 @@ function run_math_test ($debug) {
   $exe_start_time = test_show_result(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   */
 
+  $time_phr = load_word(TW_2020, $debug-1);
 
   // test zuc_math_bracket
   $math_text = "(3 - 1) * 2";
   $target = "2 * 2";
-  $result = zuc_math_bracket($math_text, array(), 0, 0);
+  $result = zuc_math_bracket($math_text, array(), $time_phr, 0);
   $exe_start_time = test_show_result(", zuc_math_bracket: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_math_parse
   $math_text = "3 - 1";
   $target = 2;
-  $result = zuc_math_parse($math_text, ZUP_RESULT_TYPE_VALUE);
+  $result = zuc_math_parse($math_text, ZUP_RESULT_TYPE_VALUE, $time_phr, $debug);
   $exe_start_time = test_show_result(", zuc_math_parse: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_math_parse
   $math_text = "2 * 2";
   $target = 4;
-  $result = zuc_math_parse($math_text, ZUP_RESULT_TYPE_VALUE);
+  $result = zuc_math_parse($math_text, ZUP_RESULT_TYPE_VALUE, $time_phr, $debug);
   $exe_start_time = test_show_result(", zuc_math_parse: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_is_math_symbol_or_num
   $formula_part_text = "/{f19}";
+  $wrd_lst = New word_list;
+  $wrd_lst->usr = $usr;
+  $wrd_lst->add_name(TW_ABB);
+  $wrd_lst->add_name(TW_SALES);
+  $wrd_lst->add_name(TW_MIO);
+  $wrd_lst->load($debug-1);
   $target = 1;
-  $result = zuc_is_math_symbol_or_num($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuc_is_math_symbol_or_num($formula_part_text, $debug);
   $exe_start_time = test_show_result(", zuc_is_math_symbol_or_num: the result for formula \"".$formula_part_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_get_math_symbol
   $formula_part_text = "/{f19}";
   $target = "/";
-  $result = zuc_get_math_symbol($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuc_get_math_symbol($formula_part_text, $debug);
   $exe_start_time = test_show_result(", zuc_get_math_symbol: the result for formula \"".$formula_part_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
@@ -189,11 +191,9 @@ function run_math_test ($debug) {
   */
 
 
-  echo "Calculate value update ...<br>";
+  test_header('Calculate value update ...');
 
   /*$val_ids_upd = array(348);
   zuc_upd_val_lst($val_ids_upd, 14, $debug); */
 
 }
-
-?>

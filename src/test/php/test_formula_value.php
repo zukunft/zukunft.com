@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_formula_value_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the formula value class (classes/formula_value.php)</h2><br>";
+  test_header('Test the formula value class (classes/formula_value.php)');
 
   // test load result without time
   $phr_lst = New phrase_list;
@@ -58,6 +53,7 @@ function run_formula_value_test ($debug) {
   } else {
     $result = 'no '.TW_SALES.' '.TF_INCREASE.' value found for '.TW_ABB;
   }
+  // todo review
   //$result = $abb_up->phr_grp_id;
   $target = '-0.046588314872749';
   $target = '';
@@ -74,7 +70,7 @@ function run_formula_value_test ($debug) {
     $abb_up->time_id = $time_phr->id;
     //$abb_up->wrd_lst = $phr_lst;
     $abb_up->usr = $usr;
-    $abb_up->usr_id = $usr->id; // temp solution until the value is save automatically for all users
+    $abb_up->usr->id = $usr->id; // temp solution until the value is saved automatically for all users
     $abb_up->load($debug-1);
     $result = $abb_up->value;
   } else {
@@ -147,25 +143,19 @@ function run_formula_value_test ($debug) {
 function run_formula_value_list_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
+  test_header('Test the formula value list class (classes/formula_value_list.php)');
 
-  echo "<br><br><h2>Test the formula value list class (classes/formula_value_list.php)</h2><br>";
-
-  $frm = load_formula(TF_PE, $debug-1);
+  // todo add PE frm test
+  //$frm = load_formula(TF_PE, $debug-1);
   $frm = load_formula(TF_INCREASE, $debug-1);
   $fv_lst = New formula_value_list;
   $fv_lst->frm_id = $frm->id;
   $fv_lst->usr = $usr;
-  $fv_lst->load($debug-1);
-  $result = $fv_lst->dsp_id();
+  $fv_lst->load();
+  $result = $fv_lst->dsp_id($debug-1);
   $target = '"Sales","percent","increase","'.TW_ADD_RENAMED.'","2017"';
   $exe_start_time = test_show_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
 }
-
-?>

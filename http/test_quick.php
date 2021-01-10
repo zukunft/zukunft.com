@@ -41,7 +41,7 @@ if ($usr->id > 0) {
   if ($usr->is_admin($debug)) {
 
     // load the testing functions
-    include_once '../classes/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
+    include_once '../src/test/php/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
 
     // ---------------
     // prepare testing

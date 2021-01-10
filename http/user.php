@@ -129,40 +129,54 @@ $db_con = zu_start("user", "", $debug);
     }
     
     $result .= $dsp->dsp_navbar($back, $debug-1);
-    $result .= $dsp_usr->dsp_edit($debug-1);
+    $result .= $dsp_usr->dsp_edit($back, $debug-1);
 
     // allow to import data
     if ($usr->can_import($debug-1)) {
+      $result .= dsp_text_h2('<br>Data import<br>');
       $result .= dsp_text_h3('<br>Import <a href="/http/import.php">JSON</a><br>');
+      $result .= dsp_text_h3('<br>');
     }
-    
-    // display the user sandbox if there is something in
+
+      // allow admins to test the system consistence
+      if ($usr->is_admin($debug-1)) {
+        $result .= dsp_text_h2('<br>System testing<br>');
+        $result .= dsp_text_h3('<br>Perform all unit <a href="/http/test.php">tests</a><br>');
+        $result .= dsp_text_h3('<br>Perform critical unit and integration <a href="/http/test_quick.php">tests</a><br>');
+        $result .= dsp_text_h3('<br>');
+      }
+
+      // display the user sandbox if there is something in
     $sandbox = $dsp_usr->dsp_sandbox ($back, $debug-1);
     if (trim($sandbox) <> "") {
-      $result .= dsp_text_h3("Your changes, which are not standard");
+      $result .= dsp_text_h2("Your changes, which are not standard");
       $result .= $sandbox;
+      $result .= dsp_text_h3('<br>');
     }
 
     // display the user changes 
     $changes = $dsp_usr->dsp_changes (0, SQL_ROW_LIMIT, 1, $back, $debug-1)  ;
     if (trim($changes) <> "") {
-      $result .= dsp_text_h3("Your latest changes");
+      $result .= dsp_text_h2("Your latest changes");
       $result .= $changes;
+      $result .= dsp_text_h3('<br>');
     }
 
     // display the program issues that the user has found if there are some
     $errors = $dsp_usr->dsp_errors  ("", SQL_ROW_LIMIT, 1, $back, $debug-1);
     if (trim($errors) <> "") {
-      $result .= dsp_text_h3("Program issues that you found, that have not yet been solved.");
+      $result .= dsp_text_h2("Program issues that you found, that have not yet been solved.");
       $result .= $errors;
+      $result .= dsp_text_h3('<br>');
     }
     
     // display all program issues if the user is an admin
     if ($usr->profile_id == cl(SQL_USER_ADMIN)) {
       $errors_all = $dsp_usr->dsp_errors  ("other", SQL_ROW_LIMIT, 1, $back, $debug-1);
       if (trim($errors_all) <> "") {
-        $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
+        $result .= dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
         $result .= $errors_all;
+        $result .= dsp_text_h3('<br>');
       }
     }
 

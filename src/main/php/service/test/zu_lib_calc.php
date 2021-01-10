@@ -425,7 +425,7 @@ function zuc_frm_val ($formula, $word_array, $time_word_id, $user_id, $debug) {
   // get any addition words if needed
   if ($part_r <> "") {
     zu_debug("zuc_frm_val -> r part " . $part_r.".", $debug);
-    $new_word_id = zuf_2num_get_word($r_part, $debug-1);
+    $new_word_id = zuf_2num_get_word($part_r, $debug-1);
     if ($new_word_id > 0) {
       // seperate words from right part and add the words to the word array 
       $words_to_add = zu_str_left_of($part_r, ZUP_CHAR_WORDS_END);

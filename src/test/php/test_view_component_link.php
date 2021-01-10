@@ -32,11 +32,7 @@ function run_view_component_link_test ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the view component link class (classes/view_component_link.php)</h2><br>";
+  test_header('Test the view component link class (classes/view_component_link.php)');
   
   // prepare testing by creating the view and components needed for testing
   $dsp = get_view          (TM_ADD_RENAMED, $debug-1);
@@ -72,7 +68,7 @@ function run_view_component_link_test ($debug) {
   $target = true; 
   $exe_start_time = test_show_result(', view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // ... check if the value update has been triggert
+  // ... check if the value update has been triggered
 
   // if second user removes the new link
   $cmp = load_view_component_usr(TC_ADD_RENAMED, $usr2, $debug-1);
@@ -103,7 +99,7 @@ function run_view_component_link_test ($debug) {
   $exe_start_time = test_show_result(', view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr2->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  // ... check if the value update for the second user has been triggert
+  // ... check if the value update for the second user has been triggered
 
   // ... check if the link is still used for the first user
   $cmp = load_view_component(TC_ADD_RENAMED, $debug-1);
@@ -268,12 +264,10 @@ function run_view_component_link_test ($debug) {
   // unlink the second component
   $result = $cmp2->unlink($dsp, $debug-1);
   $target = '111';
-  $exe_start_time = test_show_result(', view component_link->unlink again seconde component "'.$dsp->name.'" from "'.$cmp2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result(', view component_link->unlink again second component "'.$dsp->name.'" from "'.$cmp2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
   
 
   // the code changes and tests for view component link should be moved the view_component_link
 
 
 }
-
-?>

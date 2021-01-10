@@ -199,7 +199,7 @@ class value_list_dsp extends value_list {
               if ($sub_wrd->id > 0) {
                 $add_phr_lst->add($sub_wrd->phrase($debug-1), $debug-1);
                 $add_phr_ids[] = $sub_wrd->id;
-                $type_ids[] = $type_word_id;
+                $type_ids[] = $sub_wrd->id; // todo check if it should not be $type_word_id
               }  
               // if values for just one column are added, the column head word id is already in the commen id list and due to that does not need to be added
               if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id > 0) {

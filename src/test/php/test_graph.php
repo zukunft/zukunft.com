@@ -29,14 +29,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_graph_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the graph class (classes/word_link_list.php)</h2><br>";
+  $back = 0;
+
+  test_header('Test the graph class (classes/word_link_list.php)');
 
   // get all phrase links used for a phrase and its related values 
   // e.g. for the phrase "Company" the link "Company has a balance sheet" should be returned
@@ -69,7 +66,7 @@ function run_graph_test ($debug) {
   $lnk_lst->wrd_lst   = $phr_lst_used;
   $lnk_lst->direction = 'up';
   $lnk_lst->load($debug-1);
-  $result = $lnk_lst->name($debug-1);
+  $result = $lnk_lst->name();
   // check if at least the basic relations are in the database
   $target = ''.TEST_WORD.' has a balance sheet';
   test_show_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
@@ -90,7 +87,7 @@ function run_graph_test ($debug) {
   $lnk_lst->wrd_lst   = $phr_lst;
   $lnk_lst->direction = 'up';
   $lnk_lst->load($debug-1);
-  $result = $lnk_lst->name($debug-1);
+  $result = $lnk_lst->name();
   // to be reviewed
   //$target = 'ABB (Company),million (scaling)';
   $target = 'Sales is part of cash flow statement';
@@ -126,5 +123,3 @@ function run_graph_test ($debug) {
   $exe_start_time = test_show_result(', graph->load for ABB up is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

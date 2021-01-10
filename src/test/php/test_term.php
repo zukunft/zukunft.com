@@ -26,55 +26,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_term_test ($debug) {
+function run_term_test ($debug)
+{
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the term class (classes/term.php)</h2><br>";
+  test_header('est the term class (classes/term.php)');
 
   // check that adding the predefined word "Company" creates an error message
-  $term = New term;
-  $term->name= TEST_WORD;
+  $term = new term;
+  $term->name = TEST_WORD;
   $term->usr = $usr;
-  $term->load($debug-1);
-  $target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
-  $result = $term->id_used_msg($debug-1);
-  $exe_start_time = test_show_contains(', term->load for id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $term->load($debug - 1);
+  $target = 'A word with the name "' . TEST_WORD . '" already exists. Please use another name.';
+  $result = $term->id_used_msg($debug - 1);
+  $exe_start_time = test_show_contains(', term->load for id ' . TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check also for a triple
-  $term = New term;
-  $term->name= 'Zurich ('.TW_CITY.')';
+  $term = new term;
+  $term->name = 'Zurich (' . TW_CITY . ')';
   $term->usr = $usr;
-  $term->load($debug-1);
-  $target = 'A triple with the name "Zurich ('.TW_CITY.')" already exists. Please use another name.';
-  $result = $term->id_used_msg($debug-1);
-  $exe_start_time = test_show_contains(', term->load for id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $term->load($debug - 1);
+  $target = 'A triple with the name "Zurich (' . TW_CITY . ')" already exists. Please use another name.';
+  $result = $term->id_used_msg($debug - 1);
+  $exe_start_time = test_show_contains(', term->load for id ' . TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check also for a verb
-  $term = New term;
-  $term->name= 'is a';
+  $term = new term;
+  $term->name = 'is a';
   $term->usr = $usr;
-  $term->load($debug-1);
+  $term->load($debug - 1);
   $target = 'A verb with the name "is a" already exists. Please use another name.';
-  $result = $term->id_used_msg($debug-1);
-  $exe_start_time = test_show_contains(', term->load for id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = $term->id_used_msg($debug - 1);
+  $exe_start_time = test_show_contains(', term->load for id ' . TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check also for a formula
-  $term = New term;
-  $term->name= TF_INCREASE;
+  $term = new term;
+  $term->name = TF_INCREASE;
   $term->usr = $usr;
-  $term->load($debug-1);
+  $term->load($debug - 1);
   // each formula name has also a word
   $target = 'A formula with the name "increase" already exists. Please use another name.';
-  $result = $term->id_used_msg($debug-1);
-  $exe_start_time = test_show_contains(', term->load for id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = $term->id_used_msg($debug - 1);
+  $exe_start_time = test_show_contains(', term->load for id ' . TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

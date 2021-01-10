@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_source_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the source class (classes/source.php)</h2><br>";
+  test_header('Test the source class (src/main/php/model/ref/source.php)');
 
   $src = New source;
   $src->id = TS_NESN_2016_ID;
@@ -47,5 +42,3 @@ function run_source_test ($debug) {
   $exe_start_time = test_show_result(', source->load of ID "'.TS_NESN_2016_ID.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
 
 }
-
-?>

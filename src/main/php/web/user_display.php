@@ -33,7 +33,7 @@ class user_dsp extends user {
 
   // display a form with the user parameters such as name or email
   // add back here ???
-  function dsp_edit ($debug) {
+  function dsp_edit ($back, $debug) {
     zu_debug('user_dsp->dsp_edit(u'.$this->id.')', $debug-10);
     $result = ''; // reset the html code var
 
@@ -47,7 +47,7 @@ class user_dsp extends user {
     $result .= '<tr><td>first name</td><td> <input type="text"   name="fname" value="'.$this->first_name.'"></td></tr>';
     $result .= '<tr><td>last name </td><td> <input type="text"   name="lname" value="'.$this->last_name.'"></td></tr>';
     $result .= dsp_tbl_end ();
-    $result .= dsp_form_end();
+    $result .= dsp_form_end('', $back, $debug-1);
     
     zu_debug('user_dsp->dsp_edit -> done', $debug-1);
     return $result;
@@ -1227,8 +1227,4 @@ class user_dsp extends user {
     return $result;
   }
 
-
-
 }
-
-?>

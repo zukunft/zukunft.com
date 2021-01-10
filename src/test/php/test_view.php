@@ -28,8 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function create_base_views ($debug) {
   echo "<h2>Check if all base views are exist</h2><br>";
-  test_view(TD_COMPLETE);
-  test_view(TD_COMPANY_LIST);
+  test_view(TD_COMPLETE, $debug-1);
+  test_view(TD_COMPANY_LIST, $debug-1);
   echo "<br><br>";
 }
 
@@ -38,12 +38,10 @@ function run_view_test ($debug) {
   global $usr;
   global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the view class (classes/view.php)</h2><br>";
+  $back = 0;
+
+  test_header('Test the view class (classes/view.php)');
 
   // test the creation and changing of a view
 
@@ -110,7 +108,7 @@ function run_view_test ($debug) {
   $dsp->name = TM_ADD;
   $dsp->usr = $usr;
   $result = $dsp->save($debug-1);
-  $target = 'A view with the name "'.TM_ADD.'" already exists. Please use another name.'; // is this error messsage really needed???
+  $target = 'A view with the name "'.TM_ADD.'" already exists. Please use another name.'; // is this error message really needed???
   $target = '1';
   $exe_start_time = test_show_result(', view->save adding "'.$dsp->name.'" again', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
@@ -242,5 +240,3 @@ function run_view_test ($debug) {
   // check if the user specific changes can be removed with one click
 
 }
-
-?>

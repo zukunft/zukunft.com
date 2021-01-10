@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_phrase_group_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the phrase group class (classes/phrase_group.php)</h2><br>";
+  test_header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
   // test getting the group id based on ids
   $wrd_lst = New word_list;
@@ -152,5 +147,3 @@ function run_phrase_group_test ($debug) {
   // test if the search links are correctly created
 
 }
-
-?>

@@ -29,14 +29,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_phrase_list_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
+  test_header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
-  echo "<br><br><h2>Test the phrase list class (classes/phrase_list.php)</h2><br>";
+  // prepare test by loading Insurance Zurich
+  $wrd_zh     = load_word(TW_ZH, $debug-1);
+  $lnk_company = New word_link;
+  $lnk_company->from_id = $wrd_zh->id;
+  $lnk_company->verb_id = cl(SQL_LINK_TYPE_IS);
+  $lnk_company->to_id   = TEST_WORD_ID;
+  $lnk_company->usr  = $usr;
+  $lnk_company->load($debug-1);
+  $triple_sample_id = $lnk_company->id;
 
   // test the phrase loading via id
   $wrd_lst = New word_list;
@@ -118,5 +123,3 @@ function run_phrase_list_test ($debug) {
   $exe_start_time = test_show_result(', phrase_list->ex_scaling of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

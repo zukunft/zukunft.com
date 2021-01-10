@@ -2,7 +2,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
 $db_con = zu_start("test_single", "", $debug);
@@ -18,7 +18,7 @@ $db_con = zu_start("test_single", "", $debug);
     } else {
 
       // load the testing functions
-      include_once '../classes/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
+      include_once '../src/test/php/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
 
       $start_time = microtime(true);
       $exe_start_time = $start_time;

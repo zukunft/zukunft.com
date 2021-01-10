@@ -34,14 +34,10 @@ function run_test_cleanup ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
   global $test_val_lst;
 
   // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
-  echo "<br><br><h2>Cleanup the test</h2><br>";
+  test_header('Cleanup the test');
 
   foreach ($test_val_lst AS $val_id) {
     if ($val_id > 0) {
@@ -198,7 +194,8 @@ function run_test_cleanup ($debug) {
 
   // for values
   $sql_max = 'SELECT MAX(value_id) AS max_id FROM `values`;';
-  $val_max_db = $db_con->get1($sql_max, $debug-1); 
+  $val_max_db = $db_con->get1($sql_max, $debug-1);
+  $next_id = 0;
   if ($val_max_db['max_id'] > 0) {
     $next_id = $val_max_db['max_id'] + 1;
     $sql = 'ALTER TABLE `values` auto_increment = '.$next_id.';';
@@ -269,5 +266,3 @@ function run_test_cleanup ($debug) {
   echo 'Next database id for view_component_links: '.$next_id.'<br>';
 
 }
-
-?>

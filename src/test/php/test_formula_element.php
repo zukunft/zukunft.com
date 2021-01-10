@@ -28,15 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function run_formula_element_test ($debug) {
 
-  global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the formula element class (classes/formula_element.php)</h2><br>";
+  $back = 0;
+  
+  test_header('Test the formula element class (classes/formula_element.php)');
 
   // load increase formula for testing
   $frm = load_formula(TF_SECTOR, $debug-1);
@@ -46,6 +42,7 @@ function run_formula_element_test ($debug) {
   if (isset($elm_lst)) {
     if (isset($elm_lst->lst)) {
       $pos = 0;
+      $target = '';
       foreach ($elm_lst->lst AS $elm) {
         $elm->load($debug-1);
         
@@ -102,15 +99,11 @@ function run_formula_element_test ($debug) {
 
 function run_formula_element_list_test ($debug) {
 
-  global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the formula element list class (classes/formula_element_list.php)</h2><br>";
+  $back = 0;
+
+  test_header('Test the formula element list class (classes/formula_element_list.php)');
 
   // load increase formula for testing
   $frm = load_formula(TF_SECTOR, $debug-1);
@@ -118,7 +111,7 @@ function run_formula_element_list_test ($debug) {
   $elm_lst = $exp->element_lst ($back, $debug-1);
 
   if (isset($elm_lst)) {
-    $result = $elm_lst->dsp_id();
+    $result = $elm_lst->dsp_id($debug-1);
     $target = 'Sales can be used as a differentiator for Sector Total Sales';
     $exe_start_time = test_show_contains(', formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   } else {
@@ -128,5 +121,3 @@ function run_formula_element_list_test ($debug) {
   }
 
 }
-
-?>

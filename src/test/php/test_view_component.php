@@ -32,11 +32,7 @@ function run_view_component_test ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the view component class (classes/view_component.php)</h2><br>";
+  test_header('Test the view component class (classes/view_component.php)');
   /*
   // test loading of one view_component
   $cmp = new view_component_dsp;
@@ -239,5 +235,3 @@ function run_view_component_test ($debug) {
   // check if the user specific changes can be removed with one click
 
 }
-
-?>

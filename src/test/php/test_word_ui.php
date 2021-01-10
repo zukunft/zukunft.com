@@ -33,14 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_word_ui_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the word frontend scripts (e.g. /word_add.php)</h2><br>";
+  test_header('Test the word frontend scripts (e.g. /word_add.php)');
 
   // call the add word page and check if at least some keywords are returned
   $wrd_ABB = New word_dsp;
@@ -63,7 +58,7 @@ function run_word_ui_test ($debug) {
   $target = TW_ABB;
   $exe_start_time = test_show_contains(', frontend word_del.php '.$result.' contains at least '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
-  echo "<br><br><h2>Test the display list class (classes/display_list.php)</h2><br>";
+  test_header('Test the display list class (classes/display_list.php)');
 
   // not yet used
   /*
@@ -82,5 +77,3 @@ function run_word_ui_test ($debug) {
   */
   
 }
-
-?>

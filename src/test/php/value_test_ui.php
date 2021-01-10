@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_value_ui_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the value frontend scripts (e.g. /value_add.php)</h2><br>";
+  test_header('Test the value frontend scripts (e.g. /value_add.php)');
 
   // prepare the frontend testing 
   $phr_lst_added = New phrase_list;
@@ -60,11 +55,12 @@ function run_value_ui_test ($debug) {
   $val_ABB->load($debug-1);
 
   // call the add value page and check if at least some basic keywords are returned
-  $result = file_get_contents('https://zukunft.com/http/value_add.php?back='.$back.$phr_lst_added->id_url_long().'');
+  $back = 0;
+  $result = file_get_contents('https://zukunft.com/http/value_add.php?back='.$back.$phr_lst_added->id_url_long($debug-1).'');
   $target = TW_ADD_RENAMED;
   $exe_start_time = test_show_contains(', frontend value_add.php '.$result.' contains at least '.TW_ADD_RENAMED, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
 
-  $result = file_get_contents('https://zukunft.com/http/value_add.php?back='.$back.$phr_lst_abb->id_url_long().'');
+  $result = file_get_contents('https://zukunft.com/http/value_add.php?back='.$back.$phr_lst_abb->id_url_long($debug-1).'');
   $target = TW_ABB;
   $exe_start_time = test_show_contains(', frontend value_add.php '.$result.' contains at least '.TW_ABB, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
 
@@ -87,7 +83,7 @@ function run_value_ui_test ($debug) {
   $exe_start_time = test_show_contains(', frontend value_del.php '.$result.' contains at least '.TW_ABB, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
 
-  echo "<br><br><h2>Test the value list class (classes/value_list.php)</h2><br>";
+  test_header('Test the value list class (classes/value_list.php)');
 
   // check the database consistency for all values
   $val_lst = New value_list;
@@ -128,7 +124,7 @@ function run_value_ui_test ($debug) {
   $wrd_2014->name = TW_2014;
   $wrd_2014->usr = $usr;
   $wrd_2014->load($debug-1);
-  if ($time_lst->does_contain($wrd_2014, $debug-1)) {
+  if ($time_lst->does_contain($wrd_2014)) {
     $result = true;
   } else {
     $result = false;
@@ -144,7 +140,7 @@ function run_value_ui_test ($debug) {
   $time_lst->load($debug-1);
   $used_value_lst = $val_lst->filter_by_time($time_lst, $debug-1);
   $used_time_lst = $used_value_lst->time_lst($debug-1);
-  if ($time_lst->does_contain($wrd_2014, $debug-1)) {
+  if ($time_lst->does_contain($wrd_2014)) {
     $result = true;
   } else {
     $result = false;
@@ -157,7 +153,7 @@ function run_value_ui_test ($debug) {
   $wrd_2016->name = TW_2016;
   $wrd_2016->usr = $usr;
   $wrd_2016->load($debug-1);
-  if ($time_lst->does_contain($wrd_2016, $debug-1)) {
+  if ($time_lst->does_contain($wrd_2016)) {
     $result = true;
   } else {
     $result = false;
@@ -200,7 +196,7 @@ function run_value_ui_test ($debug) {
   $exe_start_time = test_show_result(', value_list->filter_by_phrase_lst is '.$used_phr_lst->name().', but includes '.$wrd_power->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  echo "<br><br><h2>Test the value list display class (classes/value_list_display.php)</h2><br>";
+  test_header('Test the value list display class (classes/value_list_display.php)');
 
   // test the value table
   $wrd = New word_dsp;
@@ -221,7 +217,4 @@ function run_value_ui_test ($debug) {
   //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id, $debug-1);
   //$exe_start_time = test_show_result(', value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
-
 }
-
-?>

@@ -27,7 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 function create_base_words () {
-  echo "<br><br><h2>Check if all base words are correct</h2><br>";
+
+  test_header('Check if all base words are correct');
+
   test_word(TW_ABB);
   test_word(TW_DAN);
   test_word(TW_NESN);
@@ -64,8 +66,8 @@ function run_word_test ($debug) {
   global $usr;
   global $usr2;
   global $exe_start_time;
-  
-  echo "<br><br><h2>Test the word class (classes/word.php)</h2><br>";
+
+  test_header('Test the word class (classes/word.php)');
 
   // check the first predefined word "Company"
   // load by id
@@ -440,5 +442,3 @@ function run_word_test ($debug) {
   $wrd = New word;
 
 }
-
-?>

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
 $db_con = zu_start("start test.php", "", $debug-10);
 
 /*
@@ -248,7 +248,7 @@ autocomplete(document.getElementById("word_chars"), countries);
 </html>
 */
 // Free resultset
-mysql_free_result($result);
+mysql_free_result();
 
 // Closing connection
 zu_end($db_con, $debug);

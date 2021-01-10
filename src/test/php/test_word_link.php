@@ -36,11 +36,7 @@ function run_word_link_test ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the word link class (classes/word_link.php)</h2><br>";
+  test_header('Test the word link class (classes/word_link.php)');
 
   // check the triple usage for Zurich (City) and Zurich (Canton)
   $wrd_zh     = load_word(TW_ZH, $debug-1);
@@ -63,7 +59,7 @@ function run_word_link_test ($debug) {
 
   // ... now test the Canton Zurich using the name function
   $target = TW_ZH.' (Canton)';
-  $result = $lnk_canton->name($debug-1);
+  $result = $lnk_canton->name();
   $exe_start_time = test_show_result(', triple->load for Canton Zurich using the function', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... now test the Insurance Zurich
@@ -77,14 +73,9 @@ function run_word_link_test ($debug) {
   $result = $lnk_company->name;
   $exe_start_time = test_show_result(', triple->load for '.TP_ZH_INS.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $triple_sample_id = $lnk_company->id;
-
-  // remember the id for later use
-  $zh_company_id = $lnk_company->id;
-
   // ... now test the Insurance Zurich using the name function
   $target = TP_ZH_INS;
-  $result = $lnk_company->name($debug-1);
+  $result = $lnk_company->name();
   $exe_start_time = test_show_result(', triple->load for '.TP_ZH_INS.' using the function', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // link the added word to the test word
@@ -138,7 +129,7 @@ function run_word_link_test ($debug) {
   $target = ''.TW_ADD_RENAMED.' ('.TEST_WORD.')'; 
   $exe_start_time = test_show_result(', triple->load for user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // ... check if the value update has been triggert
+  // ... check if the value update has been triggered
 
   // if second user removes the new link
   $lnk = New word_link;
@@ -170,11 +161,11 @@ function run_word_link_test ($debug) {
   $lnk2->verb_id = $vrb->id;
   $lnk2->to_id   = $wrd->id;
   $lnk2->load($debug-1);
-  $result = $lnk2->name($debug-1);
+  $result = $lnk2->name();
   $target = ''; 
   $exe_start_time = test_show_result(', triple->load "'.$wrd_added->name.'" '.$vrb->name.' "'.$wrd->name.'" for user "'.$usr2->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
 
-  // ... check if the value update for the second user has been triggert
+  // ... check if the value update for the second user has been triggered
 
   // ... check all places where the word maybe used ...
 
@@ -250,5 +241,3 @@ function run_word_link_test ($debug) {
   // the code changes and tests for formula link should be moved the view_component_link
 
 }
-
-?>

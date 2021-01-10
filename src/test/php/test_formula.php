@@ -28,9 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function create_base_formulas ($debug) {
   echo "<h2>Check if all base formulas are correct</h2><br>";
-  test_formula(TF_SCALE_BIL);
-  test_formula(TF_SCALE_MIO);
-  test_formula(TF_SCALE_K);
+  test_formula(TF_SCALE_BIL, $debug);
+  test_formula(TF_SCALE_MIO, $debug);
+  test_formula(TF_SCALE_K, $debug);
   echo "<br><br>";
 }
 
@@ -40,11 +40,9 @@ function run_formula_test ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
+  test_header('Test the formula class (classes/formula.php)');
 
-  echo "<br><br><h2>Test the formula class (classes/formula.php)</h2><br>";
+  $back = 0;
 
   // test loading of one formula
   $frm = New formula;
@@ -61,14 +59,14 @@ function run_formula_test ($debug) {
   $exe_start_time = test_show_result(', formula->is_special for "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $exp = $frm->expression($debug-1);
-  $frm_lst = $exp->element_special_following_frm($debug-1);
+  $frm_lst = $exp->element_special_following_frm($back, $debug-1);
+  $phr_lst = New phrase_list;
   if (count($frm_lst->lst) > 0) {
     $elm_frm = $frm_lst->lst[0];
     $result = zu_dsp_bool($elm_frm->is_special($debug-1));
     $target = zu_dsp_bool(true);
     $exe_start_time = test_show_result(', formula->is_special for "'.$elm_frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
     
-    $phr_lst = New phrase_list;
     $phr_lst->usr = $usr;
     $phr_lst->add_name(TW_ABB);
     $phr_lst->add_name(TW_SALES);
@@ -187,7 +185,7 @@ function run_formula_test ($debug) {
   $target = '"percent" = ( <a href="/http/formula_edit.php?id=3&back=1">this</a> - <a href="/http/formula_edit.php?id=5&back=1">prior</a> ) / <a href="/http/formula_edit.php?id=5&back=1">prior</a>';
   $exe_start_time = test_show_result(', formula->dsp_text for '.$frm->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $result = $frm->name_linked($back, $debug-1);
+  $result = $frm->name_linked($back);
   $target = '<a href="/http/formula_edit.php?id=52&back=1">increase</a>';
   $exe_start_time = test_show_result(', formula->display for '.$frm->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -293,11 +291,9 @@ function run_formula_test ($debug) {
   $frm_renamed = New formula;
   $frm_renamed->name = TF_ADD_RENAMED;
   $frm_renamed->usr = $usr;
-  $result = $frm_renamed->load($debug-1);
-  if ($result == '') {
-    if ($frm_renamed->id > 0) {
-      $result = $frm_renamed->name;
-    }
+  $frm_renamed->load($debug-1);
+  if ($frm_renamed->id > 0) {
+    $result = $frm_renamed->name;
   }
   $target = TF_ADD_RENAMED;
   $exe_start_time = test_show_result(', formula->load renamed formula "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -467,14 +463,9 @@ function run_formula_test ($debug) {
 function run_formula_list_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the formula list class (classes/formula_list.php)</h2><br>";
+  test_header('est the formula list class (classes/formula_list.php)');
 
   $wrd = New word;
   $wrd->id = TEST_WORD_ID;
@@ -490,5 +481,3 @@ function run_formula_list_test ($debug) {
   $exe_start_time = test_show_contains(', formula_list->load formula for word "'.$wrd->dsp_id().'" should contain', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
 }
-
-?>

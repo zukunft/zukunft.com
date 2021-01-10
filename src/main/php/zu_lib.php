@@ -843,7 +843,7 @@ function zu_str_right_of($text, $maker) {
   return $result;
 }
 
-function zu_str_between($text, $maker_start, $maker_end, $debug) {
+function zu_str_between($text, $maker_start, $maker_end, $debug = 0) {
   zu_debug('zu_str_between "'.$text.'", start "'.$maker_start.'" end "'.$maker_end.'"', $debug-10);
   $result = '';
   $result = zu_str_right_of($text, $maker_start);

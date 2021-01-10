@@ -52,7 +52,7 @@ class formula_value_list {
 
   // load formula results from the database related to one formula or one word
   // similar to load of the formula_value object, but to load many results at once
-  function load ($limit, $debug) {
+  function load ($limit = SQL_ROW_LIMIT, $debug = 0) {
     zu_debug('formula_value_list->load', $debug-18);
 
     global $db_con;

@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_formula_trigger_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the formula calculation triggers</h2><br>";
+  test_header('Test the formula calculation triggers');
 
   // prepare the calculation trigger test
   $phr_lst1 = New phrase_list;
@@ -115,10 +110,8 @@ function run_formula_trigger_test ($debug) {
   $val_add2->del($debug-1);
 
   // change the second number and test if the result has been updated
-  // a second user changes the value back to the originalvalue and check if for the second number the result is updated
+  // a second user changes the value back to the original value and check if for the second number the result is updated
   // check if the result for the first user is not changed
   // the first user also changes back the value to the original value and now the values for both user should be the same
 
 }
-
-?>

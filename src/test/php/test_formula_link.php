@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_formula_links ($debug) {
+function create_base_formula_links () {
   echo "<h2>Check if all base formulas link correctly</h2><br>";
   test_formula_link(TF_SCALE_BIL, TW_BIL);
   test_formula_link(TF_SCALE_MIO, TW_MIO);
@@ -40,11 +40,7 @@ function run_formula_link_test ($debug) {
   global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the formula link class (classes/formula_link.php)</h2><br>";
+  test_header('Test the formula link class (classes/formula_link.php)');
 
   // link the test formula to another word
   $frm = load_formula(TF_ADD_RENAMED, $debug-1);
@@ -106,7 +102,7 @@ function run_formula_link_test ($debug) {
   $target = true; 
   $exe_start_time = test_show_result(', formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  // ... check if the value update has been triggert
+  // ... check if the value update has been triggered
 
   // if second user removes the new link
   $frm = New formula;
@@ -143,7 +139,7 @@ function run_formula_link_test ($debug) {
   $exe_start_time = test_show_result(', formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr2->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  // ... check if the value update for the second user has been triggert
+  // ... check if the value update for the second user has been triggered
 
   // ... check if the link is still used for the first user
   $frm = load_formula(TF_ADD_RENAMED, $debug-1);
@@ -208,14 +204,9 @@ function run_formula_link_test ($debug) {
 function run_formula_link_list_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the formula link list class (classes/formula_link_list.php)</h2><br>";
+  test_header('Test the formula link list class (classes/formula_link_list.php)');
 
   $frm = load_formula(TF_INCREASE, $debug-1);
   $frm_lnk_lst = New formula_link_list;
@@ -232,5 +223,3 @@ function run_formula_link_list_test ($debug) {
   $exe_start_time = test_show_contains(', formula_link_list->load phrase linked to '.$frm->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
 
 }
-
-?>

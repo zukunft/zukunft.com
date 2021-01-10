@@ -36,11 +36,11 @@ function run_permission_test ($debug) {
   global $timeout_counter;
   global $total_tests;
 
-  echo "<br><br><h2>Test the user permission level increase</h2><br>";
+  test_header('Test the user permission level increase');
 
   // if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
-  // if a user has added 3 values and at least one is accpected by another user, he can add words and formula and he must have a valid email
-  // if a user has added 2 formula and both are accpected by at least one other user and no one has complained, he can change formulas and words, including linking of words
+  // if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
+  // if a user has added 2 formula and both are accepted by at least one other user and no one has complained, he can change formulas and words, including linking of words
   // if a user has linked a 10 words and all got accepted by one other user and no one has complained, he can request new verbs and he must have an validated address
 
   // if a user got 10 pending word or formula discussion, he can no longer add words or formula until the open discussions are less than 10
@@ -50,5 +50,3 @@ function run_permission_test ($debug) {
   // the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
 
 }
-
-?>

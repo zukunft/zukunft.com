@@ -29,14 +29,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_formula_element_group_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
-  echo "<br><br><h2>Test the formula element group list class (classes/formula_element_group_list.php)</h2><br>";
+  $back = 0;
+
+  test_header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
   // load increase formula for testing
   $frm = load_formula(TF_INCREASE, $debug-1);
@@ -64,12 +61,12 @@ function run_formula_element_group_test ($debug) {
   // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
   $elm_grp_lst = $exp->element_grp_lst ($back, $debug-1);
 
-  $result = $elm_grp_lst->dsp_id();
+  $result = $elm_grp_lst->dsp_id($debug-1);
   $target = 'this / prior';
   $exe_start_time = test_show_contains(', formula_element_group_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  echo "<br><br><h2>Test the formula element group class (classes/formula_element_group.php)</h2><br>";
+  test_header('Test the formula element group class (classes/formula_element_group.php)');
 
   // define the element group object to retrieve the value
   if (count($elm_grp_lst->lst) > 0) {
@@ -104,8 +101,8 @@ function run_formula_element_group_test ($debug) {
     
     // remember the figure list for the figure and figure list class test
     $fig_lst = $elm_grp->figures($debug-1);
-    
-    echo "<br><br><h2>Test the figure class (classes/figure.php)</h2><br>";
+
+    test_header('Test the figure class (classes/figure.php)');
 
     // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
     $fig_count = 0;
@@ -131,9 +128,9 @@ function run_formula_element_group_test ($debug) {
       $target = 'this (3) and "ABB","Sales","CHF","million","2015"@';
       $exe_start_time = test_show_result(', formula_element_group->figures', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
     }
-    
 
-    echo "<br><br><h2>Test the figure list class (classes/figure_lst.php)</h2><br>";
+
+    test_header('Test the figure list class (classes/figure_lst.php)');
 
     $result = htmlspecialchars($fig_lst->dsp_id());
     $target = htmlspecialchars("<font class=\"user_specific\">35'481</font> (438)");
@@ -161,5 +158,3 @@ function run_formula_element_group_test ($debug) {
   }
 
 }
-
-?>

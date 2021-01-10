@@ -33,14 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_word_display_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the word display class (classes/word_display.php)</h2><br>";
+  test_header('Test the word display class (classes/word_display.php)');
 
   // check the graph display
   // test uses the old function zum_word_list to compare, so it is a kind of double coding
@@ -123,7 +118,6 @@ function run_word_display_test ($debug) {
   */
   $target = "ABB";
   $result = $wrd_ABB->dsp_val_list ($wrd_year, 0, $debug-1);
-  $result = $result;
   //$exe_start_time = test_show_result(', word_dsp->dsp_val_list compare to old for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
   $exe_start_time = test_show_contains(', word_dsp->dsp_val_list compare to old for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
@@ -145,7 +139,7 @@ function run_word_display_test ($debug) {
   */
 
 
-  echo "<br><br><h2>Test the display selector class (classes/display_selector.php)</h2><br>";
+  test_header('Test the display selector class (classes/display_selector.php)');
 
   // for testing the selector display a company selector and select ABB
   $phr_corp = load_phrase(TEST_WORD, $debug-1);
@@ -162,5 +156,3 @@ function run_word_display_test ($debug) {
   $exe_start_time = test_show_contains(', display_selector->display of all '.$phr_corp->name.' with '.$wrd_ABB->name.' selected', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

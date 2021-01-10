@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_import_test ($file_list, $debug) {
 
   global $exe_start_time;
-  
-  echo "<br><br><h2>Zukunft.com integration tests by importing the sample cases</h2><br>";
+
+  test_header('Zukunft.com integration tests by importing the sample cases');
 
   $import_path = PATH_TEST_IMPORT_FILES;
   

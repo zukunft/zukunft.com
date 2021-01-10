@@ -399,9 +399,9 @@ class expression {
   
   // list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
   function element_special_following ($back, $debug) {
+    $phr_lst = New phrase_list;
     $elm_lst = $this->element_lst_all(EXP_ELM_SELECT_ALL, FALSE, $back, $debug-1);
     if (!empty($elm_lst->lst)) {
-      $phr_lst = New phrase_list;
       $phr_lst->usr = $this->usr;
       foreach ($elm_lst->lst AS $elm) {
         if ($elm->frm_type == SQL_FORMULA_TYPE_THIS

@@ -36,7 +36,7 @@ function run_legacy_test ($debug) {
   global $timeout_counter;
   global $total_tests;
 
-  echo "<br><br><h2>Test sql base functions</h2><br>";
+  test_header('Test sql base functions');
 
   // test sf (Sql Formatting) function
   $text = "'4'";
@@ -67,7 +67,7 @@ function run_legacy_test ($debug) {
   echo "<h2>done</h2><br>";
   */
 
-  echo "<br><br><h2>Test calc functions</h2><br>";
+  test_header('Test calc functions');
 
 
   /*
@@ -210,7 +210,7 @@ function run_legacy_test ($debug) {
 
 
 
-  echo "<br><br><h2>Test link functions</h2><br>";
+  test_header('Test link functions');
 
   // test zul_name 
   $id = "2";
@@ -252,7 +252,7 @@ function run_legacy_test ($debug) {
   // word_list / word chain
   // word matrix
 
-  echo "<h2>Old test functions</h2><br>";
+  test_header('Old test functions');
 
   /*
 
@@ -267,7 +267,7 @@ function run_legacy_test ($debug) {
   */
 
   // load the database records used for testing
-  echo "<h2>check database records</h2><br>";
+  test_header('check database records');
 
     function test_show_db_id($test_text, $result) {
       if ($result > 0) {

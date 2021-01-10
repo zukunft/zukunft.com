@@ -26,17 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_db_link_test ($debug) {
+function run_db_link_test () {
 
-  global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test database link functions (zu_lib_sql_code_link.php)</h2><br>";
+  test_header('Test database link functions (zu_lib_sql_code_link.php)');
 
   // test zut_name 
   $id = DBL_SYSLOG_TBL_WORD;
@@ -45,5 +39,3 @@ function run_db_link_test ($debug) {
   $exe_start_time = test_show_result(", sql_code_link ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

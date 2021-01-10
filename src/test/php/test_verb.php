@@ -29,14 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_verb_test ($debug) {
 
   global $usr;
-  global $usr2;
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  echo "<br><br><h2>Test the verb class (classes/verb.php)</h2><br>";
+  test_header('Test the verb class (classes/verb.php)');
 
   // check the loading of the "is a" verb
   $vrb = New verb;
@@ -48,7 +43,7 @@ function run_verb_test ($debug) {
   $exe_start_time = test_show_result(', verb->load ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
-  echo "<br><br><h2>Test the verb list class (classes/verb_list.php)</h2><br>";
+  test_header('Test the verb list class (classes/verb_list.php)');
 
   // check the loading of the "is a" verb
   $wrd_ABB = load_word(TW_ABB, $debug-1);
@@ -64,5 +59,3 @@ function run_verb_test ($debug) {
   $exe_start_time = test_show_result(', verb_list->load ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }
-
-?>

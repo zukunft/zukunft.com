@@ -30,14 +30,9 @@ function run_value_test ($debug) {
 
   global $usr;
   global $usr2;
-  global $exe_start_time;
-  
+
   global $test_val_lst;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
   test_header('Test the value class (classes/value.php)');
   
   // prepare the unit tests and create all base objects if needed for the testing
@@ -101,11 +96,11 @@ function run_value_test ($debug) {
   $chk_val->ids = $chk_wrd_lst->ids;
   $chk_val->usr = $usr;
   $chk_val->load($debug-1);
+  $target = '';
   if ($chk_val->id <= 0) {
     $result = 'No value found for '.$chk_wrd_lst->dsp_id().'.';
     test_dsp(', value->check for value id "'.implode(",",$chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
   } else {
-    $target = '';
     $result = $chk_val->check($debug-1);
     test_dsp(', value->check for value id "'.implode(",",$chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -151,6 +146,7 @@ function run_value_test ($debug) {
   $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
   $wrd_lst->ex_time($debug-1);
   $grp = $wrd_lst->get_grp($debug-1);
+  $val = New value;
   $val->grp = $grp;
   $val->grp_id = $grp->id;
   $val->load($debug-1);
@@ -162,10 +158,11 @@ function run_value_test ($debug) {
       $result = implode(',',$val->wrd_lst->names($debug-1));
     }
   }
-  $target = implode(',',$wrd_lst->names($debug-1));
+  $target = implode(',',$wrd_lst->names());
   test_dsp(', value->load for group id "'.$grp->id.'"', $target, $result, TIMEOUT_LIMIT);
 
   // test load the word list object via word ids
+  $val = New value;
   $val->grp = 0;
   $val->wrd_ids = $wrd_lst->ids;
   $val->load($debug-1);
@@ -175,7 +172,7 @@ function run_value_test ($debug) {
       $result = implode(',',$val->wrd_lst->names($debug-1));
     }
   }
-  $target = implode(',',$wrd_lst->names($debug-1));
+  $target = implode(',',$wrd_lst->names());
   test_dsp(', value->load for ids '.implode(',',$wrd_lst->ids).'', $target, $result, TIMEOUT_LIMIT);
   
 
@@ -185,7 +182,7 @@ function run_value_test ($debug) {
   $pct_val->ids = $wrd_lst->ids;
   $pct_val->usr = $usr;
   $pct_val->load($debug-1);
-  $result = $pct_val->display($back, $debug-1);
+  $result = $pct_val->display(0, $debug-1);
   $target = TV_DAN_SALES_USA_2016;
   test_dsp(', value->val_formatted for a word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
 
@@ -212,12 +209,12 @@ function run_value_test ($debug) {
   $mio_val->load($debug-1);
   $fig = $mio_val->figure($debug-1);
   $result = $fig->display_linked('1', $debug-1);
-  $target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
+  $target = '';
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
   test_dsp(', value->figure->display_linked for word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
 
   // test the HTML code creation
-  $result = $mio_val->display($back, $debug-1);
+  $result = $mio_val->display(0, $debug-1);
   $target = number_format(TV_ABB_SALES_2014,0,DEFAULT_DEC_POINT,DEFAULT_THOUSAND_SEP);
   test_dsp(', value->display', $target, $result, TIMEOUT_LIMIT);
 
@@ -471,5 +468,3 @@ function run_value_test ($debug) {
 
 
 }
-
-?>
