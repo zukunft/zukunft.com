@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
+include_once '../src/main/php/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
 $db_con = zu_start("error_update", "", $debug);
 

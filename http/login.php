@@ -31,7 +31,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
 $db_con = zu_start("login", "center_form", $debug);
@@ -81,7 +81,7 @@ $db_con = zu_start("login", "center_form", $debug);
         //header("Location: ../view.php?sid=".SID.""); 
         exit; 
       } else {
-        $msg .= dsp_err ('Login failed. <a href="/http/login_reset.php" title="Send a new password via email.">Forgot password?</a>'); 
+        $msg .= dsp_err ('Login failed. <a href="/http/login_reset.php" title="Send a new password via email.">Forgot password?</a>');
       }  
     }  
   }  

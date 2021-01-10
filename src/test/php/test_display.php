@@ -66,30 +66,30 @@ function run_display_test ($debug) {
 
   echo "<br><br><h2>Test the display button class (classes/display_button.php )</h2><br>";
 
-  $target = '<a href="/http/view.php" title="Add test"><img src="../images/button_add.svg" alt="Add test"></a>';
+  $target = '<a href="/http/view.php" title="Add test"><img src="../../../images/button_add.svg" alt="Add test"></a>';
   $target = '<a href="/http/view.php" title="Add test">';
   $result = btn_add('Add test', '/http/view.php');
   $exe_start_time = test_show_contains(", btn_add", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $target = '<a href="/http/view.php" title="Edit test"><img src="../images/button_edit.svg" alt="Edit test"></a>';
+  $target = '<a href="/http/view.php" title="Edit test"><img src="../../../images/button_edit.svg" alt="Edit test"></a>';
   $target = '<a href="/http/view.php" title="Edit test">';
   $result = btn_edit('Edit test', '/http/view.php');
   $exe_start_time = test_show_contains(", btn_edit", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $target = '<a href="/http/view.php" title="Del test"><img src="../images/button_del.svg" alt="Del test"></a>';
+  $target = '<a href="/http/view.php" title="Del test"><img src="../../../images/button_del.svg" alt="Del test"></a>';
   $target = '<a href="/http/view.php" title="Del test">';
   $result = btn_del('Del test', '/http/view.php');
   $exe_start_time = test_show_contains(", btn_del", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $target = '<a href="/http/view.php" title="Undo test"><img src="../images/button_undo.svg" alt="Undo test"></a>';
+  $target = '<a href="/http/view.php" title="Undo test"><img src="../../../images/button_undo.svg" alt="Undo test"></a>';
   $result = btn_undo('Undo test', '/http/view.php');
   $exe_start_time = test_show_result(", btn_undo", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $target = '<a href="/http/view.php" title="Find test"><img src="../images/button_find.svg" alt="Find test"></a>';
+  $target = '<a href="/http/view.php" title="Find test"><img src="../../../images/button_find.svg" alt="Find test"></a>';
   $result = btn_find('Find test', '/http/view.php');
   $exe_start_time = test_show_result(", btn_find", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $target = '<a href="/http/view.php" title="Show all test"><img src="../images/button_filter_off.svg" alt="Show all test"></a>';
+  $target = '<a href="/http/view.php" title="Show all test"><img src="../../../images/button_filter_off.svg" alt="Show all test"></a>';
   $result = btn_unfilter('Show all test', '/http/view.php');
   $exe_start_time = test_show_result(", btn_unfilter", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -97,14 +97,14 @@ function run_display_test ($debug) {
   $result = btn_yesno('YesNo test', '/http/view.php');
   $exe_start_time = test_show_result(", btn_yesno", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-  $target = '<a href="/http/view.php?words=1" title="back"><img src="../images/button_back.svg" alt="back"></a>';
+  $target = '<a href="/http/view.php?words=1" title="back"><img src="../../../images/button_back.svg" alt="back"></a>';
   $result = btn_back('');
   $exe_start_time = test_show_result(", btn_back", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   echo "<br><br><h2>Test the display HTML class (classes/display_html.php )</h2><br>";
 
-  $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../style/style.css" /> </head> <body class="center_form">'));
+  $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../style/style.css" /> </head> <body class="center_form">'));
   $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
   $result = htmlspecialchars(trim(dsp_header('Header test', 'center_form')));
   $exe_start_time = test_show_contains(", dsp_header", $target, $result, $exe_start_time, TIMEOUT_LIMIT);

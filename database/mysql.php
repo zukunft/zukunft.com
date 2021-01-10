@@ -543,7 +543,7 @@ class mysql
 // insert a new record in the database
 // similar to exe, but returning the row id added to be able to update e.g. the log entry with the row id of the real row added
 // writing the changes to the log table for history rollback is done at the calling function also because zu_log also uses this function
-    function insert($fields, $values, $debug)
+    function insert($fields, $values, $debug = 0)
     {
         $sql = '';
         $this->set_table($debug - 1);

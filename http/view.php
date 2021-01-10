@@ -35,7 +35,7 @@
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
 $db_con = zu_start("view", "", $debug);

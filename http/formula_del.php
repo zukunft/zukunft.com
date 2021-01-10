@@ -30,7 +30,7 @@
 */
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 $db_con = zu_start("formula_del", "", $debug);
 

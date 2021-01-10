@@ -65,13 +65,13 @@ function dsp_header($title, $style) {
     // include the bootstrap JavaScript plugins
     $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap/4.1.3/js/bootstrap.js"></script>';
     // adjust the styles where needed
-    $result .= '  <link rel="stylesheet" type="text/css" href="../style/style_bs.css" />';
+    $result .= '  <link rel="stylesheet" type="text/css" href="../../../../style/style_bs.css" />';
     // load the icon font
     $result .= '  <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">';
     $result .= '  <script defer src="https://www.zukunft.com/lib_external/fontawesome/js/all.js"></script>';
   } else {
     // use a simple stylesheet without Javascript
-    $result .= '  <link rel="stylesheet" type="text/css" href="../style/style.css" />';
+    $result .= '  <link rel="stylesheet" type="text/css" href="../../../../style/style.css" />';
   }  
   $result .= '</head>';
   if (UI_USE_BOOTSTRAP) {
@@ -124,7 +124,7 @@ function dsp_logo() {
     $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">';
     $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 4em;">';
   } else {  
-    $result .= '<a href="/http/view.php" title="zukunft.com">'; 
+    $result .= '<a href="/http/view.php" title="zukunft.com">';
     $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 5em;">'; 
   }
   $result .= '</a>'; 
@@ -134,7 +134,7 @@ function dsp_logo() {
 // the increased zukunft.com logo to display it in the center
 function dsp_logo_big() {
   $result = '';
-  $result .= '<a href="/http/view.php" title="zukunft.com Logo">'; 
+  $result .= '<a href="/http/view.php" title="zukunft.com Logo">';
   $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;">'; 
   $result .= '</a>'; 
   return $result;

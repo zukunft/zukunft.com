@@ -1942,7 +1942,7 @@ return detect;
 *  The following code is a derivative work of some part of the SVGPathSeg API.
 *
 *  This API is a drop-in replacement for the SVGPathSeg and SVGPathSegList APIs that were removed from
-*  SVG2 (https://lists.w3.org/Archives/Public/www-svg/2015Jun/0044.html), including the latest spec
+*  SVG2 (https://lists.w3.org/Archives/http/www-svg/2015Jun/0044.html), including the latest spec
 *  changes which were implemented in Firefox 43 and Chrome 46.
 *
 *  @source https://github.com/progers/pathseg
@@ -2837,7 +2837,7 @@ return builder.pathSegList;
 *  The above code is a derivative work of some part of the SVGPathSeg API.
 *
 *  This API is a drop-in replacement for the SVGPathSeg and SVGPathSegList APIs that were removed from
-*  SVG2 (https://lists.w3.org/Archives/Public/www-svg/2015Jun/0044.html), including the latest spec
+*  SVG2 (https://lists.w3.org/Archives/http/www-svg/2015Jun/0044.html), including the latest spec
 *  changes which were implemented in Firefox 43 and Chrome 46.
 *
 *  @source https://github.com/progers/pathseg

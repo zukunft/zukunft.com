@@ -2,13 +2,13 @@
 
 /*
 
-  test_import.php - TESTing of the IMPORT functions by loading the sample import files
-  ---------------
+  import.php - IMPORT a json in the zukunft.com exchange format
+  ----------
   
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Zurich
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function import_file ($filename, $debug) {
+# import a single json file
+function import_json_file ($filename, $debug) {
   global $usr;
 
   $msg = '';
@@ -35,7 +36,7 @@ function import_file ($filename, $debug) {
   $import = New file_import;
   $import->usr      = $usr;
   $import->json_str = $json_str;
-  $import_result .= $import->put($debug-1);
+  $import_result = $import->put($debug-1);
   if ($import_result == '') {
     $msg .= ' done ('.$import->words_done.' words, '.$import->triples_done.' triples, '.$import->formulas_done.' formulas, '.$import->values_done.' sources, '.$import->sources_done.' values, '.$import->views_done.' views loaded)';
   } else {
@@ -44,28 +45,20 @@ function import_file ($filename, $debug) {
   return $msg;
 }
   
-function run_import_test ($file_list, $debug) {
+# import all zukunft.com base configuration json files
+function import_base_config ($debug) {
+  $import_path = '/src/main/resources/';
 
-  global $usr;
-  global $usr2;
-  global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
+  zu_debug('load base config', $debug -1 );
 
-  echo "<br><br><h2>Zukunft.com integration tests by importing the sample cases</h2><br>";
-
-  //import_file('../test_cases/personal_climate_gas_emissions_timon.json', $debug-1); 
-  
-  $import_path = '../test_cases/';
-  
-  foreach ($file_list AS $json_test_filename) {                               
-    $result = import_file($import_path.$json_test_filename, $debug-1); 
-    $target = 'done';
-    $exe_start_time = test_show_contains(', import of '.$json_test_filename.' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_IMPORT);
+  $file_list = unserialize (BASE_CONFIG_FILES);
+  foreach ($file_list AS $filename) {
+    $result = import_json_file($import_path . $filename, $debug - 1);
   }
-  
+
+  zu_debug('load base config ... done', $debug -1 );
+
+  return $result;
 }
 
 ?>

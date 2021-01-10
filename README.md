@@ -11,4 +11,4 @@ To install this version 0.0.1 use a LAMP server (https://wiki.debian.org/LaMp) a
 5) execute the script "zukunft_structure.sql" in MySQL to create the database zukunft_structure
 6) execute the script "zukunft_init_data.sql" in MySQL to fill the database with the code linked database rows
 7) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
-8) test if the installation is running fine by calling http://yourserver.com/test.php
+8) test if the installation is running fine by calling http://yourserver.com/http/test.php

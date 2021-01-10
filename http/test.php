@@ -122,7 +122,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../lib/zu_lib.php'; if ($debug > 1) { echo 'lib loaded<br>'; }
+include_once '../src/main/php/zu_lib.php'; if ($debug > 1) { echo 'lib loaded<br>'; }
 $db_con = zu_start("start test.php", "", $debug-10);
 
 // open database
@@ -137,7 +137,7 @@ if ($usr->id > 0) {
   if ($usr->is_admin($debug)) {
 
     // load the testing functions
-    include_once '../classes/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
+    include_once '../src/test/php/test_base.php'; if ($debug > 9) { echo 'test base loaded<br>'; }
 
     // ---------------
     // prepare testing
