@@ -85,5 +85,3 @@ class batch_job_list {
   }
   
 }
-
-?>

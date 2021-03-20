@@ -229,7 +229,7 @@ class batch_job {
 
     if (isset($this->frm)) {
       if (get_class($this->frm) == 'formula') {
-        $result .= $this->frm->name($debug);
+        $result .= $this->frm->name();
       } else {  
         $result .= get_class($this->frm).' '.$this->frm->name($debug);
       }  
@@ -245,5 +245,3 @@ class batch_job {
   }
 
 }
-
-?>

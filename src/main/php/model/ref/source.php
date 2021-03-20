@@ -173,7 +173,7 @@ class source {
   // create an object for the export
   function export_obj ($debug) {
     zu_debug('source->export_obj', $debug-10);
-    $result = Null;
+    $result = New source();
 
     // add the source parameters
     $result->name    = $this->name;

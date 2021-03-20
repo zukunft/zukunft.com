@@ -148,12 +148,10 @@ class system_error_log {
       $db_rec->id  = $this->id;
       $db_rec->usr = $this->usr;
       $db_rec->load($debug-1);
-      zu_debug("system_error_log->save -> database entry loaded (".$db_rec->name.")", $debug-14);
+      zu_debug("system_error_log->save -> database entry loaded", $debug-14);
 
       $result .= $this->save_field_status ($db_con, $db_rec, $debug-1);
-    }  
+    }
+    return $result;
   }
-    
 }
-
-?>

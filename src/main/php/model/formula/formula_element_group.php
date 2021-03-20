@@ -351,5 +351,3 @@ class formula_element_group {
   }  
 
 }
-
-?>

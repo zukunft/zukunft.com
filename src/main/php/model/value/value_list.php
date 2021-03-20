@@ -412,7 +412,7 @@ class value_list {
       if (isset($val_phr_lst)) {
         zu_debug('value_list->filter_by_phrase_lst val phrase list '.$val_phr_lst->name(), $debug-14);
       } else {
-        zu_debug('value_list->filter_by_phrase_lst val no value pharse list', $debug-14);
+        zu_debug('value_list->filter_by_phrase_lst val no value phrase list', $debug-14);
       }
       $found = false;
       foreach ($val_phr_lst->lst AS $phr) {
@@ -421,7 +421,7 @@ class value_list {
           if (isset($val_phr_lst)) {
             zu_debug('value_list->filter_by_phrase_lst val phrase list '.$val_phr_lst->name().' is found in '.$phr_lst->name(), $debug-14);
           } else {
-            zu_debug('value_list->filter_by_phrase_lst val found, but no value pharse list', $debug-14);
+            zu_debug('value_list->filter_by_phrase_lst val found, but no value phrase list', $debug-14);
           }  
           $found = true; // to make sure that each value is only added once; an improval could be to stop searching after a phrase is found
         }
@@ -719,7 +719,7 @@ class value_list {
       $commen_phr_lst->ids = $common_phr_ids;
       $commen_phr_lst->usr = $this->usr;
       $commen_phr_lst->load($debug-1); 
-      $result .= ' in ('.implode(",",$commen_phr_lst->names_linked()).')<br>';
+      $result .= ' in ('.implode(",",$commen_phr_lst->names_linked($debug)).')<br>';
     }
     
     // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern

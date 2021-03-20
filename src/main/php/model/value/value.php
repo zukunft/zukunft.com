@@ -44,8 +44,8 @@ class value extends user_sandbox_display {
 
   // database fields additional to the user sandbox fields for the value object
   public $number        = NULL; // simply the numeric value
-  public $source_id     = NULL; // the id of source where the value is comming from
-  public $grp_id        = NULL; // id of the group of pharses that are linked to this value for fast selections
+  public $source_id     = NULL; // the id of source where the value is coming from
+  public $grp_id        = NULL; // id of the group of phrases that are linked to this value for fast selections
   public $time_id       = NULL; // id of the main time period word for fast time seres creation selections
   public $time_stamp    = NULL; // the time stamp for this value (if this is set, the time wrd is supposed to be empty)
   public $last_update   = NULL; // the time of the last update of fields that may influence the calculated results
@@ -67,7 +67,7 @@ class value extends user_sandbox_display {
   public $source        = NULL; // the source object
 
   // field for user interaction
-  public $usr_value     = '';    // the raw value as the user has entered it including formatting chars such as the thousand seperator
+  public $usr_value     = '';    // the raw value as the user has entered it including formatting chars such as the thousand separator
   
   
   function __construct() {
@@ -162,7 +162,7 @@ class value extends user_sandbox_display {
   }
   
   // load the record from the database
-  // in a seperate function, because this can be called twice from the load function
+  // in a separate function, because this can be called twice from the load function
   function load_rec($sql_where, $debug) {
     global $db_con;
 
@@ -187,7 +187,7 @@ class value extends user_sandbox_display {
     zu_debug('value->load_rec -> sql "'.$sql.'"', $debug-18);      
     $db_val = $db_con->get1($sql, $debug-5);  
     if ($db_val['value_id'] <= 0) {
-      $this->reset($debug-1);
+      $this->reset();
     } else {
       $this->id            = $db_val['value_id'];
       $this->usr_cfg_id    = $db_val['user_value_id'];
@@ -225,7 +225,7 @@ class value extends user_sandbox_display {
           $sql_where  .= ' AND v.time_word_id = '.$this->time_id.' ';
         }
       } elseif ( !empty($this->ids) ) {
-        $result .= $this->set_grp_and_time_by_ids($debug-1);
+        $this->set_grp_and_time_by_ids($debug-1);
         if ($this->grp_id > 0) {
           $sql_where = 'v.phrase_group_id = '.$this->grp_id;
           if ($this->time_id > 0) {
@@ -237,7 +237,7 @@ class value extends user_sandbox_display {
         zu_err('Either the database ID ('.$this->id.'), the word group ('.$this->grp_id.') or the word list ('.implode(",",$this->ids).') and the user ('.$this->usr->id.') must be set to load a value.', 'value->load', '', (new Exception)->getTraceAsString(), $this->usr);
       }
 
-      // check if a valid indentification is given and load the result
+      // check if a valid identification is given and load the result
       if ($sql_where <> '') {
         zu_debug('value->load -> by "'.$sql_where.'"', $debug-16);      
         $this->load_rec($sql_where, $debug);
@@ -302,7 +302,8 @@ class value extends user_sandbox_display {
         }
       }
     }
-    zu_debug('value->load -> got '.$this->number.' with id '.$this->id, $debug-14);      
+    zu_debug('value->load -> got '.$this->number.' with id '.$this->id, $debug-14);
+    return $result;
   }
   
   // get the best matching value
@@ -326,7 +327,7 @@ class value extends user_sandbox_display {
         $grp_unscale = $phr_lst_unscaled->get_grp($debug-1);
         $this->grp_id = $grp_unscale->id;
         $this->load($debug-1);
-        // if not found try with coverted measure
+        // if not found try with converted measure
         if ($this->id <= 0) {
           // try to get a value with another measure 
           $phr_lst_converted = clone $phr_lst_unscaled;
@@ -401,7 +402,7 @@ class value extends user_sandbox_display {
     }
     
     if (isset($src)) {
-      zu_debug('value->load_source -> '.$src->dsp_id(), $debug-10);
+      zu_debug('value->load_source -> '.$src->dsp_id($debug-1), $debug-10);
     } else {
       zu_debug('value->load_source done', $debug-10);
     }
@@ -428,9 +429,9 @@ class value extends user_sandbox_display {
     // if a list object is missing
     if (!isset($this->wrd_lst) OR !isset($this->lnk_lst)) {
       if (isset($this->grp)) {
-        $this->set_lst_by_grp($debug-1);
+        $this->set_lst_by_grp();
         
-        // these if's are only needed for debuging to avoid accessing an unset object, which would cause a crash
+        // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
         if (isset($this->phr_lst)) {
           zu_debug('value->load_grp_by_id got '.$this->phr_lst->name($debug-1).' from group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
         }  
@@ -453,7 +454,7 @@ class value extends user_sandbox_display {
 
   // set the list objects based on the loaded phrase group
   // function to set depending objects based on loaded objects
-  function set_lst_by_grp($debug) {
+  function set_lst_by_grp() {
     if (isset($this->grp)) {
       $this->grp_id  = $this->grp->id;
       if (!isset($this->phr_lst)) { $this->phr_lst = $this->grp->phr_lst; }
@@ -522,6 +523,7 @@ class value extends user_sandbox_display {
     // 3. get the group based on the phrase list
     $result .= $this->set_grp_by_ids($debug-1);
     zu_debug('value->set_grp_and_time_by_ids "'.implode(",",$this->ids).'" to "'.$this->grp_id.'" and '.$this->time_id, $debug-16);
+    return $result;
   }
   
   // rebuild the phrase list based on the phrase ids
@@ -570,6 +572,7 @@ class value extends user_sandbox_display {
   // add set the time_id if needed
   function set_grp_by_ids($debug) {
     zu_debug('value->set_grp_by_ids for ids "'.implode(",",$this->ids).'" for "'.$this->usr->name.'"', $debug-16);
+    $result = '';
     if (!isset($this->grp)) {
       if (!empty($this->ids)) {
         $grp = New phrase_group;
@@ -579,7 +582,7 @@ class value extends user_sandbox_display {
         if ($grp->id > 0) {
           $this->grp    = $grp;
           $this->grp_id = $grp->id;
-          /* actuallay not needed
+          /* actually not needed
           $this->set_lst_by_grp($debug-1);
           if (isset($this->wrd_lst)) {
             zu_debug('value->set_grp_by_ids -> got '.$this->wrd_lst->name().' for '.implode(',',$this->ids).'', $debug-12);
@@ -589,12 +592,15 @@ class value extends user_sandbox_display {
       }
     }  
     zu_debug('value->set_grp_by_ids -> group set to id '.$this->grp_id, $debug-16);
+    return $result;
   }
 
   // exclude the time period word from the phrase list
   function set_phr_lst_ex_time($debug) {
     zu_debug('value->set_phr_lst_ex_time for "'.$this->phr_lst->name($debug-1).'" for "'.$this->usr->name.'"', $debug-16);
+    $result = '';
     $this->phr_lst->ex_time($debug);
+    return $result;
   }
 
   /*
@@ -696,7 +702,7 @@ class value extends user_sandbox_display {
     $this->load_phrases($debug-1);
     zu_debug('value->check phrases loaded', $debug-10);
     
-    // remove dublicate entries in value phrase link table
+    // remove duplicate entries in value phrase link table
     $result .= $this->upd_phr_links($debug-1);
   
     zu_debug('value->check done', $debug-18);
@@ -731,7 +737,7 @@ class value extends user_sandbox_display {
         // get any scaling words related to the value
         $scale_wrd_lst = $this->wrd_lst->scaling_lst($debug-1);
         if (count($scale_wrd_lst->lst) > 1) {
-          zu_warning('Only one scale word can be taken into account in the current version, but not a list like '.$this->scale_wrd_lst->name($debug-1).'.', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
+          zu_warning('Only one scale word can be taken into account in the current version, but not a list like '.$scale_wrd_lst->name($debug-1).'.', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
         } else {
           if (count($scale_wrd_lst->lst) == 1) {
             $scale_wrd = $scale_wrd_lst->lst[0]; 
@@ -766,12 +772,13 @@ class value extends user_sandbox_display {
                         zu_debug('value->scale -> replace ('.$wrd_symbol.' in '.$r_part.' with '.$this->number.')', $debug-1);
                         $r_part = str_replace($wrd_symbol,$this->number,$r_part);
                         zu_debug('value->scale -> replace done ('.$r_part.')', $debug-1);
-                        $result = zuc_math_parse($r_part, $value_words, Null, $debug-1);
+                        // todo separet time from value words
+                        $result = zuc_math_parse($r_part, $wrd_lst, Null, $debug-1);
                       } else {
-                        zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because the words are not defined as scaling words.');
+                        zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
                       }
                     } else {
-                      zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because only one word should be on both sides of the equation.');
+                      zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because only one word should be on both sides of the equation.', 'scale');
                     }
                   } 
                 }
@@ -793,7 +800,7 @@ class value extends user_sandbox_display {
   // create an object for the export
   function export_obj ($debug) {
     zu_debug('value->export_obj', $debug-10);
-    $result = Null;
+    $result = New value();
 
     // reload the value parameters
     $this->load($debug-10);
@@ -924,7 +931,7 @@ class value extends user_sandbox_display {
           if ($wrd->id == 0) {
             zu_err('Cannot add time word "'.$value.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
           } else {
-            $this->time_phr = $wrd->pharse($debug-1); 
+            $this->time_phr = $wrd->phrase($debug-1);
             $this->time_id  = $wrd->id; 
           }
         } else {         
@@ -1019,7 +1026,7 @@ class value extends user_sandbox_display {
     return $result;    
   }
 
-  // html code to show the value with the possibility to click for the result explaination
+  // html code to show the value with the possibility to click for the result explanation
   function display_linked($back, $debug) {
     $result = '';
 
@@ -1084,7 +1091,7 @@ class value extends user_sandbox_display {
   
   // convert a user entry for a value to a useful database number
   // e.g. remove leading spaces and tabulators
-  // if the value contains a single quote "'" the function asks once if to use it as a commy or a tausend operator
+  // if the value contains a single quote "'" the function asks once if to use it as a comma or a thousand operator
   // once the user has given an answer it saves the answer in the database and uses it for the next values
   // if the type of the value differs the user should be asked again
   function convert ($debug) {
@@ -1264,10 +1271,10 @@ class value extends user_sandbox_display {
         }
         // prepare a new value display
         $row_value = $db_row["word_value"];
-        $word_names = $wrd->dsp_link_style("grey");
+        $word_names = $wrd->dsp_link_style("grey", $debug);
         $value_id = $new_value_id;
       } else {
-        $word_names .= ", ".$wrd->dsp_link_style("grey");
+        $word_names .= ", ".$wrd->dsp_link_style("grey", $debug);
       }
     }
     // display the last row if there has been at least one word
@@ -1332,7 +1339,7 @@ class value extends user_sandbox_display {
       $result .= '  <input type="hidden" name="confirm" value="1">';
       
       // reset the phrase sample settings
-      $main_wrd == Null;
+      $main_wrd = Null;
       zu_debug("value->dsp_edit main wrd", $debug-10);
       
       // rebuild the value ids if needed 
@@ -1352,7 +1359,7 @@ class value extends user_sandbox_display {
       $phr_lst->usr = $this->usr;
       $phr_lst->load($debug-1);
       
-      // seperate the time if needed
+      // separate the time if needed
       if ($this->time_id <= 0) {
         $this->time_phr = $phr_lst->time_useful($debug-1);
         $phr_lst->del($this->time_phr, $debug-1);
@@ -1461,8 +1468,8 @@ class value extends user_sandbox_display {
               $url_pos++;
               
               $result .= '    </td>';
-              $result .= '    <td>'.btn_del  ("Remove ".$phr->name, $used_url, $debug-1).'</td>';
-              $result .= '    <td>'.btn_edit ("Rename ".$phr->name, $phrase_url, $debug-1).'</td>';
+              $result .= '    <td>'.btn_del  ("Remove ".$phr->name, $used_url).'</td>';
+              $result .= '    <td>'.btn_edit ("Rename ".$phr->name, $phrase_url).'</td>';
             }
           }
 
@@ -1479,8 +1486,8 @@ class value extends user_sandbox_display {
               $url_pos++;
               
               $result .= '    </td>';
-              $result .= '    <td>'.btn_del  ("Remove ".$phr->name, $used_url, $debug-1).'</td>';
-              $result .= '    <td>'.btn_edit ("Rename ".$phr->name, $phrase_url, $debug-1).'</td>';
+              $result .= '    <td>'.btn_del  ("Remove ".$phr->name, $used_url).'</td>';
+              $result .= '    <td>'.btn_edit ("Rename ".$phr->name, $phrase_url).'</td>';
             }
           }  
 
@@ -1502,7 +1509,7 @@ class value extends user_sandbox_display {
             $url_pos++;
             
             $result .= '    </td>';
-            $result .= '    <td>'.btn_del  ("Remove ".$this->time_phr->name, $used_url, $debug-1).'</td>';
+            $result .= '    <td>'.btn_del  ("Remove ".$this->time_phr->name, $used_url).'</td>';
           }
           $result .= '  </tr>';
         }  
@@ -1521,7 +1528,7 @@ class value extends user_sandbox_display {
           $url_pos++;
           
           $result .= '    </td>';
-          $result .= '    <td>'.btn_del  ("Remove new", $used_url, $debug-1).'</td>';
+          $result .= '    <td>'.btn_del  ("Remove new", $used_url).'</td>';
         }
         $result .= '  </tr>';
       }  
@@ -1545,7 +1552,7 @@ class value extends user_sandbox_display {
     } else {
       $result .= '  is <input type="text" name="value">';
     }
-    $result .= dsp_form_end("Save");
+    $result .= dsp_form_end("Save", $back);
     $result .= '<br><br>';
     zu_debug('value->dsp_edit -> load source', $debug-18);
     $src = $this->load_source($debug-1);
@@ -1618,7 +1625,7 @@ class value extends user_sandbox_display {
   
     Save functions
     
-    changer      - true if another user is using this record (value in theis case)
+    changer      - true if another user is using this record (value in this case)
     can_change   - true if the actual user is allowed to change the record
     log_add      - set the log object for adding a new record
     log_upd      - set the log object for changing this record
@@ -1740,7 +1747,7 @@ class value extends user_sandbox_display {
     global $db_con;
     $result = '';
 
-    if (!$this->has_usr_cfg) {
+    if (!$this->has_usr_cfg($debug)) {
       zu_debug('value->add_usr_cfg for "'.$this->id.' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
@@ -1765,7 +1772,7 @@ class value extends user_sandbox_display {
   }
 
   // check if the database record for the user specific settings can be removed 
-  // exposed at the moment to user_display.php for consistency check, but this hsould not be needed
+  // exposed at the moment to user_display.php for consistency check, but this should not be needed
   function del_usr_cfg_if_not_needed($debug) {
     zu_debug('value->del_usr_cfg_if_not_needed pre check for "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
@@ -1868,7 +1875,7 @@ class value extends user_sandbox_display {
   */
   
   // update the phrase links to the value based on the group and time for faster searching
-  // e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lins to all phrases to the value are in the database 
+  // e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
   //      to be able to search the value by a single phrase
   // to do: make it user specific!
   function upd_phr_links($debug) {
@@ -2369,7 +2376,7 @@ class value extends user_sandbox_display {
     //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;  
     if (isset($this->time_stamp)) {
-      $db_con->type = 'value_time_serie';         
+      $db_con->type = 'value_time_series';
     } else {  
       $db_con->type = 'value';         
     }
@@ -2476,5 +2483,3 @@ class value extends user_sandbox_display {
   */
   
 }
-
-?>

@@ -359,7 +359,7 @@ class view extends user_sandbox {
   // create an object for the export
   function export_obj ($debug) {
     zu_debug('view->export_obj '.$this->dsp_id(), $debug-10);
-    $result = Null;
+    $result = New view();
 
     // add the view parameters
     $result->name    = $this->name;

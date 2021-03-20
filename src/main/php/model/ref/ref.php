@@ -89,7 +89,7 @@ class ref {
         $db_con->usr_id = $this->usr->id;         
         $db_ref = $db_con->get1($sql, $debug-5);  
         if ($db_ref['ref_id'] <= 0) {
-          $this->reset($debug-1);
+          $this->reset();
         } else {
           $this->id           = $db_ref['ref_id'];
           $this->phr_id       = $db_ref['phrase_id'];
@@ -178,7 +178,7 @@ class ref {
   }
 
   // create the unique name
-  function name ($debug) {
+  function name () {
     $result = ''; 
 
     if (isset($this->phr)) {
@@ -372,9 +372,11 @@ class ref {
   }
   
   function del($debug) {
-    $result = '';
     zu_debug('ref->del '.$this->dsp_id(), $debug-10);
-    
+
+    global $db_con;
+    $result = '';
+
     $result .= $this->load($debug-18);
     if ($result <> '') {
       zu_warning('Reload of ref '.$this->dsp_id().' for deletion unexpectedly lead to '.$result.'.', 'ref->del');
@@ -393,5 +395,3 @@ class ref {
     return $result;    
   }
 }
-
-?>

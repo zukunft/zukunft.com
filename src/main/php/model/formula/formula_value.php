@@ -191,8 +191,8 @@ class formula_value {
               // get the best matching word group
               $phr_lst = New phrase_list;
               $phr_lst->usr = $this->usr;
-              $phr_lst->add($this->wrd->phrase($debug-1));
-              $phr_lst->add($this->frm->name_wrd->phrase($debug-1));
+              $phr_lst->add($this->wrd->phrase($debug-1), $debug-1);
+              $phr_lst->add($this->frm->name_wrd->phrase($debug-1), $debug-1);
               zu_debug('formula_value->load -> get group by words '.$phr_lst->name(), $debug-12);
             }
           }
@@ -211,6 +211,7 @@ class formula_value {
           zu_debug('formula_value->load group not found!', $debug-12);
         }
 
+        $sql_order = '';
         // include the source words in the search if requested
         if ($this->src_time_id > 0) {
           $sql_src_time = " source_time_word_id = ".$this->src_time_id." ";
@@ -530,14 +531,14 @@ class formula_value {
   }
   
   // update the source time word id based on the source time word object ($this->src_time_phr)
-  private function save_prepare_time_wrd_src($debug) {
+  private function save_prepare_time_wrd_src() {
     if (isset($this->src_time_phr)) {
       $this->src_time_id = $this->src_time_phr->id;
     }
   }
   
   // update the time word id based on the time word object ($this->time_phr)
-  private function save_prepare_time_wrd($debug) {
+  private function save_prepare_time_wrd() {
     if (isset($this->time_phr)) {
       $this->time_id = $this->time_phr->id;
     }
@@ -549,8 +550,8 @@ class formula_value {
     $this->save_prepare_phr_lst_src($debug-1);
     $this->save_prepare_phr_lst($debug-1);
     zu_debug("formula_value->save_prepare_wrds source done.", $debug-12);
-    $this->save_prepare_time_wrd_src($debug-1);
-    $this->save_prepare_time_wrd($debug-1);
+    $this->save_prepare_time_wrd_src();
+    $this->save_prepare_time_wrd();
     zu_debug("formula_value->save_prepare_wrds done.", $debug-12);
   }
   
@@ -584,7 +585,7 @@ class formula_value {
   }
   
   // create and return the figure object for the value
-  function figure($debug) {
+  function figure() {
     $fig = New figure;
     $fig->id          = $this->id;
     $fig->usr         = $this->usr;
@@ -654,12 +655,13 @@ class formula_value {
   
   // html code to show the value with the indication if the value is influence by the user input
   function display($back, $debug) {
+    $result = '';
     if (!is_null($this->value)) {
       $num_text = $this->val_formatted($debug-1);
       if ($this->owner_id > 0) {
-        $result = '<font class="user_specific">'.$num_text.'</font>'."\n";
+        $result .= '<font class="user_specific">'.$num_text.'</font>'."\n";
       } else {  
-        $result = $num_text."\n";
+        $result .= $num_text."\n";
       }  
     }
     return $result; 
@@ -667,6 +669,7 @@ class formula_value {
   
   // html code to show the value with the possibility to click for the result explanation
   function display_linked($back, $debug) {
+    $result = '';
     if (!is_null($this->value)) {
       $num_text = $this->val_formatted($debug-1);
       $link_format = '';
@@ -675,7 +678,7 @@ class formula_value {
       }
       // to review
       $lead_phr_id = $this->wrd_ids[0];
-      $result = '<a href="/http/formula_result.php?id='.$this->id.'&phrase='.$lead_phr_id.'&group='.$this->phr_grp_id.'&back='.$back.'"'.$link_format.'>'.$num_text.'</a>';
+      $result .= '<a href="/http/formula_result.php?id='.$this->id.'&phrase='.$lead_phr_id.'&group='.$this->phr_grp_id.'&back='.$back.'"'.$link_format.'>'.$num_text.'</a>';
     }
     return $result; 
   }
@@ -723,7 +726,7 @@ class formula_value {
     $frm->load($debug-1);
     $result .= ' based on</br>'.$frm->name_linked($back);
     $result .= ' '.$frm->dsp_text($back, $debug-1)."\n";
-    $result .= ' '.$frm->btn_edit($back, $debug-1)."\n";
+    $result .= ' '.$frm->btn_edit($back)."\n";
     $result .= '</br></br>'."\n";
 
     // load the formula element groups
@@ -815,7 +818,7 @@ class formula_value {
     }
     // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
     if (!empty($frm_ids)) {  
-      $sql = "SELECT formula_value_id,
+      $sql = "SELECT formula_value_id, formula_id
                 FROM formula_values 
                WHERE formula_id IN (".implode(",",$frm_ids).")
                  AND phrase_group_id = ".$this->phr_grp_id."
@@ -825,7 +828,7 @@ class formula_value {
       $db_con->usr_id = $this->usr->id;         
       $val_rows = $db_con->get($sql, $debug-5);  
       foreach ($val_rows AS $val_row) {
-        $frm_ids[] = $frm_row['formula_id'];
+        $frm_ids[] = $val_row['formula_id'];
         $fv_upd = New formula_value;
         $fv_upd->usr = $this->usr;
         $fv_upd->id = $val_row['formula_value_id'];
@@ -1045,5 +1048,3 @@ class formula_value {
 
   }
 }
-
-?>

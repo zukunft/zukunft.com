@@ -138,5 +138,3 @@ class formula_link_list {
   }
   
 }
-
-?>

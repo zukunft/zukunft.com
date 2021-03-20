@@ -470,5 +470,3 @@ class phrase_group_list {
   }
 
 }
-
-?>

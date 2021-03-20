@@ -193,7 +193,7 @@ class word_list {
             $new_word = New word_dsp;
             $new_word->id           = $db_wrd['word_id'];
             $new_word->usr          = $this->usr;
-            $new_word->owner        = $db_wrd['user_id'];
+            $new_word->owner_id     = $db_wrd['user_id'];
             $new_word->name         = $db_wrd['word_name'];
             $new_word->plural       = $db_wrd['plural'];
             $new_word->description  = $db_wrd['description'];
@@ -468,8 +468,8 @@ class word_list {
   // return best possible id for this element mainly used for debugging
   function dsp_id () {
     $id = $this->ids_txt();
-    if ($this->name(0) <> '""') {
-      $result = ''.$this->name(0).' ('.$id.')';
+    if ($this->name() <> '""') {
+      $result = ''.$this->name().' ('.$id.')';
     } else {
       $result = ''.$id.'';
     }
@@ -607,7 +607,6 @@ class word_list {
     $wrd->load($debug-1);
     $vrb = New verb;
     $vrb->id  = $verb_id;
-    $vrb->usr = $this->usr;
     $vrb->load($debug-1);
     $lnk_lst = New word_link_list;
     $lnk_lst->wrd       = $wrd;
@@ -1358,6 +1357,9 @@ class word_list {
   // get the best matching word group ()
   function get_grp ($debug) {
     zu_debug('word_list->get_grp', $debug-18);
+
+    $result = '';
+
     $grp = New phrase_group;
     if (isset($this->lst)) {
       if (count($this->lst) > 0) {
@@ -1397,5 +1399,3 @@ class word_list {
   }
 
 }
-
-?>

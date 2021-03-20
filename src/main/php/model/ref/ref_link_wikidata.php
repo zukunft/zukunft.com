@@ -51,9 +51,5 @@ class ref_link_wikidata {
     zu_debug('ref_link_wikidata->read ... done', $debug-12);
     return $result;    
   }
-  
 
-  
 }
-
-?>

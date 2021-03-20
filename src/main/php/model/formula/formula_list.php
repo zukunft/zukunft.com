@@ -204,5 +204,3 @@ class formula_list {
   }
 
 }
-
-?>

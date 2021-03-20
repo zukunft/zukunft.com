@@ -146,25 +146,33 @@ function run_value_test ($debug) {
   $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
   $wrd_lst->ex_time($debug-1);
   $grp = $wrd_lst->get_grp($debug-1);
-  $val = New value;
-  $val->grp = $grp;
-  $val->grp_id = $grp->id;
-  $val->load($debug-1);
-  $result = '';
-  if ($val->id <= 0) {
-    $result = 'No value found for '.$val->dsp_id().'.';
+  if ($grp->id == 0) {
+      $result = 'No word list found.';
+      $target = implode(',', $wrd_lst->names());
+      test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
   } else {
-    if (isset($val->wrd_lst)) {
-      $result = implode(',',$val->wrd_lst->names($debug-1));
-    }
+      $val = new value;
+      $val->grp = $grp;
+      $val->grp_id = $grp->id;
+      $val->usr = $usr;
+      $val->load($debug - 1);
+      $result = '';
+      if ($val->id <= 0) {
+          $result = 'No value found for ' . $val->dsp_id() . '.';
+      } else {
+          if (isset($val->wrd_lst)) {
+              $result = implode(',', $val->wrd_lst->names($debug - 1));
+          }
+      }
+      $target = implode(',', $wrd_lst->names());
+      test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
   }
-  $target = implode(',',$wrd_lst->names());
-  test_dsp(', value->load for group id "'.$grp->id.'"', $target, $result, TIMEOUT_LIMIT);
 
   // test load the word list object via word ids
   $val = New value;
   $val->grp = 0;
   $val->wrd_ids = $wrd_lst->ids;
+  $val->usr = $usr;
   $val->load($debug-1);
   $result = '';
   if ($val->id > 0) {

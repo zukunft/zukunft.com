@@ -104,5 +104,3 @@ class figure_list {
   }
   
 }
-
-?>

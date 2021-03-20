@@ -993,5 +993,3 @@ Create a new value if needed, but ask the user: abb sales of 46000, is still use
 
   
 }
-
-?>

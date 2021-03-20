@@ -158,7 +158,7 @@ class formula extends user_sandbox  {
       $db_con->usr_id = $this->usr->id;         
       $db_rec = $db_con->get1($sql, $debug-5);  
       if ($db_rec['formula_id'] <= 0) {
-        $this->reset($debug-1);
+        $this->reset();
       } else {
         $this->id           = $db_rec['formula_id'];
         $this->owner_id     = $db_rec['user_id'];
@@ -244,7 +244,7 @@ class formula extends user_sandbox  {
         $db_con->usr_id = $this->usr->id;         
         $db_frm = $db_con->get1($sql, $debug-5);  
         if ($db_frm['formula_id'] <= 0) {
-          $this->reset($debug-1);
+          $this->reset();
         } else {
           $this->id           = $db_frm['formula_id'];
           $this->usr_cfg_id   = $db_frm['user_formula_id'];
@@ -500,7 +500,7 @@ class formula extends user_sandbox  {
   // fill the formula in the reference format with numbers
   // to do: verbs
   function to_num($phr_lst, $back, $debug) {
-    zu_debug('get numbers for '.$this->name_linked($back, $debug-1).' and '.$phr_lst->name_linked(), $debug-4);
+    zu_debug('get numbers for '.$this->name_linked($back).' and '.$phr_lst->name_linked(), $debug-4);
     
     // check 
     if ($this->ref_text_r == '' AND $this->ref_text <> '') {
@@ -522,8 +522,8 @@ class formula extends user_sandbox  {
     $fv_lst = New formula_value_list;
     $fv_lst->usr = $this->usr;
     
-    // create a master formula value object to only need to fill it with the numbers in the coee below
-    $fv_init = New formula_value; // maybe move the contructor of formula_value_list?
+    // create a master formula value object to only need to fill it with the numbers in the code below
+    $fv_init = New formula_value; // maybe move the constructor of formula_value_list?
     $fv_init->usr = $this->usr;
     $fv_init->frm      = $this;
     $fv_init->frm_id   = $this->id;
@@ -584,8 +584,9 @@ class formula extends user_sandbox  {
         if (count($fv_lst->lst) == 0) {
           $fv_lst->lst[] = $fv_init;
         }
-        // if there is more than one number to fill replicate each previous result, so in fact it multiplicates the number of results
+        // if there is more than one number to fill replicate each previous result, so in fact it multiplies the number of results
         foreach ($fv_lst->lst AS $fv) {
+          $fv_master = clone $fv;
           $fig_nbr = 1;
           foreach ($fig_lst->lst AS $fig) {
             if ($fv->val_missing == False) {
@@ -617,7 +618,6 @@ class formula extends user_sandbox  {
                   $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
                   if ($fv->last_val_update < $fig->last_update) { $fv->last_val_update = $fig->last_update; }
                   zu_debug('formula->to_num -> one figure "'.$fig->number.'" for "'.$fig->symbol.'" in "'.$fv->num_text.'"', $debug-8);
-                  $fv_master = clone $fv;
                 } else {
                   // if the result has been the standard result until now 
                   if ($fv_master->is_std) {
@@ -677,20 +677,20 @@ class formula extends user_sandbox  {
       if ($fv->last_val_update < $this->last_update) { $fv->last_val_update = $this->last_update; }
       // calculate only if any parameter has been updated since last calculation
       if ($fv->num_text == '') {
-        // if num text is empty nothing needs to be done, but aktually this should never happen
+        // if num text is empty nothing needs to be done, but actually this should never happen
       } else {
         if ($fv->last_val_update > $fv->last_update) {
           // check if all needed value exist
           $can_calc = false;
           if ($this->need_all_val) {
-            zu_debug('calculate '.$this->name_linked($back, $debug-1).' only if all numbers are given', $debug-8);
+            zu_debug('calculate '.$this->name_linked($back).' only if all numbers are given', $debug-8);
             if ($fv->val_missing) {
-              zu_debug('got some numbers for '.$this->name_linked($back, $debug-1).' and '.implode(",",$fv->wrd_ids), $debug-2);
+              zu_debug('got some numbers for '.$this->name_linked($back).' and '.implode(",",$fv->wrd_ids), $debug-2);
             } else {
               if ($fv->is_std) {
-                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked($back, $debug-1).': '.$fv->num_text, $debug-2);
+                zu_debug('got all numbers for '.$this->name_linked($back).' and '.$fv->name_linked($back, $debug-1).': '.$fv->num_text, $debug-2);
               } else {
-                zu_debug('got all numbers for '.$this->name_linked($back, $debug-1).' and '.$fv->name_linked($back, $debug-1).': '.$fv->num_text.' (user specific)', $debug-2);
+                zu_debug('got all numbers for '.$this->name_linked($back).' and '.$fv->name_linked($back, $debug-1).': '.$fv->num_text.' (user specific)', $debug-2);
               }  
               $can_calc = true;
             }
@@ -702,7 +702,7 @@ class formula extends user_sandbox  {
             zu_debug('calculate '.$fv->num_text.' for '.$phr_lst_ex->dsp_id(), $debug-6);
             $fv->value = zuc_math_parse($fv->num_text, $phr_lst_ex->ids, $time_wrd->id, $debug-20);
             $fv->is_updated = true;
-            zu_debug('the calculated '.$this->name_linked($back, $debug-1).' is '.$fv->value.' for '.$fv->phr_lst->name_linked(), $debug-1);
+            zu_debug('the calculated '.$this->name_linked($back).' is '.$fv->value.' for '.$fv->phr_lst->name_linked(), $debug-1);
           }  
         }
       }
@@ -731,7 +731,7 @@ class formula extends user_sandbox  {
   // calculate the result for one formula for one user
   // and save the result in the database
   // the $phr_lst is the context for the value retrieval and it also contains any time words
-  // the time words are only seperated right before saving to the database
+  // the time words are only separated right before saving to the database
   // always returns an array of formula values
   // todo: check if calculation is really needed
   //       if one of the result words is a scaling word, remove all value scaling words
@@ -795,7 +795,7 @@ class formula extends user_sandbox  {
               zu_debug('formula->calc -> added words '.$fv_add_phr_lst->dsp_id().' to the result '.$fv->phr_lst->dsp_id(), $debug-14);
             }  
 
-            // make common assumtions on the word list    
+            // make common assumptions on the word list
             
             // apply general rules to the result words
             if (isset($fv_add_phr_lst)) {
@@ -815,7 +815,7 @@ class formula extends user_sandbox  {
                 $fv->phr_lst->ex_scaling($debug-1);
                 zu_debug('formula->calc -> scaling words removed from '.$fv->phr_lst->dsp_id(), $debug-9);
                 // maybe add the scaling word to the result words to remember based on which words the result has been created, 
-                // but probably this is not needed, because the source words are also savef
+                // but probably this is not needed, because the source words are also saved
                 //$scale_wrd_lst = $fv_add_wrd_lst->scaling_lst ($debug-1);
                 //$fv->phr_lst->merge($scale_wrd_lst->lst, $debug-1);
                 //zu_debug('formula->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$fv->phr_lst->names()).'"', $debug-8);
@@ -853,7 +853,7 @@ class formula extends user_sandbox  {
   // create an object for the export
   function export_obj ($debug) {
     zu_debug('formula->export_obj', $debug-10);
-    $result = Null;
+    $result = New formula();
 
     if ($this->name <> '')        { $result->name        = $this->name; }
     if ($this->usr_text <> '')    { $result->expression  = $this->usr_text; }
@@ -954,7 +954,7 @@ class formula extends user_sandbox  {
     return $result; 
   }
 
-  // allow the user to unlick a word
+  // allow the user to unlink a word
   function dsp_unlink_phr ($phr_id, $back, $debug) {
     zu_debug('formula->dsp_unlink_phr('.$phr_id.')', $debug-10);
     $result  = '    <td>'."\n";
@@ -1034,7 +1034,7 @@ class formula extends user_sandbox  {
       $result .= '  </tr>'."\n";
     }
 
-    // give the user the possibility to add a simular word
+    // give the user the possibility to add a similar word
     zu_debug("formula->dsp_used4words user", $debug-10);
     $result .= '  <tr>';
     $result .= '    <td>';
@@ -1132,10 +1132,11 @@ class formula extends user_sandbox  {
     $result .= dsp_form_fld ("formula_name", $this->name, "Formula name:", "col-sm-8");
     $result .= $this->dsp_type_selector($script, "col-sm-4", $debug);    
     $result .= '</div>';
-    $result .= dsp_form_fld ("description", $this->description, "Description:");
+    $result .= dsp_form_fld ("description", $this->description, "Description:", "col-sm-9");
     // predefined formulas like "this" or "next" should only be changed by an admin
-    if (!$this->is_special ($debug-1) OR $this->is_admin($debug-1)) {
-      $result .= dsp_form_fld ("formula_text", $resolved_text, "Expression:");
+    // todo check if formula user or login user should be used
+    if (!$this->is_special ($debug-1) OR $this->usr->is_admin($debug-1)) {
+      $result .= dsp_form_fld ("formula_text", $resolved_text, "Expression:", "col-sm-10");
     }
     $result .= dsp_form_fld_checkbox ("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
     $result .= '<br><br>';
@@ -1148,7 +1149,7 @@ class formula extends user_sandbox  {
       // list all words linked to the formula and allow to unlink or add new words
       $comp_html = $this->dsp_used4words ($add, $wrd, $back, $debug);
       // allow to test and refresh the formula and show some sample values
-      $nbrs_html = $this->dsp_test_and_samples ($back, $debug);
+      $numbers_html = $this->dsp_test_and_samples ($back, $debug);
       // display the user changes 
       $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back, $debug-1);
       if (trim($changes) <> "") {
@@ -1163,7 +1164,7 @@ class formula extends user_sandbox  {
         $link_html = 'No word have been added or removed yet.';
       }
       $result .= dsp_link_hist_box ('Usage',        $comp_html,
-                                    'Test',         $nbrs_html,
+                                    'Test',         $numbers_html,
                                     'Changes',      $hist_html,
                                     'Link changes', $link_html, $debug-1);
     }
@@ -1270,11 +1271,11 @@ class formula extends user_sandbox  {
 
     // read the elements from the formula text
     $elm_type_id = cl($element_type);
-    if ($element_type == SQL_FORMULA_PART_TYPE_WORD) {
-      $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id, $debug-1);
-    }
-    if ($element_type == SQL_FORMULA_PART_TYPE_FORMULA) {
-      $elm_ids = $this->frm_ids($frm_text, $frm_usr_id, $debug-1);
+    switch ($element_type) {
+      case SQL_FORMULA_PART_TYPE_FORMULA:
+        $elm_ids = $this->frm_ids($frm_text, $frm_usr_id, $debug-1); break;
+      default:
+        $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id, $debug-1); break;
     }
     zu_debug('formula->element_refresh_type -> got ('.implode(",",$elm_ids).') of type '.$element_type.' from text', $debug-16);
     
@@ -1429,8 +1430,7 @@ class formula extends user_sandbox  {
     zu_debug('formula->not_used ('.$this->id.')', $debug-10);
 
     global $db_con;
-    $result = true;
-    
+
     $result = $this->not_changed($debug-1);
 /*    $change_user_id = 0;
     $sql = "SELECT user_id 
@@ -1504,7 +1504,7 @@ class formula extends user_sandbox  {
     global $db_con;
     $result = false;
 
-    if (!$this->has_usr_cfg) {
+    if (!$this->has_usr_cfg($debug-1)) {
       zu_debug('formula->add_usr_cfg for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
@@ -1590,11 +1590,9 @@ class formula extends user_sandbox  {
     if ($this->id > 0 AND $this->usr->id > 0) {
       zu_debug('formula->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
-      $db_type = 'user_formula';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;         
+        $db_con->usr_id = $this->usr->id;
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
 
@@ -1687,6 +1685,7 @@ class formula extends user_sandbox  {
     zu_debug('formula->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'" with '.$result, $debug-18);
     
     // save the pending update to the database for the batch calculation
+    return $result;
   }
   
   // set the update parameters for the formula text as written by the user if needed
@@ -1739,7 +1738,7 @@ class formula extends user_sandbox  {
   }
   
   // set the update parameters for the formula type
-  // todo: save the refrence also in the log
+  // todo: save the reference also in the log
   function save_field_type($db_con, $db_rec, $std_rec, $debug) {
     $result = '';
     if ($db_rec->type_id <> $this->type_id) {
@@ -1846,7 +1845,7 @@ class formula extends user_sandbox  {
         
       } else {
         // create a new formula 
-        // and request the deleteion confirms for the old from all changers
+        // and request the deletion confirms for the old from all changers
         // ???? or update the user formula table 
       }
     }
@@ -1923,7 +1922,7 @@ class formula extends user_sandbox  {
             // .. and use it for the update
             $this->id = $db_chk->id;
             $this->owner_id = $db_chk->owner_id;
-            // force the reinclude
+            // force the include again
             $this->excluded = Null;
             $db_rec->excluded = '1';
             $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
@@ -2070,7 +2069,7 @@ class formula extends user_sandbox  {
   }
   
   // TODO user specific???
-  function del_links($db_con, $debug) {
+  function del_links($debug) {
     $result = '';
     $frm_lnk_lst = New formula_link_list;
     $frm_lnk_lst->usr = $this->usr;         
@@ -2081,5 +2080,3 @@ class formula extends user_sandbox  {
   }
   
 }
-
-?>

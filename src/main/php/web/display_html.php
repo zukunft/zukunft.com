@@ -401,7 +401,7 @@ function dsp_form_start ($form_name) {
 }
 
 // end a html form
-function dsp_form_end ($submit_name, $back, $del_call) {
+function dsp_form_end ($submit_name, $back, $del_call = '') {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     if ($submit_name == "") {
@@ -416,7 +416,7 @@ function dsp_form_end ($submit_name, $back, $del_call) {
         $result .= '<a href="'.$back.'" class="btn btn-outline-secondary btn-space" role="button">Cancel</a>';
       }
     }
-    if ($del_call <> "") {
+    if ($del_call <> '') {
       $result .= '<a href="'.$del_call.'" class="btn btn-outline-danger" role="button">delete</a>';
     }
   } else {  
@@ -477,7 +477,7 @@ function dsp_form_text_big ($field, $txt_value, $label, $class, $attribute) {
 }
 
 // add the field to a form
-function dsp_form_fld ($field, $txt_value, $label, $class, $attribute) {
+function dsp_form_fld ($field, $txt_value, $label, $class, $attribute = '') {
   $result = '';
   if ($label == '') {
     $label = $field;

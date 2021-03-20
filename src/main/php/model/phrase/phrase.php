@@ -89,11 +89,11 @@ class phrase {
           zu_debug('phrase->loaded formula '.$this->dsp_id().' by name', $debug-14);
         }
       } else {
-        if ($this->type == '') {
+        if ($this->type_name == '') {
           // TODO check that this is never used for an error detection
           //zu_err('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         } else {  
-          zu_err('"'.$this->name.'" has the type '.$this->type.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          zu_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         }
       }
     }
@@ -116,7 +116,7 @@ class phrase {
     } elseif ($this->id > 0) {
       $result = $this->obj;
     } else {
-      zu_err('"'.$this->name.'" has the type '.$this->type.' which is not expected for a phrase.', "phrase->main_word", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->main_word", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     zu_debug('phrase->main_word done '.$result->dsp_id(), $debug-14);
     return $result;
@@ -439,7 +439,7 @@ class phrase {
   function dsp_name_del ($del_call, $debug) {
     zu_debug('phrase->dsp_name_del', $debug-10);
     if ($this->id > 0) {
-      $result = $this->dsp_name_del($debug-1);
+      $result = $this->dsp_name_del($del_call, $debug-1);
     } else {
     }
     return $result;
@@ -511,5 +511,3 @@ class phrase {
   
   
 }
-
-?>

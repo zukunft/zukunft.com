@@ -83,5 +83,3 @@ class formula_element_list {
   }  
 
 }
-
-?>

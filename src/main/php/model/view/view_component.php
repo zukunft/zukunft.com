@@ -365,7 +365,7 @@ class view_component extends user_sandbox {
   // create an object for the export
   function export_obj ($debug) {
     zu_debug('view_component->export_obj '.$this->dsp_id(), $debug-10);
-    $result = Null;
+    $result = New view_component();
 
     // add the component parameters
     $this->load_phrases($debug-1);

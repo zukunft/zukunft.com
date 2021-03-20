@@ -34,19 +34,19 @@
 
 class user_sandbox {
 
-  // fields to define the object; should be set in the constructor of the chield object
+  // fields to define the object; should be set in the constructor of the child object
   public $obj_name          = '';   // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
   public $type              = '';   // either a "named" object or a "link" object
   public $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
   
-  // database fields that are used in all objects and that have a specific behavier
+  // database fields that are used in all objects and that have a specific behavior
   public $id                = NULL; // the database id of the object, which is the same for the standard and the user specific object
-  public $usr_cfg_id        = NULL; // the database id if there is alrady some user specific configuration for this object
+  public $usr_cfg_id        = NULL; // the database id if there is already some user specific configuration for this object
   public $usr               = NULL; // the person for whom the object is loaded, so to say the viewer
   public $owner_id          = NULL; // the user id of the person who created the object, which is the default object
   public $share_id          = NULL; // id for public, personal, group or private
   public $protection_id     = NULL; // id for no, user, admin or full protection
-  public $excluded          = NULL; // the user sandbox for object is implimented, but can be switched off for the complete instance 
+  public $excluded          = NULL; // the user sandbox for object is implemented, but can be switched off for the complete instance
                                     // but for calculation, use and display an excluded should not be used
 
   // only used for objects that have a name
@@ -61,7 +61,7 @@ class user_sandbox {
   public $from_name         = '';   // the name of the from object type e.g. view for view_component_links
   public $to_name           = '';   // the name of the  to  object type e.g. view for view_component_links
   
-  // to be overwritten by the chield object
+  // to be overwritten by the child object
   function __construct() {
     $this->type     = 'named';
   }
@@ -112,7 +112,7 @@ class user_sandbox {
   }
 
   // todo What should be returned?
-  function id_used_msg ($debug) {
+  function id_used_msg () {
     $result = '';
     $result .= $this->dsp_id();
     return $result;
@@ -309,7 +309,31 @@ class user_sandbox {
     zu_debug($this->obj_name.'->changer is '.$user_id, $debug-10);  
     return $user_id;
   }
-  
+
+  // a list of all user that have ever changed the object
+  function usr_lst($debug) {
+    zu_debug($this->obj_name.'->usr_lst '.$this->dsp_id(), $debug-10);
+
+    global $db_con;
+
+    $result = New user_list;
+
+    // add object owner
+    $result->add_by_id($this->owner_id);
+
+    $sql = 'SELECT user_id 
+              FROM user_'.$this->obj_name.'s 
+              WHERE '.$this->obj_name.'_id = '.$this->id.'
+                AND (excluded <> 1 OR excluded is NULL)';
+    $db_usr_lst = $db_con->get($sql, $debug-5);
+    foreach ($db_usr_lst AS $db_usr) {
+      $result->add_by_id($db_usr['user_id']);
+    }
+    $result->load_by_id($debug);
+
+    return $result;
+  }
+
   // get the user id of the most often used link (position) beside the standard (position)
   // 
   // TODO review, because the median is not taking into account the number of standard used values
@@ -454,21 +478,21 @@ class user_sandbox {
 
   // true if no else one has used the object
   // TODO if this should be true if no one else has been used this object e.g. for calculation
-  function used_by_someon_else($debug) {
+  function used_by_someone_else($debug) {
     $result = true;
-    zu_debug($this->obj_name.'->used_by_someon_else ('.$this->id.')', $debug-10);  
+    zu_debug($this->obj_name.'->used_by_someone_else ('.$this->id.')', $debug-10);
     
-    zu_debug($this->obj_name.'->used_by_someon_else owner is '.$this->owner_id.' and the change is requested by '.$this->usr->id, $debug-18);  
+    zu_debug($this->obj_name.'->used_by_someone_else owner is '.$this->owner_id.' and the change is requested by '.$this->usr->id, $debug-18);
     if ($this->owner_id == $this->usr->id OR $this->owner_id <= 0) {
       $changer_id = $this->changer($debug-1);
       // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-      zu_debug($this->obj_name.'->used_by_someon_else changer is '.$changer_id.' and the change is requested by '.$this->usr->id, $debug-18);  
+      zu_debug($this->obj_name.'->used_by_someone_else changer is '.$changer_id.' and the change is requested by '.$this->usr->id, $debug-18);
       if ($changer_id == $this->usr->id OR $changer_id <= 0) {
         $result = false;
       }  
     }  
 
-    zu_debug($this->obj_name.'->used_by_someon_else -> ('.zu_dsp_bool($result).')', $debug-10);  
+    zu_debug($this->obj_name.'->used_by_someone_else -> ('.zu_dsp_bool($result).')', $debug-10);
     return $result;
   }
 
@@ -857,7 +881,7 @@ class user_sandbox {
           $this->id = $db_chk->id;
           $this->owner_id = $db_chk->owner_id;
           // TODO check which links needs to be updated, because this is a kind of combine objects
-          // force the reinclude
+          // force the include again
           $this->excluded = Null;
           $db_rec->excluded = '1';
           $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-20);
@@ -1016,8 +1040,8 @@ class user_sandbox {
 
     // check if a new object is supposed to be added
     if ($this->id <= 0) {
-      // check possible dublicates before adding
-      zu_debug($this->obj_name.'->save check possible dublicates before adding '.$this->dsp_id(), $debug-12);
+      // check possible duplicates before adding
+      zu_debug($this->obj_name.'->save check possible duplicates before adding '.$this->dsp_id(), $debug-12);
       $similar = $this->get_similar($debug-1);
       if (isset($similar)) {
         if ($similar->id <> 0) {
@@ -1064,7 +1088,7 @@ class user_sandbox {
             $similar = $this->get_similar($debug-1);
             if (isset($similar)) {
               if ($similar-> id <> 0) {
-                $result .= $similar->id_used_msg($debug-1);
+                $result .= $similar->id_used_msg();
               }
             }
           }  
@@ -1150,7 +1174,7 @@ class user_sandbox {
         zu_warning('Delete failed', $this->obj_name.'->del', 'Delete failed, because it seems that the '.$this->obj_name.' '.$this->dsp_id().' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->usr);
       } else {
         // check if the object simply can be deleted, because it has never been used
-        if (!$this->used_by_someon_else($debug-1)) {
+        if (!$this->used_by_someone_else($debug-1)) {
           $result .= $this->del_exe($debug-1);
         } else {
           // if the owner deletes the object find a new owner or delete the object completely
@@ -1169,7 +1193,7 @@ class user_sandbox {
               $result .= $this->set_owner($new_owner_id, $debug);
 
               // delete all user records of the new owner
-              // does not use del_usr_cfg because the deletion reqest has already been logged
+              // does not use del_usr_cfg because the deletion request has already been logged
               // TODO reduce the db connection opening
               //$db_con = new mysql;
               $db_con->usr_id = $this->usr->id;         
@@ -1179,7 +1203,7 @@ class user_sandbox {
           }
           // check again after the owner change if the object simply can be deleted, because it has never been used
           // TODO check if "if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {" would be correct
-          if (!$this->used_by_someon_else($debug-1)) {
+          if (!$this->used_by_someone_else($debug-1)) {
             zu_debug($this->obj_name.'->del can delete '.$this->dsp_id().' after owner change', $debug-8);
             $result .= $this->del_exe($debug-1);
           } else {
@@ -1220,5 +1244,3 @@ class user_sandbox {
   }
   
 }
-
-?>

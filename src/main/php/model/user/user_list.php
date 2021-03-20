@@ -32,7 +32,23 @@
 class user_list {
 
   public $usr_lst = array();  // the list of users
-    
+
+  // fill the user objects of the list based on an sql
+  private function load_sql($sql, $debug) {
+
+    global $db_con;
+
+    $db_usr_lst = $db_con->get($sql, $debug-5);
+
+    foreach ($db_usr_lst AS $db_usr) {
+      $usr = New user;
+      $usr->id          = $db_usr['user_id'];
+      $usr->name        = $db_usr['user_name'];
+      $usr->code_id     = $db_usr['code_id'];
+      $this->usr_lst[] = $usr;
+    }
+  }
+
   // return a list of all users that have done at least one modification compared to the standard
   function load_active ($debug) {
     zu_debug('user_list->load_active', $debug-10);
@@ -59,25 +75,33 @@ class user_list {
                   GROUP BY user_id ) AS c
             WHERE u.user_id = c.user_id
          ORDER BY u.user_id;";
-    //$db_con = New mysql;
-    $db_con->usr_id = $usr->id;         
-    $db_usr_lst = $db_con->get($sql, $debug-5);  
-
-    foreach ($db_usr_lst AS $db_usr) {
-      $usr = New user;
-      $usr->id          = $db_usr['user_id'];
-      $usr->name        = $db_usr['user_name'];
-      $usr->code_id     = $db_usr['code_id'];
-      $this->usr_lst[] = $usr;
-    }
+    // todo check if the user needs to be set to the original value again
+    $db_con->usr_id = $usr->id;
+    $this->load_sql($sql, $debug);
 
     zu_debug('user_list->load_active -> ('.count($this->usr_lst).')', $debug-5);
     return $this->usr_lst;
   }
 
+  // add a usr with just the id for later mass load
+  function add_by_id($usr_id) {
+    $usr = New user;
+    $usr->id = $usr_id;
+    $result[] = $usr;
+  }
+
+  // fill the user objects of the list based on the id
+  function load_by_id($debug) {
+
+    $sql = "SELECT user_id, user_name, code_id 
+              FROM users
+            WHERE user_id IN(".implode(",", $this->usr_lst).")
+         ORDER BY user_id;";
+    $this->load_sql($sql, $debug);
+  }
+
   function name () {
-    $result = implode(",",$this->names());
-    return $result;
+    return implode(",",$this->names());
   }
   
   function names () {
@@ -87,7 +111,5 @@ class user_list {
     }
     return $result;
   }
-  
-}
 
-?>
+}

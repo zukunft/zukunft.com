@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,28 +26,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-// --------------------------------------
-// start testing the system functionality 
-// --------------------------------------
-  
-function run_user_test ($debug) {
+// -----------------------------------------------
+// start testing the user permission functionality
+// -----------------------------------------------
 
-  global $usr;
-  global $exe_start_time;
+function run_user_test($debug)
+{
 
-  $back = 0;
+    global $usr;
+    global $exe_start_time;
 
-  // test the user display after the word changes to have a sample case
-  test_header('Test the user display class (classes/user_display.php)');
+    $back = 0;
 
-  $result = $usr->dsp_edit($back, $debug-1);
-  $target = TEST_USER_NAME;
-  $exe_start_time = test_show_contains(', user_display->dsp_edit', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    // test the user display after the word changes to have a sample case
+    test_header('Test the user display class (classes/user_display.php)');
 
-  // display system user names
-  echo "based on<br>";
-  echo 'php user: '.$_SERVER['PHP_AUTH_USER'].'<br>';
-  echo 'remote user: '.$_SERVER['REMOTE_USER'].'<br>';
-  echo 'user id: '.$usr->id.'<br>';
+    $result = $usr->dsp_edit($back, $debug - 1);
+    $target = TEST_USER_NAME;
+    $exe_start_time = test_show_contains(', user_display->dsp_edit', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // display system user names
+    echo "based on<br>";
+    echo 'php user: ' . $_SERVER['PHP_AUTH_USER'] . '<br>';
+    echo 'remote user: ' . $_SERVER['REMOTE_USER'] . '<br>';
+    echo 'user id: ' . $usr->id . '<br>';
+
+    test_header('Test the user permission scripts (e.g. /user/user.php)');
+
+    $ip_addr = '2.204.210.217';
+    $result = $usr->ip_check($ip_addr, $debug - 1);
+    $target = '';
+    test_dsp(', usr->ip_check', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

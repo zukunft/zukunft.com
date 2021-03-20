@@ -279,6 +279,7 @@ class word_link {
     $this->check_order($debug-1);
     
     // set the where clause depending on the values given
+    $sql_where = '';
     if ($this->id > 0 AND !is_null($this->usr->id)) {
       $sql_where = "l.word_link_id = ".$this->id;
     // search for a forward link e.g. Taxes is part of Cask Flow Statement
@@ -403,7 +404,7 @@ class word_link {
   // create an object for the export
   function export_obj ($debug) {
     zu_debug('word_link->export_obj', $debug-10);
-    $result = Null;
+    $result = New word_link();
 
     if ($this->name <> '')        { $result->name        = $this->name;        }
     if ($this->description <> '') { $result->description = $this->description; }
@@ -686,7 +687,7 @@ class word_link {
   }
   
   // simply to display a single triple in a table
-  function dsp_link ($debug) {
+  function dsp_link () {
     $result = '<a href="/http/view.php?link='.$this->id.'" title="'.$this->description.'">'.$this->name.'</a>';
     return $result;
   }
@@ -699,7 +700,7 @@ class word_link {
       $result .= '&nbsp;';
       $intent = $intent - 1;
     }
-    $result .= '      '.$this->dsp_link($debug-1).''."\n";
+    $result .= '      '.$this->dsp_link().''."\n";
     $result .= '    </td>'."\n";
     return $result;
   }
@@ -737,11 +738,9 @@ class word_link {
   // true if no one has used this triple
   private function not_used($debug) {
     zu_debug('word_link->not_used ('.$this->id.')', $debug-10);  
-    $result = true;
-    
-    // to review: maybe replace by a database foreign key check
-    $result = $this->not_changed($debug-1);
-    return $result;
+
+    // todo review: maybe replace by a database foreign key check
+    return $this->not_changed($debug-1);
   }
 
   // true if no other user has modified the triple
@@ -786,7 +785,7 @@ class word_link {
   }
 
   // true if a record for a user specific configuration already exists in the database
-  private function has_usr_cfg($debug) {
+  private function has_usr_cfg() {
     $has_cfg = false;
     if ($this->usr_cfg_id > 0) {
       $has_cfg = true;
@@ -800,7 +799,7 @@ class word_link {
     global $db_con;
     $result = '';
 
-    if (!$this->has_usr_cfg) {
+    if (!$this->has_usr_cfg()) {
       if (isset($this->from) AND isset($this->to)) {
         zu_debug('word_link->add_usr_cfg for "'.$this->from->name.'"/"'.$this->to->name.'" by user "'.$this->usr->name.'"', $debug-10);  
       } else {
@@ -883,7 +882,6 @@ class word_link {
     if ($this->id > 0 AND $this->usr->id > 0) {
       zu_debug('word_link->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
-      $db_type = 'user_word_link';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
         //$db_con = new mysql;
@@ -975,7 +973,7 @@ class word_link {
       if ($this->can_change($debug-1)) {
         $result .= $db_con->update($this->id, $log->field, $new_value, $debug-1);
       } else {
-        if (!$this->has_usr_cfg($debug-1)) { $this->add_usr_cfg($debug-1); }
+        if (!$this->has_usr_cfg()) { $this->add_usr_cfg($debug-1); }
         $db_con->type = 'user_word_link';
         if ($new_value == $std_value) {
           $result .= $db_con->update($this->id, $log->field, Null, $debug-1);
@@ -995,7 +993,7 @@ class word_link {
     
     // the name field is a generic created field, so update it before saving
     $db_rec->name  = $db_rec->name($debug-1);
-    $this->name    = $this->name($debug-1);
+    $this->name    = $this->name();
     $std_rec->name = $std_rec->name($debug-1);
     
     if ($db_rec->name <> $this->name) {
@@ -1044,7 +1042,7 @@ class word_link {
       if ($this->can_change($debug-1)) {
         $result .= $db_con->update($this->id, $log->field, $new_value, $debug-1);
       } else {
-        if (!$this->has_usr_cfg($debug-1)) { $this->add_usr_cfg($debug-1); }
+        if (!$this->has_usr_cfg()) { $this->add_usr_cfg($debug-1); }
         $db_con->type = 'user_word_link';
         if ($new_value == $std_value) {
           $result .= $db_con->update($this->id, $log->field, Null, $debug-1);
@@ -1104,7 +1102,7 @@ class word_link {
     if ($db_rec->from_id <> $this->from_id 
      OR $db_rec->verb_id <> $this->verb_id 
      OR $db_rec->to_id   <> $this->to_id) {
-      $this->reset_objects($debug-1);
+      $this->reset_objects();
       // check if target link already exists
       zu_debug('word_link->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")', $debug-14);
       $db_chk = clone $this;
@@ -1196,7 +1194,7 @@ class word_link {
     // load the objects if needed
     $this->load_objects($debug-1);
     
-    // check if the opposide triple already exists and if yes, ask for confirmation
+    // check if the opposite triple already exists and if yes, ask for confirmation
     if ($this->id <= 0) {
       zu_debug('word_link->save check if a new word_link for "'.$this->from->name.'" and "'.$this->to->name.'" needs to be created', $debug-12);
       // check if the same triple is already in the database

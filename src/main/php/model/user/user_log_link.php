@@ -505,5 +505,3 @@ class user_log_link {
 
   
 }
-
-?>

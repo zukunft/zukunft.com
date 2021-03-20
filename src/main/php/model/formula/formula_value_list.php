@@ -133,7 +133,8 @@ class formula_value_list {
           $fv->phr_grp_id     = $val_row['phrase_group_id'];
           $fv->time_id        = $val_row['time_word_id'];
           $fv->value          = $val_row['formula_value'];
-          $fv->usr_id         = $val_row['user_id'];
+          // todo get user for the case that not all value are for the same unser
+          //$fv->usr            = $val_row['user_id'];
 
           zu_debug('formula_value_list->load_frm get words', $debug-10);      
           $fv->load_phrases($debug-1);
@@ -195,7 +196,7 @@ class formula_value_list {
     }
 
   if ($debug > 10) {
-      $result = '"'.implode('","',$name_lst.'"');
+      $result = '"'.implode('","',$name_lst).'"';
     } else {
       $result = '"'.implode('","',array_slice($name_lst, 0, 7));
       if (count($name_lst) > 8) {
@@ -207,7 +208,7 @@ class formula_value_list {
   }
   
   // return a list of the formula result ids
-  function ids($debug) {
+  function ids() {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $fv) {
@@ -620,7 +621,7 @@ class formula_value_list {
   // add one phrase to the phrase list, but only if it is not yet part of the phrase list
   function add($fv_to_add, $debug) {
     zu_debug('phrase_list->add '.$fv_to_add->dsp_id(), $debug-10);
-    if (!in_array($fv_to_add->id, $this->ids)) {
+    if (!in_array($fv_to_add->id, $this->ids())) {
       if ($fv_to_add->id <> 0) {
         $this->lst[] = $fv_to_add;
       }
@@ -631,14 +632,15 @@ class formula_value_list {
   
   // combine two calculation queues
   function merge($lst_to_merge, $debug) {
-    zu_debug('fv_lst->merge '.$lst_to_merge->dsp_id().' to '.$this->dsp_id(), $debug-12);        
+    // todo remove always $debug from dsp_id
+    zu_debug('fv_lst->merge '.$lst_to_merge->dsp_id().' to '.$this->dsp_id($debug-1), $debug-12);
     if (isset($lst_to_merge->lst)) {
       foreach ($lst_to_merge->lst AS $new_fv) {
-        zu_debug('fv_lst->merge add '.$new_fv->dsp_id(), $debug-18);
+        zu_debug('fv_lst->merge add '.$new_fv->dsp_id($debug-1), $debug-18);
         $this->add($new_fv, $debug-1);
       }
     }
-    zu_debug('fv_lst->merge -> to '.$this->dsp_id(), $debug-14); 
+    zu_debug('fv_lst->merge -> to '.$this->dsp_id($debug-1), $debug-14);
     return $this;
   }
   

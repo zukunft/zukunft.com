@@ -876,11 +876,11 @@ update "Sales" "water" "annual growth rate"
 */
 
 // returns a list of all formula results that needs to be updated the numbers in $val_ids_updated has been updated
-function zuc_upd_val_lst($val_ids_updated, $upd_usr_id, $debug) {
-  zu_debug('zuc_upd_val_lst(v'.implode(",",$val_ids_updated).',u'.$upd_usr_id.')', $debug-1);
+function zuc_upd_val_lst($val_ids_updated, $upd_usr, $debug) {
+  zu_debug('zuc_upd_val_lst(v'.implode(",",$val_ids_updated).',u'.$upd_usr.')', $debug-1);
   // 1. get all formulas where the value is used
   // include the category words, because a formula linked to "Year" is inheritent to e.g. "2016"
-  $val_wrd_lst = zuv_ids_wrd_lst_incl_cat($val_ids_updated, $upd_usr_id, $debug-5);
+  $val_wrd_lst = zuv_ids_wrd_lst_incl_cat($val_ids_updated, $upd_usr, $debug-5);
   
   $elm_type_id = cl(SQL_FORMULA_PART_TYPE_WORD);
   $sql = "SELECT formula_id 
@@ -890,7 +890,7 @@ function zuc_upd_val_lst($val_ids_updated, $upd_usr_id, $debug) {
   $frm_ids = zu_sql_get_ids($sql, $debug-10);        
   zu_debug('zuc_upd_val_lst -> formulas ('.implode(",",$frm_ids).')', $debug-1);
   // 2. update the formulas
-  $fv_lst = zuc_val_frm_upd($val_wrd_lst, $frm_ids, $upd_usr_id, "", $debug-1);  
+  $fv_lst = zuc_val_frm_upd($val_wrd_lst, $frm_ids, $upd_usr, "", $debug-1);
   // 3. if the result has changed repeat with 1.
   
   // to do: check that the same value is not updated twice
@@ -1014,11 +1014,12 @@ function zuc_upd_lst_val($wrd_id, $frm_wrd_ids, $frm_row, $usr_id, $debug) {
 }
 
 // update the progress bar for the user
-function zuc_upd_lst_msg($last_msg_time, $pos, $total, $debug) {
+function zuc_upd_lst_msg($last_msg_time, $pos, $total, $frm_row) {
   // show the user the progress every two seconds
   if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
     $calc_pct = ($pos/$total) * 100;
-    echo "calculate collect ".round($calc_pct,2)."% (".$frm_row['resolved_text']." for ".$usr_lst[$usr_id].")<br>";
+    echo "calculate collect ".round($calc_pct,2)."% (".$frm_row['resolved_text'];
+    //echo "calculate collect ".round($calc_pct,2)."% (".$frm_row['resolved_text']." for ".$usr_lst[$usr_id].")<br>";
     $last_msg_time = time();
     flush();
   }
@@ -1059,7 +1060,7 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
     zu_debug('zuc_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $usr_id), $debug);
     
     // show the user the progress every two seconds
-    $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysql_num_rows($sql_result), $debug);
+    $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysql_num_rows($sql_result), $frm_row);
     $collect_pos++;
 
     // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
@@ -1094,7 +1095,7 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
         $frm_ids = array();
         foreach ($all_frm_ids as $chk_frm_id) {
           if (zuf_is_special ($chk_frm_id, $usr_id, $debug-10)) {
-            $special_frm_wrd_ids = zuc_upd_lst_frm_special ($frm_row['formula_id'], $frm_text, $usr_id, $special_frm_wrd_ids, $debug);
+            $special_frm_wrd_ids = zuc_upd_lst_frm_special ($frm_row['formula_id'], $frm_row['formula_text'], $usr_id, $special_frm_wrd_ids, $debug);
             
             //get all values related to the words
           } else {
@@ -1291,8 +1292,8 @@ function zuc_frm($frm_id, $frm_text, $wrd_ids, $time_word_id, $user_id, $debug) 
 // similar to zuc_frm_upd below, but with a filter on the values
 // $val_wrd_lst - list of words that is related to the value update; only results linked to these word needs to be updated
 // returns a list of formula results that needs to be updated
-function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back, $debug) {
-  zu_debug("zuc_val_frm_upd (t".implode(",",$val_wrd_lst).",f".implode(",",$frm_ids).",u".$usr_id.")", $debug-1);
+function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr, $back, $debug) {
+  zu_debug("zuc_val_frm_upd (t".implode(",",$val_wrd_lst).",f".implode(",",$frm_ids).",u".$usr.")", $debug-1);
   $result = array();
   
   //ob_implicit_flush(true);
@@ -1301,14 +1302,11 @@ function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back, $debug) {
   $last_msg_time = time(); // the start time
   $collect_pos = 0;        // to calculate the progress in percent
 
-  $frm_upd_lst = zuc_upd_lst_usr($val_wrd_lst, $frm_ids, $usr_id, $last_msg_time, $collect_pos, $debug-1);
+  $frm_upd_lst = zuc_upd_lst_usr($val_wrd_lst, $frm_ids, $usr, $last_msg_time, $collect_pos, $debug-1);
   $calc_pos = 0;
   $last_msg_time = time();
   foreach ($frm_upd_lst AS $r) {
-    zu_debug("calculate ".round($calc_pct,2)."% (".$r['frm_name']." for ".implode(",",$wrd_names).") = ".$val_result[$r_key][0], $debug-1);
-    $usr = New user;
-    $usr->id = $r['usr_id'];
-    $usr->load($debug-1);
+    //zu_debug("calculate ".round($calc_pct,2)."% (".$r['frm_name']." for ".implode(",",$wrd_names).") = ".$r[$r_key][0], $debug-1);
     $frm = New formula;
     $frm->id = $r['frm_id'];
     $frm->ref_text = $r['frm_text'];
@@ -1350,17 +1348,14 @@ function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr_id, $back, $debug) {
 }
 
 // if a list of formulas needs to updated the results, calculate all the depending values
-function zuc_frm_upd($frm_ids_updated, $usr_id, $back, $debug) {
+function zuc_frm_upd($frm_ids_updated, $usr, $back, $debug) {
   ob_implicit_flush(true);
   ob_end_flush();
 
-  $frm_upd_lst = zuc_upd_lst($frm_ids_updated, $usr_id, $debug);
+  $frm_upd_lst = zuc_upd_lst($frm_ids_updated, $usr, $debug);
   $calc_pos = 0;
   $last_msg_time = time();
   foreach ($frm_upd_lst AS $r) {
-    $usr = New user;
-    $usr->id = $r['usr_id'];
-    $usr->load($debug-1);
     $frm = New formula;
     $frm->id = $r['frm_id'];
     //$frm->ref_text = $r['frm_text'];
@@ -1403,7 +1398,7 @@ function zuc_frm_upd($frm_ids_updated, $usr_id, $back, $debug) {
   }
   ob_end_flush();
 
-  $result .= zuh_go_back($back, $usr_id, $debug-1);
+  $result = zuh_go_back($back, $usr, $debug-1);
 }
 
 
@@ -1440,13 +1435,10 @@ function zuc_batch_all($back, $debug) {
       if ($result_nbr < 1000) {
         $wrd_ids = array();
         $wrd_ids[] = $wrd_id;
-        $usr = New user;
-        $usr->id = $user_id;
-        $usr->load($debug-1);
         $frm = New formula;
         $frm->id = $frm_id;
         $frm->ref_text = $frm_row['formula_text'];
-        $frm->usr = $usr;
+        //$frm->usr = $usr;
         $frm->calc($wrd_ids, $back, $debug-1);
         //zuc_frm($frm_id, $frm_row['formula_text'], $wrd_ids, $user_id, $debug);
         $result_nbr++;

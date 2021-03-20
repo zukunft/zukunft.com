@@ -141,5 +141,3 @@ function get_ref_type_by_name($name, $debug) {
   
   return $result;  
 }
-
-?>

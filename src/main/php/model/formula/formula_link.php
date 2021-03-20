@@ -111,7 +111,7 @@ class formula_link extends user_sandbox {
       $db_con->usr_id = $this->usr->id;         
       $db_frm = $db_con->get1($sql, $debug-5);  
       if ($db_frm['formula_link_id'] <= 0) {
-        $this->reset($debug-1);
+        $this->reset();
       } else {      
         $this->id           = $db_frm['formula_link_id'];
         $this->owner_id     = $db_frm['user_id'];
@@ -188,7 +188,7 @@ class formula_link extends user_sandbox {
           $db_con->usr_id = $this->usr->id;         
           $db_row = $db_con->get1($sql, $debug-5);  
           if ($db_row['formula_link_id'] <= 0) {
-            $this->reset($debug-1);
+            $this->reset();
           } else {      
             $this->id            = $db_row['formula_link_id'];
             $this->usr_cfg_id    = $db_row['user_link_id'];
@@ -233,10 +233,10 @@ class formula_link extends user_sandbox {
 
     global $db_con;
 
-    if ($this->type_id > 0 AND $this->link_name == '') {
+    if ($this->link_type_id > 0 AND $this->link_name == '') {
       $sql = "SELECT type_name, description
                 FROM formula_link_types
-               WHERE formula_link_type_id = ".$this->type_id.";";
+               WHERE formula_link_type_id = ".$this->link_type_id.";";
       //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_type = $db_con->get1($sql, $debug-5);  
@@ -315,8 +315,7 @@ class formula_link extends user_sandbox {
   // true if no one has used this formula
   function not_used($debug) {
     zu_debug('formula_link->not_used ('.$this->id.')', $debug-10);  
-    $result = true;
-    
+
     // to review: maybe replace by a database foreign key check
     $result = $this->not_changed($debug-1);
     return $result;
@@ -382,7 +381,7 @@ class formula_link extends user_sandbox {
     global $db_con;
     $result = '';
 
-    if (!$this->has_usr_cfg) {
+    if (!$this->has_usr_cfg($debug-1)) {
       if (isset($this->fob) AND isset($this->tob)) {
         zu_debug('formula_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
       } else {
@@ -463,11 +462,9 @@ class formula_link extends user_sandbox {
     if ($this->id > 0 AND $this->usr->id > 0) {
       zu_debug('formula_link->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
-      $db_type = 'user_formula_link';
       $log = $this->log_del($debug-1);
       if ($log->id > 0) {
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;         
+        $db_con->usr_id = $this->usr->id;
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
 
@@ -747,8 +744,7 @@ class formula_link extends user_sandbox {
     } else {
       zu_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save", '', (new Exception)->getTraceAsString(), $this->usr);
     }
-    $result = "";
-    
+
     // build the database object because the is anyway needed
     //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
@@ -817,5 +813,3 @@ class formula_link extends user_sandbox {
   }
   
 }
-
-?>

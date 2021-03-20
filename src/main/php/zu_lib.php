@@ -276,98 +276,103 @@
 */
 
 global $debug;
+global $root_path;
+
+if ($root_path == '') {
+  $root_path = '../';
+}
 
 // database links
-include_once '../database/mysql.php';                                        if ($debug > 9) { echo 'mysql link loaded<br>'; }
+include_once $root_path.'database/mysql.php';                                        if ($debug > 9) { echo 'mysql link loaded<br>'; }
 // service
-include_once '../src/main/php/service/import/import_file.php';               if ($debug > 9) { echo 'service import loaded<br>'; }
-include_once '../src/main/php/service/import/import.php';                    if ($debug > 9) { echo 'class import loaded<br>'; }
-include_once '../src/main/php/service/export/export.php';                    if ($debug > 9) { echo 'class export loaded<br>'; }
-include_once '../src/main/php/service/export/json.php';                      if ($debug > 9) { echo 'class json loaded<br>'; }
-include_once '../src/main/php/service/export/xml.php';                       if ($debug > 9) { echo 'class xml loaded<br>'; }
+include_once $root_path.'src/main/php/service/import/import_file.php';               if ($debug > 9) { echo 'service import loaded<br>'; }
+include_once $root_path.'src/main/php/service/import/import.php';                    if ($debug > 9) { echo 'class import loaded<br>'; }
+include_once $root_path.'src/main/php/service/export/export.php';                    if ($debug > 9) { echo 'class export loaded<br>'; }
+include_once $root_path.'src/main/php/service/export/json.php';                      if ($debug > 9) { echo 'class json loaded<br>'; }
+include_once $root_path.'src/main/php/service/export/xml.php';                       if ($debug > 9) { echo 'class xml loaded<br>'; }
 // classes
-include_once '../src/main/php/model/user/user.php';                          if ($debug > 9) { echo 'class user loaded<br>'; }
-include_once '../src/main/php/web/user_display.php';                         if ($debug > 9) { echo 'class user display loaded<br>'; }
-include_once '../src/main/php/model/user/user_list.php';                     if ($debug > 9) { echo 'class user list loaded<br>'; }
-include_once '../src/main/php/model/user/user_log.php';                      if ($debug > 9) { echo 'class user log loaded<br>'; }
-include_once '../src/main/php/model/user/user_log_link.php';                 if ($debug > 9) { echo 'class user log reference loaded<br>'; }
-include_once '../src/main/php/web/user_log_display.php';                     if ($debug > 9) { echo 'class user log display loaded<br>'; }
-include_once '../src/main/php/model/user_sandbox.php';                       if ($debug > 9) { echo 'class user sandbox loaded<br>'; }
-include_once '../src/main/php/web/user_sandbox_display.php';                 if ($debug > 9) { echo 'class user sandbox display loaded<br>'; }
-include_once '../src/main/php/model/system/system_error_log.php';            if ($debug > 9) { echo 'class system error log loaded<br>'; }
-include_once '../src/main/php/model/system/system_error_log_list.php';       if ($debug > 9) { echo 'class system error log list loaded<br>'; }
-include_once '../src/main/php/web/display_button.php';                       if ($debug > 9) { echo 'class display button loaded<br>'; }
-include_once '../src/main/php/web/display_html.php';                         if ($debug > 9) { echo 'class display html loaded<br>'; }
-include_once '../src/main/php/web/display_selector.php';                     if ($debug > 9) { echo 'class display selector loaded<br>'; }
-include_once '../src/main/php/web/display_list.php';                         if ($debug > 9) { echo 'class display list loaded<br>'; }
-include_once '../src/main/php/model/word/word.php';                          if ($debug > 9) { echo 'class word loaded<br>'; }
-include_once '../src/main/php/web/word_display.php';                         if ($debug > 9) { echo 'class word display loaded<br>'; }
-include_once '../src/main/php/model/word/word_list.php';                     if ($debug > 9) { echo 'class word list loaded<br>'; }
-include_once '../src/main/php/model/word/word_link.php';                     if ($debug > 9) { echo 'class word link loaded<br>'; }
-include_once '../src/main/php/model/word/word_link_list.php';                if ($debug > 9) { echo 'class word link list loaded<br>'; }
-include_once '../src/main/php/model/phrase/phrase.php';                      if ($debug > 9) { echo 'class phrase loaded<br>'; }
-include_once '../src/main/php/model/phrase/phrase_list.php';                 if ($debug > 9) { echo 'class phrase list loaded<br>'; }
-include_once '../src/main/php/model/phrase/phrase_group.php';                if ($debug > 9) { echo 'class phrase group loaded<br>'; }
-include_once '../src/main/php/model/phrase/phrase_group_list.php';           if ($debug > 9) { echo 'class phrase group list loaded<br>'; }
-include_once '../src/main/php/model/verb/verb.php';                          if ($debug > 9) { echo 'class verb loaded<br>'; }
-include_once '../src/main/php/model/verb/verb_list.php';                     if ($debug > 9) { echo 'class verb list loaded<br>'; }
-include_once '../src/main/php/model/phrase/term.php';                        if ($debug > 9) { echo 'class term loaded<br>'; }
-include_once '../src/main/php/model/value/value.php';                        if ($debug > 9) { echo 'class value loaded<br>'; }
-include_once '../src/main/php/model/value/value_list.php';                   if ($debug > 9) { echo 'class value list loaded<br>'; }
-include_once '../src/main/php/web/value_list_display.php';                   if ($debug > 9) { echo 'class value list display loaded<br>'; }
-include_once '../src/main/php/model/value/value_phrase_link.php';            if ($debug > 9) { echo 'class value word link loaded<br>'; }
-include_once '../src/main/php/model/ref/source.php';                         if ($debug > 9) { echo 'class source loaded<br>'; }
-include_once '../src/main/php/model/ref/ref.php';                            if ($debug > 9) { echo 'class external reference loaded<br>'; }
-include_once '../src/main/php/model/ref/ref_type.php';                       if ($debug > 9) { echo 'class external reference types loaded<br>'; }
-include_once '../src/main/php/model/formula/expression.php';                 if ($debug > 9) { echo 'class expression loaded<br>'; }
-include_once '../src/main/php/model/formula/formula.php';                    if ($debug > 9) { echo 'class formula loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_list.php';               if ($debug > 9) { echo 'class formula list loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_link.php';               if ($debug > 9) { echo 'class formula link loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_link_list.php';          if ($debug > 9) { echo 'class formula link list loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_value.php';              if ($debug > 9) { echo 'class formula value loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_value_list.php';         if ($debug > 9) { echo 'class formula value list loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_element.php';            if ($debug > 9) { echo 'class formula element loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_element_list.php';       if ($debug > 9) { echo 'class formula element list loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_element_group.php';      if ($debug > 9) { echo 'class formula element group loaded<br>'; }
-include_once '../src/main/php/model/formula/formula_element_group_list.php'; if ($debug > 9) { echo 'class formula element group list loaded<br>'; }
-include_once '../src/main/php/model/formula/figure.php';                     if ($debug > 9) { echo 'class figure loaded<br>'; }
-include_once '../src/main/php/model/formula/figure_list.php';                if ($debug > 9) { echo 'class figure list loaded<br>'; }
-include_once '../src/main/php/model/system/batch_job.php';                   if ($debug > 9) { echo 'class batch job loaded<br>'; }
-include_once '../src/main/php/model/system/batch_job_list.php';              if ($debug > 9) { echo 'class batch job list loaded<br>'; }
-include_once '../src/main/php/model/view/view.php';                          if ($debug > 9) { echo 'class view loaded<br>'; }
-include_once '../src/main/php/web/view_display.php';                         if ($debug > 9) { echo 'class view display loaded<br>'; }
-include_once '../src/main/php/model/view/view_component.php';                if ($debug > 9) { echo 'class view component loaded<br>'; }
-include_once '../src/main/php/model/view/view_component_dsp.php';            if ($debug > 9) { echo 'class view component display loaded<br>'; }
-include_once '../src/main/php/model/view/view_component_link.php';           if ($debug > 9) { echo 'class view component link loaded<br>'; }
+include_once $root_path.'src/main/php/model/user/user.php';                          if ($debug > 9) { echo 'class user loaded<br>'; }
+include_once $root_path.'src/main/php/web/user_display.php';                         if ($debug > 9) { echo 'class user display loaded<br>'; }
+include_once $root_path.'src/main/php/model/user/user_list.php';                     if ($debug > 9) { echo 'class user list loaded<br>'; }
+include_once $root_path.'src/main/php/model/user/user_log.php';                      if ($debug > 9) { echo 'class user log loaded<br>'; }
+include_once $root_path.'src/main/php/model/user/user_log_link.php';                 if ($debug > 9) { echo 'class user log reference loaded<br>'; }
+include_once $root_path.'src/main/php/web/user_log_display.php';                     if ($debug > 9) { echo 'class user log display loaded<br>'; }
+include_once $root_path.'src/main/php/model/user_sandbox.php';                       if ($debug > 9) { echo 'class user sandbox loaded<br>'; }
+include_once $root_path.'src/main/php/web/user_sandbox_display.php';                 if ($debug > 9) { echo 'class user sandbox display loaded<br>'; }
+include_once $root_path.'src/main/php/model/system/system_error_log.php';            if ($debug > 9) { echo 'class system error log loaded<br>'; }
+include_once $root_path.'src/main/php/model/system/system_error_log_list.php';       if ($debug > 9) { echo 'class system error log list loaded<br>'; }
+include_once $root_path.'src/main/php/web/display_button.php';                       if ($debug > 9) { echo 'class display button loaded<br>'; }
+include_once $root_path.'src/main/php/web/display_html.php';                         if ($debug > 9) { echo 'class display html loaded<br>'; }
+include_once $root_path.'src/main/php/web/display_selector.php';                     if ($debug > 9) { echo 'class display selector loaded<br>'; }
+include_once $root_path.'src/main/php/web/display_list.php';                         if ($debug > 9) { echo 'class display list loaded<br>'; }
+include_once $root_path.'src/main/php/model/word/word.php';                          if ($debug > 9) { echo 'class word loaded<br>'; }
+include_once $root_path.'src/main/php/web/word_display.php';                         if ($debug > 9) { echo 'class word display loaded<br>'; }
+include_once $root_path.'src/main/php/model/word/word_list.php';                     if ($debug > 9) { echo 'class word list loaded<br>'; }
+include_once $root_path.'src/main/php/model/word/word_link.php';                     if ($debug > 9) { echo 'class word link loaded<br>'; }
+include_once $root_path.'src/main/php/model/word/word_link_list.php';                if ($debug > 9) { echo 'class word link list loaded<br>'; }
+include_once $root_path.'src/main/php/model/phrase/phrase.php';                      if ($debug > 9) { echo 'class phrase loaded<br>'; }
+include_once $root_path.'src/main/php/model/phrase/phrase_list.php';                 if ($debug > 9) { echo 'class phrase list loaded<br>'; }
+include_once $root_path.'src/main/php/model/phrase/phrase_group.php';                if ($debug > 9) { echo 'class phrase group loaded<br>'; }
+include_once $root_path.'src/main/php/model/phrase/phrase_group_list.php';           if ($debug > 9) { echo 'class phrase group list loaded<br>'; }
+include_once $root_path.'src/main/php/model/verb/verb.php';                          if ($debug > 9) { echo 'class verb loaded<br>'; }
+include_once $root_path.'src/main/php/model/verb/verb_list.php';                     if ($debug > 9) { echo 'class verb list loaded<br>'; }
+include_once $root_path.'src/main/php/model/phrase/term.php';                        if ($debug > 9) { echo 'class term loaded<br>'; }
+include_once $root_path.'src/main/php/model/value/value.php';                        if ($debug > 9) { echo 'class value loaded<br>'; }
+include_once $root_path.'src/main/php/model/value/value_list.php';                   if ($debug > 9) { echo 'class value list loaded<br>'; }
+include_once $root_path.'src/main/php/web/value_list_display.php';                   if ($debug > 9) { echo 'class value list display loaded<br>'; }
+include_once $root_path.'src/main/php/model/value/value_phrase_link.php';            if ($debug > 9) { echo 'class value word link loaded<br>'; }
+include_once $root_path.'src/main/php/model/ref/source.php';                         if ($debug > 9) { echo 'class source loaded<br>'; }
+include_once $root_path.'src/main/php/model/ref/ref.php';                            if ($debug > 9) { echo 'class external reference loaded<br>'; }
+include_once $root_path.'src/main/php/model/ref/ref_type.php';                       if ($debug > 9) { echo 'class external reference types loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/expression.php';                 if ($debug > 9) { echo 'class expression loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula.php';                    if ($debug > 9) { echo 'class formula loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_list.php';               if ($debug > 9) { echo 'class formula list loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_link.php';               if ($debug > 9) { echo 'class formula link loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_link_list.php';          if ($debug > 9) { echo 'class formula link list loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_value.php';              if ($debug > 9) { echo 'class formula value loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_value_list.php';         if ($debug > 9) { echo 'class formula value list loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_element.php';            if ($debug > 9) { echo 'class formula element loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_element_list.php';       if ($debug > 9) { echo 'class formula element list loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_element_group.php';      if ($debug > 9) { echo 'class formula element group loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/formula_element_group_list.php'; if ($debug > 9) { echo 'class formula element group list loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/figure.php';                     if ($debug > 9) { echo 'class figure loaded<br>'; }
+include_once $root_path.'src/main/php/model/formula/figure_list.php';                if ($debug > 9) { echo 'class figure list loaded<br>'; }
+include_once $root_path.'src/main/php/model/system/batch_job.php';                   if ($debug > 9) { echo 'class batch job loaded<br>'; }
+include_once $root_path.'src/main/php/model/system/batch_job_list.php';              if ($debug > 9) { echo 'class batch job list loaded<br>'; }
+include_once $root_path.'src/main/php/model/view/view.php';                          if ($debug > 9) { echo 'class view loaded<br>'; }
+include_once $root_path.'src/main/php/web/view_display.php';                         if ($debug > 9) { echo 'class view display loaded<br>'; }
+include_once $root_path.'src/main/php/model/view/view_component.php';                if ($debug > 9) { echo 'class view component loaded<br>'; }
+include_once $root_path.'src/main/php/model/view/view_component_dsp.php';            if ($debug > 9) { echo 'class view component display loaded<br>'; }
+include_once $root_path.'src/main/php/model/view/view_component_link.php';           if ($debug > 9) { echo 'class view component link loaded<br>'; }
 
 // include all other libraries that are usually needed
-include_once '../db_link/zu_lib_sql_link.php';                               if ($debug > 9) { echo 'lib sql link loaded<br>'; }
-include_once '../src/main/php/service/zu_lib_sql_code_link.php';             if ($debug > 9) { echo 'lib sql code link loaded<br>'; }
-include_once '../src/main/php/service/config.php';                           if ($debug > 9) { echo 'lib config loaded<br>'; }
+include_once $root_path.'db_link/zu_lib_sql_link.php';                               if ($debug > 9) { echo 'lib sql link loaded<br>'; }
+include_once $root_path.'src/main/php/service/zu_lib_sql_code_link.php';             if ($debug > 9) { echo 'lib sql code link loaded<br>'; }
+include_once $root_path.'src/main/php/service/config.php';                           if ($debug > 9) { echo 'lib config loaded<br>'; }
 
 // used at the moment, but to be replaced with R-Project call
-include_once '../src/main/php/service/zu_lib_calc_math.php';                if ($debug > 9) { echo 'lib calc math loaded<br>'; }
+include_once $root_path.'src/main/php/service/zu_lib_calc_math.php';                if ($debug > 9) { echo 'lib calc math loaded<br>'; }
 
 // libraries that may be useful in the future
 /*
-include_once '../lib/test/zu_lib_auth.php';               if ($debug > 9) { echo 'user authentication loaded<br>'; }
-include_once '../lib/test/config.php';             if ($debug > 9) { echo 'configuration loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_auth.php';               if ($debug > 9) { echo 'user authentication loaded<br>'; }
+include_once $root_path.'lib/test/config.php';             if ($debug > 9) { echo 'configuration loaded<br>'; }
 */
 
 // libraries that can be dismissed, but still used for regression testing (using test.php)
 /*
-include_once '../lib/test/zu_lib_word_dsp.php';           if ($debug > 9) { echo 'lib word display loaded<br>'; }
-include_once '../lib/test/zu_lib_sql.php';                if ($debug > 9) { echo 'lib sql loaded<br>'; }
-include_once '../lib/test/zu_lib_link.php';               if ($debug > 9) { echo 'lib link loaded<br>'; }
-include_once '../lib/test/zu_lib_sql_naming.php';         if ($debug > 9) { echo 'lib sql naming loaded<br>'; }
-include_once '../lib/test/zu_lib_value.php';              if ($debug > 9) { echo 'lib value loaded<br>'; }
-include_once '../lib/test/zu_lib_word.php';               if ($debug > 9) { echo 'lib word loaded<br>'; }
-include_once '../lib/test/zu_lib_word_db.php';            if ($debug > 9) { echo 'lib word database link loaded<br>'; }
-include_once '../lib/test/zu_lib_calc.php';               if ($debug > 9) { echo 'lib calc loaded<br>'; }
-include_once '../lib/test/zu_lib_value_db.php';           if ($debug > 9) { echo 'lib value database link loaded<br>'; }
-include_once '../lib/test/zu_lib_value_dsp.php';          if ($debug > 9) { echo 'lib value display loaded<br>'; }
-include_once '../lib/test/zu_lib_user.php';               if ($debug > 9) { echo 'lib user loaded<br>'; }
-include_once '../lib/test/zu_lib_html.php';               if ($debug > 9) { echo 'lib html loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_word_dsp.php';           if ($debug > 9) { echo 'lib word display loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_sql.php';                if ($debug > 9) { echo 'lib sql loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_link.php';               if ($debug > 9) { echo 'lib link loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_sql_naming.php';         if ($debug > 9) { echo 'lib sql naming loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_value.php';              if ($debug > 9) { echo 'lib value loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_word.php';               if ($debug > 9) { echo 'lib word loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_word_db.php';            if ($debug > 9) { echo 'lib word database link loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_calc.php';               if ($debug > 9) { echo 'lib calc loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_value_db.php';           if ($debug > 9) { echo 'lib value database link loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_value_dsp.php';          if ($debug > 9) { echo 'lib value display loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_user.php';               if ($debug > 9) { echo 'lib user loaded<br>'; }
+include_once $root_path.'lib/test/zu_lib_html.php';               if ($debug > 9) { echo 'lib html loaded<br>'; }
 */
 
 
@@ -496,11 +501,11 @@ define("ZUH_IMG_EDIT_FA",  "fa-edit");
 define("ZUH_IMG_DEL_FA",   "fa-times-circle");
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
-define ("PATH_BASE_CONFIG_FILES", '../src/main/resources/');
+define ("PATH_BASE_CONFIG_FILES", $root_path.'src/main/resources/');
 define ("BASE_CONFIG_FILES", serialize (array ('units.json')));
 
 # list of all static import files for testing the system consistency
-define ("PATH_TEST_IMPORT_FILES", '../src/test/resources/');
+define ("PATH_TEST_IMPORT_FILES", $root_path.'src/test/resources/');
 define ("TEST_IMPORT_FILE_LIST", serialize (array ('companies.json',
                                                    'ABB_2013.json', 
                                                    'ABB_2017.json', 

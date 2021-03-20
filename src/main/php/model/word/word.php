@@ -290,11 +290,11 @@ class word {
               WHERE phrase_id = ".$this->id.";";
     //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
-    $db_row = $db_con->get1($sql, $debug-5);  
+    $db_row = $db_con->get1($sql, $debug-5);
+    $frm = New formula;
     if (isset($db_row)) {
       if ($db_row['formula_id'] > 0) {
-        $frm = New formula;
-        $frm->id = $db_row['formula_id'];         
+        $frm->id = $db_row['formula_id'];
         $frm->usr = $this->usr;         
         $frm->load($debug-1);
       }
@@ -306,7 +306,7 @@ class word {
   // create a word object for the export
   function export_obj ($debug) {
     zu_debug('word->export_obj', $debug-10);
-    $result = Null;
+    $result = New word();
 
     if ($this->name <> '')        { $result->name        = $this->name;        }
     if ($this->plural <> '')      { $result->plural      = $this->plural;      }
@@ -1405,7 +1405,7 @@ class word {
       }  
     }  
       
-    // create a new formula or update an existing
+    // create a new word or update an existing
     if ($this->id <= 0) {
       $result .= $this->add($db_con, $debug-1);
     } else {  

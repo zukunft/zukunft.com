@@ -55,6 +55,7 @@ class term {
   // simply load a formula (separate function, because used twice)
   private function load_frm ($debug) {
     zu_debug('term->load_frm for "'.$this->name.'"', $debug-16);
+    $result = 0;
     $frm = New formula;
     $frm->name = $this->name;
     $frm->usr  = $this->usr;
@@ -66,6 +67,7 @@ class term {
       $result = $frm->id;
     }
     zu_debug('term->load_frm loaded id "'.$this->id.'"', $debug-16);
+    return $result;
   }
   
   // test if the name is used already
@@ -119,7 +121,7 @@ class term {
   }
 
   // create a message text that the name is already used
-  function id_used_msg ($debug) {
+  function id_used_msg () {
     $result = "";
     
     if ($this->id > 0) {
@@ -130,5 +132,3 @@ class term {
   }
   
 }
-
-?>

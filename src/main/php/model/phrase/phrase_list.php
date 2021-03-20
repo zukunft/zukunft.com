@@ -946,7 +946,7 @@ class phrase_list {
     // loop over the phrase ids and add only the time ids to the result array
     foreach ($this->lst as $phr) {
       if (get_class($phr) <> 'phrase' AND get_class($phr) <> 'word' AND get_class($phr) <> 'word_dsp') {
-        zu_warning('The phrase list contains '.$this->dsp_id.' of type '.get_class($phr).', which is not supoosed to be in the list.', 'phrase_list->measure_lst', '', (new Exception)->getTraceAsString(), $this->usr);
+        zu_warning('The phrase list contains '.$this->dsp_id().' of type '.get_class($phr).', which is not supoosed to be in the list.', 'phrase_list->measure_lst', '', (new Exception)->getTraceAsString(), $this->usr);
         zu_debug('phrase_list->measure_lst contains object '.get_class($phr).', which is not a phrase', $debug-10);
       } else {
         if ($phr->type_id($debug-1) == $measure_type) { 

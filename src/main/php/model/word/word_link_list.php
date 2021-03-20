@@ -453,5 +453,3 @@ class word_link_list {
   }
 
 }
-
-?>
