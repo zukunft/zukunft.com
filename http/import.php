@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("import", "", $debug);
+$db_con = prg_start("import", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -41,7 +41,7 @@ $db_con = zu_start("import", "", $debug);
   $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  zu_debug('import.php check user ', $debug-10);
+  log_debug('import.php check user ', $debug-10);
   if ($usr->id > 0) {
 
     // prepare the display
@@ -57,7 +57,7 @@ $db_con = zu_start("import", "", $debug);
     }
 
     // if the user has confirmed the upload
-    zu_debug('import.php check submit ', $debug-10);
+    log_debug('import.php check submit ', $debug-10);
     //if ($_GET["confirm"] == 1) {
     if (isset($_POST["submit"])) {
       $uploadOk = True;
@@ -85,7 +85,7 @@ $db_con = zu_start("import", "", $debug);
         $uploadOk = False;
       }
 
-      zu_debug('import.php check file '.$fileName.' done ', $debug-10);
+      log_debug('import.php check file '.$fileName.' done ', $debug-10);
       if ($uploadOk) {
         //checks for errors and checks that file is uploaded
         if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK       
@@ -110,7 +110,7 @@ $db_con = zu_start("import", "", $debug);
         
     // if nothing yet done display the edit view (and any message on the top)
     if ($result == '')  {
-      zu_debug('import.php display mask ', $debug-10);
+      log_debug('import.php display mask ', $debug-10);
       // show the value and the linked words to edit the value (again after removing or adding a word)
       $result .= $dsp->dsp_navbar($back, $debug-1);
       $result .= dsp_err($msg);
@@ -133,6 +133,6 @@ $db_con = zu_start("import", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);
 
 ?>

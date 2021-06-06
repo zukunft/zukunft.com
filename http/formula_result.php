@@ -33,7 +33,7 @@
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
-$db_con = zu_start("formula_result", "", $debug);
+$db_con = prg_start("formula_result", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -67,19 +67,19 @@ $db_con = zu_start("formula_result", "", $debug);
       if ($fv->id > 0) {
         $result .= $fv->explain($phr_id, $back, $debug-1);
       } else {
-        $result .= zu_err("Formula result with id ".$frm_val_id.' not found.', "formula_result.php");
+        $result .= log_err("Formula result with id ".$frm_val_id.' not found.', "formula_result.php");
       }
-      zu_debug('formula_result.php explained (id'.$fv->id.' for user '.$session_usr->name.')', $debug-10);
+      log_debug('formula_result.php explained (id'.$fv->id.' for user '.$session_usr->name.')', $debug-10);
     } else {
       // ... or complain about a wrong call
       $url_txt = "";
       foreach($_GET as $key => $value) {
         $url_txt .= $key.'='.$value.',';
       }
-      $result .= zu_err("Wrong parameters: ".$url_txt, "formula_result.php");
+      $result .= log_err("Wrong parameters: ".$url_txt, "formula_result.php");
     }
   }
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

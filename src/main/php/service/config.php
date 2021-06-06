@@ -32,22 +32,84 @@
 */
 
 // get a config value from the database table
-function cfg_get($code_id, $usr, $debug) {
-  zu_debug('cfg_get for "'.$code_id.'"', $debug-12);
+function cfg_get($code_id, $usr, $debug)
+{
 
-  global $db_con;
-  $result = '';
-  
-  $sql = "SELECT `value` 
+    // init
+    global $db_con;
+    $result = '';
+    log_debug('cfg_get for "' . $code_id . '"', $debug - 12);
+
+    // check the parameters to capsule this function
+    if ($code_id == '') {
+        log_err("The code id must be set", "config->cfg_get");
+    }
+
+    // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
+    $db_con->type = 'config';
+    $sql = "SELECT `value` 
             FROM `config` 
-           WHERE `code_id` = ".sf($code_id).";";
-  //$db_con = new mysql;
-  $db_con->usr_id = $usr->id;         
-  $db_row = $db_con->get1($sql, $debug-5);  
-  $result = $db_row['value'];
+           WHERE `code_id` = " . sf($code_id) . ";";
+    $db_con->usr_id = $usr->id;
+    $db_row = $db_con->get1($sql, $debug - 5);
+    $db_value = $db_row['value'];
+    // if no value exists create it with the default value (a configuration value should never be empty)
+    if ($db_value == '') {
+        $db_con->insert(
+            array(
+                'code_id',
+                'value',
+                'description'),
+            array(
+                $code_id,
+                cfg_default_value($code_id, $usr, $debug),
+                cfg_default_description($code_id, $usr, $debug)), $debug - 1);
 
-  return $result;
+    } else {
+        $result .= $db_value;
+    }
+
+    return $result;
 }
 
+// get a default config value based on code CONST values
+function cfg_default_value($code_id, $usr, $debug)
+{
 
-?>
+    // init
+    $result = '';
+    log_debug('cfg_default_value for "' . $code_id . '"', $debug - 12);
+
+    // check the parameters to capsule this function
+    if ($code_id == '') {
+        log_err("The code id must be set", "config->cfg_default_value");
+    }
+
+    switch ($code_id) {
+        case CFG_VERSION_DB:
+            $result = FIRST_VERSION;
+    }
+
+    return $result;
+}
+
+// get a default description for a configuration value
+function cfg_default_description($code_id, $usr, $debug)
+{
+
+    // init
+    $result = '';
+    log_debug('cfg_default_description for "' . $code_id . '"', $debug - 12);
+
+    // check the parameters to capsule this function
+    if ($code_id == '') {
+        log_err("The code id must be set", "config->cfg_default_description");
+    }
+
+    switch ($code_id) {
+        case CFG_VERSION_DB:
+            $result = 'the program version which has last completed the update';
+    }
+
+    return $result;
+}

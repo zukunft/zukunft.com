@@ -35,7 +35,7 @@ include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<b
 
 
 // open database 
-$db_con = zu_start("login_activate", "center_form", $debug);
+$db_con = prg_start("login_activate", "center_form", $debug);
 
 
   $result = ''; // reset the html code var
@@ -46,7 +46,7 @@ $db_con = zu_start("login_activate", "center_form", $debug);
   if(isset($_POST['submit'])){ 
     $usr_id = $_POST['id']; 
     $debug = $_POST['debug']; 
-    zu_debug("login_activate (user: ".$usr_id.")", $debug);
+    log_debug("login_activate (user: ".$usr_id.")", $debug);
 
     $db_con = new mysql;         
     $db_con->usr_id = $usr_id;         
@@ -64,7 +64,7 @@ $db_con = zu_start("login_activate", "center_form", $debug);
     $sql = "SELECT NOW() AS db_dow;"; 
     $db_row = $db_con->get1($sql, $debug-5);  
     $db_now = $db_row['db_dow'];
-    zu_debug("login_activate (db: ".$db_key.", post: ".$_POST['key'].", limit: ".$db_time_limit.", db now:".$db_now.")", $debug);
+    log_debug("login_activate (db: ".$db_key.", post: ".$_POST['key'].", limit: ".$db_time_limit.", db now:".$db_now.")", $debug);
     if ($db_key == $_POST['key'] AND $db_time_limit > $db_now) {
 
       // check the user input
@@ -104,7 +104,7 @@ $db_con = zu_start("login_activate", "center_form", $debug);
           $_SESSION['user_name'] = $usr_name; 
           $_SESSION['logged'] = TRUE; 
         } else {
-          zu_err("Cannot find id for ".$usr_name." after password change.","login_activate.php");
+          log_err("Cannot find id for ".$usr_name." after password change.","login_activate.php");
         }
         
         # Redirect the user to a main page 
@@ -165,4 +165,4 @@ $db_con = zu_start("login_activate", "center_form", $debug);
   echo $result;
 
 // close the database  
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

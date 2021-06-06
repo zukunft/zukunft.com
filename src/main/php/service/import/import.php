@@ -56,7 +56,7 @@ class file_import {
   
   // import zukunft.com data as object for creating e.g. a json message
   function put ($debug) {
-    zu_debug('import->put', $debug-10);
+    log_debug('import->put', $debug-10);
     $result = '';
 
     $json_array = json_decode($this->json_str, true);

@@ -44,7 +44,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // returns the position of the corresponding seperator and takes text fields and brakets into account by not splitting them
 function zuc_pos_seperator($formula, $seperator, $start_pos, $debug) {
-  zu_debug("zuc_pos_seperator (".$formula.",".$seperator.",".$start_pos.")", $debug-10);
+  log_debug("zuc_pos_seperator (".$formula.",".$seperator.",".$start_pos.")", $debug-10);
 
   $pos = $start_pos;     // the search pos; was - 1 because for php the first char is 0, but in the lib it should be 1, but the is changed now
   $text_linked = False;  // do not look at text in highquotes
@@ -111,14 +111,14 @@ function zuc_pos_seperator($formula, $seperator, $start_pos, $debug) {
     $pos = -1;
   }
   
-  zu_debug("zuc_pos_seperator -> ".$pos, $debug-10);
+  log_debug("zuc_pos_seperator -> ".$pos, $debug-10);
   return $pos;
 }
 
 
 // returns the position of the next predefined function
 function zuc_pos_function($formula, $debug) {
-  zu_debug("zuc_pos_function (".$formula.")", $debug);
+  log_debug("zuc_pos_function (".$formula.")", $debug);
 
   // if not found return -1 because the seperator can also be on position 0
   $pos = -1;
@@ -127,13 +127,13 @@ function zuc_pos_function($formula, $debug) {
   if ($pos < 0) { $pos = zuc_pos_seperator($formula, ZUP_FUNC_SUM,   0, $debug-10); } 
   if ($pos < 0) { $pos = zuc_pos_seperator($formula, ZUP_FUNC_ISNUM, 0, $debug-10); } 
 
-  zu_debug("zuc_pos_function -> ".$pos, $debug);
+  log_debug("zuc_pos_function -> ".$pos, $debug);
   return $pos;
 }
 
 // return the left lost function name of the formula
 function zuc_func_name ($formula, $debug) {
-  zu_debug("zuc_func_name (".$formula.")", $debug);
+  log_debug("zuc_func_name (".$formula.")", $debug);
   $result = '';
 
   if (substr($formula, 0, strlen(ZUP_FUNC_IF)) == ZUP_FUNC_IF) {
@@ -152,7 +152,7 @@ function zuc_func_name ($formula, $debug) {
       $result = 1;
     }
   */
-  zu_debug("zuc_func_name -> ".$result, $debug);
+  log_debug("zuc_func_name -> ".$result, $debug);
   
   return $result;
 }
@@ -160,7 +160,7 @@ function zuc_func_name ($formula, $debug) {
 
 // returns true if the formula string starts with a fixed function; the formula text is always intepreted from left to right
 function zuc_has_function ($formula, $result_type, $debug) {
-  zu_debug("zuc_has_function (".$formula.",".$result_type."(", $debug);
+  log_debug("zuc_has_function (".$formula.",".$result_type."(", $debug);
 
   $result = False;
 
@@ -174,7 +174,7 @@ function zuc_has_function ($formula, $result_type, $debug) {
 
 // returns true if a text contains a mathematical function
 function zuc_has_function_pos($formula, $debug) {
-  zu_debug("zuc_has_function_pos (".$formula.")", $debug);
+  log_debug("zuc_has_function_pos (".$formula.")", $debug);
 
   $result = False;
   $pos = zuc_pos_function($formula, $debug-1); 
@@ -185,7 +185,7 @@ function zuc_has_function_pos($formula, $debug) {
 
 // returns the next predefined function
 function zuc_get_function($formula, $debug) {
-  zu_debug("zuc_get_function (".$formula.")", $debug);
+  log_debug("zuc_get_function (".$formula.")", $debug);
 
   // if not found return -1 because the seperator can also be on position 0
   $result = '';
@@ -194,13 +194,13 @@ function zuc_get_function($formula, $debug) {
   if (substr($formula, 0, strlen(ZUP_FUNC_SUM))   == ZUP_FUNC_SUM)   { $result = ZUP_FUNC_SUM; }
   if (substr($formula, 0, strlen(ZUP_FUNC_ISNUM)) == ZUP_FUNC_ISNUM) { $result = ZUP_FUNC_ISNUM; }
 
-  zu_debug("zuc_get_function -> ".$result, $debug);
+  log_debug("zuc_get_function -> ".$result, $debug);
   return $result;
 }
 
 // returns the position of the next mathematical operator
 function zuc_pos_operator($formula, $debug) {
-  zu_debug("zuc_pos_operator (".$formula.")", $debug-10);
+  log_debug("zuc_pos_operator (".$formula.")", $debug-10);
 
   // if not found return -1 because the seperator can also be on position 0
   $next_pos = -1;
@@ -213,13 +213,13 @@ function zuc_pos_operator($formula, $debug) {
   $pos = zuc_pos_seperator($formula, ZUP_OPER_AND, 0, $debug-10); if ($pos >= 0 AND ($pos < $next_pos OR $next_pos < 0)) { $next_pos = $pos; } 
   $pos = zuc_pos_seperator($formula, ZUP_OPER_OR,  0, $debug-10); if ($pos >= 0 AND ($pos < $next_pos OR $next_pos < 0)) { $next_pos = $pos; } 
 
-  zu_debug("zuc_pos_operator -> ".$next_pos, $debug-10);
+  log_debug("zuc_pos_operator -> ".$next_pos, $debug-10);
   return $next_pos;
 }
 
 // returns true if a text contains a mathematical operator
 function zuc_has_operator($formula, $debug) {
-  zu_debug("zuc_has_operator (".$formula.")", $debug);
+  log_debug("zuc_has_operator (".$formula.")", $debug);
 
   $result = False;
   $pos = zuc_pos_operator($formula, $debug-10); 
@@ -230,7 +230,7 @@ function zuc_has_operator($formula, $debug) {
 
 // get the left most math operator
 function zuc_get_operator($formula, $debug) {
-  zu_debug("zuc_get_operator (".$formula.")", $debug);
+  log_debug("zuc_get_operator (".$formula.")", $debug);
 
   $result = '';
   if ($formula[0] == ZUP_OPER_ADD) {
@@ -261,7 +261,7 @@ function zuc_get_operator($formula, $debug) {
 
 // get the next math operator
 function zuc_get_operator_pos($formula, $debug) {
-  zu_debug("zuc_get_operator_pos (".$formula.")", $debug);
+  log_debug("zuc_get_operator_pos (".$formula.")", $debug);
 
   $result = '';
   $pos = zuc_pos_operator($formula, $debug-10);
@@ -293,7 +293,7 @@ function zuc_get_operator_pos($formula, $debug) {
 
 // returns the position of the next mathematical operator
 function zuc_pos_braket($formula, $debug) {
-  zu_debug("zuc_pos_braket (".$formula.")", $debug);
+  log_debug("zuc_pos_braket (".$formula.")", $debug);
 
   // if not found return -1 because the seperator can also be on position 0
   $next_pos = -1;
@@ -301,13 +301,13 @@ function zuc_pos_braket($formula, $debug) {
   $pos = zuc_pos_seperator($formula, ZUP_CHAR_BRAKET_OPEN,  0, $debug-10); if ($pos >= 0 AND ($pos < $next_pos OR $next_pos < 0)) { $next_pos = $pos; } 
   $pos = zuc_pos_seperator($formula, ZUP_CHAR_BRAKET_CLOSE, 0, $debug-10); if ($pos >= 0 AND ($pos < $next_pos OR $next_pos < 0)) { $next_pos = $pos; } 
 
-  zu_debug("zuc_pos_braket -> ".$next_pos, $debug);
+  log_debug("zuc_pos_braket -> ".$next_pos, $debug);
   return $next_pos;
 }
 
 // returns the next braket
 function zuc_get_braket($formula, $debug) {
-  zu_debug("zuc_get_braket (".$formula.")", $debug);
+  log_debug("zuc_get_braket (".$formula.")", $debug);
 
   // if not found return -1 because the seperator can also be on position 0
   $result = '';
@@ -315,13 +315,13 @@ function zuc_get_braket($formula, $debug) {
   if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_OPEN))  == ZUP_CHAR_BRAKET_OPEN)  { $result = ZUP_CHAR_BRAKET_OPEN;  }
   if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_CLOSE)) == ZUP_CHAR_BRAKET_CLOSE) { $result = ZUP_CHAR_BRAKET_CLOSE; }
 
-  zu_debug("zuc_get_braket -> ".$result, $debug);
+  log_debug("zuc_get_braket -> ".$result, $debug);
   return $result;
 }
 
 // returns true if the formula starts with a braket, so that first the inner part needs to be calculated
 function zuc_has_braket($formula, $debug) {
-  zu_debug("zuc_has_braket (".$formula.")", $debug);
+  log_debug("zuc_has_braket (".$formula.")", $debug);
 
   $result = false;
   if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_OPEN)) == ZUP_CHAR_BRAKET_OPEN) {
@@ -332,7 +332,7 @@ function zuc_has_braket($formula, $debug) {
 
 // true if the formula starts with the closing braket
 function zuc_has_braket_close($formula, $debug) {
-  zu_debug("zuc_has_braket_close (".$formula.")", $debug);
+  log_debug("zuc_has_braket_close (".$formula.")", $debug);
 
   $result = false;
   if (substr($formula, 0, strlen(ZUP_CHAR_BRAKET_CLOSE)) == ZUP_CHAR_BRAKET_CLOSE) {
@@ -351,7 +351,7 @@ function zuc_has_braket_close($formula, $debug) {
 // this could should be replaced by R-project.org later
 function zuc_math($formula, $operator, $word_array, $time_phr, $debug) {
   if (isset($time_phr)) { $time_word_id = $time_phr->id; } else { $time_word_id = 0; }
-  zu_debug("zuc_math (".$formula.",".$operator.",".implode(",",$word_array).",".$time_word_id.")", $debug-2);
+  log_debug("zuc_math (".$formula.",".$operator.",".implode(",",$word_array).",".$time_word_id.")", $debug-2);
   
   $result = $formula;
   
@@ -367,13 +367,13 @@ function zuc_math($formula, $operator, $word_array, $time_phr, $debug) {
   // if ($pos > 1 && zuc_has_operator(substr($result, $pos - 1, 1)) == false) {
   if ($pos > 0) {
     $part_l = zu_str_left($result, $pos);
-    zu_debug("zuc_math -> left part of ".$operator.": ".$part_l.".", $debug);
+    log_debug("zuc_math -> left part of ".$operator.": ".$part_l.".", $debug);
     $part_l = zuc_math_parse($part_l, $word_array, $time_phr, $debug-1);
-    zu_debug("zuc_math -> left part result ".$part_l.": ", $debug-8);
+    log_debug("zuc_math -> left part result ".$part_l.": ", $debug-8);
     $part_r = zu_str_right($result, ($pos + 1) * -1);
-    zu_debug("zuc_math -> right part ".$operator.": ".$part_r.".", $debug);
+    log_debug("zuc_math -> right part ".$operator.": ".$part_r.".", $debug);
     $part_r = zuc_math_parse($part_r, $word_array, $time_phr, $debug-1);
-    zu_debug("zuc_math -> right part result ".$part_r.": ", $debug-8);
+    log_debug("zuc_math -> right part result ".$part_r.": ", $debug-8);
 
     $result_l = strval($part_l);
     $result_r = strval($part_r);
@@ -385,7 +385,7 @@ function zuc_math($formula, $operator, $word_array, $time_phr, $debug) {
       break;
     case ZUP_OPER_DIV:
       if ($result_r <> 0) {
-        zu_debug("zuc_math -> result ".$result_l." / ".$result_r, $debug-2);
+        log_debug("zuc_math -> result ".$result_l." / ".$result_r, $debug-2);
         $result = $result_l / $result_r;
       } else {
         $result = 0;
@@ -395,7 +395,7 @@ function zuc_math($formula, $operator, $word_array, $time_phr, $debug) {
       $result = $result_l + $result_r;
       break;
     case ZUP_OPER_SUB:
-      zu_debug("zuc_math -> result ".$result_l." / ".$result_r, $debug-2);
+      log_debug("zuc_math -> result ".$result_l." / ".$result_r, $debug-2);
       $result = $result_l - $result_r;
       break;
     }
@@ -435,7 +435,7 @@ function zuc_math_sub($formula, $word_array, $time_phr, $debug) {
 // why is $word_array and $time_word_id needed? this should have been converted to numbers earlier
 function zuc_math_bracket($formula, $word_array, $time_phr, $debug) {
   if (isset($time_phr)) { $time_word_id = $time_phr->id; } else { $time_word_id = 0; }
-  zu_debug("zuc_math_bracket (".$formula.",".implode(",",$word_array).",".$time_word_id.")", $debug-5);
+  log_debug("zuc_math_bracket (".$formula.",".implode(",",$word_array).",".$time_word_id.")", $debug-5);
 
   $result = $formula;
 
@@ -450,44 +450,44 @@ function zuc_math_bracket($formula, $word_array, $time_phr, $debug) {
 
     // get the left part, but don't get the result of the left part because this can cause loops
     $left_part = substr($result, 0, $inner_start_pos);
-    zu_debug("zuc_math_bracket -> left_part ".$left_part, $debug-5);
+    log_debug("zuc_math_bracket -> left_part ".$left_part, $debug-5);
 
     $inner_part = substr($result, $inner_start_pos + 1, $inner_end_pos - $inner_start_pos - 1);
-    zu_debug("zuc_math_bracket -> inner_part ".$inner_part, $debug-5);
+    log_debug("zuc_math_bracket -> inner_part ".$inner_part, $debug-5);
     
     // get the right part, but don't get the result of the right part because will be done by the calling function
     //$right_part = substr($result, (strlen($result) - $inner_end_pos - 1) * -1);
     $right_part = zu_str_right_of($result, $left_part.ZUP_CHAR_BRAKET_OPEN.$inner_part.ZUP_CHAR_BRAKET_CLOSE);
-    zu_debug("zuc_math_bracket -> right_part ".$right_part, $debug-5);
+    log_debug("zuc_math_bracket -> right_part ".$right_part, $debug-5);
       
     // ... and something needs to be calculated
     if (zuc_has_operator($inner_part)) {
     
       // calculate the inner part
       $inner_part = zuc_math_parse($inner_part, $word_array, $time_phr, $debug-1);
-      zu_debug("zuc_math_bracket -> inner_part result ".$inner_part, $debug-1);
+      log_debug("zuc_math_bracket -> inner_part result ".$inner_part, $debug-1);
 
       // combine the result
       $result = $left_part . $inner_part . $right_part;
     }
   }
   
-  zu_debug("zuc_math_bracket -> done (".$result.")", $debug-5);
+  log_debug("zuc_math_bracket -> done (".$result.")", $debug-5);
   return $result;
 }
 
 // 
 function zuc_math_if($formula, $word_array, $time_phr, $debug) {
   if (isset($time_phr)) { $time_word_id = $time_phr->id; } else { $time_word_id = 0; }
-  zu_debug("zuc_math_if (".$formula.",".implode(",",$word_array).",".$time_word_id.")", $debug-8);
+  log_debug("zuc_math_if (".$formula.",".implode(",",$word_array).",".$time_word_id.")", $debug-8);
 
   $result = $formula;
 
   // get the position of the next braket
-  zu_debug("zuc_math_if -> seperate ", $debug-16);
+  log_debug("zuc_math_if -> seperate ", $debug-16);
   $if_start_pos    = zuc_pos_seperator($result, ZUP_FUNC_IF, 0, $debug-10);
   $inner_start_pos = zuc_pos_seperator($result, ZUP_CHAR_BRAKET_OPEN, 0, $debug-10);
-  zu_debug("zuc_math_if -> seperated ", $debug-16);
+  log_debug("zuc_math_if -> seperated ", $debug-16);
   // if there is a braket ...
   if ($if_start_pos >= 0 AND $inner_start_pos >= 0 AND $if_start_pos < $inner_start_pos) {
     // ... and a closeing braket ...
@@ -497,22 +497,22 @@ function zuc_math_if($formula, $word_array, $time_phr, $debug) {
 
     // get the left part, but don't get the result of the left part because this can cause loops
     $left_part = substr($result, 0, $inner_start_pos);
-    zu_debug("zuc_math_if -> left_part ".$left_part, $debug-6);
+    log_debug("zuc_math_if -> left_part ".$left_part, $debug-6);
 
     $inner_part = substr($result, $inner_start_pos + 1, $inner_end_pos - $inner_start_pos - 1);
-    zu_debug('zuc_math_if -> inner_part "'.$inner_part.'"', $debug-6);
+    log_debug('zuc_math_if -> inner_part "'.$inner_part.'"', $debug-6);
     
     // get the right part, but don't get the result of the right part because will be done by the calling function
     //$right_part = substr($result, (strlen($result) - $inner_end_pos - 1) * -1);
     $right_part = zu_str_right_of($result, $left_part.ZUP_CHAR_BRAKET_OPEN.$inner_part.ZUP_CHAR_BRAKET_CLOSE);
-    zu_debug("zuc_math_if -> right_part ".$right_part, $debug-6);
+    log_debug("zuc_math_if -> right_part ".$right_part, $debug-6);
       
     // ... and something needs to be looked at
     if (zuc_has_operator($inner_part) OR zuc_has_function_pos($inner_part)) {
     
       // depending on the operator split the inner part if needed
       $operator = zuc_get_operator_pos ($inner_part);
-      zu_debug('zuc_math_if -> operator "'.$operator.'" in "'.$inner_part.'"', $debug-6);
+      log_debug('zuc_math_if -> operator "'.$operator.'" in "'.$inner_part.'"', $debug-6);
       if ($operator == ZUP_OPER_AND OR $operator == ZUP_OPER_OR) {
         $result = Null; // by default no result
         $inner_left_part  = zu_str_left_of ($inner_part, $operator);
@@ -521,28 +521,28 @@ function zuc_math_if($formula, $word_array, $time_phr, $debug) {
         $inner_right_part = zuc_math_parse($inner_right_part, $word_array, $time_phr, $debug-1);
         if ($operator == ZUP_OPER_AND) {
           if ($inner_left_part == True AND $inner_right_part == True) {
-            zu_debug('if: get logical result for "'.$inner_part.'" is "true"', $debug);
+            log_debug('if: get logical result for "'.$inner_part.'" is "true"', $debug);
             $result = zuc_math_parse($right_part,  $word_array, $time_phr, $debug-1);
           }
         }
         if ($operator == ZUP_OPER_OR) {
           if ($inner_left_part == True OR $inner_right_part == True) {
-            zu_debug('if: get logical result for "'.$inner_part.'" is "true"', $debug);
+            log_debug('if: get logical result for "'.$inner_part.'" is "true"', $debug);
             $result = zuc_math_parse($right_part,  $word_array, $time_phr, $debug-1);
           }
         }
       } else { 
         // calculate the inner part
         $inner_part_result = zuc_math_parse($inner_part, $word_array, $time_phr, $debug-1);
-        zu_debug("zuc_math_if -> inner_part result ".$inner_part, $debug-6);
-        zu_debug('if: get logical result for "'.$inner_part.'" is "'.$inner_part_result.'"', $debug);
+        log_debug("zuc_math_if -> inner_part result ".$inner_part, $debug-6);
+        log_debug('if: get logical result for "'.$inner_part.'" is "'.$inner_part_result.'"', $debug);
         // combine the result
         $result = $left_part . $inner_part_result . $right_part;
       }
     }
   }
   
-  zu_debug("zuc_math_if ... done (".$result.")", $debug-10);
+  log_debug("zuc_math_if ... done (".$result.")", $debug-10);
   return $result;
 }
 
@@ -555,8 +555,8 @@ function zuc_math_if($formula, $word_array, $time_phr, $debug) {
 // actually calculate the numeric result; this should be replaced by R
 function zuc_math_parse($formula, $word_array, $time_phr, $debug) {
   if (isset($time_phr)) { $time_word_id = $time_phr->id; } else { $time_word_id = 0; }
-  zu_debug('calculate (by calling R): "'.$formula.'"', $debug-1);
-  zu_debug("zuc_math_parse (".$formula.",".implode(",",$word_array).",".$time_word_id.")", $debug-60);
+  log_debug('calculate (by calling R): "'.$formula.'"', $debug-1);
+  log_debug("zuc_math_parse (".$formula.",".implode(",",$word_array).",".$time_word_id.")", $debug-60);
 
   $result = $formula;
 
@@ -566,47 +566,47 @@ function zuc_math_parse($formula, $word_array, $time_phr, $debug) {
     }
     
     $result = zuc_math_if($result, $word_array, $time_phr, $debug-60);    
-    zu_debug("zuc_math_parse after if:".$result, $debug-60);
+    log_debug("zuc_math_parse after if:".$result, $debug-60);
     $result = zuc_math_bracket($result, $word_array, $time_phr, $debug-60);    
-    zu_debug("zuc_math_parse after bracket:".$result, $debug-60);
+    log_debug("zuc_math_parse after bracket:".$result, $debug-60);
     $result = zuc_math_mul($result, $word_array, $time_phr, $debug-60);
-    zu_debug("zuc_math_parse after mul:".$result, $debug-60);
+    log_debug("zuc_math_parse after mul:".$result, $debug-60);
     $result = zuc_math_div($result, $word_array, $time_phr, $debug-60);
-    zu_debug("zuc_math_parse after div:".$result, $debug-60);
+    log_debug("zuc_math_parse after div:".$result, $debug-60);
     $result = zuc_math_add($result, $word_array, $time_phr, $debug-1);
-    zu_debug("zuc_math_parse after add:".$result, $debug-60);
+    log_debug("zuc_math_parse after add:".$result, $debug-60);
     $result = zuc_math_sub($result, $word_array, $time_phr, $debug-60);
-    zu_debug("zuc_math_parse after sub:".$result, $debug-60);
+    log_debug("zuc_math_parse after sub:".$result, $debug-60);
   }
   
-  zu_debug('calculated result: "'.$result.'"', $debug-1);
+  log_debug('calculated result: "'.$result.'"', $debug-1);
   return $result;
 }
 
 // returns true if the next symbol is a math symbol (that can be ingored if a formula should be converted to the db format)
 function zuc_is_math_symbol($formula, $debug) {
-  zu_debug("zuc_is_math_symbol (".$formula.")", $debug);
+  log_debug("zuc_is_math_symbol (".$formula.")", $debug);
   $result = false;
   if (zuc_has_operator($formula[0])) {
-    zu_debug("zuc_is_math_symbol -> oper", $debug);
+    log_debug("zuc_is_math_symbol -> oper", $debug);
     $result = True;
   } else {
   if (zuc_has_braket($formula[0])) {
-    zu_debug("zuc_is_math_symbol -> braket", $debug);
+    log_debug("zuc_is_math_symbol -> braket", $debug);
     $result = True;
   } else {
   if (zuc_has_braket_close($formula[0])) {
-    zu_debug("zuc_is_math_symbol -> close", $debug);
+    log_debug("zuc_is_math_symbol -> close", $debug);
     $result = True;
   } else {
   if (zuc_pos_function($formula, $debug-1) == 0) {
-    zu_debug("zuc_is_math_symbol -> func", $debug);
+    log_debug("zuc_is_math_symbol -> func", $debug);
     $result = True;
   }
   }
   }
   }
-  zu_debug("zuc_is_math_symbol ... (".zu_dsp_bool($result).")", $debug-1);
+  log_debug("zuc_is_math_symbol ... (".zu_dsp_bool($result).")", $debug-1);
   return $result;
 }
 
@@ -630,21 +630,21 @@ function zuc_next_char_is_num($formula, $debug) {
 
 
 function zuc_is_math_symbol_or_num($formula, $debug) {
-  zu_debug("zuc_is_math_symbol_or_num (".$formula.")", $debug);
+  log_debug("zuc_is_math_symbol_or_num (".$formula.")", $debug);
   $result = false;
   if (zuc_is_math_symbol($formula)) {
-    zu_debug("zuc_is_math_symbol_or_num -> math", $debug);
+    log_debug("zuc_is_math_symbol_or_num -> math", $debug);
     $result = True;
   } else {
     $result = zuc_next_char_is_num($formula, $debug);
   }
-  zu_debug("zuc_is_math_symbol_or_num ... (".zu_dsp_bool($result).")", $debug-1);
+  log_debug("zuc_is_math_symbol_or_num ... (".zu_dsp_bool($result).")", $debug-1);
   return $result;
 }
 
 // returns the position of the next math symbol
 function zuc_pos_math_symbol($formula, $debug) {
-  zu_debug("zuc_pos_math_symbol (".$formula.")", $debug);
+  log_debug("zuc_pos_math_symbol (".$formula.")", $debug);
 
   $result = -1;
   $pos = zuc_pos_operator($formula, $debug-10);
@@ -654,13 +654,13 @@ function zuc_pos_math_symbol($formula, $debug) {
   $pos = zuc_pos_braket  ($formula, $debug-10);
   if ($pos >= 0 AND ($pos < $result OR $result == -1)) { $result = $pos; }
 
-  zu_debug("zuc_pos_math_symbol ... (".$result.")", $debug-1);
+  log_debug("zuc_pos_math_symbol ... (".$result.")", $debug-1);
   return $result;
 }
 
 // returns the next math symbol or number
 function zuc_get_math_symbol($formula, $debug) {
-  zu_debug("zuc_get_math_symbol (".$formula.")", $debug);
+  log_debug("zuc_get_math_symbol (".$formula.")", $debug);
 
   $result = "";
   if ($result == '') { $result = zuc_get_operator($formula, $debug-10);  }
@@ -672,7 +672,7 @@ function zuc_get_math_symbol($formula, $debug) {
     }
   }  */
 
-  zu_debug("zuc_get_math_symbol -> (".$result.")", $debug);
+  log_debug("zuc_get_math_symbol -> (".$result.")", $debug);
   return $result;
 }
 

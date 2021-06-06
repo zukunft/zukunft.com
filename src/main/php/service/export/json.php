@@ -45,7 +45,7 @@ class json_io
     // export zukunft.com data as json
     function export($debug)
     {
-        zu_debug('json_io->export', $debug - 10);
+        log_debug('json_io->export', $debug - 10);
         $result = '';
 
         // get the export object
@@ -54,7 +54,7 @@ class json_io
         $export_instance->phr_lst = $this->phr_lst;
         $export_obj = $export_instance->get($debug - 1);
 
-        zu_debug('json_io->export create json string', $debug - 16);
+        log_debug('json_io->export create json string', $debug - 16);
         $result .= json_encode($export_obj);
 
         return $result;

@@ -10,20 +10,22 @@
   "Il semble que la perfection soit atteinte non quand il n'y a plus rien à ajouter, 
    mais quand il n'y a plus rien à retrancher." 
    
-  In Englisch "reduce to the max" 
+  In English "reduce to the max"
   
-  This code should be as simple as possible and have as less dependencies as possible. 
-  So you only neew a LAMP server (https://wiki.debian.org/LaMp) and an HTML (using some HTML5 features) browser.
+  The code use for zukunft.com should be as simple as possible and have as less dependencies as possible,
+  so basically follow the Zen of Python https://www.python.org/dev/peps/pep-0020/
+  So you the minimal requirements are a LAMP server (https://wiki.debian.org/LaMp) and an HTML (using some HTML5 features) browser.
   If you see anything that does not look simple to you, 
   please request a change on https://github.com/zukunft/zukunft.com
   or write an email to timon@zukunft.com
   
   
   General coding principles:
-   - check input: each method should check the consistency of the input at the beginning
+   - init:        each function first collect the global vars, initiate the result variable and create a debug message if requested
+   - check input: each method should check the consistency of the input parameters at the beginning
    - debug:       all methods have a "debug" message after the input check for easy debugging
    - $debug-1:    a call of the next level function should be with debug-1 so that the user can dig into step by step
-   - $debug-10:   up to a debug level of 10 the debug messages should be a kind of user readble
+   - $debug-10:   up to a debug level of 10 the debug messages should be a kind of user readable
                   debug levels above 10 are used for programmer debugging
    - each code file start with a table of contents and the copyright
    - each function should be tested in test.php
@@ -32,50 +34,55 @@
   
   Naming conventions:
   -------------------
-  wrd (WoRD)           - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph 
-                         and used to retrieve the numeric values
-  val (VALue)          - a numeric value the can be used for calculations 
-  frm (FoRMula)        - a formula in the zukunft.com format, 
-                         which can be either in the usr (USeR) format with real words 
-                         or in the db (DataBase) format with database id references 
-                         or in the math (MATHematical) format, which should contain only numeric values
+  wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
+                             and used to retrieve the numeric values
+  val (VALue)              - a numeric value the can be used for calculations
+  frm (FoRMula)            - a formula in the zukunft.com format,
+                             which can be either in the usr (USeR) format with real words
+                             or in the db (DataBase) format with database id references
+                             or in the math (MATHematical) format, which should contain only numeric values
   
-  vrb (VeRB)           - a predicate (mostly just a verb) that defines the type that links two words; 
-                         by default a verb can be used forward and backward e.g. ABB is a conmpany and companies are ABB, ...
-                         if the reverse name is empty, the verb can only be used the forward way
-                         if a link should only be used one way for one phrase link, the negative verb is saved
-                         verbs are also named as word_links
-  lnk (LiNK)           - a triple, so a word, connected to another word with a verb (word_link.php is the related class)
-  phr (PHRase)         - either a word or triple mainly used for selection
-  grp (GrouP)          - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
-  trm (TeRM)           - either a work, verb or triple (formula names have always a corresponding phrase)
-  exp (EXPression)     - a formula text that implies a data selection and lead to a number
-  elm (ELeMents)       - a structured reference for terms, verbs or formulas mostly used for formula elements
-  fv (Formula Value)   - the calculated result of a formula (rename to result? and if use RESult)                     
-  fig (FIGure)         - either a value set by the user or a calculated formula result
-  usr (USeR)           - the person who is logged in
-  log                  - to save all changes in a user readable format
-  src (SouRCe)         - url or description where a value is taken from
+  vrb (VeRB)               - a predicate (mostly just a verb) that defines the type that links two words;
+                             by default a verb can be used forward and backward e.g. ABB is a company and companies are ABB, ...
+                             if the reverse name is empty, the verb can only be used the forward way
+                             if a link should only be used one way for one phrase link, the negative verb is saved
+                             verbs are also named as word_links
+  lnk (LiNK)               - a triple, so a word, connected to another word with a verb (word_link.php is the related class)
+  phr (PHRase)             - either a word or triple mainly used for selection
+  grp (GrouP)              - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
+  trm (TeRM)               - either a work, verb or triple (formula names have always a corresponding phrase)
+  exp (EXPression)         - a formula text that implies a data selection and lead to a number
+  elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements
+  fv (Formula Value)       - the calculated result of a formula (rename to result? and if use RESult)
+  fig (FIGure)             - either a value set by the user or a calculated formula result
+  usr (USeR)               - the person who is logged in
+  log                      - to save all changes in a user readable format
+  src (SouRCe)             - url or description where a value is taken from
 
-  sbx (SandBoX)        - the user sandbox tables where the adjustments of the users are saved
-  uso (User Sbx Object)- an object (word, value, formula, ...) that uses the user sandbox
+  sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
+  uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
 
-  id (IDentifier)      - internal prime key of a database row
-  ids (IDentifierS)    - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
-  glst (Get LiST)      - is used to name the private internal functions that can also create the user list
-  lst (LiST)           - an array of objects
-  ulst (User LiST)     - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
-                         the user list should only be used to display something and never for checking if an item exists
-                         this is the short for for sbx_lst
+  id (IDentifier)          - internal prime key of a database row
+  ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
+  glst (Get LiST)          - is used to name the private internal functions that can also create the user list
+  lst (LiST)               - an array of objects
+  ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
+                             the user list should only be used to display something and never for checking if an item exists
+                             this is the short for for sbx_lst
 
-  dsp (DiSPlay)        - a view (ex view) object or a function that return HTML code that can be displayed
-  cmp (CoMPonent)      - one part of a view so a kind of view component (ex view entry)
-  dsl (DSp cmp Link)   - link of a view component to a view
-  btn (BuTtoN)         - button
-  tbl (TaBLe)          - HTML code for a table 
+  ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
+  djs (DiSPlay JavaScript) - functions for the vue.js JavaScript user interface implementation
+  dbs (DiSPlay BootStrap)  - functions for the bootstrap user interface implementation
+  dsp (DiSPlay html)       - functions for the pure html user interface implementation
+                             a view object or a function that return HTML code that can be displayed
+  dtx (DiSPlay TeXt)       - functions for the text interface implementation mainly for debugging
+  cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
+  dsl (DSp cmp Link)       - link of a view component to a view
+  btn (BuTtoN)             - button
+  tbl (TaBLe)              - HTML code for a table
   
-  cl (Code Link)       - a text used to identify one predefined database entry that triggers to use of some program code
-  sf (Sql Format)      - to convert a text for the database
+  cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
+  sf (Sql Format)          - to convert a text for the database
   
   
   database change setup
@@ -95,7 +102,7 @@
   To split the load between to several servers it is suggested to move one word and all it's related values and results to a second server
   further splitting can be done by another word to split in hierarchy order 
   e.g. use company as the first splitter and than ABB, Daimler, ... as the second or CO2 as the second tree
-       in this case the CO2 balance of ABB will be on the "Company ABB server", but all other CO2 data will be on en "enviroment server"
+       in this case the CO2 balance of ABB will be on the "Company ABB server", but all other CO2 data will be on en "environment server"
   the word graph should stay on the main server for consistency reasons     
        
   function naming
@@ -135,7 +142,7 @@
   This library contains general functions like debug or string
   that could also be taken from another framework
   
-  all functions that could pontentially go wrong have the parameter debug, 
+  all functions that could potentially go wrong have the parameter debug,
   so that the administrator can find out more details about what has gone wrong
   a positive debug value means that the user wants to see some debug message
   
@@ -167,7 +174,7 @@
   - add median_user and set_owner to all user sandbox objects
   - check which functions can be private in the user_sandbox
   - use private zukunft data to manage the zukunft payments for keeping data private and 
-  - don't check ip adress if someone is trying to login
+  - don't check ip address if someone is trying to login
 
   Technical
   - move the JSON object creation to the classes
@@ -184,15 +191,15 @@
   view
   - move the edit and add view to the change view mask instead show a pencil to edit the view
   - add a select box the the view name in the page header e.g. select box to select the view with a line to add a new view 
-  - add for values, words, formulas, ... the tab "compare" aditional to "Changes"
+  - add for values, words, formulas, ... the tab "compare" additional to "Changes"
   
   Table view
   - a table headline should show a mouseover message e.g. the "not unhappy ratio" should show explain what it is if the mouse is moved over the word
-  - allow to add a subrow to the table view and allow to select a formula for the subrow
+  - allow to add a sub row to the table view and allow to select a formula for the sub row
 
   value view
   - when displaying a value allow several display formats (template formatting including ...
-  - ... subvalues for related formula result
+  - ... sub values for related formula result
   - ... other user plus minus indicator
   - ... other user range chart)
   - show the values of other users also if the user has just an IP
@@ -220,10 +227,10 @@
   - if an admin does the import he has the possibility to be the owner for all imported values
 
   features
-  - allow paying users to protect thier values and offer them to a group of users
+  - allow paying users to protect their values and offer them to a group of users
     - the user can set the default to open or closed 
     - the user can open or close all values related to a word
-  - each user can define uo to 100 users as "prefered trust"  
+  - each user can define uo to 100 users as "preferred trust"
   - for each user show all values, formulas, words where the user has different settings than the other users and allow to move back to the standard
   - it should be possible to link an existing formula to a word/phrase (plus on formula should allow also to link an existing formula)
   - make the phrase to value links for fast searching user specific 
@@ -232,11 +239,11 @@
   - check the correct usage of verbs (see definition)
   - for the speed check use the speed log table with the url and the execution time if above a threshold
   - for wishes use the github issue tracker
-  - base increase (this, prior) on the default time jumpt (e.g. for turnover the time jump would be "yoy")
+  - base increase (this, prior) on the default time jump (e.g. for turnover the time jump would be "yoy")
 
   Bugs
   - solve the view sorting issue by combining the user settings for view, link and components
-    e.g. if a user chages the mask, he probably wants that the complete mask is unchanged
+    e.g. if a user changes the mask, he probably wants that the complete mask is unchanged
   - bug: display linked words does not display the downward words e.g. "Company main ratio" does not show "Target Price"
   - don't write the same log message several times during the same call
   - don't write too many log message in on php script call
@@ -245,8 +252,8 @@
   - remove all old zu_ function calls
 
 
-  prio 2:
-  - review user autentification (use fidoalliance.org/fido2/)
+  Prio 2:
+  - review user authentication (use fidoalliance.org/fido2/)
   - review the database indices and the foreign keys
   - include a list of basic values in test.php e.g. CO2 of rice
   
@@ -301,8 +308,9 @@ include_once $root_path.'src/main/php/model/user_sandbox.php';                  
 include_once $root_path.'src/main/php/web/user_sandbox_display.php';                 if ($debug > 9) { echo 'class user sandbox display loaded<br>'; }
 include_once $root_path.'src/main/php/model/system/system_error_log.php';            if ($debug > 9) { echo 'class system error log loaded<br>'; }
 include_once $root_path.'src/main/php/model/system/system_error_log_list.php';       if ($debug > 9) { echo 'class system error log list loaded<br>'; }
-include_once $root_path.'src/main/php/web/display_button.php';                       if ($debug > 9) { echo 'class display button loaded<br>'; }
+include_once $root_path.'src/main/php/web/display_interface.php';                    if ($debug > 9) { echo 'class display interface loaded<br>'; }
 include_once $root_path.'src/main/php/web/display_html.php';                         if ($debug > 9) { echo 'class display html loaded<br>'; }
+include_once $root_path.'src/main/php/web/display_button.php';                       if ($debug > 9) { echo 'class display button loaded<br>'; }
 include_once $root_path.'src/main/php/web/display_selector.php';                     if ($debug > 9) { echo 'class display selector loaded<br>'; }
 include_once $root_path.'src/main/php/web/display_list.php';                         if ($debug > 9) { echo 'class display list loaded<br>'; }
 include_once $root_path.'src/main/php/model/word/word.php';                          if ($debug > 9) { echo 'class word loaded<br>'; }
@@ -392,12 +400,14 @@ The beta test is expected to start with version 0.7
 
 */
 
-define("PRG_VERSION",  "0.0.2"); // to detect the correct update script and to mark the data export
-define("NEXT_VERSION", "0.0.3"); // to prevent importing imcompatible data
+const FIRST_VERSION = "0.0.3"; // the first program version which has a basic upgrade process
+const PRG_VERSION   = "0.0.3"; // to detect the correct update script and to mark the data export
+const NEXT_VERSION  = "0.0.4"; // to prevent importing incompatible data
 
 // global code settings
-define("UI_USE_BOOTSTRAP", 1);  // IF FALSE a simple HTML frontend without javascript is used
-define("UI_MIN_RESPONSE_TIME", 2); // mininal time after that the user user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
+// TODO move the user interface setting to the user page, so that he can define which UI he wants to use
+const UI_USE_BOOTSTRAP     = 1; // IF FALSE a simple HTML frontend without javascript is used
+const UI_MIN_RESPONSE_TIME = 2; // minimal time after that the user user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
 
 /*
 if UI_CAN_CHANGE_... setting is true renaming an object may switch to an object with the new name
@@ -411,94 +421,95 @@ e.g. if this setting is true
      2. "Nestlé" with id 2 will not be excluded any more
      
 */
-define("UI_CAN_CHANGE_VALUE",               TRUE); 
-define("UI_CAN_CHANGE_VIEW_NAME",           TRUE); 
-define("UI_CAN_CHANGE_VIEW_COMPONENT_NAME", TRUE); // dito for view components
-define("UI_CAN_CHANGE_VIEW_COMPONENT_LINK", TRUE); // dito for view component links
-define("UI_CAN_CHANGE_WORD_NAME",           TRUE); // dito for words
-define("UI_CAN_CHANGE_FORMULA_NAME",        TRUE); // dito for formulas
-define("UI_CAN_CHANGE_VERB_NAME",           TRUE); // dito for verbs
-define("UI_CAN_CHANGE_SOURCE_NAME",         TRUE); // dito for sources
+const UI_CAN_CHANGE_VALUE               = TRUE;
+const UI_CAN_CHANGE_VIEW_NAME           = TRUE;
+const UI_CAN_CHANGE_VIEW_COMPONENT_NAME = TRUE; // dito for view components
+const UI_CAN_CHANGE_VIEW_COMPONENT_LINK = TRUE; // dito for view component links
+const UI_CAN_CHANGE_WORD_NAME           = TRUE; // dito for words
+const UI_CAN_CHANGE_FORMULA_NAME        = TRUE; // dito for formulas
+const UI_CAN_CHANGE_VERB_NAME           = TRUE; // dito for verbs
+const UI_CAN_CHANGE_SOURCE_NAME         = TRUE; // dito for sources
 
-define("CFG_SITE_NAME", 'site_name'); // the name of the pod
+const CFG_SITE_NAME  = 'site_name';             // the name of the pod
+const CFG_VERSION_DB = 'version_database';      // the version of the database at the moment to trigger an update script if needed
 
 // the fixed system user
-define("SYSTEM_USER_ID", 1); // 
+const SYSTEM_USER_ID = 1; //
 
-// data retrival settings 
-define("SQL_ROW_LIMIT", 20); // default number of rows per page/query if not defined 
-define("SQL_ROW_MAX", 2000); // the max number of rows per query to avoid long response times
+// data retrieval settings
+const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
+const SQL_ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
-define("MAX_LOOP", 10000); // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
+const MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
 
 // max number of recursive call to avoid endless looping in case of a program error
-define("MAX_RECURSIVE", 10);   
+const MAX_RECURSIVE = 10;
 
 // the standard word displayed to the user if she/he as not yet viewed any other word
-define("DEFAULT_WORD_ID",        1);   
-define("DEFAULT_WORD_TYPE_ID",   1);   
-define("DEFAULT_DEC_POINT",    ".");   
-define("DEFAULT_THOUSAND_SEP", "'");   
+const DEFAULT_WORD_ID = 1;
+const DEFAULT_WORD_TYPE_ID = 1;
+const DEFAULT_DEC_POINT = ".";
+const DEFAULT_THOUSAND_SEP = "'";
 
 // some standard settings used as a fallback
 // move to code link?
-define("DEFAULT_VIEW",        "dsp_start");   
+const DEFAULT_VIEW = "dsp_start";
 
-// text convertion const (used to convert word, verbs or formula text to a database reference)
-define('ZUP_CHAR_WORD',           '"');    // or a zukunft verb or a zukunft formula 
-define('ZUP_CHAR_WORDS_START',    '[');    // 
-define('ZUP_CHAR_WORDS_END',      ']');    // 
-define('ZUP_CHAR_SEPERATOR',      ',');    // 
-define('ZUP_CHAR_RANGE',          ':');    // 
-define('ZUP_CHAR_TEXT_CONCAT',    '&');    // 
+// text conversion const (used to convert word, verbs or formula text to a database reference)
+const ZUP_CHAR_WORD        = '"';    // or a zukunft verb or a zukunft formula
+const ZUP_CHAR_WORDS_START = '[';    //
+const ZUP_CHAR_WORDS_END   = ']';    //
+const ZUP_CHAR_SEPERATOR   = ',';    //
+const ZUP_CHAR_RANGE       = ':';    //
+const ZUP_CHAR_TEXT_CONCAT = '&';    //
 
 // to convert word, formula or verbs database reference to word or word list and in a second step to a value or value list
-define('ZUP_CHAR_WORD_START',     '{t');    // 
-define('ZUP_CHAR_WORD_END',       '}');    // 
-define('ZUP_CHAR_LINK_START',     '{l');   // 
-define('ZUP_CHAR_LINK_END',       '}');    // 
-define('ZUP_CHAR_FORMULA_START',  '{f');   // 
-define('ZUP_CHAR_FORMULA_END',    '}');    // 
+const ZUP_CHAR_WORD_START    = '{t';   //
+const ZUP_CHAR_WORD_END      = '}';    //
+const ZUP_CHAR_LINK_START    = '{l';   //
+const ZUP_CHAR_LINK_END      = '}';    //
+const ZUP_CHAR_FORMULA_START = '{f';   //
+const ZUP_CHAR_FORMULA_END   = '}';    //
 
-define('ZUC_MAX_CALC_LAYERS',     '10000');    // max number of calculation layers
+const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
 // math calc (probably not needed any more if r-project.org is used)
-define('ZUP_CHAR_CALC', '=');    // 
-define('ZUP_OPER_ADD',  '+');    // 
-define('ZUP_OPER_SUB',  '-');    // 
-define('ZUP_OPER_MUL',  '*');    // 
-define('ZUP_OPER_DIV',  '/');    // 
+const ZUP_CHAR_CALC = '=';    //
+const ZUP_OPER_ADD  = '+';    //
+const ZUP_OPER_SUB  = '-';    //
+const ZUP_OPER_MUL  = '*';    //
+const ZUP_OPER_DIV  = '/';    //
 
-define('ZUP_OPER_AND',  '&');    // 
-define('ZUP_OPER_OR',   '|');    // 
+const ZUP_OPER_AND = '&';    //
+const ZUP_OPER_OR  = '|';    //
 
 // fixed functions
-define('ZUP_FUNC_IF',    'if');    // 
-define('ZUP_FUNC_SUM',   'sum');    // 
-define('ZUP_FUNC_ISNUM', 'is.numeric');    // 
+const ZUP_FUNC_IF    = 'if';    //
+const ZUP_FUNC_SUM   = 'sum';    //
+const ZUP_FUNC_ISNUM = 'is.numeric';    //
 
-// text convertion const (used to convert word, formula or verbs text to a reference)
-define('ZUP_CHAR_BRAKET_OPEN',    '(');    // 
-define('ZUP_CHAR_BRAKET_CLOSE',   ')');    // 
-define('ZUP_CHAR_TXT_FIELD',      '"');    // don't look for math symbols in text that is a highquotes
+// text conversion const (used to convert word, formula or verbs text to a reference)
+const ZUP_CHAR_BRAKET_OPEN  = '(';    //
+const ZUP_CHAR_BRAKET_CLOSE = ')';    //
+const ZUP_CHAR_TXT_FIELD    = '"';    // don't look for math symbols in text that is a high quotes
 
 
 
 // file links used
-//define("ZUH_IMG_ADD",      "../images/button_add_small.jpg");
-//define("ZUH_IMG_EDIT",     "../images/button_edit_small.jpg");
-define("ZUH_IMG_ADD",      "../images/button_add.svg");
-define("ZUH_IMG_EDIT",     ".../images/button_edit.svg");
-define("ZUH_IMG_DEL",      "../images/button_del.svg");
-define("ZUH_IMG_UNDO",     "../images/button_undo.svg");
-define("ZUH_IMG_FIND",     ".../images/button_find.svg");
-define("ZUH_IMG_UNFILTER", "../images/button_filter_off.svg");
-define("ZUH_IMG_BACK",     "../images/button_back.svg");
-define("ZUH_IMG_LOGO",     "../images/ZUKUNFT_logo.svg");
+//const ZUH_IMG_ADD       = "../images/button_add_small.jpg";
+//const ZUH_IMG_EDIT      = "../images/button_edit_small.jpg";
+const ZUH_IMG_ADD       = "../images/button_add.svg";
+const ZUH_IMG_EDIT      = ".../images/button_edit.svg";
+const ZUH_IMG_DEL       = "../images/button_del.svg";
+const ZUH_IMG_UNDO      = "../images/button_undo.svg";
+const ZUH_IMG_FIND      = ".../images/button_find.svg";
+const ZUH_IMG_UN_FILTER = "../images/button_filter_off.svg";
+const ZUH_IMG_BACK      = "../images/button_back.svg";
+const ZUH_IMG_LOGO      = "../images/ZUKUNFT_logo.svg";
 
-define("ZUH_IMG_ADD_FA",   "fa-plus-square");
-define("ZUH_IMG_EDIT_FA",  "fa-edit");
-define("ZUH_IMG_DEL_FA",   "fa-times-circle");
+const ZUH_IMG_ADD_FA  = "fa-plus-square";
+const ZUH_IMG_EDIT_FA = "fa-edit";
+const ZUH_IMG_DEL_FA  = "fa-times-circle";
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define ("PATH_BASE_CONFIG_FILES", $root_path.'src/main/resources/');
@@ -531,7 +542,7 @@ define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('car_costs.json')));
 // for internal functions debugging
 // each complex function should call this at the beginning with the parameters and with -1 at the end with the result
 // called function should use $debug-1
-function zu_debug($msg_text, $debug) {
+function log_debug($msg_text, $debug) {
   if ($debug > 0) { 
     echo $msg_text.'.<br>' ; 
     //ob_flush();
@@ -540,9 +551,13 @@ function zu_debug($msg_text, $debug) {
 }
 
 // for system messages no debug calls to avoid loops
-// $msg_text is a short description that is used to group and limit the number of error messages
+// $msg_text        is a short description that is used to group and limit the number of error messages
 // $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
-function zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr) {
+// $msg_type_id     is the criticality level e.g. debug, info, warning, error or fatal error
+// $function_name   is the function name which has most likely caused the error
+// $function_trace  is the complete system trace to get more details
+// $usr             is the user id who has probably seen the error message
+function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr) {
 
   global $sys_log_msg_lst;
   global $db_con;
@@ -608,49 +623,49 @@ function zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $func
   }
   return $result;
 }
-function zu_info($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+function log_info($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
   // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_INFO, "Info");
   $msg_type_id = 1;
-  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function zu_warning($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+function log_warning($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
   // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning");
   $msg_type_id = 2;
-  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function zu_err($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+function log_err($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
   // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_ERROR, "Error");
   $msg_type_id = 3;
-  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function zu_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
+function log_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
   // todo cache the id at program start to avoid endless loops
   $msg_type_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR");
   $msg_type_id = 4;
-  return zu_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
 
 // should be call from all code that can be accessed by an url
-function zu_start($code_name, $style, $debug) {
+function prg_start($code_name, $style, $debug) {
   global $sys_time_start, $sys_script;
 
-  zu_debug ($code_name.' ...', $debug);
+  log_debug ($code_name.' ...', $debug);
   
   $sys_time_start = time();
   $sys_script = $code_name;
 
   // resume session (based on cookies)
   session_start();
-  zu_debug ($code_name.' ... session_start', $debug);
+  log_debug ($code_name.' ... session_start', $debug);
 
   // link to database
   $db_con = New mysql;
-  zu_debug ($code_name.' ... db set', $debug);
+  log_debug ($code_name.' ... db set', $debug);
   $db_con->open($debug-1);
-  zu_debug ($code_name.' ... database link open', $debug-5);
+  log_debug ($code_name.' ... database link open', $debug-5);
   
   // load default records
   //verbs_load;
@@ -661,10 +676,10 @@ function zu_start($code_name, $style, $debug) {
   return $db_con;
 }
 
-function zu_start_api($code_name, $style, $debug) {
+function prg_start_api($code_name, $style, $debug) {
   global $sys_time_start, $sys_script;
   
-  zu_debug ($code_name.' ..', $debug);
+  log_debug ($code_name.' ..', $debug);
   
   $sys_time_start = time();
   $sys_script = $code_name;
@@ -675,12 +690,12 @@ function zu_start_api($code_name, $style, $debug) {
   // link to database
   $db_con = New mysql;
   $db_con->open($debug-1);
-  zu_debug ($code_name.' ... database link open', $debug-5);
+  log_debug ($code_name.' ... database link open', $debug-5);
   
   return $db_con;
 }
 
-function zu_end($db_con, $debug) {
+function prg_end($db_con, $debug) {
   global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
   echo dsp_footer();
@@ -710,11 +725,11 @@ function zu_end($db_con, $debug) {
   unset($sys_time_limit);
   unset($sys_time_start);
   
-  zu_debug (' ... database link closed', $debug-5);
+  log_debug (' ... database link closed', $debug-5);
 }
 
 // special page closing only for the about page
-function zu_end_about($link, $debug) {
+function prg_end_about($link, $debug) {
   global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
   echo dsp_footer(true);
@@ -728,12 +743,12 @@ function zu_end_about($link, $debug) {
   unset($sys_time_limit);
   unset($sys_time_start);
   
-  zu_debug (' ... database link closed', $debug);
+  log_debug (' ... database link closed', $debug);
 }
 
 // special page closing of api pages
 // for the api e.g. the csv export no footer should be shown
-function zu_end_api($link, $debug) {
+function prg_end_api($link, $debug) {
   global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
   // Closing connection
@@ -745,7 +760,7 @@ function zu_end_api($link, $debug) {
   unset($sys_time_limit);
   unset($sys_time_start);
   
-  zu_debug (' ... database link closed', $debug);
+  log_debug (' ... database link closed', $debug);
 }
 
 /*
@@ -849,12 +864,12 @@ function zu_str_right_of($text, $maker) {
 }
 
 function zu_str_between($text, $maker_start, $maker_end, $debug = 0) {
-  zu_debug('zu_str_between "'.$text.'", start "'.$maker_start.'" end "'.$maker_end.'"', $debug-10);
+  log_debug('zu_str_between "'.$text.'", start "'.$maker_start.'" end "'.$maker_end.'"', $debug-10);
   $result = '';
   $result = zu_str_right_of($text, $maker_start);
-  zu_debug('zu_str_between -> "'.$result.'" is right of "'.$maker_start.'"', $debug-10);
+  log_debug('zu_str_between -> "'.$result.'" is right of "'.$maker_start.'"', $debug-10);
   $result = zu_str_left_of($result, $maker_end);
-  zu_debug('zu_str_between -> "'.$result.'"', $debug-10);
+  log_debug('zu_str_between -> "'.$result.'"', $debug-10);
   return $result;
 }
 
@@ -905,7 +920,7 @@ list functions (to be dismissed / replaced by objects)
 
 // get all entries of the list that are not in the second list
 function zu_lst_not_in($in_lst, $exclude_lst, $debug) {
-  zu_debug ('zu_lst_not_in('.implode(",",array_keys($in_lst)).',ex'.implode(",",$exclude_lst).')', $debug-10);
+  log_debug ('zu_lst_not_in('.implode(",",array_keys($in_lst)).',ex'.implode(",",$exclude_lst).')', $debug-10);
   $result = array();
   foreach (array_keys($in_lst) as $lst_entry) {
     if (!in_array($lst_entry, $exclude_lst)) {
@@ -917,27 +932,27 @@ function zu_lst_not_in($in_lst, $exclude_lst, $debug) {
 
 // similar to zu_lst_not_in, but looking at the array value not the key
 function zu_lst_not_in_no_key($in_lst, $exclude_lst, $debug) {
-  zu_debug ('zu_lst_not_in_no_key('.implode(",",$in_lst).'ex'.implode(",",$exclude_lst).')', $debug-10);
+  log_debug ('zu_lst_not_in_no_key('.implode(",",$in_lst).'ex'.implode(",",$exclude_lst).')', $debug-10);
   $result = array();
   foreach ($in_lst as $lst_entry) {
     if (!in_array($lst_entry, $exclude_lst)) {
       $result[] = $lst_entry;
     }
   }    
-  zu_debug ('zu_lst_not_in_no_key -> ('.implode(",",$result).')', $debug-10);
+  log_debug ('zu_lst_not_in_no_key -> ('.implode(",",$result).')', $debug-10);
   return $result;
 }
 
 // similar to zu_lst_not_in, but excluding only one value (diff to in_array????)
 function zu_lst_excluding($in_lst, $exclude_id, $debug) {
-  zu_debug ('zu_lst_excluding('.implode(",",$in_lst).'ex'.$exclude_id.')', $debug-10);
+  log_debug ('zu_lst_excluding('.implode(",",$in_lst).'ex'.$exclude_id.')', $debug-10);
   $result = array();
   foreach ($in_lst as $lst_entry) {
     if ($lst_entry <> $exclude_id) {
       $result[] = $lst_entry;
     }
   }    
-  zu_debug ('zu_lst_excluding -> ('.implode(",",$result).')', $debug-10);
+  log_debug ('zu_lst_excluding -> ('.implode(",",$result).')', $debug-10);
   return $result;
 }
 
@@ -1054,7 +1069,7 @@ function zu_lst_common($id_lst1, $id_lst2, $debug) {
 // collects from an array in an array a list of common ids
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
 function zu_lst_get_common_ids($val_lst, $sub_array_pos, $debug) {
-  zu_debug("zu_lst_get_common_ids (".zu_lst_dsp($val_lst).")", $debug-10);
+  log_debug("zu_lst_get_common_ids (".zu_lst_dsp($val_lst, $debug).")", $debug-10);
   $result = 0;
   //print_r ($val_lst);
   foreach ($val_lst as $val_entry) {
@@ -1068,14 +1083,14 @@ function zu_lst_get_common_ids($val_lst, $sub_array_pos, $debug) {
     }
   }  
 
-  zu_debug("zu_lst_get_common_ids -> (".implode(",",$result).")", $debug-10);
+  log_debug("zu_lst_get_common_ids -> (".implode(",",$result).")", $debug-10);
   return $result;
 }
 
 // collects from an array in an array a list of all ids similar to zu_lst_get_common_ids
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
 function zu_lst_all_ids($val_lst, $sub_array_pos, $debug) {
-  zu_debug("zu_lst_all_ids (".zu_lst_dsp($val_lst).",pos".$sub_array_pos.")", $debug-10);
+  log_debug("zu_lst_all_ids (".zu_lst_dsp($val_lst, $debug).",pos".$sub_array_pos.")", $debug-10);
   $result = array();
   foreach ($val_lst as $val_entry) {
     if (is_array($val_entry)) {
@@ -1092,7 +1107,7 @@ function zu_lst_all_ids($val_lst, $sub_array_pos, $debug) {
     }
   }  
 
-  zu_debug("zu_lst_all_ids -> (".implode(",",$result).")", $debug-10);
+  log_debug("zu_lst_all_ids -> (".implode(",",$result).")", $debug-10);
   return $result;
 }
 
@@ -1100,7 +1115,7 @@ function zu_lst_all_ids($val_lst, $sub_array_pos, $debug) {
 // if the subarray does not have any value of the filter id_lst it is not included in the result
 // e.g. for a value list with all related words get only those values that are related to on of the time words given in the id_lst
 function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos, $debug) {
-  zu_debug("zu_lst_id_filter (".zu_lst_dsp($val_lst).",t".zu_lst_dsp($id_lst).",pos".$sub_array_pos.")", $debug-10);
+  log_debug("zu_lst_id_filter (".zu_lst_dsp($val_lst, $debug).",t".zu_lst_dsp($id_lst, $debug).",pos".$sub_array_pos.")", $debug-10);
   $result = array();
   foreach (array_keys($val_lst) as $val_key) {
     $val_entry = $val_lst[$val_key];
@@ -1109,10 +1124,10 @@ function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos, $debug) {
       $found = false;
       foreach ($wrd_ids as $wrd_id) {
         if (!$found) {
-          zu_debug("zu_lst_id_filter -> test (".$wrd_id." in ".zu_lst_dsp($id_lst).")", $debug-10);
+          log_debug("zu_lst_id_filter -> test (".$wrd_id." in ".zu_lst_dsp($id_lst, $debug).")", $debug-10);
           if (array_key_exists($wrd_id,$id_lst)) {
             $found = true;
-            zu_debug("zu_lst_id_filter -> found (".$wrd_id." in ".zu_lst_dsp($id_lst).")", $debug-10);
+            log_debug("zu_lst_id_filter -> found (".$wrd_id." in ".zu_lst_dsp($id_lst, $debug).")", $debug-10);
           }
         }
       }  
@@ -1122,7 +1137,7 @@ function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos, $debug) {
     }
   }  
 
-  zu_debug("zu_lst_id_filter -> (".zu_lst_dsp($result).")", $debug-10);
+  log_debug("zu_lst_id_filter -> (".zu_lst_dsp($result, $debug).")", $debug-10);
   return $result;
 }
 

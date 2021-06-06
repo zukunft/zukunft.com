@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("verb_edit", '', $debug);
+$db_con = prg_start("verb_edit", '', $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -60,7 +60,7 @@ $db_con = zu_start("verb_edit", '', $debug);
     $vrb->load($debug-1);
 
     if ($vrb->id <= 0) {
-      $result .= zu_err("No verb found to change because the id is missing.", "verb_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
@@ -103,4 +103,4 @@ $db_con = zu_start("verb_edit", '', $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

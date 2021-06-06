@@ -44,13 +44,13 @@ class batch_job_list {
   // add another job to the list, but only if needed
   function add($job, $debug) {
     $result = '';
-    zu_debug('batch_job_list->add', $debug-18);    
+    log_debug('batch_job_list->add', $debug-18);
     
     // check if the job to add has all needed parameters
     if (!isset($job->frm)) {
-      zu_err('Job '.$job->dsp_id().' cannot be added, because formula is missing.','batch_job_list->add', '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('Job '.$job->dsp_id().' cannot be added, because formula is missing.','batch_job_list->add', '', (new Exception)->getTraceAsString(), $this->usr);
     } elseif (!isset($job->phr_lst)) {
-      zu_err('Job '.$job->dsp_id().' cannot be added, because no words or triples are defined.','batch_job_list->add', '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('Job '.$job->dsp_id().' cannot be added, because no words or triples are defined.','batch_job_list->add', '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // check if a similar job is already in the list
@@ -74,7 +74,7 @@ class batch_job_list {
         $result = 1;
       }  
     }
-    zu_debug('batch_job_list->add done', $debug-18);      
+    log_debug('batch_job_list->add done', $debug-18);
     return $result;
   }
     

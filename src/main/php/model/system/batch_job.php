@@ -95,26 +95,26 @@ class batch_job {
     global $db_con;
 
     $result = '';
-    zu_debug('batch_job->add', $debug-18);      
+    log_debug('batch_job->add', $debug-18);
     // create first the database entry to make sure the update is done
     if ($this->type <= 0) {
       // invalid type?
-      zu_debug('batch_job->type invalid', $debug-18);
+      log_debug('batch_job->type invalid', $debug-18);
     } else {
-      zu_debug('batch_job->type ok', $debug-18);      
+      log_debug('batch_job->type ok', $debug-18);
       if ($this->row_id <= 0) {
         if (isset($this->obj)) {
           $this->row_id = $this->obj->id;
         }  
       } 
       if ($this->row_id <= 0) {
-        zu_debug('batch_job->add row id missing?', $debug-18);
+        log_debug('batch_job->add row id missing?', $debug-18);
       } else {
-        zu_debug('batch_job->row_id ok', $debug-18);      
+        log_debug('batch_job->row_id ok', $debug-18);
         if (isset($this->obj)) {
           if (!isset($this->usr)) { $this->usr = $this->obj->usr; }
           $this->row_id = $this->obj->id;
-          zu_debug('batch_job->add connect', $debug-18);      
+          log_debug('batch_job->add connect', $debug-18);
           //$db_con = New mysql;
           $db_type = $db_con->type;
           $db_con->usr_id = $this->usr->id;         
@@ -133,25 +133,25 @@ class batch_job {
         }
       }
     }
-    zu_debug('batch_job->add done', $debug-18);  
+    log_debug('batch_job->add done', $debug-18);
     return $result;
   }
   
   // update all result depending on one value
   function exe_val_upd($debug) {
-    zu_debug('batch_job->exe_val_upd ...', $debug-18);
+    log_debug('batch_job->exe_val_upd ...', $debug-18);
     global $db_con;
 
     // load all depending formula results
     if (isset($this->obj)) {
-      zu_debug('batch_job->exe_val_upd -> get list for user '.$this->obj->usr->name, $debug-16);      
+      log_debug('batch_job->exe_val_upd -> get list for user '.$this->obj->usr->name, $debug-16);
       $fv_lst = $this->obj->fv_lst_depending($debug-1);
       if (isset($fv_lst)) {
-        zu_debug('batch_job->exe_val_upd -> got '.$fv_lst->dsp_id(), $debug-14);      
+        log_debug('batch_job->exe_val_upd -> got '.$fv_lst->dsp_id(), $debug-14);
         foreach ($fv_lst->lst AS $fv) {
-          zu_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id(), $debug-12);      
+          log_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id(), $debug-12);
           $fv->update($debug-1);
-          zu_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id().' done', $debug-12);      
+          log_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id().' done', $debug-12);
         }
       }
     }
@@ -163,7 +163,7 @@ class batch_job {
     $result = $db_con->update($this->id, 'end_time', 'Now()', $debug-1);
     $db_con->type = $db_type;
 
-    zu_debug('batch_job->exe_val_upd -> done with '.$result, $debug-10);
+    log_debug('batch_job->exe_val_upd -> done with '.$result, $debug-10);
   }
   
   // execute all open requests
@@ -175,11 +175,11 @@ class batch_job {
     $db_con->type = 'calc_and_cleanup_task';         
     $result = $db_con->update($this->id, 'start_time', 'Now()', $debug-1);
       
-    zu_debug('batch_job->exe -> '.$this->type.' with '.$result, $debug-14);
+    log_debug('batch_job->exe -> '.$this->type.' with '.$result, $debug-14);
     if ($this->type == cl(DBL_JOB_VALUE_UPDATE)) {
       $this->exe_val_upd($debug-1);
     } else {
-      zu_err('Job type "'.$this->type.'" not defined.','batch_job->exe', '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('Job type "'.$this->type.'" not defined.','batch_job->exe', '', (new Exception)->getTraceAsString(), $this->usr);
     }
     $db_con->type = $db_type;
   }

@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
-$db_con = zu_start("login", "center_form", $debug);
+$db_con = prg_start("login", "center_form", $debug);
 
   // load the session user parameters
   $usr = New user;
@@ -109,6 +109,6 @@ $db_con = zu_start("login", "center_form", $debug);
   echo $result;
 
 // close the database  
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);
 
 ?>

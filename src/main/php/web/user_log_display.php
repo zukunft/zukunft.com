@@ -44,7 +44,7 @@ class user_log_display {
   
   // display the history of a word, phrase, value or formula
   function dsp_hist($debug) {
-    zu_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
+    log_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -96,7 +96,7 @@ class user_log_display {
     }
     
     if ($sql_where == '') {
-      zu_err("Internal error: object not defined for showing the changes.", "user_log_display->dsp_hist", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("Internal error: object not defined for showing the changes.", "user_log_display->dsp_hist", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       // get word changes by the user that are not standard
       $sql = "SELECT c.change_id, 
@@ -122,7 +122,7 @@ class user_log_display {
                      ".$sql_row." 
             ORDER BY c.change_time DESC
                LIMIT ".$this->size.";";
-      zu_debug('user_log_display->dsp_hist '.$sql, $debug-14);
+      log_debug('user_log_display->dsp_hist '.$sql, $debug-14);
       //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $db_lst = $db_con->get($sql, $debug-5);  
@@ -246,7 +246,7 @@ class user_log_display {
       $result .= dsp_tbl_end ();
     }
 
-    zu_debug("user_log_display->dsp_hist -> done", $debug-12);
+    log_debug("user_log_display->dsp_hist -> done", $debug-12);
     return $result;
   }
 
@@ -254,7 +254,7 @@ class user_log_display {
   // e.g. if a formula is linked to another word
   //   or if a component is added to a display view
   function dsp_hist_links($debug) {
-    zu_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
+    log_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -378,7 +378,7 @@ class user_log_display {
     }
     $result .= dsp_tbl_end ();
 
-    zu_debug("formula->dsp_hist_links -> done", $debug-1);
+    log_debug("formula->dsp_hist_links -> done", $debug-1);
     return $result;
   }
   

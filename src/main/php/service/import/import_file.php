@@ -46,19 +46,24 @@ function import_json_file ($filename, $debug) {
 }
   
 # import all zukunft.com base configuration json files
+# for an import it can be assumed that this base configuration is loaded
+# even if a user has overwritten some of these definitions the technical import should be possible
+# TODO load this configuration on first start of zukunft
+# TODO add a check bottom for admin to reload the base configuration
 function import_base_config ($debug) {
+  $result = '';
+
   $import_path = '/src/main/resources/';
 
-  zu_debug('load base config', $debug -1 );
+  log_debug('load base config', $debug -1 );
 
   $file_list = unserialize (BASE_CONFIG_FILES);
   foreach ($file_list AS $filename) {
-    $result = import_json_file($import_path . $filename, $debug - 1);
+    ui_echo("load " . $filename);
+    $result .= import_json_file($import_path . $filename, $debug - 1);
   }
 
-  zu_debug('load base config ... done', $debug -1 );
+  log_debug('load base config ... done', $debug -1 );
 
   return $result;
 }
-
-?>

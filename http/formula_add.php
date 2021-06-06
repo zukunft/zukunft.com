@@ -36,7 +36,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("formula_add", "", $debug);
+$db_con = prg_start("formula_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -80,7 +80,7 @@ $db_con = zu_start("formula_add", "", $debug);
     
     // if the user has requested to add a new formula
     if ($_GET['confirm'] > 0) {
-      zu_debug('formula_add->check ', $debug-14);
+      log_debug('formula_add->check ', $debug-14);
 
       // check parameters
       if (!isset($wrd)) {
@@ -96,18 +96,18 @@ $db_con = zu_start("formula_add", "", $debug);
       }
       
       // check if a word, verb or formula with the same name already exists
-      zu_debug('formula_add->check word ', $debug-14);
+      log_debug('formula_add->check word ', $debug-14);
       $trm = $frm->term($debug-1);      
       if (isset($trm)) {
         if ($trm->id > 0) {
           $msg .= $trm->id_used_msg($debug-1);
         }
       }
-      zu_debug('formula_add->checked ', $debug-14);
+      log_debug('formula_add->checked ', $debug-14);
       
       // if the parameters are fine
       if ($msg == '') {
-        zu_debug('formula_add->do ', $debug-14);
+        log_debug('formula_add->do ', $debug-14);
     
         // add to db
         $add_result = $frm->save($debug-1);
@@ -150,4 +150,4 @@ $db_con = zu_start("formula_add", "", $debug);
     
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

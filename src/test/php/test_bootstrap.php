@@ -7,7 +7,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
-$db_con = zu_start("start test.php", "", $debug-10);
+$db_con = prg_start("start test.php", "", $debug-10);
 
 /*
 
@@ -243,6 +243,6 @@ Test bootstrap
 mysql_free_result($result);
 
 // Closing connection
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);
 
 ?>

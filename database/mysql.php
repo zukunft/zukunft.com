@@ -51,21 +51,21 @@ class mysql
     // link to database
     function open($debug)
     {
-        zu_debug("db->open", $debug - 15);
+        log_debug("db->open", $debug - 15);
 
         if (SQL_DB_TYPE == 'postgres') {
             try {
                 $this->link = new PDO('pgsql:dbname=zukunft host=localhost', SQL_DB_USER, SQL_DB_PASSWD);
             } catch (PDOException $e) {
                 $err_msg = $e->getMessage();
-                zu_fatal($err_msg, 'mysql->exe');
+                log_fatal($err_msg, 'mysql->exe');
             }
         } else {
             $this->link = mysql_connect('localhost', SQL_DB_USER, SQL_DB_PASSWD) or die('Could not connect: ' . mysql_error());
             mysql_select_db('zukunft', $this->link) or die('Could not select database');
         }
 
-        zu_debug("mysql->open -> done", $debug - 10);
+        log_debug("mysql->open -> done", $debug - 10);
         return $this->link;
     }
 
@@ -78,7 +78,7 @@ class mysql
             mysql_close($this->link);
         }
 
-        zu_debug("db->close -> done", $debug - 10);
+        log_debug("db->close -> done", $debug - 10);
     }
 
     /*
@@ -125,7 +125,7 @@ class mysql
                 $result = "`" . $result . "`";
             }
         }
-        zu_debug("mysql->set_table to (" . $result . ")", $debug - 20);
+        log_debug("mysql->set_table to (" . $result . ")", $debug - 20);
         $this->table = $result;
     }
 
@@ -144,7 +144,7 @@ class mysql
         if ($result == 'sys_log_statuss_id') {
             $result = 'sys_log_status_id';
         }
-        zu_debug("mysql->set_id_field to (" . $result . ")", $debug - 20);
+        log_debug("mysql->set_id_field to (" . $result . ")", $debug - 20);
         $this->id_field = $result;
     }
 
@@ -178,7 +178,7 @@ class mysql
         if ($result == 'sys_log_statuss_name') {
             $result = 'sys_log_status_name';
         }
-        zu_debug("mysql->set_name_field to (" . $result . ")", $debug - 20);
+        log_debug("mysql->set_name_field to (" . $result . ")", $debug - 20);
         $this->name_field = $result;
     }
 
@@ -195,7 +195,7 @@ class mysql
     // the log level is given by the calling function because after some errors the program may nevertheless continue
     function exe($sql, $log_level, $function_name, $function_trace = '', $debug = 0)
     {
-        zu_debug("mysql->exe (" . $sql . ",u" . $this->usr_id . ",ll:" . $log_level . ",fn:" . $function_name . ",ft:" . $function_trace . ")", $debug - 20);
+        log_debug("mysql->exe (" . $sql . ",u" . $this->usr_id . ",ll:" . $log_level . ",fn:" . $function_name . ",ft:" . $function_trace . ")", $debug - 20);
 
         $result = '';
 
@@ -208,19 +208,19 @@ class mysql
             $sql = str_replace("\n", "", $sql);
             try {
                 if ($this->link == null) {
-                    zu_fatal('database connection lost', 'mysql->exe');
+                    log_fatal('database connection lost', 'mysql->exe');
                 } else {
                     $stmt = $this->link->prepare($sql);
                     try {
                         $result = $stmt->execute();
                     } catch (PDOException $e) {
                         $err_msg = $e->getMessage();
-                        zu_fatal($err_msg, 'mysql->exe');
+                        log_fatal($err_msg, 'mysql->exe');
                     }
                 }
             } catch (PDOException $e) {
                 $err_msg = $e->getMessage();
-                zu_fatal($err_msg, 'mysql->exe');
+                log_fatal($err_msg, 'mysql->exe');
             }
         } else {
             $result = mysql_query($sql);
@@ -230,8 +230,8 @@ class mysql
                 $sql = str_replace("\"", "", $sql);
                 $msg_text .= " (" . $sql . ")";
                 $msg_type_id = cl($log_level);
-                $result = zu_msg($msg_text, $msg_text . ' from ' . $function_name, $msg_type_id, $function_name, $function_trace, $this->usr_id);
-                zu_debug("mysql->exe -> error (" . $result . ")", $debug - 10);
+                $result = log_msg($msg_text, $msg_text . ' from ' . $function_name, $msg_type_id, $function_name, $function_trace, $this->usr_id);
+                log_debug("mysql->exe -> error (" . $result . ")", $debug - 10);
             }
         }
 
@@ -249,15 +249,15 @@ class mysql
     {
         $result = false;
         if ($debug > 20) {
-            zu_debug("mysql->get (" . $sql . ")", $debug - 20);
+            log_debug("mysql->get (" . $sql . ")", $debug - 20);
         } else {
-            zu_debug("mysql->get (" . substr($sql, 0, 100) . " ... )", $debug - 10);
+            log_debug("mysql->get (" . substr($sql, 0, 100) . " ... )", $debug - 10);
         }
 
         if ($sql <> "") {
             if (SQL_DB_TYPE == 'postgres') {
                 if ($this->link == null) {
-                    zu_err('Database connection lost', 'get1');
+                    log_err('Database connection lost', 'get1');
                 } else {
                     $sql_result = $this->link->query($sql);
                     // todo fetch seems to be invalid if no record is returned
@@ -275,7 +275,7 @@ class mysql
             }
         }
 
-        zu_debug("mysql->get -> done", $debug - 11);
+        log_debug("mysql->get -> done", $debug - 11);
         return $result;
     }
 
@@ -284,9 +284,9 @@ class mysql
     {
         $result = false;
         if ($debug > 20) {
-            zu_debug("mysql->get1 (" . $sql . ")", $debug - 30);
+            log_debug("mysql->get1 (" . $sql . ")", $debug - 30);
         } else {
-            zu_debug("mysql->get1 (" . substr($sql, 0, 100) . " ... )", $debug - 20);
+            log_debug("mysql->get1 (" . substr($sql, 0, 100) . " ... )", $debug - 20);
         }
 
         // optimise the sql statement
@@ -300,7 +300,7 @@ class mysql
         if ($sql <> "") {
             if (SQL_DB_TYPE == 'postgres') {
                 if ($this->link == null) {
-                    zu_err('Database connection lost', 'get1');
+                    log_err('Database connection lost', 'get1');
                 } else {
                     $sql_result = $this->link->query($sql);
                     // todo fetch seems to be invalid if no record is returned
@@ -314,7 +314,7 @@ class mysql
             }
         }
 
-        zu_debug("mysql->get1 -> done", $debug - 20);
+        log_debug("mysql->get1 -> done", $debug - 20);
         return $result;
     }
 
@@ -322,7 +322,7 @@ class mysql
     function get_value($field_name, $id_name, $id, $debug)
     {
         $result = '';
-        zu_debug('mysql->get_value ' . $field_name . ' from ' . $this->type . ' where ' . $id_name . ' = ' . sf($id), $debug - 20);
+        log_debug('mysql->get_value ' . $field_name . ' from ' . $this->type . ' where ' . $id_name . ' = ' . sf($id), $debug - 20);
 
         if ($this->type <> '') {
             $this->set_table($debug - 1);
@@ -341,7 +341,7 @@ class mysql
 
             if (SQL_DB_TYPE == 'postgres') {
                 if ($this->link == null) {
-                    zu_err('Database connection lost', 'get1');
+                    log_err('Database connection lost', 'get1');
                 } else {
                     $sql_result = $this->link->query($sql);
                     // todo fetch seems to be invalid if no record is returned
@@ -357,7 +357,7 @@ class mysql
                 $result = $sql_row[0];
             }
         } else {
-            zu_err("Type not set to get " . $id . " " . $id_name . ".", "mysql->get_value", (new Exception)->getTraceAsString());
+            log_err("Type not set to get " . $id . " " . $id_name . ".", "mysql->get_value", (new Exception)->getTraceAsString());
         }
 
         return $result;
@@ -367,14 +367,14 @@ class mysql
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2, $debug)
     {
         $result = '';
-        zu_debug('mysql->get_value_2key ' . $field_name . ' from ' . $this->type . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2, $debug - 20);
+        log_debug('mysql->get_value_2key ' . $field_name . ' from ' . $this->type . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2, $debug - 20);
 
         $this->set_table($debug - 1);
         $sql = "SELECT " . $field_name . " FROM " . $this->table . " WHERE " . $id1_name . " = '" . $id1 . "' AND " . $id2_name . " = '" . $id2 . "' LIMIT 1;";
 
         if (SQL_DB_TYPE == 'postgres') {
             if ($this->link == null) {
-                zu_err('Database connection lost', 'get1');
+                log_err('Database connection lost', 'get1');
             } else {
                 $sql_result = $this->link->query($sql);
                 // todo fetch seems to be invalid if no record is returned
@@ -399,27 +399,27 @@ class mysql
     function get_id($name, $debug = 0)
     {
         $result = '';
-        zu_debug('mysql->get_id for "' . $name . '" of the db object "' . $this->type . '"', $debug - 12);
+        log_debug('mysql->get_id for "' . $name . '" of the db object "' . $this->type . '"', $debug - 12);
 
         $this->set_table($debug - 1);
         $this->set_id_field($debug - 1);
         $this->set_name_field($debug - 1);
         $result .= $this->get_value($this->id_field, $this->name_field, $name, $debug - 1);
 
-        zu_debug('mysql->get_id is "' . $result . '"', $debug - 15);
+        log_debug('mysql->get_id is "' . $result . '"', $debug - 15);
         return $result;
     }
 
     function get_id_from_code($code_id, $debug)
     {
         $result = '';
-        zu_debug('mysql->get_id_from_code for "' . $code_id . '" of the db object "' . $this->type . '"', $debug - 12);
+        log_debug('mysql->get_id_from_code for "' . $code_id . '" of the db object "' . $this->type . '"', $debug - 12);
 
         $this->set_table($debug - 1);
         $this->set_id_field($debug - 1);
         $result .= $this->get_value($this->id_field, DBL_FIELD, $code_id, $debug - 1);
 
-        zu_debug('mysql->get_id_from_code is "' . $result . '"', $debug - 15);
+        log_debug('mysql->get_id_from_code is "' . $result . '"', $debug - 15);
         return $result;
     }
 
@@ -427,14 +427,14 @@ class mysql
     function get_name($id, $debug)
     {
         $result = '';
-        zu_debug('mysql->get_name for "' . $id . '" of the db object "' . $this->type . '"', $debug - 12);
+        log_debug('mysql->get_name for "' . $id . '" of the db object "' . $this->type . '"', $debug - 12);
 
         $this->set_table($debug - 1);
         $this->set_id_field($debug - 1);
         $this->set_name_field($debug - 1);
         $result = $this->get_value($this->name_field, $this->id_field, $id, $debug - 1);
 
-        zu_debug('mysql->get_name is "' . $result . '"', $debug - 15);
+        log_debug('mysql->get_name is "' . $result . '"', $debug - 15);
         return $result;
     }
 
@@ -442,21 +442,21 @@ class mysql
     function get_id_2key($name, $field2_name, $field2_value, $debug)
     {
         $result = '';
-        zu_debug('mysql->get_id_2key for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->type . '"', $debug - 12);
+        log_debug('mysql->get_id_2key for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->type . '"', $debug - 12);
 
         $this->set_table($debug - 1);
         $this->set_id_field($debug - 1);
         $this->set_name_field($debug - 1);
         $result = $this->get_value_2key($this->id_field, $this->name_field, $name, $field2_name, $field2_value, $debug - 1);
 
-        zu_debug('mysql->get_id_2key is "' . $result . '"', $debug - 15);
+        log_debug('mysql->get_id_2key is "' . $result . '"', $debug - 15);
         return $result;
     }
 
 // create a standard query for a list of database id and name while taking the user sandbox into account
     function sql_std_lst_usr($debug)
     {
-        zu_debug("mysql->sql_std_lst_usr (" . $this->type . ")", $debug);
+        log_debug("mysql->sql_std_lst_usr (" . $this->type . ")", $debug);
 
         $this->set_table($debug - 1);
         $this->set_id_field($debug - 1);
@@ -490,7 +490,7 @@ class mysql
 // create a standard query for a list of database id and name
     function sql_std_lst($debug)
     {
-        zu_debug("mysql->sql_std_lst (" . $this->type . ")", $debug);
+        log_debug("mysql->sql_std_lst (" . $this->type . ")", $debug);
 
         $this->set_table($debug - 1);
         $this->set_id_field($debug - 1);
@@ -506,7 +506,7 @@ class mysql
 // return all database ids, where the owner is not yet set
     function missing_owner($debug)
     {
-        zu_debug("mysql->missing_owner (" . $this->type . ")", $debug);
+        log_debug("mysql->missing_owner (" . $this->type . ")", $debug);
         $result = Null;
 
         $this->set_table($debug - 1);
@@ -522,7 +522,7 @@ class mysql
 // return all database ids, where the owner is not yet set
     function set_default_owner($debug)
     {
-        zu_debug("mysql->set_default_owner (" . $this->type . ")", $debug);
+        log_debug("mysql->set_default_owner (" . $this->type . ")", $debug);
         $result = Null;
 
         $this->set_table($debug - 1);
@@ -549,9 +549,9 @@ class mysql
         $this->set_table($debug - 1);
 
         if (is_array($fields)) {
-            zu_debug('mysql->insert into "' . $this->type . '" SET "' . implode('","', $fields) . '" WITH "' . implode('","', $values) . '" for user ' . $this->usr_id, $debug - 10);
+            log_debug('mysql->insert into "' . $this->type . '" SET "' . implode('","', $fields) . '" WITH "' . implode('","', $values) . '" for user ' . $this->usr_id, $debug - 10);
             if (count($fields) <> count($values)) {
-                zu_fatal('MySQL insert call with different number of fields (' . count($fields) . ': ' . implode(',', $fields) . ') and values (' . count($values) . ': ' . implode(',', $values) . ').', "user_log->add");
+                log_fatal('MySQL insert call with different number of fields (' . count($fields) . ': ' . implode(',', $fields) . ') and values (' . count($values) . ': ' . implode(',', $values) . ').', "user_log->add");
             } else {
                 foreach (array_keys($fields) as $i) {
                     $fields[$i] = $fields[$i];
@@ -561,7 +561,7 @@ class mysql
                                       VALUES (' . implode(',', $values) . ');';
             }
         } else {
-            zu_debug('mysql->insert into "' . $this->type . '" SET "' . $fields . '" WITH "' . $values . '" for user ' . $this->usr_id, $debug - 10);
+            log_debug('mysql->insert into "' . $this->type . '" SET "' . $fields . '" WITH "' . $values . '" for user ' . $this->usr_id, $debug - 10);
             $sql = 'INSERT INTO ' . $this->table . ' (' . $fields . ') 
                                  VALUES (' . sf($values) . ');';
         }
@@ -569,7 +569,7 @@ class mysql
         if ($sql <> '') {
             if (SQL_DB_TYPE == 'postgres') {
                 if ($this->link == null) {
-                    zu_err('Database connection lost', 'insert');
+                    log_err('Database connection lost', 'insert');
                 } else {
 
                     try {
@@ -578,10 +578,10 @@ class mysql
                         $stmt->execute();
                         $this->link->commit();
                         $result = $this->link->lastInsertId();
-                        zu_debug('mysql->insert -> done "' . $result . '"', $debug - 12);
+                        log_debug('mysql->insert -> done "' . $result . '"', $debug - 12);
                     } catch (PDOExecption $e) {
                         $this->link->rollback();
-                        zu_debug('mysql->insert -> failed (' . $sql . ')', $debug - 12);
+                        log_debug('mysql->insert -> failed (' . $sql . ')', $debug - 12);
                     }
                 }
 
@@ -589,15 +589,15 @@ class mysql
                 $sql_result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->insert", (new Exception)->getTraceAsString(), $debug - 1);
                 if ($sql_result) {
                     $result = mysql_insert_id();
-                    zu_debug('mysql->insert -> done "' . $result . '"', $debug - 12);
+                    log_debug('mysql->insert -> done "' . $result . '"', $debug - 12);
                 } else {
                     $result = -1;
-                    zu_debug('mysql->insert -> failed (' . $sql . ')', $debug - 12);
+                    log_debug('mysql->insert -> failed (' . $sql . ')', $debug - 12);
                 }
             }
         } else {
             $result = -1;
-            zu_debug('mysql->insert -> failed (' . $sql . ')', $debug - 12);
+            log_debug('mysql->insert -> failed (' . $sql . ')', $debug - 12);
         }
 
         return $result;
@@ -607,34 +607,34 @@ class mysql
 // add a new unique text to the database and return the id (similar to get_id)
     function add_id($name, $debug = 0)
     {
-        zu_debug('mysql->add_id ' . $name . ' to ' . $this->type, $debug - 10);
+        log_debug('mysql->add_id ' . $name . ' to ' . $this->type, $debug - 10);
 
         $this->set_table($debug - 1);
         $this->set_name_field($debug - 1);
         $result = $this->insert($this->name_field, sf($name), $debug - 1);
 
-        zu_debug('mysql->add_id is "' . $result . '"', $debug - 12);
+        log_debug('mysql->add_id is "' . $result . '"', $debug - 12);
         return $result;
     }
 
 // similar to zu_sql_add_id, but using a second ID field
     function add_id_2key($name, $field2_name, $field2_value, $debug)
     {
-        zu_debug('mysql->add_id_2key ' . $name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type, $debug - 10);
+        log_debug('mysql->add_id_2key ' . $name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type, $debug - 10);
 
         $this->set_table($debug - 1);
         $this->set_name_field($debug - 1);
         //zu_debug('mysql->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"', $debug-12);
         $result = $this->insert(array($this->name_field, $field2_name), array($name, $field2_value), $debug - 1);
 
-        zu_debug('mysql->add_id_2key is "' . $result . '"', $debug - 12);
+        log_debug('mysql->add_id_2key is "' . $result . '"', $debug - 12);
         return $result;
     }
 
 // update some values in a table
     function update($id, $fields, $values, $debug)
     {
-        zu_debug('mysql->update of ' . $this->type . ' row ' . $id . ' ' . $fields . ' with "' . $values . '" for user ' . $this->usr_id, $debug - 10);
+        log_debug('mysql->update of ' . $this->type . ' row ' . $id . ' ' . $fields . ' with "' . $values . '" for user ' . $this->usr_id, $debug - 10);
 
         $result = '';
 
@@ -644,11 +644,11 @@ class mysql
         $this->set_id_field($debug - 1);
         if ($debug > 0) {
             if ($this->table == "") {
-                zu_err("Table not valid for " . $fields . " at " . $id . ".", "zu_sql_update", (new Exception)->getTraceAsString());
+                log_err("Table not valid for " . $fields . " at " . $id . ".", "zu_sql_update", (new Exception)->getTraceAsString());
                 $par_ok = false;
             }
             if ($values === "") {
-                zu_err("Values missing for " . $fields . " in " . $this->table . ".", "zu_sql_update", (new Exception)->getTraceAsString());
+                log_err("Values missing for " . $fields . " in " . $this->table . ".", "zu_sql_update", (new Exception)->getTraceAsString());
                 $par_ok = false;
             }
         }
@@ -677,11 +677,11 @@ class mysql
                 $sql_set .= ' SET ' . $fields . ' = ' . sf($values);
             }
             $sql = $sql_upd . $sql_set . $sql_where . ';';
-            zu_debug('mysql->update sql "' . $sql . '"', $debug - 14);
+            log_debug('mysql->update sql "' . $sql . '"', $debug - 14);
             $result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->update", (new Exception)->getTraceAsString(), $debug - 1);
         }
 
-        zu_debug('mysql->update -> done (' . $result . ')', $debug - 12);
+        log_debug('mysql->update -> done (' . $result . ')', $debug - 12);
         return $result;
     }
 
@@ -695,7 +695,7 @@ class mysql
 // call the MySQL delete action
     function delete($id_fields, $id_values, $debug)
     {
-        zu_debug('mysql->delete in "' . $this->type . '" WHERE "' . implode(",", $id_fields) . '" IS "' . implode(",", $id_values) . '" for user ' . $this->usr_id, $debug - 10);
+        log_debug('mysql->delete in "' . $this->type . '" WHERE "' . implode(",", $id_fields) . '" IS "' . implode(",", $id_values) . '" for user ' . $this->usr_id, $debug - 10);
 
         $this->set_table($debug - 1);
 
@@ -720,14 +720,14 @@ class mysql
             $sql = 'DELETE FROM ' . $this->table . ' WHERE ' . $id_fields . ' = ' . sf($id_values) . ';';
         }
 
-        zu_debug('mysql->delete sql "' . $sql . '"', $debug - 14);
+        log_debug('mysql->delete sql "' . $sql . '"', $debug - 14);
         $sql_result = $this->exe($sql, DBL_SYSLOG_FATAL_ERROR, "mysql->delete", (new Exception)->getTraceAsString(), $debug - 1);
         if ($sql_result) {
             $result = $sql_result;
-            zu_debug('mysql->delete -> done "' . $result . '"', $debug - 12);
+            log_debug('mysql->delete -> done "' . $result . '"', $debug - 12);
         } else {
             $result = -1;
-            zu_debug('mysql->delete -> failed (' . $sql . ')', $debug - 12);
+            log_debug('mysql->delete -> failed (' . $sql . ')', $debug - 12);
         }
 
         return $result;
@@ -742,7 +742,7 @@ class mysql
 // load all types of a type/table at once
     function load_types($table, $additional_field_lst, $debug)
     {
-        zu_debug('mysql->load_types', $debug - 10);
+        log_debug('mysql->load_types', $debug - 10);
 
         $additional_fields = '';
         if (count($additional_field_lst) > 0) {
@@ -761,7 +761,7 @@ class mysql
           ORDER BY ' . $table . '_id;';
         $result = $this->get($sql, $debug - 1);
 
-        zu_debug('mysql->load_types -> got ' . count($result), $debug - 10);
+        log_debug('mysql->load_types -> got ' . count($result), $debug - 10);
         return $result;
     }
 
@@ -770,7 +770,7 @@ class mysql
 // formats one value for the sql statement
 function postgres_format($field_value, $debug = 0)
 {
-    zu_debug("mysql_format (" . $field_value . ")", $debug - 1);
+    log_debug("mysql_format (" . $field_value . ")", $debug - 1);
 
 // remove any previous formattings (if all code is fine, this may not be needed any more)
     $result = $field_value;
@@ -793,7 +793,7 @@ function postgres_format($field_value, $debug = 0)
             $result = "'" . $result . "'";
         }
     }
-    zu_debug("postgres_format -> done (" . $result . ")", $debug - 1);
+    log_debug("postgres_format -> done (" . $result . ")", $debug - 1);
 
     return $result;
 }
@@ -801,7 +801,7 @@ function postgres_format($field_value, $debug = 0)
 // formats one value for the sql statement
 function mysql_format($field_value, $debug = 0)
 {
-    zu_debug("mysql_format (" . $field_value . ")", $debug - 1);
+    log_debug("mysql_format (" . $field_value . ")", $debug - 1);
 
     // remove any previous formattings (if all code is fine, this may not be needed any more)
     $result = $field_value;
@@ -830,7 +830,7 @@ function mysql_format($field_value, $debug = 0)
         $result = "Now()";
     }
 
-    zu_debug("mysql_format -> done (" . $result . ")", $debug - 1);
+    log_debug("mysql_format -> done (" . $result . ")", $debug - 1);
 
     return $result;
 }

@@ -118,7 +118,7 @@ class formula_element_group {
       } else {
         $this->symbol .= ' '.$elm->symbol;
       }
-      zu_debug('formula_element_group->build_symbol -> symbol "'.$elm->symbol.'" added to "'.$this->symbol.'"', $debug-21);
+      log_debug('formula_element_group->build_symbol -> symbol "'.$elm->symbol.'" added to "'.$this->symbol.'"', $debug-21);
     }      
 
     return $this->symbol;
@@ -139,18 +139,18 @@ class formula_element_group {
   // set the time phrase based on a predefined formula such as "prior" or "next"
   // e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
   private function set_formula_time_phrase($frm_elm, $val_phr_lst, $debug) {
-    zu_debug('formula_element_group->set_formula_time_phrase for '.$frm_elm->dsp_id().' and '.$val_phr_lst->dsp_id(), $debug-10);
+    log_debug('formula_element_group->set_formula_time_phrase for '.$frm_elm->dsp_id().' and '.$val_phr_lst->dsp_id(), $debug-10);
     // guess the time word if needed
     if (isset($this->time_phr)) {
       if ($this->time_phr->id == 0) {
-        zu_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id(), $debug-14);
+        log_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id(), $debug-14);
         $val_time_phr = $val_phr_lst->assume_time($debug-1); 
         if (isset($val_time_phr)) {
           $this->time_phr = $val_time_phr; 
         }
       } 
     } else {
-      zu_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id(), $debug-14);
+      log_debug('formula_element_group->set_formula_time_phrase -> assume time for '.$val_phr_lst->dsp_id(), $debug-14);
       $val_time_phr = $val_phr_lst->assume_time($debug-1); 
       if (isset($val_time_phr)) {
         $this->time_phr = $val_time_phr; 
@@ -163,13 +163,13 @@ class formula_element_group {
         // switched off because it is not working for "this"
         //zu_err('No time found for "'.$frm_elm->obj->name.'".', 'formula_element_group->figures', '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
-        zu_debug('formula_element_group->set_formula_time_phrase -> get predefined time result', $debug-14);
+        log_debug('formula_element_group->set_formula_time_phrase -> get predefined time result', $debug-14);
         if (isset($frm_elm->obj)) {
           $val_time = $frm_elm->obj->special_time_phr ($this->time_phr, $debug-1);
           if ($val_time->id > 0) {
             $val_time_phr = $val_time;
             if ($val_time_phr->id == 0 OR $val_time_phr->name == '') { $val_time_phr->load($debug-1); }
-            zu_debug('formula_element_group->set_formula_time_phrase -> add element word for special formula result '.$val_phr_lst->dsp_id().' taken from the result', $debug-24);
+            log_debug('formula_element_group->set_formula_time_phrase -> add element word for special formula result '.$val_phr_lst->dsp_id().' taken from the result', $debug-24);
           }
         }
       }
@@ -179,11 +179,11 @@ class formula_element_group {
       $val_phr_lst->ex_time($debug-20);
       $val_phr_lst->add($val_time_phr, $debug-20);
       $this->time_phr = $val_time_phr; 
-      zu_debug('formula_element_group->set_formula_time_phrase -> got the special formula word "'.$val_time_phr->name.'" ('.$val_time_phr->id.')', $debug-18);
+      log_debug('formula_element_group->set_formula_time_phrase -> got the special formula word "'.$val_time_phr->name.'" ('.$val_time_phr->id.')', $debug-18);
     }
     
     if (isset($val_time_phr)) {
-      zu_debug('formula_element_group->set_formula_time_phrase -> got '.$val_time_phr->dsp_id(), $debug-12);
+      log_debug('formula_element_group->set_formula_time_phrase -> got '.$val_time_phr->dsp_id(), $debug-12);
     }
     
     return $val_time_phr;
@@ -199,7 +199,7 @@ class formula_element_group {
          if the last share price is from 2016 and CHF is the most important (used) currency
   */
   function figures ($debug) {
-    zu_debug('formula_element_group->figures '.$this->dsp_id(), $debug-10);
+    log_debug('formula_element_group->figures '.$this->dsp_id(), $debug-10);
     
     // init the resulting figure list 
     $fig_lst = New figure_list;
@@ -214,7 +214,7 @@ class formula_element_group {
       $val_phr_lst = clone $this->phr_lst;
       $val_time_phr = $this->time_phr;
       if (isset($val_time_phr)) {
-        zu_debug('formula_element_group->figures -> for time '.$val_time_phr->dsp_id(), $debug-9);
+        log_debug('formula_element_group->figures -> for time '.$val_time_phr->dsp_id(), $debug-9);
       }
 
       // build the symbol for the number replacement before adding the formula elements
@@ -222,13 +222,13 @@ class formula_element_group {
         $this->build_symbol($debug-1);
       }
 
-      zu_debug('formula_element_group->figures -> use element '.$frm_elm->dsp_id().' also for value selection', $debug-9);
+      log_debug('formula_element_group->figures -> use element '.$frm_elm->dsp_id().' also for value selection', $debug-9);
       
       // get the element word to be able to add it later to the value selection (differs for the element type)
       if ($frm_elm->type == 'word') {
         if ($frm_elm->id > 0) {
           $val_phr_lst->add($frm_elm->obj, $debug-1);
-          zu_debug('formula_element_group->figures -> include '.$frm_elm->dsp_id().' in value selection', $debug-8);
+          log_debug('formula_element_group->figures -> include '.$frm_elm->dsp_id().' in value selection', $debug-8);
         }
       }
 
@@ -238,13 +238,13 @@ class formula_element_group {
         if ($frm_elm->obj->is_special($debug-1)) {
           $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst, $debug-1);
           if (isset($val_time_phr)) {
-            zu_debug('formula_element_group->figures -> adjusted time '.$val_time_phr->dsp_id(), $debug-9);
+            log_debug('formula_element_group->figures -> adjusted time '.$val_time_phr->dsp_id(), $debug-9);
           }
         } else {
           if ($frm_elm->wrd_id > 0) {
             $val_phr_lst->add($frm_elm->wrd_obj, $debug-1);
           }
-          zu_debug('formula_element_group->figures -> include formula word "'.$frm_elm->wrd_obj->name.'" ('.$frm_elm->wrd_id.')', $debug-8);
+          log_debug('formula_element_group->figures -> include formula word "'.$frm_elm->wrd_obj->name.'" ('.$frm_elm->wrd_id.')', $debug-8);
         }
       }
     
@@ -260,15 +260,15 @@ class formula_element_group {
       if (isset($val_phr_lst)) { usort($val_phr_lst, array("phrase", "cmp")); }
       //asort($val_phr_lst);
       $val_phr_grp = $val_phr_lst->get_grp ($debug-10);
-      zu_debug('formula_element_group->figures -> words group for "'.$val_phr_lst->name($debug-1).'" = '.$val_phr_grp->id, $debug-10);
+      log_debug('formula_element_group->figures -> words group for "'.$val_phr_lst->name($debug-1).'" = '.$val_phr_grp->id, $debug-10);
 
       // try to get a normal value set by the user directly for the phrase list
       // display the word group value and offer the user to change it
       // e.g. if the user has overwritten a formula value use the user overwrite
       if (isset($val_time_phr)) {
-        zu_debug('formula_element_group->figures -> load word value for '.$val_phr_grp->dsp_id().' and '.$val_time_phr->dsp_id(), $debug-10);
+        log_debug('formula_element_group->figures -> load word value for '.$val_phr_grp->dsp_id().' and '.$val_time_phr->dsp_id(), $debug-10);
       } else {  
-        zu_debug('formula_element_group->figures -> load word value for '.$val_phr_lst->dsp_id(), $debug-10);
+        log_debug('formula_element_group->figures -> load word value for '.$val_phr_lst->dsp_id(), $debug-10);
       }
       $wrd_val = New value;
       $wrd_val->grp_id  = $val_phr_grp->id;
@@ -281,7 +281,7 @@ class formula_element_group {
         $fig = $wrd_val->figure($debug-10);
         $fig->symbol = $frm_elm->symbol;
         $fig_lst->lst[] = $fig;
-        zu_debug('formula_element_group->figures -> value result for '.$val_phr_lst->dsp_id().' = '.$wrd_val->number.' (symbol '.$fig->symbol.')', $debug-8);
+        log_debug('formula_element_group->figures -> value result for '.$val_phr_lst->dsp_id().' = '.$wrd_val->number.' (symbol '.$fig->symbol.')', $debug-8);
       } else {     
         // if there is no number that the user has entered for the word list, try to get the most useful formula result
       
@@ -292,7 +292,7 @@ class formula_element_group {
         }
 
         // get the word group result, which means a formula result
-        zu_debug('formula_element_group->figures -> load formula value for '.$val_phr_lst->name($debug-1), $debug-8);
+        log_debug('formula_element_group->figures -> load formula value for '.$val_phr_lst->name($debug-1), $debug-8);
         $grp_fv = New formula_value;
         $grp_fv->phr_grp_id = $val_phr_grp->id;
         $grp_fv->time_id    = $val_time_phr->id;
@@ -305,33 +305,33 @@ class formula_element_group {
           $fig->symbol = $this->symbol;
           $fig_lst->lst[] = $fig;
 
-          zu_debug('formula_element_group->figures -> formula value for '.$val_phr_lst->name($debug-1).', time '.$val_time_phr->name.'" (word group '.$val_phr_grp->id.', user '.$this->usr->id.') = '.$grp_fv->value, $debug-9);
+          log_debug('formula_element_group->figures -> formula value for '.$val_phr_lst->name($debug-1).', time '.$val_time_phr->name.'" (word group '.$val_phr_grp->id.', user '.$this->usr->id.') = '.$grp_fv->value, $debug-9);
         } else {     
           // if there is also not a formula result at least one number of the formula is not valid
           $fig_lst->fig_missing = True;
-          zu_debug('formula_element_group->figures -> figure missing', $debug-8);
+          log_debug('formula_element_group->figures -> figure missing', $debug-8);
         }
       }
     }
     
-    zu_debug('formula_element_group->figures -> '.count($fig_lst->lst).' found', $debug-10);
+    log_debug('formula_element_group->figures -> '.count($fig_lst->lst).' found', $debug-10);
     return $fig_lst;
   }
 
   // the HTML code to display a figure list
   function dsp_values ($back, $time_default, $debug) {
-    zu_debug('formula_element_group->dsp_values', $debug-10);
+    log_debug('formula_element_group->dsp_values', $debug-10);
 
     $result = '';
     
     $fig_lst = $this->figures($debug-1);
-    zu_debug('formula_element_group->dsp_values -> got figures', $debug-10);
+    log_debug('formula_element_group->dsp_values -> got figures', $debug-10);
     
     // show the time if adjusted by a special formula element
     if (isset($fig_lst)) {   
       // build the html code to display the value with the link
       foreach ($fig_lst->lst AS $fig) {
-        zu_debug('formula_element_group->dsp_values -> display figure', $debug-10);
+        log_debug('formula_element_group->dsp_values -> display figure', $debug-10);
         $result .= $fig->display_linked($back, $debug-1);
       }
 
@@ -346,7 +346,7 @@ class formula_element_group {
 
     }
     
-    zu_debug('formula_element_group->dsp_values -> result "'.$result.'"', $debug-10);
+    log_debug('formula_element_group->dsp_values -> result "'.$result.'"', $debug-10);
     return $result;
   }  
 

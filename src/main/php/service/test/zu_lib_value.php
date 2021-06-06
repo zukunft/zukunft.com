@@ -61,7 +61,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // selects from a val_lst_wrd the best matching value
 // best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
 function zuv_lst_get ($val_lst_wrd, $word_ids, $debug) {
-  zu_debug("zuv_lst_get (".zu_lst_dsp($val_lst_wrd).",t".implode(",",$word_ids).")", $debug);
+  log_debug("zuv_lst_get (".zu_lst_dsp($val_lst_wrd).",t".implode(",",$word_ids).")", $debug);
 
   $found = false;
   $result = array();
@@ -99,24 +99,24 @@ function zuv_lst_get ($val_lst_wrd, $word_ids, $debug) {
       $wrd_missing = zu_lst_not_in_no_key($word_ids, $val_wrd_ids, $debug-10);
       if (empty($wrd_missing)) {
         // potential result candidate, because the value has all needed words 
-        zu_debug("zuv_lst_get -> can (".$val_lst[0].")", $debug)-10;
+        log_debug("zuv_lst_get -> can (".$val_lst[0].")", $debug)-10;
         $wrd_extra = zu_lst_not_in_no_key($val_wrd_ids, $word_ids, $debug-10);
         if (empty($wrd_extra)) {
           // if there is no extra word, it is the correct value 
-          zu_debug("zuv_lst_get -> is (".$val_lst[0].")", $debug-10);
+          log_debug("zuv_lst_get -> is (".$val_lst[0].")", $debug-10);
           $found = true;
           $result = array();
           $result[] = $val_lst[0];
           $result[] = $val_id;
           $result[] = $val_lst[1]; // the user_id if the value is user specific
         } else {
-          zu_debug("zuv_lst_get -> is not, because (".implode(",",$wrd_extra).")", $debug-10);
+          log_debug("zuv_lst_get -> is not, because (".implode(",",$wrd_extra).")", $debug-10);
         }
       }
     }
   }
 
-  zu_debug("zuv_lst_get -> done (".implode(",",$result).")", $debug);
+  log_debug("zuv_lst_get -> done (".implode(",",$result).")", $debug);
   return $result;
 }
 
@@ -158,7 +158,7 @@ function zuv_value_table($word_id, $word_lst, $debug) {
 }
 
 function zuv_matrix($row_lst, $col_lst, $user_id, $debug) {
-  zu_debug('zuv_matrix('.$row_lst.','.$col_lst.')', $debug);
+  log_debug('zuv_matrix('.$row_lst.','.$col_lst.')', $debug);
   $result = array();
   
   return $result;
@@ -166,13 +166,13 @@ function zuv_matrix($row_lst, $col_lst, $user_id, $debug) {
 
 // get the source id of an value
 function zuv_source ($id, $debug) {
-  zu_debug('zuv_source ('.$id.')', $debug);
+  log_debug('zuv_source ('.$id.')', $debug);
   return zu_sql_get_field ('value', $id, 'source_id', $debug-1);
 }
 
 // return the value type
 function zuv_type ($id, $debug) {
-  zu_debug('zuv_type('.$id.')', $debug);
+  log_debug('zuv_type('.$id.')', $debug);
   return zu_sql_get_field ('word', $id, 'word_type_id', $debug-1);
 }
 
@@ -182,7 +182,7 @@ function zuv_type ($id, $debug) {
 // once the user has given an answer it saves the answer in the database and uses it for the next values
 // if the type of the value differs the user should be asked again
 function zuv_convert ($user_value, $user_id, $debug) {
-  zu_debug('zuv_convert ('.$user_value.',u'.$user_id.')', $debug);
+  log_debug('zuv_convert ('.$user_value.',u'.$user_id.')', $debug);
   $result = $user_value;
   $result = str_replace(" ", "", $result);
   $result = str_replace("'", "", $result);
@@ -191,14 +191,14 @@ function zuv_convert ($user_value, $user_id, $debug) {
 }
 
 function zuv_scale ($user_value, $value_words, $user_id, $debug) {
-  zu_debug('zuv_scale ('.$user_value.',t'.implode(",",$value_words).',u'.$user_id.')', $debug);
+  log_debug('zuv_scale ('.$user_value.',t'.implode(",",$value_words).',u'.$user_id.')', $debug);
   $result = $user_value;
 
   // if it has a scaling word, scale it to one
   if (zut_has_scaling($value_words, $debug-1)) {
     // get any scaling words related to the value
     $scale_word = zut_scale_id($value_words, $user_id, $debug-1); 
-    zu_debug('zuv_scale -> word ('.$scale_word.')', $debug-1);
+    log_debug('zuv_scale -> word ('.$scale_word.')', $debug-1);
     if ($scale_word > 0) {
       $formula_id = zut_formula($scale_word, $user_id, $debug-1);
       if ($formula_id > 0) {
@@ -213,12 +213,12 @@ function zuv_scale ($user_value, $value_words, $user_id, $debug) {
           if (zut_is_type($l_part_wrd_id, SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1) 
           AND zut_is_type($r_part_wrd_id, SQL_WORD_TYPE_SCALING, $debug-1) ) {
             $wrd_symbol = ZUP_CHAR_WORD_START.$r_part_wrd_id.ZUP_CHAR_WORD_END;
-            zu_debug('zuv_scale -> replace ('.$wrd_symbol.' in '.$r_part.' with '.$user_value.')', $debug-1);
+            log_debug('zuv_scale -> replace ('.$wrd_symbol.' in '.$r_part.' with '.$user_value.')', $debug-1);
             $r_part = str_replace($wrd_symbol,$user_value,$r_part);
-            zu_debug('zuv_scale -> replace done ('.$r_part.')', $debug-1);
+            log_debug('zuv_scale -> replace done ('.$r_part.')', $debug-1);
             $result = zuc_math_parse($r_part, $value_words, 0, $debug-1);
           } else {
-            zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula.');
+            log_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula.');
           }
         }
       }
@@ -231,20 +231,20 @@ function zuv_scale ($user_value, $value_words, $user_id, $debug) {
 // return the first value related to the word lst (ex zuv_word_lst)
 // or an array with the value and the user_id if the result is user specific
 function zuv_of_wrd_lst($wrd_lst, $user_id, $debug) {
-  zu_debug("zuv_of_wrd_lst (".implode(",",$wrd_lst).",u".$user_id.")", $debug);
+  log_debug("zuv_of_wrd_lst (".implode(",",$wrd_lst).",u".$user_id.")", $debug);
 
   // remove the general word if a more specific word is already part of the selection e.g. remove country, if Germany is a selection word
   $used_wrd_lst = zut_keep_only_specific($wrd_lst, $debug);
-  zu_debug("zuv_of_wrd_lst -> (".implode(",",$used_wrd_lst).")", $debug-1);
+  log_debug("zuv_of_wrd_lst -> (".implode(",",$used_wrd_lst).")", $debug-1);
   $result = zu_sql_wrd_ids_val ($used_wrd_lst, $user_id, $debug);
 
-  zu_debug("zuv_of_wrd_lst -> (".$result['num'].")", $debug-1);
+  log_debug("zuv_of_wrd_lst -> (".$result['num'].")", $debug-1);
   return $result;
 }
 
 // similar to zuv_of_wrd_lst but with correct naming and always returns an array to know the user specific result
 function zuv_of_wrd_ids($wrd_ids, $user_id, $debug) {
-  zu_debug("zuv_of_wrd_ids (".implode(",",$wrd_ids).",u".$user_id.")", $debug);
+  log_debug("zuv_of_wrd_ids (".implode(",",$wrd_ids).",u".$user_id.")", $debug);
 
   // remove the general word if a more specific word is already part of the selection e.g. remove country, if Germany is a selection word
   $used_wrd_ids = zut_keep_only_specific($wrd_ids, $debug);
@@ -254,7 +254,7 @@ function zuv_of_wrd_ids($wrd_ids, $user_id, $debug) {
 
 // 
 function zuv_of_wrd_lst_scaled($wrd_lst, $user_id, $debug) {
-  zu_debug("zuv_of_wrd_lst_scaled (".implode(",",$wrd_lst).",u".$user_id.")", $debug);
+  log_debug("zuv_of_wrd_lst_scaled (".implode(",",$wrd_lst).",u".$user_id.")", $debug);
 
   $wrd_val = zuv_of_wrd_lst($wrd_lst, $user_id, $debug-5);
   
@@ -266,7 +266,7 @@ function zuv_of_wrd_lst_scaled($wrd_lst, $user_id, $debug) {
 
     // get all words related to the value id; in many cases this does not match with the value_words there are use to get the word: it may contains additional word ids
     if ($wrd_val['id'] > 0) {
-      zu_debug("zuv_of_wrd_lst_scaled -> get word ids ".implode(",",$wrd_lst), $debug-5);        
+      log_debug("zuv_of_wrd_lst_scaled -> get word ids ".implode(",",$wrd_lst), $debug-5);
       $val_wrd_ids = zuv_wrd_ids($wrd_val['id'], $user_id, $debug-5);
       $wrd_val['num'] = zuv_scale($wrd_val['num'], $val_wrd_ids, $user_id, $debug-5);      
     }
@@ -278,7 +278,7 @@ function zuv_of_wrd_lst_scaled($wrd_lst, $user_id, $debug) {
 
 // 
 function zuv_wrd_group_result($wrd_grp_id, $time_wrd_id, $user_id, $debug) {
-  zu_debug("zuv_wrd_group_result (".$wrd_grp_id.",time".$time_wrd_id.",u".$user_id.")", $debug);
+  log_debug("zuv_wrd_group_result (".$wrd_grp_id.",time".$time_wrd_id.",u".$user_id.")", $debug);
   $result = array(); 
   
   if ($time_wrd_id > 0) {
@@ -319,12 +319,12 @@ function zuv_wrd_group_result($wrd_grp_id, $time_wrd_id, $user_id, $debug) {
               WHERE phrase_group_id = ".$wrd_grp_id."
                 AND (user_id = 0 OR user_id IS NULL);";
       $result = zudb_get1($sql, $user_id, $debug-1); 
-      zu_debug("zuv_wrd_group_result -> (".$result['num'].")", $debug-1);
+      log_debug("zuv_wrd_group_result -> (".$result['num'].")", $debug-1);
     } else {
-      zu_debug("zuv_wrd_group_result -> (".$result['num'].")", $debug-1);
+      log_debug("zuv_wrd_group_result -> (".$result['num'].")", $debug-1);
     }  
   } else {
-    zu_debug("zuv_wrd_group_result -> (".$result['num']." for ".$user_id.")", $debug-1);
+    log_debug("zuv_wrd_group_result -> (".$result['num']." for ".$user_id.")", $debug-1);
   }
   
   return $result;
@@ -382,7 +382,7 @@ chf 2017
 */
 
 function zuv_frm_related_grp_wrds($wrd_id, $wrd_ids, $user_id, $debug) {
-  zu_debug("zuv_frm_related_grp_wrds (".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
+  log_debug("zuv_frm_related_grp_wrds (".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
   $result = array();
 
   if ($wrd_id > 0 AND !empty($wrd_ids)) {
@@ -394,13 +394,13 @@ function zuv_frm_related_grp_wrds($wrd_id, $wrd_ids, $user_id, $debug) {
     $result = zuv_frm_related_grp_wrds_part($val_ids, $wrd_id, $wrd_ids, $user_id, $debug-1);
   }
    
-  zu_debug("zuv_frm_related_grp_wrds -> (".zu_lst_dsp($result).")", $debug-1);
+  log_debug("zuv_frm_related_grp_wrds -> (".zu_lst_dsp($result).")", $debug-1);
   return $result;
 }
 
 // similar to zuv_frm_related_grp_wrds, but for calculated values (therefore the prefic is VC for ValuesCalculated)
 function zuvc_frm_related_grp_wrds($val_wrd_lst, $wrd_id, $frm_ids, $user_id, $debug) {
-  zu_debug("zuvc_frm_related_grp_wrds (vt".implode(",",$val_wrd_lst).",".$wrd_id.",f".implode(",",$frm_ids).",u".$user_id.")", $debug);
+  log_debug("zuvc_frm_related_grp_wrds (vt".implode(",",$val_wrd_lst).",".$wrd_id.",f".implode(",",$frm_ids).",u".$user_id.")", $debug);
   $result = array();
 
   if ($wrd_id > 0 AND !empty($frm_ids)) {
@@ -412,7 +412,7 @@ function zuvc_frm_related_grp_wrds($val_wrd_lst, $wrd_id, $frm_ids, $user_id, $d
     $result = zuvc_frm_related_grp_wrds_part($valc_ids, $wrd_id, $frm_ids, $user_id, $debug-1);
   }
    
-  zu_debug("zuvc_frm_related_grp_wrds -> (".zu_lst_dsp($result).")", $debug-1);
+  log_debug("zuvc_frm_related_grp_wrds -> (".zu_lst_dsp($result).")", $debug-1);
   return $result;
 }
 
@@ -420,7 +420,7 @@ function zuvc_frm_related_grp_wrds($val_wrd_lst, $wrd_id, $frm_ids, $user_id, $d
 // described by the word to which the formula is assigned 
 // and the words used in the formula
 function zuv_frm_related($wrd_id, $wrd_ids, $user_id, $debug) {
-  zu_debug("zuv_frm_related (".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
+  log_debug("zuv_frm_related (".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
   $result = array();
 
   if ($wrd_id > 0 AND !empty($wrd_ids)) {
@@ -433,12 +433,12 @@ function zuv_frm_related($wrd_id, $wrd_ids, $user_id, $debug) {
     $result = zu_sql_get_ids($sql, $debug-10); 
   }
    
-  zu_debug("zuv_frm_related -> (".implode(",",$result).")", $debug-1);
+  log_debug("zuv_frm_related -> (".implode(",",$result).")", $debug-1);
   return $result;
 }
 
 function zuvc_frm_related($frm_ids, $wrd_id, $user_id, $debug) {
-  zu_debug("zuvc_frm_related (f".implode(",",$frm_ids).",u".$user_id.")", $debug);
+  log_debug("zuvc_frm_related (f".implode(",",$frm_ids).",u".$user_id.")", $debug);
   $result = array();
 
   if (!empty($frm_ids)) {
@@ -448,14 +448,14 @@ function zuvc_frm_related($frm_ids, $wrd_id, $user_id, $debug) {
     $result = zu_sql_get_ids($sql, $debug-10); 
   }
    
-  zu_debug("zuvc_frm_related -> (".implode(",",$result).")", $debug-1);
+  log_debug("zuvc_frm_related -> (".implode(",",$result).")", $debug-1);
   return $result;
 }
 
 // group words
 // kind of similar to zu_sql_val_lst_wrd
 function zuv_frm_related_grp_wrds_part($val_ids, $wrd_id, $wrd_ids, $user_id, $debug) {
-  zu_debug("zuv_frm_related_grp_wrds_part (v".implode(",",$val_ids).",t".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
+  log_debug("zuv_frm_related_grp_wrds_part (v".implode(",",$val_ids).",t".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
   $result = array();
 
   if ($wrd_id > 0 AND !empty($wrd_ids) AND !empty($val_ids)) {
@@ -504,13 +504,13 @@ function zuv_frm_related_grp_wrds_part($val_ids, $wrd_id, $wrd_ids, $user_id, $d
     } 
   } 
 
-  zu_debug("zuv_frm_related_grp_wrds_part -> (".zu_lst_dsp($result).")", $debug);
+  log_debug("zuv_frm_related_grp_wrds_part -> (".zu_lst_dsp($result).")", $debug);
   return $result;
 }
 
 // similar to zuv_frm_related_grp_wrds_part, but for formula result values
 function zuvc_frm_related_grp_wrds_part($frm_val_ids, $wrd_id, $wrd_ids, $user_id, $debug) {
-  zu_debug("zuvc_frm_related_grp_wrds_part (v".implode(",",$frm_val_ids).",t".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
+  log_debug("zuvc_frm_related_grp_wrds_part (v".implode(",",$frm_val_ids).",t".$wrd_id.",ft".implode(",",$wrd_ids).",u".$user_id.")", $debug);
   $result = array();
   
   if ($wrd_id > 0 AND !empty($wrd_ids) AND !empty($frm_val_ids)) {
@@ -551,7 +551,7 @@ function zuvc_frm_related_grp_wrds_part($frm_val_ids, $wrd_id, $wrd_ids, $user_i
     } 
   } 
 
-  zu_debug("zuvc_frm_related_grp_wrds_part -> (".zu_lst_dsp($result).")", $debug);
+  log_debug("zuvc_frm_related_grp_wrds_part -> (".zu_lst_dsp($result).")", $debug);
   return $result;
 }
 
@@ -563,7 +563,7 @@ function zuv_of_wrd_lst_id($word_lst, $user_id, $debug) {
 
 // a list of all words related to a given value 
 function zuv_wrd_lst($val_id, $user_id, $debug) {
-  zu_debug("zuv_wrd_lst (".$val_id.",u".$user_id.")", $debug);
+  log_debug("zuv_wrd_lst (".$val_id.",u".$user_id.")", $debug);
   $result = array();
 
   if ($val_id > 0) {
@@ -577,7 +577,7 @@ function zuv_wrd_lst($val_id, $user_id, $debug) {
           ORDER BY t.values, t.word_name;";
     $result = zu_sql_get_lst($sql, $debug-5);
   } else {
-    zu_err("Missing value id","zuv_wrd_lst");
+    log_err("Missing value id","zuv_wrd_lst");
   }
 
   return $result;
@@ -585,7 +585,7 @@ function zuv_wrd_lst($val_id, $user_id, $debug) {
 
 // a list of all words related to a list of value ids
 function zuv_ids_wrd_lst($val_ids, $user_id, $debug) {
-  zu_debug("zuv_ids_wrd_lst (".implode(",",$val_ids).",u".$user_id.")", $debug-5);
+  log_debug("zuv_ids_wrd_lst (".implode(",",$val_ids).",u".$user_id.")", $debug-5);
   $result = array();
 
   if (!empty($val_ids)) {
@@ -599,16 +599,16 @@ function zuv_ids_wrd_lst($val_ids, $user_id, $debug) {
           ORDER BY t.values, t.word_name;";
     $result = zu_sql_get_lst($sql, $debug-10);
   } else {
-    zu_err("Missing value id","zuv_ids_wrd_lst");
+    log_err("Missing value id","zuv_ids_wrd_lst");
   }
 
-  zu_debug("zuv_ids_wrd_lst -> (".implode(",",$result)." for ".implode(",",$val_ids).")", $debug-1);
+  log_debug("zuv_ids_wrd_lst -> (".implode(",",$result)." for ".implode(",",$val_ids).")", $debug-1);
   return $result;
 }
 
 // same as zuv_ids_wrd_lst, but includes the category words e.g. "Year" for "2016"
 function zuv_ids_wrd_lst_incl_cat($val_ids, $user_id, $debug) {
-  zu_debug("zuv_ids_wrd_lst_incl_cat (".implode(",",$val_ids).",u".$user_id.")", $debug-8);
+  log_debug("zuv_ids_wrd_lst_incl_cat (".implode(",",$val_ids).",u".$user_id.")", $debug-8);
   $wrd_lst = zuv_ids_wrd_lst($val_ids, $user_id, $debug-8);
 
   foreach (array_keys($wrd_lst) AS $wrd_id) {
@@ -620,13 +620,13 @@ function zuv_ids_wrd_lst_incl_cat($val_ids, $user_id, $debug) {
     }
   }
 
-  zu_debug("zuv_ids_wrd_lst_incl_cat -> (the words ".implode(",",$wrd_lst)." are related to the values ".implode(",",$val_ids).")", $debug-1);
+  log_debug("zuv_ids_wrd_lst_incl_cat -> (the words ".implode(",",$wrd_lst)." are related to the values ".implode(",",$val_ids).")", $debug-1);
   return $wrd_lst;
 }
 
 // a list of all word links related to a given value with the id of the linked word
 function zuv_wrd_link_lst($val_id, $user_id, $debug) {
-  zu_debug("zuv_wrd_link_lst (".$val_id.",u".$user_id.")", $debug);
+  log_debug("zuv_wrd_link_lst (".$val_id.",u".$user_id.")", $debug);
   $result = array();
 
   if ($val_id > 0) {
@@ -640,7 +640,7 @@ function zuv_wrd_link_lst($val_id, $user_id, $debug) {
           ORDER BY t.values, t.word_name;";
     $result = zu_sql_get_lst($sql, $debug-5);
   } else {
-    zu_err("Missing value id","zuv_wrd_link_lst");
+    log_err("Missing value id","zuv_wrd_link_lst");
   }
 
   return $result;
@@ -648,14 +648,14 @@ function zuv_wrd_link_lst($val_id, $user_id, $debug) {
 
 // lists all words related to a given value 
 function zuv_wrd_ids($val_id, $user_id, $debug) {
-  zu_debug("zuv_wrd_ids (".$val_id.",u".$user_id.")", $debug);
+  log_debug("zuv_wrd_ids (".$val_id.",u".$user_id.")", $debug);
   $result = array();
 
   if ($val_id > 0) {
     $sql = "SELECT word_id FROM value_phrase_links WHERE value_id = ".$val_id." GROUP BY word_id;";
     $result = zu_sql_get_ids($sql, $debug-5);
   } else {
-    zu_err("Missing value id","zuv_wrd_ids");
+    log_err("Missing value id","zuv_wrd_ids");
   }
 
   return $result;
@@ -665,7 +665,7 @@ function zuv_wrd_ids($val_id, $user_id, $debug) {
 // lists all words related to a given value execpt the given word
 // should be replaced by zuv_wrd_lst
 function zuv_words($value_id, $ex_word_id, $user_id, $return_type) {
-  zu_debug("zuv_words ... ", $debug);
+  log_debug("zuv_words ... ", $debug);
   if ($return_type == 'ids') {
     $result = array();
   } else {  
@@ -706,7 +706,7 @@ function zuv_words($value_id, $ex_word_id, $user_id, $return_type) {
     }
   }
 
-  zu_debug("zuv_words ... done", $debug);
+  log_debug("zuv_words ... done", $debug);
 
   return $result;
 }

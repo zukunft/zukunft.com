@@ -92,7 +92,7 @@ class xml_io
     // export zukunft.com data as xml
     function export($debug)
     {
-        zu_debug('xml_io->export', $debug - 10);
+        log_debug('xml_io->export', $debug - 10);
         $result = '';
 
         // get the export object
@@ -101,13 +101,13 @@ class xml_io
         $export_instance->phr_lst = $this->phr_lst;
         $export_obj = $export_instance->get($debug - 1);
 
-        zu_debug('xml_io->export xml string from ' . json_encode($export_obj), $debug - 16);
+        log_debug('xml_io->export xml string from ' . json_encode($export_obj), $debug - 16);
 
         $xml_generator = new XMLSerializer;
         $std_class = json_decode(json_encode($export_obj));
         $result .= $xml_generator->generateValidXmlFromObj($std_class);
 
-        zu_debug('xml_io->export done with ' . $result, $debug - 16);
+        log_debug('xml_io->export done with ' . $result, $debug - 16);
 
         return $result;
     }

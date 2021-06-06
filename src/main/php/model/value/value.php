@@ -184,7 +184,7 @@ class value extends user_sandbox_display {
           LEFT JOIN user_values u ON u.value_id = v.value_id 
                                 AND u.user_id = '.$this->usr->id.' 
               WHERE '.$sql_where.';';
-    zu_debug('value->load_rec -> sql "'.$sql.'"', $debug-18);      
+    log_debug('value->load_rec -> sql "'.$sql.'"', $debug-18);
     $db_val = $db_con->get1($sql, $debug-5);  
     if ($db_val['value_id'] <= 0) {
       $this->reset();
@@ -200,7 +200,7 @@ class value extends user_sandbox_display {
       $this->time_id       = $db_val['time_word_id'];
       $this->last_update   = new DateTime($db_val['last_update']);
       $this->excluded      = $db_val['excluded'];
-      zu_debug('value->load_rec -> got '.$this->number.' with id '.$this->id, $debug-14);      
+      log_debug('value->load_rec -> got '.$this->number.' with id '.$this->id, $debug-14);
     } 
   }
   
@@ -212,9 +212,9 @@ class value extends user_sandbox_display {
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      zu_err('The user id must be set to load a result.', 'value->load', '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('The user id must be set to load a result.', 'value->load', '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
-      zu_debug('value->load', $debug-18);      
+      log_debug('value->load', $debug-18);
 
       $sql_where = '';
       if ($this->id > 0) {
@@ -234,18 +234,18 @@ class value extends user_sandbox_display {
         }
       } else {
         // if no value for a word group is found it is not an error, this is why here the error message is not at the same point as in other load methods
-        zu_err('Either the database ID ('.$this->id.'), the word group ('.$this->grp_id.') or the word list ('.implode(",",$this->ids).') and the user ('.$this->usr->id.') must be set to load a value.', 'value->load', '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err('Either the database ID ('.$this->id.'), the word group ('.$this->grp_id.') or the word list ('.implode(",",$this->ids).') and the user ('.$this->usr->id.') must be set to load a value.', 'value->load', '', (new Exception)->getTraceAsString(), $this->usr);
       }
 
       // check if a valid identification is given and load the result
       if ($sql_where <> '') {
-        zu_debug('value->load -> by "'.$sql_where.'"', $debug-16);      
+        log_debug('value->load -> by "'.$sql_where.'"', $debug-16);
         $this->load_rec($sql_where, $debug);
         
         // if not direct value is found try to get a more specific value
         // similar to formula_value
         if ($this->id <= 0 and isset($this->phr_lst)) {
-          zu_debug('value->load try best guess', $debug-10);
+          log_debug('value->load try best guess', $debug-10);
           $phr_lst = clone $this->phr_lst;
           if ($this->time_id <= 0) {
             $time_phr = $this->phr_lst->time_useful($debug-1);
@@ -285,7 +285,7 @@ class value extends user_sandbox_display {
                             FROM `values`
                           WHERE phrase_group_id IN (".$sql_grp.") ".$sql_time.";";
             }             
-            zu_debug('value->load sql val "'.$sql_val.'"', $debug-12);
+            log_debug('value->load sql val "'.$sql_val.'"', $debug-12);
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;         
             $val_ids_rows = $db_con->get($sql_val, $debug-5);  
@@ -295,14 +295,14 @@ class value extends user_sandbox_display {
               if ($this->id > 0) {
                 $sql_where = "v.value_id = ".$this->id;
                 $this->load_rec($sql_where, $debug);
-                zu_debug('value->loaded best guess id ('.$this->id.')', $debug-10);
+                log_debug('value->loaded best guess id ('.$this->id.')', $debug-10);
               }
             }
           } 
         }
       }
     }
-    zu_debug('value->load -> got '.$this->number.' with id '.$this->id, $debug-14);
+    log_debug('value->load -> got '.$this->number.' with id '.$this->id, $debug-14);
     return $result;
   }
   
@@ -312,18 +312,18 @@ class value extends user_sandbox_display {
   // e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
   //      because most values for "ABB", "Sales" are in ,"million","CHF"
   function load_best($debug) {
-    zu_debug('value->load_best for '.$this->dsp_id(), $debug-10);
+    log_debug('value->load_best for '.$this->dsp_id(), $debug-10);
     $this->load($debug-10);
     // if not found try without scaling
     if ($this->id <= 0) {
       $this->load_phrases($debug-10);
       if (!isset($this->phr_lst)) {
-        zu_err('No phrases found for '.$this->dsp_id().'.', 'value->load_best', '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err('No phrases found for '.$this->dsp_id().'.', 'value->load_best', '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
         // try to get a value with another scaling 
         $phr_lst_unscaled = clone $this->phr_lst;
         $phr_lst_unscaled->ex_scaling($debug-10);
-        zu_debug('value->load_best try unscaled with '.$phr_lst_unscaled->dsp_id(), $debug-10);
+        log_debug('value->load_best try unscaled with '.$phr_lst_unscaled->dsp_id(), $debug-10);
         $grp_unscale = $phr_lst_unscaled->get_grp($debug-1);
         $this->grp_id = $grp_unscale->id;
         $this->load($debug-1);
@@ -332,7 +332,7 @@ class value extends user_sandbox_display {
           // try to get a value with another measure 
           $phr_lst_converted = clone $phr_lst_unscaled;
           $phr_lst_converted->ex_measure($debug-10);
-          zu_debug('value->load_best try converted with '.$phr_lst_converted->dsp_id(), $debug-10);
+          log_debug('value->load_best try converted with '.$phr_lst_converted->dsp_id(), $debug-10);
           $grp_unscale = $phr_lst_converted->get_grp($debug-1);
           $this->grp_id = $grp_unscale->id;
           $this->load($debug-1);
@@ -343,7 +343,7 @@ class value extends user_sandbox_display {
         }
       }
     }
-    zu_debug('value->load_best got '.$this->number.' for '.$this->dsp_id(), $debug-12);
+    log_debug('value->load_best got '.$this->number.' for '.$this->dsp_id(), $debug-12);
   }
   
   /*
@@ -363,21 +363,21 @@ class value extends user_sandbox_display {
   // maybe rename to load_objects
   // NEVER call the dsp_id function from this function or any called function, because this would lead to an endless loop
   function load_phrases($debug) {
-    zu_debug('value->load_phrases', $debug-18);
+    log_debug('value->load_phrases', $debug-18);
     // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
     if ($this->grp_id > 0) {
       $this->load_grp_by_id($debug-1);
     }
-    zu_debug('value->load_phrases load time', $debug-18);
+    log_debug('value->load_phrases load time', $debug-18);
     $this->load_time_phrase($debug-1);
-    zu_debug('value->load_phrases -> done ('.(new Exception)->getTraceAsString().')', $debug-16);
+    log_debug('value->load_phrases -> done ('.(new Exception)->getTraceAsString().')', $debug-16);
   }
   
   // load the source object
   // what happens if a source is updated
   function load_source($debug) {
     $src = Null;
-    zu_debug('value->load_source for '.$this->dsp_id(), $debug-10);
+    log_debug('value->load_source for '.$this->dsp_id(), $debug-10);
     
     $do_load = false;
     if (isset($this->source)) {
@@ -402,9 +402,9 @@ class value extends user_sandbox_display {
     }
     
     if (isset($src)) {
-      zu_debug('value->load_source -> '.$src->dsp_id($debug-1), $debug-10);
+      log_debug('value->load_source -> '.$src->dsp_id($debug-1), $debug-10);
     } else {
-      zu_debug('value->load_source done', $debug-10);
+      log_debug('value->load_source done', $debug-10);
     }
     return $src;
   }
@@ -433,23 +433,23 @@ class value extends user_sandbox_display {
         
         // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
         if (isset($this->phr_lst)) {
-          zu_debug('value->load_grp_by_id got '.$this->phr_lst->name($debug-1).' from group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
+          log_debug('value->load_grp_by_id got '.$this->phr_lst->name($debug-1).' from group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
         }  
         if (isset($this->wrd_lst)) {
           if (isset($this->lnk_lst)) {
-            zu_debug('value->load_grp_by_id -> both', $debug-16);
-            zu_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' ', $debug-12);
-            zu_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' and triples '.$this->lnk_lst->name($debug-1).' ', $debug-12);
-            zu_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' and triples '.$this->lnk_lst->name($debug-1).' by group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
+            log_debug('value->load_grp_by_id -> both', $debug-16);
+            log_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' ', $debug-12);
+            log_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' and triples '.$this->lnk_lst->name($debug-1).' ', $debug-12);
+            log_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' and triples '.$this->lnk_lst->name($debug-1).' by group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
           } else {  
-            zu_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' by group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
+            log_debug('value->load_grp_by_id with words '.$this->wrd_lst->name($debug-1).' by group '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
           }  
         } else {  
-          zu_debug('value->load_grp_by_id '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
+          log_debug('value->load_grp_by_id '.$this->grp_id.' for "'.$this->usr->name.'"', $debug-12);
         }
       }
     }  
-    zu_debug('value->load_grp_by_id -> done', $debug-16);
+    log_debug('value->load_grp_by_id -> done', $debug-16);
   }
 
   // set the list objects based on the loaded phrase group
@@ -466,7 +466,7 @@ class value extends user_sandbox_display {
   
   // just load the time word object based on the id loaded from the database
   function load_time_phrase($debug) {
-    zu_debug('value->load_time_phrase', $debug-1);
+    log_debug('value->load_time_phrase', $debug-1);
     $do_load = false;
     
     if (isset($this->time_phr)) {
@@ -478,25 +478,25 @@ class value extends user_sandbox_display {
     }
     if ($do_load) {
       if ($this->time_id <> 0) {
-        zu_debug('value->load_time_phrase -> load', $debug-1);
+        log_debug('value->load_time_phrase -> load', $debug-1);
         $time_phr = new phrase;
         $time_phr->id  = $this->time_id;
         $time_phr->usr = $this->usr; 
         $time_phr->load($debug-1);
         $this->time_phr = $time_phr;
-        zu_debug('value->load_time_phrase -> got '.$time_phr->dsp_id(), $debug-1);
+        log_debug('value->load_time_phrase -> got '.$time_phr->dsp_id(), $debug-1);
       } else {
         $this->time_phr = null;
       }
     }
-    zu_debug('value->load_time_phrase done', $debug-1);
+    log_debug('value->load_time_phrase done', $debug-1);
   }
   
   // load the source and return the source name
   function source_name($debug) {
     $result = '';
-    zu_debug('value->source_name', $debug-10);
-    zu_debug('value->source_name for '.$this->dsp_id(), $debug-10);
+    log_debug('value->source_name', $debug-10);
+    log_debug('value->source_name for '.$this->dsp_id(), $debug-10);
 
     if ($this->source_id > 0) {
       $this->load_source($debug-1);
@@ -515,27 +515,27 @@ class value extends user_sandbox_display {
   
   // 
   function set_grp_and_time_by_ids($debug) {
-    zu_debug('value->set_grp_and_time_by_ids', $debug-10);
+    log_debug('value->set_grp_and_time_by_ids', $debug-10);
     // 1. load the phrases parameters based on the ids
     $result = $this->set_phr_lst_by_ids($debug-1);
     // 2. extract the time from the phrase list
     $result .= $this->set_time_by_phr_lst($debug-10);
     // 3. get the group based on the phrase list
     $result .= $this->set_grp_by_ids($debug-1);
-    zu_debug('value->set_grp_and_time_by_ids "'.implode(",",$this->ids).'" to "'.$this->grp_id.'" and '.$this->time_id, $debug-16);
+    log_debug('value->set_grp_and_time_by_ids "'.implode(",",$this->ids).'" to "'.$this->grp_id.'" and '.$this->time_id, $debug-16);
     return $result;
   }
   
   // rebuild the phrase list based on the phrase ids
   function set_phr_lst_by_ids($debug) {
-    zu_debug('value->set_phr_lst_by_ids for '.implode(",",$this->ids), $debug-10);
+    log_debug('value->set_phr_lst_by_ids for '.implode(",",$this->ids), $debug-10);
     $result = '';
 
     // check the parameters
     if (empty($this->usr)) {
-      zu_err('User must be set to load '.$this->dsp_id(),'phrase_list->load', '', (new Exception)->getTraceAsString(), $this->usr); 
+      log_err('User must be set to load '.$this->dsp_id(),'phrase_list->load', '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
-      zu_debug('value->set_phr_lst_by_ids for "'.implode(",",$this->ids).'" and "'.$this->usr->name.'"', $debug-16);
+      log_debug('value->set_phr_lst_by_ids for "'.implode(",",$this->ids).'" and "'.$this->usr->name.'"', $debug-16);
       if (empty($this->phr_lst)) {
         if (!empty($this->ids)) {
           $phr_lst = New phrase_list;
@@ -553,7 +553,7 @@ class value extends user_sandbox_display {
   function set_time_by_phr_lst($debug) {
     $result = '';
     if (isset($this->phr_lst)) {
-      zu_debug('value->set_time_by_phr_lst from '.$this->phr_lst->name(), $debug-16);
+      log_debug('value->set_time_by_phr_lst from '.$this->phr_lst->name(), $debug-16);
       if (!isset($this->time_id)) {
         if (isset($this->time_phr)) {
           $this->time_id = $this->time_phr->id;
@@ -561,7 +561,7 @@ class value extends user_sandbox_display {
           $wrd_lst = $this->phr_lst->wrd_lst_all($debug-1);
           $this->time_phr = $wrd_lst->assume_time($debug-1);
           $this->time_id = $this->time_phr->id;
-          zu_debug('value->set_time_by_phr_lst got '.$this->time_phr->name.' for user '.$this->time_phr->usr->name, $debug-14);
+          log_debug('value->set_time_by_phr_lst got '.$this->time_phr->name.' for user '.$this->time_phr->usr->name, $debug-14);
         }  
       }
     }  
@@ -571,7 +571,7 @@ class value extends user_sandbox_display {
   // rebuild the word and triple list based on the word and triple ids
   // add set the time_id if needed
   function set_grp_by_ids($debug) {
-    zu_debug('value->set_grp_by_ids for ids "'.implode(",",$this->ids).'" for "'.$this->usr->name.'"', $debug-16);
+    log_debug('value->set_grp_by_ids for ids "'.implode(",",$this->ids).'" for "'.$this->usr->name.'"', $debug-16);
     $result = '';
     if (!isset($this->grp)) {
       if (!empty($this->ids)) {
@@ -591,13 +591,13 @@ class value extends user_sandbox_display {
         }  
       }
     }  
-    zu_debug('value->set_grp_by_ids -> group set to id '.$this->grp_id, $debug-16);
+    log_debug('value->set_grp_by_ids -> group set to id '.$this->grp_id, $debug-16);
     return $result;
   }
 
   // exclude the time period word from the phrase list
   function set_phr_lst_ex_time($debug) {
-    zu_debug('value->set_phr_lst_ex_time for "'.$this->phr_lst->name($debug-1).'" for "'.$this->usr->name.'"', $debug-16);
+    log_debug('value->set_phr_lst_ex_time for "'.$this->phr_lst->name($debug-1).'" for "'.$this->usr->name.'"', $debug-16);
     $result = '';
     $this->phr_lst->ex_time($debug);
     return $result;
@@ -612,23 +612,23 @@ class value extends user_sandbox_display {
   // set the word list object for this value if needed
   // to be dismissed, but used by value_list->html at the moment
   function load_wrd_lst($debug) {
-    zu_debug('value->load_wrd_lst', $debug-12);
+    log_debug('value->load_wrd_lst', $debug-12);
 
     global $db_con;
 
     if ($this->wrd_lst == NUll) {
       // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
       if ($this->grp_id > 0) {
-        zu_debug('value->load_wrd_lst by group id', $debug-14);
+        log_debug('value->load_wrd_lst by group id', $debug-14);
         $this->load_grp_by_id($debug-1);
-        zu_debug('value->load_wrd_lst by group id done', $debug-14);
+        log_debug('value->load_wrd_lst by group id done', $debug-14);
       } else {
         // when adding new values only the word IDs are known
-        zu_debug('value->load_wrd_lst by ids', $debug-14);
+        log_debug('value->load_wrd_lst by ids', $debug-14);
         if (isset($this->ids)) {
-          zu_debug('value->load_wrd_lst by ids do', $debug-14);
+          log_debug('value->load_wrd_lst by ids do', $debug-14);
           $this->set_grp_by_ids($debug-1);
-          zu_debug('value->load_wrd_lst '.$this->wrd_lst->name($debug-1).'" by ids '.$this->ids.' for "'.$this->usr->name.'"', $debug-10);
+          log_debug('value->load_wrd_lst '.$this->wrd_lst->name($debug-1).'" by ids '.$this->ids.' for "'.$this->usr->name.'"', $debug-10);
         } else {
           if ($this->id > 0) {
             // rebuild word ids based on the link table
@@ -644,19 +644,19 @@ class value extends user_sandbox_display {
             $this->ids = $wrd_ids;
             $this->set_grp_by_ids($debug-1);
           } else {
-            zu_err("Missing value id","value->load_wrd_lst");
+            log_err("Missing value id","value->load_wrd_lst");
           }
         }
       }
     }
-    zu_debug('value->load_wrd_lst -> done (trace '.(new Exception)->getTraceAsString().')', $debug-14);
+    log_debug('value->load_wrd_lst -> done (trace '.(new Exception)->getTraceAsString().')', $debug-14);
   }
 
   // to be dismissed
   // a list of all word links related to a given value with the id of the linked word
   // used by value_edit.php 
   function wrd_link_lst($debug) {
-    zu_debug("value->wrd_link_lst (".$this->id." and user ".$this->usr->name.")", $debug-10);
+    log_debug("value->wrd_link_lst (".$this->id." and user ".$this->usr->name.")", $debug-10);
 
     global $db_con;
     $result = array();
@@ -678,7 +678,7 @@ class value extends user_sandbox_display {
         $result[$id] = $db_row['word_id'];
       }
     } else {
-      zu_err("Missing value id","value->wrd_link_lst");
+      log_err("Missing value id","value->wrd_link_lst");
     }
 
     return $result;
@@ -696,16 +696,16 @@ class value extends user_sandbox_display {
     $result = '';
 
     // reload the value to include all changes
-    zu_debug('value->check id '.$this->id.', for user '.$this->usr->name, $debug-10);
+    log_debug('value->check id '.$this->id.', for user '.$this->usr->name, $debug-10);
     $this->load($debug-1);
-    zu_debug('value->check load phrases', $debug-10);
+    log_debug('value->check load phrases', $debug-10);
     $this->load_phrases($debug-1);
-    zu_debug('value->check phrases loaded', $debug-10);
+    log_debug('value->check phrases loaded', $debug-10);
     
     // remove duplicate entries in value phrase link table
     $result .= $this->upd_phr_links($debug-1);
   
-    zu_debug('value->check done', $debug-18);
+    log_debug('value->check done', $debug-18);
     return $result;
   }
   
@@ -714,7 +714,7 @@ class value extends user_sandbox_display {
   //      if the target words are empty convert "2.1 mio" to "2'100'000"
   // once this is working switch on the call in word_list->value_scaled
   function scale ($target_wrd_lst, $debug) {
-    zu_debug('value->scale '.$this->number, $debug-12);
+    log_debug('value->scale '.$this->number, $debug-12);
     // fallback value
     $result = $this->number;
     
@@ -725,31 +725,31 @@ class value extends user_sandbox_display {
       // this test should be done in the calling function if needed
       // zu_info("To scale a value the number should not be empty.", "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
     } elseif (is_null($this->usr->id)) {
-      zu_warning("To scale a value the user must be defined.", "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_warning("To scale a value the user must be defined.", "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
     } elseif (is_null($this->wrd_lst)) {
-      zu_warning("To scale a value the word list should be loaded by the calling method.", "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
-      zu_debug('value->scale '.$this->number.' for '.$this->wrd_lst->name($debug-1).' (user '.$this->usr->id.')', $debug-10);
+      log_debug('value->scale '.$this->number.' for '.$this->wrd_lst->name($debug-1).' (user '.$this->usr->id.')', $debug-10);
 
       // if it has a scaling word, scale it to one
       if ($this->wrd_lst->has_scaling($debug-1)) {
-        zu_debug('value->scale value words have a scaling words', $debug-14);
+        log_debug('value->scale value words have a scaling words', $debug-14);
         // get any scaling words related to the value
         $scale_wrd_lst = $this->wrd_lst->scaling_lst($debug-1);
         if (count($scale_wrd_lst->lst) > 1) {
-          zu_warning('Only one scale word can be taken into account in the current version, but not a list like '.$scale_wrd_lst->name($debug-1).'.', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_warning('Only one scale word can be taken into account in the current version, but not a list like '.$scale_wrd_lst->name($debug-1).'.', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
         } else {
           if (count($scale_wrd_lst->lst) == 1) {
             $scale_wrd = $scale_wrd_lst->lst[0]; 
-            zu_debug('value->scale -> word ('.$scale_wrd->name.')', $debug-10);
+            log_debug('value->scale -> word ('.$scale_wrd->name.')', $debug-10);
             if ($scale_wrd->id > 0) {
               $frm = $scale_wrd->formula($debug-1);
               $frm->usr = $this->usr; // temp solution until the bug of not setting is found
               if (!isset($frm)) {
-                zu_warning('No scaling formula defined for "'.$scale_wrd->name.'".', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
+                log_warning('No scaling formula defined for "'.$scale_wrd->name.'".', "value->scale", '', (new Exception)->getTraceAsString(), $this->usr);
               } else {
                 $formula_text = $frm->ref_text;
-                zu_debug('value->scale -> scaling formula "'.$frm->name.'" ('.$frm->id.'): '.$formula_text, $debug-12);
+                log_debug('value->scale -> scaling formula "'.$frm->name.'" ('.$frm->id.'): '.$formula_text, $debug-12);
                 if ($formula_text <> "") {
                   $l_part = zu_str_left_of($formula_text, ZUP_CHAR_CALC);
                   $r_part = zu_str_right_of($formula_text, ZUP_CHAR_CALC);
@@ -769,16 +769,16 @@ class value extends user_sandbox_display {
                       if ($fv_wrd->is_type(SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1) 
                       AND $r_wrd->is_type(SQL_WORD_TYPE_SCALING, $debug-1) ) {
                         $wrd_symbol = ZUP_CHAR_WORD_START.$r_wrd->id.ZUP_CHAR_WORD_END;
-                        zu_debug('value->scale -> replace ('.$wrd_symbol.' in '.$r_part.' with '.$this->number.')', $debug-1);
+                        log_debug('value->scale -> replace ('.$wrd_symbol.' in '.$r_part.' with '.$this->number.')', $debug-1);
                         $r_part = str_replace($wrd_symbol,$this->number,$r_part);
-                        zu_debug('value->scale -> replace done ('.$r_part.')', $debug-1);
+                        log_debug('value->scale -> replace done ('.$r_part.')', $debug-1);
                         // todo separet time from value words
                         $result = zuc_math_parse($r_part, $wrd_lst, Null, $debug-1);
                       } else {
-                        zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
+                        log_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
                       }
                     } else {
-                      zu_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because only one word should be on both sides of the equation.', 'scale');
+                      log_err ('Formula "'.$formula_text.'" seems to be not a valid scaling formula, because only one word should be on both sides of the equation.', 'scale');
                     }
                   } 
                 }
@@ -799,16 +799,16 @@ class value extends user_sandbox_display {
   
   // create an object for the export
   function export_obj ($debug) {
-    zu_debug('value->export_obj', $debug-10);
+    log_debug('value->export_obj', $debug-10);
     $result = New value();
 
     // reload the value parameters
     $this->load($debug-10);
-    zu_debug('value->export_obj load phrases', $debug-18);
+    log_debug('value->export_obj load phrases', $debug-18);
     $this->load_phrases($debug-10);
 
     // add the words
-    zu_debug('value->export_obj get words', $debug-18);
+    log_debug('value->export_obj get words', $debug-18);
     $wrd_lst = array();
     foreach ($this->wrd_lst->lst AS $wrd) {
       $wrd_lst[] = $wrd->name();
@@ -833,37 +833,37 @@ class value extends user_sandbox_display {
       $phr->id  = $this->time_id;
       $phr->load($debug-1);
       $result->time = $phr->name; 
-      zu_debug('value->export_obj got time '.$this->time_phr->dsp_id(), $debug-18);
+      log_debug('value->export_obj got time '.$this->time_phr->dsp_id(), $debug-18);
     }
 
     // add the value itself
     $result->number = $this->number;
 
     // add the share type
-    zu_debug('value->export_obj get share', $debug-18);
+    log_debug('value->export_obj get share', $debug-18);
     if ($this->share_id > 0 and $this->share_id <> cl(DBL_SHARE_PUBLIC)) {
       $result->share = $this->share_type_code_id($debug-1);
     }  
 
     // add the protection type
-    zu_debug('value->export_obj get protection', $debug-18);
+    log_debug('value->export_obj get protection', $debug-18);
     if ($this->protection_id > 0 and $this->protection_id <> cl(DBL_PROTECT_NO)) {
       $result->protection = $this->protection_type_code_id($debug-1);
     }  
 
     // add the source
-    zu_debug('value->export_obj get source', $debug-18);
+    log_debug('value->export_obj get source', $debug-18);
     if ($this->source_id > 0) {
       $result->source = $this->source_name($debug-1);
     }
     
-    zu_debug('value->export_obj -> '.json_encode($result), $debug-18);
+    log_debug('value->export_obj -> '.json_encode($result), $debug-18);
     return $result;
   }
   
   // import a value from an external object
   function import_obj ($json_obj, $debug) {
-    zu_debug('value->import_obj', $debug-10);
+    log_debug('value->import_obj', $debug-10);
     $result = '';
     
     $get_ownership = false;
@@ -888,7 +888,7 @@ class value extends user_sandbox_display {
               $wrd->save($debug-1);
             }
             if ($wrd->id == 0) {
-              zu_err('Cannot add word "'.$phr_name.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+              log_err('Cannot add word "'.$phr_name.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
             } else {
               $phr_lst->add($wrd, $debug-1);
             }
@@ -896,20 +896,20 @@ class value extends user_sandbox_display {
             $phr_lst->add($phr, $debug-1);
           }  
         }  
-        zu_debug('value->import_obj got words '.$phr_lst->dsp_id(), $debug-16);
+        log_debug('value->import_obj got words '.$phr_lst->dsp_id(), $debug-16);
         $phr_grp = $phr_lst->get_grp($debug-1);
-        zu_debug('value->import_obj got word group '.$phr_grp->dsp_id(), $debug-18);
+        log_debug('value->import_obj got word group '.$phr_grp->dsp_id(), $debug-18);
         $this->grp = $phr_grp; 
         $this->grp_id = $phr_grp->id; 
         $this->phr_lst = $phr_lst; 
-        zu_debug('value->import_obj set grp id to '.$this->grp_id, $debug-14);
+        log_debug('value->import_obj set grp id to '.$this->grp_id, $debug-14);
       }
       
       if ($key == 'timestamp') {
         if(strtotime($value)){
           $this->time_stamp = strtotime($value);
         } else {
-          zu_err('Cannot add timestamp "'.$value.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err('Cannot add timestamp "'.$value.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       }
       
@@ -929,7 +929,7 @@ class value extends user_sandbox_display {
             $wrd->save($debug-1);
           }
           if ($wrd->id == 0) {
-            zu_err('Cannot add time word "'.$value.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err('Cannot add time word "'.$value.'" when importing '.$this->dsp_id(), 'value->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
           } else {
             $this->time_phr = $wrd->phrase($debug-1);
             $this->time_id  = $wrd->id; 
@@ -958,9 +958,9 @@ class value extends user_sandbox_display {
     
     if ($result == '') {
       $this->save($debug-1);
-      zu_debug('value->import_obj -> '.$this->dsp_id(), $debug-18);
+      log_debug('value->import_obj -> '.$this->dsp_id(), $debug-18);
     } else {
-      zu_debug('value->import_obj -> '.$result, $debug-18);
+      log_debug('value->import_obj -> '.$result, $debug-18);
     }
     
     // try to get the ownership if requested
@@ -1030,7 +1030,7 @@ class value extends user_sandbox_display {
   function display_linked($back, $debug) {
     $result = '';
 
-    zu_debug('value->display_linked ('.$this->id.',u'.$this->usr->id.')', $debug-18);
+    log_debug('value->display_linked ('.$this->id.',u'.$this->usr->id.')', $debug-18);
     if (!is_null($this->number)) {
       $num_text = $this->val_formatted($debug-1);
       $link_format = '';
@@ -1042,7 +1042,7 @@ class value extends user_sandbox_display {
       // to review
       $result .= '<a href="/http/value_edit.php?id='.$this->id.'&back='.$back.'"'.$link_format.'>'.$num_text.'</a>';
     }
-    zu_debug('value->display_linked -> done', $debug-18);
+    log_debug('value->display_linked -> done', $debug-18);
     return $result; 
   }
   
@@ -1076,7 +1076,7 @@ class value extends user_sandbox_display {
   
   // create and return the figure object for the value
   function figure($debug) {
-    zu_debug('value->figure', $debug-16);
+    log_debug('value->figure', $debug-16);
     $fig = New figure;
     $fig->id          = $this->id;
     $fig->usr         = $this->usr;
@@ -1084,7 +1084,7 @@ class value extends user_sandbox_display {
     $fig->number      = $this->number;
     $fig->last_update = $this->last_update;
     $fig->obj         = $this;
-    zu_debug('value->figure -> done', $debug-16);
+    log_debug('value->figure -> done', $debug-16);
       
     return $fig;
   }
@@ -1095,7 +1095,7 @@ class value extends user_sandbox_display {
   // once the user has given an answer it saves the answer in the database and uses it for the next values
   // if the type of the value differs the user should be asked again
   function convert ($debug) {
-    zu_debug('value->convert ('.$this->usr_value.',u'.$this->usr->id.')', $debug-10);
+    log_debug('value->convert ('.$this->usr_value.',u'.$this->usr->id.')', $debug-10);
     $result = $this->usr_value;
     $result = str_replace(" ", "", $result);
     $result = str_replace("'", "", $result);
@@ -1142,7 +1142,7 @@ class value extends user_sandbox_display {
 
   // display a value, means create the HTML code that allows to edit the value
   function dsp_tbl_std ($back, $debug) {
-    zu_debug('value->dsp_tbl_std ', $debug-10);
+    log_debug('value->dsp_tbl_std ', $debug-10);
     $result  = '';
     $result .= '    <td>'."\n";
     $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$this->id.'&back='.$back.'">'.$this->val_formatted($debug-1).'</a></div>'."\n";
@@ -1152,7 +1152,7 @@ class value extends user_sandbox_display {
 
   // same as dsp_tbl_std, but in the user specific color
   function dsp_tbl_usr ($back, $debug) {
-    zu_debug('value->dsp_tbl_usr', $debug-10);
+    log_debug('value->dsp_tbl_usr', $debug-10);
     $result  = '';
     $result .= '    <td>'."\n";
     $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$this->id.'&back='.$back.'" class="user_specific">'.$this->val_formatted($debug-1).'</a></div>'."\n";
@@ -1161,7 +1161,7 @@ class value extends user_sandbox_display {
   }
 
   function dsp_tbl ($back, $debug) {
-    zu_debug('value->dsp_tbl_std ', $debug-10);
+    log_debug('value->dsp_tbl_std ', $debug-10);
     $result = '';
 
     if ($this->is_std($debug-1)) {
@@ -1174,7 +1174,7 @@ class value extends user_sandbox_display {
   
   // display the history of a value
   function dsp_hist($page, $size, $call, $back, $debug) {
-    zu_debug("value->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
+    log_debug("value->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
     $result = ''; // reset the html code var
     
     $log_dsp = New user_log_display;
@@ -1188,13 +1188,13 @@ class value extends user_sandbox_display {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist($debug-1);
     
-    zu_debug("value->dsp_hist -> done", $debug-1);
+    log_debug("value->dsp_hist -> done", $debug-1);
     return $result;
   }
 
   // display the history of a value
   function dsp_hist_links($page, $size, $call, $back, $debug) {
-    zu_debug("value->dsp_hist_links (".$this->id.",size".$size.",b".$size.")", $debug-10);
+    log_debug("value->dsp_hist_links (".$this->id.",size".$size.",b".$size.")", $debug-10);
     $result = ''; // reset the html code var
 
     $log_dsp = New user_log_display;
@@ -1207,14 +1207,14 @@ class value extends user_sandbox_display {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist_links($debug-1);
     
-    zu_debug("value->dsp_hist_links -> done", $debug-1);
+    log_debug("value->dsp_hist_links -> done", $debug-1);
     return $result;
   }
 
   // display some value samples related to the wrd_id
   // with a preference of the start_word_ids
   function dsp_samples($wrd_id, $start_wrd_ids, $size, $back, $debug) {
-    zu_debug("value->dsp_samples (".$wrd_id.",rt".implode(",",$start_wrd_ids).",size".$size.")", $debug-10);
+    log_debug("value->dsp_samples (".$wrd_id.",rt".implode(",",$start_wrd_ids).",size".$size.")", $debug-10);
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -1286,7 +1286,7 @@ class value extends user_sandbox_display {
     }
     $result .= dsp_tbl_end ();
     
-    zu_debug("value->dsp_samples -> done.", $debug-16);
+    log_debug("value->dsp_samples -> done.", $debug-16);
     return $result;
   }  
 
@@ -1315,17 +1315,17 @@ class value extends user_sandbox_display {
       $script = "value_add";
       $result .= dsp_form_start($script);
       $result .= dsp_text_h3("Add value for"); 
-      zu_debug("value->dsp_edit new for phrase ids ".implode(",",$this->ids)." and user ".$this->usr->id.".", $debug-10);
+      log_debug("value->dsp_edit new for phrase ids ".implode(",",$this->ids)." and user ".$this->usr->id.".", $debug-10);
     } else { 
       $script = "value_edit";
       $result .= dsp_form_start($script);
       $result .= dsp_text_h3("Change value for"); 
       if (count($this->ids) <= 0) {
         $this->load_phrases($debug-1);
-        zu_debug('value->dsp_edit id '.$this->id.' with "'.$this->grp->name().'"@"'.$this->time_phr->name.'"and user '.$this->usr->id, $debug-10);
+        log_debug('value->dsp_edit id '.$this->id.' with "'.$this->grp->name().'"@"'.$this->time_phr->name.'"and user '.$this->usr->id, $debug-10);
       } else {  
         $this->load_time_phrase($debug-1);
-        zu_debug('value->dsp_edit id '.$this->id.' with phrase ids '.implode(',',$this->ids).' and user '.$this->usr->id, $debug-10);
+        log_debug('value->dsp_edit id '.$this->id.' with phrase ids '.implode(',',$this->ids).' and user '.$this->usr->id, $debug-10);
       }
     }
     $this_url = '/http/'.$script.'.php?id='.$this->id.'&back='.$back; // url to call this display again to display the user changes
@@ -1340,16 +1340,16 @@ class value extends user_sandbox_display {
       
       // reset the phrase sample settings
       $main_wrd = Null;
-      zu_debug("value->dsp_edit main wrd", $debug-10);
+      log_debug("value->dsp_edit main wrd", $debug-10);
       
       // rebuild the value ids if needed 
       // 1. load the phrases parameters based on the ids
       $result .= $this->set_phr_lst_by_ids($debug-1);
       // 2. extract the time from the phrase list
       $result .= $this->set_time_by_phr_lst($debug-1);
-      zu_debug("value->dsp_edit phrase list incl. time ".$this->phr_lst->name(), $debug-10);
+      log_debug("value->dsp_edit phrase list incl. time ".$this->phr_lst->name(), $debug-10);
       $result .= $this->set_phr_lst_ex_time($debug-1);
-      zu_debug("value->dsp_edit phrase list excl. time ".$this->phr_lst->name(), $debug-10);
+      log_debug("value->dsp_edit phrase list excl. time ".$this->phr_lst->name(), $debug-10);
       $phr_lst = $this->phr_lst;
       
       /*
@@ -1382,22 +1382,22 @@ class value extends user_sandbox_display {
         }
         // guess the missing phrase types 
         if ($phr->is_wrd_id == 0) {
-          zu_debug('value->dsp_edit -> guess type for "'.$phr->name.'"', $debug-10);
+          log_debug('value->dsp_edit -> guess type for "'.$phr->name.'"', $debug-10);
           $phr->is_wrd = $phr->is_mainly($debug-1);
           if ($phr->is_wrd->id > 0) {
             $phr->is_wrd_id = $phr->is_wrd->id;
-            zu_debug('value->dsp_edit -> guessed type for '.$phr->name.': '.$phr->is_wrd->name, $debug-10);
+            log_debug('value->dsp_edit -> guessed type for '.$phr->name.': '.$phr->is_wrd->name, $debug-10);
           }  
         }
       }
   
       // show first the phrases, that are not supposed to be changed
       //foreach (array_keys($this->ids) AS $pos) {
-      zu_debug('value->dsp_edit -> show fixed phrases', $debug-16);
+      log_debug('value->dsp_edit -> show fixed phrases', $debug-16);
       foreach ($phr_lst->lst AS $phr) {
         //if ($type_ids[$pos] < 0) {
         if ($phr->is_wrd_id < 0) {
-          zu_debug('value->dsp_edit -> show fixed phrase "'.$phr->name.'"', $debug-10);
+          log_debug('value->dsp_edit -> show fixed phrase "'.$phr->name.'"', $debug-10);
           // allow the user to change also the fixed phrases
           $type_ids_adj = $type_ids;
           $type_ids_adj[$phr->dsp_pos] = 0;
@@ -1410,7 +1410,7 @@ class value extends user_sandbox_display {
       }
 
       // show the phrases that the user can change: first the non specific ones, that the phrases of a selective type and new phrases at the end
-      zu_debug('value->dsp_edit -> show phrases', $debug-16);
+      log_debug('value->dsp_edit -> show phrases', $debug-16);
       for ($dsp_type = 0; $dsp_type <= 1; $dsp_type++) {
         foreach ($phr_lst->lst AS $phr) {
           /*
@@ -1432,7 +1432,7 @@ class value extends user_sandbox_display {
           } */
 
           // build the url for the case that this phrase should be removed
-          zu_debug('value->dsp_edit -> build url', $debug-18);
+          log_debug('value->dsp_edit -> build url', $debug-18);
           $phr_ids_adj  = $this->ids;
           $type_ids_adj = $type_ids;
           array_splice($phr_ids_adj,  $phr->dsp_pos, 1);
@@ -1454,7 +1454,7 @@ class value extends user_sandbox_display {
           // show the phrases that have a type
           if ($dsp_type == 0) {
             if ($phr->is_wrd->id > 0) {
-              zu_debug('value->dsp_edit -> id '.$phr->id.' has a type', $debug-18);
+              log_debug('value->dsp_edit -> id '.$phr->id.' has a type', $debug-18);
               $result .= '    <td>';
               $result .= $phr->is_wrd->name.':';
               $result .= '    </td>';
@@ -1476,7 +1476,7 @@ class value extends user_sandbox_display {
           // show the phrases that don't have a type
           if ($dsp_type == 1) {
             if ($phr->is_wrd->id == 0 AND $phr->id > 0) {
-              zu_debug('value->dsp_edit -> id '.$phr->id.' has no type', $debug-18);
+              log_debug('value->dsp_edit -> id '.$phr->id.' has no type', $debug-18);
               if (!isset($main_wrd)) {
                 $main_wrd = $phr;
               }
@@ -1497,14 +1497,14 @@ class value extends user_sandbox_display {
       } 
 
       // show the time word
-      zu_debug('value->dsp_edit -> show time', $debug-18);
+      log_debug('value->dsp_edit -> show time', $debug-18);
       if ($this->time_id > 0) {
         if (isset($this->time_phr)) {
           $result .= '  <tr>';
           if ($phr_id == 0) {
             $result .= '    <td colspan="2">';
 
-            zu_debug('value->dsp_edit -> show time selector', $debug-18);
+            log_debug('value->dsp_edit -> show time selector', $debug-18);
             $result .= $this->time_phr->dsp_time_selector (0, $script, $url_pos, $back, $debug-1) ;
             $url_pos++;
             
@@ -1516,7 +1516,7 @@ class value extends user_sandbox_display {
       }  
       
       // show the new phrases
-      zu_debug('value->dsp_edit -> show new phrases', $debug-18);
+      log_debug('value->dsp_edit -> show new phrases', $debug-18);
       foreach ($this->ids AS $phr_id) {
         $result .= '  <tr>';
         if ($phr_id == 0) {
@@ -1536,7 +1536,7 @@ class value extends user_sandbox_display {
 
     $result .= dsp_tbl_end ();
 
-    zu_debug('value->dsp_edit -> table ended', $debug-18);
+    log_debug('value->dsp_edit -> table ended', $debug-18);
     $phr_ids_new    = $this->ids;
     //$phr_ids_new[]  = $new_phrase_default;
     $phr_ids_new[]  = 0;
@@ -1554,7 +1554,7 @@ class value extends user_sandbox_display {
     }
     $result .= dsp_form_end("Save", $back);
     $result .= '<br><br>';
-    zu_debug('value->dsp_edit -> load source', $debug-18);
+    log_debug('value->dsp_edit -> load source', $debug-18);
     $src = $this->load_source($debug-1);
     if (isset($src)) {
       $result .= $src->dsp_select($script, $back, $debug-1);
@@ -1571,7 +1571,7 @@ class value extends user_sandbox_display {
     $result .= btn_back($back);
     
     // display the user changes 
-    zu_debug('value->dsp_edit -> user changes', $debug-18);
+    log_debug('value->dsp_edit -> user changes', $debug-18);
     if ($this->id > 0) { 
       $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back, $debug-1);
       if (trim($changes) <> "") {
@@ -1588,7 +1588,7 @@ class value extends user_sandbox_display {
       if (isset($main_wrd)) {
         $main_wrd->load($debug-1);
         $samples = $this->dsp_samples($main_wrd->id, $this->ids, 10, $back, $debug-1);
-        zu_debug("value->dsp_edit samples.", $debug-10);
+        log_debug("value->dsp_edit samples.", $debug-10);
         if (trim($samples) <> "") {
           $result .= dsp_text_h3('Please have a look at these other "'.$main_wrd->dsp_link_style("grey").'" values as an indication', 'change_hist');
           $result .= $samples;
@@ -1596,7 +1596,7 @@ class value extends user_sandbox_display {
       }
     }
 
-    zu_debug("value->dsp_edit -> done", $debug-10);
+    log_debug("value->dsp_edit -> done", $debug-10);
     return $result;
   }
 
@@ -1610,13 +1610,13 @@ class value extends user_sandbox_display {
   // get a list of all formula results that are depending on this value
   // todo: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
   function fv_lst_depending($debug) {
-    zu_debug('value->fv_lst_depending group id "'.$this->grp_id.'" for user '.$this->usr->name.'', $debug-10);      
+    log_debug('value->fv_lst_depending group id "'.$this->grp_id.'" for user '.$this->usr->name.'', $debug-10);
     $fv_lst = New formula_value_list;
     $fv_lst->usr    = $this->usr;
     $fv_lst->grp_id = $this->grp_id;
     $fv_lst->load(SQL_ROW_MAX, $debug-1);
 
-    zu_debug('value->fv_lst_depending -> done', $debug-10);      
+    log_debug('value->fv_lst_depending -> done', $debug-10);
     return $fv_lst;
   }
   
@@ -1657,7 +1657,7 @@ class value extends user_sandbox_display {
   
   // true if no one has used this value
   function not_used($debug) {
-    zu_debug('value->not_used ('.$this->id.')', $debug-10);  
+    log_debug('value->not_used ('.$this->id.')', $debug-10);
     $result = true;
     
     // to review: maybe replace by a database foreign key check
@@ -1667,7 +1667,7 @@ class value extends user_sandbox_display {
 
   // true if no other user has modified the value
   function not_changed($debug) {
-    zu_debug('value->not_changed id '.$this->id.' by someone else than the owner ('.$this->owner_id.')', $debug-10);
+    log_debug('value->not_changed id '.$this->id.' by someone else than the owner ('.$this->owner_id.')', $debug-10);
 
     global $db_con;
     $result = true;
@@ -1692,7 +1692,7 @@ class value extends user_sandbox_display {
     if ($change_user_id > 0) {
       $result = false;
     }
-    zu_debug('value->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);  
+    log_debug('value->not_changed for '.$this->id.' is '.zu_dsp_bool($result), $debug-10);
     return $result;
   }
 
@@ -1715,20 +1715,20 @@ class value extends user_sandbox_display {
       $result = true;
     }  
 
-    zu_debug('value->is_std -> ('.zu_dsp_bool($result).')', $debug-10);  
+    log_debug('value->is_std -> ('.zu_dsp_bool($result).')', $debug-10);
     return $result;
   }
   
   // true if the user is the owner and no one else has changed the value
   function can_change($debug) {
-    zu_debug('value->can_change id '.$this->id.' by user '.$this->usr->name, $debug-10);  
+    log_debug('value->can_change id '.$this->id.' by user '.$this->usr->name, $debug-10);
     $can_change = false;
-    zu_debug('value->can_change id '.$this->id.' owner '.$this->owner_id.' = '.$this->usr->id.'?', $debug-14);  
+    log_debug('value->can_change id '.$this->id.' owner '.$this->owner_id.' = '.$this->usr->id.'?', $debug-14);
     if ($this->owner_id == $this->usr->id OR $this->owner_id <= 0) {
       $can_change = true;
     }  
 
-    zu_debug('value->can_change -> ('.zu_dsp_bool($can_change).')', $debug-10);  
+    log_debug('value->can_change -> ('.zu_dsp_bool($can_change).')', $debug-10);
     return $can_change;
   }
 
@@ -1748,7 +1748,7 @@ class value extends user_sandbox_display {
     $result = '';
 
     if (!$this->has_usr_cfg($debug)) {
-      zu_debug('value->add_usr_cfg for "'.$this->id.' und user '.$this->usr->name, $debug-10);
+      log_debug('value->add_usr_cfg for "'.$this->id.' und user '.$this->usr->name, $debug-10);
 
       // check again if there ist not yet a record
       $sql = 'SELECT user_id 
@@ -1774,7 +1774,7 @@ class value extends user_sandbox_display {
   // check if the database record for the user specific settings can be removed 
   // exposed at the moment to user_display.php for consistency check, but this should not be needed
   function del_usr_cfg_if_not_needed($debug) {
-    zu_debug('value->del_usr_cfg_if_not_needed pre check for "'.$this->id.' und user '.$this->usr->name, $debug-12);
+    log_debug('value->del_usr_cfg_if_not_needed pre check for "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
     global $db_con;
     $result = '';
@@ -1790,13 +1790,13 @@ class value extends user_sandbox_display {
     //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $usr_cfg = $db_con->get1($sql, $debug-5);  
-    zu_debug('value->del_usr_cfg_if_not_needed check for "'.$this->id.' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
+    log_debug('value->del_usr_cfg_if_not_needed check for "'.$this->id.' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
     if ($usr_cfg['value_id'] > 0) {
       if ($usr_cfg['user_value'] == Null
       AND $usr_cfg['source_id']  == Null
       AND $usr_cfg['excluded'] == Null) {
         // delete the entry in the user sandbox
-        zu_debug('value->del_usr_cfg_if_not_needed any more for "'.$this->id.' und user '.$this->usr->name, $debug-10);
+        log_debug('value->del_usr_cfg_if_not_needed any more for "'.$this->id.' und user '.$this->usr->name, $debug-10);
         $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
       }  
     }  
@@ -1824,7 +1824,7 @@ class value extends user_sandbox_display {
     $result = '';
 
     if ($this->id > 0 AND $this->usr->id > 0) {
-      zu_debug('value->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
+      log_debug('value->del_usr_cfg  "'.$this->id.' und user '.$this->usr->name, $debug-12);
 
       $db_type = 'user_value';
       $log = $this->log_del($db_type, $debug-1);
@@ -1835,7 +1835,7 @@ class value extends user_sandbox_display {
       }  
 
     } else {
-      zu_err("The value database ID and the user must be set to remove a user specific modification.", "value->del_usr_cfg", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The value database ID and the user must be set to remove a user specific modification.", "value->del_usr_cfg", '', (new Exception)->getTraceAsString(), $this->usr);
     }
 
     return $result;
@@ -1843,7 +1843,7 @@ class value extends user_sandbox_display {
 
   // set the log entry parameters for a value update
   function log_upd($debug) {
-    zu_debug('value->log_upd "'.$this->number.'" for user '.$this->usr->id, $debug-10);
+    log_debug('value->log_upd "'.$this->number.'" for user '.$this->usr->id, $debug-10);
     $log = New user_log;
     $log->usr    = $this->usr;
     $log->action = 'update';
@@ -1879,7 +1879,7 @@ class value extends user_sandbox_display {
   //      to be able to search the value by a single phrase
   // to do: make it user specific!
   function upd_phr_links($debug) {
-    zu_debug('value->upd_phr_links', $debug-10);
+    log_debug('value->upd_phr_links', $debug-10);
 
     global $db_con;
     $result = '';
@@ -1901,7 +1901,7 @@ class value extends user_sandbox_display {
       $db_ids[] = $grp_lnk_row[$field_name];
     }
 
-    zu_debug('value->upd_phr_links -> links found in database '.implode(",",$db_ids), $debug-12);
+    log_debug('value->upd_phr_links -> links found in database '.implode(",",$db_ids), $debug-12);
     
     // add the time phrase to the target link list
     if (!isset($this->phr_lst)) { $this->load_phrases($debug-1); }
@@ -1915,14 +1915,14 @@ class value extends user_sandbox_display {
         }
       }
     }
-    zu_debug('value->upd_phr_links -> phrases loaded based on value '.implode(",",$phr_ids_used), $debug-12);
+    log_debug('value->upd_phr_links -> phrases loaded based on value '.implode(",",$phr_ids_used), $debug-12);
     
     // get what needs added or removed
-    zu_debug('value->upd_phr_links -> should have phrase ids '.implode(",",$phr_ids_used), $debug-12);
+    log_debug('value->upd_phr_links -> should have phrase ids '.implode(",",$phr_ids_used), $debug-12);
     $add_ids = array_diff($phr_ids_used, $db_ids);
     $del_ids = array_diff($db_ids, $phr_ids_used);
-    zu_debug('value->upd_phr_links -> add ids '.implode(",",$add_ids), $debug-12);
-    zu_debug('value->upd_phr_links -> del ids '.implode(",",$del_ids), $debug-12);
+    log_debug('value->upd_phr_links -> add ids '.implode(",",$add_ids), $debug-12);
+    log_debug('value->upd_phr_links -> del ids '.implode(",",$del_ids), $debug-12);
     
     // add the missing links
     if (count($add_ids) > 0) {
@@ -1940,7 +1940,7 @@ class value extends user_sandbox_display {
           }
         }
       }
-      zu_debug('value->upd_phr_links -> add sql', $debug-12);
+      log_debug('value->upd_phr_links -> add sql', $debug-12);
       if ($sql <> '') { 
         $sql_result = $db_con->exe($sql, DBL_SYSLOG_ERROR, "value->upd_phr_links", (new Exception)->getTraceAsString(), $debug-5);
         if ($sql_result === False) {
@@ -1948,11 +1948,11 @@ class value extends user_sandbox_display {
         }
       }
     }  
-    zu_debug('value->upd_phr_links -> added links "'.implode(',',$add_ids).'" lead to '.implode(",",$db_ids), $debug-14);
+    log_debug('value->upd_phr_links -> added links "'.implode(',',$add_ids).'" lead to '.implode(",",$db_ids), $debug-14);
     
     // remove the links not needed any more
     if (count($del_ids) > 0) {
-      zu_debug('value->upd_phr_links -> del '.implode(",",$del_ids).'', $debug-8);
+      log_debug('value->upd_phr_links -> del '.implode(",",$del_ids).'', $debug-8);
       $del_nbr = 0;
       $sql = 'DELETE FROM '.$table_name.' 
                WHERE value_id = '.$this->id.'
@@ -1962,9 +1962,9 @@ class value extends user_sandbox_display {
         $result .= 'Error removing group links "'.implode(',',$del_ids).'" from '.$this->id.'.';
       }
     }  
-    zu_debug('value->upd_phr_links -> deleted links "'.implode(',',$del_ids).'" lead to '.implode(",",$db_ids), $debug-14);
+    log_debug('value->upd_phr_links -> deleted links "'.implode(',',$del_ids).'" lead to '.implode(",",$db_ids), $debug-14);
     
-    zu_debug('value->upd_phr_links -> done', $debug-12);
+    log_debug('value->upd_phr_links -> done', $debug-12);
     return $result;    
   }
   
@@ -2086,11 +2086,11 @@ class value extends user_sandbox_display {
 
     $this->last_update = new DateTime();
     $result .= $db_con->update($this->id, 'last_update', 'Now()', $debug-1);
-    zu_debug('value->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'"', $debug-18);
+    log_debug('value->save_field_trigger_update timestamp of '.$this->id.' updated to "'.$this->last_update->format('Y-m-d H:i:s').'"', $debug-18);
     
     // trigger the batch job
     // save the pending update to the database for the batch calculation  
-    zu_debug('value->save_field_trigger_update group id "'.$this->grp_id.'" for user '.$this->usr->name.'', $debug-10);      
+    log_debug('value->save_field_trigger_update group id "'.$this->grp_id.'" for user '.$this->usr->name.'', $debug-10);
     if ($this->id > 0) {
       $job = New batch_job;
       $job->type = cl(DBL_JOB_VALUE_UPDATE);
@@ -2098,7 +2098,7 @@ class value extends user_sandbox_display {
       $job->obj  = $this;
       $job->add($debug-1);
     }
-    zu_debug('value->save_field_trigger_update -> done', $debug-18);      
+    log_debug('value->save_field_trigger_update -> done', $debug-18);
     
   }
   
@@ -2114,7 +2114,7 @@ class value extends user_sandbox_display {
       $log->field     = 'word_value';
       $result .= $this->save_field_do($db_con, $log, $debug-1);
       // updating the number is definitely relevant for calculation, so force to update the timestamp
-      zu_debug('value->save_field_number -> trigger update', $debug-18);      
+      log_debug('value->save_field_number -> trigger update', $debug-18);
       $result .= $this->save_field_trigger_update($db_con, $debug-1);
     }
     return $result;
@@ -2178,14 +2178,14 @@ class value extends user_sandbox_display {
     $result .= $this->save_field_share      ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_protection ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded   ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('value->save_fields all fields for "'.$this->id.'" has been saved', $debug-12);
+    log_debug('value->save_fields all fields for "'.$this->id.'" has been saved', $debug-12);
     return $result;
   }
     
   // updated the view component name (which is the id field)
   // should only be called if the user is the owner and nobody has used the display component link
   function save_id_fields($db_con, $db_rec, $std_rec, $debug) {
-    zu_debug('value->save_id_fields', $debug-18);
+    log_debug('value->save_id_fields', $debug-18);
     $result = '';
 
     // to load any missing objects
@@ -2194,7 +2194,7 @@ class value extends user_sandbox_display {
     $std_rec->load_phrases($debug-1);
       
     if ($db_rec->grp_id <> $this->grp_id) {
-      zu_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().')', $debug-10);
+      log_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().')', $debug-10);
       
       $log = $this->log_upd($debug-1);
       if (isset($db_rec->grp))  { $log->old_value = $db_rec->grp->name($debug-1); }
@@ -2210,10 +2210,10 @@ class value extends user_sandbox_display {
                                               array($this->grp_id), $debug-1);
       }
     }
-    zu_debug('value->save_id_fields group updated for '.$this->dsp_id(), $debug-12);
+    log_debug('value->save_id_fields group updated for '.$this->dsp_id(), $debug-12);
     
     if ($db_rec->time_id <> $this->time_id) {
-      zu_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().')', $debug-10);
+      log_debug('value->save_id_fields to '.$this->dsp_id().' from "'.$db_rec->dsp_id().'" (standard '.$std_rec->dsp_id().')', $debug-10);
       $log = $this->log_upd($debug-1);
       $log->old_value = $db_rec->time_phr->name($debug-1);
       $log->old_id    = $db_rec->time_id;
@@ -2228,7 +2228,7 @@ class value extends user_sandbox_display {
                                               array($this->time_id), $debug-1);
       }
     }
-    zu_debug('value->save_id_fields time updated for '.$this->dsp_id(), $debug-12);
+    log_debug('value->save_id_fields time updated for '.$this->dsp_id(), $debug-12);
     
     // update the phrase links for fast searching
     $result .=$this->upd_phr_links($debug-1);
@@ -2249,14 +2249,14 @@ class value extends user_sandbox_display {
       }
     }
     */
-    zu_debug('value->save_id_fields time updated for '.$this->dsp_id(), $debug-12);
+    log_debug('value->save_id_fields time updated for '.$this->dsp_id(), $debug-12);
     
     return $result;
   }
   
   // check if the id parameters are supposed to be changed 
   function save_id_if_updated($db_con, $db_rec, $std_rec, $debug) {
-    zu_debug('value->save_id_if_updated has name changed from "'.$db_rec->dsp_id().'" to "'.$this->dsp_id().'"', $debug-14);
+    log_debug('value->save_id_if_updated has name changed from "'.$db_rec->dsp_id().'" to "'.$this->dsp_id().'"', $debug-14);
     $result = '';
     
     // if the phrases or time has changed, check if value with the same phrases/time already exists
@@ -2268,18 +2268,18 @@ class value extends user_sandbox_display {
       $chk_val->time_stamp = $this->time_stamp;
       $chk_val->usr        = $this->usr;
       $chk_val->load($debug-1);
-      zu_debug('value->save_id_if_updated check value loaded', $debug-14);
+      log_debug('value->save_id_if_updated check value loaded', $debug-14);
       if ($chk_val->id > 0) {
         // if the target value is already in the database combine the user changes with this values
         $this->id = $chk_val->id;
         $result .= $this->save($debug-1);
-        zu_debug('value->save_id_if_updated update the existing '.$chk_val->dsp_id(), $debug-14);
+        log_debug('value->save_id_if_updated update the existing '.$chk_val->dsp_id(), $debug-14);
       } else {
         
-        zu_debug('value->save_id_if_updated target value name does not yet exists for '.$this->dsp_id(), $debug-14);
+        log_debug('value->save_id_if_updated target value name does not yet exists for '.$this->dsp_id(), $debug-14);
         if ($this->can_change($debug-1) AND $this->not_used($debug-1)) {
           // in this case change is allowed and done
-          zu_debug('value->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'")', $debug-14);
+          log_debug('value->save_id_if_updated change the existing display component link '.$this->dsp_id().' (db "'.$db_rec->dsp_id().'", standard "'.$std_rec->dsp_id().'")', $debug-14);
           //$this->load_objects($debug-1);
           $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug-1);
         } else {
@@ -2293,20 +2293,20 @@ class value extends user_sandbox_display {
           $this->id = 0;
           $this->owner_id = $this->usr->id;
           $result .= $this->add($db_con, $debug-20);
-          zu_debug('value->save_id_if_updated recreate the value "'.$db_rec->dsp_id().'" as '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")', $debug-14);
+          log_debug('value->save_id_if_updated recreate the value "'.$db_rec->dsp_id().'" as '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")', $debug-14);
         }
       }
     } else {
-      zu_debug('value->save_id_if_updated no id field updated (group '.$db_rec->grp_id.'='.$this->grp_id.', time '.$db_rec->time_id.'='.$this->time_id.')', $debug-14);
+      log_debug('value->save_id_if_updated no id field updated (group '.$db_rec->grp_id.'='.$this->grp_id.', time '.$db_rec->time_id.'='.$this->time_id.')', $debug-14);
     }
 
-    zu_debug('value->save_id_if_updated for '.$this->dsp_id().' has been done', $debug-12);
+    log_debug('value->save_id_if_updated for '.$this->dsp_id().' has been done', $debug-12);
     return $result;
   }
   
   // create a new value
   function add($db_con, $debug) {
-    zu_debug('value->add the value '.$this->dsp_id(), $debug-12);
+    log_debug('value->add the value '.$this->dsp_id(), $debug-12);
     $result = '';
     
     // log the insert attempt first
@@ -2357,7 +2357,7 @@ class value extends user_sandbox_display {
           $result .= $this->save_fields($db_con, $db_val, $std_val, $debug-1);
 
         } else {
-          zu_err("Adding value ".$this->id." failed.", "value->save");
+          log_err("Adding value ".$this->id." failed.", "value->save");
         }
       }
     }
@@ -2367,7 +2367,7 @@ class value extends user_sandbox_display {
   
   // insert or update a number in the database or save a user specific number
   function save($debug) {
-    zu_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
+    log_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
 
     global $db_con;
     $result = "";
@@ -2386,7 +2386,7 @@ class value extends user_sandbox_display {
     
     // check if a new value is supposed to be added
     if ($this->id <= 0) {
-      zu_debug('value->save check if a value for "'.$this->name().'" and user '.$this->usr->name.' is already in the database', $debug-10);
+      log_debug('value->save check if a value for "'.$this->name().'" and user '.$this->usr->name.' is already in the database', $debug-10);
       // check if a value for this words is already in the database
       $db_chk = New value;
       $db_chk->grp_id     = $this->grp_id;
@@ -2395,17 +2395,17 @@ class value extends user_sandbox_display {
       $db_chk->usr        = $this->usr;
       $db_chk->load($debug-1);
       if ($db_chk->id > 0) {
-        zu_debug('value->save value for "'.$this->grp->name().'"@"'.$this->time_phr->name.'" and user '.$this->usr->name.' is already in the database and will be updated', $debug-12);
+        log_debug('value->save value for "'.$this->grp->name().'"@"'.$this->time_phr->name.'" and user '.$this->usr->name.' is already in the database and will be updated', $debug-12);
         $this->id = $db_chk->id;
       }
     }  
     
     if ($this->id <= 0) {
-      zu_debug('value->save "'.$this->name().'": '.$this->number.' for user '.$this->usr->name.' as a new value', $debug-10);
+      log_debug('value->save "'.$this->name().'": '.$this->number.' for user '.$this->usr->name.' as a new value', $debug-10);
 
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('value->save update id '.$this->id.' to save "'.$this->number.'" for user '.$this->usr->id, $debug-10);
+      log_debug('value->save update id '.$this->id.' to save "'.$this->number.'" for user '.$this->usr->id, $debug-10);
       // update a value
       // todo: if no one else has ever changed the value, change to default value, else create a user overwrite
 
@@ -2415,12 +2415,12 @@ class value extends user_sandbox_display {
       $db_rec->id  = $this->id;
       $db_rec->usr = $this->usr;
       $db_rec->load($debug-1);
-      zu_debug("value->save -> old database value loaded (".$db_rec->number.") with group ".$db_rec->grp_id.".", $debug-10);
+      log_debug("value->save -> old database value loaded (".$db_rec->number.") with group ".$db_rec->grp_id.".", $debug-10);
       $std_rec = New value;
       $std_rec->id = $this->id;
       $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-1);
-      zu_debug("value->save -> standard value settings loaded (".$std_rec->number.")", $debug-14);
+      log_debug("value->save -> standard value settings loaded (".$std_rec->number.")", $debug-14);
 
       // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save 
       if ($this->owner_id <= 0) {

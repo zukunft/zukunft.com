@@ -47,7 +47,7 @@ function getRandomKey($length = 20)
 
 
 // open database 
-$db_con = zu_start("login_reset", "center_form", $debug);
+$db_con = prg_start("login_reset", "center_form", $debug);
 
   // load the session user parameters
   $usr = New user;
@@ -131,4 +131,4 @@ $db_con = zu_start("login_reset", "center_form", $debug);
   echo $result;
 
 // close the database  
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

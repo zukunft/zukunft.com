@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("view_component_edit", "", $debug);
+$db_con = prg_start("view_component_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -49,7 +49,7 @@ $db_con = zu_start("view_component_edit", "", $debug);
 
     // get the view component id
     if (!isset($_GET['id'])) {
-      zu_info("The view component id must be set to display a view.", "view_component_edit.php", '', (new Exception)->getTraceAsString(), $usr);    
+      log_info("The view component id must be set to display a view.", "view_component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {  
       // init the display object to show the standard elements such as the header
       $dsp = new view_dsp;
@@ -140,4 +140,4 @@ $db_con = zu_start("view_component_edit", "", $debug);
   
   echo $result;
   
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

@@ -87,7 +87,7 @@ class formula_element {
           $this->frm_type = $frm->type_cl;
         }
       }
-      zu_debug("formula_element->load got ".$this->dsp_id()." (".$this->symbol.").", $debug-10);
+      log_debug("formula_element->load got ".$this->dsp_id()." (".$this->symbol.").", $debug-10);
     }  
   }  
   

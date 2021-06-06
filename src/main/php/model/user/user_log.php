@@ -69,13 +69,13 @@ class user_log {
   
   // to save database space the table name is saved as a reference id in the log table
   private function set_table($debug) {
-    zu_debug('user_log->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
+    log_debug('user_log->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
 
     global $db_con;
 
     // check parameter
-    if ($this->table == "") { zu_err("missing table name","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0) { zu_err("missing user","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->table == "") { log_err("missing table name","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0) { log_err("missing user","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
     
     // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
     //$db_con = new mysql;
@@ -91,21 +91,21 @@ class user_log {
     if ($table_id > 0) {
       $this->table_id = $table_id;
     } else {
-      zu_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
     $db_con->type = $db_type;
   }
 
   private function set_field($debug) {
-    zu_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr->dsp_id(), $debug-10);
+    log_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr->dsp_id(), $debug-10);
 
     global $db_con;
 
     // check parameter
-    if ($this->table_id <= 0) { zu_err("missing table_id","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->field == "")   { zu_err("missing field name","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0)   { zu_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->table_id <= 0) { log_err("missing table_id","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->field == "")   { log_err("missing field name","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0)   { log_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
 
     //$db_con = new mysql;
     $db_type = $db_con->type;
@@ -120,20 +120,20 @@ class user_log {
     if ($field_id > 0) {
       $this->field_id = $field_id;
     } else {
-      zu_fatal("Insert to change log failed due to field id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed due to field id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
     $db_con->type = $db_type;
   }
 
   private function set_action($debug) {
-    zu_debug('user_log->set_action "'.$this->action.'" for '.$this->usr->id, $debug-10);
+    log_debug('user_log->set_action "'.$this->action.'" for '.$this->usr->id, $debug-10);
 
     global $db_con;
 
     // check parameter
-    if ($this->action == "") { zu_err("missing action name","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0)  { zu_err("missing user","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->action == "") { log_err("missing action name","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0)  { log_err("missing user","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
     
     // if e.g. the action is "add" the reference 1 is saved in the log table to save space
     //$db_con = new mysql;
@@ -149,7 +149,7 @@ class user_log {
     if ($action_id > 0) {
       $this->action_id = $action_id;
     } else {
-      zu_fatal("Insert to change log failed due to action id failure.","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed due to action id failure.","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
     $db_con->type = $db_type;
@@ -177,7 +177,7 @@ class user_log {
                AND c.row_id = ".$this->row_id."
                AND c.user_id = u.user_id
           ORDER BY c.change_id DESC;";
-    zu_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
+    log_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
     //$db_con = new mysql;
     $db_type = $db_con->type;
     $db_con->type = "change";
@@ -205,7 +205,7 @@ class user_log {
   
   // log a user change of a word, value or formula
   function add($debug) {
-    zu_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id, $debug-10);
+    log_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id, $debug-10);
 
     global $db_con;
 
@@ -245,9 +245,9 @@ class user_log {
 
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters has caused the error
-      zu_fatal("Insert to change log failed.","user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString(), $this);
-      zu_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
-      zu_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed.","user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString(), $this);
+      log_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;
@@ -263,7 +263,7 @@ class user_log {
   // e.g. because the row id is know after the adding of the real record, 
   // but the log entry has been created upfront to make sure that logging is complete
   function add_ref($row_id, $debug) {
-    zu_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
+    log_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
     global $db_con;
     //$db_con = new mysql;
     $db_type = $db_con->type;
@@ -272,9 +272,9 @@ class user_log {
     $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters has caused the error
-      zu_fatal("Update of reference in the change log failed.","user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString(), $this);
-      zu_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
-      zu_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Update of reference in the change log failed.","user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString(), $this);
+      log_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;

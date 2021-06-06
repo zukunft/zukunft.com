@@ -159,7 +159,7 @@ class view_component_link extends user_sandbox {
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a view component link.", "view_component_link->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a view component link.", "view_component_link->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // try to get the search values from the objects
@@ -174,7 +174,7 @@ class view_component_link extends user_sandbox {
 
       // if it still fails create an error message
       if ($this->id <= 0 AND ($this->view_id <= 0 OR $this->view_component_id <= 0)) {  
-        zu_err("The database ID (".$this->id.") or the view (".$this->view_id.") and item id (".$this->view_component_id.") and the user (".$this->usr->id.") must be set to find a display item link.", "view_component_link->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("The database ID (".$this->id.") or the view (".$this->view_id.") and item id (".$this->view_component_id.") and the user (".$this->usr->id.") must be set to find a display item link.", "view_component_link->load", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
 
         // set the where clause depending on the values given
@@ -186,7 +186,7 @@ class view_component_link extends user_sandbox {
         }
 
         if ($sql_where == '') {
-          zu_err("Internal error on the where clause.", "view_component_link->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err("Internal error on the where clause.", "view_component_link->load", '', (new Exception)->getTraceAsString(), $this->usr);
         } else{  
           $sql = "SELECT l.view_component_link_id,
                          u.view_component_link_id AS user_link_id,
@@ -213,11 +213,11 @@ class view_component_link extends user_sandbox {
           $this->pos_type_id   = $db_item['position_type'];
           $this->excluded      = $db_item['excluded'];
           //} 
-          zu_debug('view_component_link->load of '.$this->id.' done', $debug-10); 
+          log_debug('view_component_link->load of '.$this->id.' done', $debug-10);
         }  
       }  
     }  
-    zu_debug('view_component_link->load of '.$this->id.' done and quit', $debug-10); 
+    log_debug('view_component_link->load of '.$this->id.' done and quit', $debug-10);
   }
     
   // to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
@@ -247,7 +247,7 @@ class view_component_link extends user_sandbox {
     AND isset($this->tob)) {
       $result = $this->fob->name_linked(NULL, $back, $debug-1).' to '.$this->tob->name_linked($back, $debug-1);
     } else {
-      $result .= zu_err("The view name or the component name cannot be loaded.", "view_component_link->name", '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_err("The view name or the component name cannot be loaded.", "view_component_link->name", '', (new Exception)->getTraceAsString(), $this->usr);
     }
 
     
@@ -307,7 +307,7 @@ class view_component_link extends user_sandbox {
 
   // 
   private function pos_type_name($debug) {
-    zu_debug('view_component_link->pos_type_name do', $debug-16);
+    log_debug('view_component_link->pos_type_name do', $debug-16);
 
     global $db_con;
 
@@ -320,7 +320,7 @@ class view_component_link extends user_sandbox {
       $db_type = $db_con->get1($sql, $debug-5);  
       $this->type_name = $db_type['type_name'];
     }
-    zu_debug('view_component_link->pos_type_name done', $debug-16);
+    log_debug('view_component_link->pos_type_name done', $debug-16);
     return $this->type_name;    
   }
   
@@ -343,21 +343,21 @@ class view_component_link extends user_sandbox {
 
     // check the all minimal input parameters
     if ($this->id <= 0) {
-      zu_err("Cannot load the view component link.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("Cannot load the view component link.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
     } elseif ($this->view_id <= 0 OR $this->view_component_id <= 0) {
-      zu_err("The view component id and the view component id must be given to move it.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The view component id and the view component id must be given to move it.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
-      zu_debug('view_component_link->move '.$direction.' '.$this->dsp_id(), $debug-10);
+      log_debug('view_component_link->move '.$direction.' '.$this->dsp_id(), $debug-10);
 
       // new reorder code that can create a separate order for each user
       if (!isset($this->fob) OR !isset($this->tob)) {
-        zu_err("The view component and the view component cannot be loaded to move them.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("The view component and the view component cannot be loaded to move them.", "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
         $this->fob->load_components($debug-1);
         
         // correct any wrong order numbers e.g. a missing number
         $order_number_corrected = false;
-        zu_debug('view_component_link->move check order numbers for '.$this->fob->dsp_id(), $debug-10);
+        log_debug('view_component_link->move check order numbers for '.$this->fob->dsp_id(), $debug-10);
         $order_nbr = 0;
         foreach ($this->fob->cmp_lst AS $entry) {
           // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
@@ -368,17 +368,17 @@ class view_component_link extends user_sandbox {
           $cmp_lnk->load($debug-1);
           // fix any wrong order numbers
           if ($cmp_lnk->order_nbr != $order_nbr) {
-            zu_debug('view_component_link->move check order number of the view component '.$entry->dsp_id().' corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.' in '.$this->fob->dsp_id(), $debug-10);
+            log_debug('view_component_link->move check order number of the view component '.$entry->dsp_id().' corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.' in '.$this->fob->dsp_id(), $debug-10);
             //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
             $cmp_lnk->order_nbr = $order_nbr;
             $cmp_lnk->save($debug-1);
             $order_number_corrected = true;
           }          
-          zu_debug('view_component_link->move check order numbers checked for '.$this->fob->dsp_id().' and '.$entry->dsp_id().' at position '.$order_nbr, $debug-10);
+          log_debug('view_component_link->move check order numbers checked for '.$this->fob->dsp_id().' and '.$entry->dsp_id().' at position '.$order_nbr, $debug-10);
           $order_nbr++;
         }
         if ($order_number_corrected) {
-          zu_debug('view_component_link->move reload after correction', $debug-12);
+          log_debug('view_component_link->move reload after correction', $debug-12);
           $this->fob->load_components($debug-1);
           // check if correction was successful
           $order_nbr = 0;
@@ -389,11 +389,11 @@ class view_component_link extends user_sandbox {
             $cmp_lnk->usr = $this->usr;
             $cmp_lnk->load($debug-1);
             if ($cmp_lnk->order_nbr != $order_nbr) {
-              zu_err('Component link '.$cmp_lnk->dsp_id().' should have position '.$order_nbr.', but is '.$cmp_lnk->order_nbr, "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
+              log_err('Component link '.$cmp_lnk->dsp_id().' should have position '.$order_nbr.', but is '.$cmp_lnk->order_nbr, "view_component_link->move", '', (new Exception)->getTraceAsString(), $this->usr);
             }
           }
         }
-        zu_debug('view_component_link->move order numbers checked for '.$this->fob->dsp_id(), $debug-10);
+        log_debug('view_component_link->move order numbers checked for '.$this->fob->dsp_id(), $debug-10);
         
         // actually move the selected component
         // TODO what happens if the another user has deleted some components?
@@ -409,12 +409,12 @@ class view_component_link extends user_sandbox {
           $cmp_lnk->load($debug-1);
           if ($prev_entry_down) {
             if (isset($prev_entry)) {
-              zu_debug('view_component_link->move order number of the view component '.$prev_entry->tob->dsp_id().' changed from '.$prev_entry->order_nbr.' to '.$order_nbr.' in '.$this->fob->dsp_id(), $debug-10);
+              log_debug('view_component_link->move order number of the view component '.$prev_entry->tob->dsp_id().' changed from '.$prev_entry->order_nbr.' to '.$order_nbr.' in '.$this->fob->dsp_id(), $debug-10);
               $prev_entry->order_nbr = $order_nbr;
               $prev_entry->save($debug-1);
               $prev_entry = Null;
             }  
-            zu_debug('view_component_link->move order number of the view component "'.$cmp_lnk->tob->name.'" changed from '.$cmp_lnk->order_nbr.' to '.$order_nbr.' - 1 in "'.$this->fob->name.'"', $debug-10);
+            log_debug('view_component_link->move order number of the view component "'.$cmp_lnk->tob->name.'" changed from '.$cmp_lnk->order_nbr.' to '.$order_nbr.' - 1 in "'.$this->fob->name.'"', $debug-10);
             $cmp_lnk->order_nbr = $order_nbr - 1;
             $cmp_lnk->save($debug-1);
             $result = true;
@@ -423,12 +423,12 @@ class view_component_link extends user_sandbox {
           if ($entry->id == $this->view_component_id) {
             if ($direction == 'up') {
               if ($cmp_lnk->order_nbr > 0) {
-                zu_debug('view_component_link->move order number of the view component '.$cmp_lnk->tob->dsp_id().' changed from '.$cmp_lnk->order_nbr.' to '.$order_nbr.' - 1 in '.$this->fob->dsp_id(), $debug-10);
+                log_debug('view_component_link->move order number of the view component '.$cmp_lnk->tob->dsp_id().' changed from '.$cmp_lnk->order_nbr.' to '.$order_nbr.' - 1 in '.$this->fob->dsp_id(), $debug-10);
                 $cmp_lnk->order_nbr = $order_nbr - 1;
                 $cmp_lnk->save($debug-1);
                 $result = true;
                 if (isset($prev_entry)) {
-                  zu_debug('view_component_link->move order number of the view component '.$prev_entry->tob->dsp_id().' changed from '.$prev_entry->order_nbr.' to '.$order_nbr.' in '.$this->fob->dsp_id(), $debug-10);
+                  log_debug('view_component_link->move order number of the view component '.$prev_entry->tob->dsp_id().' changed from '.$prev_entry->order_nbr.' to '.$order_nbr.' in '.$this->fob->dsp_id(), $debug-10);
                   $prev_entry->order_nbr = $order_nbr;
                   $prev_entry->save($debug-1);
                 }
@@ -446,11 +446,11 @@ class view_component_link extends user_sandbox {
       }
       
       // force to reload view components
-      zu_debug('view_component_link->move reload', $debug-12);
+      log_debug('view_component_link->move reload', $debug-12);
       $this->fob->load_components($debug-1);
     }
 
-    zu_debug('view_component_link->move done', $debug-12);
+    log_debug('view_component_link->move done', $debug-12);
     return $result;
   }
   
@@ -472,9 +472,9 @@ class view_component_link extends user_sandbox {
 
     if (!$this->has_usr_cfg) {
       if (isset($this->fob) AND isset($this->tob)) {
-        zu_debug('view_component_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);  
+        log_debug('view_component_link->add_usr_cfg for "'.$this->fob->name.'"/"'.$this->tob->name.'" by user "'.$this->usr->name.'"', $debug-10);
       } else {
-        zu_debug('view_component_link->add_usr_cfg for "'.$this->id.'" and user "'.$this->usr->name.'"', $debug-10);  
+        log_debug('view_component_link->add_usr_cfg for "'.$this->id.'" and user "'.$this->usr->name.'"', $debug-10);
       }
 
       // check again if there ist not yet a record
@@ -499,7 +499,7 @@ class view_component_link extends user_sandbox {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    zu_debug('view_component_link->del_usr_cfg_if_not_needed pre check for '.$this->dsp_id(), $debug-12);
+    log_debug('view_component_link->del_usr_cfg_if_not_needed pre check for '.$this->dsp_id(), $debug-12);
 
     global $db_con;
     $result = '';
@@ -517,13 +517,13 @@ class view_component_link extends user_sandbox {
       //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('view_component_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' with ('.$sql.')', $debug-12);
+      log_debug('view_component_link->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' with ('.$sql.')', $debug-12);
       if ($usr_cfg['view_component_link_id'] > 0) {
         if ($usr_cfg['order_nbr']     == Null
         AND $usr_cfg['position_type'] == Null
         AND $usr_cfg['excluded']      == Null) {
           // delete the entry in the user sandbox
-          zu_debug('view_component_link->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id(), $debug-10);
+          log_debug('view_component_link->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id(), $debug-10);
           $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
         }  
       }  
@@ -570,7 +570,7 @@ class view_component_link extends user_sandbox {
     $result .= $this->save_field_order_nbr ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_type      ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded  ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('view_component_link->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
+    log_debug('view_component_link->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
     return $result;
   }
     

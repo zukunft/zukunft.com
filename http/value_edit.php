@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("value_edit", "", $debug);
+$db_con = prg_start("value_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -60,7 +60,7 @@ $db_con = zu_start("value_edit", "", $debug);
     $val->load($debug-1);              // to load any missing parameters of the edit view like the group and phrases from the database
     
     if ($val->id <= 0) {
-      $result .= zu_err("Value id missing for value_edit called from ".$back, "value_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_err("Value id missing for value_edit called from ".$back, "value_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
 
       // update the parameters on the object, so that the object save can update the database
@@ -85,8 +85,8 @@ $db_con = zu_start("value_edit", "", $debug);
           }
           $phr_pos++;
         }
-        zu_debug("value_edit -> phrases ".implode(",",$phr_ids) .".", $debug-1);
-        zu_debug("value_edit -> types "  .implode(",",$type_ids).".", $debug-1);
+        log_debug("value_edit -> phrases ".implode(",",$phr_ids) .".", $debug-1);
+        log_debug("value_edit -> types "  .implode(",",$type_ids).".", $debug-1);
 
         $val->ids       = $phr_ids;
       }  
@@ -132,4 +132,4 @@ $db_con = zu_start("value_edit", "", $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

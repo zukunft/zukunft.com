@@ -16,7 +16,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php';  if ($debug > 9) { echo 'lib loaded<br>'; }
 
 // open database
-$db_con = zu_start("start formula_test.php", "", $debug-10);
+$db_con = prg_start("start formula_test.php", "", $debug-10);
 
   // load the session user parameters
   $session_usr = New user;
-  $result .= $session_usr->get($debug-1);
+  $result = $session_usr->get($debug-1);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($session_usr->id > 0) {
@@ -89,9 +89,9 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
 
       // delete all formula results if requested
       if ($refresh == 1) {
-        zu_debug('refresh all formula results for '.$frm1->id, $debug-8);
+        log_debug('refresh all formula results for '.$frm1->id, $debug-8);
         $frm1->fv_del($debug-1);
-        zu_debug('old formula results for '.$frm_id.' deleted', $debug-9);
+        log_debug('old formula results for '.$frm_id.' deleted', $debug-9);
       }
       
       // if only one result is selected, display the selected result words
@@ -114,7 +114,7 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
       if (!empty($phr_ids)) {
 
         foreach ($frm_lst->lst AS $frm) {
-          zu_debug('calculate "'.$frm->dsp_text().'" for '.$phr_lst->name_linked(), $debug-2);
+          log_debug('calculate "'.$frm->dsp_text().'" for '.$phr_lst->name_linked(), $debug-2);
           $fv_lst = $frm->calc($phr_lst, $debug-1);
           
           // display the single result if requested
@@ -127,7 +127,7 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
                 $debug_text  = ''.$frm->name_linked().' for '.$fv->phr_lst->name_linked($debug-1);
               }
               $debug_text .= ' = '.$fv->display_linked($back, $debug-1).' (<a href="/http/formula_test.php?id='.$frm_id.'&phrases='.$phr_ids_txt.'&user='.$usr->id.'&back='.$back.'&debug='.$debug_next_level.'">more details</a>)';
-              zu_debug($debug_text, $debug);
+              log_debug($debug_text, $debug);
             }  
           }
         }
@@ -138,7 +138,7 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
         // start displaying while calculating
         ob_implicit_flush(true);
         ob_end_flush();
-        zu_debug("create the calculation queue ... ", $debug-1);
+        log_debug("create the calculation queue ... ", $debug-1);
         $calc_pos = 0;
         $last_msg_time = time();
         
@@ -153,11 +153,11 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
           $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back, $debug-1);
         }
         
-        zu_debug("calculate queue is build (number of values to test: ".count($calc_lst->lst).")", $debug);
+        log_debug("calculate queue is build (number of values to test: ".count($calc_lst->lst).")", $debug);
         
         // execute the queue
         foreach ($calc_lst->lst AS $r) {
-          zu_debug('calculate "'.$r->frm->name.'" for '.$r->phr_lst->name(), $debug-7);
+          log_debug('calculate "'.$r->frm->name.'" for '.$r->phr_lst->name(), $debug-7);
           if ($phr_ids_txt == "" or $phr_ids == $r->phr_lst->ids ) {
 
             // calculate one formula result
@@ -176,9 +176,9 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
                       $debug_text .= '&phrases='.implode(",",$r->phr_lst->ids);
                     }
                     $debug_text .= '&user='.$usr->id.'&back='.$back.'&debug='.$debug_next_level.'">more details for this result</a>)';
-                    zu_debug($debug_text, $debug);
+                    log_debug($debug_text, $debug);
                   } else {  
-                    zu_debug("Skipped ".$debug_text, $debug);
+                    log_debug("Skipped ".$debug_text, $debug);
                   }
                 }
               } else {
@@ -191,7 +191,7 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
                     $debug_text .= '&phrases='.implode(",",$r->phr_lst->ids);
                   }
                   $debug_text .= '&user='.$usr->id.'&back='.$back.'&debug='.$debug_next_level.'">more details only for this result</a>)';
-                  zu_debug($debug_text, $debug);
+                  log_debug($debug_text, $debug);
                 }
               }
 
@@ -230,5 +230,5 @@ $db_con = zu_start("start formula_test.php", "", $debug-10);
   }
 
 // Closing connection
-zu_end($db_con, $debug-10);
+prg_end($db_con, $debug-10);
 ?>

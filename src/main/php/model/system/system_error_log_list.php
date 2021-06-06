@@ -43,7 +43,7 @@ class system_error_log_list {
   // or display the error that are related to the user, so that he can track when they are closed
   // called also from user_display.php/dsp_errors
   function display ($debug) {
-    zu_debug('system_error_log_list->display for user "'.$this->usr->name.'"', $debug-10);
+    log_debug('system_error_log_list->display for user "'.$this->usr->name.'"', $debug-10);
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -95,7 +95,7 @@ class system_error_log_list {
     $db_lst = $db_con->get($sql, $debug-5);  
 
     if (count($db_lst) > 0) {
-      zu_debug('system_error_log_list->display -> '.count($db_lst).' rows', $debug-1);
+      log_debug('system_error_log_list->display -> '.count($db_lst).' rows', $debug-1);
       // prepare to show the word link
       $db_row = $db_lst[0];
       if ($db_row["sys_log_time"] <> '') {
@@ -131,7 +131,7 @@ class system_error_log_list {
       }
     }
     
-    zu_debug('system_error_log_list->display -> done', $debug-1);
+    log_debug('system_error_log_list->display -> done', $debug-1);
     return $result;
   }
     

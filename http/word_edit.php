@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("word_edit", "", $debug);
+$db_con = prg_start("word_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -60,7 +60,7 @@ $db_con = zu_start("word_edit", "", $debug);
     $wrd->load($debug-1);
       
     if ($wrd->id <= 0) {
-      $result .= zu_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);    
+      $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {  
 
       // get all parameters (but if not set, use the database value)
@@ -105,4 +105,4 @@ $db_con = zu_start("word_edit", "", $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

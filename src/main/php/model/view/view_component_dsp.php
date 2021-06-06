@@ -36,7 +36,7 @@ class view_component_dsp extends view_component {
   function text($debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_COMPONENT_TEXT)) {
-      zu_debug('view_component_dsp->text ('.$this->dsp_id().')', $debug-10);
+      log_debug('view_component_dsp->text ('.$this->dsp_id().')', $debug-10);
       $result .= " " . $this->name;
     }
     return $result;
@@ -47,9 +47,9 @@ class view_component_dsp extends view_component {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_WORD_NAME)) {
       if (!isset($wrd)) {
-        $result .= zu_err('No word selected for "'.$this->name.'".', "view_component_dsp->word_name", '', (new Exception)->getTraceAsString(), $this->usr);  
+        $result .= log_err('No word selected for "'.$this->name.'".', "view_component_dsp->word_name", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
-        zu_debug('view_component_dsp->word_name in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+        log_debug('view_component_dsp->word_name in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
         $wrd_dsp = New word_dsp;
         $wrd_dsp->id  = $wrd->id;
         $wrd_dsp->usr = $wrd->usr;
@@ -71,7 +71,7 @@ class view_component_dsp extends view_component {
   function table($phr, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_VALUES_RELATED)) {
-      zu_debug('view_component_dsp->table of view component '.$this->dsp_id().' for "'.$phr->name.'" with columns "'.$this->wrd_row->name.'" and user "'.$this->usr->name.'"', $debug-10);
+      log_debug('view_component_dsp->table of view component '.$this->dsp_id().' for "'.$phr->name.'" with columns "'.$this->wrd_row->name.'" and user "'.$this->usr->name.'"', $debug-10);
       $val_lst = New value_list_dsp;
       $val_lst->phr = $phr;
       $val_lst->usr = $this->usr;
@@ -85,11 +85,11 @@ class view_component_dsp extends view_component {
     $result = '';
 
     if ($this->type_id == cl(SQL_VIEW_TYPE_WORD_VALUE)) {
-      zu_debug('view_component_dsp->num_list in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->num_list in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
 
       // check the parameters
       if (get_class($wrd) <> 'word_dsp') {
-        $result .= zu_warning('The word parameter has type '.get_class($wrd).', but should be word_dsp.', "view_component_dsp->num_list", '', (new Exception)->getTraceAsString(), $this->usr);  
+        $result .= log_warning('The word parameter has type '.get_class($wrd).', but should be word_dsp.', "view_component_dsp->num_list", '', (new Exception)->getTraceAsString(), $this->usr);
         $wrd_dsp = New word_dsp;
         $wrd_dsp->id = $wrd->id;
         $wrd_dsp->usr = $this->usr;
@@ -101,7 +101,7 @@ class view_component_dsp extends view_component {
       if (isset($this->wrd_col)) {
         $result .= $wrd->dsp_val_list ($this->wrd_col, $back, $debug-1);
       } else {
-        $result .= zu_err('Column definition is missing for '.$this->dsp_id().'.', "view_component_dsp->num_list", '', (new Exception)->getTraceAsString(), $this->usr);  
+        $result .= log_err('Column definition is missing for '.$this->dsp_id().'.', "view_component_dsp->num_list", '', (new Exception)->getTraceAsString(), $this->usr);
       }
     }
     return $result;
@@ -120,7 +120,7 @@ class view_component_dsp extends view_component {
   function formulas($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_FORMULAS)) {
-      zu_debug('view_component_dsp->formulas in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->formulas in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= dsp_text_h2('Formulas');
 
       $frm_lst = $this->formula_list($wrd, $debug-1);
@@ -128,7 +128,7 @@ class view_component_dsp extends view_component {
       
       $parent_word_lst = $wrd->parents($debug-1);
       foreach ($parent_word_lst->lst AS $parent_wrd) {
-        zu_debug('view_component_dsp->formulas -> parent ('.$parent_wrd->name.')', $debug-10);
+        log_debug('view_component_dsp->formulas -> parent ('.$parent_wrd->name.')', $debug-10);
         $result .= dsp_text_h3('Formulas inherented by '.$parent_wrd->name);
 
         $frm_lst = $this->formula_list($parent_wrd, $debug-1);
@@ -146,7 +146,7 @@ class view_component_dsp extends view_component {
   function formula_values($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_FORMULA_RESULTS)) {
-      zu_debug('view_component_dsp->formula_values in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->formula_values in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= "<br><br>calculated values<br>";
       $frm_val_lst = New formula_value_list;
       $frm_val_lst->phr_id = $wrd->id;
@@ -164,7 +164,7 @@ class view_component_dsp extends view_component {
     $result = '';
 
     if ($this->type_id == cl(SQL_VIEW_TYPE_WORDS_DOWN)) {
-      zu_debug('view_component_dsp->word_children in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->word_children in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= $wrd->dsp_graph ("down", $debug-1);
     }
     
@@ -175,7 +175,7 @@ class view_component_dsp extends view_component {
   function word_parents($wrd, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_WORDS_DOWN)) {
-      zu_debug('view_component_dsp->word_parents in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->word_parents in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= $wrd->dsp_graph ("up",   $debug-1);
     }
     return $result;
@@ -185,7 +185,7 @@ class view_component_dsp extends view_component {
   function json_export($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_JSON_EXPORT)) {
-      zu_debug('view_component_dsp->json_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->json_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $result .= $wrd->config_json_export ($back, $debug-1);
       $result .= '<br>';
@@ -197,7 +197,7 @@ class view_component_dsp extends view_component {
   function xml_export($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_XML_EXPORT)) {
-      zu_debug('view_component_dsp->xml_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->xml_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $result .= $wrd->config_xml_export ($back, $debug-1);
       $result .= '<br>';
@@ -209,7 +209,7 @@ class view_component_dsp extends view_component {
   function csv_export($wrd, $back, $debug) {
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_CSV_EXPORT)) {
-      zu_debug('view_component_dsp->csv_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->csv_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $result .= $wrd->config_csv_export ($back, $debug-1);
       $result .= '<br>';
@@ -219,10 +219,10 @@ class view_component_dsp extends view_component {
 
   // shows all: all words that link to the given word and all values related to the given word
   function all($phr, $back, $debug) {
-    zu_debug('view_component_dsp->all for word '.$phr->name, $debug-10);
+    log_debug('view_component_dsp->all for word '.$phr->name, $debug-10);
     $result = '';
     if ($this->type_id == cl(SQL_VIEW_TYPE_VALUES_ALL)) {
-      zu_debug('view_component_dsp->all in view '.$this->dsp_id().' for word '.$phr->name.' and user '.$this->usr->name, $debug-10);
+      log_debug('view_component_dsp->all in view '.$this->dsp_id().' for word '.$phr->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $phrases_down = $phr->dsp_graph ("down", $debug-1);
       $phrases_up   = $phr->dsp_graph ("up",   $debug-1);
@@ -237,7 +237,7 @@ class view_component_dsp extends view_component {
       $val_lst = New value_list;
       $val_lst->phr = $phr;
       $val_lst->usr = $this->usr;
-      zu_debug('view_component_dsp->all load values for word "'.$phr->name.'" and user "'.$this->usr->name.'"', $debug-10);
+      log_debug('view_component_dsp->all load values for word "'.$phr->name.'" and user "'.$this->usr->name.'"', $debug-10);
       $val_lst->load_by_phr($debug-1);
       $result .= $val_lst->html($back, $debug-1);
     }
@@ -253,7 +253,7 @@ class view_component_dsp extends view_component {
   
   // allow the user to unlick a view
   function btn_unlink ($view_id, $wrd, $back, $debug) {
-    zu_debug('view_component_dsp->btn_unlink(me'.$this->id.',m'.$view_id.',t'.$wrd->id.')', $debug-10);
+    log_debug('view_component_dsp->btn_unlink(me'.$this->id.',m'.$view_id.',t'.$wrd->id.')', $debug-10);
     $result  = '    <td>'."\n";
     $result .= btn_del ("unlink view", "/http/view_component_edit.php?id=".$this->id."&unlink_view=".$view_id."&word=".$wrd->id."&back=".$back);
     $result .= '    </td>'."\n";
@@ -262,7 +262,7 @@ class view_component_dsp extends view_component {
 
   // lists of all views where a view component is used
   private function linked_views($add_link, $wrd, $back, $debug) {
-    zu_debug("view_component_dsp->linked_view componet id ".$this->id." and user ".$this->usr->id." (word ".$wrd->id.", add ".$add_link.").", $debug-10);
+    log_debug("view_component_dsp->linked_view componet id ".$this->id." and user ".$this->usr->id." (word ".$wrd->id.", add ".$add_link.").", $debug-10);
 
     global $db_con;
     $result = '';
@@ -372,7 +372,7 @@ class view_component_dsp extends view_component {
 
   // display the history of a view component
   function dsp_hist($page, $size, $call, $back, $debug) {
-    zu_debug("view_component_dsp->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
+    log_debug("view_component_dsp->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
     $result = ''; // reset the html code var
     
     $log_dsp = New user_log_display;
@@ -385,13 +385,13 @@ class view_component_dsp extends view_component {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist($debug-1);
     
-    zu_debug("view_component_dsp->dsp_hist -> done", $debug-1);
+    log_debug("view_component_dsp->dsp_hist -> done", $debug-1);
     return $result;
   }
 
   // display the link history of a view component
   function dsp_hist_links($page, $size, $call, $back, $debug) {
-    zu_debug("view_component_dsp->dsp_hist_links for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
+    log_debug("view_component_dsp->dsp_hist_links for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
     $result = ''; // reset the html code var
     
     $log_dsp = New user_log_display;
@@ -404,7 +404,7 @@ class view_component_dsp extends view_component {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist_links($debug-1);
     
-    zu_debug("view_component_dsp->dsp_hist_links -> done", $debug-1);
+    log_debug("view_component_dsp->dsp_hist_links -> done", $debug-1);
     return $result;
   }
 
@@ -415,7 +415,7 @@ class view_component_dsp extends view_component {
 
   // HTML code to edit all word fields
   function dsp_edit ($add_link, $wrd, $back, $debug) {
-    zu_debug('view_component_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.')', $debug-10);
+    log_debug('view_component_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.')', $debug-10);
     $result = '';
     
     // show the view component name

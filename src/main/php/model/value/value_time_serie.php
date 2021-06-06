@@ -120,7 +120,7 @@ class value_time_serie extends user_sandbox_display {
           LEFT JOIN user_values u ON u.value_time_serie_id = v.value_time_serie_id 
                                 AND u.user_id = '.$this->usr->id.' 
               WHERE '.$sql_where.';';
-    zu_debug('value_time_serie->load_rec -> sql "'.$sql.'"', $debug-18);      
+    log_debug('value_time_serie->load_rec -> sql "'.$sql.'"', $debug-18);
     $db_val = $db_con->get1($sql, $debug-5);  
     if ($db_val['value_time_serie_id'] <= 0) {
       $this->reset($debug-1);
@@ -135,13 +135,13 @@ class value_time_serie extends user_sandbox_display {
       $this->time_id       = $db_val['time_word_id'];
       $this->last_update   = new DateTime($db_val['last_update']);
       $this->excluded      = $db_val['excluded'];
-      zu_debug('value_time_serie->load_rec -> got '.$this->number.' with id '.$this->id, $debug-14);      
+      log_debug('value_time_serie->load_rec -> got '.$this->number.' with id '.$this->id, $debug-14);
     } 
   }
   
   // insert or update a number in the database or save a user specific number
   function save($debug) {
-    zu_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
+    log_debug('value->save "'.$this->number.'" for user '.$this->usr->name, $debug-10);
 
     global $db_con;
     $result = "";
@@ -156,7 +156,7 @@ class value_time_serie extends user_sandbox_display {
     
     // check if a new value is supposed to be added
     if ($this->id <= 0) {
-      zu_debug('value->save check if a value for "'.$this->name().'" and user '.$this->usr->name.' is already in the database', $debug-10);
+      log_debug('value->save check if a value for "'.$this->name().'" and user '.$this->usr->name.' is already in the database', $debug-10);
       // check if a value for this words is already in the database
       $db_chk = New value;
       $db_chk->grp_id     = $this->grp_id;
@@ -165,17 +165,17 @@ class value_time_serie extends user_sandbox_display {
       $db_chk->usr        = $this->usr;
       $db_chk->load($debug-1);
       if ($db_chk->id > 0) {
-        zu_debug('value->save value for "'.$this->grp->name().'"@"'.$this->time_phr->name.'" and user '.$this->usr->name.' is already in the database and will be updated', $debug-12);
+        log_debug('value->save value for "'.$this->grp->name().'"@"'.$this->time_phr->name.'" and user '.$this->usr->name.' is already in the database and will be updated', $debug-12);
         $this->id = $db_chk->id;
       }
     }  
     
     if ($this->id <= 0) {
-      zu_debug('value->save "'.$this->name().'": '.$this->number.' for user '.$this->usr->name.' as a new value', $debug-10);
+      log_debug('value->save "'.$this->name().'": '.$this->number.' for user '.$this->usr->name.' as a new value', $debug-10);
 
       $result .= $this->add($db_con, $debug-1);
     } else {  
-      zu_debug('value->save update id '.$this->id.' to save "'.$this->number.'" for user '.$this->usr->id, $debug-10);
+      log_debug('value->save update id '.$this->id.' to save "'.$this->number.'" for user '.$this->usr->id, $debug-10);
       // update a value
       // todo: if no one else has ever changed the value, change to default value, else create a user overwrite
 
@@ -185,12 +185,12 @@ class value_time_serie extends user_sandbox_display {
       $db_rec->id  = $this->id;
       $db_rec->usr = $this->usr;
       $db_rec->load($debug-1);
-      zu_debug("value->save -> old database value loaded (".$db_rec->number.") with group ".$db_rec->grp_id.".", $debug-10);
+      log_debug("value->save -> old database value loaded (".$db_rec->number.") with group ".$db_rec->grp_id.".", $debug-10);
       $std_rec = New value;
       $std_rec->id = $this->id;
       $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
       $std_rec->load_standard($debug-1);
-      zu_debug("value->save -> standard value settings loaded (".$std_rec->number.")", $debug-14);
+      log_debug("value->save -> standard value settings loaded (".$std_rec->number.")", $debug-14);
 
       // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save 
       if ($this->owner_id <= 0) {

@@ -33,7 +33,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("link_edit", "", $debug);
+$db_con = prg_start("link_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -60,7 +60,7 @@ $db_con = zu_start("link_edit", "", $debug);
     
     // edit the link or ask for confirmation
     if ($lnk->id <= 0) {
-      $result .= zu_err("No triple found to change because the id is missing.", "link_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_err("No triple found to change because the id is missing.", "link_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
     
       if ($_GET['confirm'] == 1) {
@@ -97,4 +97,4 @@ $db_con = zu_start("link_edit", "", $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start_api("get_xml", "", $debug);
+$db_con = prg_start_api("get_xml", "", $debug);
 
   // load the session user parameters
   $usr = New user;
@@ -44,7 +44,7 @@ $db_con = zu_start_api("get_xml", "", $debug);
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET['words'];
-    zu_debug("get_xml(".$phrases.")", $debug);
+    log_debug("get_xml(".$phrases.")", $debug);
     $word_names = explode(",",$phrases);
     
     // get all related Phrases
@@ -59,13 +59,13 @@ $db_con = zu_start_api("get_xml", "", $debug);
       $phr_lst->load($debug-1);
       $phr_lst = $phr_lst->are($debug-1);
     
-      zu_debug("get_xml.php ... phrase loaded.", $debug-10);
+      log_debug("get_xml.php ... phrase loaded.", $debug-10);
       $xml_export = New xml_io;
       $xml_export->usr     = $usr;
       $xml_export->phr_lst = $phr_lst;
       $xml = $xml_export->export($debug-1);
     } else {
-      $result .= zu_info('No XML can be created, because no word or triple is given.','', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_info('No XML can be created, because no word or triple is given.','', (new Exception)->getTraceAsString(), $this->usr);
     }
 
     if ($result <> '') {
@@ -78,4 +78,4 @@ $db_con = zu_start_api("get_xml", "", $debug);
   
 
 // Closing connection
-zu_end_api($db_con, $debug);
+prg_end_api($db_con, $debug);

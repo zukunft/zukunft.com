@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ function run_formula_test ($debug) {
   $frm->usr = $usr;
   $result = $frm->save($debug-1);
   // use the next line if system config is non standard
-  $target = 'A formula with the name "'.TF_ADD.'" already exists. Please use another name.';
+  //$target = 'A formula with the name "'.TF_ADD.'" already exists. Please use another name.';
   $target = '11111';
   $exe_start_time = test_show_result(', formula->save adding "'.$frm->name.'" again', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 

@@ -43,7 +43,7 @@ class dsp_list {
   // converts a id field name to an edit php script name
   // assuming that ...
   private function id_to_edit($debug) {
-    zu_debug("zu_id_to_edit(".$this->id_field.")", $debug-10);
+    log_debug("zu_id_to_edit(".$this->id_field.")", $debug-10);
     $result = zu_str_left_of($this->id_field, "_id")."_edit.php";
     // todo: cleanup
     if ($result == 'view_component_edit.php') { $result = 'view_component_edit.php'; }

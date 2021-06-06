@@ -32,7 +32,7 @@
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
-$db_con = zu_start("formula_edit", "", $debug);
+$db_con = prg_start("formula_edit", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -66,7 +66,7 @@ $db_con = zu_start("formula_edit", "", $debug);
     //if (isset($_GET['need_all_val']))  { if ($_GET['need_all_val'] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
 
     if ($frm->id <= 0) {
-      $result .= zu_err("No formula found to change because the id is missing.", "formula_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_err("No formula found to change because the id is missing.", "formula_edit.php", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // do the direct changes initiated by other buttons than the save button
@@ -128,4 +128,4 @@ $db_con = zu_start("formula_edit", "", $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 /*
 
-  test_db_link.php - TESTing of the DataBase LINK functions
-  ----------------
+  db_check.php - test if the DataBase exists and start the creation or upgrade process
+  ------------
   
 
 zukunft.com - calc with words
@@ -26,16 +26,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_db_link_test () {
+// read the version number from the database and compare it with the backend version
+// if the database has a lower version than the backend program start the upgrade process
+function db_check($debug)
+{
 
-  global $exe_start_time;
-  
-  test_header('Test database link functions (zu_lib_sql_code_link.php)');
+    global $usr;
 
-  // test zut_name 
-  $id = DBL_SYSLOG_TBL_WORD;
-  $target = 2;
-  $result = cl($id);
-  $exe_start_time = test_show_result(", sql_code_link ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    // get the db version
+    $db_version = cfg_get(CFG_VERSION_DB, $usr, $debug);
 
+}
+
+function db_create($debug)
+{
 }

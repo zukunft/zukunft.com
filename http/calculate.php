@@ -10,7 +10,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("calculate", "", $debug);
+$db_con = prg_start("calculate", "", $debug);
 
   // load the requesting user
   $usr = New user;
@@ -47,7 +47,7 @@ $db_con = zu_start("calculate", "", $debug);
     $last_msg_time = time();
     ob_implicit_flush();
     ob_end_flush();
-    zu_debug("create the calculation queue ... ", $debug - 1);
+    log_debug("create the calculation queue ... ", $debug - 1);
 
     // load the formulas to calculate
     $frm_lst = new formula_list;
@@ -62,7 +62,7 @@ $db_con = zu_start("calculate", "", $debug);
       $calc_fv_lst->usr = $usr;
       $calc_fv_lst->frm = $frm_request;
       $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back, $debug - 2);
-      zu_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")", $debug - 1);
+      log_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")", $debug - 1);
 
       // execute the queue
       foreach ($calc_lst->lst as $r) {
@@ -91,4 +91,4 @@ $db_con = zu_start("calculate", "", $debug);
   }
 
 // Closing connection
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

@@ -51,7 +51,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ function zuu_id ($debug) {
   // if the user has logged in use the logged in account
   if ($_SESSION['logged']) { 
     $user_id = $_SESSION['usr_id'];
-    zu_debug('zuu_id -> use ('.$user_id.')', $debug);
+    log_debug('zuu_id -> use ('.$user_id.')', $debug);
   } else {
     // else use the IP adress
     $ip_address = zuu_ip();
@@ -104,13 +104,13 @@ function zuu_id ($debug) {
 
 // return the user profile id
 function zuu_profile ($user_id, $debug) {
-  zu_debug('zuu_profile('.$user_id.')', $debug);
+  log_debug('zuu_profile('.$user_id.')', $debug);
   return zu_sql_get_field ('user', $user_id, 'user_profile_id', $debug-1);
 }
 
 // return a list of all users that have done at least one modification compared to the standard
 function zuu_active_lst ($debug) {
-  zu_debug('zuu_active_lst', $debug);
+  log_debug('zuu_active_lst', $debug);
   
   $sql = "SELECT u.user_id, u.user_name 
             FROM users u,
@@ -133,7 +133,7 @@ function zuu_active_lst ($debug) {
 
 // true if the user has admin rights
 function zuu_is_admin ($user_id, $debug) {
-  zu_debug('zuu_is_admin ('.$user_id.')', $debug);
+  log_debug('zuu_is_admin ('.$user_id.')', $debug);
   $result = false;
 
   $user_profile = zuu_profile($user_id, $debug-1);
@@ -145,20 +145,20 @@ function zuu_is_admin ($user_id, $debug) {
 
 // remember the last source that the user has used
 function zuu_set_source ($user_id, $source_id, $debug) {
-  zu_debug('zuu_set_source('.$user_id.',s'.$source_id.')', $debug);
+  log_debug('zuu_set_source('.$user_id.',s'.$source_id.')', $debug);
   $result = zu_sql_update('users', $user_id, 'source_id', $source_id, $user_id, $debug);
   return $result;
 }
 
 // return the last source that the user has used
 function zuu_last_source ($user_id, $debug) {
-  zu_debug('zuu_last_source('.$user_id.')', $debug);
+  log_debug('zuu_last_source('.$user_id.')', $debug);
   return zu_sql_get_field ('user', $user_id, 'source_id', $debug-1);
 }
 
 // display a form with the user parameters such as name or email
 function zuu_dsp_par ($user_id, $debug) {
-  zu_debug('zuu_dsp_par(u'.$user_id.')', $debug);
+  log_debug('zuu_dsp_par(u'.$user_id.')', $debug);
   $result = ''; // reset the html code var
 
   $sql = "SELECT user_name, email, first_name, last_name FROM users WHERE user_id = ".$user_id.";";
@@ -177,13 +177,13 @@ function zuu_dsp_par ($user_id, $debug) {
   $result .= '</table>';
   $result .= zuh_form_end();
   
-  zu_debug('zuu_dsp_par -> done', $debug-1);
+  log_debug('zuu_dsp_par -> done', $debug-1);
   return $result;
 }
 
 // display word changes by the user which are not (yet) standard 
 function zuu_dsp_sandbox_wrd ($user_id, $back_link, $debug) {
-  zu_debug('zuu_dsp_sandbox_wrd(u'.$user_id.')', $debug);
+  log_debug('zuu_dsp_sandbox_wrd(u'.$user_id.')', $debug);
   $result = ''; // reset the html code var
 
   // get word changes by the user that are not standard
@@ -213,13 +213,13 @@ function zuu_dsp_sandbox_wrd ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_sandbox_wrd -> done', $debug-1);
+  log_debug('zuu_dsp_sandbox_wrd -> done', $debug-1);
   return $result;
 }
 
 // display formula changes by the user which are not (yet) standard 
 function zuu_dsp_sandbox_frm ($user_id, $back_link, $debug) {
-  zu_debug('zuu_dsp_sandbox_frm(u'.$user_id.')', $debug);
+  log_debug('zuu_dsp_sandbox_frm(u'.$user_id.')', $debug);
   $result = ''; // reset the html code var
 
   // get word changes by the user that are not standard
@@ -255,13 +255,13 @@ function zuu_dsp_sandbox_frm ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_sandbox_frm -> done', $debug-1);
+  log_debug('zuu_dsp_sandbox_frm -> done', $debug-1);
   return $result;
 }
 
 // display value changes by the user which are not (yet) standard 
 function zuu_dsp_sandbox_val ($user_id, $back_link, $debug) {
-  zu_debug('zuu_dsp_sandbox_val(u'.$user_id.')', $debug);
+  log_debug('zuu_dsp_sandbox_val(u'.$user_id.')', $debug);
   $result = ''; // reset the html code var
 
   // get value changes by the user that are not standard
@@ -310,13 +310,13 @@ function zuu_dsp_sandbox_val ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_sandbox_val -> done', $debug-1);
+  log_debug('zuu_dsp_sandbox_val -> done', $debug-1);
   return $result;
 }
 
 // display changes by the user which are not (yet) standard 
 function zuu_dsp_sandbox ($user_id, $back_link, $debug) {
-  zu_debug('zuu_dsp_sandbox(u'.$user_id.',b'.$back_link.')', $debug);
+  log_debug('zuu_dsp_sandbox(u'.$user_id.',b'.$back_link.')', $debug);
   $result  = zuu_dsp_sandbox_val ($user_id, $back_link, $debug); 
   $result .= zuu_dsp_sandbox_frm ($user_id, $back_link, $debug); 
   $result .= zuu_dsp_sandbox_wrd ($user_id, $back_link, $debug); 
@@ -325,7 +325,7 @@ function zuu_dsp_sandbox ($user_id, $back_link, $debug) {
 
 // display the latest changes by the user
 function zuu_dsp_changes ($user_id, $back_link, $debug) {
-  zu_debug('zuu_dsp_changes (u'.$user_id.',b'.$back_link.')', $debug);
+  log_debug('zuu_dsp_changes (u'.$user_id.',b'.$back_link.')', $debug);
   $result = ''; // reset the html code var
 
   // get value changes by the user that are not standard
@@ -382,14 +382,14 @@ function zuu_dsp_changes ($user_id, $back_link, $debug) {
   }
   $result .= '</table>';
   
-  zu_debug('zuu_dsp_changes -> done', $debug-1);
+  log_debug('zuu_dsp_changes -> done', $debug-1);
   return $result;
 }
 
 // display the error that are related to the user, so that he can track when they are closed
 // or display the error that are related to the user, so that he can track when they are closed
 function zuu_dsp_errors ($user_id, $user_profile, $dsp_type, $back, $debug) {
-  zu_debug('zuu_dsp_errors(u'.$user_id.')', $debug);
+  log_debug('zuu_dsp_errors(u'.$user_id.')', $debug);
   $result = ''; // reset the html code var
   
   // set the filter for the requested display type
@@ -459,7 +459,7 @@ function zuu_dsp_errors ($user_id, $user_profile, $dsp_type, $back, $debug) {
     $result .= '</table>';
   }
   
-  zu_debug('zuu_dsp_errors -> done', $debug-1);
+  log_debug('zuu_dsp_errors -> done', $debug-1);
   return $result;
 }
 
@@ -475,7 +475,7 @@ function zuu_upd_par ($user_id, $usr_par, $usr_row, $fld_pos, $fld_name, $par_na
 
 // check and update all user parameters
 function zuu_upd_pars ($user_id, $usr_par, $debug) {
-  zu_debug('zuu_upd_pars(u'.$user_id.',p'.implode($usr_par).')', $debug);
+  log_debug('zuu_upd_pars(u'.$user_id.',p'.implode($usr_par).')', $debug);
   $result = ''; // reset the html code var
 
   $sql = "SELECT user_name, email, first_name, last_name FROM users WHERE user_id = ".$user_id.";";
@@ -486,7 +486,7 @@ function zuu_upd_pars ($user_id, $usr_par, $debug) {
   zuu_upd_par ($user_id, $usr_par, $usr_row, 2, "first_name", 'fname', $debug);
   zuu_upd_par ($user_id, $usr_par, $usr_row, 3, "last_name",  'lname', $debug);
     
-  zu_debug('zuu_upd_pars -> done', $debug-1);
+  log_debug('zuu_upd_pars -> done', $debug-1);
   return $result;
 }
 ?>

@@ -76,7 +76,7 @@ class user
         $sql_where = '';
         if ($this->id > 0) {
             $sql_where = "u.user_id = " . $this->id;
-            zu_debug('user->load user id ' . $this->id, $debug - 15);
+            log_debug('user->load user id ' . $this->id, $debug - 15);
         } elseif ($this->code_id > 0) {
             $sql_where = "u.code_id = " . $this->code_id;
         } elseif ($this->name <> '') {
@@ -85,9 +85,9 @@ class user
             $sql_where = "u.ip_address = " . sf($this->ip_addr);
         }
 
-        zu_debug('user->load search by "' . $sql_where . '"', $debug - 14);
+        log_debug('user->load search by "' . $sql_where . '"', $debug - 14);
         if ($sql_where == '') {
-            zu_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this);
+            log_err("Either the database ID, the user name, the ip address or the code_id must be set for loading a user.", "user->load", '', (new Exception)->getTraceAsString(), $this);
         } else {
             $sql = "SELECT u.user_id,
                      u.code_id,
@@ -130,7 +130,7 @@ class user
                 $this->dec_point = DEFAULT_DEC_POINT;
                 $this->thousand_sep = DEFAULT_THOUSAND_SEP;
             }
-            zu_debug('user->load (' . $this->name . ')', $debug - 12);
+            log_debug('user->load (' . $this->name . ')', $debug - 12);
         }
         return $result;
     }
@@ -146,7 +146,7 @@ class user
     {
         $result = false;
         if (ip2long(trim($min)) <= ip2long(trim($ip_addr)) && ip2long(trim($ip_addr)) <= ip2long(trim($max))) {
-            zu_debug('user->ip_in_range ip ' . $ip_addr . ' (' . ip2long(trim($ip_addr)) . ') is in range between ' . $min . ' (' . ip2long(trim($min)) . ') and  ' . $max . ' (' . ip2long(trim($max)) . ')', $debug - 10);
+            log_debug('user->ip_in_range ip ' . $ip_addr . ' (' . ip2long(trim($ip_addr)) . ') is in range between ' . $min . ' (' . ip2long(trim($min)) . ') and  ' . $max . ' (' . ip2long(trim($max)) . ')', $debug - 10);
             return true;
         }
         return $result;
@@ -157,7 +157,7 @@ class user
     // exposed as public mainly for testing
     public function ip_check($ip_addr, $debug)
     {
-        zu_debug('user->ip_check (' . $ip_addr . ')', $debug - 10);
+        log_debug('user->ip_check (' . $ip_addr . ')', $debug - 10);
 
         global $db_con;
 
@@ -170,9 +170,9 @@ class user
         $db_con->usr_id = $this->id;
         $ip_lst = $db_con->get($sql, $debug - 10);
         foreach ($ip_lst as $ip_range) {
-            zu_debug('user->ip_check range (' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to'] . ')', $debug - 10);
+            log_debug('user->ip_check range (' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to'] . ')', $debug - 10);
             if ($this->ip_in_range($ip_addr, $ip_range['ip_from'], $ip_range['ip_to'], $debug - 1)) {
-                zu_debug('user->ip_check ip ' . $ip_addr . ' blocked due to range from ' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to'], $debug - 10);
+                log_debug('user->ip_check ip ' . $ip_addr . ' blocked due to range from ' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to'], $debug - 10);
                 $msg = 'Your IP ' . $ip_addr . ' is blocked at the moment because ' . $ip_range['reason'] . '. If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com.';
                 $this->id = 0; // switch off the permission
             }
@@ -201,7 +201,7 @@ class user
         if ($this->ip_addr == '') {
             $this->get_ip();
         } else {
-            zu_debug('user->get (' . $this->ip_addr . ')', $debug - 10);
+            log_debug('user->get (' . $this->ip_addr . ')', $debug - 10);
         }
         // even if the user has an open session, but the ip is blocked, drop the user
         $result .= $this->ip_check($this->ip_addr, $debug - 1);
@@ -211,7 +211,7 @@ class user
             if ($_SESSION['logged']) {
                 $this->id = $_SESSION['usr_id'];
                 $this->load($debug - 1);
-                zu_debug('user->get -> use (' . $this->id . ')', $debug - 10);
+                log_debug('user->get -> use (' . $this->id . ')', $debug - 10);
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
                 $this->get_ip();
@@ -227,14 +227,14 @@ class user
                 }
             }
         }
-        zu_debug('user->got "' . $this->name . '" (' . $this->id . ')', $debug - 10);
+        log_debug('user->got "' . $this->name . '" (' . $this->id . ')', $debug - 10);
         return $result;
     }
 
     // true if the user has admin rights
     function is_admin($debug)
     {
-        zu_debug('user->is_admin (' . $this->id . ')', $debug - 10);
+        log_debug('user->is_admin (' . $this->id . ')', $debug - 10);
         $result = false;
 
         if (!isset($this->profile_id)) {
@@ -249,7 +249,7 @@ class user
     // true if the user has the right to import data
     function can_import($debug)
     {
-        zu_debug('user->can_import (' . $this->id . ')', $debug - 10);
+        log_debug('user->can_import (' . $this->id . ')', $debug - 10);
         $result = false;
 
         if (!isset($this->profile_id)) {
@@ -308,7 +308,7 @@ class user
     // remember the last source that the user has used
     function set_source($source_id, $debug)
     {
-        zu_debug('user->set_source(' . $this->id . ',s' . $source_id . ')', $debug - 10);
+        log_debug('user->set_source(' . $this->id . ',s' . $source_id . ')', $debug - 10);
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
@@ -321,7 +321,7 @@ class user
     // todo add the database field
     function set_verb($vrb_id, $debug)
     {
-        zu_debug('user->set_verb(' . $this->id . ',s' . $vrb_id . ')', $debug - 10);
+        log_debug('user->set_verb(' . $this->id . ',s' . $vrb_id . ')', $debug - 10);
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
@@ -334,7 +334,7 @@ class user
     // set the main log entry parameters for updating one word field
     private function log_upd($debug)
     {
-        zu_debug('user->log_upd user ' . $this->name, $debug - 10);
+        log_debug('user->log_upd user ' . $this->name, $debug - 10);
         $log = new user_log;
         $log->usr = $this;
         $log->action = 'update';
@@ -364,8 +364,8 @@ class user
     // check and update all user parameters
     function upd_pars($usr_par, $debug)
     {
-        zu_debug('user->upd_pars', $debug - 10);
-        zu_debug('user->upd_pars(u' . $this->id . ',p' . implode(",", $usr_par) . ')', $debug - 10);
+        log_debug('user->upd_pars', $debug - 10);
+        log_debug('user->upd_pars(u' . $this->id . ',p' . implode(",", $usr_par) . ')', $debug - 10);
 
         global $db_con;
 
@@ -378,14 +378,14 @@ class user
         $db_usr = new user;
         $db_usr->id = $this->id;
         $db_row = $db_usr->load_db($debug - 1);
-        zu_debug('user->save -> database user loaded "' . $db_row['name'] . '"', $debug - 14);
+        log_debug('user->save -> database user loaded "' . $db_row['name'] . '"', $debug - 14);
 
         $this->upd_par($db_con, $usr_par, $db_row, "user_name", 'name', $debug - 1);
         $this->upd_par($db_con, $usr_par, $db_row, "email", 'email', $debug - 1);
         $this->upd_par($db_con, $usr_par, $db_row, "first_name", 'fname', $debug - 1);
         $this->upd_par($db_con, $usr_par, $db_row, "last_name", 'lname', $debug - 1);
 
-        zu_debug('user->upd_pars -> done', $debug - 1);
+        log_debug('user->upd_pars -> done', $debug - 1);
         return $result;
     }
 
@@ -409,20 +409,20 @@ class user
         $db_con->type = 'user';
 
         if ($this->id <= 0) {
-            zu_debug("user->save add (" . $this->name . ")", $debug - 10);
+            log_debug("user->save add (" . $this->name . ")", $debug - 10);
 
             $this->id = $db_con->insert("user_name", $this->name, $debug - 1);
             // log the changes???
             if ($this->id > 0) {
                 // add the ip address to the user
                 $result .= $db_con->update($this->id, "ip_address", $this->get_ip(), $debug - 1);
-                zu_debug("user->save add ... done." . $result . ".", $debug - 10);
+                log_debug("user->save add ... done." . $result . ".", $debug - 10);
             } else {
-                zu_debug("user->save add ... failed." . $result . ".", $debug - 10);
+                log_debug("user->save add ... failed." . $result . ".", $debug - 10);
             }
         } else {
             // update the ip address and log the changes????
-            zu_warning('user->save method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
+            log_warning('user->save method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
         }
         return $result;
     }

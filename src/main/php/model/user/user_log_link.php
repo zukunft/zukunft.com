@@ -103,13 +103,13 @@ class user_log_link {
 
   // identical to the functions in user_log (maybe move to a common object??)
   private function set_table($debug) {
-    zu_debug('user_log_link->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
+    log_debug('user_log_link->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
 
     global $db_con;
 
     // check parameter
-    if ($this->table == "") { zu_err("missing table name","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0) { zu_err("missing user","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->table == "") { log_err("missing table name","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0) { log_err("missing user","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
     
     // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
     //$db_con = new mysql;
@@ -125,20 +125,20 @@ class user_log_link {
     if ($table_id > 0) {
       $this->table_id = $table_id;
     } else {
-      zu_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
     $db_con->type = $db_type;
   }
 
   private function set_action($debug) {
-    zu_debug('user_log_link->set_action "'.$this->action.'" for '.$this->usr->dsp_id(), $debug-10);
+    log_debug('user_log_link->set_action "'.$this->action.'" for '.$this->usr->dsp_id(), $debug-10);
 
     global $db_con;
 
     // check parameter
-    if ($this->action == "") { zu_err("missing action name","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0)  { zu_err("missing user","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->action == "") { log_err("missing action name","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($this->usr->id <= 0)  { log_err("missing user","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
     
     // if e.g. the action is "add" the reference 1 is saved in the log table to save space
     //$db_con = new mysql;
@@ -154,7 +154,7 @@ class user_log_link {
     if ($action_id > 0) {
       $this->action_id = $action_id;
     } else {
-      zu_fatal("Insert to change log failed due to action id failure.","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_fatal("Insert to change log failed due to action id failure.","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
     $db_con->type = $db_type;
@@ -162,17 +162,17 @@ class user_log_link {
 
   // functions used until each call is done with the object instead of the id
   private function set_usr($debug) {
-    zu_debug('user_log_link->set_usr for '.$this->usr->dsp_id(), $debug-12);
+    log_debug('user_log_link->set_usr for '.$this->usr->dsp_id(), $debug-12);
     if (!isset($this->usr)) {
       $usr = New user;
       $usr->id = $this->usr->id;
       $usr->load_test_user($debug-1);
       $this->usr = $usr;
-      zu_debug('user_log_link->set_usr got '.$this->usr->name, $debug-14);
+      log_debug('user_log_link->set_usr got '.$this->usr->name, $debug-14);
     }
   }
   private function word_name($id, $debug) {
-    zu_debug('user_log_link->word_name for '.$id, $debug-12);
+    log_debug('user_log_link->word_name for '.$id, $debug-12);
     $result = '';
     if ($id > 0) {
       $this->set_usr($debug-1);
@@ -181,7 +181,7 @@ class user_log_link {
       $wrd->usr = $this->usr;
       $wrd->load($debug-1);
       $result = $wrd->name;
-      zu_debug('user_log_link->word_name got '.$result, $debug-14);
+      log_debug('user_log_link->word_name got '.$result, $debug-14);
     }
     return $result;
   }
@@ -211,7 +211,7 @@ class user_log_link {
   // log a user change of a link / verb
   // this should be dismissed, instead use add, which also save the text reference for fast and reliable displaying
   function add_link($debug) {
-    zu_debug("user_log_link->add_link (u".$this->usr->id." ".$this->action." ".$this->table.
+    log_debug("user_log_link->add_link (u".$this->usr->id." ".$this->action." ".$this->table.
                                     ",of".$this->old_from.",ol".$this->old_link.",ot".$this->old_to.
                                     ",nf".$this->new_from.",nl".$this->new_link.",nt".$this->new_to.",r".$this->row_id.")", $debug-10);
 
@@ -257,9 +257,9 @@ class user_log_link {
       $func_name = 'user_log_link->add_link';
       $msg_text = 'Insert to link log failed';
       $traceback = (new Exception)->getTraceAsString();
-      zu_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+      log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
       $msg_description = $msg_text.' with '.$this->dsp_id();
-      zu_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+      log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;
@@ -268,7 +268,7 @@ class user_log_link {
     // restore the type before saving the log
     $db_con->type = $db_type;
 
-    zu_debug('user_log_link->add_link -> ('.zu_dsp_bool($result).')', $debug-10);  
+    log_debug('user_log_link->add_link -> ('.zu_dsp_bool($result).')', $debug-10);
     return $result;
   }
 
@@ -315,7 +315,7 @@ class user_log_link {
                AND u.user_id = ".$this->usr->id."
                    ".$sql_where."
           ORDER BY c.change_link_id DESC;";
-    zu_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
+    log_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
     //$db_con = new mysql;
     $db_type = $db_con->type;
     $db_con->type = "change_link";
@@ -340,7 +340,7 @@ class user_log_link {
   // similar to add_link, but additional fix the references as a text for fast displaying
   // $link_text is used for fixed links such as the source for values
   function add($debug) {
-    zu_debug('user_log_link->add do "'.$this->action.'" of "'.$this->table.'" for user '.$this->usr->dsp_id(), $debug-10);
+    log_debug('user_log_link->add do "'.$this->action.'" of "'.$this->table.'" for user '.$this->usr->dsp_id(), $debug-10);
 
     global $db_con;
 
@@ -348,7 +348,7 @@ class user_log_link {
     $this->set_action($debug-1);
     
     // set the table specific references
-    zu_debug('user_log_link->add -> set fields', $debug-16);
+    log_debug('user_log_link->add -> set fields', $debug-16);
     if ($this->table == "words" 
      OR $this->table == "word_links") {
       if ($this->action == "add" OR $this->action == "update") {
@@ -406,7 +406,7 @@ class user_log_link {
       if ($this->old_to > 0) { $this->old_text_to = $this->source_name($this->old_to, $debug-1); }
       if ($this->new_to > 0) { $this->new_text_to = $this->source_name($this->new_to, $debug-1); }
     }
-    zu_debug('user_log_link->add -> set fields done', $debug-16);
+    log_debug('user_log_link->add -> set fields done', $debug-16);
       
     $sql_fields = array();
     $sql_values = array();
@@ -459,9 +459,9 @@ class user_log_link {
       $func_name = 'user_log_link->add';
       $msg_text = 'Insert to change log failed';
       $traceback = (new Exception)->getTraceAsString();
-      zu_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+      log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
       $msg_description = $msg_text.' with '.$this->dsp_id();
-      zu_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+      log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;
@@ -470,7 +470,7 @@ class user_log_link {
     // restore the type before saving the log
     $db_con->type = $db_type;
 
-    zu_debug('user_log_link->add -> ('.zu_dsp_bool($result).')', $debug-10);  
+    log_debug('user_log_link->add -> ('.zu_dsp_bool($result).')', $debug-10);
     return $result;
   }
 
@@ -478,7 +478,7 @@ class user_log_link {
   // e.g. because the row id is know after the adding of the real record, 
   // but the log entry has been created upfront to make sure that logging is complete
   function add_ref($row_id, $debug) {
-    zu_debug("user_log_link->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
+    log_debug("user_log_link->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
     global $db_con;
     //$db_con = new mysql;
     $db_type = $db_con->type;
@@ -490,9 +490,9 @@ class user_log_link {
       $func_name = 'user_log_link->add_ref';
       $msg_text = 'Insert to change ref log failed';
       $traceback = (new Exception)->getTraceAsString();
-      zu_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+      log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
       $msg_description = $msg_text.' with '.$this->dsp_id();
-      zu_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+      log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
       $result = False;
     } else {
       $this->id = $log_id;

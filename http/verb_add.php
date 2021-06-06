@@ -35,7 +35,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /* open database */
-$db_con = zu_start("link_type_add", "", $debug);
+$db_con = prg_start("link_type_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -55,7 +55,7 @@ $db_con = zu_start("link_type_add", "", $debug);
     $back = $_GET['back']; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin($debug-1)) {
-      $result .= zu_err("Only user with the administrator profile can add verbs (word link types).","verb_add.php");
+      $result .= log_err("Only user with the administrator profile can add verbs (word link types).","verb_add.php");
     } else {
 
       // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -115,4 +115,4 @@ $db_con = zu_start("link_type_add", "", $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

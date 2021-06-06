@@ -15,7 +15,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -92,11 +92,11 @@ include_once '../src/main/php/service/test/zu_lib_user.php';       if ($debug > 
 include_once '../src/main/php/service/test/zu_lib_html.php';       if ($debug > 9) { echo 'lib html loaded<br>'; }
 
 // the fixed system user used for testing
-define("TEST_USER_ID",          "1");   
-define("TEST_USER_NAME",        "zukunft.com system batch job");   
-define("TEST_USER_DESCRIPTION", "standard user view for all users");   
-define("TEST_USER_ID2",         "2");   
-define("TEST_USER_IP",          "66.249.64.95"); // used to check the blocking of an IP address
+const TEST_USER_ID = "1";
+const TEST_USER_NAME = "zukunft.com system batch job";
+const TEST_USER_DESCRIPTION = "standard user view for all users";
+const TEST_USER_ID2 = "2";
+const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
 
 /*
 
@@ -105,11 +105,11 @@ Setting that should be moved to the system config table
 */
 
 // switch for the email testing
-define("TEST_EMAIL",       FALSE); // if set to true an email will be send in case of errors and once a day an "everything fine" email is send
+const TEST_EMAIL = FALSE; // if set to true an email will be send in case of errors and once a day an "everything fine" email is send
 
 // the basic test record for doing the pre check
 // the word "Company" is assumed to have the ID 1
-define("TEST_WORD_ID",      "1");   
+const TEST_WORD_ID = "1";
 define("TEST_WORD",         "Company");   
 define("TEST_WORD_PLURAL",  "Companies");   
 define("TEST_TRIPLE_ID",    "1");   
@@ -198,14 +198,14 @@ define("TC_ADD_RENAMED",          "Mask Component Test");
 define("TC_ADD2",                 "Test Mask Component two");   
 
 // max time expected for each function execution
-define("TIMEOUT_LIMIT",          0.03); // time limit for normal functions
-define("TIMEOUT_LIMIT_PAGE",     0.1);  // time limit for complete webpage
-define("TIMEOUT_LIMIT_PAGE_SEMI",0.6);  // time limit for complete webpage
-define("TIMEOUT_LIMIT_PAGE_LONG",1.2);  // time limit for complete webpage
-define("TIMEOUT_LIMIT_DB",       0.2);  // time limit for database modification functions
-define("TIMEOUT_LIMIT_DB_MULTI", 0.9);  // time limit for many database modifications
-define("TIMEOUT_LIMIT_LONG",     3);    // time limit for complex functions
-define("TIMEOUT_LIMIT_IMPORT",   12);   // time limit for complex import tests in seconds
+const TIMEOUT_LIMIT           =  0.03; // time limit for normal functions
+const TIMEOUT_LIMIT_PAGE      =  0.1;  // time limit for complete webpage
+const TIMEOUT_LIMIT_PAGE_SEMI =  0.6;  // time limit for complete webpage
+const TIMEOUT_LIMIT_PAGE_LONG =  1.2;  // time limit for complete webpage
+const TIMEOUT_LIMIT_DB        =  0.2;  // time limit for database modification functions
+const TIMEOUT_LIMIT_DB_MULTI  =  0.9;  // time limit for many database modifications
+const TIMEOUT_LIMIT_LONG      =  3;    // time limit for complex functions
+const TIMEOUT_LIMIT_IMPORT    = 12;    // time limit for complex import tests in seconds
 
 // views used for testing
 define("TD_COMPLETE",      "complete");                      // the default and base view for all words

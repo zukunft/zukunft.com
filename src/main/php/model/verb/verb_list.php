@@ -45,7 +45,7 @@ class verb_list {
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a list of verbs.", "verb_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a list of verbs.", "verb_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
     /*  
     } elseif (!isset($this->wrd) OR $this->direction == '')  {  
       zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
@@ -88,16 +88,16 @@ class verb_list {
         $vrb->frm_name    = $db_vrb['formula_name'];
         $vrb->description = $db_vrb['description'];
         $this->lst[]      = $vrb;
-        zu_debug('verb_list->load added ('.$vrb->name.')', $debug-15);
+        log_debug('verb_list->load added ('.$vrb->name.')', $debug-15);
       }
-      zu_debug('verb_list->load ('.count(".$sql_where." 
+      log_debug('verb_list->load ('.count(".$sql_where."
                  ).')', $debug-10);
     }  
   }
         
   // calculates how many times a word is used, because this can be helpful for sorting
   function calc_usage ($debug) {
-    zu_debug('verb_list->calc_usage', $debug-10);
+    log_debug('verb_list->calc_usage', $debug-10);
 
     global $db_con;
 
@@ -132,7 +132,7 @@ class verb_list {
 
   // display all verbs and allow an admin to change it
   function dsp_list ($debug) {
-    zu_debug('verb_list->dsp_list('.$this->usr.')', $debug-10);
+    log_debug('verb_list->dsp_list('.$this->usr.')', $debug-10);
     $result  = "";
 
     $result .= dsp_list($this->lst, "link_type", $debug-1);

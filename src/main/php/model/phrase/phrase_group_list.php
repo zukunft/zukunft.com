@@ -69,7 +69,7 @@ class phrase_group_list {
   
   // add a phrase group and a time word based on the id
   private function add_grp_time_id($grp_id, $time_id, $debug) {
-    zu_debug('phrase_group_list->add_grp_time_id '.$grp_id.'@'.$time_id, $debug-14);
+    log_debug('phrase_group_list->add_grp_time_id '.$grp_id.'@'.$time_id, $debug-14);
     $result = false;
     
     if ($grp_id > 0) {
@@ -78,14 +78,14 @@ class phrase_group_list {
       $grp->usr = $this->usr;
       $grp->load($debug-1);
       $grp->load_lst($debug-1);
-      zu_debug('phrase_group_list->add_grp_time_id -> found '.$grp->name($debug-1), $debug-18);
+      log_debug('phrase_group_list->add_grp_time_id -> found '.$grp->name($debug-1), $debug-18);
     }
     if ($time_id > 0) {
       $time = New word_dsp;
       $time->id  = $time_id;
       $time->usr = $this->usr;
       $time->load($debug-1);
-      zu_debug('phrase_group_list->add_grp_time_id -> found time '.$time->dsp_id(), $debug-18);
+      log_debug('phrase_group_list->add_grp_time_id -> found time '.$time->dsp_id(), $debug-18);
     }
     $result = $this->add_with_time($grp, $time, $debug-1);
     return $result;
@@ -96,11 +96,11 @@ class phrase_group_list {
     $result = false;
     
     $id = $this->grp_time_id($grp, $time, $debug-1);
-    zu_debug('phrase_group_list->add_with_time '.$id, $debug-12);
+    log_debug('phrase_group_list->add_with_time '.$id, $debug-12);
     if ($id <> '') {
-      zu_debug('phrase_group_list->add_with_time is id '.$id.' in '.implode(",",$this->grp_time_ids), $debug-12);
+      log_debug('phrase_group_list->add_with_time is id '.$id.' in '.implode(",",$this->grp_time_ids), $debug-12);
       if (!in_array($id, $this->grp_time_ids)) {
-        zu_debug('phrase_group_list->add_with_time id '.$id.' add', $debug-12);
+        log_debug('phrase_group_list->add_with_time id '.$id.' add', $debug-12);
         $this->grp_time_ids[] = $id;
         if (isset($grp)) {
           $this->lst[]        = $grp;
@@ -121,9 +121,9 @@ class phrase_group_list {
         }
         $this->phr_lst_lst[]  = $phr_lst;
         $result = true;
-        zu_debug($grp->dsp_id().' added to list '.$this->dsp_id($debug-6), $debug-6);
+        log_debug($grp->dsp_id().' added to list '.$this->dsp_id($debug-6), $debug-6);
       } else {
-        zu_debug($grp->dsp_id().' skipped, because is already in list '.$this->dsp_id($debug-6), $debug-6);
+        log_debug($grp->dsp_id().' skipped, because is already in list '.$this->dsp_id($debug-6), $debug-6);
       }
     }
     return $result;
@@ -131,15 +131,15 @@ class phrase_group_list {
   
   // add a phrase group if it is not yet part of the list
   function add($grp, $debug) {
-    zu_debug('phrase_group_list->add '.$grp->id, $debug-12);
+    log_debug('phrase_group_list->add '.$grp->id, $debug-12);
     if ($grp->id > 0) {
       if (!in_array($grp->id, $this->grp_ids)) {
         $this->lst[]    = $grp;
         $this->grp_ids[] = $grp->id;
         $this->time_lst[]   = Null;
-        zu_debug($grp->dsp_id().' added to list '.$this->dsp_id($debug-6), $debug-1);
+        log_debug($grp->dsp_id().' added to list '.$this->dsp_id($debug-6), $debug-1);
       } else {
-        zu_debug($grp->dsp_id().' skipped, because is already in list '.$this->dsp_id($debug-6), $debug-1);
+        log_debug($grp->dsp_id().' skipped, because is already in list '.$this->dsp_id($debug-6), $debug-1);
       }
     }
   }
@@ -190,22 +190,22 @@ class phrase_group_list {
   // query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
   // e.g. which value that have "Sales" and "2016"?
   private function get_grp_by_phr($type, $phr_linked, $phr_used, $debug) {
-    zu_debug('get values because formula is assigned to phrases '.$phr_linked->name().' and phrases '.$phr_used->name().' are used in the formula', $debug-3);
+    log_debug('get values because formula is assigned to phrases '.$phr_linked->name().' and phrases '.$phr_used->name().' are used in the formula', $debug-3);
 
     global $db_con;
     $result = Null;
 
     // separate the time words from the phrases
     $time_linked  = $phr_linked->time_lst($debug-1);
-    zu_debug('phr_grp_lst->get_grp_by_phr -> time words linked '.$time_linked->name(), $debug-12);
+    log_debug('phr_grp_lst->get_grp_by_phr -> time words linked '.$time_linked->name(), $debug-12);
     $time_used    = $phr_used->time_lst($debug-1);
-    zu_debug('phr_grp_lst->get_grp_by_phr -> time words used '.$time_used->name(), $debug-12);
+    log_debug('phr_grp_lst->get_grp_by_phr -> time words used '.$time_used->name(), $debug-12);
     $phr_linked_ex = clone $phr_linked;
     $phr_linked_ex->ex_time($debug-1);
-    zu_debug('phr_grp_lst->get_grp_by_phr -> linked ex time '.$phr_linked_ex->name(), $debug-10);
+    log_debug('phr_grp_lst->get_grp_by_phr -> linked ex time '.$phr_linked_ex->name(), $debug-10);
     $phr_used_ex = clone $phr_used;
     $phr_used_ex->ex_time($debug-1);
-    zu_debug('phr_grp_lst->get_grp_by_phr -> used ex time '.$phr_used_ex->name(), $debug-10);
+    log_debug('phr_grp_lst->get_grp_by_phr -> used ex time '.$phr_used_ex->name(), $debug-10);
 
     // create the group selection
     $sql_group = '';
@@ -273,7 +273,7 @@ class phrase_group_list {
       }
     }
     
-    zu_debug('phr_grp_lst->get_grp_by_phr -> sql "'.$sql.'"', $debug-14);
+    log_debug('phr_grp_lst->get_grp_by_phr -> sql "'.$sql.'"', $debug-14);
     //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $result = $db_con->get($sql, $debug-10); 
@@ -283,12 +283,12 @@ class phrase_group_list {
   // combined code add add values assigned by a word or a predefined formula like "this", "prior" or "next"
   private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_fv, $debug) {
     // check the parameters
-    if ($type == '')         { zu_err('Type is missing.',           'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
-    if (!isset($frm_linked)) { zu_err('Linked formula is missing.', 'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
-    if (!isset($frm_used))   { zu_err('Used formula is missing.',   'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
-    if (!isset($phr_frm))    { zu_err('Formula phrase is missing.', 'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
+    if ($type == '')         { log_err('Type is missing.',           'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
+    if (!isset($frm_linked)) { log_err('Linked formula is missing.', 'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
+    if (!isset($frm_used))   { log_err('Used formula is missing.',   'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
+    if (!isset($phr_frm))    { log_err('Formula phrase is missing.', 'phr_grp_lst->add_grp_by_phr', '', (new Exception)->getTraceAsString(), $this->usr); }
     
-    zu_debug('phr_grp_lst->add_grp_by_phr -> '.$frm_linked->name().' related '.$type.'s found for '.$frm_used->name().' and user '.$this->usr->name, $debug-10);
+    log_debug('phr_grp_lst->add_grp_by_phr -> '.$frm_linked->name().' related '.$type.'s found for '.$frm_used->name().' and user '.$this->usr->name, $debug-10);
     $added = 0;
     $changed = 0;
 
@@ -299,8 +299,8 @@ class phrase_group_list {
       foreach ($val_rows AS $val_row) {
         // add the phrase group of the value or formula result add the time using a combined index
         // because a time word should never be part of a phrase group to have a useful number of groups
-        zu_debug('phr_grp_lst->add_grp_by_phr -> add id '.$val_row['phrase_group_id'], $debug-10-$added);
-        zu_debug('phr_grp_lst->add_grp_by_phr -> add time id '.$val_row['time_word_id'], $debug-10-$added);
+        log_debug('phr_grp_lst->add_grp_by_phr -> add id '.$val_row['phrase_group_id'], $debug-10-$added);
+        log_debug('phr_grp_lst->add_grp_by_phr -> add time id '.$val_row['time_word_id'], $debug-10-$added);
         // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and 
         $val_grp = New phrase_group;
         $val_grp->usr = $this->usr;
@@ -308,32 +308,32 @@ class phrase_group_list {
         $val_grp->load($debug-$added);
         $val_grp->load_lst($debug-$added);
         $used_phr_lst = clone $val_grp->phr_lst;
-        zu_debug('phr_grp_lst->add_grp_by_phr -> used_phr_lst '.$used_phr_lst->dsp_id(), $debug-10-$added);
+        log_debug('phr_grp_lst->add_grp_by_phr -> used_phr_lst '.$used_phr_lst->dsp_id(), $debug-10-$added);
         // exclude the formula name
         $used_phr_lst->del($phr_frm, $debug-$added);
-        zu_debug('phr_grp_lst->add_grp_by_phr -> removed formula phrase '.$phr_frm->dsp_id().' from used_phr_lst '.$used_phr_lst->dsp_id(), $debug-10-$added);
+        log_debug('phr_grp_lst->add_grp_by_phr -> removed formula phrase '.$phr_frm->dsp_id().' from used_phr_lst '.$used_phr_lst->dsp_id(), $debug-10-$added);
         // exclude the result phrases
         $phr_lst_fv_name = '';
         if (isset($phr_lst_fv)) { 
           $used_phr_lst->diff($phr_lst_fv, $debug-$added); 
-          zu_debug('phr_grp_lst->add_grp_by_phr -> removed result phrases '.$phr_lst_fv->dsp_id().' from used_phr_lst '.$used_phr_lst->dsp_id(), $debug-10-$added);
+          log_debug('phr_grp_lst->add_grp_by_phr -> removed result phrases '.$phr_lst_fv->dsp_id().' from used_phr_lst '.$used_phr_lst->dsp_id(), $debug-10-$added);
           $phr_lst_fv_name = $phr_lst_fv->dsp_id();
         }  
         // add the group to the calculation list if the group is not yet in the list
         $grp_to_add = $used_phr_lst->get_grp($debug-10-$changed);
         if ($grp_to_add->id <> $val_grp->id) {
-          zu_debug('phr_grp_lst->add_grp_by_phr -> group '.$grp_to_add->dsp_id().' used instead of '.$val_grp->dsp_id().' because '.$phr_frm->dsp_id().' and  '.$phr_lst_fv_name.' are part of the formula and have been remove from the phrase group selection', $debug-10-$changed);
+          log_debug('phr_grp_lst->add_grp_by_phr -> group '.$grp_to_add->dsp_id().' used instead of '.$val_grp->dsp_id().' because '.$phr_frm->dsp_id().' and  '.$phr_lst_fv_name.' are part of the formula and have been remove from the phrase group selection', $debug-10-$changed);
           $changed++;
         }
         if ($this->add_grp_time_id($grp_to_add->id, $val_row['time_word_id'], $debug-$added)) {
           $added++;
           $changed++;
-          zu_debug('phr_grp_lst->add_grp_by_phr -> added '.$added.' in '.count($this->grp_time_ids), $debug-10-$added);
+          log_debug('phr_grp_lst->add_grp_by_phr -> added '.$added.' in '.count($this->grp_time_ids), $debug-10-$added);
         }  
       }        
     }
 
-    zu_debug($added.' '.$type.'s selected for update because the formula is assigned '.$frm_linked->name().' and uses '.$frm_used->name().' (adding up to "'.$this->name().'")', $debug-1);
+    log_debug($added.' '.$type.'s selected for update because the formula is assigned '.$frm_linked->name().' and uses '.$frm_used->name().' (adding up to "'.$this->name().'")', $debug-1);
     return $added;
   }
   
@@ -381,7 +381,7 @@ class phrase_group_list {
   
   // return all phrases that are part of each phrase group of the list
   function common_phrases($debug) {
-    zu_debug('phrase_group_list->common_phrases', $debug-14);
+    log_debug('phrase_group_list->common_phrases', $debug-14);
     $result = New phrase_list;
     $result->usr = $this->usr;
     $pos = 0;
@@ -397,10 +397,10 @@ class phrase_group_list {
           $result->common($grp->phr_lst, $debug-1);
         }  
       }
-      zu_debug('phrase_group_list->common_phrases '.$result->name(), $debug-18);
+      log_debug('phrase_group_list->common_phrases '.$result->name(), $debug-18);
       $pos++;
     }  
-    zu_debug('phrase_group_list->common_phrases ('.count($result->lst).')', $debug-14);
+    log_debug('phrase_group_list->common_phrases ('.count($result->lst).')', $debug-14);
     return $result; 
   }
   
@@ -461,7 +461,7 @@ class phrase_group_list {
     foreach ($this->lst AS $phr_lst) {
       $result[] = $phr_lst->name($debug-1);
     }
-    zu_debug('phrase_group_list->names '.implode(" / ",$result), $debug-14);
+    log_debug('phrase_group_list->names '.implode(" / ",$result), $debug-14);
     return $result; 
   }
   

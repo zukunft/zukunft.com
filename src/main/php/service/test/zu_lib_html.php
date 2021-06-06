@@ -55,7 +55,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ function zuh_footer($no_about, $empty) {
 
 // same as zuh_top_right, but without the view change used for the view editors
 function zuh_top_right_user($view_id, $view_name, $word_id, $debug) {
-  zu_debug('zuh_top_right_user('.$view_id.','.$view_name.')', $debug);
+  log_debug('zuh_top_right_user('.$view_id.','.$view_name.')', $debug);
   $result  = '';
   $result .= '<table style="width:100%">';
   $result .= '<tr><td>';
@@ -143,7 +143,7 @@ function zuh_top_right_user($view_id, $view_name, $word_id, $debug) {
 }
 
 function zuh_top_right_logout($debug) {
-  zu_debug('zuh_top_right_logout', $debug);
+  log_debug('zuh_top_right_logout', $debug);
   if ($_SESSION['logged']) { 
     $result = ' <a href="/http/logout.php">log out</a>';
   } else {  
@@ -155,7 +155,7 @@ function zuh_top_right_logout($debug) {
 
 // show the standard top right corner, where the user can login or change the settings
 function zuh_top_right($view_id, $view_name, $word_id, $user_id, $debug) {
-  zu_debug('zuh_top_right('.$view_id.','.$view_name.')', $debug);
+  log_debug('zuh_top_right('.$view_id.','.$view_name.')', $debug);
   $result  = zuh_top_right_user($view_id, $view_name, $word_id, $debug-1) ;
   $result .= ' - ';
   $result .= zuh_btn_find ('find a word or formula', '/http/find.php?word='.$word_id).' - ';
@@ -174,7 +174,7 @@ function zuh_top_right($view_id, $view_name, $word_id, $user_id, $debug) {
 
 // same as zuh_top_right, but without the view change used for the view editors
 function zuh_top_right_no_view($view_id, $view_name, $word_id, $debug) {
-  zu_debug('zuh_top_right('.$view_id.','.$view_name.')', $debug);
+  log_debug('zuh_top_right('.$view_id.','.$view_name.')', $debug);
   $result  = zuh_top_right_user($view_id, $view_name, $word_id, $debug-1) ;
   $result .= zuh_top_right_logout($debug-1);
   $result .= '</td></tr></table>';
@@ -184,7 +184,7 @@ function zuh_top_right_no_view($view_id, $view_name, $word_id, $debug) {
 
 // after a word, value or formula has been added or changed go back to the calling page
 function zuh_go_back($back, $user_id, $debug) {
-  zu_debug('zuh_go_back('.$back.')', $debug);
+  log_debug('zuh_go_back('.$back.')', $debug);
 
   $result = '';
   // old version for testing, which has the disadvantage of potential double creations
@@ -219,7 +219,7 @@ function zuh_text_h2 ($title, $style) {
     return "<h2>".$title."</h2>";
   }  
 }
-function zuh_text_h3 ($title, $style) {
+function zuh_text_h3 ($title, $style = '') {
   if ($style <> "") {
     return '<h3 class="'.$style.'">'.$title.'</h3>';
   } else {  
@@ -270,7 +270,7 @@ function zuh_btn_edit     ($title, $call) { return zuh_btn_fa(ZUH_IMG_EDIT_FA,  
 function zuh_btn_del      ($title, $call) { return zuh_btn_fa(ZUH_IMG_DEL_FA,      $title, $call); } // an delete button to remove an entry
 function zuh_btn_undo     ($title, $call) { return zuh_btn   (ZUH_IMG_UNDO,        $title, $call); } // an undo button to undo an change (not only the last)
 function zuh_btn_find     ($title, $call) { return zuh_btn   (ZUH_IMG_FIND,        $title, $call); } // a find button to search for a word
-function zuh_btn_unfilter ($title, $call) { return zuh_btn   (ZUH_IMG_UNFILTER,    $title, $call); } // button to remove a filter
+function zuh_btn_unfilter ($title, $call) { return zuh_btn   (ZUH_IMG_UN_FILTER,    $title, $call); } // button to remove a filter
 
 
 function zuh_btn_back ($back_link) {
@@ -359,7 +359,7 @@ function zuh_tbl_width_half () {
 // $selected   - database id of the selected value; if 0 add a "please select ..." entry 
 // $dummy_text - text that should be displayed instead of the default "please select ..."
 function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
-  zu_debug('zuh_selector ('.$name.','.$form.','.$query.',s'.$selected.','.$dummy_text.')', $debug);
+  log_debug('zuh_selector ('.$name.','.$form.','.$query.',s'.$selected.','.$dummy_text.')', $debug);
   $result  = '';
 
   $result .= '<select name="'.$name.'" form="'.$form.'">';
@@ -376,7 +376,7 @@ function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
   //$sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
   while ($word_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
     if ($word_entry[0] == $selected AND $selected <> 0) {
-      zu_debug('zuh_selector ... selected '.$word_entry[0], $debug-1);
+      log_debug('zuh_selector ... selected '.$word_entry[0], $debug-1);
       $result .= '      <option value="'.$word_entry[0].'" selected>'.$word_entry[1].'</option>';
     } else {  
       //zu_debug('zuh_selector ... not selected '.$word_entry[0], $debug);
@@ -386,20 +386,20 @@ function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
 
   $result .= '</select>';
 
-  zu_debug('zuh_selector ... done', $debug-1);
+  log_debug('zuh_selector ... done', $debug-1);
   return $result;
 }
 
 // similar to zuh_selector but using a list not a query
 function zuh_selector_lst ($name, $form, $word_lst, $selected, $debug) {
-  zu_debug('zuh_selector_lst('.$name.','.$form.','.implode(",",array_keys($word_lst)).',s'.$selected.')', $debug);
+  log_debug('zuh_selector_lst('.$name.','.$form.','.implode(",",array_keys($word_lst)).',s'.$selected.')', $debug);
   $result  = '';
 
   $result .= '<select name="'.$name.'" form="'.$form.'">';
 
   foreach (array_keys($word_lst) as $word_id) {
     if ($word_id == $selected) {
-      zu_debug('zuh_selector_lst ... selected '.$word_id, $debug-1);
+      log_debug('zuh_selector_lst ... selected '.$word_id, $debug-1);
       $result .= '      <option value="'.$word_id.'" selected>'.$word_lst[$word_id].'</option>';
     } else {  
       $result .= '      <option value="'.$word_id.'">'.$word_lst[$word_id].'</option>';
@@ -408,7 +408,7 @@ function zuh_selector_lst ($name, $form, $word_lst, $selected, $debug) {
 
   $result .= '</select>';
 
-  zu_debug('zuh_selector_lst ... done', $debug-1); 
+  log_debug('zuh_selector_lst ... done', $debug-1);
   return $result;
 }
 

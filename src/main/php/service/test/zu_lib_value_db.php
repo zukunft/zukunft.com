@@ -19,7 +19,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // get the owner of an value; the owner is the user who created the value who first changed the value if the original owner has exclude the value from his profile
 function zuv_owner($val_id, $debug) {
-  zu_debug('zuv_owner (v'.$val_id.')', $debug);  
+  log_debug('zuv_owner (v'.$val_id.')', $debug);
   $user_id = zu_sql_get_value("values", "user_id", "value_id", $val_id, $debug-1);  
   return $user_id;
 }
@@ -53,7 +53,7 @@ function zuv_owner($val_id, $debug) {
 // if the value has been changed by someone else than the owner the user id is returned
 // but only return the user id if the user has not also excluded it
 function zuv_changer($val_id, $debug) {
-  zu_debug('zuv_changer (v'.$val_id.')', $debug);  
+  log_debug('zuv_changer (v'.$val_id.')', $debug);
   
   $sql = "SELECT user_id 
             FROM user_values 
@@ -65,7 +65,7 @@ function zuv_changer($val_id, $debug) {
 
 // true if the user is the owner and noone else has changed the value
 function zuv_can_change($val_id, $user_id, $debug) {
-  zu_debug('zuv_can_change (v'.$val_id.',u'.$user_id.')', $debug);  
+  log_debug('zuv_can_change (v'.$val_id.',u'.$user_id.')', $debug);
   $can_change = false;
   $val_owner = zuv_owner($val_id, $debug-10);
   if ($val_owner == $user_id OR $val_owner <= 0) {
@@ -75,7 +75,7 @@ function zuv_can_change($val_id, $user_id, $debug) {
     }  
   }  
 
-  zu_debug('zuv_can_change -> ('.zu_dsp_bool($can_change).')', $debug);  
+  log_debug('zuv_can_change -> ('.zu_dsp_bool($can_change).')', $debug);
   return $can_change;
 }
 
@@ -88,7 +88,7 @@ function zuv_can_change($val_id, $user_id, $debug) {
 // add a value to the database and link the words
 // to do: combine the sql statements in one commit
 function zuv_db_add($new_value, $wrd_ids, $user_id, $debug) {
-  zu_debug("zuv_db_add (".$new_value.",t".implode(",",$wrd_ids).",u".$user_id.")", $debug);
+  log_debug("zuv_db_add (".$new_value.",t".implode(",",$wrd_ids).",u".$user_id.")", $debug);
   $result = false;
 
   // log the insert attempt first
@@ -116,7 +116,7 @@ function zuv_db_add($new_value, $wrd_ids, $user_id, $debug) {
 
 // link an additional word to a value
 function zuvt_db_add($val_id, $wrd_id, $user_id, $debug) {
-  zu_debug("zuvt_db_add (v".$val_id.",t".$wrd_id.",u".$user_id.")", $debug);   
+  log_debug("zuvt_db_add (v".$val_id.",t".$wrd_id.",u".$user_id.")", $debug);
   $result = false;
 
   if (zuv_can_change($val_id, $user_id, $debug-1)) {
@@ -150,7 +150,7 @@ function zuvt_db_add($val_id, $wrd_id, $user_id, $debug) {
 // update a value
 // todo: if noone else has ever changed the value, change to default value, else create a user overwrite
 function zuv_db_upd($val_id, $new_value, $user_id, $debug) {
-  zu_debug("zuv_db_upd (v".$val_id.",".$new_value.",u".$user_id.")", $debug);
+  log_debug("zuv_db_upd (v".$val_id.",".$new_value.",u".$user_id.")", $debug);
   $result = "";
 
   // read the database values to be able to check if something has been changed; done first, because it needs to be done for user and general values
@@ -200,13 +200,13 @@ function zuv_db_upd($val_id, $new_value, $user_id, $debug) {
     }  
   }
 
-  zu_debug("zuv_db_upd -> done(".$result.")", $debug-1);
+  log_debug("zuv_db_upd -> done(".$result.")", $debug-1);
   return $result;
 }
 
 // change a link of a word to a value
 function zuvt_db_upd($link_id, $val_id, $wrd_new_id, $user_id, $debug) {
-  zu_debug("zuvt_db_upd (l".$link_id.",v".$val_id.",t".$wrd_new_id.",u".$user_id.")", $debug);
+  log_debug("zuvt_db_upd (l".$link_id.",v".$val_id.",t".$wrd_new_id.",u".$user_id.")", $debug);
 
   // to do: move some parts to the calling function
   $wrd_old_id = zu_sql_get1("SELECT phrase_id FROM value_phrase_links WHERE value_phrase_link_id  = ".$link_id.";", $debug-1);
@@ -228,19 +228,19 @@ function zuvt_db_upd($link_id, $val_id, $wrd_new_id, $user_id, $debug) {
       $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuvt_db_upd", (new Exception)->getTraceAsString(), $debug-1);
       $link_id = zu_sql_get1("SELECT value_phrase_link_id FROM value_phrase_links WHERE value_id  = ".$val_id." AND phrase_id  = ".$wrd_old_id.";", $debug-1);
       if ($link_id > 0) {
-        zu_err("Dublicate words (".$wrd_old_id.") for value ".$val_id." found and the automatic removal failed.","zuvt_db_upd");
+        log_err("Dublicate words (".$wrd_old_id.") for value ".$val_id." found and the automatic removal failed.","zuvt_db_upd");
       } else {  
-        zu_warning("Dublicate words (".$wrd_old_id.") for value ".$val_id." found, but they have been removed automatically.","zuvt_db_upd", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_warning("Dublicate words (".$wrd_old_id.") for value ".$val_id." found, but they have been removed automatically.","zuvt_db_upd", '', (new Exception)->getTraceAsString(), $this->usr);
       }  
     }
     $sql_result = mysql_query($sql);
   }      
-  zu_debug("zuvt_db_upd ... done", $debug-1);
+  log_debug("zuvt_db_upd ... done", $debug-1);
 }
 
 // add the source of a new value
 function zuvs_db_add($val_id, $src_id, $user_id, $debug) {
-  zu_debug("zuvs_db_add (".$val_id.",s".$src_id.",u".$user_id.")", $debug);
+  log_debug("zuvs_db_add (".$val_id.",s".$src_id.",u".$user_id.")", $debug);
   $result = false;
   
   // if the user is the owner and no other user has adjusted the value, really delete the value in the database
@@ -260,7 +260,7 @@ function zuvs_db_add($val_id, $src_id, $user_id, $debug) {
 
 // update the source of the value
 function zuvs_db_upd($val_id, $src_id, $user_id, $debug) {
-  zu_debug("zuvs_db_upd (".$val_id.",s".$src_id.",u".$user_id.")", $debug);
+  log_debug("zuvs_db_upd (".$val_id.",s".$src_id.",u".$user_id.")", $debug);
   $result = false;
   
   // if the user is the owner and no other user has adjusted the value, really delete the value in the database
@@ -276,7 +276,7 @@ function zuvs_db_upd($val_id, $src_id, $user_id, $debug) {
       }
     }
   } else {
-    zu_err("Changing the source if the user is not permitted is not yet possible.","zuvs_db_upd");
+    log_err("Changing the source if the user is not permitted is not yet possible.","zuvs_db_upd");
     //$sql = "SELECT user_value FROM `user_values` WHERE value_id = ".$val_id." AND  user_id = ".$user_id.";";
     //$user_value = zu_sql_get($sql, $debug-1);
   }
@@ -291,7 +291,7 @@ function zuvs_db_upd($val_id, $src_id, $user_id, $debug) {
 
 // check if the user value record is still needed and if not remove it
 function zuv_db_usr_check ($val_id, $user_id, $debug) {
-  zu_debug("zuv_db_usr_check (v".$val_id.",u".$user_id.")", $debug);
+  log_debug("zuv_db_usr_check (v".$val_id.",u".$user_id.")", $debug);
   $result = false;
 
   $sql_std = "SELECT user_value, excluded FROM `values`      WHERE value_id = ".$val_id.";";
@@ -310,7 +310,7 @@ function zuv_db_usr_check ($val_id, $user_id, $debug) {
 // switch off one value for one user. if most user want to switch off one value switch it off by default
 // no need to unlink the word from the value, because other users can do the with the unlink functions and for this user the value is anyway excluded
 function zuv_db_del($val_id, $user_id, $debug) {
-  zu_debug('zuv_db_del ('.$val_id.',u'.$user_id.')', $debug);  
+  log_debug('zuv_db_del ('.$val_id.',u'.$user_id.')', $debug);
 
   $result = '';
 
@@ -328,12 +328,12 @@ function zuv_db_del($val_id, $user_id, $debug) {
         $sql_result = zuv_db_usr_check ($val_id, $user_id, $debug);
       } else {  
         // this case is not expected if the database is clean
-        zu_warning("Looks like database cleanup for value ".$val_id." has not yet been done.", "zuv_db_del", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_warning("Looks like database cleanup for value ".$val_id." has not yet been done.", "zuv_db_del", '', (new Exception)->getTraceAsString(), $this->usr);
       }
     } else {
       if ($user_excluded == 1) {
         // this case is not expected if the database is clean
-        zu_warning("Looks like value ".$val_id." has been displayed to the user ".$user_id.", but the user has switched it off already.", "zuv_db_del", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_warning("Looks like value ".$val_id." has been displayed to the user ".$user_id.", but the user has switched it off already.", "zuv_db_del", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
         // if the user is the owner and no other user has adjusted the value, really delete the value in the database
         if (zuv_can_change($val_id, $user_id, $debug-1)) {

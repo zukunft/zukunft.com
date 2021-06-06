@@ -34,7 +34,7 @@ class user_sandbox_display extends user_sandbox {
 
   // create the HTML code to display the protection setting (but only if allowed)
   function dsp_share($form_name, $back, $debug) {
-    zu_debug($this->obj_name.'->dsp_share '.$this->dsp_id(), $debug-10);  
+    log_debug($this->obj_name.'->dsp_share '.$this->dsp_id(), $debug-10);
     $result = ''; // reset the html code var
 
     // only the owner can change the share type (TODO or an admin)
@@ -49,13 +49,13 @@ class user_sandbox_display extends user_sandbox {
       $result .= 'share type '.$sel->display ($debug-1).' ';
     }
     
-    zu_debug($this->obj_name.'->dsp_share '.$this->dsp_id().' -> done', $debug-14);  
+    log_debug($this->obj_name.'->dsp_share '.$this->dsp_id().' -> done', $debug-14);
     return $result;    
   }
   
   // create the HTML code to display the protection setting (but only if allowed)
   function dsp_protection($form_name, $back, $debug) {
-    zu_debug($this->obj_name.'->dsp_protection '.$this->dsp_id(), $debug-10);  
+    log_debug($this->obj_name.'->dsp_protection '.$this->dsp_id(), $debug-10);
     $result = ''; // reset the html code var
 
     // only the owner can change the protection level (TODO or an admin)
@@ -66,12 +66,12 @@ class user_sandbox_display extends user_sandbox {
       $sel->name       = "protection";  
       $sel->sql        = sql_lst ("protection_type", $debug-1);
       $sel->selected   = $this->protection_id;
-      zu_debug($this->obj_name.'->dsp_protection '.$this->dsp_id().' id '.$this->protection_id, $debug-1);  
+      log_debug($this->obj_name.'->dsp_protection '.$this->dsp_id().' id '.$this->protection_id, $debug-1);
       $sel->dummy_text = 'please define the protection level';
       $result .= 'protection '.$sel->display ($debug-1).' ';
     }
     
-    zu_debug($this->obj_name.'->dsp_protection '.$this->dsp_id().' -> done', $debug-14);  
+    log_debug($this->obj_name.'->dsp_protection '.$this->dsp_id().' -> done', $debug-14);
     return $result;    
   }
   

@@ -57,7 +57,7 @@ class button {
   function del      () { return $this->html_fa(ZUH_IMG_DEL_FA      ); } // an delete button to remove an entry
   function undo     () { return $this->html   (ZUH_IMG_UNDO        ); } // an undo button to undo an change (not only the last)
   function find     () { return $this->html   (ZUH_IMG_FIND        ); } // a find button to search for a word
-  function unfilter () { return $this->html   (ZUH_IMG_UNFILTER    ); } // button to remove a filter
+  function unfilter () { return $this->html   (ZUH_IMG_UN_FILTER    ); } // button to remove a filter
   function back     () { return $this->html   (ZUH_IMG_BACK        ); } // button to go back to the original calling page
 
   // display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
@@ -102,12 +102,12 @@ class button {
 
   // display a button to add a value
   function add_value ($phr_lst, $type_ids, $back, $debug) {
-    zu_debug("button->add_value", $debug-18);
+    log_debug("button->add_value", $debug-18);
     
     $url_phr = '';
     if (isset($phr_lst)) {
       if (get_class($phr_lst) <> 'phrase_list') {
-        zu_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value", '', (new Exception)->getTraceAsString(), null);
+        log_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value", '', (new Exception)->getTraceAsString(), null);
       } else {
         if (!empty($phr_lst->ids)) {
           $this->title = "add new value similar to ".$phr_lst->name($debug);
@@ -118,7 +118,7 @@ class button {
       }
     }  
     
-    zu_debug("button->add_value -> type URL", $debug-18);
+    log_debug("button->add_value -> type URL", $debug-18);
     $url_type = '';
     if (isset($type_ids)) {
       $url_type = zu_ids_to_url($type_ids,"type", $debug-1);
@@ -127,13 +127,13 @@ class button {
     $this->call  = '/http/value_add.php?back='.$back.$url_phr.$url_type;
     $result = $this->add();
     
-    zu_debug("button->add_value -> (".$result.")", $debug-16);
+    log_debug("button->add_value -> (".$result.")", $debug-16);
     return $result;
   }
 
   // similar to btn_add_value, but uses a simple modal box
   function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug) {
-    zu_debug("button->add_value", $debug-18);
+    log_debug("button->add_value", $debug-18);
     $result = '';
     
     // group the modal box with the button
@@ -185,13 +185,13 @@ class button {
     // close the modal group
     $result .= '</div>';
     
-    zu_debug("button->add_value -> (".$result.")", $debug-16);
+    log_debug("button->add_value -> (".$result.")", $debug-16);
     return $result;
   }
 
   // display a button to adjust a value
   function edit_value ($phr_lst, $value_id, $back, $debug) {
-    zu_debug("button->edit_value (".$phr_lst->name($debug-1).",v".$value_id.",b".$back.")", $debug-1);
+    log_debug("button->edit_value (".$phr_lst->name($debug-1).",v".$value_id.",b".$back.")", $debug-1);
     
     if (!empty($phr_lst->ids)) {
       $this->title = "change the value for ".$phr_lst->name();
@@ -200,13 +200,13 @@ class button {
     }  
     $this->call  = '/http/value_edit.php?id='.$value_id.'&back='.$back;
     $result = $this->edit();
-    zu_debug("button->edit_value -> (".$result.")", $debug-1);
+    log_debug("button->edit_value -> (".$result.")", $debug-1);
     return $result;
   }
 
   // display a button to exclude a value
   function del_value ($phr_lst, $value_id, $back, $debug) {
-    zu_debug("button->del_value (".$phr_lst->name($debug-1).",v".$value_id.",b".$back.")", $debug-1);
+    log_debug("button->del_value (".$phr_lst->name($debug-1).",v".$value_id.",b".$back.")", $debug-1);
     
     if (!empty($phr_lst->ids)) {
       $this->title = "delete the value for ".$phr_lst->name();
@@ -215,7 +215,7 @@ class button {
     }  
     $this->call  = '/http/value_del.php?id='.$value_id.'&back='.$back;
     $result = $this->del();
-    zu_debug("button->del_value -> (".$result.")", $debug-1);
+    log_debug("button->del_value -> (".$result.")", $debug-1);
     return $result;
   }
 

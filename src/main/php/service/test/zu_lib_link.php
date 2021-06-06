@@ -31,7 +31,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ function zul_name ($id, $user_id, $debug) {
 
 // the verb id for the given name
 function zul_id ($name, $debug) {
-  zu_debug('zul_id('.$name.')', $debug);
+  log_debug('zul_id('.$name.')', $debug);
   return zu_sql_get_id ('verb', $name, $debug-1);
 }
 
@@ -82,7 +82,7 @@ function zul_type ($name) {
 
 // display all verbs and allow an admin to change it
 function zul_dsp_list ($user_id, $debug) {
-  zu_debug('zul_dsp_list('.$user_id.')', $debug);
+  log_debug('zul_dsp_list('.$user_id.')', $debug);
   $result  = "";
 
   $verb_lst = zu_sql_verbs($user_id, $debug-1);
@@ -93,7 +93,7 @@ function zul_dsp_list ($user_id, $debug) {
 
 // show the html form to add a new verb 
 function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link, $debug) {
-  zu_debug('zul_dsp_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')', $debug);
+  log_debug('zul_dsp_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')', $debug);
   $result = '';
   
   $result .= zuh_text_h2('Add verb (word link type)');
@@ -136,12 +136,12 @@ function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reve
   $result .= zuh_tbl_end();
   $result .= zuh_form_end();
 
-  zu_debug('zul_dsp_add ... done', $debug);
+  log_debug('zul_dsp_add ... done', $debug);
   return $result;
 }
 
 function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link, $debug) {
-  zu_debug('zul_db_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')', $debug);
+  log_debug('zul_db_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')', $debug);
 
   // check the parameter is expected to be done by the calling function
   
@@ -172,7 +172,7 @@ function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_rever
             $result = zu_sql_update("verbs", $verb_id, "name_plural_reverse", sf($name_plural_reverse), $user_id, $debug-1);
           }
         } else {
-          zu_err("Adding verb ".$verb_name." failed.", "zul_db_add");
+          log_err("Adding verb ".$verb_name." failed.", "zul_db_add");
         }
       }  
     }
@@ -183,7 +183,7 @@ function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_rever
 
 // calulates how many times a word is used, because this can be helpful for sorting
 function zul_calc_usage ($debug) {
-  zu_debug('zul_calc_usage', $debug);
+  log_debug('zul_calc_usage', $debug);
   
   $sql = "UPDATE verbs l
              SET `words` = ( 

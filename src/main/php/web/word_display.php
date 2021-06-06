@@ -33,7 +33,7 @@ class word_dsp extends word {
  
   // display a word as the view header
   function dsp_header ($debug) {
-    zu_debug('word_dsp->dsp_header ('.$this->id.')', $debug-10);
+    log_debug('word_dsp->dsp_header ('.$this->id.')', $debug-10);
     $result  = '';
     
     if ($this->id <= 0) {
@@ -76,7 +76,7 @@ class word_dsp extends word {
 
   // simply to display a single word in a table as a header
   function dsp_tbl_head_right ($debug) {
-    zu_debug('word_dsp->dsp_tbl_head_right', $debug-10);
+    log_debug('word_dsp->dsp_tbl_head_right', $debug-10);
     $result  = '    <th align="right">'."\n";
     $result .= '      '.$this->dsp_link($debug-1)."\n";
     $result .= '    </th>'."\n";
@@ -85,7 +85,7 @@ class word_dsp extends word {
 
   // simply to display a single word in a table cell
   function dsp_tbl_cell ($intent, $debug) {
-    zu_debug('word_dsp->dsp_tbl_cell', $debug-10);
+    log_debug('word_dsp->dsp_tbl_cell', $debug-10);
     $result  = '    <td>'."\n";
     while ($intent > 0) {
       $result .= '&nbsp;';
@@ -99,7 +99,7 @@ class word_dsp extends word {
   // simply to display a single word in a table
   // rename and jion to dsp_tbl_cell to have a more specific name
   function dsp_tbl ($intent, $debug) {
-    zu_debug('word_dsp->dsp_tbl', $debug-10);
+    log_debug('word_dsp->dsp_tbl', $debug-10);
     $result  = '    <td>'."\n";
     while ($intent > 0) {
       $result .= '&nbsp;';
@@ -120,7 +120,7 @@ class word_dsp extends word {
   // simply to display a single word and allow to delete it
   // used by value->dsp_edit
   function dsp_name_del ($del_call, $debug) {
-    zu_debug('word_dsp->dsp_name_del', $debug-10);
+    log_debug('word_dsp->dsp_name_del', $debug-10);
     $result  = '  <tr>'."\n";
     $result .= $this->dsp_tbl_cell(0, $debug-1);
     $result .= '    <td>'."\n";
@@ -138,7 +138,7 @@ class word_dsp extends word {
   
   // create a selector that contains the time words
   function dsp_time_selector ($type, $form_name, $pos, $back, $debug) {
-    zu_debug('word_dsp->dsp_selector -> for form '.$form_name.''.$pos, $debug-10);
+    log_debug('word_dsp->dsp_selector -> for form '.$form_name.''.$pos, $debug-10);
     $result = '';
     
     if ($pos > 0) {
@@ -185,7 +185,7 @@ class word_dsp extends word {
     $sel->dummy_text = '... please select';
     $result .= $sel->display ($debug-1);
     
-    zu_debug('word_dsp->dsp_selector -> done ', $debug-10);
+    log_debug('word_dsp->dsp_selector -> done ', $debug-10);
     return $result;
   }
     
@@ -193,7 +193,7 @@ class word_dsp extends word {
   // maybe move this to a new object user_log_display
   // because this is very similar to a value linked function
   private function dsp_hist($page, $size, $call, $back, $debug) {
-    zu_debug("word_dsp->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
+    log_debug("word_dsp->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
     $result = ''; // reset the html code var
     
     $log_dsp = New user_log_display;
@@ -206,13 +206,13 @@ class word_dsp extends word {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist($debug-1);
 
-    zu_debug('word_dsp->dsp_hist -> done', $debug-10);
+    log_debug('word_dsp->dsp_hist -> done', $debug-10);
     return $result;
   }
 
   // show the changes of the view
   function dsp_log_view ($back, $debug) {
-    zu_debug('word_dsp->dsp_log_view ('.$this->id.')', $debug-10);
+    log_debug('word_dsp->dsp_log_view ('.$this->id.')', $debug-10);
     $result  = '';
     
     // if ($this->id <= 0 OR !is_null($this->usr_id)) {
@@ -236,7 +236,7 @@ class word_dsp extends word {
 
   // list of related words and values filtered by a link type
   function dsp_val_list ($col_wrd, $back, $debug) {
-    zu_debug('word_dsp->dsp_val_list for '.$this->dsp_id().' with "'.$col_wrd->name.'" columns for user '.$this->usr->name, $debug-10);
+    log_debug('word_dsp->dsp_val_list for '.$this->dsp_id().' with "'.$col_wrd->name.'" columns for user '.$this->usr->name, $debug-10);
     $result = '';
     
     $result .= $this->dsp_header ($debug-1);
@@ -246,7 +246,7 @@ class word_dsp extends word {
     
     $row_lst = $this->children($debug-1);    // not $this->are($debug-1), because e.g. for "Company" the word "Company" itself should not be included in the list
     $col_lst = $col_wrd->children($debug-1);
-    zu_debug('word_dsp->dsp_val_list -> columns '.$col_lst->name, $debug-10);
+    log_debug('word_dsp->dsp_val_list -> columns '.$col_lst->name, $debug-10);
 
     $row_lst->wlsort($debug-1);
     $col_lst->wlsort($debug-1);
@@ -255,7 +255,7 @@ class word_dsp extends word {
     $val_matrix = $row_lst->val_matrix($col_lst, $this->usr->id, $debug-1);
     $result    .= $row_lst->dsp_val_matrix($val_matrix, $this->usr->id, $debug-1);
     
-    zu_debug('word_dsp->dsp_val_list -> table', $debug-10);
+    log_debug('word_dsp->dsp_val_list -> table', $debug-10);
 
     // display the words
     $row_nbr = 0;
@@ -273,14 +273,14 @@ class word_dsp extends word {
         $result .= '    <th>'."\n";
         $result .= '    </th>'."\n";
         foreach ($col_lst->lst AS $col_lst_wrd) {
-          zu_debug('word_dsp->dsp_val_list -> column '.$col_lst_wrd->name, $debug-10);
+          log_debug('word_dsp->dsp_val_list -> column '.$col_lst_wrd->name, $debug-10);
           $result .= $col_lst_wrd->dsp_tbl_head_right ($debug-1);
         }
         $result .= '  </tr>'."\n";
       }
 
       // display the rows
-      zu_debug('word_dsp->dsp_val_list -> row', $debug-10);
+      log_debug('word_dsp->dsp_val_list -> row', $debug-10);
       $result .= '  <tr>'."\n";
       $result .= '      '.$row_phr_dsp->dsp_tbl(0, $debug-1).''."\n";
       foreach ($col_lst->lst AS $col_lst_wrd) {
@@ -293,10 +293,10 @@ class word_dsp extends word {
         $val_wrd_lst->usr = $this->usr;
         $val_wrd_lst->ids = $val_wrd_ids;
         $val_wrd_lst->load($debug-1);
-        zu_debug('word_dsp->dsp_val_list -> get group '.implode(",",$val_wrd_ids), $debug-10);
+        log_debug('word_dsp->dsp_val_list -> get group '.implode(",",$val_wrd_ids), $debug-10);
         $wrd_grp = $val_wrd_lst->get_grp($debug-1);
         if ($wrd_grp->id > 0) {
-          zu_debug('word_dsp->dsp_val_list -> got group '.$wrd_grp->id, $debug-10);
+          log_debug('word_dsp->dsp_val_list -> got group '.$wrd_grp->id, $debug-10);
           $in_value = $wrd_grp->result(0, $debug-1);
           $value = $in_value['num'];
           $fv_text = '';   
@@ -341,7 +341,7 @@ class word_dsp extends word {
   // database link must be open
   // ??? identical to word_list ???
   function dsp_graph ($direction, $back, $debug) {
-    zu_debug('word_dsp->dsp_graph of '.$this->dsp_id().' '.$direction.' for user '.$this->usr->name, $debug-10);
+    log_debug('word_dsp->dsp_graph of '.$this->dsp_id().' '.$direction.' for user '.$this->usr->name, $debug-10);
     $result  = '';
 
     // get the link types related to the word
@@ -349,7 +349,7 @@ class word_dsp extends word {
     
     // loop over the link types
     foreach ($vrb_lst->lst AS $vrb) {
-      zu_debug('word_dsp->dsp_graph verb '.$vrb->name, $debug-14);
+      log_debug('word_dsp->dsp_graph verb '.$vrb->name, $debug-14);
 
       // show the RDF graph for this verb
       $graph = New word_link_list;
@@ -367,7 +367,7 @@ class word_dsp extends word {
 
   // allow the user to unlick a word
   function dsp_unlink ($link_id, $debug) {
-    zu_debug('word_dsp->dsp_unlink('.$link_id.')', $debug-10);
+    log_debug('word_dsp->dsp_unlink('.$link_id.')', $debug-10);
     $result  = '    <td>'."\n";
     $result .= btn_del ("unlink word", "/http/link_del.php?id=".$link_id."&back=".$this->id);
     $result .= '    </td>'."\n";
@@ -376,8 +376,8 @@ class word_dsp extends word {
   }
 
   // to select a existing word to be added
-  private function selector_add ($id, $form, $debug) {
-    zu_debug('word_dsp->selector_add ... word id '.$id, $debug-10);
+  private function selector_add ($id, $form, $class, $debug) {
+    log_debug('word_dsp->selector_add ... word id '.$id, $debug-10);
     $result = '';
     $sel = New selector;
     $sel->usr        = $this->usr;
@@ -396,7 +396,7 @@ class word_dsp extends word {
   // returns the html code to select a word link type
   // database link must be open
   private function selector_type ($id, $form, $debug) {
-    zu_debug('word_dsp->selector_type ... word id '.$id, $debug-10);
+    log_debug('word_dsp->selector_type ... word id '.$id, $debug-10);
     $result = '';
     
     if ($id <= 0) {
@@ -419,7 +419,7 @@ class word_dsp extends word {
   // database link must be open
   // todo: similar to verb->dsp_selector maybe combine???
   function selector_link ($id, $form, $back, $debug) {
-    zu_debug('word_dsp->selector_link ... verb id '.$id, $debug-10);
+    log_debug('word_dsp->selector_link ... verb id '.$id, $debug-10);
     $result = '';
     
     $sql = "SELECT * FROM (
@@ -454,7 +454,7 @@ class word_dsp extends word {
   // returns the html code to select a word
   // database link must be open
   function selector_word ($id, $pos, $form_name, $debug) {
-    zu_debug('word_dsp->selector_word ... word id '.$id, $debug-10);
+    log_debug('word_dsp->selector_word ... word id '.$id, $debug-10);
     $result = '';
     
     if ($pos > 0) {
@@ -471,7 +471,7 @@ class word_dsp extends word {
     $sel->dummy_text = '';
     $result .= $sel->display ($debug-1);
     
-    zu_debug('word_dsp->selector_word ... done '.$id, $debug-10);
+    log_debug('word_dsp->selector_word ... done '.$id, $debug-10);
     return $result;
   }
 
@@ -493,7 +493,7 @@ class word_dsp extends word {
   
   // HTML code to edit all word fields
   function dsp_add ($wrd_id, $wrd_to, $vrb_id, $back, $debug) {
-    zu_debug('word_dsp->dsp_add '.$this->dsp_id().' (type '.$this->type_id.') or link the existing word with id '.$wrd_id.' to '.$wrd_to.' by verb '.$vrb_id.' for user '.$this->usr->name.' (called by '.$back.')', $debug-10);
+    log_debug('word_dsp->dsp_add '.$this->dsp_id().' (type '.$this->type_id.') or link the existing word with id '.$wrd_id.' to '.$wrd_to.' by verb '.$vrb_id.' for user '.$this->usr->name.' (called by '.$back.')', $debug-10);
     $result = '';
   
     $form = "word_add";
@@ -504,7 +504,7 @@ class word_dsp extends word {
     $result .= '<div class="form-row">';
     $result .= dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
     $result .= $this->dsp_type_selector ($form, "col-sm-4", $debug-1);
-    $result .= $this->selector_add ($wrd_id, $form, $debug-1).' ';
+    $result .= $this->selector_add ($wrd_id, $form, "form-row", $debug-1).' ';
     $result .= '</div>';
     $result .= 'which ';
     $result .= '<div class="form-row">';
@@ -513,13 +513,13 @@ class word_dsp extends word {
     $result .= '</div>';
     $result .= dsp_form_end('', $back);
 
-    zu_debug('word_dsp->dsp_add ... done', $debug-10);
+    log_debug('word_dsp->dsp_add ... done', $debug-10);
     return $result;
   }
   
   // HTML code to edit all word fields
   function dsp_edit ($back, $debug) {
-    zu_debug('word_dsp->dsp_edit '.$this->dsp_id(), $debug-10);
+    log_debug('word_dsp->dsp_edit '.$this->dsp_id(), $debug-10);
     $result = '';
     
     if ($this->id > 0) {
@@ -566,13 +566,13 @@ class word_dsp extends word {
       $result .= $changes;
     }
 
-    zu_debug('word_dsp->dsp_edit -> done', $debug-1);
+    log_debug('word_dsp->dsp_edit -> done', $debug-1);
     return $result;
   }
 
   // display the history of a word
   function dsp_hist_links($page, $size, $call, $back, $debug) {
-    zu_debug("word_dsp->dsp_hist_links (".$this->id.",size".$size.",b".$size.")", $debug-10);
+    log_debug("word_dsp->dsp_hist_links (".$this->id.",size".$size.",b".$size.")", $debug-10);
     $result = ''; // reset the html code var
 
     $log_dsp = New user_log_display;
@@ -585,7 +585,7 @@ class word_dsp extends word {
     $log_dsp->back = $back;
     $result .= $log_dsp->dsp_hist_links($debug-1);
     
-    zu_debug('word_dsp->dsp_hist_links -> done', $debug-1);
+    log_debug('word_dsp->dsp_hist_links -> done', $debug-1);
     return $result;
   }
   

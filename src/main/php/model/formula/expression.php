@@ -49,7 +49,7 @@ class expression {
   // returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
   // uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
   private function get_ref_id ($ref_text, $start_maker, $end_maker, $debug) {
-    zu_debug('expression->get_ref_id >'.$ref_text.'<', $debug-12);
+    log_debug('expression->get_ref_id >'.$ref_text.'<', $debug-12);
     $result = 0;
 
     $pos_start = strpos($ref_text, $start_maker);
@@ -60,29 +60,29 @@ class expression {
       $l_part = zu_str_left_of ($r_part,  $end_maker);
       if (is_numeric($l_part)) {
         $result = $l_part;
-        zu_debug('expression->get_ref_id -> part "'.$result.'"', $debug-14);
+        log_debug('expression->get_ref_id -> part "'.$result.'"', $debug-14);
       }
     }
 
-    zu_debug('expression->get_ref_id -> "'.$result.'"', $debug-10);
+    log_debug('expression->get_ref_id -> "'.$result.'"', $debug-10);
     return $result;
   }
 
   // returns a positive word id if the formula string in the database format contains a word link
   private function get_wrd_id ($ref_text, $debug) {
-    zu_debug('expression->get_wrd_id "'.$ref_text.'"', $debug-10);
+    log_debug('expression->get_wrd_id "'.$ref_text.'"', $debug-10);
     $result = $this->get_ref_id ($ref_text, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END, $debug-1);
     return $result;
   }
 
   private function get_frm_id ($ref_text, $debug) {
-    zu_debug('expression->get_wrd_id "'.$ref_text.'"', $debug-10);
+    log_debug('expression->get_wrd_id "'.$ref_text.'"', $debug-10);
     $result = $this->get_ref_id ($ref_text, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END, $debug-1);
     return $result;
   }
 
   private function get_lnk_id ($ref_text, $debug) {
-    zu_debug('expression->get_wrd_id "'.$ref_text.'"', $debug-10);
+    log_debug('expression->get_wrd_id "'.$ref_text.'"', $debug-10);
     $result = $this->get_ref_id ($ref_text, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END, $debug-1);
     return $result;
   }
@@ -116,7 +116,7 @@ class expression {
   // get the phrases that should be added to the result of a formula
   // e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
   function fv_phr_lst ($debug) {
-    zu_debug('expression->fv_phr_lst >'.$this->ref_text.'< and user '.$this->usr->name.'"', $debug-11);
+    log_debug('expression->fv_phr_lst >'.$this->ref_text.'< and user '.$this->usr->name.'"', $debug-11);
     $phr_lst = Null;
     $wrd_ids = array();
     
@@ -137,17 +137,17 @@ class expression {
       $phr_lst->ids = $wrd_ids;
       $phr_lst->usr = $this->usr;
       $phr_lst->load($debug-10);
-      zu_debug('expression->fv_phr_lst -> '.$phr_lst->name($debug-9), $debug-9);
+      log_debug('expression->fv_phr_lst -> '.$phr_lst->name($debug-9), $debug-9);
     }
 
-    zu_debug('expression->fv_phr_lst -> done', $debug-19);
+    log_debug('expression->fv_phr_lst -> done', $debug-19);
     $this->fv_phr_lst = $phr_lst;
     return $phr_lst;
   }
 
   // extracts an array with the words from a given formula text and load the words
   function phr_lst ($debug) {
-    zu_debug('expression->phr_lst "'.$this->ref_text.',u'.$this->usr->name.'"', $debug-7);
+    log_debug('expression->phr_lst "'.$this->ref_text.',u'.$this->usr->name.'"', $debug-7);
     $phr_lst = Null;
     $wrd_ids = array();
     
@@ -162,7 +162,7 @@ class expression {
           $wrd_ids[] = $new_wrd_id; 
         }
         $ref_text = zu_str_right_of($ref_text, ZUP_CHAR_WORD_START.$new_wrd_id.ZUP_CHAR_WORD_END);
-        zu_debug('remaining: '.$ref_text.'', $debug-7);
+        log_debug('remaining: '.$ref_text.'', $debug-7);
         $new_wrd_id = $this->get_wrd_id($ref_text, $debug-1);
       }
       
@@ -175,7 +175,7 @@ class expression {
       }
     }
 
-    zu_debug('expression->phr_lst -> '.$phr_lst->name($debug-9), $debug-7);
+    log_debug('expression->phr_lst -> '.$phr_lst->name($debug-9), $debug-7);
     $this->phr_lst = $phr_lst;
     return $phr_lst;
   }
@@ -185,7 +185,7 @@ class expression {
   // the filter is done within this function, because e.g. a verb can increase the number of words to return
   // if group it is true, element groups instead of single elements are returned
   private function element_lst_all ($type, $group_it, $back, $debug) {
-    zu_debug('expression->element_lst_all get '.$type.' out of "'.$this->ref_text.'" for user '.$this->usr->name, $debug-10);
+    log_debug('expression->element_lst_all get '.$type.' out of "'.$this->ref_text.'" for user '.$this->usr->name, $debug-10);
 
     // init result and work vars
     $lst = array();                 
@@ -204,13 +204,13 @@ class expression {
 
     if ($work == '') {
       // zu_warning ???
-      zu_warning('expression->element_lst_all -> work is empty','',' work is empty', (new Exception)->getTraceAsString(), $this->usr);
+      log_warning('expression->element_lst_all -> work is empty','',' work is empty', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       // loop over the formula text and replace ref by ref from left to right
       $found = true;
       $nbr = 0;
       while ($found AND $nbr < MAX_LOOP) {
-        zu_debug('expression->element_lst_all -> in "'.$work.'"', $debug-18);
+        log_debug('expression->element_lst_all -> in "'.$work.'"', $debug-18);
         $found = false;
 
         // $pos is the position von the next element
@@ -227,7 +227,7 @@ class expression {
               $elm->type   = 'word';
               $elm->id     = $elm_id;
               $pos = strpos($work, ZUP_CHAR_WORD_START);
-              zu_debug('expression->element_lst_all -> wrd pos '.$pos.'', $debug-20);
+              log_debug('expression->element_lst_all -> wrd pos '.$pos.'', $debug-20);
             }
           }
         }
@@ -235,7 +235,7 @@ class expression {
         // find the next verb reference
         if ($type == EXP_ELM_SELECT_ALL OR $type == EXP_ELM_SELECT_VERB) {
           $new_pos = strpos($work, ZUP_CHAR_LINK_START);
-          zu_debug('expression->element_lst_all -> verb pos '.$new_pos.'', $debug-20);
+          log_debug('expression->element_lst_all -> verb pos '.$new_pos.'', $debug-20);
           if ($new_pos < $pos) {
             $elm_id = zu_str_between($work, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END, $debug-20);
             if (is_numeric($elm_id)) {
@@ -251,7 +251,7 @@ class expression {
         // find the next formula reference
         if ($type == EXP_ELM_SELECT_ALL OR $type == EXP_ELM_SELECT_FORMULA OR $type == EXP_ELM_SELECT_PHRASE OR $type == EXP_ELM_SELECT_VERB_WORD) {
           $new_pos = strpos($work, ZUP_CHAR_FORMULA_START);
-          zu_debug('expression->element_lst_all -> frm pos '.$new_pos.'', $debug-20);
+          log_debug('expression->element_lst_all -> frm pos '.$new_pos.'', $debug-20);
           if ($new_pos < $pos) {
             $elm_id = zu_str_between($work, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END, $debug-20);
             if (is_numeric($elm_id)) {
@@ -273,7 +273,7 @@ class expression {
 
             // update work text
             $changed = str_replace($elm->symbol, $elm->name, $work);
-            zu_debug('expression->element_lst_all -> found "'.$elm->name.'" for '.$elm->symbol.', so "'.$work.'" is now "'.$changed.'"', $debug-12);
+            log_debug('expression->element_lst_all -> found "'.$elm->name.'" for '.$elm->symbol.', so "'.$work.'" is now "'.$changed.'"', $debug-12);
             if ($changed <> $work) {
               $work = $changed;
               $found = true;
@@ -283,19 +283,19 @@ class expression {
             // group the references if needed
             if ($group_it) {
               $elm_grp->lst[]  = $elm;
-              zu_debug('expression->element_lst_all -> new group element "'.$elm->name.'"', $debug-18);
+              log_debug('expression->element_lst_all -> new group element "'.$elm->name.'"', $debug-18);
               
               if ($pos > 0) {
                 // get the position of the next element to check if a new group should be created or added to the same
                 $next_pos = strlen($work); 
-                zu_debug('expression->element_lst_all -> next_pos '.$next_pos, $debug-20);
+                log_debug('expression->element_lst_all -> next_pos '.$next_pos, $debug-20);
                 $new_pos = strpos($work, ZUP_CHAR_WORD_START);
                 if ($new_pos < $next_pos) {
                   $elm_id = zu_str_between($work, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END, $debug-20);
                   if (is_numeric($elm_id)) {
                     if ($elm_id > 0) {
                       $next_pos = $new_pos;
-                      zu_debug('expression->element_lst_all -> next_pos shorter by word '.$next_pos, $debug-20);
+                      log_debug('expression->element_lst_all -> next_pos shorter by word '.$next_pos, $debug-20);
                     }  
                   }  
                 }  
@@ -305,7 +305,7 @@ class expression {
                   if (is_numeric($elm_id)) {
                     if ($elm_id > 0) {
                       $next_pos = $new_pos;
-                      zu_debug('expression->element_lst_all -> next_pos shorter by verb '.$next_pos, $debug-20);
+                      log_debug('expression->element_lst_all -> next_pos shorter by verb '.$next_pos, $debug-20);
                     }  
                   }  
                 }  
@@ -315,23 +315,23 @@ class expression {
                   if (is_numeric($elm_id)) {
                     if ($elm_id > 0) {
                       $next_pos = $new_pos;
-                      zu_debug('expression->element_lst_all -> next_pos shorter by formula  '.$next_pos, $debug-20);
+                      log_debug('expression->element_lst_all -> next_pos shorter by formula  '.$next_pos, $debug-20);
                     }  
                   }  
                 }  
 
                 // get the text between the references
                 $len = $next_pos - $pos;
-                zu_debug('expression->element_lst_all -> in "'.$work.'" after '.$pos.' len '.$len.' "'.$next_pos.' - '.$pos.')', $debug-18);
+                log_debug('expression->element_lst_all -> in "'.$work.'" after '.$pos.' len '.$len.' "'.$next_pos.' - '.$pos.')', $debug-18);
                 $txt_between_elm = substr($work, $pos, $len);
-                zu_debug('expression->element_lst_all -> between elements "'.$txt_between_elm.'" ("'.$work.'" from '.$pos.' to '.$next_pos.')', $debug-22);
+                log_debug('expression->element_lst_all -> between elements "'.$txt_between_elm.'" ("'.$work.'" from '.$pos.' to '.$next_pos.')', $debug-22);
                 $txt_between_elm = str_replace('"','',$txt_between_elm);
                 $txt_between_elm = trim($txt_between_elm);
               }
               // check if the references does not have any math symbol in between and therefore are use to retrieve one value
               if (strlen($txt_between_elm) > 0 OR $next_pos == strlen($work)) {
                 $lst[]  = $elm_grp;
-                zu_debug('expression->element_lst_all -> group finished with '.$elm->name, $debug-10);
+                log_debug('expression->element_lst_all -> group finished with '.$elm->name, $debug-10);
                 $elm_grp = New formula_element_group;
                 $elm_grp->usr = $this->usr;
               }
@@ -352,7 +352,7 @@ class expression {
     } 
     $result->lst = $lst;
     
-    zu_debug('expression->element_lst_all got -> '.count($result->lst).' elements', $debug-6);
+    log_debug('expression->element_lst_all got -> '.count($result->lst).' elements', $debug-6);
     return $result;
   }
 
@@ -372,20 +372,20 @@ class expression {
   // similar to phr_lst, but (todo!) should also include the words implied by the verbs 
   // e.g. for "Sales" "differentiator" "Country" all "Country" words should be included
   function phr_verb_lst ($back, $debug) {
-    zu_debug('expression->phr_verb_lst', $debug-14);
+    log_debug('expression->phr_verb_lst', $debug-14);
     $elm_lst = $this->element_lst_all(EXP_ELM_SELECT_PHRASE, FALSE, $back, $debug-1);
-    zu_debug('expression->phr_verb_lst -> got '.count($elm_lst->lst).' formula elements', $debug-14);
+    log_debug('expression->phr_verb_lst -> got '.count($elm_lst->lst).' formula elements', $debug-14);
     $phr_lst = New phrase_list;
     $phr_lst->usr = $this->usr;
     foreach ($elm_lst->lst AS $elm) {
-      zu_debug('expression->phr_verb_lst -> check elements '.$elm->name(), $debug-14);
+      log_debug('expression->phr_verb_lst -> check elements '.$elm->name(), $debug-14);
       if ($elm->type == 'formula') {
         if (isset($elm->wrd_obj)) {
           $phr = $elm->wrd_obj->phrase($debug-1);
           $phr_lst->lst[] = $phr;
           $phr_lst->ids[] = $phr->id;
         } else {  
-          zu_err('Word missing for formula element '.$elm->dsp_id.'.', 'expression->phr_verb_lst', '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err('Word missing for formula element '.$elm->dsp_id.'.', 'expression->phr_verb_lst', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       } else {  
         $phr_lst->lst[] = $elm;
@@ -393,7 +393,7 @@ class expression {
       }
     }
     $phr_lst->load($debug-1);
-    zu_debug('expression->phr_verb_lst -> '.count($phr_lst->lst), $debug-10);
+    log_debug('expression->phr_verb_lst -> '.count($phr_lst->lst), $debug-10);
     return $phr_lst;
   }
   
@@ -416,7 +416,7 @@ class expression {
       }  
     }
     
-    zu_debug('expression->element_special_following -> '.count($phr_lst->lst), $debug-9);
+    log_debug('expression->element_special_following -> '.count($phr_lst->lst), $debug-9);
     return $phr_lst;
   }
   
@@ -434,7 +434,7 @@ class expression {
           $frm_lst->ids[] = $elm->id;
         }
       }
-      zu_debug('expression->element_special_following_frm -> pre load '.count($frm_lst->lst), $debug-19);
+      log_debug('expression->element_special_following_frm -> pre load '.count($frm_lst->lst), $debug-19);
       /*
       if (!empty($frm_lst->lst)) {
         $frm_lst->load($debug-1);
@@ -442,14 +442,14 @@ class expression {
       */
     }
     
-    zu_debug('expression->element_special_following_frm -> '.count($frm_lst->lst), $debug-9);
+    log_debug('expression->element_special_following_frm -> '.count($frm_lst->lst), $debug-9);
     return $frm_lst;
   }
   
   // converts a formula from the database reference format to the human readable format
   // e.g. converts "={t6}{l12}/{f19}" to "='Sales' 'differentiator'/'Total Sales'"
   private function get_usr_part ($formula, $debug) {
-    zu_debug('expression->get_usr_part >'.$formula.'< and user '.$this->usr->name, $debug-10);
+    log_debug('expression->get_usr_part >'.$formula.'< and user '.$this->usr->name, $debug-10);
     $result = $formula;
     
     // replace the words
@@ -488,13 +488,13 @@ class expression {
       $id = zu_str_between($result, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END, $debug-1);
     }
 
-    zu_debug('expression->get_usr_part -> "'.$result.'"', $debug-10);
+    log_debug('expression->get_usr_part -> "'.$result.'"', $debug-10);
     return $result;
   }
 
   // convert the database reference format to the user text 
   function get_usr_text ($debug) {
-    zu_debug('expression->get_usr_text >'.$this->ref_text.'< and user '.$this->usr->name, $debug-10);
+    log_debug('expression->get_usr_text >'.$this->ref_text.'< and user '.$this->usr->name, $debug-10);
     $result = '';
 
     // check the formula indicator "=" and convert the left and right part separately
@@ -502,20 +502,20 @@ class expression {
     if ($pos > 0) {
       $left_part  = $this->fv_part();
       $right_part = $this->r_part();
-      zu_debug('expression->get_usr_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-1);
+      log_debug('expression->get_usr_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-1);
       $left_part  = $this->get_usr_part($left_part, $debug-1);
       $right_part = $this->get_usr_part($right_part, $debug-1);
       $result = $left_part . ZUP_CHAR_CALC . $right_part;
     }
 
-    zu_debug('expression->get_usr_text ... done "'.$result.'"', $debug-10);
+    log_debug('expression->get_usr_text ... done "'.$result.'"', $debug-10);
     return $result; 
   }
 
   // converts a formula from the user text format to the database reference format
   // e.g. converts "='Sales' 'differentiator'/'Total Sales'" to "={t6}{l12}/{f19}"
   private function get_ref_part ($formula, $debug) {
-    zu_debug('expression->get_ref_part "'.$formula.','.$this->usr->name.'"', $debug-8);
+    log_debug('expression->get_ref_part "'.$formula.','.$this->usr->name.'"', $debug-8);
     $result = $formula;
     
     // find the first word
@@ -527,7 +527,7 @@ class expression {
       $name  = substr($result, $pos + 1, $end - $pos - 1);
       $left  = substr($result, 0,               $pos);
       $right = substr($result, $end + 1);
-      zu_debug('expression->get_ref_part -> name "'.$name.'" ('.$end.') left "'.$left.'" ('.$pos.') right "'.$right.'"', $debug-10);
+      log_debug('expression->get_ref_part -> name "'.$name.'" ('.$end.') left "'.$left.'" ('.$pos.') right "'.$right.'"', $debug-10);
       
       $db_sym = '';
       
@@ -540,7 +540,7 @@ class expression {
         $frm->load($debug-1);
         if ($frm->id > 0) {
           $db_sym = ZUP_CHAR_FORMULA_START.$frm->id.ZUP_CHAR_FORMULA_END;
-          zu_debug('expression->get_ref_part -> found formula "'.$db_sym.'" for "'.$name.'"', $debug-10);
+          log_debug('expression->get_ref_part -> found formula "'.$db_sym.'" for "'.$name.'"', $debug-10);
         }  
       }  
 
@@ -552,7 +552,7 @@ class expression {
         $wrd->load($debug-1);
         if ($wrd->id > 0) {
           $db_sym = ZUP_CHAR_WORD_START.$wrd->id.ZUP_CHAR_WORD_END;
-          zu_debug('expression->get_ref_part -> found word "'.$db_sym.'" for "'.$name.'"', $debug-10);
+          log_debug('expression->get_ref_part -> found word "'.$db_sym.'" for "'.$name.'"', $debug-10);
         } 
       } 
 
@@ -564,7 +564,7 @@ class expression {
         $vrb->load($debug-1);
         if ($vrb->id > 0) {
           $db_sym = ZUP_CHAR_LINK_START.$vrb->id.ZUP_CHAR_LINK_END;
-          zu_debug('expression->get_ref_part -> found verb "'.$db_sym.'" for "'.$name.'"', $debug-10);
+          log_debug('expression->get_ref_part -> found verb "'.$db_sym.'" for "'.$name.'"', $debug-10);
         }  
       }  
       
@@ -574,23 +574,23 @@ class expression {
       }
 
       $result = $left . $db_sym . $right;
-      zu_debug('expression->get_ref_part -> changed to "'.$result.'"', $debug-10);
+      log_debug('expression->get_ref_part -> changed to "'.$result.'"', $debug-10);
 
       // find the next word
       $start = strlen($left) + strlen($db_sym);
-      zu_debug('expression->get_ref_part -> start "'.$start.'"', $debug-10);
+      log_debug('expression->get_ref_part -> start "'.$start.'"', $debug-10);
       $pos = strpos($result, ZUP_CHAR_WORD, $start);
-      zu_debug('expression->get_ref_part -> pos "'.$pos.'"', $debug-10);
+      log_debug('expression->get_ref_part -> pos "'.$pos.'"', $debug-10);
       $end = strpos($result, ZUP_CHAR_WORD, $pos + 1);
     }
 
-    zu_debug('expression->get_ref_part -> done "'.$result.'"', $debug-7);
+    log_debug('expression->get_ref_part -> done "'.$result.'"', $debug-7);
     return $result;
   }
 
   // convert the user text to the database reference format
   function get_ref_text ($debug) {
-    zu_debug('expression->get_ref_text '.$this->dsp_id(), $debug-12);
+    log_debug('expression->get_ref_text '.$this->dsp_id(), $debug-12);
     $result = '';
 
     // check the formula indicator "=" and convert the left and right part separately
@@ -598,7 +598,7 @@ class expression {
     if ($pos >= 0) {
       $left_part  = $this->fv_part_usr();
       $right_part = $this->r_part_usr();
-      zu_debug('expression->get_ref_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-14);
+      log_debug('expression->get_ref_text -> (l:'.$left_part.',r:'.$right_part.'"', $debug-14);
       $left_part  = $this->get_ref_part($left_part, $debug-1);
       $right_part = $this->get_ref_part($right_part, $debug-1);
       $result = $left_part . ZUP_CHAR_CALC . $right_part;
@@ -607,13 +607,13 @@ class expression {
     // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
     $result = str_replace(" ","",$result);
     
-    zu_debug('expression->get_ref_text -> done "'.$result.'"', $debug-10);
+    log_debug('expression->get_ref_text -> done "'.$result.'"', $debug-10);
     return $result; 
   }
 
   // returns true if the formula contains a word, verb or formula link
   function has_ref ($debug) {
-    zu_debug('expression->has_ref '.$this->dsp_id(), $debug-12);
+    log_debug('expression->has_ref '.$this->dsp_id(), $debug-12);
     $result = false;
 
     if ($this->get_wrd_id($this->ref_text, $debug-1) > 0 
@@ -623,7 +623,7 @@ class expression {
       $result = true;
     }
 
-    zu_debug('expression->has_ref -> done '.zu_dsp_bool($result), $debug-10);
+    log_debug('expression->has_ref -> done '.zu_dsp_bool($result), $debug-10);
     return $result; 
   }
   

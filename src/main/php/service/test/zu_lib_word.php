@@ -62,7 +62,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ define("TIME_FUT_PCT",  20); // the default number of future outlook e.g. if the
 
 // return the word description for a comma seperated word id list like 1,2,3; the word list is used in the URL and this funktion can be used to display the words
 function zut_names ($word_list, $user_id, $debug) {
-  zu_debug('zut_names('.$word_list.')', $debug);
+  log_debug('zut_names('.$word_list.')', $debug);
   $word_description = "";
   $word_array = explode(",",$word_list);
   foreach ($word_array as $word_id) {
@@ -102,7 +102,7 @@ function zut_names ($word_list, $user_id, $debug) {
 
 // return the word type
 function zut_type ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_type ('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_type ('.$wrd_id.',u'.$user_id.')', $debug);
   $result = NULL;
   if ($wrd_id > 0) {
     $wrd_del  = zu_sql_get1 ("SELECT word_id FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id." AND excluded = 1;", $debug-10);
@@ -115,19 +115,19 @@ function zut_type ($wrd_id, $user_id, $debug) {
     }
   }
 
-  zu_debug('zut_type ('.$wrd_id.'->'.$result.')', $debug);
+  log_debug('zut_type ('.$wrd_id.'->'.$result.')', $debug);
   return $result;
 }
 
 // return the word type name of a give word type id
 function zut_type_name ($type_id, $debug) {
-  zu_debug('zut_type_name('.$type_id.')', $debug);
+  log_debug('zut_type_name('.$type_id.')', $debug);
   return zu_sql_get_field ('word_type', $type_id, 'type_name', $debug-1);
 }
 
 // return the first word of a predefined type e.g. the word "other" based on the code_id of the word type
 function zut_type_wrd ($type_code_id, $user_id, $debug) {
-  zu_debug('zut_type_wrd ('.$type_code_id.',u'.$user_id.')', $debug);
+  log_debug('zut_type_wrd ('.$type_code_id.',u'.$user_id.')', $debug);
   $result = NULL;
   $type_id = cl($type_code_id);
 /*  if ($wrd_id > 0) {
@@ -141,13 +141,13 @@ function zut_type_wrd ($type_code_id, $user_id, $debug) {
     }
   } */
 
-  zu_debug('zut_type ('.$wrd_id.'->'.$result.')', $debug);
+  log_debug('zut_type ('.$wrd_id.'->'.$result.')', $debug);
   return $result;
 }
 
 // return the word category name based on the verb is
 function zut_is_name ($id, $debug) {
-  zu_debug('zut_is_name('.$id.')', $debug);
+  log_debug('zut_is_name('.$id.')', $debug);
   $is_word = zut_is_id ($id, $debug-1);
   $result = zu_sql_get_name ('word', $is_word, $debug-1);
   return $result;
@@ -155,7 +155,7 @@ function zut_is_name ($id, $debug) {
 
 // return the word category id based on the predefined verb is
 function zut_is_id ($id, $debug) {
-  zu_debug('zut_is_id('.$id.')', $debug);
+  log_debug('zut_is_id('.$id.')', $debug);
   $link_id = cl(SQL_LINK_TYPE_IS, $debug-1);
   $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $id, 'verb_id', $link_id);
   return $result;
@@ -163,7 +163,7 @@ function zut_is_id ($id, $debug) {
 
 // return the follow word id based on the predefined verb following
 function zut_next_id ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_next_id('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_next_id('.$wrd_id.',u'.$user_id.')', $debug);
   $link_id = cl(SQL_LINK_TYPE_FOLLOW, $debug-1);
   $result = zu_sql_get_value_2key('word_links', 'from_phrase_id', 'to_phrase_id', $wrd_id, 'verb_id', $link_id);
   return $result;
@@ -171,7 +171,7 @@ function zut_next_id ($wrd_id, $user_id, $debug) {
 
 // return the prior word id based on the predefined verb following
 function zut_prior_id ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_prior_id('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_prior_id('.$wrd_id.',u'.$user_id.')', $debug);
   $link_id = cl(SQL_LINK_TYPE_FOLLOW, $debug-1);
   $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $wrd_id, 'verb_id', $link_id);
   return $result;
@@ -179,7 +179,7 @@ function zut_prior_id ($wrd_id, $user_id, $debug) {
 
 // the word id for the given word string
 function zut_id ($wrd_name, $user_id, $debug) {
-  zu_debug('zut_id('.$wrd_name.',u'.$user_id.')', $debug-10);
+  log_debug('zut_id('.$wrd_name.',u'.$user_id.')', $debug-10);
   $wrd_id = 0;
 
   // if the user has overwritten the standard name, test this first
@@ -190,26 +190,26 @@ function zut_id ($wrd_name, $user_id, $debug) {
     $wrd_id = zu_sql_get_id ('word', $wrd_name, $debug-10);
   }
 
-  zu_debug('zut_id -> ('.$wrd_id.' for '.$wrd_name.')', $debug-1);
+  log_debug('zut_id -> ('.$wrd_id.' for '.$wrd_name.')', $debug-1);
   return $wrd_id; 
 }
 
 // the verb id for the given string
 // old function, please replace with zul_id
 function zutv_id ($verb, $debug) {
-  zu_debug('zutv_id('.$verb.')', $debug);
+  log_debug('zutv_id('.$verb.')', $debug);
   return zu_sql_get_id ('link_type', $verb, $debug-1);
 }
 
 // the word id for the given word string
 function zutv_formula_id ($verb, $debug) {
-  zu_debug('zutv_formula_id('.$verb.')', $debug);
+  log_debug('zutv_formula_id('.$verb.')', $debug);
   return zu_sql_get_value ('link_types', 'link_type_id', 'formula_name', $verb, $debug-1);
 }
 
 // returns an array of word ids based on a word string list like "turnover", "Nestlé"
 function zut_ids ($words, $user_id, $debug) {
-  zu_debug('zut_ids ... words '.$words, $debug);
+  log_debug('zut_ids ... words '.$words, $debug);
   // split the word list in single words
   $word_list = explode(",",$words);
   // loop over the words and get the ids
@@ -217,10 +217,10 @@ function zut_ids ($words, $user_id, $debug) {
   foreach ($word_list as $word_name) {
     $word_id = zut_id(zu_str_between($word_name, '"', '"'), $user_id, $debug-1);
     if ($word_id > 0) { 
-      zu_debug('zut_ids -> '.$word_name.'='.$word_id, $debug);
+      log_debug('zut_ids -> '.$word_name.'='.$word_id, $debug);
       array_push($word_id_list, $word_id);
     } else {  
-      zu_debug('zut_ids -> no id found for '.$word_id, $debug);
+      log_debug('zut_ids -> no id found for '.$word_id, $debug);
     }
   }
   return $word_id_list;
@@ -228,7 +228,7 @@ function zut_ids ($words, $user_id, $debug) {
 
 // get all words of one type
 function zut_type_lst ($wrd_type, $user_id, $debug) {
-  zu_debug('zut_type_ids ('.$wrd_type.',u'.$user_id.')', $debug);
+  log_debug('zut_type_ids ('.$wrd_type.',u'.$user_id.')', $debug);
   
   $sql = "SELECT word_id, word_name FROM words WHERE word_type_id = ".$wrd_type." ORDER BY word_name;";
   $result = zu_sql_get_lst($sql, $debug);
@@ -238,7 +238,7 @@ function zut_type_lst ($wrd_type, $user_id, $debug) {
 // true if the word id has a "is a" relation to the related word
 // e.g.for the given word string
 function zut_is_a ($word_id, $related_word_id, $debug) {
-  zu_debug('zut_is_a ('.$word_id.','.$related_word_id.')', $debug);
+  log_debug('zut_is_a ('.$word_id.','.$related_word_id.')', $debug);
 
   $result = false;
   $is_word_ids = zut_ids_is($word_id, $debug-1); // should be taken from the original array to increase speed
@@ -246,33 +246,33 @@ function zut_is_a ($word_id, $related_word_id, $debug) {
     $result = true;
   }
   
-  zu_debug('zut_is_a -> '.zu_dsp_bool($result).''.$word_id, $debug);
+  log_debug('zut_is_a -> '.zu_dsp_bool($result).''.$word_id, $debug);
   return $result;
 }
 
 // get all values related to the word
 function zut_val_lst ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_val_lst ('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_val_lst ('.$wrd_id.',u'.$user_id.')', $debug);
   
   $sql = "SELECT v.value_id, v.word_value FROM `values` v, value_phrase_links l WHERE l.phrase_id = ".$wrd_id." AND l.value_id = v.value_id;";
   $result = zu_sql_get_lst($sql, $debug-5);
   
-  zu_debug('zut_val_lst -> '.zu_lst_dsp($result).''.$word_id, $debug-1);
+  log_debug('zut_val_lst -> '.zu_lst_dsp($result).''.$word_id, $debug-1);
   return $result;
 }
 
 // returns an array of word ids based on an array of word names "turnover", "Nestlé"
 function zut_array_ids ($word_array, $user_id, $debug) {
-  zu_debug('zut_ids ... words '.$words, $debug);
+  log_debug('zut_ids ... words '.$words, $debug);
   // loop over the words and get the ids
   $word_ids = array();
   foreach ($word_array as $word_name) {
     $word_id = zut_id($word_name, $user_id, $debug-1);
     if ($word_id > 0) { 
-      zu_debug('zut_ids ... '.$word_name.'='.$word_id, $debug);
+      log_debug('zut_ids ... '.$word_name.'='.$word_id, $debug);
       $word_ids[] = $word_id;
     } else {  
-      zu_debug('zut_ids ... no id found for '.$word_id, $debug);
+      log_debug('zut_ids ... no id found for '.$word_id, $debug);
     }
   }
   return $word_ids;
@@ -280,7 +280,7 @@ function zut_array_ids ($word_array, $user_id, $debug) {
 
 // creates an SQL string to request the word group from a given word array
 function zut_sql_ids ($word_ids, $debug) {
-  zu_debug('zut_sql_ids ... ', $debug);
+  log_debug('zut_sql_ids ... ', $debug);
   $word_list = "";
   // loop over the words and get the ids
   foreach ($word_ids as $word_id) {
@@ -302,7 +302,7 @@ function zut_sql_ids ($word_ids, $debug) {
 // return the word group (and create a new group if needed)
 // based on a string with the word ids
 function zut_group_id ($word_ids, $user_id, $debug) {
-  zu_debug('zut_group_id ('.$word_ids.',u'.$user_id.')', $debug);
+  log_debug('zut_group_id ('.$word_ids.',u'.$user_id.')', $debug);
   $phrase_group = zu_sql_get_value ("phrase_groups", "phrase_group_id", "word_ids", $word_ids, $debug-1);
 
   // create the word group if it is missing
@@ -316,10 +316,10 @@ function zut_group_id ($word_ids, $user_id, $debug) {
 
 // create a new word group
 function zut_group_create ($word_ids, $user_id, $debug) {
-  zu_debug('zut_group_create ... ', $debug);
+  log_debug('zut_group_create ... ', $debug);
   
   $group_name = zut_names ($word_ids, $user_id, $debug-1);
-  zu_debug('zut_group_create ... group name '.$group_name, $debug);
+  log_debug('zut_group_create ... group name '.$group_name, $debug);
   
   // write new group
   $sql_result = zutg_db_add($word_ids, $group_name, $debug-1);
@@ -339,7 +339,7 @@ function zut_group_create ($word_ids, $user_id, $debug) {
 
 // if there is just one formula linked to the word, get it
 function zut_formula ($word_id, $user_id, $debug) {
-  zu_debug('zut_formula (t'.$word_id.',u'.$user_id.')', $debug);
+  log_debug('zut_formula (t'.$word_id.',u'.$user_id.')', $debug);
 
   $result = zu_sql_get_value ("formula_word_links", "formula_id", "word_id", $word_id, $debug-1);
   return $result;    
@@ -349,7 +349,7 @@ function zut_formula ($word_id, $user_id, $debug) {
 
 // return true if the word has the given type
 function zut_is_type ($word_id, $type, $debug) {
-  zu_debug('zut_is_type (t'.$word_id.','.$type.')', $debug);
+  log_debug('zut_is_type (t'.$word_id.','.$type.')', $debug);
 
   $result = false;
   $word_type = zu_sql_get_value ("words", "word_type_id", "word_id", $word_id, $debug-1);
@@ -367,7 +367,7 @@ function zut_is_time ($word_id, $debug) {
 
 // filter the time words out of the list of words
 function zut_time_lst ($word_lst, $debug) {
-  zu_debug('zut_time_lst('.zu_lst_dsp($word_lst, $debug-1).')', $debug);
+  log_debug('zut_time_lst('.zu_lst_dsp($word_lst, $debug-1).')', $debug);
 
   $result = array();
   $time_type = cl(SQL_WORD_TYPE_TIME);
@@ -378,13 +378,13 @@ function zut_time_lst ($word_lst, $debug) {
       $result[$word_id] = $word_lst[$word_id];
     }
   }
-  zu_debug('zut_time_lst ... done ('.zu_lst_dsp($result).')', $debug-1);
+  log_debug('zut_time_lst ... done ('.zu_lst_dsp($result).')', $debug-1);
   return $result;    
 }
 
 // filter the time words out of a list of word ids
 function zut_time_ids ($word_ids, $debug) {
-  zu_debug('zut_time_ids('.implode(",",$word_ids).')', $debug);
+  log_debug('zut_time_ids('.implode(",",$word_ids).')', $debug);
 
   $result = array();
   // loop over the word ids and add only the time ids to the result array
@@ -393,13 +393,13 @@ function zut_time_ids ($word_ids, $debug) {
       $result[] = $word_id;
     }
   }
-  zu_debug('zut_time_ids -> done', $debug-1);
+  log_debug('zut_time_ids -> done', $debug-1);
   return $result;    
 }
 
 // exclude the time words from a list of word ids
 function zut_ids_ex_time ($word_ids, $user_id, $debug) {
-  zu_debug('zut_ids_ex_time('.implode(",",$word_ids).',u'.$user_id.')', $debug);
+  log_debug('zut_ids_ex_time('.implode(",",$word_ids).',u'.$user_id.')', $debug);
 
   $result = array();
   // loop over the word ids and add only the time ids to the result array
@@ -408,14 +408,14 @@ function zut_ids_ex_time ($word_ids, $user_id, $debug) {
       $result[] = $word_id;
     }
   }
-  zu_debug('zut_ids_ex_time -> done', $debug-1);
+  log_debug('zut_ids_ex_time -> done', $debug-1);
   return $result;    
 }
 
 // filter the first / best time word out of a list of word ids
 // includes the user id, because potentially the user could change the type
 function zut_time_id ($word_ids, $user_id, $debug) {
-  zu_debug('zut_time_id('.implode(",",$word_ids).',u'.$user_id.')', $debug);
+  log_debug('zut_time_id('.implode(",",$word_ids).',u'.$user_id.')', $debug);
 
   $result = NULL;
   // loop over the word ids and add only the time ids to the result array
@@ -424,13 +424,13 @@ function zut_time_id ($word_ids, $user_id, $debug) {
       $result = $word_id;
     }
   }
-  zu_debug('zut_time_id -> done', $debug-1);
+  log_debug('zut_time_id -> done', $debug-1);
   return $result;    
 }
 
 // true if a word lst contains a time word
 function zut_has_time ($word_lst, $debug) {
-  zu_debug('zut_has_time('.implode(",",$word_lst).')', $debug);
+  log_debug('zut_has_time('.implode(",",$word_lst).')', $debug);
 
   $result = false;
   // loop over the word ids and add only the time ids to the result array
@@ -441,13 +441,13 @@ function zut_has_time ($word_lst, $debug) {
       }
     }
   }
-  zu_debug('zut_has_time ... done ('.zu_dsp_bool($result).')', $debug-1);
+  log_debug('zut_has_time ... done ('.zu_dsp_bool($result).')', $debug-1);
   return $result;    
 }
 
 // create a useful list of time word
 function zut_time_useful ($word_lst, $debug) {
-  zu_debug('zut_time_useful('.zu_lst_dsp($word_lst).')', $debug);
+  log_debug('zut_time_useful('.zu_lst_dsp($word_lst).')', $debug);
 
   //$result = zu_lst_to_flat_lst($word_lst, $debug-1);
   $result = $word_lst;
@@ -465,7 +465,7 @@ function zut_time_useful ($word_lst, $debug) {
   // fill from the start word the default number of words
 
   
-  zu_debug('zut_time_useful -> ('.zu_lst_dsp($result).')', $debug-1);
+  log_debug('zut_time_useful -> ('.zu_lst_dsp($result).')', $debug-1);
   return $result;    
 }
 
@@ -474,7 +474,7 @@ function zut_assume_time ($word_ids, $user_id, $debug) {
   // fix wrd_ids if needed
   $word_ids = zu_ids_not_empty($word_ids);
 
-  zu_debug('zut_assume_time('.implode(",",$word_ids).',u'.$user_id.')', $debug-1);
+  log_debug('zut_assume_time('.implode(",",$word_ids).',u'.$user_id.')', $debug-1);
   
   $word_lst = zu_sql_wrd_ids_to_lst ($word_ids, $user_id, $debug-1);
   if (zut_has_time($word_lst, $debug-1)) {
@@ -487,13 +487,13 @@ function zut_assume_time ($word_ids, $user_id, $debug) {
     $result = zut_get_max_time_all($word_ids[0], $word_ids, $user_id, $debug-1); 
   }
 
-  zu_debug('zut_assume_time -> time used "'.zut_name($result, $user_id, $debug-10).'" ('.$result.')', $debug-1);
+  log_debug('zut_assume_time -> time used "'.zut_name($result, $user_id, $debug-10).'" ('.$result.')', $debug-1);
   return $result;    
 }
 
 // get the time of the last value related to a word and assisiated to a word list
 function zut_get_max_time ($word_id, $word_lst, $user_id, $debug) {
-  zu_debug('zut_get_max_time('.$word_id.','.implode(",",$word_lst).','.$user_id.')', $debug);
+  log_debug('zut_get_max_time('.$word_id.','.implode(",",$word_lst).','.$user_id.')', $debug);
 
   $result = 0;
 
@@ -514,13 +514,13 @@ function zut_get_max_time ($word_id, $word_lst, $user_id, $debug) {
     $result = $time_keys[0];
   }
   
-  zu_debug('zut_get_max_time ... done ('.$result.')', $debug);
+  log_debug('zut_get_max_time ... done ('.$result.')', $debug);
   return $result;    
 }
 
 // get the time of the last value related to a word and assisiated to a word list
 function zut_get_max_time_all ($word_id, $word_lst, $user_id, $debug) {
-  zu_debug('zut_get_max_time_all('.$word_id.','.implode(",",$word_lst).','.$user_id.')', $debug);
+  log_debug('zut_get_max_time_all('.$word_id.','.implode(",",$word_lst).','.$user_id.')', $debug);
 
   $result = 0;
 
@@ -528,7 +528,7 @@ function zut_get_max_time_all ($word_id, $word_lst, $user_id, $debug) {
   $value_in = zuv_of_wrd_ids($word_lst, $user_id, $debug-1);
   $value_lst = array();
   $value_lst[$value_in['id']] = $value_in['num'];
-  zu_debug('zut_get_max_time_all -> ('.implode(",",$value_lst).')', $debug);
+  log_debug('zut_get_max_time_all -> ('.implode(",",$value_lst).')', $debug);
   
   if (sizeof($value_lst) > 0) {
 
@@ -544,13 +544,13 @@ function zut_get_max_time_all ($word_id, $word_lst, $user_id, $debug) {
     $result = $time_keys[0];
   }
   
-  zu_debug('zut_get_max_time_all ... done ('.$result.')', $debug);
+  log_debug('zut_get_max_time_all ... done ('.$result.')', $debug);
   return $result;    
 }
 
 // get the most ofter time type e.g. years if the list contains more than 5 years
 function zut_time_type_most_used ($word_lst, $debug) {
-  zu_debug('zut_time_type_most_used('.$word_lst.')', $debug);
+  log_debug('zut_time_type_most_used('.$word_lst.')', $debug);
 
   // get the most ofter time type e.g. years if the list contains more than 5 years
   // if nothing special is defined try to select 20 % outlokk to the future
@@ -561,7 +561,7 @@ function zut_time_type_most_used ($word_lst, $debug) {
 
 // get the only the time words of one type e.g. ony years
 function zut_time_type_filter ($word_lst, $time_type, $debug) {
-  zu_debug('zut_time_type_filter('.$word_lst.')', $debug);
+  log_debug('zut_time_type_filter('.$word_lst.')', $debug);
 
   $result = array();
   // loop over the word ids and add only the time ids to the result array
@@ -576,7 +576,7 @@ function zut_time_type_filter ($word_lst, $time_type, $debug) {
 
 // true if a word lst contains a scaling word
 function zut_has_scaling ($word_ids, $debug) {
-  zu_debug('zut_has_scaling ('.implode(",",$word_ids).')', $debug);
+  log_debug('zut_has_scaling ('.implode(",",$word_ids).')', $debug);
 
   $result = false;
   // loop over the word ids and add only the time ids to the result array
@@ -588,13 +588,13 @@ function zut_has_scaling ($word_ids, $debug) {
       }
     }
   }
-  zu_debug('zut_has_scaling ... done ('.zu_dsp_bool($result).')', $debug-1);
+  log_debug('zut_has_scaling ... done ('.zu_dsp_bool($result).')', $debug-1);
   return $result;    
 }
 
 // get the (first) scaling words of the word lst
 function zut_scale_lst ($word_lst, $debug) {
-  zu_debug('zut_scale_lst('.zu_lst_dsp($word_lst, $debug-1).')', $debug);
+  log_debug('zut_scale_lst('.zu_lst_dsp($word_lst, $debug-1).')', $debug);
 
   $result = array();
   $scale_type        = cl(SQL_WORD_TYPE_SCALING);
@@ -606,13 +606,13 @@ function zut_scale_lst ($word_lst, $debug) {
       $result[$word_id] = $word_lst[$word_id];
     }
   }
-  zu_debug('zut_scale_lst ... done ('.zu_lst_dsp($result).')', $debug-1);
+  log_debug('zut_scale_lst ... done ('.zu_lst_dsp($result).')', $debug-1);
   return $result;    
 }
 
 // get the (last) scaling word of the word id list
 function zut_scale_id ($wrd_ids, $user_id, $debug) {
-  zu_debug('zut_scale_id ('.implode(",",$wrd_ids).',u'.$user_id.')', $debug);
+  log_debug('zut_scale_id ('.implode(",",$wrd_ids).',u'.$user_id.')', $debug);
 
   $result = -1;
   $scale_type        = cl(SQL_WORD_TYPE_SCALING);
@@ -624,13 +624,13 @@ function zut_scale_id ($wrd_ids, $user_id, $debug) {
       $result = $word_id;
     }
   }
-  zu_debug('zut_scale_id ... done ('.$result.')', $debug-1);
+  log_debug('zut_scale_id ... done ('.$result.')', $debug-1);
   return $result;    
 }
 
 // true if a word lst contains a formula name
 function zut_has_formula ($word_names, $debug) {
-  zu_debug('zut_has_formula('.$word_lst.')', $debug);
+  log_debug('zut_has_formula('.$word_lst.')', $debug);
 
   $formula_name = zut_get_formula ($word_names, $debug);
   if ($formula_name <> '') {
@@ -638,12 +638,12 @@ function zut_has_formula ($word_names, $debug) {
   } else {  
     $result = false;
   }
-  zu_debug('zut_has_formula ... done', $debug-1);
+  log_debug('zut_has_formula ... done', $debug-1);
   return $result;    
 }
 
 function zut_get_formula ($word_names, $debug) {
-  zu_debug('zut_get_formula('.implode(",",$word_names).')', $debug);
+  log_debug('zut_get_formula('.implode(",",$word_names).')', $debug);
 
   $result = '';
   //$word_array = explode(",",$word_names);
@@ -651,35 +651,35 @@ function zut_get_formula ($word_names, $debug) {
   // loop over the word ids and add only the time ids to the result array
   foreach ($word_array as $word_name) {
     $formula_id = zuf_id($word_name, $debug-1);
-    zu_debug('zut_get_formula -> "'.$word_name.'" (id '.$formula_id.')', $debug-1);
+    log_debug('zut_get_formula -> "'.$word_name.'" (id '.$formula_id.')', $debug-1);
     if ($formula_id > 0) { 
       $result = $word_name;
     }
   }
-  zu_debug('zut_get_formula ... "'.$result.'" ', $debug-1);
+  log_debug('zut_get_formula ... "'.$result.'" ', $debug-1);
   return $result;    
 }
 
 // convert an array of word names to an array, where the array key is the database ID
 function zut_names_to_lst ($word_names, $user_id, $debug) {
-  zu_debug('zut_names_to_lst('.implode(",",$word_names).')', $debug);
+  log_debug('zut_names_to_lst('.implode(",",$word_names).')', $debug);
 
   $result = array();
   // loop over the word ids and add only the time ids to the result array
   foreach ($word_names as $word_name) {
     $word_id = zut_id($word_name, $user_id, $debug-1);
-    zu_debug('zut_names_to_lst -> "'.$word_name.'" (id '.$word_id.')', $debug-1);
+    log_debug('zut_names_to_lst -> "'.$word_name.'" (id '.$word_id.')', $debug-1);
     if ($word_id > 0) { 
       $result[$word_id] = $word_name;
     }
   }
-  zu_debug('zut_names_to_lst ... "'.implode(",",$result).'" ', $debug-1);
+  log_debug('zut_names_to_lst ... "'.implode(",",$result).'" ', $debug-1);
   return $result;    
 }
 
 // calulates how many times a word is used, because this can be helpful for sorting
 function zut_calc_usage ($debug) {
-  zu_debug('zut_calc_usage', $debug);
+  log_debug('zut_calc_usage', $debug);
   
   $sql = "UPDATE words t
              SET `values` = ( 
@@ -739,12 +739,12 @@ Default functions - assuming the best guess
 
 // if the user has given no hind at all guess an word the the user might be interested to start
 function zut_default_id ($user_id, $debug) {
-  zu_debug('zut_default_id('.$user_id.')', $debug);
+  log_debug('zut_default_id('.$user_id.')', $debug);
   $result = zu_sql_get_value ("users", "last_word_id", "user_id", $user_id, $debug-1);
   if ($result <= 0) {
     $result = 1; // if nothing is know, start with the first word
   }
-  zu_debug('zut_default_id->'.$result.')', $debug-1);
+  log_debug('zut_default_id->'.$result.')', $debug-1);
   return $result;    
 }
 
@@ -789,16 +789,16 @@ function zut_assume ($word_array, $word_type_id, $debug)
 
 // look at a word list and remove the general word, if there is a more specific word also part of the list e.g. remove "Country", but keep "Switzerland"
 function zut_keep_only_specific ($word_array, $debug) {
-  zu_debug('zut_keep_only_specific('.implode(",",$word_array).')', $debug);
+  log_debug('zut_keep_only_specific('.implode(",",$word_array).')', $debug);
 
   $result = $word_array;
   foreach ($word_array AS $word_id) {
     $word_types = zut_foaf_parent($word_id, $debug-1);
-    zu_debug('zut_keep_only_specific -> '.$word_id.' is of type ('.implode(",",$word_types).')', $debug);
+    log_debug('zut_keep_only_specific -> '.$word_id.' is of type ('.implode(",",$word_types).')', $debug);
     $result = zu_lst_not_in_no_key($result, array_keys($word_types), $debug-1);
   }
 
-  zu_debug('zut_keep_only_specific -> ('.implode(",",$result).')', $debug);
+  log_debug('zut_keep_only_specific -> ('.implode(",",$result).')', $debug);
 
   return $result;
 }

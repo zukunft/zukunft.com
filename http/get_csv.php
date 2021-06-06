@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = zu_start("get_csv", "", $debug);
+$db_con = prg_start("get_csv", "", $debug);
 
   // load the session user parameters
   $usr = New user;
@@ -41,7 +41,7 @@ $db_con = zu_start("get_csv", "", $debug);
 
     // sample "Nestlé 2 country weight"
     $words = $_GET['words'];
-    zu_debug("get_csv(".$words.")", $debug);
+    log_debug("get_csv(".$words.")", $debug);
     $word_names = explode(",",$words);
     
     $wrd_lst = New word_list;
@@ -62,7 +62,7 @@ $db_con = zu_start("get_csv", "", $debug);
       $time_word_id = zut_get_max_time($word_names[0], $word_names, $debug-1); 
     } 
     zu_debug("-> time word (".$time_word_id.")", $debug); */
-    zu_debug("get_csv -> other words (".implode(",",$word_names).")", $debug);
+    log_debug("get_csv -> other words (".implode(",",$word_names).")", $debug);
     
     // get formula
     $frm = New formula;
@@ -74,14 +74,14 @@ $db_con = zu_start("get_csv", "", $debug);
       $frm->load($debug-1);
       //$word_names = zu_lst_not_in($word_names, $formula_name, $debug-1);
       $word_names = array_diff($word_names, array($formula_name));
-      zu_debug("get_csv -> word names used (".implode(",",$word_names).")", $debug);
+      log_debug("get_csv -> word names used (".implode(",",$word_names).")", $debug);
       $formula_id = $frm->id;
       $formula_text = $frm->ref_text;
-      zu_debug("get_csv -> formula used (".$formula_text.")", $debug);
+      log_debug("get_csv -> formula used (".$formula_text.")", $debug);
     }
 
     $word_lst = array_keys(zut_names_to_lst($word_names, $usr->id, $debug-1));
-    zu_debug("get_csv -> words used (".implode(",",$word_lst).")", $debug);
+    log_debug("get_csv -> words used (".implode(",",$word_lst).")", $debug);
     
     if ($formula_text <> '') {
       $in_result = $frm->to_num($word_lst, 0, $debug-1);
@@ -100,4 +100,4 @@ $db_con = zu_start("get_csv", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end_api($db_con, $debug);
+prg_end_api($db_con, $debug);

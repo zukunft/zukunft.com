@@ -32,7 +32,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,21 +58,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // get the owner of the word; the owner is the user who created the word; the user that has first changed the word will be the owner if the original owner has exclude the word from his profile
 function zut_owner($wrd_id, $debug) {
-  zu_debug('zut_owner (t'.$wrd_id.')', $debug);  
+  log_debug('zut_owner (t'.$wrd_id.')', $debug);
   $user_id = zu_sql_get_value("words", "user_id", "word_id", $wrd_id, $debug-10);  
   return $user_id;
 }
 
 // if the word has been change by someone else than the owner the user id of the first one who has changed it, is returned
 function zut_changer($wrd_id, $debug) {
-  zu_debug('zut_changer (t'.$wrd_id.')', $debug);  
+  log_debug('zut_changer (t'.$wrd_id.')', $debug);
   $user_id = zu_sql_get_value("user_words", "user_id", "word_id", $wrd_id, $debug-10);
   return $user_id;
 }
 
 // true if the user is the owner and noone else has changed the value
 function zut_can_change($wrd_id, $user_id, $debug) {
-  zu_debug('zut_can_change (t'.$wrd_id.',u'.$user_id.')', $debug);  
+  log_debug('zut_can_change (t'.$wrd_id.',u'.$user_id.')', $debug);
   $can_change = false;
   $wrd_owner = zut_owner($wrd_id, $debug-10);
   if ($wrd_owner == $user_id OR $wrd_owner <= 0) {
@@ -92,7 +92,7 @@ function zut_can_change($wrd_id, $user_id, $debug) {
 // returns a list of words related to the given word by the special verbs such as 'is' or 'contains'
 // should be using zu_sql_word_lst_linked
 function zut_db_tree_up_level_type ($level, $word_id, $result, $link_type_id, $user_id, $debug) {
-  zu_debug('zut_db_tree_up_level_type('.$level.',t'.$word_id.','.$link_type_id.',u'.$user_id.')', $debug);
+  log_debug('zut_db_tree_up_level_type('.$level.',t'.$word_id.','.$link_type_id.',u'.$user_id.')', $debug);
   $query = "   SELECT l.to_phrase_id, t.word_name " 
          . "     FROM word_links l, words t " 
          . "    WHERE l.to_phrase_id   = t.word_id " 
@@ -103,7 +103,7 @@ function zut_db_tree_up_level_type ($level, $word_id, $result, $link_type_id, $u
   while ($entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
     $sub_id = $entry[0];
     if ($sub_id > 0 AND !in_array($sub_id, $result)) {
-      zu_debug('zut_db_tree_up_level_type -> add '.$sub_id, $debug-5);
+      log_debug('zut_db_tree_up_level_type -> add '.$sub_id, $debug-5);
       $result[] = $sub_id;
       $result = zut_db_tree_up_level ($level + 1, $sub_id, $result, $debug-5);
     }
@@ -114,7 +114,7 @@ function zut_db_tree_up_level_type ($level, $word_id, $result, $link_type_id, $u
 // similar to zut_db_tree_up_level_type, but the other way round
 // should be using zu_sql_word_lst_linked
 function zut_db_tree_level_type ($level, $word_id, $result, $link_type_id, $user_id, $debug) {
-  zu_debug('zut_db_tree_level_type('.$level.',t'.$word_id.','.$link_type_id.',u'.$user_id.')', $debug);
+  log_debug('zut_db_tree_level_type('.$level.',t'.$word_id.','.$link_type_id.',u'.$user_id.')', $debug);
   $query = "   SELECT l.from_phrase_id, t.word_name " 
          . "     FROM word_links l, words t " 
          . "    WHERE l.from_phrase_id   = t.word_id " 
@@ -125,7 +125,7 @@ function zut_db_tree_level_type ($level, $word_id, $result, $link_type_id, $user
   while ($entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
     $sub_id = $entry[0];
     if ($sub_id > 0 AND !in_array($sub_id, $result)) {
-      zu_debug('zut_db_tree_level_type -> add '.$sub_id, $debug-5);
+      log_debug('zut_db_tree_level_type -> add '.$sub_id, $debug-5);
       $result[] = $sub_id;
       $result = zut_db_tree_level ($level + 1, $sub_id, $result, $debug-5);
     }
@@ -135,7 +135,7 @@ function zut_db_tree_level_type ($level, $word_id, $result, $link_type_id, $user
 
 // build one level of a word tree
 function zut_db_tree_up_level ($level, $word_id, $result, $link_type_id, $user_id, $debug) {
-  zu_debug('zut_db_tree_up_level(lev'.$level.',t'.$word_id.')', $debug);
+  log_debug('zut_db_tree_up_level(lev'.$level.',t'.$word_id.')', $debug);
   $loops = 0;
   do {
     $loops = $loops + 1;
@@ -144,7 +144,7 @@ function zut_db_tree_up_level ($level, $word_id, $result, $link_type_id, $user_i
     $result       = $adj_result;
 
     if ($loops >= MAX_RECURSIVE) {
-      zu_fatal("max number (".$loops.") of loops for word ".$word_id." reached.","zut_db_tree_up_level");
+      log_fatal("max number (".$loops.") of loops for word ".$word_id." reached.","zut_db_tree_up_level");
     }
   } while (!empty($added_words) AND $loops < MAX_RECURSIVE);
   return $result;    
@@ -152,7 +152,7 @@ function zut_db_tree_up_level ($level, $word_id, $result, $link_type_id, $user_i
 
 // build one level of a word tree
 function zut_db_tree_level ($level, $word_id, $result, $link_type_id, $user_id, $debug) {
-  zu_debug('zut_db_tree_level(lev'.$level.',t'.$word_id.')', $debug);
+  log_debug('zut_db_tree_level(lev'.$level.',t'.$word_id.')', $debug);
   $loops = 0;
   do {
     $loops = $loops + 1;
@@ -161,7 +161,7 @@ function zut_db_tree_level ($level, $word_id, $result, $link_type_id, $user_id, 
     $result       = $adj_result;
 
     if ($loops >= MAX_RECURSIVE) {
-      zu_fatal("max number (".$loops.") of loops for word ".$word_id." reached.","zut_db_tree_level");
+      log_fatal("max number (".$loops.") of loops for word ".$word_id." reached.","zut_db_tree_level");
     }
   } while (!empty($added_words) AND $loops < MAX_RECURSIVE);
   return $result;    
@@ -169,68 +169,68 @@ function zut_db_tree_level ($level, $word_id, $result, $link_type_id, $user_id, 
 
 // returns an array of word ids, that characterises the given word e.g. for the id of "ABB Ltd." it will return the id of "Company" if the link type is "is a"
 function zut_db_tree_up ($word_id, $link_type_id, $user_id, $debug) {
-  zu_debug('zut_db_tree_up(t'.$word_id.',l'.$link_type_id.')', $debug);
+  log_debug('zut_db_tree_up(t'.$word_id.',l'.$link_type_id.')', $debug);
   $level = 0;
   $result = zut_db_tree_up_level ($level, $word_id, array(), $link_type_id, $user_id, $debug-5);
 
-  zu_debug('zut_db_tree_up -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_db_tree_up -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // similar to zut_db_tree, but the other way round e.g. for the id of "Companies" it will return the id of "ABB Ltd." and others if the link type is "are"
 function zut_db_tree ($word_id, $link_type_id, $user_id, $debug) {
-  zu_debug('zut_db_tree(t'.$word_id.',l'.$link_type_id.')', $debug);
+  log_debug('zut_db_tree(t'.$word_id.',l'.$link_type_id.')', $debug);
   $level = 0;
   $result = zut_db_tree_level ($level, $word_id, array(), $link_type_id, $user_id, $debug-5);
 
-  zu_debug('zut_db_tree -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_db_tree -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // id array of all words that the given word is related to e.g. for the id of "ABB Ltd." it will return the id of "Company"
 function zut_ids_is ($word_id, $user_id, $debug) {
-  zu_debug('zut_ids_is(t'.$word_id.')', $debug);
+  log_debug('zut_ids_is(t'.$word_id.')', $debug);
   $link_type_id = sql_code_link(SQL_LINK_TYPE_IS);
   $result = zut_db_tree_up ($word_id, $link_type_id, $user_id, $debug-1);
 
-  zu_debug('zut_ids_is -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_ids_is -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // word ids that ARE of the type of the given word e.g. for "Company" it will be "ABB Ltd." and others
 function zut_ids_are ($word_id, $user_id, $debug) {
-  zu_debug('zut_ids_are(t'.$word_id.',u'.$user_id.')', $debug);
+  log_debug('zut_ids_are(t'.$word_id.',u'.$user_id.')', $debug);
   $link_type_id = sql_code_link(SQL_LINK_TYPE_IS);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id, $debug-5);
 
-  zu_debug('zut_ids_are -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_ids_are -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // similar to zut_ids_are, but returns a word list with the word name included (this should be the normal use)
 function zut_lst_are ($word_id, $user_id, $debug) {
-  zu_debug('zut_lst_are (t'.$word_id.',u'.$user_id.')', $debug);
+  log_debug('zut_lst_are (t'.$word_id.',u'.$user_id.')', $debug);
 
   $wrd_ids = zut_ids_are ($word_id, $user_id, $debug);
   $result = zu_sql_wrd_ids_to_lst ($wrd_ids, $user_id, $debug-1);
 
-  zu_debug('zut_lst_are -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_lst_are -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // all word ids that are part of the given word e.g. for "cash flow statement" it will be "Sales" and others
 function zut_ids_contains ($word_id, $user_id, $debug) {
-  zu_debug('zut_ids_contains(t'.$word_id.')', $debug);
+  log_debug('zut_ids_contains(t'.$word_id.')', $debug);
   $link_type_id = sql_code_link(SQL_LINK_TYPE_CONTAIN);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id, $debug-1);
 
-  zu_debug('zut_ids_contains -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_ids_contains -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // similar to zut_ids_contains, but also includes "sub" words that are of a containing type e.g. if Sales contains Country all countries like "Switzerland" are also included in the result
 function zut_ids_contains_and_are ($start_wrd_id, $user_id, $debug) {
-  zu_debug('zut_ids_contains_and_are(t'.$start_wrd_id.')', $debug);
+  log_debug('zut_ids_contains_and_are(t'.$start_wrd_id.')', $debug);
 
   $result = array();
   $added[] = $start_wrd_id;
@@ -255,13 +255,13 @@ function zut_ids_contains_and_are ($start_wrd_id, $user_id, $debug) {
     }  
   }
   
-  zu_debug('zut_ids_contains_and_are -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_ids_contains_and_are -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // add all potential differentiator words of the word lst to ther word list
 function zut_db_lst_differentiators ($word_lst, $user_id, $debug) {
-  zu_debug('zut_db_lst_differentiators (t'.implode(",",$word_lst).'u'.$user_id.')', $debug);
+  log_debug('zut_db_lst_differentiators (t'.implode(",",$word_lst).'u'.$user_id.')', $debug);
   $result = $word_lst;
   foreach ($word_lst as $sub_word_id) {
     $differantiator_words = zut_db_differantiator_words($sub_word_id, $debug-5);
@@ -272,31 +272,31 @@ function zut_db_lst_differentiators ($word_lst, $user_id, $debug) {
     $result    = zu_lst_merge_with_key($differantiator_words, $result);
   }  
 
-  zu_debug('zut_db_lst_differentiators -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_db_lst_differentiators -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // similar to zut_db_lst_differentiators, but only a filtered list of differentiators is viewed to increase speed
 function zut_db_lst_differentiators_filtered ($word_ids, $filter_ids, $user_id, $debug) {
-  zu_debug('zut_db_lst_differentiators_filtered (t'.implode(",",$word_ids).',f'.implode(",",$filter_ids).',u'.$user_id.')', $debug);
+  log_debug('zut_db_lst_differentiators_filtered (t'.implode(",",$word_ids).',f'.implode(",",$filter_ids).',u'.$user_id.')', $debug);
   $result = zu_sql_wrd_ids_to_lst($word_ids, $user_id, $debug-1);
   foreach ($word_ids as $sub_word_id) {
     $differantiator_words = zut_db_differantiator_words_filtered($sub_word_id, $filter_ids, $user_id, $debug-5);
-    zu_debug('zut_db_lst_differentiators_filtered -> differantiator_words ('.implode(",",$differantiator_words).')', $debug-1);
+    log_debug('zut_db_lst_differentiators_filtered -> differantiator_words ('.implode(",",$differantiator_words).')', $debug-1);
     // select only the differentiator words that have a value for the main word
     $new_words = zu_lst_not_in        ($differantiator_words, $result);
-    zu_debug('zut_db_lst_differentiators_filtered -> new_words ('.implode(",",$new_words).')', $debug-1);
+    log_debug('zut_db_lst_differentiators_filtered -> new_words ('.implode(",",$new_words).')', $debug-1);
     $result    = zu_lst_merge_with_key($new_words,            $result);
-    zu_debug('zut_db_lst_differentiators_filtered -> merged words ('.implode(",",$result).')', $debug-1);
+    log_debug('zut_db_lst_differentiators_filtered -> merged words ('.implode(",",$result).')', $debug-1);
   }  
 
-  zu_debug('zut_db_lst_differentiators_filtered -> ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_db_lst_differentiators_filtered -> ('.implode(",",$result).')', $debug-1);
   return $result;
 }
 
 // returns a sorted list of words as an array of word ids 
 function zut_db_list ($start_word, $number_of_words, $debug) {
-  zu_debug('zut_db_list', $debug);
+  log_debug('zut_db_list', $debug);
   $result = 0;
   // find out if a word group matches the word list
   $phrase_group = 0;
@@ -315,7 +315,7 @@ function zut_db_list ($start_word, $number_of_words, $debug) {
 
 // get the word ids of a word group
 function zutg_wrd_ids ($wrd_grp_id, $user_id, $debug) {
-  zu_debug('zutg_wrd_ids ('.$wrd_grp_id.',u'.$user_id.')', $debug-10);
+  log_debug('zutg_wrd_ids ('.$wrd_grp_id.',u'.$user_id.')', $debug-10);
 
   $result = array();
   $sql = "SELECT word_ids FROM phrase_groups WHERE phrase_group_id = ".$wrd_grp_id.";";
@@ -327,7 +327,7 @@ function zutg_wrd_ids ($wrd_grp_id, $user_id, $debug) {
 
 // creates a list all parent words of the given word (foaf - friend of a friend - which means using a recursive search)
 function zut_foaf_parent($word_id, $debug) {
-  zu_debug('zut_foaf_parent('.$word_id.')', $debug);  
+  log_debug('zut_foaf_parent('.$word_id.')', $debug);
 
   $result = array();
   $parent_type = sql_code_link(SQL_LINK_TYPE_IS);
@@ -341,14 +341,14 @@ function zut_foaf_parent($word_id, $debug) {
     $result = zu_lst_merge_with_key($result, $foaf_words);
   }  
   
-  zu_debug('zut_foaf_parent ... done ('.implode(",",$result).')', $debug-1);
+  log_debug('zut_foaf_parent ... done ('.implode(",",$result).')', $debug-1);
 
   return $result;
 }
 
 // creates a list with the differantiator words (improve later by using an array instead of single SQL)
 function zut_db_differantiator_words($word_id, $debug) {
-  zu_debug('zut_db_differantiator_words ('.$word_id.')', $debug);  
+  log_debug('zut_db_differantiator_words ('.$word_id.')', $debug);
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
@@ -356,7 +356,7 @@ function zut_db_differantiator_words($word_id, $debug) {
 
   // find direct differantiator words
   $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differantiator_type, "up", $debug-5), $debug-5);
-  zu_debug('zut_db_differantiator_words ... words linked ('.implode(",",$word_lst).')', $debug-5);  
+  log_debug('zut_db_differantiator_words ... words linked ('.implode(",",$word_lst).')', $debug-5);
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
   $is_a_type = sql_code_link(SQL_LINK_TYPE_IS);
@@ -375,26 +375,26 @@ function zut_db_differantiator_words($word_id, $debug) {
     $added_words = zu_lst_not_in($added_words, $xtra_words, $debug-5);
   } */
   
-  zu_debug('zut_db_differantiator_words ... done ('.implode(",",$word_lst).')', $debug-1);
+  log_debug('zut_db_differantiator_words ... done ('.implode(",",$word_lst).')', $debug-1);
 
   return $word_lst;
 }
 
 // creates a list with the differantiator words (improve later by using an array instead of single SQL)
 function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $debug) {
-  zu_debug('zut_db_differantiator_words_filtered ('.$word_id.',f'.implode(",",$filter_ids).',u'.$user_id.')', $debug);  
+  log_debug('zut_db_differantiator_words_filtered ('.$word_id.',f'.implode(",",$filter_ids).',u'.$user_id.')', $debug);
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
   $differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
-  zu_debug('zut_db_differantiator_words_filtered ... type ('.$differantiator_type.')', $debug-5);  
+  log_debug('zut_db_differantiator_words_filtered ... type ('.$differantiator_type.')', $debug-5);
 
   // find direct differantiator words
   $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differantiator_type, "up", $debug-5), $debug-5);
   if (count($word_lst) > 0) {
-    zu_debug('zut_db_differantiator_words_filtered ... words linked ('.implode(",",$word_lst).')', $debug-5);  
+    log_debug('zut_db_differantiator_words_filtered ... words linked ('.implode(",",$word_lst).')', $debug-5);
   } else {  
-    zu_debug('zut_db_differantiator_words_filtered ... no words linked', $debug-5);  
+    log_debug('zut_db_differantiator_words_filtered ... no words linked', $debug-5);
   }
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
@@ -403,9 +403,9 @@ function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $
   // add all words that are "is a" to the $differantiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
   $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, "up", $debug-5);
-  zu_debug('zut_db_differantiator_words_filtered ... sub words ('.implode(",",$sub_words).')', $debug-1);  
+  log_debug('zut_db_differantiator_words_filtered ... sub words ('.implode(",",$sub_words).')', $debug-1);
   $sub_words= zu_lst_in_ids($sub_words, $filter_ids, $debug-1);
-  zu_debug('zut_db_differantiator_words_filtered ... sub words filtered ('.implode(",",$sub_words).')', $debug-1);  
+  log_debug('zut_db_differantiator_words_filtered ... sub words filtered ('.implode(",",$sub_words).')', $debug-1);
   //$sub_wrd_lst = zu_sql_wrd_ids_to_lst($sub_words, $user_id, $debug-1);
   $word_lst = zu_lst_merge_with_key($word_lst, $sub_words);
   //echo 'combi: '.implode(",",$word_lst).'<br>';
@@ -418,7 +418,7 @@ function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $
     $added_words = zu_lst_not_in($added_words, $xtra_words, $debug-5);
   } */
   
-  zu_debug('zut_db_differantiator_words_filtered ... done ('.implode(",",$word_lst).')', $debug-1);
+  log_debug('zut_db_differantiator_words_filtered ... done ('.implode(",",$word_lst).')', $debug-1);
 
   return $word_lst;
 }
@@ -434,7 +434,7 @@ function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $
 // $user_id  - 
 
 function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id, $debug) {
-  zu_debug("zut_db_add (".$wrd_name.",to".$wrd_to.",type".$type_id.",add".$add_id.",v".$link_id.",u".$user_id.")", $debug);
+  log_debug("zut_db_add (".$wrd_name.",to".$wrd_to.",type".$type_id.",add".$add_id.",v".$link_id.",u".$user_id.")", $debug);
 
   // check the parameter
   if ($link_id == 0) {
@@ -461,7 +461,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id, 
         // maybe ask for confirmation
         // change the link type to "formula link"
         $type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
-        zu_debug('word_add -> changed type to ('.$type_id.')', $debug);
+        log_debug('word_add -> changed type to ('.$type_id.')', $debug);
         $id_txt = ""; // reset the id_txt, because this case would be fine
       }  
     }
@@ -483,7 +483,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id, 
           zu_sql_update("words", $wrd_id, "word_type_id", $type_id, $user_id, $debug);
           zu_sql_update("words", $wrd_id, "user_id",      $user_id, $user_id, $debug);
         } else {
-          zu_err("Adding word ".$wrd_name." failed.", "zut_db_add");
+          log_err("Adding word ".$wrd_name." failed.", "zut_db_add");
         }
       }  
     }
@@ -502,7 +502,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id, 
 
 // add a new word group
 function zutg_db_add ($word_ids, $group_name, $debug) {
-  zu_debug('zutg_db_add', $debug);
+  log_debug('zutg_db_add', $debug);
   $sql_query = "INSERT INTO phrase_groups (word_ids, auto_description) VALUES ('".$word_ids."','".$group_name."');";
   $sql_result = mysql_query($sql_query);
 
@@ -511,7 +511,7 @@ function zutg_db_add ($word_ids, $group_name, $debug) {
 
 // creates a user word record
 function zut_db_usr_add ($wrd_id, $user_id, $debug) {
-  zu_debug("zut_db_usr_add (t".$wrd_id.",u".$user_id.")", $debug);
+  log_debug("zut_db_usr_add (t".$wrd_id.",u".$user_id.")", $debug);
   $result = false;
 
   $usr_wrd_id = zu_sql_get("SELECT word_id FROM `user_words` WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";", $debug-1);
@@ -526,7 +526,7 @@ function zut_db_usr_add ($wrd_id, $user_id, $debug) {
 
 // check if the user word record is still needed and if not remove it
 function zut_db_usr_check ($wrd_id, $user_id, $debug) {
-  zu_debug("zut_db_usr_check (t".$wrd_id.",u".$user_id.")", $debug);
+  log_debug("zut_db_usr_check (t".$wrd_id.",u".$user_id.")", $debug);
   $result = false;
 
   $sql_std = "SELECT word_name, plural, description, word_type_id, excluded FROM words      WHERE word_id = ".$wrd_id.";";
@@ -550,7 +550,7 @@ function zut_db_usr_check ($wrd_id, $user_id, $debug) {
 // what if the user changes the name back to the original name?
 // if a user (not the owner) adds a description, it should be changed in the original record
 function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_description, $user_id, $debug) {
-  zu_debug("zut_db_upd (t".$wrd_id.",".$wrd_name.",".$wrd_plural.",".substr($wrd_description,0,50).",".$wrd_type.",u".$user_id.")", $debug);
+  log_debug("zut_db_upd (t".$wrd_id.",".$wrd_name.",".$wrd_plural.",".substr($wrd_description,0,50).",".$wrd_type.",u".$user_id.")", $debug);
   $result = "";
   
   // read the database values to be able to check if something has been changed; done first, because it needs to be done for user and general words
@@ -651,7 +651,7 @@ function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_descriptio
     }  
   }
 
-  zu_debug("zut_db_upd -> done(".$result.")", $debug-1);
+  log_debug("zut_db_upd -> done(".$result.")", $debug-1);
   return $result;
 }
 /*
@@ -666,7 +666,7 @@ function zut_db_upd_usr_fld ($old_name, $fld_name, $wrd_id, $user_id, $debug) {
 */
 // creates an sql select statment for the value_phrase_links based on an word array
 function zutg_db_select_sql ($word_ids, $debug) {
-  zu_debug('zutg_db_select_sql ... ', $debug);
+  log_debug('zutg_db_select_sql ... ', $debug);
   
   $sql_start = "SELECT l1.value_id ";
   $sql_from  = " FROM ";
@@ -696,14 +696,14 @@ function zutg_db_select_sql ($word_ids, $debug) {
 // reads a value from the database and returns it
 // the selection is based on a word / word_link list
 function zut_value ($word_ids, $time_word_id, $user_id, $debug) {
-  zu_debug('zut_value ('.$word_ids.','.$time_word_id.','.$user_id.')', $debug);
+  log_debug('zut_value ('.$word_ids.','.$time_word_id.','.$user_id.')', $debug);
   $result = 0;
   // find out if a word group matches the word list
   //$phrase_group = 0;
   //$query = "SELECT phrase_group_id FROM phrase_groups WHERE word_ids = '".zut_sql_ids($word_ids, $debug)."';";
   //$sql_array = zu_sql_get($query, $debug);
   $phrase_group = zut_group_id ($word_ids, $debug-1);
-  zu_debug('zut_value -> group id ('.$phrase_group.')', $debug-1);
+  log_debug('zut_value -> group id ('.$phrase_group.')', $debug-1);
   
   // get the value for word group
   $query = "SELECT word_value FROM `values` WHERE phrase_group_id = ".$phrase_group." AND time_word_id = ".$time_word_id." ;";
@@ -717,13 +717,13 @@ function zut_value ($word_ids, $time_word_id, $user_id, $debug) {
     $value_id = zuv_word_lst_id($word_lst, $debug);
   }
 
-  zu_debug('zut_value -> ('.$result.')', $debug-1);
+  log_debug('zut_value -> ('.$result.')', $debug-1);
   return $result;    
 }
 
 // add the group id to all values
 function zut_group_review ($debug) {
-  zu_debug('zut_group_review', $debug);
+  log_debug('zut_group_review', $debug);
   $query = "SELECT value_id, phrase_id FROM value_phrase_links WHERE value_id > 0 AND phrase_id > 0 ORDER BY value_id, phrase_id;";
   $sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
   $last_value = 0;

@@ -83,7 +83,7 @@ class figure {
   // return the html code to display a value
   // this is the opposite of the convert function 
   function display ($back, $debug) {
-    zu_debug('figure->display', $debug-10);
+    log_debug('figure->display', $debug-10);
     $result = '';
 
     if ($this->type == 'value') {
@@ -97,15 +97,15 @@ class figure {
 
   // html code to show the value with the possibility to click for the result explanation
   function display_linked($back, $debug) {
-    zu_debug('figure->display_linked', $debug-10);
+    log_debug('figure->display_linked', $debug-10);
     $result = '';
 
-    zu_debug('figure->display_linked -> type '.$this->type, $debug-10);
+    log_debug('figure->display_linked -> type '.$this->type, $debug-10);
     if ($this->type == 'value') {
-      zu_debug('figure->display_linked -> value '.$this->number, $debug-10);
+      log_debug('figure->display_linked -> value '.$this->number, $debug-10);
       $result .= $this->obj->display_linked($back, $debug-1);
     } elseif ($this->type == 'result') {
-      zu_debug('figure->display_linked -> result '.$this->number, $debug-10);
+      log_debug('figure->display_linked -> result '.$this->number, $debug-10);
       $result .= $this->obj->display_linked($back, $debug-1);
     }
     

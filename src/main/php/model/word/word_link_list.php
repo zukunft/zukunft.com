@@ -86,13 +86,13 @@ class word_link_list {
   
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
   function load($debug) {
-    zu_debug('word_link_list->load', $debug-18);
+    log_debug('word_link_list->load', $debug-18);
 
     global $db_con;
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
       // set the where clause depending on the defined select values
       $sql_where       = '';
@@ -115,7 +115,7 @@ class word_link_list {
           $sql_wrd2_fields  = $this->load_wrd_fields('2');
           $sql_wrd2_from    = $this->load_wrd_from  ('2');
           $sql_wrd2         = 'l.to_phrase_id = t2.word_id';
-          zu_debug('word_link_list->load where ids '.$sql_where, $debug-18);
+          log_debug('word_link_list->load where ids '.$sql_where, $debug-18);
         }
       }  
       if ($sql_where == '') {
@@ -129,19 +129,19 @@ class word_link_list {
             $sql_where = 'l.to_phrase_id   = '.$this->wrd->id;
             $sql_wrd2  = 'l.from_phrase_id = t2.word_id';
           }
-          zu_debug('word_link_list->load where wrd '.$sql_where, $debug-18);
+          log_debug('word_link_list->load where wrd '.$sql_where, $debug-18);
         }  
       }
       if ($sql_where == '') {
         if (isset($this->wrd_lst)) {
-          zu_debug('word_link_list->load based on word list', $debug-20);
+          log_debug('word_link_list->load based on word list', $debug-20);
           $sql_wrd1_fields = $this->load_wrd_fields('');
           $sql_wrd1_from   = $this->load_wrd_from  ('');
           $sql_wrd1_fields .= ', ';
           $sql_wrd1_from   .= ', ';
           $sql_wrd2_fields = $this->load_wrd_fields('2');
           $sql_wrd2_from   = $this->load_wrd_from  ('2');
-          zu_debug('word_link_list->load based on word list loaded', $debug-20);
+          log_debug('word_link_list->load based on word list loaded', $debug-20);
           if ($this->direction == 'up') {
             $sql_where = 'l.from_phrase_id IN ('.$this->wrd_lst->ids_txt($debug-1).')';
             $sql_wrd1  = 'AND l.from_phrase_id = t.word_id';
@@ -151,7 +151,7 @@ class word_link_list {
             $sql_wrd1  = 'AND l.to_phrase_id   = t.word_id';
             $sql_wrd2  = 'l.from_phrase_id = t2.word_id';
           }
-          zu_debug('word_link_list->load where wrd in '.$sql_where, $debug-18);
+          log_debug('word_link_list->load where wrd in '.$sql_where, $debug-18);
         }  
       }  
       if (isset($this->vrb)) {
@@ -167,7 +167,7 @@ class word_link_list {
       
       // check the selection criteria and report missing parameters
       if ($sql_where == '' OR $sql_wrd2 == '') {
-        zu_err("A word or word list must be set to show a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("A word or word list must be set to show a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
       } else { 
 
         // load the word link and the destination word with one sql statement to save time
@@ -206,7 +206,7 @@ class word_link_list {
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_lst = $db_con->get($sql, $debug-10);  
-        zu_debug('word_link_list->load ... sql "'.$sql.'"', $debug-15);
+        log_debug('word_link_list->load ... sql "'.$sql.'"', $debug-15);
         $this->lst = array();
         $this->ids = array();
         foreach ($db_lst AS $db_lnk) {
@@ -253,7 +253,7 @@ class word_link_list {
                 $new_link->from_name    = $new_word->name;
               } else {
                 if (isset($this->wrd)) {
-                  zu_debug('word_link_list->load ... use "'.$this->wrd->name.'" as from', $debug-15);
+                  log_debug('word_link_list->load ... use "'.$this->wrd->name.'" as from', $debug-15);
                   $new_link->from      = $this->wrd;
                   $new_link->from_name = $this->wrd->name;
                 }
@@ -269,7 +269,7 @@ class word_link_list {
                 $new_word->type_id      = $db_lnk['word_type_id2'];
                 $new_word->link_type_id = $db_lnk['verb_id'];
                 //$added_wrd2_lst->add($new_word, $debug-1);
-                zu_debug('word_link_list->load -> added word "'.$new_word->name.'" for verb ('.$db_lnk['verb_id'].')', $debug-10);
+                log_debug('word_link_list->load -> added word "'.$new_word->name.'" for verb ('.$db_lnk['verb_id'].')', $debug-10);
                 $new_link->to           = $new_word;
                 $new_link->to_name      = $new_word->name;
               } elseif ($db_lnk['word_id2'] < 0) {
@@ -284,14 +284,14 @@ class word_link_list {
             $this->ids[] = $new_link->id;
           } 
         }
-        zu_debug('word_link_list->load ... done ('.count($this->lst).')', $debug-10);
+        log_debug('word_link_list->load ... done ('.count($this->lst).')', $debug-10);
       }  
     }  
   }
   
   // add one triple to the triple list, but only if it is not yet part of the list
   function add($lnk_to_add, $debug) {
-    zu_debug('word_link_list->add '.$lnk_to_add->dsp_id(), $debug-30);
+    log_debug('word_link_list->add '.$lnk_to_add->dsp_id(), $debug-30);
     if (!in_array($lnk_to_add->id, $this->ids)) {
       if ($lnk_to_add->id > 0) {
         $this->lst[] = $lnk_to_add;
@@ -348,10 +348,10 @@ class word_link_list {
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
       if (isset($this->wrd)) {
-        zu_debug('graph->display for '.$this->wrd->name.' '.$this->direction.' and user '.$this->usr->name, $debug-10);
+        log_debug('graph->display for '.$this->wrd->name.' '.$this->direction.' and user '.$this->usr->name, $debug-10);
       }  
       $prev_verb_id  = 0;
 
@@ -367,7 +367,7 @@ class word_link_list {
         
         // display type header
         if ($lnk->verb_id <> $prev_verb_id) {
-          zu_debug('graph->display type "'.$lnk->link_type->name.'"', $debug-12);
+          log_debug('graph->display type "'.$lnk->link_type->name.'"', $debug-12);
 
           // select the same side of the verb
           if ($this->direction == "down") {
@@ -397,7 +397,7 @@ class word_link_list {
         }  
 
         // display the word
-        zu_debug('word->dsp_graph display word '.$lnk->from->name, $debug-16);
+        log_debug('word->dsp_graph display word '.$lnk->from->name, $debug-16);
         $result .= '  <tr>'."\n";
         $result .= $lnk->to->dsp_tbl_cell (0, $debug-1);
         $result .= $lnk->dsp_btn_edit ($lnk->from, $debug-1);

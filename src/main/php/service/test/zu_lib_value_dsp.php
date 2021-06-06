@@ -31,7 +31,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // todo: take user unlink of words into account
 // save data to the database only if "save" is pressed add and remove the word links "on the fly", which means that after the first call the edit view is more or less the same as the add view
 function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $back_link, $user_id, $debug) {
-  zu_debug("zuv_dsp_edit_or_add (".$val_id.",t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",db".implode(",",$db_ids)."b".$back_link.",u".$user_id.")", $debug);
+  log_debug("zuv_dsp_edit_or_add (".$val_id.",t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",db".implode(",",$db_ids)."b".$back_link.",u".$user_id.")", $debug);
 
   $result = ''; // reset the html code var
   
@@ -84,10 +84,10 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
   // convert and validate the parameters
   if (count($wrd_ids) <> count($type_ids) OR count($wrd_ids) <> count($db_ids)) {
     if (count($wrd_ids) <> count($type_ids)) {
-      zu_err ("Invalide parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_edit_or_add");
+      log_err ("Invalide parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_edit_or_add");
     }
     if (count($wrd_ids) <> count($db_ids)) {
-      zu_err ("Invalide parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of db ids (".implode(",",$db_ids). ") given.","zuv_dsp_edit_or_add");
+      log_err ("Invalide parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of db ids (".implode(",",$db_ids). ") given.","zuv_dsp_edit_or_add");
     }
   } else {
     $word_pos = 1; // the word position (combined number for fixed, type and free words)
@@ -96,7 +96,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
     $result .= '  <input type="hidden" name="confirm" value="1">';
     
     // reset the word sample setting s
-    $main_wrd_id == 0;
+    $main_wrd_id = 0;
  
     // show first the words, that are not supposed to be changed
     foreach (array_keys($wrd_ids) AS $pos) {
@@ -118,12 +118,12 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
     foreach (array_keys($wrd_ids) AS $pos) {
       // if no type is given, guess a type
       if ($type_ids[$pos] == 0) {
-        zu_debug("zuv_dsp_edit_or_add -> guess type for position ".$pos.".", $debug);
+        log_debug("zuv_dsp_edit_or_add -> guess type for position ".$pos.".", $debug);
         $wrd_type_ids = zut_ids_is ($wrd_ids[$pos], $user_id, $debug);
         if (!empty($wrd_type_ids)) {
           // use the first type as a guess
           $type_ids[$pos] = $wrd_type_ids[0];
-          zu_debug("zuv_dsp_edit_or_add -> guessed type for position ".$pos.": ".$type_ids[$pos].".", $debug);
+          log_debug("zuv_dsp_edit_or_add -> guessed type for position ".$pos.": ".$type_ids[$pos].".", $debug);
         }
       }
     }  
@@ -138,9 +138,9 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
           //$sql_type_words = zu_sql_words_linked($type_ids, cl(SQL_LINK_TYPE_IS), "up", $debug-1);
           //$sub_words = zu_sql_get_lst($sql_type_words, $debug-1);
           $sub_words = zut_ids_are($type_ids[$pos], $debug-1);
-          zu_debug("zuv_dsp_edit_or_add -> suggested word ids for position ".$pos.": ".implode(",",$sub_words).".", $debug);
+          log_debug("zuv_dsp_edit_or_add -> suggested word ids for position ".$pos.": ".implode(",",$sub_words).".", $debug);
           $wrd_lst = zu_sql_wrd_ids_to_lst_names($sub_words, $user_id, $debug) ;
-          zu_debug("zuv_dsp_edit_or_add -> suggested words for position ".$pos.": ".implode(",",$wrd_lst).".", $debug);
+          log_debug("zuv_dsp_edit_or_add -> suggested words for position ".$pos.": ".implode(",",$wrd_lst).".", $debug);
         } else {
           // if no word group is found, use the word type time if the word is a time word
           if (zut_is_time($wrd_ids[$pos])) {
@@ -268,7 +268,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
     }
   }
 
-  zu_debug("zuv_dsp_edit_or_add -> done", $debug);
+  log_debug("zuv_dsp_edit_or_add -> done", $debug);
   return $result;
 }
 
@@ -278,7 +278,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
 //              if the type id is 0, not type is preselected
 //              if the type id is -1, the words is not supposed to be changed by the user, but the user can remove the preselection if really needed
 function zuv_dsp_add_old($wrd_ids, $type_ids, $back_link, $user_id, $debug) {
-  zu_debug("zuv_dsp_add(t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",b".$back_link.",u".$user_id.")", $debug);
+  log_debug("zuv_dsp_add(t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",b".$back_link.",u".$user_id.")", $debug);
 
   $result = ''; // reset the html code var
 
@@ -291,7 +291,7 @@ function zuv_dsp_add_old($wrd_ids, $type_ids, $back_link, $user_id, $debug) {
 
   // convert and validate the parameters
   if (count($wrd_ids) <> count($type_ids)) {
-    zu_err ("Invalide parameter size at value add: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_add");
+    log_err ("Invalide parameter size at value add: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_add");
   } else {
     $word_pos = 1;
     // if the form is confirmed, save the value or the other way round: if with the plus sign only a new word is added, do not yet save the value
@@ -313,12 +313,12 @@ function zuv_dsp_add_old($wrd_ids, $type_ids, $back_link, $user_id, $debug) {
     foreach (array_keys($wrd_ids) AS $pos) {
       // if no type is given, guess a type
       if ($type_ids[$pos] == 0) {
-        zu_debug("zuv_dsp_add -> guess type for position ".$pos.".", $debug);
+        log_debug("zuv_dsp_add -> guess type for position ".$pos.".", $debug);
         $wrd_type_ids = zut_ids_is ($wrd_ids[$pos], $user_id, $debug);
         if (!empty($wrd_type_ids)) {
           // use the first type as a guess
           $type_ids[$pos] = $wrd_type_ids[0];
-          zu_debug("zuv_dsp_add -> guessed type for position ".$pos.": ".$type_ids[$pos].".", $debug);
+          log_debug("zuv_dsp_add -> guessed type for position ".$pos.": ".$type_ids[$pos].".", $debug);
         }
       }
     }  
@@ -333,9 +333,9 @@ function zuv_dsp_add_old($wrd_ids, $type_ids, $back_link, $user_id, $debug) {
           //$sql_type_words = zu_sql_words_linked($type_ids, cl(SQL_LINK_TYPE_IS), "up", $debug-1);
           //$sub_words = zu_sql_get_lst($sql_type_words, $debug-1);
           $sub_words = zut_ids_are($type_ids[$pos], $debug-1);
-          zu_debug("zuv_dsp_add -> suggested word ids for position ".$pos.": ".implode(",",$sub_words).".", $debug);
+          log_debug("zuv_dsp_add -> suggested word ids for position ".$pos.": ".implode(",",$sub_words).".", $debug);
           $wrd_lst = zu_sql_wrd_ids_to_lst_names($sub_words, $user_id, $debug) ;
-          zu_debug("zuv_dsp_add -> suggested words for position ".$pos.": ".implode(",",$wrd_lst).".", $debug);
+          log_debug("zuv_dsp_add -> suggested words for position ".$pos.": ".implode(",",$wrd_lst).".", $debug);
         } else {
           // if no word group is found, use the word type time if the word is a time word
           if (zut_is_time($wrd_ids[$pos])) {
@@ -404,13 +404,13 @@ function zuv_dsp_add_old($wrd_ids, $type_ids, $back_link, $user_id, $debug) {
   $result .= zuh_btn_back($back_link);
   //$result .= zu_sql_get_field ('value', $id, 'word_value');
 
-  zu_debug("zuv_dsp_add -> done", $debug);
+  log_debug("zuv_dsp_add -> done", $debug);
 
   return $result;
 }
 
 function zuv_dsp_edit_old($id, $back_link, $user_id, $debug) {
-  zu_debug("zuv_dsp_edit_old (".$id.",".$back_link.")", $debug);
+  log_debug("zuv_dsp_edit_old (".$id.",".$back_link.")", $debug);
 
   $result = ''; // reset the html code var
 
@@ -460,14 +460,14 @@ function zuv_dsp_edit_old($id, $back_link, $user_id, $debug) {
   $result .= zuh_btn_back($back_link);
   //$result .= zu_sql_get_field ('value', $id, 'word_value');
 
-  zu_debug("zuv_dsp_edit_old -> done", $debug);
+  log_debug("zuv_dsp_edit_old -> done", $debug);
 
   return $result;
 }
 
 // display a selector for the value source
 function zuv_dsp_source($src_id, $php_script, $back_link, $user_id, $debug) {
-  zu_debug("zuv_dsp_source (".$src_id.",".$php_script.",b".$back_link.",u".$user_id.")", $debug);
+  log_debug("zuv_dsp_source (".$src_id.",".$php_script.",b".$back_link.",u".$user_id.")", $debug);
 
   $result = ''; // reset the html code var
 
@@ -476,7 +476,7 @@ function zuv_dsp_source($src_id, $php_script, $back_link, $user_id, $debug) {
     $src_id = zuu_last_source ($user_id, $debug);
   }
 
-  zu_debug("zuv_dsp_source -> source id used (".$src_id.")", $debug-5);
+  log_debug("zuv_dsp_source -> source id used (".$src_id.")", $debug-5);
   $result .= '      taken from '.zuh_selector ("source", $php_script, zu_sql_std_lst ("source"), $src_id, "please define the source" , $debug-1).' ';
   $result .= '    <td>'.zuh_btn_edit ("Rename ".zus_name($src_id), '/http/source_edit.php?id='.$src_id.'&back='.$back_link).'</td>';
   $result .= '    <td>'.zuh_btn_add  ("Add new source", '/http/source_add.php?back='.$back_link).'</td>';
@@ -489,10 +489,10 @@ function zuv_dsp_source($src_id, $php_script, $back_link, $user_id, $debug) {
 // $type_word   - word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word
 // $back_id     - id of the calling word to define what should be displayed after the adding of the value
 function zuv_btn_add_value ($wrd_ids, $type_ids, $back_id, $debug) {
-  zu_debug("zuv_btn_add_value (".implode(",",$wrd_ids).",t".implode(",",$type_ids).",b".$back_id.")", $debug-1);
+  log_debug("zuv_btn_add_value (".implode(",",$wrd_ids).",t".implode(",",$type_ids).",b".$back_id.")", $debug-1);
   $url = '/http/value_add.php?back='.$back_id.zu_ids_to_url($wrd_ids,"word", $debug-1).zu_ids_to_url($type_ids,"type", $debug-1);
   $result = zuh_btn_add ('add new value', $url);
-  zu_debug("zuv_btn_add_value -> (".$result.")", $debug-1);
+  log_debug("zuv_btn_add_value -> (".$result.")", $debug-1);
   return $result;
 }
 
@@ -517,7 +517,7 @@ function zuv_btn_undo_add_value ($value_id, $back_id, $debug) {
 
 // display all values related to a given word
 function zuv_list ($id, $user_id, $debug) {
-  zu_debug('zuv_list ('.$id.',u'.$user_id.')', $debug);
+  log_debug('zuv_list ('.$id.',u'.$user_id.')', $debug);
   $result = '';
 
   // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
@@ -533,7 +533,7 @@ function zuv_list ($id, $user_id, $debug) {
     $value_id = $value_entry[0];
     $result .= '  <tr>';
     $result .= '    <td>';
-    zu_debug('zuv_list -> linked words '.$value_id, $debug);
+    log_debug('zuv_list -> linked words '.$value_id, $debug);
     $result .= '      '.zuv_words_names_linked($value_id, $id, $user_id).' <a href="/http/value_edit.php?id='.$value_id.'&back='.$id.'">'.zuv_value($value_id, $user_id, $debug-1).'</a>';
     // te be fixed !!!!!!!!!!!!!!
     $word_array = array(6,7);
@@ -547,7 +547,7 @@ function zuv_list ($id, $user_id, $debug) {
     if ($last_words <> zuv_words_id_txt($value_id)) {
       $last_words = zuv_words_id_txt($value_id);
       if (empty($common_words)) {
-        zu_debug('zuv_list -> use last as common (c'.implode(",",$common_words).',l'.$last_words.')', $debug);
+        log_debug('zuv_list -> use last as common (c'.implode(",",$common_words).',l'.$last_words.')', $debug);
         $common_words = explode(",",$last_words);
         // get the types of the common words
         foreach ($common_words AS $common_word) {
@@ -557,9 +557,9 @@ function zuv_list ($id, $user_id, $debug) {
           }
         }
       } else {  
-        zu_debug('zuv_list -> get common (c'.implode(",",$common_words).',l'.$last_words.')', $debug);
+        log_debug('zuv_list -> get common (c'.implode(",",$common_words).',l'.$last_words.')', $debug);
         $common_words = array_intersect($common_words, explode(",",$last_words));
-        zu_debug('zuv_list -> is common ('.implode(",",$common_words).')', $debug);
+        log_debug('zuv_list -> is common ('.implode(",",$common_words).')', $debug);
       }
       $result .= '    <td>';
       // temp until conversion to object is completed
@@ -599,21 +599,21 @@ function zuv_list ($id, $user_id, $debug) {
   $usr->id = $user_id;
   $usr->load($debug-1);
   $commen_wrd_lst->usr = $usr;
-  zu_debug("zuv_list -> common words ".implode(",",$commen_wrd_lst->wrd_ids), $debug);
+  log_debug("zuv_list -> common words ".implode(",",$commen_wrd_lst->wrd_ids), $debug);
   $commen_wrd_lst->load(); 
   $commen_phr_lst = $commen_wrd_lst->phrase_lst($debug-1);
   if (isset($commen_phr_lst)) {
     $result .= btn_add_value ($commen_phr_lst->ids, 0, $id, $debug); 
   }
 
-  zu_debug("zuv_list ... done", $debug);
+  log_debug("zuv_list ... done", $debug);
 
   return $result;
 }
 
 // display a value and formats is according to the format word
 function zuv_dsp ($num_value, $format_word_id, $debug) {
-  zu_debug('zuv_dsp ('.$num_value.','.$format_word_id.')', $debug);
+  log_debug('zuv_dsp ('.$num_value.','.$format_word_id.')', $debug);
   $result = $num_value;
   if (is_numeric($num_value)) {
     if ($format_word_id == cl(SQL_WORD_TYPE_PERCENT)) {
@@ -626,7 +626,7 @@ function zuv_dsp ($num_value, $format_word_id, $debug) {
 // creates a table of all values related to a word and a related word and all the subwords of the related word
 // e.g. for "ABB" (word) list all values for the cash flow statement (related word)
 function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
-  zu_debug("zuv_table (t".$word_id.",".$related_word_id."u".$user_id.")", $debug);
+  log_debug("zuv_table (t".$word_id.",".$related_word_id."u".$user_id.")", $debug);
   $result = '';
 
   // create the table headline e.g. cash flow statement
@@ -669,7 +669,7 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
   $xtra_words = zu_lst_not_in($xtra_words, array_keys($common_lst), $debug-1);
 
   // display the common words 
-  zu_debug("zuv_table common", $debug);
+  log_debug("zuv_table common", $debug);
   // to do: sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
   if (count($common_lst) > 0) {
     $commen_text = '(in ';
@@ -682,7 +682,7 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
     $result .= zuh_line_small($commen_text);
   }
   $result .= '<br>';
-  zu_debug("zuv_table start", $debug);
+  log_debug("zuv_table start", $debug);
     
   // display the table
   $result .= zuh_tbl_start();
@@ -763,18 +763,18 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
     $result .= '  </tr>'."\n";
     
     // display the row differentiators
-    zu_debug("zuv_table ... get differantiator for ".$sub_word_id.".", $debug-1);
+    log_debug("zuv_table ... get differantiator for ".$sub_word_id.".", $debug-1);
     // get all potential differentiator words
     $differantiator_words = zut_db_differantiator_words_filtered($sub_word_id, $all_word_ids, $user_id, $debug-1);
     //$differantiator_words = zut_db_differantiator_words($sub_word_id, $debug-1);
-    zu_debug("zuv_table ... show differantiator of ".explode(",",$differantiator_words).".", $debug-1);
+    log_debug("zuv_table ... show differantiator of ".explode(",",$differantiator_words).".", $debug-1);
     // select only the differentiator words that have a value for the main word
     $differantiator_words = zu_lst_in($differantiator_words, $xtra_words);
 
     // find direct differantiator words
     $differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
     $type_word_ids = array_keys(zu_sql_get_lst(zu_sql_words_linked($sub_word_id, $differantiator_type, "up", $debug), $debug-1));
-    zu_debug("zuv_table -> differantiator types ".implode(",",$type_word_ids).".", $debug-1);
+    log_debug("zuv_table -> differantiator types ".implode(",",$type_word_ids).".", $debug-1);
     
     // if there is more than one type of differantiator group the differantiators by type
     // and add on each one an "other" line, if the sum is not 100%
@@ -901,7 +901,7 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
 
   $result .= '<br><br>';
 
-  zu_debug("zuv_table ... done", $debug-1);
+  log_debug("zuv_table ... done", $debug-1);
 
   return $result;
 }
@@ -920,7 +920,7 @@ old zuv_table code that may be needed for cleanup
 
 // display a value, means create the HTML code that allows to edit the value
 function zuv_tbl_val ($id, $name, $back, $debug) {
-  zu_debug('zuv_tbl_val ('.$id.','.$name.','.$back.')', $debug);
+  log_debug('zuv_tbl_val ('.$id.','.$name.','.$back.')', $debug);
   $result  = '';
   $result .= '    <td>'."\n";
   $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'">'.$name.'</a></div>'."\n";
@@ -930,7 +930,7 @@ function zuv_tbl_val ($id, $name, $back, $debug) {
 
 // same as zuv_tbl_val, but in the user specific color
 function zuv_tbl_val_usr ($id, $name, $back, $debug) {
-  zu_debug('zuv_tbl_val ('.$id.','.$name.','.$back.')', $debug);
+  log_debug('zuv_tbl_val ('.$id.','.$name.','.$back.')', $debug);
   $result  = '';
   $result .= '    <td>'."\n";
   $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'" class="user_specific">'.$name.'</a></div>'."\n";
@@ -939,7 +939,7 @@ function zuv_tbl_val_usr ($id, $name, $back, $debug) {
 }
 
 function zuv_dsp_matrix($val_matrix, $user_id, $debug) {
-  zu_debug('zuv_dsp_matrix('.$val_matrix.','.$col_lst.')', $debug);
+  log_debug('zuv_dsp_matrix('.$val_matrix.','.$col_lst.')', $debug);
   $result = '';
   
   return $result;
@@ -948,7 +948,7 @@ function zuv_dsp_matrix($val_matrix, $user_id, $debug) {
 
 // display a value and the related words
 function zuv_wrd_lst_dsp($id, $user_id, $debug) {
-  zu_debug("zuv_wrd_lst_dsp (".$id.",u".$user_id.")", $debug);
+  log_debug("zuv_wrd_lst_dsp (".$id.",u".$user_id.")", $debug);
 
   $result = ''; // reset the html code var
   
@@ -961,7 +961,7 @@ function zuv_wrd_lst_dsp($id, $user_id, $debug) {
     $result .= 'as '.implode (",",$wrd_lst).' ';
   }
 
-  zu_debug("zuv_wrd_lst_dsp ... done", $debug-1);
+  log_debug("zuv_wrd_lst_dsp ... done", $debug-1);
 
   return $result;
 }
@@ -969,7 +969,7 @@ function zuv_wrd_lst_dsp($id, $user_id, $debug) {
 // display some value samples related to the wrd_id
 // with a preference of the start_word_ids
 function zuv_dsp_samples($wrd_id, $start_wrd_ids, $size, $user_id, $back, $debug) {
-  zu_debug("zuv_dsp_samples (".$wrd_id.",rt".implode(",",$start_wrd_ids).",size".$size.")", $debug);
+  log_debug("zuv_dsp_samples (".$wrd_id.",rt".implode(",",$start_wrd_ids).",size".$size.")", $debug);
   $result = ''; // reset the html code var
   
   // get value changes by the user that are not standard
@@ -1037,7 +1037,7 @@ function zuv_dsp_samples($wrd_id, $start_wrd_ids, $size, $user_id, $back, $debug
 
 // display the history of a value
 function zuv_dsp_hist($val_id, $size, $back_link, $debug) {
-  zu_debug("zuv_dsp_hist (".$val_id.",size".$size.",b".$size.")", $debug);
+  log_debug("zuv_dsp_hist (".$val_id.",size".$size.",b".$size.")", $debug);
   $result = ''; // reset the html code var
   
   // get value changes by the user that are not standard
@@ -1086,13 +1086,13 @@ function zuv_dsp_hist($val_id, $size, $back_link, $debug) {
   }
   $result .= '</table>';
 
-  zu_debug("zuv_dsp_hist -> done", $debug-1);
+  log_debug("zuv_dsp_hist -> done", $debug-1);
   return $result;
 }
 
 // display the history of a value
 function zuv_dsp_hist_links($val_id, $size, $back_link, $debug) {
-  zu_debug("zuv_dsp_hist_links (".$val_id.",size".$size.",b".$size.")", $debug);
+  log_debug("zuv_dsp_hist_links (".$val_id.",size".$size.",b".$size.")", $debug);
   $result = ''; // reset the html code var
 
   // get value changes by the user that are not standard
@@ -1139,7 +1139,7 @@ function zuv_dsp_hist_links($val_id, $size, $back_link, $debug) {
   }
   $result .= '</table>';
 
-  zu_debug("zuv_dsp_hist_links -> done", $debug-1);
+  log_debug("zuv_dsp_hist_links -> done", $debug-1);
   return $result;
 }
 

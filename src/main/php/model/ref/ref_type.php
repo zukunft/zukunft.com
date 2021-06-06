@@ -68,7 +68,7 @@ class ref_type {
 
 // load all reference types if needed
 function load_ref_types($debug) {
-  zu_debug('ref_type->load_ref_types', $debug-10);
+  log_debug('ref_type->load_ref_types', $debug-10);
 
   global $db_con;
   global $usr;
@@ -83,11 +83,11 @@ function load_ref_types($debug) {
       $id = $db_row['ref_type_id'];
       $name = $db_row['ref_type_name'];
       if ($id <= 0) {
-        zu_err('A reference type with id '.$id.' is in the database, but the id should always be greater zero.', 'load_ref_types', '', (new Exception)->getTraceAsString(), $usr);
+        log_err('A reference type with id '.$id.' is in the database, but the id should always be greater zero.', 'load_ref_types', '', (new Exception)->getTraceAsString(), $usr);
       } elseif ($name == '') {
-        zu_err('A reference type with an empty name is in the database, but a name must be set', 'load_ref_types', '', (new Exception)->getTraceAsString(), $usr);
+        log_err('A reference type with an empty name is in the database, but a name must be set', 'load_ref_types', '', (new Exception)->getTraceAsString(), $usr);
       } else {
-        zu_debug('ref_type->load_ref_types -> add '.$name, $debug-18);
+        log_debug('ref_type->load_ref_types -> add '.$name, $debug-18);
         $ref_type = New ref_type;
         $ref_type->usr         = $usr;
         $ref_type->id          = $db_row['ref_type_id']; // TODO needed??
@@ -99,13 +99,13 @@ function load_ref_types($debug) {
         $ref_type_name_lst[$name] = $id;
       }
     }  
-    zu_debug('ref_type->load_ref_types -> loaded '.count($ref_type_lst), $debug-12);
+    log_debug('ref_type->load_ref_types -> loaded '.count($ref_type_lst), $debug-12);
   }  
 }
 
 // get a reference type object based on the id
 function get_ref_type($id, $debug) {
-  zu_debug('ref_type->get_ref_type', $debug-10);
+  log_debug('ref_type->get_ref_type', $debug-10);
 
   global $usr;
   global $ref_type_lst;
@@ -113,10 +113,10 @@ function get_ref_type($id, $debug) {
   $result = NULL;
   load_ref_types($debug-1);
   if (!array_key_exists($id, $ref_type_lst)) {
-    zu_err('A reference type with id '.$id.' is not found.', 'get_ref_type', '', (new Exception)->getTraceAsString(), $usr);
+    log_err('A reference type with id '.$id.' is not found.', 'get_ref_type', '', (new Exception)->getTraceAsString(), $usr);
   } else {
     $result = $ref_type_lst[$id];
-    zu_debug('ref_type->get_ref_type -> done '.$result->dsp_id(), $debug-12);
+    log_debug('ref_type->get_ref_type -> done '.$result->dsp_id(), $debug-12);
   }
   
   return $result;  
@@ -124,7 +124,7 @@ function get_ref_type($id, $debug) {
 
 // get a reference type object based on the name
 function get_ref_type_by_name($name, $debug) {
-  zu_debug('ref_type->get_ref_type_by_name', $debug-10);
+  log_debug('ref_type->get_ref_type_by_name', $debug-10);
 
   global $usr;
   global $ref_type_name_lst;
@@ -132,11 +132,11 @@ function get_ref_type_by_name($name, $debug) {
   $result = NULL;
   load_ref_types($debug-1);
   if (!array_key_exists($name, $ref_type_name_lst)) {
-    zu_err('A reference type with name '.$name.' is not found.', 'get_ref_type_by_name', '', (new Exception)->getTraceAsString(), $usr);
+    log_err('A reference type with name '.$name.' is not found.', 'get_ref_type_by_name', '', (new Exception)->getTraceAsString(), $usr);
   } else {
     $id = $ref_type_name_lst[$name];
     $result = get_ref_type($id, $debug-1);
-    zu_debug('ref_type->get_ref_type_by_name -> done '.$result->dsp_id(), $debug-12);
+    log_debug('ref_type->get_ref_type_by_name -> done '.$result->dsp_id(), $debug-12);
   }
   
   return $result;  

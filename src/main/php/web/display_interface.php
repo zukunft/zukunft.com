@@ -2,8 +2,10 @@
 
 /*
 
-  ref_link_wikidata.php - link for the reference type wikidata
-  --------------------
+  display_interface.php - this module contain all interface functions that should be used
+  ---------------------
+  
+  depending on the settings either pure HTML, BOOTSTRAP HTML or JavaScript functions are called
   
   This file is part of zukunft.com - calc with words
 
@@ -29,27 +31,16 @@
   
 */
 
-class ref_link_wikidata {
-
-  // to import an entity from wikidata
-  function read ($debug) {
-    $result = '';
-    log_debug('ref_link_wikidata->read ... done', $debug-10);
-    /*
-    example
-     wget to
-     https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q39|Q183&format=json&languages=en
-     
-     use JSON
-     
-     save the aliases
-     
-     
-     
-    */
-    
-    log_debug('ref_link_wikidata->read ... done', $debug-12);
-    return $result;    
-  }
-
+// display a message immediately to the user
+function ui_echo($text, $style = '') {
+  echo $text;
 }
+
+// display a progress bar
+// TODO create a auto refresh page for async processes and the HTML front end without JavaScript
+// TODO create a db table, where the async process can drop the status
+// TODO add the refresh frequency setting to the general and user settings
+function ui_progress($id, $value, $max, $text) {
+    echo $text;
+}
+

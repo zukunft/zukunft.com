@@ -46,7 +46,7 @@ class selector {
   public $dummy_text = '';   // text for the NULL result if allowed
   
   function display ($debug) {
-    zu_debug('selector->display ('.$this->name.','.$this->form.','.$this->sql.',s'.$this->selected.','.$this->dummy_text.')', $debug-10);
+    log_debug('selector->display ('.$this->name.','.$this->form.','.$this->sql.',s'.$this->selected.','.$this->dummy_text.')', $debug-10);
 
     global $db_con;
     $result  = '';
@@ -67,7 +67,7 @@ class selector {
     foreach ($db_lst AS $db_entry) {
       $row_option = '';
       if ($db_entry['id'] == $this->selected AND $this->selected <> 0) {
-        zu_debug('selector->display ... selected '.$db_entry['id'], $debug-12);
+        log_debug('selector->display ... selected '.$db_entry['id'], $debug-12);
         $row_option = ' selected';
       }
       $result .= '<option value="'.$db_entry['id'].'"'.$row_option.'>'.$db_entry['name'].'</option>';
@@ -75,7 +75,7 @@ class selector {
 
     $result .= dsp_form_fld_select_end();
 
-    zu_debug('selector->display ... done', $debug-14);
+    log_debug('selector->display ... done', $debug-14);
     return $result;
   }
 

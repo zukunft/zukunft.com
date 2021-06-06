@@ -21,7 +21,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ function zu_sql_std_table ($type, $debug) {
 }
 
 function zu_sql_std_id_field ($type, $debug) {  
-  zu_debug("zu_sql_std_id_field (".$type.")", $debug);
+  log_debug("zu_sql_std_id_field (".$type.")", $debug);
 
   // exceptions for user overwrite tables
   if (zu_str_is_left($type, 'user_')) {
@@ -66,12 +66,12 @@ function zu_sql_std_id_field ($type, $debug) {
     $result = 'view_component_id';
   }
 
-  zu_debug("zu_sql_std_id_field -> (".$result.")", $debug);
+  log_debug("zu_sql_std_id_field -> (".$result.")", $debug);
   return $result;
 }
 
 function zu_sql_std_name_field ($type, $debug) {
-  zu_debug("zu_sql_std_name_field (".$type.")", $debug);
+  log_debug("zu_sql_std_name_field (".$type.")", $debug);
 
   // exceptions for user overwrite tables
   if (zu_str_is_left($type, 'user_')) {
@@ -86,12 +86,12 @@ function zu_sql_std_name_field ($type, $debug) {
     $result = 'type_name';
   }
 
-  zu_debug("zu_sql_std_name_field -> (".$result.")", $debug);
+  log_debug("zu_sql_std_name_field -> (".$result.")", $debug);
   return $result;
 }
 
 function zu_sql_std_type ($table_name, $debug) {
-  zu_debug("sql_code_link ... ", $debug);
+  log_debug("sql_code_link ... ", $debug);
 
   $result = '';
   if (substr($table_name, 0, 1) == "`") {
@@ -104,14 +104,14 @@ function zu_sql_std_type ($table_name, $debug) {
     $result = 'sys_log';
   }
 
-  zu_debug("zu_sql_std_type ... done", $debug-1);
+  log_debug("zu_sql_std_type ... done", $debug-1);
 
   return $result;
 }
 
 // create a standard query for a list of database id and name
 function zu_sql_std_lst ($type, $debug) {
-  zu_debug("zu_sql_std_lst (".$type.")", $debug);
+  log_debug("zu_sql_std_lst (".$type.")", $debug);
   
   $table    = zu_sql_std_table      ($type, $debug-1);
   $id_fld   = zu_sql_std_id_field   ($type, $debug-1);
@@ -123,7 +123,7 @@ function zu_sql_std_lst ($type, $debug) {
 
 // formats the table name for the sql statement
 function zu_sql_table_name ($table_name, $debug) {
-  zu_debug("zu_sql_table_name(".$table_name.")", $debug-1);
+  log_debug("zu_sql_table_name(".$table_name.")", $debug-1);
 
   $result = '';
   if (substr($table_name, 0, 1) == "`") {
@@ -132,19 +132,19 @@ function zu_sql_table_name ($table_name, $debug) {
     $result   = "`".$table_name."`";
   }  
 
-  zu_debug("zu_sql_table_name ... done (".$result.")", $debug-1);
+  log_debug("zu_sql_table_name ... done (".$result.")", $debug-1);
 
   return $result;
 }
 
 // returns the pk for the given table
 function zu_sql_get_id_field ($table_name, $debug) {
-  zu_debug("zu_sql_get_id_field ... ", $debug);
+  log_debug("zu_sql_get_id_field ... ", $debug);
 
   $type   = zu_sql_std_type ($table_name, $debug);
   $result = zu_sql_std_id_field ($type, $debug);
 
-  zu_debug("zu_sql_get_id_field ... done", $debug-1);
+  log_debug("zu_sql_get_id_field ... done", $debug-1);
 
   return $result;
 }

@@ -8,7 +8,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ function run_display_test ($debug) {
   // check if the about page contains at least some basic keywords
   $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
   $target = 'zukunft.com AG';
-  if (strpos($dsp_test, $target) > 0) {
+  if (strpos($result, $target) > 0) {
     $result = $target;
   } else {
     $result = '';

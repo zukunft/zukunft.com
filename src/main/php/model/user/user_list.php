@@ -51,7 +51,7 @@ class user_list {
 
   // return a list of all users that have done at least one modification compared to the standard
   function load_active ($debug) {
-    zu_debug('user_list->load_active', $debug-10);
+    log_debug('user_list->load_active', $debug-10);
 
     global $db_con;
 
@@ -79,7 +79,7 @@ class user_list {
     $db_con->usr_id = $usr->id;
     $this->load_sql($sql, $debug);
 
-    zu_debug('user_list->load_active -> ('.count($this->usr_lst).')', $debug-5);
+    log_debug('user_list->load_active -> ('.count($this->usr_lst).')', $debug-5);
     return $this->usr_lst;
   }
 

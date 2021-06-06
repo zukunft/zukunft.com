@@ -51,7 +51,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /* open database */
-$db_con = zu_start("word_add", "", $debug);
+$db_con = prg_start("word_add", "", $debug);
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -121,7 +121,7 @@ $db_con = zu_start("word_add", "", $debug);
           } else {
           */
           $msg .= $trm->id_used_msg($debug-1);
-          zu_debug('word_add -> ', $debug);
+          log_debug('word_add -> ', $debug);
           //}  
         }  
       
@@ -135,7 +135,7 @@ $db_con = zu_start("word_add", "", $debug);
         $lnk_test->load($debug-1);
         if ($lnk_test->id > 0) {
           $lnk_test->load_objects($debug-1);
-          zu_debug('word_add -> check forward link '.$wrd_id.' '.$vrb_id.' '.$wrd_to.'', $debug-1);
+          log_debug('word_add -> check forward link '.$wrd_id.' '.$vrb_id.' '.$wrd_to.'', $debug-1);
           $msg .= '"'.$lnk_test->from_name.' '.$lnk_test->verb_name.' '.$lnk_test->to_name.'" already exists. ';
         }
         $lnk_rev = New word_link;
@@ -152,7 +152,7 @@ $db_con = zu_start("word_add", "", $debug);
       
       // if the parameters are fine ...
       if ($msg == '') {
-        zu_debug('word_add -> no msg', $debug);
+        log_debug('word_add -> no msg', $debug);
         $add_result = '';
         // ... add the new word to the database
         if ($wrd->name <> "") {
@@ -161,10 +161,10 @@ $db_con = zu_start("word_add", "", $debug);
           $wrd->id = $wrd_id;
           $wrd->load($debug-1);
         }
-        zu_debug('word_add -> test word', $debug);
+        log_debug('word_add -> test word', $debug);
         if ($wrd->id > 0 AND $vrb_id <> 0 AND $wrd_to > 0) {
           // ... and link it to an existing word
-          zu_debug('word_add -> word '.$wrd->id.' linked via '.$vrb_id.' to '.$wrd_to.': '.$add_result, $debug-1);
+          log_debug('word_add -> word '.$wrd->id.' linked via '.$vrb_id.' to '.$wrd_to.': '.$add_result, $debug-1);
           $lnk = New word_link;
           $lnk->usr     = $usr;
           $lnk->from_id = $wrd->id;
@@ -199,4 +199,4 @@ $db_con = zu_start("word_add", "", $debug);
 
   echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

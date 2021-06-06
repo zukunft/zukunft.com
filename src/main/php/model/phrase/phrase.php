@@ -50,7 +50,7 @@ class phrase {
   
   //  load either a word or triple
   function load ($debug) {
-    zu_debug('phrase->load '.$this->dsp_id(), $debug-10);
+    log_debug('phrase->load '.$this->dsp_id(), $debug-10);
     $result = '';
     if ($this->id < 0) {
       $lnk = New word_link;
@@ -59,7 +59,7 @@ class phrase {
       $lnk->load($debug-1);
       $this->obj  = $lnk;
       $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
-      zu_debug('phrase->loaded triple '.$this->dsp_id(), $debug-14);
+      log_debug('phrase->loaded triple '.$this->dsp_id(), $debug-14);
     } elseif ($this->id > 0) {
       $wrd = New word_dsp;
       $wrd->id  = $this->id;
@@ -67,7 +67,7 @@ class phrase {
       $wrd->load($debug-1);
       $this->obj  = $wrd;
       $this->name = $wrd->name;
-      zu_debug('phrase->loaded word '.$this->dsp_id(), $debug-14);
+      log_debug('phrase->loaded word '.$this->dsp_id(), $debug-14);
     } elseif ($this->name <> '') {
       // add to load word link
       $trm = New term;
@@ -77,33 +77,33 @@ class phrase {
       if ($trm->type == 'word') {
         $this->obj = $trm->obj;
         $this->id  = $trm->id;
-        zu_debug('phrase->loaded word '.$this->dsp_id().' by name', $debug-14);
+        log_debug('phrase->loaded word '.$this->dsp_id().' by name', $debug-14);
       } elseif ($trm->type == 'triple') {
         $this->obj = $trm->obj;
         $this->id  = $trm->id * -1;
-        zu_debug('phrase->loaded triple '.$this->dsp_id().' by name', $debug-14);
+        log_debug('phrase->loaded triple '.$this->dsp_id().' by name', $debug-14);
       } elseif ($trm->type == 'formula') {
         if (isset($trm->obj->name_wrd)) {
           $this->obj = $trm->obj->name_wrd;
           $this->id  = $trm->obj->name_wrd->id;
-          zu_debug('phrase->loaded formula '.$this->dsp_id().' by name', $debug-14);
+          log_debug('phrase->loaded formula '.$this->dsp_id().' by name', $debug-14);
         }
       } else {
         if ($this->type_name == '') {
           // TODO check that this is never used for an error detection
           //zu_err('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         } else {  
-          zu_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         }
       }
     }
-    zu_debug('phrase->load done '.$this->dsp_id(), $debug-14);
+    log_debug('phrase->load done '.$this->dsp_id(), $debug-14);
     return $result;
   }
   
   // 
   function main_word ($debug) {
-    zu_debug('phrase->main_word '.$this->dsp_id(), $debug-10);
+    log_debug('phrase->main_word '.$this->dsp_id(), $debug-10);
     $result = Null;
 
     if ($this->id == 0 OR $this->name == '') {
@@ -116,20 +116,20 @@ class phrase {
     } elseif ($this->id > 0) {
       $result = $this->obj;
     } else {
-      zu_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->main_word", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->main_word", '', (new Exception)->getTraceAsString(), $this->usr);
     }
-    zu_debug('phrase->main_word done '.$result->dsp_id(), $debug-14);
+    log_debug('phrase->main_word done '.$result->dsp_id(), $debug-14);
     return $result;
   }
   
   function type_id ($debug) {
-    zu_debug('phrase->type_id '.$this->dsp_id(), $debug-10);
+    log_debug('phrase->type_id '.$this->dsp_id(), $debug-10);
     $result = Null;
 
     $wrd = $this->main_word($debug-1);
     $result = $wrd->type_id;
     
-    zu_debug('phrase->type_id for '.$this->dsp_id().' is '.$result, $debug-10);
+    log_debug('phrase->type_id for '.$this->dsp_id().' is '.$result, $debug-10);
     return $result;
   }
   
@@ -141,13 +141,13 @@ class phrase {
   
   // get a list of all values related to this phrase
   function val_lst ($debug) {
-    zu_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-12);
+    log_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-12);
     $val_lst = New value_list;
     $val_lst->usr = $this->usr;
     $val_lst->phr = $this;
     $val_lst->page_size = SQL_ROW_MAX;
     $val_lst->load($debug-1);
-    zu_debug('phrase->val_lst -> got '.count($val_lst->lst), $debug-14);
+    log_debug('phrase->val_lst -> got '.count($val_lst->lst), $debug-14);
     return $val_lst;    
   }
   
@@ -189,7 +189,7 @@ class phrase {
   
   function dsp_tbl ($debug) {
     if (!isset($this->obj)) { $this->load($debug-1); }
-    zu_debug('phrase->dsp_tbl for '.$this->dsp_id(), $debug-10);
+    log_debug('phrase->dsp_tbl for '.$this->dsp_id(), $debug-10);
     // the function dsp_tbl should exists for words and triples
     $result = $this->obj->dsp_tbl($debug-1);
     return $result;
@@ -200,7 +200,7 @@ class phrase {
     if (isset($this->obj)) {
       $result = $this->obj->dsp_tbl_row($debug-1);
     } else {
-      zu_err('The phrase object is missing for '.$this->dsp_id().'.', "formula_value->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('The phrase object is missing for '.$this->dsp_id().'.', "formula_value->load", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     return $result;
   }
@@ -228,7 +228,7 @@ class phrase {
     $phr_lst = New phrase_list;
     $phr_lst->usr = $this->usr;
     $phr_lst->add($this, $debug-1);
-    zu_debug('phrase->lst -> '.$phr_lst->name($debug-1), $debug-18);
+    log_debug('phrase->lst -> '.$phr_lst->name($debug-1), $debug-18);
     return $phr_lst;
   }
 
@@ -237,7 +237,7 @@ class phrase {
     $this_lst = $this->lst($debug-1);
     $phr_lst = $this_lst->is($debug-1);
     //$phr_lst->add($this,$debug-1);
-    zu_debug('phrase->is -> '.$this->dsp_id().' is a '.$phr_lst->name($debug-1), $debug-8);
+    log_debug('phrase->is -> '.$this->dsp_id().' is a '.$phr_lst->name($debug-1), $debug-8);
     return $phr_lst;
   }
 
@@ -259,7 +259,7 @@ class phrase {
   // true if the word id has a "is a" relation to the related word
   // e.g.for the given word string
   function is_a ($related_phrase, $debug) {
-    zu_debug('phrase->is_a ('.$this->dsp_id().','.$related_phrase->name.')', $debug-10);
+    log_debug('phrase->is_a ('.$this->dsp_id().','.$related_phrase->name.')', $debug-10);
 
     $result = false;
     $is_phrases = $this->is($debug-1); // should be taken from the original array to increase speed
@@ -267,13 +267,13 @@ class phrase {
       $result = true;
     }
     
-    zu_debug('phrase->is_a -> '.zu_dsp_bool($result).''.$this->id, $debug-10);
+    log_debug('phrase->is_a -> '.zu_dsp_bool($result).''.$this->id, $debug-10);
     return $result;
   }
 
   // SQL to list the user phrases (related to a type if needed)
   function sql_list ($type, $debug) {
-    zu_debug('phrase->sql_list', $debug-10);
+    log_debug('phrase->sql_list', $debug-10);
         
     $sql_type_from  = '';
     $sql_type_where = '';
@@ -387,7 +387,7 @@ class phrase {
              WHERE p.excluded = 0
           GROUP BY p.name
           ORDER BY p.name;';
-    zu_debug('phrase->sql_list -> '.$sql, $debug-10);
+    log_debug('phrase->sql_list -> '.$sql, $debug-10);
     return $sql;
   }
   
@@ -401,7 +401,7 @@ class phrase {
   // if one form contains more than one selector, $pos is used for identification
   // $type is a word to preselect the list to only those phrases matching this type
   function dsp_selector ($type, $form_name, $pos, $class, $back, $debug) {
-    zu_debug('phrase->dsp_selector -> type "'.$type->name.'" with id '.$this->id.' selected for form '.$form_name.''.$pos, $debug-10);
+    log_debug('phrase->dsp_selector -> type "'.$type->name.'" with id '.$this->id.' selected for form '.$form_name.''.$pos, $debug-10);
     $result = '';
     
     if ($pos > 0) {
@@ -430,14 +430,14 @@ class phrase {
     $sel->dummy_text = '... please select';
     $result .= $sel->display ($debug-1);
     
-    zu_debug('phrase->dsp_selector -> done ', $debug-10);
+    log_debug('phrase->dsp_selector -> done ', $debug-10);
     return $result;
   }
     
   // simply to display a single word and allow to delete it
   // used by value->dsp_edit
   function dsp_name_del ($del_call, $debug) {
-    zu_debug('phrase->dsp_name_del', $debug-10);
+    log_debug('phrase->dsp_name_del', $debug-10);
     if ($this->id > 0) {
       $result = $this->dsp_name_del($del_call, $debug-1);
     } else {
@@ -459,7 +459,7 @@ class phrase {
     if (count($is_wrd_lst->lst) >= 1) {
       $result = $is_wrd_lst->lst[0];
     }
-    zu_debug('phrase->is_mainly -> ('.$this->dsp_id().' is a '.$result->name.')', $debug-8);
+    log_debug('phrase->is_mainly -> ('.$this->dsp_id().' is a '.$result->name.')', $debug-8);
     return $result;
   }
   

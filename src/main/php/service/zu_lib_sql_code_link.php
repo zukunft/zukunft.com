@@ -237,7 +237,7 @@ $dbl_protection_types = array();
 // if the code_id does not exist the missing record is created
 // the code_id is always saved in the 20 char long field code_id
 function sql_code_link($code_id, $description, $debug = 0) {
-  zu_debug("sql_code_link (".$code_id.",".$description.")", $debug-10);
+  log_debug("sql_code_link (".$code_id.",".$description.")", $debug-10);
 
   global $db_con;
 
@@ -422,7 +422,7 @@ function sql_code_link($code_id, $description, $debug = 0) {
   } */
 
   if ($table_name == '' AND $db_type == '') {
-    zu_debug('table name for code_id '.$code_id.' ('.$db_type.') not found <br>', $debug-14);
+    log_debug('table name for code_id '.$code_id.' ('.$db_type.') not found <br>', $debug-14);
   } else {
     $result = '';
     //$db_con = new mysql;
@@ -442,19 +442,19 @@ function sql_code_link($code_id, $description, $debug = 0) {
       } else {  
         $result .= $db_con->insert(DBL_FIELD, $code_id, $debug-14);
       }  
-      zu_debug ('inserted '.$code_id.'<br>', $debug-14);
+      log_debug ('inserted '.$code_id.'<br>', $debug-14);
       // get the id of the inserted row
       $row_id = $db_con->get_id_from_code($code_id, $debug-14);
-      zu_debug ('inserted '.$code_id.' as '.$row_id.'<br>', $debug-14);
+      log_debug ('inserted '.$code_id.' as '.$row_id.'<br>', $debug-14);
     } else {
-      zu_debug ('found '.$code_id.' as '.$row_id.'<br>', $debug-14);
+      log_debug ('found '.$code_id.' as '.$row_id.'<br>', $debug-14);
     }
 
     // set the name as default
     if ($row_id > 0 AND $description <> '') {
       $row_name = $db_con->get_name($row_id, $debug-14);
       if ($row_name == '') {
-        zu_debug ('add '.$description.'<br>', $debug-14);
+        log_debug ('add '.$description.'<br>', $debug-14);
         $result .= $db_con->update_name($row_id, $description, $debug-14);
       }
     }
@@ -462,7 +462,7 @@ function sql_code_link($code_id, $description, $debug = 0) {
     $db_con->type = $db_value_type;
   }
 
-  zu_debug("sql_code_link ... done", $debug-14);
+  log_debug("sql_code_link ... done", $debug-14);
 
   return $row_id;
 } 

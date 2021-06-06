@@ -50,7 +50,7 @@ class formula_list {
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a list of formulas.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a list of formulas.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {  
 
       // set the where clause depending on the given selection parameters
@@ -67,7 +67,7 @@ class formula_list {
           $sql_from = 'formula_links l, formulas f';
           $sql_where = 'l.phrase_id IN ('.$this->phr_lst->ids_txt().') AND l.formula_id = f.formula_id';
         } else {
-          zu_err("A phrase list is set (".$this->phr_lst->dsp_id()."), but the id list is ".$this->phr_lst->ids_txt().".", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err("A phrase list is set (".$this->phr_lst->dsp_id()."), but the id list is ".$this->phr_lst->ids_txt().".", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
         
           $sql_from = 'formula_links l, formulas f';
           $sql_where = 'l.formula_id = f.formula_id';
@@ -80,9 +80,9 @@ class formula_list {
 
       if ($sql_where == '') {
         // activate this error message for page loading of the complete formula list
-        zu_err("Either the word or the ID list must be set for loading.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("Either the word or the ID list must be set for loading.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
-        zu_debug('formula_list->load by ('.$sql_where.')', $debug-22);
+        log_debug('formula_list->load by ('.$sql_where.')', $debug-22);
         // the formula name is excluded from the user sandbox to avoid confusion
         $sql = "SELECT f.formula_id,
                        f.formula_name,
@@ -170,7 +170,7 @@ class formula_list {
   
   // lists all formulas with results related to a word
   function display($debug) {
-    zu_debug('formula_list->display '.$this->dsp_id(), $debug-10);
+    log_debug('formula_list->display '.$this->dsp_id(), $debug-10);
     $result = '';
 
     $type = 'short';
@@ -199,7 +199,7 @@ class formula_list {
       }
     }  
 
-    zu_debug("formula_list->display ... done (".$result.")", $debug-1);
+    log_debug("formula_list->display ... done (".$result.")", $debug-1);
     return $result;
   }
 

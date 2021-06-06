@@ -13,7 +13,7 @@ if ($debug > 0) {
 }
 
 // open database
-$db_con = zu_start("test_single", "", $debug);
+$db_con = prg_start("test_single", "", $debug);
 
 $result = ''; // reset the html code var
 
@@ -22,7 +22,7 @@ $result .= $usr->get($debug - 1);
 
 // todo review
 if ($usr->id <= 0) {
-    $result = zu_err('User has is not permitted', 'test_single');
+    $result = log_err('User has is not permitted', 'test_single');
 } else {
 
     // load the testing functions
@@ -82,4 +82,4 @@ if ($usr->id <= 0) {
 
 echo $result;
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

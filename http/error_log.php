@@ -16,7 +16,7 @@
 
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
-$db_con = zu_start("error_log", "", $debug);
+$db_con = prg_start("error_log", "", $debug);
 
   $result = ''; // reset the html code var
 
@@ -85,7 +85,7 @@ $db_con = zu_start("error_log", "", $debug);
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
     if ($err_id > 0) {
-      zu_debug("error_log -> (".$err_id.")", $debug-1);
+      log_debug("error_log -> (".$err_id.")", $debug-1);
       // prepare the display to edit the view
       $dsp = new view_dsp;
       $dsp->usr = $usr;
@@ -99,4 +99,4 @@ $db_con = zu_start("error_log", "", $debug);
   echo $result;
 
 // Closing connection
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

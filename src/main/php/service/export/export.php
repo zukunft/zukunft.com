@@ -49,11 +49,11 @@ class export {
   
   // export zukunft.com data as object for creating e.g. a json message
   function get ($debug) {
-    zu_debug('export->get', $debug-10);
+    log_debug('export->get', $debug-10);
     $export_obj = Null;
     
     if (count($this->phr_lst) <= 0) {
-      zu_warning("No words to filter the export are defined.","export->get", '', (new Exception)->getTraceAsString(), $this->usr); 
+      log_warning("No words to filter the export are defined.","export->get", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // 1. create the header
@@ -67,17 +67,17 @@ class export {
 
       // 2. collect values linked to the user selected words
       //    e.g. if carrots are selected get the climate gas emissions per weight percent
-      zu_debug('export->get values', $debug-16);
+      log_debug('export->get values', $debug-16);
       $val_lst = $this->phr_lst->val_lst($debug-1);
       
       // 3. get all words and triples needed for the values that should be exported
       //    e.g. carrots, climate gas emission (CO2, methane), weight, percent
-      zu_debug('export->get words and triples', $debug-16);
+      log_debug('export->get words and triples', $debug-16);
       $this->phr_lst->merge($val_lst->phr_lst_all($debug-1), $debug-1);
       $wrd_lst = $this->phr_lst->wrd_lst_all($debug-1);
       
       // 4. export all words that have a special type or any other non default setting
-      zu_debug('export->get typed words', $debug-16);
+      log_debug('export->get typed words', $debug-16);
       $exp_words = array();
       foreach ($wrd_lst->lst AS $wrd) {
         if (get_class($wrd) == 'word' or get_class($wrd) == 'word_dsp') {
@@ -88,16 +88,16 @@ class export {
             }
           }  
         } else {
-          zu_err('The function wrd_lst_all returns '.$wrd->dsp_id().', which is '.get_class($wrd).', but not a word.','export->get', '', (new Exception)->getTraceAsString(), $this->usr); 
+          log_err('The function wrd_lst_all returns '.$wrd->dsp_id().', which is '.get_class($wrd).', but not a word.','export->get', '', (new Exception)->getTraceAsString(), $this->usr);
         }
       }
-      zu_debug('export->get typed words done', $debug-18);
+      log_debug('export->get typed words done', $debug-18);
       if (count($exp_words) > 0) {
         $export_obj->words = $exp_words;
       }  
       
       // 5. export all word relations
-      zu_debug('export->get triples', $debug-16);
+      log_debug('export->get triples', $debug-16);
       $lnk_lst = $this->phr_lst->wrd_lnk_lst($debug-1);
       $exp_triples = array();
       foreach ($lnk_lst->lst AS $lnk) {
@@ -111,7 +111,7 @@ class export {
       }  
 
       // 6. export all used formula relations to reproduce the results
-      zu_debug('export->get formulas', $debug-16);
+      log_debug('export->get formulas', $debug-16);
       $frm_lst = $this->phr_lst->frm_lst($debug-1);
       $exp_formulas = array();
       foreach ($frm_lst->lst AS $frm) {
@@ -123,9 +123,9 @@ class export {
       $export_obj->formulas = $exp_formulas;
 
       // 7. add all sources to the export object
-      zu_debug('export->get sources', $debug-16);
+      log_debug('export->get sources', $debug-16);
       $source_lst = $val_lst->source_lst($debug-1);
-      zu_debug('export->got '.count($source_lst).' sources', $debug-18);
+      log_debug('export->got '.count($source_lst).' sources', $debug-18);
       $exp_sources = array();
       foreach ($source_lst AS $src) {
         if (isset($src)) {
@@ -140,7 +140,7 @@ class export {
       }  
 
       // 8. add all values to the export object
-      zu_debug('export->get values', $debug-16);
+      log_debug('export->get values', $debug-16);
       $exp_values = array();
       foreach ($val_lst->lst AS $val) {
         if (isset($val)) {
@@ -154,7 +154,7 @@ class export {
       
       // 9. add all views and view components to the export object
       // TODO create an array add function that does not add duplicates
-      zu_debug('export->get views', $debug-16);
+      log_debug('export->get views', $debug-16);
       //$wrd_lst = $phr_lst_used->wrd_lst_all($debug-1);
       $view_lst = $wrd_lst->view_lst($debug-1);
       $exp_view_lst = array();
@@ -164,13 +164,13 @@ class export {
       $export_obj->views = $exp_view_lst;
       
       // 10. just for validating the import: add all formula results to the export
-      zu_debug('export->get formula results', $debug-16);
+      log_debug('export->get formula results', $debug-16);
       
       // 11. just for validating the import: add "screenshots" of the views to the export
-      zu_debug('export->get screenshots', $debug-16);
+      log_debug('export->get screenshots', $debug-16);
     }  
     
-    zu_debug('export->get ... done', $debug-10);
+    log_debug('export->get ... done', $debug-10);
     return $export_obj;    
   }
   

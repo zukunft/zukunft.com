@@ -81,7 +81,7 @@ class view extends user_sandbox {
     }
 
     if ($sql_where == '') {
-      $result .= zu_err('Cannot load standard view because ID and name are missing', 'view->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
+      $result .= log_err('Cannot load standard view because ID and name are missing', 'view->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
     } else{  
       $sql = "SELECT m.view_id,
                      m.user_id,
@@ -129,9 +129,9 @@ class view extends user_sandbox {
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } elseif ($this->id <= 0 AND $this->code_id == '' AND $this->name == '') {  
-      zu_err("Either the database ID (".$this->id."), the name (".$this->name.") or the code_id (".$this->code_id.") and the user (".$this->usr->id.") must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("Either the database ID (".$this->id."), the name (".$this->name.") or the code_id (".$this->code_id.") and the user (".$this->usr->id.") must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // set the where clause depending on the values given
@@ -145,7 +145,7 @@ class view extends user_sandbox {
       }
 
       if ($sql_where == '') {
-        zu_err("Internal error on the where clause.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("Internal error on the where clause.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
       } else{  
         $sql = "SELECT m.view_id,
                        u.view_id AS user_view_id,
@@ -173,7 +173,7 @@ class view extends user_sandbox {
           $this->excluded   = $db_view['excluded'];
           // because system masks can be created 
         } 
-        zu_debug('view->load '.$this->dsp_id(), $debug-10);
+        log_debug('view->load '.$this->dsp_id(), $debug-10);
       }  
     }
     return $result;
@@ -181,7 +181,7 @@ class view extends user_sandbox {
     
   // load all parts of this view for this user
   function load_components($debug) {
-    zu_debug('view->load_components for '.$this->dsp_id(), $debug-10);
+    log_debug('view->load_components for '.$this->dsp_id(), $debug-10);
 
     global $db_con;
 
@@ -211,7 +211,7 @@ class view extends user_sandbox {
               WHERE l.view_id = ".$this->id." 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY IF(y.order_nbr IS NULL, l.order_nbr, y.order_nbr);";
-    zu_debug("view->load_components ... ".$sql, $debug-12);
+    log_debug("view->load_components ... ".$sql, $debug-12);
     //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_lst = $db_con->get($sql, $debug-8);  
@@ -237,7 +237,7 @@ class view extends user_sandbox {
         $this->cmp_lst[]          = $new_entry;
       }
     }
-    zu_debug('view->load_components '.count($this->cmp_lst).' loaded for '.$this->dsp_id(), $debug-8);
+    log_debug('view->load_components '.count($this->cmp_lst).' loaded for '.$this->dsp_id(), $debug-8);
 
     return $this->cmp_lst;
   }
@@ -246,7 +246,7 @@ class view extends user_sandbox {
   // the view type defines something like the basic setup of a view
   // e.g. the catch view does not have the header, whereas all other views have
   function dsp_type_open($debug) {
-    zu_debug('view->dsp_type_open ('.$this->type_id.')', $debug-10);
+    log_debug('view->dsp_type_open ('.$this->type_id.')', $debug-10);
     $result = '';
     // move to database !!
     // but avoid security leaks
@@ -258,7 +258,7 @@ class view extends user_sandbox {
   }
 
   function dsp_type_close($debug) {
-    zu_debug('view->dsp_type_close ('.$this->type_id.')', $debug-10);
+    log_debug('view->dsp_type_close ('.$this->type_id.')', $debug-10);
     $result = '';
     // move to a view component function
     // for the word array build an object
@@ -289,13 +289,13 @@ class view extends user_sandbox {
   
   // return the html code of all view components
   function dsp_entries($wrd, $back, $debug) {
-    zu_debug('view->dsp_entries "'.$wrd->name.'" with the view '.$this->dsp_id().' for user "'.$this->usr->name.'"', $debug-10);
+    log_debug('view->dsp_entries "'.$wrd->name.'" with the view '.$this->dsp_id().' for user "'.$this->usr->name.'"', $debug-10);
 
     $result = '';
     $word_array = array();
     $this->load_components($debug-1);
     foreach ($this->cmp_lst AS $cmp) {
-      zu_debug('view->dsp_entries ... "'.$cmp->name.'" type "'.$cmp->type_id.'"', $debug-6);
+      log_debug('view->dsp_entries ... "'.$cmp->name.'" type "'.$cmp->type_id.'"', $debug-6);
       
       // list of all possible view components
       $result .= $cmp->text            ($debug-1);        // just to display a simple text
@@ -312,7 +312,7 @@ class view extends user_sandbox {
       $result .= $cmp->all             ($wrd, $back, $debug-1); // shows all: all words that link to the given word and all values related to the given word
     }
 
-    zu_debug('view->dsp_entries ... done', $debug-10);
+    log_debug('view->dsp_entries ... done', $debug-10);
     return $result;
   }
 
@@ -334,7 +334,7 @@ class view extends user_sandbox {
   // view_type_id is used to .... remove???
   // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
   function display ($wrd, $back, $debug) {
-    zu_debug('view->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'"', $debug-10);
+    log_debug('view->display "'.$wrd->name.'" with the view '.$this->dsp_id().' (type '.$this->type_id.')  for user "'.$this->usr->name.'"', $debug-10);
     $result = '';
     
     // check and correct the parameters
@@ -343,7 +343,7 @@ class view extends user_sandbox {
     }
 
     if ($this->id <= 0) {
-      zu_err("The view id must be loaded to display it.", "view->display", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The view id must be loaded to display it.", "view->display", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       // display always the view name in the top right corner and allow the user to edit the view
       $result .= $this->dsp_type_open($debug-1);
@@ -351,14 +351,14 @@ class view extends user_sandbox {
       $result .= $this->dsp_entries($wrd, $back, $debug-1);
       $result .= $this->dsp_type_close($debug-1);
     }
-    zu_debug('view->display ... done', $debug-18);
+    log_debug('view->display ... done', $debug-18);
     
     return $result;
   }
   
   // create an object for the export
   function export_obj ($debug) {
-    zu_debug('view->export_obj '.$this->dsp_id(), $debug-10);
+    log_debug('view->export_obj '.$this->dsp_id(), $debug-10);
     $result = New view();
 
     // add the view parameters
@@ -375,13 +375,13 @@ class view extends user_sandbox {
     }
     $result->view_components = $exp_cmp_lst;
 
-    zu_debug('view->export_obj -> '.json_encode($result), $debug-18);
+    log_debug('view->export_obj -> '.json_encode($result), $debug-18);
     return $result;
   }
   
   // import a view from an object
   function import_obj ($json_obj, $debug) {
-    zu_debug('view->import_obj', $debug-10);
+    log_debug('view->import_obj', $debug-10);
     $result = '';
     
     foreach ($json_obj AS $key => $value) {
@@ -399,9 +399,9 @@ class view extends user_sandbox {
     
     if ($result == '') {
       $this->save($debug-1);
-      zu_debug('view->import_obj -> '.$this->dsp_id(), $debug-18);
+      log_debug('view->import_obj -> '.$this->dsp_id(), $debug-18);
     } else {
-      zu_debug('view->import_obj -> '.$result, $debug-18);
+      log_debug('view->import_obj -> '.$result, $debug-18);
     }
 
     return $result;
@@ -443,7 +443,7 @@ class view extends user_sandbox {
     $result = '';
     // check the all minimal input parameters
     if ($view_component_id <= 0) {
-      zu_err("The view component id must be given to move it.", "view->entry_up", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The view component id must be given to move it.", "view->entry_up", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       $cmp = new view_component_dsp;
       $cmp->id  = $view_component_id;
@@ -464,7 +464,7 @@ class view extends user_sandbox {
     $result = '';
     // check the all minimal input parameters
     if ($view_component_id <= 0) {
-      zu_err("The view component id must be given to move it.", "view->entry_down", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The view component id must be given to move it.", "view->entry_down", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
       $cmp = new view_component_dsp;
       $cmp->id  = $view_component_id;
@@ -482,7 +482,7 @@ class view extends user_sandbox {
   
   // create a selection page where the user can select a view that should be used for a word
   function selector_page ($wrd_id, $back, $debug) {
-    zu_debug('view->selector_page ('.$this->id.','.$wrd_id.')', $debug-10);
+    log_debug('view->selector_page ('.$this->id.','.$wrd_id.')', $debug-10);
 
     global $db_con;
     $result  = '';
@@ -515,7 +515,7 @@ class view extends user_sandbox {
       $result .= '<br>';
     }
 
-    zu_debug('view->selector_page ... done', $debug-1);
+    log_debug('view->selector_page ... done', $debug-1);
     return $result;
   }
 
@@ -524,7 +524,7 @@ class view extends user_sandbox {
     $result = false; 
     
     foreach ($dsp_lst AS $dsp_id) {
-      zu_debug('view->is_in_list '.$dsp_id.' = '.$this->id.'?', $debug-12);
+      log_debug('view->is_in_list '.$dsp_id.' = '.$this->id.'?', $debug-12);
       if ($dsp_id == $this->id) {
         $result = true; 
       }
@@ -536,7 +536,7 @@ class view extends user_sandbox {
   // create a database record to save user specific settings for this view
   function add_usr_cfg($debug) {
     $result = '';
-    zu_debug('view->add_usr_cfg '.$this->dsp_id(), $debug-10);
+    log_debug('view->add_usr_cfg '.$this->dsp_id(), $debug-10);
 
     global $db_con;
 
@@ -565,7 +565,7 @@ class view extends user_sandbox {
 
   // check if the database record for the user specific settings can be removed
   function del_usr_cfg_if_not_needed($debug) {
-    zu_debug('view->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
+    log_debug('view->del_usr_cfg_if_not_needed pre check for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-12);
 
     global $db_con;
     $result = false;
@@ -584,13 +584,13 @@ class view extends user_sandbox {
       //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
       $usr_cfg = $db_con->get1($sql, $debug-5);  
-      zu_debug('view->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
+      log_debug('view->del_usr_cfg_if_not_needed check for "'.$this->dsp_id().' und user '.$this->usr->name.' with ('.$sql.')', $debug-12);
       if ($usr_cfg['view_id'] > 0) {
         if ($usr_cfg['comment']      == ''
         AND $usr_cfg['view_type_id'] == Null
         AND $usr_cfg['excluded']     == Null) {
           // delete the entry in the user sandbox
-          zu_debug('view->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
+          log_debug('view->del_usr_cfg_if_not_needed any more for "'.$this->dsp_id().' und user '.$this->usr->name, $debug-10);
           $result .= $this->del_usr_cfg_exe($db_con, $debug-1);
         }  
       }  
@@ -637,7 +637,7 @@ class view extends user_sandbox {
     $result .= $this->save_field_comment  ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_type     ($db_con, $db_rec, $std_rec, $debug-1);
     $result .= $this->save_field_excluded ($db_con, $db_rec, $std_rec, $debug-1);
-    zu_debug('view->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
+    log_debug('view->save_fields all fields for '.$this->dsp_id().' has been saved', $debug-12);
     return $result;
   }
   

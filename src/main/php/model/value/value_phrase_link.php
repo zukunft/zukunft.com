@@ -83,7 +83,7 @@ class val_lnk {
       $this->val_id = $db_val['value_id'];
       $this->wrd_id = $db_val['phrase_id'];
     } else {
-      zu_err("Cannot find value word link, because neither the id nor the value and word are set","val_lnk->load");
+      log_err("Cannot find value word link, because neither the id nor the value and word are set","val_lnk->load");
     }
   }
 
@@ -93,16 +93,16 @@ class val_lnk {
     $result = true;
     
     if (isset($this->val)) {
-      zu_debug('val_lnk->used check if value with id '.$this->val->id.' has never been used', $debug-14);  
+      log_debug('val_lnk->used check if value with id '.$this->val->id.' has never been used', $debug-14);
       $result = $this->val->used($debug-1);
-      zu_debug('val_lnk->used for id '.$this->val->id.' is '.zu_dsp_bool($result), $debug-12);  
+      log_debug('val_lnk->used for id '.$this->val->id.' is '.zu_dsp_bool($result), $debug-12);
     }
     return $result;
   }
 
   // set the log entry parameter for a new value word link
   private function log_add($debug) {
-    zu_debug('val_lnk->log_add for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
+    log_debug('val_lnk->log_add for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);
     $log = New user_log_link;
     $log->usr       = $this->usr;
     $log->action    = 'add';
@@ -118,7 +118,7 @@ class val_lnk {
   // set the main log entry parameters for updating one value word link
   // e.g. if the entered the number for "interest income", but see that he has used the word "interest cost" and changes it to "interest income"
   private function log_upd($db_rec, $debug) {
-    zu_debug('val_lnk->log_upd for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
+    log_debug('val_lnk->log_upd for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);
     $log = New user_log_link;
     $log->usr       = $this->usr;
     $log->action    = 'update';
@@ -135,7 +135,7 @@ class val_lnk {
 
   // set the log entry parameter to remove a value word link
   private function log_del($debug) {
-    zu_debug('val_lnk->log_del for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);  
+    log_debug('val_lnk->log_del for "'.$this->wrd->id.' to '.$this->val->id, $debug-10);
     $log = New user_log_link;
     $log->usr       = $this->usr;
     $log->action    = 'del';
@@ -181,9 +181,9 @@ class val_lnk {
       $db_row = $db_con->get1($sql, $debug-1);
       $this->id = $db_row['value_phrase_link_id'];
       if ($this->id > 0) {
-        zu_err("Duplicate words (".$wrd_old_id.") for value ".$this->val_id." found and the automatic removal failed.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("Duplicate words (".$wrd_old_id.") for value ".$this->val_id." found and the automatic removal failed.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {  
-        zu_warning("Duplicate words (".$wrd_old_id.") for value ".$this->val_id." found, but they have been removed automatically.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_warning("Duplicate words (".$wrd_old_id.") for value ".$this->val_id." found, but they have been removed automatically.","val_lnk->update", '', (new Exception)->getTraceAsString(), $this->usr);
       } 
     }  
     return $result;
@@ -197,7 +197,7 @@ class val_lnk {
   // change a link of a word to a value
   // only allowed if the value has not yet been used
   function save($debug) {
-    zu_debug("val_lnk->save link word id ".$this->wrd->name." to ".$this->val->id." (link id ".$this->id." for user ".$this->usr->id.").", $debug-10);
+    log_debug("val_lnk->save link word id ".$this->wrd->name." to ".$this->val->id." (link id ".$this->id." for user ".$this->usr->id.").", $debug-10);
 
     global $db_con;
     //$db_con = new mysql;
@@ -207,7 +207,7 @@ class val_lnk {
     if (!$this->used($debug-1)) {
       // check if a new value is supposed to be added
       if ($this->id <= 0) {
-        zu_debug("val_lnk->save check if word ".$this->wrd->name." is already linked to ".$this->val->id.".", $debug-10);
+        log_debug("val_lnk->save check if word ".$this->wrd->name." is already linked to ".$this->val->id.".", $debug-10);
         // check if a value_phrase_link with the same word is already in the database
         $db_chk = New val_lnk;
         $db_chk->val = $this->val;
@@ -220,7 +220,7 @@ class val_lnk {
       }  
         
       if ($this->id <= 0) {
-        zu_debug('val_lnk->save add new value_phrase_link of "'.$this->wrd->name.'" to "'.$this->val->id.'"', $debug-12);
+        log_debug('val_lnk->save add new value_phrase_link of "'.$this->wrd->name.'" to "'.$this->val->id.'"', $debug-12);
         // log the insert attempt first
         $log = $this->log_add($debug-1);
         if ($log->id > 0) {
@@ -230,18 +230,18 @@ class val_lnk {
             // update the id in the log
             $result = $log->add_ref($this->id, $debug-1);
           } else {
-            zu_err("Adding value_phrase_link ".$this->val->id." failed.", "val_lnk->save");
+            log_err("Adding value_phrase_link ".$this->val->id." failed.", "val_lnk->save");
           }
         }  
       } else {
-        zu_debug('val_lnk->save update "'.$this->id.'"', $debug-12);
+        log_debug('val_lnk->save update "'.$this->id.'"', $debug-12);
         // read the database values to be able to check if something has been changed; done first, 
         // because it needs to be done for user and general formulas
         $db_rec = New val_lnk;
         $db_rec->id  = $this->id;
         $db_rec->usr = $this->usr;
         $db_rec->load($debug-1);
-        zu_debug("val_lnk->save -> database value_phrase_link loaded (".$db_rec->id.")", $debug-14);
+        log_debug("val_lnk->save -> database value_phrase_link loaded (".$db_rec->id.")", $debug-14);
 
         // update the linked word
         $result = $this->save_field_wrd ($db_con, $db_rec, $debug-1);
@@ -254,14 +254,14 @@ class val_lnk {
       // try to create a new value and link all words
       // if the value already exist, create a user entry
     }
-    zu_debug("val_lnk->save ... done", $debug-1);
+    log_debug("val_lnk->save ... done", $debug-1);
   }
     
   // remove a link
   // the user id is the user who has requested the change,
   // but it is a parameter and not part of the object, because there are not user specific value word links
   function del($user_id, $debug) {
-    zu_debug("val_lnk->del (v".$this->val_id.",t".$this->wrd->id.",u".$user_id.")", $debug-10);
+    log_debug("val_lnk->del (v".$this->val_id.",t".$this->wrd->id.",u".$user_id.")", $debug-10);
 
     global $db_con;
     $result = '';
@@ -280,7 +280,7 @@ class val_lnk {
       // if no create a new value
     }
 
-    zu_debug("val_lnk->del -> (".$result.")", $debug-1);
+    log_debug("val_lnk->del -> (".$result.")", $debug-1);
     return $result;    
   }
 

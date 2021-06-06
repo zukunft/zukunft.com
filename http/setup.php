@@ -23,12 +23,12 @@ The steps should be
 
 */
 
-$db_con = zu_start("setup", "center_form", $debug);
+$db_con = prg_start("setup", "center_form", $debug);
 
 // load the coded linked database rows with zukunft_init_data.sql
 $sql = $db_con->sql_of_code_linked_db_rows();
 if ($sql == false) {
-    zu_err('Cannot read the initial database data file', 'setup');
+    log_err('Cannot read the initial database data file', 'setup');
 } else {
     $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "setup");
 }
@@ -60,6 +60,6 @@ sql_code_link(SQL_LINK_TYPE_IS,      "is a", $debug);
 // these records are used for the test cases
 
 
-zu_debug ("setup ... done.", $debug);
+log_debug ("setup ... done.", $debug);
 
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);

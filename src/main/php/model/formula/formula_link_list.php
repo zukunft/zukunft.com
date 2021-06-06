@@ -44,7 +44,7 @@ class formula_link_list {
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to load a list of formula links.", "formula_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a list of formula links.", "formula_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
     } else {
 
       // set the where clause depending on the values given
@@ -56,7 +56,7 @@ class formula_link_list {
       }
 
       if ($sql_where == '') {
-        zu_err("The words assigned to a formula cannot be loaded because the formula is not defined.", "formula_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("The words assigned to a formula cannot be loaded because the formula is not defined.", "formula_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
       } else{  
         $sql = "SELECT DISTINCT 
                        l.formula_link_id,
@@ -85,14 +85,14 @@ class formula_link_list {
           $frm_lnk->excluded      = $db_row['excluded'];
           $this->lst[] = $frm_lnk;
         }
-        zu_debug('formula_link_list->load -> '.count($this->lst).' links loaded', $debug-10); 
+        log_debug('formula_link_list->load -> '.count($this->lst).' links loaded', $debug-10);
       }  
     }  
   }
     
   // get an array with all phrases linked of this list e.g. linked to one formula
   function phrase_ids($sbx, $debug) {
-    zu_debug('formula_link_list->ids', $debug-18);
+    log_debug('formula_link_list->ids', $debug-18);
     $result = array();
     
     foreach ($this->lst AS $frm_lnk) {
@@ -107,14 +107,14 @@ class formula_link_list {
       }  
     }
     
-    zu_debug('formula_link_list->ids -> got '.count($result), $debug-16);
+    log_debug('formula_link_list->ids -> got '.count($result), $debug-16);
     return $result;    
   }
   
   // delete all links without log because this is used only when deleting a formula
   // and the main event of deleting the formula is already logged
   function del_without_log($debug) {
-    zu_debug('formula_link_list->del_without_log', $debug-16);
+    log_debug('formula_link_list->del_without_log', $debug-16);
 
     global $db_con;
     $result = '';
@@ -129,11 +129,11 @@ class formula_link_list {
         $db_con->type   = 'formula_link';         
         $result .= $db_con->delete('formula_link_id', $frm_lnk->id, $debug-1);
       } else {
-        zu_err("Cannot delete a formula word link (id ".$frm_lnk->id."), which is used or created by another user.", "formula_link_list->del_without_log", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("Cannot delete a formula word link (id ".$frm_lnk->id."), which is used or created by another user.", "formula_link_list->del_without_log", '', (new Exception)->getTraceAsString(), $this->usr);
       }
     }
     
-    zu_debug('formula_link_list->del_without_log -> done', $debug-16);
+    log_debug('formula_link_list->del_without_log -> done', $debug-16);
     return $result;    
   }
   

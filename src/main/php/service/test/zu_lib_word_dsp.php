@@ -43,7 +43,7 @@
   
 zukunft.com - calc with words
 
-copyright 1995-2020 by zukunft.com AG, Zurich
+copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -64,14 +64,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // simply to display a single word and also get the name
 function zut_html_id ($id, $user_id, $debug) {
-  zu_debug('zut_html_id('.$id.')', $debug);
+  log_debug('zut_html_id('.$id.')', $debug);
   $result  = zut_html ($id, zut_name($id, $user_id), $debug-1);
   return $result;
 }
 
 // simply to display a single word
 function zut_html ($id, $name, $debug) {
-  zu_debug('zut_html', $debug);
+  log_debug('zut_html', $debug);
   $result  = '  <tr>'."\n";
   $result .= zut_html_tbl($id, $name, $debug-1);
   $result .= '  </tr>'."\n";
@@ -81,7 +81,7 @@ function zut_html ($id, $name, $debug) {
 // simply to display a single word and allow to delete it
 // used by zuv_dsp_add
 function zut_html_del ($id, $name, $del_call, $debug) {
-  zu_debug('zut_html', $debug);
+  log_debug('zut_html', $debug);
   $result  = '  <tr>'."\n";
   $result .= zut_html_tbl($id, $name, $debug-1);
   $result .= '    <td>'."\n";
@@ -108,7 +108,7 @@ function zut_link_style ($id, $name, $style, $debug) {
 
 // simply to display a single word in a table
 function zut_html_tbl ($id, $name, $intent, $debug) {
-  zu_debug('zut_tbl_html', $debug);
+  log_debug('zut_tbl_html', $debug);
   $result  = '    <td>'."\n";
   while ($intent > 0) {
     $result .= '&nbsp;';
@@ -121,7 +121,7 @@ function zut_html_tbl ($id, $name, $intent, $debug) {
 
 // simply to display a single word in a table as a header
 function zut_html_tbl_head ($id, $name, $debug) {
-  zu_debug('zut_html_tbl_head', $debug);
+  log_debug('zut_html_tbl_head', $debug);
   $result  = '    <th>'."\n";
   $result .= '      '.zut_link ($id, $name, $debug-1)."\n";
   $result .= '    </th>'."\n";
@@ -130,7 +130,7 @@ function zut_html_tbl_head ($id, $name, $debug) {
 
 // simply to display a single word in a table as a header
 function zut_html_tbl_head_right ($id, $name, $debug) {
-  zu_debug('zut_html_tbl_head_right', $debug);
+  log_debug('zut_html_tbl_head_right', $debug);
   $result  = '    <th>'."\n";
   $result .= '      <p align="right">'.zut_link ($id, $name, $debug-1).'</p>'."\n";
   $result .= '    </th>'."\n";
@@ -139,7 +139,7 @@ function zut_html_tbl_head_right ($id, $name, $debug) {
 
 // allow the user to unlick a word
 function zut_unlink_html ($link_id, $word_id, $debug) {
-  zu_debug('zut_unlink_html('.$link_id.')', $debug);
+  log_debug('zut_unlink_html('.$link_id.')', $debug);
   $result  = '    <td>'."\n";
   $result .= btn_del ("unlink word", "/http/link_del.php?id=".$link_id."&back=".$word_id);
   $result .= '    </td>'."\n";
@@ -148,7 +148,7 @@ function zut_unlink_html ($link_id, $word_id, $debug) {
 
 // display a word as the view header
 function zut_dsp_header ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_dsp_header ('.$wrd_id.')', $debug);
+  log_debug('zut_dsp_header ('.$wrd_id.')', $debug);
   $result  = '';
   
   if ($wrd_id <= 0) {
@@ -165,13 +165,13 @@ function zut_dsp_header ($wrd_id, $user_id, $debug) {
     $result .= '</h2>';
   }
     
-  zu_debug('zut_dsp_header done', $debug);
+  log_debug('zut_dsp_header done', $debug);
   return $result;
 }
 
 // display a word list as a text, means word by word within one line
 function zut_dsp_lst_txt ($wrd_lst, $debug) {
-  zu_debug('zut_dsp_lst_txt ('.implode(",",$wrd_lst).')', $debug);
+  log_debug('zut_dsp_lst_txt ('.implode(",",$wrd_lst).')', $debug);
   $result = '';
 
   foreach (array_keys($wrd_lst) AS $wrd_id) {
@@ -193,7 +193,7 @@ function zut_dsp_lst_txt ($wrd_lst, $debug) {
 // returns the html code to select a word that can be edit
 // database link must be open
 function zut_html_list_related ($id, $direction, $user_id, $debug) {
-  zu_debug('zut_html_list_related('.$id.','.$direction.',u'.$user_id.')', $debug);
+  log_debug('zut_html_list_related('.$id.','.$direction.',u'.$user_id.')', $debug);
   $result  = '';
 
   
@@ -227,22 +227,22 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
       $start_id = $id;
     }
     
-    zu_debug('zut_html_list_related link', $debug);
+    log_debug('zut_html_list_related link', $debug);
     
     // display the link type
     $num_rows = mysql_num_rows($sql_result);
     if ($num_rows > 1) {
       $result .= zut_plural ($id, $user_id, $debug);
-      zu_debug('zut_html_list_related plu', $debug);
+      log_debug('zut_html_list_related plu', $debug);
       if ($direction == "down") {
 	$result .= " " . zul_plural_reverse($link_type_id);
       } else {  
 	$result .= " " . zul_plural($link_type_id);
       }
     } else {  
-      zu_debug('zut_html_list_related rev', $debug);
+      log_debug('zut_html_list_related rev', $debug);
       $result .= zut_name ($id, $user_id, $debug);
-      zu_debug('zut_html_list_related revn', $debug);
+      log_debug('zut_html_list_related revn', $debug);
       if ($direction == "down") {
 	$result .= " " . zul_reverse($link_type_id);
       } else {  
@@ -250,18 +250,18 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
       }
     }
 
-    zu_debug('zut_html_list_related link done', $debug);
+    log_debug('zut_html_list_related link done', $debug);
     
     // display the words
     $result .= '<table class="table col-sm-5 table-borderless">';
     while ($word_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
       $result .= '  <tbody><tr>'."\n";
       $result .= zut_html_tbl($word_entry[0], $word_entry[1], $debug-1);
-      zu_debug('zut_html_list_related btn link', $debug);
+      log_debug('zut_html_list_related btn link', $debug);
       $result .= zutl_btn_edit ($word_entry[3], $id, $debug-1);
-      zu_debug('zut_html_list_related btn link done', $debug);
+      log_debug('zut_html_list_related btn link done', $debug);
       $result .= zut_unlink_html ($word_entry[3], $id, $debug-1);
-      zu_debug('zut_html_list_related btn unlink done', $debug);
+      log_debug('zut_html_list_related btn unlink done', $debug);
       $result .= '  </tr>'."\n";
       $result .= '  </tbody>'."\n";
       //$result .= zut_html($word_entry[0], $word_entry[1], $debug);
@@ -271,7 +271,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
         $last_linked_word_id = $word_entry[0];
       }  
     }
-    zu_debug('zut_html_list_related btn done', $debug);
+    log_debug('zut_html_list_related btn done', $debug);
 
     // in case of the verb "following" continue the series after the last element
     if ($link_type_id == cl(SQL_LINK_TYPE_FOLLOW)) {
@@ -299,7 +299,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
 
 // display a list of words that match to the given pattern
 function zut_dsp_like ($word_pattern, $user_id, $debug) {
-  zu_debug('zut_dsp_like ('.$word_pattern.',u'.$user_id.')', $debug);
+  log_debug('zut_dsp_like ('.$word_pattern.',u'.$user_id.')', $debug);
   $result  = '';
 
   $back_link = 1;
@@ -329,7 +329,7 @@ function zut_dsp_like ($word_pattern, $user_id, $debug) {
 
 // list of related words filtered by a link type
 function zut_dsp_list_wrd_val ($wrd_id, $col_wrd_id, $user_id, $debug) {
-  zu_debug('zut_dsp_list_wrd_val (rt'.$wrd_id.',ct'.$col_wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_dsp_list_wrd_val (rt'.$wrd_id.',ct'.$col_wrd_id.',u'.$user_id.')', $debug);
   $result = '';
   
   $result .= zut_dsp_header ($wrd_id, $user_id, $debug);
@@ -337,10 +337,10 @@ function zut_dsp_list_wrd_val ($wrd_id, $col_wrd_id, $user_id, $debug) {
   //$result .= zut_name($wrd_id, $user_id, $debug-1)."<br>";
   //$result .= zut_name($col_wrd_id, $user_id, $debug-1)."<br>";
   
-  zu_debug('zut_dsp_list_wrd_val -> get columns "'.implode('","',$col_lst).'"', $debug);
+  log_debug('zut_dsp_list_wrd_val -> get columns "'.implode('","',$col_lst).'"', $debug);
   $row_lst = zut_lst_are($wrd_id, $user_id, $debug-1);
   $col_lst = zut_lst_are($col_wrd_id, $user_id, $debug-1);
-  zu_debug('zut_dsp_list_wrd_val -> columns "'.implode('","',$col_lst).'"', $debug);
+  log_debug('zut_dsp_list_wrd_val -> columns "'.implode('","',$col_lst).'"', $debug);
 
   asort($row_lst);
   asort($col_lst);
@@ -349,7 +349,7 @@ function zut_dsp_list_wrd_val ($wrd_id, $col_wrd_id, $user_id, $debug) {
   //$result    .= zuv_dsp_matrix($val_matrix, $user_id, $debug-1);
   
   
-  zu_debug('zut_dsp_list_wrd_val -> table', $debug);
+  log_debug('zut_dsp_list_wrd_val -> table', $debug);
 
   // display the words
   $row_nbr = 0;
@@ -424,7 +424,7 @@ function zut_dsp_list_wrd_val ($wrd_id, $col_wrd_id, $user_id, $debug) {
 // returns the html code to select a word
 // database link must be open
 function zut_html_selector_word ($id, $pos, $form_name, $debug) {
-  zu_debug('zut_html_selector_word ... word id '.$id, $debug);
+  log_debug('zut_html_selector_word ... word id '.$id, $debug);
   
   //$result = zuh_selector("word",      "word_add", "SELECT word_id, word_name FROM words;", $id);
   if ($pos > 0) {
@@ -435,19 +435,19 @@ function zut_html_selector_word ($id, $pos, $form_name, $debug) {
   $result = zuh_selector($field_id, $form_name, "SELECT word_id, word_name FROM words ORDER BY word_name;", $id, "", $debug);
   //zuh_selector ($name, $form, $query, $selected, $debug)
   
-  zu_debug('zut_html_selector_word ... done '.$id, $debug);
+  log_debug('zut_html_selector_word ... done '.$id, $debug);
   return $result;
 }
 
 function zut_html_selector_word_time ($id, $debug) {
-  zu_debug('zut_html_selector_word_time ... word id '.$id, $debug);
+  log_debug('zut_html_selector_word_time ... word id '.$id, $debug);
   $result = zuh_selector("word", "word_add", "SELECT word_id, word_name FROM words WHERE word_type_id = 2 ORDER BY word_name;", $id, "", $debug);
   return $result;
 }
 
 // to select a existing word to be added
 function zut_html_selector_add ($id, $debug) {
-  zu_debug('zut_html_selector_add ... word id '.$id, $debug);
+  log_debug('zut_html_selector_add ... word id '.$id, $debug);
   $result = zuh_selector("add", "word_add", "SELECT word_id, word_name FROM words WHERE word_id <> ".$id." ORDER BY word_name;", 0, "... or select an existing word to link it", $debug);
   return $result;
 }
@@ -455,7 +455,7 @@ function zut_html_selector_add ($id, $debug) {
 // returns the html code to select a word link type
 // database link must be open
 function zut_dsp_selector_link ($id, $user_id, $back_link, $debug) {
-  zu_debug('zut_dsp_selector_link ... word id '.$id, $debug);
+  log_debug('zut_dsp_selector_link ... word id '.$id, $debug);
   $result = '';
   
   $sql = "SELECT * FROM (
@@ -481,7 +481,7 @@ function zut_dsp_selector_link ($id, $user_id, $back_link, $debug) {
 
 // similar to zut_dsp_selector_link, but displays only the "forward" links, means not the reverse
 function zut_dsp_selector_link_fwd ($id, $back_link, $user_id, $debug) {
-  zu_debug('zut_dsp_selector_link ... word id '.$id, $debug);
+  log_debug('zut_dsp_selector_link ... word id '.$id, $debug);
   $result = '';
   
   $sql = "SELECT * FROM (
@@ -503,7 +503,7 @@ function zut_dsp_selector_link_fwd ($id, $back_link, $user_id, $debug) {
 // returns the html code to select a word link type
 // database link must be open
 function zut_html_selector_type ($id, $debug) {
-  zu_debug('zut_html_selector_type ... word id '.$id, $debug);
+  log_debug('zut_html_selector_type ... word id '.$id, $debug);
   $result = zuh_selector("type", "word_add", "SELECT word_type_id, type_name FROM word_types;", $id, "", $debug);
 
   return $result;
@@ -512,7 +512,7 @@ function zut_html_selector_type ($id, $debug) {
 
 // show a word with its the default view
 function zut_dsp ($id, $user_id, $debug) {
-  zu_debug('zut_dsp('.$id.')', $debug);
+  log_debug('zut_dsp('.$id.')', $debug);
   $result = '';
 
   // check input and set default if needed
@@ -522,7 +522,7 @@ function zut_dsp ($id, $user_id, $debug) {
   $view_id = zum_default_id($user_id, $id, $debug-1);
   $result .= zum_html($view_id, $id, 0, $debug-1);
 
-  zu_debug('zut_dsp ... done', $debug-1);
+  log_debug('zut_dsp ... done', $debug-1);
   return $result;
 }
 
@@ -531,7 +531,7 @@ function zut_dsp ($id, $user_id, $debug) {
 // e.g. add time_pos:2013 to the word list if the word list contains "year" and "now" 
 // maybe allow to enter the plural and the description in the same view
 function zut_dsp_add ($in_word, $in_link, $in_type, $user_id, $back_id, $debug) {
-  zu_debug('zut_dsp_add ('.$in_word.','.$in_link.','.$in_link.','.$user_id.','.$back_id.')', $debug);
+  log_debug('zut_dsp_add ('.$in_word.','.$in_link.','.$in_link.','.$user_id.','.$back_id.')', $debug);
   $result = '';
   
   $result .= zuh_text_h2('Add ');
@@ -548,14 +548,14 @@ function zut_dsp_add ($in_word, $in_link, $in_type, $user_id, $back_id, $debug) 
   }
   $result .= zuh_form_end();
 
-  zu_debug('zut_dsp_add ... done', $debug);
+  log_debug('zut_dsp_add ... done', $debug);
   return $result;
 }
 
 // show all related word
 // should be moved to a view component
 function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
-  zu_debug('zut_dsp_edit('.$wrd_id.',u'.$user_id.',b'.$back_link.')', $debug);
+  log_debug('zut_dsp_edit('.$wrd_id.',u'.$user_id.',b'.$back_link.')', $debug);
   $result = '';
   
   $wrd_name        = zut_name        ($wrd_id, $user_id, $debug-1);
@@ -603,13 +603,13 @@ function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
     $result .= $changes;
   }
 
-  zu_debug('zut_dsp_edit -> done', $debug-1);
+  log_debug('zut_dsp_edit -> done', $debug-1);
   return $result;
 }
 
 // display the history of a word
 function zut_dsp_hist($wrd_id, $size, $back_link, $debug) {
-  zu_debug("zut_dsp_hist (".$wrd_id.",size".$size.",b".$size.")", $debug);
+  log_debug("zut_dsp_hist (".$wrd_id.",size".$size.",b".$size.")", $debug);
   $result = ''; // reset the html code var
   
   // get word changes by the user that are not standard
@@ -654,13 +654,13 @@ function zut_dsp_hist($wrd_id, $size, $back_link, $debug) {
   }
   $result .= '</table>';
 
-  zu_debug("zut_dsp_hist -> done", $debug-1);
+  log_debug("zut_dsp_hist -> done", $debug-1);
   return $result;
 }
 
 // display the history of a word
 function zut_dsp_hist_links($wrd_id, $size, $back_link, $debug) {
-  zu_debug("zut_dsp_hist_links (".$wrd_id.",size".$size.",b".$size.")", $debug);
+  log_debug("zut_dsp_hist_links (".$wrd_id.",size".$size.",b".$size.")", $debug);
   $result = ''; // reset the html code var
 
   // get changed links related to one word 
@@ -708,13 +708,13 @@ function zut_dsp_hist_links($wrd_id, $size, $back_link, $debug) {
   }
   $result .= '</table>';
 
-  zu_debug("zut_dsp_hist_links -> done", $debug-1);
+  log_debug("zut_dsp_hist_links -> done", $debug-1);
   return $result;
 }
 
 // display a botton to edit the word link in a table cell
 function zutl_btn_edit ($link_id, $word_id, $debug) {
-  zu_debug("zutl_btn_edit (".$link_id.",b".$word_id.")", $debug);
+  log_debug("zutl_btn_edit (".$link_id.",b".$word_id.")", $debug);
   $result = ''; // reset the html code var
 
   // get the link from the database
@@ -722,13 +722,13 @@ function zutl_btn_edit ($link_id, $word_id, $debug) {
   $result .= btn_edit ("edit word link", "/http/link_edit.php?id=".$link_id."&back=".$word_id);
   $result .= '    </td>'."\n";
 
-  zu_debug("zutl_btn_edit done", $debug);
+  log_debug("zutl_btn_edit done", $debug);
   return $result;
 }
 
 // return the word name for more than one
 function zut_plural ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_plural ('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_plural ('.$wrd_id.',u'.$user_id.')', $debug);
   $result = NULL;
   if ($wrd_id > 0) {
     $wrd_del  = zu_sql_get1 ("SELECT word_id FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id." AND excluded = 1;", $debug-10);
@@ -741,14 +741,14 @@ function zut_plural ($wrd_id, $user_id, $debug) {
     }
   }
 
-  zu_debug('zut_plural ('.$wrd_id.'->'.$result.')', $debug);
+  log_debug('zut_plural ('.$wrd_id.'->'.$result.')', $debug);
   return $result;
 }
 
 // return the word name for the user
 // todo: combine to one query
 function zut_name ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_name ('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_name ('.$wrd_id.',u'.$user_id.')', $debug);
   $result = NULL;
   if ($wrd_id > 0) {
     if ($user_id > 0) {
@@ -766,13 +766,13 @@ function zut_name ($wrd_id, $user_id, $debug) {
     }
   }
 
-  zu_debug('zut_name ('.$wrd_id.'->'.$result.')', $debug);
+  log_debug('zut_name ('.$wrd_id.'->'.$result.')', $debug);
   return $result;
 }
 
 // return the word name for more than one
 function zut_description ($wrd_id, $user_id, $debug) {
-  zu_debug('zut_description ('.$wrd_id.',u'.$user_id.')', $debug);
+  log_debug('zut_description ('.$wrd_id.',u'.$user_id.')', $debug);
   $result = NULL;
   if ($wrd_id > 0) {
     $wrd_del  = zu_sql_get1 ("SELECT word_id FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id." AND excluded = 1;", $debug-10);
@@ -785,7 +785,7 @@ function zut_description ($wrd_id, $user_id, $debug) {
     }
   }
 
-  zu_debug('zut_description ('.$wrd_id.'->'.$result.')', $debug);
+  log_debug('zut_description ('.$wrd_id.'->'.$result.')', $debug);
   return $result;
 }
 

@@ -36,7 +36,7 @@ include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<b
 echo 'logging off ...'; // reset the html code var
 
 // open database 
-$db_con = zu_start("logoff", "center_form", $debug);
+$db_con = prg_start("logoff", "center_form", $debug);
 
   // load the session user parameters
   $usr = New user;
@@ -54,7 +54,7 @@ $db_con = zu_start("logoff", "center_form", $debug);
   session_unset(); 
 
 // close the database  
-zu_end($db_con, $debug);
+prg_end($db_con, $debug);
 
 echo 'logoff done.'; // reset the html code var
 
