@@ -221,7 +221,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
     }
     
     // in case of the verb "following" continue the series
-    if ($link_type_id == cl(SQL_LINK_TYPE_FOLLOW)) {
+    if ($link_type_id == cl(DBL_LINK_TYPE_FOLLOW)) {
       $start_id = $link_type_id * -1;
     } else {  
       $start_id = $id;
@@ -267,14 +267,14 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
       //$result .= zut_html($word_entry[0], $word_entry[1], $debug);
       // use the last word as a sample for the new word type
       $word_type_id = $word_entry[2];
-      if ($link_type_id == cl(SQL_LINK_TYPE_FOLLOW)) {
+      if ($link_type_id == cl(DBL_LINK_TYPE_FOLLOW)) {
         $last_linked_word_id = $word_entry[0];
       }  
     }
     log_debug('zut_html_list_related btn done', $debug);
 
     // in case of the verb "following" continue the series after the last element
-    if ($link_type_id == cl(SQL_LINK_TYPE_FOLLOW)) {
+    if ($link_type_id == cl(DBL_LINK_TYPE_FOLLOW)) {
       $start_id = $last_linked_word_id;
 /*      if ($directional_link_type_id > 0) {
         $directional_link_type_id = $directional_link_type_id * -1;
@@ -307,7 +307,7 @@ function zut_dsp_like ($word_pattern, $user_id, $debug) {
   $sql = " ( SELECT t.word_id, t.word_name AS name, 'word' AS type
                FROM words t 
               WHERE t.word_name like '".$word_pattern."%' 
-                AND t.word_type_id <> ".cl(SQL_WORD_TYPE_FORMULA_LINK).")
+                AND t.word_type_id <> ".cl(DBL_WORD_TYPE_FORMULA_LINK).")
      UNION ( SELECT f.formula_id, f.formula_name AS name, 'formula' AS type
                FROM formulas f 
               WHERE f.formula_name like '".$word_pattern."%' )
@@ -569,7 +569,7 @@ function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
     $result .= zuh_form_start("word_edit");
     $result .= zuh_form_hidden ("id", $wrd_id);
     $result .= zuh_form_hidden ("back", $back_link);
-    if ($wrd_type == cl (SQL_WORD_TYPE_FORMULA_LINK)) {
+    if ($wrd_type == cl (DBL_WORD_TYPE_FORMULA_LINK)) {
       $result .= zuh_form_hidden ("name", $wrd_name);
       $result .= '  to change the name of "'.$wrd_name.'" rename the ';
       $result .= zuf_dsp(zuf_id($wrd_name, $user_id), "formula", $user_id, $back_link, $debug-1);
@@ -578,7 +578,7 @@ function zut_dsp_edit ($wrd_id, $user_id, $back_link, $debug) {
       $result .= '  rename to:<input type="text" name="name" value="'.$wrd_name.'">';
     }
     $result .= '  plural:<input type="text" name="plural" value="'.$wrd_plural.'">';
-    if ($wrd_type == cl (SQL_WORD_TYPE_FORMULA_LINK)) {
+    if ($wrd_type == cl (DBL_WORD_TYPE_FORMULA_LINK)) {
       $result .= ' type: '.zut_type_name($wrd_type, $debug-1);
     } else {
       $result .= zuh_selector("type", "word_edit", "SELECT word_type_id, type_name FROM word_types;", $wrd_type, "", $debug);

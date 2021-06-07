@@ -28,9 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function create_base_phrases ($debug) {
   echo "<h2>Check if all base phrases are correct</h2><br>";
-  test_word_link(TW_ZH, SQL_LINK_TYPE_IS, TW_CANTON, true, TP_ZH_CANTON, $debug);
-  test_word_link(TW_ZH, SQL_LINK_TYPE_IS, TW_CITY,   true, TP_ZH_CITY, $debug);
-  test_word_link(TW_ZH, SQL_LINK_TYPE_IS, TEST_WORD, true, TP_ZH_INS, $debug);
+  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CANTON, true, TP_ZH_CANTON, $debug);
+  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CITY,   true, TP_ZH_CITY, $debug);
+  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TEST_WORD, true, TP_ZH_INS, $debug);
   echo "<br><br>";
 
   echo "<h2>Check if all base phrases are correct</h2><br>";
@@ -55,7 +55,7 @@ function run_phrase_test ($debug) {
   $wrd_zh     = load_word(TW_ZH, $debug-1);
   $lnk_company = New word_link;
   $lnk_company->from_id = $wrd_zh->id;
-  $lnk_company->verb_id = cl(SQL_LINK_TYPE_IS);
+  $lnk_company->verb_id = cl(DBL_LINK_TYPE_IS);
   $lnk_company->to_id   = TEST_WORD_ID;
   $lnk_company->usr  = $usr;
   $lnk_company->load($debug-1);

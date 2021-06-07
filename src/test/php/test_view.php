@@ -147,7 +147,7 @@ function run_view_test ($debug) {
 
   // check if the view parameters can be added
   $dsp_renamed->comment = 'Just added for testing the user sandbox';
-  $dsp_renamed->type_id = cl(SQL_VIEW_TYPE_WORD_DEFAULT);
+  $dsp_renamed->type_id = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $result = $dsp_renamed->save($debug-1);
   $target = '11';
   $exe_start_time = test_show_result(', view->save all view fields beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -161,7 +161,7 @@ function run_view_test ($debug) {
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_WORD_DEFAULT);
+  $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the view parameter adding have been logged
@@ -184,7 +184,7 @@ function run_view_test ($debug) {
   $dsp_usr2->usr = $usr2;
   $dsp_usr2->load($debug-1);
   $dsp_usr2->comment = 'Just changed for testing the user sandbox';
-  $dsp_usr2->type_id = cl(SQL_VIEW_TYPE_ENTRY);
+  $dsp_usr2->type_id = cl(DBL_VIEW_TYPE_ENTRY);
   $result = $dsp_usr2->save($debug-1);
   $target = '11';
   $exe_start_time = test_show_result(', view->save all view fields for user 2 beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -198,7 +198,7 @@ function run_view_test ($debug) {
   $target = 'Just changed for testing the user sandbox';
   $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_usr2_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_ENTRY);
+  $target = cl(DBL_VIEW_TYPE_ENTRY);
   $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check the view for the original user remains unchanged
@@ -210,7 +210,7 @@ function run_view_test ($debug) {
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_WORD_DEFAULT);
+  $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if undo all specific changes removes the user view
@@ -219,7 +219,7 @@ function run_view_test ($debug) {
   $dsp_usr2->usr = $usr2;
   $dsp_usr2->load($debug-1);
   $dsp_usr2->comment = 'Just added for testing the user sandbox';
-  $dsp_usr2->type_id = cl(SQL_VIEW_TYPE_WORD_DEFAULT);
+  $dsp_usr2->type_id = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $result = $dsp_usr2->save($debug-1);
   $target = '11';
   $exe_start_time = test_show_result(', view->save undo the user view fields beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -233,7 +233,7 @@ function run_view_test ($debug) {
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_usr2_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_WORD_DEFAULT);
+  $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // redo the user specific view changes

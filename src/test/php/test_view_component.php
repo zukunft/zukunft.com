@@ -142,7 +142,7 @@ function run_view_component_test ($debug) {
   $cmp_renamed->usr = $usr;
   $cmp_renamed->load($debug-1);
   $cmp_renamed->comment = 'Just added for testing the user sandbox';
-  $cmp_renamed->type_id = cl(SQL_VIEW_TYPE_WORD_NAME);
+  $cmp_renamed->type_id = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
   $result = $cmp_renamed->save($debug-1);
   $target = '11';
   $exe_start_time = test_show_result(', view_component->save all view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
@@ -156,7 +156,7 @@ function run_view_component_test ($debug) {
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $cmp_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_WORD_NAME);
+  $target = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
   $exe_start_time = test_show_result(', view_component->load type_id for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the view_component parameter adding have been logged
@@ -179,7 +179,7 @@ function run_view_component_test ($debug) {
   $cmp_usr2->usr = $usr2;
   $cmp_usr2->load($debug-1);
   $cmp_usr2->comment = 'Just changed for testing the user sandbox';
-  $cmp_usr2->type_id = cl(SQL_VIEW_TYPE_FORMULAS);
+  $cmp_usr2->type_id = cl(DBL_VIEW_COMP_TYPE_FORMULAS);
   $result = $cmp_usr2->save($debug-1);
   $target = '11';
   $exe_start_time = test_show_result(', view_component->save all view_component fields for user 2 beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -193,7 +193,7 @@ function run_view_component_test ($debug) {
   $target = 'Just changed for testing the user sandbox';
   $exe_start_time = test_show_result(', view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $cmp_usr2_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_FORMULAS);
+  $target = cl(DBL_VIEW_COMP_TYPE_FORMULAS);
   $exe_start_time = test_show_result(', view_component->load type_id for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check the view_component for the original user remains unchanged
@@ -205,7 +205,7 @@ function run_view_component_test ($debug) {
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result(', view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $cmp_reloaded->type_id;
-  $target = cl(SQL_VIEW_TYPE_WORD_NAME);
+  $target = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
   $exe_start_time = test_show_result(', view_component->load type_id for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if undo all specific changes removes the user view_component
@@ -214,7 +214,7 @@ function run_view_component_test ($debug) {
   $cmp_usr2->usr = $usr2;
   $cmp_usr2->load($debug-1);
   $cmp_usr2->comment = 'Just added for testing the user sandbox';
-  $cmp_usr2->type_id = cl(SQL_VIEW_TYPE_WORD_NAME);
+  $cmp_usr2->type_id = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
   $result = $cmp_usr2->save($debug-1);
   $target = '11';
   $exe_start_time = test_show_result(', view_component->save undo the user view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);

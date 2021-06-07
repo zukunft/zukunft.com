@@ -64,7 +64,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_USER);
+    $dsp->id = cl(DBL_VIEW_USER);
     $dsp->usr = $usr;
     $dsp->load($debug - 1);
 
@@ -179,7 +179,7 @@ if ($usr->id > 0) {
     }
 
     // display all program issues if the user is an admin
-    if ($usr->profile_id == cl(SQL_USER_ADMIN)) {
+    if ($usr->profile_id == cl(DBL_USER_ADMIN)) {
         $errors_all = $dsp_usr->dsp_errors("other", SQL_ROW_LIMIT, 1, $back, $debug - 1);
         if (trim($errors_all) <> "") {
             $result .= dsp_text_h2("Program issues that other user have found, that have not yet been solved.");

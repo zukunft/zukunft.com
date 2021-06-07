@@ -564,7 +564,7 @@ class verb {
       // check if a word, formula or verb with the same name is already in the database
       $trm = $this->term($debug-1);      
       if ($trm->id > 0 AND $trm->type <> 'verb') {
-        $result .= $trm->id_used_msg($debug-1);
+        $result .= $trm->id_used_msg();
       } else {
         $this->id = $trm->id;
         log_debug('verb->save adding verb name '.$this->dsp_id().' is OK', $debug-14);
@@ -589,7 +589,7 @@ class verb {
         // check if a verb, formula or verb with the same name is already in the database
         $trm = $this->term($debug-1);      
         if ($trm->id > 0 AND $trm->type <> 'verb') {
-          $result .= $trm->id_used_msg($debug-1);
+          $result .= $trm->id_used_msg();
         } else {
           if ($this->can_change($debug-1)) {
             $result .= $this->save_field_name        ($db_con, $db_rec, $debug-1);

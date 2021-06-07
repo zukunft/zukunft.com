@@ -766,8 +766,8 @@ class value extends user_sandbox_display {
                       $r_wrd  = $wrd_lst->lst[0];
                       
                       // test if it is a valid scale formula
-                      if ($fv_wrd->is_type(SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1) 
-                      AND $r_wrd->is_type(SQL_WORD_TYPE_SCALING, $debug-1) ) {
+                      if ($fv_wrd->is_type(DBL_WORD_TYPE_SCALING_HIDDEN, $debug-1)
+                      AND $r_wrd->is_type(DBL_WORD_TYPE_SCALING, $debug-1) ) {
                         $wrd_symbol = ZUP_CHAR_WORD_START.$r_wrd->id.ZUP_CHAR_WORD_END;
                         log_debug('value->scale -> replace ('.$wrd_symbol.' in '.$r_part.' with '.$this->number.')', $debug-1);
                         $r_part = str_replace($wrd_symbol,$this->number,$r_part);
@@ -884,7 +884,7 @@ class value extends user_sandbox_display {
             $wrd->load($debug-1);
             if ($wrd->id == 0) {
               $wrd->name = $phr_name;
-              $wrd->type_id = cl(SQL_WORD_TYPE_NORMAL);
+              $wrd->type_id = cl(DBL_WORD_TYPE_NORMAL);
               $wrd->save($debug-1);
             }
             if ($wrd->id == 0) {
@@ -925,7 +925,7 @@ class value extends user_sandbox_display {
           $wrd->load($debug-1);
           if ($wrd->id == 0) {
             $wrd->name = $value;
-            $wrd->type_id = cl(SQL_WORD_TYPE_TIME);
+            $wrd->type_id = cl(DBL_WORD_TYPE_TIME);
             $wrd->save($debug-1);
           }
           if ($wrd->id == 0) {
@@ -1000,7 +1000,7 @@ class value extends user_sandbox_display {
   function name($debug) {
     $result = '';
     if (isset($this->grp)) {
-      $result .= $this->grp->name();
+      $result .= $this->grp->name($debug);
     }
     if (isset($this->time_phr)) {
       if ($result <> '') { $result .= ','; }
@@ -2386,7 +2386,7 @@ class value extends user_sandbox_display {
     
     // check if a new value is supposed to be added
     if ($this->id <= 0) {
-      log_debug('value->save check if a value for "'.$this->name().'" and user '.$this->usr->name.' is already in the database', $debug-10);
+      log_debug('value->save check if a value for "'.$this->name($debug).'" and user '.$this->usr->name.' is already in the database', $debug-10);
       // check if a value for this words is already in the database
       $db_chk = New value;
       $db_chk->grp_id     = $this->grp_id;
@@ -2401,7 +2401,7 @@ class value extends user_sandbox_display {
     }  
     
     if ($this->id <= 0) {
-      log_debug('value->save "'.$this->name().'": '.$this->number.' for user '.$this->usr->name.' as a new value', $debug-10);
+      log_debug('value->save "'.$this->name($debug).'": '.$this->number.' for user '.$this->usr->name.' as a new value', $debug-10);
 
       $result .= $this->add($db_con, $debug-1);
     } else {  

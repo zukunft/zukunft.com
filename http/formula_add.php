@@ -50,7 +50,7 @@ $db_con = prg_start("formula_add", "", $debug);
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_FORMULA_ADD);
+    $dsp->id = cl(DBL_VIEW_FORMULA_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     $back = $_GET['back'];
@@ -100,7 +100,7 @@ $db_con = prg_start("formula_add", "", $debug);
       $trm = $frm->term($debug-1);      
       if (isset($trm)) {
         if ($trm->id > 0) {
-          $msg .= $trm->id_used_msg($debug-1);
+          $msg .= $trm->id_used_msg();
         }
       }
       log_debug('formula_add->checked ', $debug-14);

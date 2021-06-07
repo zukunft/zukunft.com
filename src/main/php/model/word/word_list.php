@@ -332,7 +332,7 @@ class word_list {
  
   // returns a list of words that are related to this word list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
   function is ($debug) {
-    $wrd_lst = $this->foaf_parents(cl(SQL_LINK_TYPE_IS), $debug-1);
+    $wrd_lst = $this->foaf_parents(cl(DBL_LINK_TYPE_IS), $debug-1);
     log_debug('word_list->is -> ('.$this->dsp_id().' is '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
   }
@@ -341,7 +341,7 @@ class word_list {
   // e.g. to get all related values
   function are ($debug) {
     log_debug('word_list->are for '.$this->dsp_id(), $debug-8);
-    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
+    $wrd_lst = $this->foaf_children(cl(DBL_LINK_TYPE_IS), $debug-1);
     $wrd_lst->merge($this, $debug-1);
     log_debug('word_list->are -> ('.$this->dsp_id().' are '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
@@ -349,7 +349,7 @@ class word_list {
 
   // returns a list of words that are related to this word list 
   function contains ($debug) {
-    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
+    $wrd_lst = $this->foaf_children(cl(DBL_LINK_TYPE_CONTAIN), $debug-1);
     $wrd_lst->merge($this, $debug-1);
     log_debug('word_list->contains -> ('.$this->dsp_id().' contains '.$wrd_lst->name().')', $debug-8);
     return $wrd_lst;
@@ -386,7 +386,7 @@ class word_list {
   // add all potential differentiator words of the word lst e.g. get "energy" for "sector"
   function differentiators ($debug) {
     log_debug('word_list->differentiators for '.$this->dsp_id(), $debug-18);
-    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+    $wrd_lst = $this->foaf_children(cl(DBL_LINK_TYPE_DIFFERENTIATOR), $debug-1);
     $wrd_lst->merge($this, $debug-1);
     log_debug('word_list->differentiators -> '.$wrd_lst->dsp_id().' for '.$this->dsp_id(), $debug-8);
     return $wrd_lst;
@@ -396,7 +396,7 @@ class word_list {
   function differentiators_all($debug) {
     log_debug('word_list->differentiators_all for '.$this->dsp_id(), $debug-18);
     // this first time get all related items
-    $wrd_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-20);
+    $wrd_lst = $this->foaf_children(cl(DBL_LINK_TYPE_DIFFERENTIATOR), $debug-20);
     log_debug('word_list->differentiators -> children '.$wrd_lst->dsp_id(), $debug-8);
     if (count($wrd_lst->lst) > 0) {
       $wrd_lst = $wrd_lst->are     ($debug-20);
@@ -413,7 +413,7 @@ class word_list {
       $loops = 0;
       log_debug('word_list->differentiators -> added '.$added_lst->dsp_id().' to '.$wrd_lst->name(), $debug-8);
       do {
-        $next_lst  = $added_lst->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-10);
+        $next_lst  = $added_lst->foaf_children(cl(DBL_LINK_TYPE_DIFFERENTIATOR), $debug-10);
         log_debug('word_list->differentiators -> sub children '.$wrd_lst->dsp_id(), $debug-8);
         if (count($next_lst->lst) > 0) {
           $next_lst  = $next_lst->are     ($debug-20);
@@ -683,7 +683,7 @@ class word_list {
     $sql = " ( SELECT t.word_id AS id, t.word_name AS name, 'word' AS type
                  FROM words t 
                 WHERE t.word_name like '".$word_pattern."%' 
-                  AND t.word_type_id <> ".cl(SQL_WORD_TYPE_FORMULA_LINK).")
+                  AND t.word_type_id <> ".cl(DBL_WORD_TYPE_FORMULA_LINK).")
        UNION ( SELECT f.formula_id AS id, f.formula_name AS name, 'formula' AS type
                  FROM formulas f 
                 WHERE f.formula_name like '".$word_pattern."%' )
@@ -994,7 +994,7 @@ class word_list {
     log_debug('word_list->time_lst_old('.$this->dsp_id().')', $debug-10);
 
     $result = array();
-    $time_type = cl(SQL_WORD_TYPE_TIME);
+    $time_type = cl(DBL_WORD_TYPE_TIME);
     // loop over the word ids and add only the time ids to the result array
     foreach ($this->lst as $wrd) {
       if ($wrd->type_id == $time_type) { 
@@ -1011,7 +1011,7 @@ class word_list {
 
     $result = New word_list;
     $result->usr = $this->usr;
-    $time_type = cl(SQL_WORD_TYPE_TIME);
+    $time_type = cl(DBL_WORD_TYPE_TIME);
     // loop over the word ids and add only the time ids to the result array
     foreach ($this->lst as $wrd) {
       if ($wrd->type_id == $time_type) { 
@@ -1061,7 +1061,7 @@ class word_list {
 
     $result = New word_list;
     $result->usr = $this->usr;
-    $measure_type = cl(SQL_WORD_TYPE_MEASURE);
+    $measure_type = cl(DBL_WORD_TYPE_MEASURE);
     // loop over the word ids and add only the time ids to the result array
     foreach ($this->lst as $wrd) {
       if ($wrd->type_id == $measure_type) { 
@@ -1082,8 +1082,8 @@ class word_list {
 
     $result = New word_list;
     $result->usr = $this->usr;
-    $scale_type        = cl(SQL_WORD_TYPE_SCALING);
-    $scale_hidden_type = cl(SQL_WORD_TYPE_SCALING_HIDDEN);
+    $scale_type        = cl(DBL_WORD_TYPE_SCALING);
+    $scale_hidden_type = cl(DBL_WORD_TYPE_SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach ($this->lst as $wrd) {
       if ($wrd->type_id == $scale_type OR $wrd->type_id == $scale_hidden_type) { 
@@ -1105,7 +1105,7 @@ class word_list {
 
     $result = New word_list;
     $result->usr = $this->usr;
-    $percent_type = cl(SQL_WORD_TYPE_SCALING_PCT);
+    $percent_type = cl(DBL_WORD_TYPE_SCALING_PCT);
     // loop over the word ids and add only the time ids to the result array
     foreach ($this->lst as $wrd) {
       if ($wrd->type_id == $percent_type) { 

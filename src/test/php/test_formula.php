@@ -276,7 +276,7 @@ function run_formula_test ($debug) {
   // check if the formula linked word has been created
   $wrd = load_word(TF_ADD, $debug-1);
   $result = $wrd->type_id;
-  $target = cl(SQL_WORD_TYPE_FORMULA_LINK);
+  $target = cl(DBL_WORD_TYPE_FORMULA_LINK);
   $exe_start_time = test_show_result(', word->load of the word "'.$frm->name.'" has the formula type', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
@@ -311,7 +311,7 @@ function run_formula_test ($debug) {
   // check if the formula parameters can be added
   $frm_renamed->usr_text     = '= "this"';
   $frm_renamed->description  = TF_ADD_RENAMED.' description';
-  $frm_renamed->type_id      = cl(SQL_FORMULA_TYPE_THIS);
+  $frm_renamed->type_id      = cl(DBL_FORMULA_TYPE_THIS);
   $frm_renamed->need_all_val = True;
   $result = $frm_renamed->save($debug-0);
   $target = '1111111';
@@ -329,7 +329,7 @@ function run_formula_test ($debug) {
   $target = TF_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', formula->load description for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_reloaded->type_id;
-  $target = cl(SQL_FORMULA_TYPE_THIS);
+  $target = cl(DBL_FORMULA_TYPE_THIS);
   $exe_start_time = test_show_result(', formula->load type_id for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_reloaded->need_all_val;
   $target = True;
@@ -374,7 +374,7 @@ function run_formula_test ($debug) {
   $frm_usr2->load($debug-1);
   $frm_usr2->usr_text     = '"percent" = ( "this" - "prior" ) / "prior"';
   $frm_usr2->description  = TF_ADD_RENAMED.' description2';
-  $frm_usr2->type_id      = cl(SQL_FORMULA_TYPE_NEXT);
+  $frm_usr2->type_id      = cl(DBL_FORMULA_TYPE_NEXT);
   $frm_usr2->need_all_val = False;
   $result = $frm_usr2->save($debug-1);
   $target = '1111111111';
@@ -395,7 +395,7 @@ function run_formula_test ($debug) {
   $target = TF_ADD_RENAMED.' description2';
   $exe_start_time = test_show_result(', formula->load description for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_usr2_reloaded->type_id;
-  $target = cl(SQL_FORMULA_TYPE_NEXT);
+  $target = cl(DBL_FORMULA_TYPE_NEXT);
   $exe_start_time = test_show_result(', formula->load type_id for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_usr2_reloaded->need_all_val;
   $target = False;
@@ -413,7 +413,7 @@ function run_formula_test ($debug) {
   $target = TF_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', formula->load description for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_reloaded->type_id;
-  $target = cl(SQL_FORMULA_TYPE_THIS);
+  $target = cl(DBL_FORMULA_TYPE_THIS);
   $exe_start_time = test_show_result(', formula->load type_id for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_reloaded->need_all_val;
   $target = True;
@@ -426,7 +426,7 @@ function run_formula_test ($debug) {
   $frm_usr2->load($debug-1);
   $frm_usr2->usr_text     = '= "this"';
   $frm_usr2->description  = TF_ADD_RENAMED.' description';
-  $frm_usr2->type_id      = cl(SQL_FORMULA_TYPE_THIS);
+  $frm_usr2->type_id      = cl(DBL_FORMULA_TYPE_THIS);
   $frm_usr2->need_all_val = True;
   $result = $frm_usr2->save($debug-1);
   $target = '111111111';
@@ -447,7 +447,7 @@ function run_formula_test ($debug) {
   $target = TF_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', formula->load description for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_usr2_reloaded->type_id;
-  $target = cl(SQL_FORMULA_TYPE_THIS);
+  $target = cl(DBL_FORMULA_TYPE_THIS);
   $exe_start_time = test_show_result(', formula->load type_id for "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $frm_usr2_reloaded->need_all_val;
   $target = True;

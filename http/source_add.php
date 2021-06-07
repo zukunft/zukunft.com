@@ -49,7 +49,7 @@ $db_con = prg_start("source_add", "", $debug);
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_SOURCE_ADD);
+    $dsp->id = cl(DBL_VIEW_SOURCE_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     $back = $_GET['back'];      // the calling word which should be displayed after saving

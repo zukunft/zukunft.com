@@ -20,9 +20,14 @@
   -----
   
   DBL - DataBase Link: link to the database over the special field code_id
-  
-  TODO change the naming to DBL
 
+  TODO load all code links once at program start, because the ID will never change within the same instance
+
+  TODO use cases:
+    these the optimal tax rates are
+        from -10% needed to fulfill the basic needed
+        to 99% for everything more than the community is able to invest to save one live
+        reason: this is the optimal combination between safety and prestige
 
   This file is part of zukunft.com - calc with words
 
@@ -48,194 +53,232 @@
   
 */
 
-define("LOG_LEVEL", "warning"); // starting from this criticality level messages are written to the log for debuging
-define("MSG_LEVEL", "error");   // in case of a error or fatal error 
-                                                   // additional the message a link to the system log shown 
-                                                   // so that the user can track when the error is solved
+const LOG_LEVEL = "log_warning"; // starting from this criticality level messages are written to the log for debugging
+const MSG_LEVEL = "error";       // in case of a error or fatal error
+                                 // additional the message a link to the system log shown
+                                 // so that the user can track when the error is solved
 
 // addition reserved field names for zukunft
-define("DBL_FIELD", "code_id");   
+const DBL_FIELD = "code_id";
 
 
 // link to the predefined edit views
 // the code ids must unique over all types 
-define("SQL_VIEW_START",                    "dsp_start");   
-define("SQL_VIEW_WORD",                     "word_dsp");   
-define("SQL_VIEW_WORD_ADD",                 "word_add");   
-define("SQL_VIEW_WORD_EDIT",                "word_edit");  
-define("SQL_VIEW_WORD_FIND",                "word_find");  
-define("SQL_VIEW_WORD_DEL",                 "word_del");  
-define("SQL_VIEW_VALUE_ADD",                "value_add");   
-define("SQL_VIEW_VALUE_EDIT",               "value_edit");  
-define("SQL_VIEW_VALUE_DEL",                "value_del");   
-define("SQL_VIEW_VALUE_DISPLAY",            "value_display");   
-define("SQL_VIEW_FORMULA_ADD",              "formula_add"); 
-define("SQL_VIEW_FORMULA_EDIT",             "formula_edit");
-define("SQL_VIEW_FORMULA_DEL",              "formula_del");
-define("SQL_VIEW_FORMULA_EXPLAIN",          "formula_explain");
-define("SQL_VIEW_FORMULA_TEST",             "formula_test");
-define("SQL_VIEW_SOURCE_ADD",               "source_add"); 
-define("SQL_VIEW_SOURCE_EDIT",              "source_edit");
-define("SQL_VIEW_SOURCE_DEL",               "source_del");
-define("SQL_VIEW_VERBS",                    "verbs");
-define("SQL_VIEW_VERB_ADD",                 "verb_add");
-define("SQL_VIEW_VERB_EDIT",                "verb_edit");
-define("SQL_VIEW_VERB_DEL",                 "verb_del");
-define("SQL_VIEW_LINK_ADD",                 "triple_add");
-define("SQL_VIEW_LINK_EDIT",                "triple_edit");
-define("SQL_VIEW_LINK_DEL",                 "triple_del");
-define("SQL_VIEW_USER",                     "user");
-define("SQL_VIEW_ERR_LOG",                  "error_log");
-define("SQL_VIEW_ERR_UPD",                  "error_update");
-define("SQL_VIEW_IMPORT",                   "import");
+const DBL_VIEW_START             = "dsp_start";
+const DBL_VIEW_WORD              = "dsp_word";
+const DBL_VIEW_WORD_ADD          = "dsp_word_add";
+const DBL_VIEW_WORD_EDIT         = "dsp_word_edit";
+const DBL_VIEW_WORD_FIND         = "dsp_word_find";
+const DBL_VIEW_WORD_DEL          = "dsp_word_del";
+const DBL_VIEW_VALUE_ADD         = "dsp_value_add";
+const DBL_VIEW_VALUE_EDIT        = "dsp_value_edit";
+const DBL_VIEW_VALUE_DEL         = "dsp_value_del";
+const DBL_VIEW_VALUE_DISPLAY     = "dsp_value";
+const DBL_VIEW_FORMULA_ADD       = "dsp_formula_add";
+const DBL_VIEW_FORMULA_EDIT      = "dsp_formula_edit";
+const DBL_VIEW_FORMULA_DEL       = "dsp_formula_del";
+const DBL_VIEW_FORMULA_EXPLAIN   = "dsp_formula_explain";
+const DBL_VIEW_FORMULA_TEST      = "dsp_formula_test";
+const DBL_VIEW_SOURCE_ADD        = "dsp_source_add";
+const DBL_VIEW_SOURCE_EDIT       = "dsp_source_edit";
+const DBL_VIEW_SOURCE_DEL        = "dsp_source_del";
+const DBL_VIEW_VERBS             = "dsp_verbs";
+const DBL_VIEW_VERB_ADD          = "dsp_verb_add";
+const DBL_VIEW_VERB_EDIT         = "dsp_verb_edit";
+const DBL_VIEW_VERB_DEL          = "dsp_verb_del";
+const DBL_VIEW_LINK_ADD          = "dsp_triple_add";
+const DBL_VIEW_LINK_EDIT         = "dsp_triple_edit";
+const DBL_VIEW_LINK_DEL          = "dsp_triple_del";
+const DBL_VIEW_USER              = "dsp_user";
+const DBL_VIEW_ERR_LOG           = "dsp_error_log";
+const DBL_VIEW_ERR_UPD           = "dsp_error_update";
+const DBL_VIEW_IMPORT            = "dsp_import";
 // views to edit views                     
-define("SQL_VIEW_ADD",                      "view_add");   
-define("SQL_VIEW_EDIT",                     "view_edit");  
-define("SQL_VIEW_DEL",                      "view_del");  
-define("SQL_VIEW_COMPONENT_ADD",            "view_enty_add");   
-define("SQL_VIEW_COMPONENT_EDIT",           "view_enty_edit");  
-define("SQL_VIEW_COMPONENT_DEL",            "view_enty_del");  
+const DBL_VIEW_ADD               = "dsp_view_add";
+const DBL_VIEW_EDIT              = "dsp_view_edit";
+const DBL_VIEW_DEL               = "dsp_view_del";
+const DBL_VIEW_COMPONENT_ADD     = "dsp_view_entry_add";
+const DBL_VIEW_COMPONENT_EDIT    = "dsp_view_entry_edit";
+const DBL_VIEW_COMPONENT_DEL     = "dsp_view_entry_del";
 // views types; using view type instead of a single view, because there maybe several default views for words
-define("SQL_VIEW_TYPE_DEFAULT",             "view_type_default");  
-define("SQL_VIEW_TYPE_ENTRY",               "entry");  
-define("SQL_VIEW_TYPE_WORD_DEFAULT",        "word_default");  
-                                          
+const DBL_VIEW_TYPE_DEFAULT      = "dsp_type_default";
+const DBL_VIEW_TYPE_ENTRY        = "dsp_type_entry";
+const DBL_VIEW_TYPE_WORD_DEFAULT = "dsp_type_word_default";
+const DBL_VIEW_TYPE_MASK_DEFAULT = "dsp_type_mask_default";
+
 // views component types                  
-define("SQL_VIEW_COMPONENT_TEXT",           "text");   
-define("SQL_VIEW_TYPE_WORD",                "fixed");   
-define("SQL_VIEW_TYPE_WORDS_UP",            "word_list_up");   
-define("SQL_VIEW_TYPE_WORDS_DOWN",          "word_list_down");  
-define("SQL_VIEW_TYPE_WORD_NAME",           "word_name");  
-define("SQL_VIEW_TYPE_WORD_VALUE",          "word_value_list"); // a list of
-define("SQL_VIEW_TYPE_VALUES_ALL",          "values_all");  
-define("SQL_VIEW_TYPE_VALUES_RELATED",      "values_related");  
-define("SQL_VIEW_TYPE_FORMULAS",            "formula_list");  
-define("SQL_VIEW_TYPE_FORMULA_RESULTS",     "formula_results");  
-define("SQL_VIEW_TYPE_JSON_EXPORT",         "json_export");  
-define("SQL_VIEW_TYPE_XML_EXPORT",          "xml_export");  
-define("SQL_VIEW_TYPE_CSV_EXPORT",          "csv_export");  
-                                          
-define("SQL_WORD_TYPE_NORMAL",              "default");  
-define("SQL_WORD_TYPE_TIME",                "time");  
-define("SQL_WORD_TYPE_TIMEJUMP",            "timejump");
-define("SQL_WORD_TYPE_PERCENT",             "percent");  
-define("SQL_WORD_TYPE_MEASURE",             "measure");  
-define("SQL_WORD_TYPE_SCALING",             "scaling");  
-define("SQL_WORD_TYPE_SCALING_HIDDEN",      "scaling_hidden");  
-define("SQL_WORD_TYPE_SCALING_PCT",         "scaling_percent");  
-define("SQL_WORD_TYPE_SCALED_MEASURE",      "scaled_measure");  
-define("SQL_WORD_TYPE_FORMULA_LINK",        "formula_link");  
-define("SQL_WORD_TYPE_OTHER",               "type_other");  
-define("SQL_WORD_TYPE_NEXT",                "next");  
-define("SQL_WORD_TYPE_THIS",                "this");  
-define("SQL_WORD_TYPE_PREV",                "previous");  
-                                          
-define("SQL_FORMULA_TYPE_NEXT",             "time_next");  
-define("SQL_FORMULA_TYPE_THIS",             "time_this");  
-define("SQL_FORMULA_TYPE_PREV",             "time_prior");  
-                                          
-define("SQL_FORMULA_PART_TYPE_WORD",        "word");  
-define("SQL_FORMULA_PART_TYPE_VERB",        "word_link");  
-define("SQL_FORMULA_PART_TYPE_FORMULA",     "formula");  
+const DBL_VIEW_COMP_TYPE_TEXT            = "dsp_comp_type_text";
+const DBL_VIEW_COMP_TYPE_WORD            = "dsp_comp_type_fixed";
+const DBL_VIEW_COMP_TYPE_WORD_SELECT     = "dsp_comp_type_word_select";
+const DBL_VIEW_COMP_TYPE_WORDS_UP        = "dsp_comp_type_word_list_up";
+const DBL_VIEW_COMP_TYPE_WORDS_DOWN      = "dsp_comp_type_word_list_down";
+const DBL_VIEW_COMP_TYPE_WORD_NAME       = "dsp_comp_type_word_name";
+const DBL_VIEW_COMP_TYPE_WORD_VALUE      = "dsp_comp_type_word_value_list"; // a list of
+const DBL_VIEW_COMP_TYPE_VALUES_ALL      = "dsp_comp_type_values_all";
+const DBL_VIEW_COMP_TYPE_VALUES_RELATED  = "dsp_comp_type_values_related";
+const DBL_VIEW_COMP_TYPE_FORMULAS        = "dsp_comp_type_formula_list";
+const DBL_VIEW_COMP_TYPE_FORMULA_RESULTS = "dsp_comp_type_formula_results";
+const DBL_VIEW_COMP_TYPE_JSON_EXPORT     = "dsp_comp_type_json_export";
+const DBL_VIEW_COMP_TYPE_XML_EXPORT      = "dsp_comp_type_xml_export";
+const DBL_VIEW_COMP_TYPE_CSV_EXPORT      = "dsp_comp_type_csv_export";
+const DBL_VIEW_COMP_TYPE_VIEW_SELECT     = "dsp_comp_type_view_select";
+const DBL_VIEW_COMP_TYPE_LINK            = "dsp_comp_type_link";
+
+const DBL_WORD_TYPE_NORMAL         = "wrd_type_default";
+const DBL_WORD_TYPE_TIME           = "wrd_type_time";
+const DBL_WORD_TYPE_TIME_JUMP      = "wrd_type_time_jump";
+const DBL_WORD_TYPE_PERCENT        = "wrd_type_percent";
+const DBL_WORD_TYPE_MEASURE        = "wrd_type_measure";
+const DBL_WORD_TYPE_SCALING        = "wrd_type_scaling";
+const DBL_WORD_TYPE_SCALING_HIDDEN = "wrd_type_scaling_hidden";
+const DBL_WORD_TYPE_SCALING_PCT    = "wrd_type_scaling_percent";
+const DBL_WORD_TYPE_SCALED_MEASURE = "wrd_type_scaled_measure";
+const DBL_WORD_TYPE_FORMULA_LINK   = "wrd_type_formula_link";
+const DBL_WORD_TYPE_CALC           = "wrd_type_calc";
+const DBL_WORD_TYPE_LAYER          = "wrd_type_view";
+const DBL_WORD_TYPE_OTHER          = "wrd_type_type_other";
+const DBL_WORD_TYPE_NEXT           = "wrd_type_next";
+const DBL_WORD_TYPE_THIS           = "wrd_type_this";
+const DBL_WORD_TYPE_PREV           = "wrd_type_previous";
+
+const DBL_FORMULA_TYPE_NEXT = "frm_type_time_next";
+const DBL_FORMULA_TYPE_THIS = "frm_type_time_this";
+const DBL_FORMULA_TYPE_PREV = "frm_type_time_prior";
+
+const DBL_FORMULA_PART_TYPE_WORD    = "frm_elm_word";
+const DBL_FORMULA_PART_TYPE_VERB    = "frm_elm_verb";
+const DBL_FORMULA_PART_TYPE_FORMULA = "frm_elm_formula";
                                           
 // predefined word link types or verbs    
-define("SQL_LINK_TYPE_IS",                  "is");  
-define("SQL_LINK_TYPE_CONTAIN",             "contains");  
-define("SQL_LINK_TYPE_FOLLOW",              "follow");  
-define("SQL_LINK_TYPE_DIFFERANTIATOR",      "can_contain");  
+const DBL_LINK_TYPE_IS             = "vrb_is";
+const DBL_LINK_TYPE_CONTAIN        = "vrb_contains";
+const DBL_LINK_TYPE_FOLLOW         = "vrb_follow";
+const DBL_LINK_TYPE_DIFFERENTIATOR = "vrb_can_contain";
                                           
 // predefined words                       
-define("SQL_WORD_OTHER",                    "other");  // replaced by a word type
+const DBL_WORD_OTHER = "other";  // replaced by a word type
                                           
 // share types                            
-define("DBL_SHARE_PUBLIC",                  "public");  
-define("DBL_SHARE_PERSONAL",                "personal");  
-define("DBL_SHARE_GROUP",                   "group");  
-define("DBL_SHARE_PRIVATE",                 "private");  
+const DBL_SHARE_PUBLIC   = "share_public";
+const DBL_SHARE_PERSONAL = "share_personal";
+const DBL_SHARE_GROUP    = "share_group";
+const DBL_SHARE_PRIVATE  = "share_private";
                                           
 // protection types                            
-define("DBL_PROTECT_NO",                    "no_protection");  
-define("DBL_PROTECT_USER",                  "user_protection");  
-define("DBL_PROTECT_ADMIN",                 "admin_protection");  
-define("DBL_PROTECT_NO_CHANGE",             "no_change");  
+const DBL_PROTECT_NO        = "no_protection";
+const DBL_PROTECT_USER      = "user_protection";
+const DBL_PROTECT_ADMIN     = "admin_protection";
+const DBL_PROTECT_NO_CHANGE = "no_change";
                                           
 // links to external systems
-define("DBL_REF_WIKIPEDIA",                 "ref_wikipedia");  
-define("DBL_REF_WIKIDATA",                  "ref_wikidata");  
+const DBL_REF_WIKIPEDIA = "ref_wikipedia";
+const DBL_REF_WIKIDATA  = "ref_wikidata";
                                           
 // user profiles                          
-define("SQL_USER_ADMIN",                    "admin");  
-define("SQL_USER_DEV",                      "dev");  
+const DBL_USER_NORMAL = "usr_role_normal";
+const DBL_USER_ADMIN = "usr_role_admin";
+const DBL_USER_DEV   = "usr_role_dev";
                                           
 // single special users                   
-define("SQL_USER_SYSTEM",                   "system");  
-                                          
+const DBL_USER_SYSTEM_TEST = "usr_system_test";
+const DBL_USER_SYSTEM = "usr_system";
+
 // system log stati                       
-define("DBL_ERR_NEW",                       "new");  
-define("DBL_ERR_ASSIGNED",                  "assigned");  
-define("DBL_ERR_RESOLVED",                  "resolved");  
-define("DBL_ERR_CLOSED",                    "closed");  
-                                          
+const DBL_ERR_NEW      = "log_status_new";
+const DBL_ERR_ASSIGNED = "log_status_assigned";
+const DBL_ERR_RESOLVED = "log_status_resolved";
+const DBL_ERR_CLOSED   = "log_status_closed";
+
 // system log types                       
-define("DBL_SYSLOG_INFO",                   "info");  
-define("DBL_SYSLOG_WARNING",                "warning");  
-define("DBL_SYSLOG_ERROR",                  "error");  
-define("DBL_SYSLOG_FATAL_ERROR",            "fatal");  
+const DBL_SYSLOG_INFO = "log_info";
+const DBL_SYSLOG_WARNING = "log_warning";
+const DBL_SYSLOG_ERROR = "log_error";
+const DBL_SYSLOG_FATAL_ERROR = "log_fatal";
 
-define("DBL_SYSLOG_TBL_USR",                "users");  
-define("DBL_SYSLOG_TBL_VALUE",              "values");  
-define("DBL_SYSLOG_TBL_VALUE_USR",          "user_values");  
-define("DBL_SYSLOG_TBL_VALUE_LINK",         "value_links");  
-define("DBL_SYSLOG_TBL_WORD",               "words");  
-define("DBL_SYSLOG_TBL_WORD_USR",           "user_words");  
-define("DBL_SYSLOG_TBL_WORD_LINK",          "word_links");  
-define("DBL_SYSLOG_TBL_WORD_LINK_USR",      "user_word_links");  
-define("DBL_SYSLOG_TBL_FORMULA",            "formulas");  
-define("DBL_SYSLOG_TBL_FORMULA_USR",        "user_formulas");  
-define("DBL_SYSLOG_TBL_FORMULA_LINK",       "formula_links");  
-define("DBL_SYSLOG_TBL_FORMULA_LINK_USR",   "user_formula_links");  
-define("DBL_SYSLOG_TBL_VIEW",               "views");  
-define("DBL_SYSLOG_TBL_VIEW_USR",           "user_views");  
-define("DBL_SYSLOG_TBL_VIEW_LINK",          "view_component_links");  
-define("DBL_SYSLOG_TBL_VIEW_LINK_USR",      "user_view_component_links");  
-define("DBL_SYSLOG_TBL_VIEW_COMPONENT",     "view_components");  
-define("DBL_SYSLOG_TBL_VIEW_COMPONENT_USR", "user_view_components");  
+const DBL_SYSLOG_TBL_USR                = "users";
+const DBL_SYSLOG_TBL_VALUE              = "values";
+const DBL_SYSLOG_TBL_VALUE_USR          = "user_values";
+const DBL_SYSLOG_TBL_VALUE_LINK         = "value_links";
+const DBL_SYSLOG_TBL_WORD               = "words";
+const DBL_SYSLOG_TBL_WORD_USR           = "user_words";
+const DBL_SYSLOG_TBL_WORD_LINK          = "word_links";
+const DBL_SYSLOG_TBL_WORD_LINK_USR      = "user_word_links";
+const DBL_SYSLOG_TBL_FORMULA            = "formulas";
+const DBL_SYSLOG_TBL_FORMULA_USR        = "user_formulas";
+const DBL_SYSLOG_TBL_FORMULA_LINK       = "formula_links";
+const DBL_SYSLOG_TBL_FORMULA_LINK_USR   = "user_formula_links";
+const DBL_SYSLOG_TBL_VIEW               = "views";
+const DBL_SYSLOG_TBL_VIEW_USR           = "user_views";
+const DBL_SYSLOG_TBL_VIEW_LINK          = "view_component_links";
+const DBL_SYSLOG_TBL_VIEW_LINK_USR      = "user_view_component_links";
+const DBL_SYSLOG_TBL_VIEW_COMPONENT     = "view_components";
+const DBL_SYSLOG_TBL_VIEW_COMPONENT_USR = "user_view_components";
 
-define("DBL_SYSLOG_STATUS_CLOSE",           "closed");  
 
 // the batch job types to keep the dependencies updated and the database clean
-define("DBL_JOB_VALUE_UPDATE",              "job_value_update");  
-define("DBL_JOB_VALUE_ADD",                 "job_value_add");  
-define("DBL_JOB_VALUE_DEL",                 "job_value_del");  
-define("DBL_JOB_FORMULA_UPDATE",            "job_formula_update");  
-define("DBL_JOB_FORMULA_ADD",               "job_formula_add");  
-define("DBL_JOB_FORMULA_DEL",               "job_formula_del");  
-define("DBL_JOB_FORMULA_LINK",              "job_formula_link");  
-define("DBL_JOB_FORMULA_UNLINK",            "job_formula_unlink");  
-define("DBL_JOB_WORD_LINK",                 "job_word_link");  
-define("DBL_JOB_WORD_UNLINK",               "job_word_unlink");  
+const DBL_JOB_VALUE_UPDATE   = "job_value_update";
+const DBL_JOB_VALUE_ADD      = "job_value_add";
+const DBL_JOB_VALUE_DEL      = "job_value_del";
+const DBL_JOB_FORMULA_UPDATE = "job_formula_update";
+const DBL_JOB_FORMULA_ADD    = "job_formula_add";
+const DBL_JOB_FORMULA_DEL    = "job_formula_del";
+const DBL_JOB_FORMULA_LINK   = "job_formula_link";
+const DBL_JOB_FORMULA_UNLINK = "job_formula_unlink";
+const DBL_JOB_WORD_LINK      = "job_word_link";
+const DBL_JOB_WORD_UNLINK    = "job_word_unlink";
                                            
-// fixed settings without code id for the tripple links
-define("DBL_TRIPPLE_LINK_IS_WORD",           1);  
-define("DBL_TRIPPLE_LINK_IS_TRIPPLE",        2);  
-define("DBL_TRIPPLE_LINK_IS_GROUP",          3);  
+// fixed settings without code id for the triple links
+const DBL_TRIPLE_LINK_IS_WORD   = 1;
+const DBL_TRIPLE_LINK_IS_TRIPLE = 2;
+const DBL_TRIPLE_LINK_IS_GROUP  = 3;
 
 // table fields where the change should be encoded before shown to the user
 // e.g. the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
-define("DBL_FLD_FORMULA_ALL_NEEDED",        "all_values_needed");  
-define("DBL_FLD_FORMULA_TYPE",              "frm_type");  
+const DBL_FLD_FORMULA_ALL_NEEDED = "all_values_needed";
+const DBL_FLD_FORMULA_TYPE       = "frm_type";
 // e.g. the formula field "ref_txt" is more a internal field, which should not be shown to the user (only to an admin for debugging)
-define("DBL_FLD_FORMULA_REF_TEXT",          "ref_text");  
+const DBL_FLD_FORMULA_REF_TEXT   = "ref_text";
 
 
 // global list of database values that cannot be changed by the user 
 // these need to be loaded only once to the frontend because only a system upgrade can change them
 $dbl_protection_types = array();
 
+// shortcut name for sql_code_link for better code reading
+// don't use it for the first call to make sure that the description is in the database
+function cl($code_id) {
+    return sql_code_link($code_id, "", 0);
+}
+
+// return the default description for any code link
+function sql_code_link_description($code_id) {
+    $result = '';
+
+    switch ($code_id) {
+
+        // system log
+        case DBL_SYSLOG_INFO:
+            $result = 'info';
+            break;
+        case DBL_SYSLOG_WARNING:
+            $result = 'Warning';
+            break;
+        case DBL_SYSLOG_ERROR:
+            $result = 'Error';
+            break;
+        case DBL_SYSLOG_FATAL_ERROR:
+            $result = 'FATAL ERROR';
+            break;
+    }
+
+    return $result;
+}
+
 
 // returns the pk / row_id for a given code_id
 // if the code_id does not exist the missing record is created
 // the code_id is always saved in the 20 char long field code_id
+// TODO check automatically that the code links are unique
 function sql_code_link($code_id, $description, $debug = 0) {
   log_debug("sql_code_link (".$code_id.",".$description.")", $debug-10);
 
@@ -244,74 +287,74 @@ function sql_code_link($code_id, $description, $debug = 0) {
     // set the table name and the id field
   $table_name = '';
   $db_type = '';
-  if ($code_id == SQL_VIEW_START
-   OR $code_id == SQL_VIEW_WORD
-   OR $code_id == SQL_VIEW_WORD_ADD
-   OR $code_id == SQL_VIEW_WORD_EDIT
-   OR $code_id == SQL_VIEW_WORD_FIND
-   OR $code_id == SQL_VIEW_WORD_DEL
-   OR $code_id == SQL_VIEW_VALUE_ADD
-   OR $code_id == SQL_VIEW_VALUE_EDIT
-   OR $code_id == SQL_VIEW_VALUE_DEL
-   OR $code_id == SQL_VIEW_VALUE_DISPLAY
-   OR $code_id == SQL_VIEW_FORMULA_ADD
-   OR $code_id == SQL_VIEW_FORMULA_EDIT
-   OR $code_id == SQL_VIEW_FORMULA_DEL
-   OR $code_id == SQL_VIEW_FORMULA_EXPLAIN
-   OR $code_id == SQL_VIEW_FORMULA_TEST
-   OR $code_id == SQL_VIEW_SOURCE_ADD
-   OR $code_id == SQL_VIEW_SOURCE_EDIT
-   OR $code_id == SQL_VIEW_SOURCE_DEL
-   OR $code_id == SQL_VIEW_VERBS
-   OR $code_id == SQL_VIEW_VERB_ADD
-   OR $code_id == SQL_VIEW_VERB_EDIT
-   OR $code_id == SQL_VIEW_VERB_DEL
-   OR $code_id == SQL_VIEW_LINK_ADD
-   OR $code_id == SQL_VIEW_LINK_EDIT
-   OR $code_id == SQL_VIEW_LINK_DEL
-   OR $code_id == SQL_VIEW_USER
-   OR $code_id == SQL_VIEW_ERR_LOG
-   OR $code_id == SQL_VIEW_ERR_UPD
-   OR $code_id == SQL_VIEW_IMPORT
-   OR $code_id == SQL_VIEW_ADD
-   OR $code_id == SQL_VIEW_EDIT
-   OR $code_id == SQL_VIEW_DEL) {
+  if ($code_id == DBL_VIEW_START
+   OR $code_id == DBL_VIEW_WORD
+   OR $code_id == DBL_VIEW_WORD_ADD
+   OR $code_id == DBL_VIEW_WORD_EDIT
+   OR $code_id == DBL_VIEW_WORD_FIND
+   OR $code_id == DBL_VIEW_WORD_DEL
+   OR $code_id == DBL_VIEW_VALUE_ADD
+   OR $code_id == DBL_VIEW_VALUE_EDIT
+   OR $code_id == DBL_VIEW_VALUE_DEL
+   OR $code_id == DBL_VIEW_VALUE_DISPLAY
+   OR $code_id == DBL_VIEW_FORMULA_ADD
+   OR $code_id == DBL_VIEW_FORMULA_EDIT
+   OR $code_id == DBL_VIEW_FORMULA_DEL
+   OR $code_id == DBL_VIEW_FORMULA_EXPLAIN
+   OR $code_id == DBL_VIEW_FORMULA_TEST
+   OR $code_id == DBL_VIEW_SOURCE_ADD
+   OR $code_id == DBL_VIEW_SOURCE_EDIT
+   OR $code_id == DBL_VIEW_SOURCE_DEL
+   OR $code_id == DBL_VIEW_VERBS
+   OR $code_id == DBL_VIEW_VERB_ADD
+   OR $code_id == DBL_VIEW_VERB_EDIT
+   OR $code_id == DBL_VIEW_VERB_DEL
+   OR $code_id == DBL_VIEW_LINK_ADD
+   OR $code_id == DBL_VIEW_LINK_EDIT
+   OR $code_id == DBL_VIEW_LINK_DEL
+   OR $code_id == DBL_VIEW_USER
+   OR $code_id == DBL_VIEW_ERR_LOG
+   OR $code_id == DBL_VIEW_ERR_UPD
+   OR $code_id == DBL_VIEW_IMPORT
+   OR $code_id == DBL_VIEW_ADD
+   OR $code_id == DBL_VIEW_EDIT
+   OR $code_id == DBL_VIEW_DEL) {
     $db_type = "view";
   }
-  if ($code_id == SQL_VIEW_TYPE_DEFAULT
-   OR $code_id == SQL_VIEW_TYPE_ENTRY
-   OR $code_id == SQL_VIEW_TYPE_WORD_DEFAULT) {
+  if ($code_id == DBL_VIEW_TYPE_DEFAULT
+   OR $code_id == DBL_VIEW_TYPE_ENTRY
+   OR $code_id == DBL_VIEW_TYPE_WORD_DEFAULT) {
     $db_type = "view_type";
   }
-  if ($code_id == SQL_VIEW_COMPONENT_TEXT
-   OR $code_id == SQL_VIEW_TYPE_WORD
-   OR $code_id == SQL_VIEW_TYPE_WORDS_UP
-   OR $code_id == SQL_VIEW_TYPE_WORDS_DOWN
-   OR $code_id == SQL_VIEW_TYPE_WORD_NAME
-   OR $code_id == SQL_VIEW_TYPE_WORD_VALUE
-   OR $code_id == SQL_VIEW_TYPE_VALUES_ALL
-   OR $code_id == SQL_VIEW_TYPE_VALUES_RELATED
-   OR $code_id == SQL_VIEW_TYPE_FORMULAS
-   OR $code_id == SQL_VIEW_TYPE_FORMULA_RESULTS
-   OR $code_id == SQL_VIEW_TYPE_JSON_EXPORT
-   OR $code_id == SQL_VIEW_TYPE_XML_EXPORT
-   OR $code_id == SQL_VIEW_TYPE_CSV_EXPORT) {
+  if ($code_id == DBL_VIEW_COMP_TYPE_TEXT
+   OR $code_id == DBL_VIEW_COMP_TYPE_WORD
+   OR $code_id == DBL_VIEW_COMP_TYPE_WORDS_UP
+   OR $code_id == DBL_VIEW_COMP_TYPE_WORDS_DOWN
+   OR $code_id == DBL_VIEW_COMP_TYPE_WORD_NAME
+   OR $code_id == DBL_VIEW_COMP_TYPE_WORD_VALUE
+   OR $code_id == DBL_VIEW_COMP_TYPE_VALUES_ALL
+   OR $code_id == DBL_VIEW_COMP_TYPE_VALUES_RELATED
+   OR $code_id == DBL_VIEW_COMP_TYPE_FORMULAS
+   OR $code_id == DBL_VIEW_COMP_TYPE_FORMULA_RESULTS
+   OR $code_id == DBL_VIEW_COMP_TYPE_JSON_EXPORT
+   OR $code_id == DBL_VIEW_COMP_TYPE_XML_EXPORT
+   OR $code_id == DBL_VIEW_COMP_TYPE_CSV_EXPORT) {
     $db_type = "view_component_type";
   }
-  if ($code_id == SQL_WORD_TYPE_NORMAL
-   OR $code_id == SQL_WORD_TYPE_TIME
-   OR $code_id == SQL_WORD_TYPE_TIMEJUMP
-   OR $code_id == SQL_WORD_TYPE_MEASURE
-   OR $code_id == SQL_WORD_TYPE_PERCENT
-   OR $code_id == SQL_WORD_TYPE_MEASURE
-   OR $code_id == SQL_WORD_TYPE_SCALING
-   OR $code_id == SQL_WORD_TYPE_SCALING_HIDDEN
-   OR $code_id == SQL_WORD_TYPE_SCALING_PCT
-   OR $code_id == SQL_WORD_TYPE_FORMULA_LINK
-   OR $code_id == SQL_WORD_TYPE_OTHER
-   OR $code_id == SQL_WORD_TYPE_NEXT
-   OR $code_id == SQL_WORD_TYPE_THIS
-   OR $code_id == SQL_WORD_TYPE_PREV) {
+  if ($code_id == DBL_WORD_TYPE_NORMAL
+   OR $code_id == DBL_WORD_TYPE_TIME
+   OR $code_id == DBL_WORD_TYPE_TIME_JUMP
+   OR $code_id == DBL_WORD_TYPE_MEASURE
+   OR $code_id == DBL_WORD_TYPE_PERCENT
+   OR $code_id == DBL_WORD_TYPE_MEASURE
+   OR $code_id == DBL_WORD_TYPE_SCALING
+   OR $code_id == DBL_WORD_TYPE_SCALING_HIDDEN
+   OR $code_id == DBL_WORD_TYPE_SCALING_PCT
+   OR $code_id == DBL_WORD_TYPE_FORMULA_LINK
+   OR $code_id == DBL_WORD_TYPE_OTHER
+   OR $code_id == DBL_WORD_TYPE_NEXT
+   OR $code_id == DBL_WORD_TYPE_THIS
+   OR $code_id == DBL_WORD_TYPE_PREV) {
     $db_type = "word_type";
   }
 
@@ -334,14 +377,14 @@ function sql_code_link($code_id, $description, $debug = 0) {
     $db_type    = "ref_type";
   }
 
-  if ($code_id == SQL_FORMULA_TYPE_NEXT
-   OR $code_id == SQL_FORMULA_TYPE_THIS
-   OR $code_id == SQL_FORMULA_TYPE_PREV) {
+  if ($code_id == DBL_FORMULA_TYPE_NEXT
+   OR $code_id == DBL_FORMULA_TYPE_THIS
+   OR $code_id == DBL_FORMULA_TYPE_PREV) {
     $db_type = "formula_type";
   }
-  if ($code_id == SQL_FORMULA_PART_TYPE_WORD
-   OR $code_id == SQL_FORMULA_PART_TYPE_VERB
-   OR $code_id == SQL_FORMULA_PART_TYPE_FORMULA) {
+  if ($code_id == DBL_FORMULA_PART_TYPE_WORD
+   OR $code_id == DBL_FORMULA_PART_TYPE_VERB
+   OR $code_id == DBL_FORMULA_PART_TYPE_FORMULA) {
     $db_type = "formula_element_type";
   }
   if ($code_id == DBL_SYSLOG_INFO
@@ -352,12 +395,12 @@ function sql_code_link($code_id, $description, $debug = 0) {
     $db_type = "sys_log_type";
   }
 
-  if ($code_id == SQL_USER_ADMIN
-   OR $code_id == SQL_USER_DEV) {
+  if ($code_id == DBL_USER_ADMIN
+   OR $code_id == DBL_USER_DEV) {
     $db_type = "user_profile";
   }
 
-  if ($code_id == SQL_USER_SYSTEM) {
+  if ($code_id == DBL_USER_SYSTEM) {
     $db_type = "user";
   }
 
@@ -365,7 +408,7 @@ function sql_code_link($code_id, $description, $debug = 0) {
    OR $code_id == DBL_ERR_ASSIGNED
    OR $code_id == DBL_ERR_RESOLVED
    OR $code_id == DBL_ERR_CLOSED) {
-    $db_type    = "sys_log_status";
+    $db_type = "sys_log_status";
   }
 
   if ($code_id == DBL_SYSLOG_TBL_VALUE
@@ -401,14 +444,14 @@ function sql_code_link($code_id, $description, $debug = 0) {
     $db_type = "calc_and_cleanup_task_type";
   }
 
-  if ($code_id == DBL_SYSLOG_STATUS_CLOSE) {
+  if ($code_id == DBL_ERR_CLOSED) {
     $db_type = "sys_log_status";
   }
   
-  if ($code_id == SQL_LINK_TYPE_IS
-   OR $code_id == SQL_LINK_TYPE_CONTAIN
-   OR $code_id == SQL_LINK_TYPE_FOLLOW
-   OR $code_id == SQL_LINK_TYPE_DIFFERANTIATOR) {
+  if ($code_id == DBL_LINK_TYPE_IS
+   OR $code_id == DBL_LINK_TYPE_CONTAIN
+   OR $code_id == DBL_LINK_TYPE_FOLLOW
+   OR $code_id == DBL_LINK_TYPE_DIFFERENTIATOR) {
     $db_type = "verb";
   }
   
@@ -424,7 +467,6 @@ function sql_code_link($code_id, $description, $debug = 0) {
   if ($table_name == '' AND $db_type == '') {
     log_debug('table name for code_id '.$code_id.' ('.$db_type.') not found <br>', $debug-14);
   } else {
-    $result = '';
     //$db_con = new mysql;
     // remember the db_type
     $db_value_type = $db_con->type;
@@ -436,11 +478,10 @@ function sql_code_link($code_id, $description, $debug = 0) {
 
     // insert the missing row if needed
     if ($row_id <= 0) {
-      $row_id = $db_con->get_id_from_code($code_id, $debug-14);
       if ($db_type == 'view') {
-        $result .= $db_con->insert(array(DBL_FIELD, 'user_id'), array($code_id, SYSTEM_USER_ID), $debug-14);
+        $db_con->insert(array(DBL_FIELD, 'user_id'), array($code_id, SYSTEM_USER_ID), $debug-14);
       } else {  
-        $result .= $db_con->insert(DBL_FIELD, $code_id, $debug-14);
+        $db_con->insert(DBL_FIELD, $code_id, $debug-14);
       }  
       log_debug ('inserted '.$code_id.'<br>', $debug-14);
       // get the id of the inserted row
@@ -455,7 +496,7 @@ function sql_code_link($code_id, $description, $debug = 0) {
       $row_name = $db_con->get_name($row_id, $debug-14);
       if ($row_name == '') {
         log_debug ('add '.$description.'<br>', $debug-14);
-        $result .= $db_con->update_name($row_id, $description, $debug-14);
+        $db_con->update_name($row_id, $description, $debug-14);
       }
     }
     // restore the db_type
@@ -466,12 +507,6 @@ function sql_code_link($code_id, $description, $debug = 0) {
 
   return $row_id;
 } 
-
-// shortcut name for sql_code_link for better code reading
-// don't use it for the first call to make sure that the description is in the database
-function cl($code_id) {
-  return sql_code_link($code_id, "", 0);
-}
 
 
 ?>

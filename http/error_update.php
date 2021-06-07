@@ -47,10 +47,10 @@ $db_con = prg_start("error_update", "", $debug);
     
     $dsp = new view_dsp;
     $dsp->usr = $usr;
-    $dsp->id = cl(SQL_VIEW_ERR_UPD);
+    $dsp->id = cl(DBL_VIEW_ERR_UPD);
     $result .= $dsp->dsp_navbar($back, $debug-1);
     
-    if ($usr->id > 0 AND $usr->profile_id == cl(SQL_USER_ADMIN)) {
+    if ($usr->id > 0 AND $usr->profile_id == cl(DBL_USER_ADMIN)) {
       // update the error if requested
       if ($log_id > 0 AND $status_id > 0) {
         $err_entry = New system_error_log;

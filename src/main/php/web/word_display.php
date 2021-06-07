@@ -45,7 +45,7 @@ class word_dsp extends word {
       }
       
       $is_part_of = $this->is_mainly($debug-1);
-      $default_view_id = cl(SQL_VIEW_WORD);
+      $default_view_id = cl(DBL_VIEW_WORD);
       $title = '';
       //$title .= '<a href="/http/view.php?words='.$this->id.'&view='.$default_view_id.'" title="'.$this->description.'">'.$this->name.'</a>';
       $title .= $this->name;
@@ -156,9 +156,9 @@ class word_dsp extends word {
                        FROM word_links l, words w   
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
                                         AND u.user_id = ".$this->usr->id." 
-                      WHERE w.word_type_id = ".cl(SQL_WORD_TYPE_TIME)."
+                      WHERE w.word_type_id = ".cl(DBL_WORD_TYPE_TIME)."
                         AND w.word_id = l.from_phrase_id 
-                        AND l.verb_id = ".cl(SQL_LINK_TYPE_IS)."              
+                        AND l.verb_id = ".cl(DBL_LINK_TYPE_IS)."              
                         AND l.to_phrase_id = ".$type->id."            
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    
@@ -171,7 +171,7 @@ class word_dsp extends word {
                        FROM words w   
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
                                         AND u.user_id = ".$this->usr->id."
-                      WHERE w.word_type_id = ".cl(SQL_WORD_TYPE_TIME)."
+                      WHERE w.word_type_id = ".cl(DBL_WORD_TYPE_TIME)."
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                   
           ORDER BY name;";
@@ -530,7 +530,7 @@ class word_dsp extends word {
       $result .= dsp_form_hidden ("back",    $back);
       $result .= dsp_form_hidden ("confirm", '1');
       $result .= '<div class="form-row">';
-      if ($this->type_id == cl (SQL_WORD_TYPE_FORMULA_LINK)) {
+      if ($this->type_id == cl (DBL_WORD_TYPE_FORMULA_LINK)) {
         $result .= dsp_form_hidden ("name", $this->name);
         $result .= '  to change the name of "'.$this->name.'" rename the ';
         $frm = $this->formula($debug-1);
@@ -540,7 +540,7 @@ class word_dsp extends word {
         $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-4");
       }
       $result .= dsp_form_text("plural", $this->plural, "Plural:", "col-sm-4");
-      if ($this->type_id == cl (SQL_WORD_TYPE_FORMULA_LINK)) {
+      if ($this->type_id == cl (DBL_WORD_TYPE_FORMULA_LINK)) {
         $result .= ' type: '.$this->type_name;
       } else {
         $result .= $this->dsp_type_selector ('word_edit', "col-sm-4", $debug-1);

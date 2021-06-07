@@ -113,7 +113,7 @@ class formula extends user_sandbox  {
     // if the formula word is missing, try a word creating as a kind of auto recovery
     $name_wrd = new word_dsp;
     $name_wrd->name    = $this->name;
-    $name_wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
+    $name_wrd->type_id = cl(DBL_WORD_TYPE_FORMULA_LINK);
     $name_wrd->usr     = $this->usr;
     $name_wrd->save($debug-1); 
     if ($name_wrd->id > 0) {
@@ -310,13 +310,13 @@ class formula extends user_sandbox  {
 
     if ($this->type_id > 0) {
       log_debug("formula->special_result -> type (".$this->type_cl.")", $debug-8);
-      if ($this->type_cl == SQL_FORMULA_TYPE_THIS) {
+      if ($this->type_cl == DBL_FORMULA_TYPE_THIS) {
         $val_phr_lst = clone $phr_lst;
         $val_phr_lst->add($time_phr, $debug-1); // the time word should be added at the end, because ...
         log_debug("formula->special_result -> this (".$time_phr->name.")", $debug-8);
         $val = $val_phr_lst->value_scaled($debug-1);
       }  
-      if ($this->type_cl == SQL_FORMULA_TYPE_NEXT) {
+      if ($this->type_cl == DBL_FORMULA_TYPE_NEXT) {
         $val_phr_lst = clone $phr_lst;
         $next_wrd = $time_phr->next();
         if ($next_wrd->id > 0) {
@@ -325,7 +325,7 @@ class formula extends user_sandbox  {
           $val = $val_phr_lst->value_scaled($debug-1);
         }
       }  
-      if ($this->type_cl == SQL_FORMULA_TYPE_PREV) {
+      if ($this->type_cl == DBL_FORMULA_TYPE_PREV) {
         $val_phr_lst = clone $phr_lst;
         $prior_wrd = $time_phr->prior();
         if ($prior_wrd->id > 0) {
@@ -350,15 +350,15 @@ class formula extends user_sandbox  {
       if ($time_phr->id <= 0) {
         log_err('No time defined for '.$time_phr->dsp_id().'.', 'formula->special_time_phr', '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
-        if ($this->type_cl == SQL_FORMULA_TYPE_THIS) {
+        if ($this->type_cl == DBL_FORMULA_TYPE_THIS) {
           $result = $time_phr;
         }  
-        if ($this->type_cl == SQL_FORMULA_TYPE_NEXT) {
+        if ($this->type_cl == DBL_FORMULA_TYPE_NEXT) {
           $this_wrd = $time_phr->main_word($debug-1);         
           $next_wrd = $this_wrd->next($debug-1);  
           $result = $next_wrd->phrase($debug-1);
         }  
-        if ($this->type_cl == SQL_FORMULA_TYPE_PREV) {
+        if ($this->type_cl == DBL_FORMULA_TYPE_PREV) {
           $this_wrd = $time_phr->main_word($debug-1);         
           $prior_wrd = $this_wrd->prior($debug-1);  
           $result = $prior_wrd->phrase($debug-1);
@@ -1272,7 +1272,7 @@ class formula extends user_sandbox  {
     // read the elements from the formula text
     $elm_type_id = cl($element_type);
     switch ($element_type) {
-      case SQL_FORMULA_PART_TYPE_FORMULA:
+      case DBL_FORMULA_PART_TYPE_FORMULA:
         $elm_ids = $this->frm_ids($frm_text, $frm_usr_id, $debug-1); break;
       default:
         $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id, $debug-1); break;
@@ -1348,9 +1348,9 @@ class formula extends user_sandbox  {
     $result = '';
 
     // refresh the links for the standard formula used if the user has not changed the formula
-    if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, SQL_FORMULA_PART_TYPE_WORD, 0, $this->usr->id, $debug-1); }  
+    if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, DBL_FORMULA_PART_TYPE_WORD, 0, $this->usr->id, $debug-1); }
     // update formula links of the standard formula
-    if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, SQL_FORMULA_PART_TYPE_FORMULA, 0, $this->usr->id, $debug-1); }  
+    if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, DBL_FORMULA_PART_TYPE_FORMULA, 0, $this->usr->id, $debug-1); }
 
     // refresh the links for the user specific formula
     $sql = "SELECT user_id FROM user_formulas WHERE formula_id = ".$this->id.";";
@@ -1359,9 +1359,9 @@ class formula extends user_sandbox  {
     $db_lst = $db_con->get($sql, $debug-5);  
     foreach ($db_lst AS $db_row) {
       // update word links of the user formula
-      if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, SQL_FORMULA_PART_TYPE_WORD, $db_row['user_id'], $this->usr->id, $debug-1); }
+      if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, DBL_FORMULA_PART_TYPE_WORD, $db_row['user_id'], $this->usr->id, $debug-1); }
       // update formula links of the standard formula
-      if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, SQL_FORMULA_PART_TYPE_FORMULA, $db_row['user_id'], $this->usr->id, $debug-1); }
+      if (str_replace ('1','',$result) == '') { $result .= $this->element_refresh_type ($frm_text, DBL_FORMULA_PART_TYPE_FORMULA, $db_row['user_id'], $this->usr->id, $debug-1); }
     }
     
     log_debug('formula->element_refresh -> done'.$result, $debug-1);
@@ -1904,7 +1904,7 @@ class formula extends user_sandbox  {
       // check if a verb or word with the same name is already in the database
       $trm = $this->term($debug-1);      
       if ($trm->id > 0 AND $trm->type <> 'formula') {
-        $result .= $trm->id_used_msg($debug-1);
+        $result .= $trm->id_used_msg();
         log_debug('formula->save_id_if_updated name "'.$trm->name.'" used already as "'.$trm->type.'"', $debug-14);
       } else {
         
@@ -2009,7 +2009,7 @@ class formula extends user_sandbox  {
       $trm = $this->term($debug-1);      
       if ($trm->id > 0) {
         if ($trm->type <> 'formula') {
-          $result .= $trm->id_used_msg($debug-1);
+          $result .= $trm->id_used_msg();
         } else {
           $this->id = $trm->id;
           log_debug('formula->save adding formula name '.$this->dsp_id().' is OK', $debug-14);

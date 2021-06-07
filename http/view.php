@@ -80,7 +80,7 @@ $db_con = prg_start("view", "", $debug);
             $view_id = $wrd->view_id($debug-1);
             if ($view_id <= 0) {
               // if no one has set a view for this word, use the fallback view
-              $view_id = cl(SQL_VIEW_WORD);
+              $view_id = cl(DBL_VIEW_WORD);
             }
           }
         }

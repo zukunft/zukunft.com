@@ -355,7 +355,7 @@ function zuc_get_verb_words ($verb_id, $word_array, $time_word_id, $user_id, $de
   $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, "up", $debug-1);
   log_debug("zuc_get_verb_words -> verb words ".implode(",",$verb_words), $debug);
   // list all foaf of the verb
-  $is_a_type = sql_code_link(SQL_LINK_TYPE_IS);
+  $is_a_type = sql_code_link(DBL_LINK_TYPE_IS);
   $word_ids = zut_array_ids($verb_words, $user_id, $debug-1);
   foreach ($word_ids AS $word_id) {
     log_debug("zuc_get_verb_words -> add word id ".$word_id." to result", $debug);
@@ -882,7 +882,7 @@ function zuc_upd_val_lst($val_ids_updated, $upd_usr, $debug) {
   // include the category words, because a formula linked to "Year" is inheritent to e.g. "2016"
   $val_wrd_lst = zuv_ids_wrd_lst_incl_cat($val_ids_updated, $upd_usr, $debug-5);
   
-  $elm_type_id = cl(SQL_FORMULA_PART_TYPE_WORD);
+  $elm_type_id = cl(DBL_FORMULA_PART_TYPE_WORD);
   $sql = "SELECT formula_id 
             FROM formula_elements
            WHERE formula_element_type_id = ".$elm_type_id."

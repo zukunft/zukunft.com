@@ -99,8 +99,8 @@ function run_word_test ($debug) {
   // word type
   $wrd_2013 = test_word(TW_2013, $debug-1);
   $target = True;
-  $result = $wrd_2013->is_type(SQL_WORD_TYPE_TIME, $debug-1);
-  $exe_start_time = test_show_result(', word->is_type for '.TW_2013.' and "'.SQL_WORD_TYPE_TIME.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $result = $wrd_2013->is_type(DBL_WORD_TYPE_TIME, $debug-1);
+  $exe_start_time = test_show_result(', word->is_type for '.TW_2013.' and "'.DBL_WORD_TYPE_TIME.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // is time
   $target = True;
@@ -321,7 +321,7 @@ function run_word_test ($debug) {
   // check if the word parameters can be added
   $wrd_renamed->plural      = TW_ADD_RENAMED.'s';
   $wrd_renamed->description = TW_ADD_RENAMED.' description';
-  $wrd_renamed->type_id     = cl(SQL_WORD_TYPE_OTHER);
+  $wrd_renamed->type_id     = cl(DBL_WORD_TYPE_OTHER);
   $result = $wrd_renamed->save($debug-1);
   $target = '11111';
   $exe_start_time = test_show_result(', word->save all word fields beside the name for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -335,7 +335,7 @@ function run_word_test ($debug) {
   $target = TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_reloaded->type_id;
-  $target = cl(SQL_WORD_TYPE_OTHER);
+  $target = cl(DBL_WORD_TYPE_OTHER);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the word parameter adding have been logged
@@ -364,7 +364,7 @@ function run_word_test ($debug) {
   $wrd_usr2->load($debug-1);
   $wrd_usr2->plural      = TW_ADD_RENAMED.'s2';
   $wrd_usr2->description = TW_ADD_RENAMED.' description2';
-  $wrd_usr2->type_id     = cl(SQL_WORD_TYPE_TIME);
+  $wrd_usr2->type_id     = cl(DBL_WORD_TYPE_TIME);
   $result = $wrd_usr2->save($debug-1);
   $target = '11111';
   $exe_start_time = test_show_result(', word->save all word fields for user 2 beside the name for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -381,7 +381,7 @@ function run_word_test ($debug) {
   $target = TW_ADD_RENAMED.' description2';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_usr2_reloaded->type_id;
-  $target = cl(SQL_WORD_TYPE_TIME);
+  $target = cl(DBL_WORD_TYPE_TIME);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check the word for the original user remains unchanged
@@ -393,7 +393,7 @@ function run_word_test ($debug) {
   $target = TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_reloaded->type_id;
-  $target = cl(SQL_WORD_TYPE_OTHER);
+  $target = cl(DBL_WORD_TYPE_OTHER);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if undo all specific changes removes the user word
@@ -403,7 +403,7 @@ function run_word_test ($debug) {
   $wrd_usr2->load($debug-1);
   $wrd_usr2->plural      = TW_ADD_RENAMED.'s';
   $wrd_usr2->description = TW_ADD_RENAMED.' description';
-  $wrd_usr2->type_id     = cl(SQL_WORD_TYPE_OTHER);
+  $wrd_usr2->type_id     = cl(DBL_WORD_TYPE_OTHER);
   $result = $wrd_usr2->save($debug-1);
   $target = '111111';
   $exe_start_time = test_show_result(', word->save undo the user word fields beside the name for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
@@ -420,7 +420,7 @@ function run_word_test ($debug) {
   $target = TW_ADD_RENAMED.' description';
   $exe_start_time = test_show_result(', word->load description for "'.TW_ADD_RENAMED.'" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $wrd_usr2_reloaded->type_id;
-  $target = cl(SQL_WORD_TYPE_OTHER);
+  $target = cl(DBL_WORD_TYPE_OTHER);
   $exe_start_time = test_show_result(', word->load type_id for "'.TW_ADD_RENAMED.'" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // redo the user specific word changes

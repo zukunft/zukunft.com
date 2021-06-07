@@ -34,62 +34,67 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 global $debug;
+global $root_path;
 
-include_once '../src/main/php/service/config.php';   if ($debug > 9) { echo 'lib config loaded<br>'; }
+if ($root_path == '') {
+    $root_path = '../';
+}
+
+include_once $root_path.'src/main/php/service/config.php';   if ($debug > 9) { echo 'lib config loaded<br>'; }
 
 // load the testing functions
-include_once '../src/test/php/test_system.php';                if ($debug > 9) { echo 'system test loaded<br>'; }
-include_once '../src/test/php/test_db_link.php';               if ($debug > 9) { echo 'database link test loaded<br>'; }
-include_once '../src/test/php/test_lib.php';                   if ($debug > 9) { echo 'library test loaded<br>'; }
-include_once '../src/test/php/test_math.php';                  if ($debug > 9) { echo 'mathematical test loaded<br>'; }
-include_once '../src/test/php/test_user.php';                  if ($debug > 9) { echo 'user test loaded<br>'; }
-include_once '../src/test/php/test_word.php';                  if ($debug > 9) { echo 'word test loaded<br>'; }
-include_once '../src/test/php/test_word_ui.php';               if ($debug > 9) { echo 'word user interface test loaded<br>'; }
-include_once '../src/test/php/test_word_display.php';          if ($debug > 9) { echo 'word display test loaded<br>'; }
-include_once '../src/test/php/test_word_list.php';             if ($debug > 9) { echo 'word list test loaded<br>'; }
-include_once '../src/test/php/test_word_link.php';             if ($debug > 9) { echo 'word link test loaded<br>'; }
-include_once '../src/test/php/phrase_test.php';                if ($debug > 9) { echo 'phrase test loaded<br>'; }
-include_once '../src/test/php/phrase_list_test.php';           if ($debug > 9) { echo 'phrase list test loaded<br>'; }
-include_once '../src/test/php/phrase_group_test.php';          if ($debug > 9) { echo 'phrase group test loaded<br>'; }
-include_once '../src/test/php/phrase_group_list_test.php';     if ($debug > 9) { echo 'phrase group list test loaded<br>'; }
-include_once '../src/test/php/ref_test.php';                   if ($debug > 9) { echo 'ref test loaded<br>'; }
-include_once '../src/test/php/test_graph.php';                 if ($debug > 9) { echo 'graph test loaded<br>'; }
-include_once '../src/test/php/test_verb.php';                  if ($debug > 9) { echo 'verb test loaded<br>'; }
-include_once '../src/test/php/test_term.php';                  if ($debug > 9) { echo 'term test loaded<br>'; }
-include_once '../src/test/php/value_test.php';                 if ($debug > 9) { echo 'value test loaded<br>'; }
-include_once '../src/test/php/value_test_ui.php';              if ($debug > 9) { echo 'value user interface test loaded<br>'; }
-include_once '../src/test/php/test_source.php';                if ($debug > 9) { echo 'source test loaded<br>'; }
-include_once '../src/test/php/test_expression.php';            if ($debug > 9) { echo 'expression test loaded<br>'; }
-include_once '../src/test/php/test_formula.php';               if ($debug > 9) { echo 'formula test loaded<br>'; }
-include_once '../src/test/php/test_formula_ui.php';            if ($debug > 9) { echo 'formula user interface test loaded<br>'; }
-include_once '../src/test/php/test_formula_link.php';          if ($debug > 9) { echo 'formula link test loaded<br>'; }
-include_once '../src/test/php/test_formula_trigger.php';       if ($debug > 9) { echo 'formula trigger test loaded<br>'; }
-include_once '../src/test/php/test_formula_value.php';         if ($debug > 9) { echo 'formula value test loaded<br>'; }
-include_once '../src/test/php/test_formula_element.php';       if ($debug > 9) { echo 'formula element test loaded<br>'; }
-include_once '../src/test/php/test_formula_element_group.php'; if ($debug > 9) { echo 'formula element group test loaded<br>'; }
-include_once '../src/test/php/test_batch.php';                 if ($debug > 9) { echo 'batch job test loaded<br>'; }
-include_once '../src/test/php/test_view.php';                  if ($debug > 9) { echo 'view test loaded<br>'; }
-include_once '../src/test/php/test_view_component.php';        if ($debug > 9) { echo 'view component test loaded<br>'; }
-include_once '../src/test/php/test_view_component_link.php';   if ($debug > 9) { echo 'view component link test loaded<br>'; }
-include_once '../src/test/php/test_display.php';               if ($debug > 9) { echo 'display test loaded<br>'; }
-include_once '../src/test/php/test_import.php';                if ($debug > 9) { echo 'import test loaded<br>'; }
-include_once '../src/test/php/test_export.php';                if ($debug > 9) { echo 'export test loaded<br>'; }
-include_once '../src/test/php/test_legacy.php';                if ($debug > 9) { echo 'test legacy loaded<br>'; }
-include_once '../src/test/php/test_cleanup.php';               if ($debug > 9) { echo 'test cleanup loaded<br>'; }
+include_once $root_path.'src/test/php/test_system.php';                if ($debug > 9) { echo 'system test loaded<br>'; }
+include_once $root_path.'src/test/php/test_db_link.php';               if ($debug > 9) { echo 'database link test loaded<br>'; }
+include_once $root_path.'src/test/php/test_lib.php';                   if ($debug > 9) { echo 'library test loaded<br>'; }
+include_once $root_path.'src/test/php/test_math.php';                  if ($debug > 9) { echo 'mathematical test loaded<br>'; }
+include_once $root_path.'src/test/php/test_user.php';                  if ($debug > 9) { echo 'user test loaded<br>'; }
+include_once $root_path.'src/test/php/test_word.php';                  if ($debug > 9) { echo 'word test loaded<br>'; }
+include_once $root_path.'src/test/php/test_word_ui.php';               if ($debug > 9) { echo 'word user interface test loaded<br>'; }
+include_once $root_path.'src/test/php/test_word_display.php';          if ($debug > 9) { echo 'word display test loaded<br>'; }
+include_once $root_path.'src/test/php/test_word_list.php';             if ($debug > 9) { echo 'word list test loaded<br>'; }
+include_once $root_path.'src/test/php/test_word_link.php';             if ($debug > 9) { echo 'word link test loaded<br>'; }
+include_once $root_path.'src/test/php/phrase_test.php';                if ($debug > 9) { echo 'phrase test loaded<br>'; }
+include_once $root_path.'src/test/php/phrase_list_test.php';           if ($debug > 9) { echo 'phrase list test loaded<br>'; }
+include_once $root_path.'src/test/php/phrase_group_test.php';          if ($debug > 9) { echo 'phrase group test loaded<br>'; }
+include_once $root_path.'src/test/php/phrase_group_list_test.php';     if ($debug > 9) { echo 'phrase group list test loaded<br>'; }
+include_once $root_path.'src/test/php/ref_test.php';                   if ($debug > 9) { echo 'ref test loaded<br>'; }
+include_once $root_path.'src/test/php/test_graph.php';                 if ($debug > 9) { echo 'graph test loaded<br>'; }
+include_once $root_path.'src/test/php/test_verb.php';                  if ($debug > 9) { echo 'verb test loaded<br>'; }
+include_once $root_path.'src/test/php/test_term.php';                  if ($debug > 9) { echo 'term test loaded<br>'; }
+include_once $root_path.'src/test/php/value_test.php';                 if ($debug > 9) { echo 'value test loaded<br>'; }
+include_once $root_path.'src/test/php/value_test_ui.php';              if ($debug > 9) { echo 'value user interface test loaded<br>'; }
+include_once $root_path.'src/test/php/test_source.php';                if ($debug > 9) { echo 'source test loaded<br>'; }
+include_once $root_path.'src/test/php/test_expression.php';            if ($debug > 9) { echo 'expression test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula.php';               if ($debug > 9) { echo 'formula test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula_ui.php';            if ($debug > 9) { echo 'formula user interface test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula_link.php';          if ($debug > 9) { echo 'formula link test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula_trigger.php';       if ($debug > 9) { echo 'formula trigger test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula_value.php';         if ($debug > 9) { echo 'formula value test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula_element.php';       if ($debug > 9) { echo 'formula element test loaded<br>'; }
+include_once $root_path.'src/test/php/test_formula_element_group.php'; if ($debug > 9) { echo 'formula element group test loaded<br>'; }
+include_once $root_path.'src/test/php/test_batch.php';                 if ($debug > 9) { echo 'batch job test loaded<br>'; }
+include_once $root_path.'src/test/php/test_view.php';                  if ($debug > 9) { echo 'view test loaded<br>'; }
+include_once $root_path.'src/test/php/test_view_component.php';        if ($debug > 9) { echo 'view component test loaded<br>'; }
+include_once $root_path.'src/test/php/test_view_component_link.php';   if ($debug > 9) { echo 'view component link test loaded<br>'; }
+include_once $root_path.'src/test/php/test_display.php';               if ($debug > 9) { echo 'display test loaded<br>'; }
+include_once $root_path.'src/test/php/test_import.php';                if ($debug > 9) { echo 'import test loaded<br>'; }
+include_once $root_path.'src/test/php/test_export.php';                if ($debug > 9) { echo 'export test loaded<br>'; }
+include_once $root_path.'src/test/php/test_legacy.php';                if ($debug > 9) { echo 'test legacy loaded<br>'; }
+include_once $root_path.'src/test/php/test_cleanup.php';               if ($debug > 9) { echo 'test cleanup loaded<br>'; }
 
 // libraries that can be dismissed, but still used to compare the result with the result of the legacy function
-include_once '../src/main/php/service/test/zu_lib_word_dsp.php';   if ($debug > 9) { echo 'lib word display loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_sql.php';        if ($debug > 9) { echo 'lib sql loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_link.php';       if ($debug > 9) { echo 'lib link loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_sql_naming.php'; if ($debug > 9) { echo 'lib sql naming loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_value.php';      if ($debug > 9) { echo 'lib value loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_word.php';       if ($debug > 9) { echo 'lib word loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_word_db.php';    if ($debug > 9) { echo 'lib word database link loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_calc.php';       if ($debug > 9) { echo 'lib calc loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_value_db.php';   if ($debug > 9) { echo 'lib value database link loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_value_dsp.php';  if ($debug > 9) { echo 'lib value display loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_user.php';       if ($debug > 9) { echo 'lib user loaded<br>'; }
-include_once '../src/main/php/service/test/zu_lib_html.php';       if ($debug > 9) { echo 'lib html loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_word_dsp.php';   if ($debug > 9) { echo 'lib word display loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_sql.php';        if ($debug > 9) { echo 'lib sql loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_link.php';       if ($debug > 9) { echo 'lib link loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_sql_naming.php'; if ($debug > 9) { echo 'lib sql naming loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_value.php';      if ($debug > 9) { echo 'lib value loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_word.php';       if ($debug > 9) { echo 'lib word loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_word_db.php';    if ($debug > 9) { echo 'lib word database link loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_calc.php';       if ($debug > 9) { echo 'lib calc loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_value_db.php';   if ($debug > 9) { echo 'lib value database link loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_value_dsp.php';  if ($debug > 9) { echo 'lib value display loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_user.php';       if ($debug > 9) { echo 'lib user loaded<br>'; }
+include_once $root_path.'src/main/php/service/test/zu_lib_html.php';       if ($debug > 9) { echo 'lib html loaded<br>'; }
 
 // the fixed system user used for testing
 const TEST_USER_ID = "1";
@@ -739,7 +744,7 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the default view
         $lnk_test->usr  = $usr;
         $lnk_test->load($debug-1);
         $result = $lnk_test;
-        if ($verb == SQL_LINK_TYPE_IS) {
+        if ($verb == DBL_LINK_TYPE_IS) {
           $target = $to.' ('.$from.')';
         } else {
           $target = $to.' '.$vrb->name.' '.$from;
@@ -817,10 +822,10 @@ define("TD_COMPANY_LIST",  "Company list with main ratios"); // the default view
     for ($year = $start_year; $year <= $end_year; $year++) {
       $this_year = $year;
       test_word(strval($this_year));
-      $wrd_lnk = test_word_link(TW_YEAR, SQL_LINK_TYPE_IS, $this_year, true,  '', $debug-1);
+      $wrd_lnk = test_word_link(TW_YEAR, DBL_LINK_TYPE_IS, $this_year, true,  '', $debug-1);
       $result = $wrd_lnk->name;
       if ($prev_year <> '') {
-        test_word_link($prev_year, SQL_LINK_TYPE_FOLLOW, $this_year, true, '', $debug-1);
+        test_word_link($prev_year, DBL_LINK_TYPE_FOLLOW, $this_year, true, '', $debug-1);
       }
       $prev_year = $this_year;
     }

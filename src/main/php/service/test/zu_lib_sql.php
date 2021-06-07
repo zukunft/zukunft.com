@@ -1048,8 +1048,8 @@ function zu_sql_word_lst_values($word_ids, $value_ids, $user_id, $debug) {
 function zu_sql_word_lst_add_differantiator($word_lst, $xtra_words, $debug) {
   log_debug('zu_sql_word_lst_add_differantiator('.$word_lst.','.$xtra_words.')', $debug-10);
   
-  $is_a_type = sql_code_link(SQL_LINK_TYPE_IS);
-  $differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+  $is_a_type = sql_code_link(DBL_LINK_TYPE_IS);
+  $differantiator_type = sql_code_link(DBL_LINK_TYPE_DIFFERENTIATOR);
 
   // add all words that are "is a" to the $differantiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   echo 'extra: '.implode(",",$xtra_words).'<br>';

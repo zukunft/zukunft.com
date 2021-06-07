@@ -70,6 +70,7 @@
                              the user list should only be used to display something and never for checking if an item exists
                              this is the short for for sbx_lst
 
+  dsp (DiSPlay)            - a view/mask that is shown to the user
   ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
   djs (DiSPlay JavaScript) - functions for the vue.js JavaScript user interface implementation
   dbs (DiSPlay BootStrap)  - functions for the bootstrap user interface implementation
@@ -282,6 +283,9 @@
 
 */
 
+// the main global vars used to shorten the code
+// TODO load the config, that is not expected to be changed during a session once at startup
+// TODO start the backend only once and react to REST calls from the frontend
 global $debug;
 global $root_path;
 
@@ -430,6 +434,7 @@ const UI_CAN_CHANGE_FORMULA_NAME        = TRUE; // dito for formulas
 const UI_CAN_CHANGE_VERB_NAME           = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME         = TRUE; // dito for sources
 
+// program configuration names
 const CFG_SITE_NAME  = 'site_name';             // the name of the pod
 const CFG_VERSION_DB = 'version_database';      // the version of the database at the moment to trigger an update script if needed
 
@@ -542,8 +547,16 @@ define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('car_costs.json')));
 // for internal functions debugging
 // each complex function should call this at the beginning with the parameters and with -1 at the end with the result
 // called function should use $debug-1
-function log_debug($msg_text, $debug) {
-  if ($debug > 0) { 
+function log_debug($msg_text, $debug_overwrite = null) {
+  global $debug;
+
+  $debug_used = $debug;
+
+  if ($debug_overwrite != null) {
+    $debug_used = $debug_overwrite;
+  }
+
+  if ($debug_used > 0) {
     echo $msg_text.'.<br>' ; 
     //ob_flush();
     //flush();

@@ -81,8 +81,8 @@ class term {
     $wrd->usr  = $this->usr;
     $wrd->load($debug-1);
     if ($wrd->id > 0) {
-      log_debug('term->load word type is "'.$wrd->type_id.'" and the formula type is '.cl(SQL_WORD_TYPE_FORMULA_LINK), $debug-16);
-      if ($wrd->type_id == cl(SQL_WORD_TYPE_FORMULA_LINK)) {
+      log_debug('term->load word type is "'.$wrd->type_id.'" and the formula type is '.cl(DBL_WORD_TYPE_FORMULA_LINK), $debug-16);
+      if ($wrd->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
         $this->load_frm($debug-1);
       } else {
         $this->id = $wrd->id;

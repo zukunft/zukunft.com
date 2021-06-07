@@ -77,7 +77,7 @@ function run_phrase_group_test ($debug) {
   $wrd_zh = load_word(TW_ZH, $debug-1);
   $lnk_company = New word_link;
   $lnk_company->from_id = $wrd_zh->id;
-  $lnk_company->verb_id = cl(SQL_LINK_TYPE_IS);
+  $lnk_company->verb_id = cl(DBL_LINK_TYPE_IS);
   $lnk_company->to_id   = TEST_WORD_ID;
   $lnk_company->usr  = $usr;
   $lnk_company->load($debug-1);

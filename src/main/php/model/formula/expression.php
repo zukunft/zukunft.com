@@ -404,9 +404,9 @@ class expression {
     if (!empty($elm_lst->lst)) {
       $phr_lst->usr = $this->usr;
       foreach ($elm_lst->lst AS $elm) {
-        if ($elm->frm_type == SQL_FORMULA_TYPE_THIS
-        OR $elm->frm_type == SQL_FORMULA_TYPE_NEXT
-        OR $elm->frm_type == SQL_FORMULA_TYPE_PREV) {
+        if ($elm->frm_type == DBL_FORMULA_TYPE_THIS
+        OR $elm->frm_type == DBL_FORMULA_TYPE_NEXT
+        OR $elm->frm_type == DBL_FORMULA_TYPE_PREV) {
           $phr_lst->lst[] = $elm->wrd_obj;
           $phr_lst->ids[] = $elm->wrd_id;
         }
@@ -427,9 +427,9 @@ class expression {
       $frm_lst = New formula_list;
       $frm_lst->usr = $this->usr;
       foreach ($elm_lst->lst AS $elm) {
-        if ($elm->frm_type == SQL_FORMULA_TYPE_THIS
-        OR $elm->frm_type == SQL_FORMULA_TYPE_NEXT
-        OR $elm->frm_type == SQL_FORMULA_TYPE_PREV) {
+        if ($elm->frm_type == DBL_FORMULA_TYPE_THIS
+        OR $elm->frm_type == DBL_FORMULA_TYPE_NEXT
+        OR $elm->frm_type == DBL_FORMULA_TYPE_PREV) {
           $frm_lst->lst[] = $elm->obj;
           $frm_lst->ids[] = $elm->id;
         }

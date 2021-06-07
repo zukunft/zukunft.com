@@ -17,9 +17,11 @@ include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<b
 The steps should be
 1. ask for the database connection and test it
 2. ask for the admin user and set the database user
-3. create the database using zukunft_structure.sql
-4. load the coded linked database rows with zukunft_init_data.sql
-5. import the initial usr data with JSON
+3. write the database connection to a config file, which should not be readable for the www user
+4. create the database using zukunft_structure.sql
+5. load the coded linked database rows with zukunft_init_data.sql
+6. import the initial usr data with JSON
+7. on each start it is checked if the local config exists and if no the setup is started
 
 */
 
@@ -43,18 +45,18 @@ if ($sql == false) {
 // the code link always is done with the field "code_id"
 // this way the user can give the record another name without using the code link
 // maybe the code link should be shown to the user for
-sql_code_link(SQL_VIEW_WORD_ADD,     "Add new words", $debug);
-sql_code_link(SQL_VIEW_WORD_EDIT,    "Word Edit", $debug);
-sql_code_link(SQL_VIEW_VALUE_ADD,    "Add new values", $debug);
-sql_code_link(SQL_VIEW_VALUE_EDIT,   "Value Edit", $debug);
-sql_code_link(SQL_VIEW_FORMULA_ADD,  "Add new formula", $debug);
-sql_code_link(SQL_VIEW_FORMULA_EDIT, "Formula Edit", $debug);
-sql_code_link(SQL_VIEW_ADD,          "Add new view", $debug);
-sql_code_link(SQL_VIEW_EDIT,         "view Edit", $debug);
-sql_code_link(SQL_VIEW_IMPORT,       "Import", $debug);
+sql_code_link(DBL_VIEW_WORD_ADD,     "Add new words", $debug);
+sql_code_link(DBL_VIEW_WORD_EDIT,    "Word Edit", $debug);
+sql_code_link(DBL_VIEW_VALUE_ADD,    "Add new values", $debug);
+sql_code_link(DBL_VIEW_VALUE_EDIT,   "Value Edit", $debug);
+sql_code_link(DBL_VIEW_FORMULA_ADD,  "Add new formula", $debug);
+sql_code_link(DBL_VIEW_FORMULA_EDIT, "Formula Edit", $debug);
+sql_code_link(DBL_VIEW_ADD,          "Add new view", $debug);
+sql_code_link(DBL_VIEW_EDIT,         "view Edit", $debug);
+sql_code_link(DBL_VIEW_IMPORT,       "Import", $debug);
 
-sql_code_link(SQL_WORD_TYPE_TIME,    "Time Word", $debug);
-sql_code_link(SQL_LINK_TYPE_IS,      "is a", $debug);
+sql_code_link(DBL_WORD_TYPE_TIME,    "Time Word", $debug);
+sql_code_link(DBL_LINK_TYPE_IS,      "is a", $debug);
 
 // create test records
 // these records are used for the test cases

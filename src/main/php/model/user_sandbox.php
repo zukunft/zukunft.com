@@ -978,13 +978,13 @@ class user_sandbox {
 
     if ($this->type == 'named') {
       if ($this->obj_name == 'word') {
-        if ($this->type_id <> cl(SQL_WORD_TYPE_FORMULA_LINK)) {
+        if ($this->type_id <> cl(DBL_WORD_TYPE_FORMULA_LINK)) {
           $trm = $this->term($debug-1);  
           $result = $trm;
         }  
         if ($result > 0) {
           if ($trm->obj_name <> 'word') {
-            $result .= $trm->id_used_msg($debug-1);
+            $result .= $trm->id_used_msg();
           } else {
             $this->id = $trm->id;
             log_debug($this->obj_name.'->get_similar adding word name "'.$this->dsp_id().'" is OK', $debug-14);

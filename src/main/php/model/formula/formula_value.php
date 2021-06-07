@@ -805,7 +805,7 @@ class formula_value {
     
     // get depending formulas
     $frm_ids = array();
-    $frm_elm_type = cl(SQL_FORMULA_PART_TYPE_FORMULA);
+    $frm_elm_type = cl(DBL_FORMULA_PART_TYPE_FORMULA);
     $sql = "SELECT formula_id
               FROM formula_elements 
              WHERE ref_id = ".$this->frm_id."

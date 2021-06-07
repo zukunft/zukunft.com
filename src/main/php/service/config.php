@@ -109,6 +109,7 @@ function cfg_default_description($code_id, $usr, $debug)
     switch ($code_id) {
         case CFG_VERSION_DB:
             $result = 'the program version which has last completed the update';
+            break;
     }
 
     return $result;

@@ -42,8 +42,8 @@ function run_word_ui_test ($debug) {
   $wrd_ABB->name = TW_ABB;
   $wrd_ABB->usr = $usr;
   $wrd_ABB->load($debug-1);
-  $vrb_is = cl(SQL_LINK_TYPE_IS);
-  $wrd_type = cl(SQL_WORD_TYPE_NORMAL);
+  $vrb_is = cl(DBL_LINK_TYPE_IS);
+  $wrd_type = cl(DBL_WORD_TYPE_NORMAL);
   $result = file_get_contents('https://zukunft.com/http/word_add.php?verb='.$vrb_is.'&word='.$wrd_ABB->id.'&type=1&back='.$wrd_ABB->id.'');
   $target = TW_ABB;
   $exe_start_time = test_show_contains(', frontend word_add.php '.$result.' contains at least '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);

@@ -44,12 +44,12 @@ function run_word_link_test ($debug) {
   $wrd_canton = load_word(TW_CANTON, $debug-1);
 
   // test the City of Zurich
-  $lnk_city = test_word_link(TW_ZH, SQL_LINK_TYPE_IS, TW_CITY, false, TP_ZH_CITY);
+  $lnk_city = test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CITY, false, TP_ZH_CITY);
 
   // ... now test the Canton Zurich
   $lnk_canton = New word_link;
   $lnk_canton->from_id = $wrd_zh->id;
-  $lnk_canton->verb_id = cl(SQL_LINK_TYPE_IS);
+  $lnk_canton->verb_id = cl(DBL_LINK_TYPE_IS);
   $lnk_canton->to_id   = $wrd_canton->id;
   $lnk_canton->usr  = $usr;
   $lnk_canton->load($debug-1);
@@ -65,7 +65,7 @@ function run_word_link_test ($debug) {
   // ... now test the Insurance Zurich
   $lnk_company = New word_link;
   $lnk_company->from_id = $wrd_zh->id;
-  $lnk_company->verb_id = cl(SQL_LINK_TYPE_IS);
+  $lnk_company->verb_id = cl(DBL_LINK_TYPE_IS);
   $lnk_company->to_id   = TEST_WORD_ID;
   $lnk_company->usr  = $usr;
   $lnk_company->load($debug-1);
@@ -82,7 +82,7 @@ function run_word_link_test ($debug) {
   $wrd_added = load_word(TW_ADD_RENAMED, $debug-1);
   $wrd = load_word(TEST_WORD, $debug-1);
   $vrb = New verb;
-  $vrb->id= cl(SQL_LINK_TYPE_IS);
+  $vrb->id= cl(DBL_LINK_TYPE_IS);
   $vrb->usr_id = $usr->id;
   $vrb->load($debug-1);
   $lnk = New word_link;

@@ -307,7 +307,7 @@ class phrase {
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                                 AND u.user_id = '.$this->usr->id.'
                          WHERE l.to_phrase_id = '.$type->id.' 
-                           AND l.verb_id = '.cl(SQL_LINK_TYPE_IS).' ) AS a 
+                           AND l.verb_id = '.cl(DBL_LINK_TYPE_IS).' ) AS a 
                          WHERE (excluded <> 1 OR excluded is NULL) ';
 
         // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -319,7 +319,7 @@ class phrase {
                        LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                                   AND u.user_id = '.$this->usr->id.'
                            WHERE l.to_phrase_id <> '.$type->id.' 
-                             AND l.verb_id = '.cl(SQL_LINK_TYPE_IS).'
+                             AND l.verb_id = '.cl(DBL_LINK_TYPE_IS).'
                              AND l.from_phrase_id IN ('.$sql_wrd_all.')  
                         GROUP BY l.from_phrase_id ) AS o 
                            WHERE (excluded <> 1 OR excluded is NULL) ';
@@ -348,7 +348,7 @@ class phrase {
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                                 AND u.user_id = '.$this->usr->id.'
                          WHERE l.from_phrase_id IN ( '.$sql_wrd_other.')                                        
-                           AND l.verb_id = '.cl(SQL_LINK_TYPE_IS).'
+                           AND l.verb_id = '.cl(DBL_LINK_TYPE_IS).'
                            AND l.to_phrase_id = '.$type->id.'  
                       GROUP BY name ) AS t 
                          WHERE (excluded <> 1 OR excluded is NULL) ';

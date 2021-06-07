@@ -343,37 +343,37 @@ INSERT INTO `views` (`view_id`, `user_id`, `view_name`, `comment`, `view_type_id
 (1, 1, 'Start view', 'A dynamic start mask that shows a interesting fact', 1, 'dsp_start', NULL),
 (2, 14, 'Company sheet', 'The income statement, balance sheet or cash flow sheet of a big company', 3, NULL, NULL),
 (3, 14, 'complete', 'Show a word, all related words to edit the word tree and the linked formulas with some results', 4, NULL, NULL),
-(4, 1, 'Change Number', '', NULL, 'value_edit', NULL),
-(5, 1, 'Add New Formula', '', NULL, 'formula_add', NULL),
-(6, 1, 'Add New Word', '', NULL, 'word_add', NULL),
-(7, 1, 'Change Word', '', NULL, 'word_edit', NULL),
-(8, 1, 'Add New Number', '', NULL, 'value_add', NULL),
-(9, 1, 'Change Formula', '', NULL, 'formula_edit', NULL),
-(10, 1, 'Add New View', '', NULL, 'view_add', NULL),
-(11, 1, 'Change View', '', NULL, 'view_edit', NULL),
-(12, 1, 'Add New Verb', '', NULL, 'verb_add', NULL),
-(13, 1, 'Search', 'The search page for all words and formulas', NULL, 'word_find', NULL),
-(14, 1, 'Delete Number', '', NULL, 'value_del', NULL),
+(4, 1, 'Change Number', '', NULL, 'dsp_value_edit', NULL),
+(5, 1, 'Add New Formula', '', NULL, 'dsp_formula_add', NULL),
+(6, 1, 'Add New Word', '', NULL, 'dsp_word_add', NULL),
+(7, 1, 'Change Word', '', NULL, 'dsp_word_edit', NULL),
+(8, 1, 'Add New Number', '', NULL, 'dsp_value_add', NULL),
+(9, 1, 'Change Formula', '', NULL, 'dsp_formula_edit', NULL),
+(10, 1, 'Add New View', '', NULL, 'dsp_view_add', NULL),
+(11, 1, 'Change View', '', NULL, 'dsp_view_edit', NULL),
+(12, 1, 'Add New Verb', '', NULL, 'dsp_verb_add', NULL),
+(13, 1, 'Search', 'The search page for all words and formulas', NULL, 'dsp_word_find', NULL),
+(14, 1, 'Delete Number', '', NULL, 'dsp_value_del', NULL),
 (15, 14, 'Company list with main ratios', 'List the most interesting companies with the main ratios', 3, NULL, NULL),
-(16, 1, '', 'to change the user settings', NULL, 'user', NULL),
-(17, 1, 'Add New Source', '', NULL, 'source_add', NULL),
-(18, 1, 'Verb List', 'List all available ways how to link two words', NULL, 'verbs', NULL),
-(19, 1, 'System Error List', 'List the system errors and allow the user to change the status', NULL, 'error_update', NULL),
-(20, 1, 'Delete Formula', 'To confirm the exclusion or deleting of a formula', NULL, 'formula_del', NULL),
-(21, 1, 'Error Log', 'simple confirm page for a new error that has been logged in the database', NULL, 'error_log', NULL),
-(22, 1, 'Explain Formula Result', 'Explain the formula result', NULL, 'formula_explain', NULL),
-(23, 1, 'Delete Word', 'Exclude or delete a word', NULL, 'word_del', NULL),
-(24, 1, 'Change Source', '', NULL, 'source_edit', NULL),
-(25, 1, 'Delete Source', 'Delete an external data source', NULL, 'source_del', NULL),
-(28, 1, 'Change Verb', 'Rename a tern link type', NULL, 'verb_edit', NULL),
+(16, 1, '', 'to change the user settings', NULL, 'dsp_user', NULL),
+(17, 1, 'Add New Source', '', NULL, 'dsp_source_add', NULL),
+(18, 1, 'Verb List', 'List all available ways how to link two words', NULL, 'dsp_verbs', NULL),
+(19, 1, 'System Error List', 'List the system errors and allow the user to change the status', NULL, 'dsp_error_update', NULL),
+(20, 1, 'Delete Formula', 'To confirm the exclusion or deleting of a formula', NULL, 'dsp_formula_del', NULL),
+(21, 1, 'Error Log', 'simple confirm page for a new error that has been logged in the database', NULL, 'dsp_error_log', NULL),
+(22, 1, 'Explain Formula Result', 'Explain the formula result', NULL, 'dsp_formula_explain', NULL),
+(23, 1, 'Delete Word', 'Exclude or delete a word', NULL, 'dsp_word_del', NULL),
+(24, 1, 'Change Source', '', NULL, 'dsp_source_edit', NULL),
+(25, 1, 'Delete Source', 'Delete an external data source', NULL, 'dsp_source_del', NULL),
+(28, 1, 'Change Verb', 'Rename a tern link type', NULL, 'dsp_verb_edit', NULL),
 (30, 14, 'Country ratios', '', 2, NULL, NULL),
-(31, 1, 'Word', 'the default view for words', 0, 'word_dsp', NULL),
-(32, 1, 'Formula test', 'To debug the formula', NULL, 'formula_test', NULL),
-(33, 1, 'Delete verb', 'Exclude or delete a verb', NULL, 'verb_del', NULL),
-(34, 1, 'Delete view', '', NULL, 'view_del', NULL),
-(35, 1, 'Add New Triple', '', NULL, 'triple_add', NULL),
-(36, 1, 'Change Triple', 'Rename a triple', NULL, 'triple_edit', NULL),
-(37, 1, 'Delete triple', 'Exclude or delete a triple', NULL, 'triple_del', NULL);
+(31, 1, 'Word', 'the default view for words', 0, 'dsp_word', NULL),
+(32, 1, 'Formula test', 'To debug the formula', NULL, 'dsp_formula_test', NULL),
+(33, 1, 'Delete verb', 'Exclude or delete a verb', NULL, 'dsp_verb_del', NULL),
+(34, 1, 'Delete view', '', NULL, 'dsp_view_del', NULL),
+(35, 1, 'Add New Triple', '', NULL, 'dsp_triple_add', NULL),
+(36, 1, 'Change Triple', 'Rename a triple', NULL, 'dsp_triple_edit', NULL),
+(37, 1, 'Delete triple', 'Exclude or delete a triple', NULL, 'dsp_triple_del', NULL);
 
 --
 -- Dumping data for table `view_components`
@@ -403,22 +403,22 @@ INSERT INTO `view_component_position_types` (`view_component_position_type_id`, 
 --
 
 INSERT INTO `view_component_types` (`view_component_type_id`, `view_component_type_name`, `description`, `code_id`) VALUES
-(1, 'word selector', '', 'word_select'),
-(2, 'view selector', 'to select an existing mask e.g. to set the default view', 'view_select'),
-(3, 'text', 'simply to display a variable text', 'text'),
-(4, 'fixed word', 'just display a word as a text', 'fixed'),
-(5, 'linked word', 'display a word and offer a link', 'link'),
-(6, 'formula results', 'show the results of a formula', 'formula_results'),
-(7, 'word list up', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'word_list_up'),
-(8, 'word name', 'show the word name and give the user the possibility to change the word name', 'word_name'),
-(9, 'word list down', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'word_list_down'),
-(10, 'all relations', 'show the complete list of all relations', 'values_all'),
-(11, 'values related to', 'display all values that are related to a defined term', 'values_related'),
-(12, 'formulas', 'show all related formulas', 'formula_list'),
-(13, 'word value list', 'A list of words with some key values e.g. a company list with the PE ratio', 'word_value_list'),
-(14, 'XML export', 'offer to configure and start the XML export of a phrase and all related words, numbers and formulas', 'xml_export'),
-(15, 'CSV export', 'to define the main phrase, the column and row for the CSV export', 'csv_export'),
-(16, 'JSON Export', 'To start or configure the JSON export', 'json_export');
+(1, 'word selector', '', 'dsp_comp_type_word_select'),
+(2, 'view selector', 'to select an existing mask e.g. to set the default view', 'dsp_comp_type_view_select'),
+(3, 'text', 'simply to display a variable text', 'dsp_comp_type_text'),
+(4, 'fixed word', 'just display a word as a text', 'dsp_comp_type_fixed'),
+(5, 'linked word', 'display a word and offer a link', 'dsp_comp_type_link'),
+(6, 'formula results', 'show the results of a formula', 'dsp_comp_type_formula_results'),
+(7, 'word list up', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'dsp_comp_type_word_list_up'),
+(8, 'word name', 'show the word name and give the user the possibility to change the word name', 'dsp_comp_type_word_name'),
+(9, 'word list down', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'dsp_comp_type_word_list_down'),
+(10, 'all relations', 'show the complete list of all relations', 'dsp_comp_type_values_all'),
+(11, 'values related to', 'display all values that are related to a defined term', 'dsp_comp_type_values_related'),
+(12, 'formulas', 'show all related formulas', 'dsp_comp_type_formula_list'),
+(13, 'word value list', 'A list of words with some key values e.g. a company list with the PE ratio', 'dsp_comp_type_word_value_list'),
+(14, 'XML export', 'offer to configure and start the XML export of a phrase and all related words, numbers and formulas', 'dsp_comp_type_xml_export'),
+(15, 'CSV export', 'to define the main phrase, the column and row for the CSV export', 'dsp_comp_type_csv_export'),
+(16, 'JSON Export', 'To start or configure the JSON export', 'dsp_comp_type_json_export');
 
 --
 -- Dumping data for table `view_link_types`
@@ -432,33 +432,33 @@ INSERT INTO `view_link_types` (`view_link_type_id`, `type_name`, `comment`) VALU
 --
 
 INSERT INTO `view_types` (`view_type_id`, `type_name`, `description`, `code_id`) VALUES
-(1, 'entry view', 'These masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'entry'),
+(1, 'entry view', 'These masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'dsp_type_entry'),
 (2, 'presentation view', '', NULL),
-(3, 'detail view', 'the standard mask without additional functionalities', 'mask_type_default'),
-(4, 'word default', 'A default mask for new words', 'word_default'),
-(5, '', '', 'view_type_default');
+(3, 'detail view', 'the standard mask without additional functionalities', 'dsp_type_mask_default'),
+(4, 'word default', 'A default mask for new words', 'dsp_type_word_default'),
+(5, '', '', 'dsp_type_default');
 
 --
 -- Dumping data for table `word_types`
 --
 
 INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`, `scaling_factor`, `word_symbol`) VALUES
-(1, 'standard', 'for words that have need no special behaviour', 'default', NULL, ''),
-(2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'time', NULL, ''),
-(3, 'measure type', 'a measure word such as meter, kilogram, ...', 'measure', NULL, ''),
-(4, 'Timejump', 'these terms describes a change of a timestamp term', 'timejump', NULL, ''),
+(1, 'standard', 'for words that have need no special behaviour', 'wrd_type_default', NULL, ''),
+(2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'wrd_type_time', NULL, ''),
+(3, 'measure type', 'a measure word such as meter, kilogram, ...', 'wrd_type_measure', NULL, ''),
+(4, 'Timejump', 'these terms describes a change of a timestamp term', 'wrd_type_time_jump', NULL, ''),
 (5, 'calc', 'a calculated word in R; e.g. this year returns always a different term', NULL, NULL, ''),
-(6, 'format percent', 'terms that forces the result to be formatted in percent', 'percent', NULL, ''),
-(7, 'scaling', 'a scaling word such as millions, one, ...', 'scaling', NULL, ''),
-(8, 'hidden scaling', '"one" is needed as a scaling word for correct calculations, but it is not useful to display it', 'scaling_hidden', NULL, ''),
-(9, 'view / layer', 'word to separate the number layers and to change the view.\r\nE.g. -as reported- are exactly the numbers as they come from the external source\r\n-detailed- are the most granular splitting of the -as reported- numbers\r\n-projection- show the changes and includes the estimates to make a forecast\r\n', 'view', NULL, ''),
-(10, 'formula link', 'A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten', 'formula_link', NULL, ''),
-(11, 'differentiator filler', 'these terms are used to fill up a differentiator list, so most likely the erm linked will be named "other"', 'type_other', NULL, ''),
-(12, 'this', 'not sure, why this is needed', 'this', NULL, ''),
-(13, 'next', 'not sure, why this is needed', 'next', NULL, ''),
-(14, 'prior', 'not sure, why this is needed', 'previous', NULL, ''),
-(15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%'),
-(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, '');
+(6, 'format percent', 'terms that forces the result to be formatted in percent', 'wrd_type_percent', NULL, ''),
+(7, 'scaling', 'a scaling word such as millions, one, ...', 'wrd_type_scaling', NULL, ''),
+(8, 'hidden scaling', '"one" is needed as a scaling word for correct calculations, but it is not useful to display it', 'wrd_type_scaling_hidden', NULL, ''),
+(9, 'view / layer', 'word to separate the number layers and to change the view.\r\nE.g. -as reported- are exactly the numbers as they come from the external source\r\n-detailed- are the most granular splitting of the -as reported- numbers\r\n-projection- show the changes and includes the estimates to make a forecast\r\n', 'wrd_type_view', NULL, ''),
+(10, 'formula link', 'A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten', 'wrd_type_formula_link', NULL, ''),
+(11, 'differentiator filler', 'these terms are used to fill up a differentiator list, so most likely the erm linked will be named "other"', 'wrd_type_type_other', NULL, ''),
+(12, 'this', 'not sure, why this is needed', 'wrd_type_this', NULL, ''),
+(13, 'next', 'not sure, why this is needed', 'wrd_type_next', NULL, ''),
+(14, 'prior', 'not sure, why this is needed', 'wrd_type_previous', NULL, ''),
+(15, 'scaling word percent', 'all words that represent percent', 'wrd_type_scaling_percent', 100, '%'),
+(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'wrd_type_scaled_measure', 0, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

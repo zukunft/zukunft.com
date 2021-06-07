@@ -49,7 +49,7 @@ $db_con = prg_start("view_component_add", "", $debug);
 
     // init the display object to show the standard elements such as the header
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_COMPONENT_ADD);
+    $dsp->id = cl(DBL_VIEW_COMPONENT_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     // the calling stack to move back to page where the user has come from after adding the view component is done

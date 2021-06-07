@@ -46,7 +46,7 @@ $db_con = prg_start("find", "", $debug);
     // show view header
     $dsp = new view_dsp;
     $dsp->usr = $usr;
-    $dsp->id = cl(SQL_VIEW_WORD_FIND);
+    $dsp->id = cl(DBL_VIEW_WORD_FIND);
     $result .= $dsp->dsp_navbar($back, $debug-1);
 
     $find_str = $_GET['pattern'];

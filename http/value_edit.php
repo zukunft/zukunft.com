@@ -48,7 +48,7 @@ $db_con = prg_start("value_edit", "", $debug);
     
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_VALUE_EDIT);
+    $dsp->id = cl(DBL_VIEW_VALUE_EDIT);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)

@@ -63,7 +63,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load($debug-1);
-  $wrd_lst->add_by_type(Null, cl(SQL_LINK_TYPE_IS), "up", $debug-1);
+  $wrd_lst->add_by_type(Null, cl(DBL_LINK_TYPE_IS), "up", $debug-1);
   $result = implode(',',$wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result(', word_list->add_by_type for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -73,7 +73,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load($debug-1);
-  $wrd_lst->foaf_parents(cl(SQL_LINK_TYPE_IS), $debug-1);
+  $wrd_lst->foaf_parents(cl(DBL_LINK_TYPE_IS), $debug-1);
   $result = implode(',',$wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result(', word_list->foaf_parent for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -83,7 +83,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load($debug-1);
-  $wrd_lst->parents(cl(SQL_LINK_TYPE_IS), 1, $debug-1);
+  $wrd_lst->parents(cl(DBL_LINK_TYPE_IS), 1, $debug-1);
   $result = implode(',',$wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result(', word_list->parents for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -93,7 +93,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TEST_WORD);
   $wrd_lst->load($debug-1);
-  $wrd_lst->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
+  $wrd_lst->foaf_children(cl(DBL_LINK_TYPE_IS), $debug-1);
   $ABB = load_word(TW_ABB, $debug-1);
   $result = $wrd_lst->does_contain($ABB);
   $target = true; 
@@ -104,7 +104,7 @@ function run_word_list_test ($debug) {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TEST_WORD);
   $wrd_lst->load($debug-1);
-  $wrd_lst->children(cl(SQL_LINK_TYPE_IS), 1,$debug-1);
+  $wrd_lst->children(cl(DBL_LINK_TYPE_IS), 1,$debug-1);
   $ABB = load_word(TW_ABB, $debug-1);
   $result = $wrd_lst->does_contain($ABB);
   $target = true; 

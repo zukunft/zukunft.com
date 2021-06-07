@@ -65,7 +65,7 @@ $db_con = prg_start("word_add", "", $debug);
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_WORD_ADD);
+    $dsp->id = cl(DBL_VIEW_WORD_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     $back = $_GET['back']; // the calling page which should be displayed after saving
@@ -120,7 +120,7 @@ $db_con = prg_start("word_add", "", $debug);
             zu_debug('word_add -> changed type to ('.$wrd->type_id.')', $debug);
           } else {
           */
-          $msg .= $trm->id_used_msg($debug-1);
+          $msg .= $trm->id_used_msg();
           log_debug('word_add -> ', $debug);
           //}  
         }  

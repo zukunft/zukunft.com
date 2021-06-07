@@ -137,7 +137,7 @@ function zuu_is_admin ($user_id, $debug) {
   $result = false;
 
   $user_profile = zuu_profile($user_id, $debug-1);
-  if ($user_profile == cl(SQL_USER_ADMIN)) {
+  if ($user_profile == cl(DBL_USER_ADMIN)) {
     $result = true;
   }  
   return $result;
@@ -422,7 +422,7 @@ function zuu_dsp_errors ($user_id, $user_profile, $dsp_type, $back, $debug) {
        LEFT JOIN users a             ON l.solver_id           = a.user_id
        LEFT JOIN sys_log_functions f ON l.sys_log_function_id = f.sys_log_function_id
            WHERE ".$user_sql." 
-                (l.sys_log_status_id <> ".cl(DBL_SYSLOG_STATUS_CLOSE)." OR l.sys_log_status_id IS NULL);";
+                (l.sys_log_status_id <> ".cl(DBL_ERR_CLOSED)." OR l.sys_log_status_id IS NULL);";
   $sql_result =zu_sql_get_all($sql, $debug-1);
 
   if (mysql_num_rows($sql_result) > 0) {
@@ -449,7 +449,7 @@ function zuu_dsp_errors ($user_id, $user_profile, $dsp_type, $back, $debug) {
       $result .= '<td>'.$wrd_row["sys_log_function_name"].'</td>';
       $result .= '<td>'.$wrd_row["solver_name"]          .'</td>';
       $result .= '<td>'.$wrd_row["sys_log_status_name"]  .'</td>';
-      if ($user_profile == cl(SQL_USER_ADMIN)) {
+      if ($user_profile == cl(DBL_USER_ADMIN)) {
         $result .= '<td><a href="/http/error_update.php?id='.$wrd_row["sys_log_id"].'&status='.cl(DBL_ERR_CLOSED).'&back='.$back.'">close</a></td>';
       }  
 

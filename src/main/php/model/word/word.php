@@ -312,7 +312,7 @@ class word {
     if ($this->plural <> '')      { $result->plural      = $this->plural;      }
     if ($this->description <> '') { $result->description = $this->description; }
     if (isset($this->type_id)) { 
-      if ($this->type_id <> cl(SQL_WORD_TYPE_NORMAL)) { 
+      if ($this->type_id <> cl(DBL_WORD_TYPE_NORMAL)) {
         $result->type        = $this->type_code_id($debug-1); 
       }
     }
@@ -358,7 +358,7 @@ class word {
     if ($result == '') {
       // set the default type if no type is specified
       if ($this->type_id == 0) {
-        $this->type_id = cl(SQL_WORD_TYPE_NORMAL);
+        $this->type_id = cl(DBL_WORD_TYPE_NORMAL);
       }
       $this->save($debug-1);
       log_debug('word->import_obj -> '.$this->dsp_id(), $debug-18);
@@ -446,8 +446,8 @@ class word {
   // to add a word linked to this word
   // e.g. if this word is "Company" to add another company
   function btn_add ($back) {
-    $vrb_is = cl(SQL_LINK_TYPE_IS);
-    $wrd_type = cl(SQL_WORD_TYPE_NORMAL); // maybe base it on the other linked words
+    $vrb_is = cl(DBL_LINK_TYPE_IS);
+    $wrd_type = cl(DBL_WORD_TYPE_NORMAL); // maybe base it on the other linked words
     $wrd_add_title = "add a new ".$this->name;
     $wrd_add_call = "/http/word_add.php?verb=".$vrb_is."&word=".$this->id."&type=".$wrd_type."&back=".$back."";
     $result = btn_add ($wrd_add_title, $wrd_add_call);
@@ -502,7 +502,7 @@ class word {
 
   // return true if the word has the type "time"
   function is_time ($debug) {
-    $result = $this->is_type (SQL_WORD_TYPE_TIME, $debug-1);
+    $result = $this->is_type (DBL_WORD_TYPE_TIME, $debug-1);
     return $result;    
   }
 
@@ -512,7 +512,7 @@ class word {
   function is_measure ($debug) {
     log_debug('word->is_measure '.$this->dsp_id(), $debug-10);
     $result = false;
-    if ($this->is_type (SQL_WORD_TYPE_MEASURE, $debug-1)) {
+    if ($this->is_type (DBL_WORD_TYPE_MEASURE, $debug-1)) {
       $result = true;
     }
     return $result;    
@@ -521,8 +521,8 @@ class word {
   // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
   function is_scaling ($debug) {
     $result = false;
-    if ($this->is_type (SQL_WORD_TYPE_SCALING,        $debug-1)
-     OR $this->is_type (SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1)) {
+    if ($this->is_type (DBL_WORD_TYPE_SCALING,        $debug-1)
+     OR $this->is_type (DBL_WORD_TYPE_SCALING_HIDDEN, $debug-1)) {
       $result = true;
     }
     return $result;    
@@ -531,7 +531,7 @@ class word {
   // return true if the word has the type "scaling_percent" (e.g. "percent")
   function is_percent ($debug) {
     $result = false;
-    if ($this->is_type (SQL_WORD_TYPE_SCALING_PCT, $debug-1)) {
+    if ($this->is_type (DBL_WORD_TYPE_SCALING_PCT, $debug-1)) {
       $result = true;
     }
     return $result;    
@@ -594,7 +594,7 @@ class word {
   function parents ($debug) {
     log_debug('word->parents for '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
     $wrd_lst = $this->lst($debug-1);
-    $parent_wrd_lst = $wrd_lst->foaf_parents (cl(SQL_LINK_TYPE_IS), $debug-1);
+    $parent_wrd_lst = $wrd_lst->foaf_parents (cl(DBL_LINK_TYPE_IS), $debug-1);
     log_debug('word->parents are '.$parent_wrd_lst->name($debug-1).' for '.$this->dsp_id(), $debug-10);
     return $parent_wrd_lst;
   }
@@ -622,7 +622,7 @@ class word {
   function children ($debug) {
     log_debug('word->children for '.$this->dsp_id().' and user '.$this->usr->id, $debug-12);
     $wrd_lst = $this->lst($debug-1);
-    $child_wrd_lst = $wrd_lst->foaf_children (cl(SQL_LINK_TYPE_IS), $debug-1);
+    $child_wrd_lst = $wrd_lst->foaf_children (cl(DBL_LINK_TYPE_IS), $debug-1);
     log_debug('word->children are '.$child_wrd_lst->name($debug-1).' for '.$this->dsp_id(), $debug-10);
     return $child_wrd_lst;
   }
@@ -668,7 +668,7 @@ class word {
     global $db_con;
     $result = New word_dsp;
 
-    $link_id = cl(SQL_LINK_TYPE_FOLLOW);
+    $link_id = cl(DBL_LINK_TYPE_FOLLOW);
     //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'word_link';         
@@ -687,7 +687,7 @@ class word {
     global $db_con;
     $result = New word_dsp;
 
-    $link_id = cl(SQL_LINK_TYPE_FOLLOW);
+    $link_id = cl(DBL_LINK_TYPE_FOLLOW);
     //$db_con = new mysql;
     $db_con->usr_id = $this->usr->id;         
     $db_con->type   = 'word_link';         
@@ -705,7 +705,7 @@ class word {
   // to use by default the most specific value
   function is_part ($debug) {
     log_debug('word->is('.$this->dsp_id().', user '.$this->usr->id.')', $debug-10);
-    $link_type_id = cl(SQL_LINK_TYPE_CONTAIN);
+    $link_type_id = cl(DBL_LINK_TYPE_CONTAIN);
     $wrd_lst = $this->lst($debug-1);
     $is_wrd_lst = $wrd_lst->foaf_parents ($link_type_id, $debug-1);
 
@@ -738,7 +738,7 @@ class word {
       }  
     }  
     if (isset($this->type_id)) {
-      if ($this->type_id <> cl(SQL_WORD_TYPE_NORMAL)) {
+      if ($this->type_id <> cl(DBL_WORD_TYPE_NORMAL)) {
         $has_cfg = true;
       }  
     }  
@@ -1389,13 +1389,13 @@ class word {
       // check if a word, formula or verb with the same name is already in the database
       // but not if the formula linked word is supposed to be created
       $trm_id = 0;
-      if ($this->type_id <> cl(SQL_WORD_TYPE_FORMULA_LINK)) {
+      if ($this->type_id <> cl(DBL_WORD_TYPE_FORMULA_LINK)) {
         $trm = $this->term($debug-1);  
         $trm_id = $trm->id;
       }  
       if ($trm_id > 0) {
         if ($trm->type <> 'word') {
-          $result .= $trm->id_used_msg($debug-1);
+          $result .= $trm->id_used_msg();
         } else {
           $this->id = $trm->id;
           log_debug('word->save adding word name '.$this->dsp_id().' is OK', $debug-14);
@@ -1432,12 +1432,12 @@ class word {
       if ($db_rec->name <> $this->name) {
         // check if a verb, formula or word with the same name is already in the database
         $trm_id = 0;
-        if ($this->type_id <> cl(SQL_WORD_TYPE_FORMULA_LINK)) {
+        if ($this->type_id <> cl(DBL_WORD_TYPE_FORMULA_LINK)) {
           $trm = $this->term($debug-1);  
           $trm_id = $trm->id;
         }  
         if ($trm_id > 0 AND $trm->type <> 'word') {
-          $result .= $trm->id_used_msg($debug-1);
+          $result .= $trm->id_used_msg();
         }
       }  
 

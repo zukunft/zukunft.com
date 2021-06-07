@@ -16,9 +16,9 @@
   zuv_dsp_source    - display a selector for the value source
   zuv_btn_add_value - button to add an related value to $words but mainly to one word
                       edit button not needed because a click on the value itself is used to edit
-  zuv_btn_del_value - button to allow the user to exclude a single value from calulation and display
+  zuv_btn_del_value - button to allow the user to exclude a single value from calculation and display
   zuv_list          - display all values related to a given word
-  zuv_table         - creates a table of all values related to a word and a related word and all the subwords of the related word
+  zuv_table         - creates a table of all values related to a word and a related word and all the sub words of the related word
   zuv_tbl_val       - display a value, means create the HTML code that allows to edit the value
   zuv_dsp           - display a value and formats is according to the format word
 
@@ -144,7 +144,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
         } else {
           // if no word group is found, use the word type time if the word is a time word
           if (zut_is_time($wrd_ids[$pos])) {
-            $wrd_lst = zut_type_lst(cl(SQL_WORD_TYPE_TIME), $debug-1);
+            $wrd_lst = zut_type_lst(cl(DBL_WORD_TYPE_TIME), $debug-1);
           }
         }
 
@@ -272,198 +272,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
   return $result;
 }
 
-// html code for adding a new value: lists all words related to a given value execpt the given word
-// $wrd_ids   - the suggested word id used of the selection list as a preset
-// $type_ids  - word ids that defines by the "is a" verb the selection list for the word to be selected by the user
-//              if the type id is 0, not type is preselected
-//              if the type id is -1, the words is not supposed to be changed by the user, but the user can remove the preselection if really needed
-function zuv_dsp_add_old($wrd_ids, $type_ids, $back_link, $user_id, $debug) {
-  log_debug("zuv_dsp_add(t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",b".$back_link.",u".$user_id.")", $debug);
 
-  $result = ''; // reset the html code var
-
-  // display the header  
-  $result .= zuh_text_h3("Add value for");
-  $result .= zuh_form_start("value_add");
-
-  // list all linked words
-  $result .= zuh_tbl_start_half();
-
-  // convert and validate the parameters
-  if (count($wrd_ids) <> count($type_ids)) {
-    log_err ("Invalide parameter size at value add: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_add");
-  } else {
-    $word_pos = 1;
-    // if the form is confirmed, save the value or the other way round: if with the plus sign only a new word is added, do not yet save the value
-    $result .= '  <input type="hidden" name="confirm" value="1">';
- 
-    // show the words, that are not supposed to be changed, first
-    foreach (array_keys($wrd_ids) AS $pos) {
-      if ($type_ids[$pos] < 0) {
-        // allow the user to change also the fixed words
-        $type_ids_adj = $type_ids;
-        $type_ids_adj[$pos] = 0;
-        $result .= zut_html_del($wrd_ids[$pos], zut_name($wrd_ids[$pos], $user_id), '/http/value_add.php?back='.$back_link.zu_ids_to_url($wrd_ids).zu_ids_to_url($type_ids_adj), $debug-1);
-        $result .= '  <input type="hidden" name="word'.$word_pos.'" value="'.$wrd_ids[$pos].'">';
-        $word_pos = $word_pos + 1;
-      } 
-    }
-
-    // guess the missing word types 
-    foreach (array_keys($wrd_ids) AS $pos) {
-      // if no type is given, guess a type
-      if ($type_ids[$pos] == 0) {
-        log_debug("zuv_dsp_add -> guess type for position ".$pos.".", $debug);
-        $wrd_type_ids = zut_ids_is ($wrd_ids[$pos], $user_id, $debug);
-        if (!empty($wrd_type_ids)) {
-          // use the first type as a guess
-          $type_ids[$pos] = $wrd_type_ids[0];
-          log_debug("zuv_dsp_add -> guessed type for position ".$pos.": ".$type_ids[$pos].".", $debug);
-        }
-      }
-    }  
-   
-    // show the words that the user can change
-    for ($dsp_type = 0; $dsp_type <= 1; $dsp_type++) {
-      foreach (array_keys($wrd_ids) AS $pos) {
-        // build a list of suggested words
-        $wrd_lst = array();
-        if ($type_ids[$pos] > 0) {
-          // prepare the selector for the type word
-          //$sql_type_words = zu_sql_words_linked($type_ids, cl(SQL_LINK_TYPE_IS), "up", $debug-1);
-          //$sub_words = zu_sql_get_lst($sql_type_words, $debug-1);
-          $sub_words = zut_ids_are($type_ids[$pos], $debug-1);
-          log_debug("zuv_dsp_add -> suggested word ids for position ".$pos.": ".implode(",",$sub_words).".", $debug);
-          $wrd_lst = zu_sql_wrd_ids_to_lst_names($sub_words, $user_id, $debug) ;
-          log_debug("zuv_dsp_add -> suggested words for position ".$pos.": ".implode(",",$wrd_lst).".", $debug);
-        } else {
-          // if no word group is found, use the word type time if the word is a time word
-          if (zut_is_time($wrd_ids[$pos])) {
-            $wrd_lst = zut_type_lst(cl(SQL_WORD_TYPE_TIME), $debug-1);
-          }
-        }
-        
-        // show the word selector
-        if ($dsp_type == 1) {
-          if ($type_ids[$pos] > 0) {
-            $result .= '  <tr>';
-            $result .= '    <td>';
-            $result .= zut_name($type_ids[$pos], $user_id).':';
-            $result .= '    </td>';
-            $result .= '    <td>';
-            if (!empty($wrd_lst)) {
-              $result .= '      '.zuh_selector_lst("word".$word_pos, "value_add", $wrd_lst, $wrd_ids[$pos], $debug-1);
-            } else {  
-              $result .= '      '.zuh_selector("word".$word_pos, "value_add", "SELECT word_id, word_name FROM words ORDER BY word_name;", $wrd_ids[$pos]);
-            }
-            $word_pos = $word_pos + 1;
-            
-            $result .= '    </td>';
-            $wrd_ids_adj  = $wrd_ids;
-            $type_ids_adj = $type_ids;
-            array_splice($wrd_ids_adj,  $pos, 1);
-            array_splice($type_ids_adj, $pos, 1);
-            $result .= '    <td>'.zuh_btn_del ("Remove ".zut_name($wrd_ids[$pos], $user_id), "/http/value_add.php?back=".$back_link.zu_ids_to_url($wrd_ids_adj,"word", $debug-1).zu_ids_to_url($type_ids_adj),"type", $debug-1).'</td>';
-            $result .= '    <td>'.zuh_btn_edit ("Rename ".zut_name($wrd_ids[$pos], $user_id), '/http/word_edit.php?id='.$wrd_ids[$pos].'&back='.$back_link).'</td>';
-            $result .= '  </tr>';
-          }
-        } else {
-          if ($type_ids[$pos] == 0) {
-            $result .= '  <tr>';
-            $result .= '    <td colspan="2">';
-            $result .= '      '.zuh_selector("word".$word_pos, "value_add", "SELECT word_id, word_name FROM words ORDER BY word_name;", $wrd_ids[$pos]);
-            $word_pos = $word_pos + 1;
-            
-            $result .= '    </td>';
-            $result .= '    <td>'.zuh_btn_del ("Remove ".zut_name($wrd_ids[$pos], $user_id), "/http/value_add.php?back=".$back_link.zu_ids_to_url($wrd_ids_adj,"word", $debug-1).zu_ids_to_url($type_ids_adj),"type", $debug-1).'</td>';
-            $result .= '    <td>'.zuh_btn_edit ("Rename ".zut_name($wrd_ids[$pos], $user_id), '/http/word_edit.php?id='.$wrd_ids[$pos].'&back='.$back_link).'</td>';
-            $result .= '  </tr>';
-          }
-        }
-
-      } 
-    } 
-  }
-
-  $result .= '</table> ';
-
-  $wrd_ids_new    = $wrd_ids;
-  //$wrd_ids_new[]  = $new_word_default;
-  $wrd_ids_new[]  = 1;
-  $type_ids_new   = $type_ids;
-  $type_ids_new[] = 0;
-  $result .= '  '.zuh_btn_add ("Add another word", "/http/value_add.php?back=".$back_link.zu_ids_to_url($wrd_ids_new,"word", $debug-1).zu_ids_to_url($type_ids_new,"type", $debug-1));
-  $result .= '  <br><br>';
-  $result .= '  <input type="hidden" name="back" value="'.$back_link.'">';
-  $result .= '  is <input type="text" name="value">';
-  $result .= '  <input type="submit">';
-  $result .= '</form>';
-  $result .= '<br><br>';
-  $result .= zuv_dsp_source($src_id, "value_add", $back_link, $user_id, $debug-1);
-  $result .= '<br><br>';
-  $result .= zuh_btn_back($back_link);
-  //$result .= zu_sql_get_field ('value', $id, 'word_value');
-
-  log_debug("zuv_dsp_add -> done", $debug);
-
-  return $result;
-}
-
-function zuv_dsp_edit_old($id, $back_link, $user_id, $debug) {
-  log_debug("zuv_dsp_edit_old (".$id.",".$back_link.")", $debug);
-
-  $result = ''; // reset the html code var
-
-  // check and prepare the parameters
-  $src_id   = zuv_source($id, $debug-1);
-  $this_url = '/http/value_edit.php?id='.$id.'&back='.$back_link; // url to call this display again to display the user changes
-
-  // display the header  
-  $result .= zuh_text_h3("Change value for");
-  $result .= zuh_form_start("value_edit");
-
-  // list all linked words
-  $wrd_nbr = 0;           // ???
-  $new_word_default = 0;  // to be set based on the given words
-  $wrd_selector_new = ""; // ???
-  $wrd_lst = zuv_wrd_lst($id, $user_id, $debug-1);
-  foreach (array_keys($wrd_lst) AS $wrd_id) {
-    $wrd_nbr = $wrd_nbr + 1;
-    $wrd_selector  = '      <input type="hidden" name="db'.$wrd_nbr.'"" value="'.$wrd_id.'">';
-    $wrd_selector .= zut_html_selector_word ($wrd_id, $wrd_nbr , "value_edit", $debug).' ';
-    $wrd_selector .= zuh_btn_del ("Remove ".$wrd_lst[$wrd_id], $this_url.'&word_del='.$wrd_id);
-    $wrd_selector .= '<br>';
-    if ($wrd_id == 0) {
-      $wrd_selector_new = $wrd_selector;
-    } else {
-      $result .= $wrd_selector;
-    }
-  }
-  if ($wrd_selector_new <> "") {
-    $result .= $wrd_selector_new;
-  }
-
-  $result .= '  <input type="hidden" name="word_counter" value="'.$wrd_nbr.'">';
-  $result .= '  <input type="hidden" name="id" value="'.$id.'">';
-  $result .= '  <input type="hidden" name="back" value="'.$back_link.'">';
-  $result .= zuh_btn_add ("Add another word", $this_url.'&word_add='.$new_word_default);
-  $result .= '<br><br>';
-  $result .= '  to <input type="text" name="value" value="'.zuv_value($id, $user_id, $debug).'">';
-  $result .= zuh_form_end("Save");
-
-  $result .= '<br><br>';
-  $result .= '      or delete it '. zuv_btn_del_value ($id, $back_link, $debug-1).'<br>';
-  //$result .= '      taken from '.zuh_selector ("source", "value_edit", "SELECT source_id, source_name FROM sources ORDER BY source_name;", $src_id, "please select a source" , $debug-1).' ';
-  $result .= zuv_dsp_source($src_id, "value_edit", $back_link, $user_id, $debug-1);
-  $result .= ' '. zus_btn_add ($id, $back_link, $debug-1).'<br>';
-  $result .= '<br><br>';
-  $result .= zuh_btn_back($back_link);
-  //$result .= zu_sql_get_field ('value', $id, 'word_value');
-
-  log_debug("zuv_dsp_edit_old -> done", $debug);
-
-  return $result;
-}
 
 // display a selector for the value source
 function zuv_dsp_source($src_id, $php_script, $back_link, $user_id, $debug) {
@@ -515,122 +324,28 @@ function zuv_btn_undo_add_value ($value_id, $back_id, $debug) {
   return $result;
 }
 
-// display all values related to a given word
-function zuv_list ($id, $user_id, $debug) {
-  log_debug('zuv_list ('.$id.',u'.$user_id.')', $debug);
-  $result = '';
-
-  // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
-  
-  $result .= '<table style="width:500px">';
-  $last_words = '';
-
-  $query = "SELECT value_id FROM value_phrase_links WHERE phrase_id = ".$id." GROUP BY value_id;";
-  $sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
-  $common_words = array();
-  $common_types = array();
-  while ($value_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
-    $value_id = $value_entry[0];
-    $result .= '  <tr>';
-    $result .= '    <td>';
-    log_debug('zuv_list -> linked words '.$value_id, $debug);
-    $result .= '      '.zuv_words_names_linked($value_id, $id, $user_id).' <a href="/http/value_edit.php?id='.$value_id.'&back='.$id.'">'.zuv_value($value_id, $user_id, $debug-1).'</a>';
-    // te be fixed !!!!!!!!!!!!!!
-    $word_array = array(6,7);
-    $time_word_id = 0;
-    $result .= zuf_list($value_id, $id, $word_array, $time_word_id, $debug);
-    //$result .= '      '.zuv_words_names_linked($value_id, $id, $user_id).' <a href="/http/view.php?words='.$value_id.'">'.zuv_value($value_id, $user_id, $debug-1).'</a>';
-    $result .= '    </td>';
-    $result .= '    <td>';
-    $result .= '      '.zuv_btn_del_value ($value_id, $id, $debug-1);
-    $result .= '    </td>';
-    if ($last_words <> zuv_words_id_txt($value_id)) {
-      $last_words = zuv_words_id_txt($value_id);
-      if (empty($common_words)) {
-        log_debug('zuv_list -> use last as common (c'.implode(",",$common_words).',l'.$last_words.')', $debug);
-        $common_words = explode(",",$last_words);
-        // get the types of the common words
-        foreach ($common_words AS $common_word) {
-          $wrd_types = zut_ids_is($common_word, $debug-1);
-          if (!empty($wrd_types)) {
-            $common_types[] = $wrd_types[0];
-          }
-        }
-      } else {  
-        log_debug('zuv_list -> get common (c'.implode(",",$common_words).',l'.$last_words.')', $debug);
-        $common_words = array_intersect($common_words, explode(",",$last_words));
-        log_debug('zuv_list -> is common ('.implode(",",$common_words).')', $debug);
-      }
-      $result .= '    <td>';
-      // temp until conversion to object is completed
-      $val_obj = New value;
-      $val_obj->id     = $value_id;
-      $usr = New user;
-      $usr->id = $user_id;
-      $usr->load($debug-1);
-      $val_obj->usr = $usr;
-      $val_wrd_lst = $val_obj->wrd_lst();
-      $val_phr_lst = $val_wrd_lst->phrase_lst($debug-1);
-      if (isset($val_phr_lst)) {
-        $result .= btn_add_value ($val_phr_lst->ids, 0, $id, $debug); 
-      }
-
-      //$result .= '      '.zuv_btn_add_value (zuv_wrd_ids($value_id, $user_id, $debug), 0, $id, $debug);
-      // maybe remove the time
-      //$result .= '      '.zuv_btn_add_value ($last_words, $id, $debug);
-      $result .= '    </td>';
-    }
-    $result .= '  </tr>';
-  }
-
-  $result .= '</table> ';
-  
-  // allow the user to add a completely new value 
-  // to do: get also the common type and the position
-  if (empty($common_words)) {
-    $common_words[] = $id;
-  } else {
-    $common_words = array_values($common_words);
-  }
-  
-  $commen_wrd_lst = New word_list;
-  $commen_wrd_lst->wrd_ids = $common_words;
-  $usr = New user;
-  $usr->id = $user_id;
-  $usr->load($debug-1);
-  $commen_wrd_lst->usr = $usr;
-  log_debug("zuv_list -> common words ".implode(",",$commen_wrd_lst->wrd_ids), $debug);
-  $commen_wrd_lst->load(); 
-  $commen_phr_lst = $commen_wrd_lst->phrase_lst($debug-1);
-  if (isset($commen_phr_lst)) {
-    $result .= btn_add_value ($commen_phr_lst->ids, 0, $id, $debug); 
-  }
-
-  log_debug("zuv_list ... done", $debug);
-
-  return $result;
-}
 
 // display a value and formats is according to the format word
 function zuv_dsp ($num_value, $format_word_id, $debug) {
   log_debug('zuv_dsp ('.$num_value.','.$format_word_id.')', $debug);
   $result = $num_value;
   if (is_numeric($num_value)) {
-    if ($format_word_id == cl(SQL_WORD_TYPE_PERCENT)) {
+    if ($format_word_id == cl(DBL_WORD_TYPE_PERCENT)) {
       $result = round($num_value*100,2)."%";
     }
   }
   return $result;
 }
 
-// creates a table of all values related to a word and a related word and all the subwords of the related word
+/*
+// creates a table of all values related to a word and a related word and all the sub words of the related word
 // e.g. for "ABB" (word) list all values for the cash flow statement (related word)
 function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
   log_debug("zuv_table (t".$word_id.",".$related_word_id."u".$user_id.")", $debug);
   $result = '';
 
   // create the table headline e.g. cash flow statement
-  $related_word_name .= zut_name($related_word_id, $user_id, $debug-1);
+  $related_word_name = zut_name($related_word_id, $user_id, $debug-1);
   $result .= zut_html($related_word_id, $related_word_name);
   $result .= '<br>';
 
@@ -740,7 +455,7 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
           $add_wrd_ids[] = $diff_word_id;
           $type_ids[] = 0;
         }
-        // if values for just one column are added, the column head word id is already in the commen id list and due to that does not need to be added
+        // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
         if (!in_array($val_word_id, $add_wrd_ids) and $val_word_id > 0) {
           $add_wrd_ids[] = $val_word_id;
           $type_ids[] = 0;
@@ -757,26 +472,26 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
           // display the extra words of this value
           /*$result .= '      <td><div>'."\n";
           $result .= zuv_words($tbl_value[1], $word_id, 'names');
-          $result .= '      </div></td>'."\n"; */
+          $result .= '      </div></td>'."\n";
       }
     }
     $result .= '  </tr>'."\n";
     
     // display the row differentiators
-    log_debug("zuv_table ... get differantiator for ".$sub_word_id.".", $debug-1);
+    log_debug("zuv_table ... get differentiator for ".$sub_word_id.".", $debug-1);
     // get all potential differentiator words
-    $differantiator_words = zut_db_differantiator_words_filtered($sub_word_id, $all_word_ids, $user_id, $debug-1);
-    //$differantiator_words = zut_db_differantiator_words($sub_word_id, $debug-1);
-    log_debug("zuv_table ... show differantiator of ".explode(",",$differantiator_words).".", $debug-1);
+    $differentiator_words = zut_db_differantiator_words_filtered($sub_word_id, $all_word_ids, $user_id, $debug-1);
+    //$differentiator_words = zut_db_differentiator_words($sub_word_id, $debug-1);
+    log_debug("zuv_table ... show differentiator of ".explode(",",$differentiator_words).".", $debug-1);
     // select only the differentiator words that have a value for the main word
-    $differantiator_words = zu_lst_in($differantiator_words, $xtra_words);
+    $differentiator_words = zu_lst_in($differentiator_words, $xtra_words);
 
-    // find direct differantiator words
-    $differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
-    $type_word_ids = array_keys(zu_sql_get_lst(zu_sql_words_linked($sub_word_id, $differantiator_type, "up", $debug), $debug-1));
-    log_debug("zuv_table -> differantiator types ".implode(",",$type_word_ids).".", $debug-1);
+    // find direct differentiator words
+    $differentiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+    $type_word_ids = array_keys(zu_sql_get_lst(zu_sql_words_linked($sub_word_id, $differentiator_type, "up", $debug), $debug-1));
+    log_debug("zuv_table -> differentiator types ".implode(",",$type_word_ids).".", $debug-1);
     
-    // if there is more than one type of differantiator group the differantiators by type
+    // if there is more than one type of differentiator group the differentiators by type
     // and add on each one an "other" line, if the sum is not 100%
 
     foreach ($type_word_ids as $type_word_id) {
@@ -787,7 +502,7 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
         $result .= '  </tr>'."\n";
       }
       // display the differentiator rows that are matching to the word type (e.g. the country)
-      foreach (array_keys($differantiator_words) as $diff_word_id) {
+      foreach (array_keys($differentiator_words) as $diff_word_id) {
         if (zut_is_a($diff_word_id, $type_word_id, $debug-1)) {
           $diff_word_type_ids = zut_ids_contains_and_are($diff_word_id, $debug-1); // should be taken from the original array to increase speed
           $result .= '  <tr>'."\n";
@@ -849,14 +564,14 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
               // display the extra words of this value
               /*$result .= '      <td><div>'."\n";
               $result .= zuv_words($tbl_value[1], $word_id, 'names');
-              $result .= '      </div></td>'."\n"; */
+              $result .= '      </div></td>'."\n";
             }
           }
           $result .= '  </tr>'."\n";
         }
       }
       // add a new part value for the sub_word
-      if (!empty($differantiator_words)) {
+      if (!empty($differentiator_words)) {
         $result .= '  <tr>'."\n";
         $result .= '      <td><div>'."\n";
 
@@ -905,6 +620,7 @@ function zuv_table ($word_id, $related_word_id, $user_id, $debug) {
 
   return $result;
 }
+*/
 
 /*
 
@@ -935,13 +651,6 @@ function zuv_tbl_val_usr ($id, $name, $back, $debug) {
   $result .= '    <td>'."\n";
   $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'" class="user_specific">'.$name.'</a></div>'."\n";
   $result .= '    </td>'."\n";
-  return $result;
-}
-
-function zuv_dsp_matrix($val_matrix, $user_id, $debug) {
-  log_debug('zuv_dsp_matrix('.$val_matrix.','.$col_lst.')', $debug);
-  $result = '';
-  
   return $result;
 }
 
@@ -1142,5 +851,3 @@ function zuv_dsp_hist_links($val_id, $size, $back_link, $debug) {
   log_debug("zuv_dsp_hist_links -> done", $debug-1);
   return $result;
 }
-
-?>

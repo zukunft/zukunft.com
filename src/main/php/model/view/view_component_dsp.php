@@ -35,7 +35,7 @@ class view_component_dsp extends view_component {
   // just to display a simple text
   function text($debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_COMPONENT_TEXT)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_TEXT)) {
       log_debug('view_component_dsp->text ('.$this->dsp_id().')', $debug-10);
       $result .= " " . $this->name;
     }
@@ -45,7 +45,7 @@ class view_component_dsp extends view_component {
   // show the word name and give the user the possibility to change the word name
   function word_name ($wrd, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_WORD_NAME)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_WORD_NAME)) {
       if (!isset($wrd)) {
         $result .= log_err('No word selected for "'.$this->name.'".', "view_component_dsp->word_name", '', (new Exception)->getTraceAsString(), $this->usr);
       } else {
@@ -70,7 +70,7 @@ class view_component_dsp extends view_component {
 
   function table($phr, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_VALUES_RELATED)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_VALUES_RELATED)) {
       log_debug('view_component_dsp->table of view component '.$this->dsp_id().' for "'.$phr->name.'" with columns "'.$this->wrd_row->name.'" and user "'.$this->usr->name.'"', $debug-10);
       $val_lst = New value_list_dsp;
       $val_lst->phr = $phr;
@@ -84,7 +84,7 @@ class view_component_dsp extends view_component {
   function num_list($wrd, $back, $debug) {
     $result = '';
 
-    if ($this->type_id == cl(SQL_VIEW_TYPE_WORD_VALUE)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_WORD_VALUE)) {
       log_debug('view_component_dsp->num_list in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
 
       // check the parameters
@@ -119,7 +119,7 @@ class view_component_dsp extends view_component {
   // display all formulas related to the given word
   function formulas($wrd, $back, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_FORMULAS)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_FORMULAS)) {
       log_debug('view_component_dsp->formulas in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= dsp_text_h2('Formulas');
 
@@ -145,7 +145,7 @@ class view_component_dsp extends view_component {
   // show a list of formula results related to a word
   function formula_values($wrd, $back, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_FORMULA_RESULTS)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_FORMULA_RESULTS)) {
       log_debug('view_component_dsp->formula_values in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= "<br><br>calculated values<br>";
       $frm_val_lst = New formula_value_list;
@@ -163,7 +163,7 @@ class view_component_dsp extends view_component {
   function word_children($wrd, $debug) {
     $result = '';
 
-    if ($this->type_id == cl(SQL_VIEW_TYPE_WORDS_DOWN)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_WORDS_DOWN)) {
       log_debug('view_component_dsp->word_children in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= $wrd->dsp_graph ("down", $debug-1);
     }
@@ -174,7 +174,7 @@ class view_component_dsp extends view_component {
   // show all word that this words is based on
   function word_parents($wrd, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_WORDS_DOWN)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_WORDS_DOWN)) {
       log_debug('view_component_dsp->word_parents in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= $wrd->dsp_graph ("up",   $debug-1);
     }
@@ -184,7 +184,7 @@ class view_component_dsp extends view_component {
   // configure the json export
   function json_export($wrd, $back, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_JSON_EXPORT)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_JSON_EXPORT)) {
       log_debug('view_component_dsp->json_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $result .= $wrd->config_json_export ($back, $debug-1);
@@ -196,7 +196,7 @@ class view_component_dsp extends view_component {
   // configure the xml export
   function xml_export($wrd, $back, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_XML_EXPORT)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_XML_EXPORT)) {
       log_debug('view_component_dsp->xml_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $result .= $wrd->config_xml_export ($back, $debug-1);
@@ -208,7 +208,7 @@ class view_component_dsp extends view_component {
   // configure the csv export
   function csv_export($wrd, $back, $debug) {
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_CSV_EXPORT)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_CSV_EXPORT)) {
       log_debug('view_component_dsp->csv_export in view '.$this->dsp_id().' for word '.$wrd->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $result .= $wrd->config_csv_export ($back, $debug-1);
@@ -221,7 +221,7 @@ class view_component_dsp extends view_component {
   function all($phr, $back, $debug) {
     log_debug('view_component_dsp->all for word '.$phr->name, $debug-10);
     $result = '';
-    if ($this->type_id == cl(SQL_VIEW_TYPE_VALUES_ALL)) {
+    if ($this->type_id == cl(DBL_VIEW_COMP_TYPE_VALUES_ALL)) {
       log_debug('view_component_dsp->all in view '.$this->dsp_id().' for word '.$phr->name.' and user '.$this->usr->name, $debug-10);
       $result .= '<br>';
       $phrases_down = $phr->dsp_graph ("down", $debug-1);
@@ -230,7 +230,7 @@ class view_component_dsp extends view_component {
         $result .= $phrases_down.$phrases_up;
       } else {
         $result .= "The type of ".$phr->name." is not jet defined. Please define what it is: ";
-        $type_is = cl(SQL_LINK_TYPE_IS);
+        $type_is = cl(DBL_LINK_TYPE_IS);
         $result .= btn_add ("Please link ".$phr->name." to an existing word to include it in the lists", '/http/link_add.php?from='.$phr->id.'&verb='.$type_is.'&back='.$phr->id);
       }
       $result .= '<br><br>values<br>';

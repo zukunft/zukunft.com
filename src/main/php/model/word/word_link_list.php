@@ -405,12 +405,12 @@ class word_link_list {
         $result .= '  </tr>'."\n";
 
         // use the last word as a sample for the new word type
-        if ($lnk->verb_id == cl(SQL_LINK_TYPE_FOLLOW)) {
+        if ($lnk->verb_id == cl(DBL_LINK_TYPE_FOLLOW)) {
           $last_linked_word_id = $lnk->to->id;
         }  
 
         // in case of the verb "following" continue the series after the last element
-        if ($lnk->verb_id == cl(SQL_LINK_TYPE_FOLLOW)) {
+        if ($lnk->verb_id == cl(DBL_LINK_TYPE_FOLLOW)) {
           $start_id = $last_linked_word_id;
           // and link with the same direction (looks like not needed!)
           /* if ($directional_link_type_id > 0) {

@@ -28,13 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function run_legacy_test ($debug) {
 
-  global $usr;
-  global $usr2;
   global $exe_start_time;
-  
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
 
   test_header('Test sql base functions');
 
@@ -297,9 +291,7 @@ function run_legacy_test ($debug) {
   $word_percent      = zu_sql_get_id ("word",    TW_PCT,         $debug); test_show_db_id("Word percent",      $word_percent);
   $word_CHF          = zu_sql_get_id ("word",    TW_CHF,         $debug); test_show_db_id("Word CHF",          $word_CHF);
   //$formula_value     = zu_sql_get_id ("formula", "value",       $debug); test_show_db_id("Formula Value",     $formula_value);
-  $word_type_time    = cl(SQL_WORD_TYPE_TIME);                           test_show_db_id("Word Type Time",    $word_type_time);
-  $word_type_percent = cl(SQL_WORD_TYPE_PERCENT);                        test_show_db_id("Word Type Percent", $word_type_percent);   
+  $word_type_time    = cl(DBL_WORD_TYPE_TIME);                           test_show_db_id("Word Type Time",    $word_type_time);
+  $word_type_percent = cl(DBL_WORD_TYPE_PERCENT);                        test_show_db_id("Word Type Percent", $word_type_percent);
  
 }
-
-?>

@@ -156,7 +156,7 @@ function zut_is_name ($id, $debug) {
 // return the word category id based on the predefined verb is
 function zut_is_id ($id, $debug) {
   log_debug('zut_is_id('.$id.')', $debug);
-  $link_id = cl(SQL_LINK_TYPE_IS, $debug-1);
+  $link_id = cl(DBL_LINK_TYPE_IS, $debug-1);
   $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $id, 'verb_id', $link_id);
   return $result;
 }
@@ -164,7 +164,7 @@ function zut_is_id ($id, $debug) {
 // return the follow word id based on the predefined verb following
 function zut_next_id ($wrd_id, $user_id, $debug) {
   log_debug('zut_next_id('.$wrd_id.',u'.$user_id.')', $debug);
-  $link_id = cl(SQL_LINK_TYPE_FOLLOW, $debug-1);
+  $link_id = cl(DBL_LINK_TYPE_FOLLOW, $debug-1);
   $result = zu_sql_get_value_2key('word_links', 'from_phrase_id', 'to_phrase_id', $wrd_id, 'verb_id', $link_id);
   return $result;
 }
@@ -172,7 +172,7 @@ function zut_next_id ($wrd_id, $user_id, $debug) {
 // return the prior word id based on the predefined verb following
 function zut_prior_id ($wrd_id, $user_id, $debug) {
   log_debug('zut_prior_id('.$wrd_id.',u'.$user_id.')', $debug);
-  $link_id = cl(SQL_LINK_TYPE_FOLLOW, $debug-1);
+  $link_id = cl(DBL_LINK_TYPE_FOLLOW, $debug-1);
   $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $wrd_id, 'verb_id', $link_id);
   return $result;
 }
@@ -361,7 +361,7 @@ function zut_is_type ($word_id, $type, $debug) {
 
 // return true if the word has the type "time"
 function zut_is_time ($word_id, $debug) {
-  $result = zut_is_type ($word_id, SQL_WORD_TYPE_TIME, $debug-1);
+  $result = zut_is_type ($word_id, DBL_WORD_TYPE_TIME, $debug-1);
   return $result;    
 }
 
@@ -370,7 +370,7 @@ function zut_time_lst ($word_lst, $debug) {
   log_debug('zut_time_lst('.zu_lst_dsp($word_lst, $debug-1).')', $debug);
 
   $result = array();
-  $time_type = cl(SQL_WORD_TYPE_TIME);
+  $time_type = cl(DBL_WORD_TYPE_TIME);
   // loop over the word ids and add only the time ids to the result array
   foreach (array_keys($word_lst) as $word_id) {
     $word_type = $word_lst[$word_id][1];
@@ -582,8 +582,8 @@ function zut_has_scaling ($word_ids, $debug) {
   // loop over the word ids and add only the time ids to the result array
   foreach ($word_ids as $word_id) {
     if ($result == false) { 
-      if (zut_is_type ($word_id, SQL_WORD_TYPE_SCALING,        $debug-1)
-       OR zut_is_type ($word_id, SQL_WORD_TYPE_SCALING_HIDDEN, $debug-1)) { 
+      if (zut_is_type ($word_id, DBL_WORD_TYPE_SCALING,        $debug-1)
+       OR zut_is_type ($word_id, DBL_WORD_TYPE_SCALING_HIDDEN, $debug-1)) {
         $result = true;
       }
     }
@@ -597,8 +597,8 @@ function zut_scale_lst ($word_lst, $debug) {
   log_debug('zut_scale_lst('.zu_lst_dsp($word_lst, $debug-1).')', $debug);
 
   $result = array();
-  $scale_type        = cl(SQL_WORD_TYPE_SCALING);
-  $scale_type_hidden = cl(SQL_WORD_TYPE_SCALING_HIDDEN);
+  $scale_type        = cl(DBL_WORD_TYPE_SCALING);
+  $scale_type_hidden = cl(DBL_WORD_TYPE_SCALING_HIDDEN);
   // loop over the word ids and add only the time ids to the result array
   foreach (array_keys($word_lst) as $word_id) {
     $word_type = $word_lst[$word_id][1];
@@ -615,8 +615,8 @@ function zut_scale_id ($wrd_ids, $user_id, $debug) {
   log_debug('zut_scale_id ('.implode(",",$wrd_ids).',u'.$user_id.')', $debug);
 
   $result = -1;
-  $scale_type        = cl(SQL_WORD_TYPE_SCALING);
-  $scale_type_hidden = cl(SQL_WORD_TYPE_SCALING_HIDDEN);
+  $scale_type        = cl(DBL_WORD_TYPE_SCALING);
+  $scale_type_hidden = cl(DBL_WORD_TYPE_SCALING_HIDDEN);
   // loop over the word ids and add only the time ids to the result array
   foreach ($wrd_ids as $word_id) {
     $word_type = zut_type($word_id, $user_id);
@@ -686,7 +686,7 @@ function zut_calc_usage ($debug) {
           SELECT COUNT(value_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);";
-  $result = zu_sql_exe($sql, cl(SQL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zut_calc_usage", (new Exception)->getTraceAsString(), $debug-10);
+  $result = zu_sql_exe($sql, cl(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zut_calc_usage", (new Exception)->getTraceAsString(), $debug-10);
   
   return $result;           
 }

@@ -220,7 +220,7 @@ class source {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $result = ''; 
 
     if ($this->name <> '') {

@@ -49,7 +49,7 @@ $db_con = prg_start("link_type_add", "", $debug);
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(SQL_VIEW_VERB_ADD);
+    $dsp->id = cl(DBL_VIEW_VERB_ADD);
     $dsp->usr = $usr;
     $dsp->load($debug-1);
     $back = $_GET['back']; // the calling word which should be displayed after saving
@@ -81,7 +81,7 @@ $db_con = prg_start("link_type_add", "", $debug);
           $trm->usr  = $usr;
           $trm->load($debug-1);
           if ($trm->id > 0) {
-            $msg .= $trm->id_used_msg($debug-1);
+            $msg .= $trm->id_used_msg();
           }  
 
           // if the parameters are fine

@@ -281,7 +281,7 @@ class phrase_list {
  
   // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
   function is ($debug) {
-    $phr_lst = $this->foaf_parents(cl(SQL_LINK_TYPE_IS), $debug-1);
+    $phr_lst = $this->foaf_parents(cl(DBL_LINK_TYPE_IS), $debug-1);
     log_debug('phrase_list->is -> ('.$this->dsp_id().' is '.$phr_lst->name().')', $debug-8);
     return $phr_lst;
   }
@@ -290,7 +290,7 @@ class phrase_list {
   // e.g. to get all related values
   function are ($debug) {
     log_debug('phrase_list->are -> '.$this->dsp_id(), $debug-16);
-    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_IS), $debug-1);
+    $phr_lst = $this->foaf_children(cl(DBL_LINK_TYPE_IS), $debug-1);
     log_debug('phrase_list->are -> '.$this->dsp_id().' are '.$phr_lst->dsp_id(), $debug-12);
     $phr_lst->merge($this, $debug-1);
     log_debug('phrase_list->are -> '.$this->dsp_id().' merged into '.$phr_lst->dsp_id(), $debug-8);
@@ -299,7 +299,7 @@ class phrase_list {
 
   // returns a list of phrases that are related to this phrase list 
   function contains ($debug) {
-    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_CONTAIN), $debug-1);
+    $phr_lst = $this->foaf_children(cl(DBL_LINK_TYPE_CONTAIN), $debug-1);
     $phr_lst->merge($this, $debug-1);
     log_debug('phrase_list->contains -> ('.$this->dsp_id().' contains '.$phr_lst->name().')', $debug-8);
     return $phr_lst;
@@ -336,7 +336,7 @@ class phrase_list {
   // add all potential differentiator phrases of the phrase lst e.g. get "energy" for "sector"
   function differentiators ($debug) {
     log_debug('phrase_list->differentiators for '.$this->dsp_id(), $debug-18);
-    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+    $phr_lst = $this->foaf_children(cl(DBL_LINK_TYPE_DIFFERENTIATOR), $debug-1);
     log_debug('phrase_list->differentiators merge '.$this->dsp_id(), $debug-18);
     $this->merge($phr_lst, $debug-1);
     log_debug('phrase_list->differentiators -> '.$phr_lst->dsp_id().' for '.$this->dsp_id(), $debug-8);
@@ -348,7 +348,7 @@ class phrase_list {
     log_debug('phrase_list->differantiators_all for '.$this->dsp_id(), $debug-18);
     // this first time get all related items
     $phr_lst = clone $this;
-    $phr_lst = $this->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+    $phr_lst = $this->foaf_children(cl(DBL_LINK_TYPE_DIFFERENTIATOR), $debug-1);
     $phr_lst = $phr_lst->are     ($debug-1);
     $phr_lst = $phr_lst->contains($debug-1);
     $added_lst = $phr_lst->diff($this, $debug-1);
@@ -357,7 +357,7 @@ class phrase_list {
       $loops = 0;
       log_debug('phrase_list->differentiators -> added '.$added_lst->dsp_id().' to '.$phr_lst->name(), $debug-18);
       do {
-        $next_lst  = $added_lst->foaf_children(cl(SQL_LINK_TYPE_DIFFERANTIATOR), $debug-1);
+        $next_lst  = $added_lst->foaf_children(cl(DBL_LINK_TYPE_DIFFERENTIATOR), $debug-1);
         $next_lst  = $next_lst->are     ($debug-1);
         $next_lst  = $next_lst->contains($debug-1);
         $added_lst = $next_lst->diff($phr_lst, $debug-1);
@@ -859,7 +859,7 @@ class phrase_list {
     log_debug('phrase_list->time_lst_old('.$this->dsp_id().')', $debug-10);
 
     $result = array();
-    $time_type = cl(SQL_WORD_TYPE_TIME);
+    $time_type = cl(DBL_WORD_TYPE_TIME);
     // loop over the phrase ids and add only the time ids to the result array
     foreach ($this->lst as $phr) {
       if ($phr->type_id($debug-1) == $time_type) { 
@@ -942,7 +942,7 @@ class phrase_list {
 
     $result = New phrase_list;
     $result->usr = $this->usr;
-    $measure_type = cl(SQL_WORD_TYPE_MEASURE);
+    $measure_type = cl(DBL_WORD_TYPE_MEASURE);
     // loop over the phrase ids and add only the time ids to the result array
     foreach ($this->lst as $phr) {
       if (get_class($phr) <> 'phrase' AND get_class($phr) <> 'word' AND get_class($phr) <> 'word_dsp') {
@@ -967,8 +967,8 @@ class phrase_list {
 
     $result = New phrase_list;
     $result->usr = $this->usr;
-    $scale_type        = cl(SQL_WORD_TYPE_SCALING);
-    $scale_hidden_type = cl(SQL_WORD_TYPE_SCALING_HIDDEN);
+    $scale_type        = cl(DBL_WORD_TYPE_SCALING);
+    $scale_hidden_type = cl(DBL_WORD_TYPE_SCALING_HIDDEN);
     // loop over the phrase ids and add only the time ids to the result array
     foreach ($this->lst as $phr) {
       if ($phr->type_id($debug-1) == $scale_type OR $phr->type_id($debug-1) == $scale_hidden_type) { 

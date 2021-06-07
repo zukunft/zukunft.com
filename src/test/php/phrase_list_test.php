@@ -37,7 +37,7 @@ function run_phrase_list_test ($debug) {
   $wrd_zh     = load_word(TW_ZH, $debug-1);
   $lnk_company = New word_link;
   $lnk_company->from_id = $wrd_zh->id;
-  $lnk_company->verb_id = cl(SQL_LINK_TYPE_IS);
+  $lnk_company->verb_id = cl(DBL_LINK_TYPE_IS);
   $lnk_company->to_id   = TEST_WORD_ID;
   $lnk_company->usr  = $usr;
   $lnk_company->load($debug-1);
@@ -72,7 +72,7 @@ function run_phrase_list_test ($debug) {
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load($debug-1);
   $phr_lst = $wrd_lst->phrase_lst($debug-1);
-  $lst_parents = $phr_lst->foaf_parents(cl(SQL_LINK_TYPE_IS), $debug-1);
+  $lst_parents = $phr_lst->foaf_parents(cl(DBL_LINK_TYPE_IS), $debug-1);
   $result = implode(',',$lst_parents->names($debug-1));
   $target = TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result(', phrase_list->foaf_parents for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

@@ -190,7 +190,7 @@ function zut_db_tree ($word_id, $link_type_id, $user_id, $debug) {
 // id array of all words that the given word is related to e.g. for the id of "ABB Ltd." it will return the id of "Company"
 function zut_ids_is ($word_id, $user_id, $debug) {
   log_debug('zut_ids_is(t'.$word_id.')', $debug);
-  $link_type_id = sql_code_link(SQL_LINK_TYPE_IS);
+  $link_type_id = sql_code_link(DBL_LINK_TYPE_IS);
   $result = zut_db_tree_up ($word_id, $link_type_id, $user_id, $debug-1);
 
   log_debug('zut_ids_is -> ('.implode(",",$result).')', $debug-1);
@@ -200,7 +200,7 @@ function zut_ids_is ($word_id, $user_id, $debug) {
 // word ids that ARE of the type of the given word e.g. for "Company" it will be "ABB Ltd." and others
 function zut_ids_are ($word_id, $user_id, $debug) {
   log_debug('zut_ids_are(t'.$word_id.',u'.$user_id.')', $debug);
-  $link_type_id = sql_code_link(SQL_LINK_TYPE_IS);
+  $link_type_id = sql_code_link(DBL_LINK_TYPE_IS);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id, $debug-5);
 
   log_debug('zut_ids_are -> ('.implode(",",$result).')', $debug-1);
@@ -221,7 +221,7 @@ function zut_lst_are ($word_id, $user_id, $debug) {
 // all word ids that are part of the given word e.g. for "cash flow statement" it will be "Sales" and others
 function zut_ids_contains ($word_id, $user_id, $debug) {
   log_debug('zut_ids_contains(t'.$word_id.')', $debug);
-  $link_type_id = sql_code_link(SQL_LINK_TYPE_CONTAIN);
+  $link_type_id = sql_code_link(DBL_LINK_TYPE_CONTAIN);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id, $debug-1);
 
   log_debug('zut_ids_contains -> ('.implode(",",$result).')', $debug-1);
@@ -330,7 +330,7 @@ function zut_foaf_parent($word_id, $debug) {
   log_debug('zut_foaf_parent('.$word_id.')', $debug);
 
   $result = array();
-  $parent_type = sql_code_link(SQL_LINK_TYPE_IS);
+  $parent_type = sql_code_link(DBL_LINK_TYPE_IS);
 
   // find direct parent words
   $result = zu_sql_get_lst(zu_sql_words_linked($word_id, $parent_type, "down", $debug), $debug-1);
@@ -352,14 +352,14 @@ function zut_db_differantiator_words($word_id, $debug) {
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
-  $differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+  $differantiator_type = sql_code_link(DBL_LINK_TYPE_DIFFERENTIATOR);
 
   // find direct differantiator words
   $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differantiator_type, "up", $debug-5), $debug-5);
   log_debug('zut_db_differantiator_words ... words linked ('.implode(",",$word_lst).')', $debug-5);
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
-  $is_a_type = sql_code_link(SQL_LINK_TYPE_IS);
+  $is_a_type = sql_code_link(DBL_LINK_TYPE_IS);
 
   // add all words that are "is a" to the $differantiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
@@ -386,7 +386,7 @@ function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
-  $differantiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+  $differantiator_type = sql_code_link(DBL_LINK_TYPE_DIFFERENTIATOR);
   log_debug('zut_db_differantiator_words_filtered ... type ('.$differantiator_type.')', $debug-5);
 
   // find direct differantiator words
@@ -398,7 +398,7 @@ function zut_db_differantiator_words_filtered($word_id, $filter_ids, $user_id, $
   }
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
-  $is_a_type = sql_code_link(SQL_LINK_TYPE_IS);
+  $is_a_type = sql_code_link(DBL_LINK_TYPE_IS);
 
   // add all words that are "is a" to the $differantiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
@@ -460,7 +460,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id, 
       if (substr($id_txt, 0, strlen(ZUP_CHAR_FORMULA_START)) == ZUP_CHAR_FORMULA_START) {
         // maybe ask for confirmation
         // change the link type to "formula link"
-        $type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
+        $type_id = cl(DBL_WORD_TYPE_FORMULA_LINK);
         log_debug('word_add -> changed type to ('.$type_id.')', $debug);
         $id_txt = ""; // reset the id_txt, because this case would be fine
       }  

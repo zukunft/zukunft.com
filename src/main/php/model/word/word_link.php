@@ -436,7 +436,7 @@ class word_link {
           $wrd->load($debug-1);
           if ($wrd->id == 0) {
             $wrd->name = $value;
-            $wrd->type_id = cl(SQL_WORD_TYPE_NORMAL);
+            $wrd->type_id = cl(DBL_WORD_TYPE_NORMAL);
             $wrd->save($debug-1);
           }
           if ($wrd->id == 0) {
@@ -464,7 +464,7 @@ class word_link {
           $wrd->load($debug-1);
           if ($wrd->id == 0) {
             $wrd->name = $value;
-            $wrd->type_id = cl(SQL_WORD_TYPE_NORMAL);
+            $wrd->type_id = cl(DBL_WORD_TYPE_NORMAL);
             $wrd->save($debug-1);
           }
           if ($wrd->id == 0) {
@@ -559,7 +559,7 @@ class word_link {
       if ($this->description <> '') {
         $result = $this->description;
       // or use special verb based generic description
-      } elseif ($this->verb_id == cl(SQL_LINK_TYPE_IS)) {
+      } elseif ($this->verb_id == cl(DBL_LINK_TYPE_IS)) {
         $result = $this->from_name.' ('.$this->to_name.')';
       // or use the standard generic description
       } else {

@@ -89,7 +89,7 @@ $db_con = prg_start("error_log", "", $debug);
       // prepare the display to edit the view
       $dsp = new view_dsp;
       $dsp->usr = $usr;
-      $dsp->id = cl(SQL_VIEW_ERR_LOG);
+      $dsp->id = cl(DBL_VIEW_ERR_LOG);
       $result .= $dsp->dsp_navbar($back, $debug-1);
       //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
       $result .= err_dsp($err_id, $usr->id, $debug-1);
