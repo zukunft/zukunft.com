@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_element_test ($debug) {
+function run_formula_element_test ($debug = 0) {
 
   global $exe_start_time;
 
@@ -56,7 +56,7 @@ function run_formula_element_test ($debug) {
         } elseif ($pos == 3) {
           $target = 'formula "Total Sales" (19) for user zukunft.com system batch job';
         } 
-        $exe_start_time = test_show_result(', formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         
         $result = $elm->name($debug-1);
         if ($pos == 0) {
@@ -68,7 +68,7 @@ function run_formula_element_test ($debug) {
         } elseif ($pos == 3) {
           $target = 'Total Sales';
         } 
-        $exe_start_time = test_show_result(', formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         
         $result = $elm->name_linked($back, $debug-1);
         if ($pos == 0) {
@@ -80,24 +80,24 @@ function run_formula_element_test ($debug) {
         } elseif ($pos == 3) {
           $target = '<a href="/http/formula_edit.php?id=19&back=1">Total Sales</a>';
         } 
-        $exe_start_time = test_show_result(', formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         
         $pos++;
       }
     } else {
       $result = 'formula element list is empty';
       $target = '';
-      $exe_start_time = test_show_result(', expression->element_lst', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+      $exe_start_time = test_show_result('expression->element_lst', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
     }
   } else {
     $result = 'formula element list not set';
     $target = '';
-    $exe_start_time = test_show_result(', expression->element_lst', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('expression->element_lst', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   }
 
 }
 
-function run_formula_element_list_test ($debug) {
+function run_formula_element_list_test ($debug = 0) {
 
   global $exe_start_time;
 
@@ -117,7 +117,7 @@ function run_formula_element_list_test ($debug) {
   } else {
     $result = 'formula element list not set';
     $target = '';
-    $exe_start_time = test_show_result(', formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   }
 
 }

@@ -137,7 +137,7 @@ class user
 
     // special function to exposed the user loading for simulating test users for the automatic system test
     // TODO used also in the user sandbox: check if this is correct
-    function load_test_user($debug)
+    function load_test_user($debug = 0)
     {
         return $this->load($debug - 1);
     }
@@ -193,7 +193,7 @@ class user
     }
 
     // get the active session user object
-    function get($debug)
+    function get($debug = 0)
     {
         $result = ''; // for the result message e.g. if the user is blocked
 
@@ -208,10 +208,12 @@ class user
 
         if ($result == '') {
             // if the user has logged in use the logged in account
-            if ($_SESSION['logged']) {
-                $this->id = $_SESSION['usr_id'];
-                $this->load($debug - 1);
-                log_debug('user->get -> use (' . $this->id . ')', $debug - 10);
+            if (isset($_SESSION['logged'])) {
+                if ($_SESSION['logged']) {
+                    $this->id = $_SESSION['usr_id'];
+                    $this->load($debug - 1);
+                    log_debug('user->get -> use (' . $this->id . ')', $debug - 10);
+                }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
                 $this->get_ip();
@@ -232,7 +234,7 @@ class user
     }
 
     // true if the user has admin rights
-    function is_admin($debug)
+    function is_admin($debug = 0)
     {
         log_debug('user->is_admin (' . $this->id . ')', $debug - 10);
         $result = false;
@@ -312,7 +314,7 @@ class user
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->type = 'user';
+        $db_con->set_type(DB_TYPE_USER);
         $result = $db_con->update($this->id, 'source_id', $source_id, $debug - 1);
         return $result;
     }
@@ -325,7 +327,7 @@ class user
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->type = 'user';
+        $db_con->set_type(DB_TYPE_USER);
         $result = '';
         //$result = $db_con->update($this->id, 'verb_id', $vrb_id, $debug-1);
         return $result;
@@ -355,6 +357,7 @@ class user
             $log->row_id = $this->id;
             $log->field = $fld_name;
             if ($log->add($debug - 1)) {
+                $db_con->set_type(DB_TYPE_USER);
                 $result = $db_con->update($this->id, $log->field, $log->new_value, $debug - 1);
             }
         }
@@ -373,7 +376,7 @@ class user
 
         // build the database object because the is anyway needed
         $db_con->usr_id = $this->id;
-        $db_con->type = 'user';
+        $db_con->set_type(DB_TYPE_USER);
 
         $db_usr = new user;
         $db_usr->id = $this->id;
@@ -406,7 +409,7 @@ class user
         // build the database object because the is anyway needed
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->type = 'user';
+        $db_con->set_type(DB_TYPE_USER);
 
         if ($this->id <= 0) {
             log_debug("user->save add (" . $this->name . ")", $debug - 10);

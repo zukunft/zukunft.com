@@ -26,7 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_source_test ($debug) {
+function create_base_sources ($debug = 0) {
+    echo "<h2>Check if all base sources are exist</h2><br>";
+    test_source(TEST_SOURCE_WIKIDATA);
+    echo "<br><br>";
+}
+
+function run_source_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -39,6 +45,6 @@ function run_source_test ($debug) {
   $src->load($debug-1);
   $result = $src->name;
   $target = TS_NESN_2016_NAME;
-  $exe_start_time = test_show_result(', source->load of ID "'.TS_NESN_2016_ID.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
+  $exe_start_time = test_show_result('source->load of ID "'.TS_NESN_2016_ID.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
 
 }

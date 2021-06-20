@@ -32,366 +32,384 @@
    
 */
 
-class ref {
+class ref
+{
 
-  // database fields
-  public $id           = NULL; // the database id of the reference
-  public $phr_id       = NULL; // the database id of the word, verb or formula
-  public $external_key = '';   // the unique key in the external system
-  public $ref_type_id  = NULL; // the id of the ref type
+    // database fields
+    public $id = NULL; // the database id of the reference
+    public $phr_id = NULL; // the database id of the word, verb or formula
+    public $external_key = '';   // the unique key in the external system
+    public $ref_type_id = NULL; // the id of the ref type
 
-  // in memory only fields
-  public $usr      = NULL;     // just needed for logging the changes
-  public $phr      = NULL;     // the phrase object
-  public $ref_type = NULL;     // the ref type object
-  
-  function reset() {
-    $this->id            = NULL;
-    $this->phr_id        = NULL;
-    $this->external_key  = '';
-    $this->ref_type_id   = NULL;
-                        
-    $this->usr           = NULL; 
-    $this->phr           = NULL; 
-    $this->ref_type      = NULL; 
-  }
+    // in memory only fields
+    public $usr = NULL;     // just needed for logging the changes
+    public $phr = NULL;     // the phrase object
+    public $ref_type = NULL;     // the ref type object
 
-  // test if the name is used already
-  public function load ($debug) {
-    log_debug('ref->load ('.$this->dsp_id().')', $debug-10);
+    function reset()
+    {
+        $this->id = NULL;
+        $this->phr_id = NULL;
+        $this->external_key = '';
+        $this->ref_type_id = NULL;
 
-    global $db_con;
-    $result = NULL;
+        $this->usr = NULL;
+        $this->phr = NULL;
+        $this->ref_type = NULL;
+    }
 
-    // check if the minimal input parameters are set
-    if ($this->id <= 0 AND ($this->phr_id <= 0 OR $this->ref_type_id <= 0)) {  
-      log_err('Either the database ID ('.$this->id.') or the phrase id ('.$this->phr_id.') AND the reference type id ('.$this->ref_type_id.') must be set to load a reference.', 'ref->load', '', (new Exception)->getTraceAsString(), $this->usr);
-    } else {
-    
-      // set the where clause depending on the values given
-      $sql_where = '';
-      if ($this->id > 0) {
-        $sql_where = 'ref_id = '.$this->id;
-      } elseif ($this->phr_id > 0 AND $this->ref_type_id > 0) {
-        $sql_where = 'phrase_id = '.sf($this->phr_id).' AND ref_type_id = '.$this->ref_type_id;
-      }
+    // test if the name is used already
+    public function load($debug)
+    {
+        log_debug('ref->load (' . $this->dsp_id() . ')', $debug - 10);
 
-      if ($sql_where == '') {
-        log_err('Internal error on the where clause.', 'ref->load', '', (new Exception)->getTraceAsString(), $this->usr);
-      } else {  
-        $sql = 'SELECT ref_id,
+        global $db_con;
+        $result = NULL;
+
+        // check if the minimal input parameters are set
+        if ($this->id <= 0 and ($this->phr_id <= 0 or $this->ref_type_id <= 0)) {
+            log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr_id . ') AND the reference type id (' . $this->ref_type_id . ') must be set to load a reference.', 'ref->load', '', (new Exception)->getTraceAsString(), $this->usr);
+        } else {
+
+            // set the where clause depending on the values given
+            $sql_where = '';
+            if ($this->id > 0) {
+                $sql_where = 'ref_id = ' . $this->id;
+            } elseif ($this->phr_id > 0 and $this->ref_type_id > 0) {
+                $sql_where = 'phrase_id = ' . sf($this->phr_id) . ' AND ref_type_id = ' . $this->ref_type_id;
+            }
+
+            if ($sql_where == '') {
+                log_err('Internal error on the where clause.', 'ref->load', '', (new Exception)->getTraceAsString(), $this->usr);
+            } else {
+                $sql = 'SELECT ref_id,
                        phrase_id,
                        external_key,
                        ref_type_id
                   FROM refs 
-                 WHERE '.$sql_where.';';
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;         
-        $db_ref = $db_con->get1($sql, $debug-5);  
-        if ($db_ref['ref_id'] <= 0) {
-          $this->reset();
-        } else {
-          $this->id           = $db_ref['ref_id'];
-          $this->phr_id       = $db_ref['phrase_id'];
-          $this->external_key = $db_ref['external_key'];
-          $this->ref_type_id  = $db_ref['ref_type_id'];
-          $this->load_objects($debug-1);
-        } 
-      }  
-    }  
-    log_debug('ref->load -> done '.$this->dsp_id(), $debug-16);
-    
-    return $result;    
-  }
+                 WHERE ' . $sql_where . ';';
+                //$db_con = new mysql;
+                $db_con->usr_id = $this->usr->id;
+                $db_ref = $db_con->get1($sql, $debug - 5);
+                if ($db_ref['ref_id'] <= 0) {
+                    $this->id = 0;
+                    //$this->reset();
+                } else {
+                    $this->id = $db_ref['ref_id'];
+                    $this->phr_id = $db_ref['phrase_id'];
+                    $this->external_key = $db_ref['external_key'];
+                    $this->ref_type_id = $db_ref['ref_type_id'];
+                    $this->load_objects($debug - 1);
+                }
+            }
+        }
+        log_debug('ref->load -> done ' . $this->dsp_id(), $debug - 16);
 
-  // to load the related objects if the reference object is loaded
-  private function load_objects($debug) {
-    log_debug('ref->load_objects', $debug-10);
-
-    if (!isset($this->phr)) {
-      if ($this->phr_id <> 0) {
-        $phr = New phrase;
-        $phr->id  = $this->phr_id;
-        $phr->usr = $this->usr;
-        $phr->load($debug-1);
-        $this->phr = $phr;
-        log_debug('ref->load_objects -> phrase '.$this->phr->dsp_id().' loaded', $debug-14);
-      }
-    }
-    if (!isset($this->ref_type)) {
-      if ($this->ref_type_id > 0) {
-        $this->ref_type = get_ref_type($this->ref_type_id, $debug-1);
-        log_debug('ref->load_objects -> ref_type '.$this->ref_type->dsp_id().' loaded', $debug-14);
-      }
+        return $result;
     }
 
-    log_debug('ref->load_objects -> done', $debug-12);
-  }
-  
-  // import a link to external database from a imported object
-  function import_obj ($json_obj, $debug) {
-    log_debug('ref->import_obj', $debug-10);
-    $result = '';
-    
-    foreach ($json_obj AS $key => $value) {
-      if ($key == 'name') { $this->external_key = $value; }
-      if ($key == 'type') { 
-        $this->ref_type = get_ref_type_by_name($value, $debug-1); 
+    // to load the related objects if the reference object is loaded
+    private function load_objects($debug)
+    {
+        log_debug('ref->load_objects', $debug - 10);
+
+        if (!isset($this->phr)) {
+            if ($this->phr_id <> 0) {
+                $phr = new phrase;
+                $phr->id = $this->phr_id;
+                $phr->usr = $this->usr;
+                $phr->load($debug - 1);
+                $this->phr = $phr;
+                log_debug('ref->load_objects -> phrase ' . $this->phr->dsp_id() . ' loaded', $debug - 14);
+            }
+        }
         if (!isset($this->ref_type)) {
-          log_err('Reference type for '.$value.' not found', 'ref->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+            if ($this->ref_type_id > 0) {
+                $this->ref_type = get_ref_type($this->ref_type_id, $debug - 1);
+                log_debug('ref->load_objects -> ref_type ' . $this->ref_type->dsp_id() . ' loaded', $debug - 14);
+            }
+        }
+
+        log_debug('ref->load_objects -> done', $debug - 12);
+    }
+
+    // import a link to external database from a imported object
+    function import_obj($json_obj, $debug)
+    {
+        log_debug('ref->import_obj', $debug - 10);
+        $result = '';
+
+        foreach ($json_obj as $key => $value) {
+            if ($key == 'name') {
+                $this->external_key = $value;
+            }
+            if ($key == 'type') {
+                $this->ref_type = get_ref_type_by_name($value, $debug - 1);
+                if (!isset($this->ref_type)) {
+                    log_err('Reference type for ' . $value . ' not found', 'ref->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+                } else {
+                    $this->ref_type_id = $this->ref_type->id;
+                }
+                log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type_id . ')', $debug - 14);
+            }
+        }
+        if ($result == '') {
+            $this->load_objects($debug - 1); // to be able to log the object names
+            $this->save($debug - 1);
+            log_debug('ref->import_obj -> ' . $this->dsp_id(), $debug - 18);
         } else {
-          $this->ref_type_id = $this->ref_type->id; 
+            log_debug('ref->import_obj -> ' . $result, $debug - 18);
         }
-        log_debug('ref->import_obj -> ref_type set based on '.$value.' ('.$this->ref_type_id.')', $debug-14);
-      }
-    }
-    if ($result == '') {
-      $this->load_objects($debug-1); // to be able to log the object names
-      $this->save($debug-1);
-      log_debug('ref->import_obj -> '.$this->dsp_id(), $debug-18);
-    } else {
-      log_debug('ref->import_obj -> '.$result, $debug-18);
+
+        return $result;
     }
 
-    return $result;
-  }
-  
-  /*
-  
-  display functions
-  
-  */
-  
-  // display the unique id fields
-  function dsp_id () {
-    $result = ''; 
+    /*
 
-    $result .= $this->name(); 
-    if ($result <> '') {
-      if ($this->id > 0) {
-        $result .= ' ('.$this->id.')';
-      }  
-    } else {
-      $result .= $this->id;
-    }
-    return $result;
-  }
+    display functions
 
-  // create the unique name
-  function name () {
-    $result = ''; 
+    */
 
-    if (isset($this->phr)) {
-      $result .= 'ref of "'.$this->phr->name.'"'; 
-    } else {  
-      if (isset($this->phr_id)) {
-        if ($this->phr_id > 0) {
-          $result .= 'ref of phrase id '.$this->phr_id.' '; 
+    // display the unique id fields
+    function dsp_id()
+    {
+        $result = '';
+
+        $result .= $this->name();
+        if ($result <> '') {
+            if ($this->id > 0) {
+                $result .= ' (' . $this->id . ')';
+            }
+        } else {
+            $result .= $this->id;
         }
-      }
+        return $result;
     }
-    if (isset($this->ref_type)) {
-      $result .= 'to "'.$this->ref_type->name.'"'; 
-    } else {  
-      if (isset($this->ref_type_id)) {
-        if ($this->ref_type_id > 0) {
-          $result .= 'to type id '.$this->ref_type_id.' '; 
+
+    // create the unique name
+    function name()
+    {
+        $result = '';
+
+        if (isset($this->phr)) {
+            $result .= 'ref of "' . $this->phr->name . '"';
+        } else {
+            if (isset($this->phr_id)) {
+                if ($this->phr_id > 0) {
+                    $result .= 'ref of phrase id ' . $this->phr_id . ' ';
+                }
+            }
         }
-      }
-    }
-    return $result;
-  }
-
-  // set the log entry parameter for a new reference
-  function log_add($debug) {
-    log_debug('ref->log_add '.$this->dsp_id(), $debug-10);
-    
-    // check that the minimal parameters are set
-    if (!isset($this->phr)) {
-      log_err('The phrase object must be set to log adding an external reference.', 'ref->log_add', '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    if (!isset($this->ref_type)) {
-      log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add', '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    
-    $log = New user_log_link;
-    $log->usr       = $this->usr;
-    $log->action    = 'add';
-    $log->table     = 'refs';
-    // TODO review in log_link
-    // TODO object must be loaded before it can be logged
-    $log->new_from  = $this->phr;
-    $log->new_link  = $this->ref_type;
-    $log->new_to    = $this;
-    $log->row_id    = 0; 
-    $log->add($debug-1);
-    
-    return $log;    
-  }
-  
-  // set the main log entry parameters for updating one reference field
-  function log_upd($db_rec, $debug) {
-    log_debug('ref->log_upd '.$this->dsp_id(), $debug-10);
-    $log = New user_log_link;
-    $log->usr       = $this->usr;
-    $log->action    = 'update';
-    $log->table     = 'refs';
-    $log->old_from  = $db_rec->phr;
-    $log->old_link  = $db_rec->ref_type;
-    $log->old_to    = $db_rec;
-    $log->new_from  = $this->phr;
-    $log->new_link  = $this->ref_type;
-    $log->new_to    = $this;
-    $log->row_id    = $this->id; 
-    $log->add($debug-1);
-    
-    return $log;    
-  }
-  
-  // set the log entry parameter to delete a reference
-  function log_del($debug) {
-    log_debug('ref->log_del '.$this->dsp_id(), $debug-10);
-    
-    // check that the minimal parameters are set
-    if (!isset($this->phr)) {
-      log_err('The phrase object must be set to log deletion of an external reference.', 'ref->log_del', '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    if (!isset($this->ref_type)) {
-      log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del', '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    
-    $log = New user_log_link;
-    $log->usr       = $this->usr;
-    $log->action    = 'del';
-    $log->table     = 'refs';
-    $log->old_from  = $this->phr;
-    $log->old_link  = $this->ref_type;
-    $log->old_to    = $this;
-    $log->row_id    = $this->id; 
-    $log->add($debug-1);
-    
-    return $log;    
-  }
-  
-  // update a ref in the database or update the existing
-  private function add($debug) {
-    log_debug('ref->add '.$this->dsp_id(), $debug-10);
-
-    global $db_con;
-    $result = '';
-
-    // log the insert attempt first
-    $log = $this->log_add($debug-1);
-    if ($log->id > 0) {
-      log_debug('ref->add -> insert', $debug-10);
-      // insert the new reference
-      //$db_con = New mysql;
-      $db_con->usr_id = $this->usr->id;         
-      $db_con->type = 'ref';         
-      $this->id = $db_con->insert(array('phrase_id','external_key','ref_type_id'),
-                                  array($this->phr_id,$this->external_key,$this->ref_type_id), $debug-1);
-      if ($this->id > 0) {
-        // update the id in the log for the correct reference
-        $result .= $log->add_ref($this->id, $debug-1);
-      } else {
-        log_err('Adding reference '.$this->dsp_id().' failed.', 'ref->add');
-      }  
-    }
-    
-    return $result;    
-  }
-
-  function get_similar($debug) {
-    $result = NULL;
-    log_debug('ref->get_similar '.$this->dsp_id(), $debug-10);
-
-    $db_chk = clone $this;
-    $db_chk->reset();
-    $db_chk->phr_id      = $this->phr_id;
-    $db_chk->ref_type_id = $this->ref_type_id;
-    $db_chk->usr         = $this->usr;
-    $db_chk->load($debug-1); 
-    if ($db_chk->id > 0) {
-      log_debug('ref->get_similar an external reference for '.$this->dsp_id().' already exists', $debug-12);
-      $result = $db_chk;
-    }
-
-    return $result;
-  }
-  
-  // update a ref in the database or update the existing
-  function save($debug) {
-    log_debug('ref->save '.$this->dsp_id(), $debug-10);
-
-    global $db_con;
-    $result = '';
-
-    // build the database object because the is anyway needed
-    //$db_con = new mysql;
-    $db_con->usr_id = $this->id;         
-    $db_con->type   = 'ref';         
-    
-    // check if the external reference is supposed to be added
-    if ($this->id <= 0) {
-      // check possible duplicates before adding
-      log_debug('ref->save check possible duplicates before adding '.$this->dsp_id(), $debug-12);
-      $similar = $this->get_similar($debug-1);
-      if (isset($similar)) {
-        if ($similar->id <> 0) {
-          $this->id = $similar->id;
+        if (isset($this->ref_type)) {
+            $result .= 'to "' . $this->ref_type->name . '"';
+        } else {
+            if (isset($this->ref_type_id)) {
+                if ($this->ref_type_id > 0) {
+                    $result .= 'to type id ' . $this->ref_type_id . ' ';
+                }
+            }
         }
-      }
-    }  
-      
-    // create a new object or update an existing
-    if ($this->id <= 0) {
-      log_debug('ref->save add', $debug-12);
-      $result .= $this->add($debug-1);
-    } else {  
-      log_debug('ref->save update', $debug-12);
-      
-      // read the database values to be able to check if something has been changed; 
-      // done first, because it needs to be done for user and general object values
-      $db_rec = clone $this;
-      $db_rec->reset();
-      $db_rec->id  = $this->id;
-      $db_rec->usr = $this->usr;
-      $db_rec->load($debug-10);
-      log_debug('ref->save reloaded from db', $debug-14);
+        return $result;
+    }
 
-      // if needed log the change and update the database
-      if ($this->external_key <> $db_rec->external_key) {
-        $log = $this->log_upd($db_rec, $debug-1);
+    // set the log entry parameter for a new reference
+    function log_add($debug)
+    {
+        log_debug('ref->log_add ' . $this->dsp_id(), $debug - 10);
+
+        // check that the minimal parameters are set
+        if (!isset($this->phr)) {
+            log_err('The phrase object must be set to log adding an external reference.', 'ref->log_add', '', (new Exception)->getTraceAsString(), $this->usr);
+        }
+        if (!isset($this->ref_type)) {
+            log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add', '', (new Exception)->getTraceAsString(), $this->usr);
+        }
+
+        $log = new user_log_link;
+        $log->usr = $this->usr;
+        $log->action = 'add';
+        $log->table = 'refs';
+        // TODO review in log_link
+        // TODO object must be loaded before it can be logged
+        $log->new_from = $this->phr;
+        $log->new_link = $this->ref_type;
+        $log->new_to = $this;
+        $log->row_id = 0;
+        $log->add($debug - 1);
+
+        return $log;
+    }
+
+    // set the main log entry parameters for updating one reference field
+    function log_upd($db_rec, $debug)
+    {
+        log_debug('ref->log_upd ' . $this->dsp_id(), $debug - 10);
+        $log = new user_log_link;
+        $log->usr = $this->usr;
+        $log->action = 'update';
+        $log->table = 'refs';
+        $log->old_from = $db_rec->phr;
+        $log->old_link = $db_rec->ref_type;
+        $log->old_to = $db_rec;
+        $log->new_from = $this->phr;
+        $log->new_link = $this->ref_type;
+        $log->new_to = $this;
+        $log->row_id = $this->id;
+        $log->add($debug - 1);
+
+        return $log;
+    }
+
+    // set the log entry parameter to delete a reference
+    function log_del($debug)
+    {
+        log_debug('ref->log_del ' . $this->dsp_id(), $debug - 10);
+
+        // check that the minimal parameters are set
+        if (!isset($this->phr)) {
+            log_err('The phrase object must be set to log deletion of an external reference.', 'ref->log_del', '', (new Exception)->getTraceAsString(), $this->usr);
+        }
+        if (!isset($this->ref_type)) {
+            log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del', '', (new Exception)->getTraceAsString(), $this->usr);
+        }
+
+        $log = new user_log_link;
+        $log->usr = $this->usr;
+        $log->action = 'del';
+        $log->table = 'refs';
+        $log->old_from = $this->phr;
+        $log->old_link = $this->ref_type;
+        $log->old_to = $this;
+        $log->row_id = $this->id;
+        $log->add($debug - 1);
+
+        return $log;
+    }
+
+    // update a ref in the database or update the existing
+    private function add($debug)
+    {
+        log_debug('ref->add ' . $this->dsp_id(), $debug - 10);
+
+        global $db_con;
+        $result = '';
+
+        // log the insert attempt first
+        $log = $this->log_add($debug - 1);
         if ($log->id > 0) {
-          $result .= $db_con->update($this->id, 'external_key', $this->external_key, $debug-1);
-          log_debug('ref->save update ... done.'.$result.'', $debug-10);
+            log_debug('ref->add -> insert', $debug - 10);
+            // insert the new reference
+            //$db_con = New mysql;
+            $db_con->usr_id = $this->usr->id;
+            $db_con->set_type(DB_TYPE_REF);
+            $this->id = $db_con->insert(array('phrase_id', 'external_key', 'ref_type_id'),
+                array($this->phr_id, $this->external_key, $this->ref_type_id), $debug - 1);
+            if ($this->id > 0) {
+                // update the id in the log for the correct reference
+                $result .= $log->add_ref($this->id, $debug - 1);
+            } else {
+                log_err('Adding reference ' . $this->dsp_id() . ' failed.', 'ref->add');
+            }
         }
-      }
+
+        return $result;
     }
-    return $result;    
-  }
-  
-  function del($debug) {
-    log_debug('ref->del '.$this->dsp_id(), $debug-10);
 
-    global $db_con;
-    $result = '';
+    function get_similar($debug)
+    {
+        $result = NULL;
+        log_debug('ref->get_similar ' . $this->dsp_id(), $debug - 10);
 
-    $result .= $this->load($debug-18);
-    if ($result <> '') {
-      log_warning('Reload of ref '.$this->dsp_id().' for deletion unexpectedly lead to '.$result.'.', 'ref->del');
-    } else {
-      if ($this->id <= 0) {
-        log_warning('Delete failed, because it seems that the ref '.$this->dsp_id().' has been deleted in the meantime.', 'ref->del');
-      } else {  
-        $log = $this->log_del($debug-1);
-        if ($log->id > 0) {
-          $result .= $db_con->delete('ref_id', $this->id, $debug-1);
-          log_debug('ref->del update -> done.'.$result.'', $debug-12);
+        $db_chk = clone $this;
+        $db_chk->reset();
+        $db_chk->phr_id = $this->phr_id;
+        $db_chk->ref_type_id = $this->ref_type_id;
+        $db_chk->usr = $this->usr;
+        $db_chk->load($debug - 1);
+        if ($db_chk->id > 0) {
+            log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists', $debug - 12);
+            $result = $db_chk;
         }
-      }
+
+        return $result;
     }
-    
-    return $result;    
-  }
+
+    // update a ref in the database or update the existing
+    function save($debug)
+    {
+        log_debug('ref->save ' . $this->dsp_id(), $debug - 10);
+
+        global $db_con;
+        $result = '';
+
+        // build the database object because the is anyway needed
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_type(DB_TYPE_REF);
+
+        // check if the external reference is supposed to be added
+        if ($this->id <= 0) {
+            // check possible duplicates before adding
+            log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id(), $debug - 12);
+            $similar = $this->get_similar($debug - 1);
+            if (isset($similar)) {
+                if ($similar->id <> 0) {
+                    $this->id = $similar->id;
+                }
+            }
+        }
+
+        // create a new object or update an existing
+        if ($this->id <= 0) {
+            log_debug('ref->save add', $debug - 12);
+            $result .= $this->add($debug - 1);
+        } else {
+            log_debug('ref->save update', $debug - 12);
+
+            // read the database values to be able to check if something has been changed;
+            // done first, because it needs to be done for user and general object values
+            $db_rec = clone $this;
+            $db_rec->reset();
+            $db_rec->id = $this->id;
+            $db_rec->usr = $this->usr;
+            $db_rec->load($debug - 10);
+            log_debug('ref->save reloaded from db', $debug - 14);
+
+            // if needed log the change and update the database
+            if ($this->external_key <> $db_rec->external_key) {
+                $log = $this->log_upd($db_rec, $debug - 1);
+                if ($log->id > 0) {
+                    $db_con->set_type(DB_TYPE_REF);
+                    $result .= $db_con->update($this->id, 'external_key', $this->external_key, $debug - 1);
+                    log_debug('ref->save update ... done.' . $result . '', $debug - 10);
+                }
+            }
+        }
+        return $result;
+    }
+
+    function del($debug)
+    {
+        log_debug('ref->del ' . $this->dsp_id(), $debug - 10);
+
+        global $db_con;
+        $result = '';
+
+        $result .= $this->load($debug - 18);
+        if ($result <> '') {
+            log_warning('Reload of ref ' . $this->dsp_id() . ' for deletion unexpectedly lead to ' . $result . '.', 'ref->del');
+        } else {
+            if ($this->id <= 0) {
+                log_warning('Delete failed, because it seems that the ref ' . $this->dsp_id() . ' has been deleted in the meantime.', 'ref->del');
+            } else {
+                $log = $this->log_del($debug - 1);
+                if ($log->id > 0) {
+                    $db_con->set_type(DB_TYPE_REF);
+                    $result .= $db_con->delete('ref_id', $this->id, $debug - 1);
+                    log_debug('ref->del update -> done.' . $result . '', $debug - 12);
+                }
+            }
+        }
+
+        return $result;
+    }
 }

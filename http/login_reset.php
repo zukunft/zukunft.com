@@ -65,23 +65,23 @@ $db_con = prg_start("login_reset", "center_form", $debug);
         
       // Lets search the database for the user name and password
       // don't use the sf shortcut here!
-      $usr_name = mysql_real_escape_string($_POST['username']); 
-      $usr_mail = mysql_real_escape_string($_POST['email']); 
+      $usr_name = mysqli_real_escape_string($_POST['username']); 
+      $usr_mail = mysqli_real_escape_string($_POST['email']); 
       $sql = "SELECT * FROM users  
               WHERE user_name ='".$usr_name."' 
                   OR email ='".$usr_mail."'
                     LIMIT 1"; 
-      $sql_result = mysql_query($sql); 
-      if(mysql_num_rows($sql_result) == 1){ 
-        $row = mysql_fetch_array($sql_result); 
+      $sql_result = mysqli_query($sql); 
+      if(mysqli_num_rows($sql_result) == 1){ 
+        $row = mysqli_fetch_array($sql_result); 
         $user_id      = $row['user_id'];
         $user_email   = $row['email'];
 
         // save activation key
         $key = getRandomKey(20);
         //$db_con = new mysql;
-        $db_con->type = "user";         
-        $db_con->usr_id = $usr->id;         
+        $db_con->set_type(DB_TYPE_USER);
+        $db_con->set_usr($usr->id);
         $sql_result = $db_con->update($user_id, array("activation_key","activation_key_timeout"), array(sf($key),'NOW() + INTERVAL 1 DAY'), $debug-1);
         /*
         $sql = "UPDATE users 

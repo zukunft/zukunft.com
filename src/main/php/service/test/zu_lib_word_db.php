@@ -100,7 +100,7 @@ function zut_db_tree_up_level_type ($level, $word_id, $result, $link_type_id, $u
          . "      AND l.verb_id = ".$link_type_id." " 
          . " ORDER BY t.word_name;";
   $sql_result = zu_sql_get_all($query, $debug-5);
-  while ($entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $sub_id = $entry[0];
     if ($sub_id > 0 AND !in_array($sub_id, $result)) {
       log_debug('zut_db_tree_up_level_type -> add '.$sub_id, $debug-5);
@@ -122,7 +122,7 @@ function zut_db_tree_level_type ($level, $word_id, $result, $link_type_id, $user
          . "      AND l.verb_id = ".$link_type_id." " 
          . " ORDER BY t.word_name;";
   $sql_result = zu_sql_get_all($query, $debug-5);
-  while ($entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $sub_id = $entry[0];
     if ($sub_id > 0 AND !in_array($sub_id, $result)) {
       log_debug('zut_db_tree_level_type -> add '.$sub_id, $debug-5);
@@ -504,7 +504,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id, 
 function zutg_db_add ($word_ids, $group_name, $debug) {
   log_debug('zutg_db_add', $debug);
   $sql_query = "INSERT INTO phrase_groups (word_ids, auto_description) VALUES ('".$word_ids."','".$group_name."');";
-  $sql_result = mysql_query($sql_query);
+  $sql_result = mysqli_query($sql_query);
 
   return $sql_result;
 }
@@ -725,9 +725,9 @@ function zut_value ($word_ids, $time_word_id, $user_id, $debug) {
 function zut_group_review ($debug) {
   log_debug('zut_group_review', $debug);
   $query = "SELECT value_id, phrase_id FROM value_phrase_links WHERE value_id > 0 AND phrase_id > 0 ORDER BY value_id, phrase_id;";
-  $sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
+  $sql_result = mysqli_query($query) or die('Query failed: ' . mysqli_error());
   $last_value = 0;
-  while ($link_row = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($link_row = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     if ($last_value <> $link_row[0]) {
       // save the last group
       if ($last_value > 0) {
@@ -739,7 +739,7 @@ function zut_group_review ($debug) {
           $sql_query = "UPDATE `values` SET phrase_group_id = ".$phrase_group.", time_word_id = ".$time_id." WHERE value_id = ".$last_value.";";
         }
         //echo $sql_query.'->';
-        $update_result = mysql_query($sql_query);
+        $update_result = mysqli_query($sql_query);
       }
       //echo 'check for value '.$link_row[0].'->';
       $last_value = $link_row[0];

@@ -69,179 +69,188 @@ A user updates a formula
 
 */
 
-class batch_job {
+class batch_job
+{
 
-  // database fields
-  public $id           = NULL;  // the database id of the request
-  public $request_time = NULL;  // time when the job has been requested
-  public $start_time   = NULL;  // start time of the job execution 
-  public $end_time     = NULL;  // end time of the job execution 
-  public $usr          = NULL;  // the user who has done the request and whose data needs to be updated
-  public $type         = NULL;  // "update value", "add formula" or ... reference to the type table
-  public $row_id       = NULL;  // the id of the related object e.g. if a value has been updated the value_id
-  
-  // in memory only fields
-  public $obj          = NULL;  // the updated object 
+    // database fields
+    public $id = NULL;  // the database id of the request
+    public $request_time = NULL;  // time when the job has been requested
+    public $start_time = NULL;  // start time of the job execution
+    public $end_time = NULL;  // end time of the job execution
+    public $usr = NULL;  // the user who has done the request and whose data needs to be updated
+    public $type = NULL;  // "update value", "add formula" or ... reference to the type table
+    public $row_id = NULL;  // the id of the related object e.g. if a value has been updated the value_id
 
-  // for calculation request a simple phrase list is used 
-  // not phrase groups and time because the phrase group and time splitting should only be used to save to the database
-  public $frm     = NULL; // the formula object that should be used for updating the result 
-  public $phr_lst = NULL; // 
+    // in memory only fields
+    public $obj = NULL;  // the updated object
 
-  
-  // request a new calculation 
-  function add($debug) {
+    // for calculation request a simple phrase list is used
+    // not phrase groups and time because the phrase group and time splitting should only be used to save to the database
+    public $frm = NULL; // the formula object that should be used for updating the result
+    public $phr_lst = NULL; //
 
-    global $db_con;
 
-    $result = '';
-    log_debug('batch_job->add', $debug-18);
-    // create first the database entry to make sure the update is done
-    if ($this->type <= 0) {
-      // invalid type?
-      log_debug('batch_job->type invalid', $debug-18);
-    } else {
-      log_debug('batch_job->type ok', $debug-18);
-      if ($this->row_id <= 0) {
-        if (isset($this->obj)) {
-          $this->row_id = $this->obj->id;
-        }  
-      } 
-      if ($this->row_id <= 0) {
-        log_debug('batch_job->add row id missing?', $debug-18);
-      } else {
-        log_debug('batch_job->row_id ok', $debug-18);
-        if (isset($this->obj)) {
-          if (!isset($this->usr)) { $this->usr = $this->obj->usr; }
-          $this->row_id = $this->obj->id;
-          log_debug('batch_job->add connect', $debug-18);
-          //$db_con = New mysql;
-          $db_type = $db_con->type;
-          $db_con->usr_id = $this->usr->id;         
-          $db_con->type = 'calc_and_cleanup_task';         
-          $job_id = $db_con->insert(array('user_id','request_time','calc_and_cleanup_task_type_id','row_id'), 
-                                    array($this->usr->id, 'Now()', $this->type, $this->row_id), $debug-1);
-          $this->request_time = new DateTime();
-          
-          // execute the job if possible
-          if ($job_id > 0) {
-            $this->id = $job_id;
-            $this->exe($debug-1);
-            $result = $job_id;
-          }
-          $db_con->type = $db_type;
+    // request a new calculation
+    function add($debug)
+    {
+
+        global $db_con;
+
+        $result = '';
+        log_debug('batch_job->add', $debug - 18);
+        // create first the database entry to make sure the update is done
+        if ($this->type <= 0) {
+            // invalid type?
+            log_debug('batch_job->type invalid', $debug - 18);
+        } else {
+            log_debug('batch_job->type ok', $debug - 18);
+            if ($this->row_id <= 0) {
+                if (isset($this->obj)) {
+                    $this->row_id = $this->obj->id;
+                }
+            }
+            if ($this->row_id <= 0) {
+                log_debug('batch_job->add row id missing?', $debug - 18);
+            } else {
+                log_debug('batch_job->row_id ok', $debug - 18);
+                if (isset($this->obj)) {
+                    if (!isset($this->usr)) {
+                        $this->usr = $this->obj->usr;
+                    }
+                    $this->row_id = $this->obj->id;
+                    log_debug('batch_job->add connect', $debug - 18);
+                    //$db_con = New mysql;
+                    $db_type = $db_con->get_type();
+                    $db_con->set_type(DB_TYPE_TASK);
+                    $db_con->set_usr($this->usr->id);
+                    $job_id = $db_con->insert(array('user_id', 'request_time', 'calc_and_cleanup_task_type_id', 'row_id'),
+                        array($this->usr->id, 'Now()', $this->type, $this->row_id), $debug - 1);
+                    $this->request_time = new DateTime();
+
+                    // execute the job if possible
+                    if ($job_id > 0) {
+                        $this->id = $job_id;
+                        $this->exe($debug - 1);
+                        $result = $job_id;
+                    }
+                    $db_con->set_type($db_type);
+                }
+            }
         }
-      }
+        log_debug('batch_job->add done', $debug - 18);
+        return $result;
     }
-    log_debug('batch_job->add done', $debug-18);
-    return $result;
-  }
-  
-  // update all result depending on one value
-  function exe_val_upd($debug) {
-    log_debug('batch_job->exe_val_upd ...', $debug-18);
-    global $db_con;
 
-    // load all depending formula results
-    if (isset($this->obj)) {
-      log_debug('batch_job->exe_val_upd -> get list for user '.$this->obj->usr->name, $debug-16);
-      $fv_lst = $this->obj->fv_lst_depending($debug-1);
-      if (isset($fv_lst)) {
-        log_debug('batch_job->exe_val_upd -> got '.$fv_lst->dsp_id(), $debug-14);
-        foreach ($fv_lst->lst AS $fv) {
-          log_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id(), $debug-12);
-          $fv->update($debug-1);
-          log_debug('batch_job->exe_val_upd -> update '.get_class($fv).' '.$fv->dsp_id().' done', $debug-12);
+    // update all result depending on one value
+    function exe_val_upd($debug)
+    {
+        log_debug('batch_job->exe_val_upd ...', $debug - 18);
+        global $db_con;
+
+        // load all depending formula results
+        if (isset($this->obj)) {
+            log_debug('batch_job->exe_val_upd -> get list for user ' . $this->obj->usr->name, $debug - 16);
+            $fv_lst = $this->obj->fv_lst_depending($debug - 1);
+            if (isset($fv_lst)) {
+                log_debug('batch_job->exe_val_upd -> got ' . $fv_lst->dsp_id(), $debug - 14);
+                foreach ($fv_lst->lst as $fv) {
+                    log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id(), $debug - 12);
+                    $fv->update($debug - 1);
+                    log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id() . ' done', $debug - 12);
+                }
+            }
         }
-      }
-    }
-    
-    //$db_con = New mysql;
-    $db_type = $db_con->type;
-    $db_con->usr_id = $this->usr->id;
-    $db_con->type = 'calc_and_cleanup_task';         
-    $result = $db_con->update($this->id, 'end_time', 'Now()', $debug-1);
-    $db_con->type = $db_type;
 
-    log_debug('batch_job->exe_val_upd -> done with '.$result, $debug-10);
-  }
-  
-  // execute all open requests
-  function exe($debug) {
-    global $db_con;
-    //$db_con = New mysql;
-    $db_type = $db_con->type;
-    $db_con->usr_id = $this->usr->id;
-    $db_con->type = 'calc_and_cleanup_task';         
-    $result = $db_con->update($this->id, 'start_time', 'Now()', $debug-1);
-      
-    log_debug('batch_job->exe -> '.$this->type.' with '.$result, $debug-14);
-    if ($this->type == cl(DBL_JOB_VALUE_UPDATE)) {
-      $this->exe_val_upd($debug-1);
-    } else {
-      log_err('Job type "'.$this->type.'" not defined.','batch_job->exe', '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    $db_con->type = $db_type;
-  }
-  
-  // remove the old requests from the database if they are closed since a while
-  private function del($debug) {
-  }
-  
-  /*
-  
-  display functions
-  
-  */
-  
-  // return best possible identification for this formula mainly used for debugging
-  function dsp_id () {
-    $result = $this->type; 
+        //$db_con = New mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_TASK);
+        $db_con->usr_id = $this->usr->id;
+        $result = $db_con->update($this->id, 'end_time', 'Now()', $debug - 1);
+        $db_con->set_type($db_type);
 
-    if ($this->row_id > 0) {
-      $result .= ' for id '.$this->row_id;
+        log_debug('batch_job->exe_val_upd -> done with ' . $result, $debug - 10);
     }
-    if (isset($this->frm)) {
-      if (get_class($this->frm) == 'formula') {
-        $result .= ' '.$this->frm->dsp_id();
-      } else {  
-        $result .= ' '.get_class($this->frm).' '.$this->frm->dsp_id();
-      }  
-    }
-    if (isset($this->phr_lst)) {
-      if (get_class($this->phr_lst) == 'phrase_list') {
-        $result .= ' '.$this->phr_lst->dsp_id();
-      } else {
-        $result .= ' '.get_class($this->phr_lst).' '.$this->phr_lst->dsp_id();
-      }  
-    }
-    if ($this->id > 0) {
-      $result .= ' ('.$this->id.')';
-    }
-    if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
-    }
-    return $result;
-  }
 
-  function name ($debug) {
-    $result = $this->type; 
+    // execute all open requests
+    function exe($debug)
+    {
+        global $db_con;
+        //$db_con = New mysql;
+        $db_type = $db_con->get_type();
+        $db_con->usr_id = $this->usr->id;
+        $db_con->set_type(DB_TYPE_TASK);
+        $result = $db_con->update($this->id, 'start_time', 'Now()', $debug - 1);
 
-    if (isset($this->frm)) {
-      if (get_class($this->frm) == 'formula') {
-        $result .= $this->frm->name();
-      } else {  
-        $result .= get_class($this->frm).' '.$this->frm->name($debug);
-      }  
+        log_debug('batch_job->exe -> ' . $this->type . ' with ' . $result, $debug - 14);
+        if ($this->type == cl(DBL_JOB_VALUE_UPDATE)) {
+            $this->exe_val_upd($debug - 1);
+        } else {
+            log_err('Job type "' . $this->type . '" not defined.', 'batch_job->exe', '', (new Exception)->getTraceAsString(), $this->usr);
+        }
+        $db_con->set_type($db_type);
     }
-    if (isset($this->phr_lst)) {
-      if (get_class($this->phr_lst) == 'phrase_list') {
-        $result .= ' '.$this->phr_lst->name($debug);
-      } else {
-        $result .= ' '.get_class($this->phr_lst).' '.$this->phr_lst->name($debug);
-      }  
+
+    // remove the old requests from the database if they are closed since a while
+    private function del($debug)
+    {
     }
-    return $result;
-  }
+
+    /*
+
+    display functions
+
+    */
+
+    // return best possible identification for this formula mainly used for debugging
+    function dsp_id()
+    {
+        $result = $this->type;
+
+        if ($this->row_id > 0) {
+            $result .= ' for id ' . $this->row_id;
+        }
+        if (isset($this->frm)) {
+            if (get_class($this->frm) == 'formula') {
+                $result .= ' ' . $this->frm->dsp_id();
+            } else {
+                $result .= ' ' . get_class($this->frm) . ' ' . $this->frm->dsp_id();
+            }
+        }
+        if (isset($this->phr_lst)) {
+            if (get_class($this->phr_lst) == 'phrase_list') {
+                $result .= ' ' . $this->phr_lst->dsp_id();
+            } else {
+                $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->dsp_id();
+            }
+        }
+        if ($this->id > 0) {
+            $result .= ' (' . $this->id . ')';
+        }
+        if (isset($this->usr)) {
+            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        }
+        return $result;
+    }
+
+    function name($debug)
+    {
+        $result = $this->type;
+
+        if (isset($this->frm)) {
+            if (get_class($this->frm) == 'formula') {
+                $result .= $this->frm->name();
+            } else {
+                $result .= get_class($this->frm) . ' ' . $this->frm->name($debug);
+            }
+        }
+        if (isset($this->phr_lst)) {
+            if (get_class($this->phr_lst) == 'phrase_list') {
+                $result .= ' ' . $this->phr_lst->name($debug);
+            } else {
+                $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->name($debug);
+            }
+        }
+        return $result;
+    }
 
 }

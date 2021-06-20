@@ -248,7 +248,7 @@ autocomplete(document.getElementById("word_chars"), countries);
 </html>
 */
 // Free resultset
-mysql_free_result();
+mysqli_free_result();
 
 // Closing connection
 prg_end($db_con, $debug);

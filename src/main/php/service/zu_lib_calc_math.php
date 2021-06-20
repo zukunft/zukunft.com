@@ -145,8 +145,8 @@ function zuc_func_name ($formula, $debug) {
 
   // maybe later loop over all function ids
   /*$query = "SELECT formula_id FROM formulas;";
-  $sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
-  while ($formula_id = mysql_fetch_array($sql_result, MYSQL_ASSOC) and $result == 0) {
+  $sql_result = mysqli_query($query) or die('Query failed: ' . mysqli_error());
+  while ($formula_id = mysqli_fetch_array($sql_result, MYSQL_ASSOC) and $result == 0) {
     zu_debug("t".$formula_id[0]."=".$formula[3], $debug);
     if ($formula_id[0] == $formula[3]) {
       $result = 1;

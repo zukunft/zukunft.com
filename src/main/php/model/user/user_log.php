@@ -79,8 +79,8 @@ class user_log {
     
     // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_table";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_TABLE);
     $db_con->usr_id = $this->usr->id;
     $table_id = $db_con->get_id($this->table, $debug-1);
 
@@ -94,7 +94,7 @@ class user_log {
       log_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
   }
 
   private function set_field($debug) {
@@ -108,8 +108,8 @@ class user_log {
     if ($this->usr->id <= 0)   { log_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
 
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_field";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_FIELD);
     $db_con->usr_id = $this->usr->id;
     $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id, $debug-1);
 
@@ -123,7 +123,7 @@ class user_log {
       log_fatal("Insert to change log failed due to field id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
   }
 
   private function set_action($debug) {
@@ -137,8 +137,8 @@ class user_log {
     
     // if e.g. the action is "add" the reference 1 is saved in the log table to save space
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_action";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_ACTION);
     $db_con->usr_id = $this->usr->id;
     $action_id = $db_con->get_id($this->action, $debug-1);
 
@@ -152,7 +152,7 @@ class user_log {
       log_fatal("Insert to change log failed due to action id failure.","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
   }
 
   // display the last change related to one object (word, formula, value, verb, ...)
@@ -179,8 +179,8 @@ class user_log {
           ORDER BY c.change_id DESC;";
     log_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE);
     $db_con->usr_id = $this->usr->id;         
     $db_row = $db_con->get1($sql, $debug-5);  
     if (!$ex_time) {
@@ -199,7 +199,7 @@ class user_log {
       $result .= 'added '.$db_row['new_value'];
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
     return $result;
   }
   
@@ -238,9 +238,9 @@ class user_log {
     $sql_values[] = $this->row_id;
     
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change";         
-    $db_con->usr_id = $this->usr->id;
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE);
+    $db_con->set_usr($this->usr->id);
     $log_id = $db_con->insert($sql_fields, $sql_values, $debug-10);
 
     if ($log_id <= 0) {
@@ -252,7 +252,7 @@ class user_log {
     } else {
       $this->id = $log_id;
       // restore the type before saving the log
-      $db_con->type = $db_type;
+      $db_con->set_type($db_type);
       $result = True;
     }
     
@@ -266,9 +266,9 @@ class user_log {
     log_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
     global $db_con;
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change";
-    $db_con->usr_id = $this->usr->id;
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE);
+    $db_con->set_usr($this->usr->id);
     $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters has caused the error
@@ -279,7 +279,7 @@ class user_log {
     } else {
       $this->id = $log_id;
       // restore the type before saving the log
-      $db_con->type = $db_type;
+      $db_con->set_type($db_type);
       $result = True;
     }
     return $result;

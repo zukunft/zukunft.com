@@ -206,7 +206,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
   $sql_type_result = zu_sql_get_all($type_query, $debug);
 
   // loop over the link types
-  while ($type_entry = mysql_fetch_array($sql_type_result, MYSQL_NUM)) {
+  while ($type_entry = mysqli_fetch_array($sql_type_result, MYSQL_NUM)) {
 
     // select the words
     $link_type_id = $type_entry[0];
@@ -230,7 +230,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
     log_debug('zut_html_list_related link', $debug);
     
     // display the link type
-    $num_rows = mysql_num_rows($sql_result);
+    $num_rows = mysqli_num_rows($sql_result);
     if ($num_rows > 1) {
       $result .= zut_plural ($id, $user_id, $debug);
       log_debug('zut_html_list_related plu', $debug);
@@ -254,7 +254,7 @@ function zut_html_list_related ($id, $direction, $user_id, $debug) {
     
     // display the words
     $result .= '<table class="table col-sm-5 table-borderless">';
-    while ($word_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+    while ($word_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
       $result .= '  <tbody><tr>'."\n";
       $result .= zut_html_tbl($word_entry[0], $word_entry[1], $debug-1);
       log_debug('zut_html_list_related btn link', $debug);
@@ -315,7 +315,7 @@ function zut_dsp_like ($word_pattern, $user_id, $debug) {
   $sql_result = zu_sql_get_all($sql, $debug-1);
 
   // loop over the words and display it with the link
-  while ($entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     if ($entry[2] == "word") {
       $result .= zut_html($entry[0], $entry[1], $debug-1);
     }  
@@ -402,7 +402,7 @@ function zut_dsp_list_wrd_val ($wrd_id, $col_wrd_id, $user_id, $debug) {
   $result .= '</table>';
   
 /*  
-  while ($word_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($word_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $result .= zutl_btn_edit ($word_entry[3], $word_id, $debug-1);
     $result .= zut_unlink_html ($word_entry[3], $word_id, $debug-1);
     // use the last word as a sample for the new word type
@@ -636,7 +636,7 @@ function zut_dsp_hist($wrd_id, $size, $back_link, $debug) {
   // prepare to show where the user uses different word than a normal viewer
   $row_nbr = 0;
   $result .= '<table class="change_hist">';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {
@@ -688,7 +688,7 @@ function zut_dsp_hist_links($wrd_id, $size, $back_link, $debug) {
   // display the changes
   $row_nbr = 0;
   $result .= '<table class="change_hist">';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {

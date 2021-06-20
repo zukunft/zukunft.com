@@ -79,7 +79,7 @@ class verb_list {
       foreach ($db_vrb_lst AS $db_vrb) {
         $vrb = New verb;
         $vrb->id          = $db_vrb['verb_id'];
-        $vrb->usr_id      = $this->usr->id;
+        $vrb->usr      = $this->usr->id;
         $vrb->code_id     = $db_vrb['code_id'];
         $vrb->name        = $db_vrb['verb_name'];
         $vrb->plural      = $db_vrb['name_plural'];

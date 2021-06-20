@@ -396,7 +396,7 @@ class phrase_group {
       // build the database object because the is anyway needed
       //$db_con = new mysql;
       $db_con->usr_id = $this->usr->id;         
-      $db_con->type   = 'view';         
+      $db_con->set_type(DB_TYPE_VIEW);
 
       // set the where clause depending on the values given
       $sql_where = '';
@@ -429,7 +429,8 @@ class phrase_group {
         $db_con->usr_id = $this->usr->id;         
         $db_grp = $db_con->get1($sql, $debug-5);  
         if ($db_grp['phrase_group_id'] <= 0) {
-          $this->reset($debug-1);          
+          $this->id = 0;
+          //$this->reset($debug-1);
         } else {
           $this->id           = $db_grp['phrase_group_id'];
           $this->grp_name     = $db_grp['phrase_group_name'];
@@ -831,7 +832,7 @@ class phrase_group {
         // update the generic name in the database
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
-        $db_con->type   = 'phrase_group';         
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $result .= $db_con->update($this->id, 'auto_description',$group_name, $debug-5);
         log_debug('phrase_group->generic_name updated to '.$group_name, $debug-10);
       }
@@ -889,7 +890,7 @@ Create a new value if needed, but ask the user: abb sales of 46000, is still use
       if ($this->wrd_id_txt <> '' OR $this->lnk_id_txt <> '') {
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
-        $db_con->type   = 'phrase_group';         
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $this->id = $db_con->insert(array(     'word_ids',     'triple_ids',        'auto_description'),
                                     array($this->wrd_id_txt,$this->lnk_id_txt,$this->auto_name), $debug-5);
       } else {

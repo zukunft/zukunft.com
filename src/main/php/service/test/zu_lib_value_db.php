@@ -99,7 +99,7 @@ function zuv_db_add($new_value, $wrd_ids, $user_id, $debug) {
     $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_add", (new Exception)->getTraceAsString(), $debug-1);
     if ($result) {
       // update the reference in the log
-      $val_id = mysql_insert_id();
+      $val_id = mysqli_insert_id();
       $result = zu_log_upd($log_id, $val_id, $user_id, $debug-1);
       if ($val_id > 0 and $result) {
         // link the words
@@ -130,7 +130,7 @@ function zuvt_db_add($val_id, $wrd_id, $user_id, $debug) {
       $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuvt_db_add", (new Exception)->getTraceAsString(), $debug-1);
       if ($result) {
         // update the reference in the log
-        $val_wrd_id = mysql_insert_id();
+        $val_wrd_id = mysqli_insert_id();
         // next line switched off because the row id should be the ref to the original value
         //$result = zu_log_link_upd($log_id, $val_wrd_id, $user_id, $debug-1);
         // todo: call the word group creation 
@@ -233,7 +233,7 @@ function zuvt_db_upd($link_id, $val_id, $wrd_new_id, $user_id, $debug) {
         log_warning("Dublicate words (".$wrd_old_id.") for value ".$val_id." found, but they have been removed automatically.","zuvt_db_upd", '', (new Exception)->getTraceAsString(), $this->usr);
       }  
     }
-    $sql_result = mysql_query($sql);
+    $sql_result = mysqli_query($sql);
   }      
   log_debug("zuvt_db_upd ... done", $debug-1);
 }

@@ -26,14 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_views ($debug) {
+function create_base_views ($debug = 0) {
   echo "<h2>Check if all base views are exist</h2><br>";
   test_view(TD_COMPLETE, $debug-1);
   test_view(TD_COMPANY_LIST, $debug-1);
   echo "<br><br>";
 }
 
-function run_view_test ($debug) {
+function run_view_test ($debug = 0) {
 
   global $usr;
   global $usr2;
@@ -52,7 +52,7 @@ function run_view_test ($debug) {
   $dsp->load($debug-1);
   $result = $dsp->comment;
   $target = 'Show a word, all related words to edit the word tree and the linked formulas with some results';
-  $exe_start_time = test_show_result(', view->load the comment of "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load the comment of "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test the complete view for one word
   $wrd = New word_dsp;
@@ -82,7 +82,7 @@ function run_view_test ($debug) {
     $result = $dsp->comment;
   }
   $target = 'Just added for testing';
-  $exe_start_time = test_show_result(', view->save for adding "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('view->save for adding "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if the view name has been saved
   $dsp = new view;
@@ -91,7 +91,7 @@ function run_view_test ($debug) {
   $dsp->load($debug-1);
   $result = $dsp->comment;
   $target = 'Just added for testing';
-  $exe_start_time = test_show_result(', view->load the added "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load the added "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the view adding has been logged
   $log = New user_log;
@@ -101,7 +101,7 @@ function run_view_test ($debug) {
   $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Test Mask';
-  $exe_start_time = test_show_result(', view->save adding logged for "'.TM_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->save adding logged for "'.TM_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if adding the same view again creates a correct error message
   $dsp = new view;
@@ -110,7 +110,7 @@ function run_view_test ($debug) {
   $result = $dsp->save($debug-1);
   $target = 'A view with the name "'.TM_ADD.'" already exists. Please use another name.'; // is this error message really needed???
   $target = '1';
-  $exe_start_time = test_show_result(', view->save adding "'.$dsp->name.'" again', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  $exe_start_time = test_show_result('view->save adding "'.$dsp->name.'" again', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
   // check if the view can be renamed
   $dsp = new view;
@@ -120,7 +120,7 @@ function run_view_test ($debug) {
   $dsp->name = TM_ADD_RENAMED;
   $result = $dsp->save($debug-1);
   $target = '1';
-  $exe_start_time = test_show_result(', view->save rename "'.TM_ADD.'" to "'.TM_ADD_RENAMED.'".', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('view->save rename "'.TM_ADD.'" to "'.TM_ADD_RENAMED.'".', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if the view renaming was successful
   $dsp_renamed = new view;
@@ -133,7 +133,7 @@ function run_view_test ($debug) {
     }
   }
   $target = TM_ADD_RENAMED;
-  $exe_start_time = test_show_result(', view->load renamed view "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load renamed view "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the view renaming has been logged
   $log = New user_log;
@@ -143,14 +143,14 @@ function run_view_test ($debug) {
   $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job changed Test Mask to Mask Test';
-  $exe_start_time = test_show_result(', view->save rename logged for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->save rename logged for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the view parameters can be added
   $dsp_renamed->comment = 'Just added for testing the user sandbox';
   $dsp_renamed->type_id = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $result = $dsp_renamed->save($debug-1);
   $target = '11';
-  $exe_start_time = test_show_result(', view->save all view fields beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('view->save all view fields beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if the view parameters have been added
   $dsp_reloaded = new view;
@@ -159,10 +159,10 @@ function run_view_test ($debug) {
   $dsp_reloaded->load($debug-1);
   $result = $dsp_reloaded->comment;
   $target = 'Just added for testing the user sandbox';
-  $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_reloaded->type_id;
   $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
-  $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the view parameter adding have been logged
   $log = New user_log;
@@ -172,11 +172,11 @@ function run_view_test ($debug) {
   $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added Just added for testing the user sandbox';
-  $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load comment for "'.TM_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $log->field = 'view_type_id';
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job added word default';
-  $exe_start_time = test_show_result(', view->load view_type_id for "'.TM_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load view_type_id for "'.TM_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if a user specific view is created if another user changes the view
   $dsp_usr2 = new view;
@@ -187,7 +187,7 @@ function run_view_test ($debug) {
   $dsp_usr2->type_id = cl(DBL_VIEW_TYPE_ENTRY);
   $result = $dsp_usr2->save($debug-1);
   $target = '11';
-  $exe_start_time = test_show_result(', view->save all view fields for user 2 beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('view->save all view fields for user 2 beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if a user specific view changes have been saved
   $dsp_usr2_reloaded = new view;
@@ -196,10 +196,10 @@ function run_view_test ($debug) {
   $dsp_usr2_reloaded->load($debug-1);
   $result = $dsp_usr2_reloaded->comment;
   $target = 'Just changed for testing the user sandbox';
-  $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_usr2_reloaded->type_id;
   $target = cl(DBL_VIEW_TYPE_ENTRY);
-  $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check the view for the original user remains unchanged
   $dsp_reloaded = new view;
@@ -208,10 +208,10 @@ function run_view_test ($debug) {
   $dsp_reloaded->load($debug-1);
   $result = $dsp_reloaded->comment;
   $target = 'Just added for testing the user sandbox';
-  $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_reloaded->type_id;
   $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
-  $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if undo all specific changes removes the user view
   $dsp_usr2 = new view;
@@ -222,7 +222,7 @@ function run_view_test ($debug) {
   $dsp_usr2->type_id = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
   $result = $dsp_usr2->save($debug-1);
   $target = '11';
-  $exe_start_time = test_show_result(', view->save undo the user view fields beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('view->save undo the user view fields beside the name for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if a user specific view changes have been saved
   $dsp_usr2_reloaded = new view;
@@ -231,10 +231,10 @@ function run_view_test ($debug) {
   $dsp_usr2_reloaded->load($debug-1);
   $result = $dsp_usr2_reloaded->comment;
   $target = 'Just added for testing the user sandbox';
-  $exe_start_time = test_show_result(', view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load comment for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = $dsp_usr2_reloaded->type_id;
   $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
-  $exe_start_time = test_show_result(', view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view->load type_id for "'.TM_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // redo the user specific view changes
   // check if the user specific changes can be removed with one click

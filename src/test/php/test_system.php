@@ -2,7 +2,7 @@
 
 /*
 
-  test_system.php - TESTing of the basic system functions
+  test_system.php - TESTing of the basic system functions like ip blocking
   ---------------
   
 
@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_system_test ($debug) {
+function run_system_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -48,7 +48,7 @@ function run_system_test ($debug) {
 
   // check if the owner is always setting
   //$sbx = New user_sandbox;
-  //$chk_txt = $sbx->chk_owner('word_link', False, $debug-1); if ($chk_txt <> '') { echo $chk_txt."<br>"; }
+  //$chk_txt = $sbx->chk_owner(DB_TYPE_WORD_LINK, False, $debug-1); if ($chk_txt <> '') { echo $chk_txt."<br>"; }
 
   test_header('Test the blocked IP addresses');
 
@@ -61,14 +61,14 @@ function run_system_test ($debug) {
   if ($usr_test->id > 0) {
     $result = 'permitted!';
   }
-  $exe_start_time = test_show_result(', IP blocking for '.$usr_test->ip_addr, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('IP blocking for '.$usr_test->ip_addr, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   test_header('Test the user class (classes/user.php)');
 
   $target = '<a href="/http/user.php?id='.TEST_USER_ID.'">zukunft.com system batch job</a>';
   $result = $usr->display();
-  $exe_start_time = test_show_result(', user->load for id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('user->load for id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   test_header('Test the user list class (classes/user_list.php)');

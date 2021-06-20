@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_group_test ($debug) {
+function run_phrase_group_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -47,7 +47,7 @@ function run_phrase_group_test ($debug) {
   $abb_grp->load($debug-1);
   $result = $abb_grp->id;
   $target = '2116';
-  $exe_start_time = test_show_result(', phrase_group->load by ids for '.implode(",",$wrd_lst->names()), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_group->load by ids for '.implode(",",$wrd_lst->names()), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and if the time word is correctly excluded
   $wrd_lst->add_name(TW_2014);
@@ -58,7 +58,7 @@ function run_phrase_group_test ($debug) {
   $abb_grp->load($debug-1);
   $result = $abb_grp->id;
   $target = '2116';
-  $exe_start_time = test_show_result(', phrase_group->load by ids excluding time for '.implode(",",$wrd_lst->names()), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_group->load by ids excluding time for '.implode(",",$wrd_lst->names()), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // load based on id
   if ($abb_grp->id > 0) {
@@ -70,7 +70,7 @@ function run_phrase_group_test ($debug) {
     $wrd_lst_reloaded = $abb_grp_reload->wrd_lst;
     $result = implode(",",$wrd_lst_reloaded->names());
     $target = 'million,CHF,Sales,ABB';
-    $exe_start_time = test_show_result(', phrase_group->load for id '.$abb_grp->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('phrase_group->load for id '.$abb_grp->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   }
 
   // if a new group is created in needed when a triple is added
@@ -93,13 +93,13 @@ function run_phrase_group_test ($debug) {
   $zh_ins_grp->ids[] = $lnk_company->id * - 1;
   $result = $zh_ins_grp->get_id($debug-1);
   $target = '3490';
-  $exe_start_time = test_show_result(', phrase_group->load by ids for '.$lnk_company->name.' and '.implode(",",$wrd_lst->names()), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  $exe_start_time = test_show_result('phrase_group->load by ids for '.$lnk_company->name.' and '.implode(",",$wrd_lst->names()), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   // test names
   $result = implode(",",$zh_ins_grp->names($debug-1));
   $target = 'million,CHF,Sales,Zurich Insurance';  // fix the issue after the libraries are excluded
   //$target = 'million,CHF,Sales,'.TP_ZH_INS.'';
-  $exe_start_time = test_show_result(', phrase_group->names', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_group->names', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test if the phrase group links are correctly recreated when a group is updated
   $phr_lst = New phrase_list;
@@ -115,7 +115,7 @@ function run_phrase_group_test ($debug) {
   $grp_check->load($debug-1);
   $result = $grp_check->load_link_ids($debug-1);
   $target = $grp->ids;
-  $exe_start_time = test_show_result(', phrase_group->load_link_ids for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  $exe_start_time = test_show_result('phrase_group->load_link_ids for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   // second test if the phrase group links are correctly recreated when a group is updated
   $phr_lst = New phrase_list;
@@ -133,7 +133,7 @@ function run_phrase_group_test ($debug) {
   $grp_check->load($debug-1);
   $result = $grp_check->load_link_ids($debug-1);
   $target = $grp->ids;
-  $exe_start_time = test_show_result(', phrase_group->load_link_ids for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  $exe_start_time = test_show_result('phrase_group->load_link_ids for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   // test value
   // test value_scaled

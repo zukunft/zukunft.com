@@ -129,7 +129,10 @@
   
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is testet by prg_version_is_older_test
   
-  todo
+  TODO
+  complete the database abstraction layer
+  use the user sandbox wherever useful to reduce the code
+  crawl all public available information from the web and add it as user preset to the database
   rename dsp_text in formula to display
   rename name_linked in formula_element to name_linked
   
@@ -283,10 +286,74 @@
 
 */
 
-// the main global vars used to shorten the code
+const PRG_VERSION   = "0.0.3"; // to detect the correct update script and to mark the data export
+const NEXT_VERSION  = "0.0.4"; // to prevent importing incompatible data
+const FIRST_VERSION = "0.0.3"; // the first program version which has a basic upgrade process
+
+// the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
+// TODO use const for all object names
+const DB_TYPE_USER = 'user';
+const DB_TYPE_WORD = 'word';
+const DB_TYPE_WORD_LINK = 'word_link';
+const DB_TYPE_VERB = 'verb';
+const DB_TYPE_PHRASE = 'phrase';
+const DB_TYPE_PHRASE_GROUP = 'phrase_group';
+const DB_TYPE_VALUE = 'value';
+const DB_TYPE_VALUE_TIME_SERIES = 'value_time_series';
+const DB_TYPE_VALUE_PHRASE_LINK = 'value_phrase_link';
+const DB_TYPE_SOURCE = 'source';
+const DB_TYPE_SOURCE_TYPE = 'source_type';
+const DB_TYPE_REF = 'ref';
+const DB_TYPE_FORMULA = 'formula';
+const DB_TYPE_FORMULA_LINK = 'formula_link';
+const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
+const DB_TYPE_FORMULA_VALUE = 'formula_value';
+const DB_TYPE_VIEW = 'view';
+const DB_TYPE_VIEW_COMPONENT = 'view_component';
+const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
+
+const DB_TYPE_CHANGE = 'change';
+const DB_TYPE_CHANGE_TABLE = 'change_table';
+const DB_TYPE_CHANGE_FIELD = 'change_field';
+const DB_TYPE_CHANGE_ACTION = 'change_action';
+const DB_TYPE_CHANGE_LINK = 'change_link';
+const DB_TYPE_CONFIG = 'config';
+const DB_TYPE_SYS_LOG = 'sys_log';
+const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
+const DB_TYPE_SYS_SCRIPT= 'sys_script'; // to log the execution times for code optimising
+const DB_TYPE_TASK = 'calc_and_cleanup_task';
+
+const DB_TYPE_USER_PREFIX = 'user_';
+
+const DB_FIELD_EXT_ID = '_id';
+const DB_FIELD_EXT_NAME = '_name';
+
+// the fixed system user
+const SYSTEM_USER_ID = 1; //
+
+
+// the main global vars to shorten the code by avoiding them in many function calls as parameter
+global $db_com; // the database connection
+global $usr;    // the session user
+global $debug;  // the debug level
+
 // TODO load the config, that is not expected to be changed during a session once at startup
 // TODO start the backend only once and react to REST calls from the frontend
-global $debug;
+// TODO make use of __DIR__ ?
+
+// global vars for system control
+global $sys_script;      // name php script that has been call this library
+global $sys_trace;       // names of the php functions
+global $sys_time_start;  // to measure the execution time
+global $sys_time_limit;  // to write too long execution times to the log to improve the code
+global $sys_log_msg_lst; // to avoid to repeat the same message
+
+$sys_script = "";
+$sys_trace = "";
+$sys_time_start = time();
+$sys_time_limit = time() + 2;
+$sys_log_msg_lst = array();
+
 global $root_path;
 
 if ($root_path == '') {
@@ -294,7 +361,8 @@ if ($root_path == '') {
 }
 
 // database links
-include_once $root_path.'database/mysql.php';                                        if ($debug > 9) { echo 'mysql link loaded<br>'; }
+include_once $root_path.'database/sql_db.php';                                       if ($debug > 9) { echo 'mysql link loaded<br>'; }
+include_once $root_path.'src/main/php/db/db_check.php';                              if ($debug > 9) { echo 'db check loaded<br>'; }
 // service
 include_once $root_path.'src/main/php/service/import/import_file.php';               if ($debug > 9) { echo 'service import loaded<br>'; }
 include_once $root_path.'src/main/php/service/import/import.php';                    if ($debug > 9) { echo 'class import loaded<br>'; }
@@ -387,14 +455,6 @@ include_once $root_path.'lib/test/zu_lib_user.php';               if ($debug > 9
 include_once $root_path.'lib/test/zu_lib_html.php';               if ($debug > 9) { echo 'lib html loaded<br>'; }
 */
 
-
-// global vars for system control
-$sys_script = "";             // name php script that has been call this library
-$sys_trace = "";              // names of the php functions
-$sys_time_start = time();     // to measure the execution time
-$sys_time_limit = time() + 2; // to write too long execution times to the log to improve the code
-$sys_log_msg_lst = array();   // to avoid to repeat the same message 
-
 /*
 
 Target is to have with version 0.1 a usable version for alpha testing. 
@@ -403,10 +463,6 @@ The roadmap for version 0.1 can be found here: https://zukunft.com/mantisbt/road
 The beta test is expected to start with version 0.7
 
 */
-
-const FIRST_VERSION = "0.0.3"; // the first program version which has a basic upgrade process
-const PRG_VERSION   = "0.0.3"; // to detect the correct update script and to mark the data export
-const NEXT_VERSION  = "0.0.4"; // to prevent importing incompatible data
 
 // global code settings
 // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
@@ -437,9 +493,6 @@ const UI_CAN_CHANGE_SOURCE_NAME         = TRUE; // dito for sources
 // program configuration names
 const CFG_SITE_NAME  = 'site_name';             // the name of the pod
 const CFG_VERSION_DB = 'version_database';      // the version of the database at the moment to trigger an update script if needed
-
-// the fixed system user
-const SYSTEM_USER_ID = 1; //
 
 // data retrieval settings
 const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
@@ -584,13 +637,12 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
   // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
   $msg_type_text = $user_id.substr($msg_text,0,200);
   if (!in_array($msg_type_text, $sys_log_msg_lst)) {
-    //$db_con = new mysql;
-    $db_con->usr_id = $user_id;         
+    $db_con->usr_id = $user_id;
     
     $sys_log_msg_lst[] = $msg_type_text;
     $log_level = cl(LOG_LEVEL);
     if ($msg_type_id > $log_level) {
-      $db_con->type = "sys_log_function";         
+      $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
       $function_id = $db_con->get_id($function_name);
       if ($function_id <= 0) {
         $function_id = $db_con->add_id($function_name);
@@ -617,10 +669,10 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
         $fields[] = "user_id";
         $values[] = $user_id;
       }
-      $db_con->type = "sys_log";         
+      $db_con->set_type(DB_TYPE_SYS_LOG);
       $sys_log_id = $db_con->insert($fields, $values);
-      //$sql_result = mysql_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysql_error().'. If this happens again, please send this message to errors@zukunft.com.');
-      //$sys_log_id = mysql_insert_id();
+      //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
+      //$sys_log_id = mysqli_insert_id();
     }
     $msg_level = cl(MSG_LEVEL);
     if ($msg_type_id >= $msg_level) {
@@ -662,7 +714,8 @@ function log_fatal($msg_text, $function_name, $msg_description = '', $function_t
 }
 
 // should be call from all code that can be accessed by an url
-function prg_start($code_name, $style, $debug) {
+// return null if the db connection fails or the db is not compatible
+function prg_start($code_name, $style = "", $debug = 0) {
   global $sys_time_start, $sys_script;
 
   log_debug ($code_name.' ...', $debug);
@@ -675,16 +728,25 @@ function prg_start($code_name, $style, $debug) {
   log_debug ($code_name.' ... session_start', $debug);
 
   // link to database
-  $db_con = New mysql;
+  $db_con = New sql_db;
+  $db_con->db_type = SQL_DB_TYPE;
   log_debug ($code_name.' ... db set', $debug);
   $db_con->open($debug-1);
   log_debug ($code_name.' ... database link open', $debug-5);
-  
-  // load default records
-  //verbs_load;
-  
+
   // html header
   echo dsp_header("", $style);
+
+  // check the system setup
+  $result = db_check($db_con, $debug);
+  if ($result != '') {
+    echo $result;
+    $db_con->close($debug-1);
+    $db_con = null;
+  }
+
+  // load default records
+  //verbs_load;
 
   return $db_con;
 }
@@ -701,14 +763,14 @@ function prg_start_api($code_name, $style, $debug) {
   session_start(); 
 
   // link to database
-  $db_con = New mysql;
+  $db_con = New sql_db;
   $db_con->open($debug-1);
   log_debug ($code_name.' ... database link open', $debug-5);
   
   return $db_con;
 }
 
-function prg_end($db_con, $debug) {
+function prg_end($db_con, $debug = 0) {
   global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
   echo dsp_footer();
@@ -717,17 +779,19 @@ function prg_end($db_con, $debug) {
   $sys_time_end = time();
   if ($sys_time_end > $sys_time_limit) {
     $db_con->usr_id = SYSTEM_USER_ID;
-    $db_con->type = "sys_script";         
+    $db_con->set_type(DB_TYPE_SYS_SCRIPT);
     $sys_script_id = $db_con->get_id($sys_script, $debug-1);
     if ($sys_script_id <= 0) {
       $sys_script_id = $db_con->add_id($sys_script, $debug-1);
     }
-    $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('".date ("Y-m-d H:i:s", $sys_time_start)."',".$sys_script_id.",".sf($_SERVER[REQUEST_URI]).");";
+    $start_time_sql = date ("Y-m-d H:i:s", $sys_time_start);
+    //$db_con->insert();
+    $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('".date ("Y-m-d H:i:s", $sys_time_start)."',".$sys_script_id.",".sf($_SERVER['REQUEST_URI']).");";
     $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString(), $debug-10);
   }
 
   // Free result test
-  //mysql_free_result($result);
+  //mysqli_free_result($result);
 
   // Closing connection
   $db_con->close($debug-1);
@@ -823,28 +887,24 @@ function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION
 }
 
 // unit_test for prg_version_is_newer
-function prg_version_is_newer_test($debug) {
+function prg_version_is_newer_test() {
   global $exe_start_time;
   
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  $result = zu_dsp_bool(prg_version_is_newer('0.0.1')); 
+  $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
   $target = 'false';
-  $exe_start_time = test_show_result(', prg_version 0.0.1 is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('prg_version 0.0.1 is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION)); 
   $target = 'false';
-  $exe_start_time = test_show_result(', prg_version '.PRG_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('prg_version '.PRG_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION)); 
   $target = 'true';
-  $exe_start_time = test_show_result(', prg_version '.NEXT_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('prg_version '.NEXT_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9')); 
   $target = 'true';
-  $exe_start_time = test_show_result(', prg_version 0.1.0 is newer than 0.0.9', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('prg_version 0.1.0 is newer than 0.0.9', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1')); 
   $target = 'false';
-  $exe_start_time = test_show_result(', prg_version 0.2.3 is newer than 1.1.1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('prg_version 0.2.3 is newer than 1.1.1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 }
 
 /*
@@ -852,6 +912,10 @@ function prg_version_is_newer_test($debug) {
 string functions
 
 */
+
+function zu_trim($text) {
+    return trim(preg_replace('!\s+!', ' ', $text));
+}
 
 // 
 function zu_str_left_of($text, $maker) {
@@ -907,6 +971,111 @@ function zu_str_is_left($text, $maker) {
     $result = true;
   }
   return $result;
+}
+
+function zu_str_compute_diff($from, $to)
+{
+    $diffValues = array();
+    $diffMask = array();
+
+    $dm = array();
+    $n1 = count($from);
+    $n2 = count($to);
+
+    for ($j = -1; $j < $n2; $j++) $dm[-1][$j] = 0;
+    for ($i = -1; $i < $n1; $i++) $dm[$i][-1] = 0;
+    for ($i = 0; $i < $n1; $i++)
+    {
+        for ($j = 0; $j < $n2; $j++)
+        {
+            if ($from[$i] == $to[$j])
+            {
+                $ad = $dm[$i - 1][$j - 1];
+                $dm[$i][$j] = $ad + 1;
+            }
+            else
+            {
+                $a1 = $dm[$i - 1][$j];
+                $a2 = $dm[$i][$j - 1];
+                $dm[$i][$j] = max($a1, $a2);
+            }
+        }
+    }
+
+    $i = $n1 - 1;
+    $j = $n2 - 1;
+    while (($i > -1) || ($j > -1))
+    {
+        if ($j > -1)
+        {
+            if ($dm[$i][$j - 1] == $dm[$i][$j])
+            {
+                $diffValues[] = $to[$j];
+                $diffMask[] = 1;
+                $j--;
+                continue;
+            }
+        }
+        if ($i > -1)
+        {
+            if ($dm[$i - 1][$j] == $dm[$i][$j])
+            {
+                $diffValues[] = $from[$i];
+                $diffMask[] = -1;
+                $i--;
+                continue;
+            }
+        }
+        {
+            $diffValues[] = $from[$i];
+            $diffMask[] = 0;
+            $i--;
+            $j--;
+        }
+    }
+
+    $diffValues = array_reverse($diffValues);
+    $diffMask = array_reverse($diffMask);
+
+    return array('values' => $diffValues, 'mask' => $diffMask);
+}
+
+function zu_str_diff($original_text, $compare_text)
+{
+    $diff = zu_str_compute_diff(str_split($original_text), str_split($compare_text));
+    $diffval = $diff['values'];
+    $diffmask = $diff['mask'];
+
+    $n = count($diffval);
+    $pmc = 0;
+    $result = '';
+    for ($i = 0; $i < $n; $i++)
+    {
+        $mc = $diffmask[$i];
+        if ($mc != $pmc)
+        {
+            switch ($pmc)
+            {
+                case -1: $result .= '</del>'; break;
+                case 1: $result .= '</ins>'; break;
+            }
+            switch ($mc)
+            {
+                case -1: $result .= '<del>'; break;
+                case 1: $result .= '<ins>'; break;
+            }
+        }
+        $result .= $diffval[$i];
+
+        $pmc = $mc;
+    }
+    switch ($pmc)
+    {
+        case -1: $result .= '</del>'; break;
+        case 1: $result .= '</ins>'; break;
+    }
+
+    return $result;
 }
 
 /*
@@ -1194,16 +1363,3 @@ function zu_lst_merge_with_key($lst_1, $lst_2, $debug) {
   }    
   return $result;
 }
-
-/*
-
-unit test functions 
-
-*/
-
-// run all unit tests of the lib library
-function run_lib_tests ($debug) {
-  prg_version_is_newer_test($debug);
-}
-
-?>

@@ -32,8 +32,8 @@
 class verb {
 
   public $id           = NULL;  // the database id of the word link type (verb)
-  public $usr_id       = NULL;  // not used at the moment, because there should not be any user specific verbs
-                                // otherwise if 0 (not NULL) the standard word link type, otherwise the user specific verb
+  public $usr          = NULL;  // not used at the moment, because there should not be any user specific verbs
+                                // otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
   public $code_id      = '';    // the main id to detect verbs that have a special behavior
   public $name         = '';    // the verb name to build the "sentence" for the user, which cannot be empty
   public $formula_name = '';    // short name of the verb for the use in formulas 
@@ -81,7 +81,11 @@ class verb {
                 FROM verbs v 
               WHERE ".$sql_where.";";
       //$db_con = new mysql;
-      $db_con->usr_id = $this->usr->id;         
+      if (!isset($this->usr)) {
+        log_err("User is missing", "verb->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      } else {
+        $db_con->usr_id = $this->usr->id;
+      }
       $db_lnk = $db_con->get1($sql, $debug-5);  
       if ($db_lnk['verb_id'] > 0) {
         $this->id           = $db_lnk['verb_id'];
@@ -93,7 +97,9 @@ class verb {
         $this->rev_plural   = $db_lnk['name_plural_reverse'];
         $this->frm_name     = $db_lnk['formula_name'];
         $this->description  = $db_lnk['description'];
-      } 
+      } else {
+        $this->id           = 0;
+      }
       log_debug('verb->load ('.$this->dsp_id().')', $debug-12);
     }  
     return $result;
@@ -371,6 +377,7 @@ class verb {
     }  
     if ($log->add($debug-1)) {
       if ($this->can_change($debug-1)) {
+        $db_con->set_type(DB_TYPE_VERB);
         $result .= $db_con->update($this->id, $log->field, $new_value, $debug-1);
       } else {
         // todo: create a new verb and request to delete the old
@@ -527,6 +534,7 @@ class verb {
     $log = $this->log_add($debug-1);
     if ($log->id > 0) {
       // insert the new verb
+      $db_con->set_type(DB_TYPE_VERB);
       $this->id = $db_con->insert("verb_name", $this->name, $debug-1);
       if ($this->id > 0) {
         // update the id in the log
@@ -555,9 +563,8 @@ class verb {
     $result = '';
     
     // build the database object because the is anyway needed
-    //$db_con = new mysql;
-    $db_con->usr_id = $this->usr->id;         
-    $db_con->type   = 'verb';         
+    $db_con->set_usr($this->usr->id);
+    $db_con->set_type(DB_TYPE_VERB);
     
     // check if a new word is supposed to be added
     if ($this->id <= 0) {
@@ -624,7 +631,7 @@ class verb {
         if ($log->id > 0) {
           //$db_con = new mysql;
           $db_con->usr_id = $this->usr->id;         
-          $db_con->type   = 'verb';         
+          $db_con->set_type(DB_TYPE_VERB);
           $result .= $db_con->delete('verb_id', $this->id, $debug-1);
         }
       } else {

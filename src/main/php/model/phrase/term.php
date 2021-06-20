@@ -103,7 +103,7 @@ class term {
       } else {
         $vrb = New verb;
         $vrb->name   = $this->name;
-        $vrb->usr_id = $this->usr->id;
+        $vrb->usr = $this->usr;
         $vrb->load($debug-1);
         if ($vrb->id > 0) {
           $this->id = $vrb->id;

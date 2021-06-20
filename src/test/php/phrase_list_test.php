@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_list_test ($debug) {
+function run_phrase_list_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -57,13 +57,13 @@ function run_phrase_list_test ($debug) {
   $phr_lst->load($debug-1);
   $target = '"'.TW_ABB.'","'.TW_VESTAS.'","'.TP_ZH_INS.'"';
   $result = $phr_lst->name($debug-1);
-  $exe_start_time = test_show_result(', phrase->load via id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->load via id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... the complete word list, which means split the triples into single words
   $wrd_lst_all = $phr_lst->wrd_lst_all($debug-1);
   $target = '"'.TW_ABB.'","'.TW_VESTAS.'","'.TW_ZH.'","'.TEST_WORD.'"';
   $result = $wrd_lst_all->name($debug-1);
-  $exe_start_time = test_show_result(', phrase->wrd_lst_all of list above', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->wrd_lst_all of list above', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   // test getting the parent for phrase list with ABB
@@ -75,14 +75,14 @@ function run_phrase_list_test ($debug) {
   $lst_parents = $phr_lst->foaf_parents(cl(DBL_LINK_TYPE_IS), $debug-1);
   $result = implode(',',$lst_parents->names($debug-1));
   $target = TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result(', phrase_list->foaf_parents for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_list->foaf_parents for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... same using is
   $phr_lst = $wrd_lst->phrase_lst($debug-1);
   $lst_is = $phr_lst->is($debug-1);
   $result = implode(',',$lst_is->names($debug-1));
   $target = TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result(', phrase_list->is for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_list->is for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... same with Coca Cola
   $wrd_lst = New word_list;
@@ -93,7 +93,7 @@ function run_phrase_list_test ($debug) {
   $lst_is = $phr_lst->is($debug-1);
   $result = implode(',',$lst_is->names($debug-1));
   $target = TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result(', phrase_list->is for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_list->is for '.$phr_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test the excluding function
   $phr_lst = New phrase_list;
@@ -108,18 +108,18 @@ function run_phrase_list_test ($debug) {
   $phr_lst_ex->ex_time($debug-1);
   $target = '"'.TW_ABB.'","'.TW_SALES.'","'.TW_CHF.'","'.TW_MIO.'"';
   $result = $phr_lst_ex->name($debug-1);
-  $exe_start_time = test_show_result(', phrase_list->ex_time of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_list->ex_time of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $phr_lst_ex = clone $phr_lst;
   $phr_lst_ex->ex_measure($debug-1);
   $target = '"'.TW_ABB.'","'.TW_SALES.'","'.TW_MIO.'","'.TW_2017.'"';
   $result = $phr_lst_ex->name($debug-1);
-  $exe_start_time = test_show_result(', phrase_list->ex_measure of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_list->ex_measure of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $phr_lst_ex = clone $phr_lst;
   $phr_lst_ex->ex_scaling($debug-1);
   $target = '"'.TW_ABB.'","'.TW_SALES.'","'.TW_CHF.'","'.TW_2017.'"';
   $result = $phr_lst_ex->name($debug-1);
-  $exe_start_time = test_show_result(', phrase_list->ex_scaling of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_list->ex_scaling of '.$phr_lst->name($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

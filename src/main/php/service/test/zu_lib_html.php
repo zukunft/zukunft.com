@@ -373,8 +373,8 @@ function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
   }
 
   $sql_result = zu_sql_get_all($query, $debug-1);
-  //$sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
-  while ($word_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  //$sql_result = mysqli_query($query) or die('Query failed: ' . mysqli_error());
+  while ($word_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     if ($word_entry[0] == $selected AND $selected <> 0) {
       log_debug('zuh_selector ... selected '.$word_entry[0], $debug-1);
       $result .= '      <option value="'.$word_entry[0].'" selected>'.$word_entry[1].'</option>';
@@ -418,8 +418,8 @@ function zuh_list_sort ($sql_result, $id_field, $text_field, $script_name, $scri
   $result  = '';
 
   $row_nbr = 0;
-  $num_rows = mysql_num_rows($sql_result);
-  while ($entry = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  $num_rows = mysqli_num_rows($sql_result);
+  while ($entry = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     // list of all possible view entries
     $row_nbr = $row_nbr + 1;
     $edit_script = zu_id_to_edit($id_field);

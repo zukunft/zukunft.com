@@ -58,15 +58,15 @@ $db_con = prg_start("login", "center_form", $debug);
         
       // Lets search the database for the user name and password
       // don't use the sf shortcut here!
-      $usr = mysql_real_escape_string($_POST['username']); 
-      $pw_hash = hash('sha256', mysql_real_escape_string($_POST['password'])); 
+      $usr = mysqli_real_escape_string($_POST['username']); 
+      $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password'])); 
       $sql = "SELECT * FROM users  
               WHERE user_name='$usr'
                 AND password='$pw_hash'
                     LIMIT 1"; 
-      $sql_result = mysql_query($sql); 
-      if(mysql_num_rows($sql_result) == 1){ 
-        $row = mysql_fetch_array($sql_result); 
+      $sql_result = mysqli_query($sql); 
+      if(mysqli_num_rows($sql_result) == 1){ 
+        $row = mysqli_fetch_array($sql_result); 
         session_start(); 
         $_SESSION['usr_id'] = $row['user_id']; 
         $_SESSION['user_name'] = $row['user_name']; 

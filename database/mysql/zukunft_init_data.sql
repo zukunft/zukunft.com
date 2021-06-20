@@ -320,20 +320,20 @@ INSERT INTO `user_types` (`user_type_id`, `user_type`, `code_id`, `comment`) VAL
 INSERT INTO `verbs` (`verb_id`, `verb_name`, `code_id`, `description`, `condition_type`, `formula_name`, `name_plural_reverse`, `name_plural`, `name_reverse`, `words`) VALUES
 (0, 'not set', '', NULL, NULL, '', '', '', '', 0),
 (1, 'has a', '', NULL, 0, '', 'is used for', 'has', 'is used for', 27),
-(2, 'is a', 'is', NULL, 0, '', 'are', 'are', 'are', 113),
+(2, 'is a', 'vrb_is', NULL, 0, '', 'are', 'are', 'are', 113),
 (3, 'is time jump for', '', 'is the default time jump for', 0, 'time jump', 'have the default time jump', 'are the time jump for', 'has the default time jump', 2),
 (4, 'is term jump for', '', 'is the default term jump for', 1, '', '', '', '', 0),
 (5, 'term type needed', '', 'the formula needs the linked term type', NULL, '', '', '', '', 0),
-(6, 'is follower of', 'follow', 'is follower of', NULL, 'follower', 'is followed by', 'is follower of', 'is followed by', 17),
-(7, 'is part of', 'contains', 'if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings', NULL, NULL, 'contains', 'is part of', 'contains', 51),
+(6, 'is follower of', 'vrb_follow', 'is follower of', NULL, 'follower', 'is followed by', 'is follower of', 'is followed by', 17),
+(7, 'is part of', 'vrb_contains', 'if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings', NULL, NULL, 'contains', 'is part of', 'contains', 51),
 (8, 'uses', '', NULL, NULL, NULL, 'are used by', 'uses', 'is used by', 7),
 (9, 'issue', '', NULL, NULL, NULL, 'are issued by', 'issues', 'is issued by', 3),
 (10, 'is measure type for', '', 'is the default measure type for', NULL, NULL, 'have the measure type', 'are measure type for', 'has the measure type', 9),
 (11, 'is an acronym for', '', 'is an acronym for', NULL, NULL, 'are an acronyms of', 'are an acronyms for', 'is an acronym of', 0),
-(12, 'can be used as a differentiator for', 'can_contain', 'similar to contains, but in a table view the row will not be shown if there is no corresponding value', NULL, 'differentiator', 'can be differentiated by', 'can be used as a differentiator for', 'can be differentiated by', 2),
+(12, 'can be used as a differentiator for', 'vrb_can_contain', 'similar to contains, but in a table view the row will not be shown if there is no corresponding value', NULL, 'differentiator', 'can be differentiated by', 'can be used as a differentiator for', 'can be differentiated by', 2),
 (13, 'influences', '', NULL, NULL, NULL, 'is influenced by', 'influences', 'is influenced by', 0),
 (14, 'is alias of', '', NULL, NULL, NULL, 'is alias of', 'is alias of', 'is alias of', 5),
-(15, 'can be', '', 'can be', NULL, NULL, 'can be', 'can be', 'can be', 2);
+(15, 'can be', '', 'vrb_can_be', NULL, NULL, 'can be', 'can be', 'can be', 2);
 
 --
 -- Dumping data for table `views`
@@ -446,7 +446,7 @@ INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`,
 (1, 'standard', 'for words that have need no special behaviour', 'wrd_type_default', NULL, ''),
 (2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'wrd_type_time', NULL, ''),
 (3, 'measure type', 'a measure word such as meter, kilogram, ...', 'wrd_type_measure', NULL, ''),
-(4, 'Timejump', 'these terms describes a change of a timestamp term', 'wrd_type_time_jump', NULL, ''),
+(4, 'time jump', 'these terms describes a change of a timestamp term', 'wrd_type_time_jump', NULL, ''),
 (5, 'calc', 'a calculated word in R; e.g. this year returns always a different term', NULL, NULL, ''),
 (6, 'format percent', 'terms that forces the result to be formatted in percent', 'wrd_type_percent', NULL, ''),
 (7, 'scaling', 'a scaling word such as millions, one, ...', 'wrd_type_scaling', NULL, ''),
@@ -459,6 +459,14 @@ INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`,
 (14, 'prior', 'not sure, why this is needed', 'wrd_type_previous', NULL, ''),
 (15, 'scaling word percent', 'all words that represent percent', 'wrd_type_scaling_percent', 100, '%'),
 (16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'wrd_type_scaled_measure', 0, '');
+
+--
+-- Setting the initial IP blocking for testing
+--
+
+INSERT INTO `user_blocked_ips` (`user_blocked_id`, `ip_from`, `ip_to`, `reason`, `isactive`) VALUES
+    (1, '66.249.64.95', '66.249.64.95', 'too much damage from this IP', 1);
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

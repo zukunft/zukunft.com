@@ -45,9 +45,9 @@ $db_con = prg_start("signup", "center_form", $debug);
   // get the parameters
   if (isset($_POST['submit'])) { 
     # search the database to see if the user name has been taken or not 
-    $sql = sprintf("SELECT * FROM users WHERE user_name='%s' LIMIT 1",mysql_real_escape_string($_POST['user_name'])); 
-    $sql_result = mysql_query($sql); 
-    $row = mysql_fetch_array($sql_result); 
+    $sql = sprintf("SELECT * FROM users WHERE user_name='%s' LIMIT 1",mysqli_real_escape_string($_POST['user_name'])); 
+    $sql_result = mysqli_query($sql); 
+    $row = mysqli_fetch_array($sql_result); 
     #check too see what fields have been left empty, and if the passwords match 
     $usr_name = $_POST['user_name']; 
     if ($row || empty($_POST['user_name'])
@@ -80,14 +80,14 @@ $db_con = prg_start("signup", "center_form", $debug);
     }else{ 
       # If all fields are not empty, and the passwords match, 
       # create a session, and session variables, 
-      $pw_hash = hash('sha256', mysql_real_escape_string($_POST['password'])); 
+      $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password'])); 
       //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
       $sql = sprintf("INSERT INTO users (`user_name`,`email`,`password`) 
         VALUES('%s','%s','%s')", 
-        mysql_real_escape_string($usr_name), 
-        mysql_real_escape_string($_POST['email']), 
-        $pw_hash)or die(mysql_error()); 
-      $sql_result = mysql_query($sql); 
+        mysqli_real_escape_string($usr_name), 
+        mysqli_real_escape_string($_POST['email']), 
+        $pw_hash)or die(mysqli_error()); 
+      $sql_result = mysqli_query($sql); 
       // get user id
       $sql = "SELECT user_id FROM users  
               WHERE user_name='".$usr_name."' LIMIT 1"; 

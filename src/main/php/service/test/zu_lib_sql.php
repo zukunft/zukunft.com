@@ -1,7 +1,5 @@
 <?php
 
-include_once 'zu_lib_passwords.php';
-
 /*
 
   zu_lib_sql.php - olf ZUkunft.com LIBrary SQL link functions  (just just for regression code testing)
@@ -16,7 +14,7 @@ include_once 'zu_lib_passwords.php';
   -------
   zu_sql_open     - called from zu_start in all php scripts that can be called by the user
   zu_sql_close    - called at the end of all php scripts that can be called by the user
-  zu_sql_add_user - add an new user for authentification and logging
+  zu_sql_add_user - add an new user for authentication and logging
 
 
   MySQL functions
@@ -36,7 +34,7 @@ include_once 'zu_lib_passwords.php';
   internal change functions without logging that should not be call only from *_db_* lib function that have already done the logging
   --------------
 
-  sql_insert       - insert only if row does not yet exsist (maybe replace by zu_sql_insert), 
+  sql_insert       - insert only if row does not yet exist (maybe replace by zu_sql_insert),
   sql_set_no_log   - (to be renamed to zu_sql_upd_no_log)
 
   zu_sql_get_all   - backend functions that should only be used in this library
@@ -93,7 +91,7 @@ include_once 'zu_lib_passwords.php';
   
   code ids
   preset records that are linked to the program code
-  below a list of predefined verbs that have a fixed predefined behavier as const
+  below a list of predefined verbs that have a fixed predefined behavior as const
   the const is the code_id that is also shown to to user if he/she wants to change the name
 
   verbs are also named as word_links
@@ -126,8 +124,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function zu_sql_open($debug) {
   log_debug("zu_sql_open", $debug-10);
 
-  $link = mysql_connect('localhost', 'timon', SQL_DB_PASSWD) or die('Could not connect: ' . mysql_error());
-  mysql_select_db('zukunft',   $link)                        or die('Could not select database');
+  $link = mysqli_connect('localhost', 'timon', SQL_DB_PASSWD) or die('Could not connect: ' . mysqli_error());
+  mysqli_select_db('zukunft',   $link)                        or die('Could not select database');
 
   log_debug("zu_sql_open ... done", $debug-10);
 
@@ -136,7 +134,7 @@ function zu_sql_open($debug) {
 
 // just to have all sql in one library
 function zu_sql_close($link, $debug) {
-  mysql_close($link);
+  mysqli_close($link);
 
   log_debug("zu_sql_close ... done", $debug-10);
 }
@@ -146,9 +144,9 @@ function zu_sql_close($link, $debug) {
 // the log level is given by the calling function because after some errors the program may nevertheless continue
 function zu_sql_exe($sql, $user_id, $log_level, $function_name, $function_trace, $debug) {
   log_debug("zu_sql_exe (".$sql.",u".$user_id.",ll:".$log_level.",fn:".$function_name.",ft:".$function_trace.")", $debug-10);
-  $result = mysql_query($sql);
+  $result = mysqli_query($sql);
   if (!$result) {
-    $msg_text = mysql_error();
+    $msg_text = mysqli_error();
     $sql = str_replace("'", "", $sql);
     $sql = str_replace("\"", "", $sql);
     $msg_text .= " (".$sql.")";
@@ -171,7 +169,7 @@ function zudb_get($sql, $user_id, $debug) {
   $result = false;
   if ($sql <> "") {
     $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zudb_get", (new Exception)->getTraceAsString(), $debug-1);
-    while ($sql_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+    while ($sql_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
       $result[] = $sql_row;
     }
   }
@@ -199,7 +197,7 @@ function zudb_get1($sql, $user_id, $debug) {
   $result = false;
   if ($sql <> "") {
     $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zudb_get1", (new Exception)->getTraceAsString(), $debug-1);
-    $result = mysql_fetch_array($sql_result, MYSQL_ASSOC);
+    $result = mysqli_fetch_array($sql_result, MYSQL_ASSOC);
   }
   
   log_debug("zudb_get1 -> done", $debug-10);
@@ -222,7 +220,7 @@ function zu_sql_insert($table, $fields, $values, $user_id, $debug) {
        .                ' VALUES ('.$values.');';
   $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_insert", (new Exception)->getTraceAsString(), $debug-1);
   if ($sql_result) {
-    $result = mysql_insert_id();
+    $result = mysqli_insert_id();
   } else {
     $result = -1;
   }
@@ -239,7 +237,7 @@ function zu_sql_add_user($user_name, $debug) {
   log_debug("zu_sql_update ... exec ".$sql, $debug-10);
   $sql_result = zu_sql_exe($sql, 0, DBL_SYSLOG_FATAL_ERROR, "zu_sql_add_user", (new Exception)->getTraceAsString(), $debug-1);
   // log the changes???
-  $result = mysql_insert_id();
+  $result = mysqli_insert_id();
 
   log_debug("zu_sql_add_user ... done ".$result.".", $debug-10);
 
@@ -312,9 +310,9 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id, $debu
       $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "sql_insert", (new Exception)->getTraceAsString(), $debug-10);
       if (!$result) {
         if ($table <> 'events') {
-          //echo event_add("Insert ".$table." ".$value_field." ".$new_value." failt", "Cannot insert into ".$table." the ".$value_field." ".$new_value." because: ".mysql_error().".", EVENT_TYPE_SQL_ERROR, date('Y-m-d H:i:s'), "Please contact your system administrator.", "", "", "", "", "");
+          //echo event_add("Insert ".$table." ".$value_field." ".$new_value." failt", "Cannot insert into ".$table." the ".$value_field." ".$new_value." because: ".mysqli_error().".", EVENT_TYPE_SQL_ERROR, date('Y-m-d H:i:s'), "Please contact your system administrator.", "", "", "", "", "");
         } else {
-          echo "Error ".mysql_error()." when creating an event." ;
+          echo "Error ".mysqli_error()." when creating an event." ;
         }
       } else {
         log_debug("sql_insert -> get id for ".$new_value."", $debug-10);
@@ -346,7 +344,7 @@ function sql_set_no_log($table, $id_field, $id_value, $value_field, $new_value, 
   if ($db_value <> $new_value) {
     $sql_query = "UPDATE ".zu_sql_table_name ($table, $debug)." SET `".$value_field."` = '".$new_value."' WHERE `".$id_field."` = ".sf($id_value).";";
     //echo $sql_query;
-    mysql_query($sql_query);
+    mysqli_query($sql_query);
   }
 
   log_debug("sql_set_no_log ... done", $debug-10);
@@ -379,7 +377,7 @@ function zu_sql_get($query, $debug) {
   }
 
   $sql_result =zu_sql_get_all($query, $debug-1);
-  $result = mysql_fetch_array($sql_result, MYSQL_NUM); 
+  $result = mysqli_fetch_array($sql_result, MYSQL_NUM); 
 
   log_debug("zu_sql_get ... done", $debug-10);
 
@@ -415,7 +413,7 @@ function zu_sql_get_lst($sql, $debug) {
   if ($sql <> "") {
     $user_id = zuu_id();
     $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_get_lst", (new Exception)->getTraceAsString(), $debug-10);
-    while ($value_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+    while ($value_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
       $result[$value_entry[0]] = $value_entry[1];
     }
   }
@@ -436,7 +434,7 @@ function zu_sql_get_lst_2fld($query, $debug) {
   $result = array();
   if ($query <> "") {
     $sql_result =zu_sql_get_all($query, $debug-1);
-    while ($value_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+    while ($value_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
       $row_result   = array();
       $row_result[] = $value_entry[1];
       $row_result[] = $value_entry[2];
@@ -463,7 +461,7 @@ function zu_sql_get_ids($sql, $debug) {
   if ($sql <> "") {
     $user_id = zuu_id();
     $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_get_ids", (new Exception)->getTraceAsString(), $debug-10);
-    while ($value_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+    while ($value_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
       if (!in_array($value_entry[0], $result)) {
         $result[] = $value_entry[0];
       }  
@@ -610,14 +608,14 @@ function zu_sql_log_field ($table_name, $row_id, $user_id, $field_name, $new_val
   $result = '';
   $table_id = zu_sql_get_value ("change_tables", "table_id", "name", $table_name, $debug-1);
   if ($table_id <= 0) {
-    $result .= mysql_query("INSERT INTO change_tables (name) VALUES (".$table_name.")") or die('Query '.$query.' failed: ' . mysql_error());
+    $result .= mysqli_query("INSERT INTO change_tables (name) VALUES (".$table_name.")") or die('Query '.$query.' failed: ' . mysqli_error());
     $table_id = zu_sql_get_value ("change_tables", "table_id", "name", $table_name, $debug-1);
   }
 
   $user_id = 0;
   $old_value = zu_sql_get_value ($table_name, $field_name, zu_sql_get_id_field ($table_name, $debug), $row_id, $debug-1);
   if ($table_id > 0) {
-    $result .= mysql_query("INSERT INTO changes (table_id, row_id, user_id, field_name, old_value, new_value) VALUES (".$table_id.", ".$row_id.", ".$user_id.", ".$field_name.", ".$old_value.", ".$new_value.")") or die('Query '.$query.' failed: ' . mysql_error());
+    $result .= mysqli_query("INSERT INTO changes (table_id, row_id, user_id, field_name, old_value, new_value) VALUES (".$table_id.", ".$row_id.", ".$user_id.", ".$field_name.", ".$old_value.", ".$new_value.")") or die('Query '.$query.' failed: ' . mysqli_error());
   }
 
   log_debug("zu_sql_log_field ... done", $debug-10);
@@ -640,8 +638,8 @@ function zu_sql_val_add($new_value, $word_lst, $debug) {
   $sql = "INSERT INTO `values` " 
        . "            (word_value)  " 
        . "     VALUES ('".$new_value."');";
-  $ins_result = mysql_query($sql);
-  $val_id = mysql_insert_id();
+  $ins_result = mysqli_query($sql);
+  $val_id = mysqli_insert_id();
   if ($val_id > 0) {
     // to to: check if value was inserted correctly
     foreach ($word_lst as $word_id) {
@@ -649,7 +647,7 @@ function zu_sql_val_add($new_value, $word_lst, $debug) {
         $sql = "INSERT INTO value_phrase_links " 
              . "           (value_id   ,    phrase_id) " 
              . "    VALUES (".$val_id.", ".$word_id.");";
-        $ins_result = mysql_query($sql);
+        $ins_result = mysqli_query($sql);
       }
     }
   } else {
@@ -984,7 +982,7 @@ function zu_sql_val_lst_wrd ($word_id, $user_id, $debug) {
       //zu_debug('zu_sql_val_lst_wrd -> sql '.$sql.')', $debug-10);  
       $sql_result = zu_sql_get_all($sql, $debug-1);
       $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
-      while ($val_entry = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+      while ($val_entry = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
         if ($value_id == $val_entry['value_id']) {
           $wrd_result[] = $val_entry['word_id'];
           //zu_debug('zu_sql_val_lst_wrd -> add word '.$val_entry['word_id'].' to ('.$value_id.')', $debug-10);  
@@ -1354,7 +1352,7 @@ function zu_sql_words_linked($word_id, $verb_id, $direction, $user_id, $debug) {
 function zu_sql_word_unlink($link_id, $debug) {
   log_debug('zu_sql_word_unlink('.$link_id.')', $debug-10);
   $sql = "DELETE FROM `word_links` WHERE word_link_id = ".$link_id.";";
-  return mysql_query($sql);
+  return mysqli_query($sql);
 }
 
 // returns all views 

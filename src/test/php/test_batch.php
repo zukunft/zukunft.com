@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_batch_job_test ($debug) {
+function run_batch_job_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -48,7 +48,7 @@ function run_batch_job_test ($debug) {
   $val->load($debug-1);
   $result = $val->number;
   $target = TV_ABB_SALES_2014;
-  $exe_start_time = test_show_result(', batch_job->value to link', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('batch_job->value to link', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test adding a batch job
   $job = new batch_job;
@@ -58,11 +58,11 @@ function run_batch_job_test ($debug) {
   if ($result > 0) {
     $target = $result;
   }  
-  $exe_start_time = test_show_result(', batch_job->add has number "'.$result.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('batch_job->add has number "'.$result.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
   
 }
 
-function run_batch_job_list_test ($debug) {
+function run_batch_job_list_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -92,6 +92,6 @@ function run_batch_job_list_test ($debug) {
   if ($result > 0) {
     $target = $result;
   }  
-  $exe_start_time = test_show_result(', batch_job->add has number "'.$result.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('batch_job->add has number "'.$result.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
 }

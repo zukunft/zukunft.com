@@ -26,11 +26,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_phrases ($debug) {
+function create_base_phrases ($debug = 0) {
   echo "<h2>Check if all base phrases are correct</h2><br>";
-  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CANTON, true, TP_ZH_CANTON, $debug);
-  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CITY,   true, TP_ZH_CITY, $debug);
-  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TEST_WORD, true, TP_ZH_INS, $debug);
+  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CANTON, TP_ZH_CANTON);
+  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CITY, TP_ZH_CITY);
+  test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TEST_WORD, TP_ZH_INS, TP_ZH_INS);
   echo "<br><br>";
 
   echo "<h2>Check if all base phrases are correct</h2><br>";
@@ -44,7 +44,7 @@ function create_base_times () {
   echo "<br><br>";
 }
 
-function run_phrase_test ($debug) {
+function run_phrase_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -71,7 +71,7 @@ function run_phrase_test ($debug) {
   $phr->load($debug-1);
   $result = $phr->name;
   $target = TEST_WORD;
-  $exe_start_time = test_show_result(', phrase->load word by id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->load word by id '.TEST_WORD_ID, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $result = str_replace("  "," ",str_replace("\n","",$phr->dsp_tbl($debug-1)));
   $target = ' <td> <a href="/http/view.php?words=1" title="">' .TEST_WORD.'</a> </td> ';
@@ -79,7 +79,7 @@ function run_phrase_test ($debug) {
   $target = str_replace("<","&lt;",str_replace(">","&gt;",$target));
   // to overwrite any special char
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', phrase->dsp_tbl word for '.TEST_WORD, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->dsp_tbl word for '.TEST_WORD, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test the phrase display functions (triple side)
   $phr = New phrase;
@@ -88,7 +88,7 @@ function run_phrase_test ($debug) {
   $phr->load($debug-1);
   $result = $phr->name;
   $target = TP_ZH_INS;
-  $exe_start_time = test_show_result(', phrase->load triple by id '.$zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->load triple by id '.$zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $result = str_replace("  "," ",str_replace("\n","",$phr->dsp_tbl($debug-1)));
   $target = ' <td> <a href="/http/view.php?link=313" title="' .TP_ZH_INS.'">'.TP_ZH_INS.'</a> </td> ';
@@ -96,7 +96,7 @@ function run_phrase_test ($debug) {
   $target = str_replace("<","&lt;",str_replace(">","&gt;",$target));
   // to overwrite any special char
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', phrase->dsp_tbl triple for '.$zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->dsp_tbl triple for '.$zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test the phrase selector
   $form_name = 'test_phrase_selector';
@@ -129,6 +129,6 @@ function run_phrase_test ($debug) {
   $is_phr = $phr->is_mainly($debug-1);
   $result = $is_phr->name;
   $target = TEST_WORD; 
-  $exe_start_time = test_show_result(', phrase->is_mainly for '.$phr->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase->is_mainly for '.$phr->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

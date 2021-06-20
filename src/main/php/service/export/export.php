@@ -49,6 +49,9 @@ class export {
   
   // export zukunft.com data as object for creating e.g. a json message
   function get ($debug) {
+
+    global $db_con;
+
     log_debug('export->get', $debug-10);
     $export_obj = Null;
     
@@ -58,7 +61,7 @@ class export {
 
       // 1. create the header
       $export_obj->version   = PRG_VERSION;
-      $export_obj->pod       = cfg_get(CFG_SITE_NAME, $this->usr, $debug-1);
+      $export_obj->pod       = cfg_get(CFG_SITE_NAME, $this->usr, $db_con, $debug-1);
       $export_obj->time      = date("Y-m-d H:i:s");
       $export_obj->user      = $this->usr->name;
       $export_obj->selection = $this->phr_lst->names($debug-1); // must be set by before the call TODO not nice

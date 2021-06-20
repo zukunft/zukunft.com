@@ -113,8 +113,8 @@ class user_log_link {
     
     // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_table";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_TABLE);
     $db_con->usr_id = $this->usr->id;
     $table_id = $db_con->get_id($this->table, $debug-1);
 
@@ -128,7 +128,7 @@ class user_log_link {
       log_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
   }
 
   private function set_action($debug) {
@@ -142,8 +142,8 @@ class user_log_link {
     
     // if e.g. the action is "add" the reference 1 is saved in the log table to save space
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_action";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_ACTION);
     $db_con->usr_id = $this->usr->id;
     $action_id = $db_con->get_id($this->action, $debug-1);
 
@@ -157,7 +157,7 @@ class user_log_link {
       log_fatal("Insert to change log failed due to action id failure.","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
   }
 
   // functions used until each call is done with the object instead of the id
@@ -185,19 +185,12 @@ class user_log_link {
     }
     return $result;
   }
-  private function link_name($id, $debug) {
-    global $db_con;
-    $result = '';
-    //$db_con = new mysql;
-    $db_con->type = "link_type";         
-    $result .= $db_con->get_name($id, $debug-1);
-    return $result;
-  }
+
   private function source_name($id, $debug) {
     global $db_con;
     $result = '';
     //$db_con = new mysql;
-    $db_con->type = "source";         
+    $db_con->set_type(DB_TYPE_SOURCE);
     $result .= $db_con->get_name($id, $debug-1);
     return $result;
   }
@@ -247,9 +240,9 @@ class user_log_link {
     $sql_values[] = $this->row_id;
     
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_link";
-    $db_con->usr_id = $this->usr->id;
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_LINK);
+    $db_con->set_usr($this->usr->id);
     $log_id = $db_con->insert($sql_fields, $sql_values, $debug-1);
 
     if ($log_id <= 0) {
@@ -266,7 +259,7 @@ class user_log_link {
       $result = True;
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
 
     log_debug('user_log_link->add_link -> ('.zu_dsp_bool($result).')', $debug-10);
     return $result;
@@ -317,8 +310,8 @@ class user_log_link {
           ORDER BY c.change_link_id DESC;";
     log_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_link";
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_LINK);
     $db_con->usr_id = $this->usr->id;
     $db_row = $db_con->get1($sql, $debug-5);  
     if (!$ex_time) {
@@ -333,7 +326,7 @@ class user_log_link {
       $result .= 'unlinked '.$db_row['old_text_from'].' from '.$db_row['old_text_to'];
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
     return $result;
   }
   
@@ -449,9 +442,9 @@ class user_log_link {
     $sql_values[] = $this->row_id;
     
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_link";
-    $db_con->usr_id = $this->usr->id;
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_LINK);
+    $db_con->set_usr($this->usr->id);
     $log_id = $db_con->insert($sql_fields, $sql_values, $debug-1);
 
     if ($log_id <= 0) {
@@ -468,7 +461,7 @@ class user_log_link {
       $result = True;
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
 
     log_debug('user_log_link->add -> ('.zu_dsp_bool($result).')', $debug-10);
     return $result;
@@ -481,9 +474,9 @@ class user_log_link {
     log_debug("user_log_link->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
     global $db_con;
     //$db_con = new mysql;
-    $db_type = $db_con->type;
-    $db_con->type = "change_link";
-    $db_con->usr_id = $this->usr->id;
+    $db_type = $db_con->get_type();
+    $db_con->set_type(DB_TYPE_CHANGE_LINK);
+    $db_con->set_usr($this->usr->id);
     $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
     if ($log_id <= 0) {
       // write the error message in steps to get at least some message if the parameters causes an additional the error
@@ -499,7 +492,7 @@ class user_log_link {
       $result = True;
     }
     // restore the type before saving the log
-    $db_con->type = $db_type;
+    $db_con->set_type($db_type);
     return $result;
   }
 

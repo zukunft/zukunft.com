@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_value_test ($debug) {
+function run_value_test ($debug = 0) {
 
   global $usr;
   global $usr2;

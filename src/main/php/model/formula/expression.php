@@ -560,7 +560,7 @@ class expression {
       if ($db_sym == '') {
         $vrb = New verb;
         $vrb->name   = $name;
-        $vrb->usr_id = $this->usr->id;
+        $vrb->usr = $this->usr;
         $vrb->load($debug-1);
         if ($vrb->id > 0) {
           $db_sym = ZUP_CHAR_LINK_START.$vrb->id.ZUP_CHAR_LINK_END;

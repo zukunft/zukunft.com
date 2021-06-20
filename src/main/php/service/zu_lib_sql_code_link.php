@@ -154,7 +154,8 @@ const DBL_LINK_TYPE_IS             = "vrb_is";
 const DBL_LINK_TYPE_CONTAIN        = "vrb_contains";
 const DBL_LINK_TYPE_FOLLOW         = "vrb_follow";
 const DBL_LINK_TYPE_DIFFERENTIATOR = "vrb_can_contain";
-                                          
+const DBL_LINK_TYPE_CAN_BE         = "vrb_can_be";
+
 // predefined words                       
 const DBL_WORD_OTHER = "other";  // replaced by a word type
                                           
@@ -469,9 +470,9 @@ function sql_code_link($code_id, $description, $debug = 0) {
   } else {
     //$db_con = new mysql;
     // remember the db_type
-    $db_value_type = $db_con->type;
+    $db_value_type = $db_con->get_type();
     $db_con->usr_id = SYSTEM_USER_ID;         
-    $db_con->type = $db_type;         
+    $db_con->set_type($db_type);
       
     // get the row_id
     $row_id = $db_con->get_id_from_code($code_id, $debug-14);
@@ -500,7 +501,7 @@ function sql_code_link($code_id, $description, $debug = 0) {
       }
     }
     // restore the db_type
-    $db_con->type = $db_value_type;
+    $db_con->set_type($db_value_type);
   }
 
   log_debug("sql_code_link ... done", $debug-14);

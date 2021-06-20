@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_value_ui_test ($debug) {
+function run_value_ui_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -90,7 +90,7 @@ function run_value_ui_test ($debug) {
   $val_lst->usr = $usr;
   $result = $val_lst->check_all($debug-1);
   $target = '';
-  $exe_start_time = test_show_result(', value_list->check_all', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  $exe_start_time = test_show_result('value_list->check_all', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
   // test get a single value from a value list by group and time
   // get all value for ABB
@@ -112,11 +112,11 @@ function run_value_ui_test ($debug) {
   $grp = $wrd_lst->get_grp($debug-1);
   $result = $grp->id;
   $target = '2116';
-  $exe_start_time = test_show_result(', word_list->get_grp for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  $exe_start_time = test_show_result('word_list->get_grp for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
   $val = $val_lst->get_by_grp($grp, $wrd_time, $debug-1);
   $result = $val->number;
   $target = TV_ABB_SALES_2014;
-  $exe_start_time = test_show_result(', value_list->get_by_grp for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  $exe_start_time = test_show_result('value_list->get_by_grp for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
   // ... get all times of the ABB values
   $time_lst = $val_lst->time_lst($debug-1);
@@ -130,7 +130,7 @@ function run_value_ui_test ($debug) {
     $result = false;
   }
   $target = true;
-  $exe_start_time = test_show_result(', value_list->time_lst is '.$time_lst->name().', which includes '.$wrd_2014->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  $exe_start_time = test_show_result('value_list->time_lst is '.$time_lst->name().', which includes '.$wrd_2014->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
       
   // ... and filter by times
   $time_lst = New word_list;
@@ -146,7 +146,7 @@ function run_value_ui_test ($debug) {
     $result = false;
   }
   $target = false;
-  $exe_start_time = test_show_result(', value_list->time_lst is '.$used_time_lst->name().', which does not include '.$wrd_2014->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('value_list->time_lst is '.$used_time_lst->name().', which does not include '.$wrd_2014->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... but not 2016
   $wrd_2016 = New word_dsp;
@@ -159,7 +159,7 @@ function run_value_ui_test ($debug) {
     $result = false;
   }
   $target = true;
-  $exe_start_time = test_show_result(', value_list->filter_by_phrase_lst is '.$used_time_lst->name().', but includes '.$wrd_2016->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('value_list->filter_by_phrase_lst is '.$used_time_lst->name().', but includes '.$wrd_2016->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and filter by phrases
   $sector_lst = New word_list;
@@ -180,7 +180,7 @@ function run_value_ui_test ($debug) {
     $result = false;
   }
   $target = false;
-  $exe_start_time = test_show_result(', value_list->filter_by_phrase_lst is '.$used_phr_lst->name().', which does not include '.$wrd_auto->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT); 
+  $exe_start_time = test_show_result('value_list->filter_by_phrase_lst is '.$used_phr_lst->name().', which does not include '.$wrd_auto->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT); 
 
   // ... but not 2016
   $wrd_power = New word_dsp;
@@ -193,7 +193,7 @@ function run_value_ui_test ($debug) {
     $result = false;
   }
   $target = true;
-  $exe_start_time = test_show_result(', value_list->filter_by_phrase_lst is '.$used_phr_lst->name().', but includes '.$wrd_power->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('value_list->filter_by_phrase_lst is '.$used_phr_lst->name().', but includes '.$wrd_power->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   test_header('Test the value list display class (classes/value_list_display.php)');
@@ -215,6 +215,6 @@ function run_value_ui_test ($debug) {
   $exe_start_time = test_show_contains(', value_list_dsp->dsp_table for "'.$wrd->name.'" ('.$result.') contains '.$target.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
   //$result = $val_lst->dsp_table($wrd_col, $wrd->id, $debug-1);
   //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id, $debug-1);
-  //$exe_start_time = test_show_result(', value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  //$exe_start_time = test_show_result('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
 
 }

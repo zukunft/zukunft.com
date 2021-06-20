@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_import_test ($file_list, $debug) {
+function run_import_test ($file_list, $debug = 0) {
 
   global $exe_start_time;
 

@@ -240,7 +240,7 @@ Test bootstrap
 */
 
 // Free resultset
-mysql_free_result($result);
+mysqli_free_result($result);
 
 // Closing connection
 prg_end($db_con, $debug);

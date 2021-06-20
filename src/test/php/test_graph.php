@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_graph_test ($debug) {
+function run_graph_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -101,7 +101,7 @@ function run_graph_test ($debug) {
   $ABB->load($debug-1);
   $is = New verb;
   $is->id= cl(DBL_LINK_TYPE_IS);
-  $is->usr_id = $usr->id;
+  $is->usr = $usr->id;
   $is->load($debug-1);
   $graph = New word_link_list;
   $graph->wrd = $ABB;
@@ -112,7 +112,7 @@ function run_graph_test ($debug) {
   $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id, $debug);
   $result = $graph->display($back, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', graph->load for ABB down is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('graph->load for ABB down is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // the other side
   $graph->direction = 'up';
@@ -120,6 +120,6 @@ function run_graph_test ($debug) {
   $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id, $debug);
   $result = $graph->display($back, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', graph->load for ABB up is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('graph->load for ABB up is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

@@ -704,7 +704,7 @@ function zuv_dsp_samples($wrd_id, $start_wrd_ids, $size, $user_id, $back, $debug
   $value_id = 0;
   $word_names = "";
   $result .= '<table class="change_hist">';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_ASSOC) AND $row_nbr <= $size) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC) AND $row_nbr <= $size) {
     // display the headline first if there is at least on entry
     if ($row_nbr == 0) {
       $result .= '<tr>';
@@ -774,7 +774,7 @@ function zuv_dsp_hist($val_id, $size, $back_link, $debug) {
   // prepare to show where the user uses different value than a normal viewer
   $row_nbr = 0;
   $result .= '<table class="change_hist">';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {
@@ -827,7 +827,7 @@ function zuv_dsp_hist_links($val_id, $size, $back_link, $debug) {
   // prepare to show where the user uses different value than a normal viewer
   $row_nbr = 0;
   $result .= '<table class="change_hist">';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {

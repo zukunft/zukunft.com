@@ -37,53 +37,75 @@ class word_link_list {
 
   public $lst       = array(); // the list of word links
   public $usr       = NULL;    // the user object of the person for whom the word list is loaded, so to say the viewer
-  
-  // fields to select a part of the graph 
+
+  // fields to select a part of the graph
   public $ids       = array(); // list of link ids
   public $wrd       = NULL;    // show the graph elements related to this word
   public $wrd_lst   = NULL;    // show the graph elements related to these words
   public $vrb       = NULL;    // show the graph elements related to this verb
   public $vrb_lst   = NULL;    // show the graph elements related to these verbs
   public $direction = 'down';  // either up, down or both
-    
+
   private function load_lnk_fields($pos) {
-    $sql = "t".$pos.".word_id AS word_id".$pos.",
-            t".$pos.".user_id AS user_id".$pos.",
-            IF(u".$pos.".word_name IS NULL,     t".$pos.".word_name,     u".$pos.".word_name)     AS word_name".$pos.",
-            IF(u".$pos.".plural IS NULL,        t".$pos.".plural,        u".$pos.".plural)        AS plural".$pos.",
-            IF(u".$pos.".description IS NULL,   t".$pos.".description,   u".$pos.".description)   AS description".$pos.",
-            IF(u".$pos.".word_type_id IS NULL,  t".$pos.".word_type_id,  u".$pos.".word_type_id)  AS word_type_id".$pos.",
-            IF(u".$pos.".excluded IS NULL,      t".$pos.".excluded,      u".$pos.".excluded)      AS excluded".$pos.",
-            t".$pos.".`values` AS `values".$pos."`";
-    return $sql; 
+      if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+          $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
+                  t" . $pos . ".user_id AS user_id" . $pos . ",
+       CASE WHEN (u" . $pos . ".word_name    <> '' IS NOT TRUE) THEN t" . $pos . ".word_name     ELSE u" . $pos . ".word_name     END AS word_name" . $pos . ",
+       CASE WHEN (u" . $pos . ".plural       <> '' IS NOT TRUE) THEN t" . $pos . ".plural        ELSE u" . $pos . ".plural        END AS plural" . $pos . ",
+       CASE WHEN (u" . $pos . ".description  <> '' IS NOT TRUE) THEN t" . $pos . ".description   ELSE u" . $pos . ".description   END AS description" . $pos . ",
+       CASE WHEN (u" . $pos . ".word_type_id <> '' IS NOT TRUE) THEN t" . $pos . ".word_type_id  ELSE u" . $pos . ".word_type_id  END AS word_type_id" . $pos . ",
+       CASE WHEN (u" . $pos . ".excluded     <> '' IS NOT TRUE) THEN t" . $pos . ".excluded      ELSE u" . $pos . ".excluded      END AS excluded" . $pos . ",
+                  t" . $pos . ".`values` AS `values" . $pos . "`";
+      } else {
+          $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
+            t" . $pos . ".user_id AS user_id" . $pos . ",
+            IF(u" . $pos . ".word_name IS NULL,     t" . $pos . ".word_name,     u" . $pos . ".word_name)     AS word_name" . $pos . ",
+            IF(u" . $pos . ".plural IS NULL,        t" . $pos . ".plural,        u" . $pos . ".plural)        AS plural" . $pos . ",
+            IF(u" . $pos . ".description IS NULL,   t" . $pos . ".description,   u" . $pos . ".description)   AS description" . $pos . ",
+            IF(u" . $pos . ".word_type_id IS NULL,  t" . $pos . ".word_type_id,  u" . $pos . ".word_type_id)  AS word_type_id" . $pos . ",
+            IF(u" . $pos . ".excluded IS NULL,      t" . $pos . ".excluded,      u" . $pos . ".excluded)      AS excluded" . $pos . ",
+            t" . $pos . ".`values` AS `values" . $pos . "`";
+      }
+    return $sql;
   }
-  
+
   private function load_lnk_from($pos) {
     $sql = " words t".$pos." 
              LEFT JOIN user_words u".$pos." ON u".$pos.".word_id = t".$pos.".word_id 
                                            AND u".$pos.".user_id = ".$this->usr->id." ";
-    return $sql; 
+    return $sql;
   }
-  
+
   private function load_wrd_fields($pos) {
-    $sql = "t".$pos.".word_id AS word_id".$pos.",
-            t".$pos.".user_id AS user_id".$pos.",
-            IF(u".$pos.".word_name IS NULL,     t".$pos.".word_name,     u".$pos.".word_name)     AS word_name".$pos.",
-            IF(u".$pos.".plural IS NULL,        t".$pos.".plural,        u".$pos.".plural)        AS plural".$pos.",
-            IF(u".$pos.".description IS NULL,   t".$pos.".description,   u".$pos.".description)   AS description".$pos.",
-            IF(u".$pos.".word_type_id IS NULL,  t".$pos.".word_type_id,  u".$pos.".word_type_id)  AS word_type_id".$pos.",
-            IF(u".$pos.".excluded IS NULL,      t".$pos.".excluded,      u".$pos.".excluded)      AS excluded".$pos.",
-            t".$pos.".`values` AS `values".$pos."`";
-    return $sql; 
+      if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+          $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
+                  t" . $pos . ".user_id AS user_id" . $pos . ",
+       CASE WHEN (u" . $pos . ".word_name    <> '' IS NOT TRUE) THEN t" . $pos . ".word_name,     u" . $pos . ".word_name)     AS word_name" . $pos . ",
+       CASE WHEN (u" . $pos . ".plural       <> '' IS NOT TRUE) THEN t" . $pos . ".plural,        u" . $pos . ".plural)        AS plural" . $pos . ",
+       CASE WHEN (u" . $pos . ".description  <> '' IS NOT TRUE) THEN t" . $pos . ".description,   u" . $pos . ".description)   AS description" . $pos . ",
+       CASE WHEN (u" . $pos . ".word_type_id <> '' IS NOT TRUE) THEN t" . $pos . ".word_type_id,  u" . $pos . ".word_type_id)  AS word_type_id" . $pos . ",
+       CASE WHEN (u" . $pos . ".excluded     <> '' IS NOT TRUE) THEN t" . $pos . ".excluded,      u" . $pos . ".excluded)      AS excluded" . $pos . ",
+                  t" . $pos . ".`values` AS `values" . $pos . "`";
+      } else {
+          $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
+                  t" . $pos . ".user_id AS user_id" . $pos . ",
+               IF(u" . $pos . ".word_name    IS NULL, t" . $pos . ".word_name,     u" . $pos . ".word_name)     AS word_name" . $pos . ",
+               IF(u" . $pos . ".plural       IS NULL, t" . $pos . ".plural,        u" . $pos . ".plural)        AS plural" . $pos . ",
+               IF(u" . $pos . ".description  IS NULL, t" . $pos . ".description,   u" . $pos . ".description)   AS description" . $pos . ",
+               IF(u" . $pos . ".word_type_id IS NULL, t" . $pos . ".word_type_id,  u" . $pos . ".word_type_id)  AS word_type_id" . $pos . ",
+               IF(u" . $pos . ".excluded     IS NULL, t" . $pos . ".excluded,      u" . $pos . ".excluded)      AS excluded" . $pos . ",
+                  t" . $pos . ".`values` AS `values" . $pos . "`";
+      }
+    return $sql;
   }
-  
+
   private function load_wrd_from($pos) {
     $sql = " words t".$pos." 
              LEFT JOIN user_words u".$pos." ON u".$pos.".word_id = t".$pos.".word_id 
                                            AND u".$pos.".user_id = ".$this->usr->id." ";
-    return $sql; 
+    return $sql;
   }
-  
+
   // load the word link without the linked objects, because in many cases the object are already loaded by the caller
   function load($debug) {
     log_debug('word_link_list->load', $debug-18);
@@ -93,7 +115,7 @@ class word_link_list {
     // check the all minimal input parameters
     if (!isset($this->usr)) {
       log_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
-    } else {  
+    } else {
       // set the where clause depending on the defined select values
       $sql_where       = '';
       $sql_type        = '';
@@ -117,7 +139,7 @@ class word_link_list {
           $sql_wrd2         = 'l.to_phrase_id = t2.word_id';
           log_debug('word_link_list->load where ids '.$sql_where, $debug-18);
         }
-      }  
+      }
       if ($sql_where == '') {
         if (isset($this->wrd)) {
           $sql_wrd2_fields = $this->load_wrd_fields('2');
@@ -130,7 +152,7 @@ class word_link_list {
             $sql_wrd2  = 'l.from_phrase_id = t2.word_id';
           }
           log_debug('word_link_list->load where wrd '.$sql_where, $debug-18);
-        }  
+        }
       }
       if ($sql_where == '') {
         if (isset($this->wrd_lst)) {
@@ -152,26 +174,26 @@ class word_link_list {
             $sql_wrd2  = 'l.from_phrase_id = t2.word_id';
           }
           log_debug('word_link_list->load where wrd in '.$sql_where, $debug-18);
-        }  
-      }  
+        }
+      }
       if (isset($this->vrb)) {
         if ($this->vrb->id > 0) {
           $sql_type = 'AND l.verb_id = '.$this->vrb->id;
         }
-      }  
+      }
       if (isset($this->vrb_lst)) {
         if (count($this->vrb_lst->lst) > 0) {
           $sql_type = 'AND l.verb_id IN ('.$this->vrb_lst->ids_txt($debug-1).')';
         }
-      }  
-      
+      }
+
       // check the selection criteria and report missing parameters
       if ($sql_where == '' OR $sql_wrd2 == '') {
         log_err("A word or word list must be set to show a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
-      } else { 
+      } else {
 
         // load the word link and the destination word with one sql statement to save time
-        // similar to word->load and word_link->load 
+        // similar to word->load and word_link->load
         $sql = "SELECT l.word_link_id,
                        l.from_phrase_id,
                        l.verb_id,
@@ -204,8 +226,8 @@ class word_link_list {
               ORDER BY v.verb_id, t2.word_name;";
               // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
         //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;         
-        $db_lst = $db_con->get($sql, $debug-10);  
+        $db_con->usr_id = $this->usr->id;
+        $db_lst = $db_con->get($sql, $debug-10);
         log_debug('word_link_list->load ... sql "'.$sql.'"', $debug-15);
         $this->lst = array();
         $this->ids = array();
@@ -222,7 +244,7 @@ class word_link_list {
               $new_link->name         = $db_lnk['name'];
               if ($db_lnk['verb_id'] > 0) {
                 $new_verb = New verb;
-                $new_verb->usr_id      = $this->usr->id;
+                $new_verb->usr      = $this->usr->id;
                 $new_verb->id          = $db_lnk['verb_id'];
                 $new_verb->code_id     = $db_lnk['code_id'];
                 $new_verb->name        = $db_lnk['verb_name'];
@@ -282,13 +304,13 @@ class word_link_list {
             }
             $this->lst[] = $new_link;
             $this->ids[] = $new_link->id;
-          } 
+          }
         }
         log_debug('word_link_list->load ... done ('.count($this->lst).')', $debug-10);
-      }  
-    }  
+      }
+    }
   }
-  
+
   // add one triple to the triple list, but only if it is not yet part of the list
   function add($lnk_to_add, $debug) {
     log_debug('word_link_list->add '.$lnk_to_add->dsp_id(), $debug-30);
@@ -299,17 +321,17 @@ class word_link_list {
       }
     }
   }
-  
+
   /*
-  
+
   display functions
-  
+
   */
-  
+
   // description of the triple list for debugging
   function dsp_id() {
     $result = '';
-    
+
     $id   = implode(",",$this->ids);
     $name = $this->name();
     if ($name <> '') {
@@ -320,27 +342,27 @@ class word_link_list {
 
     return $result;
   }
-  
+
   // description of the triple list for the user
   function name() {
     $result = implode(",",$this->names());
     return $result;
   }
-  
+
   // return a list of the triple names
   // this function is called from dsp_id, so no other call is allowed
   function names() {
     $result = array();
     if (isset($this->lst)) {
       foreach ($this->lst AS $lnk) {
-        if ($lnk->name <> '') { 
+        if ($lnk->name <> '') {
           $result[] = $lnk->name;
         }
       }
     }
-    return $result; 
+    return $result;
   }
-  
+
   // shows all words the link to the given word
   // returns the html code to select a word that can be edit
   function display ($back, $debug) {
@@ -349,10 +371,10 @@ class word_link_list {
     // check the all minimal input parameters
     if (!isset($this->usr)) {
       log_err("The user id must be set to load a graph.", "word_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
-    } else {  
+    } else {
       if (isset($this->wrd)) {
         log_debug('graph->display for '.$this->wrd->name.' '.$this->direction.' and user '.$this->usr->name, $debug-10);
-      }  
+      }
       $prev_verb_id  = 0;
 
       // loop over the graph elements
@@ -364,7 +386,7 @@ class word_link_list {
         } else {
           $next_lnk = $lnk;
         }
-        
+
         // display type header
         if ($lnk->verb_id <> $prev_verb_id) {
           log_debug('graph->display type "'.$lnk->link_type->name.'"', $debug-12);
@@ -372,29 +394,29 @@ class word_link_list {
           // select the same side of the verb
           if ($this->direction == "down") {
             $directional_link_type_id = $lnk->verb_id;
-          } else {  
+          } else {
             $directional_link_type_id = $lnk->verb_id * -1;
           }
-          
+
           // display the link type
           if ($lnk->verb_id == $next_lnk->verb_id) {
             $result .= $this->wrd->plural;
             if ($this->direction == "down") {
               $result .= " " . $lnk->link_type->rev_plural;
-            } else {  
+            } else {
               $result .= " " . $lnk->link_type->plural;
             }
-          } else {  
+          } else {
             $result .= $this->wrd->name;
             if ($this->direction == "down") {
               $result .= " " . $lnk->link_type->reverse;
-            } else {  
+            } else {
               $result .= " " . $lnk->link_type->name;
             }
           }
           $result .= dsp_tbl_start_half();
           $prev_verb_id = $lnk->verb_id;
-        }  
+        }
 
         // display the word
         log_debug('word->dsp_graph display word '.$lnk->from->name, $debug-16);
@@ -407,7 +429,7 @@ class word_link_list {
         // use the last word as a sample for the new word type
         if ($lnk->verb_id == cl(DBL_LINK_TYPE_FOLLOW)) {
           $last_linked_word_id = $lnk->to->id;
-        }  
+        }
 
         // in case of the verb "following" continue the series after the last element
         if ($lnk->verb_id == cl(DBL_LINK_TYPE_FOLLOW)) {
@@ -415,11 +437,11 @@ class word_link_list {
           // and link with the same direction (looks like not needed!)
           /* if ($directional_link_type_id > 0) {
             $directional_link_type_id = $directional_link_type_id * -1;
-          } */ 
-        } else {  
+          } */
+        } else {
           $start_id = $lnk->from->id; // to select a similar word for the verb following
         }
-          
+
         if ($lnk->verb_id <> $next_lnk->verb_id) {
           // give the user the possibility to add a similar word
           $result .= '  <tr>';
@@ -437,9 +459,9 @@ class word_link_list {
   }
 
   /*
-  
+
   convert functions
-  
+
   */
 
   // convert the word list object into a phrase list object

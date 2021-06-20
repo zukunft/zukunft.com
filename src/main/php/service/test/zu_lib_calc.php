@@ -905,8 +905,8 @@ function zuc_upd_val_lst($val_ids_updated, $upd_usr, $debug) {
   }
   
 /*  $sql_result = zuf_wrd_lst ($frm_ids_updated, $usr_id, $debug-10);
-    zu_debug('zuc_upd_lst -> number of formulas '. mysql_num_rows ($sql_result), $debug);
-    while ($frm_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+    zu_debug('zuc_upd_lst -> number of formulas '. mysqli_num_rows ($sql_result), $debug);
+    while ($frm_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
       zu_debug('zuc_upd_lst -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], */
 }
 
@@ -1055,12 +1055,12 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
   // loop over the word categories assigned to the formulas
   // get the words where the formula is used including the based on the assigned word e.g. Company or year
   $sql_result = zuf_wrd_lst ($frm_ids_updated, $usr_id, $debug-10);
-  log_debug('zuc_upd_lst_usr -> number of formula assigned words '. mysql_num_rows ($sql_result), $debug);
-  while ($frm_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  log_debug('zuc_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result), $debug);
+  while ($frm_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     log_debug('zuc_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $usr_id), $debug);
     
     // show the user the progress every two seconds
-    $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysql_num_rows($sql_result), $frm_row);
+    $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysqli_num_rows($sql_result), $frm_row);
     $collect_pos++;
 
     // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
@@ -1422,7 +1422,7 @@ function zuc_batch_all($back, $debug) {
   $frm_ids_updated = array();
   $sql_result = zuf_wrd_lst ($frm_ids_updated, $user_id, $debug-1);
   // get the words where the formula is used including the based on the assigned word e.g. Company or year
-  while ($frm_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+  while ($frm_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
     $frm_id = $frm_row['formula_id'];
     log_debug('zuc_batch_all -> formula ('.$frm_row['resolved_text'].' ('.$frm_id.'), word '.zut_name($frm_row['word_id'], $user_id).' ('.$frm_row['word_id'].')', $debug);
     $frm_wrd_id = zut_id($frm_row['formula_name'], $user_id, $debug-10);

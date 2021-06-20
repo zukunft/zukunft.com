@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_value_test ($debug) {
+function run_formula_value_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -57,7 +57,7 @@ function run_formula_value_test ($debug) {
   //$result = $abb_up->phr_grp_id;
   $target = '-0.046588314872749';
   $target = '';
-  $exe_start_time = test_show_result(', value->val_formatted ex time for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
+  $exe_start_time = test_show_result('value->val_formatted ex time for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
 
   // test load result with time
   $phr_lst->add_name(TW_2014); 
@@ -79,9 +79,9 @@ function run_formula_value_test ($debug) {
   //$result = $abb_up->phr_grp_id;
   $target = '0.0099235970843945';
   if (isset($time_phr) and isset($phr_lst) and isset($abb_up_grp)) {
-    $exe_start_time = test_show_result(', value->val_formatted incl time ('.$time_phr->dsp_id().') for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('value->val_formatted incl time ('.$time_phr->dsp_id().') for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   } else {
-    $exe_start_time = test_show_result(', value->val_formatted incl time for ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('value->val_formatted incl time for ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   }
 
   // test the scaling
@@ -107,7 +107,7 @@ function run_formula_value_test ($debug) {
   //$result = $mio_val->check($debug-1);
   $result = $mio_val->scale($dest_wrd_lst, $debug-1);
   $target = '46000000000';
-  $exe_start_time = test_show_result(', value->val_scaling for a tern list '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  $exe_start_time = test_show_result('value->val_scaling for a tern list '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   // test getting the "best guess" value
   // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -124,7 +124,7 @@ function run_formula_value_test ($debug) {
   $val_best_guess->load($debug-1);
   $result = $val_best_guess->number;
   $target = '46000';
-  $exe_start_time = test_show_result(', value->load the best guess for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  $exe_start_time = test_show_result('value->load the best guess for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   /* 
 
@@ -140,7 +140,7 @@ function run_formula_value_test ($debug) {
 
 }
 
-function run_formula_value_list_test ($debug) {
+function run_formula_value_list_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;

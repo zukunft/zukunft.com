@@ -154,6 +154,7 @@ class val_lnk {
     if ($db_rec->wrd->id <> $this->wrd->id) {
       $log = $this->log_upd($debug-1);
       if ($log->add($debug-1)) {
+        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         $result .= $db_con->update($this->id, 'phrase_id', $this->wrd->id, $debug-1);
       }  
     }
@@ -200,9 +201,8 @@ class val_lnk {
     log_debug("val_lnk->save link word id ".$this->wrd->name." to ".$this->val->id." (link id ".$this->id." for user ".$this->usr->id.").", $debug-10);
 
     global $db_con;
-    //$db_con = new mysql;
-    $db_con->usr_id = $this->usr->id;         
-    $db_con->type   = 'value_phrase_link';         
+    $db_con->set_usr($this->usr->id);
+    $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
 
     if (!$this->used($debug-1)) {
       // check if a new value is supposed to be added
@@ -225,6 +225,7 @@ class val_lnk {
         $log = $this->log_add($debug-1);
         if ($log->id > 0) {
           // insert the new value_phrase_link
+          $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
           $this->id = $db_con->insert(array("value_id","word_id"), array($this->val->id,$this->wrd->id), $debug-1);
           if ($this->id > 0) {
             // update the id in the log
@@ -246,7 +247,7 @@ class val_lnk {
         // update the linked word
         $result = $this->save_field_wrd ($db_con, $db_rec, $debug-1);
 
-        // check for dublicates and remove them
+        // check for duplicates and remove them
         $result .= $this->cleanup ($db_con, $debug-1);
 
       }
@@ -271,7 +272,7 @@ class val_lnk {
       if ($log->id > 0) {
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
-        $db_con->type   = 'value_phrase_link';         
+        $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         $result .= $db_con->delete(array('value_id','phrase_id'), array($this->val->id,$this->wrd->id), $debug-1);
       }  
     } else {

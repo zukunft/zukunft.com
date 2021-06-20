@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_trigger_test ($debug) {
+function run_formula_trigger_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -67,7 +67,7 @@ function run_formula_trigger_test ($debug) {
   $added_val->load($debug-1);
   $result = $added_val->number;
   $target = TV_TEST_SALES_2016;
-  $exe_start_time = test_show_result(', value->check added test value for "'.$phr_lst1->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  $exe_start_time = test_show_result('value->check added test value for "'.$phr_lst1->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
   // check if the second number have been save correctly
   $added_val2 = New value;
   $added_val2->ids = $phr_lst2->ids;
@@ -75,7 +75,7 @@ function run_formula_trigger_test ($debug) {
   $added_val2->load($debug-1);
   $result = $added_val2->number;
   $target = TV_TEST_SALES_2017;
-  $exe_start_time = test_show_result(', value->check added test value for "'.$phr_lst2->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  $exe_start_time = test_show_result('value->check added test value for "'.$phr_lst2->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
 
   // check if requesting the best number for the first number returns a useful value
   $best_val = New value;
@@ -84,7 +84,7 @@ function run_formula_trigger_test ($debug) {
   $best_val->load_best($debug-1);
   $result = $best_val->number;
   $target = TV_TEST_SALES_2016;
-  $exe_start_time = test_show_result(', value->check best value for "'.$phr_lst1->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  $exe_start_time = test_show_result('value->check best value for "'.$phr_lst1->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
   // check if requesting the best number for the second number returns a useful value
   $best_val2 = New value;
   $best_val2->ids = $phr_lst2->ids;
@@ -92,7 +92,7 @@ function run_formula_trigger_test ($debug) {
   $best_val2->load_best($debug-1);
   $result = $best_val2->number;
   $target = TV_TEST_SALES_2017;
-  $exe_start_time = test_show_result(', value->check best value for "'.$phr_lst2->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  $exe_start_time = test_show_result('value->check best value for "'.$phr_lst2->dsp_id().'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
 
   // calculate the increase and check the result
   $fv_lst = $frm->calc($phr_lst2, 0, $debug-1);
@@ -103,7 +103,7 @@ function run_formula_trigger_test ($debug) {
     $result = '';
   }
   $target = TV_TEST_SALES_INCREASE_2017_FORMATTED;
-  $exe_start_time = test_show_result(', formula result for '.$frm->dsp_id().' from '.$phr_lst1->dsp_id().' to '.$phr_lst2->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
+  $exe_start_time = test_show_result('formula result for '.$frm->dsp_id().' from '.$phr_lst1->dsp_id().' to '.$phr_lst2->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
 
   // remove the test values
   $val_add1->del($debug-1);

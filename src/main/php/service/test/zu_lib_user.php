@@ -199,7 +199,7 @@ function zuu_dsp_sandbox_wrd ($user_id, $back_link, $debug) {
   // prepare to show the word link
   $row_nbr = 0;
   $result .= '<table>';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {
@@ -236,7 +236,7 @@ function zuu_dsp_sandbox_frm ($user_id, $back_link, $debug) {
   // prepare to show the word link
   $row_nbr = 0;
   $result .= '<table>';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {
@@ -278,7 +278,7 @@ function zuu_dsp_sandbox_val ($user_id, $back_link, $debug) {
   // prepare to show where the user uses different value than a normal viewer
   $row_nbr = 0;
   $result .= '<table>';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $row_nbr++;
     if ($wrd_row[3] == 1) {
       $usr_val = "deleted";
@@ -353,7 +353,7 @@ function zuu_dsp_changes ($user_id, $back_link, $debug) {
   // prepare to show where the user uses different value than a normal viewer
   $row_nbr = 0;
   $result .= '<table>';
-  while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     $row_nbr++;
     $result .= '<tr>';
     if ($row_nbr == 1) {
@@ -425,11 +425,11 @@ function zuu_dsp_errors ($user_id, $user_profile, $dsp_type, $back, $debug) {
                 (l.sys_log_status_id <> ".cl(DBL_ERR_CLOSED)." OR l.sys_log_status_id IS NULL);";
   $sql_result =zu_sql_get_all($sql, $debug-1);
 
-  if (mysql_num_rows($sql_result) > 0) {
+  if (mysqli_num_rows($sql_result) > 0) {
     // prepare to show the word link
     $result .= '<table>';
     $row_nbr = 0;
-    while ($wrd_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+    while ($wrd_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
       $row_nbr++;
       $result .= '<tr>';
       if ($row_nbr == 1) {

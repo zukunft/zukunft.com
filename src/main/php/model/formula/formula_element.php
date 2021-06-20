@@ -59,7 +59,7 @@ class formula_element {
       if ($this->type == 'verb') {
         $lnk = New verb;
         $lnk->id        = $this->id;
-        $lnk->usr_id    = $this->usr->id;
+        $lnk->usr       = $this->usr;
         $lnk->load($debug-1);
         $this->name     = $lnk->name; 
         $this->dsp_name = $lnk->display($this->back);

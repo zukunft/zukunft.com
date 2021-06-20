@@ -57,19 +57,34 @@ class formula_link_list {
 
       if ($sql_where == '') {
         log_err("The words assigned to a formula cannot be loaded because the formula is not defined.", "formula_link_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
-      } else{  
-        $sql = "SELECT DISTINCT 
+      } else{
+          if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+              $sql = "SELECT DISTINCT 
+                       l.formula_link_id,
+                       u.formula_link_id AS user_link_id,
+                       l.user_id,
+                       l.formula_id, 
+                       l.phrase_id,
+                       CASE WHEN (u.link_type_id <> '' IS NOT TRUE) THEN l.link_type_id ELSE u.link_type_id END AS link_type_id,
+                       CASE WHEN (u.excluded     <> '' IS NOT TRUE) THEN l.excluded     ELSE u.excluded     END AS excluded
+                  FROM formula_link_types t, formula_links l
+             LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
+                                                AND u.user_id = " . $this->usr->id . " 
+                  WHERE " . $sql_where . ";";
+          } else {
+              $sql = "SELECT DISTINCT 
                        l.formula_link_id,
                        u.formula_link_id AS user_link_id,
                        l.user_id,
                        l.formula_id, 
                        l.phrase_id,
                        IF(u.link_type_id IS NULL, l.link_type_id, u.link_type_id) AS link_type_id,
-                       IF(u.excluded IS NULL,     l.excluded,     u.excluded)     AS excluded
+                       IF(u.excluded     IS NULL, l.excluded,     u.excluded)     AS excluded
                   FROM formula_link_types t, formula_links l
              LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
-                                                AND u.user_id = ".$this->usr->id." 
-                  WHERE ".$sql_where.";";
+                                                AND u.user_id = " . $this->usr->id . " 
+                  WHERE " . $sql_where . ";";
+          }
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_lst = $db_con->get($sql, $debug-5);  
@@ -124,9 +139,9 @@ class formula_link_list {
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;         
         // delete first all user configuration that have also been excluded
-        $db_con->type = 'user_formula_link';
+        $db_con->set_type(DB_TYPE_USER_PREFIX.DB_TYPE_FORMULA_LINK);
         $result .= $db_con->delete(array('formula_link_id','excluded'), array($frm_lnk->id,'1'), $debug-1);
-        $db_con->type   = 'formula_link';         
+        $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $result .= $db_con->delete('formula_link_id', $frm_lnk->id, $debug-1);
       } else {
         log_err("Cannot delete a formula word link (id ".$frm_lnk->id."), which is used or created by another user.", "formula_link_list->del_without_log", '', (new Exception)->getTraceAsString(), $this->usr);

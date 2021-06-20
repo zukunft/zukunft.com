@@ -32,7 +32,7 @@
 */
 
 // the general html header
-function dsp_header($title, $style) {
+function dsp_header($title, $style = "") {
   $result  = '<!DOCTYPE html>';
   $result .= '<html lang="en">'; // todo: to be adjusted depending on the display language
   $result .= '<head>';

@@ -48,7 +48,7 @@ $db_con = prg_start("login_activate", "center_form", $debug);
     $debug = $_POST['debug']; 
     log_debug("login_activate (user: ".$usr_id.")", $debug);
 
-    $db_con = new mysql;         
+    $db_con = new sql_db;
     $db_con->usr_id = $usr_id;         
     
     // check key
@@ -82,7 +82,7 @@ $db_con = prg_start("login_activate", "center_form", $debug);
       if ($error == '') {  
         // If all fields are not empty, and the passwords match, 
         // create a session, and session variables, 
-        $pw_hash = hash('sha256', mysql_real_escape_string($_POST['password'])); 
+        $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password']));
         //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
         $sql = sprintf("UPDATE users 
                           SET password       = '%s',

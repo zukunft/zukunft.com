@@ -90,8 +90,8 @@ class phrase {
         }
       } else {
         if ($this->type_name == '') {
-          // TODO check that this is never used for an error detection
-          //zu_err('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          // TODO check that this ($phrase->load) is never used for an error detection
+          log_warning('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         } else {  
           log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
         }

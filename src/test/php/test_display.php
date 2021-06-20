@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_display_test ($debug) {
+function run_display_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -54,7 +54,7 @@ function run_display_test ($debug) {
   $cmp->name = TS_NESN_2016_NAME;
   $result = $cmp->text($debug-1);
   $target = ' '.TS_NESN_2016_NAME;
-  $exe_start_time = test_show_result(', view_component_dsp->text', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('view_component_dsp->text', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
 

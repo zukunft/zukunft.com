@@ -62,7 +62,7 @@ $db_con = prg_start("verb_del", "", $debug);
       // create the verb object to have an object to update the parameters
       $vrb = New verb;
       $vrb->id  = $vrb_id;
-      $vrb->usr_id = $usr->id;
+      $vrb->usr = $usr;
       $vrb->load($debug-1);
       
       if ($confirm == 1) {

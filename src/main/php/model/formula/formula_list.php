@@ -84,23 +84,43 @@ class formula_list {
       } else {
         log_debug('formula_list->load by ('.$sql_where.')', $debug-22);
         // the formula name is excluded from the user sandbox to avoid confusion
-        $sql = "SELECT f.formula_id,
+          if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+              $sql = "SELECT f.formula_id,
                        f.formula_name,
-                       IF(u.formula_text IS NULL,      f.formula_text,      u.formula_text)      AS formula_text,
-                       IF(u.resolved_text IS NULL,     f.resolved_text,     u.resolved_text)     AS resolved_text,
-                       IF(u.description IS NULL,       f.description,       u.description)       AS description,
-                       IF(u.formula_type_id IS NULL,   f.formula_type_id,   u.formula_type_id)   AS formula_type_id,
-                       IF(c.code_id IS NULL,           t.code_id,           c.code_id)           AS code_id,
-                       IF(u.all_values_needed IS NULL, f.all_values_needed, u.all_values_needed) AS all_values_needed,
-                       IF(u.last_update IS NULL,       f.last_update,       u.last_update)       AS last_update,
-                       IF(u.excluded IS NULL,          f.excluded,          u.excluded)          AS excluded
-                  FROM ".$sql_from." 
+                       CASE WHEN (u.formula_text      <> '' IS NOT TRUE) THEN f.formula_text      ELSE u.formula_text      END AS formula_text,
+                       CASE WHEN (u.resolved_text     <> '' IS NOT TRUE) THEN f.resolved_text     ELSE u.resolved_text     END AS resolved_text,
+                       CASE WHEN (u.description       <> '' IS NOT TRUE) THEN f.description       ELSE u.description       END AS description,
+                       CASE WHEN (u.formula_type_id   <> '' IS NOT TRUE) THEN f.formula_type_id   ELSE u.formula_type_id   END AS formula_type_id,
+                       CASE WHEN (c.code_id           <> '' IS NOT TRUE) THEN t.code_id           ELSE c.code_id           END AS code_id,
+                       CASE WHEN (u.all_values_needed <> '' IS NOT TRUE) THEN f.all_values_needed ELSE u.all_values_needed END AS all_values_needed,
+                       CASE WHEN (u.last_update       <> '' IS NOT TRUE) THEN f.last_update       ELSE u.last_update       END AS last_update,
+                       CASE WHEN (u.excluded          <> '' IS NOT TRUE) THEN f.excluded          ELSE u.excluded          END AS excluded
+                  FROM " . $sql_from . " 
              LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
-                                      AND u.user_id = ".$this->usr->id." 
+                                      AND u.user_id = " . $this->usr->id . " 
              LEFT JOIN formula_types t ON f.formula_type_id = t.formula_type_id
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
-                 WHERE ".$sql_where."
+                 WHERE " . $sql_where . "
               GROUP BY f.formula_id;";
+          } else {
+              $sql = "SELECT f.formula_id,
+                       f.formula_name,
+                       IF(u.formula_text      IS NULL, f.formula_text,      u.formula_text)      AS formula_text,
+                       IF(u.resolved_text     IS NULL, f.resolved_text,     u.resolved_text)     AS resolved_text,
+                       IF(u.description       IS NULL, f.description,       u.description)       AS description,
+                       IF(u.formula_type_id   IS NULL, f.formula_type_id,   u.formula_type_id)   AS formula_type_id,
+                       IF(c.code_id           IS NULL, t.code_id,           c.code_id)           AS code_id,
+                       IF(u.all_values_needed IS NULL, f.all_values_needed, u.all_values_needed) AS all_values_needed,
+                       IF(u.last_update       IS NULL, f.last_update,       u.last_update)       AS last_update,
+                       IF(u.excluded          IS NULL, f.excluded,          u.excluded)          AS excluded
+                  FROM " . $sql_from . " 
+             LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
+                                      AND u.user_id = " . $this->usr->id . " 
+             LEFT JOIN formula_types t ON f.formula_type_id = t.formula_type_id
+             LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
+                 WHERE " . $sql_where . "
+              GROUP BY f.formula_id;";
+          }
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
         $db_frm_lst = $db_con->get($sql, $debug-14);  

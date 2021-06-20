@@ -123,8 +123,7 @@ class user_log_display {
             ORDER BY c.change_time DESC
                LIMIT ".$this->size.";";
       log_debug('user_log_display->dsp_hist '.$sql, $debug-14);
-      //$db_con = New mysql;
-      $db_con->usr_id = $this->usr->id;         
+      $db_con->usr_id = $this->usr->id;
       $db_lst = $db_con->get($sql, $debug-5);  
 
       // prepare to show where the user uses different word than a normal viewer
@@ -337,8 +336,7 @@ class user_log_display {
                AND ".$sql_user." 
           ORDER BY c.change_time DESC
              LIMIT ".$this->size.";";
-    //$db_con = New mysql;
-    $db_con->usr_id = $this->usr->id;         
+    $db_con->usr_id = $this->usr->id;
     $db_lst = $db_con->get($sql, $debug-5);  
 
     // display the changes

@@ -394,8 +394,8 @@ class formula_value_list {
     // loop over the word categories assigned to the formulas
     // get the words where the formula is used including the based on the assigned word e.g. Company or year
     //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->usr->id, $debug-9);
-    //zu_debug('fv_lst->frm_upd_lst_usr -> number of formula assigned words '. mysql_num_rows ($sql_result), $debug-9);
-    //while ($frm_row = mysql_fetch_array($sql_result, MYSQL_ASSOC)) {
+    //zu_debug('fv_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result), $debug-9);
+    //while ($frm_row = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
       //zu_debug('fv_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->usr->id), $debug-9);
       
     // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
@@ -458,7 +458,7 @@ class formula_value_list {
         $result = array_merge($result, $result_val);
 
         // show the user the progress every two seconds
-        $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysql_num_rows($sql_result), $debug-1);
+        $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysqli_num_rows($sql_result), $debug-1);
         $collect_pos++;
 
       }  

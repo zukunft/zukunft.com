@@ -34,7 +34,7 @@ function create_base_formula_links () {
   echo "<br><br>";
 }
 
-function run_formula_link_test ($debug) {
+function run_formula_link_test ($debug = 0) {
 
   global $usr;
   global $usr2;
@@ -50,7 +50,7 @@ function run_formula_link_test ($debug) {
   $phr->load($debug-1);
   $result = $frm->link_phr($phr, $debug-1);
   $target = '1';
-  $exe_start_time = test_show_result(', formula_link->link_phr "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('formula_link->link_phr "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // ... check the correct logging
   $log = New user_log_link;
@@ -60,7 +60,7 @@ function run_formula_link_test ($debug) {
   $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job linked Formula Test to '.TW_ADD_RENAMED.'';
-  $exe_start_time = test_show_result(', formula_link->link_phr logged for "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula_link->link_phr logged for "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
   $frm_lnk = New formula_link;
@@ -78,11 +78,11 @@ function run_formula_link_test ($debug) {
   // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
   $result = $frm_lnk2->fob->name();
   $target = $frm->name(); 
-  $exe_start_time = test_show_result(', formula_link->load by formula id and link id "'.$frm->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula_link->load by formula id and link id "'.$frm->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   $result = $frm_lnk2->tob->name();
   $target = $phr->name(); 
-  $exe_start_time = test_show_result(', formula_link->load by phrase id and link id "'.$phr->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula_link->load by phrase id and link id "'.$phr->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check if the link is shown correctly
   $frm = load_formula(TF_ADD_RENAMED, $debug-1);
@@ -90,7 +90,7 @@ function run_formula_link_test ($debug) {
   echo $phr_lst->dsp_id().'<br>';
   $result = $phr_lst->does_contain($phr, $debug-1);
   $target = true; 
-  $exe_start_time = test_show_result(', formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check if the link is shown correctly also for the second user
   $frm = New formula;
@@ -100,7 +100,7 @@ function run_formula_link_test ($debug) {
   $phr_lst = $frm->assign_phr_ulst($debug-1);
   $result = $phr_lst->does_contain($phr, $debug-1);
   $target = true; 
-  $exe_start_time = test_show_result(', formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check if the value update has been triggered
 
@@ -115,7 +115,7 @@ function run_formula_link_test ($debug) {
   $phr->load($debug-1);
   $result = $frm->unlink_phr($phr, $debug-1);
   $target = '';
-  $exe_start_time = test_show_result(', formula_link->unlink_phr "'.$phr->name.'" from "'.$frm->name.'" by user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('formula_link->unlink_phr "'.$phr->name.'" from "'.$frm->name.'" by user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // ... check if the removal of the link for the second user has been logged
   $log = New user_log_link;
@@ -125,7 +125,7 @@ function run_formula_link_test ($debug) {
   $log->usr = $usr2;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system test unlinked Formula Test from '.TW_ADD_RENAMED.'';
-  $exe_start_time = test_show_result(', formula_link->unlink_phr logged for "'.$phr->name.'" to "'.$frm->name.'" and user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula_link->unlink_phr logged for "'.$phr->name.'" to "'.$frm->name.'" and user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   // ... check if the link is really not used any more for the second user
@@ -136,7 +136,7 @@ function run_formula_link_test ($debug) {
   $phr_lst = $frm->assign_phr_ulst($debug-1);
   $result = $phr_lst->does_contain($phr, $debug-1);
   $target = false; 
-  $exe_start_time = test_show_result(', formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr2->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr2->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   // ... check if the value update for the second user has been triggered
@@ -146,14 +146,14 @@ function run_formula_link_test ($debug) {
   $phr_lst = $frm->assign_phr_ulst($debug-1);
   $result = $phr_lst->does_contain($phr, $debug-1);
   $target = true; 
-  $exe_start_time = test_show_result(', formula->assign_phr_ulst still contains "'.$phr->name.'" for user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula->assign_phr_ulst still contains "'.$phr->name.'" for user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... check if the values for the first user are still the same
 
   // if the first user also removes the link, both records should be deleted
   $result = $frm->unlink_phr($phr, $debug-1);
   $target = '11';
-  $exe_start_time = test_show_result(', formula_link->unlink_phr "'.$phr->name.'" from "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  $exe_start_time = test_show_result('formula_link->unlink_phr "'.$phr->name.'" from "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
   // check the correct logging
   $log = New user_log_link;
@@ -163,14 +163,14 @@ function run_formula_link_test ($debug) {
   $log->usr = $usr;
   $result = $log->dsp_last(true, $debug-1);
   $target = 'zukunft.com system batch job unlinked Formula Test from '.TW_ADD_RENAMED.'';
-  $exe_start_time = test_show_result(', formula_link->unlink_phr logged of "'.$phr->name.'" from "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula_link->unlink_phr logged of "'.$phr->name.'" from "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check if the formula is not used any more for both users
   $frm = load_formula(TF_ADD_RENAMED, $debug-1);
   $phr_lst = $frm->assign_phr_ulst($debug-1);
   $result = $phr_lst->does_contain($phr, $debug-1);
   $target = false; 
-  $exe_start_time = test_show_result(', formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('formula->assign_phr_ulst contains "'.$phr->name.'" for user "'.$usr->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 
   // ... and the values have been updated
@@ -184,7 +184,7 @@ function run_formula_link_test ($debug) {
   $phr->load($debug-1);
   $result = $frm->link_phr($phr, $debug-1);
   $target = '1';
-  $exe_start_time = test_show_result(', formula_link->link_phr "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  $exe_start_time = test_show_result('formula_link->link_phr "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
   */
 
   // ... if the second user changes the link
@@ -201,7 +201,7 @@ function run_formula_link_test ($debug) {
 
 }
 
-function run_formula_link_list_test ($debug) {
+function run_formula_link_list_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;

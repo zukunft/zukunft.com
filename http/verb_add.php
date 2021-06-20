@@ -60,7 +60,7 @@ $db_con = prg_start("link_type_add", "", $debug);
 
       // create the object to store the parameters so that if the add form is shown again it is already filled
       $vrb = New verb;
-      $vrb->usr_id = $usr->id;
+      $vrb->usr = $usr;
     
       // load the parameters to the verb object to display it again in case of an error
       if (isset($_GET['name']))           { $vrb->name       = $_GET['name']; }

@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // start testing the system functionality 
 // --------------------------------------
   
-function run_word_display_test ($debug) {
+function run_word_display_test ($debug = 0) {
 
   global $usr;
   global $exe_start_time;
@@ -47,7 +47,7 @@ function run_word_display_test ($debug) {
   $direction = 'up';
   $target = TW_ABB.' is a';
   $result = substr($wrd_ABB->dsp_graph ($direction, 0, $debug-1),0,8);
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph '.$direction.' for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph '.$direction.' for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // check the graph display
   $wrd_ABB = New word_dsp;
@@ -57,14 +57,14 @@ function run_word_display_test ($debug) {
   $direction = 'down';
   $target = zut_html_list_related ($wrd_ABB->id, $direction, $usr->id, $debug-1);
   $result = $wrd_ABB->dsp_graph ($direction, 0, $debug-1);
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and the other side
   $direction = 'up';
   $target = zut_html_list_related ($wrd_ABB->id, $direction, $usr->id, $debug-1);
   $result = $wrd_ABB->dsp_graph ($direction, 0, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   test_show_diff ($target, $result);
 
   // ... and the graph display for Zurich
@@ -76,14 +76,14 @@ function run_word_display_test ($debug) {
   $target = zut_html_list_related ($wrd_ZH->id, $direction, $usr->id, $debug);
   $result = $wrd_ZH->dsp_graph ($direction, 0, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and the other side
   $direction = 'up';
   $target = zut_html_list_related ($wrd_ZH->id, $direction, $usr->id, $debug);
   $result = $wrd_ZH->dsp_graph ($direction, 0, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and the graph display for 2012
   $wrd_2012 = New word_dsp;
@@ -94,14 +94,14 @@ function run_word_display_test ($debug) {
   $target = zut_html_list_related ($wrd_2012->id, $direction, $usr->id, $debug);
   $result = $wrd_2012->dsp_graph ($direction, 0, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_2012->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_2012->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // ... and the other side
   $direction = 'up';
   $target = zut_html_list_related ($wrd_2012->id, $direction, $usr->id, $debug);
   $result = $wrd_2012->dsp_graph ($direction, 0, $debug-1);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result(', word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_2012->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old '.$direction.' for '.$wrd_2012->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // the value table for ABB
   $wrd_ABB = New word_dsp;
@@ -118,7 +118,7 @@ function run_word_display_test ($debug) {
   */
   $target = "ABB";
   $result = $wrd_ABB->dsp_val_list ($wrd_year, 0, $debug-1);
-  //$exe_start_time = test_show_result(', word_dsp->dsp_val_list compare to old for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  //$exe_start_time = test_show_result('word_dsp->dsp_val_list compare to old for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
   $exe_start_time = test_show_contains(', word_dsp->dsp_val_list compare to old for '.$wrd_ABB->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
   // the value table for Company
@@ -135,7 +135,7 @@ function run_word_display_test ($debug) {
   $target = substr($target,0,200);
   $result = $wrd_company->dsp_val_list ($wrd_ratios, $back, $debug-1);
   $result = substr($result,0,200);
-  $exe_start_time = test_show_result(', word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   */
 
 

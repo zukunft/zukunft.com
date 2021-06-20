@@ -44,9 +44,8 @@ $db_con = prg_start("logoff", "center_form", $debug);
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
-    //$db_con = new mysql;
-    $db_con->type = "user";         
-    $db_con->usr_id = $usr->id;         
+    $db_con->set_type(DB_TYPE_USER);
+    $db_con->set_usr($usr->id);
     $sql_result = $db_con->update($usr->id, "last_logoff", "Now()", $debug-1);
   }
   

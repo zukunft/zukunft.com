@@ -476,7 +476,7 @@ function zuv_frm_related_grp_wrds_part($val_ids, $wrd_id, $wrd_ids, $user_id, $d
 
     $sql_result = zu_sql_get_all($sql, $debug-10);
     $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
-    while ($val_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+    while ($val_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
       if ($value_id == $val_entry[0]) {
         $wrd_result[] = $val_entry[2];
         //zu_debug('zu_sql_val_lst_wrd -> add word '.$val_entry[2].' to ('.$value_id.')', $debug);  
@@ -540,7 +540,7 @@ function zuvc_frm_related_grp_wrds_part($frm_val_ids, $wrd_id, $wrd_ids, $user_i
           GROUP BY v.formula_value_id;";
 
     $sql_result = zu_sql_get_all($sql, $debug-10);
-    while ($val_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+    while ($val_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
       $result_wrd_ids = explode(",",$val_entry[2]);
       if (in_array($wrd_id, $result_wrd_ids)) {
         $row_result   = array();
@@ -673,8 +673,8 @@ function zuv_words($value_id, $ex_word_id, $user_id, $return_type) {
   }  
 
   $query = "SELECT phrase_id FROM value_phrase_links WHERE value_id = ".$value_id." GROUP BY word_id;";
-  $sql_result = mysql_query($query) or die('Query failed: ' . mysql_error());
-  while ($value_entry = mysql_fetch_array($sql_result, MYSQL_NUM)) {
+  $sql_result = mysqli_query($query) or die('Query failed: ' . mysqli_error());
+  while ($value_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
     if ($value_entry[0] <> $ex_word_id) {
       if ($return_type == 'names') {
 	if ($word_id <> $value_entry[0]) {

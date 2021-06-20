@@ -56,7 +56,7 @@ $db_con = prg_start("verb_edit", '', $debug);
     // create the verb object to have an place to update the parameters
     $vrb = New verb;
     $vrb->id  = $_GET['id'];
-    $vrb->usr_id = $usr->id;
+    $vrb->usr = $usr;
     $vrb->load($debug-1);
 
     if ($vrb->id <= 0) {
