@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_verb_test ($debug = 0) {
+function run_verb_test () {
 
   global $usr;
   global $exe_start_time;
@@ -37,7 +37,7 @@ function run_verb_test ($debug = 0) {
   $vrb = New verb;
   $vrb->id= cl(DBL_LINK_TYPE_IS);
   $vrb->usr = $usr->id;
-  $vrb->load($debug-1);
+  $vrb->load();
   $target = 'is a';
   $result = $vrb->name;
   $exe_start_time = test_show_result('verb->load ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -46,8 +46,8 @@ function run_verb_test ($debug = 0) {
   test_header('Test the verb list class (classes/verb_list.php)');
 
   // check the loading of the "is a" verb
-  $wrd_ABB = load_word(TW_ABB, $debug-1);
-  $vrb_lst = $wrd_ABB->link_types ('up', $debug-1);
+  $wrd_ABB = load_word(TW_ABB);
+  $vrb_lst = $wrd_ABB->link_types ('up');
   $target = 'is a';
   $result = '';
   // select the first verb

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -31,29 +31,31 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php';
 
 echo 'logging off ...'; // reset the html code var
 
 // open database 
-$db_con = prg_start("logoff", "center_form", $debug);
+$db_con = prg_start("logoff", "center_form");
 
-  // load the session user parameters
-  $usr = New user;
-  $result = $usr->get($debug-1); // to check from which ip the user has logged in
+// load the session user parameters
+$usr = new user;
+$result = $usr->get(); // to check from which ip the user has logged in
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
     $db_con->set_type(DB_TYPE_USER);
     $db_con->set_usr($usr->id);
-    $sql_result = $db_con->update($usr->id, "last_logoff", "Now()", $debug-1);
-  }
-  
-  // end the session
-  session_unset(); 
+    if (!$db_con->update($usr->id, "last_logoff", "Now()")) {
+        log_err('Logout time update failed for ' . $usr->id);
+    }
+}
+
+// end the session
+session_unset();
 
 // close the database  
-prg_end($db_con, $debug);
+prg_end($db_con);
 
 echo 'logoff done.'; // reset the html code var
 

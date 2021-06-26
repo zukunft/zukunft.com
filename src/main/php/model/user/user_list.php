@@ -35,12 +35,12 @@ class user_list
     public $usr_lst = array();  // the list of users
 
     // fill the user objects of the list based on an sql
-    private function load_sql($sql, $debug)
+    private function load_sql($sql)
     {
 
         global $db_con;
 
-        $db_usr_lst = $db_con->get($sql, $debug - 5);
+        $db_usr_lst = $db_con->get($sql);
 
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
@@ -54,9 +54,9 @@ class user_list
     }
 
 // return a list of all users that have done at least one modification compared to the standard
-    function load_active($debug)
+    function load_active()
     {
-        log_debug('user_list->load_active', $debug - 10);
+        log_debug('user_list->load_active');
 
         global $db_con;
 
@@ -82,9 +82,9 @@ class user_list
          ORDER BY u.user_id;";
         // todo check if the user needs to be set to the original value again
         $db_con->usr_id = $usr->id;
-        $this->load_sql($sql, $debug);
+        $this->load_sql($sql);
 
-        log_debug('user_list->load_active -> (' . count($this->usr_lst) . ')', $debug - 5);
+        log_debug('user_list->load_active -> (' . count($this->usr_lst) . ')');
         return $this->usr_lst;
     }
 
@@ -97,14 +97,14 @@ class user_list
     }
 
 // fill the user objects of the list based on the id
-    function load_by_id($debug)
+    function load_by_id()
     {
 
         $sql = "SELECT user_id, user_name, code_id 
               FROM users
             WHERE user_id IN(" . implode(",", $this->usr_lst) . ")
          ORDER BY user_id;";
-        $this->load_sql($sql, $debug);
+        $this->load_sql($sql);
     }
 
     function name()

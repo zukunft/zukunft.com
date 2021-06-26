@@ -126,8 +126,8 @@ function zuh_footer($no_about, $empty) {
 }
 
 // same as zuh_top_right, but without the view change used for the view editors
-function zuh_top_right_user($view_id, $view_name, $word_id, $debug) {
-  log_debug('zuh_top_right_user('.$view_id.','.$view_name.')', $debug);
+function zuh_top_right_user($view_id, $view_name, $word_id) {
+  log_debug('zuh_top_right_user('.$view_id.','.$view_name.')');
   $result  = '';
   $result .= '<table style="width:100%">';
   $result .= '<tr><td>';
@@ -142,8 +142,8 @@ function zuh_top_right_user($view_id, $view_name, $word_id, $debug) {
   return $result;
 }
 
-function zuh_top_right_logout($debug) {
-  log_debug('zuh_top_right_logout', $debug);
+function zuh_top_right_logout() {
+  log_debug('zuh_top_right_logout');
   if ($_SESSION['logged']) { 
     $result = ' <a href="/http/logout.php">log out</a>';
   } else {  
@@ -154,41 +154,41 @@ function zuh_top_right_logout($debug) {
  
 
 // show the standard top right corner, where the user can login or change the settings
-function zuh_top_right($view_id, $view_name, $word_id, $user_id, $debug) {
-  log_debug('zuh_top_right('.$view_id.','.$view_name.')', $debug);
-  $result  = zuh_top_right_user($view_id, $view_name, $word_id, $debug-1) ;
+function zuh_top_right($view_id, $view_name, $word_id, $user_id) {
+  log_debug('zuh_top_right('.$view_id.','.$view_name.')');
+  $result  = zuh_top_right_user($view_id, $view_name, $word_id) ;
   $result .= ' - ';
   $result .= zuh_btn_find ('find a word or formula', '/http/find.php?word='.$word_id).' - ';
-  if (zum_is_system($view_id, $debug-1) AND !zuu_is_admin($user_id, $debug)) {
+  if (zum_is_system($view_id) AND !zuu_is_admin($user_id)) {
     $result .= ''.$view_name.' ';
   } else {
     $result .= 'view <a href="/http/view_select.php?id='.$view_id.'&word='.$word_id.'">'.$view_name.'</a> ';
     $result .= zuh_btn_edit ('adjust the view '.$view_name, '/http/view_edit.php?id='.$view_id.'&word='.$word_id).' ';
     $result .= zuh_btn_add ('create a new view', '/http/view_add.php?word='.$word_id);
   }
-  $result .= zuh_top_right_logout($debug-1);
+  $result .= zuh_top_right_logout();
   $result .= '</td></tr></table>';
   //$result .= '</div><br>';
   return $result;
 }
 
 // same as zuh_top_right, but without the view change used for the view editors
-function zuh_top_right_no_view($view_id, $view_name, $word_id, $debug) {
-  log_debug('zuh_top_right('.$view_id.','.$view_name.')', $debug);
-  $result  = zuh_top_right_user($view_id, $view_name, $word_id, $debug-1) ;
-  $result .= zuh_top_right_logout($debug-1);
+function zuh_top_right_no_view($view_id, $view_name, $word_id) {
+  log_debug('zuh_top_right('.$view_id.','.$view_name.')');
+  $result  = zuh_top_right_user($view_id, $view_name, $word_id) ;
+  $result .= zuh_top_right_logout();
   $result .= '</td></tr></table>';
   //$result .= '</div><br>';
   return $result;
 }
 
 // after a word, value or formula has been added or changed go back to the calling page
-function zuh_go_back($back, $user_id, $debug) {
-  log_debug('zuh_go_back('.$back.')', $debug);
+function zuh_go_back($back, $user_id) {
+  log_debug('zuh_go_back('.$back.')');
 
   $result = '';
   // old version for testing, which has the disadvantage of potential double creations
-  // $result .= zut_dsp($back, $user_id, $debug-1);
+  // $result .= zut_dsp($back, $user_id);
 
   if (is_numeric($back)) {
     header("Location: view.php?words=".$back.""); // go back to the calling page and try to avoid double change script calls
@@ -358,8 +358,8 @@ function zuh_tbl_width_half () {
 // $query      - sql query to select the values where the first column is the database id and the second the selection value
 // $selected   - database id of the selected value; if 0 add a "please select ..." entry 
 // $dummy_text - text that should be displayed instead of the default "please select ..."
-function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
-  log_debug('zuh_selector ('.$name.','.$form.','.$query.',s'.$selected.','.$dummy_text.')', $debug);
+function zuh_selector ($name, $form, $query, $selected, $dummy_text) {
+  log_debug('zuh_selector ('.$name.','.$form.','.$query.',s'.$selected.','.$dummy_text.')');
   $result  = '';
 
   $result .= '<select name="'.$name.'" form="'.$form.'">';
@@ -372,34 +372,34 @@ function zuh_selector ($name, $form, $query, $selected, $dummy_text, $debug) {
     }  
   }
 
-  $sql_result = zu_sql_get_all($query, $debug-1);
+  $sql_result = zu_sql_get_all($query);
   //$sql_result = mysqli_query($query) or die('Query failed: ' . mysqli_error());
-  while ($word_entry = mysqli_fetch_array($sql_result, MYSQL_NUM)) {
+  while ($word_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
     if ($word_entry[0] == $selected AND $selected <> 0) {
-      log_debug('zuh_selector ... selected '.$word_entry[0], $debug-1);
+      log_debug('zuh_selector ... selected '.$word_entry[0]);
       $result .= '      <option value="'.$word_entry[0].'" selected>'.$word_entry[1].'</option>';
     } else {  
-      //zu_debug('zuh_selector ... not selected '.$word_entry[0], $debug);
+      //zu_debug('zuh_selector ... not selected '.$word_entry[0]);
       $result .= '      <option value="'.$word_entry[0].'">'.$word_entry[1].'</option>';
     }
   }
 
   $result .= '</select>';
 
-  log_debug('zuh_selector ... done', $debug-1);
+  log_debug('zuh_selector ... done');
   return $result;
 }
 
 // similar to zuh_selector but using a list not a query
-function zuh_selector_lst ($name, $form, $word_lst, $selected, $debug) {
-  log_debug('zuh_selector_lst('.$name.','.$form.','.implode(",",array_keys($word_lst)).',s'.$selected.')', $debug);
+function zuh_selector_lst ($name, $form, $word_lst, $selected) {
+  log_debug('zuh_selector_lst('.$name.','.$form.','.implode(",",array_keys($word_lst)).',s'.$selected.')');
   $result  = '';
 
   $result .= '<select name="'.$name.'" form="'.$form.'">';
 
   foreach (array_keys($word_lst) as $word_id) {
     if ($word_id == $selected) {
-      log_debug('zuh_selector_lst ... selected '.$word_id, $debug-1);
+      log_debug('zuh_selector_lst ... selected '.$word_id);
       $result .= '      <option value="'.$word_id.'" selected>'.$word_lst[$word_id].'</option>';
     } else {  
       $result .= '      <option value="'.$word_id.'">'.$word_lst[$word_id].'</option>';
@@ -408,18 +408,18 @@ function zuh_selector_lst ($name, $form, $word_lst, $selected, $debug) {
 
   $result .= '</select>';
 
-  log_debug('zuh_selector_lst ... done', $debug-1);
+  log_debug('zuh_selector_lst ... done');
   return $result;
 }
 
 // display a list that can be sorted using the fixed field "order_nbr"
 // $sql_result - list of the query results
-function zuh_list_sort ($sql_result, $id_field, $text_field, $script_name, $script_parameter, $debug) {
+function zuh_list_sort ($sql_result, $id_field, $text_field, $script_name, $script_parameter) {
   $result  = '';
 
   $row_nbr = 0;
   $num_rows = mysqli_num_rows($sql_result);
-  while ($entry = mysqli_fetch_array($sql_result, MYSQL_ASSOC)) {
+  while ($entry = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
     // list of all possible view entries
     $row_nbr = $row_nbr + 1;
     $edit_script = zu_id_to_edit($id_field);
@@ -442,7 +442,7 @@ function zuh_list_sort ($sql_result, $id_field, $text_field, $script_name, $scri
 }
 
 // display a list of elements
-function zuh_list ($item_lst, $item_type, $debug) {
+function zuh_list ($item_lst, $item_type) {
   $result  = "";
 
   foreach (array_keys($item_lst) as $item_nbr) {

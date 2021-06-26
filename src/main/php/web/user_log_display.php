@@ -43,8 +43,8 @@ class user_log_display {
   public $back        = '';   // 
   
   // display the history of a word, phrase, value or formula
-  function dsp_hist($debug) {
-    log_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
+  function dsp_hist() {
+    log_debug('user_log_display->dsp_hist '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back);
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -96,7 +96,7 @@ class user_log_display {
     }
     
     if ($sql_where == '') {
-      log_err("Internal error: object not defined for showing the changes.", "user_log_display->dsp_hist", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("Internal error: object not defined for showing the changes.", "user_log_display->dsp_hist");
     } else {
       // get word changes by the user that are not standard
       $sql = "SELECT c.change_id, 
@@ -122,9 +122,9 @@ class user_log_display {
                      ".$sql_row." 
             ORDER BY c.change_time DESC
                LIMIT ".$this->size.";";
-      log_debug('user_log_display->dsp_hist '.$sql, $debug-14);
+      log_debug('user_log_display->dsp_hist '.$sql);
       $db_con->usr_id = $this->usr->id;
-      $db_lst = $db_con->get($sql, $debug-5);  
+      $db_lst = $db_con->get($sql);  
 
       // prepare to show where the user uses different word than a normal viewer
       $row_nbr = 0;
@@ -158,11 +158,11 @@ class user_log_display {
               $val = New value;
               $val->id = $db_row['row_id'];
               $val->usr = $this;
-              $val->load($debug-1);
-              $val->load_phrases($debug-1);
+              $val->load();
+              $val->load_phrases();
               $txt_fld .= '<td>';
               if (isset($val->wrd_lst)) {
-                $txt_fld .= implode(",",$val->wrd_lst->names_linked($debug-1));
+                $txt_fld .= implode(",",$val->wrd_lst->names_linked());
               }
               $txt_fld .= '</td>';
             } else {
@@ -223,7 +223,7 @@ class user_log_display {
             }  
           } elseif ($this->type == 'value') {
             if ($db_row['type'] == 'add') { 
-              $undo_btn = $this->obj->btn_undo_add_value ($this->back, $debug-1);
+              $undo_btn = $this->obj->btn_undo_add_value ($this->back);
             }  
           } elseif ($this->type == 'formula') {
             if ($db_row['type'] == 'update') { 
@@ -245,15 +245,15 @@ class user_log_display {
       $result .= dsp_tbl_end ();
     }
 
-    log_debug("user_log_display->dsp_hist -> done", $debug-12);
+    log_debug("user_log_display->dsp_hist -> done");
     return $result;
   }
 
   // display change of links
   // e.g. if a formula is linked to another word
   //   or if a component is added to a display view
-  function dsp_hist_links($debug) {
-    log_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back, $debug-10);
+  function dsp_hist_links() {
+    log_debug('user_log_display->dsp_hist_links '.$this->type.' id '.$this->id.' size '.$this->size.' page '.$this->page.' call from '.$this->call.' original call from '.$this->back);
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -337,7 +337,7 @@ class user_log_display {
           ORDER BY c.change_time DESC
              LIMIT ".$this->size.";";
     $db_con->usr_id = $this->usr->id;
-    $db_lst = $db_con->get($sql, $debug-5);  
+    $db_lst = $db_con->get($sql);  
 
     // display the changes
     $row_nbr = 0;
@@ -376,7 +376,7 @@ class user_log_display {
     }
     $result .= dsp_tbl_end ();
 
-    log_debug("formula->dsp_hist_links -> done", $debug-1);
+    log_debug("formula->dsp_hist_links -> done");
     return $result;
   }
   

@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS change_fields
     change_field_name varchar(255) NOT NULL,
     table_id          bigint       NOT NULL,
     description       text,
-    code_id           varchar(100) NOT NULL
+    code_id           varchar(100) DEFAULT NULL
 );
 
 COMMENT ON COLUMN change_fields.table_id is 'because every field must only be unique within a table';
@@ -168,6 +168,8 @@ COMMENT ON TABLE comments is 'separate table because it is expected that only a 
 
 CREATE TABLE IF NOT EXISTS config
 (
+    config_id   BIGSERIAL PRIMARY KEY,
+    config_name varchar(100) DEFAULT NULL,
     code_id     varchar(100) NOT NULL,
     value       varchar(100) DEFAULT NULL,
     description text
@@ -263,8 +265,8 @@ CREATE TABLE IF NOT EXISTS formula_link_types
 (
     formula_link_type_id BIGSERIAL PRIMARY KEY,
     type_name            varchar(200) NOT NULL,
-    code_id              varchar(100) DEFAULT NULL,
-    formula_id           bigint       NOT NULL,
+    code_id              varchar(100)          DEFAULT NULL,
+    formula_id           bigint       NOT NULL DEFAULT 1,
     word_type_id         bigint       NOT NULL,
     link_type_id         bigint       NOT NULL,
     description          text
@@ -297,8 +299,8 @@ CREATE TABLE IF NOT EXISTS formula_values
     user_id                bigint                DEFAULT NULL,
     source_phrase_group_id bigint                DEFAULT NULL,
     source_time_word_id    bigint                DEFAULT NULL,
-    phrase_group_id        bigint                DEFAULT '0',
-    time_word_id           bigint                DEFAULT '0',
+    phrase_group_id        bigint                DEFAULT 0,
+    time_word_id           bigint                DEFAULT 0,
     formula_value          double precision NOT NULL,
     last_update            timestamp        NULL DEFAULT NULL,
     dirty                  smallint              DEFAULT NULL
@@ -619,10 +621,10 @@ CREATE TABLE IF NOT EXISTS sys_scripts
 
 CREATE TABLE IF NOT EXISTS sys_script_times
 (
-    sys_script_time  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    sys_script_time  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sys_script_start timestamp,
-    sys_script_id    bigint       NOT NULL,
-    url              varchar(250) NOT NULL
+    sys_script_id    bigint    NOT NULL,
+    url              varchar(250)       DEFAULT NULL
 );
 
 -- --------------------------------------------------------
@@ -679,8 +681,8 @@ COMMENT ON COLUMN users.source_id is 'the last source used by this user to have 
 
 CREATE TABLE IF NOT EXISTS user_attempts
 (
-    id         bigint      NOT NULL,
-    ip         varchar(39) NOT NULL,
+    id          bigint      NOT NULL,
+    ip          varchar(39) NOT NULL,
     expire_date timestamp   NOT NULL
 );
 
@@ -1032,7 +1034,7 @@ CREATE TABLE IF NOT EXISTS value_phrase_links
     phrase_id            bigint NOT NULL,
     weight               double precision DEFAULT NULL,
     link_type_id         bigint           DEFAULT NULL,
-    condition_formula_id bigint NOT NULL
+    condition_formula_id bigint           DEFAULT NULL
 );
 
 COMMENT ON TABLE value_phrase_links is 'link single word or triple to a value only for fast search';
@@ -1063,13 +1065,13 @@ COMMENT ON TABLE value_relations is 'to link two values directly; maybe not used
 CREATE TABLE IF NOT EXISTS value_time_series
 (
     value_time_series_id BIGSERIAL PRIMARY KEY,
-    user_id             bigint    NOT NULL,
-    source_id           bigint         DEFAULT NULL,
-    phrase_group_id     bigint    NOT NULL,
-    excluded            smallint       DEFAULT NULL,
-    share_type_id       bigint         DEFAULT NULL,
-    protection_type_id  bigint    NOT NULL,
-    last_update         timestamp NULL DEFAULT NULL
+    user_id              bigint    NOT NULL,
+    source_id            bigint         DEFAULT NULL,
+    phrase_group_id      bigint    NOT NULL,
+    excluded             smallint       DEFAULT NULL,
+    share_type_id        bigint         DEFAULT NULL,
+    protection_type_id   bigint    NOT NULL,
+    last_update          timestamp NULL DEFAULT NULL
 );
 
 COMMENT ON TABLE value_time_series is 'common parameters for a list of intraday values';
@@ -1083,8 +1085,8 @@ COMMENT ON TABLE value_time_series is 'common parameters for a list of intraday 
 CREATE TABLE IF NOT EXISTS value_ts_data
 (
     value_time_series_id BIGSERIAL PRIMARY KEY,
-    val_time            timestamp NOT NULL,
-    number              float     NOT NULL
+    val_time             timestamp NOT NULL,
+    number               float     NOT NULL
 );
 
 COMMENT ON TABLE value_ts_data is 'for efficient saving of daily or intraday values';
@@ -1344,7 +1346,7 @@ CREATE TABLE IF NOT EXISTS word_del_requests
     word_name           varchar(200) NOT NULL,
     started             timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     canceled            timestamp    NULL     DEFAULT NULL,
-    confirmed          timestamp    NULL     DEFAULT NULL,
+    confirmed           timestamp    NULL     DEFAULT NULL,
     finished            timestamp    NULL     DEFAULT NULL,
     user_id             bigint       NOT NULL
 );
@@ -1450,7 +1452,7 @@ FROM user_phrase_group_triple_links AS t;
 --
 -- Indexes for table changes
 --
-CREATE INDEX change_table_idx  ON changes (change_field_id, row_id);
+CREATE INDEX change_table_idx ON changes (change_field_id, row_id);
 CREATE INDEX change_action_idx ON changes (change_action_id);
 
 --
@@ -1461,9 +1463,9 @@ CREATE INDEX change_field_table_idx ON change_fields (table_id);
 --
 -- Indexes for table change_links
 --
-CREATE INDEX change_link_user_idx   ON change_links  (user_id);
-CREATE INDEX change_link_table_idx  ON change_links  (change_table_id);
-CREATE INDEX change_link_action_idx ON change_links  (change_action_id);
+CREATE INDEX change_link_user_idx ON change_links (user_id);
+CREATE INDEX change_link_table_idx ON change_links (change_table_id);
+CREATE INDEX change_link_action_idx ON change_links (change_action_id);
 
 --
 -- Indexes for table config
@@ -1473,46 +1475,47 @@ CREATE UNIQUE INDEX config_idx ON config (code_id);
 --
 -- Indexes for table formulas
 --
-CREATE UNIQUE INDEX formula_name_idx     ON formulas (formula_name);
-CREATE INDEX formula_user_idx            ON formulas (user_id);
-CREATE INDEX formula_type_idx            ON formulas (formula_type_id);
+CREATE UNIQUE INDEX formula_name_idx ON formulas (formula_name);
+CREATE INDEX formula_user_idx ON formulas (user_id);
+CREATE INDEX formula_type_idx ON formulas (formula_type_id);
 CREATE INDEX formula_protection_type_idx ON formulas (protection_type_id);
 
 --
 -- Indexes for table formula_elements
 --
-CREATE INDEX formula_element_idx      ON formula_elements (formula_id);
+CREATE INDEX formula_element_idx ON formula_elements (formula_id);
 CREATE INDEX formula_element_type_idx ON formula_elements (formula_element_type_id);
 
 --
 -- Indexes for table formula_links
 --
 CREATE INDEX formula_link_user_idx ON formula_links (user_id);
-CREATE INDEX formula_link_idx      ON formula_links (formula_id);
+CREATE INDEX formula_link_idx ON formula_links (formula_id);
 CREATE INDEX formula_link_type_idx ON formula_links (link_type_id);
 
 --
 -- Indexes for table formula_values
 --
-CREATE UNIQUE INDEX formula_value_idx      ON formula_values (formula_id,user_id,phrase_group_id,time_word_id,source_phrase_group_id,source_time_word_id);
-CREATE        INDEX formula_value_user_idx ON formula_values (user_id);
+CREATE UNIQUE INDEX formula_value_idx ON formula_values (formula_id, user_id, phrase_group_id, time_word_id,
+                                                         source_phrase_group_id, source_time_word_id);
+CREATE INDEX formula_value_user_idx ON formula_values (user_id);
 
 --
 -- Indexes for table phrase_groups
 --
-CREATE UNIQUE INDEX phrase_group_term_idx ON phrase_groups (word_ids,triple_ids);
+CREATE UNIQUE INDEX phrase_group_term_idx ON phrase_groups (word_ids, triple_ids);
 
 --
 -- Indexes for table phrase_group_triple_links
 --
 CREATE INDEX phrase_group_triple_link_group_idx ON phrase_group_triple_links (phrase_group_id);
-CREATE INDEX phrase_group_triple_link_idx       ON phrase_group_triple_links (triple_id);
+CREATE INDEX phrase_group_triple_link_idx ON phrase_group_triple_links (triple_id);
 
 --
 -- Indexes for table phrase_group_word_links
 --
-CREATE        INDEX phrase_group_word_link_idx      ON phrase_group_word_links (phrase_group_id);
-CREATE        INDEX phrase_group_word_link_word_idx ON phrase_group_word_links (word_id);
+CREATE INDEX phrase_group_word_link_idx ON phrase_group_word_links (phrase_group_id);
+CREATE INDEX phrase_group_word_link_word_idx ON phrase_group_word_links (word_id);
 
 --
 -- Indexes for table protection_types
@@ -1522,178 +1525,178 @@ CREATE UNIQUE INDEX protection_type_idx ON protection_types (protection_type_id)
 --
 -- Indexes for table refs
 --
-CREATE UNIQUE INDEX ref_phrase_type_idx ON refs (phrase_id,ref_type_id);
-CREATE        INDEX ref_type_idx        ON refs (ref_type_id);
+CREATE UNIQUE INDEX ref_phrase_type_idx ON refs (phrase_id, ref_type_id);
+CREATE INDEX ref_type_idx ON refs (ref_type_id);
 
 --
 -- Indexes for table ref_types
 --
-CREATE UNIQUE INDEX ref_type_name_idx ON ref_types (ref_type_name,code_id);
+CREATE UNIQUE INDEX ref_type_name_idx ON ref_types (ref_type_name, code_id);
 
 --
 -- Indexes for table source_values
 --
-CREATE        INDEX source_value_value_idx  ON source_values (value_id);
-CREATE        INDEX source_value_source_idx ON source_values (source_id);
-CREATE        INDEX source_value_user_idx  ON source_values (user_id);
+CREATE INDEX source_value_value_idx ON source_values (value_id);
+CREATE INDEX source_value_source_idx ON source_values (source_id);
+CREATE INDEX source_value_user_idx ON source_values (user_id);
 
 --
 -- Indexes for table sys_log
 --
-CREATE        INDEX sys_log_time         ON sys_log (sys_log_time);
-CREATE        INDEX sys_log_type_idx     ON sys_log (sys_log_type_id);
-CREATE        INDEX sys_log_function_idx ON sys_log (sys_log_function_id);
-CREATE        INDEX sys_log_status_idx   ON sys_log (sys_log_status_id);
+CREATE INDEX sys_log_time ON sys_log (sys_log_time);
+CREATE INDEX sys_log_type_idx ON sys_log (sys_log_type_id);
+CREATE INDEX sys_log_function_idx ON sys_log (sys_log_function_id);
+CREATE INDEX sys_log_status_idx ON sys_log (sys_log_status_id);
 
 --
 -- Indexes for table sys_script_times
 --
-CREATE        INDEX sys_script_time_idx ON sys_script_times (sys_script_id);
+CREATE INDEX sys_script_time_idx ON sys_script_times (sys_script_id);
 
 --
 -- Indexes for table users
 --
 CREATE UNIQUE INDEX user_name_idx ON users (user_name);
-CREATE        INDEX user_type_idx ON users (user_type_id);
+CREATE INDEX user_type_idx ON users (user_type_id);
 
 --
 -- Indexes for table user_formulas
 --
-CREATE UNIQUE INDEX user_formula_unique_idx ON user_formulas (formula_id,user_id);
-CREATE        INDEX user_formula_idx        ON user_formulas (formula_id);
-CREATE        INDEX user_formula_user_idx   ON user_formulas (user_id);
-CREATE        INDEX user_formula_type_idx   ON user_formulas (formula_type_id);
-CREATE        INDEX user_formula_share_idx  ON user_formulas (share_type_id);
+CREATE UNIQUE INDEX user_formula_unique_idx ON user_formulas (formula_id, user_id);
+CREATE INDEX user_formula_idx ON user_formulas (formula_id);
+CREATE INDEX user_formula_user_idx ON user_formulas (user_id);
+CREATE INDEX user_formula_type_idx ON user_formulas (formula_type_id);
+CREATE INDEX user_formula_share_idx ON user_formulas (share_type_id);
 
 --
 -- Indexes for table user_formula_links
 --
-CREATE UNIQUE INDEX user_formula_link_unique_idx ON user_formula_links (formula_link_id,user_id);
-CREATE        INDEX user_formula_link_idx        ON user_formula_links (formula_link_id);
-CREATE        INDEX user_formula_link_user_idx   ON user_formula_links (user_id);
-CREATE        INDEX user_formula_link_type_idx   ON user_formula_links (link_type_id);
+CREATE UNIQUE INDEX user_formula_link_unique_idx ON user_formula_links (formula_link_id, user_id);
+CREATE INDEX user_formula_link_idx ON user_formula_links (formula_link_id);
+CREATE INDEX user_formula_link_user_idx ON user_formula_links (user_id);
+CREATE INDEX user_formula_link_type_idx ON user_formula_links (link_type_id);
 
 --
 -- Indexes for table user_phrase_groups
 --
-CREATE UNIQUE INDEX user_phrase_group_unique_id ON user_phrase_groups (phrase_group_id,user_id);
-CREATE        INDEX user_phrase_group_idx       ON user_phrase_groups (phrase_group_id);
-CREATE        INDEX user_phrase_group_user_idx  ON user_phrase_groups (user_id);
+CREATE UNIQUE INDEX user_phrase_group_unique_id ON user_phrase_groups (phrase_group_id, user_id);
+CREATE INDEX user_phrase_group_idx ON user_phrase_groups (phrase_group_id);
+CREATE INDEX user_phrase_group_user_idx ON user_phrase_groups (user_id);
 
 --
 -- Indexes for table user_phrase_group_triple_links
 --
-CREATE UNIQUE INDEX user_phrase_group_triple_link_unique_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id,user_id);
-CREATE        INDEX user_phrase_group_triple_link_idx        ON user_phrase_group_triple_links (phrase_group_triple_link_id);
-CREATE        INDEX user_phrase_group_triple_user_idx        ON user_phrase_group_triple_links (user_id);
+CREATE UNIQUE INDEX user_phrase_group_triple_link_unique_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id, user_id);
+CREATE INDEX user_phrase_group_triple_link_idx ON user_phrase_group_triple_links (phrase_group_triple_link_id);
+CREATE INDEX user_phrase_group_triple_user_idx ON user_phrase_group_triple_links (user_id);
 
 --
 -- Indexes for table user_phrase_group_word_links
 --
-CREATE UNIQUE INDEX user_phrase_group_word_link_unique_idx ON user_phrase_group_word_links (phrase_group_word_link_id,user_id);
-CREATE        INDEX user_phrase_group_word_link_idx        ON user_phrase_group_word_links (phrase_group_word_link_id);
-CREATE        INDEX user_phrase_group_word_user_idx        ON user_phrase_group_word_links (user_id);
+CREATE UNIQUE INDEX user_phrase_group_word_link_unique_idx ON user_phrase_group_word_links (phrase_group_word_link_id, user_id);
+CREATE INDEX user_phrase_group_word_link_idx ON user_phrase_group_word_links (phrase_group_word_link_id);
+CREATE INDEX user_phrase_group_word_user_idx ON user_phrase_group_word_links (user_id);
 
 --
 -- Indexes for table user_sources
 --
-CREATE UNIQUE INDEX user_source_unique_idx ON user_sources (source_id,user_id);
-CREATE        INDEX user_source_user_idx   ON user_sources (user_id);
-CREATE        INDEX user_source_idx        ON user_sources (source_id);
-CREATE        INDEX user_source_type_idx   ON user_sources (source_type_id);
+CREATE UNIQUE INDEX user_source_unique_idx ON user_sources (source_id, user_id);
+CREATE INDEX user_source_user_idx ON user_sources (user_id);
+CREATE INDEX user_source_idx ON user_sources (source_id);
+CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
 
 --
 -- Indexes for table user_values
 --
-CREATE        INDEX user_value_user_idx       ON user_values (user_id);
-CREATE        INDEX user_value_source_idx     ON user_values (source_id);
-CREATE        INDEX user_value_value_idx      ON user_values (value_id);
-CREATE        INDEX user_value_share_idx      ON user_values (share_type_id);
-CREATE        INDEX user_value_protection_idx ON user_values (protection_type_id);
+CREATE INDEX user_value_user_idx ON user_values (user_id);
+CREATE INDEX user_value_source_idx ON user_values (source_id);
+CREATE INDEX user_value_value_idx ON user_values (value_id);
+CREATE INDEX user_value_share_idx ON user_values (share_type_id);
+CREATE INDEX user_value_protection_idx ON user_values (protection_type_id);
 
 --
 -- Indexes for table user_views
 --
-CREATE        INDEX user_view_user_idx ON user_views (user_id);
-CREATE        INDEX user_view_type_idx ON user_views (view_type_id);
-CREATE        INDEX user_view_idx      ON user_views (view_id);
+CREATE INDEX user_view_user_idx ON user_views (user_id);
+CREATE INDEX user_view_type_idx ON user_views (view_type_id);
+CREATE INDEX user_view_idx ON user_views (view_id);
 
 --
 -- Indexes for table user_view_components
 --
-CREATE        INDEX user_view_component_user_idx ON user_view_components (user_id);
-CREATE        INDEX user_view_component_idx      ON user_view_components (view_component_id);
-CREATE        INDEX user_view_component_type_idx ON user_view_components (view_component_type_id);
+CREATE INDEX user_view_component_user_idx ON user_view_components (user_id);
+CREATE INDEX user_view_component_idx ON user_view_components (view_component_id);
+CREATE INDEX user_view_component_type_idx ON user_view_components (view_component_type_id);
 
 --
 -- Indexes for table user_view_component_links
 --
-CREATE        INDEX user_view_component_link_user_idx     ON user_view_component_links (user_id);
-CREATE        INDEX user_view_component_link_position_idx ON user_view_component_links (position_type);
-CREATE        INDEX user_view_component_link_view_idx     ON user_view_component_links (view_component_link_id);
+CREATE INDEX user_view_component_link_user_idx ON user_view_component_links (user_id);
+CREATE INDEX user_view_component_link_position_idx ON user_view_component_links (position_type);
+CREATE INDEX user_view_component_link_view_idx ON user_view_component_links (view_component_link_id);
 
 --
 -- Indexes for table user_words
 --
-CREATE        INDEX user_word_idx          ON user_words (word_id);
-CREATE        INDEX user_word_user_idx     ON user_words (user_id);
-CREATE        INDEX user_word_language_idx ON user_words (language_id);
-CREATE        INDEX user_word_type_idx     ON user_words (word_type_id);
-CREATE        INDEX user_word_view_idx     ON user_words (view_id);
+CREATE INDEX user_word_idx ON user_words (word_id);
+CREATE INDEX user_word_user_idx ON user_words (user_id);
+CREATE INDEX user_word_language_idx ON user_words (language_id);
+CREATE INDEX user_word_type_idx ON user_words (word_type_id);
+CREATE INDEX user_word_view_idx ON user_words (view_id);
 
 --
 -- Indexes for table user_word_links
 --
-CREATE UNIQUE INDEX user_word_link_unique_idx ON user_word_links (word_link_id,user_id);
-CREATE        INDEX user_word_link_idx        ON user_word_links (word_link_id);
-CREATE        INDEX user_word_link_user_idx   ON user_word_links (user_id);
+CREATE UNIQUE INDEX user_word_link_unique_idx ON user_word_links (word_link_id, user_id);
+CREATE INDEX user_word_link_idx ON user_word_links (word_link_id);
+CREATE INDEX user_word_link_user_idx ON user_word_links (user_id);
 
 --
 -- Indexes for table values
 --
-CREATE        INDEX value_user_idx         ON "values" (user_id);
-CREATE        INDEX value_source_idx       ON "values" (source_id);
-CREATE        INDEX value_phrase_group_idx ON "values" (phrase_group_id);
-CREATE        INDEX value_time_word_idx    ON "values" (time_word_id);
-CREATE        INDEX value_protection_idx   ON "values" (protection_type_id);
+CREATE INDEX value_user_idx ON "values" (user_id);
+CREATE INDEX value_source_idx ON "values" (source_id);
+CREATE INDEX value_phrase_group_idx ON "values" (phrase_group_id);
+CREATE INDEX value_time_word_idx ON "values" (time_word_id);
+CREATE INDEX value_protection_idx ON "values" (protection_type_id);
 
 --
 -- Indexes for table value_phrase_links
 --
-CREATE UNIQUE INDEX value_phrase_link_user_idx   ON value_phrase_links (user_id,value_id,phrase_id);
-CREATE        INDEX value_phrase_link_value_idx  ON value_phrase_links (value_id);
-CREATE        INDEX value_phrase_link_phrase_idx ON value_phrase_links (phrase_id);
+CREATE UNIQUE INDEX value_phrase_link_user_idx ON value_phrase_links (user_id, value_id, phrase_id);
+CREATE INDEX value_phrase_link_value_idx ON value_phrase_links (value_id);
+CREATE INDEX value_phrase_link_phrase_idx ON value_phrase_links (phrase_id);
 
 
 --
 -- Indexes for table value_ts_data
 --
-CREATE        INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
+CREATE INDEX value_time_series_idx ON value_ts_data (value_time_series_id, val_time);
 
 --
 -- Indexes for table views
 --
-CREATE        INDEX view_type_idx ON views (view_type_id);
+CREATE INDEX view_type_idx ON views (view_type_id);
 
 --
 -- Indexes for table view_components
 --
-CREATE        INDEX view_component_formula_idx ON view_components (formula_id);
+CREATE INDEX view_component_formula_idx ON view_components (formula_id);
 
 --
 -- Indexes for table view_component_links
 --
-CREATE        INDEX view_component_link_idx           ON view_component_links (view_id);
-CREATE        INDEX view_component_link_component_idx ON view_component_links (view_component_id);
-CREATE        INDEX view_component_link_position__idx ON view_component_links (position_type);
+CREATE INDEX view_component_link_idx ON view_component_links (view_id);
+CREATE INDEX view_component_link_component_idx ON view_component_links (view_component_id);
+CREATE INDEX view_component_link_position__idx ON view_component_links (position_type);
 
 
 --
 -- Indexes for table words
 --
-CREATE UNIQUE INDEX word_name_idx ON words(word_name);
-CREATE        INDEX word_type_idx ON words(word_type_id);
-CREATE        INDEX word_view_idx ON words(view_id);
+CREATE UNIQUE INDEX word_name_idx ON words (word_name);
+CREATE INDEX word_type_idx ON words (word_type_id);
+CREATE INDEX word_view_idx ON words (view_id);
 
 
 --

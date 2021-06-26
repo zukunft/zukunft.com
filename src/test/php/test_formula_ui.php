@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,28 +26,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_ui_test ($debug = 0) {
+function run_formula_ui_test()
+{
 
-  global $exe_start_time;
-  
-  test_header('Test the formula frontend scripts (e.g. /formula_add.php)');
+    global $exe_start_time;
 
-  // call the add formula page and check if at least some keywords are returned
-  $frm = load_formula(TF_INCREASE, $debug-1);
-  $result = file_get_contents('https://zukunft.com/http/formula_add.php?word='.TEST_WORD_ID.'&back='.TEST_WORD_ID.'');
-  $target = 'Add new formula for';
-  $exe_start_time = test_show_contains(', frontend formula_add.php '.$result.' contains at least the headline', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
-  $target = TEST_WORD;
-  $exe_start_time = test_show_contains(', frontend formula_add.php '.$result.' contains at least the linked word '.TEST_WORD, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+    test_header('Test the formula frontend scripts (e.g. /formula_add.php)');
 
-  // test the edit formula frontend
-  $result = file_get_contents('https://zukunft.com/http/formula_edit.php?id='.$frm->id.'&back='.TEST_WORD_ID.'');
-  $target = TF_INCREASE;
-  $exe_start_time = test_show_contains(', frontend formula_edit.php '.$result.' contains at least '.$frm->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
+    // load the main test word
+    $wrd_company = test_word(TEST_WORD);
 
-  // test the del formula frontend
-  $result = file_get_contents('https://zukunft.com/http/formula_del.php?id='.$frm->id.'&back='.TEST_WORD_ID.'');
-  $target = TF_INCREASE;
-  $exe_start_time = test_show_contains(', frontend formula_del.php '.$result.' contains at least '.$frm->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+    // call the add formula page and check if at least some keywords are returned
+    $frm = load_formula(TF_INCREASE);
+    $result = file_get_contents('https://zukunft.com/http/formula_add.php?word=' . $wrd_company->id . '&back=' . $wrd_company->id . '');
+    $target = 'Add new formula for';
+    $exe_start_time = test_show_contains(', frontend formula_add.php ' . $result . ' contains at least the headline', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
+    $target = TEST_WORD;
+    $exe_start_time = test_show_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . TEST_WORD, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+
+    // test the edit formula frontend
+    $result = file_get_contents('https://zukunft.com/http/formula_edit.php?id=' . $frm->id . '&back=' . $wrd_company->id . '');
+    $target = TF_INCREASE;
+    $exe_start_time = test_show_contains(', frontend formula_edit.php ' . $result . ' contains at least ' . $frm->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
+
+    // test the del formula frontend
+    $result = file_get_contents('https://zukunft.com/http/formula_del.php?id=' . $frm->id . '&back=' . $wrd_company->id . '');
+    $target = TF_INCREASE;
+    $exe_start_time = test_show_contains(', frontend formula_del.php ' . $result . ' contains at least ' . $frm->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
 }

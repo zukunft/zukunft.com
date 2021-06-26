@@ -43,25 +43,25 @@ class json_io
     public $phr_lst = NULL; // to export all values related to this phrase
 
     // export zukunft.com data as json
-    function export($debug)
+    function export()
     {
-        log_debug('json_io->export', $debug - 10);
+        log_debug('json_io->export');
         $result = '';
 
         // get the export object
         $export_instance = new export;
         $export_instance->usr = $this->usr;
         $export_instance->phr_lst = $this->phr_lst;
-        $export_obj = $export_instance->get($debug - 1);
+        $export_obj = $export_instance->get();
 
-        log_debug('json_io->export create json string', $debug - 16);
+        log_debug('json_io->export create json string');
         $result .= json_encode($export_obj);
 
         return $result;
     }
 
     // import zukunft.com data from json
-    function import($debug)
+    function import()
     {
         $result = '';
 

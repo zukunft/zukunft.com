@@ -35,14 +35,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /* open database */
-$db_con = prg_start("link_type_add", "", $debug);
+$db_con = prg_start("link_type_add");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
 
   // load the session user parameters
   $usr = New user;
-  echo $usr->get($debug-1); // if the usr identification fails, show any message immediately because this should never happen
+  echo $usr->get(); // if the usr identification fails, show any message immediately because this should never happen
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -51,10 +51,10 @@ $db_con = prg_start("link_type_add", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_VERB_ADD);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back']; // the calling word which should be displayed after saving
 
-    if (!$usr->is_admin($debug-1)) {
+    if (!$usr->is_admin()) {
       $result .= log_err("Only user with the administrator profile can add verbs (word link types).","verb_add.php");
     } else {
 
@@ -79,7 +79,7 @@ $db_con = prg_start("link_type_add", "", $debug);
           $trm = New term;
           $trm->name = $vrb->name;
           $trm->usr  = $usr;
-          $trm->load($debug-1);
+          $trm->load();
           if ($trm->id > 0) {
             $msg .= $trm->id_used_msg();
           }  
@@ -87,12 +87,12 @@ $db_con = prg_start("link_type_add", "", $debug);
           // if the parameters are fine
           if ($msg == '') {
             // add the new verb
-            $add_result = $vrb->save($debug-1);
+            $add_result = $vrb->save();
 
             // if adding was successful ...
             if (str_replace ('1','',$add_result) == '') {
               // ... and display the calling view
-              $result .= dsp_go_back($back, $usr, $debug-1);
+              $result .= dsp_go_back($back, $usr);
             } else {
               // ... or in case of a problem prepare to show the message
               $msg .= $add_result;
@@ -104,15 +104,15 @@ $db_con = prg_start("link_type_add", "", $debug);
       // if nothing yet done display the add view (and any message on the top)
       if ($result == '')  {
         // show the header
-        $result .= $dsp->dsp_navbar($back, $debug-1);
+        $result .= $dsp->dsp_navbar($back);
         $result .= dsp_err($msg);
 
         // get the form to add a new verb
-        $result .= $vrb->dsp_edit ($back, $debug-1);
+        $result .= $vrb->dsp_edit ($back);
       }  
     }
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

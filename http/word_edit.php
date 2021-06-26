@@ -34,14 +34,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("word_edit", "", $debug);
+$db_con = prg_start("word_edit");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -50,14 +50,14 @@ $db_con = prg_start("word_edit", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_WORD_EDIT);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
         
     // create the word object to have an place to update the parameters
     $wrd = New word_dsp;
     $wrd->id  = $_GET['id'];
     $wrd->usr = $usr;
-    $wrd->load($debug-1);
+    $wrd->load();
       
     if ($wrd->id <= 0) {
       $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
@@ -77,13 +77,13 @@ $db_con = prg_start("word_edit", "", $debug);
           $msg .= 'An empty name should never be saved. Please delete the word instead.';
         } else {  
           // save the changes
-          $upd_result = $wrd->save($debug-1);
+          $upd_result = $wrd->save();
         
           // if update was fine ...
           if (str_replace ('1','',$upd_result) == '') {
             // ... display the calling page is switched of to keep the user on the edit view and see the implications of the change
             // switched off because maybe staying on the edit page is the expected behaviour
-            //$result .= dsp_go_back($back, $usr, $debug-1);
+            //$result .= dsp_go_back($back, $usr);
           } else { 
             // ... or in case of a problem prepare to show the message
             $msg .= $upd_result;
@@ -94,15 +94,15 @@ $db_con = prg_start("word_edit", "", $debug);
       // if nothing yet done display the edit view (and any message on the top)
       if ($result == '')  {
         // show the header
-        $result .= $dsp->dsp_navbar($back, $debug-1);
+        $result .= $dsp->dsp_navbar($back);
         $result .= dsp_err($msg);
 
         // show the word and its relations, so that the user can change it
-        $result .= $wrd->dsp_edit ($back, $debug-1);
+        $result .= $wrd->dsp_edit ($back);
       }  
     }  
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

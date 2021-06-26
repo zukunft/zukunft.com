@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_group_list_test ($debug = 0) {
+function run_phrase_group_list_test () {
 
   global $usr;
   global $exe_start_time;
@@ -42,8 +42,8 @@ function run_phrase_group_list_test ($debug = 0) {
   $phr_lst->add_name(TW_SALES);
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
-  $phr_lst->load($debug-1);
-  $abb_grp = $phr_lst->get_grp($debug-1);
+  $phr_lst->load();
+  $abb_grp = $phr_lst->get_grp();
 
   // Zurich taxes
   $phr_lst = New phrase_list;
@@ -52,8 +52,8 @@ function run_phrase_group_list_test ($debug = 0) {
   $phr_lst->add_name(TW_TAX);
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
-  $phr_lst->load($debug-1);
-  $zh_grp = $phr_lst->get_grp($debug-1);
+  $phr_lst->load();
+  $zh_grp = $phr_lst->get_grp();
 
   // Zurich Insurance taxes
   $phr_lst = New phrase_list;
@@ -62,16 +62,16 @@ function run_phrase_group_list_test ($debug = 0) {
   $phr_lst->add_name(TW_TAX);
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
-  $phr_lst->load($debug-1);
-  $ins_grp = $phr_lst->get_grp($debug-1);
+  $phr_lst->load();
+  $ins_grp = $phr_lst->get_grp();
 
   // test add a phrase group to a phrase group list
   $grp_lst = New phrase_group_list;
   $grp_lst->usr = $usr;
-  $grp_lst->add($abb_grp, $debug-1);
-  $grp_lst->add($zh_grp, $debug-1);
-  $grp_lst->add($abb_grp, $debug-1);
-  $result = $grp_lst->name($debug-1);
+  $grp_lst->add($abb_grp);
+  $grp_lst->add($zh_grp);
+  $grp_lst->add($abb_grp);
+  $result = $grp_lst->name();
   $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TW_ZH.'';
   $exe_start_time = test_show_result('phrase_group_list->add of '.$abb_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$abb_grp->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
@@ -79,10 +79,10 @@ function run_phrase_group_list_test ($debug = 0) {
   // test add a phrase group to a phrase group list
   $grp_lst = New phrase_group_list;
   $grp_lst->usr = $usr;
-  $grp_lst->add($abb_grp, $debug-1);
-  $grp_lst->add($zh_grp, $debug-1);
-  $grp_lst->add($ins_grp, $debug-1);
-  $result = $grp_lst->name($debug-1);
+  $grp_lst->add($abb_grp);
+  $grp_lst->add($zh_grp);
+  $grp_lst->add($ins_grp);
+  $result = $grp_lst->name();
   $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TW_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TP_ZH_INS.'';
   $exe_start_time = test_show_result('phrase_group_list->add of '.$zh_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$ins_grp->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -96,21 +96,21 @@ function run_phrase_group_list_test ($debug = 0) {
   $wrd_lst->add_name(TW_SALES);
   $wrd_lst->add_name(TW_CHF);
   $wrd_lst->add_name(TW_MIO);
-  $wrd_lst->load($debug-1);
-  $abb_grp = $wrd_lst->get_grp($debug-1);
-  $grp_lst->add($abb_grp, $debug-1);
+  $wrd_lst->load();
+  $abb_grp = $wrd_lst->get_grp();
+  $grp_lst->add($abb_grp);
   $wrd_lst = New word_list;
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ZH);
   $wrd_lst->add_name(TW_TAX);
   $wrd_lst->add_name(TW_CHF);
   $wrd_lst->add_name(TW_MIO);
-  $wrd_lst->load($debug-1);
-  $zh_grp = $wrd_lst->get_grp($debug-1);
-  $grp_lst->add($zh_grp, $debug-1);
-  $phr_lst = $grp_lst->common_phrases($debug-1);
-  $result = $phr_lst->name($debug-1);
+  $wrd_lst->load();
+  $zh_grp = $wrd_lst->get_grp();
+  $grp_lst->add($zh_grp);
+  $phr_lst = $grp_lst->common_phrases();
+  $result = $phr_lst->name();
   $target = '"'.TW_MIO.'","'.TW_CHF.'"';
-  $exe_start_time = test_show_result('phrase_group_list->common_phrases of '.$grp_lst->dsp_id($debug-1), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  $exe_start_time = test_show_result('phrase_group_list->common_phrases of '.$grp_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

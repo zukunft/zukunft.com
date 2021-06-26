@@ -32,11 +32,11 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start_api("get_xml", "", $debug);
+$db_con = prg_start_api("get_xml");
 
   // load the session user parameters
   $usr = New user;
-  $result = $usr->get($debug-1);
+  $result = $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -44,7 +44,7 @@ $db_con = prg_start_api("get_xml", "", $debug);
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET['words'];
-    log_debug("get_xml(".$phrases.")", $debug);
+    log_debug("get_xml(".$phrases.")");
     $word_names = explode(",",$phrases);
     
     // get all related Phrases
@@ -52,18 +52,18 @@ $db_con = prg_start_api("get_xml", "", $debug);
     $phr_lst->usr = $usr;
     foreach ($word_names AS $wrd_name) {
       if ($wrd_name <> '') {
-        $phr_lst->add_name($wrd_name, $debug-1);
+        $phr_lst->add_name($wrd_name);
       }  
     }
     if (count($phr_lst->lst) > 0) {
-      $phr_lst->load($debug-1);
-      $phr_lst = $phr_lst->are($debug-1);
+      $phr_lst->load();
+      $phr_lst = $phr_lst->are();
     
-      log_debug("get_xml.php ... phrase loaded.", $debug-10);
+      log_debug("get_xml.php ... phrase loaded.");
       $xml_export = New xml_io;
       $xml_export->usr     = $usr;
       $xml_export->phr_lst = $phr_lst;
-      $xml = $xml_export->export($debug-1);
+      $xml = $xml_export->export();
     } else {
       $result .= log_info('No XML can be created, because no word or triple is given.','', (new Exception)->getTraceAsString(), $this->usr);
     }
@@ -78,4 +78,4 @@ $db_con = prg_start_api("get_xml", "", $debug);
   
 
 // Closing connection
-prg_end_api($db_con, $debug);
+prg_end_api($db_con);

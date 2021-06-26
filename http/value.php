@@ -34,17 +34,17 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("value", "", $debug);
+$db_con = prg_start("value");
 
   // get the parameters
   $wrd_names = $_GET['t']; 
-  log_debug("value for ".$wrd_names, $debug-1);
+  log_debug("value for ".$wrd_names);
   
   $result = ''; // reset the html code var
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -53,10 +53,10 @@ $db_con = prg_start("value", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_VALUE_DISPLAY);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
         
-    $result .= $dsp->dsp_navbar($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back);
 
     if ($wrd_names <> '') {
 
@@ -64,15 +64,15 @@ $db_con = prg_start("value", "", $debug);
       $wrd_lst = New word_list;
       $wrd_lst->name_lst = explode(",",$wrd_names);
       $wrd_lst->usr = $usr;
-      $wrd_lst->load($debug-1);
+      $wrd_lst->load();
       
-      $result .= $wrd_lst->name_linked($debug-1);   
+      $result .= $wrd_lst->name_linked();   
       $result .= ' = ';   
-      $val = $wrd_lst->value($debug-1);   
-      $result .= $val->display_linked($back, $debug-1);   
+      $val = $wrd_lst->value();   
+      $result .= $val->display_linked($back);   
     }  
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

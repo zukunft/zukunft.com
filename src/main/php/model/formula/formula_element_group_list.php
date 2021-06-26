@@ -41,9 +41,9 @@ class formula_element_group_list {
   */
   
   // return best possible identification for this element group list mainly used for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $id = implode(",",$this->ids());
-    $name = $this->name($debug-1);
+    $name = $this->name();
     if ($name <> '""') {
       $result = ''.$name.' ('.$id.')';
     } else {
@@ -57,11 +57,11 @@ class formula_element_group_list {
   }
   
   // to show the element group list name to the user in the most simple form (without any ids)
-  function name ($debug) {
+  function name () {
     $lst = array();
     foreach ($this->lst AS $elm_grp) {
       if (isset($elm_grp)) {
-        $lst[] = $elm_grp->name($debug-1);
+        $lst[] = $elm_grp->name();
       }
     }
     $result = implode(" / ",$lst);

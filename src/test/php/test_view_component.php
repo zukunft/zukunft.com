@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_view_component_test ($debug = 0) {
+function run_view_component_test () {
 
   global $usr;
   global $usr2;
@@ -38,7 +38,7 @@ function run_view_component_test ($debug = 0) {
   $cmp = new view_component_dsp;
   $cmp->usr = $usr;
   $cmp->name = 'complete';
-  $cmp->load($debug-1);
+  $cmp->load();
   $result = $cmp->comment;
   $target = 'Show a word, all related words to edit the word tree and the linked formulas with some results';
   $exe_start_time = test_show_result('view_component->load the comment of "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -47,8 +47,8 @@ function run_view_component_test ($debug = 0) {
   $wrd = New word_dsp;
   $wrd->usr  = $usr;
   $wrd->name = TW_ABB;
-  $wrd->load($debug-1);
-  $result = $cmp->display($wrd, $debug-1);
+  $wrd->load();
+  $result = $cmp->display($wrd);
   // check if the view_component contains the word name
   $target = TW_ABB;
   $exe_start_time = test_show_contains(', view_component->display "'.$cmp->name.'" for "'.$wrd->name.'" contains', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
@@ -66,7 +66,7 @@ function run_view_component_test ($debug = 0) {
   $cmp->name    = TC_ADD;
   $cmp->comment = 'Just added for testing';
   $cmp->usr = $usr;
-  $result = $cmp->save($debug-1);
+  $result = $cmp->save();
   if ($cmp->id > 0) {
     $result = $cmp->comment;
   }
@@ -77,7 +77,7 @@ function run_view_component_test ($debug = 0) {
   $cmp_added = new view_component;
   $cmp_added->name = TC_ADD;
   $cmp_added->usr = $usr;
-  $cmp_added->load($debug-1);
+  $cmp_added->load();
   $result = $cmp_added->comment;
   $target = 'Just added for testing';
   $exe_start_time = test_show_result('view_component->load the added "'.$cmp_added->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -88,7 +88,7 @@ function run_view_component_test ($debug = 0) {
   $log->field = 'view_component_name';
   $log->row_id = $cmp->id;
   $log->usr = $usr;
-  $result = $log->dsp_last(true, $debug-1);
+  $result = $log->dsp_last(true);
   $target = 'zukunft.com system batch job added Test Mask Component';
   $exe_start_time = test_show_result('view_component->save adding logged for "'.TC_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -96,7 +96,7 @@ function run_view_component_test ($debug = 0) {
   $cmp = new view_component;
   $cmp->name = TC_ADD;
   $cmp->usr = $usr;
-  $result = $cmp->save($debug-1);
+  $result = $cmp->save();
   // in case of other settings
   $target = 'A view component with the name "'.TC_ADD.'" already exists. Please use another name.';
   // for the standard settings
@@ -107,9 +107,9 @@ function run_view_component_test ($debug = 0) {
   $cmp = new view_component;
   $cmp->name = TC_ADD;
   $cmp->usr = $usr;
-  $cmp->load($debug-1);
+  $cmp->load();
   $cmp->name = TC_ADD_RENAMED;
-  $result = $cmp->save($debug-1);
+  $result = $cmp->save();
   $target = '1';
   $exe_start_time = test_show_result('view_component->save rename "'.TC_ADD.'" to "'.TC_ADD_RENAMED.'".', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -117,7 +117,7 @@ function run_view_component_test ($debug = 0) {
   $cmp_renamed = new view_component;
   $cmp_renamed->name = TC_ADD_RENAMED;
   $cmp_renamed->usr = $usr;
-  $result = $cmp_renamed->load($debug-1);
+  $result = $cmp_renamed->load();
   if ($result == '') {
     if ($cmp_renamed->id > 0) {
       $result = $cmp_renamed->name;
@@ -132,7 +132,7 @@ function run_view_component_test ($debug = 0) {
   $log->field = 'view_component_name';
   $log->row_id = $cmp_renamed->id;
   $log->usr = $usr;
-  $result = $log->dsp_last(true, $debug-1);
+  $result = $log->dsp_last(true);
   $target = 'zukunft.com system batch job changed Test Mask Component to Mask Component Test';
   $exe_start_time = test_show_result('view_component->save rename logged for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -140,10 +140,10 @@ function run_view_component_test ($debug = 0) {
   $cmp_renamed = new view_component;
   $cmp_renamed->name = TC_ADD_RENAMED;
   $cmp_renamed->usr = $usr;
-  $cmp_renamed->load($debug-1);
+  $cmp_renamed->load();
   $cmp_renamed->comment = 'Just added for testing the user sandbox';
   $cmp_renamed->type_id = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
-  $result = $cmp_renamed->save($debug-1);
+  $result = $cmp_renamed->save();
   $target = '11';
   $exe_start_time = test_show_result('view_component->save all view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
 
@@ -151,7 +151,7 @@ function run_view_component_test ($debug = 0) {
   $cmp_reloaded = new view_component;
   $cmp_reloaded->name = TC_ADD_RENAMED;
   $cmp_reloaded->usr = $usr;
-  $cmp_reloaded->load($debug-1);
+  $cmp_reloaded->load();
   $result = $cmp_reloaded->comment;
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -165,11 +165,11 @@ function run_view_component_test ($debug = 0) {
   $log->field = 'comment';
   $log->row_id = $cmp_reloaded->id;
   $log->usr = $usr;
-  $result = $log->dsp_last(true, $debug-1);
+  $result = $log->dsp_last(true);
   $target = 'zukunft.com system batch job added Just added for testing the user sandbox';
   $exe_start_time = test_show_result('view_component->load comment for "'.TC_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   $log->field = 'view_component_type_id';
-  $result = $log->dsp_last(true, $debug-1);
+  $result = $log->dsp_last(true);
   $target = 'zukunft.com system batch job added word name';
   $exe_start_time = test_show_result('view_component->load view_component_type_id for "'.TC_ADD_RENAMED.'" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -177,10 +177,10 @@ function run_view_component_test ($debug = 0) {
   $cmp_usr2 = new view_component;
   $cmp_usr2->name = TC_ADD_RENAMED;
   $cmp_usr2->usr = $usr2;
-  $cmp_usr2->load($debug-1);
+  $cmp_usr2->load();
   $cmp_usr2->comment = 'Just changed for testing the user sandbox';
   $cmp_usr2->type_id = cl(DBL_VIEW_COMP_TYPE_FORMULAS);
-  $result = $cmp_usr2->save($debug-1);
+  $result = $cmp_usr2->save();
   $target = '11';
   $exe_start_time = test_show_result('view_component->save all view_component fields for user 2 beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -188,7 +188,7 @@ function run_view_component_test ($debug = 0) {
   $cmp_usr2_reloaded = new view_component;
   $cmp_usr2_reloaded->name = TC_ADD_RENAMED;
   $cmp_usr2_reloaded->usr = $usr2;
-  $cmp_usr2_reloaded->load($debug-1);
+  $cmp_usr2_reloaded->load();
   $result = $cmp_usr2_reloaded->comment;
   $target = 'Just changed for testing the user sandbox';
   $exe_start_time = test_show_result('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -200,7 +200,7 @@ function run_view_component_test ($debug = 0) {
   $cmp_reloaded = new view_component;
   $cmp_reloaded->name = TC_ADD_RENAMED;
   $cmp_reloaded->usr = $usr;
-  $cmp_reloaded->load($debug-1);
+  $cmp_reloaded->load();
   $result = $cmp_reloaded->comment;
   $target = 'Just added for testing the user sandbox';
   $exe_start_time = test_show_result('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -212,10 +212,10 @@ function run_view_component_test ($debug = 0) {
   $cmp_usr2 = new view_component;
   $cmp_usr2->name = TC_ADD_RENAMED;
   $cmp_usr2->usr = $usr2;
-  $cmp_usr2->load($debug-1);
+  $cmp_usr2->load();
   $cmp_usr2->comment = 'Just added for testing the user sandbox';
   $cmp_usr2->type_id = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
-  $result = $cmp_usr2->save($debug-1);
+  $result = $cmp_usr2->save();
   $target = '11';
   $exe_start_time = test_show_result('view_component->save undo the user view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -223,7 +223,7 @@ function run_view_component_test ($debug = 0) {
   $cmp_usr2_reloaded = new view_component;
   $cmp_usr2_reloaded->name = TC_ADD_RENAMED;
   $cmp_usr2_reloaded->usr = $usr2;
-  $cmp_usr2_reloaded->load($debug-1);
+  $cmp_usr2_reloaded->load();
   $result = $cmp_usr2_reloaded->comment;
   $target = 'Just changed for testing the user sandbox';
   $exe_start_time = test_show_result('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

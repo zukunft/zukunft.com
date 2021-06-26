@@ -34,11 +34,11 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
-$db_con = prg_start("login", "center_form", $debug);
+$db_con = prg_start("login", "center_form");
 
   // load the session user parameters
   $usr = New user;
-  $result = $usr->get($debug-1);
+  $result = $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -109,6 +109,4 @@ $db_con = prg_start("login", "center_form", $debug);
   echo $result;
 
 // close the database  
-prg_end($db_con, $debug);
-
-?>
+prg_end($db_con);

@@ -43,9 +43,9 @@ class figure_list {
   */
   
   // display the unique id fields
-  function dsp_id ($debug) {
+  function dsp_id () {
     $id = $this->ids_txt();
-    $name = $this->display('',$debug-1);
+    $name = $this->display('',);
     if ($name <> '""') {
       $result = ''.$name.' ('.$id.')';
     } else {
@@ -60,11 +60,11 @@ class figure_list {
     return $result;    
   }
   
-  function name ($debug) {
+  function name () {
     $result = '';
     
     foreach ($this->lst AS $fig) {
-      $result .= $fig->name($debug-1).' ';
+      $result .= $fig->name().' ';
     }
     
     return $result;    
@@ -93,11 +93,11 @@ class figure_list {
   // return the html code to display a value
   // this is the opposite of the convert function 
   // this function is called from dsp_id, so no other call is allowed
-  function display ($back, $debug) {
+  function display ($back) {
     $result = '';
     
     foreach ($this->lst AS $fig) {
-      $result .= $fig->display($back, $debug-1).' ';
+      $result .= $fig->display($back).' ';
     }
     
     return $result;    

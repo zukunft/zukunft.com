@@ -34,14 +34,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("word_del", "", $debug);
+$db_con = prg_start("word_del");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -50,7 +50,7 @@ $db_con = prg_start("word_del", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_WORD_DEL);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
         
     // get the parameters
@@ -63,23 +63,23 @@ $db_con = prg_start("word_del", "", $debug);
       $wrd = New word;
       $wrd->id  = $wrd_id;
       $wrd->usr = $usr;
-      $wrd->load($debug-1);
+      $wrd->load();
       
       if ($confirm == 1) {
-        $wrd->del($debug-1);  
+        $wrd->del();  
     
-        $result .= dsp_go_back($back, $usr, $debug-1);
+        $result .= dsp_go_back($back, $usr);
       } else {
         // display the view header
-        $result .= $dsp->dsp_navbar($back, $debug-1);
+        $result .= $dsp->dsp_navbar($back);
 
         $result .= btn_yesno("Delete ".$wrd->name."? ", "/http/word_del.php?id=".$wrd_id."&back=".$back);
       }
     } else {
-      $result .= dsp_go_back($back, $usr, $debug-1);
+      $result .= dsp_go_back($back, $usr);
     }  
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_export_test ($debug = 0) {
+function run_export_test () {
 
   global $usr;
   global $exe_start_time;
@@ -36,11 +36,11 @@ function run_export_test ($debug = 0) {
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
   $phr_lst->add_name(TEST_WORD);
-  $phr_lst->load($debug-1);
+  $phr_lst->load();
   $xml_export = New xml_io;
   $xml_export->usr     = $usr;
   $xml_export->phr_lst = $phr_lst;
-  $result = $xml_export->export($debug-1);
+  $result = $xml_export->export();
   $target = 'Company has a balance sheet';
   $exe_start_time = test_show_contains(', xml->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
@@ -49,7 +49,7 @@ function run_export_test ($debug = 0) {
   $json_export = New json_io;
   $json_export->usr     = $usr;
   $json_export->phr_lst = $phr_lst;
-  $result = $json_export->export($debug-1);
+  $result = $json_export->export();
   $target = 'Company has a balance sheet';
   $exe_start_time = test_show_contains(', json->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
   

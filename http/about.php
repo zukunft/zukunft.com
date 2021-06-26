@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
-$db_con = prg_start("about", "center_form", $debug);
+$db_con = prg_start("about", "center_form");
 
   $result = ''; // reset the html code var
 
@@ -58,4 +58,4 @@ $db_con = prg_start("about", "center_form", $debug);
   echo $result;
 
 // close the database  
-prg_end_about($db_con, $debug);
+prg_end_about($db_con);

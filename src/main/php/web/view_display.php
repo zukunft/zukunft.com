@@ -38,7 +38,7 @@ class view_dsp extends view {
   */
 
   // true if the view/page is used by the system and should only be changed by an administrator
-  private function is_system ($debug) {
+  private function is_system () {
     $result = false;
     if ($this->code_id <> "") {
       $result = true;
@@ -47,20 +47,20 @@ class view_dsp extends view {
   }
 
   // show the name of the used view and allow to change it  
-  private function dsp_view_name($back, $debug) {
+  private function dsp_view_name($back) {
     $result = 'view <a href="/http/view_select.php?id='.$this->id.'&word='.$back.'&back='.$back.'">'.$this->name.'</a> ';
     return $result;
   }
     
   // either the user name or the link to create an account
-  private function dsp_user($back, $debug) {
+  private function dsp_user($back) {
     $result = '';
     if ($_SESSION['logged']) { 
-      log_debug('view_dsp->dsp_user for user '.$_SESSION['user_name'], $debug-12);
-      log_debug('view_dsp->dsp_user for user '.$_SESSION['usr_id'], $debug-12);
-      log_debug('view_dsp->dsp_user for user '.$back, $debug-12);
+      log_debug('view_dsp->dsp_user for user '.$_SESSION['user_name']);
+      log_debug('view_dsp->dsp_user for user '.$_SESSION['usr_id']);
+      log_debug('view_dsp->dsp_user for user '.$back);
       $result .= '<a href="/http/user.php?id='.$_SESSION['usr_id'].'&back='.$back.'">'.$_SESSION['user_name'].'</a>';
-      log_debug('view_dsp->dsp_user user done', $debug-12);
+      log_debug('view_dsp->dsp_user user done');
     } else {  
       $url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
       $back_path = parse_url($url, PHP_URL_PATH);
@@ -72,7 +72,7 @@ class view_dsp extends view {
       //$back = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
       $result .= '<a href="/http/login.php?back='.$back.'">log in</a> or <a href="/http/signup.php">Create account</a>';
     }
-    log_debug('view_dsp->dsp_user done', $debug-14);
+    log_debug('view_dsp->dsp_user done');
     return $result;
   }
 
@@ -109,23 +109,23 @@ class view_dsp extends view {
   }
 
   // show the standard top right corner, where the user can login or change the settings
-  private function dsp_navbar_html($back, $debug) {
+  private function dsp_navbar_html($back) {
     $result = '';
 
     $result .= $this->html_navbar_start();
     $result .= '<td align="right">';
-    if ($this->is_system() AND !$this->usr->is_admin($debug-1)) {
+    if ($this->is_system() AND !$this->usr->is_admin()) {
       $result .= btn_find ('find a word or formula', '/find.php').' - ';
       $result .= ''.$this->name.' ';
     } else {
       $result .= btn_find ('find a word or formula', '/http/find.php?word='.$back).' - ';
-      $result .= $this->dsp_view_name($back, $debug-1);
+      $result .= $this->dsp_view_name($back);
       $result .= btn_edit ('adjust the view '.$this->name, '/http/view_edit.php?id='.$this->id.'&word='.$back.'&back='.$back).' ';
       $result .= btn_add  ('create a new view', '/http/view_add.php?word='.$back.'&back='.$back);
     }
     $result .= ' - ';
-    log_debug('view_dsp->dsp_navbar '.$this->dsp_id().' ('.$this->id.')', $debug-10);
-    $result .= $this->dsp_user($back, $debug-1);
+    log_debug('view_dsp->dsp_navbar '.$this->dsp_id().' ('.$this->id.')');
+    $result .= $this->dsp_user($back);
     $result .= ' ';
     $result .= $this->dsp_logout();
     $result .= '</td>';
@@ -135,12 +135,12 @@ class view_dsp extends view {
   }
 
   // same as dsp_navbar, but without the view change used for the view editors
-  public function dsp_navbar_html_no_view($back, $debug) {
+  public function dsp_navbar_html_no_view($back) {
     $result = '';
 
     $result .= $this->html_navbar_start();
     $result .= '<td align="right">';
-    $result .= $this->dsp_user($back, $debug-1) ;
+    $result .= $this->dsp_user($back) ;
     $result .= $this->dsp_logout();
     $result .= '</td>';
     $result .= $this->html_navbar_end();
@@ -155,7 +155,7 @@ class view_dsp extends view {
   */
 
   // same as dsp_navbar_html, but using bootstrap
-  private function dsp_navbar_bs($show_view, $back, $debug) {
+  private function dsp_navbar_bs($show_view, $back) {
     $result  = '<nav class="navbar bg-light fixed-top">';
     $result .= dsp_logo();
     $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
@@ -165,14 +165,14 @@ class view_dsp extends view {
     $result .= '  <div class="col-sm-2">';
     $result .= '    <ul class="nav navbar-nav">';
     $result .= '      <li class="active">';
-    $result .=          $this->dsp_user($back, $debug-1);
+    $result .=          $this->dsp_user($back);
     $result .= '      </li>';
     $result .= '      <li class="active">';
     $result .=          $this->dsp_logout();
     $result .= '      </li>';
     if ($show_view) {
       $result .= '      <li class="active">';
-      $result .=          $this->dsp_view_name($back, $debug-1);
+      $result .=          $this->dsp_view_name($back);
       $result .=          btn_edit ('adjust the view '.$this->name, '/http/view_edit.php?id='.$this->id.'&word='.$back.'&back='.$back).' ';
       $result .=          btn_add  ('create a new view', '/http/view_add.php?word='.$back.'&back='.$back);
       $result .= '      </li>';
@@ -219,41 +219,41 @@ class view_dsp extends view {
   // show the navigation bar, which allow the user to search, to login or change the settings
   // without javascript this is the top right corner
   // with    javascript this is a bar on the top
-  public function dsp_navbar($back, $debug) {
-    log_debug('view_dsp->dsp_navbar '.$back, $debug-10);
+  public function dsp_navbar($back) {
+    log_debug('view_dsp->dsp_navbar '.$back);
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
-      log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
     } elseif ($this->id <= 0) {  
-      log_err("The display ID (".$this->id.") must be set to display a view.", "view_dsp->dsp_navbar", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The display ID (".$this->id.") must be set to display a view.", "view_dsp->dsp_navbar");
     } else {
       if ($this->name == '') { 
-        $this->load($debug-1);
+        $this->load();
       }
       if (UI_USE_BOOTSTRAP) {
-        $result = $this->dsp_navbar_bs(TRUE, $back, $debug);
+        $result = $this->dsp_navbar_bs(TRUE, $back);
       } else {
-        $result = $this->dsp_navbar_html($back, $debug);
+        $result = $this->dsp_navbar_html($back);
       }
     }
     
-    log_debug('view_dsp->dsp_navbar done', $debug-14);
+    log_debug('view_dsp->dsp_navbar done');
     return $result;
   }
   
   // same as dsp_navbar, but without the view change used for the view editors
-  public function dsp_navbar_no_view($back, $debug) {
+  public function dsp_navbar_no_view($back) {
     $result = '';
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
-      log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
     } else {
       if (UI_USE_BOOTSTRAP) {
-        $result .= $this->dsp_navbar_bs(FALSE, $back, $debug);
+        $result .= $this->dsp_navbar_bs(FALSE, $back);
       } else {
-        $result .= $this->dsp_navbar_html_no_view($back, $debug);
+        $result .= $this->dsp_navbar_html_no_view($back);
       }
     }
     return $result;
@@ -277,8 +277,8 @@ class view_dsp extends view {
   */
 
   // display the history of a view
-  function dsp_hist($page, $size, $call, $back, $debug) {
-    log_debug("view_dsp->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
+  function dsp_hist($page, $size, $call, $back) {
+    log_debug("view_dsp->dsp_hist for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".");
     $result = ''; // reset the html code var
     
     $log_dsp = New user_log_display;
@@ -289,15 +289,15 @@ class view_dsp extends view {
     $log_dsp->size = $size;
     $log_dsp->call = $call;
     $log_dsp->back = $back;
-    $result .= $log_dsp->dsp_hist($debug-1);
+    $result .= $log_dsp->dsp_hist();
     
-    log_debug("view_dsp->dsp_hist -> done", $debug-1);
+    log_debug("view_dsp->dsp_hist -> done");
     return $result;
   }
 
   // display the link history of a view
-  function dsp_hist_links($page, $size, $call, $back, $debug) {
-    log_debug("view_dsp->dsp_hist_links for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".", $debug-10);
+  function dsp_hist_links($page, $size, $call, $back) {
+    log_debug("view_dsp->dsp_hist_links for id ".$this->id." page ".$size.", size ".$size.", call ".$call.", back ".$back.".");
     $result = ''; // reset the html code var
     
     $log_dsp = New user_log_display;
@@ -308,22 +308,22 @@ class view_dsp extends view {
     $log_dsp->size = $size;
     $log_dsp->call = $call;
     $log_dsp->back = $back;
-    $result .= $log_dsp->dsp_hist_links($debug-1);
+    $result .= $log_dsp->dsp_hist_links();
     
-    log_debug("view_dsp->dsp_hist_links -> done", $debug-1);
+    log_debug("view_dsp->dsp_hist_links -> done");
     return $result;
   }
 
   /*
   // create the HTML code to edit a view
-  public function edit($wrd, $debug) {
+  public function edit($wrd) {
     $result = '';
 
     // check the all minimal input parameters are set
     if (!isset($this->usr)) {
-      zu_err("The user id must be set to display a view.", "view_dsp->dsp_navbar", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
     } else {
-      $result  = $this->dsp_user($wrd, $debug-1);
+      $result  = $this->dsp_user($wrd);
       $result .= $this->dsp_logout();
       $result .= '</td>';
       $result .= $this->html_navbar_end();
@@ -332,22 +332,22 @@ class view_dsp extends view {
   }
 */
   // lists of all view components which are used by this view
-  private function linked_components($add_cmp, $wrd, $back, $debug) {
+  private function linked_components($add_cmp, $wrd, $back) {
     $result = '';
     
     if (UI_USE_BOOTSTRAP) { $result .= dsp_tbl_start_hist (); }    
     
     // show the view elements and allow the user to change them
-    log_debug('view_dsp->linked_components load', $debug-1);
-    $cmp_lst = $this->load_components($debug-1);
-    log_debug('view_dsp->linked_components loaded', $debug-1);
+    log_debug('view_dsp->linked_components load');
+    $cmp_lst = $this->load_components();
+    log_debug('view_dsp->linked_components loaded');
     $dsp_list = New dsp_list;
     $dsp_list->lst              = $cmp_lst;
     $dsp_list->id_field         = "view_component_id";
     $dsp_list->script_name      = "view_edit.php";
     $dsp_list->script_parameter = $this->id."&back=".$back."&word=".$wrd->id;
-    $result .= $dsp_list->display($back, $debug-1);
-    log_debug('view_dsp->linked_components displayed', $debug-1);
+    $result .= $dsp_list->display($back);
+    log_debug('view_dsp->linked_components displayed');
     if (UI_USE_BOOTSTRAP) { $result .= '<tr><td>'; }
     
     // check if the add button has been pressed and ask the user what to add
@@ -359,9 +359,9 @@ class view_dsp extends view {
       $sel->form       = 'view_edit';
       $sel->dummy_text = 'Select a view component ...';
       $sel->name       = 'add_view_component';  
-      $sel->sql        = sql_lst_usr ("view_component", $this->usr, $debug-1);
+      $sel->sql        = sql_lst_usr ("view_component", $this->usr);
       $sel->selected   = 0; // no default view component to add defined yet, maybe use the last???
-      $result .= $sel->display ($debug-1);
+      $result .= $sel->display ();
       
       $result .= dsp_form_end('', "/http/view_edit.php?id=".$this->id."&word=".$wrd->id."&back=".$back);
     } elseif ($add_cmp < 0) { 
@@ -371,9 +371,9 @@ class view_dsp extends view {
       $sel->form       = 'view_edit';
       $sel->dummy_text = 'Select a type ...';
       $sel->name       = 'new_entry_type';  
-      $sel->sql        = sql_lst ("view_component_type", $debug-1);
+      $sel->sql        = sql_lst ("view_component_type");
       $sel->selected   = $this->type_id;  // ??? should this not be the default entry type
-      $result .= $sel->display ($debug-1);
+      $result .= $sel->display ();
       $result .= dsp_form_end('', "/http/view_edit.php?id=".$this->id."&word=".$wrd->id."&back=".$back);
     } else { 
       $result .= btn_add("add view component", "/http/view_edit.php?id=".$this->id."&word=".$wrd->id."&add_entry=1&back=".$back."");
@@ -386,7 +386,7 @@ class view_dsp extends view {
   }
   
   // display the type selector
-  private function dsp_type_selector ($script, $class, $attribute, $debug) {
+  private function dsp_type_selector ($script, $class, $attribute) {
     $result = '';
     $sel = New selector;
     $sel->usr        = $this->usr;
@@ -395,15 +395,15 @@ class view_dsp extends view {
     $sel->label      = "View type:";  
     $sel->bs_class   = $class;  
     $sel->attribute  = $attribute;  
-    $sel->sql        = sql_lst("view_type", $debug-1); 
+    $sel->sql        = sql_lst("view_type"); 
     $sel->selected   = $this->type_id;
     $sel->dummy_text = '';
-    $result .= $sel->display ($debug-1);
+    $result .= $sel->display ();
     return $result;
   }
   
   // HTML code to edit all word fields
-  function dsp_edit ($add_cmp, $wrd, $back, $debug) {
+  function dsp_edit ($add_cmp, $wrd, $back) {
     $result = '';
     
     // use the default settings if needed
@@ -411,11 +411,11 @@ class view_dsp extends view {
     
     // the header to add or change a view
     if ($this->id <= 0) {
-      log_debug('view_dsp->dsp_edit create a view', $debug-10);
+      log_debug('view_dsp->dsp_edit create a view');
       $script = "view_add";
       $result .= dsp_text_h2 ('Create a new view (for <a href="/http/view.php?words='.$wrd->id.'">'.$wrd->name.'</a>)');
     } else {
-      log_debug('view_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.')', $debug-10);
+      log_debug('view_dsp->dsp_edit '.$this->dsp_id().' for user '.$this->usr->name.' (called from '.$back.')');
       $script = "view_edit";
       $result .= dsp_text_h2 ('Edit view "'.$this->name.'" (used for <a href="/http/view.php?words='.$wrd->id.'">'.$wrd->name.'</a>)');
     }    
@@ -436,13 +436,13 @@ class view_dsp extends view {
     if ($add_cmp < 0 OR $add_cmp > 0) {
       // show the fields inactive, because the assign fields are active
       $result .= dsp_form_text   ("name", $this->name, "Name:", "col-sm-8", "disabled");
-      $result .= $this->dsp_type_selector($script, "col-sm-4", "disabled", $debug-1);
+      $result .= $this->dsp_type_selector($script, "col-sm-4", "disabled");
       $result .= '</div>';
       $result .= dsp_form_text_big ("comment", $this->comment, "Comment:", "", "disabled");
     } else {
       // show the fields inactive, because the assign fields are active
       $result .= dsp_form_text   ("name", $this->name, "Name:", "col-sm-8");
-      $result .= $this->dsp_type_selector($script, "col-sm-4", "", $debug-1);
+      $result .= $this->dsp_type_selector($script, "col-sm-4", "");
       $result .= '</div>';
       $result .= dsp_form_text_big ("comment", $this->comment, "Comment:");
       $result .= dsp_form_end('', $back, "/http/view_del.php?id=".$this->id."&back=".$back);
@@ -452,16 +452,16 @@ class view_dsp extends view {
     if ($this->id > 0) {
       $result .= '</div>';
       
-      $comp_html = $this->linked_components($add_cmp, $wrd, $back, $debug-1);
+      $comp_html = $this->linked_components($add_cmp, $wrd, $back);
       
       // collect the history
-      $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back, $debug-1);
+      $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
       if (trim($changes) <> "") {
         $hist_html = $changes;
       } else {
         $hist_html = 'Nothing changed yet.';
       }
-      $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back, $debug-1);
+      $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
       if (trim($changes) <> "") {
         $link_html = $changes;
       } else {
@@ -472,9 +472,9 @@ class view_dsp extends view {
       $result .= dsp_link_hist_box ('Components',        $comp_html,
                                     '',                 '',
                                     'Changes',          $hist_html,
-                                    'Component changes', $link_html, $debug-1);
+                                    'Component changes', $link_html);
       
-      log_debug('view_dsp->dsp_edit done', $debug-1);
+      log_debug('view_dsp->dsp_edit done');
     }
     
     $result .= '</div>';   // of row

@@ -36,7 +36,7 @@ if ($debug > 1) {
     echo 'lib loaded<br>';
 }
 
-$db_con = prg_start("user", "", $debug);
+$db_con = prg_start("user");
 
 $result = ''; // reset the html code var
 
@@ -55,28 +55,28 @@ $undo_src = $_GET['undo_source'];
 
 // load the session user parameters
 $usr = new user;
-$result .= $usr->get($debug - 1);
-$dsp_usr = $usr->dsp_user($debug - 1);
+$result .= $usr->get();
+$dsp_usr = $usr->dsp_user();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
-    log_debug("user -> (" . $usr->id . ")", $debug - 1);
+    log_debug("user -> (" . $usr->id . ")");
 
     // prepare the display
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_USER);
     $dsp->usr = $usr;
-    $dsp->load($debug - 1);
+    $dsp->load();
 
     // do user changes
-    $result .= $usr->upd_pars($_GET, $debug - 1);
+    $result .= $usr->upd_pars($_GET);
 
     // undo user changes for values
     if ($undo_val > 0) {
         $val = new value;
         $val->id = $undo_val;
         $val->usr = $usr;
-        $val->del_usr_cfg($debug - 1);
+        $val->del_usr_cfg();
     }
 
     // undo user changes for words
@@ -84,7 +84,7 @@ if ($usr->id > 0) {
         $wrd = new word_dsp;
         $wrd->id = $undo_wrd;
         $wrd->usr = $usr;
-        $wrd->del_usr_cfg($debug - 1);
+        $wrd->del_usr_cfg();
     }
 
     // undo user changes for triples
@@ -92,7 +92,7 @@ if ($usr->id > 0) {
         $lnk = new word_link;
         $lnk->id = $undo_lnk;
         $lnk->usr = $usr;
-        $lnk->del_usr_cfg($debug - 1);
+        $lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
@@ -100,7 +100,7 @@ if ($usr->id > 0) {
         $frm = new formula;
         $frm->id = $undo_frm;
         $frm->usr = $usr;
-        $frm->del_usr_cfg($debug - 1);
+        $frm->del_usr_cfg();
     }
 
     // undo user changes for formula word links
@@ -108,7 +108,7 @@ if ($usr->id > 0) {
         $frm_lnk = new formula_link;
         $frm_lnk->id = $undo_frm_lnk;
         $frm_lnk->usr = $usr;
-        $frm_lnk->del_usr_cfg($debug - 1);
+        $frm_lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
@@ -116,7 +116,7 @@ if ($usr->id > 0) {
         $dsp = new view;
         $dsp->id = $undo_dsp;
         $dsp->usr = $usr;
-        $dsp->del_usr_cfg($debug - 1);
+        $dsp->del_usr_cfg();
     }
 
     // undo user changes for formulas
@@ -124,7 +124,7 @@ if ($usr->id > 0) {
         $cmp = new view_component;
         $cmp->id = $undo_cmp;
         $cmp->usr = $usr;
-        $cmp->del_usr_cfg($debug - 1);
+        $cmp->del_usr_cfg();
     }
 
     // undo user changes for formulas
@@ -132,21 +132,21 @@ if ($usr->id > 0) {
         $cmp_lnk = new view_component_link;
         $cmp_lnk->id = $undo_cmp_lnk;
         $cmp_lnk->usr = $usr;
-        $cmp_lnk->del_usr_cfg($debug - 1);
+        $cmp_lnk->del_usr_cfg();
     }
 
-    $result .= $dsp->dsp_navbar($back, $debug - 1);
-    $result .= $dsp_usr->dsp_edit($back, $debug - 1);
+    $result .= $dsp->dsp_navbar($back);
+    $result .= $dsp_usr->dsp_edit($back);
 
     // allow to import data
-    if ($usr->can_import($debug - 1)) {
+    if ($usr->can_import()) {
         $result .= dsp_text_h2('<br>Data import<br>');
         $result .= dsp_text_h3('<br>Import <a href="/http/import.php">JSON</a><br>');
         $result .= dsp_text_h3('<br>');
     }
 
     // allow admins to test the system consistence
-    if ($usr->is_admin($debug - 1)) {
+    if ($usr->is_admin()) {
         $result .= dsp_text_h2('<br>System testing<br>');
         $result .= dsp_text_h3('<br>Perform all unit <a href="/http/test.php">tests</a><br>');
         $result .= dsp_text_h3('<br>Perform critical unit and integration <a href="/http/test_quick.php">tests</a><br>');
@@ -155,7 +155,7 @@ if ($usr->id > 0) {
     }
 
     // display the user sandbox if there is something in
-    $sandbox = $dsp_usr->dsp_sandbox($back, $debug - 1);
+    $sandbox = $dsp_usr->dsp_sandbox($back);
     if (trim($sandbox) <> "") {
         $result .= dsp_text_h2("Your changes, which are not standard");
         $result .= $sandbox;
@@ -163,7 +163,7 @@ if ($usr->id > 0) {
     }
 
     // display the user changes 
-    $changes = $dsp_usr->dsp_changes(0, SQL_ROW_LIMIT, 1, $back, $debug - 1);
+    $changes = $dsp_usr->dsp_changes(0, SQL_ROW_LIMIT, 1, $back);
     if (trim($changes) <> "") {
         $result .= dsp_text_h2("Your latest changes");
         $result .= $changes;
@@ -171,7 +171,7 @@ if ($usr->id > 0) {
     }
 
     // display the program issues that the user has found if there are some
-    $errors = $dsp_usr->dsp_errors("", SQL_ROW_LIMIT, 1, $back, $debug - 1);
+    $errors = $dsp_usr->dsp_errors("", SQL_ROW_LIMIT, 1, $back);
     if (trim($errors) <> "") {
         $result .= dsp_text_h2("Program issues that you found, that have not yet been solved.");
         $result .= $errors;
@@ -180,7 +180,7 @@ if ($usr->id > 0) {
 
     // display all program issues if the user is an admin
     if ($usr->profile_id == cl(DBL_USER_ADMIN)) {
-        $errors_all = $dsp_usr->dsp_errors("other", SQL_ROW_LIMIT, 1, $back, $debug - 1);
+        $errors_all = $dsp_usr->dsp_errors("other", SQL_ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;
@@ -199,4 +199,4 @@ $result .= btn_back($back);
 echo $result;
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);

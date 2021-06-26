@@ -211,13 +211,13 @@ function dsp_text_h3 ($title, $style = '') {
 }
 
 // after simple add views e.g. for a value automatically go back to the calling page
-function dsp_go_back($back, $usr, $debug) {
-  log_debug('dsp_go_back('.$back.')', $debug-20);
+function dsp_go_back($back, $usr) {
+  log_debug('dsp_go_back('.$back.')');
 
   $result = '';
 
   if ($back == '') {
-    log_err("Internal error: go back page missing.", "dsp_header->dsp_go_back", '', (new Exception)->getTraceAsString(), $this->usr);
+    log_err("Internal error: go back page missing.", "dsp_header->dsp_go_back");
     header("Location: view.php?words=1"); // go back to the fallback page
   } else {
     if (is_numeric($back)) {
@@ -253,7 +253,7 @@ function dsp_err ($err_text) {
 }
 
 // display a list of elements
-function dsp_list ($item_lst, $item_type, $debug) {
+function dsp_list ($item_lst, $item_type) {
   $result  = "";
 
   $edit_script = $item_type."_edit.php";
@@ -271,7 +271,7 @@ function dsp_list ($item_lst, $item_type, $debug) {
 function dsp_link_hist_box ($comp_name, $comp_html, 
                             $nbrs_name, $nbrs_html, 
                             $hist_name, $hist_html, 
-                            $link_name, $link_html, $debug) {
+                            $link_name, $link_html) {
                    
   $result  = "";
   
@@ -330,8 +330,8 @@ function dsp_link_hist_box ($comp_name, $comp_html,
 // -----------------------
 
 // simply to display a single word in a table as a header
-function dsp_tbl_head ($link_name, $debug) {
-  log_debug('dsp_tbl_head', $debug-20);
+function dsp_tbl_head ($link_name) {
+  log_debug('dsp_tbl_head');
   $result  = '    <th>'."\n";
   $result .= '      '.$link_name."\n";
   $result .= '    </th>'."\n";
@@ -339,8 +339,8 @@ function dsp_tbl_head ($link_name, $debug) {
 }
 
 // simply to display a single word in a table as a header
-function dsp_tbl_head_right ($link_name, $debug) {
-  log_debug('dsp_tbl_head_right', $debug-20);
+function dsp_tbl_head_right ($link_name) {
+  log_debug('dsp_tbl_head_right');
   $result  = '    <th align="right">'."\n";
   $result .= '      '.$link_name."\n";
   $result .= '    </th>'."\n";

@@ -34,54 +34,57 @@
   
 */
 
-class batch_job_list {
+class batch_job_list
+{
 
-  public $lst          = array(); // list of the batch jobs e.g. calculation requests
-  public $usr          = NULL;  // the user who has done the request and whose data needs to be updated
-  public $cut_off_time = Null;    //
-  
-  
-  // add another job to the list, but only if needed
-  function add($job, $debug) {
-    $result = '';
-    log_debug('batch_job_list->add', $debug-18);
-    
-    // check if the job to add has all needed parameters
-    if (!isset($job->frm)) {
-      log_err('Job '.$job->dsp_id().' cannot be added, because formula is missing.','batch_job_list->add', '', (new Exception)->getTraceAsString(), $this->usr);
-    } elseif (!isset($job->phr_lst)) {
-      log_err('Job '.$job->dsp_id().' cannot be added, because no words or triples are defined.','batch_job_list->add', '', (new Exception)->getTraceAsString(), $this->usr);
-    } else {
+    public $lst = array(); // list of the batch jobs e.g. calculation requests
+    public $usr = NULL;  // the user who has done the request and whose data needs to be updated
+    public $cut_off_time = Null;    //
 
-      // check if a similar job is already in the list
-      $found = false;
-      // build the
-      $chk_phr_lst_ids = array();
-      foreach ($this->lst AS $chk_job) {
-        $chk_phr_lst_ids = $chk_job->phr_lst->id($debug-1);
-      }  
-      foreach ($this->lst AS $chk_job) {
-        if ($chk_job->frm == $job->frm) {
-          if ($chk_job->usr == $job->usr) {
-            if (in_array($chk_job->phr_lst->id($debug-1),$chk_phr_lst_ids)) {
-              $found = true;
+
+    // add another job to the list, but only if needed
+    function add($job)
+    {
+        $result = '';
+        log_debug('batch_job_list->add');
+
+        // check if the job to add has all needed parameters
+        if (!isset($job->frm)) {
+            log_err('Job ' . $job->dsp_id() . ' cannot be added, because formula is missing.', 'batch_job_list->add');
+        } elseif (!isset($job->phr_lst)) {
+            log_err('Job ' . $job->dsp_id() . ' cannot be added, because no words or triples are defined.', 'batch_job_list->add');
+        } else {
+
+            // check if a similar job is already in the list
+            $found = false;
+            // build the
+            $chk_phr_lst_ids = array();
+            foreach ($this->lst as $chk_job) {
+                $chk_phr_lst_ids = $chk_job->phr_lst->id();
             }
-          }
+            foreach ($this->lst as $chk_job) {
+                if ($chk_job->frm == $job->frm) {
+                    if ($chk_job->usr == $job->usr) {
+                        if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
+                            $found = true;
+                        }
+                    }
+                }
+            }
+            if (!$found) {
+                $this->lst[] = $job;
+                $result = 1;
+            }
         }
-      }
-      if (!$found) {
-        $this->lst[] = $job;
-        $result = 1;
-      }  
+        log_debug('batch_job_list->add done');
+        return $result;
     }
-    log_debug('batch_job_list->add done', $debug-18);
-    return $result;
-  }
-    
-  function merge($job_lst, $debug) {
-    foreach ($job_lst->lst AS $job) {
-      $this->add($job, $debug-1);
+
+    function merge($job_lst)
+    {
+        foreach ($job_lst->lst as $job) {
+            $this->add($job);
+        }
     }
-  }
-  
+
 }

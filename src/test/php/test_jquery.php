@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
-$db_con = prg_start("start test.php", "", $debug-10);
+$db_con = prg_start("start test.php");
 
 /*
 
@@ -95,7 +95,7 @@ xmlhttp.send();
 mysqli_free_result($result);
 
 // Closing connection
-zu_end($db_con, $debug);
+zu_end($db_con);
 
       source: words
       source: "https://zukunft.com/http/get_json.php"

@@ -57,7 +57,7 @@ class view_component extends user_sandbox
 
     function __construct()
     {
-        $this->type = user_sandbox::TYPE_NAMED;
+        $this->obj_type = user_sandbox::TYPE_NAMED;
         $this->obj_name = 'view_component';
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
@@ -96,7 +96,6 @@ class view_component extends user_sandbox
         if ($db_row != null) {
             if ($db_row['view_component_id'] > 0) {
                 $this->id = $db_row['view_component_id'];
-                $this->owner_id = $db_row['user_id'];
                 $this->name = $db_row['view_component_name'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_component_type_id'];
@@ -108,6 +107,7 @@ class view_component extends user_sandbox
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_component_id'];
+                    $this->owner_id = $db_row['user_id'];
                     //$this->share_id = $db_row['share_type_id'];
                     //$this->protection_id = $db_row['protection_type_id'];
                 } else {
@@ -123,100 +123,87 @@ class view_component extends user_sandbox
     }
 
     // load the view component parameters for all users
-    function load_standard($debug)
+    function load_standard(): bool
     {
-
         global $db_con;
-        $result = '';
+        $result = false;
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row','link_type_id','formula_id','word_id_col','word_id_col2','excluded'));
+        $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_cmp = $db_con->get1($sql, $debug - 5);
+            $db_cmp = $db_con->get1($sql);
             $this->row_mapper($db_cmp);
-            if ($this->id > 0) {
-
-                // TODO try to avoid using load_test_user
-                if ($this->owner_id > 0) {
-                    $usr = new user;
-                    $usr->id = $this->owner_id;
-                    $usr->load_test_user($debug - 1);
-                    $this->usr = $usr;
-                } else {
-                    // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                    $sql_set = "UPDATE view_components SET user_id = " . $this->usr->id . " WHERE view_component_id = " . $this->id . ";";
-                    $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "view_component->load_standard", (new Exception)->getTraceAsString(), $debug - 10);
-                    //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
-                }
-
-                $this->load_phrases($debug - 1);
+            $result = $this->load_owner();
+            if ($result) {
+                $result = $this->load_phrases();
             }
         }
         return $result;
     }
 
     // load the missing view component parameters from the database
-    function load($debug)
+    function load(): bool
     {
-        log_debug('view_component->load', $debug);
+        log_debug('view_component->load');
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         // check the minimal input parameters
         if (!isset($this->usr)) {
-            log_err("The user id must be set to load a view component.", "view_component->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The user id must be set to load a view component.", "view_component->load");
         } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to find a display item.", "view_component->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to find a display item.", "view_component->load");
         } else {
 
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
             $db_con->set_usr($this->usr->id);
             $db_con->set_join_usr_fields(array('code_id'), 'view_component_type');
             $db_con->set_fields(array('comment'));
-            $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row','link_type_id','formula_id','word_id_col','word_id_col2','excluded'));
+            $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
             $db_con->set_where($this->id, $this->name);
             $sql = $db_con->select();
 
             if ($db_con->get_where() <> '') {
-                $db_item = $db_con->get1($sql, $debug - 5);
+                $db_item = $db_con->get1($sql);
                 //zu_debug('view_component->level-22 '.$debug.' done.', 10);
-                log_debug('view_component->load with ' . $sql, $debug - 10);
+                log_debug('view_component->load with ' . $sql);
                 //zu_debug('view_component->level-2 '.$debug.' done.', 10);
                 $this->row_mapper($db_item, true);
                 if ($this->id > 0) {
-                    $this->load_phrases($debug - 1);
-                    log_debug('view_component->load of ' . $this->dsp_id() . ' done', $debug - 16);
+                    $this->load_phrases();
+                    log_debug('view_component->load of ' . $this->dsp_id() . ' done');
+                    $result = true;
                 }
             }
         }
-        log_debug('view_component->load of ' . $this->dsp_id() . ' quit', $debug - 14);
+        log_debug('view_component->load of ' . $this->dsp_id() . ' quit');
         return $result;
     }
 
     // load the related word and formula objects
-    function load_phrases($debug)
+    function load_phrases()
     {
-        $this->load_wrd_row($debug - 1);
-        $this->load_wrd_col($debug - 1);
-        $this->load_wrd_col2($debug - 1);
-        $this->load_formula($debug - 1);
-        log_debug('view_component->load_phrases done for ' . $this->dsp_id(), $debug - 18);
+        $this->load_wrd_row();
+        $this->load_wrd_col();
+        $this->load_wrd_col2();
+        $this->load_formula();
+        log_debug('view_component->load_phrases done for ' . $this->dsp_id());
     }
 
     //
-    function load_wrd_row($debug)
+    function load_wrd_row()
     {
         $result = '';
         if ($this->word_id_row > 0) {
             $wrd_row = new word_dsp;
             $wrd_row->id = $this->word_id_row;
             $wrd_row->usr = $this->usr;
-            $wrd_row->load($debug - 1);
+            $wrd_row->load();
             $this->wrd_row = $wrd_row;
             $result = $wrd_row->name;
         }
@@ -224,14 +211,14 @@ class view_component extends user_sandbox
     }
 
     //
-    function load_wrd_col($debug)
+    function load_wrd_col()
     {
         $result = '';
         if ($this->word_id_col > 0) {
             $wrd_col = new word_dsp;
             $wrd_col->id = $this->word_id_col;
             $wrd_col->usr = $this->usr;
-            $wrd_col->load($debug - 1);
+            $wrd_col->load();
             $this->wrd_col = $wrd_col;
             $result = $wrd_col->name;
         }
@@ -239,14 +226,14 @@ class view_component extends user_sandbox
     }
 
     //
-    function load_wrd_col2($debug)
+    function load_wrd_col2()
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word_dsp;
             $wrd_col2->id = $this->word_id_col2;
             $wrd_col2->usr = $this->usr;
-            $wrd_col2->load($debug - 1);
+            $wrd_col2->load();
             $this->wrd_col2 = $wrd_col2;
             $result = $wrd_col2->name;
         }
@@ -254,14 +241,14 @@ class view_component extends user_sandbox
     }
 
     //
-    function load_formula($debug)
+    function load_formula()
     {
         $result = '';
         if ($this->formula_id > 0) {
             $frm = new formula;
             $frm->id = $this->formula_id;
             $frm->usr = $this->usr;
-            $frm->load($debug - 1);
+            $frm->load();
             $this->frm = $frm;
             $result = $frm->name;
         }
@@ -269,14 +256,14 @@ class view_component extends user_sandbox
     }
 
     // list of all view ids that are directly assigned to this view component
-    function assign_dsp_ids($debug)
+    function assign_dsp_ids()
     {
 
         global $db_con;
         $result = array();
 
         if ($this->id > 0 and isset($this->usr)) {
-            log_debug('view_component->assign_dsp_ids for view_component "' . $this->id . '" and user "' . $this->usr->name . '"', $debug - 12);
+            log_debug('view_component->assign_dsp_ids for view_component "' . $this->id . '" and user "' . $this->usr->name . '"');
             // this sql is similar to the load statement in view_links.php, maybe combine
             $sql = "SELECT l.view_component_link_id,
                      u.view_component_link_id AS user_link_id,
@@ -292,23 +279,23 @@ class view_component extends user_sandbox
                WHERE l.view_component_id = " . $this->id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($sql, $debug - 9);
+            $db_lst = $db_con->get($sql);
             foreach ($db_lst as $db_row) {
-                log_debug('view_component->assign_dsp_ids -> check exclusion ', $debug - 16);
+                log_debug('view_component->assign_dsp_ids -> check exclusion ');
                 if (is_null($db_row['excluded']) or $db_row['excluded'] == 0) {
                     $result[] = $db_row['view_id'];
                 }
             }
-            log_debug('view_component->assign_dsp_ids -> number of views ' . count($result), $debug - 10);
+            log_debug('view_component->assign_dsp_ids -> number of views ' . count($result));
         } else {
-            log_err("The user id must be set to list the view_component links.", "view_component->assign_dsp_ids", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The user id must be set to list the view_component links.", "view_component->assign_dsp_ids");
         }
 
         return $result;
     }
 
     // return the html code to display a view name with the link
-    function name_linked($back, $debug)
+    function name_linked($back)
     {
         $result = '';
 
@@ -318,9 +305,9 @@ class view_component extends user_sandbox
     }
 
     //
-    function type_name($debug)
+    function type_name()
     {
-        log_debug('view_component->type_name do', $debug - 16);
+        log_debug('view_component->type_name do');
 
         global $db_con;
 
@@ -330,27 +317,27 @@ class view_component extends user_sandbox
                WHERE view_component_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql, $debug - 5);
+            $db_type = $db_con->get1($sql);
             $this->type_name = $db_type['type_name'];
         }
-        log_debug('view_component->type_name done', $debug - 16);
+        log_debug('view_component->type_name done');
         return $this->type_name;
     }
 
     // create an object for the export
-    function export_obj($debug)
+    function export_obj()
     {
-        log_debug('view_component->export_obj ' . $this->dsp_id(), $debug - 10);
+        log_debug('view_component->export_obj ' . $this->dsp_id());
         $result = new view_component();
 
         // add the component parameters
-        $this->load_phrases($debug - 1);
+        $this->load_phrases();
         if ($this->order_nbr >= 0) {
             $result->pos = $this->order_nbr;
         }
         $result->name = $this->name;
-        if ($this->type_name($debug - 1) <> '') {
-            $result->type = $this->type_name($debug - 1);
+        if ($this->type_name() <> '') {
+            $result->obj_type = $this->type_name();
         }
         if ($this->code_id <> '') {
             $result->code_id = $this->code_id;
@@ -368,12 +355,12 @@ class view_component extends user_sandbox
             $result->comment = $this->comment;
         }
 
-        log_debug('view_component->export_obj -> ' . json_encode($result), $debug - 18);
+        log_debug('view_component->export_obj -> ' . json_encode($result));
         return $result;
     }
 
     // import a view from an object
-    function import_obj($debug)
+    function import_obj()
     {
     }
 
@@ -384,7 +371,7 @@ class view_component extends user_sandbox
     */
 
     // display the unique id fields
-    function dsp_id()
+    function dsp_id(): string
     {
         $result = '';
 
@@ -402,21 +389,21 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    function name($debug)
+    function name()
     {
         $result = '"' . $this->name . '"';
         return $result;
     }
 
     // not used at the moment
-    /*  private function link_type_name($debug) {
+    /*  private function link_type_name() {
         if ($this->type_id > 0) {
           $sql = "SELECT view_component_type_name
                     FROM view_component_types
                    WHERE view_component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
           $db_con->usr_id = $this->usr->id;
-          $db_type = $db_con->get1($sql, $debug-5);
+          $db_type = $db_con->get1($sql);
           $this->type_name = $db_type['type_name'];
         }
         return $this->type_name;
@@ -429,14 +416,14 @@ class view_component extends user_sandbox
     */
 
     // returns the next free order number for a new view component
-    function next_nbr($view_id, $debug)
+    function next_nbr($view_id)
     {
-        log_debug('view_component->next_nbr for view "' . $view_id . '"', $debug - 10);
+        log_debug('view_component->next_nbr for view "' . $view_id . '"');
 
         global $db_con;
 
         if ($view_id == '' or $view_id == Null or $view_id == 0) {
-            log_err('Cannot get the next position, because the view_id is not set', 'view_component->next_nbr', '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err('Cannot get the next position, because the view_id is not set', 'view_component->next_nbr');
         } else {
             $sql = " SELECT max(m.order_nbr) AS max_order_nbr
                 FROM ( SELECT IF(u.order_nbr IS NULL,     l.order_nbr,     u.order_nbr)     AS order_nbr
@@ -446,7 +433,7 @@ class view_component extends user_sandbox
                         WHERE l.view_id = " . $view_id . " ) AS m;";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql, $debug - 5);
+            $db_row = $db_con->get1($sql);
             $result = $db_row["max_order_nbr"];
 
             // if nothing is found, assume one as the next free number
@@ -457,14 +444,14 @@ class view_component extends user_sandbox
             }
         }
 
-        log_debug("view_component->next_nbr -> (" . $result . ")", $debug - 10);
+        log_debug("view_component->next_nbr -> (" . $result . ")");
         return $result;
     }
 
     // set the log entry parameters for a value update
-    function log_link($dsp, $debug)
+    function log_link($dsp)
     {
-        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->usr->id, $debug - 10);
+        log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->usr->id);
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = 'add';
@@ -472,16 +459,16 @@ class view_component extends user_sandbox
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id;
-        $result = $log->add_link_ref($debug - 1);
+        $result = $log->add_link_ref();
 
-        log_debug('view_component -> link logged ' . $log->id . '', $debug - 10);
+        log_debug('view_component -> link logged ' . $log->id . '');
         return $result;
     }
 
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
-    function log_unlink($dsp, $debug)
+    function log_unlink($dsp)
     {
-        log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->usr->id, $debug - 10);
+        log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->usr->id);
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = 'del';
@@ -489,16 +476,16 @@ class view_component extends user_sandbox
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id;
-        $result = $log->add_link_ref($debug - 1);
+        $result = $log->add_link_ref();
 
-        log_debug('view_component -> unlink logged ' . $log->id, $debug - 14);
+        log_debug('view_component -> unlink logged ' . $log->id);
         return $result;
     }
 
     // link a view component to a view
-    function link($dsp, $order_nbr, $debug)
+    function link($dsp, $order_nbr)
     {
-        log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr, $debug - 10);
+        log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
         $result = '';
 
         $dsp_lnk = new view_component_link;
@@ -508,7 +495,7 @@ class view_component extends user_sandbox
         $dsp_lnk->order_nbr = $order_nbr;
         $dsp_lnk->pos_type_id = 1; // to be reviewed
         $result = '';
-        $result .= $dsp_lnk->save($debug - 1);
+        $result .= $dsp_lnk->save();
 
         return $result;
     }
@@ -516,33 +503,33 @@ class view_component extends user_sandbox
     // remove a view component from a view
     // to do: check if the view component is not linked anywhere else
     // and if yes, delete the view component after confirmation
-    function unlink($dsp, $debug)
+    function unlink($dsp)
     {
         $result = '';
 
         if (isset($dsp) and isset($this->usr)) {
-            log_debug('view_component->unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')', $debug - 10);
+            log_debug('view_component->unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
             $dsp_lnk = new view_component_link;
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
             $dsp_lnk->usr = $this->usr;
-            $result .= $dsp_lnk->del($debug - 1);
+            $result .= $dsp_lnk->del();
         } else {
-            $result .= log_err("Cannot unlink view component, because view is not set.", "view_component.php", '', (new Exception)->getTraceAsString(), $this->usr);
+            $result .= log_err("Cannot unlink view component, because view is not set.", "view_component.php");
         }
 
         return $result;
     }
 
     // create a database record to save user specific settings for this view_component
-    function add_usr_cfg($debug)
+    function add_usr_cfg()
     {
 
         global $db_con;
         $result = '';
 
         if (!$this->has_usr_cfg) {
-            log_debug('view_component->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 10);
+            log_debug('view_component->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record
             $sql = 'SELECT user_id 
@@ -551,12 +538,12 @@ class view_component extends user_sandbox
                  AND user_id = ' . $this->usr->id . ';';
             //$db_con = New mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql, $debug - 10);
+            $db_row = $db_con->get1($sql);
             $usr_db_id = $db_row['user_id'];
             if ($usr_db_id <= 0) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT);
-                $log_id = $db_con->insert(array('view_component_id', 'user_id'), array($this->id, $this->usr->id), $debug - 10);
+                $log_id = $db_con->insert(array('view_component_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     $result .= 'Insert of user_view_component failed.';
                 }
@@ -566,9 +553,9 @@ class view_component extends user_sandbox
     }
 
     // check if the database record for the user specific settings can be removed
-    function del_usr_cfg_if_not_needed($debug)
+    function del_usr_cfg_if_not_needed()
     {
-        log_debug('view_component->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 12);
+        log_debug('view_component->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = '';
@@ -591,8 +578,8 @@ class view_component extends user_sandbox
                  AND user_id = " . $this->usr->id . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql, $debug - 5);
-        log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')', $debug - 12);
+        $usr_cfg = $db_con->get1($sql);
+        log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg['view_component_id'] > 0) {
             if ($usr_cfg['comment'] == ''
                 and $usr_cfg['view_component_type_id'] == Null
@@ -603,8 +590,8 @@ class view_component extends user_sandbox
                 and $usr_cfg['word_id_col2'] == Null
                 and $usr_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 10);
-                $result .= $this->del_usr_cfg_exe($db_con, $debug - 10);
+                log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                $result .= $this->del_usr_cfg_exe($db_con);
             }
         }
         //}
@@ -612,133 +599,141 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the view component comment
-    function save_field_comment($db_con, $db_rec, $std_rec, $debug)
+    function save_field_comment($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->comment <> $this->comment) {
-            $log = $this->log_upd($debug - 1);
+            $log = $this->log_upd();
             $log->old_value = $db_rec->comment;
             $log->new_value = $this->comment;
             $log->std_value = $std_rec->comment;
             $log->row_id = $this->id;
             $log->field = 'comment';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec, $debug)
+    function save_field_type($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->type_name($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->type_name();
             $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name($debug - 1);
+            $log->new_value = $this->type_name();
             $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name($debug - 1);
+            $log->std_value = $std_rec->type_name();
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
             $log->field = 'view_component_type_id';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the word row
-    function save_field_wrd_row($db_con, $db_rec, $std_rec, $debug)
+    function save_field_wrd_row($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->word_id_row <> $this->word_id_row) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->load_wrd_row($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->load_wrd_row();
             $log->old_id = $db_rec->word_id_row;
-            $log->new_value = $this->load_wrd_row($debug - 1);
+            $log->new_value = $this->load_wrd_row();
             $log->new_id = $this->word_id_row;
-            $log->std_value = $std_rec->load_wrd_row($debug - 1);
+            $log->std_value = $std_rec->load_wrd_row();
             $log->std_id = $std_rec->word_id_row;
             $log->row_id = $this->id;
             $log->field = 'word_id_row';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the word col
-    function save_field_wrd_col($db_con, $db_rec, $std_rec, $debug)
+    function save_field_wrd_col($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->word_id_col <> $this->word_id_col) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->load_wrd_col($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->load_wrd_col();
             $log->old_id = $db_rec->word_id_col;
-            $log->new_value = $this->load_wrd_col($debug - 1);
+            $log->new_value = $this->load_wrd_col();
             $log->new_id = $this->word_id_col;
-            $log->std_value = $std_rec->load_wrd_col($debug - 1);
+            $log->std_value = $std_rec->load_wrd_col();
             $log->std_id = $std_rec->word_id_col;
             $log->row_id = $this->id;
             $log->field = 'word_id_col';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the word col2
-    function save_field_wrd_col2($db_con, $db_rec, $std_rec, $debug)
+    function save_field_wrd_col2($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->load_wrd_col2($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->load_wrd_col2();
             $log->old_id = $db_rec->word_id_col2;
-            $log->new_value = $this->load_wrd_col2($debug - 1);
+            $log->new_value = $this->load_wrd_col2();
             $log->new_id = $this->word_id_col2;
-            $log->std_value = $std_rec->load_wrd_col2($debug - 1);
+            $log->std_value = $std_rec->load_wrd_col2();
             $log->std_id = $std_rec->word_id_col2;
             $log->row_id = $this->id;
             $log->field = 'word_id_col2';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the formula
-    function save_field_formula($db_con, $db_rec, $std_rec, $debug)
+    function save_field_formula($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->formula_id <> $this->formula_id) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->load_formula($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->load_formula();
             $log->old_id = $db_rec->formula_id;
-            $log->new_value = $this->load_formula($debug - 1);
+            $log->new_value = $this->load_formula();
             $log->new_id = $this->formula_id;
-            $log->std_value = $std_rec->load_formula($debug - 1);
+            $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
             $log->row_id = $this->id;
             $log->field = 'formula_id';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // save all updated view_component fields excluding the name, because already done when adding a view_component
-    function save_fields($db_con, $db_rec, $std_rec, $debug)
+    function save_fields($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
-        log_debug('view_component->save_fields for ' . $std_rec->dsp_id(), $debug - 18);
-
-        $result .= $this->save_field_comment($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_wrd_col($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_wrd_col2($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_formula($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $debug - 1);
-        log_debug('view_component->save_fields all fields for ' . $this->dsp_id() . ' has been saved', $debug - 12);
+        $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
+        if ($result) {
+            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_wrd_col($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_wrd_col2($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_formula($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        }
+        log_debug('view_component->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 
 }
 
-?>

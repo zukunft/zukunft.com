@@ -38,7 +38,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database 
-$db_con = prg_start("view", "", $debug);
+$db_con = prg_start("view");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
@@ -46,7 +46,7 @@ $db_con = prg_start("view", "", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -56,10 +56,10 @@ $db_con = prg_start("view", "", $debug);
     $wrd = New word_dsp;
     $wrd->usr = $usr;
     if (isset($_GET['words'])) {
-      $wrd->main_wrd_from_txt($_GET['words'], $debug-1);
+      $wrd->main_wrd_from_txt($_GET['words']);
     } else {  
       // get last word used by the user or a default value
-      $wrd = $usr->last_wrd($debug-1);
+      $wrd = $usr->last_wrd();
     }
 
     // select the view
@@ -67,7 +67,7 @@ $db_con = prg_start("view", "", $debug);
       // if the user has changed the view for this word, save it
       if (isset($_GET['new_id'])) {
         $view_id = $_GET['new_id'];
-        $wrd->save_view($view_id, $debug-1);
+        $wrd->save_view($view_id);
       } else {  
         // if the user has selected a special view, use it
         if (isset($_GET['view'])) {
@@ -77,7 +77,7 @@ $db_con = prg_start("view", "", $debug);
           $view_id = $wrd->view_id;
           if ($view_id <= 0) {
             // if any user has set a view for this word, use the common view
-            $view_id = $wrd->view_id($debug-1);
+            $view_id = $wrd->view_id();
             if ($view_id <= 0) {
               // if no one has set a view for this word, use the fallback view
               $view_id = cl(DBL_VIEW_WORD);
@@ -91,15 +91,15 @@ $db_con = prg_start("view", "", $debug);
         $dsp = new view_dsp;
         $dsp->id = $view_id;
         $dsp->usr = $usr;
-        $dsp->load($debug-1);
-        $dsp_text = $dsp->display($wrd, $back, $debug-1);
+        $dsp->load();
+        $dsp_text = $dsp->display($wrd, $back);
         
         // use a fallback if the view is empty
         if ($dsp_text == '' OR $dsp->name == '') {
           $view_id = cl(DEFAULT_VIEW);
           $dsp->id = $view_id;
-          $dsp->load($debug-1);
-          $dsp_text = $dsp->display($wrd, $back, $debug-1);
+          $dsp->load();
+          $dsp_text = $dsp->display($wrd, $back);
         }
         if ($dsp_text == '') {
           $result .= 'Please add a component to the view by clicking on Edit on the top right.';  
@@ -117,4 +117,4 @@ $db_con = prg_start("view", "", $debug);
 
   echo $result;
 // close the database  
-prg_end($db_con, $debug);
+prg_end($db_con);

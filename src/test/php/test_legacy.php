@@ -26,32 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_legacy_test ($debug = 0) {
+function run_legacy_test () {
 
   global $exe_start_time;
-
-  test_header('Test sql base functions');
-
-  // test sf (Sql Formatting) function
-  $text = "'4'";
-  $target = "4";
-  $result = sf($text);
-  $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-  $text = "four";
-  $target = "'four'";
-  $result = sf($text);
-  $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-  $text = "'four'";
-  $target = "'four'";
-  $result = sf($text);
-  $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-  $text = " ";
-  $target = "NULL";
-  $result = sf($text);
-  $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   /*
   echo "<h2>check word groups</h2><br>";
@@ -71,7 +48,7 @@ function run_legacy_test ($debug = 0) {
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
   $target = TV_NESN_SALES_2016;
-  $result = zuc_get_formula($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuc_get_formula($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num_value
@@ -80,7 +57,7 @@ function run_legacy_test ($debug = 0) {
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
   $target = 5;
-  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num_value
@@ -89,7 +66,7 @@ function run_legacy_test ($debug = 0) {
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
   $target = 5;
-  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num_value
@@ -98,7 +75,7 @@ function run_legacy_test ($debug = 0) {
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
   $target = TV_NESN_SALES_2016;
-  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num_value
@@ -107,7 +84,7 @@ function run_legacy_test ($debug = 0) {
   $context_word_lst[] = $word_nesn;
   $time_word_id = $word_2016;
   $target = TV_NESN_SALES_2016;
-  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test if zuf_2num still does a simple calculation
@@ -116,7 +93,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array();
   $time_word_id = 0;
   $target = 4;
-  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -125,7 +102,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array();
   $time_word_id = 0;
   $target = 3;
-  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -134,7 +111,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array();
   $time_word_id = 0;
   $target = 2;
-  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -143,7 +120,7 @@ function run_legacy_test ($debug = 0) {
   $target = 1;
   $word_array = array($word_nesn);
   $time_word_id = $word_2016;
-  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -153,7 +130,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array($word_abb,$word_revenues);
   $time_word_id = 0;
   $debug = false;
-  $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -163,7 +140,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array($word_abb,$word_revenues);
   $time_word_id = 0;
   $debug = false;
-  $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -173,7 +150,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array($word_abb,$word_revenues);
   $time_word_id = 0;
   $debug = false;
-  $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -182,7 +159,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array($word_abb,$word_revenues);
   $time_word_id = 0;
   $debug = false;
-  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula with id ".$frm_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuf_2num
@@ -191,7 +168,7 @@ function run_legacy_test ($debug = 0) {
   $word_array = array($word_abb,$word_revenues);
   $time_word_id = 0;
   $debug = false;
-  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id, $debug);
+  $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
   $exe_start_time = test_show_result(", zuf_2num: the result for formula with id ".$frm_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test zuc_has_operator
@@ -273,25 +250,25 @@ function run_legacy_test ($debug = 0) {
 
 
   // reserved word types: at least one word of the each reserved type must exist for proper usage, but there may exist several alias
-  /*$word_other        = zu_sql_get_id ("word",    "other",       $debug); test_show_db_id("Word other",        $word_other);
-  $word_next         = zu_sql_get_id ("word",    "other",       $debug); test_show_db_id("Word ABB",          $word_abb);
-  $word_this         = zu_sql_get_id ("word",    "other",       $debug); test_show_db_id("Word ABB",          $word_abb);
-  $word_previous     = zu_sql_get_id ("word",    "other",       $debug); test_show_db_id("Word ABB",          $word_abb);
+  /*$word_other        = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word other",        $word_other);
+  $word_next         = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word ABB",          $word_abb);
+  $word_this         = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word ABB",          $word_abb);
+  $word_previous     = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word ABB",          $word_abb);
   */
   // testing words
-  $word_abb          = zu_sql_get_id ("word",    TW_ABB,         $debug); test_show_db_id("Word ABB",          $word_abb);
-  $word_nesn         = zu_sql_get_id ("word",    TW_NESN,        $debug); test_show_db_id("Word Nestlé",       $word_nesn);
-  $word_country      = zu_sql_get_id ("word",    "Country",      $debug); test_show_db_id("Word Country",      $word_country);
-  $word_ch           = zu_sql_get_id ("word",    "Switzerland",  $debug); test_show_db_id("Word Switzerland",  $word_ch);
-  $word_revenues     = zu_sql_get_id ("word",    TW_SALES,       $debug); test_show_db_id("Word Sales",        $word_revenues);
-  $word_2013         = zu_sql_get_id ("word",    TW_2013,        $debug); test_show_db_id("Word 2013",         $word_2013);
-  $word_2014         = zu_sql_get_id ("word",    TW_2014,        $debug); test_show_db_id("Word 2014",         $word_2014);
-  $word_2016         = zu_sql_get_id ("word",    TW_2016,        $debug); test_show_db_id("Word 2016",         $word_2016);
-  $word_mio          = zu_sql_get_id ("word",    TW_M,           $debug); test_show_db_id("Word mio",          $word_mio);
-  $word_percent      = zu_sql_get_id ("word",    TW_PCT,         $debug); test_show_db_id("Word percent",      $word_percent);
-  $word_CHF          = zu_sql_get_id ("word",    TW_CHF,         $debug); test_show_db_id("Word CHF",          $word_CHF);
+  $word_abb          = zu_sql_get_id ("word",    TW_ABB         ); test_show_db_id("Word ABB",          $word_abb);
+  $word_nesn         = zu_sql_get_id ("word",    TW_NESN        ); test_show_db_id("Word Nestlé",       $word_nesn);
+  $word_country      = zu_sql_get_id ("word",    "Country"      ); test_show_db_id("Word Country",      $word_country);
+  $word_ch           = zu_sql_get_id ("word",    "Switzerland"  ); test_show_db_id("Word Switzerland",  $word_ch);
+  $word_revenues     = zu_sql_get_id ("word",    TW_SALES       ); test_show_db_id("Word Sales",        $word_revenues);
+  $word_2013         = zu_sql_get_id ("word",    TW_2013        ); test_show_db_id("Word 2013",         $word_2013);
+  $word_2014         = zu_sql_get_id ("word",    TW_2014        ); test_show_db_id("Word 2014",         $word_2014);
+  $word_2016         = zu_sql_get_id ("word",    TW_2016        ); test_show_db_id("Word 2016",         $word_2016);
+  $word_mio          = zu_sql_get_id ("word",    TW_M           ); test_show_db_id("Word mio",          $word_mio);
+  $word_percent      = zu_sql_get_id ("word",    TW_PCT         ); test_show_db_id("Word percent",      $word_percent);
+  $word_CHF          = zu_sql_get_id ("word",    TW_CHF         ); test_show_db_id("Word CHF",          $word_CHF);
   //$formula_value     = zu_sql_get_id ("formula", "value",       $debug); test_show_db_id("Formula Value",     $formula_value);
-  $word_type_time    = cl(DBL_WORD_TYPE_TIME);                           test_show_db_id("Word Type Time",    $word_type_time);
-  $word_type_percent = cl(DBL_WORD_TYPE_PERCENT);                        test_show_db_id("Word Type Percent", $word_type_percent);
+  $word_type_time    = cl(DBL_WORD_TYPE_TIME);                         test_show_db_id("Word Type Time",    $word_type_time);
+  $word_type_percent = cl(DBL_WORD_TYPE_PERCENT);                      test_show_db_id("Word Type Percent", $word_type_percent);
  
 }

@@ -34,9 +34,9 @@ class user_dsp extends user
 
     // display a form with the user parameters such as name or email
     // add back here ???
-    function dsp_edit($back, $debug)
+    function dsp_edit($back)
     {
-        log_debug('user_dsp->dsp_edit(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_edit(u' . $this->id . ')');
         $result = ''; // reset the html code var
 
         // display the user fields using a table and not using px in css to be independent from any screen solution
@@ -49,16 +49,16 @@ class user_dsp extends user
         $result .= '<tr><td>first name</td><td> <input type="text"   name="fname" value="' . $this->first_name . '"></td></tr>';
         $result .= '<tr><td>last name </td><td> <input type="text"   name="lname" value="' . $this->last_name . '"></td></tr>';
         $result .= dsp_tbl_end();
-        $result .= dsp_form_end('', $back, $debug - 1);
+        $result .= dsp_form_end('', $back);
 
-        log_debug('user_dsp->dsp_edit -> done', $debug - 1);
+        log_debug('user_dsp->dsp_edit -> done');
         return $result;
     }
 
     // display the latest changes by the user
-    function dsp_changes($call, $size, $page, $back, $debug)
+    function dsp_changes($call, $size, $page, $back)
     {
-        log_debug('user_dsp->dsp_changes (u' . $this->id . ',b' . $back . ')', $debug - 10);
+        log_debug('user_dsp->dsp_changes (u' . $this->id . ',b' . $back . ')');
         $result = ''; // reset the html code var
 
         // get value changes by the user that are not standard
@@ -70,17 +70,17 @@ class user_dsp extends user
         $log_dsp->size = $size;
         $log_dsp->call = $call;
         $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist($debug - 1);
+        $result .= $log_dsp->dsp_hist();
 
-        log_debug('user_dsp->dsp_changes -> done', $debug - 1);
+        log_debug('user_dsp->dsp_changes -> done');
         return $result;
     }
 
     // display the error that are related to the user, so that he can track when they are closed
     // or display the error that are related to the user, so that he can track when they are closed
-    function dsp_errors($dsp_type, $size, $page, $back, $debug)
+    function dsp_errors($dsp_type, $size, $page, $back)
     {
-        log_debug('user_dsp->dsp_errors ' . $dsp_type . ' errors for user ' . $this->name, $debug - 10);
+        log_debug('user_dsp->dsp_errors ' . $dsp_type . ' errors for user ' . $this->name);
 
         $err_lst = new system_error_log_list;
         $err_lst->usr = $this;
@@ -88,16 +88,16 @@ class user_dsp extends user
         $err_lst->size = $size;
         $err_lst->dsp_type = $dsp_type;
         $err_lst->back = $back;
-        $result = $err_lst->display($debug - 1);
+        $result = $err_lst->display();
 
-        log_debug('user_dsp->dsp_errors -> done', $debug - 12);
+        log_debug('user_dsp->dsp_errors -> done');
         return $result;
     }
 
     // display word changes by the user which are not (yet) standard
-    function dsp_sandbox_wrd($back, $debug)
+    function dsp_sandbox_wrd($back)
     {
-        log_debug('user_dsp->dsp_sandbox_wrd(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_wrd(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -111,7 +111,7 @@ class user_dsp extends user
              WHERE u.user_id = " . $this->id . "
                AND u.word_id = t.word_id;";
         $db_con->usr_id = $this->id;
-        $wrd_lst = $db_con->get($sql, $debug - 5);
+        $wrd_lst = $db_con->get($sql);
 
         // prepare to show the word link
         $row_nbr = 0;
@@ -130,14 +130,14 @@ class user_dsp extends user
         }
         $result .= dsp_tbl_end();
 
-        log_debug('user_dsp->dsp_sandbox_wrd -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_wrd -> done');
         return $result;
     }
 
     // display word_link changes by the user which are not (yet) standard
-    function dsp_sandbox_wrd_link($back, $debug)
+    function dsp_sandbox_wrd_link($back)
     {
-        log_debug('user_dsp->dsp_sandbox_wrd_link(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_wrd_link(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -175,7 +175,7 @@ class user_dsp extends user
              WHERE u.user_id = " . $this->id . "
                AND u.word_link_id = l.word_link_id;";
         }
-        $sbx_lst = $db_con->get($sql, $debug - 5);
+        $sbx_lst = $db_con->get($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different word_entry_link than a normal viewer
@@ -193,27 +193,27 @@ class user_dsp extends user
                 $wrd_usr->name = $sbx_row['usr_name'];
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
                 $wrd_usr->usr = $this;
-                $wrd_usr->load($debug - 1);
+                $wrd_usr->load();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $wrd_std = clone $wrd_usr;
                 $wrd_std->usr = $usr_std;
-                $wrd_std->load($debug - 1);
+                $wrd_std->load();
                 $wrd_std->name = $sbx_row['std_name'];
                 $wrd_std->excluded = $sbx_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($wrd_usr->name == $wrd_std->name
                     and $wrd_usr->excluded == $wrd_std->excluded) {
-                    $wrd_usr->del_usr_cfg($debug - 1);
+                    $wrd_usr->del_usr_cfg();
                 } else {
 
                     // prepare the row word_links
-                    //$sandbox_item_name = $wrd_usr->name_linked($back, $debug-1);
+                    //$sandbox_item_name = $wrd_usr->name_linked($back);
 
                     // format the user word_link
                     if ($wrd_usr->excluded == 1) {
@@ -241,17 +241,17 @@ class user_dsp extends user
                            AND u.word_link_id = l.word_link_id
                            AND u.word_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $sbx_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $sbx_lst_other = $db_con->get($sql_other);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $wrd_lnk_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user word_links with one query
                         $wrd_lnk_other = clone $wrd_usr;
                         $wrd_lnk_other->usr = $usr_other;
-                        $wrd_lnk_other->load($debug - 1);
+                        $wrd_lnk_other->load();
                         $wrd_lnk_other->name = $wrd_lnk_other_row['name'];
                         $wrd_lnk_other->excluded = $wrd_lnk_other_row['excluded'];
                         if ($sandbox_other <> '') {
@@ -291,14 +291,14 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_wrd_link -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_wrd_link -> done');
         return $result;
     }
 
     // display formula changes by the user which are not (yet) standard
-    function dsp_sandbox_frm($back, $debug)
+    function dsp_sandbox_frm($back)
     {
-        log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -313,7 +313,7 @@ class user_dsp extends user
             WHERE u.user_id = " . $this->id . "
               AND u.formula_id = f.formula_id;";
         $db_con->usr_id = $this->id;
-        $frm_lst = $db_con->get($sql, $debug - 5);
+        $frm_lst = $db_con->get($sql);
 
         // prepare to show the word link
         $row_nbr = 0;
@@ -337,14 +337,14 @@ class user_dsp extends user
         }
         $result .= dsp_tbl_end();
 
-        log_debug('user_dsp->dsp_sandbox_frm -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_frm -> done');
         return $result;
     }
 
     // display formula_link changes by the user which are not (yet) standard
-    function dsp_sandbox_frm_link($back, $debug)
+    function dsp_sandbox_frm_link($back)
     {
-        log_debug('user_dsp->dsp_sandbox_frm_link(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_frm_link(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -380,7 +380,7 @@ class user_dsp extends user
              WHERE u.user_id = " . $this->id . "
                AND u.formula_link_id = l.formula_link_id;";
         }
-        $sbx_lst = $db_con->get($sql, $debug - 5);
+        $sbx_lst = $db_con->get($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different formula_entry_link than a normal viewer
@@ -397,12 +397,12 @@ class user_dsp extends user
                 $frm_usr->link_type_id = $sbx_row['usr_type'];
                 $frm_usr->excluded = $sbx_row['usr_excluded'];
                 $frm_usr->usr = $this;
-                $frm_usr->load_objects($debug - 1);
+                $frm_usr->load_objects();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $frm_std = clone $frm_usr;
                 $frm_std->usr = $usr_std;
@@ -412,18 +412,18 @@ class user_dsp extends user
                 // check database consistency and correct it if needed
                 if ($frm_usr->link_type_id == $frm_std->link_type_id
                     and $frm_usr->excluded == $frm_std->excluded) {
-                    $frm_usr->del_usr_cfg($debug - 1);
+                    $frm_usr->del_usr_cfg();
                 } else {
 
                     // prepare the row formula_links
-                    $sandbox_item_name = $frm_usr->fob->name_linked($back, $debug - 1);
-                    //$sandbox_item_name = $frm_usr->name_linked($back, $debug-1);
+                    $sandbox_item_name = $frm_usr->fob->name_linked($back);
+                    //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
                     if ($frm_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->tob->dsp_link($debug - 1);
+                        $sandbox_usr_txt = $frm_usr->tob->dsp_link();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -431,7 +431,7 @@ class user_dsp extends user
                     if ($frm_std->excluded == 1) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->tob->dsp_link($debug - 1);
+                        $sandbox_std_txt = $frm_std->tob->dsp_link();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -447,23 +447,23 @@ class user_dsp extends user
                            AND u.formula_link_id = l.formula_link_id
                            AND u.formula_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $sbx_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $sbx_lst_other = $db_con->get($sql_other);
                     foreach ($sbx_lst_other as $frm_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $frm_lnk_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->usr = $usr_other;
                         $frm_lnk_other->link_type_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->excluded = $frm_lnk_other_row['excluded'];
-                        $frm_lnk_other->load_objects($debug - 1);
+                        $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $frm_lnk_other->tob->dsp_link($debug - 1);
+                        $sandbox_other .= $frm_lnk_other->tob->dsp_link();
                     }
                     $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
@@ -497,14 +497,14 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_frm_link -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_frm_link -> done');
         return $result;
     }
 
     // display value changes by the user which are not (yet) standard
-    function dsp_sandbox_val($back, $debug)
+    function dsp_sandbox_val($back)
     {
-        log_debug('user_dsp->dsp_sandbox_val(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_val(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -546,7 +546,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.value_id = v.value_id;";
         }
-        $val_lst = $db_con->get($sql, $debug - 5);
+        $val_lst = $db_con->get($sql);
 
         if (count($val_lst) > 0) {
             // prepare to show where the user uses different value than a normal viewer
@@ -564,12 +564,12 @@ class user_dsp extends user
                 $val_usr->grp_id = $val_row['phrase_group_id'];
                 $val_usr->time_id = $val_row['time_word_id'];
                 $val_usr->usr = $this;
-                $val_usr->load_phrases($debug - 1);
+                $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $val_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $val_std = clone $val_usr;
                 $val_std->usr = $usr_std;
@@ -581,20 +581,20 @@ class user_dsp extends user
                 if ($val_usr->number == $val_std->number
                     and $val_usr->source_id == $val_std->source_id
                     and $val_usr->excluded == $val_std->excluded) {
-                    $val_usr->del_usr_cfg($debug - 1);
+                    $val_usr->del_usr_cfg();
                 } else {
 
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (isset($val_usr->wrd_lst)) {
-                        $sandbox_item_name = $val_usr->wrd_lst->name_linked($debug - 1);
+                        $sandbox_item_name = $val_usr->wrd_lst->name_linked();
                     }
 
                     // format the user value
                     if ($val_usr->excluded == 1) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $val_usr->val_formatted($debug - 1);
+                        $sandbox_usr_txt = $val_usr->val_formatted();
                     }
                     $sandbox_usr_txt = '<a href="/http/value_edit.php?id=' . $val_usr->id . '&back=' . $back . '">' . $sandbox_usr_txt . '</a>';
 
@@ -602,7 +602,7 @@ class user_dsp extends user
                     if ($val_std->excluded == 1) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $val_std->val_formatted($debug - 1);
+                        $sandbox_std_txt = $val_std->val_formatted();
                     }
 
                     // format the value of other users
@@ -618,12 +618,12 @@ class user_dsp extends user
                            AND u.value_id = v.value_id
                            AND u.value_id = " . $val_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $val_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $val_lst_other = $db_con->get($sql_other);
                     foreach ($val_lst_other as $val_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $val_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user values with one query
                         $val_other = clone $val_usr;
@@ -634,7 +634,7 @@ class user_dsp extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $val_other->val_formatted($debug - 1);
+                        $sandbox_other .= $val_other->val_formatted();
                     }
                     $sandbox_other = '<a href="/http/user_value.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
@@ -667,14 +667,14 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_val -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_val -> done');
         return $result;
     }
 
     // display view changes by the user which are not (yet) standard
-    function dsp_sandbox_view($back, $debug)
+    function dsp_sandbox_view($back)
     {
-        log_debug('user_dsp->dsp_sandbox_view(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_view(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -716,7 +716,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.view_id = m.view_id;";
         }
-        $sbx_lst = $db_con->get($sql, $debug - 5);
+        $sbx_lst = $db_con->get($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view than a normal viewer
@@ -737,7 +737,7 @@ class user_dsp extends user
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->usr = $usr_std;
@@ -751,7 +751,7 @@ class user_dsp extends user
                     and $dsp_usr->comment == $dsp_std->comment
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
-                    $dsp_usr->del_usr_cfg($debug - 1);
+                    $dsp_usr->del_usr_cfg();
                 } else {
 
                     // format the user view
@@ -783,12 +783,12 @@ class user_dsp extends user
                            AND u.view_id = m.view_id
                            AND u.view_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $sbx_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $sbx_lst_other = $db_con->get($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $dsp_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
@@ -832,14 +832,14 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_view -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_view -> done');
         return $result;
     }
 
     // display view_component changes by the user which are not (yet) standard
-    function dsp_sandbox_view_component($back, $debug)
+    function dsp_sandbox_view_component($back)
     {
-        log_debug('user_dsp->dsp_sandbox_view_component(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_view_component(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -881,7 +881,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.view_component_id = m.view_component_id;";
         }
-        $sbx_lst = $db_con->get($sql, $debug - 5);
+        $sbx_lst = $db_con->get($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view_component than a normal viewer
@@ -902,7 +902,7 @@ class user_dsp extends user
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->usr = $usr_std;
@@ -916,7 +916,7 @@ class user_dsp extends user
                     and $dsp_usr->comment == $dsp_std->comment
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
-                    //$dsp_usr->del_usr_cfg($debug-1);
+                    //$dsp_usr->del_usr_cfg();
                 } else {
 
                     // format the user view_component
@@ -948,12 +948,12 @@ class user_dsp extends user
                            AND u.view_component_id = m.view_component_id
                            AND u.view_component_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $sbx_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $sbx_lst_other = $db_con->get($sql_other);
                     foreach ($sbx_lst_other as $cmp_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $cmp_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user view_components with one query
                         $cmp_other = clone $dsp_usr;
@@ -997,14 +997,14 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_view_component -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_view_component -> done');
         return $result;
     }
 
     // display view_component_link changes by the user which are not (yet) standard
-    function dsp_sandbox_view_link($back, $debug)
+    function dsp_sandbox_view_link($back)
     {
-        log_debug('user_dsp->dsp_sandbox_view_link(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_view_link(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -1049,7 +1049,7 @@ class user_dsp extends user
                 AND u.view_component_link_id = l.view_component_link_id;";
             }
         }
-        $sbx_lst = $db_con->get($sql, $debug - 5);
+        $sbx_lst = $db_con->get($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view_entry_link than a normal viewer
@@ -1067,12 +1067,12 @@ class user_dsp extends user
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
                 $dsp_usr->usr = $this;
-                $dsp_usr->load_objects($debug - 1);
+                $dsp_usr->load_objects();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->usr = $usr_std;
@@ -1084,11 +1084,11 @@ class user_dsp extends user
                 if ($dsp_usr->order_nbr == $dsp_std->order_nbr
                     and $dsp_usr->position_type == $dsp_std->position_type
                     and $dsp_usr->excluded == $dsp_std->excluded) {
-                    $dsp_usr->del_usr_cfg($debug - 1);
+                    $dsp_usr->del_usr_cfg();
                 } else {
 
                     // prepare the row view_component_links
-                    $sandbox_item_name = $dsp_usr->name_linked($back, $debug - 1);
+                    $sandbox_item_name = $dsp_usr->name_linked($back);
 
                     // format the user view_component_link
                     if ($dsp_usr->excluded == 1) {
@@ -1117,12 +1117,12 @@ class user_dsp extends user
                            AND u.view_component_link_id = l.view_component_link_id
                            AND u.view_component_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $sbx_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $sbx_lst_other = $db_con->get($sql_other);
                     foreach ($sbx_lst_other as $dsp_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $dsp_lnk_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user view_component_links with one query
                         $dsp_lnk_other = clone $dsp_usr;
@@ -1167,14 +1167,14 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_view_link -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_view_link -> done');
         return $result;
     }
 
     // display source changes by the user which are not (yet) standard
-    function dsp_sandbox_source($back, $debug)
+    function dsp_sandbox_source($back)
     {
-        log_debug('user_dsp->dsp_sandbox_source(u' . $this->id . ')', $debug - 10);
+        log_debug('user_dsp->dsp_sandbox_source(u' . $this->id . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -1220,7 +1220,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.source_id = m.source_id;";
         }
-        $sbx_lst = $db_con->get($sql, $debug - 5);
+        $sbx_lst = $db_con->get($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different source than a normal viewer
@@ -1242,7 +1242,7 @@ class user_dsp extends user
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
                 $usr_std->id = $sbx_row['owner_id'];
-                $usr_std->load_test_user($debug - 1);
+                $usr_std->load_test_user();
 
                 $dsp_std = clone $dsp_usr;
                 $dsp_std->usr = $usr_std;
@@ -1259,8 +1259,8 @@ class user_dsp extends user
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
                     // todo: add user config also to source?
-                    //$dsp_usr->del_usr_cfg($debug-1);
-                    $dsp_usr->del($debug - 1);
+                    //$dsp_usr->del_usr_cfg();
+                    $dsp_usr->del();
                 } else {
 
                     // format the user source
@@ -1293,12 +1293,12 @@ class user_dsp extends user
                            AND u.source_id = m.source_id
                            AND u.source_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
-                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')', $debug - 10);
-                    $sbx_lst_other = $db_con->get($sql_other, $debug - 5);
+                    log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
+                    $sbx_lst_other = $db_con->get($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $dsp_other_row['user_id'];
-                        $usr_other->load_test_user($debug - 1);
+                        $usr_other->load_test_user();
 
                         // to review: load all user sources with one query
                         $dsp_other = clone $dsp_usr;
@@ -1343,23 +1343,23 @@ class user_dsp extends user
             $result .= dsp_tbl_end();
         }
 
-        log_debug('user_dsp->dsp_sandbox_source -> done', $debug - 1);
+        log_debug('user_dsp->dsp_sandbox_source -> done');
         return $result;
     }
 
     // display changes by the user which are not (yet) standard
-    function dsp_sandbox($back, $debug)
+    function dsp_sandbox($back)
     {
-        log_debug('user_dsp->dsp_sandbox(u' . $this->id . ',b' . $back . ')', $debug - 10);
-        $result = $this->dsp_sandbox_val($back, $debug - 1);
-        $result .= $this->dsp_sandbox_frm($back, $debug - 1);
-        $result .= $this->dsp_sandbox_frm_link($back, $debug - 1);
-        $result .= $this->dsp_sandbox_wrd($back, $debug - 1);
-        $result .= $this->dsp_sandbox_wrd_link($back, $debug - 1);
-        $result .= $this->dsp_sandbox_view($back, $debug - 1);
-        $result .= $this->dsp_sandbox_view_component($back, $debug - 1);
-        $result .= $this->dsp_sandbox_view_link($back, $debug - 1);
-        $result .= $this->dsp_sandbox_source($back, $debug - 1);
+        log_debug('user_dsp->dsp_sandbox(u' . $this->id . ',b' . $back . ')');
+        $result = $this->dsp_sandbox_val($back);
+        $result .= $this->dsp_sandbox_frm($back);
+        $result .= $this->dsp_sandbox_frm_link($back);
+        $result .= $this->dsp_sandbox_wrd($back);
+        $result .= $this->dsp_sandbox_wrd_link($back);
+        $result .= $this->dsp_sandbox_view($back);
+        $result .= $this->dsp_sandbox_view_component($back);
+        $result .= $this->dsp_sandbox_view_link($back);
+        $result .= $this->dsp_sandbox_source($back);
         return $result;
     }
 

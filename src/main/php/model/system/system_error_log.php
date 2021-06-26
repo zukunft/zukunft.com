@@ -47,7 +47,7 @@ class system_error_log
     public $function_name = NULL;  //
     public $status_name = NULL;  //
 
-    private function load($debug)
+    private function load()
     {
 
         global $db_con;
@@ -58,9 +58,9 @@ class system_error_log
             $sql_where = "l.sys_log_id = " . $this->id;
         }
 
-        log_debug('system_error_log->load search by "' . $sql_where . '"', $debug - 14);
+        log_debug('system_error_log->load search by "' . $sql_where . '"');
         if ($sql_where == '') {
-            log_err("The database ID must be set for loading a error entry.", "system_error_log->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The database ID must be set for loading a error entry.", "system_error_log->load");
         } else {
             $sql = "SELECT l.sys_log_id,
                      l.user_id,
@@ -79,7 +79,7 @@ class system_error_log
               WHERE " . $sql_where . ";";
             //$db_con = New mysql;
             $db_con->usr_id = $this->id;
-            $db_row = $db_con->get1($sql, $debug - 14);
+            $db_row = $db_con->get1($sql);
             if ($db_row['sys_log_id'] > 0) {
                 $this->usr_id = $db_row['user_id'];
                 $this->solver_id = $db_row['solver_id'];
@@ -92,14 +92,14 @@ class system_error_log
                 $this->status_id = $db_row['sys_log_status_id'];
                 $this->status_name = $db_row['sys_log_status_name'];
             }
-            log_debug('system_error_log->load done', $debug - 12);
+            log_debug('system_error_log->load done');
         }
     }
 
     // set the main log entry parameters for updating one error field
-    private function log_upd($debug)
+    private function log_upd()
     {
-        log_debug('system_error_log->log_upd', $debug - 10);
+        log_debug('system_error_log->log_upd');
         $log = new user_log;
         $log->usr = $this->usr;
         $log->action = 'update';
@@ -109,37 +109,36 @@ class system_error_log
     }
 
     // actually update a error field in the main database record or the user sandbox
-    private function save_field_do($db_con, $log, $debug)
+    private function save_field_do($db_con, $log): bool
     {
-        log_debug('system_error_log->save_field_do', $debug - 10);
-        $result = '';
-        if ($log->add($debug - 1)) {
+        $result = true;
+        if ($log->add()) {
             $db_con->set_type(DB_TYPE_SYS_LOG);
-            $result .= $db_con->update($this->id, $log->field, $log->new_id, $debug - 1);
+            $result = $db_con->update($this->id, $log->field, $log->new_id);
         }
-        log_debug('system_error_log->save_field_do -> done', $debug - 10);
+        log_debug('system_error_log->save_field_do -> done');
         return $result;
     }
 
     // set the update parameters for the error status
-    private function save_field_status($db_con, $db_rec, $debug)
+    private function save_field_status($db_con, $db_rec)
     {
-        log_debug('system_error_log->save_field_status', $debug - 10);
+        log_debug('system_error_log->save_field_status');
         $result = '';
         if ($db_rec->status_id <> $this->status_id) {
-            $log = $this->log_upd($debug - 1);
+            $log = $this->log_upd();
             $log->old_value = $db_rec->status_name;
             $log->old_id = $db_rec->status_id;
             $log->new_value = $this->status_name;
             $log->new_id = $this->status_id;
             $log->row_id = $this->id;
             $log->field = 'sys_log_status_id';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
-    function save($debug)
+    function save(): string
     {
 
         global $db_con;
@@ -153,10 +152,10 @@ class system_error_log
             $db_rec = new system_error_log;
             $db_rec->id = $this->id;
             $db_rec->usr = $this->usr;
-            $db_rec->load($debug - 1);
-            log_debug("system_error_log->save -> database entry loaded", $debug - 14);
+            $db_rec->load();
+            log_debug("system_error_log->save -> database entry loaded");
 
-            $result .= $this->save_field_status($db_con, $db_rec, $debug - 1);
+            $result .= $this->save_field_status($db_con, $db_rec);
         }
         return $result;
     }

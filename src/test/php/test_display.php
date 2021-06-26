@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_display_test ($debug = 0) {
+function run_display_test () {
 
   global $usr;
   global $exe_start_time;
@@ -34,13 +34,13 @@ function run_display_test ($debug = 0) {
   test_header('Test the view_display class (classes/view_display.php)');
 
   // test the usage of a view to create the HTML code
-  $wrd     = load_word(TEST_WORD, $debug-1);
-  $wrd_abb = load_word(TW_ABB, $debug-1);
+  $wrd     = load_word(TEST_WORD);
+  $wrd_abb = load_word(TW_ABB);
   $dsp = new view;
   $dsp->name = 'Company ratios';
   $dsp->usr = $usr;
-  $dsp->load($debug-1);
-  //$result = $dsp->display($wrd, $back, $debug-1);
+  $dsp->load();
+  //$result = $dsp->display($wrd, $back);
   $target = true;
   //$exe_start_time = test_show_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -52,7 +52,7 @@ function run_display_test ($debug = 0) {
   $cmp = new view_component_dsp;
   $cmp->type_id = cl(DBL_VIEW_COMP_TYPE_TEXT);
   $cmp->name = TS_NESN_2016_NAME;
-  $result = $cmp->text($debug-1);
+  $result = $cmp->text();
   $target = ' '.TS_NESN_2016_NAME;
   $exe_start_time = test_show_result('view_component_dsp->text', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -27,43 +27,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 # import a single json file
-function import_json_file ($filename, $debug) {
-  global $usr;
+function import_json_file($filename)
+{
+    global $usr;
 
-  $msg = '';
-  
-  $json_str = file_get_contents($filename); 
-  $import = New file_import;
-  $import->usr      = $usr;
-  $import->json_str = $json_str;
-  $import_result = $import->put($debug-1);
-  if ($import_result == '') {
-    $msg .= ' done ('.$import->words_done.' words, '.$import->triples_done.' triples, '.$import->formulas_done.' formulas, '.$import->values_done.' sources, '.$import->sources_done.' values, '.$import->views_done.' views loaded)';
-  } else {
-    $msg .= ' failed because '.$import_result.'.';
-  }
-  return $msg;
+    $msg = '';
+
+    $json_str = file_get_contents($filename);
+    if ($json_str == '') {
+        $msg .= ' failed because message file is empty of not found.';
+    } else {
+        $import = new file_import;
+        $import->usr = $usr;
+        $import->json_str = $json_str;
+        $import_result = $import->put();
+        if ($import_result == '') {
+            $msg .= ' done (' . $import->words_done . ' words, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->values_done . ' sources, ' . $import->sources_done . ' values, ' . $import->views_done . ' views loaded)';
+        } else {
+            $msg .= ' failed because ' . $import_result . '.';
+        }
+    }
+
+    return $msg;
 }
-  
+
 # import all zukunft.com base configuration json files
 # for an import it can be assumed that this base configuration is loaded
 # even if a user has overwritten some of these definitions the technical import should be possible
 # TODO load this configuration on first start of zukunft
 # TODO add a check bottom for admin to reload the base configuration
-function import_base_config ($debug) {
-  $result = '';
+function import_base_config()
+{
+    $result = '';
 
-  $import_path = '/src/main/resources/';
+    $import_path = '../src/main/resources/';
 
-  log_debug('load base config', $debug -1 );
+    log_debug('load base config');
 
-  $file_list = unserialize (BASE_CONFIG_FILES);
-  foreach ($file_list AS $filename) {
-    ui_echo("load " . $filename);
-    $result .= import_json_file($import_path . $filename, $debug - 1);
-  }
+    $file_list = unserialize(BASE_CONFIG_FILES);
+    foreach ($file_list as $filename) {
+        ui_echo("load " . $filename);
+        $result .= import_json_file($import_path . $filename);
+    }
 
-  log_debug('load base config ... done', $debug -1 );
+    log_debug('load base config ... done');
 
-  return $result;
+    return $result;
 }

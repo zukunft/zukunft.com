@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_element_test ($debug = 0) {
+function run_formula_element_test () {
 
   global $exe_start_time;
 
@@ -35,16 +35,16 @@ function run_formula_element_test ($debug = 0) {
   test_header('Test the formula element class (classes/formula_element.php)');
 
   // load increase formula for testing
-  $frm = load_formula(TF_SECTOR, $debug-1);
-  $exp = $frm->expression($debug-1);
-  $elm_lst = $exp->element_lst ($back, $debug-1);
+  $frm = load_formula(TF_SECTOR);
+  $exp = $frm->expression();
+  $elm_lst = $exp->element_lst ($back);
 
   if (isset($elm_lst)) {
     if (isset($elm_lst->lst)) {
       $pos = 0;
       $target = '';
       foreach ($elm_lst->lst AS $elm) {
-        $elm->load($debug-1);
+        $elm->load();
         
         $result = $elm->dsp_id();
         if ($pos == 0) {
@@ -58,7 +58,7 @@ function run_formula_element_test ($debug = 0) {
         } 
         $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         
-        $result = $elm->name($debug-1);
+        $result = $elm->name();
         if ($pos == 0) {
           $target = 'Sales';
         } elseif ($pos == 1) {
@@ -70,7 +70,7 @@ function run_formula_element_test ($debug = 0) {
         } 
         $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         
-        $result = $elm->name_linked($back, $debug-1);
+        $result = $elm->name_linked($back);
         if ($pos == 0) {
           $target = '<a href="/http/view.php?words=6&back=1">Sales</a>';
         } elseif ($pos == 1) {
@@ -97,7 +97,7 @@ function run_formula_element_test ($debug = 0) {
 
 }
 
-function run_formula_element_list_test ($debug = 0) {
+function run_formula_element_list_test () {
 
   global $exe_start_time;
 
@@ -106,12 +106,12 @@ function run_formula_element_list_test ($debug = 0) {
   test_header('Test the formula element list class (classes/formula_element_list.php)');
 
   // load increase formula for testing
-  $frm = load_formula(TF_SECTOR, $debug-1);
-  $exp = $frm->expression($debug-1);
-  $elm_lst = $exp->element_lst ($back, $debug-1);
+  $frm = load_formula(TF_SECTOR);
+  $exp = $frm->expression();
+  $elm_lst = $exp->element_lst ($back);
 
   if (isset($elm_lst)) {
-    $result = $elm_lst->dsp_id($debug-1);
+    $result = $elm_lst->dsp_id();
     $target = 'Sales can be used as a differentiator for Sector Total Sales';
     $exe_start_time = test_show_contains(', formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   } else {

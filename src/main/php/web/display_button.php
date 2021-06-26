@@ -101,8 +101,8 @@ class button {
   }
 
   // display a button to add a value
-  function add_value ($phr_lst, $type_ids, $back, $debug) {
-    log_debug("button->add_value", $debug-18);
+  function add_value ($phr_lst, $type_ids, $back) {
+    log_debug("button->add_value");
     
     $url_phr = '';
     if (isset($phr_lst)) {
@@ -110,42 +110,42 @@ class button {
         log_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value", '', (new Exception)->getTraceAsString(), null);
       } else {
         if (!empty($phr_lst->ids)) {
-          $this->title = "add new value similar to ".$phr_lst->name($debug);
+          $this->title = "add new value similar to ".$phr_lst->name();
         } else {
           $this->title = "add new value";
         }  
-        $url_phr = $phr_lst->id_url_long($debug);
+        $url_phr = $phr_lst->id_url_long();
       }
     }  
     
-    log_debug("button->add_value -> type URL", $debug-18);
+    log_debug("button->add_value -> type URL");
     $url_type = '';
     if (isset($type_ids)) {
-      $url_type = zu_ids_to_url($type_ids,"type", $debug-1);
+      $url_type = zu_ids_to_url($type_ids,"type");
     }  
 
     $this->call  = '/http/value_add.php?back='.$back.$url_phr.$url_type;
     $result = $this->add();
     
-    log_debug("button->add_value -> (".$result.")", $debug-16);
+    log_debug("button->add_value -> (".$result.")");
     return $result;
   }
 
   // similar to btn_add_value, but uses a simple modal box
-  function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug) {
-    log_debug("button->add_value", $debug-18);
+  function add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back) {
+    log_debug("button->add_value");
     $result = '';
     
     // group the modal box with the button
     $result .= '<div class="container">';
     
     // build the phrase list for the modal box header
-    $phr_time = $phr_lst->time_lst($debug-1);
+    $phr_time = $phr_lst->time_lst();
     $common_lst_ex_main = clone $common_lst;
-    $common_lst_ex_main->del($phr_main, $debug-1);
+    $common_lst_ex_main->del($phr_main);
     $phr_lst_header = clone $phr_lst;
-    $phr_lst_header->diff($common_lst_ex_main, $debug-1);
-    $phr_lst_header->diff($phr_time, $debug-1);
+    $phr_lst_header->diff($common_lst_ex_main);
+    $phr_lst_header->diff($phr_time);
     
 
     // the button to call the modal box
@@ -185,13 +185,13 @@ class button {
     // close the modal group
     $result .= '</div>';
     
-    log_debug("button->add_value -> (".$result.")", $debug-16);
+    log_debug("button->add_value -> (".$result.")");
     return $result;
   }
 
   // display a button to adjust a value
-  function edit_value ($phr_lst, $value_id, $back, $debug) {
-    log_debug("button->edit_value (".$phr_lst->name($debug-1).",v".$value_id.",b".$back.")", $debug-1);
+  function edit_value ($phr_lst, $value_id, $back) {
+    log_debug("button->edit_value (".$phr_lst->name().",v".$value_id.",b".$back.")");
     
     if (!empty($phr_lst->ids)) {
       $this->title = "change the value for ".$phr_lst->name();
@@ -200,13 +200,13 @@ class button {
     }  
     $this->call  = '/http/value_edit.php?id='.$value_id.'&back='.$back;
     $result = $this->edit();
-    log_debug("button->edit_value -> (".$result.")", $debug-1);
+    log_debug("button->edit_value -> (".$result.")");
     return $result;
   }
 
   // display a button to exclude a value
-  function del_value ($phr_lst, $value_id, $back, $debug) {
-    log_debug("button->del_value (".$phr_lst->name($debug-1).",v".$value_id.",b".$back.")", $debug-1);
+  function del_value ($phr_lst, $value_id, $back) {
+    log_debug("button->del_value (".$phr_lst->name().",v".$value_id.",b".$back.")");
     
     if (!empty($phr_lst->ids)) {
       $this->title = "delete the value for ".$phr_lst->name();
@@ -215,7 +215,7 @@ class button {
     }  
     $this->call  = '/http/value_del.php?id='.$value_id.'&back='.$back;
     $result = $this->del();
-    log_debug("button->del_value -> (".$result.")", $debug-1);
+    log_debug("button->del_value -> (".$result.")");
     return $result;
   }
 
@@ -234,16 +234,16 @@ function btn_back     ($bl)    { $b = New button;                               
 
 
 // button to add a new value related to some phrases
-function btn_add_value ($phr_lst, $type_ids, $back, $debug) {
+function btn_add_value ($phr_lst, $type_ids, $back) {
   $b = New button;
-  $result = $b->add_value ($phr_lst, $type_ids, $back, $debug-1);
+  $result = $b->add_value ($phr_lst, $type_ids, $back);
   return $result;
 }
 
 // similar to btn_add_value, but uses a simple modal box
-function btn_add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug) {
+function btn_add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back) {
   $b = New button;
-  $result = $b->add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back, $debug-1);
+  $result = $b->add_value_fast ($modal_nbr, $phr_lst, $phr_main, $common_lst, $back);
   return $result;
 }
 

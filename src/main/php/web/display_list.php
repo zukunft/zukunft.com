@@ -42,8 +42,8 @@ class dsp_list {
   
   // converts a id field name to an edit php script name
   // assuming that ...
-  private function id_to_edit($debug) {
-    log_debug("zu_id_to_edit(".$this->id_field.")", $debug-10);
+  private function id_to_edit() {
+    log_debug("zu_id_to_edit(".$this->id_field.")");
     $result = zu_str_left_of($this->id_field, "_id")."_edit.php";
     // todo: cleanup
     if ($result == 'view_component_edit.php') { $result = 'view_component_edit.php'; }
@@ -51,7 +51,7 @@ class dsp_list {
   }
 
   // display a list that can be sorted using the fixed field "order_nbr"
-  function display ($back, $debug) {
+  function display ($back) {
     $result  = '';
     
     // set the default values
@@ -62,7 +62,7 @@ class dsp_list {
       
       // list of all possible view components
       $row_nbr = $row_nbr + 1;
-      $edit_script = $this->id_to_edit($debug-1);
+      $edit_script = $this->id_to_edit();
       $result .=  '<a href="/http/'.$edit_script.'?id='.$entry->id.'&back='.$this->script_parameter.'">'.$entry->name.'</a> ';
       if ($row_nbr > 1) {
         $result .= '<a href="/http/'.$this->script_name.'?id='.$this->script_parameter.'&move_up='.$entry->id.'">up</a>';

@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
-$db_con = prg_start("start test.php", "", $debug-10);
+$db_con = prg_start("start test.php");
 
 /*
 
@@ -46,7 +46,7 @@ $db_con = prg_start("start test.php", "", $debug-10);
       $result .= '<div class="tab-content border-right border-bottom border-left rounded-bottom">';
       $result .= '  <div id="tab-comp" role="tabpanel" class="tab-pane fade active show">';
       $result .= '    <p>comp</p>';
-      //$result .= $this->linked_components($add_cmp, $wrd, $back, $debug-1);
+      //$result .= $this->linked_components($add_cmp, $wrd, $back);
       $result .= '  </div>';
       $result .= '  <div id="tab-hist" role="tabpanel" class="tab-pane fade">';
       $result .= '    <p>hist</p>';
@@ -212,17 +212,17 @@ $('#tokenfield').tokenfield({
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude google from doing stupid stuff)
   if ($usr->id > 0) {
     $dsp = new view_dsp;
     $dsp->id = cl(SQL_VIEW_LINK_EDIT);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
-    $result .= $dsp->dsp_navbar($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back);
 
     $result .= '  <br><br>';
     $result .= '  <form class="form-inline my-2 my-lg-0" action="/http/find.php">';
@@ -239,10 +239,10 @@ Test bootstrap
 <?php 
 */
 
-// Free resultset
-mysqli_free_result($result);
+// Free result set
+mysqli_free_result();
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);
 
 ?>

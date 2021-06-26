@@ -34,14 +34,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("view_edit", "", $debug);
+$db_con = prg_start("view_edit");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
   
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -51,14 +51,14 @@ $db_con = prg_start("view_edit", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_ADD);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back'];
         
     // create the view object that the user can change
     $dsp_edit = new view_dsp;
     $dsp_edit->id  = $_GET['id'];
     $dsp_edit->usr = $usr;
-    $result .= $dsp_edit->load($debug-1);
+    $result .= $dsp_edit->load();
     
     // get the view id to adjust
     if ($dsp_edit->id <= 0) {
@@ -69,12 +69,12 @@ $db_con = prg_start("view_edit", "", $debug);
       $wrd = New word;
       $wrd->id   = $_GET['word']; 
       $wrd->usr  = $usr;
-      $result   .= $wrd->load($debug-1);
+      $result   .= $wrd->load();
       
       // save the direct changes
       // ... of the element list
       if (isset($_GET['move_up'])) {
-        $upd_result = $dsp_edit->entry_up($_GET['move_up'], $debug-1);
+        $upd_result = $dsp_edit->entry_up($_GET['move_up']);
         if (str_replace ('1','',$upd_result) <> '') {
           // ... or in case of a problem prepare to show the message
           $msg .= $upd_result;
@@ -82,7 +82,7 @@ $db_con = prg_start("view_edit", "", $debug);
       }
 
       if (isset($_GET['move_down'])) {
-        $upd_result .= $dsp_edit->entry_down($_GET['move_down'], $debug-1);
+        $upd_result .= $dsp_edit->entry_down($_GET['move_down']);
         if (str_replace ('1','',$upd_result) <> '') {
           // ... or in case of a problem prepare to show the message
           $msg .= $upd_result;
@@ -94,8 +94,8 @@ $db_con = prg_start("view_edit", "", $debug);
         $cmp = new view_component;
         $cmp->id   = $_GET['del']; 
         $cmp->usr  = $usr;
-        $cmp->load($debug-1);
-        $cmp->unlink($dsp_edit, $debug-1);
+        $cmp->load();
+        $cmp->unlink($dsp_edit);
       }
       
       // check if a existing view element should be added
@@ -104,9 +104,9 @@ $db_con = prg_start("view_edit", "", $debug);
           $cmp = new view_component;
           $cmp->id   = $_GET['add_view_component']; 
           $cmp->usr  = $usr;
-          $cmp->load($debug-1);
-          $order_nbr = $cmp->next_nbr($dsp_edit->id, $debug-1);
-          $cmp->link($dsp_edit, $order_nbr, $debug-1);
+          $cmp->load();
+          $order_nbr = $cmp->next_nbr($dsp_edit->id);
+          $cmp->link($dsp_edit, $order_nbr);
         }  
       }  
 
@@ -116,13 +116,13 @@ $db_con = prg_start("view_edit", "", $debug);
           $cmp = new view_component;
           $cmp->name = $_GET['entry_name']; 
           $cmp->usr  = $usr;
-          $cmp->save($debug-1);
-          $cmp->load($debug-1);
+          $cmp->save();
+          $cmp->load();
           if ($cmp->id > 0) {
             $cmp->type_id = $_GET['new_entry_type']; 
-            $cmp->save($debug-1);
-            $order_nbr = $cmp->next_nbr($dsp_edit->id, $debug-1);
-            $cmp->link($dsp_edit, $order_nbr, $debug-1);
+            $cmp->save();
+            $order_nbr = $cmp->next_nbr($dsp_edit->id);
+            $cmp->link($dsp_edit, $order_nbr);
           }
         }
       }
@@ -138,12 +138,12 @@ $db_con = prg_start("view_edit", "", $debug);
         if (isset($_GET['type']))    { $dsp_edit->type_id = $_GET['type']; } // 
           
         // save the changes
-        $upd_result = $dsp_edit->save($debug-1);
+        $upd_result = $dsp_edit->save();
         
         // if update was fine ...
         if (str_replace ('1','',$upd_result) == '') {
           // ... display the calling page (switched off because it seems more useful it the user goes back by selecting the related word)
-          // $result .= dsp_go_back($back, $usr, $debug-1);
+          // $result .= dsp_go_back($back, $usr);
         } else { 
           // ... or in case of a problem prepare to show the message
           $msg .= $upd_result;
@@ -153,7 +153,7 @@ $db_con = prg_start("view_edit", "", $debug);
       // if nothing yet done display the add view (and any message on the top)
       if ($result == '')  {
         // in view edit views the view cannot be changed
-        $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
+        $result .= $dsp->dsp_navbar_no_view($back);
         $result .= dsp_err($msg);
 
         // get parameters that change only dsp_edit
@@ -162,11 +162,11 @@ $db_con = prg_start("view_edit", "", $debug);
         if (isset($_GET['add_entry'])) { $add_cmp = $_GET['add_entry']; }
         
         // show the word and its relations, so that the user can change it
-        $result .= $dsp_edit->dsp_edit ($add_cmp, $wrd, $back, $debug-1);
+        $result .= $dsp_edit->dsp_edit ($add_cmp, $wrd, $back);
       }  
     }
   }
 
   echo $result;
   
-prg_end($db_con, $debug);
+prg_end($db_con);

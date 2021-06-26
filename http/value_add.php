@@ -34,14 +34,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("value_add", "", $debug);
+$db_con = prg_start("value_add");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -50,7 +50,7 @@ $db_con = prg_start("value_add", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_VALUE_ADD);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
         
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -73,15 +73,15 @@ $db_con = prg_start("value_add", "", $debug);
         }
         $phr_pos++;
       }
-      log_debug("value_add -> phrases ".implode(",",$phr_ids) .".", $debug-12);
-      log_debug("value_add -> types "  .implode(",",$type_ids).".", $debug-12);
+      log_debug("value_add -> phrases ".implode(",",$phr_ids) .".");
+      log_debug("value_add -> types "  .implode(",",$type_ids).".");
       $val->ids = $phr_ids;
     } elseif (isset($_GET['phrases'])) {
       $phr_ids = array();
       if ($_GET['phrases'] <> '') {
         $phr_ids = explode(",",$_GET['phrases']);
       }
-      log_debug("value_add -> phrases ".implode(",",$phr_ids) .".", $debug-12);
+      log_debug("value_add -> phrases ".implode(",",$phr_ids) .".");
       $val->ids = $phr_ids;
     }
 
@@ -93,43 +93,43 @@ $db_con = prg_start("value_add", "", $debug);
     
       // adjust the user entries for the database
       $val->usr_value = $new_val;
-      $val->convert($debug-1);
+      $val->convert();
 
       // add the new value to the database
-      $upd_result = $val->save($debug-1);
+      $upd_result = $val->save();
       
       // if update was successful ...
       if ($val->id > 0 AND str_replace ('1','',$upd_result) == '') {
-        log_debug("value_add -> save value done.", $debug-12);
+        log_debug("value_add -> save value done.");
         // update the parameters on the object, so that the object save can update the database
         // save the source id as changed by the user
         if (isset($_GET['source'])) { 
           $val->source_id = $_GET['source']; 
           if ($val->source_id > 0) {
-            log_debug("value_add -> save source".$val->source_id.".", $debug-12);
-            $usr->set_source ($val->source_id, $debug-1);
-            $upd_result = $val->save($debug-1);
-            log_debug("value_add -> save source done.", $debug-12);
+            log_debug("value_add -> save source".$val->source_id.".");
+            $usr->set_source ($val->source_id);
+            $upd_result = $val->save();
+            log_debug("value_add -> save source done.");
           }
         } 
       } else {
         $result .= log_err("Adding ".$new_val." for words ".implode(",",$val->ids)." failed (".$upd_result.").","value_add");
       }
     
-      log_debug("value_add -> go back to ".$back.".", $debug-12);
-      $result .= dsp_go_back($back, $usr, $debug-1);
+      log_debug("value_add -> go back to ".$back.".");
+      $result .= dsp_go_back($back, $usr);
     }
     
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
       // display the view header
-      $result .= $dsp->dsp_navbar($back, $debug-1);
+      $result .= $dsp->dsp_navbar($back);
       $result .= dsp_err($msg);
 
-      $result .= $val->dsp_edit($type_ids, $back, $debug-1);
+      $result .= $val->dsp_edit($type_ids, $back);
     }
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

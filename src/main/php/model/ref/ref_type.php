@@ -67,8 +67,8 @@ class ref_type {
 }
 
 // load all reference types if needed
-function load_ref_types($debug) {
-  log_debug('ref_type->load_ref_types', $debug-10);
+function load_ref_types() {
+  log_debug('ref_type->load_ref_types');
 
   global $db_con;
   global $usr;
@@ -78,7 +78,7 @@ function load_ref_types($debug) {
   if (empty($ref_type_lst)) {
     //$db_con = New mysql;
     $db_con->usr_id = $usr->id;         
-    $db_lst = $db_con->load_types('ref_type', array('base_url'), $debug-14);  
+    $db_lst = $db_con->load_types('ref_type', array('base_url'));  
     foreach ($db_lst AS $db_row) {
       $id = $db_row['ref_type_id'];
       $name = $db_row['ref_type_name'];
@@ -87,7 +87,7 @@ function load_ref_types($debug) {
       } elseif ($name == '') {
         log_err('A reference type with an empty name is in the database, but a name must be set', 'load_ref_types', '', (new Exception)->getTraceAsString(), $usr);
       } else {
-        log_debug('ref_type->load_ref_types -> add '.$name, $debug-18);
+        log_debug('ref_type->load_ref_types -> add '.$name);
         $ref_type = New ref_type;
         $ref_type->usr         = $usr;
         $ref_type->id          = $db_row['ref_type_id']; // TODO needed??
@@ -99,44 +99,44 @@ function load_ref_types($debug) {
         $ref_type_name_lst[$name] = $id;
       }
     }  
-    log_debug('ref_type->load_ref_types -> loaded '.count($ref_type_lst), $debug-12);
+    log_debug('ref_type->load_ref_types -> loaded '.count($ref_type_lst));
   }  
 }
 
 // get a reference type object based on the id
-function get_ref_type($id, $debug) {
-  log_debug('ref_type->get_ref_type', $debug-10);
+function get_ref_type($id) {
+  log_debug('ref_type->get_ref_type');
 
   global $usr;
   global $ref_type_lst;
   
   $result = NULL;
-  load_ref_types($debug-1);
+  load_ref_types();
   if (!array_key_exists($id, $ref_type_lst)) {
     log_err('A reference type with id '.$id.' is not found.', 'get_ref_type', '', (new Exception)->getTraceAsString(), $usr);
   } else {
     $result = $ref_type_lst[$id];
-    log_debug('ref_type->get_ref_type -> done '.$result->dsp_id(), $debug-12);
+    log_debug('ref_type->get_ref_type -> done '.$result->dsp_id());
   }
   
   return $result;  
 }
 
 // get a reference type object based on the name
-function get_ref_type_by_name($name, $debug) {
-  log_debug('ref_type->get_ref_type_by_name', $debug-10);
+function get_ref_type_by_name($name) {
+  log_debug('ref_type->get_ref_type_by_name');
 
   global $usr;
   global $ref_type_name_lst;
   
   $result = NULL;
-  load_ref_types($debug-1);
+  load_ref_types();
   if (!array_key_exists($name, $ref_type_name_lst)) {
     log_err('A reference type with name '.$name.' is not found.', 'get_ref_type_by_name', '', (new Exception)->getTraceAsString(), $usr);
   } else {
     $id = $ref_type_name_lst[$name];
-    $result = get_ref_type($id, $debug-1);
-    log_debug('ref_type->get_ref_type_by_name -> done '.$result->dsp_id(), $debug-12);
+    $result = get_ref_type($id);
+    log_debug('ref_type->get_ref_type_by_name -> done '.$result->dsp_id());
   }
   
   return $result;  

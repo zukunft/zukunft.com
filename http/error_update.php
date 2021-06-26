@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
-$db_con = prg_start("error_update", "", $debug);
+$db_con = prg_start("error_update");
 
   $result = ''; // reset the html code var
 
@@ -40,7 +40,7 @@ $db_con = prg_start("error_update", "", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -48,7 +48,7 @@ $db_con = prg_start("error_update", "", $debug);
     $dsp = new view_dsp;
     $dsp->usr = $usr;
     $dsp->id = cl(DBL_VIEW_ERR_UPD);
-    $result .= $dsp->dsp_navbar($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back);
     
     if ($usr->id > 0 AND $usr->profile_id == cl(DBL_USER_ADMIN)) {
       // update the error if requested
@@ -57,7 +57,7 @@ $db_con = prg_start("error_update", "", $debug);
         $err_entry->usr       = $usr;
         $err_entry->id        = $log_id;
         $err_entry->status_id = $status_id;
-        $err_entry->save($debug-1);
+        $err_entry->save();
       }
     
       // display all program issues if the user is an admin
@@ -67,8 +67,8 @@ $db_con = prg_start("error_update", "", $debug);
       $err_lst->page     = 1;
       $err_lst->size     = 20;
       $err_lst->back     = $back;
-      $errors_all = $err_lst->display($debug-1);
-      //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back, $debug-1);
+      $errors_all = $err_lst->display();
+      //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back);
       if ($errors_all <> "") {
         $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
         $result .= $errors_all;
@@ -90,4 +90,4 @@ $db_con = prg_start("error_update", "", $debug);
   echo $result;
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);

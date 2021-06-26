@@ -39,7 +39,7 @@ if ($debug > 0) {
 $result = ''; // reset the html code var
 
 // open database
-$db_con = prg_start("find", "", $debug);
+$db_con = prg_start("find");
 
 // TODO review the http API code based on this example
 // TODO but first reduce the API files
@@ -51,7 +51,7 @@ if ($db_con == null) {
 
     // load the session user parameters
     $usr = new user;
-    $result .= $usr->get($debug - 1);
+    $result .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -60,7 +60,7 @@ if ($db_con == null) {
         $dsp = new view_dsp;
         $dsp->usr = $usr;
         $dsp->id = cl(DBL_VIEW_WORD_FIND);
-        $result .= $dsp->dsp_navbar($back, $debug - 1);
+        $result .= $dsp->dsp_navbar($back);
 
         $find_str = $_GET['pattern'];
 
@@ -75,10 +75,10 @@ if ($db_con == null) {
 
         // show the matching words to select
         $wrd_lst = new word_list;
-        $result .= $wrd_lst->dsp_like($find_str, $usr->id, $debug - 1);
+        $result .= $wrd_lst->dsp_like($find_str, $usr->id);
     }
 }
 
 echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

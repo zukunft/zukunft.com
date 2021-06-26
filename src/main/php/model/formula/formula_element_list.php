@@ -41,9 +41,9 @@ class formula_element_list {
   */
   
   // return best possible identification for this element list mainly used for debugging
-  function dsp_id ($debug) {
+  function dsp_id () {
     $id = implode(",",$this->ids());
-    $name = $this->name($debug-1);
+    $name = $this->name();
     if ($name <> '""') {
       $result = ''.$name.' ('.$id.')';
     } else {
@@ -58,11 +58,11 @@ class formula_element_list {
   
   // to show the element name to the user in the most simple form (without any ids)
   // this function is called from dsp_id, so no other call is allowed
-  function name ($debug) {
+  function name () {
     $result = '';
     if (isset($this->lst)) {
       foreach ($this->lst AS $elm) {
-        $result .= $elm->name($debug-1).' ';
+        $result .= $elm->name().' ';
       }
     }
     return $result;    

@@ -44,13 +44,13 @@ class formula_element {
   public $frm_type = NULL; // in case of a special formula the predefined formula type
 
   // get the name and other parameters from the database
-  function load ($debug) {
+  function load () {
     if ($this->id > 0 AND isset($this->usr)) {
       if ($this->type == 'word') {
         $wrd = new word_dsp;
         $wrd->id        = $this->id;
         $wrd->usr       = $this->usr;
-        $wrd->load($debug-1);
+        $wrd->load();
         $this->name     = $wrd->name; 
         $this->dsp_name = $wrd->display($this->back);
         $this->symbol   = ZUP_CHAR_WORD_START.$wrd->id.ZUP_CHAR_WORD_END; 
@@ -60,7 +60,7 @@ class formula_element {
         $lnk = New verb;
         $lnk->id        = $this->id;
         $lnk->usr       = $this->usr;
-        $lnk->load($debug-1);
+        $lnk->load();
         $this->name     = $lnk->name; 
         $this->dsp_name = $lnk->display($this->back);
         $this->symbol   = ZUP_CHAR_LINK_START.$lnk->id.ZUP_CHAR_LINK_END; 
@@ -70,7 +70,7 @@ class formula_element {
         $frm = New formula;
         $frm->id        = $this->id;
         $frm->usr       = $this->usr;
-        $frm->load($debug-1);
+        $frm->load();
         $this->name     = $frm->name; 
         $this->dsp_name = $frm->name_linked($this->back);
         $this->symbol   = ZUP_CHAR_FORMULA_START.$frm->id.ZUP_CHAR_FORMULA_END; 
@@ -79,15 +79,15 @@ class formula_element {
         $wrd = new word_dsp;
         $wrd->name      = $frm->name;
         $wrd->usr       = $this->usr;
-        $wrd->load($debug-1);
+        $wrd->load();
         $this->wrd_id   = $wrd->id; 
         $this->wrd_obj  = $wrd; 
         //
-        if ($frm->is_special($debug-1)) {
+        if ($frm->is_special()) {
           $this->frm_type = $frm->type_cl;
         }
       }
-      log_debug("formula_element->load got ".$this->dsp_id()." (".$this->symbol.").", $debug-10);
+      log_debug("formula_element->load got ".$this->dsp_id()." (".$this->symbol.").");
     }  
   }  
   
@@ -116,13 +116,13 @@ class formula_element {
   }
 
   // to show the element name to the user in the most simple form (without any ids)
-  function name ($debug) {
+  function name () {
     $result = '';
     
     if ($this->id > 0 AND isset($this->usr)) {
       if ($this->type == 'word') {
         if (isset($this->obj)) {
-          $result = $this->obj->name($debug-1);
+          $result = $this->obj->name();
         } else {
           $result = $this->name;
         }
@@ -130,7 +130,7 @@ class formula_element {
         $result = $this->name;
       } elseif ($this->type == 'formula') {
         if (isset($this->obj)) {
-          $result = $this->obj->name($debug-1);
+          $result = $this->obj->name();
         } else {  
           $result = $this->name;
         }
@@ -141,13 +141,13 @@ class formula_element {
   }
   
   // return the HTML code for the element name including a link to inspect the element
-  function name_linked ($back, $debug) {
+  function name_linked ($back) {
     $result = '';
     
     if ($this->id > 0 AND isset($this->usr)) {
       if ($this->type == 'word') {
         if (isset($this->obj)) {
-          $result = $this->obj->display($back, $debug-1);
+          $result = $this->obj->display($back);
         } else {
           $result = $this->name;
         }
@@ -157,7 +157,7 @@ class formula_element {
       }
       if ($this->type == 'formula') {
         if (isset($this->obj)) {
-          $result = $this->obj->name_linked($back, $debug-1);
+          $result = $this->obj->name_linked($back);
         } else {  
           $result = $this->name;
         }

@@ -33,12 +33,11 @@
 
 // get a config value from the database table
 // including $db_con because this is call also from the start, where the global $db_con is not yet set
-function cfg_get($code_id, $usr, $db_con, $debug)
+function cfg_get($code_id, $usr, $db_con)
 {
 
     // init
-    $result = '';
-    log_debug('cfg_get for "' . $code_id . '"', $debug - 12);
+    log_debug('cfg_get for "' . $code_id . '"');
 
     // check the parameters to capsule this function
     if ($code_id == '') {
@@ -47,15 +46,16 @@ function cfg_get($code_id, $usr, $db_con, $debug)
 
     // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
     $db_con->set_type(DB_TYPE_CONFIG);
-    $db_con->set_fields(array('value'));
+    $db_con->set_fields(array('code_id','value'));
     $db_con->where(array('code_id'),array($code_id));
     $sql = $db_con->select(false);
-    $db_row = $db_con->get1($sql, $debug - 5);
+    $db_row = $db_con->get1($sql);
+    $db_code_id = $db_row['code_id'];
     $db_value = $db_row['value'];
     // if no value exists create it with the default value (a configuration value should never be empty)
-    if ($db_value == '') {
-        $db_value = cfg_default_value($code_id, $usr, $debug);
-        $db_description = cfg_default_description($code_id, $usr, $debug);
+    if ($db_code_id == '') {
+        $db_value = cfg_default_value($code_id, $usr);
+        $db_description = cfg_default_description($code_id, $usr);
         $db_con->insert(
             array(
                 'code_id',
@@ -65,21 +65,17 @@ function cfg_get($code_id, $usr, $db_con, $debug)
                 $code_id,
                 $db_value,
                 $db_description));
-        $result .= $db_value;
-    } else {
-        $result .= $db_value;
     }
-
-    return $result;
+    return $db_value;
 }
 
 // get a default config value based on code CONST values
-function cfg_default_value($code_id, $usr, $debug)
+function cfg_default_value($code_id, $usr)
 {
 
     // init
     $result = '';
-    log_debug('cfg_default_value for "' . $code_id . '"', $debug - 12);
+    log_debug('cfg_default_value for "' . $code_id . '"');
 
     // check the parameters to capsule this function
     if ($code_id == '') {
@@ -95,12 +91,12 @@ function cfg_default_value($code_id, $usr, $debug)
 }
 
 // get a default description for a configuration value
-function cfg_default_description($code_id, $usr, $debug)
+function cfg_default_description($code_id, $usr)
 {
 
     // init
     $result = '';
-    log_debug('cfg_default_description for "' . $code_id . '"', $debug - 12);
+    log_debug('cfg_default_description for "' . $code_id . '"');
 
     // check the parameters to capsule this function
     if ($code_id == '') {

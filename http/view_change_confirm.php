@@ -34,7 +34,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("view_confirm", "", $debug);
+$db_con = prg_start("view_confirm");
 
   $result = ''; // reset the html code var
   $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
@@ -51,7 +51,7 @@ $db_con = prg_start("view_confirm", "", $debug);
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -64,13 +64,13 @@ $db_con = prg_start("view_confirm", "", $debug);
       //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
       $dsp->usr = $usr;
       $back = $word_id;
-      $result .= $dsp->dsp_navbar_no_view($back, $debug - 1);
+      $result .= $dsp->dsp_navbar_no_view($back);
 
       // show the word name
       $wrd = new word;
       $wrd->usr = $usr;
       $wrd->id = $word_id;
-      $wrd->load($debug - 1);
+      $wrd->load();
       $result .= dsp_text_h2('Select the display format for "' . $wrd->name . '"');
     }
 
@@ -81,11 +81,11 @@ $db_con = prg_start("view_confirm", "", $debug);
       $dsp = new view;
       $dsp->usr = $usr;
       $dsp->id = $view_id;
-      $result .= $dsp->selector_page($word_id, $back, $debug - 1);
+      $result .= $dsp->selector_page($word_id, $back);
     }
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);
 

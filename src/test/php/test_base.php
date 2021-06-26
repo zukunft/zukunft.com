@@ -36,218 +36,67 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 global $debug;
 global $root_path;
 
+//const ROOT_PATH = __DIR__;
+
 if ($root_path == '') {
     $root_path = '../';
 }
 
 include_once $root_path . 'src/main/php/service/config.php';
-if ($debug > 9) {
-    echo 'lib config loaded<br>';
-}
 
 // load the testing functions
 include_once $root_path . 'src/test/php/test_system.php';
-if ($debug > 9) {
-    echo 'system test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_db_link.php';
-if ($debug > 9) {
-    echo 'database link test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_lib.php';
-if ($debug > 9) {
-    echo 'library test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_math.php';
-if ($debug > 9) {
-    echo 'mathematical test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_user.php';
-if ($debug > 9) {
-    echo 'user test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_word.php';
-if ($debug > 9) {
-    echo 'word test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_word_ui.php';
-if ($debug > 9) {
-    echo 'word user interface test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_word_display.php';
-if ($debug > 9) {
-    echo 'word display test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_word_list.php';
-if ($debug > 9) {
-    echo 'word list test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_word_link.php';
-if ($debug > 9) {
-    echo 'word link test loaded<br>';
-}
 include_once $root_path . 'src/test/php/phrase_test.php';
-if ($debug > 9) {
-    echo 'phrase test loaded<br>';
-}
 include_once $root_path . 'src/test/php/phrase_list_test.php';
-if ($debug > 9) {
-    echo 'phrase list test loaded<br>';
-}
 include_once $root_path . 'src/test/php/phrase_group_test.php';
-if ($debug > 9) {
-    echo 'phrase group test loaded<br>';
-}
 include_once $root_path . 'src/test/php/phrase_group_list_test.php';
-if ($debug > 9) {
-    echo 'phrase group list test loaded<br>';
-}
 include_once $root_path . 'src/test/php/ref_test.php';
-if ($debug > 9) {
-    echo 'ref test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_graph.php';
-if ($debug > 9) {
-    echo 'graph test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_verb.php';
-if ($debug > 9) {
-    echo 'verb test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_term.php';
-if ($debug > 9) {
-    echo 'term test loaded<br>';
-}
 include_once $root_path . 'src/test/php/value_test.php';
-if ($debug > 9) {
-    echo 'value test loaded<br>';
-}
 include_once $root_path . 'src/test/php/value_test_ui.php';
-if ($debug > 9) {
-    echo 'value user interface test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_source.php';
-if ($debug > 9) {
-    echo 'source test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_expression.php';
-if ($debug > 9) {
-    echo 'expression test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula.php';
-if ($debug > 9) {
-    echo 'formula test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula_ui.php';
-if ($debug > 9) {
-    echo 'formula user interface test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula_link.php';
-if ($debug > 9) {
-    echo 'formula link test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula_trigger.php';
-if ($debug > 9) {
-    echo 'formula trigger test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula_value.php';
-if ($debug > 9) {
-    echo 'formula value test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula_element.php';
-if ($debug > 9) {
-    echo 'formula element test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_formula_element_group.php';
-if ($debug > 9) {
-    echo 'formula element group test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_batch.php';
-if ($debug > 9) {
-    echo 'batch job test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_view.php';
-if ($debug > 9) {
-    echo 'view test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_view_component.php';
-if ($debug > 9) {
-    echo 'view component test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_view_component_link.php';
-if ($debug > 9) {
-    echo 'view component link test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_display.php';
-if ($debug > 9) {
-    echo 'display test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_import.php';
-if ($debug > 9) {
-    echo 'import test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_export.php';
-if ($debug > 9) {
-    echo 'export test loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_legacy.php';
-if ($debug > 9) {
-    echo 'test legacy loaded<br>';
-}
 include_once $root_path . 'src/test/php/test_cleanup.php';
-if ($debug > 9) {
-    echo 'test cleanup loaded<br>';
-}
 
 // libraries that can be dismissed, but still used to compare the result with the result of the legacy function
 include_once $root_path . 'src/main/php/service/test/zu_lib_word_dsp.php';
-if ($debug > 9) {
-    echo 'lib word display loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_sql.php';
-if ($debug > 9) {
-    echo 'lib sql loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_link.php';
-if ($debug > 9) {
-    echo 'lib link loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_sql_naming.php';
-if ($debug > 9) {
-    echo 'lib sql naming loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_value.php';
-if ($debug > 9) {
-    echo 'lib value loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_word.php';
-if ($debug > 9) {
-    echo 'lib word loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_word_db.php';
-if ($debug > 9) {
-    echo 'lib word database link loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_calc.php';
-if ($debug > 9) {
-    echo 'lib calc loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_value_db.php';
-if ($debug > 9) {
-    echo 'lib value database link loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_value_dsp.php';
-if ($debug > 9) {
-    echo 'lib value display loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_user.php';
-if ($debug > 9) {
-    echo 'lib user loaded<br>';
-}
 include_once $root_path . 'src/main/php/service/test/zu_lib_html.php';
-if ($debug > 9) {
-    echo 'lib html loaded<br>';
-}
 
 // the fixed system user used for testing
 const TEST_USER_ID = "1";
@@ -267,7 +116,6 @@ const TEST_EMAIL = FALSE; // if set to true an email will be send in case of err
 
 // the basic test record for doing the pre check
 // the word "Company" is assumed to have the ID 1
-const TEST_WORD_ID = "1";
 const TEST_WORD = "Company";
 const TEST_WORD_PLURAL = "Companies";
 const TEST_TRIPLE_ID = "1";
@@ -280,80 +128,86 @@ const TW_NESN = "Nestlé";
 const TW_VESTAS = "Vestas";
 const TW_USA = "United States";
 const TW_ZH = "Zurich";
-define("TW_SALES", "Sales");
-define("TW_SALES2", "Revenues");
-define("TW_PRICE", "Price");
-define("TW_SHARE", "Share");
-define("TW_CHF", "CHF");
-define("TW_EUR", "EUR");
-define("TW_YEAR", "Year");
-define("TW_2012", "2012");
-define("TW_2013", "2013");
-define("TW_2014", "2014");
-define("TW_2015", "2015");
-define("TW_2016", "2016");
-define("TW_2017", "2017");
-define("TW_2020", "2020");
-define("TW_BIL", "billion");
-define("TW_MIO", "million");
-define("TW_K", "thousand");
-define("TW_M", "mio");
-define("TW_PCT", "percent");
-define("TW_CF", "cash flow statement");
-define("TW_TAX", "Income taxes");
-define("TW_SECT_AUTO", "Discrete Automation and Motion");
-define("TW_BALANCE", "balance sheet");
+const TW_SALES = "Sales";
+const TW_SALES2 = "Revenues";
+const TW_PRICE = "Price";
+const TW_SHARE = "Share";
+const TW_CHF = "CHF";
+const TW_EUR = "EUR";
+const TW_YEAR = "Year";
+const TW_2012 = "2012";
+const TW_2013 = "2013";
+const TW_2014 = "2014";
+const TW_2015 = "2015";
+const TW_2016 = "2016";
+const TW_2017 = "2017";
+const TW_2020 = "2020";
+const TW_BIL = "billion";
+const TW_MIO = "million";
+const TW_K = "thousand";
+const TW_M = "mio";
+const TW_PCT = "percent";
+const TW_CF = "cash flow statement";
+const TW_TAX = "Income taxes";
+const TW_SECT_AUTO = "Discrete Automation and Motion";
+const TW_BALANCE = "balance sheet";
 
 // some test words used for testing phrases
-define("TW_CANTON", "Canton");
-define("TW_CITY", "City");
+const TW_CANTON = "Canton";
+const TW_CITY = "City";
 
 // some test phrases used for testing
-define("TP_ZH_CANTON", "Zurich (Canton)");
-define("TP_ZH_CITY", "Zurich (City)");
-define("TP_ZH_INS", "Zurich Insurance");
+const TP_ZH_CANTON = "Zurich (Canton)";
+const TP_ZH_CITY = "Zurich (City)";
+const TP_ZH_INS = "Zurich Insurance";
+const TP_ABB = "ABB (Company)";
+const TP_FOLLOW = "2014 is follower of 2013";
+const TP_TAXES = "Income taxes is part of cash flow statement";
 
 // some external references used for testing
-define("TR_WIKIDATA_ABB", "Q52825");
-define("TRT_WIKIDATA", "wikidata");
+const TR_WIKIDATA_ABB = "Q52825";
+const TRT_WIKIDATA = "wikidata";
 
 // some formula parameter used for testing
-define("TF_INCREASE", "increase");
-define("TF_PE", "Price Earning ratio");
-define("TF_SECTOR", "sectorweight");
-define("TF_SCALE_BIL", "scale billions to one");
-define("TF_SCALE_MIO", "scale mio to one");
-define("TF_SCALE_K", "scale thousand to one");
+const TF_INCREASE = "increase";
+const TF_PE = "Price Earning ratio";
+const TF_SECTOR = "sectorweight";
+const TF_SCALE_BIL = "scale billions to one";
+const TF_SCALE_BIL_TEXT = '"one" = "billion" * 1000000000';
+const TF_SCALE_MIO = "scale mio to one";
+const TF_SCALE_MIO_TEXT = '"one" = "million" * 1000000';
+const TF_SCALE_K = "scale thousand to one";
+const TF_SCALE_K_TEXT = '"one" = "thousand" * 1000';
 
 // some numbers used to test the program
-define("TV_TEST_SALES_2016", 1234);
-define("TV_TEST_SALES_2017", 2345);
-define("TV_ABB_SALES_2013", 45548);
-define("TV_ABB_SALES_2014", 46000);
-define("TV_ABB_PRICE_20200515", 17.08);
-define("TV_NESN_SALES_2016", 89469);
-define("TV_ABB_SALES_AUTO_2013", 9915);
-define("TV_DAN_SALES_USA_2016", '11%');
+const TV_TEST_SALES_2016 = 1234;
+const TV_TEST_SALES_2017 = 2345;
+const TV_ABB_SALES_2013 = 45548;
+const TV_ABB_SALES_2014 = 46000;
+const TV_ABB_PRICE_20200515 = 17.08;
+const TV_NESN_SALES_2016 = 89469;
+const TV_ABB_SALES_AUTO_2013 = 9915;
+const TV_DAN_SALES_USA_2016 = '11%';
 
-define("TV_TEST_SALES_INCREASE_2017_FORMATTED", '90.03 %');
-define("TV_NESN_SALES_2016_FORMATTED", '89\'469');
+const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
+const TV_NESN_SALES_2016_FORMATTED = '89\'469';
 
 // some source used to test the program
-define("TS_NESN_2016_ID", 1);
-define("TS_NESN_2016_NAME", 'Nestlé Financial Statement 2016');
+const TS_NESN_2016_ID = 1;
+const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
 
 
 // settings for add, change and deletion tests
 // these names should not exist in the database
-define("TW_ADD", "Test Company");
-define("TW_ADD_RENAMED", "Company Test");
-define("TF_ADD", "Test Formula");
-define("TF_ADD_RENAMED", "Formula Test");
-define("TM_ADD", "Test Mask");
-define("TM_ADD_RENAMED", "Mask Test");
-define("TC_ADD", "Test Mask Component");
-define("TC_ADD_RENAMED", "Mask Component Test");
-define("TC_ADD2", "Test Mask Component two");
+const TW_ADD = "Test Company";
+const TW_ADD_RENAMED = "Company Test";
+const TF_ADD = "Test Formula";
+const TF_ADD_RENAMED = "Formula Test";
+const TM_ADD = "Test Mask";
+const TM_ADD_RENAMED = "Mask Test";
+const TC_ADD = "Test Mask Component";
+const TC_ADD_RENAMED = "Mask Component Test";
+const TC_ADD2 = "Test Mask Component two";
 
 // max time expected for each function execution
 const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
@@ -372,7 +226,46 @@ const TD_COMPANY_LIST = "Company list with main ratios"; // the default view for
 // sources used for testing
 const TEST_SOURCE_WIKIDATA = "wikidata"; // the source for all data imported from wikidata that does not yet have a source defined in wikidata
 
-//define('ROOTPATH', __DIR__);
+// ---------------
+// prepare testing
+// ---------------
+
+function test_start()
+{
+
+    global $usr1;
+    global $usr2;
+    global $start_time; // time when all tests have started
+    global $exe_start_time; // time when the single test has started (end the end time of all tests)
+
+    // the counter of the error for the summery
+    global $error_counter;
+    global $timeout_counter;
+    global $total_tests;
+
+    // create the system test user to simulate the user sandbox
+    // e.g. a value owned by the first user cannot be adjusted by the second user instead a user specific value is created
+    // instead a user specific value is created
+    // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
+    $usr1 = new user_dsp;
+    $usr1->id = TEST_USER_ID;
+    $usr1->load_test_user();
+
+    $usr2 = new user_dsp;
+    $usr2->id = TEST_USER_ID2;
+    $usr2->load_test_user();
+
+    // init the times to be able to detect potential timeouts
+    $start_time = microtime(true);
+    $exe_start_time = $start_time;
+
+    // reset the error counters
+    $error_counter = 0;
+    $timeout_counter = 0;
+    $total_tests = 0;
+
+}
+
 
 // ---------------------------
 // function to support testing
@@ -463,6 +356,16 @@ function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_ty
     $total_tests++;
     $exe_start_time = $new_start_time;
     return $new_start_time;
+}
+
+// to test if the save result is fine which is the case if the text is only a number or empty
+function num2bool($in_txt): bool
+{
+    $result = false;
+    if (intval($in_txt) > 0 or $in_txt == '') {
+        $result = true;
+    }
+    return $result;
 }
 
 // legacy function for test_dsp
@@ -588,7 +491,7 @@ function test_header($header_text)
 }
 
 // external string diff only for testing
-function str_diff($from, $to)
+function str_diff($from, $to): array
 {
     $diffValues = array();
     $diffMask = array();
@@ -657,87 +560,94 @@ function str_diff($from, $to)
   
 */
 
-function load_word($wrd_name, $debug = 0)
+function load_word($wrd_name): word
 {
     global $usr;
     $wrd = new word;
     $wrd->usr = $usr;
     $wrd->name = $wrd_name;
-    $wrd->load($debug - 1);
+    $wrd->load();
     return $wrd;
 }
 
-function test_word($wrd_name, $debug = 0)
+function test_word($wrd_name, $wrd_type_code_id = null): word
 {
     global $exe_start_time;
-    $wrd = load_word($wrd_name, $debug - 1);
+    $wrd = load_word($wrd_name);
     if ($wrd->id == 0) {
         $wrd->name = $wrd_name;
-        $wrd->save($debug - 1);
+        $wrd->save();
+    }
+    if ($wrd_type_code_id != null) {
+        $wrd->type_id = cl($wrd_type_code_id);
+        $wrd->save();
     }
     $target = $wrd_name;
     $exe_start_time = test_show_result('word', $target, $wrd->name, $exe_start_time, TIMEOUT_LIMIT);
     return $wrd;
 }
 
-function load_formula($frm_name, $debug)
+function load_formula($frm_name): formula
 {
     global $usr;
     $frm = new formula;
     $frm->usr = $usr;
     $frm->name = $frm_name;
-    $frm->load($debug - 1);
+    $frm->load();
     return $frm;
 }
 
-function test_formula($frm_name, $debug)
+// get or create a formula
+function test_formula($frm_name, $frm_text): formula
 {
     global $exe_start_time;
-    $frm = load_formula($frm_name, $debug - 1);
+    $frm = load_formula($frm_name);
     if ($frm->id == 0) {
         $frm->name = $frm_name;
-        $frm->save($debug - 1);
+        $frm->usr_text = $frm_text;
+        $frm->set_ref_text();
+        $frm->save();
     }
     $target = $frm_name;
     $exe_start_time = test_show_result('formula', $target, $frm->name, $exe_start_time, TIMEOUT_LIMIT);
     return $frm;
 }
 
-function load_phrase($phr_name, $debug)
+function load_phrase($phr_name): phrase
 {
     global $usr;
     $phr = new phrase;
     $phr->usr = $usr;
     $phr->name = $phr_name;
-    $phr->load($debug - 1);
+    $phr->load();
     return $phr;
 }
 
-function test_phrase($phr_name, $debug = 0)
+function test_phrase($phr_name): phrase
 {
     global $exe_start_time;
-    $phr = load_phrase($phr_name, $debug - 1);
+    $phr = load_phrase($phr_name);
     $target = $phr_name;
     $exe_start_time = test_show_result('phrase', $target, $phr->name, $exe_start_time, TIMEOUT_LIMIT);
     return $phr;
 }
 
 // create a phrase list object based on an array of strings
-function load_word_list($array_of_word_str, $debug)
+function load_word_list($array_of_word_str): word_list
 {
     global $usr;
     $wrd_lst = new word_list;
     $wrd_lst->usr = $usr;
     foreach ($array_of_word_str as $word_str) {
-        $wrd_lst->add_name($word_str, $debug - 1);
+        $wrd_lst->add_name($word_str);
     }
-    $wrd_lst->load($debug - 1);
+    $wrd_lst->load();
     return $wrd_lst;
 }
 
-function test_word_list($array_of_word_str, $debug)
+function test_word_list($array_of_word_str): word_list
 {
-    $wrd_lst = load_word_list($array_of_word_str, $debug - 1);
+    $wrd_lst = load_word_list($array_of_word_str);
     $target = '"' . implode('","', $array_of_word_str) . '"';
     $result = $wrd_lst->name();
     test_dsp(', word list', $target, $result, TIMEOUT_LIMIT);
@@ -745,163 +655,163 @@ function test_word_list($array_of_word_str, $debug)
 }
 
 // create a phrase list object based on an array of strings
-function load_phrase_list($array_of_word_str, $debug)
+function load_phrase_list($array_of_word_str): phrase_list
 {
     global $usr;
     $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
     foreach ($array_of_word_str as $word_str) {
-        $phr_lst->add_name($word_str, $debug - 1);
+        $phr_lst->add_name($word_str);
     }
-    $phr_lst->load($debug - 1);
+    $phr_lst->load();
     return $phr_lst;
 }
 
-function test_phrase_list($array_of_word_str, $debug)
+function test_phrase_list($array_of_word_str): phrase_list
 {
-    $phr_lst = load_phrase_list($array_of_word_str, $debug - 1);
+    $phr_lst = load_phrase_list($array_of_word_str);
     $target = '"' . implode('","', $array_of_word_str) . '"';
-    $result = $phr_lst->name($debug - 1);
+    $result = $phr_lst->name();
     test_dsp(', phrase list', $target, $result, TIMEOUT_LIMIT);
     return $phr_lst;
 }
 
-function load_value($array_of_word_str, $debug)
+function load_value($array_of_word_str): value
 {
     global $usr;
-    $phr_lst = load_phrase_list($array_of_word_str, $debug - 1);
+    $phr_lst = load_phrase_list($array_of_word_str);
     $val = new value;
     $val->ids = $phr_lst->ids;
     $val->usr = $usr;
-    $val->load($debug - 1);
+    $val->load();
     return $val;
 }
 
-function test_value($array_of_word_str, $target, $debug)
+function test_value($array_of_word_str, $target): value
 {
-    $phr_lst = load_phrase_list($array_of_word_str, $debug - 1);
-    $val = load_value($array_of_word_str, $debug - 1);
+    $phr_lst = load_phrase_list($array_of_word_str);
+    $val = load_value($array_of_word_str);
     $result = $val->number;
     test_dsp(', value->load for a phrase list ' . $phr_lst->name(), $target, $result, TIMEOUT_LIMIT);
     return $val;
 }
 
-function add_value($array_of_word_str, $target, $debug)
+function add_value($array_of_word_str, $target): value
 {
     global $usr;
-    $phr_lst = load_phrase_list($array_of_word_str, $debug - 1);
+    $phr_lst = load_phrase_list($array_of_word_str);
     $val = new value;
     $val->ids = $phr_lst->ids;
     $val->usr = $usr;
     $val->number = $target;
-    $val->save($debug - 1);
+    $val->save();
     return $val;
 }
 
-function load_source($src_name, $debug)
+function load_source($src_name): source
 {
     global $usr;
     $src = new source;
     $src->usr = $usr;
     $src->name = $src_name;
-    $src->load($debug - 1);
+    $src->load();
     return $src;
 }
 
-function test_source($src_name, $debug = 0)
+function test_source($src_name): source
 {
     global $exe_start_time;
-    $src = load_source($src_name, $debug - 1);
+    $src = load_source($src_name);
     if ($src->id == 0) {
         $src->name = $src_name;
-        $src->save($debug - 1);
+        $src->save();
     }
     $target = $src_name;
     $exe_start_time = test_show_result('phrase', $target, $src->name, $exe_start_time, TIMEOUT_LIMIT);
     return $src;
 }
 
-function load_view($dsp_name, $debug)
+function load_view($dsp_name): view
 {
     global $usr;
     $dsp = new view_dsp;
     $dsp->usr = $usr;
     $dsp->name = $dsp_name;
-    $dsp->load($debug - 1);
+    $dsp->load();
     return $dsp;
 }
 
 // same as load_view but for a specific usr
-function load_view_usr($dsp_name, $usr, $debug)
+function load_view_usr($dsp_name, $usr): view
 {
     $dsp = new view_dsp;
     $dsp->usr = $usr;
     $dsp->name = $dsp_name;
-    $dsp->load($debug - 1);
+    $dsp->load();
     return $dsp;
 }
 
-function get_view($dsp_name, $debug)
+function get_view($dsp_name): view
 {
     global $usr;
-    $dsp = load_view($dsp_name, $debug);
+    $dsp = load_view($dsp_name);
     if ($dsp->id == 0 or $dsp->id == Null) {
         $dsp->usr = $usr;
         $dsp->name = $dsp_name;
-        $dsp->save($debug - 1);
+        $dsp->save();
     }
     return $dsp;
 }
 
-function test_view($dsp_name, $debug)
+function test_view($dsp_name): view
 {
     global $exe_start_time;
-    $dsp = load_view($dsp_name, $debug - 1);
+    $dsp = load_view($dsp_name);
     if ($dsp->id == 0) {
         $dsp->name = $dsp_name;
-        $dsp->save($debug - 1);
+        $dsp->save();
     }
     $target = $dsp_name;
     $exe_start_time = test_show_result('view', $target, $dsp->name, $exe_start_time, TIMEOUT_LIMIT);
     return $dsp;
 }
 
-function load_view_component($cmp_name, $debug)
+function load_view_component($cmp_name): view_component
 {
     global $usr;
     $cmp = new view_component;
     $cmp->usr = $usr;
     $cmp->name = $cmp_name;
-    $cmp->load($debug - 1);
+    $cmp->load();
     return $cmp;
 }
 
 // same as load_view_component but for a specific usr
-function load_view_component_usr($cmp_name, $usr, $debug)
+function load_view_component_usr($cmp_name, $usr): view_component
 {
     $cmp = new view_component;
     $cmp->usr = $usr;
     $cmp->name = $cmp_name;
-    $cmp->load($debug - 1);
+    $cmp->load();
     return $cmp;
 }
 
-function get_view_component($cmp_name, $debug)
+function get_view_component($cmp_name): view_component
 {
     global $usr;
-    $cmp = load_view_component($cmp_name, $debug);
+    $cmp = load_view_component($cmp_name);
     if ($cmp->id == 0 or $cmp->id == Null) {
         $cmp->usr = $usr;
         $cmp->name = $cmp_name;
-        $cmp->save($debug - 1);
+        $cmp->save();
     }
     return $cmp;
 }
 
-function test_component($cmp_name, $debug)
+function test_view_component($cmp_name): view_component
 {
     global $exe_start_time;
-    $cmp = load_view($cmp_name, $debug - 1);
+    $cmp = load_view_component($cmp_name);
     $target = $cmp_name;
     $exe_start_time = test_show_result('view component', $target, $cmp->name, $exe_start_time, TIMEOUT_LIMIT);
     return $cmp;
@@ -909,7 +819,7 @@ function test_component($cmp_name, $debug)
 
 // check if a word link exists and if not and requested create it
 // $phrase_name should be set if the standard name for the link should not be used
-function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocreate = true, $debug = 0)
+function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocreate = true)
 {
     global $usr;
     global $exe_start_time;
@@ -917,24 +827,24 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
     $result = '';
 
     // create the words if needed
-    $wrd_from = load_word($from, $debug - 1);
+    $wrd_from = load_word($from);
     if ($wrd_from->id <= 0 and $autocreate) {
         $wrd_from->name = $from;
-        $wrd_from->save($debug - 1);
-        $wrd_from->load($debug - 1);
+        $wrd_from->save();
+        $wrd_from->load();
     }
-    $wrd_to = load_word($to, $debug - 1);
+    $wrd_to = load_word($to);
     if ($wrd_to->id <= 0 and $autocreate) {
         $wrd_to->name = $to;
-        $wrd_to->save($debug - 1);
-        $wrd_to->load($debug - 1);
+        $wrd_to->save();
+        $wrd_to->load();
     }
 
     // load the verb
     $vrb = new verb;
     $vrb->id = cl($verb);
     $vrb->usr = $usr;
-    $vrb->load($debug - 1);
+    $vrb->load();
     $lnk_test = new word_link;
 
     if ($wrd_from->id == 0 or $wrd_to->id == 0) {
@@ -945,7 +855,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
         $lnk_test->verb_id = cl($verb);
         $lnk_test->to_id = $wrd_to->id;
         $lnk_test->usr = $usr;
-        $lnk_test->load($debug - 1);
+        $lnk_test->load();
         if ($lnk_test->id > 0) {
             $result = $lnk_test;
         } else {
@@ -954,20 +864,20 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
             $lnk_test->verb_id = cl($verb);
             $lnk_test->to_id = $wrd_from->id;
             $lnk_test->usr = $usr;
-            $lnk_test->load($debug - 1);
+            $lnk_test->load();
             $result = $lnk_test;
             // create the link if requested
             if ($lnk_test->id <= 0 and $autocreate) {
                 $lnk_test->from_id = $wrd_from->id;
                 $lnk_test->verb_id = cl($verb);
                 $lnk_test->to_id = $wrd_to->id;
-                $lnk_test->save($debug - 1);
-                $lnk_test->load($debug - 1);
+                $lnk_test->save();
+                $lnk_test->load();
                 // refresh the given name if needed
                 if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
                     $lnk_test->description = $phrase_name;
-                    $lnk_test->save($debug - 1);
-                    $lnk_test->load($debug - 1);
+                    $lnk_test->save();
+                    $lnk_test->load();
                     $result = $lnk_test;
                 }
             }
@@ -978,7 +888,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
 }
 
 
-function test_formula_link($formula_name, $word_name, $autocreate = true, $debug = 0)
+function test_formula_link($formula_name, $word_name, $autocreate = true): string
 {
     global $usr;
     global $exe_start_time;
@@ -988,24 +898,24 @@ function test_formula_link($formula_name, $word_name, $autocreate = true, $debug
     $frm = new formula;
     $frm->usr = $usr;
     $frm->name = $formula_name;
-    $frm->load($debug - 1);
+    $frm->load();
     $phr = new word;
     $phr->name = $word_name;
     $phr->usr = $usr;
-    $phr->load($debug - 1);
+    $phr->load();
     if ($frm->id > 0 and $phr->id <> 0) {
         $frm_lnk = new formula_link;
         $frm_lnk->usr = $usr;
         $frm_lnk->fob = $frm;
         $frm_lnk->tob = $phr;
-        $frm_lnk->load($debug - 1);
+        $frm_lnk->load();
         if ($frm_lnk->id > 0) {
             $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
             $target = $formula_name . ' is linked to ' . $word_name;
             $exe_start_time = test_show_result('formula_link', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         } else {
             if ($autocreate) {
-                $frm_lnk->save($debug - 1);
+                $frm_lnk->save();
             }
         }
     }
@@ -1017,25 +927,30 @@ function test_formula_link($formula_name, $word_name, $autocreate = true, $debug
 // testing functions to create the main time value
 // -----------------------------------------------
 
-function zu_test_time_setup($debug = 0)
+function zu_test_time_setup()
 {
     global $usr, $db_con;
     $result = '';
     $this_year = date('Y');
     $prev_year = '';
-    $test_years = cfg_get('test_years', $usr, $db_con, $debug - 10);
-    $start_year = $this_year - $test_years;
-    $end_year = $this_year + $test_years;
-    for ($year = $start_year; $year <= $end_year; $year++) {
-        $this_year = $year;
-        test_word(strval($this_year));
-        $wrd_lnk = test_word_link(TW_YEAR, DBL_LINK_TYPE_IS, $this_year, true, '', $debug - 1);
-        $result = $wrd_lnk->name;
-        if ($prev_year <> '') {
-            test_word_link($prev_year, DBL_LINK_TYPE_FOLLOW, $this_year, true, '', $debug - 1);
+    $test_years = cfg_get('test_years', $usr, $db_con);
+    if ($test_years == '') {
+        log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
+    } else {
+        $start_year = $this_year - $test_years;
+        $end_year = $this_year + $test_years;
+        for ($year = $start_year; $year <= $end_year; $year++) {
+            $this_year = $year;
+            test_word(strval($this_year));
+            $wrd_lnk = test_word_link(TW_YEAR, DBL_LINK_TYPE_IS, $this_year, true, '');
+            $result = $wrd_lnk->name;
+            if ($prev_year <> '') {
+                test_word_link($prev_year, DBL_LINK_TYPE_FOLLOW, $this_year, true, '');
+            }
+            $prev_year = $this_year;
         }
-        $prev_year = $this_year;
     }
+
     return $result;
 }
 

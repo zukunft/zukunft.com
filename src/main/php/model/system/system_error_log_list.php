@@ -42,8 +42,8 @@ class system_error_log_list {
   // display the error that are related to the user, so that he can track when they are closed
   // or display the error that are related to the user, so that he can track when they are closed
   // called also from user_display.php/dsp_errors
-  function display ($debug) {
-    log_debug('system_error_log_list->display for user "'.$this->usr->name.'"', $debug-10);
+  function display () {
+    log_debug('system_error_log_list->display for user "'.$this->usr->name.'"');
 
     global $db_con;
     $result = ''; // reset the html code var
@@ -92,10 +92,10 @@ class system_error_log_list {
              LIMIT ".$this->size.";";
     //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;
-    $db_lst = $db_con->get($sql, $debug-5);  
+    $db_lst = $db_con->get($sql);  
 
     if (count($db_lst) > 0) {
-      log_debug('system_error_log_list->display -> '.count($db_lst).' rows', $debug-1);
+      log_debug('system_error_log_list->display -> '.count($db_lst).' rows');
       // prepare to show the word link
       $db_row = $db_lst[0];
       if ($db_row["sys_log_time"] <> '') {
@@ -131,7 +131,7 @@ class system_error_log_list {
       }
     }
     
-    log_debug('system_error_log_list->display -> done', $debug-1);
+    log_debug('system_error_log_list->display -> done');
     return $result;
   }
     

@@ -1137,7 +1137,8 @@
   "values": [
     {
       "words": [
-        "hyperfine transition frequency of Cs”,”Hz"
+        "hyperfine transition frequency of Cs",
+        "Hz"
       ],
       "time": "1967",
       "number": "9192631770",
@@ -1146,7 +1147,8 @@
     },
     {
       "words": [
-        "speed of light”,”m/s"
+        "speed of light",
+        "m/s"
       ],
       "time": "1983",
       "number": "299792458",
@@ -1155,7 +1157,8 @@
     },
     {
       "words": [
-        "Planck constant”,”J⋅s"
+        "Planck constant",
+        "J⋅s"
       ],
       "time": "2019",
       "number": "6.62607015E-34",
@@ -1164,7 +1167,8 @@
     },
     {
       "words": [
-        "elementary charge”,”C"
+        "elementary charge",
+        "C"
       ],
       "time": "2019",
       "number": "1.602176634E-19",
@@ -1173,7 +1177,8 @@
     },
     {
       "words": [
-        "Boltzmann constant”,”J/K"
+        "Boltzmann constant",
+        "J/K"
       ],
       "time": "2019",
       "number": "1.380649E-23",
@@ -1182,7 +1187,8 @@
     },
     {
       "words": [
-        "Avogadro constant”,”mol−1"
+        "Avogadro constant",
+        "mol−1"
       ],
       "time": "2019",
       "number": "6.02214076E+023",
@@ -1191,7 +1197,8 @@
     },
     {
       "words": [
-        "luminous efficacy”,”lm/W"
+        "luminous efficacy",
+        "lm/W"
       ],
       "time": "1979",
       "number": "683",

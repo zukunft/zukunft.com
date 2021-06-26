@@ -51,14 +51,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 /* open database */
-$db_con = prg_start("word_add", "", $debug);
+$db_con = prg_start("word_add");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -67,7 +67,7 @@ $db_con = prg_start("word_add", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_WORD_ADD);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back']; // the calling page which should be displayed after saving
         
     // create the word object to have an place to update the parameters
@@ -109,7 +109,7 @@ $db_con = prg_start("word_add", "", $debug);
         $trm = New term;
         $trm->usr    = $usr;
         $trm->name   = $wrd->name;
-        $trm->load($debug-1);
+        $trm->load();
         if ($trm->id > 0) {
           /*
           // todo: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
@@ -117,11 +117,11 @@ $db_con = prg_start("word_add", "", $debug);
             // maybe ask for confirmation
             // change the link type to "formula link"
             $wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
-            zu_debug('word_add -> changed type to ('.$wrd->type_id.')', $debug);
+            zu_debug('word_add -> changed type to ('.$wrd->type_id.')');
           } else {
           */
           $msg .= $trm->id_used_msg();
-          log_debug('word_add -> ', $debug);
+          log_debug('word_add -> ');
           //}  
         }  
       
@@ -132,10 +132,10 @@ $db_con = prg_start("word_add", "", $debug);
         $lnk_test->from_id = $wrd_id;
         $lnk_test->verb_id = $vrb_id;
         $lnk_test->to_id   = $wrd_to;
-        $lnk_test->load($debug-1);
+        $lnk_test->load();
         if ($lnk_test->id > 0) {
-          $lnk_test->load_objects($debug-1);
-          log_debug('word_add -> check forward link '.$wrd_id.' '.$vrb_id.' '.$wrd_to.'', $debug-1);
+          $lnk_test->load_objects();
+          log_debug('word_add -> check forward link '.$wrd_id.' '.$vrb_id.' '.$wrd_to.'');
           $msg .= '"'.$lnk_test->from_name.' '.$lnk_test->verb_name.' '.$lnk_test->to_name.'" already exists. ';
         }
         $lnk_rev = New word_link;
@@ -143,34 +143,34 @@ $db_con = prg_start("word_add", "", $debug);
         $lnk_rev->from_id = $wrd_to;
         $lnk_rev->verb_id = $vrb_id;
         $lnk_rev->to_id   = $wrd_id;
-        $lnk_rev->load($debug-1);
+        $lnk_rev->load();
         if ($lnk_rev->id > 0) {
-          $lnk_rev->load_objects($debug-1);
+          $lnk_rev->load_objects();
           $msg .= 'The reverse of "'.$lnk_rev->from_name.' '.$lnk_rev->verb_name.' '.$lnk_rev->to_name.'" already exists. Do you really want to add both sides? ';
         }
       }
       
       // if the parameters are fine ...
       if ($msg == '') {
-        log_debug('word_add -> no msg', $debug);
+        log_debug('word_add -> no msg');
         $add_result = '';
         // ... add the new word to the database
         if ($wrd->name <> "") {
-          $add_result .= $wrd->save($debug-1);
+          $add_result .= $wrd->save();
         } else {
           $wrd->id = $wrd_id;
-          $wrd->load($debug-1);
+          $wrd->load();
         }
-        log_debug('word_add -> test word', $debug);
+        log_debug('word_add -> test word');
         if ($wrd->id > 0 AND $vrb_id <> 0 AND $wrd_to > 0) {
           // ... and link it to an existing word
-          log_debug('word_add -> word '.$wrd->id.' linked via '.$vrb_id.' to '.$wrd_to.': '.$add_result, $debug-1);
+          log_debug('word_add -> word '.$wrd->id.' linked via '.$vrb_id.' to '.$wrd_to.': '.$add_result);
           $lnk = New word_link;
           $lnk->usr     = $usr;
           $lnk->from_id = $wrd->id;
           $lnk->verb_id = $vrb_id;
           $lnk->to_id   = $wrd_to;
-          $add_result .= $lnk->save($debug-1);
+          $add_result .= $lnk->save();
         }  
 
         // if adding was successful ...
@@ -178,7 +178,7 @@ $db_con = prg_start("word_add", "", $debug);
           // if word has been added or linked successfully, go back
           //if ($wrd->id > 0 AND $lnk->id <> 0 ) {
           // display the calling view
-          //$result .= dsp_go_back($back, $usr, $debug-1);
+          //$result .= dsp_go_back($back, $usr);
           //}  
         } else {
           // ... or in case of a problem prepare to show the message
@@ -190,13 +190,13 @@ $db_con = prg_start("word_add", "", $debug);
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '')  {
       // display the add view again
-      $result .= $dsp->dsp_navbar($back, $debug-1);
+      $result .= $dsp->dsp_navbar($back);
       $result .= dsp_err($msg);
 
-      $result .= $wrd->dsp_add ($wrd_id, $wrd_to, $vrb_id, $back, $debug-1);
+      $result .= $wrd->dsp_add ($wrd_id, $wrd_to, $vrb_id, $back);
     }
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

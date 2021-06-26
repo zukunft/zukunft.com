@@ -154,7 +154,7 @@
   debug functions
   -----
   
-  zu_debug   - for interactive debugging
+  zu_debug   - for interactive debugging (since version 0.0.3 based on a global $debug var, because meanwhile the PhpStorm has a debugger)
   zu_msg     - write a message to the system log for later debugging
   zu_info    - info message
   zu_warning - log a warning message if log level is set to warning
@@ -286,8 +286,8 @@
 
 */
 
-const PRG_VERSION   = "0.0.3"; // to detect the correct update script and to mark the data export
-const NEXT_VERSION  = "0.0.4"; // to prevent importing incompatible data
+const PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
+const NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
 const FIRST_VERSION = "0.0.3"; // the first program version which has a basic upgrade process
 
 // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
@@ -295,6 +295,7 @@ const FIRST_VERSION = "0.0.3"; // the first program version which has a basic up
 const DB_TYPE_USER = 'user';
 const DB_TYPE_WORD = 'word';
 const DB_TYPE_WORD_LINK = 'word_link';
+const DB_TYPE_WORD_TYPE = 'word_type';
 const DB_TYPE_VERB = 'verb';
 const DB_TYPE_PHRASE = 'phrase';
 const DB_TYPE_PHRASE_GROUP = 'phrase_group';
@@ -320,7 +321,7 @@ const DB_TYPE_CHANGE_LINK = 'change_link';
 const DB_TYPE_CONFIG = 'config';
 const DB_TYPE_SYS_LOG = 'sys_log';
 const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
-const DB_TYPE_SYS_SCRIPT= 'sys_script'; // to log the execution times for code optimising
+const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
 
 const DB_TYPE_USER_PREFIX = 'user_';
@@ -357,81 +358,276 @@ $sys_log_msg_lst = array();
 global $root_path;
 
 if ($root_path == '') {
-  $root_path = '../';
+    $root_path = '../';
 }
 
 // database links
-include_once $root_path.'database/sql_db.php';                                       if ($debug > 9) { echo 'mysql link loaded<br>'; }
-include_once $root_path.'src/main/php/db/db_check.php';                              if ($debug > 9) { echo 'db check loaded<br>'; }
+include_once $root_path . 'database/sql_db.php';
+if ($debug > 9) {
+    echo 'mysql link loaded<br>';
+}
+include_once $root_path . 'src/main/php/db/db_check.php';
+if ($debug > 9) {
+    echo 'db check loaded<br>';
+}
 // service
-include_once $root_path.'src/main/php/service/import/import_file.php';               if ($debug > 9) { echo 'service import loaded<br>'; }
-include_once $root_path.'src/main/php/service/import/import.php';                    if ($debug > 9) { echo 'class import loaded<br>'; }
-include_once $root_path.'src/main/php/service/export/export.php';                    if ($debug > 9) { echo 'class export loaded<br>'; }
-include_once $root_path.'src/main/php/service/export/json.php';                      if ($debug > 9) { echo 'class json loaded<br>'; }
-include_once $root_path.'src/main/php/service/export/xml.php';                       if ($debug > 9) { echo 'class xml loaded<br>'; }
+include_once $root_path . 'src/main/php/service/import/import_file.php';
+if ($debug > 9) {
+    echo 'service import loaded<br>';
+}
+include_once $root_path . 'src/main/php/service/import/import.php';
+if ($debug > 9) {
+    echo 'class import loaded<br>';
+}
+include_once $root_path . 'src/main/php/service/export/export.php';
+if ($debug > 9) {
+    echo 'class export loaded<br>';
+}
+include_once $root_path . 'src/main/php/service/export/json.php';
+if ($debug > 9) {
+    echo 'class json loaded<br>';
+}
+include_once $root_path . 'src/main/php/service/export/xml.php';
+if ($debug > 9) {
+    echo 'class xml loaded<br>';
+}
 // classes
-include_once $root_path.'src/main/php/model/user/user.php';                          if ($debug > 9) { echo 'class user loaded<br>'; }
-include_once $root_path.'src/main/php/web/user_display.php';                         if ($debug > 9) { echo 'class user display loaded<br>'; }
-include_once $root_path.'src/main/php/model/user/user_list.php';                     if ($debug > 9) { echo 'class user list loaded<br>'; }
-include_once $root_path.'src/main/php/model/user/user_log.php';                      if ($debug > 9) { echo 'class user log loaded<br>'; }
-include_once $root_path.'src/main/php/model/user/user_log_link.php';                 if ($debug > 9) { echo 'class user log reference loaded<br>'; }
-include_once $root_path.'src/main/php/web/user_log_display.php';                     if ($debug > 9) { echo 'class user log display loaded<br>'; }
-include_once $root_path.'src/main/php/model/user_sandbox.php';                       if ($debug > 9) { echo 'class user sandbox loaded<br>'; }
-include_once $root_path.'src/main/php/web/user_sandbox_display.php';                 if ($debug > 9) { echo 'class user sandbox display loaded<br>'; }
-include_once $root_path.'src/main/php/model/system/system_error_log.php';            if ($debug > 9) { echo 'class system error log loaded<br>'; }
-include_once $root_path.'src/main/php/model/system/system_error_log_list.php';       if ($debug > 9) { echo 'class system error log list loaded<br>'; }
-include_once $root_path.'src/main/php/web/display_interface.php';                    if ($debug > 9) { echo 'class display interface loaded<br>'; }
-include_once $root_path.'src/main/php/web/display_html.php';                         if ($debug > 9) { echo 'class display html loaded<br>'; }
-include_once $root_path.'src/main/php/web/display_button.php';                       if ($debug > 9) { echo 'class display button loaded<br>'; }
-include_once $root_path.'src/main/php/web/display_selector.php';                     if ($debug > 9) { echo 'class display selector loaded<br>'; }
-include_once $root_path.'src/main/php/web/display_list.php';                         if ($debug > 9) { echo 'class display list loaded<br>'; }
-include_once $root_path.'src/main/php/model/word/word.php';                          if ($debug > 9) { echo 'class word loaded<br>'; }
-include_once $root_path.'src/main/php/web/word_display.php';                         if ($debug > 9) { echo 'class word display loaded<br>'; }
-include_once $root_path.'src/main/php/model/word/word_list.php';                     if ($debug > 9) { echo 'class word list loaded<br>'; }
-include_once $root_path.'src/main/php/model/word/word_link.php';                     if ($debug > 9) { echo 'class word link loaded<br>'; }
-include_once $root_path.'src/main/php/model/word/word_link_list.php';                if ($debug > 9) { echo 'class word link list loaded<br>'; }
-include_once $root_path.'src/main/php/model/phrase/phrase.php';                      if ($debug > 9) { echo 'class phrase loaded<br>'; }
-include_once $root_path.'src/main/php/model/phrase/phrase_list.php';                 if ($debug > 9) { echo 'class phrase list loaded<br>'; }
-include_once $root_path.'src/main/php/model/phrase/phrase_group.php';                if ($debug > 9) { echo 'class phrase group loaded<br>'; }
-include_once $root_path.'src/main/php/model/phrase/phrase_group_list.php';           if ($debug > 9) { echo 'class phrase group list loaded<br>'; }
-include_once $root_path.'src/main/php/model/verb/verb.php';                          if ($debug > 9) { echo 'class verb loaded<br>'; }
-include_once $root_path.'src/main/php/model/verb/verb_list.php';                     if ($debug > 9) { echo 'class verb list loaded<br>'; }
-include_once $root_path.'src/main/php/model/phrase/term.php';                        if ($debug > 9) { echo 'class term loaded<br>'; }
-include_once $root_path.'src/main/php/model/value/value.php';                        if ($debug > 9) { echo 'class value loaded<br>'; }
-include_once $root_path.'src/main/php/model/value/value_list.php';                   if ($debug > 9) { echo 'class value list loaded<br>'; }
-include_once $root_path.'src/main/php/web/value_list_display.php';                   if ($debug > 9) { echo 'class value list display loaded<br>'; }
-include_once $root_path.'src/main/php/model/value/value_phrase_link.php';            if ($debug > 9) { echo 'class value word link loaded<br>'; }
-include_once $root_path.'src/main/php/model/ref/source.php';                         if ($debug > 9) { echo 'class source loaded<br>'; }
-include_once $root_path.'src/main/php/model/ref/ref.php';                            if ($debug > 9) { echo 'class external reference loaded<br>'; }
-include_once $root_path.'src/main/php/model/ref/ref_type.php';                       if ($debug > 9) { echo 'class external reference types loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/expression.php';                 if ($debug > 9) { echo 'class expression loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula.php';                    if ($debug > 9) { echo 'class formula loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_list.php';               if ($debug > 9) { echo 'class formula list loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_link.php';               if ($debug > 9) { echo 'class formula link loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_link_list.php';          if ($debug > 9) { echo 'class formula link list loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_value.php';              if ($debug > 9) { echo 'class formula value loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_value_list.php';         if ($debug > 9) { echo 'class formula value list loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_element.php';            if ($debug > 9) { echo 'class formula element loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_element_list.php';       if ($debug > 9) { echo 'class formula element list loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_element_group.php';      if ($debug > 9) { echo 'class formula element group loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/formula_element_group_list.php'; if ($debug > 9) { echo 'class formula element group list loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/figure.php';                     if ($debug > 9) { echo 'class figure loaded<br>'; }
-include_once $root_path.'src/main/php/model/formula/figure_list.php';                if ($debug > 9) { echo 'class figure list loaded<br>'; }
-include_once $root_path.'src/main/php/model/system/batch_job.php';                   if ($debug > 9) { echo 'class batch job loaded<br>'; }
-include_once $root_path.'src/main/php/model/system/batch_job_list.php';              if ($debug > 9) { echo 'class batch job list loaded<br>'; }
-include_once $root_path.'src/main/php/model/view/view.php';                          if ($debug > 9) { echo 'class view loaded<br>'; }
-include_once $root_path.'src/main/php/web/view_display.php';                         if ($debug > 9) { echo 'class view display loaded<br>'; }
-include_once $root_path.'src/main/php/model/view/view_component.php';                if ($debug > 9) { echo 'class view component loaded<br>'; }
-include_once $root_path.'src/main/php/model/view/view_component_dsp.php';            if ($debug > 9) { echo 'class view component display loaded<br>'; }
-include_once $root_path.'src/main/php/model/view/view_component_link.php';           if ($debug > 9) { echo 'class view component link loaded<br>'; }
+include_once $root_path . 'src/main/php/model/user/user.php';
+if ($debug > 9) {
+    echo 'class user loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/user_display.php';
+if ($debug > 9) {
+    echo 'class user display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/user/user_list.php';
+if ($debug > 9) {
+    echo 'class user list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/user/user_log.php';
+if ($debug > 9) {
+    echo 'class user log loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/user/user_log_link.php';
+if ($debug > 9) {
+    echo 'class user log reference loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/user_log_display.php';
+if ($debug > 9) {
+    echo 'class user log display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/user_sandbox.php';
+if ($debug > 9) {
+    echo 'class user sandbox loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/user_sandbox_display.php';
+if ($debug > 9) {
+    echo 'class user sandbox display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/system/system_error_log.php';
+if ($debug > 9) {
+    echo 'class system error log loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/system/system_error_log_list.php';
+if ($debug > 9) {
+    echo 'class system error log list loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/display_interface.php';
+if ($debug > 9) {
+    echo 'class display interface loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/display_html.php';
+if ($debug > 9) {
+    echo 'class display html loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/display_button.php';
+if ($debug > 9) {
+    echo 'class display button loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/display_selector.php';
+if ($debug > 9) {
+    echo 'class display selector loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/display_list.php';
+if ($debug > 9) {
+    echo 'class display list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/word/word.php';
+if ($debug > 9) {
+    echo 'class word loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/word_display.php';
+if ($debug > 9) {
+    echo 'class word display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/word/word_list.php';
+if ($debug > 9) {
+    echo 'class word list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/word/word_link.php';
+if ($debug > 9) {
+    echo 'class word link loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/word/word_link_list.php';
+if ($debug > 9) {
+    echo 'class word link list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/phrase/phrase.php';
+if ($debug > 9) {
+    echo 'class phrase loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/phrase/phrase_list.php';
+if ($debug > 9) {
+    echo 'class phrase list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/phrase/phrase_group.php';
+if ($debug > 9) {
+    echo 'class phrase group loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/phrase/phrase_group_list.php';
+if ($debug > 9) {
+    echo 'class phrase group list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/verb/verb.php';
+if ($debug > 9) {
+    echo 'class verb loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/verb/verb_list.php';
+if ($debug > 9) {
+    echo 'class verb list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/phrase/term.php';
+if ($debug > 9) {
+    echo 'class term loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/value/value.php';
+if ($debug > 9) {
+    echo 'class value loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/value/value_list.php';
+if ($debug > 9) {
+    echo 'class value list loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/value_list_display.php';
+if ($debug > 9) {
+    echo 'class value list display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/value/value_phrase_link.php';
+if ($debug > 9) {
+    echo 'class value word link loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/ref/source.php';
+if ($debug > 9) {
+    echo 'class source loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/ref/ref.php';
+if ($debug > 9) {
+    echo 'class external reference loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/ref/ref_type.php';
+if ($debug > 9) {
+    echo 'class external reference types loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/expression.php';
+if ($debug > 9) {
+    echo 'class expression loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula.php';
+if ($debug > 9) {
+    echo 'class formula loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_list.php';
+if ($debug > 9) {
+    echo 'class formula list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_link.php';
+if ($debug > 9) {
+    echo 'class formula link loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_link_list.php';
+if ($debug > 9) {
+    echo 'class formula link list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_value.php';
+if ($debug > 9) {
+    echo 'class formula value loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_value_list.php';
+if ($debug > 9) {
+    echo 'class formula value list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_element.php';
+if ($debug > 9) {
+    echo 'class formula element loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_element_list.php';
+if ($debug > 9) {
+    echo 'class formula element list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_element_group.php';
+if ($debug > 9) {
+    echo 'class formula element group loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/formula_element_group_list.php';
+if ($debug > 9) {
+    echo 'class formula element group list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/figure.php';
+if ($debug > 9) {
+    echo 'class figure loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/formula/figure_list.php';
+if ($debug > 9) {
+    echo 'class figure list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/system/batch_job.php';
+if ($debug > 9) {
+    echo 'class batch job loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/system/batch_job_list.php';
+if ($debug > 9) {
+    echo 'class batch job list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/view/view.php';
+if ($debug > 9) {
+    echo 'class view loaded<br>';
+}
+include_once $root_path . 'src/main/php/web/view_display.php';
+if ($debug > 9) {
+    echo 'class view display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/view/view_component.php';
+if ($debug > 9) {
+    echo 'class view component loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/view/view_component_dsp.php';
+if ($debug > 9) {
+    echo 'class view component display loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/view/view_component_link.php';
+if ($debug > 9) {
+    echo 'class view component link loaded<br>';
+}
 
 // include all other libraries that are usually needed
-include_once $root_path.'db_link/zu_lib_sql_link.php';                               if ($debug > 9) { echo 'lib sql link loaded<br>'; }
-include_once $root_path.'src/main/php/service/zu_lib_sql_code_link.php';             if ($debug > 9) { echo 'lib sql code link loaded<br>'; }
-include_once $root_path.'src/main/php/service/config.php';                           if ($debug > 9) { echo 'lib config loaded<br>'; }
+include_once $root_path . 'db_link/zu_lib_sql_link.php';
+if ($debug > 9) {
+    echo 'lib sql link loaded<br>';
+}
+include_once $root_path . 'src/main/php/service/zu_lib_sql_code_link.php';
+if ($debug > 9) {
+    echo 'lib sql code link loaded<br>';
+}
+include_once $root_path . 'src/main/php/service/config.php';
+if ($debug > 9) {
+    echo 'lib config loaded<br>';
+}
 
 // used at the moment, but to be replaced with R-Project call
-include_once $root_path.'src/main/php/service/zu_lib_calc_math.php';                if ($debug > 9) { echo 'lib calc math loaded<br>'; }
+include_once $root_path . 'src/main/php/service/zu_lib_calc_math.php';
+if ($debug > 9) {
+    echo 'lib calc math loaded<br>';
+}
 
 // libraries that may be useful in the future
 /*
@@ -466,7 +662,7 @@ The beta test is expected to start with version 0.7
 
 // global code settings
 // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
-const UI_USE_BOOTSTRAP     = 1; // IF FALSE a simple HTML frontend without javascript is used
+const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 const UI_MIN_RESPONSE_TIME = 2; // minimal time after that the user user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
 
 /*
@@ -481,17 +677,19 @@ e.g. if this setting is true
      2. "Nestlé" with id 2 will not be excluded any more
      
 */
-const UI_CAN_CHANGE_VALUE               = TRUE;
-const UI_CAN_CHANGE_VIEW_NAME           = TRUE;
+const UI_CAN_CHANGE_VALUE = TRUE;
+const UI_CAN_CHANGE_TIME_SERIES_VALUE = TRUE;
+const UI_CAN_CHANGE_VIEW_NAME = TRUE;
 const UI_CAN_CHANGE_VIEW_COMPONENT_NAME = TRUE; // dito for view components
 const UI_CAN_CHANGE_VIEW_COMPONENT_LINK = TRUE; // dito for view component links
-const UI_CAN_CHANGE_WORD_NAME           = TRUE; // dito for words
-const UI_CAN_CHANGE_FORMULA_NAME        = TRUE; // dito for formulas
-const UI_CAN_CHANGE_VERB_NAME           = TRUE; // dito for verbs
-const UI_CAN_CHANGE_SOURCE_NAME         = TRUE; // dito for sources
+const UI_CAN_CHANGE_WORD_NAME = TRUE; // dito for words
+const UI_CAN_CHANGE_WORD_LINK_NAME = TRUE; // dito for phrases
+const UI_CAN_CHANGE_FORMULA_NAME = TRUE; // dito for formulas
+const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
+const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 
 // program configuration names
-const CFG_SITE_NAME  = 'site_name';             // the name of the pod
+const CFG_SITE_NAME = 'site_name';             // the name of the pod
 const CFG_VERSION_DB = 'version_database';      // the version of the database at the moment to trigger an update script if needed
 
 // data retrieval settings
@@ -514,78 +712,77 @@ const DEFAULT_THOUSAND_SEP = "'";
 const DEFAULT_VIEW = "dsp_start";
 
 // text conversion const (used to convert word, verbs or formula text to a database reference)
-const ZUP_CHAR_WORD        = '"';    // or a zukunft verb or a zukunft formula
+const ZUP_CHAR_WORD = '"';    // or a zukunft verb or a zukunft formula
 const ZUP_CHAR_WORDS_START = '[';    //
-const ZUP_CHAR_WORDS_END   = ']';    //
-const ZUP_CHAR_SEPERATOR   = ',';    //
-const ZUP_CHAR_RANGE       = ':';    //
+const ZUP_CHAR_WORDS_END = ']';    //
+const ZUP_CHAR_SEPERATOR = ',';    //
+const ZUP_CHAR_RANGE = ':';    //
 const ZUP_CHAR_TEXT_CONCAT = '&';    //
 
 // to convert word, formula or verbs database reference to word or word list and in a second step to a value or value list
-const ZUP_CHAR_WORD_START    = '{t';   //
-const ZUP_CHAR_WORD_END      = '}';    //
-const ZUP_CHAR_LINK_START    = '{l';   //
-const ZUP_CHAR_LINK_END      = '}';    //
+const ZUP_CHAR_WORD_START = '{t';   //
+const ZUP_CHAR_WORD_END = '}';    //
+const ZUP_CHAR_LINK_START = '{l';   //
+const ZUP_CHAR_LINK_END = '}';    //
 const ZUP_CHAR_FORMULA_START = '{f';   //
-const ZUP_CHAR_FORMULA_END   = '}';    //
+const ZUP_CHAR_FORMULA_END = '}';    //
 
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
 // math calc (probably not needed any more if r-project.org is used)
 const ZUP_CHAR_CALC = '=';    //
-const ZUP_OPER_ADD  = '+';    //
-const ZUP_OPER_SUB  = '-';    //
-const ZUP_OPER_MUL  = '*';    //
-const ZUP_OPER_DIV  = '/';    //
+const ZUP_OPER_ADD = '+';    //
+const ZUP_OPER_SUB = '-';    //
+const ZUP_OPER_MUL = '*';    //
+const ZUP_OPER_DIV = '/';    //
 
 const ZUP_OPER_AND = '&';    //
-const ZUP_OPER_OR  = '|';    //
+const ZUP_OPER_OR = '|';    //
 
 // fixed functions
-const ZUP_FUNC_IF    = 'if';    //
-const ZUP_FUNC_SUM   = 'sum';    //
+const ZUP_FUNC_IF = 'if';    //
+const ZUP_FUNC_SUM = 'sum';    //
 const ZUP_FUNC_ISNUM = 'is.numeric';    //
 
 // text conversion const (used to convert word, formula or verbs text to a reference)
-const ZUP_CHAR_BRAKET_OPEN  = '(';    //
+const ZUP_CHAR_BRAKET_OPEN = '(';    //
 const ZUP_CHAR_BRAKET_CLOSE = ')';    //
-const ZUP_CHAR_TXT_FIELD    = '"';    // don't look for math symbols in text that is a high quotes
-
+const ZUP_CHAR_TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
 
 
 // file links used
 //const ZUH_IMG_ADD       = "../images/button_add_small.jpg";
 //const ZUH_IMG_EDIT      = "../images/button_edit_small.jpg";
-const ZUH_IMG_ADD       = "../images/button_add.svg";
-const ZUH_IMG_EDIT      = ".../images/button_edit.svg";
-const ZUH_IMG_DEL       = "../images/button_del.svg";
-const ZUH_IMG_UNDO      = "../images/button_undo.svg";
-const ZUH_IMG_FIND      = ".../images/button_find.svg";
+const ZUH_IMG_ADD = "../images/button_add.svg";
+const ZUH_IMG_EDIT = ".../images/button_edit.svg";
+const ZUH_IMG_DEL = "../images/button_del.svg";
+const ZUH_IMG_UNDO = "../images/button_undo.svg";
+const ZUH_IMG_FIND = ".../images/button_find.svg";
 const ZUH_IMG_UN_FILTER = "../images/button_filter_off.svg";
-const ZUH_IMG_BACK      = "../images/button_back.svg";
-const ZUH_IMG_LOGO      = "../images/ZUKUNFT_logo.svg";
+const ZUH_IMG_BACK = "../images/button_back.svg";
+const ZUH_IMG_LOGO = "../images/ZUKUNFT_logo.svg";
 
-const ZUH_IMG_ADD_FA  = "fa-plus-square";
+const ZUH_IMG_ADD_FA = "fa-plus-square";
 const ZUH_IMG_EDIT_FA = "fa-edit";
-const ZUH_IMG_DEL_FA  = "fa-times-circle";
+const ZUH_IMG_DEL_FA = "fa-times-circle";
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
-define ("PATH_BASE_CONFIG_FILES", $root_path.'src/main/resources/');
-define ("BASE_CONFIG_FILES", serialize (array ('units.json')));
+define("PATH_BASE_CONFIG_FILES", $root_path . 'src/main/resources/');
+define("BASE_CONFIG_FILES", serialize(array('units.json')));
 
 # list of all static import files for testing the system consistency
-define ("PATH_TEST_IMPORT_FILES", $root_path.'src/test/resources/');
-define ("TEST_IMPORT_FILE_LIST", serialize (array ('companies.json',
-                                                   'ABB_2013.json', 
-                                                   'ABB_2017.json', 
-                                                   'ABB_2019.json', 
-                                                   'NESN_2019.json', 
-                                                   'countries.json', 
-                                                   'real_estate.json', 
-                                                   'Ultimatum_game.json', 
-                                                   'COVID-19.json', 
-                                                   'personal_climate_gas_emissions_timon.json', 
-                                                   'THOMY_test.json')));
+define("PATH_TEST_IMPORT_FILES", $root_path . 'src/test/resources/');
+define("TEST_IMPORT_FILE_LIST", serialize(array('companies.json',
+    'ABB_2013.json',
+    'ABB_2017.json',
+    'ABB_2019.json',
+    'NESN_2019.json',
+    'countries.json',
+    'real_estate.json',
+    'Ultimatum_game.json',
+    'COVID-19.json',
+    'personal_climate_gas_emissions_timon.json',
+    'THOMY_test.json')));
 
 # list of import files for quick win testing
 /*
@@ -594,26 +791,27 @@ define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('COVID-19.json',
                                                          'real_estate.json', 
                                                          'Ultimatum_game.json')));
 define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('ABB_2013.json','work.json')));
-*/                                                         
-define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('car_costs.json')));
+*/
+define("TEST_IMPORT_FILE_LIST_QUICK", serialize(array('car_costs.json')));
 
 // for internal functions debugging
 // each complex function should call this at the beginning with the parameters and with -1 at the end with the result
 // called function should use $debug-1
-function log_debug($msg_text, $debug_overwrite = null) {
-  global $debug;
+function log_debug($msg_text, $debug_overwrite = null)
+{
+    global $debug;
 
-  $debug_used = $debug;
+    $debug_used = $debug;
 
-  if ($debug_overwrite != null) {
-    $debug_used = $debug_overwrite;
-  }
+    if ($debug_overwrite != null) {
+        $debug_used = $debug_overwrite;
+    }
 
-  if ($debug_used > 0) {
-    echo $msg_text.'.<br>' ; 
-    //ob_flush();
-    //flush();
-  }
+    if ($debug_used > 0) {
+        echo $msg_text . '.<br>';
+        //ob_flush();
+        //flush();
+    }
 }
 
 // for system messages no debug calls to avoid loops
@@ -623,221 +821,250 @@ function log_debug($msg_text, $debug_overwrite = null) {
 // $function_name   is the function name which has most likely caused the error
 // $function_trace  is the complete system trace to get more details
 // $usr             is the user id who has probably seen the error message
-function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr) {
+// return           the text that can be shown to the user in the navigation bar
+function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr): string
+{
 
-  global $sys_log_msg_lst;
-  global $db_con;
-  $result = '';
+    global $sys_log_msg_lst;
+    global $db_con;
+    $result = '';
 
-  // fill up fields with default values
-  if ($msg_description == '') { $msg_description = $msg_text; }
-  if ($function_trace == '') { $function_trace = (new Exception)->getTraceAsString(); }
-  if (isset($usr)) { $user_id = $usr->id; } else { $user_id = $_SESSION['usr_id']; }
-
-  // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
-  $msg_type_text = $user_id.substr($msg_text,0,200);
-  if (!in_array($msg_type_text, $sys_log_msg_lst)) {
-    $db_con->usr_id = $user_id;
-    
-    $sys_log_msg_lst[] = $msg_type_text;
-    $log_level = cl(LOG_LEVEL);
-    if ($msg_type_id > $log_level) {
-      $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
-      $function_id = $db_con->get_id($function_name);
-      if ($function_id <= 0) {
-        $function_id = $db_con->add_id($function_name);
-      }
-      $msg_text        = str_replace("'", "", $msg_text);
-      $msg_description = str_replace("'", "", $msg_description);
-      $function_trace  = str_replace("'", "", $function_trace);
-      $msg_text        = sf($msg_text);
-      $msg_description = sf($msg_description);
-      $function_trace  = sf($function_trace);
-      $fields = array();
-      $values = array();
-      $fields[] = "sys_log_type_id";
-      $values[] =     $msg_type_id;
-      $fields[] = "sys_log_function_id";
-      $values[] =         $function_id;
-      $fields[] = "sys_log_text";
-      $values[] =     $msg_text;
-      $fields[] = "sys_log_description";
-      $values[] =     $msg_description;
-      $fields[] =  "sys_log_trace";
-      $values[] = $function_trace;
-      if ($user_id > 0) {
-        $fields[] = "user_id";
-        $values[] = $user_id;
-      }
-      $db_con->set_type(DB_TYPE_SYS_LOG);
-      $sys_log_id = $db_con->insert($fields, $values);
-      //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
-      //$sys_log_id = mysqli_insert_id();
+    // fill up fields with default values
+    if ($msg_description == '') {
+        $msg_description = $msg_text;
     }
-    $msg_level = cl(MSG_LEVEL);
-    if ($msg_type_id >= $msg_level) {
-      echo "Zukunft.com has detected an critical internal error: <br><br>".$msg_text." by ".$function_name.".<br><br>"; 
-      if ($sys_log_id > 0) {
-        echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id='.$sys_log_id.'">www.zukunft.com/http/error_log.php?id='.$sys_log_id.'</a><br>';
-      }
-    } else {
-      $dsp = new view_dsp;
-      $result .= $dsp->dsp_navbar_simple();
-      $result .= $msg_text." (by ".$function_name.").<br><br>";
+    if ($function_trace == '') {
+        $function_trace = (new Exception)->getTraceAsString();
     }
-  }
-  return $result;
+    $user_id = SYSTEM_USER_ID; // fallback
+    if (isset($usr)) {
+        $user_id = $usr->id;
+    } elseif (isset($_SESSION['usr_id'])) {
+        $user_id = $_SESSION['usr_id'];
+    }
+
+    // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
+    $msg_type_text = $user_id . substr($msg_text, 0, 200);
+    if (!in_array($msg_type_text, $sys_log_msg_lst)) {
+        $db_con->usr_id = $user_id;
+        $sys_log_id = 0;
+
+        $sys_log_msg_lst[] = $msg_type_text;
+        $log_level = cl(LOG_LEVEL);
+        if ($msg_type_id > $log_level) {
+            $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
+            $function_id = $db_con->get_id($function_name);
+            if ($function_id <= 0) {
+                $function_id = $db_con->add_id($function_name);
+            }
+            $msg_text = str_replace("'", "", $msg_text);
+            $msg_description = str_replace("'", "", $msg_description);
+            $function_trace = str_replace("'", "", $function_trace);
+            $msg_text = sf($msg_text);
+            $msg_description = sf($msg_description);
+            $function_trace = sf($function_trace);
+            $fields = array();
+            $values = array();
+            $fields[] = "sys_log_type_id";
+            $values[] = $msg_type_id;
+            $fields[] = "sys_log_function_id";
+            $values[] = $function_id;
+            $fields[] = "sys_log_text";
+            $values[] = $msg_text;
+            $fields[] = "sys_log_description";
+            $values[] = $msg_description;
+            $fields[] = "sys_log_trace";
+            $values[] = $function_trace;
+            if ($user_id > 0) {
+                $fields[] = "user_id";
+                $values[] = $user_id;
+            }
+            $db_con->set_type(DB_TYPE_SYS_LOG);
+            $sys_log_id = $db_con->insert($fields, $values, false);
+            //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
+            //$sys_log_id = mysqli_insert_id();
+        }
+        $msg_level = cl(MSG_LEVEL);
+        if ($msg_type_id >= $msg_level) {
+            echo "Zukunft.com has detected an critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
+            if ($sys_log_id > 0) {
+                echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
+            }
+        } else {
+            $dsp = new view_dsp;
+            $result .= $dsp->dsp_navbar_simple();
+            $result .= $msg_text . " (by " . $function_name . ").<br><br>";
+        }
+    }
+    return $result;
 }
-function log_info($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
-  // todo cache the id at program start to avoid endless loops
-  $msg_type_id = sql_code_link(DBL_SYSLOG_INFO, "Info");
-  $msg_type_id = 1;
-  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+
+function log_info($msg_text, $function_name= '', $msg_description = '', $function_trace = '', $usr = null): string
+{
+    // todo cache the id at program start to avoid endless loops
+    $msg_type_id = sql_code_link(DBL_SYSLOG_INFO, "Info");
+    $msg_type_id = 1;
+    return log_msg($msg_text, $msg_description= '', $msg_type_id, $function_name, $function_trace, $usr);
 }
-function log_warning($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
-  // todo cache the id at program start to avoid endless loops
-  $msg_type_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning");
-  $msg_type_id = 2;
-  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+
+function log_warning($msg_text, $function_name= '', $msg_description = '', $function_trace = '', $usr = null): string
+{
+    // todo cache the id at program start to avoid endless loops
+    $msg_type_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning");
+    $msg_type_id = 2;
+    return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function log_err($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
-  // todo cache the id at program start to avoid endless loops
-  $msg_type_id = sql_code_link(DBL_SYSLOG_ERROR, "Error");
-  $msg_type_id = 3;
-  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+
+function log_err($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
+{
+    // todo cache the id at program start to avoid endless loops
+    $msg_type_id = sql_code_link(DBL_SYSLOG_ERROR, "Error");
+    $msg_type_id = 3;
+    return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
 }
-function log_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null) {
-  // todo cache the id at program start to avoid endless loops
-  $msg_type_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR");
-  $msg_type_id = 4;
-  return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+
+function log_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null): string
+{
+    // todo cache the id at program start to avoid endless loops
+    // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
+    //$msg_type_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR");
+    //$msg_type_id = 4;
+    //return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+    echo 'FATAL ERROR! ' . $msg_text;
+    return 'FATAL ERROR! ' . $msg_text;
 }
 
 // should be call from all code that can be accessed by an url
 // return null if the db connection fails or the db is not compatible
-function prg_start($code_name, $style = "", $debug = 0) {
-  global $sys_time_start, $sys_script;
+function prg_start($code_name, $style = "")
+{
+    global $sys_time_start, $sys_script;
 
-  log_debug ($code_name.' ...', $debug);
-  
-  $sys_time_start = time();
-  $sys_script = $code_name;
+    // resume session (based on cookies)
+    session_start();
 
-  // resume session (based on cookies)
-  session_start();
-  log_debug ($code_name.' ... session_start', $debug);
+    log_debug($code_name . ' ...');
 
-  // link to database
-  $db_con = New sql_db;
-  $db_con->db_type = SQL_DB_TYPE;
-  log_debug ($code_name.' ... db set', $debug);
-  $db_con->open($debug-1);
-  log_debug ($code_name.' ... database link open', $debug-5);
+    $sys_time_start = time();
+    $sys_script = $code_name;
 
-  // html header
-  echo dsp_header("", $style);
+    log_debug($code_name . ' ... session_start');
 
-  // check the system setup
-  $result = db_check($db_con, $debug);
-  if ($result != '') {
-    echo $result;
-    $db_con->close($debug-1);
-    $db_con = null;
-  }
+    // link to database
+    $db_con = new sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
+    log_debug($code_name . ' ... db set');
+    $db_con->open();
+    log_debug($code_name . ' ... database link open');
 
-  // load default records
-  //verbs_load;
+    // html header
+    echo dsp_header("", $style);
 
-  return $db_con;
-}
-
-function prg_start_api($code_name, $style, $debug) {
-  global $sys_time_start, $sys_script;
-  
-  log_debug ($code_name.' ..', $debug);
-  
-  $sys_time_start = time();
-  $sys_script = $code_name;
-
-  // resume session (based on cookies)
-  session_start(); 
-
-  // link to database
-  $db_con = New sql_db;
-  $db_con->open($debug-1);
-  log_debug ($code_name.' ... database link open', $debug-5);
-  
-  return $db_con;
-}
-
-function prg_end($db_con, $debug = 0) {
-  global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
-
-  echo dsp_footer();
-  
-  // write the execution time to the database if it is long
-  $sys_time_end = time();
-  if ($sys_time_end > $sys_time_limit) {
-    $db_con->usr_id = SYSTEM_USER_ID;
-    $db_con->set_type(DB_TYPE_SYS_SCRIPT);
-    $sys_script_id = $db_con->get_id($sys_script, $debug-1);
-    if ($sys_script_id <= 0) {
-      $sys_script_id = $db_con->add_id($sys_script, $debug-1);
+    // check the system setup
+    $result = db_check($db_con);
+    if ($result != '') {
+        echo $result;
+        $db_con->close();
+        $db_con = null;
     }
-    $start_time_sql = date ("Y-m-d H:i:s", $sys_time_start);
-    //$db_con->insert();
-    $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('".date ("Y-m-d H:i:s", $sys_time_start)."',".$sys_script_id.",".sf($_SERVER['REQUEST_URI']).");";
-    $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString(), $debug-10);
-  }
 
-  // Free result test
-  //mysqli_free_result($result);
+    // load default records
+    //verbs_load;
 
-  // Closing connection
-  $db_con->close($debug-1);
+    return $db_con;
+}
 
-  // free the global vars
-  unset($sys_log_msg_lst);
-  unset($sys_script);
-  unset($sys_time_limit);
-  unset($sys_time_start);
-  
-  log_debug (' ... database link closed', $debug-5);
+function prg_start_api($code_name, $style)
+{
+    global $sys_time_start, $sys_script;
+
+    log_debug($code_name . ' ..');
+
+    $sys_time_start = time();
+    $sys_script = $code_name;
+
+    // resume session (based on cookies)
+    session_start();
+
+    // link to database
+    $db_con = new sql_db;
+    $db_con->open();
+    log_debug($code_name . ' ... database link open');
+
+    return $db_con;
+}
+
+function prg_end($db_con)
+{
+    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
+
+    echo dsp_footer();
+
+    // write the execution time to the database if it is long
+    $sys_time_end = time();
+    if ($sys_time_end > $sys_time_limit) {
+        $db_con->usr_id = SYSTEM_USER_ID;
+        $db_con->set_type(DB_TYPE_SYS_SCRIPT);
+        $sys_script_id = $db_con->get_id($sys_script);
+        if ($sys_script_id <= 0) {
+            $sys_script_id = $db_con->add_id($sys_script);
+        }
+        $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
+        //$db_con->insert();
+        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . date("Y-m-d H:i:s", $sys_time_start) . "'," . $sys_script_id . "," . sf($_SERVER['REQUEST_URI']) . ");";
+        $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString());
+    }
+
+    // Free result test
+    //mysqli_free_result($result);
+
+    // Closing connection
+    $db_con->close();
+
+    // free the global vars
+    unset($sys_log_msg_lst);
+    unset($sys_script);
+    unset($sys_time_limit);
+    unset($sys_time_start);
+
+    log_debug(' ... database link closed');
 }
 
 // special page closing only for the about page
-function prg_end_about($link, $debug) {
-  global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
+function prg_end_about($link)
+{
+    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-  echo dsp_footer(true);
-  
-  // Closing connection
-  zu_sql_close($link, $debug-1);
+    echo dsp_footer(true);
 
-  // free the global vars
-  unset($sys_log_msg_lst);
-  unset($sys_script);
-  unset($sys_time_limit);
-  unset($sys_time_start);
-  
-  log_debug (' ... database link closed', $debug);
+    // Closing connection
+    zu_sql_close($link);
+
+    // free the global vars
+    unset($sys_log_msg_lst);
+    unset($sys_script);
+    unset($sys_time_limit);
+    unset($sys_time_start);
+
+    log_debug(' ... database link closed');
 }
 
 // special page closing of api pages
 // for the api e.g. the csv export no footer should be shown
-function prg_end_api($link, $debug) {
-  global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
+function prg_end_api($link)
+{
+    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-  // Closing connection
-  zu_sql_close($link, $debug-1);
+    // Closing connection
+    zu_sql_close($link);
 
-  // free the global vars
-  unset($sys_log_msg_lst);
-  unset($sys_script);
-  unset($sys_time_limit);
-  unset($sys_time_start);
-  
-  log_debug (' ... database link closed', $debug);
+    // free the global vars
+    unset($sys_log_msg_lst);
+    unset($sys_script);
+    unset($sys_time_limit);
+    unset($sys_time_start);
+
+    log_debug(' ... database link closed');
 }
 
 /*
@@ -847,13 +1074,14 @@ display functions
 */
 
 // to display a boolean var
-function zu_dsp_bool($bool_var) {
-  if ($bool_var) {
-    $result = 'true';
-  } else {
-    $result = 'false';
-  }
-  return $result;
+function zu_dsp_bool($bool_var)
+{
+    if ($bool_var) {
+        $result = 'true';
+    } else {
+        $result = 'false';
+    }
+    return $result;
 }
 
 /*
@@ -865,46 +1093,48 @@ version control functions
 
 // returns true if the version to check is older than this program version
 // used e.g. for import to allow importing of files of an older version without warning
-function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION) {
-  $is_newer = false;
-  
-  $this_prg_version_parts = explode(".", $this_version);
-  $to_check = explode(".", $prg_version_to_check);
-  $is_older = false;
-  foreach ($this_prg_version_parts AS $key => $this_part) {
-    if (!$is_newer and !$is_older) {
-      if ($this_part < $to_check[$key]) {
-        $is_newer = true;
-      } else {  
-        if ($this_part > $to_check[$key]) {
-          $is_older = true;
-        }
-      }
-    }
-  }
+function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION)
+{
+    $is_newer = false;
 
-  return $is_newer;
+    $this_prg_version_parts = explode(".", $this_version);
+    $to_check = explode(".", $prg_version_to_check);
+    $is_older = false;
+    foreach ($this_prg_version_parts as $key => $this_part) {
+        if (!$is_newer and !$is_older) {
+            if ($this_part < $to_check[$key]) {
+                $is_newer = true;
+            } else {
+                if ($this_part > $to_check[$key]) {
+                    $is_older = true;
+                }
+            }
+        }
+    }
+
+    return $is_newer;
 }
 
 // unit_test for prg_version_is_newer
-function prg_version_is_newer_test() {
-  global $exe_start_time;
-  
-  $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
-  $target = 'false';
-  $exe_start_time = test_show_result('prg_version 0.0.1 is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION)); 
-  $target = 'false';
-  $exe_start_time = test_show_result('prg_version '.PRG_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION)); 
-  $target = 'true';
-  $exe_start_time = test_show_result('prg_version '.NEXT_VERSION.' is newer than '.PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9')); 
-  $target = 'true';
-  $exe_start_time = test_show_result('prg_version 0.1.0 is newer than 0.0.9', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1')); 
-  $target = 'false';
-  $exe_start_time = test_show_result('prg_version 0.2.3 is newer than 1.1.1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+function prg_version_is_newer_test()
+{
+    global $exe_start_time;
+
+    $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
+    $target = 'false';
+    $exe_start_time = test_show_result('prg_version 0.0.1 is newer than ' . PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION));
+    $target = 'false';
+    $exe_start_time = test_show_result('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION));
+    $target = 'true';
+    $exe_start_time = test_show_result('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9'));
+    $target = 'true';
+    $exe_start_time = test_show_result('prg_version 0.1.0 is newer than 0.0.9', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1'));
+    $target = 'false';
+    $exe_start_time = test_show_result('prg_version 0.2.3 is newer than 1.1.1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 }
 
 /*
@@ -913,41 +1143,44 @@ string functions
 
 */
 
-function zu_trim($text) {
+function zu_trim($text)
+{
     return trim(preg_replace('!\s+!', ' ', $text));
 }
 
 // 
-function zu_str_left_of($text, $maker) {
-  $result = "";
-  $pos = strpos($text, $maker);
-  if ($pos > 0) {
-    $result = substr($text, 0, strpos($text, $maker));
-  }  
-  return $result;
-}
-
-function zu_str_right_of($text, $maker) {
-  if ($text === $maker) {
+function zu_str_left_of($text, $maker)
+{
     $result = "";
-  } else {  
     $pos = strpos($text, $maker);
-    //zu_debug("zu_str_right_of .. (".substr($text, strpos($text, $maker), strlen($maker)).")", 10);
-    if (substr($text, strpos($text, $maker), strlen($maker)) === $maker) {
-      $result = substr($text, strpos($text, $maker) + strlen($maker));
+    if ($pos > 0) {
+        $result = substr($text, 0, strpos($text, $maker));
     }
-  }
-  return $result;
+    return $result;
 }
 
-function zu_str_between($text, $maker_start, $maker_end, $debug = 0) {
-  log_debug('zu_str_between "'.$text.'", start "'.$maker_start.'" end "'.$maker_end.'"', $debug-10);
-  $result = '';
-  $result = zu_str_right_of($text, $maker_start);
-  log_debug('zu_str_between -> "'.$result.'" is right of "'.$maker_start.'"', $debug-10);
-  $result = zu_str_left_of($result, $maker_end);
-  log_debug('zu_str_between -> "'.$result.'"', $debug-10);
-  return $result;
+function zu_str_right_of($text, $maker)
+{
+    $result = "";
+    if ($text === $maker) {
+        $result = "";
+    } else {
+        if (substr($text, strpos($text, $maker), strlen($maker)) === $maker) {
+            $result = substr($text, strpos($text, $maker) + strlen($maker));
+        }
+    }
+    return $result;
+}
+
+function zu_str_between($text, $maker_start, $maker_end)
+{
+    log_debug('zu_str_between "' . $text . '", start "' . $maker_start . '" end "' . $maker_end . '"');
+    $result = '';
+    $result = zu_str_right_of($text, $maker_start);
+    log_debug('zu_str_between -> "' . $result . '" is right of "' . $maker_start . '"');
+    $result = zu_str_left_of($result, $maker_end);
+    log_debug('zu_str_between -> "' . $result . '"');
+    return $result;
 }
 
 /*
@@ -957,20 +1190,23 @@ string functions (to be dismissed)
 */
 
 // some small string related functions to shorten code and make the code clearer
-function zu_str_left($text, $pos) {
-  return substr($text, 0, $pos);
+function zu_str_left($text, $pos)
+{
+    return substr($text, 0, $pos);
 }
 
-function zu_str_right($text, $pos) {
-  return substr($text, $pos * -1);
+function zu_str_right($text, $pos)
+{
+    return substr($text, $pos * -1);
 }
 
-function zu_str_is_left($text, $maker) {
-  $result = false;
-  if (substr($text, 0, strlen($maker)) == $maker) {
-    $result = true;
-  }
-  return $result;
+function zu_str_is_left($text, $maker)
+{
+    $result = false;
+    if (substr($text, 0, strlen($maker)) == $maker) {
+        $result = true;
+    }
+    return $result;
 }
 
 function zu_str_compute_diff($from, $to)
@@ -984,17 +1220,12 @@ function zu_str_compute_diff($from, $to)
 
     for ($j = -1; $j < $n2; $j++) $dm[-1][$j] = 0;
     for ($i = -1; $i < $n1; $i++) $dm[$i][-1] = 0;
-    for ($i = 0; $i < $n1; $i++)
-    {
-        for ($j = 0; $j < $n2; $j++)
-        {
-            if ($from[$i] == $to[$j])
-            {
+    for ($i = 0; $i < $n1; $i++) {
+        for ($j = 0; $j < $n2; $j++) {
+            if ($from[$i] == $to[$j]) {
                 $ad = $dm[$i - 1][$j - 1];
                 $dm[$i][$j] = $ad + 1;
-            }
-            else
-            {
+            } else {
                 $a1 = $dm[$i - 1][$j];
                 $a2 = $dm[$i][$j - 1];
                 $dm[$i][$j] = max($a1, $a2);
@@ -1004,22 +1235,17 @@ function zu_str_compute_diff($from, $to)
 
     $i = $n1 - 1;
     $j = $n2 - 1;
-    while (($i > -1) || ($j > -1))
-    {
-        if ($j > -1)
-        {
-            if ($dm[$i][$j - 1] == $dm[$i][$j])
-            {
+    while (($i > -1) || ($j > -1)) {
+        if ($j > -1) {
+            if ($dm[$i][$j - 1] == $dm[$i][$j]) {
                 $diffValues[] = $to[$j];
                 $diffMask[] = 1;
                 $j--;
                 continue;
             }
         }
-        if ($i > -1)
-        {
-            if ($dm[$i - 1][$j] == $dm[$i][$j])
-            {
+        if ($i > -1) {
+            if ($dm[$i - 1][$j] == $dm[$i][$j]) {
                 $diffValues[] = $from[$i];
                 $diffMask[] = -1;
                 $i--;
@@ -1049,30 +1275,37 @@ function zu_str_diff($original_text, $compare_text)
     $n = count($diffval);
     $pmc = 0;
     $result = '';
-    for ($i = 0; $i < $n; $i++)
-    {
+    for ($i = 0; $i < $n; $i++) {
         $mc = $diffmask[$i];
-        if ($mc != $pmc)
-        {
-            switch ($pmc)
-            {
-                case -1: $result .= '</del>'; break;
-                case 1: $result .= '</ins>'; break;
+        if ($mc != $pmc) {
+            switch ($pmc) {
+                case -1:
+                    $result .= '</del>';
+                    break;
+                case 1:
+                    $result .= '</ins>';
+                    break;
             }
-            switch ($mc)
-            {
-                case -1: $result .= '<del>'; break;
-                case 1: $result .= '<ins>'; break;
+            switch ($mc) {
+                case -1:
+                    $result .= '<del>';
+                    break;
+                case 1:
+                    $result .= '<ins>';
+                    break;
             }
         }
         $result .= $diffval[$i];
 
         $pmc = $mc;
     }
-    switch ($pmc)
-    {
-        case -1: $result .= '</del>'; break;
-        case 1: $result .= '</ins>'; break;
+    switch ($pmc) {
+        case -1:
+            $result .= '</del>';
+            break;
+        case 1:
+            $result .= '</ins>';
+            break;
     }
 
     return $result;
@@ -1101,265 +1334,282 @@ list functions (to be dismissed / replaced by objects)
 */
 
 // get all entries of the list that are not in the second list
-function zu_lst_not_in($in_lst, $exclude_lst, $debug) {
-  log_debug ('zu_lst_not_in('.implode(",",array_keys($in_lst)).',ex'.implode(",",$exclude_lst).')', $debug-10);
-  $result = array();
-  foreach (array_keys($in_lst) as $lst_entry) {
-    if (!in_array($lst_entry, $exclude_lst)) {
-      $result[$lst_entry] = $in_lst[$lst_entry];
+function zu_lst_not_in($in_lst, $exclude_lst)
+{
+    log_debug('zu_lst_not_in(' . implode(",", array_keys($in_lst)) . ',ex' . implode(",", $exclude_lst) . ')');
+    $result = array();
+    foreach (array_keys($in_lst) as $lst_entry) {
+        if (!in_array($lst_entry, $exclude_lst)) {
+            $result[$lst_entry] = $in_lst[$lst_entry];
+        }
     }
-  }    
-  return $result;
+    return $result;
 }
 
 // similar to zu_lst_not_in, but looking at the array value not the key
-function zu_lst_not_in_no_key($in_lst, $exclude_lst, $debug) {
-  log_debug ('zu_lst_not_in_no_key('.implode(",",$in_lst).'ex'.implode(",",$exclude_lst).')', $debug-10);
-  $result = array();
-  foreach ($in_lst as $lst_entry) {
-    if (!in_array($lst_entry, $exclude_lst)) {
-      $result[] = $lst_entry;
+function zu_lst_not_in_no_key($in_lst, $exclude_lst)
+{
+    log_debug('zu_lst_not_in_no_key(' . implode(",", $in_lst) . 'ex' . implode(",", $exclude_lst) . ')');
+    $result = array();
+    foreach ($in_lst as $lst_entry) {
+        if (!in_array($lst_entry, $exclude_lst)) {
+            $result[] = $lst_entry;
+        }
     }
-  }    
-  log_debug ('zu_lst_not_in_no_key -> ('.implode(",",$result).')', $debug-10);
-  return $result;
+    log_debug('zu_lst_not_in_no_key -> (' . implode(",", $result) . ')');
+    return $result;
 }
 
 // similar to zu_lst_not_in, but excluding only one value (diff to in_array????)
-function zu_lst_excluding($in_lst, $exclude_id, $debug) {
-  log_debug ('zu_lst_excluding('.implode(",",$in_lst).'ex'.$exclude_id.')', $debug-10);
-  $result = array();
-  foreach ($in_lst as $lst_entry) {
-    if ($lst_entry <> $exclude_id) {
-      $result[] = $lst_entry;
+function zu_lst_excluding($in_lst, $exclude_id)
+{
+    log_debug('zu_lst_excluding(' . implode(",", $in_lst) . 'ex' . $exclude_id . ')');
+    $result = array();
+    foreach ($in_lst as $lst_entry) {
+        if ($lst_entry <> $exclude_id) {
+            $result[] = $lst_entry;
+        }
     }
-  }    
-  log_debug ('zu_lst_excluding -> ('.implode(",",$result).')', $debug-10);
-  return $result;
+    log_debug('zu_lst_excluding -> (' . implode(",", $result) . ')');
+    return $result;
 }
 
 // get all entries of the list that are not in the second list
-function zu_lst_in($in_lst, $only_if_lst, $debug) {
-  $result = array();
-  foreach (array_keys($in_lst) as $lst_entry) {
-    if (in_array($lst_entry, array_keys($only_if_lst))) {
-      $result[$lst_entry] = $in_lst[$lst_entry];
+function zu_lst_in($in_lst, $only_if_lst)
+{
+    $result = array();
+    foreach (array_keys($in_lst) as $lst_entry) {
+        if (in_array($lst_entry, array_keys($only_if_lst))) {
+            $result[$lst_entry] = $in_lst[$lst_entry];
+        }
     }
-  }    
-  return $result;
+    return $result;
 }
 
 // get all entries of the list that are not in the second list
-function zu_lst_in_ids($in_lst, $only_if_ids, $debug) {
-  $result = array();
-  foreach (array_keys($in_lst) as $lst_entry) {
-    if (in_array($lst_entry, $only_if_ids)) {
-      $result[$lst_entry] = $in_lst[$lst_entry];
+function zu_lst_in_ids($in_lst, $only_if_ids)
+{
+    $result = array();
+    foreach (array_keys($in_lst) as $lst_entry) {
+        if (in_array($lst_entry, $only_if_ids)) {
+            $result[$lst_entry] = $in_lst[$lst_entry];
+        }
     }
-  }    
-  return $result;
+    return $result;
 }
 
 // create an url parameter text out of an id array
-function zu_ids_to_url($ids, $par_name, $debug) {
-  $result = "";
-  foreach (array_keys($ids) as $pos) {
-    $nbr = $pos + 1;
-    if ($ids[$pos] <> "" OR $ids[$pos] === 0) {
-      $result .= "&".$par_name.$nbr."=".$ids[$pos];
+function zu_ids_to_url($ids, $par_name)
+{
+    $result = "";
+    foreach (array_keys($ids) as $pos) {
+        $nbr = $pos + 1;
+        if ($ids[$pos] <> "" or $ids[$pos] === 0) {
+            $result .= "&" . $par_name . $nbr . "=" . $ids[$pos];
+        }
     }
-  }    
-  return $result;
+    return $result;
 }
 
 // flattens a complex array; if the list entry is an array the first field is shown
-function zu_lst_to_array($complex_lst, $debug) {
-  //zu_debug("zu_lst_to_array", $debug-10);
-  $result = array();
-  foreach ($complex_lst as $lst_entry) {
-    if (is_array($lst_entry)) {
-      $result[] = $lst_entry[0];
-      //zu_debug("zu_lst_to_array -> ".$lst_entry[0]." (first)", $debug-10);
-    } else {
-      $result[] = $lst_entry;
-      //zu_debug("zu_lst_to_array -> ".$lst_entry, $debug-10);
+function zu_lst_to_array($complex_lst)
+{
+    //zu_debug("zu_lst_to_array");
+    $result = array();
+    foreach ($complex_lst as $lst_entry) {
+        if (is_array($lst_entry)) {
+            $result[] = $lst_entry[0];
+            //zu_debug("zu_lst_to_array -> ".$lst_entry[0]." (first)");
+        } else {
+            $result[] = $lst_entry;
+            //zu_debug("zu_lst_to_array -> ".$lst_entry);
+        }
     }
-  }    
-  return $result;
+    return $result;
 }
 
 // flattens a complex array; if the list entry is an array the first field is shown
-function zu_ids_not_empty($old_ids, $debug) {
-  // fix wrd_ids if needed
-  $result = array();
-  foreach ($old_ids AS $old_id) {
-    if ($old_id > 0) {
-      $result[] = $old_id;
+function zu_ids_not_empty($old_ids)
+{
+    // fix wrd_ids if needed
+    $result = array();
+    foreach ($old_ids as $old_id) {
+        if ($old_id > 0) {
+            $result[] = $old_id;
+        }
     }
-  }
-  return $result;
+    return $result;
 }
 
 // flattens a complex array; if the list entry is an array the first field is shown
-function zu_ids_not_zero($old_ids, $debug) {
-  // fix wrd_ids if needed
-  $result = array();
-  foreach ($old_ids AS $old_id) {
-    if ($old_id <> 0) {
-      $result[] = $old_id;
+function zu_ids_not_zero($old_ids)
+{
+    // fix wrd_ids if needed
+    $result = array();
+    foreach ($old_ids as $old_id) {
+        if ($old_id <> 0) {
+            $result[] = $old_id;
+        }
     }
-  }
-  return $result;
+    return $result;
 }
 
 // gets on id list with all word ids from the value list, that already contain the word ids for each value
 // no user id is needed because this is done already in the previous selection
-function zu_val_lst_get_wrd_ids($val_lst, $debug) {
-  //zu_debug("zu_val_lst_get_wrd_ids", $debug-10);
-  $result = array();
-  foreach ($val_lst as $val_entry) {
-    if (is_array($val_entry->wrd_lst)) {
-      $wrd_ids = $val_entry->wrd_lst->ids();
-      if (is_array($wrd_ids)) {
-        foreach ($wrd_ids as $wrd_id) {
-          $result[] = $wrd_id;
+function zu_val_lst_get_wrd_ids($val_lst)
+{
+    //zu_debug("zu_val_lst_get_wrd_ids");
+    $result = array();
+    foreach ($val_lst as $val_entry) {
+        if (is_array($val_entry->wrd_lst)) {
+            $wrd_ids = $val_entry->wrd_lst->ids();
+            if (is_array($wrd_ids)) {
+                foreach ($wrd_ids as $wrd_id) {
+                    $result[] = $wrd_id;
+                }
+            }
         }
-      }
     }
-  }  
 
-  return $result;
+    return $result;
 }
 
 // maybe use array_filter ???
-function zu_lst_common($id_lst1, $id_lst2, $debug) {
-  //zu_debug("zu_lst_common (".implode(",",$id_lst1)."x".implode(",",$id_lst1).")", $debug-10);
-  //zu_debug("zu_lst_to_array", $debug-10);
-  $result = array();
-  if (is_array($id_lst1) and is_array($id_lst2)) {
-    foreach ($id_lst1 as $id1) {
-      if (in_array($id1, $id_lst2)) {
-        $result[] = $id1;
-      }
+function zu_lst_common($id_lst1, $id_lst2)
+{
+    //zu_debug("zu_lst_common (".implode(",",$id_lst1)."x".implode(",",$id_lst1).")");
+    //zu_debug("zu_lst_to_array");
+    $result = array();
+    if (is_array($id_lst1) and is_array($id_lst2)) {
+        foreach ($id_lst1 as $id1) {
+            if (in_array($id1, $id_lst2)) {
+                $result[] = $id1;
+            }
+        }
     }
-  }  
 
-  //zu_debug("zu_lst_common -> (".implode(",",$result).")", $debug-10);
-  return $result;
+    //zu_debug("zu_lst_common -> (".implode(",",$result).")");
+    return $result;
 }
 
 // collects from an array in an array a list of common ids
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
-function zu_lst_get_common_ids($val_lst, $sub_array_pos, $debug) {
-  log_debug("zu_lst_get_common_ids (".zu_lst_dsp($val_lst, $debug).")", $debug-10);
-  $result = 0;
-  //print_r ($val_lst);
-  foreach ($val_lst as $val_entry) {
-    if (is_array($val_entry)) {
-      $wrd_ids = $val_entry[$sub_array_pos];
-      if ($result == 0) {
-        $result = $wrd_ids;
-      } else {
-        $result = zu_lst_common($result, $wrd_ids, $debug-1);
-      }
+function zu_lst_get_common_ids($val_lst, $sub_array_pos)
+{
+    log_debug("zu_lst_get_common_ids (" . zu_lst_dsp($val_lst) . ")");
+    $result = 0;
+    //print_r ($val_lst);
+    foreach ($val_lst as $val_entry) {
+        if (is_array($val_entry)) {
+            $wrd_ids = $val_entry[$sub_array_pos];
+            if ($result == 0) {
+                $result = $wrd_ids;
+            } else {
+                $result = zu_lst_common($result, $wrd_ids);
+            }
+        }
     }
-  }  
 
-  log_debug("zu_lst_get_common_ids -> (".implode(",",$result).")", $debug-10);
-  return $result;
+    log_debug("zu_lst_get_common_ids -> (" . implode(",", $result) . ")");
+    return $result;
 }
 
 // collects from an array in an array a list of all ids similar to zu_lst_get_common_ids
 // if this is used for a val_lst_wrd and the sub_array_pos is 1 the common list of word ids is returned
-function zu_lst_all_ids($val_lst, $sub_array_pos, $debug) {
-  log_debug("zu_lst_all_ids (".zu_lst_dsp($val_lst, $debug).",pos".$sub_array_pos.")", $debug-10);
-  $result = array();
-  foreach ($val_lst as $val_entry) {
-    if (is_array($val_entry)) {
-      $wrd_ids = $val_entry[$sub_array_pos];
-      if (empty($result)) {
-        $result = $wrd_ids;
-      } else {
-        foreach ($wrd_ids as $wrd_id) {
-          if (!in_array($wrd_id, $result)) {
-            $result[] = $wrd_id;
-          }
+function zu_lst_all_ids($val_lst, $sub_array_pos)
+{
+    log_debug("zu_lst_all_ids (" . zu_lst_dsp($val_lst) . ",pos" . $sub_array_pos . ")");
+    $result = array();
+    foreach ($val_lst as $val_entry) {
+        if (is_array($val_entry)) {
+            $wrd_ids = $val_entry[$sub_array_pos];
+            if (empty($result)) {
+                $result = $wrd_ids;
+            } else {
+                foreach ($wrd_ids as $wrd_id) {
+                    if (!in_array($wrd_id, $result)) {
+                        $result[] = $wrd_id;
+                    }
+                }
+            }
         }
-      }
     }
-  }  
 
-  log_debug("zu_lst_all_ids -> (".implode(",",$result).")", $debug-10);
-  return $result;
+    log_debug("zu_lst_all_ids -> (" . implode(",", $result) . ")");
+    return $result;
 }
 
 // filter an array with a sub array by the id entries of the subarray
 // if the subarray does not have any value of the filter id_lst it is not included in the result
 // e.g. for a value list with all related words get only those values that are related to on of the time words given in the id_lst
-function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos, $debug) {
-  log_debug("zu_lst_id_filter (".zu_lst_dsp($val_lst, $debug).",t".zu_lst_dsp($id_lst, $debug).",pos".$sub_array_pos.")", $debug-10);
-  $result = array();
-  foreach (array_keys($val_lst) as $val_key) {
-    $val_entry = $val_lst[$val_key];
-    if (is_array($val_entry)) {
-      $wrd_ids = $val_entry[$sub_array_pos];
-      $found = false;
-      foreach ($wrd_ids as $wrd_id) {
-        if (!$found) {
-          log_debug("zu_lst_id_filter -> test (".$wrd_id." in ".zu_lst_dsp($id_lst, $debug).")", $debug-10);
-          if (array_key_exists($wrd_id,$id_lst)) {
-            $found = true;
-            log_debug("zu_lst_id_filter -> found (".$wrd_id." in ".zu_lst_dsp($id_lst, $debug).")", $debug-10);
-          }
+function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos)
+{
+    log_debug("zu_lst_id_filter (" . zu_lst_dsp($val_lst) . ",t" . zu_lst_dsp($id_lst) . ",pos" . $sub_array_pos . ")");
+    $result = array();
+    foreach (array_keys($val_lst) as $val_key) {
+        $val_entry = $val_lst[$val_key];
+        if (is_array($val_entry)) {
+            $wrd_ids = $val_entry[$sub_array_pos];
+            $found = false;
+            foreach ($wrd_ids as $wrd_id) {
+                if (!$found) {
+                    log_debug("zu_lst_id_filter -> test (" . $wrd_id . " in " . zu_lst_dsp($id_lst) . ")");
+                    if (array_key_exists($wrd_id, $id_lst)) {
+                        $found = true;
+                        log_debug("zu_lst_id_filter -> found (" . $wrd_id . " in " . zu_lst_dsp($id_lst) . ")");
+                    }
+                }
+            }
+            if ($found) {
+                $result[$val_key] = $val_entry;
+            }
         }
-      }  
-      if ($found) {
-        $result[$val_key] = $val_entry;
-      }
     }
-  }  
 
-  log_debug("zu_lst_id_filter -> (".zu_lst_dsp($result, $debug).")", $debug-10);
-  return $result;
+    log_debug("zu_lst_id_filter -> (" . zu_lst_dsp($result) . ")");
+    return $result;
 }
 
 // flattens a complex array; if the list entry is an array the first field and the array key is returned
-function zu_lst_to_flat_lst($complex_lst, $debug) {
-  //zu_debug("zu_lst_to_array", $debug-10);
-  $result = array();
-  foreach (array_keys($complex_lst) as $lst_key) {
-    $lst_entry = $complex_lst[$lst_key];
-    if (is_array($lst_entry)) {
-      $result[$lst_key] = $lst_entry[0];
-      //zu_debug("zu_lst_to_array -> ".$lst_entry[0]." (first)", $debug-10);
-    } else {
-      $result[$lst_key] = $lst_entry;
-      //zu_debug("zu_lst_to_array -> ".$lst_entry, $debug-10);
+function zu_lst_to_flat_lst($complex_lst)
+{
+    //zu_debug("zu_lst_to_array");
+    $result = array();
+    foreach (array_keys($complex_lst) as $lst_key) {
+        $lst_entry = $complex_lst[$lst_key];
+        if (is_array($lst_entry)) {
+            $result[$lst_key] = $lst_entry[0];
+            //zu_debug("zu_lst_to_array -> ".$lst_entry[0]." (first)");
+        } else {
+            $result[$lst_key] = $lst_entry;
+            //zu_debug("zu_lst_to_array -> ".$lst_entry);
+        }
     }
-  }    
-  return $result;
+    return $result;
 }
 
 // display a list; if the list is an array the first field is shown
-function zu_lst_dsp($lst_to_dsp, $debug) {
-  //zu_debug("zu_lst_dsp", $debug-10);
-  if (is_array($lst_to_dsp)) {
-    $result_array = zu_lst_to_array($lst_to_dsp, $debug-1);
-    //zu_debug("zu_lst_dsp -> converted", $debug-10);
-    $result = implode(",",$result_array);
-  } else {
-    $result = $lst_to_dsp;
-  }
-  return $result;
+function zu_lst_dsp($lst_to_dsp)
+{
+    //zu_debug("zu_lst_dsp");
+    if (is_array($lst_to_dsp)) {
+        $result_array = zu_lst_to_array($lst_to_dsp);
+        //zu_debug("zu_lst_dsp -> converted");
+        $result = implode(",", $result_array);
+    } else {
+        $result = $lst_to_dsp;
+    }
+    return $result;
 }
 
-function zu_lst_merge_with_key($lst_1, $lst_2, $debug) {
-  $result = array();
-  foreach (array_keys($lst_1) as $lst_entry) {
-    $result[$lst_entry] = $lst_1[$lst_entry];
-  }    
-  foreach (array_keys($lst_2) as $lst_entry) {
-    $result[$lst_entry] = $lst_2[$lst_entry];
-  }    
-  return $result;
+function zu_lst_merge_with_key($lst_1, $lst_2)
+{
+    $result = array();
+    foreach (array_keys($lst_1) as $lst_entry) {
+        $result[$lst_entry] = $lst_1[$lst_entry];
+    }
+    foreach (array_keys($lst_2) as $lst_entry) {
+        $result[$lst_entry] = $lst_2[$lst_entry];
+    }
+    return $result;
 }

@@ -36,17 +36,17 @@ include_once '../src/main/php/zu_lib.php';
 if ($debug > 1) {
     echo 'lib loaded<br>';
 }
-$db_con = prg_start("start test_base_config.php", "", $debug - 10);
+//$db_con = prg_start("start test_base_config.php");
 
 // open database
-$db_con = prg_start("test_base_config", "", $debug);
+$db_con = prg_start("test_base_config");
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
-$result .= $usr->get($debug - 1);
+$result .= $usr->get();
 $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -56,9 +56,9 @@ if ($usr->id > 0) {
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_IMPORT);
     $dsp->usr = $usr;
-    $dsp->load($debug - 1);
+    $dsp->load();
 
-    if ($usr->is_admin($debug)) {
+    if ($usr->is_admin()) {
 
         // load the testing functions
         include_once '../src/main/php/service/import/import_file.php';
@@ -70,17 +70,17 @@ if ($usr->id > 0) {
         // start base configuration load and check
         // ---------------------------------------
 
-        ui_echo($dsp->dsp_navbar($back, $debug-1));
+        ui_echo($dsp->dsp_navbar($back));
 
         ui_echo("loading of base configuration started<br>");
 
-        import_base_config($debug);
+        import_base_config();
 
         ui_echo("loading of base configuration finished<br>");
 
-        ui_echo(dsp_go_back($back, $usr, $debug-1));
+        ui_echo(dsp_go_back($back, $usr));
     }
 }
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);

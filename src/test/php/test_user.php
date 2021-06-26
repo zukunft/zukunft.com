@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // start testing the user permission functionality
 // -----------------------------------------------
 
-function run_user_test($debug = 0)
+function run_user_test()
 {
 
     global $usr;
@@ -41,7 +41,7 @@ function run_user_test($debug = 0)
     // test the user display after the word changes to have a sample case
     test_header('Test the user display class (classes/user_display.php)');
 
-    $result = $usr->dsp_edit($back, $debug - 1);
+    $result = $usr->dsp_edit($back);
     $target = TEST_USER_NAME;
     $exe_start_time = test_show_contains(', user_display->dsp_edit', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -54,8 +54,10 @@ function run_user_test($debug = 0)
     test_header('Test the user permission scripts (e.g. /user/user.php)');
 
     $ip_addr = '2.204.210.217';
-    $result = $usr->ip_check($ip_addr, $debug - 1);
+    $result = $usr->ip_check($ip_addr);
     $target = '';
     test_dsp(', usr->ip_check', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // TODO add a test signup process to
 
 }

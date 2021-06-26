@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_value_test ($debug = 0) {
+function run_value_test () {
 
   global $usr;
   global $usr2;
@@ -48,29 +48,29 @@ function run_value_test ($debug = 0) {
   test_word(TW_SECT_AUTO);
   
   // save base values 
-  add_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2013),              TV_ABB_SALES_2013,      $debug-1);
-  add_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2014),              TV_ABB_SALES_2014,      $debug-1);
-  add_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2013,TW_SECT_AUTO), TV_ABB_SALES_AUTO_2013, $debug-1);
+  add_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2013),              TV_ABB_SALES_2013,      );
+  add_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2014),              TV_ABB_SALES_2014,      );
+  add_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2013,TW_SECT_AUTO), TV_ABB_SALES_AUTO_2013);
 
   // test load by phrase list first to get the value id
-  $abb_sales = test_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2013), TV_ABB_SALES_2013, $debug-1);
+  $abb_sales = test_value(array(TW_ABB,TW_SALES,TW_CHF,TW_MIO,TW_2013), TV_ABB_SALES_2013);
 
   if ($abb_sales->id > 0) {
     // test load by value id
     $val = New value;
     $val->id = $abb_sales->id;
     $val->usr = $usr;
-    $val->load($debug-1);
+    $val->load();
     $result = $val->number;
     $target = TV_ABB_SALES_2013;
     test_dsp(', value->load for value id "'.$abb_sales->id.'"', $target, $result, TIMEOUT_LIMIT);
 
     // test load by word list first to get the value id
-    $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
+    $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
     $val_by_wrd_lst = New value;
     $val_by_wrd_lst->ids = $wrd_lst->ids;
     $val_by_wrd_lst->usr = $usr;
-    $val_by_wrd_lst->load($debug-1);
+    $val_by_wrd_lst->load();
     $result = $val_by_wrd_lst->number;
     $target = TV_ABB_SALES_2014;
     test_dsp(', value->load for another word list '.$wrd_lst->name(), $target, $result, TIMEOUT_LIMIT);
@@ -79,29 +79,29 @@ function run_value_test ($debug = 0) {
     $val = New value;
     $val->id = $val_by_wrd_lst->id;
     $val->usr = $usr;
-    $val->load($debug-1);
+    $val->load();
     $result = $val->number;
     $target = TV_ABB_SALES_2014;
     test_dsp(', value->load for value id "'.$abb_sales->id.'"', $target, $result, TIMEOUT_LIMIT);
 
     // test rebuild_grp_id by value id
-    $result = $val->check($debug-1);
+    $result = $val->check();
     $target = '';
     test_dsp(', value->check for value id "'.$abb_sales->id.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
   }
   
   // test another rebuild_grp_id by value id
-  $chk_wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2013, TW_SECT_AUTO), $debug-1);
+  $chk_wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2013, TW_SECT_AUTO));
   $chk_val = New value;
   $chk_val->ids = $chk_wrd_lst->ids;
   $chk_val->usr = $usr;
-  $chk_val->load($debug-1);
+  $chk_val->load();
   $target = '';
   if ($chk_val->id <= 0) {
     $result = 'No value found for '.$chk_wrd_lst->dsp_id().'.';
     test_dsp(', value->check for value id "'.implode(",",$chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
   } else {
-    $result = $chk_val->check($debug-1);
+    $result = $chk_val->check();
     test_dsp(', value->check for value id "'.implode(",",$chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and check the number
@@ -121,7 +121,7 @@ function run_value_test ($debug = 0) {
 
     // ... and check the word reloading by group
     $chk_val->wrd_lst = Null;
-    $chk_val->load_phrases($debug-1);
+    $chk_val->load_phrases();
     if (isset($chk_val->wrd_lst)) {
       $result = implode(',',$chk_val->wrd_lst->names());
     } else {
@@ -132,7 +132,7 @@ function run_value_test ($debug = 0) {
 
     // ... and check the time word reloading
     $chk_val->time_phr = Null;
-    $chk_val->load_phrases($debug-1);
+    $chk_val->load_phrases();
     if (isset($chk_val->time_phr)) {
       $result = $chk_val->time_phr->name;
     } else {
@@ -143,9 +143,9 @@ function run_value_test ($debug = 0) {
   }
 
   // test load the word list object
-  $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
-  $wrd_lst->ex_time($debug-1);
-  $grp = $wrd_lst->get_grp($debug-1);
+  $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
+  $wrd_lst->ex_time();
+  $grp = $wrd_lst->get_grp();
   if ($grp->id == 0) {
       $result = 'No word list found.';
       $target = implode(',', $wrd_lst->names());
@@ -155,13 +155,13 @@ function run_value_test ($debug = 0) {
       $val->grp = $grp;
       $val->grp_id = $grp->id;
       $val->usr = $usr;
-      $val->load($debug - 1);
+      $val->load();
       $result = '';
       if ($val->id <= 0) {
           $result = 'No value found for ' . $val->dsp_id() . '.';
       } else {
           if (isset($val->wrd_lst)) {
-              $result = implode(',', $val->wrd_lst->names($debug - 1));
+              $result = implode(',', $val->wrd_lst->names());
           }
       }
       $target = implode(',', $wrd_lst->names());
@@ -173,11 +173,11 @@ function run_value_test ($debug = 0) {
   $val->grp = 0;
   $val->wrd_ids = $wrd_lst->ids;
   $val->usr = $usr;
-  $val->load($debug-1);
+  $val->load();
   $result = '';
   if ($val->id > 0) {
     if (isset($val->wrd_lst)) {
-      $result = implode(',',$val->wrd_lst->names($debug-1));
+      $result = implode(',',$val->wrd_lst->names());
     }
   }
   $target = implode(',',$wrd_lst->names());
@@ -185,69 +185,69 @@ function run_value_test ($debug = 0) {
   
 
   // test the formatting of a value (percent)
-  $wrd_lst = load_word_list(array(TW_DAN, TW_SALES, TW_PCT, TW_USA, TW_2016), $debug-1);
+  $wrd_lst = load_word_list(array(TW_DAN, TW_SALES, TW_PCT, TW_USA, TW_2016));
   $pct_val = New value;
   $pct_val->ids = $wrd_lst->ids;
   $pct_val->usr = $usr;
-  $pct_val->load($debug-1);
-  $result = $pct_val->display(0, $debug-1);
+  $pct_val->load();
+  $result = $pct_val->display(0);
   $target = TV_DAN_SALES_USA_2016;
   test_dsp(', value->val_formatted for a word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
 
   // test the scaling of a value
-  $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
+  $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
   $dest_wrd_lst = New word_list;
   $dest_wrd_lst->usr = $usr;
   $dest_wrd_lst->add_name(TW_SALES);
   $dest_wrd_lst->add_name(TW_K);
-  $dest_wrd_lst->load($debug-1);
+  $dest_wrd_lst->load();
   $mio_val = New value;
   $mio_val->ids = $wrd_lst->ids;
   $mio_val->usr = $usr;
-  $mio_val->load($debug-1);
-  $result = $mio_val->scale($dest_wrd_lst, $debug-1);
+  $mio_val->load();
+  $result = $mio_val->scale($dest_wrd_lst);
   $target = TV_ABB_SALES_2014 * 1000000;
   test_dsp(', value->val_scaling for a word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
 
   // test the figure object creation
-  $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
+  $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
   $mio_val = New value;
   $mio_val->ids = $wrd_lst->ids;
   $mio_val->usr = $usr;
-  $mio_val->load($debug-1);
-  $fig = $mio_val->figure($debug-1);
-  $result = $fig->display_linked('1', $debug-1);
+  $mio_val->load();
+  $fig = $mio_val->figure();
+  $result = $fig->display_linked('1');
   $target = '';
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
   test_dsp(', value->figure->display_linked for word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
 
   // test the HTML code creation
-  $result = $mio_val->display(0, $debug-1);
+  $result = $mio_val->display(0);
   $target = number_format(TV_ABB_SALES_2014,0,DEFAULT_DEC_POINT,DEFAULT_THOUSAND_SEP);
   test_dsp(', value->display', $target, $result, TIMEOUT_LIMIT);
 
   // test the HTML code creation including the hyperlink
-  $result = $mio_val->display_linked('1', $$debug-1);
+  $result = $mio_val->display_linked('1');
   $target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
   test_dsp(', value->display_linked', $target, $result, TIMEOUT_LIMIT);
 
   // convert the user input for the database
   $mio_val->usr_value = '46 000';
-  $result = $mio_val->convert($debug-1);
+  $result = $mio_val->convert();
   $target = TV_ABB_SALES_2014;
   test_dsp(', value->convert user input', $target, $result, TIMEOUT_LIMIT);
 
   // test adding a value in the database 
   // as it is call from value_add.php with all phrases in an id list including the time phrase, 
   // so the time phrase must be excluded
-  $wrd_lst = load_word_list(array(TW_ADD_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug-1);
-  $phr_lst = $wrd_lst->phrase_lst($debug-1);
+  $wrd_lst = load_word_list(array(TW_ADD_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2014));
+  $phr_lst = $wrd_lst->phrase_lst();
   $add_val = New value;
   $add_val->ids = $phr_lst->ids;
   $add_val->number = 123456789;
   $add_val->usr = $usr;
-  $result = $add_val->save($debug-1);
+  $result = $add_val->save();
   $target = '1';
   test_dsp(', value->save '.$add_val->number.' for '.$wrd_lst->name().' by user "'.$usr->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
   $test_val_lst[] = $add_val->id;
@@ -260,7 +260,7 @@ function run_value_test ($debug = 0) {
     $log->field = 'word_value';
     $log->row_id = $add_val->id;
     $log->usr = $usr;
-    $result = $log->dsp_last(true, $debug-1);
+    $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job added 123456789';
   test_dsp(', value->save logged for "'.$wrd_lst->name().'"', $target, $result, TIMEOUT_LIMIT);
@@ -269,7 +269,7 @@ function run_value_test ($debug = 0) {
   $added_val = New value;
   $added_val->ids = $phr_lst->ids;
   $added_val->usr = $usr;
-  $added_val->load($debug-1);
+  $added_val->load();
   $result = $added_val->number;
   $target = '123456789';
   test_dsp(', value->load the value previous saved for "'.$wrd_lst->name().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
@@ -278,24 +278,24 @@ function run_value_test ($debug = 0) {
   $test_val_lst[] = $added_val->id;
 
   // test if a value with the same phrases, but different time can be added
-  $wrd_lst2 = load_word_list(array(TW_ADD_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2015), $debug-1);
-  $phr_lst2 = $wrd_lst2->phrase_lst($debug-1);
+  $wrd_lst2 = load_word_list(array(TW_ADD_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2015));
+  $phr_lst2 = $wrd_lst2->phrase_lst();
   $add_val2 = New value;
   $add_val2->ids = $phr_lst2->ids;
   $add_val2->number = 234567890;
   $add_val2->usr = $usr;
-  $result = $add_val2->save($debug-1);
+  $result = $add_val2->save();
   $target = '1';
   test_dsp(', value->save '.$add_val2->number.' for '.$wrd_lst2->name().' by user "'.$usr->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
 
   // test if a value with time stamp can be saved
-  $phr_lst_ts = test_phrase_list(array(TW_ABB, TW_PRICE, TW_CHF), $debug-1);
+  $phr_lst_ts = test_phrase_list(array(TW_ABB, TW_PRICE, TW_CHF));
   $add_val_ts = New value;
   $add_val_ts->ids        = $phr_lst_ts->ids;
   $add_val_ts->number     = TV_ABB_PRICE_20200515;
   $add_val_ts->time_stamp = strtotime("2020-05-15");
   $add_val_ts->usr = $usr;
-  $result = $add_val_ts->save($debug-1);
+  $result = $add_val_ts->save();
   $target = '1';
   test_dsp(', value->save '.$add_val_ts->number.' for '.$phr_lst_ts->name().' and '.date("Y-m-d H:i:s", $add_val_ts->time_stamp).' by user "'.$usr->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
 
@@ -306,7 +306,7 @@ function run_value_test ($debug = 0) {
     $log->field = 'word_value';
     $log->row_id = $add_val2->id;
     $log->usr = $usr;
-    $result = $log->dsp_last(true, $debug-1);
+    $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job added 234567890';
   test_dsp(', value->save logged for "'.$wrd_lst2->name().'"', $target, $result, TIMEOUT_LIMIT);
@@ -315,7 +315,7 @@ function run_value_test ($debug = 0) {
   $added_val2 = New value;
   $added_val2->ids = $phr_lst2->ids;
   $added_val2->usr = $usr;
-  $added_val2->load($debug-1);
+  $added_val2->load();
   $result = $added_val2->number;
   $target = '234567890';
   test_dsp(', value->load the value previous saved for "'.$phr_lst2->name().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
@@ -326,9 +326,9 @@ function run_value_test ($debug = 0) {
   $added_val = New value;
   $added_val->id = $added_val_id;
   $added_val->usr = $usr;
-  $added_val->load($debug-1);
+  $added_val->load();
   $added_val->number = 987654321;
-  $result = $added_val->save($debug-1);
+  $result = $added_val->save();
   $target = '1';
   test_dsp(', word->save update value id "'.$added_val_id.'" from  "'.$add_val->number.'" to "'.$added_val->number.'".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
@@ -339,7 +339,7 @@ function run_value_test ($debug = 0) {
     $log->field = 'word_value';
     $log->row_id = $added_val->id;
     $log->usr = $usr;
-    $result = $log->dsp_last(true, $debug-1);
+    $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job changed 123456789 to 987654321';
   test_dsp(', value->save logged for "'.TW_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT);
@@ -348,7 +348,7 @@ function run_value_test ($debug = 0) {
   $added_val = New value;
   $added_val->ids = $phr_lst->ids;
   $added_val->usr = $usr;
-  $added_val->load($debug-1);
+  $added_val->load();
   $result = $added_val->number;
   $target = '987654321';
   test_dsp(', value->load the value previous updated for "'.TW_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
@@ -361,15 +361,15 @@ function run_value_test ($debug = 0) {
   $wrd_lst->add_name(TW_CHF);
   $wrd_lst->add_name(TW_MIO);
   $wrd_lst->add_name(TW_2014);
-  $wrd_lst->load($debug-1);
-  $phr_lst = $wrd_lst->phrase_lst($debug-1); */
+  $wrd_lst->load();
+  $phr_lst = $wrd_lst->phrase_lst(); */
   $val_usr2 = New value;
   //$val_usr2->ids = $phr_lst->ids;
   $val_usr2->id = $added_val_id;
   $val_usr2->usr = $usr2;
-  $val_usr2->load($debug-1);
+  $val_usr2->load();
   $val_usr2->number = 23456;
-  $result = $val_usr2->save($debug-1);
+  $result = $val_usr2->save();
   $target = '1';
   test_dsp(', value->save '.$val_usr2->number.' for '.$wrd_lst->name().' and user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
 
@@ -377,14 +377,14 @@ function run_value_test ($debug = 0) {
   $val_usr2 = New value;
   $val_usr2->id = $added_val_id;
   $val_usr2->usr = $usr2;
-  $val_usr2->load($debug-1);
+  $val_usr2->load();
   if ($val_usr2->id > 0) {
     $log = New user_log;
     $log->table = 'user_values';
     $log->field = 'word_value';
     $log->row_id = $val_usr2->id;
     $log->usr = $usr2;
-    $result = $log->dsp_last(true, $debug-1);
+    $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system test changed 987654321 to 23456';
   test_dsp(', value->save logged for user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT);
@@ -393,7 +393,7 @@ function run_value_test ($debug = 0) {
   $added_val_usr2 = New value;
   $added_val_usr2->ids = $phr_lst->ids;
   $added_val_usr2->usr = $usr2;
-  $added_val_usr2->load($debug-1);
+  $added_val_usr2->load();
   $result = $added_val_usr2->number;
   $target = '23456';
   test_dsp(', value->load the value previous updated for "'.$wrd_lst->name().'" by user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
@@ -402,7 +402,7 @@ function run_value_test ($debug = 0) {
   $added_val = New value;
   $added_val->ids = $phr_lst->ids;
   $added_val->usr = $usr;
-  $added_val->load($debug-1);
+  $added_val->load();
   $result = $added_val->number;
   $target = '987654321';
   test_dsp(', value->load for user "'.$usr->name.'" is still', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
@@ -411,9 +411,9 @@ function run_value_test ($debug = 0) {
   $added_val_usr2 = New value;
   $added_val_usr2->ids = $phr_lst->ids;
   $added_val_usr2->usr = $usr2;
-  $added_val_usr2->load($debug-1);
+  $added_val_usr2->load();
   $added_val_usr2->number = 987654321;
-  $result = $added_val_usr2->save($debug-1);
+  $result = $added_val_usr2->save();
   $target = '11';
   test_dsp(', value->save change to '.$val_usr2->number.' for '.$wrd_lst->name().' and user "'.$usr2->name.'" should undo the user change', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
 
@@ -421,14 +421,14 @@ function run_value_test ($debug = 0) {
   $val_usr2 = New value;
   $val_usr2->ids = $phr_lst->ids;
   $val_usr2->usr = $usr2;
-  $val_usr2->load($debug-1);
+  $val_usr2->load();
   if ($val_usr2->id > 0) {
     $log = New user_log;
     $log->table = 'user_values';
     $log->field = 'word_value';
     $log->row_id = $val_usr2->id;
     $log->usr = $usr2;
-    $result = $log->dsp_last(true, $debug-1);
+    $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system test changed 23456 to 987654321';
   test_dsp(', value->save logged for user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT);
@@ -437,7 +437,7 @@ function run_value_test ($debug = 0) {
   $added_val_usr2 = New value;
   $added_val_usr2->ids = $phr_lst->ids;
   $added_val_usr2->usr = $usr2;
-  $added_val_usr2->load($debug-1);
+  $added_val_usr2->load();
   $result = $added_val_usr2->number;
   $target = '987654321';
   test_dsp(', value->load the value previous updated for "'.$wrd_lst->name().'" by user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
@@ -451,11 +451,11 @@ function run_value_test ($debug = 0) {
   /*$added_val = New value;
   $added_val->id = $added_val_id;
   $added_val->usr = $usr;
-  $added_val->load($debug-1);
-  $wrd_to_del = load_word(TW_CHF, $debug-1);
-  $result = $added_val->del_wrd($wrd_to_del->id, $debug-1);
+  $added_val->load();
+  $wrd_to_del = load_word(TW_CHF);
+  $result = $added_val->del_wrd($wrd_to_del->id);
   $wrd_lst = $added_val->wrd_lst;
-  $result = $wrd_lst->does_contain(TW_CHF, $debug-1);
+  $result = $wrd_lst->does_contain(TW_CHF);
   $target = false;
   test_dsp(', value->add_wrd has "'.TW_CHF.'" been removed from the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
 
@@ -463,13 +463,13 @@ function run_value_test ($debug = 0) {
   $added_val = New value;
   $added_val->id = $added_val_id;
   $added_val->usr = $usr;
-  $added_val->load($debug-1);
-  $wrd_to_add = load_word(TW_EUR, $debug-1);
-  $result = $added_val->add_wrd($wrd_to_add->id, $debug-1);
+  $added_val->load();
+  $wrd_to_add = load_word(TW_EUR);
+  $result = $added_val->add_wrd($wrd_to_add->id);
   // load word list
   $wrd_lst = $added_val->wrd_lst;
   // does the word list contain TW_EUR
-  $result = $wrd_lst->does_contain(TW_EUR, $debug-1);
+  $result = $wrd_lst->does_contain(TW_EUR);
   $target = true;
   test_dsp(', value->add_wrd has "'.TW_EUR.'" been added to the word list of the value', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
   */

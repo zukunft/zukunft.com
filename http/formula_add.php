@@ -36,14 +36,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("formula_add", "", $debug);
+$db_con = prg_start("formula_add");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -52,7 +52,7 @@ $db_con = prg_start("formula_add", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_FORMULA_ADD);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
     $back = $_GET['back'];
         
     // init the formula object
@@ -75,12 +75,12 @@ $db_con = prg_start("formula_add", "", $debug);
     if (isset($_GET['word'])) {
       $wrd->id  = $_GET['word'];
       $wrd->usr = $usr;
-      $wrd->load($debug-1);
+      $wrd->load();
     }  
     
     // if the user has requested to add a new formula
     if ($_GET['confirm'] > 0) {
-      log_debug('formula_add->check ', $debug-14);
+      log_debug('formula_add->check ');
 
       // check parameters
       if (!isset($wrd)) {
@@ -96,21 +96,21 @@ $db_con = prg_start("formula_add", "", $debug);
       }
       
       // check if a word, verb or formula with the same name already exists
-      log_debug('formula_add->check word ', $debug-14);
-      $trm = $frm->term($debug-1);      
+      log_debug('formula_add->check word ');
+      $trm = $frm->term();      
       if (isset($trm)) {
         if ($trm->id > 0) {
           $msg .= $trm->id_used_msg();
         }
       }
-      log_debug('formula_add->checked ', $debug-14);
+      log_debug('formula_add->checked ');
       
       // if the parameters are fine
       if ($msg == '') {
-        log_debug('formula_add->do ', $debug-14);
+        log_debug('formula_add->do ');
     
         // add to db
-        $add_result = $frm->save($debug-1);
+        $add_result = $frm->save();
 
         // in case of a problem show the message
         if (str_replace ('1','',$add_result) <> '') {
@@ -120,12 +120,12 @@ $db_con = prg_start("formula_add", "", $debug);
           // if adding was successful ...
           // link the formula to at least one word
           if ($wrd->id > 0) {
-            $phr = $wrd->phrase($debug-1);
-            $add_result .= $frm->link_phr($phr, $debug-1);
+            $phr = $wrd->phrase();
+            $add_result .= $frm->link_phr($phr);
 
             // if linking was successful ...
             if (str_replace ('1','',$add_result) == '') {
-              $result .= dsp_go_back($back, $usr, $debug-1);
+              $result .= dsp_go_back($back, $usr);
             } else {
               // ... or in case of a problem prepare to show the message
               $msg .= $add_result;
@@ -138,10 +138,10 @@ $db_con = prg_start("formula_add", "", $debug);
     // if nothing yet done display the edit view (and any message on the top)
     if ($result == '')  {
       // show the header
-      $result .= $dsp->dsp_navbar($back, $debug-1);
+      $result .= $dsp->dsp_navbar($back);
       $result .= dsp_err($msg);
 
-      $result .= $frm->dsp_edit (0, $wrd, $back, $debug);
+      $result .= $frm->dsp_edit (0, $wrd, $back);
     }
   }
 
@@ -150,4 +150,4 @@ $db_con = prg_start("formula_add", "", $debug);
     
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

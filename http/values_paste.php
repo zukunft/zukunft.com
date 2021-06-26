@@ -34,13 +34,13 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("values_paste", "", $debug);
+$db_con = prg_start("values_paste");
 
   $result = ''; // reset the html code var
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -49,7 +49,7 @@ $db_con = prg_start("values_paste", "", $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_VALUE_ADD);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
 /*        
     // get the fixed parameters
     $new_tbl   = $_GET['table'];    // the value table as pasted by the user
@@ -76,44 +76,44 @@ $db_con = prg_start("values_paste", "", $debug);
       }
       $wrd_pos = $wrd_pos + 1;
     }
-    zu_debug("value_add ... words " .implode(",",$wrd_ids) .".", $debug-1);
-    zu_debug("value_add ... types " .implode(",",$type_ids).".", $debug-1);
-    zu_debug("value_add ... db ids ".implode(",",$db_ids).  ".", $debug-1);
+    zu_debug("value_add ... words " .implode(",",$wrd_ids) .".");
+    zu_debug("value_add ... types " .implode(",",$type_ids).".");
+    zu_debug("value_add ... db ids ".implode(",",$db_ids).  ".");
 
     if ($confirm > 0 AND $new_tbl <> '') {
     
       // adjust the user entries for the database
-      $new_tbl = v_convert($new_tbl, $usr->id, $debug-1);
+      $new_tbl = v_convert($new_tbl, $usr->id);
 
       // add the new value to the database
       $val_wrd_lst = New word_list;
       $val_wrd_lst->ids = $wrd_ids;
       $val_wrd_lst->usr = $usr;
-      $val_wrd_lst->load($debug-1);
+      $val_wrd_lst->load();
       $val = New value;
       $val-> 
-      $val_id = v_db_add($new_tbl, $wrd_ids, $usr->id, $debug);
+      $val_id = v_db_add($new_tbl, $wrd_ids, $usr->id);
       
       if ($val_id > 0) {
         // save the source
         if ($src_id > 0) {
-          zuv_db_add($val_id, $src_id, $usr->id, $debug-1);
-          zuu_set_source ($usr->id, $src_id, $debug-1);
+          zuv_db_add($val_id, $src_id, $usr->id);
+          zuu_set_source ($usr->id, $src_id);
         }
       } else {
         zu_err("Adding ".$new_tbl." for words ".implode(",",$wrd_ids)." failed.","value_add");
       }
     
-      $result .= dsp_go_back($back, $usr, $debug-1);
+      $result .= dsp_go_back($back, $usr);
     } else {
       // display the view header
-      $result .= $dsp->dsp_navbar($back, $debug-1);
+      $result .= $dsp->dsp_navbar($back);
 
-      $result .= zuv_dsp_edit_or_add (0, $wrd_ids, $type_ids, $db_ids, $src_id, $back, $usr->id, $debug-1);
+      $result .= zuv_dsp_edit_or_add (0, $wrd_ids, $type_ids, $db_ids, $src_id, $back, $usr->id);
       
     } */
   }
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

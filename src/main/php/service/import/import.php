@@ -55,8 +55,8 @@ class file_import {
   public $views_failed = 0;
   
   // import zukunft.com data as object for creating e.g. a json message
-  function put ($debug) {
-    log_debug('import->put', $debug-10);
+  function put () {
+    log_debug('import->put');
     $result = '';
 
     $json_array = json_decode($this->json_str, true);
@@ -76,7 +76,7 @@ class file_import {
         foreach ($json_obj AS $word) {
           $wrd = New word;
           $wrd->usr = $this->usr;
-          $import_result = $wrd->import_obj($word, $debug-1);
+          $import_result = $wrd->import_obj($word);
           if ($import_result == '') { $this->words_done++; } else { $this->words_failed++; }
           $result .= $import_result;
         }
@@ -84,7 +84,7 @@ class file_import {
         foreach ($json_obj AS $triple) {
           $wrd_lnk = New word_link;
           $wrd_lnk->usr = $this->usr;
-          $import_result = $wrd_lnk->import_obj($triple, $debug-1);
+          $import_result = $wrd_lnk->import_obj($triple);
           if ($import_result == '') { $this->triples_done++; } else { $this->triples_failed++; }
           $result .= $import_result;
         }
@@ -92,7 +92,7 @@ class file_import {
         foreach ($json_obj AS $formula) {
           $frm = New formula;
           $frm->usr = $this->usr;
-          $import_result = $frm->import_obj($formula, $debug-1);
+          $import_result = $frm->import_obj($formula);
           if ($import_result == '') { $this->formulas_done++; } else { $this->formulas_failed++; }
           $result .= $import_result;
         }
@@ -100,7 +100,7 @@ class file_import {
         foreach ($json_obj AS $value) {
           $src = New source;
           $src->usr = $this->usr;
-          $import_result = $src->import_obj($value, $debug-1);
+          $import_result = $src->import_obj($value);
           if ($import_result == '') { $this->sources_done++; } else { $this->sources_failed++; }
           $result .= $import_result;
         }
@@ -108,7 +108,7 @@ class file_import {
         foreach ($json_obj AS $value) {
           $val = New value;
           $val->usr = $this->usr;
-          $import_result = $val->import_obj($value, $debug-1);
+          $import_result = $val->import_obj($value);
           if ($import_result == '') { $this->values_done++; } else { $this->values_failed++; }
           $result .= $import_result;
         }
@@ -116,7 +116,7 @@ class file_import {
         foreach ($json_obj AS $view) {
           $view_obj = New view;
           $view_obj->usr = $this->usr;
-          $import_result = $view_obj->import_obj($view, $debug-1);
+          $import_result = $view_obj->import_obj($view);
           if ($import_result == '') { $this->views_done++; } else { $this->views_failed++; }
           $result .= $import_result;
         }

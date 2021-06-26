@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS ` change_fields `
     ` code_id ` varchar
 (
     100
-) NOT NULL COMMENT 'to display the change with some linked information'
+) DEFAULT NULL COMMENT 'to display the change with some linked information'
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -286,6 +286,14 @@ CREATE TABLE IF NOT EXISTS ` comments `
 
 CREATE TABLE IF NOT EXISTS ` config `
 (
+    `config_id` int
+(
+    11
+) NOT NULL,
+    ` config_name ` varchar
+(
+    100
+) DEFAULT NULL COMMENT 'short name of the configuration entry to be shown to the user',
     `code_id` varchar
 (
     100
@@ -461,7 +469,7 @@ CREATE TABLE IF NOT EXISTS ` formula_link_types `
     ` word_type_id ` int
 (
     11
-) NOT NULL,
+) NOT NULL DEFAULT 1,
     ` link_type_id ` int
 (
     11
@@ -609,7 +617,7 @@ CREATE TABLE IF NOT EXISTS ` languages_forms `
 (
     50
 ) DEFAULT NULL,
-    ` lanuages_id ` int
+    ` language_id ` int
 (
     11
 ) NOT NULL
@@ -864,7 +872,7 @@ CREATE TABLE IF NOT EXISTS ` sources `
 (
     200
 ) NOT NULL,
-    ` url ` DEFAULT NOT NULL,
+    ` url ` text,
     ` comment ` text,
     ` source_type_id ` int
 (
@@ -1085,7 +1093,7 @@ CREATE TABLE IF NOT EXISTS ` sys_script_times `
     ` url ` varchar
 (
     250
-) NOT NULL
+) DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -1866,7 +1874,7 @@ CREATE TABLE IF NOT EXISTS ` value_phrase_links `
     ` condition_formula_id ` int
 (
     11
-) NOT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true'
+) DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true'
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT ='link single word or triple to a value only for fast search';
 
 -- --------------------------------------------------------
@@ -2552,7 +2560,7 @@ ALTER TABLE ` comments `
 -- Indexes for table `config`
 --
 ALTER TABLE ` config `
-    ADD PRIMARY KEY (` code_id `), ADD UNIQUE KEY ` setting ` (` code_id `);
+    ADD PRIMARY KEY (` config_id `), ADD UNIQUE KEY ` config_name ` (` config_name `), ADD UNIQUE KEY ` setting ` (` code_id `);
 
 --
 -- Indexes for table `formulas`

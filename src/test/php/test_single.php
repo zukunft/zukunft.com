@@ -13,12 +13,12 @@ if ($debug > 0) {
 }
 
 // open database
-$db_con = prg_start("test_single", "", $debug);
+$db_con = prg_start("test_single");
 
 $result = ''; // reset the html code var
 
 $usr = new user;
-$result .= $usr->get($debug - 1);
+$result .= $usr->get();
 
 // todo review
 if ($usr->id <= 0) {
@@ -36,7 +36,7 @@ if ($usr->id <= 0) {
 
     // test the user ip
     $ip_addr = '2.204.210.217';
-    $result = $usr->ip_check($ip_addr, $debug - 1);
+    $result = $usr->ip_check($ip_addr);
     $target = '';
     test_dsp(', usr->ip_check', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -45,9 +45,9 @@ if ($usr->id <= 0) {
     test_word(TW_CHF);
     test_word(TW_MIO);
     test_word(TW_2014);
-    $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014), $debug - 1);
-    $wrd_lst->ex_time($debug - 1);
-    $grp = $wrd_lst->get_grp($debug - 1);
+    $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
+    $wrd_lst->ex_time();
+    $grp = $wrd_lst->get_grp();
     if ($grp->id == 0) {
         $result = 'No word list found.';
         $target = implode(',', $wrd_lst->names());
@@ -57,13 +57,13 @@ if ($usr->id <= 0) {
         $val->grp = $grp;
         $val->grp_id = $grp->id;
         $val->usr = $usr;
-        $val->load($debug - 1);
+        $val->load();
         $result = '';
         if ($val->id <= 0) {
             $result = 'No value found for ' . $val->dsp_id() . '.';
         } else {
             if (isset($val->wrd_lst)) {
-                $result = implode(',', $val->wrd_lst->names($debug - 1));
+                $result = implode(',', $val->wrd_lst->names());
             }
         }
         $target = implode(',', $wrd_lst->names());
@@ -74,7 +74,7 @@ if ($usr->id <= 0) {
     $wrd_new = new word;
     $wrd_new->name = TEST_WORD;
     $wrd_new->usr = $usr;
-    $result = $wrd_new->save($debug - 1);
+    $result = $wrd_new->save();
     //$target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
     $target = '';
     $exe_start_time = test_show_result('word->save for "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
@@ -82,4 +82,4 @@ if ($usr->id <= 0) {
 
 echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

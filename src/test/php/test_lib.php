@@ -35,6 +35,39 @@ function run_unit_tests()
 
     test_header('Test the base library functions (zu_lib.php)');
 
+    test_header('Test sql base functions');
+
+    // test sf (Sql Formatting) function
+    $text = "'4'";
+    $target = "'''4'''";
+    $result = sf($text);
+    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    $text = "'4'";
+    $target = "4";
+    $result = sf($text, sql_db::FLD_FORMAT_VAL);
+    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    $text = "2021";
+    $target = "'2021'";
+    $result = sf($text, sql_db::FLD_FORMAT_TEXT);
+    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    $text = "four";
+    $target = "'four'";
+    $result = sf($text);
+    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    $text = "'four'";
+    $target = "'''four'''";
+    $result = sf($text);
+    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    $text = " ";
+    $target = "NULL";
+    $result = sf($text);
+    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
     echo "<h3>version control</h3><br>";
     prg_version_is_newer_test();
 
@@ -45,6 +78,40 @@ function run_unit_tests()
     /*
      * General tests (one by one for each database)
      */
+
+    // test a simple SQL user select query for PostgreSQL by name
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->set_type(DB_TYPE_USER);
+    $db_con->set_usr(SYSTEM_USER_ID);
+    $db_con->set_where(null,'Test User');
+    $created_sql = $db_con->select();
+    $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
+    $exe_start_time = test_show_result('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... same for MySQL
+    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->set_type(DB_TYPE_USER);
+    $db_con->set_usr(SYSTEM_USER_ID);
+    $db_con->set_where(null,'Test User');
+    $created_sql = $db_con->select();
+    $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
+    $exe_start_time = test_show_result('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // test a simple SQL max select creation for PostgreSQL without where
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->set_type(DB_TYPE_VALUE);
+    $db_con->set_fields(array('MAX(value_id) AS max_id'));
+    $created_sql = $db_con->select(false);
+    $expected_sql = "SELECT MAX(value_id) AS max_id FROM values;";
+    $exe_start_time = test_show_result('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... same for MySQL
+    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->set_type(DB_TYPE_VALUE);
+    $db_con->set_fields(array('MAX(value_id) AS max_id'));
+    $created_sql = $db_con->select(false);
+    $expected_sql = "SELECT MAX(value_id) AS max_id FROM `values`;";
+    $exe_start_time = test_show_result('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
 
     // test a simple SQL select creation for PostgreSQL without the standard id and name identification
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -83,6 +150,96 @@ function run_unit_tests()
                 FROM source_types
                WHERE source_type_id = 2;";
     $exe_start_time = test_show_result('MySQL select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // test a simple SQL select of the user defined word for PostgreSQL by the id
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->set_type(DB_TYPE_WORD, true);
+    $db_con->set_usr(1);
+    $db_con->set_fields(array('plural','description','word_type_id','view_id'));
+    $db_con->set_where(1);
+    $created_sql = $db_con->select();
+    $expected_sql = 'SELECT word_id,
+                     word_name,
+                     plural,
+                     description,
+                     word_type_id,
+                     view_id
+                FROM user_words
+               WHERE word_id = 1 
+                 AND user_id = 1;';
+    $exe_start_time = test_show_result('PostgreSQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... same for MySQL
+    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->set_type(DB_TYPE_WORD, true);
+    $db_con->set_usr(1);
+    $db_con->set_fields(array('plural','description','word_type_id','view_id'));
+    $db_con->set_where(1);
+    $created_sql = $db_con->select();
+    $expected_sql = 'SELECT word_id,
+                     word_name,
+                     plural,
+                     description,
+                     word_type_id,
+                     view_id
+                FROM user_words
+               WHERE word_id = 1 
+                 AND user_id = 1;';
+    $exe_start_time = test_show_result('MySQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // test a very simple SQL select of the user defined word for PostgreSQL by the id
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->set_type(DB_TYPE_WORD, true);
+    $db_con->set_usr(1);
+    $db_con->set_where(1);
+    $created_sql = $db_con->select();
+    $expected_sql = 'SELECT word_id,
+                     word_name
+                FROM user_words
+               WHERE word_id = 1 
+                 AND user_id = 1;';
+    $exe_start_time = test_show_result('PostgreSQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... same for MySQL
+    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->set_type(DB_TYPE_WORD, true);
+    $db_con->set_usr(1);
+    $db_con->set_where(1);
+    $created_sql = $db_con->select();
+    $expected_sql = 'SELECT word_id,
+                     word_name
+                FROM user_words
+               WHERE word_id = 1 
+                 AND user_id = 1;';
+    $exe_start_time = test_show_result('MySQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // test a simple SQL select the formulas linked to a phrase
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->set_type(DB_TYPE_FORMULA_LINK);
+    $db_con->set_link_fields('formula_id', 'phrase_id');
+    $db_con->set_where_link(null,null, 1);
+    $created_sql = $db_con->select();
+    $expected_sql = 'SELECT 
+                        formula_link_id,  
+                        formula_id,  
+                        phrase_id
+                   FROM formula_links
+                  WHERE phrase_id = 1;';
+    $exe_start_time = test_show_result('PostgreSQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... same for MySQL
+    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->set_type(DB_TYPE_FORMULA_LINK);
+    $db_con->set_link_fields('formula_id', 'phrase_id');
+    $db_con->set_where_link(null,null, 1);
+    $created_sql = $db_con->select();
+    $expected_sql = 'SELECT 
+                    formula_link_id,  
+                    formula_id,  
+                    phrase_id
+               FROM formula_links
+              WHERE phrase_id = 1;';
+    $exe_start_time = test_show_result('MySQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
 
     /*
      * Start of the concrete database object test fpr PostgreSQL

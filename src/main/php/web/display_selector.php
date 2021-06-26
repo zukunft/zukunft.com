@@ -45,8 +45,8 @@ class selector {
   public $selected   = Null; // id of the selected object
   public $dummy_text = '';   // text for the NULL result if allowed
   
-  function display ($debug) {
-    log_debug('selector->display ('.$this->name.','.$this->form.','.$this->sql.',s'.$this->selected.','.$this->dummy_text.')', $debug-10);
+  function display () {
+    log_debug('selector->display ('.$this->name.','.$this->form.','.$this->sql.',s'.$this->selected.','.$this->dummy_text.')');
 
     global $db_con;
     $result  = '';
@@ -63,11 +63,11 @@ class selector {
 
     //$db_con = New mysql;
     $db_con->usr_id = $this->usr->id;         
-    $db_lst = $db_con->get($this->sql, $debug-5);  
+    $db_lst = $db_con->get($this->sql);  
     foreach ($db_lst AS $db_entry) {
       $row_option = '';
       if ($db_entry['id'] == $this->selected AND $this->selected <> 0) {
-        log_debug('selector->display ... selected '.$db_entry['id'], $debug-12);
+        log_debug('selector->display ... selected '.$db_entry['id']);
         $row_option = ' selected';
       }
       $result .= '<option value="'.$db_entry['id'].'"'.$row_option.'>'.$db_entry['name'].'</option>';
@@ -75,7 +75,7 @@ class selector {
 
     $result .= dsp_form_fld_select_end();
 
-    log_debug('selector->display ... done', $debug-14);
+    log_debug('selector->display ... done');
     return $result;
   }
 

@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // start testing the system functionality 
 // --------------------------------------
   
-function run_word_ui_test ($debug = 0) {
+function run_word_ui_test () {
 
   global $usr;
   global $exe_start_time;
@@ -41,7 +41,7 @@ function run_word_ui_test ($debug = 0) {
   $wrd_ABB = New word_dsp;
   $wrd_ABB->name = TW_ABB;
   $wrd_ABB->usr = $usr;
-  $wrd_ABB->load($debug-1);
+  $wrd_ABB->load();
   $vrb_is = cl(DBL_LINK_TYPE_IS);
   $wrd_type = cl(DBL_WORD_TYPE_NORMAL);
   $result = file_get_contents('https://zukunft.com/http/word_add.php?verb='.$vrb_is.'&word='.$wrd_ABB->id.'&type=1&back='.$wrd_ABB->id.'');
@@ -62,16 +62,16 @@ function run_word_ui_test ($debug = 0) {
 
   // not yet used
   /*
-  $phr_corp = load_phrase(TEST_WORD, $debug-1);
-  $phr_ABB  = load_phrase(TW_ABB,    $debug-1);
+  $phr_corp = load_phrase(TEST_WORD);
+  $phr_ABB  = load_phrase(TW_ABB,    );
   $sel = New selector;
   $sel->usr        = $usr;
   $sel->form       = 'test_form';
   $sel->name       = 'select_company';  
-  $sel->sql        = $phr_corp->sql_list ($phr_corp, $debug-1);
+  $sel->sql        = $phr_corp->sql_list ($phr_corp);
   $sel->selected   = $phr_ABB->id;
   $sel->dummy_text = '... please select';
-  $result .= $sel->display ($debug-1);
+  $result .= $sel->display ();
   $target = TW_ABB;
   $exe_start_time = test_show_contains(', display_selector->display of all '.$phr_corp->name.' with '.$wrd_ABB->name.' selected', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
   */

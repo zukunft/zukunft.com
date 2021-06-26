@@ -90,24 +90,24 @@ class xml_io
     //public $phr_lst_used = NULL; // all phrases used by the exported values
 
     // export zukunft.com data as xml
-    function export($debug)
+    function export()
     {
-        log_debug('xml_io->export', $debug - 10);
+        log_debug('xml_io->export');
         $result = '';
 
         // get the export object
         $export_instance = new export;
         $export_instance->usr = $this->usr;
         $export_instance->phr_lst = $this->phr_lst;
-        $export_obj = $export_instance->get($debug - 1);
+        $export_obj = $export_instance->get();
 
-        log_debug('xml_io->export xml string from ' . json_encode($export_obj), $debug - 16);
+        log_debug('xml_io->export xml string from ' . json_encode($export_obj));
 
         $xml_generator = new XMLSerializer;
         $std_class = json_decode(json_encode($export_obj));
         $result .= $xml_generator->generateValidXmlFromObj($std_class);
 
-        log_debug('xml_io->export done with ' . $result, $debug - 16);
+        log_debug('xml_io->export done with ' . $result);
 
         return $result;
     }

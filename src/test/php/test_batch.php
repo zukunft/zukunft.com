@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_batch_job_test ($debug = 0) {
+function run_batch_job_test () {
 
   global $usr;
   global $exe_start_time;
@@ -41,11 +41,11 @@ function run_batch_job_test ($debug = 0) {
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
   $phr_lst->add_name(TW_2014);
-  $phr_lst->load($debug-1);
+  $phr_lst->load();
   $val = New value;
   $val->ids = $phr_lst->ids;
   $val->usr = $usr;
-  $val->load($debug-1);
+  $val->load();
   $result = $val->number;
   $target = TV_ABB_SALES_2014;
   $exe_start_time = test_show_result('batch_job->value to link', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
@@ -54,7 +54,7 @@ function run_batch_job_test ($debug = 0) {
   $job = new batch_job;
   $job->obj = $val;
   $job->type = cl(DBL_JOB_VALUE_UPDATE);
-  $result = $job->add($debug-1);
+  $result = $job->add();
   if ($result > 0) {
     $target = $result;
   }  
@@ -62,7 +62,7 @@ function run_batch_job_test ($debug = 0) {
   
 }
 
-function run_batch_job_list_test ($debug = 0) {
+function run_batch_job_list_test () {
 
   global $usr;
   global $exe_start_time;
@@ -70,7 +70,7 @@ function run_batch_job_list_test ($debug = 0) {
   test_header('Test the batch job list class (classes/batch_job_list.php)');
 
   // prepare test adding a batch job via a list
-  $frm = load_formula(TF_INCREASE, $debug-1);
+  $frm = load_formula(TF_INCREASE);
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
   $phr_lst->add_name(TW_ABB);
@@ -78,7 +78,7 @@ function run_batch_job_list_test ($debug = 0) {
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
   $phr_lst->add_name(TW_2014);
-  $phr_lst->load($debug-1);
+  $phr_lst->load();
 
   // test adding a batch job via a list
   $job_lst = new batch_job_list;
@@ -86,7 +86,7 @@ function run_batch_job_list_test ($debug = 0) {
   $calc_request->frm     = $frm;
   $calc_request->usr     = $usr;
   $calc_request->phr_lst = $phr_lst;
-  $result = $job_lst->add($calc_request, $debug-1);
+  $result = $job_lst->add($calc_request);
   // todo review
   $target = 0;
   if ($result > 0) {

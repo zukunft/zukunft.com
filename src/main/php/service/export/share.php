@@ -52,9 +52,8 @@ class share_type {
   }
   
   // load the missing source parameters from the database
-  function load($debug) {
+  function load() {
   }
   
 }
 
-?>

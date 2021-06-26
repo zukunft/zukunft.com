@@ -31,45 +31,44 @@
   
 */
 
-class word
+class word extends user_sandbox
 {
 
-    // database fields
-    public $id = NULL; // the database id of the word, which is the same for the standard and the user specific word
-    public $usr_cfg_id = NULL; // the database id if there is already some user specific configuration for this word
-    public $usr = NULL; // the person for whom the word is loaded, so to say the viewer
-    public $owner_id = NULL; // the user id of the person who created the word, which is the default word
-    public $name = '';   // simply the word name, which cannot be empty
+    // database fields additional to the user sandbox fields
     public $plural = NULL; // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
     public $description = NULL; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
-    public $type_id = NULL; // the id of the word type
     public $view_id = NULL; // defines the default view for this word
     public $values = NULL; // the total number of values linked to this word as an indication how common the word is and to sort the words
-    public $excluded = NULL; // the user sandbox for words is implemented, but can be switched off for the complete instance
-    // when loading the word and saving the excluded field is handled as a normal user sandbox field,
-    // but for calculation, use and display an excluded should not be used
 
     // in memory only fields
-    public $type_name = '';   //
+    public $type_name = ''; // the name of the word type
     public $is_wrd = NULL; // the main type object e.g. for "ABB" it is the word object for "Company"
     public $is_wrd_id = NULL; // the id for the is object
     public $dsp_pos = NULL; // position of the word on the screen
     public $dsp_lnk_id = NULL; // position or link id based on which to item is displayed on the screen
     public $link_type_id = NULL; // used in the word list to know based on which relation the word was added to the list
 
+    // only used for the export object
+    private $view = ''; // name of the default view for this word
+
+    // define the settings for this source object
+    function __construct()
+    {
+        parent::__construct();
+        //$this->obj_type = user_sandbox::TYPE_NAMED;
+        $this->obj_name = DB_TYPE_WORD;
+
+        $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
+    }
+
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->name = '';
+        parent::reset();
         $this->plural = NULL;
         $this->description = NULL;
         $this->type_id = NULL;
         $this->view_id = NULL;
         $this->values = NULL;
-        $this->excluded = NULL;
 
         $this->type_name = '';
         $this->is_wrd = NULL;
@@ -77,9 +76,11 @@ class word
         $this->dsp_pos = NULL;
         $this->dsp_lnk_id = NULL;
         $this->link_type_id = NULL;
+
+        $this->view = '';
     }
 
-    private function row_mapper($db_row)
+    private function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['word_id'] > 0) {
@@ -90,6 +91,11 @@ class word
                 $this->type_id = $db_row['word_type_id'];
                 $this->view_id = $db_row['view_id'];
                 $this->excluded = $db_row['excluded'];
+                if ($map_usr_fields) {
+                    $this->usr_cfg_id = $db_row['user_word_id'];
+                    // TODO probably the owner of the standard word also needs to be loaded
+                    $this->owner_id = $db_row['user_id'];
+                }
             } else {
                 $this->id = 0;
             }
@@ -99,9 +105,8 @@ class word
     }
 
     // load the word parameters for all users
-    private function load_standard($debug)
+    function load_standard(): bool
     {
-
         global $db_con;
         $result = '';
 
@@ -111,43 +116,26 @@ class word
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_wrd = $db_con->get1($sql, $debug - 5);
-            if ($db_wrd['word_id'] > 0) {
-                $this->row_mapper($db_wrd);
-
-                // to review: try to avoid using load_test_user
-                if ($this->owner_id > 0) {
-                    $usr = new user;
-                    $usr->id = $this->owner_id;
-                    $usr->load_test_user($debug - 1);
-                    $this->usr = $usr;
-                } else {
-                    // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                    $sql_set = "UPDATE words SET user_id = " . $this->usr->id . " WHERE word_id = " . $this->id . ";";
-                    $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "word->load_standard", (new Exception)->getTraceAsString(), $debug - 10);
-                    if ($sql_result <> '1') {
-                        log_warning('Value owner missing for value ' . $this->id . '.', 'value->load_standard', 'Value owner missing for value ' . $this->id . '.', (new Exception)->getTraceAsString(), $this->usr);
-                    }
-                }
-            }
+            $db_wrd = $db_con->get1($sql);
+            $this->row_mapper($db_wrd);
+            $result = $this->load_owner();
         }
         return $result;
     }
 
     // load the missing word parameters from the database
-    function load($debug)
+    function load(): bool
     {
-
         global $db_con;
-        $result = '';
+        $result = false;
 
         // check the all minimal input parameters
         if (!isset($this->usr)) {
             // don't use too specific error text, because for each unique error text a new message is created
-            //zu_err('The user id must be set to load word '.$this->dsp_id().'.', "word->load", '', (new Exception)->getTraceAsString(), $this->usr);
-            log_err('The user id must be set to load word.', "word->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            //zu_err('The user id must be set to load word '.$this->dsp_id().'.', "word->load");
+            log_err('The user id must be set to load word.', "word->load");
         } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         } else {
 
             $db_con->set_type(DB_TYPE_WORD);
@@ -160,36 +148,36 @@ class word
 
             if ($db_con->get_where() <> '') {
                 // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-                $db_con->usr_id = $this->usr->id;
-                $db_wrd = $db_con->get1($sql, $debug - 5);
-                if (is_null($db_wrd['excluded']) or $db_wrd['excluded'] == 0) {
-                    $this->row_mapper($db_wrd);
-                    // additional user sandbox fields
-                    $this->usr_cfg_id = $db_wrd['user_word_id'];
-                    $this->owner_id = $db_wrd['user_id'];
-                    $this->type_name($debug - 1);
+                $db_wrd = $db_con->get1($sql);
+                $this->row_mapper($db_wrd, true);
+                if ($this->id <> 0) {
+                    if (is_null($db_wrd['excluded']) or $db_wrd['excluded'] == 0) {
+                        // additional user sandbox fields
+                        $this->type_name();
+                    }
+                    log_debug('word->loaded ' . $this->dsp_id());
+                    $result = true;
                 }
-                log_debug('word->loaded ' . $this->dsp_id(), $debug - 12);
             }
         }
         return $result;
     }
 
     // return the main word object based on a id text e.g. used in view.php to get the word to display
-    function main_wrd_from_txt($id_txt, $debug)
+    function main_wrd_from_txt($id_txt)
     {
         if ($id_txt <> '') {
-            log_debug('word->main_wrd_from_txt from "' . $id_txt . '"', $debug - 12);
+            log_debug('word->main_wrd_from_txt from "' . $id_txt . '"');
             $wrd_ids = explode(",", $id_txt);
-            log_debug('word->main_wrd_from_txt check if "' . $wrd_ids[0] . '" is a number', $debug - 12);
+            log_debug('word->main_wrd_from_txt check if "' . $wrd_ids[0] . '" is a number');
             if (is_numeric($wrd_ids[0])) {
                 $this->id = $wrd_ids[0];
-                log_debug('word->main_wrd_from_txt from "' . $id_txt . '" got id ' . $this->id, $debug - 14);
+                log_debug('word->main_wrd_from_txt from "' . $id_txt . '" got id ' . $this->id);
             } else {
                 $this->name = $wrd_ids[0];
-                log_debug('word->main_wrd_from_txt from "' . $id_txt . '" got name ' . $this->name, $debug - 14);
+                log_debug('word->main_wrd_from_txt from "' . $id_txt . '" got name ' . $this->name);
             }
-            $this->load($debug - 1);
+            $this->load();
         }
     }
 
@@ -200,29 +188,29 @@ class word
     */
 
     // get the view object for this word
-    function view($debug)
+    function view(): view
     {
-        log_debug('word->view for ' . $this->dsp_id(), $debug - 10);
+        log_debug('word->view for ' . $this->dsp_id());
         $result = Null;
 
-        $this->load($debug - 1);
+        $this->load();
         if ($this->view_id > 0) {
-            log_debug('word->view got id ' . $this->view_id, $debug - 18);
+            log_debug('word->view got id ' . $this->view_id);
             $result = new view;
             $result->usr = $this->usr;
             $result->id = $this->view_id;
-            $result->load($debug - 1);
-            log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id(), $debug - 16);
+            $result->load();
+            log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
         }
 
-        log_debug('word->view done', $debug - 10);
+        log_debug('word->view done');
         return $result;
     }
 
     // TODO review, because is it needed? get the view used by most users for this word
-    function view_id($debug)
+    function view_id()
     {
-        log_debug('word->view_id for ' . $this->dsp_id(), $debug - 10);
+        log_debug('word->view_id for ' . $this->dsp_id());
 
         global $db_con;
 
@@ -236,47 +224,48 @@ class word
           ORDER BY users DESC;";
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql, $debug - 5);
+        $db_row = $db_con->get1($sql);
         if (isset($db_row)) {
             $view_id = $db_row['view_id'];
         }
 
-        log_debug('word->view_id for ' . $this->dsp_id() . ' got ' . $view_id, $debug - 12);
+        log_debug('word->view_id for ' . $this->dsp_id() . ' got ' . $view_id);
         return $view_id;
     }
 
     // get a list of all values related to this word
-    function val_lst($debug)
+    function val_lst(): value_list
     {
-        log_debug('word->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"', $debug - 12);
+        log_debug('word->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
         $val_lst = new value_list;
         $val_lst->usr = $this->usr;
-        $val_lst->phr = $this->phrase($debug - 1);
+        $val_lst->phr = $this->phrase();
         $val_lst->page_size = SQL_ROW_MAX;
-        $val_lst->load($debug - 1);
-        log_debug('word->val_lst -> got ' . count($val_lst->lst), $debug - 14);
+        $val_lst->load();
+        log_debug('word->val_lst -> got ' . count($val_lst->lst));
         return $val_lst;
     }
 
     // if there is just one formula linked to the word, get it
-    function formula($debug)
+    // TODO allow also to retrieve a list of formulas
+    // TOTO get the user specific list of formulas
+    function formula(): formula
     {
-        log_debug('word->formula for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"', $debug - 10);
+        log_debug('word->formula for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
 
         global $db_con;
 
-        $sql = "SELECT formula_id
-              FROM formula_links
-              WHERE phrase_id = " . $this->id . ";";
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql, $debug - 5);
+        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $db_con->set_link_fields('formula_id', 'phrase_id');
+        $db_con->set_where_link(null,null, 1);
+        $sql = $db_con->select();
+        $db_row = $db_con->get1($sql);
         $frm = new formula;
         if (isset($db_row)) {
             if ($db_row['formula_id'] > 0) {
                 $frm->id = $db_row['formula_id'];
                 $frm->usr = $this->usr;
-                $frm->load($debug - 1);
+                $frm->load();
             }
         }
 
@@ -284,9 +273,9 @@ class word
     }
 
     // create a word object for the export
-    function export_obj($debug)
+    function export_obj(): word
     {
-        log_debug('word->export_obj', $debug - 10);
+        log_debug('word->export_obj');
         $result = new word();
 
         if ($this->name <> '') {
@@ -300,25 +289,24 @@ class word
         }
         if (isset($this->type_id)) {
             if ($this->type_id <> cl(DBL_WORD_TYPE_NORMAL)) {
-                $result->type = $this->type_code_id($debug - 1);
+                $result->obj_type = $this->type_code_id();
             }
         }
         if ($this->view_id > 0) {
-            $wrd_view = $this->view($debug - 1);
+            $wrd_view = $this->view();
             if (isset($wrd_view)) {
                 $result->view = $wrd_view->name;
             }
         }
 
-        log_debug('word->export_obj -> ' . json_encode($result), $debug - 18);
+        log_debug('word->export_obj -> ' . json_encode($result));
         return $result;
     }
 
     // import a word from a json data word object
-    function import_obj($json_obj, $debug)
+    function import_obj($json_obj): bool
     {
-        log_debug('word->import_obj', $debug - 10);
-        $result = '';
+        log_debug('word->import_obj');
 
         // set the all parameters for the word object excluding the usr
         $usr = $this->usr;
@@ -345,9 +333,9 @@ class word
                 $wrd_view = new view;
                 $wrd_view->name = $value;
                 $wrd_view->usr = $this->usr;
-                $wrd_view->load($debug - 1);
+                $wrd_view->load();
                 if ($wrd_view->id == 0) {
-                    log_err('Cannot find view "' . $value . '" when importing ' . $this->dsp_id(), 'word->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
+                    log_err('Cannot find view "' . $value . '" when importing ' . $this->dsp_id(), 'word->import_obj');
                 } else {
                     $this->view_id = $wrd_view->id;
                 }
@@ -355,35 +343,34 @@ class word
         }
 
         // save the word in the database
-        if ($result == '') {
-            // set the default type if no type is specified
-            if ($this->type_id == 0) {
-                $this->type_id = cl(DBL_WORD_TYPE_NORMAL);
-            }
-            $this->save($debug - 1);
-            log_debug('word->import_obj -> ' . $this->dsp_id(), $debug - 18);
-        } else {
-            log_debug('word->import_obj -> ' . $result, $debug - 18);
+        // set the default type if no type is specified
+        if ($this->type_id == 0) {
+            $this->type_id = cl(DBL_WORD_TYPE_NORMAL);
         }
+        $result = num2bool($this->save());
 
-        // add related  parameters to the word object
-        if ($this->id <= 0) {
-            log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj', '', (new Exception)->getTraceAsString(), $this->usr);
-        } else {
-            foreach ($json_obj as $key => $value) {
-                if ($key == 'refs') {
-                    foreach ($value as $ref_data) {
-                        $ref_obj = new ref;
-                        $ref_obj->usr = $this->usr;
-                        $ref_obj->phr_id = $this->id;
-                        $ref_obj->phr = $this->phrase($debug - 1);
-                        $import_result = $ref_obj->import_obj($ref_data, $debug - 1);
-                        $result .= $import_result;
+        if ($result) {
+            log_debug('word->import_obj -> saved ' . $this->dsp_id());
+
+            // add related  parameters to the word object
+            if ($this->id <= 0) {
+                log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj');
+            } else {
+                foreach ($json_obj as $key => $value) {
+                    if ($result) {
+                        if ($key == 'refs') {
+                            foreach ($value as $ref_data) {
+                                $ref_obj = new ref;
+                                $ref_obj->usr = $this->usr;
+                                $ref_obj->phr_id = $this->id;
+                                $ref_obj->phr = $this->phrase();
+                                $result = $ref_obj->import_obj($ref_data);
+                            }
+                        }
                     }
                 }
             }
         }
-
         return $result;
     }
 
@@ -393,45 +380,23 @@ class word
 
     */
 
-    // display the unique id fields
-    function dsp_id()
-    {
-        $result = '';
-
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
-        }
-        return $result;
-    }
-
     // return the name (just because all objects should have a name function)
-    function name()
+    function name(): string
     {
-        $result = $this->name;
-        return $result;
+        return $this->name;
     }
 
     // return the html code to display a word
-    function display($back)
+    function display($back): string
     {
-        $result = '<a href="/http/view.php?words=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/view.php?words=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
+    /*
     // offer the user to export the word and the relations as an xml file
-    function config_json_export($back)
+    function config_json_export($back): string
     {
-        $result = '';
-        $result .= 'Export as <a href="/http/get_json.php?words=' . $this->name . '&back=' . $back . '">JSON</a>';
-        return $result;
+        return 'Export as <a href="/http/get_json.php?words=' . $this->name . '&back=' . $back . '">JSON</a>';
     }
 
     // offer the user to export the word and the relations as an xml file
@@ -448,114 +413,102 @@ class word
         $result = '<a href="/http/get_csv.php?words=' . $this->name . '&back=' . $back . '">CSV</a>';
         return $result;
     }
+    */
 
     // to add a word linked to this word
     // e.g. if this word is "Company" to add another company
-    function btn_add($back)
+    function btn_add($back): string
     {
         $vrb_is = cl(DBL_LINK_TYPE_IS);
         $wrd_type = cl(DBL_WORD_TYPE_NORMAL); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name;
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
-        $result = btn_add($wrd_add_title, $wrd_add_call);
-        return $result;
+        return btn_add($wrd_add_title, $wrd_add_call);
     }
 
     //
-    private function type_name($debug)
+    private function type_name()
     {
 
         global $db_con;
 
         if ($this->type_id > 0) {
-            $sql = "SELECT type_name, description
-                FROM word_types
-               WHERE word_type_id = " . $this->type_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql, $debug - 5);
+            $db_con->set_type(DB_TYPE_WORD_TYPE);
+            //$db_con->set_usr($this->usr->id);
+            //$db_con->set_fields(array('description'));
+            $db_con->set_where($this->type_id);
+            $sql = $db_con->select();
+            $db_type = $db_con->get1($sql);
             $this->type_name = $db_type['type_name'];
         }
         return $this->type_name;
     }
 
-    function type_code_id($debug)
+    function type_code_id()
     {
 
         global $db_con;
         $result = '';
 
         if ($this->type_id > 0) {
-            $sql = "SELECT type_name, description, code_id
-                FROM word_types
-               WHERE word_type_id = " . $this->type_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql, $debug - 5);
+            $db_con->set_type(DB_TYPE_WORD_TYPE);
+            $db_con->set_fields(array('description','code_id'));
+            $db_con->set_where($this->type_id);
+            $sql = $db_con->select();
+            $db_type = $db_con->get1($sql);
             $result = $db_type['code_id'];
         }
         return $result;
     }
 
     // return true if the word has the given type
-    function is_type($type, $debug)
+    function is_type($type): bool
     {
-        log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')', $debug - 10);
+        log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')');
 
         $result = false;
         if ($this->type_id == cl($type)) {
             $result = true;
-            log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')', $debug - 12);
+            log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')');
         }
         return $result;
     }
 
     // return true if the word has the type "time"
-    function is_time($debug)
+    function is_time(): bool
     {
-        $result = $this->is_type(DBL_WORD_TYPE_TIME, $debug - 1);
-        return $result;
+        return $this->is_type(DBL_WORD_TYPE_TIME);
     }
 
     // return true if the word has the type "measure" (e.g. "meter" or "CHF")
     // in case of a division, these words are excluded from the result
     // in case of add, it is checked that the added value does not have a different measure
-    function is_measure($debug)
+    function is_measure(): bool
     {
-        log_debug('word->is_measure ' . $this->dsp_id(), $debug - 10);
-        $result = false;
-        if ($this->is_type(DBL_WORD_TYPE_MEASURE, $debug - 1)) {
-            $result = true;
-        }
-        return $result;
+        return $this->is_type(DBL_WORD_TYPE_MEASURE);
     }
 
     // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
-    function is_scaling($debug)
+    function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(DBL_WORD_TYPE_SCALING, $debug - 1)
-            or $this->is_type(DBL_WORD_TYPE_SCALING_HIDDEN, $debug - 1)) {
+        if ($this->is_type(DBL_WORD_TYPE_SCALING)
+            or $this->is_type(DBL_WORD_TYPE_SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
     }
 
     // return true if the word has the type "scaling_percent" (e.g. "percent")
-    function is_percent($debug)
+    function is_percent(): bool
     {
-        $result = false;
-        if ($this->is_type(DBL_WORD_TYPE_SCALING_PCT, $debug - 1)) {
-            $result = true;
-        }
-        return $result;
+        return $this->is_type(DBL_WORD_TYPE_SCALING_PCT);
     }
 
     // just to fix a problem if a phrase list contains a word
     function type_id()
     {
-        $result = $this->type_id;
-        return $result;
+        return $this->type_id;
     }
 
     /*
@@ -598,97 +551,97 @@ class word
     */
 
     // helper function that returns a word list object just with the word object
-    function lst($debug)
+    function lst(): word_list
     {
         $wrd_lst = new word_list;
         $wrd_lst->usr = $this->usr;
-        $wrd_lst->add($this, $debug - 1);
+        $wrd_lst->add($this);
         return $wrd_lst;
     }
 
     // returns a list of words that are related to this word e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich"
-    function parents($debug)
+    function parents()
     {
-        log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id, $debug - 12);
-        $wrd_lst = $this->lst($debug - 1);
-        $parent_wrd_lst = $wrd_lst->foaf_parents(cl(DBL_LINK_TYPE_IS), $debug - 1);
-        log_debug('word->parents are ' . $parent_wrd_lst->name($debug - 1) . ' for ' . $this->dsp_id(), $debug - 10);
+        log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+        $wrd_lst = $this->lst();
+        $parent_wrd_lst = $wrd_lst->foaf_parents(cl(DBL_LINK_TYPE_IS));
+        log_debug('word->parents are ' . $parent_wrd_lst->name() . ' for ' . $this->dsp_id());
         return $parent_wrd_lst;
     }
 
     // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
-    function is($debug)
+    function is()
     {
-        $wrd_lst = $this->parents($debug - 1);
-        //$wrd_lst->add($this,$debug-1);
-        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $wrd_lst->name($debug - 1), $debug - 8);
+        $wrd_lst = $this->parents();
+        //$wrd_lst->add($this,);
+        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $wrd_lst->name());
         return $wrd_lst;
     }
 
     // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
-    function is_mainly($debug)
+    function is_mainly()
     {
         $result = Null;
-        $is_wrd_lst = $this->is($debug - 1);
+        $is_wrd_lst = $this->is();
         if (count($is_wrd_lst->lst) >= 1) {
             $result = $is_wrd_lst->lst[0];
         }
-        log_debug('word->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')', $debug - 8);
+        log_debug('word->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
         return $result;
     }
 
     // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and others, but not "Company"
-    function children($debug)
+    function children()
     {
-        log_debug('word->children for ' . $this->dsp_id() . ' and user ' . $this->usr->id, $debug - 12);
-        $wrd_lst = $this->lst($debug - 1);
-        $child_wrd_lst = $wrd_lst->foaf_children(cl(DBL_LINK_TYPE_IS), $debug - 1);
-        log_debug('word->children are ' . $child_wrd_lst->name($debug - 1) . ' for ' . $this->dsp_id(), $debug - 10);
+        log_debug('word->children for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+        $wrd_lst = $this->lst();
+        $child_wrd_lst = $wrd_lst->foaf_children(cl(DBL_LINK_TYPE_IS));
+        log_debug('word->children are ' . $child_wrd_lst->name() . ' for ' . $this->dsp_id());
         return $child_wrd_lst;
     }
 
     // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and "Company"
-    function are($debug)
+    function are()
     {
-        $wrd_lst = $this->children($debug - 1);
-        $wrd_lst->add($this, $debug - 1);
+        $wrd_lst = $this->children();
+        $wrd_lst->add($this);
         return $wrd_lst;
     }
 
     // makes sure that all combinations of "are" and "contains" are included
-    function are_and_contains($debug)
+    function are_and_contains()
     {
-        log_debug('word->are_and_contains for ' . $this->dsp_id(), $debug - 18);
+        log_debug('word->are_and_contains for ' . $this->dsp_id());
 
         // this first time get all related items
-        $wrd_lst = $this->lst($debug - 1);
-        $wrd_lst = $wrd_lst->are($debug - 1);
-        $wrd_lst = $wrd_lst->contains($debug - 1);
-        $added_lst = $wrd_lst->diff($this->lst($debug - 1), $debug - 1);
+        $wrd_lst = $this->lst();
+        $wrd_lst = $wrd_lst->are();
+        $wrd_lst = $wrd_lst->contains();
+        $added_lst = $wrd_lst->diff($this->lst());
         // ... and after that get only for the new
         if (count($added_lst->lst) > 0) {
             $loops = 0;
-            log_debug('word->are_and_contains -> added ' . $added_lst->name() . ' to ' . $wrd_lst->name(), $debug - 18);
+            log_debug('word->are_and_contains -> added ' . $added_lst->name() . ' to ' . $wrd_lst->name());
             do {
                 $next_lst = clone $added_lst;
-                $next_lst = $next_lst->are($debug - 1);
-                $next_lst = $next_lst->contains($debug - 1);
-                $added_lst = $next_lst->diff($wrd_lst, $debug - 1);
+                $next_lst = $next_lst->are();
+                $next_lst = $next_lst->contains();
+                $added_lst = $next_lst->diff($wrd_lst);
                 if (count($added_lst->lst) > 0) {
-                    log_debug('word->are_and_contains -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name(), $debug - 18);
+                    log_debug('word->are_and_contains -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
                 }
-                $wrd_lst->merge($added_lst, $debug - 1);
+                $wrd_lst->merge($added_lst);
                 $loops++;
             } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
         }
-        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $wrd_lst->name(), $debug - 8);
+        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
         return $wrd_lst;
     }
 
     // return the follow word id based on the predefined verb following
-    function next($debug)
+    function next(): word_dsp
     {
-        log_debug('word->next ' . $this->dsp_id() . ' and user ' . $this->usr->name, $debug - 10);
+        log_debug('word->next ' . $this->dsp_id() . ' and user ' . $this->usr->name);
 
         global $db_con;
         $result = new word_dsp;
@@ -697,18 +650,18 @@ class word
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_WORD_LINK);
-        $result->id = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id, $debug - 1);
+        $result->id = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id);
         $result->usr = $this->usr;
         if ($result->id > 0) {
-            $result->load($debug - 1);
+            $result->load();
         }
         return $result;
     }
 
     // return the follow word id based on the predefined verb following
-    function prior($debug)
+    function prior(): word_dsp
     {
-        log_debug('word->prior(' . $this->dsp_id() . ',u' . $this->usr->id . ')', $debug - 10);
+        log_debug('word->prior(' . $this->dsp_id() . ',u' . $this->usr->id . ')');
 
         global $db_con;
         $result = new word_dsp;
@@ -717,10 +670,10 @@ class word
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_WORD_LINK);
-        $result->id = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id, $debug - 1);
+        $result->id = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id);
         $result->usr = $this->usr;
         if ($result->id > 0) {
-            $result->load($debug - 1);
+            $result->load();
         }
         return $result;
     }
@@ -729,31 +682,31 @@ class word
     // e.g. for "Meilen (District) it will return "Zürich (Canton)"
     // for the value selection this should be tested level by level
     // to use by default the most specific value
-    function is_part($debug)
+    function is_part()
     {
-        log_debug('word->is(' . $this->dsp_id() . ', user ' . $this->usr->id . ')', $debug - 10);
+        log_debug('word->is(' . $this->dsp_id() . ', user ' . $this->usr->id . ')');
         $link_type_id = cl(DBL_LINK_TYPE_CONTAIN);
-        $wrd_lst = $this->lst($debug - 1);
-        $is_wrd_lst = $wrd_lst->foaf_parents($link_type_id, $debug - 1);
+        $wrd_lst = $this->lst();
+        $is_wrd_lst = $wrd_lst->foaf_parents($link_type_id);
 
-        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_wrd_lst->name($debug - 1) . ')', $debug - 8);
+        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_wrd_lst->name() . ')');
         return $is_wrd_lst;
     }
 
     // returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
-    function link_types($direction, $debug)
+    function link_types($direction): verb_list
     {
-        log_debug('word->link_types ' . $this->dsp_id() . ' and user ' . $this->usr->id, $debug - 12);
+        log_debug('word->link_types ' . $this->dsp_id() . ' and user ' . $this->usr->id);
         $vrb_lst = new verb_list;
         $vrb_lst->wrd = clone $this;
         $vrb_lst->usr = $this->usr;
         $vrb_lst->direction = $direction;
-        $vrb_lst->load($debug - 1);
+        $vrb_lst->load();
         return $vrb_lst;
     }
 
     // true if the word has any none default settings such as a special type
-    function has_cfg()
+    function has_cfg(): bool
     {
         $has_cfg = false;
         if (isset($this->plural)) {
@@ -786,14 +739,14 @@ class word
     */
 
     // convert the word object into a phrase object
-    function phrase($debug)
+    function phrase(): phrase
     {
         $phr = new phrase;
         $phr->usr = $this->usr;
         $phr->id = $this->id;
         $phr->name = $this->name;
         $phr->obj = $this;
-        log_debug('word->phrase of ' . $this->dsp_id(), $debug - 12);
+        log_debug('word->phrase of ' . $this->dsp_id());
         return $phr;
     }
 
@@ -803,12 +756,10 @@ class word
 
     */
 
-    private function not_used($debug)
+    function not_used(): bool
     {
-        log_debug('word->not_used (' . $this->id . ')', $debug - 10);
+        log_debug('word->not_used (' . $this->id . ')');
 
-        global $db_con;
-        $result = $this->not_changed($debug - 1);
         /*    $change_user_id = 0;
             $sql = "SELECT user_id
                       FROM user_words
@@ -817,18 +768,18 @@ class word
                        AND (excluded <> 1 OR excluded is NULL)";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $change_user_id = $db_con->get1($sql, $debug-5);
+            $change_user_id = $db_con->get1($sql);
             if ($change_user_id > 0) {
               $result = false;
             } */
-        return $result;
+        return $this->not_changed();
     }
 
     // true if no other user has modified the word
     // assuming that in this case not confirmation from the other users for a word rename is needed
-    private function not_changed($debug)
+    function not_changed(): bool
     {
-        log_debug('word->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')', $debug - 10);
+        log_debug('word->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
 
         global $db_con;
         $result = true;
@@ -847,23 +798,24 @@ class word
         }
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql, $debug - 5);
+        $db_row = $db_con->get1($sql);
         $change_user_id = $db_row['user_id'];
         if ($change_user_id > 0) {
             $result = false;
         }
-        log_debug('word->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result), $debug - 10);
+        log_debug('word->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
     // to be dismissed!
     // if the value has been changed by someone else than the owner the user id is returned
     // but only return the user id if the user has not also excluded it
-    function changer($debug)
+    function changer()
     {
-        log_debug('word->changer (' . $this->id . ')', $debug - 10);
+        log_debug('word->changer (' . $this->id . ')');
 
         global $db_con;
+        $user_id = 0;
 
         $sql = "SELECT user_id 
               FROM user_words 
@@ -871,30 +823,32 @@ class word
                AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql, $debug - 5);
-        $user_id = $db_row['user_id'];
+        $db_row = $db_con->get1($sql);
+        if ($db_row != null) {
+            $user_id = $db_row['user_id'];
+        }
         return $user_id;
     }
 
     // true if the user is the owner and no one else has changed the word
     // because if another user has changed the word and the original value is changed, maybe the user word also needs to be updated
-    function can_change($debug)
+    function can_change(): bool
     {
-        log_debug('word->can_change (' . $this->id . ',u' . $this->usr->id . ')', $debug - 10);
+        log_debug('word->can_change (' . $this->id . ',u' . $this->usr->id . ')');
         $can_change = false;
         if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
-            $wrd_user = $this->changer($debug - 1);
+            $wrd_user = $this->changer();
             if ($wrd_user == $this->usr->id or $wrd_user <= 0) {
                 $can_change = true;
             }
         }
 
-        log_debug('word->can_change -> (' . zu_dsp_bool($can_change) . ')', $debug - 10);
+        log_debug('word->can_change -> (' . zu_dsp_bool($can_change) . ')');
         return $can_change;
     }
 
     // true if a record for a user specific configuration already exists in the database
-    private function has_usr_cfg()
+    function has_usr_cfg(): bool
     {
         $has_cfg = false;
         if ($this->usr_cfg_id > 0) {
@@ -904,28 +858,27 @@ class word
     }
 
     // create a database record to save user specific settings for this word
-    private function add_usr_cfg($debug)
+    private
+    function add_usr_cfg()
     {
         $result = false;
 
         if (!$this->has_usr_cfg()) {
-            log_debug('word->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 10);
+            log_debug('word->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             global $db_con;
 
             // check again if there ist not yet a record
-            $sql = 'SELECT user_id 
-                FROM user_words
-               WHERE word_id = ' . $this->id . '
-                 AND user_id = ' . $this->usr->id . ';';
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql, $debug - 5);
+            $db_con->set_type(DB_TYPE_WORD, true);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_where($this->id);
+            $sql = $db_con->select();
+            $db_row = $db_con->get1($sql);
             $usr_wrd_id = $db_row['user_id'];
             if ($usr_wrd_id <= 0) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                $log_id = $db_con->insert(array('word_id', 'user_id'), array($this->id, $this->usr->id), $debug - 1);
+                $log_id = $db_con->insert(array('word_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     $result = 'Insert of user_word failed.';
                 }
@@ -935,146 +888,46 @@ class word
     }
 
     // check if the database record for the user specific settings can be removed
-    private function del_usr_cfg_if_not_needed($debug)
+    private function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('word->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 12);
+        log_debug('word->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = '';
+        $result = true;
 
         //if ($this->has_usr_cfg) {
 
         // check again if there ist not yet a record
-        $sql = "SELECT word_id,
-                     word_name,
-                     plural,
-                     description,
-                     word_type_id,
-                     view_id
-                FROM user_words
-               WHERE word_id = " . $this->id . " 
-                 AND user_id = " . $this->usr->id . ";";
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
-        $usr_wrd_cfg = $db_con->get1($sql, $debug - 5);
-        log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')', $debug - 12);
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array('plural','description','word_type_id','view_id'));
+        $db_con->set_where($this->id);
+        $sql = $db_con->select();
+        $usr_wrd_cfg = $db_con->get1($sql);
+        log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_wrd_cfg['word_id'] > 0) {
             if ($usr_wrd_cfg['plural'] == ''
                 and $usr_wrd_cfg['description'] == ''
                 and $usr_wrd_cfg['word_type_id'] == Null
                 and $usr_wrd_cfg['view_id'] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 10);
-                $result .= $this->del_usr_cfg_exe($db_con, $debug - 1);
+                log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                $result = $this->del_usr_cfg_exe($db_con);
             }
         }
         //}
         return $result;
     }
 
-    // simply remove a user adjustment without check
-    private function del_usr_cfg_exe($db_con, $debug)
-    {
-        $result = '';
-
-        $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-        $result .= $db_con->delete(array('word_id', 'user_id'), array($this->id, $this->usr->id), $debug - 1);
-        if (str_replace('1', '', $result) <> '') {
-            $result .= 'Deletion of user word ' . $this->id . ' failed for ' . $this->usr->name . '.';
-        }
-
-        return $result;
-    }
-
-    // remove user adjustment and log it (used by user.php to undo the user changes)
-    function del_usr_cfg($debug)
-    {
-
-        global $db_con;
-        $result = '';
-
-        if ($this->id > 0 and $this->usr->id > 0) {
-            log_debug('word->del_usr_cfg  "' . $this->id . ' und user ' . $this->usr->name, $debug - 12);
-
-            $log = $this->log_del($debug - 1);
-            if ($log->id > 0) {
-                //$db_con = new mysql;
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                $db_con->usr_id = $this->usr->id;
-                $result .= $this->del_usr_cfg_exe($db_con, $debug - 1);
-            }
-
-        } else {
-            log_err("The word database ID and the user must be set to remove a user specific modification.", "word->del_usr_cfg", '', (new Exception)->getTraceAsString(), $this->usr);
-        }
-
-        return $result;
-    }
-
-    // set the log entry parameter for a new value
-    private function log_add($debug)
-    {
-        log_debug('word->log_add ' . $this->dsp_id() . ' for user ' . $this->usr->name, $debug - 10);
-        $log = new user_log;
-        $log->usr = $this->usr;
-        $log->action = 'add';
-        $log->table = 'words';
-        $log->field = 'word_name';
-        $log->old_value = '';
-        $log->new_value = $this->name;
-        $log->row_id = 0;
-        $log->add($debug - 1);
-
-        return $log;
-    }
-
-    // set the main log entry parameters for updating one word field
-    private function log_upd($debug)
-    {
-        log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name, $debug - 10);
-        $log = new user_log;
-        $log->usr = $this->usr;
-        $log->action = 'update';
-        if ($this->can_change($debug - 1)) {
-            $log->table = 'words';
-        } else {
-            $log->table = 'user_words';
-        }
-
-        return $log;
-    }
-
-    // set the log entry parameter to delete a word
-    private function log_del($debug)
-    {
-        log_debug('word->log_del ' . $this->dsp_id() . ' for user ' . $this->usr->name, $debug - 10);
-        $log = new user_log;
-        $log->usr = $this->usr;
-        $log->action = 'del';
-        $log->table = 'words';
-        $log->field = 'word_name';
-        $log->old_value = $this->name;
-        $log->new_value = '';
-        $log->row_id = $this->id;
-        $log->add($debug - 1);
-
-        return $log;
-    }
-
     // set the log entry parameters for a value update
-    private function log_upd_view($view_id, $debug)
+    private
+    function log_upd_view($view_id): user_log
     {
-        log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name, $debug - 10);
-        if ($this->view_id > 0) {
-            $dsp_old = new view_dsp;
-            $dsp_old->id = $this->view_id;
-            $dsp_old->usr = $this->usr;
-            $dsp_old->load($debug - 1);
-        }
+        log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
         $dsp_new = new view_dsp;
         $dsp_new->id = $view_id;
         $dsp_new->usr = $this->usr;
-        $dsp_new->load($debug - 1);
+        $dsp_new->load();
 
         $log = new user_log;
         $log->usr = $this->usr;
@@ -1082,6 +935,10 @@ class word
         $log->table = 'words';
         $log->field = 'view_id';
         if ($this->view_id > 0) {
+            $dsp_old = new view_dsp;
+            $dsp_old->id = $this->view_id;
+            $dsp_old->usr = $this->usr;
+            $dsp_old->load();
             $log->old_value = $dsp_old->name;
             $log->old_id = $dsp_old->id;
         } else {
@@ -1091,104 +948,77 @@ class word
         $log->new_value = $dsp_new->name;
         $log->new_id = $dsp_new->id;
         $log->row_id = $this->id;
-        $log->add($debug - 1);
+        $log->add();
 
         return $log;
     }
 
     // remember the word view, which means to save the view id for this word
     // each user can define set the view individually, so this is user specific
-    function save_view($view_id, $debug)
+    function save_view($view_id): bool
     {
 
         global $db_con;
-        $result = '';
+        $result = true;
 
         if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id) {
-            log_debug('word->save_view ' . $view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->usr->id, $debug - 10);
-            if ($this->log_upd_view($view_id, $debug - 1) > 0) {
+            log_debug('word->save_view ' . $view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
+            if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
-                if ($this->can_change($debug - 1)) {
+                if ($this->can_change()) {
                     $db_con->set_type(DB_TYPE_WORD);
-                    $result .= $db_con->update($this->id, "view_id", $view_id, $debug - 1);
+                    $result = $db_con->update($this->id, "view_id", $view_id);
                 } else {
                     if (!$this->has_usr_cfg()) {
-                        $this->add_usr_cfg($debug - 1);
+                        if (!$this->add_usr_cfg()) {
+                            $result = false;
+                        }
                     }
-                    $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                    $result .= $db_con->update($this->id, "view_id", $view_id, $debug - 1);
+                    if ($result) {
+                        $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
+                        $result = $db_con->update($this->id, "view_id", $view_id);
+                    }
                 }
-            }
-        }
-        return $result;
-    }
-
-    // actually update a word field in the main database record or the user sandbox
-    private function save_field_do($db_con, $log, $debug)
-    {
-        $result = '';
-        if ($log->new_id > 0) {
-            $new_value = $log->new_id;
-            $std_value = $log->std_id;
-        } else {
-            $new_value = $log->new_value;
-            $std_value = $log->std_value;
-        }
-        if ($log->add($debug - 1)) {
-            if ($this->can_change($debug - 1)) {
-                $db_con->set_type(DB_TYPE_WORD);
-                $result .= $db_con->update($this->id, $log->field, $new_value, $debug - 1);
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    $this->add_usr_cfg($debug - 1);
-                }
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                if ($new_value == $std_value) {
-                    log_debug('word->save_field_do remove user change', $debug - 14);
-                    $result .= $db_con->update($this->id, $log->field, Null, $debug - 1);
-                } else {
-                    $result .= $db_con->update($this->id, $log->field, $new_value, $debug - 1);
-                }
-                $result .= $this->del_usr_cfg_if_not_needed($debug - 1);
             }
         }
         return $result;
     }
 
     // set the update parameters for the word plural
-    private function save_field_plural($db_con, $db_rec, $std_rec, $debug)
+    private
+    function save_field_plural($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         // if the plural is not set, don't overwrite any db entry
         if ($this->plural <> Null) {
             if ($this->plural <> $db_rec->plural) {
-                $log = $this->log_upd($debug - 1);
+                $log = $this->log_upd();
                 $log->old_value = $db_rec->plural;
                 $log->new_value = $this->plural;
                 $log->std_value = $std_rec->plural;
                 $log->row_id = $this->id;
                 $log->field = 'plural';
-                $result .= $this->save_field_do($db_con, $log, $debug - 1);
+                $result = $this->save_field_do($db_con, $log);
             }
         }
         return $result;
     }
 
     // set the update parameters for the word description
-    private function save_field_description($db_con, $db_rec, $std_rec, $debug)
+    private function save_field_description($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         // if the description is not set, don't overwrite any db entry
         if ($this->description <> Null) {
             if ($this->description <> $db_rec->description) {
-                $log = $this->log_upd($debug - 1);
+                $log = $this->log_upd();
                 $log->old_value = $db_rec->description;
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
                 $log->field = 'description';
-                $result .= $this->save_field_do($db_con, $log, $debug - 1);
+                $result = $this->save_field_do($db_con, $log);
             }
         }
         return $result;
@@ -1196,365 +1026,55 @@ class word
 
     // set the update parameters for the word type
     // to do: log the ref
-    private function save_field_type($db_con, $db_rec, $std_rec, $debug)
+    private
+    function save_field_type($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->type_name($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->type_name();
             $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name($debug - 1);
+            $log->new_value = $this->type_name();
             $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name($debug - 1);
+            $log->std_value = $std_rec->type_name();
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
             $log->field = 'word_type_id';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
-            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')', $debug - 12);
+            $result = $this->save_field_do($db_con, $log);
+            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')');
         }
         return $result;
     }
 
     // set the update parameters for the word view_id
-    private function save_field_view($db_con, $db_rec, $std_rec, $debug)
+    private
+    function save_field_view($db_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->view_id <> $this->view_id) {
-            $result .= $this->save_view($this->view_id, $debug - 1);
-        }
-        return $result;
-    }
-
-    // set the update parameters for the value excluded
-    private function save_field_excluded($db_con, $db_rec, $std_rec, $debug)
-    {
-        $result = '';
-        if ($db_rec->excluded <> $this->excluded) {
-            if ($this->excluded == 1) {
-                $log = $this->log_del($debug - 1);
-            } else {
-                $log = $this->log_add($debug - 1);
-            }
-            $new_value = $this->excluded;
-            $std_value = $std_rec->excluded;
-            $log->field = 'excluded';
-            // similar to $this->save_field_do
-            if ($this->can_change($debug - 1)) {
-                $db_con->set_type(DB_TYPE_WORD);
-                $result .= $db_con->update($this->id, $log->field, $new_value, $debug - 1);
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    $this->add_usr_cfg($debug - 1);
-                }
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                if ($new_value == $std_value) {
-                    $result .= $db_con->update($this->id, $log->field, Null, $debug - 1);
-                } else {
-                    $result .= $db_con->update($this->id, $log->field, $new_value, $debug - 1);
-                }
-                $result .= $this->del_usr_cfg_if_not_needed($debug - 1);
-            }
+            $result = $this->save_view($this->view_id);
         }
         return $result;
     }
 
     // save all updated word fields
-    private function save_fields($db_con, $db_rec, $std_rec, $debug)
+    function save_fields($db_con, $db_rec, $std_rec): bool
     {
-        log_debug('word->save_fields', $debug - 14);
-        $result = '';
-        $result .= $this->save_field_plural($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_description($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_view($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $debug - 1);
-        log_debug('word->save_fields all fields for ' . $this->dsp_id() . ' has been saved', $debug - 12);
-        return $result;
-    }
-
-    // if the word is not really used, update the name
-    // otherwise create a new word and request to delete the old word
-    private function save_field_name($db_con, $db_rec, $debug)
-    {
-        $result = '';
-        log_debug('word->save_field_name change name from "' . $db_rec->name . '" to ' . $this->dsp_id() . '?', $debug - 14);
-        if ($db_rec->name <> $this->name) {
-            if ($this->can_change($debug - 1) and $this->not_changed($debug - 1)) {
-                log_debug('word->save_field_name change name to ' . $this->dsp_id(), $debug - 12);
-                $log = $this->log_upd($debug - 1);
-                $log->old_value = $db_rec->name;
-                $log->new_value = $this->name;
-                $log->row_id = $this->id;
-                $log->field = 'word_name';
-                $result .= $this->save_field_do($db_con, $log, $debug - 1);
-            } else {
-                // create a new word
-                // and request the deletion confirms for the old from all changers
-                // ???? or update the user word table
-            }
+        log_debug('word->save_fields');
+        $result = $this->save_field_plural($db_con, $db_rec, $std_rec);
+        if ($result) {
+            $result = $this->save_field_description($db_con, $db_rec, $std_rec);
         }
-        return $result;
-    }
-
-    // updated the view component name (which is the id field)
-    // should only be called if the user is the owner and nobody has used the display component link
-    private function save_id_fields($db_con, $db_rec, $std_rec, $debug)
-    {
-        $result = '';
-        if ($db_rec->name <> $this->name) {
-            log_debug('word->save_id_fields to ' . $this->dsp_id() . ' from "' . $db_rec->dsp_id() . '" (standard ' . $std_rec->dsp_id() . ')', $debug - 10);
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->name;
-            $log->new_value = $this->name;
-            $log->std_value = $std_rec->name;
-            $log->row_id = $this->id;
-            $log->field = 'word_name';
-            if ($log->add($debug - 1)) {
-                $db_con->set_type(DB_TYPE_WORD);
-                $result .= $db_con->update($this->id, array("word_name"),
-                    array($this->name), $debug - 1);
-            }
+        if ($result) {
+            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
         }
-        log_debug('word->save_id_fields for ' . $this->dsp_id() . ' has been done', $debug - 12);
-        return $result;
-    }
-
-    // get the term corresponding to this word name
-    // so in this case, if a formula or verb with the same name already exists, get it
-    private function term($debug)
-    {
-        $trm = new term;
-        $trm->name = $this->name;
-        $trm->usr = $this->usr;
-        $trm->load($debug - 1);
-        return $trm;
-    }
-
-    // check if the id parameters are supposed to be changed
-    private function save_id_if_updated($db_con, $db_rec, $std_rec, $debug)
-    {
-        $result = '';
-
-        if ($db_rec->name <> $this->name) {
-            // check if target link already exists
-            log_debug('word->save_id_if_updated check if target link already exists ' . $this->dsp_id() . ' (has been "' . $db_rec->dsp_id() . '")', $debug - 14);
-            $db_chk = clone $this;
-            $db_chk->id = 0; // to force the load by the id fields
-            $db_chk->load_standard($debug - 10);
-            if ($db_chk->id > 0) {
-                if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
-                    // ... if yes request to delete or exclude the record with the id parameters before the change
-                    $to_del = clone $db_rec;
-                    $result .= $to_del->del($debug - 20);
-                    // .. and use it for the update
-                    $this->id = $db_chk->id;
-                    $this->owner_id = $db_chk->owner_id;
-                    // force the include again
-                    $this->excluded = Null;
-                    $db_rec->excluded = '1';
-                    $this->save_field_excluded($db_con, $db_rec, $std_rec, $debug - 20);
-                    log_debug('word->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id(), $debug - 14);
-                } else {
-                    $result .= 'A view component with the name "' . $this->name . '" already exists. Please use another name.';
-                }
-            } else {
-                if ($this->can_change($debug - 1) and $this->not_used($debug - 1)) {
-                    // in this case change is allowed and done
-                    log_debug('word->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")', $debug - 14);
-                    //$this->load_objects($debug-1);
-                    $result .= $this->save_id_fields($db_con, $db_rec, $std_rec, $debug - 20);
-                } else {
-                    // if the target link has not yet been created
-                    // ... request to delete the old
-                    $to_del = clone $db_rec;
-                    $result .= $to_del->del($debug - 20);
-                    // .. and create a deletion request for all users ???
-
-                    // ... and create a new display component link
-                    $this->id = 0;
-                    $this->owner_id = $this->usr->id;
-                    $result .= $this->add($db_con, $debug - 20);
-                    log_debug('word->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")', $debug - 14);
-                }
-            }
+        if ($result) {
+            $result = $this->save_field_view($db_rec);
         }
-
-        log_debug('word->save_id_if_updated for ' . $this->dsp_id() . ' has been done', $debug - 12);
-        return $result;
-    }
-
-    // create a new word
-    private function add($db_con, $debug)
-    {
-        log_debug('word->add the word ' . $this->dsp_id(), $debug - 12);
-
-        $result = '';
-        $db_con->set_type(DB_TYPE_WORD);
-
-        // log the insert attempt first
-        $log = $this->log_add($debug - 1);
-        if ($log->id > 0) {
-            // insert the new word
-            $db_con->set_type(DB_TYPE_WORD);
-            $this->id = $db_con->insert(array("word_name", "user_id"), array($this->name, $this->usr->id), $debug - 1);
-            if ($this->id > 0) {
-                log_debug('word->save word ' . $this->dsp_id() . ' has been added as ' . $this->id, $debug - 12);
-                // update the id in the log
-                $result .= $log->add_ref($this->id, $debug - 1);
-
-                // create an empty db_rec element to force saving of all set fields
-                $db_rec = new word_dsp;
-                $db_rec->name = $this->name;
-                $db_rec->usr = $this->usr;
-                $std_rec = clone $db_rec;
-                // save the word fields
-                $result .= $this->save_fields($db_con, $db_rec, $std_rec, $debug - 1);
-
-            } else {
-                log_err("Adding word " . $this->name . " failed.", "word->save");
-            }
+        if ($result) {
+            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
         }
-
-        return $result;
-    }
-
-    /*
-
-     a word rename creates a new word and a word deletion request
-     a word is deleted after all users have confirmed
-     words with an active deletion request are listed at the end
-     a word can have a formula linked
-     values and formulas can be linked to a word, a triple or a word group
-     verbs needs a confirmation for creation (but the name can be reserved)
-     all other parameters beside the word/verb name can be user specific
-
-     time words are separated from the word groups to reduce the number of word groups
-     for daily data or shorter a normal date or time field is used
-     a time word can also describe a period
-
-    */
-
-    // add or update a word in the database (or create a user word if the program settings allow this)
-    function save($debug)
-    {
-        log_debug('word->save ' . $this->dsp_id() . ' for user ' . $this->usr->name, $debug - 10);
-
-        global $db_con;
-        $result = '';
-
-        // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_WORD);
-
-        // check if a new word is supposed to be added
-        if ($this->id <= 0) {
-            log_debug('word->save add new word ' . $this->dsp_id(), $debug - 12);
-            // check if a word, formula or verb with the same name is already in the database
-            // but not if the formula linked word is supposed to be created
-            if ($this->type_id <> cl(DBL_WORD_TYPE_FORMULA_LINK)) {
-                $trm = $this->term($debug - 1);
-                if ($trm->type <> 'word') {
-                    $result .= $trm->id_used_msg();
-                } else {
-                    $this->id = $trm->id;
-                    log_debug('word->save adding word name ' . $this->dsp_id() . ' is OK', $debug - 14);
-                }
-            }
-            if ($this->id <= 0) {
-                log_debug('word->save no msg for ' . $this->dsp_id(), $debug - 12);
-            }
-        }
-
-        // create a new word or update an existing
-        if ($this->id <= 0) {
-            $result .= $this->add($db_con, $debug - 1);
-        } else {
-            log_debug('word->save update "' . $this->id . '"', $debug - 12);
-            // read the database values to be able to check if something has been changed; done first,
-            // because it needs to be done for user and general formulas
-            $db_rec = new word_dsp;
-            $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
-            $db_rec->load($debug - 1);
-            log_debug('word->save -> database word "' . $db_rec->name . '" (' . $db_rec->id . ') loaded', $debug - 14);
-            $std_rec = new word_dsp;
-            $std_rec->id = $this->id;
-            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
-            $std_rec->load_standard($debug - 1);
-            log_debug('word->save -> standard word settings for "' . $std_rec->name . '" (' . $std_rec->id . ') loaded', $debug - 14);
-
-            // for a correct user word detection (function can_change) set the owner even if the word has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
-            }
-
-            // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
-            if ($db_rec->name <> $this->name) {
-                // check if a verb, formula or word with the same name is already in the database
-                $trm_id = 0;
-                if ($this->type_id <> cl(DBL_WORD_TYPE_FORMULA_LINK)) {
-                    $trm = $this->term($debug - 1);
-                    $trm_id = $trm->id;
-                }
-                if ($trm_id > 0 and $trm->type <> 'word') {
-                    $result .= $trm->id_used_msg();
-                }
-            }
-
-            // check if the id parameters are supposed to be changed
-            if (str_replace('1', '', $result) == '') {
-                $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec, $debug - 1);
-            }
-
-            // if a problem has appeared up to here, don't try to save the values
-            // the problem is shown to the user by the calling interactive script
-            if (str_replace('1', '', $result) == '') {
-                $result .= $this->save_fields($db_con, $db_rec, $std_rec, $debug - 1);
-            }
-        }
-
-        return $result;
-    }
-
-    // delete the complete word (the calling function del must have checked that no one uses this word)
-    private function del_exe($debug)
-    {
-        log_debug('word->del_exe', $debug - 16);
-
-        global $db_con;
-        $result = '';
-
-        $log = $this->log_del($debug - 1);
-        if ($log->id > 0) {
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            // delete first all user configuration that have also been excluded
-            $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-            $result .= $db_con->delete(array('word_id', 'excluded'), array($this->id, '1'), $debug - 1);
-            $db_con->set_type(DB_TYPE_WORD);
-            log_debug('word->del do delete ' . $this->dsp_id(), $debug - 14);
-            $result .= $db_con->delete('word_id', $this->id, $debug - 1);
-        }
-
-        return $result;
-    }
-
-    // exclude or delete a word
-    function del($debug)
-    {
-        log_debug('word->del', $debug - 16);
-        $result = '';
-        $this->load($debug - 1);
-        if ($this->id > 0 and $result == '') {
-            log_debug('word->del ' . $this->dsp_id(), $debug - 14);
-            if ($this->can_change($debug - 1) and $this->not_used($debug - 1)) {
-                log_debug('word->del can delete ' . $this->dsp_id(), $debug - 14);
-                $result .= $this->del_exe($debug - 1);
-            } else {
-                $this->excluded = 1;
-                $result .= $this->save($debug - 1);
-            }
-        }
+        log_debug('word->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 

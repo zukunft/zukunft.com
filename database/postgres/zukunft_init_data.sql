@@ -197,7 +197,7 @@ INSERT INTO languages (language_id, language_name, code_id, wikimedia_code, desc
 -- Dumping data for table 'languages_forms'
 --
 
-INSERT INTO languages_forms (languages_form_id, languages_form_name, code_id, lanuages_id) VALUES
+INSERT INTO languages_forms (languages_form_id, languages_form_name, code_id, language_id) VALUES
 (1, 'plural', 'plural', 1);
 
 --
@@ -250,10 +250,10 @@ INSERT INTO source_types (source_type_id, source_type_name, code_id) VALUES
 --
 
 INSERT INTO sys_log_status (sys_log_status_id, sys_log_status_name, code_id, comment, action) VALUES
-(1, 'new', 'new', 'the error has just being logged and no one has yet looked at it ', NULL),
-(2, 'assigned', 'assigned', 'A developer is looking at the error.', 'assign to'),
-(3, 'resolved', 'resolved', 'the error is supposed to be corrected', 'resolve'),
-(4, 'closed', 'closed', 'a second person (other than the developer) has confirmed that the problem is solved.', 'close');
+(1, 'new', 'log_status_new', 'the error has just being logged and no one has yet looked at it ', NULL),
+(2, 'assigned', 'log_status_assigned', 'A developer is looking at the error.', 'assign to'),
+(3, 'resolved', 'log_status_resolved', 'the error is supposed to be corrected', 'resolve'),
+(4, 'closed', 'log_status_closed', 'a second person (other than the developer) has confirmed that the problem is solved.', 'close');
 
 --
 -- Dumping data for table 'sys_log_types'
@@ -261,10 +261,10 @@ INSERT INTO sys_log_status (sys_log_status_id, sys_log_status_name, code_id, com
 
 INSERT INTO sys_log_types (sys_log_type_id, type_name, code_id) VALUES
 (0, 'undefined', 'undefined'),
-(1, 'Info', 'info'),
-(2, 'Warning', 'warning'),
-(3, 'Error', 'error'),
-(4, 'FATAL ERROR', 'fatal');
+(1, 'Info', 'log_info'),
+(2, 'Warning', 'log_warning'),
+(3, 'Error', 'log_error'),
+(4, 'FATAL ERROR', 'log_fatal');
 
 --
 -- Dumping data for table 'users'

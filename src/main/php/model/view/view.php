@@ -44,7 +44,7 @@ class view extends user_sandbox
 
     function __construct()
     {
-        $this->type = user_sandbox::TYPE_NAMED;
+        $this->obj_type = user_sandbox::TYPE_NAMED;
         $this->obj_name = DB_TYPE_VIEW;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
@@ -74,13 +74,13 @@ class view extends user_sandbox
         if ($db_row != null) {
             if ($db_row['view_id'] > 0) {
                 $this->id = $db_row['view_id'];
-                $this->owner_id = $db_row['user_id'];
                 $this->name = $db_row['view_name'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_type_id'];
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_id'];
+                    $this->owner_id = $db_row['user_id'];
                 }
             } else {
                 $this->id = 0;
@@ -91,11 +91,11 @@ class view extends user_sandbox
     }
 
     // load the view parameters for all users
-    function load_standard($debug)
+    function load_standard(): bool
     {
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr($this->usr->id);
@@ -104,53 +104,40 @@ class view extends user_sandbox
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_dsp = $db_con->get1($sql, $debug - 5);
+            $db_dsp = $db_con->get1($sql);
             $this->row_mapper($db_dsp);
-            if ($this->id > 0) {
-
-                // to review: try to avoid using load_test_user
-                if ($this->owner_id > 0) {
-                    $usr = new user;
-                    $usr->id = $this->owner_id;
-                    $usr->load_test_user($debug - 1);
-                    $this->usr = $usr;
-                } else {
-                    // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
-                    $sql_set = "UPDATE views SET user_id = " . $this->usr->id . " WHERE view_id = " . $this->id . ";";
-                    $sql_result = $db_con->exe($sql_set, DBL_SYSLOG_ERROR, "view->load_standard", (new Exception)->getTraceAsString(), $debug - 10);
-                    //zu_err('Value owner missing for value '.$this->id.'.', 'value->load_standard', '', (new Exception)->getTraceAsString(), $this->usr);
-                }
-            }
+            $result = $this->load_owner();
         }
         return $result;
     }
 
     // load the missing view parameters from the database
-    function load($debug)
+    function load(): bool
     {
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         // check the all minimal input parameters
         if (!isset($this->usr)) {
-            log_err("The user id must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The user id must be set to load a view.", "view->load");
         } elseif ($this->id <= 0 and $this->code_id == '' and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a view.", "view->load", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a view.", "view->load");
         } else {
 
             $db_con->set_type(DB_TYPE_VIEW);
             $db_con->set_usr($this->usr->id);
             $db_con->set_usr_fields(array('comment'));
             $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
-            $db_con->set_where(1);
+            $db_con->set_where($this->id, $this->name, $this->code_id);
             $sql = $db_con->select();
 
             if ($db_con->get_where() <> '') {
-                $db_view = $db_con->get1($sql, $debug - 5);
+                $db_view = $db_con->get1($sql);
                 $this->row_mapper($db_view, true);
                 if ($this->id > 0) {
-                    log_debug('view->load ' . $this->dsp_id(), $debug - 10);
+                    log_debug('view->load ' . $this->dsp_id());
+                    $result = true;
                 }
             }
         }
@@ -158,9 +145,9 @@ class view extends user_sandbox
     }
 
     // load all parts of this view for this user
-    function load_components($debug)
+    function load_components()
     {
-        log_debug('view->load_components for ' . $this->dsp_id(), $debug - 10);
+        log_debug('view->load_components for ' . $this->dsp_id());
 
         global $db_con;
 
@@ -190,10 +177,10 @@ class view extends user_sandbox
               WHERE l.view_id = " . $this->id . " 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY IF(y.order_nbr IS NULL, l.order_nbr, y.order_nbr);";
-        log_debug("view->load_components ... " . $sql, $debug - 12);
+        log_debug("view->load_components ... " . $sql);
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql, $debug - 8);
+        $db_lst = $db_con->get($sql);
         $this->cmp_lst = array();
         foreach ($db_lst as $db_entry) {
             // this is only for the view of the active user, so a direct exclude can be done
@@ -212,11 +199,11 @@ class view extends user_sandbox
                 $new_entry->word_id_col = $db_entry['word_id_col'];
                 $new_entry->word_id_col2 = $db_entry['word_id_col2'];
                 $new_entry->code_id = $db_entry['code_id'];
-                $new_entry->load_phrases($debug - 1);
+                $new_entry->load_phrases();
                 $this->cmp_lst[] = $new_entry;
             }
         }
-        log_debug('view->load_components ' . count($this->cmp_lst) . ' loaded for ' . $this->dsp_id(), $debug - 8);
+        log_debug('view->load_components ' . count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
 
         return $this->cmp_lst;
     }
@@ -224,9 +211,9 @@ class view extends user_sandbox
     // return the beginning html code for the view_type;
     // the view type defines something like the basic setup of a view
     // e.g. the catch view does not have the header, whereas all other views have
-    function dsp_type_open($debug)
+    function dsp_type_open()
     {
-        log_debug('view->dsp_type_open (' . $this->type_id . ')', $debug - 10);
+        log_debug('view->dsp_type_open (' . $this->type_id . ')');
         $result = '';
         // move to database !!
         // but avoid security leaks
@@ -237,9 +224,9 @@ class view extends user_sandbox
         return $result;
     }
 
-    function dsp_type_close($debug)
+    function dsp_type_close()
     {
-        log_debug('view->dsp_type_close (' . $this->type_id . ')', $debug - 10);
+        log_debug('view->dsp_type_close (' . $this->type_id . ')');
         $result = '';
         // move to a view component function
         // for the word array build an object
@@ -252,7 +239,7 @@ class view extends user_sandbox
     }
 
     // TODO review (get the object instead)
-    function type_name($debug)
+    function type_name()
     {
 
         global $db_con;
@@ -263,44 +250,44 @@ class view extends user_sandbox
                WHERE view_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql, $debug - 5);
+            $db_type = $db_con->get1($sql);
             $this->type_name = $db_type['type_name'];
         }
         return $this->type_name;
     }
 
     // return the html code of all view components
-    function dsp_entries($wrd, $back, $debug)
+    function dsp_entries($wrd, $back)
     {
-        log_debug('view->dsp_entries "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' for user "' . $this->usr->name . '"', $debug - 10);
+        log_debug('view->dsp_entries "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' for user "' . $this->usr->name . '"');
 
         $result = '';
         $word_array = array();
-        $this->load_components($debug - 1);
+        $this->load_components();
         foreach ($this->cmp_lst as $cmp) {
-            log_debug('view->dsp_entries ... "' . $cmp->name . '" type "' . $cmp->type_id . '"', $debug - 6);
+            log_debug('view->dsp_entries ... "' . $cmp->name . '" type "' . $cmp->type_id . '"');
 
             // list of all possible view components
-            $result .= $cmp->text($debug - 1);        // just to display a simple text
-            $result .= $cmp->word_name($wrd, $debug - 1); // show the word name and give the user the possibility to change the word name
-            $result .= $cmp->table($wrd, $debug - 1); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-            $result .= $cmp->num_list($wrd, $back, $debug - 1); // a word list with some key numbers e.g. all companies with the PE ratio
-            $result .= $cmp->formulas($wrd, $debug - 1); // display all formulas related to the given word
-            $result .= $cmp->formula_values($wrd, $debug - 1); // show a list of formula results related to a word
-            $result .= $cmp->word_children($wrd, $debug - 1); // show all words that are based on the given start word
-            $result .= $cmp->word_parents($wrd, $debug - 1); // show all word that this words is based on
-            $result .= $cmp->json_export($wrd, $back, $debug - 1); // offer to configure and create an JSON file
-            $result .= $cmp->xml_export($wrd, $back, $debug - 1); // offer to configure and create an XML file
-            $result .= $cmp->csv_export($wrd, $back, $debug - 1); // offer to configure and create an CSV file
-            $result .= $cmp->all($wrd, $back, $debug - 1); // shows all: all words that link to the given word and all values related to the given word
+            $result .= $cmp->text();        // just to display a simple text
+            $result .= $cmp->word_name($wrd); // show the word name and give the user the possibility to change the word name
+            $result .= $cmp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
+            $result .= $cmp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
+            $result .= $cmp->formulas($wrd); // display all formulas related to the given word
+            $result .= $cmp->formula_values($wrd); // show a list of formula results related to a word
+            $result .= $cmp->word_children($wrd); // show all words that are based on the given start word
+            $result .= $cmp->word_parents($wrd); // show all word that this words is based on
+            $result .= $cmp->json_export($wrd, $back); // offer to configure and create an JSON file
+            $result .= $cmp->xml_export($wrd, $back); // offer to configure and create an XML file
+            $result .= $cmp->csv_export($wrd, $back); // offer to configure and create an CSV file
+            $result .= $cmp->all($wrd, $back); // shows all: all words that link to the given word and all values related to the given word
         }
 
-        log_debug('view->dsp_entries ... done', $debug - 10);
+        log_debug('view->dsp_entries ... done');
         return $result;
     }
 
     // return the html code to display a view name with the link
-    function name_linked($wrd, $back, $debug)
+    function name_linked($wrd, $back)
     {
         $result = '';
 
@@ -317,9 +304,9 @@ class view extends user_sandbox
     // view_id is used to force the display to a set form; e.g. display the sectors of a company instead of the balance sheet
     // view_type_id is used to .... remove???
     // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
-    function display($wrd, $back, $debug)
+    function display($wrd, $back)
     {
-        log_debug('view->display "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"', $debug - 10);
+        log_debug('view->display "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
         $result = '';
 
         // check and correct the parameters
@@ -328,49 +315,49 @@ class view extends user_sandbox
         }
 
         if ($this->id <= 0) {
-            log_err("The view id must be loaded to display it.", "view->display", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The view id must be loaded to display it.", "view->display");
         } else {
             // display always the view name in the top right corner and allow the user to edit the view
-            $result .= $this->dsp_type_open($debug - 1);
-            $result .= $this->dsp_navbar($back, $debug - 1);
-            $result .= $this->dsp_entries($wrd, $back, $debug - 1);
-            $result .= $this->dsp_type_close($debug - 1);
+            $result .= $this->dsp_type_open();
+            $result .= $this->dsp_navbar($back);
+            $result .= $this->dsp_entries($wrd, $back);
+            $result .= $this->dsp_type_close();
         }
-        log_debug('view->display ... done', $debug - 18);
+        log_debug('view->display ... done');
 
         return $result;
     }
 
     // create an object for the export
-    function export_obj($debug)
+    function export_obj()
     {
-        log_debug('view->export_obj ' . $this->dsp_id(), $debug - 10);
+        log_debug('view->export_obj ' . $this->dsp_id());
         $result = new view();
 
         // add the view parameters
         $result->name = $this->name;
         $result->comment = $this->comment;
-        $result->type = $this->type_name($debug - 1);
+        $result->obj_type = $this->type_name();
         if ($this->code_id <> '') {
             $result->code_id = $this->code_id;
         }
 
         // add the view components used
-        $this->load_components($debug - 1);
+        $this->load_components();
         $exp_cmp_lst = array();
         foreach ($this->cmp_lst as $cmp) {
-            $exp_cmp_lst[] = $cmp->export_obj($debug - 1);
+            $exp_cmp_lst[] = $cmp->export_obj();
         }
         $result->view_components = $exp_cmp_lst;
 
-        log_debug('view->export_obj -> ' . json_encode($result), $debug - 18);
+        log_debug('view->export_obj -> ' . json_encode($result));
         return $result;
     }
 
     // import a view from an object
-    function import_obj($json_obj, $debug)
+    function import_obj($json_obj)
     {
-        log_debug('view->import_obj', $debug - 10);
+        log_debug('view->import_obj');
         $result = '';
 
         foreach ($json_obj as $key => $value) {
@@ -391,10 +378,10 @@ class view extends user_sandbox
         }
 
         if ($result == '') {
-            $this->save($debug - 1);
-            log_debug('view->import_obj -> ' . $this->dsp_id(), $debug - 18);
+            $this->save();
+            log_debug('view->import_obj -> ' . $this->dsp_id());
         } else {
-            log_debug('view->import_obj -> ' . $result, $debug - 18);
+            log_debug('view->import_obj -> ' . $result);
         }
 
         return $result;
@@ -407,7 +394,7 @@ class view extends user_sandbox
     */
 
     // display the unique id fields
-    function dsp_id()
+    function dsp_id(): string
     {
         $result = '';
 
@@ -425,7 +412,7 @@ class view extends user_sandbox
         return $result;
     }
 
-    function name($debug)
+    function name()
     {
         $result = '"' . $this->name . '"';
         return $result;
@@ -434,53 +421,53 @@ class view extends user_sandbox
     // move one view component one place up
     // in case of an error the error message is returned
     // if everything is fine an empty string is returned
-    function entry_up($view_component_id, $debug)
+    function entry_up($view_component_id)
     {
         $result = '';
         // check the all minimal input parameters
         if ($view_component_id <= 0) {
-            log_err("The view component id must be given to move it.", "view->entry_up", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
             $cmp = new view_component_dsp;
             $cmp->id = $view_component_id;
             $cmp->usr = $this->usr;
-            $cmp->load($debug - 1);
+            $cmp->load();
             $cmp_lnk = new view_component_link;
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->usr = $this->usr;
-            $cmp_lnk->load($debug - 1);
-            $result .= $cmp_lnk->move_up($debug - 1);
+            $cmp_lnk->load();
+            $result .= $cmp_lnk->move_up();
         }
         return $result;
     }
 
     // move one view component one place down
-    function entry_down($view_component_id, $debug)
+    function entry_down($view_component_id)
     {
         $result = '';
         // check the all minimal input parameters
         if ($view_component_id <= 0) {
-            log_err("The view component id must be given to move it.", "view->entry_down", '', (new Exception)->getTraceAsString(), $this->usr);
+            log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
             $cmp = new view_component_dsp;
             $cmp->id = $view_component_id;
             $cmp->usr = $this->usr;
-            $cmp->load($debug - 1);
+            $cmp->load();
             $cmp_lnk = new view_component_link;
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->usr = $this->usr;
-            $cmp_lnk->load($debug - 1);
-            $result .= $cmp_lnk->move_down($debug - 1);
+            $cmp_lnk->load();
+            $result .= $cmp_lnk->move_down();
         }
         return $result;
     }
 
     // create a selection page where the user can select a view that should be used for a word
-    function selector_page($wrd_id, $back, $debug)
+    function selector_page($wrd_id, $back)
     {
-        log_debug('view->selector_page (' . $this->id . ',' . $wrd_id . ')', $debug - 10);
+        log_debug('view->selector_page (' . $this->id . ',' . $wrd_id . ')');
 
         global $db_con;
         $result = '';
@@ -491,13 +478,13 @@ class view extends user_sandbox
                  WHERE code_id IS NULL
               ORDER BY view_name;";
               */
-        $sql = sql_lst_usr("view", $this->usr, $debug - 1);
+        $sql = sql_lst_usr("view", $this->usr);
         $call = '/http/view.php?words=' . $wrd_id;
         $field = 'new_id';
 
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $dsp_lst = $db_con->get($sql, $debug - 5);
+        $dsp_lst = $db_con->get($sql);
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];
             $view_name = $dsp['name'];
@@ -513,17 +500,17 @@ class view extends user_sandbox
             $result .= '<br>';
         }
 
-        log_debug('view->selector_page ... done', $debug - 1);
+        log_debug('view->selector_page ... done');
         return $result;
     }
 
     // true if the view is part of the view element list
-    function is_in_list($dsp_lst, $debug)
+    function is_in_list($dsp_lst)
     {
         $result = false;
 
         foreach ($dsp_lst as $dsp_id) {
-            log_debug('view->is_in_list ' . $dsp_id . ' = ' . $this->id . '?', $debug - 12);
+            log_debug('view->is_in_list ' . $dsp_id . ' = ' . $this->id . '?');
             if ($dsp_id == $this->id) {
                 $result = true;
             }
@@ -533,10 +520,10 @@ class view extends user_sandbox
     }
 
     // create a database record to save user specific settings for this view
-    function add_usr_cfg($debug)
+    function add_usr_cfg()
     {
         $result = '';
-        log_debug('view->add_usr_cfg ' . $this->dsp_id(), $debug - 10);
+        log_debug('view->add_usr_cfg ' . $this->dsp_id());
 
         global $db_con;
 
@@ -549,14 +536,14 @@ class view extends user_sandbox
                  AND user_id = ' . $this->usr->id . ';';
             //$db_con = New mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql, $debug - 5);
+            $db_row = $db_con->get1($sql);
             $usr_db_id = $db_row['user_id'];
             if ($usr_db_id <= 0) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW);
-                $log_id = $db_con->insert(array('view_id', 'user_id'), array($this->id, $this->usr->id), $debug - 1);
+                $log_id = $db_con->insert(array('view_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
-                    $result .= 'Insert of user_view failed.';
+                    log_err('Insert of user_view failed.');
                 }
             }
         }
@@ -564,9 +551,9 @@ class view extends user_sandbox
     }
 
     // check if the database record for the user specific settings can be removed
-    function del_usr_cfg_if_not_needed($debug)
+    function del_usr_cfg_if_not_needed()
     {
-        log_debug('view->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 12);
+        log_debug('view->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = false;
@@ -584,15 +571,15 @@ class view extends user_sandbox
                  AND user_id = " . $this->usr->id . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql, $debug - 5);
-        log_debug('view->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')', $debug - 12);
+        $usr_cfg = $db_con->get1($sql);
+        log_debug('view->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg['view_id'] > 0) {
             if ($usr_cfg['comment'] == ''
                 and $usr_cfg['view_type_id'] == Null
                 and $usr_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('view->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name, $debug - 10);
-                $result .= $this->del_usr_cfg_exe($db_con, $debug - 1);
+                log_debug('view->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                $result = $this->del_usr_cfg_exe($db_con);
             }
         }
         //}
@@ -600,51 +587,52 @@ class view extends user_sandbox
     }
 
     // set the update parameters for the view comment
-    function save_field_comment($db_con, $db_rec, $std_rec, $debug)
+    function save_field_comment($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->comment <> $this->comment) {
-            $log = $this->log_upd($debug - 1);
+            $log = $this->log_upd();
             $log->old_value = $db_rec->comment;
             $log->new_value = $this->comment;
             $log->std_value = $std_rec->comment;
             $log->row_id = $this->id;
             $log->field = 'comment';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec, $debug)
+    function save_field_type($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd($debug - 1);
-            $log->old_value = $db_rec->type_name($debug - 1);
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->type_name();
             $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name($debug - 1);
+            $log->new_value = $this->type_name();
             $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name($debug - 1);
+            $log->std_value = $std_rec->type_name();
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
             $log->field = 'view_type_id';
-            $result .= $this->save_field_do($db_con, $log, $debug - 1);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // save all updated view fields excluding the name, because already done when adding a view
-    function save_fields($db_con, $db_rec, $std_rec, $debug)
+    function save_fields($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
-        $result .= $this->save_field_comment($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec, $debug - 1);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $debug - 1);
-        log_debug('view->save_fields all fields for ' . $this->dsp_id() . ' has been saved', $debug - 12);
+        $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
+        if ($result) {
+            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        }
+        log_debug('view->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
 
 }
-
-?>

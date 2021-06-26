@@ -25,14 +25,15 @@ The steps should be
 
 */
 
-$db_con = prg_start("setup", "center_form", $debug);
+$db_con = prg_start("setup", "center_form");
 
 // load the coded linked database rows with zukunft_init_data.sql
 $sql = $db_con->sql_of_code_linked_db_rows();
 if ($sql == false) {
     log_err('Cannot read the initial database data file', 'setup');
 } else {
-    $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "setup");
+    //$sql_result = $db_con->exe($sql, 'code_linked_db_rows', array(), DBL_SYSLOG_FATAL_ERROR);
+    $sql_result = $db_con->exe($sql, '', array(), DBL_SYSLOG_FATAL_ERROR);
 }
 
 
@@ -45,23 +46,23 @@ if ($sql == false) {
 // the code link always is done with the field "code_id"
 // this way the user can give the record another name without using the code link
 // maybe the code link should be shown to the user for
-sql_code_link(DBL_VIEW_WORD_ADD,     "Add new words", $debug);
-sql_code_link(DBL_VIEW_WORD_EDIT,    "Word Edit", $debug);
-sql_code_link(DBL_VIEW_VALUE_ADD,    "Add new values", $debug);
-sql_code_link(DBL_VIEW_VALUE_EDIT,   "Value Edit", $debug);
-sql_code_link(DBL_VIEW_FORMULA_ADD,  "Add new formula", $debug);
-sql_code_link(DBL_VIEW_FORMULA_EDIT, "Formula Edit", $debug);
-sql_code_link(DBL_VIEW_ADD,          "Add new view", $debug);
-sql_code_link(DBL_VIEW_EDIT,         "view Edit", $debug);
-sql_code_link(DBL_VIEW_IMPORT,       "Import", $debug);
+sql_code_link(DBL_VIEW_WORD_ADD,     "Add new words");
+sql_code_link(DBL_VIEW_WORD_EDIT,    "Word Edit");
+sql_code_link(DBL_VIEW_VALUE_ADD,    "Add new values");
+sql_code_link(DBL_VIEW_VALUE_EDIT,   "Value Edit");
+sql_code_link(DBL_VIEW_FORMULA_ADD,  "Add new formula");
+sql_code_link(DBL_VIEW_FORMULA_EDIT, "Formula Edit");
+sql_code_link(DBL_VIEW_ADD,          "Add new view");
+sql_code_link(DBL_VIEW_EDIT,         "view Edit");
+sql_code_link(DBL_VIEW_IMPORT,       "Import");
 
-sql_code_link(DBL_WORD_TYPE_TIME,    "Time Word", $debug);
-sql_code_link(DBL_LINK_TYPE_IS,      "is a", $debug);
+sql_code_link(DBL_WORD_TYPE_TIME,    "Time Word");
+sql_code_link(DBL_LINK_TYPE_IS,      "is a");
 
 // create test records
 // these records are used for the test cases
 
 
-log_debug ("setup ... done.", $debug);
+log_debug ("setup ... done.");
 
-prg_end($db_con, $debug);
+prg_end($db_con);

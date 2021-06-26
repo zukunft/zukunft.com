@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // read the version number from the database and compare it with the backend version
 // if the database has a lower version than the backend program start the upgrade process
-function db_check($db_con, $debug)
+function db_check($db_con)
 {
 
     global $usr;
@@ -36,15 +36,15 @@ function db_check($db_con, $debug)
     $result = ''; // the message that should be shown to the user immediately
 
     // get the db version
-    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con, $debug);
+    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
         if (prg_version_is_newer($db_version)) {
             switch ($db_version) {
                 case NEXT_VERSION:
-                    $result = db_upgrade_0_0_4($db_con, $debug);
+                    $result = db_upgrade_0_0_4($db_con);
                     break;
                 default:
-                    $result = db_upgrade_0_0_3($db_con, $debug);
+                    $result = db_upgrade_0_0_3($db_con);
                     break;
             }
         } else {
@@ -58,7 +58,7 @@ function db_check($db_con, $debug)
 
 // upgrade the database from any version prior of 0.0.3
 // the version 0.0.3 is the first version, which has an build in upgrade process
-function db_upgrade_0_0_3($db_con, $debug)
+function db_upgrade_0_0_3($db_con)
 {
     global $usr;
 
@@ -72,7 +72,7 @@ function db_upgrade_0_0_3($db_con, $debug)
     $sql = 'ALTER TABLE value_time_series RENAME value_time_serie_id TO value_time_series_id;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
-    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con, $debug);
+    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';
     }
@@ -81,12 +81,12 @@ function db_upgrade_0_0_3($db_con, $debug)
 }
 
 // upgrade the database from any version prior of 0.0.4
-function db_upgrade_0_0_4($db_con, $debug)
+function db_upgrade_0_0_4($db_con)
 {
     global $usr;
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con, $debug);
+    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';
     }
@@ -95,4 +95,4 @@ function db_upgrade_0_0_4($db_con, $debug)
 }
 
 // create the database and fill it with the base configuration data
-//function db_create($debug) {}
+//function db_create() {}

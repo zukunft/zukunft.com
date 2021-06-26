@@ -50,245 +50,278 @@ maybe for each huge table is also a log table with the hist of the user changes
 */
 
 
-class user_log_link {
+class user_log_link
+{
 
-  public  $id            = NULL; // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
-  public  $usr           = NULL; // the user who has done the change
-  public  $action        = '';   // text for the user action e.g. "add", "update" or "delete"
-  private $action_id     = NULL; // database id for the action text
-  public  $table         = '';   // name of the table that has been updated
-  private $table_id      = NULL; // database id for the table text
-  // object set by the calling function
-  public  $old_from      = NULL; // the from reference before the user change; should be the object, but is sometimes still the id
-  public  $old_link      = NULL; // the reference type before the user change
-  public  $old_to        = NULL; // the to reference before the user change
-  public  $new_from      = NULL; // the from reference after the user change
-  public  $new_link      = NULL; // the reference type after the user change
-  public  $new_to        = NULL; // the to reference after the user change
-  public  $std_from      = NULL; // the standard from reference for all users that does not have changed it
-  public  $std_link      = NULL; // the standard reference type for all users that does not have changed it
-  public  $std_to        = NULL; // the standard to reference for all users that does not have changed it
-  public  $row_id        = NULL; // the reference id of the row in the database table
-  // fields to save the database row that are filled here based on the object
-  public  $old_from_id   = '';   // old id ref to the from record
-  public  $old_link_id   = '';   // old id ref to the link record
-  public  $old_to_id     = '';   // old id ref to the to record
-  public  $old_text_from = '';   // fixed description for old_from
-  public  $old_text_link = '';   // fixed description for old_link
-  public  $old_text_to   = '';   // fixed description for old_to
-  public  $new_from_id   = '';   // new id ref to the from record
-  public  $new_link_id   = '';   // new id ref to the link record
-  public  $new_to_id     = '';   // new id ref to the to record
-  public  $new_text_from = '';   // fixed description for new_from
-  public  $new_text_link = '';   // fixed description for new_link
-  public  $new_text_to   = '';   // fixed description for new_to
-  // to be replaced with new_text_link
-  public  $link_text     = '';    // is used for fixed links such as the source for values
+    public $id = NULL; // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
+    public $usr = NULL; // the user who has done the change
+    public $action = '';   // text for the user action e.g. "add", "update" or "delete"
+    private $action_id = NULL; // database id for the action text
+    public $table = '';   // name of the table that has been updated
+    private $table_id = NULL; // database id for the table text
+    // object set by the calling function
+    public $old_from = NULL; // the from reference before the user change; should be the object, but is sometimes still the id
+    public $old_link = NULL; // the reference type before the user change
+    public $old_to = NULL; // the to reference before the user change
+    public $new_from = NULL; // the from reference after the user change
+    public $new_link = NULL; // the reference type after the user change
+    public $new_to = NULL; // the to reference after the user change
+    public $std_from = NULL; // the standard from reference for all users that does not have changed it
+    public $std_link = NULL; // the standard reference type for all users that does not have changed it
+    public $std_to = NULL; // the standard to reference for all users that does not have changed it
+    public $row_id = NULL; // the reference id of the row in the database table
+    // fields to save the database row that are filled here based on the object
+    public $old_from_id = '';   // old id ref to the from record
+    public $old_link_id = '';   // old id ref to the link record
+    public $old_to_id = '';   // old id ref to the to record
+    public $old_text_from = '';   // fixed description for old_from
+    public $old_text_link = '';   // fixed description for old_link
+    public $old_text_to = '';   // fixed description for old_to
+    public $new_from_id = '';   // new id ref to the from record
+    public $new_link_id = '';   // new id ref to the link record
+    public $new_to_id = '';   // new id ref to the to record
+    public $new_text_from = '';   // fixed description for new_from
+    public $new_text_link = '';   // fixed description for new_link
+    public $new_text_to = '';   // fixed description for new_to
+    // to be replaced with new_text_link
+    public $link_text = '';    // is used for fixed links such as the source for values
 
-  private function dsp_id() {
-    $result = '';
+    private function dsp_id(): string
+    {
+        $result = '';
 
-    if (isset($this->usr)) { $result .= 'user_log_link for user '.$this->usr->dsp_id(); }
-    $result .= ' action '.$this->action.' ('.$this->action_id.')';
-    $result .= ' table '.$this->table.' ('.$this->table_id.')';
-    if (isset($this->old_from)) { $result .= ' from old '.$this->old_from->dsp_id(); }
-    if (isset($this->old_link)) { $result .= ' link old '.$this->old_link->dsp_id(); }
-    if (isset($this->old_to))   { $result .= ' to old '  .$this->old_to->dsp_id();   }
-    if (isset($this->new_from)) { $result .= ' from new '.$this->new_from->dsp_id(); }
-    if (isset($this->new_link)) { $result .= ' link new '.$this->new_link->dsp_id(); }
-    if (isset($this->new_to))   { $result .= ' to new '  .$this->new_to->dsp_id();   }
+        if (isset($this->usr)) {
+            $result .= 'user_log_link for user ' . $this->usr->dsp_id();
+        }
+        $result .= ' action ' . $this->action . ' (' . $this->action_id . ')';
+        $result .= ' table ' . $this->table . ' (' . $this->table_id . ')';
+        if (isset($this->old_from)) {
+            $result .= ' from old ' . $this->old_from->dsp_id();
+        }
+        if (isset($this->old_link)) {
+            $result .= ' link old ' . $this->old_link->dsp_id();
+        }
+        if (isset($this->old_to)) {
+            $result .= ' to old ' . $this->old_to->dsp_id();
+        }
+        if (isset($this->new_from)) {
+            $result .= ' from new ' . $this->new_from->dsp_id();
+        }
+        if (isset($this->new_link)) {
+            $result .= ' link new ' . $this->new_link->dsp_id();
+        }
+        if (isset($this->new_to)) {
+            $result .= ' to new ' . $this->new_to->dsp_id();
+        }
 
-    return $result;
-  }
-
-  // identical to the functions in user_log (maybe move to a common object??)
-  private function set_table($debug) {
-    log_debug('user_log_link->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
-
-    global $db_con;
-
-    // check parameter
-    if ($this->table == "") { log_err("missing table name","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0) { log_err("missing user","user_log_link->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    
-    // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_TABLE);
-    $db_con->usr_id = $this->usr->id;
-    $table_id = $db_con->get_id($this->table, $debug-1);
-
-    // add new table name if needed
-    if ($table_id <= 0) {
-      $table_id = $db_con->add_id ($this->table, $debug-1);
-    }
-    if ($table_id > 0) {
-      $this->table_id = $table_id;
-    } else {
-      log_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-  }
-
-  private function set_action($debug) {
-    log_debug('user_log_link->set_action "'.$this->action.'" for '.$this->usr->dsp_id(), $debug-10);
-
-    global $db_con;
-
-    // check parameter
-    if ($this->action == "") { log_err("missing action name","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0)  { log_err("missing user","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    
-    // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_ACTION);
-    $db_con->usr_id = $this->usr->id;
-    $action_id = $db_con->get_id($this->action, $debug-1);
-
-    // add new action name if needed
-    if ($action_id <= 0) {
-      $action_id = $db_con->add_id ($this->action, $debug-1);
-    }
-    if ($action_id > 0) {
-      $this->action_id = $action_id;
-    } else {
-      log_fatal("Insert to change log failed due to action id failure.","user_log_link->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-  }
-
-  // functions used until each call is done with the object instead of the id
-  private function set_usr($debug) {
-    log_debug('user_log_link->set_usr for '.$this->usr->dsp_id(), $debug-12);
-    if (!isset($this->usr)) {
-      $usr = New user;
-      $usr->id = $this->usr->id;
-      $usr->load_test_user($debug-1);
-      $this->usr = $usr;
-      log_debug('user_log_link->set_usr got '.$this->usr->name, $debug-14);
-    }
-  }
-  private function word_name($id, $debug) {
-    log_debug('user_log_link->word_name for '.$id, $debug-12);
-    $result = '';
-    if ($id > 0) {
-      $this->set_usr($debug-1);
-      $wrd = new word_dsp;
-      $wrd->id  = $id;
-      $wrd->usr = $this->usr;
-      $wrd->load($debug-1);
-      $result = $wrd->name;
-      log_debug('user_log_link->word_name got '.$result, $debug-14);
-    }
-    return $result;
-  }
-
-  private function source_name($id, $debug) {
-    global $db_con;
-    $result = '';
-    //$db_con = new mysql;
-    $db_con->set_type(DB_TYPE_SOURCE);
-    $result .= $db_con->get_name($id, $debug-1);
-    return $result;
-  }
-  
-
-  // this should be dismissed
-  function add_link_ref($debug) {
-    $this->add($debug-1);
-  }
-  
-  // log a user change of a link / verb
-  // this should be dismissed, instead use add, which also save the text reference for fast and reliable displaying
-  function add_link($debug) {
-    log_debug("user_log_link->add_link (u".$this->usr->id." ".$this->action." ".$this->table.
-                                    ",of".$this->old_from.",ol".$this->old_link.",ot".$this->old_to.
-                                    ",nf".$this->new_from.",nl".$this->new_link.",nt".$this->new_to.",r".$this->row_id.")", $debug-10);
-
-    global $db_con;
-
-    $this->set_table($debug-1);
-    $this->set_action($debug-1);
-    
-    $sql_fields = array();
-    $sql_values = array();
-    $sql_fields[] =          "user_id";
-    $sql_values[] =    $this->usr->id;
-    $sql_fields[] = "change_action_id";
-    $sql_values[] =  $this->action_id;
-    $sql_fields[] =  "change_table_id";
-    $sql_values[] =   $this->table_id;
-
-    $sql_fields[] =       "old_from_id";
-    $sql_values[] = $this->old_from;
-    $sql_fields[] =       "old_link_id";
-    $sql_values[] = $this->old_link;
-    $sql_fields[] =       "old_to_id";
-    $sql_values[] = $this->old_to;
-    
-    $sql_fields[] =       "new_from_id";
-    $sql_values[] = $this->new_from;
-    $sql_fields[] =       "new_link_id";
-    $sql_values[] = $this->new_link;
-    $sql_fields[] =       "new_to_id";
-    $sql_values[] = $this->new_to;
-    
-    $sql_fields[] =       "row_id";
-    $sql_values[] = $this->row_id;
-    
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_LINK);
-    $db_con->set_usr($this->usr->id);
-    $log_id = $db_con->insert($sql_fields, $sql_values, $debug-1);
-
-    if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters has caused the error
-      $func_name = 'user_log_link->add_link';
-      $msg_text = 'Insert to link log failed';
-      $traceback = (new Exception)->getTraceAsString();
-      log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
-      $msg_description = $msg_text.' with '.$this->dsp_id();
-      log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
-      $result = False;
-    } else {
-      $this->id = $log_id;
-      $result = True;
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-
-    log_debug('user_log_link->add_link -> ('.zu_dsp_bool($result).')', $debug-10);
-    return $result;
-  }
-
-  // display the last change related to one object (word, formula, value, verb, ...)
-  // mainly used for testing
-  function dsp_last($ex_time, $debug) {
-
-    global $db_con;
-    $result = '';
-
-    $this->set_table($debug-1);
-    
-    $sql_where = '';
-    if ($this->old_from_id > 0) {
-      $sql_where .= ' AND c.old_from_id = '.$this->old_from_id;
-    }
-    if ($this->old_from_id > 0) {
-      $sql_where .= ' AND c.old_to_id = '.$this->old_to_id;
-    }
-    if ($this->new_from_id > 0) {
-      $sql_where .= ' AND c.new_from_id = '.$this->new_from_id;
-    }
-    if ($this->new_from_id > 0) {
-      $sql_where .= ' AND c.new_to_id = '.$this->new_to_id;
+        return $result;
     }
 
-    $sql = "SELECT c.change_time,
+    // identical to the functions in user_log (maybe move to a common object??)
+    private function set_table()
+    {
+        log_debug('user_log_link->set_table "' . $this->table . '" for ' . $this->usr->dsp_id());
+
+        global $db_con;
+
+        // check parameter
+        if ($this->table == "") {
+            log_err("missing table name", "user_log_link->set_table");
+        }
+        if ($this->usr->id <= 0) {
+            log_err("missing user", "user_log_link->set_table");
+        }
+
+        // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_TABLE);
+        $db_con->usr_id = $this->usr->id;
+        $table_id = $db_con->get_id($this->table);
+
+        // add new table name if needed
+        if ($table_id <= 0) {
+            $table_id = $db_con->add_id($this->table);
+        }
+        if ($table_id > 0) {
+            $this->table_id = $table_id;
+        } else {
+            log_fatal("Insert to change log failed due to table id failure.", "user_log->add");
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+    }
+
+    private function set_action()
+    {
+        log_debug('user_log_link->set_action "' . $this->action . '" for ' . $this->usr->dsp_id());
+
+        global $db_con;
+
+        // check parameter
+        if ($this->action == "") {
+            log_err("missing action name", "user_log_link->set_action");
+        }
+        if ($this->usr->id <= 0) {
+            log_err("missing user", "user_log_link->set_action");
+        }
+
+        // if e.g. the action is "add" the reference 1 is saved in the log table to save space
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_ACTION);
+        $db_con->usr_id = $this->usr->id;
+        $action_id = $db_con->get_id($this->action);
+
+        // add new action name if needed
+        if ($action_id <= 0) {
+            $action_id = $db_con->add_id($this->action);
+        }
+        if ($action_id > 0) {
+            $this->action_id = $action_id;
+        } else {
+            log_fatal("Insert to change log failed due to action id failure.", "user_log_link->set_action");
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+    }
+
+    // functions used until each call is done with the object instead of the id
+    private function set_usr()
+    {
+        log_debug('user_log_link->set_usr for ' . $this->usr->dsp_id());
+        if (!isset($this->usr)) {
+            $usr = new user;
+            $usr->id = $this->usr->id;
+            $usr->load_test_user();
+            $this->usr = $usr;
+            log_debug('user_log_link->set_usr got ' . $this->usr->name);
+        }
+    }
+
+    private function word_name($id)
+    {
+        log_debug('user_log_link->word_name for ' . $id);
+        $result = '';
+        if ($id > 0) {
+            $this->set_usr();
+            $wrd = new word_dsp;
+            $wrd->id = $id;
+            $wrd->usr = $this->usr;
+            $wrd->load();
+            $result = $wrd->name;
+            log_debug('user_log_link->word_name got ' . $result);
+        }
+        return $result;
+    }
+
+    private function source_name($id)
+    {
+        global $db_con;
+        $result = '';
+        //$db_con = new mysql;
+        $db_con->set_type(DB_TYPE_SOURCE);
+        $result .= $db_con->get_name($id);
+        return $result;
+    }
+
+
+    // this should be dismissed
+    function add_link_ref()
+    {
+        $this->add();
+    }
+
+    // log a user change of a link / verb
+    // this should be dismissed, instead use add, which also save the text reference for fast and reliable displaying
+    function add_link()
+    {
+        log_debug("user_log_link->add_link (u" . $this->usr->id . " " . $this->action . " " . $this->table .
+            ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
+            ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
+
+        global $db_con;
+
+        $this->set_table();
+        $this->set_action();
+
+        $sql_fields = array();
+        $sql_values = array();
+        $sql_fields[] = "user_id";
+        $sql_values[] = $this->usr->id;
+        $sql_fields[] = "change_action_id";
+        $sql_values[] = $this->action_id;
+        $sql_fields[] = "change_table_id";
+        $sql_values[] = $this->table_id;
+
+        $sql_fields[] = "old_from_id";
+        $sql_values[] = $this->old_from;
+        $sql_fields[] = "old_link_id";
+        $sql_values[] = $this->old_link;
+        $sql_fields[] = "old_to_id";
+        $sql_values[] = $this->old_to;
+
+        $sql_fields[] = "new_from_id";
+        $sql_values[] = $this->new_from;
+        $sql_fields[] = "new_link_id";
+        $sql_values[] = $this->new_link;
+        $sql_fields[] = "new_to_id";
+        $sql_values[] = $this->new_to;
+
+        $sql_fields[] = "row_id";
+        $sql_values[] = $this->row_id;
+
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_usr($this->usr->id);
+        $log_id = $db_con->insert($sql_fields, $sql_values);
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            $func_name = 'user_log_link->add_link';
+            $msg_text = 'Insert to link log failed';
+            $traceback = (new Exception)->getTraceAsString();
+            log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+            $msg_description = $msg_text . ' with ' . $this->dsp_id();
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+            $result = False;
+        } else {
+            $this->id = $log_id;
+            $result = True;
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+
+        log_debug('user_log_link->add_link -> (' . zu_dsp_bool($result) . ')');
+        return $result;
+    }
+
+    // display the last change related to one object (word, formula, value, verb, ...)
+    // mainly used for testing
+    function dsp_last($ex_time)
+    {
+
+        global $db_con;
+        $result = '';
+
+        $this->set_table();
+
+        $sql_where = '';
+        if ($this->old_from_id > 0) {
+            $sql_where .= ' AND c.old_from_id = ' . $this->old_from_id;
+        }
+        if ($this->old_from_id > 0) {
+            $sql_where .= ' AND c.old_to_id = ' . $this->old_to_id;
+        }
+        if ($this->new_from_id > 0) {
+            $sql_where .= ' AND c.new_from_id = ' . $this->new_from_id;
+        }
+        if ($this->new_from_id > 0) {
+            $sql_where .= ' AND c.new_to_id = ' . $this->new_to_id;
+        }
+
+        $sql = "SELECT c.change_time,
                    u.user_name,
                    c.old_text_from,
                    c.old_from_id,
@@ -303,198 +336,201 @@ class user_log_link {
                    c.new_text_to,
                    c.new_to_id
               FROM change_links c, users u
-             WHERE c.change_table_id = ".$this->table_id."
+             WHERE c.change_table_id = " . $this->table_id . "
                AND c.user_id = u.user_id
-               AND u.user_id = ".$this->usr->id."
-                   ".$sql_where."
+               AND u.user_id = " . $this->usr->id . "
+                   " . $sql_where . "
           ORDER BY c.change_link_id DESC;";
-    log_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_LINK);
-    $db_con->usr_id = $this->usr->id;
-    $db_row = $db_con->get1($sql, $debug-5);  
-    if (!$ex_time) {
-      $result .= $db_row['change_time'].' ';
-    }  
-    if ($db_row['user_name'] <> '') {
-      $result .= $db_row['user_name'].' ';
-    }  
-    if ($db_row['new_text_from'] <> '' AND $db_row['new_text_to'] <> '') {
-      $result .= 'linked '.$db_row['new_text_from'].' to '.$db_row['new_text_to'];
-    } elseif ($db_row['old_text_from'] <> '' AND $db_row['old_text_to'] <> '') {
-      $result .= 'unlinked '.$db_row['old_text_from'].' from '.$db_row['old_text_to'];
+        log_debug("user_log->dsp_last get sql (" . $sql . ")");
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->usr_id = $this->usr->id;
+        $db_row = $db_con->get1($sql);
+        if (!$ex_time) {
+            $result .= $db_row['change_time'] . ' ';
+        }
+        if ($db_row['user_name'] <> '') {
+            $result .= $db_row['user_name'] . ' ';
+        }
+        if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
+            $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
+        } elseif ($db_row['old_text_from'] <> '' and $db_row['old_text_to'] <> '') {
+            $result .= 'unlinked ' . $db_row['old_text_from'] . ' from ' . $db_row['old_text_to'];
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+        return $result;
     }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-    return $result;
-  }
-  
-  // similar to add_link, but additional fix the references as a text for fast displaying
-  // $link_text is used for fixed links such as the source for values
-  function add($debug) {
-    log_debug('user_log_link->add do "'.$this->action.'" of "'.$this->table.'" for user '.$this->usr->dsp_id(), $debug-10);
 
-    global $db_con;
+    // similar to add_link, but additional fix the references as a text for fast displaying
+    // $link_text is used for fixed links such as the source for values
+    function add(): bool
+    {
+        log_debug('user_log_link->add do "' . $this->action . '" of "' . $this->table . '" for user ' . $this->usr->dsp_id());
 
-    $this->set_table($debug-1);
-    $this->set_action($debug-1);
-    
-    // set the table specific references
-    log_debug('user_log_link->add -> set fields', $debug-16);
-    if ($this->table == "words" 
-     OR $this->table == "word_links") {
-      if ($this->action == "add" OR $this->action == "update") {
-        $this->new_text_from = $this->new_from->name; 
-        $this->new_text_link = $this->new_link->name; 
-        $this->new_text_to   = $this->new_to->name; 
-        $this->new_from_id   = $this->new_from->id; 
-        $this->new_link_id   = $this->new_link->id; 
-        $this->new_to_id     = $this->new_to->id; 
-      }
-      if ($this->action == "del" OR $this->action == "update") {
-        $this->old_text_from = $this->old_from->name; 
-        $this->old_text_link = $this->old_link->name; 
-        $this->old_text_to   = $this->old_to->name; 
-        $this->old_from_id   = $this->old_from->id; 
-        $this->old_link_id   = $this->old_link->id; 
-        $this->old_to_id     = $this->old_to->id; 
-      }
+        global $db_con;
+
+        $this->set_table();
+        $this->set_action();
+
+        // set the table specific references
+        log_debug('user_log_link->add -> set fields');
+        if ($this->table == "words"
+            or $this->table == "word_links") {
+            if ($this->action == "add" or $this->action == "update") {
+                $this->new_text_from = $this->new_from->name;
+                $this->new_text_link = $this->new_link->name;
+                $this->new_text_to = $this->new_to->name;
+                $this->new_from_id = $this->new_from->id;
+                $this->new_link_id = $this->new_link->id;
+                $this->new_to_id = $this->new_to->id;
+            }
+            if ($this->action == "del" or $this->action == "update") {
+                $this->old_text_from = $this->old_from->name;
+                $this->old_text_link = $this->old_link->name;
+                $this->old_text_to = $this->old_to->name;
+                $this->old_from_id = $this->old_from->id;
+                $this->old_link_id = $this->old_link->id;
+                $this->old_to_id = $this->old_to->id;
+            }
+        }
+        if ($this->table == "refs") {
+            if ($this->action == "add" or $this->action == "update") {
+                $this->new_text_from = $this->new_from->name;
+                $this->new_text_link = $this->new_link->name;
+                $this->new_text_to = $this->new_to->external_key;
+                $this->new_from_id = $this->new_from->id;
+                $this->new_link_id = $this->new_link->id;
+                $this->new_to_id = $this->new_to->id;
+            }
+            if ($this->action == "del" or $this->action == "update") {
+                $this->old_text_from = $this->old_from->name;
+                $this->old_text_link = $this->old_link->name;
+                $this->old_text_to = $this->old_to->external_key;
+                $this->old_from_id = $this->old_from->id;
+                $this->old_link_id = $this->old_link->id;
+                $this->old_to_id = $this->old_to->id;
+            }
+        }
+        if ($this->table == "view_component_links"
+            or $this->table == "value_phrase_links"
+            or $this->table == "formula_links") {
+            if ($this->action == "add" or $this->action == "update") {
+                $this->new_text_from = $this->new_from->name;
+                $this->new_text_to = $this->new_to->name;
+                $this->new_from_id = $this->new_from->id;
+                $this->new_to_id = $this->new_to->id;
+            }
+            if ($this->action == "del" or $this->action == "update") {
+                $this->old_text_from = $this->old_from->name;
+                $this->old_text_to = $this->old_to->name;
+                $this->old_from_id = $this->old_from->id;
+                $this->old_to_id = $this->old_to->id;
+            }
+        }
+        if ($this->table == "values" and $this->link_text == "source") {
+            if ($this->old_to > 0) {
+                $this->old_text_to = $this->source_name($this->old_to);
+            }
+            if ($this->new_to > 0) {
+                $this->new_text_to = $this->source_name($this->new_to);
+            }
+        }
+        log_debug('user_log_link->add -> set fields done');
+
+        $sql_fields = array();
+        $sql_values = array();
+        $sql_fields[] = "user_id";
+        $sql_values[] = $this->usr->id;
+        $sql_fields[] = "change_action_id";
+        $sql_values[] = $this->action_id;
+        $sql_fields[] = "change_table_id";
+        $sql_values[] = $this->table_id;
+
+        $sql_fields[] = "old_from_id";
+        $sql_values[] = $this->old_from_id;
+        $sql_fields[] = "old_link_id";
+        $sql_values[] = $this->old_link_id;
+        $sql_fields[] = "old_to_id";
+        $sql_values[] = $this->old_to_id;
+
+        $sql_fields[] = "new_from_id";
+        $sql_values[] = $this->new_from_id;
+        $sql_fields[] = "new_link_id";
+        $sql_values[] = $this->new_link_id;
+        $sql_fields[] = "new_to_id";
+        $sql_values[] = $this->new_to_id;
+
+        $sql_fields[] = "old_text_from";
+        $sql_values[] = $this->old_text_from;
+        $sql_fields[] = "old_text_link";
+        $sql_values[] = $this->old_text_link;
+        $sql_fields[] = "old_text_to";
+        $sql_values[] = $this->old_text_to;
+
+        $sql_fields[] = "new_text_from";
+        $sql_values[] = $this->new_text_from;
+        $sql_fields[] = "new_text_link";
+        $sql_values[] = $this->new_text_link;
+        $sql_fields[] = "new_text_to";
+        $sql_values[] = $this->new_text_to;
+
+        $sql_fields[] = "row_id";
+        $sql_values[] = $this->row_id;
+
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_usr($this->usr->id);
+        $log_id = $db_con->insert($sql_fields, $sql_values);
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters causes an additional the error
+            $func_name = 'user_log_link->add';
+            $msg_text = 'Insert to change log failed';
+            $traceback = (new Exception)->getTraceAsString();
+            log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
+            $msg_description = $msg_text . ' with ' . $this->dsp_id();
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+            $result = False;
+        } else {
+            $this->id = $log_id;
+            $result = True;
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+
+        log_debug('user_log_link->add -> (' . zu_dsp_bool($result) . ')');
+        return $result;
     }
-    if ($this->table == "refs") {
-      if ($this->action == "add" OR $this->action == "update") {
-        $this->new_text_from = $this->new_from->name; 
-        $this->new_text_link = $this->new_link->name; 
-        $this->new_text_to   = $this->new_to->external_key; 
-        $this->new_from_id   = $this->new_from->id; 
-        $this->new_link_id   = $this->new_link->id; 
-        $this->new_to_id     = $this->new_to->id; 
-      }
-      if ($this->action == "del" OR $this->action == "update") {
-        $this->old_text_from = $this->old_from->name; 
-        $this->old_text_link = $this->old_link->name; 
-        $this->old_text_to   = $this->old_to->external_key; 
-        $this->old_from_id   = $this->old_from->id; 
-        $this->old_link_id   = $this->old_link->id; 
-        $this->old_to_id     = $this->old_to->id; 
-      }
-    }
-    if ($this->table == "view_component_links" 
-     OR $this->table == "value_phrase_links" 
-     OR $this->table == "formula_links") {
-      if ($this->action == "add" OR $this->action == "update") {
-        $this->new_text_from = $this->new_from->name; 
-        $this->new_text_to   = $this->new_to->name; 
-        $this->new_from_id   = $this->new_from->id; 
-        $this->new_to_id     = $this->new_to->id; 
-      }
-      if ($this->action == "del" OR $this->action == "update") {
-        $this->old_text_from = $this->old_from->name; 
-        $this->old_text_to   = $this->old_to->name; 
-        $this->old_from_id   = $this->old_from->id; 
-        $this->old_to_id     = $this->old_to->id; 
-      }
-    }
-    if ($this->table == "values" AND $this->link_text == "source") {
-      if ($this->old_to > 0) { $this->old_text_to = $this->source_name($this->old_to, $debug-1); }
-      if ($this->new_to > 0) { $this->new_text_to = $this->source_name($this->new_to, $debug-1); }
-    }
-    log_debug('user_log_link->add -> set fields done', $debug-16);
-      
-    $sql_fields = array();
-    $sql_values = array();
-    $sql_fields[] =          "user_id";
-    $sql_values[] =     $this->usr->id;
-    $sql_fields[] = "change_action_id";
-    $sql_values[] =  $this->action_id;
-    $sql_fields[] =  "change_table_id";
-    $sql_values[] =   $this->table_id;
 
-    $sql_fields[] =       "old_from_id";
-    $sql_values[] = $this->old_from_id;
-    $sql_fields[] =       "old_link_id";
-    $sql_values[] = $this->old_link_id;
-    $sql_fields[] =       "old_to_id";
-    $sql_values[] = $this->old_to_id;
-    
-    $sql_fields[] =       "new_from_id";
-    $sql_values[] = $this->new_from_id;
-    $sql_fields[] =       "new_link_id";
-    $sql_values[] = $this->new_link_id;
-    $sql_fields[] =       "new_to_id";
-    $sql_values[] = $this->new_to_id;
-    
-    $sql_fields[] =       "old_text_from";
-    $sql_values[] = $this->old_text_from;
-    $sql_fields[] =       "old_text_link";
-    $sql_values[] = $this->old_text_link;
-    $sql_fields[] =       "old_text_to";
-    $sql_values[] = $this->old_text_to;
-    
-    $sql_fields[] =       "new_text_from";
-    $sql_values[] = $this->new_text_from;
-    $sql_fields[] =       "new_text_link";
-    $sql_values[] = $this->new_text_link;
-    $sql_fields[] =       "new_text_to";
-    $sql_values[] = $this->new_text_to;
-    
-    $sql_fields[] =       "row_id";
-    $sql_values[] = $this->row_id;
-    
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_LINK);
-    $db_con->set_usr($this->usr->id);
-    $log_id = $db_con->insert($sql_fields, $sql_values, $debug-1);
+    // add the row id to an existing log entry
+    // e.g. because the row id is know after the adding of the real record,
+    // but the log entry has been created upfront to make sure that logging is complete
+    function add_ref($row_id): bool
+    {
+        log_debug("user_log_link->add_ref (" . $row_id . " to " . $this->id . " for user " . $this->usr->dsp_id() . ")");
 
-    if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters causes an additional the error
-      $func_name = 'user_log_link->add';
-      $msg_text = 'Insert to change log failed';
-      $traceback = (new Exception)->getTraceAsString();
-      log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
-      $msg_description = $msg_text.' with '.$this->dsp_id();
-      log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
-      $result = False;
-    } else {
-      $this->id = $log_id;
-      $result = True;
+        global $db_con;
+
+        $result = true;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_LINK);
+        $db_con->set_usr($this->usr->id);
+        if (!$db_con->update($this->id, "row_id", $row_id)) {
+            // write the error message in steps to get at least some message if the parameters causes an additional the error
+            $func_name = 'user_log_link->add_ref';
+            $msg_text = 'Insert to change ref log failed';
+            $traceback = (new Exception)->getTraceAsString();
+            $msg_description = $msg_text . ' with ' . $this->dsp_id();
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
+            $result = False;
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+        return $result;
     }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
 
-    log_debug('user_log_link->add -> ('.zu_dsp_bool($result).')', $debug-10);
-    return $result;
-  }
 
-  // add the row id to an existing log entry 
-  // e.g. because the row id is know after the adding of the real record, 
-  // but the log entry has been created upfront to make sure that logging is complete
-  function add_ref($row_id, $debug) {
-    log_debug("user_log_link->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
-    global $db_con;
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_LINK);
-    $db_con->set_usr($this->usr->id);
-    $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
-    if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters causes an additional the error
-      $func_name = 'user_log_link->add_ref';
-      $msg_text = 'Insert to change ref log failed';
-      $traceback = (new Exception)->getTraceAsString();
-      log_fatal($msg_text, $func_name, '', $traceback, $this->usr);
-      $msg_description = $msg_text.' with '.$this->dsp_id();
-      log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->usr);
-      $result = False;
-    } else {
-      $this->id = $log_id;
-      $result = True;
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-    return $result;
-  }
-
-  
 }

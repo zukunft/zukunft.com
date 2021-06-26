@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-  function err_dsp($err_id, $user_id, $debug) {
+  function err_dsp($err_id, $user_id) {
 
     global $db_con;
     $result = "";
@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
              WHERE l.sys_log_id = ".$err_id.";";
     //$db_con = New mysql;
     $db_con->usr_id = $user_id;         
-    $db_err = $db_con->get1($sql, $debug-5);  
+    $db_err = $db_con->get1($sql);  
 
     $result .= dsp_text_h2("Status of error #".$err_id.': '.$db_err['sys_log_status_name']);
     $result .= '"'.$db_err['sys_log_text'].'" <br>';
@@ -63,7 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
 
-$db_con = prg_start("error_log", "", $debug);
+$db_con = prg_start("error_log");
 
   $result = ''; // reset the html code var
 
@@ -72,7 +72,7 @@ $db_con = prg_start("error_log", "", $debug);
   
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   if ($back <= 0) {
     $back = 1; // replace with the fallback word id
@@ -80,23 +80,23 @@ $db_con = prg_start("error_log", "", $debug);
   $wrd = New word;
   $wrd->usr = $usr;  
   $wrd->id = $back;  
-  $wrd->load($debug-1);
+  $wrd->load();
   
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
     if ($err_id > 0) {
-      log_debug("error_log -> (".$err_id.")", $debug-1);
+      log_debug("error_log -> (".$err_id.")");
       // prepare the display to edit the view
       $dsp = new view_dsp;
       $dsp->usr = $usr;
       $dsp->id = cl(DBL_VIEW_ERR_LOG);
-      $result .= $dsp->dsp_navbar($back, $debug-1);
+      $result .= $dsp->dsp_navbar($back);
       //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
-      $result .= err_dsp($err_id, $usr->id, $debug-1);
+      $result .= err_dsp($err_id, $usr->id);
     }
   }
 
   echo $result;
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);

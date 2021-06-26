@@ -44,13 +44,13 @@ class formula_list {
 
   // load the missing formula parameters from the database
   // todo: if this list contains already some formula, don't add them again!
-  function load($debug) {
+  function load() {
 
     global $db_con;
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      log_err("The user id must be set to load a list of formulas.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a list of formulas.", "formula_list->load");
     } else {  
 
       // set the where clause depending on the given selection parameters
@@ -67,7 +67,7 @@ class formula_list {
           $sql_from = 'formula_links l, formulas f';
           $sql_where = 'l.phrase_id IN ('.$this->phr_lst->ids_txt().') AND l.formula_id = f.formula_id';
         } else {
-          log_err("A phrase list is set (".$this->phr_lst->dsp_id()."), but the id list is ".$this->phr_lst->ids_txt().".", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err("A phrase list is set (".$this->phr_lst->dsp_id()."), but the id list is ".$this->phr_lst->ids_txt().".", "formula_list->load");
         
           $sql_from = 'formula_links l, formulas f';
           $sql_where = 'l.formula_id = f.formula_id';
@@ -80,9 +80,9 @@ class formula_list {
 
       if ($sql_where == '') {
         // activate this error message for page loading of the complete formula list
-        log_err("Either the word or the ID list must be set for loading.", "formula_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+        log_err("Either the word or the ID list must be set for loading.", "formula_list->load");
       } else {
-        log_debug('formula_list->load by ('.$sql_where.')', $debug-22);
+        log_debug('formula_list->load by ('.$sql_where.')');
         // the formula name is excluded from the user sandbox to avoid confusion
           if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
               $sql = "SELECT f.formula_id,
@@ -123,7 +123,7 @@ class formula_list {
           }
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;         
-        $db_frm_lst = $db_con->get($sql, $debug-14);  
+        $db_frm_lst = $db_con->get($sql);  
         foreach ($db_frm_lst AS $db_frm) {
           if (is_null($db_frm['excluded']) OR $db_frm['excluded'] == 0) {
             $frm = New formula;
@@ -147,7 +147,7 @@ class formula_list {
               $sql_type = "SELECT code_id 
                             FROM formula_types 
                             WHERE formula_type_id = ".$frm->type_id.";";
-              $db_type = $db_con->get1($sql_type, $frm->usr_id, $debug-14);  
+              $db_type = $db_con->get1($sql_type, $frm->usr_id);  
               $frm->type_cl  = $db_type['code_id'];
             } 
             */
@@ -155,7 +155,7 @@ class formula_list {
               $name_wrd = new word_dsp;
               $name_wrd->name = $frm->name;
               $name_wrd->usr  = $this->usr;
-              $name_wrd->load($debug-16);
+              $name_wrd->load();
               $frm->name_wrd = $name_wrd;
             }              
             $this->lst[] = $frm;
@@ -189,8 +189,8 @@ class formula_list {
   }
   
   // lists all formulas with results related to a word
-  function display($debug) {
-    log_debug('formula_list->display '.$this->dsp_id(), $debug-10);
+  function display() {
+    log_debug('formula_list->display '.$this->dsp_id());
     $result = '';
 
     $type = 'short';
@@ -200,26 +200,26 @@ class formula_list {
       foreach ($this->lst AS $frm) {
         // formatting should be moved
         //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-        //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back, $debug-1));
-        $formula_value = $frm->dsp_result($this->wrd, $this->back, $debug-1);
+        //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
+        $formula_value = $frm->dsp_result($this->wrd, $this->back);
         // if the formula value is empty use the id to be able to select the formula
         if ($formula_value == '') {
           $formula_value = $frm->id;
         }
         if ($type == 'short') {
-          $result .= ' '.$frm->name_linked($this->back, $debug-1);
-          $result .= ' '.$frm->btn_del ($this->back, $debug-1);
+          $result .= ' '.$frm->name_linked($this->back);
+          $result .= ' '.$frm->btn_del ($this->back);
           $result .= ', ';
         } else {
-          $result .= ' '.$frm->name_linked($this->back, $debug-1);
-          $result .= ' ('.$frm->dsp_text($this->back, $debug-1).')';
-          $result .= ' '.$frm->btn_del ($this->back, $debug-1);
+          $result .= ' '.$frm->name_linked($this->back);
+          $result .= ' ('.$frm->dsp_text($this->back).')';
+          $result .= ' '.$frm->btn_del ($this->back);
           $result .= ' <br> ';
         }
       }
     }  
 
-    log_debug("formula_list->display ... done (".$result.")", $debug-1);
+    log_debug("formula_list->display ... done (".$result.")");
     return $result;
   }
 

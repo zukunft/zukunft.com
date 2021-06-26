@@ -49,87 +49,87 @@ class phrase {
   public $link_type_id = NULL; // used in the word list to know based on which relation the word was added to the list
   
   //  load either a word or triple
-  function load ($debug) {
-    log_debug('phrase->load '.$this->dsp_id(), $debug-10);
+  function load () {
+    log_debug('phrase->load '.$this->dsp_id());
     $result = '';
     if ($this->id < 0) {
       $lnk = New word_link;
       $lnk->id  = $this->id * -1;
       $lnk->usr = $this->usr;
-      $lnk->load($debug-1);
+      $lnk->load();
       $this->obj  = $lnk;
       $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
-      log_debug('phrase->loaded triple '.$this->dsp_id(), $debug-14);
+      log_debug('phrase->loaded triple '.$this->dsp_id());
     } elseif ($this->id > 0) {
       $wrd = New word_dsp;
       $wrd->id  = $this->id;
       $wrd->usr = $this->usr;
-      $wrd->load($debug-1);
+      $wrd->load();
       $this->obj  = $wrd;
       $this->name = $wrd->name;
-      log_debug('phrase->loaded word '.$this->dsp_id(), $debug-14);
+      log_debug('phrase->loaded word '.$this->dsp_id());
     } elseif ($this->name <> '') {
       // add to load word link
       $trm = New term;
       $trm->name = $this->name;
       $trm->usr  = $this->usr;
-      $trm->load($debug-1);
+      $trm->load();
       if ($trm->type == 'word') {
         $this->obj = $trm->obj;
         $this->id  = $trm->id;
-        log_debug('phrase->loaded word '.$this->dsp_id().' by name', $debug-14);
+        log_debug('phrase->loaded word '.$this->dsp_id().' by name');
       } elseif ($trm->type == 'triple') {
         $this->obj = $trm->obj;
         $this->id  = $trm->id * -1;
-        log_debug('phrase->loaded triple '.$this->dsp_id().' by name', $debug-14);
+        log_debug('phrase->loaded triple '.$this->dsp_id().' by name');
       } elseif ($trm->type == 'formula') {
         if (isset($trm->obj->name_wrd)) {
           $this->obj = $trm->obj->name_wrd;
           $this->id  = $trm->obj->name_wrd->id;
-          log_debug('phrase->loaded formula '.$this->dsp_id().' by name', $debug-14);
+          log_debug('phrase->loaded formula '.$this->dsp_id().' by name');
         }
       } else {
         if ($this->type_name == '') {
           // TODO check that this ($phrase->load) is never used for an error detection
-          log_warning('"'.$this->name.'" not found.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_warning('"'.$this->name.'" not found.', "phrase->load");
         } else {  
-          log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->load", '', (new Exception)->getTraceAsString(), $this->usr);
+          log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->load");
         }
       }
     }
-    log_debug('phrase->load done '.$this->dsp_id(), $debug-14);
+    log_debug('phrase->load done '.$this->dsp_id());
     return $result;
   }
   
   // 
-  function main_word ($debug) {
-    log_debug('phrase->main_word '.$this->dsp_id(), $debug-10);
+  function main_word () {
+    log_debug('phrase->main_word '.$this->dsp_id());
     $result = Null;
 
     if ($this->id == 0 OR $this->name == '') {
-      $this->load($debug-1); 
+      $this->load(); 
     }  
     if ($this->id < 0) {
       $lnk = $this->obj;
-      $lnk->load_objects($debug-1); // try do be on the save side and it is anyway checked if loading is really needed
+      $lnk->load_objects(); // try do be on the save side and it is anyway checked if loading is really needed
       $result = $lnk->from;
     } elseif ($this->id > 0) {
       $result = $this->obj;
     } else {
-      log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->main_word", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('"'.$this->name.'" has the type '.$this->type_name.' which is not expected for a phrase.', "phrase->main_word");
     }
-    log_debug('phrase->main_word done '.$result->dsp_id(), $debug-14);
+    log_debug('phrase->main_word done '.$result->dsp_id());
     return $result;
   }
   
-  function type_id ($debug) {
-    log_debug('phrase->type_id '.$this->dsp_id(), $debug-10);
+  function type_id () {
+    log_debug('phrase->type_id '.$this->dsp_id());
     $result = Null;
 
-    $wrd = $this->main_word($debug-1);
+    $wrd = $this->main_word();
     $result = $wrd->type_id;
     
-    log_debug('phrase->type_id for '.$this->dsp_id().' is '.$result, $debug-10);
+    log_debug('phrase->type_id for '.$this->dsp_id().' is '.$result);
     return $result;
   }
   
@@ -140,14 +140,14 @@ class phrase {
   */
   
   // get a list of all values related to this phrase
-  function val_lst ($debug) {
-    log_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'"', $debug-12);
+  function val_lst () {
+    log_debug('phrase->val_lst for '.$this->dsp_id().' and user "'.$this->usr->name.'"');
     $val_lst = New value_list;
     $val_lst->usr = $this->usr;
     $val_lst->phr = $this;
     $val_lst->page_size = SQL_ROW_MAX;
-    $val_lst->load($debug-1);
-    log_debug('phrase->val_lst -> got '.count($val_lst->lst), $debug-14);
+    $val_lst->load();
+    log_debug('phrase->val_lst -> got '.count($val_lst->lst));
     return $val_lst;    
   }
   
@@ -187,20 +187,20 @@ class phrase {
     return $result;
   }
   
-  function dsp_tbl ($debug) {
-    if (!isset($this->obj)) { $this->load($debug-1); }
-    log_debug('phrase->dsp_tbl for '.$this->dsp_id(), $debug-10);
+  function dsp_tbl () {
+    if (!isset($this->obj)) { $this->load(); }
+    log_debug('phrase->dsp_tbl for '.$this->dsp_id());
     // the function dsp_tbl should exists for words and triples
-    $result = $this->obj->dsp_tbl($debug-1);
+    $result = $this->obj->dsp_tbl();
     return $result;
   }
   
-  function dsp_tbl_row ($debug) {
+  function dsp_tbl_row () {
     // the function dsp_tbl_row should exists for words and triples
     if (isset($this->obj)) {
-      $result = $this->obj->dsp_tbl_row($debug-1);
+      $result = $this->obj->dsp_tbl_row();
     } else {
-      log_err('The phrase object is missing for '.$this->dsp_id().'.', "formula_value->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err('The phrase object is missing for '.$this->dsp_id().'.', "formula_value->load");
     }
     return $result;
   }
@@ -224,20 +224,20 @@ class phrase {
   }
 
   // helper function that returns a word list object just with the word object
-  function lst ($debug) {
+  function lst () {
     $phr_lst = New phrase_list;
     $phr_lst->usr = $this->usr;
-    $phr_lst->add($this, $debug-1);
-    log_debug('phrase->lst -> '.$phr_lst->name($debug-1), $debug-18);
+    $phr_lst->add($this);
+    log_debug('phrase->lst -> '.$phr_lst->name());
     return $phr_lst;
   }
 
   // returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
-  function is ($debug) {
-    $this_lst = $this->lst($debug-1);
-    $phr_lst = $this_lst->is($debug-1);
-    //$phr_lst->add($this,$debug-1);
-    log_debug('phrase->is -> '.$this->dsp_id().' is a '.$phr_lst->name($debug-1), $debug-8);
+  function is () {
+    $this_lst = $this->lst();
+    $phr_lst = $this_lst->is();
+    //$phr_lst->add($this,);
+    log_debug('phrase->is -> '.$this->dsp_id().' is a '.$phr_lst->name());
     return $phr_lst;
   }
 
@@ -246,34 +246,34 @@ class phrase {
   }
     
   // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
-/*  function is ($debug) {
+/*  function is () {
     if ($this->id > 0) {
-      $wrd_lst = $this->parents($debug-1);
+      $wrd_lst = $this->parents();
     } else {
     }
 
-    zu_debug('phrase->is -> '.$this->dsp_id().' is a '.$wrd_lst->name($debug-1), $debug-8);
+    zu_debug('phrase->is -> '.$this->dsp_id().' is a '.$wrd_lst->name());
     return $wrd_lst;
   } */
 
   // true if the word id has a "is a" relation to the related word
   // e.g.for the given word string
-  function is_a ($related_phrase, $debug) {
-    log_debug('phrase->is_a ('.$this->dsp_id().','.$related_phrase->name.')', $debug-10);
+  function is_a ($related_phrase) {
+    log_debug('phrase->is_a ('.$this->dsp_id().','.$related_phrase->name.')');
 
     $result = false;
-    $is_phrases = $this->is($debug-1); // should be taken from the original array to increase speed
+    $is_phrases = $this->is(); // should be taken from the original array to increase speed
     if (in_array($related_phrase->id, $is_phrases->ids)) {
       $result = true;
     }
     
-    log_debug('phrase->is_a -> '.zu_dsp_bool($result).''.$this->id, $debug-10);
+    log_debug('phrase->is_a -> '.zu_dsp_bool($result).''.$this->id);
     return $result;
   }
 
   // SQL to list the user phrases (related to a type if needed)
-  function sql_list ($type, $debug) {
-    log_debug('phrase->sql_list', $debug-10);
+  function sql_list ($type) {
+    log_debug('phrase->sql_list');
         
     $sql_type_from  = '';
     $sql_type_where = '';
@@ -387,7 +387,7 @@ class phrase {
              WHERE p.excluded = 0
           GROUP BY p.name
           ORDER BY p.name;';
-    log_debug('phrase->sql_list -> '.$sql, $debug-10);
+    log_debug('phrase->sql_list -> '.$sql);
     return $sql;
   }
   
@@ -400,8 +400,8 @@ class phrase {
   // create a selector that contains the words and triples
   // if one form contains more than one selector, $pos is used for identification
   // $type is a word to preselect the list to only those phrases matching this type
-  function dsp_selector ($type, $form_name, $pos, $class, $back, $debug) {
-    log_debug('phrase->dsp_selector -> type "'.$type->name.'" with id '.$this->id.' selected for form '.$form_name.''.$pos, $debug-10);
+  function dsp_selector ($type, $form_name, $pos, $class, $back) {
+    log_debug('phrase->dsp_selector -> type "'.$type->name.'" with id '.$this->id.' selected for form '.$form_name.''.$pos);
     $result = '';
     
     if ($pos > 0) {
@@ -425,41 +425,41 @@ class phrase {
       }
     }
     $sel->bs_class   = $class;  
-    $sel->sql        = $this->sql_list ($type, $debug-1);
+    $sel->sql        = $this->sql_list ($type);
     $sel->selected   = $this->id;
     $sel->dummy_text = '... please select';
-    $result .= $sel->display ($debug-1);
+    $result .= $sel->display ();
     
-    log_debug('phrase->dsp_selector -> done ', $debug-10);
+    log_debug('phrase->dsp_selector -> done ');
     return $result;
   }
     
   // simply to display a single word and allow to delete it
   // used by value->dsp_edit
-  function dsp_name_del ($del_call, $debug) {
-    log_debug('phrase->dsp_name_del', $debug-10);
+  function dsp_name_del ($del_call) {
+    log_debug('phrase->dsp_name_del');
     if ($this->id > 0) {
-      $result = $this->dsp_name_del($del_call, $debug-1);
+      $result = $this->dsp_name_del($del_call);
     } else {
     }
     return $result;
   }
 
   // button to add a new word similar to this phrase
-  function btn_add ($back, $debug) {
-    $wrd = $this->main_word($debug-1);
-    $result = $wrd->btn_add($back, $debug-1); 
+  function btn_add ($back) {
+    $wrd = $this->main_word();
+    $result = $wrd->btn_add($back); 
     return $result;    
   }
   
   // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
-  function is_mainly ($debug) {
+  function is_mainly () {
     $result = Null;
-    $is_wrd_lst = $this->is($debug-1);
+    $is_wrd_lst = $this->is();
     if (count($is_wrd_lst->lst) >= 1) {
       $result = $is_wrd_lst->lst[0];
     }
-    log_debug('phrase->is_mainly -> ('.$this->dsp_id().' is a '.$result->name.')', $debug-8);
+    log_debug('phrase->is_mainly -> ('.$this->dsp_id().' is a '.$result->name.')');
     return $result;
   }
   
@@ -469,32 +469,32 @@ class phrase {
   
   */
   
-  function is_time ($debug) {
-    $wrd = $this->main_word ($debug-1);
-    $result = $wrd->is_time ($debug-1);
+  function is_time () {
+    $wrd = $this->main_word ();
+    $result = $wrd->is_time ();
     return $result;    
   }
 
   // return true if the word has the type "measure" (e.g. "meter" or "CHF")
   // in case of a division, these words are excluded from the result
   // in case of add, it is checked that the added value does not have a different measure
-  function is_measure ($debug) {
-    $wrd = $this->main_word ($debug-1);
-    $result = $wrd->is_measure ($debug-1);
+  function is_measure () {
+    $wrd = $this->main_word ();
+    $result = $wrd->is_measure ();
     return $result;    
   }
 
   // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
-  function is_scaling ($debug) {
-    $wrd = $this->main_word ($debug-1);
-    $result = $wrd->is_scaling ($debug-1);
+  function is_scaling () {
+    $wrd = $this->main_word ();
+    $result = $wrd->is_scaling ();
     return $result;    
   }
 
   // return true if the word has the type "scaling_percent" (e.g. "percent")
-  function is_percent ($debug) {
-    $wrd = $this->main_word ($debug-1);
-    $result = $wrd->is_percent ($debug-1);
+  function is_percent () {
+    $wrd = $this->main_word ();
+    $result = $wrd->is_percent ();
     return $result;    
   }
 
@@ -502,10 +502,10 @@ class phrase {
   // e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
   //      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection 
   //      if Q1 is a wikidata qualifier a general time selector should be shown
-  function dsp_time_selector ($type, $form_name, $pos, $back, $debug) {
+  function dsp_time_selector ($type, $form_name, $pos, $back) {
     
-    $wrd = $this->main_word ($debug-1);
-    $result = $wrd->dsp_time_selector ($type, $form_name, $pos, $back, $debug-1);
+    $wrd = $this->main_word ();
+    $result = $wrd->dsp_time_selector ($type, $form_name, $pos, $back);
     return $result;    
   }
   

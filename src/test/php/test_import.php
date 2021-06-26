@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_import_test ($file_list, $debug = 0) {
+function run_import_test ($file_list) {
 
   global $exe_start_time;
 
@@ -35,7 +35,7 @@ function run_import_test ($file_list, $debug = 0) {
   $import_path = PATH_TEST_IMPORT_FILES;
   
   foreach ($file_list AS $json_test_filename) {                               
-    $result = import_json_file($import_path.$json_test_filename, $debug-1);
+    $result = import_json_file($import_path.$json_test_filename);
     $target = 'done';
     $exe_start_time = test_show_contains(', import of '.$json_test_filename.' contains at least '.$target, $target, $result, $exe_start_time, TIMEOUT_LIMIT_IMPORT);
   }

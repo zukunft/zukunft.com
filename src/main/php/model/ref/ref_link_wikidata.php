@@ -29,27 +29,29 @@
   
 */
 
-class ref_link_wikidata {
+class ref_link_wikidata
+{
 
-  // to import an entity from wikidata
-  function read ($debug) {
-    $result = '';
-    log_debug('ref_link_wikidata->read ... done', $debug-10);
-    /*
-    example
-     wget to
-     https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q39|Q183&format=json&languages=en
-     
-     use JSON
-     
-     save the aliases
-     
-     
-     
-    */
-    
-    log_debug('ref_link_wikidata->read ... done', $debug-12);
-    return $result;    
-  }
+    // to import an entity from wikidata
+    function read(): bool
+    {
+        $result = false;
+        log_debug('ref_link_wikidata->read ... done');
+        /*
+        example
+         wget to
+         https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q39|Q183&format=json&languages=en
+
+         use JSON
+
+         save the aliases
+
+
+
+        */
+
+        log_debug('ref_link_wikidata->read ... done');
+        return $result;
+    }
 
 }

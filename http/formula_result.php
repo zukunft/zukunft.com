@@ -33,13 +33,13 @@
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
-$db_con = prg_start("formula_result", "", $debug);
+$db_con = prg_start("formula_result");
 
   $result = ''; // reset the html code var
 
   // load the session user parameters
   $session_usr = New user;
-  $result .= $session_usr->get($debug-1);
+  $result .= $session_usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($session_usr->id > 0) {
@@ -49,7 +49,7 @@ $db_con = prg_start("formula_result", "", $debug);
     $dsp->usr = $session_usr;
     $dsp->id = cl(DBL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
-    $result .= $dsp->dsp_navbar($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back);
     
     // get the parameters
     $frm_val_id   = $_GET['id'];      // id of the formula result if known already
@@ -63,13 +63,13 @@ $db_con = prg_start("formula_result", "", $debug);
       $fv = New formula_value;
       $fv->id = $frm_val_id;
       $fv->usr = $session_usr;
-      $fv->load($debug-1);
+      $fv->load();
       if ($fv->id > 0) {
-        $result .= $fv->explain($phr_id, $back, $debug-1);
+        $result .= $fv->explain($phr_id, $back);
       } else {
         $result .= log_err("Formula result with id ".$frm_val_id.' not found.', "formula_result.php");
       }
-      log_debug('formula_result.php explained (id'.$fv->id.' for user '.$session_usr->name.')', $debug-10);
+      log_debug('formula_result.php explained (id'.$fv->id.' for user '.$session_usr->name.')');
     } else {
       // ... or complain about a wrong call
       $url_txt = "";
@@ -82,4 +82,4 @@ $db_con = prg_start("formula_result", "", $debug);
 
   echo $result;
 
-prg_end($db_con, $debug);
+prg_end($db_con);

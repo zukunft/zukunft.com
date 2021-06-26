@@ -32,7 +32,7 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("calculate", "", $debug);
+$db_con = prg_start("calculate");
 
   // load the requesting user
   $usr = New user;
@@ -47,12 +47,12 @@ $db_con = prg_start("calculate", "", $debug);
     $last_msg_time = time();
     ob_implicit_flush();
     ob_end_flush();
-    log_debug("create the calculation queue ... ", $debug - 1);
+    log_debug("create the calculation queue ... ");
 
     // load the formulas to calculate
     $frm_lst = new formula_list;
     $frm_lst->usr = $usr;
-    $frm_lst->load($debug - 10);
+    $frm_lst->load();
     echo "Calculate " . count($frm_lst->lst) . " formulas<br>";
 
     foreach ($frm_lst as $frm_request) {
@@ -61,20 +61,20 @@ $db_con = prg_start("calculate", "", $debug);
       $calc_fv_lst = new formula_value_list;
       $calc_fv_lst->usr = $usr;
       $calc_fv_lst->frm = $frm_request;
-      $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back, $debug - 2);
-      log_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")", $debug - 1);
+      $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
+      log_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")");
 
       // execute the queue
       foreach ($calc_lst->lst as $r) {
 
         // calculate one formula result
         $frm = clone $r->frm;
-        $fv_lst = $frm->calc($r->wrd_lst, $debug - 1);
+        $fv_lst = $frm->calc($r->wrd_lst);
 
         // show the user the progress every two seconds
         if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
           $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
-          echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names($debug - 1) . ")<br>";
+          echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names() . ")<br>";
           ob_flush();
           flush();
           $last_msg_time = time();
@@ -91,4 +91,4 @@ $db_con = prg_start("calculate", "", $debug);
   }
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);

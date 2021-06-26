@@ -39,16 +39,16 @@ class verb_list {
   public $direction  = '';      // "up" or "down" to select the parents or children
   
   // load the word parameters from the database for a list of words
-  function load($debug) {
+  function load() {
 
     global $db_con;
 
     // check the all minimal input parameters
     if (!isset($this->usr)) {
-      log_err("The user id must be set to load a list of verbs.", "verb_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      log_err("The user id must be set to load a list of verbs.", "verb_list->load");
     /*  
     } elseif (!isset($this->wrd) OR $this->direction == '')  {  
-      zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load", '', (new Exception)->getTraceAsString(), $this->usr);
+      zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
     */  
     } else {
 
@@ -74,7 +74,7 @@ class verb_list {
             ORDER BY v.verb_id;";
       //$db_con = New mysql;
       $db_con->usr_id = $this->usr->id;         
-      $db_vrb_lst = $db_con->get($sql, $debug-5);  
+      $db_vrb_lst = $db_con->get($sql);  
       $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
       foreach ($db_vrb_lst AS $db_vrb) {
         $vrb = New verb;
@@ -88,16 +88,16 @@ class verb_list {
         $vrb->frm_name    = $db_vrb['formula_name'];
         $vrb->description = $db_vrb['description'];
         $this->lst[]      = $vrb;
-        log_debug('verb_list->load added ('.$vrb->name.')', $debug-15);
+        log_debug('verb_list->load added ('.$vrb->name.')');
       }
       log_debug('verb_list->load ('.count(".$sql_where."
-                 ).')', $debug-10);
+                 ).')');
     }  
   }
         
   // calculates how many times a word is used, because this can be helpful for sorting
-  function calc_usage ($debug) {
-    log_debug('verb_list->calc_usage', $debug-10);
+  function calc_usage () {
+    log_debug('verb_list->calc_usage');
 
     global $db_con;
 
@@ -107,9 +107,10 @@ class verb_list {
               FROM word_links t
              WHERE l.verb_id = t.verb_id);";
     //$db_con = New mysql;
-    $db_con->usr_id = $this->usr->id;         
-    $result = $db_con->exe($sql, DBL_SYSLOG_ERROR, "verb_list->calc_usage", (new Exception)->getTraceAsString(), $debug-10);
-    
+    $db_con->usr_id = $this->usr->id;
+    //$result = $db_con->exe($sql, "verb_list->calc_usage", array());
+    $result = $db_con->exe($sql);
+
     return $result;           
   }
   
@@ -119,7 +120,7 @@ class verb_list {
   */
 
   // return a list of the verb ids as an sql compatible text
-  function ids_txt($debug) {
+  function ids_txt() {
     $ids = array();
     foreach ($this->lst AS $vrb) {
       if ($vrb->id > 0) {
@@ -131,11 +132,11 @@ class verb_list {
   }
 
   // display all verbs and allow an admin to change it
-  function dsp_list ($debug) {
-    log_debug('verb_list->dsp_list('.$this->usr.')', $debug-10);
+  function dsp_list () {
+    log_debug('verb_list->dsp_list('.$this->usr.')');
     $result  = "";
 
-    $result .= dsp_list($this->lst, "link_type", $debug-1);
+    $result .= dsp_list($this->lst, "link_type");
 
     return $result;
   }

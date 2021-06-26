@@ -44,91 +44,100 @@
   
 */
 
-class term {
+class term
+{
 
-  public $id    = NULL; // the database id of the word, verb or formula
-  public $usr   = NULL; // the person who wants to add a term (word, verb or formula)
-  public $type  = '';   // either "word", "verb" or "formula"
-  public $name  = '';   // the name used (must be unique for words, verbs and formulas)
-  public $obj   = NULL; // the word, verb or formula object
-  
-  // simply load a formula (separate function, because used twice)
-  private function load_frm ($debug) {
-    log_debug('term->load_frm for "'.$this->name.'"', $debug-16);
-    $result = 0;
-    $frm = New formula;
-    $frm->name = $this->name;
-    $frm->usr  = $this->usr;
-    $frm->load($debug-1);
-    if ($frm->id > 0) {
-      $this->id = $frm->id;
-      $this->type = 'formula';
-      $this->obj = $frm;
-      $result = $frm->id;
-    }
-    log_debug('term->load_frm loaded id "'.$this->id.'"', $debug-16);
-    return $result;
-  }
-  
-  // test if the name is used already
-  function load ($debug) {
-    log_debug('term->load ('.$this->name.')', $debug-10);
-    $result = NULL;
+    public $id = NULL; // the database id of the word, verb or formula
+    public $usr = NULL; // the person who wants to add a term (word, verb or formula)
+    public $type = '';   // either "word", "verb" or "formula"
+    public $name = '';   // the name used (must be unique for words, verbs and formulas)
+    public $obj = NULL; // the word, verb or formula object
 
-    // test the word
-    $wrd = new word_dsp;
-    $wrd->name = $this->name;
-    $wrd->usr  = $this->usr;
-    $wrd->load($debug-1);
-    if ($wrd->id > 0) {
-      log_debug('term->load word type is "'.$wrd->type_id.'" and the formula type is '.cl(DBL_WORD_TYPE_FORMULA_LINK), $debug-16);
-      if ($wrd->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
-        $this->load_frm($debug-1);
-      } else {
-        $this->id = $wrd->id;
-        $this->type = 'word';
-        $this->obj = $wrd;
-        $result = $wrd->id;
-      }
-    } else {
-      $lnk = New word_link;
-      $lnk->name = $this->name;
-      $lnk->usr  = $this->usr;
-      $lnk->load($debug-1);
-      if ($lnk->id > 0) {
-        $this->id = $lnk->id;
-        $this->type = 'triple';
-        $this->obj = $lnk;
-        $result = $lnk->id;
-      } else {
-        $vrb = New verb;
-        $vrb->name   = $this->name;
-        $vrb->usr = $this->usr;
-        $vrb->load($debug-1);
-        if ($vrb->id > 0) {
-          $this->id = $vrb->id;
-          $this->type = 'verb';
-          $this->obj = $vrb;
-          $result = $vrb->id;
-        } else {
-          $this->load_frm($debug-1);
+    // simply load a formula (separate function, because used twice)
+    private function load_frm(): bool
+    {
+        log_debug('term->load_frm for "' . $this->name . '"');
+        $result = false;
+        $frm = new formula;
+        $frm->name = $this->name;
+        $frm->usr = $this->usr;
+        $frm->load();
+        if ($frm->id > 0) {
+            $this->id = $frm->id;
+            $this->type = 'formula';
+            $this->obj = $frm;
+            $result = true;
         }
-      }
-    }  
-    log_debug('term->load loaded id "'.$this->id.'" for '.$this->name, $debug-16);
-    
-    return $result;    
-  }
-
-  // create a message text that the name is already used
-  function id_used_msg () {
-    $result = "";
-    
-    if ($this->id > 0) {
-      $result = dsp_err('A '.$this->type.' with the name "'.$this->name.'" already exists. Please use another name.');
+        log_debug('term->load_frm loaded id "' . $this->id . '"');
+        return $result;
     }
 
-    return $result;
-  }
-  
+    // test if the name is used already
+    // returns the id of the object found
+    function load(): int
+    {
+        log_debug('term->load (' . $this->name . ')');
+        $result = 0;
+
+        // test the word
+        $wrd = new word_dsp;
+        $wrd->name = $this->name;
+        $wrd->usr = $this->usr;
+        $wrd->load();
+        if ($wrd->id > 0) {
+            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(DBL_WORD_TYPE_FORMULA_LINK));
+            if ($wrd->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+                if ($this->load_frm()) {
+                    $result = $this->obj->id;
+                }
+            } else {
+                $this->id = $wrd->id;
+                $this->type = 'word';
+                $this->obj = $wrd;
+                $result = $wrd->id;
+            }
+        } else {
+            $lnk = new word_link;
+            $lnk->name = $this->name;
+            $lnk->usr = $this->usr;
+            $lnk->load();
+            if ($lnk->id > 0) {
+                $this->id = $lnk->id;
+                $this->type = 'triple';
+                $this->obj = $lnk;
+                $result = $lnk->id;
+            } else {
+                $vrb = new verb;
+                $vrb->name = $this->name;
+                $vrb->usr = $this->usr;
+                $vrb->load();
+                if ($vrb->id > 0) {
+                    $this->id = $vrb->id;
+                    $this->type = 'verb';
+                    $this->obj = $vrb;
+                    $result = $vrb->id;
+                } else {
+                    if ($this->load_frm()) {
+                        $result = $this->obj->id;
+                    }
+                }
+            }
+        }
+        log_debug('term->load loaded id "' . $this->id . '" for ' . $this->name);
+
+        return $result;
+    }
+
+    // create a message text that the name is already used
+    function id_used_msg(): string
+    {
+        $result = "";
+
+        if ($this->id > 0) {
+            $result = dsp_err('A ' . $this->type . ' with the name "' . $this->name . '" already exists. Please use another name.');
+        }
+
+        return $result;
+    }
+
 }

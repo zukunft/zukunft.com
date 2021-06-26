@@ -35,14 +35,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("verbs", '', $debug);
+$db_con = prg_start("verbs");
 
   $result = ''; // reset the html code var
   $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
 
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -51,21 +51,21 @@ $db_con = prg_start("verbs", '', $debug);
     $dsp = new view_dsp;
     $dsp->id = cl(DBL_VIEW_VERBS);
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
+    $dsp->load();
         
     // show the header
-    $result .= $dsp->dsp_navbar($back, $debug-1);
+    $result .= $dsp->dsp_navbar($back);
 
     // display the verb list
     $result .= dsp_text_h2("Word link types");
     $dsp = New verb_list;
     $dsp->usr = $usr;
-    $dsp->load($debug-1);
-    $result .= $dsp->dsp_list($debug-1);
-    //$result .= zul_dsp_list ($usr->id, $debug);
+    $dsp->load();
+    $result .= $dsp->dsp_list();
+    //$result .= zul_dsp_list ($usr->id);
   }
 
   echo $result;
 
 // Closing connection
-prg_end($db_con, $debug);
+prg_end($db_con);

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_value_test ($debug = 0) {
+function run_formula_value_test () {
 
   global $usr;
   global $exe_start_time;
@@ -43,12 +43,12 @@ function run_formula_value_test ($debug = 0) {
   $phr_lst->add_name(TW_MIO);
   //$phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_PCT);
-  $abb_up_grp = $phr_lst->get_grp($debug-1);
+  $abb_up_grp = $phr_lst->get_grp();
   if ($abb_up_grp->id > 0) {
     $abb_up = New formula_value;
     $abb_up->phr_grp_id = $abb_up_grp->id;
     $abb_up->usr = $usr;
-    $abb_up->load($debug-1);
+    $abb_up->load();
     $result = $abb_up->value;
   } else {
     $result = 'no '.TW_SALES.' '.TF_INCREASE.' value found for '.TW_ABB;
@@ -61,9 +61,9 @@ function run_formula_value_test ($debug = 0) {
 
   // test load result with time
   $phr_lst->add_name(TW_2014); 
-  $phr_lst->load($debug-1);
-  $time_phr = $phr_lst->time_useful($debug-1);
-  $abb_up_grp = $phr_lst->get_grp($debug-1);
+  $phr_lst->load();
+  $time_phr = $phr_lst->time_useful();
+  $abb_up_grp = $phr_lst->get_grp();
   if ($abb_up_grp->id > 0) {
     $abb_up = New formula_value;
     $abb_up->phr_grp_id = $abb_up_grp->id;
@@ -71,7 +71,7 @@ function run_formula_value_test ($debug = 0) {
     //$abb_up->wrd_lst = $phr_lst;
     $abb_up->usr = $usr;
     $abb_up->usr->id = $usr->id; // temp solution until the value is saved automatically for all users
-    $abb_up->load($debug-1);
+    $abb_up->load();
     $result = $abb_up->value;
   } else {
     $result = 'no '.TW_2014.' '.TW_SALES.' '.TF_INCREASE.' value found for '.TW_ABB;
@@ -93,19 +93,19 @@ function run_formula_value_test ($debug = 0) {
   $wrd_lst->add_name(TW_CHF);
   $wrd_lst->add_name(TW_MIO);
   $wrd_lst->add_name(TW_2014);
-  $wrd_lst->load($debug-1);
+  $wrd_lst->load();
   $dest_wrd_lst = New word_list;
   $dest_wrd_lst->usr = $usr;
   $dest_wrd_lst->add_name(TW_SALES);
   $dest_wrd_lst->add_name(TW_K);
-  $dest_wrd_lst->load($debug-1);
+  $dest_wrd_lst->load();
   $mio_val = New value;
   $mio_val->ids = $wrd_lst->ids;
   $mio_val->usr = $usr;
-  $mio_val->load($debug-1);
-  log_debug('value->scale value loaded', $debug-1);
-  //$result = $mio_val->check($debug-1);
-  $result = $mio_val->scale($dest_wrd_lst, $debug-1);
+  $mio_val->load();
+  log_debug('value->scale value loaded');
+  //$result = $mio_val->check();
+  $result = $mio_val->scale($dest_wrd_lst);
   $target = '46000000000';
   $exe_start_time = test_show_result('value->val_scaling for a tern list '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 
@@ -117,11 +117,11 @@ function run_formula_value_test ($debug = 0) {
   $phr_lst->add_name(TW_ABB);
   $phr_lst->add_name(TW_SALES);
   $phr_lst->add_name(TW_2014);
-  $phr_lst->load($debug-1);
+  $phr_lst->load();
   $val_best_guess = New value;
   $val_best_guess->ids = $phr_lst->ids;
   $val_best_guess->usr = $usr;
-  $val_best_guess->load($debug-1);
+  $val_best_guess->load();
   $result = $val_best_guess->number;
   $target = '46000';
   $exe_start_time = test_show_result('value->load the best guess for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
@@ -140,7 +140,7 @@ function run_formula_value_test ($debug = 0) {
 
 }
 
-function run_formula_value_list_test ($debug = 0) {
+function run_formula_value_list_test () {
 
   global $usr;
   global $exe_start_time;
@@ -148,13 +148,13 @@ function run_formula_value_list_test ($debug = 0) {
   test_header('Test the formula value list class (classes/formula_value_list.php)');
 
   // todo add PE frm test
-  //$frm = load_formula(TF_PE, $debug-1);
-  $frm = load_formula(TF_INCREASE, $debug-1);
+  //$frm = load_formula(TF_PE);
+  $frm = load_formula(TF_INCREASE);
   $fv_lst = New formula_value_list;
   $fv_lst->frm_id = $frm->id;
   $fv_lst->usr = $usr;
   $fv_lst->load();
-  $result = $fv_lst->dsp_id($debug-1);
+  $result = $fv_lst->dsp_id();
   $target = '"Sales","percent","increase","'.TW_ADD_RENAMED.'","2017"';
   $exe_start_time = test_show_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
 

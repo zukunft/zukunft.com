@@ -65,14 +65,14 @@ function zul_plural ($id) {
 }
 
 // name including the user id as a parameter to return the verb in the lanuage of the user
-function zul_name ($id, $user_id, $debug) {
+function zul_name ($id, $user_id) {
   return zu_sql_get_field ('verb', $id, 'verb_name');
 }
 
 // the verb id for the given name
-function zul_id ($name, $debug) {
-  log_debug('zul_id('.$name.')', $debug);
-  return zu_sql_get_id ('verb', $name, $debug-1);
+function zul_id ($name) {
+  log_debug('zul_id('.$name.')');
+  return zu_sql_get_id ('verb', $name);
 }
 
 // return the link type id
@@ -81,19 +81,19 @@ function zul_type ($name) {
 }
 
 // display all verbs and allow an admin to change it
-function zul_dsp_list ($user_id, $debug) {
-  log_debug('zul_dsp_list('.$user_id.')', $debug);
+function zul_dsp_list ($user_id) {
+  log_debug('zul_dsp_list('.$user_id.')');
   $result  = "";
 
-  $verb_lst = zu_sql_verbs($user_id, $debug-1);
-  $result .= zuh_list($verb_lst, "verb", $debug-1);
+  $verb_lst = zu_sql_verbs($user_id);
+  $result .= zuh_list($verb_lst, "verb");
 
   return $result;
 }
 
 // show the html form to add a new verb 
-function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link, $debug) {
-  log_debug('zul_dsp_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')', $debug);
+function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link) {
+  log_debug('zul_dsp_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')');
   $result = '';
   
   $result .= zuh_text_h2('Add verb (word link type)');
@@ -136,12 +136,12 @@ function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reve
   $result .= zuh_tbl_end();
   $result .= zuh_form_end();
 
-  log_debug('zul_dsp_add ... done', $debug);
+  log_debug('zul_dsp_add ... done');
   return $result;
 }
 
-function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link, $debug) {
-  log_debug('zul_db_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')', $debug);
+function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link) {
+  log_debug('zul_db_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')');
 
   // check the parameter is expected to be done by the calling function
   
@@ -149,27 +149,27 @@ function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_rever
   $verb_id = 0;
   if ($verb_name <> "") {
     // check if a word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
-    $id_txt = zu_sql_id($verb_name, $user_id, $debug-1);
+    $id_txt = zu_sql_id($verb_name, $user_id);
     if ($id_txt <> "") {
-      echo zu_sql_id_msg($id_txt, $verb_name, $user_id, $debug-1);
+      echo zu_sql_id_msg($id_txt, $verb_name, $user_id);
     } else {
       // log and add the new verb if valid
-      $log_id = zu_log($user_id, "add", "verbs", "verb_name", "", $verb_name, 0, $debug-1);
+      $log_id = zu_log($user_id, "add", "verbs", "verb_name", "", $verb_name, 0);
       if ($log_id > 0) {
         // insert the new verb
-        $verb_id = zu_sql_insert("verbs", "verb_name", sf($verb_name), $user_id, $debug);
+        $verb_id = zu_sql_insert("verbs", "verb_name", sf($verb_name), $user_id);
         if ($verb_id > 0) {
           // update the id in the log
-          $result = zu_log_upd($log_id, $verb_id, $user_id, $debug-1);
+          $result = zu_log_upd($log_id, $verb_id, $user_id);
           // save the other verb names
-          if (zu_log($user_id, "update", "verbs", "name_plural", "", $name_plural, $verb_id, $debug-1) > 0 ) {
-            $result = zu_sql_update("verbs", $verb_id, "name_plural", sf($name_plural), $user_id, $debug-1);
+          if (zu_log($user_id, "update", "verbs", "name_plural", "", $name_plural, $verb_id) > 0 ) {
+            $result = zu_sql_update("verbs", $verb_id, "name_plural", sf($name_plural), $user_id);
           }
-          if (zu_log($user_id, "update", "verbs", "name_reverse", "", $name_reverse, $verb_id, $debug-1) > 0 ) {
-            $result = zu_sql_update("verbs", $verb_id, "name_reverse", sf($name_reverse), $user_id, $debug-1);
+          if (zu_log($user_id, "update", "verbs", "name_reverse", "", $name_reverse, $verb_id) > 0 ) {
+            $result = zu_sql_update("verbs", $verb_id, "name_reverse", sf($name_reverse), $user_id);
           }
-          if (zu_log($user_id, "update", "verbs", "name_plural_reverse", "", $name_plural_reverse, $verb_id, $debug-1) > 0 ) {
-            $result = zu_sql_update("verbs", $verb_id, "name_plural_reverse", sf($name_plural_reverse), $user_id, $debug-1);
+          if (zu_log($user_id, "update", "verbs", "name_plural_reverse", "", $name_plural_reverse, $verb_id) > 0 ) {
+            $result = zu_sql_update("verbs", $verb_id, "name_plural_reverse", sf($name_plural_reverse), $user_id);
           }
         } else {
           log_err("Adding verb ".$verb_name." failed.", "zul_db_add");
@@ -182,15 +182,15 @@ function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_rever
 }
 
 // calulates how many times a word is used, because this can be helpful for sorting
-function zul_calc_usage ($debug) {
-  log_debug('zul_calc_usage', $debug);
+function zul_calc_usage () {
+  log_debug('zul_calc_usage');
   
   $sql = "UPDATE verbs l
              SET `words` = ( 
           SELECT COUNT(to_word_id) 
             FROM word_links t
            WHERE l.verb_id = t.verb_id);";
-  $result = zu_sql_exe($sql, cl(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zul_calc_usage", (new Exception)->getTraceAsString(), $debug-10);
+  $result = zu_sql_exe($sql, cl(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zul_calc_usage", (new Exception)->getTraceAsString());
   
   return $result;           
 }

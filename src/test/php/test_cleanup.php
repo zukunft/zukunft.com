@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,243 +26,185 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_test_cleanup ($debug = 0) {
+function run_test_cleanup()
+{
 
-  global $db_con;
+    global $db_con;
 
-  global $usr;
-  global $usr2;
-  global $exe_start_time;
-  
-  global $test_val_lst;
+    global $usr;
+    global $usr2;
+    global $exe_start_time;
 
-  // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
-  test_header('Cleanup the test');
+    global $test_val_lst;
 
-  foreach ($test_val_lst AS $val_id) {
-    if ($val_id > 0) {
-      // request to delete the added test value
-      $val = New value;
-      $val->id = $val_id;
-      $val->usr = $usr;
-      $val->load($debug-1);
-      // check again, because some id may be added twice
-      if ($val->id > 0) {
-        $result = $val->del($debug-1);
+    // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
+    test_header('Cleanup the test');
+
+    if ($test_val_lst != null) {
+        foreach ($test_val_lst as $val_id) {
+            if ($val_id > 0) {
+                // request to delete the added test value
+                $val = new value;
+                $val->id = $val_id;
+                $val->usr = $usr;
+                $val->load();
+                // check again, because some id may be added twice
+                if ($val->id > 0) {
+                    $result = $val->del();
+                    $target = '11';
+                    $exe_start_time = test_show_result('value->del test value for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+                }
+            }
+        }
+    }
+
+    // secure cleanup the test views
+    // todo: if a user has changed the view during the test, delete also the user views
+
+    // load the test view
+    $dsp = load_view(TM_ADD);
+    if ($dsp->id <= 0) {
+        $dsp = load_view(TM_ADD_RENAMED);
+    }
+
+    // load the test view for user 2
+    $dsp_usr2 = load_view_usr(TM_ADD, $usr2);
+    if ($dsp_usr2->id <= 0) {
+        $dsp_usr2 = load_view_usr(TM_ADD_RENAMED, $usr2);
+    }
+
+    // load the first test view component
+    $cmp = load_view_component(TC_ADD);
+    if ($cmp->id <= 0) {
+        $cmp = load_view_component(TC_ADD_RENAMED);
+    }
+
+    // load the first test view component for user 2
+    $cmp_usr2 = load_view_component_usr(TC_ADD, $usr2);
+    if ($cmp_usr2->id <= 0) {
+        $cmp_usr2 = load_view_component_usr(TC_ADD_RENAMED, $usr2);
+    }
+
+    // load the second test view component
+    $cmp2 = load_view_component(TC_ADD2);
+
+    // load the second test view component for user 2
+    $cmp2_usr2 = load_view_component_usr(TC_ADD2, $usr2);
+
+    // check if the test components have been unlinked
+    if ($dsp->id > 0 and $cmp->id > 0) {
+        $result = $cmp->unlink($dsp);
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: unlink first component "' . $cmp->name . '" from "' . $dsp->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    }
+
+    // check if the test components have been unlinked for user 2
+    if ($dsp_usr2->id > 0 and $cmp_usr2->id > 0) {
+        $result = $cmp_usr2->unlink($dsp_usr2);
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: unlink first component "' . $cmp_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    }
+
+    // unlink the second component
+    // error at the moment: if the second user is still using the link,
+    // the second user does not get the owner
+    // instead a foreign key error happens
+    if ($dsp->id > 0 and $cmp2->id > 0) {
+        $result = $cmp2->unlink($dsp);
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: unlink second component "' . $cmp2->name . '" from "' . $dsp->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    }
+
+    // unlink the second component for user 2
+    if ($dsp_usr2->id > 0 and $cmp2_usr2->id > 0) {
+        $result = $cmp2_usr2->unlink($dsp_usr2);
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: unlink second component "' . $cmp2_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    }
+
+    // request to delete the test view component
+    if ($cmp->id > 0) {
+        $result = $cmp->del();
+        $target = '111';
+        //$target = '';
+        $exe_start_time = test_show_result('cleanup: del of first component "' . TC_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
+
+    // request to delete the test view component for user 2
+    if ($cmp_usr2->id > 0) {
+        $result = $cmp_usr2->del();
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: del of first component "' . TC_ADD . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
+
+    // request to delete the second added test view component
+    if ($cmp2->id > 0) {
+        $result = $cmp2->del();
         $target = '11';
-        $exe_start_time = test_show_result('value->del test value for "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
-      }
-    }  
-  }
+        //$target = '';
+        $exe_start_time = test_show_result('cleanup: del of second component "' . TC_ADD2 . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
 
-  // secure cleanup the test views
-  // todo: if a user has changed the view during the test, delete also the user views
+    // request to delete the second added test view component for user 2
+    if ($cmp2_usr2->id > 0) {
+        $result = $cmp2_usr2->del();
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: del of second component "' . TC_ADD2 . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
 
-  // load the test view
-  $dsp = load_view(TM_ADD, $debug-1);
-  if ($dsp->id <= 0) { $dsp = load_view(TM_ADD_RENAMED, $debug-1); }
+    // request to delete the added test view
+    if ($dsp->id > 0) {
+        $result = $dsp->del();
+        $target = '111';
+        $exe_start_time = test_show_result('cleanup: del of view "' . TM_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
 
-  // load the test view for user 2
-  $dsp_usr2 = load_view_usr(TM_ADD, $usr2, $debug-1);
-  if ($dsp_usr2->id <= 0) { $dsp_usr2 = load_view_usr(TM_ADD_RENAMED, $usr2, $debug-1); }
+    // request to delete the added test view for user 2
+    if ($dsp_usr2->id > 0) {
+        $result = $dsp_usr2->del();
+        $target = '';
+        $exe_start_time = test_show_result('cleanup: del of view "' . TM_ADD . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
 
-  // load the first test view component
-  $cmp = load_view_component(TC_ADD, $debug-1);
-  if ($cmp->id <= 0) { $cmp = load_view_component(TC_ADD_RENAMED, $debug-1); }
+    // request to delete the added test formula
+    $frm = load_formula(TF_ADD);
+    if ($frm->id > 0) {
+        $result = $frm->del();
+        $target = '';
+        $exe_start_time = test_show_result('formula->del of "' . TF_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    }
 
-  // load the first test view component for user 2
-  $cmp_usr2 = load_view_component_usr(TC_ADD, $usr2, $debug-1);
-  if ($cmp_usr2->id <= 0) { $cmp_usr2 = load_view_component_usr(TC_ADD_RENAMED, $usr2, $debug-1); }
+    // request to delete the renamed test formula
+    $frm = load_formula(TF_ADD_RENAMED);
+    if ($frm->id > 0) {
+        $result = $frm->del();
+        $target = '1111';
+        $exe_start_time = test_show_result('formula->del of "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
 
-  // load the second test view component
-  $cmp2 = load_view_component(TC_ADD2, $debug-1);
+    // request to delete the added test word
+    // todo: if a user has changed the word during the test, delete also the user words
+    $wrd = load_word(TW_ADD);
+    if ($wrd->id > 0) {
+        $result = $wrd->del();
+        $target = '';
+        $exe_start_time = test_show_result('word->del of "' . TW_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    }
 
-  // load the second test view component for user 2
-  $cmp2_usr2 = load_view_component_usr(TC_ADD2, $usr2, $debug-1);
+    // request to delete the renamed test word
+    $wrd = load_word(TW_ADD_RENAMED);
+    if ($wrd->id > 0) {
+        $result = $wrd->del();
+        $target = true;
+        $exe_start_time = test_show_result('word->del of "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    }
 
-  // check if the test components have been unlinked
-  if ($dsp->id > 0 and $cmp->id > 0) {
-    $result = $cmp->unlink($dsp, $debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: unlink first component "'.$cmp->name.'" from "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
-  }
-
-  // check if the test components have been unlinked for user 2
-  if ($dsp_usr2->id > 0 and $cmp_usr2->id > 0) {
-    $result = $cmp_usr2->unlink($dsp_usr2, $debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: unlink first component "'.$cmp_usr2->name.'" from "'.$dsp_usr2->name.'" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
-  }
-
-  // unlink the second component
-  // error at the moment: if the second user is still using the link, 
-  // the second user does not get the owner
-  // instead a foreign key error happens
-  if ($dsp->id > 0 and $cmp2->id > 0) {
-    $result = $cmp2->unlink($dsp, $debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: unlink second component "'.$cmp2->name.'" from "'.$dsp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
-  }
-
-  // unlink the second component for user 2
-  if ($dsp_usr2->id > 0 and $cmp2_usr2->id > 0) {
-    $result = $cmp2_usr2->unlink($dsp_usr2, $debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: unlink second component "'.$cmp2_usr2->name.'" from "'.$dsp_usr2->name.'" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
-  }
-
-  // request to delete the test view component
-  if ($cmp->id > 0) {
-    $result = $cmp->del($debug-1);
-    $target = '111';
-    //$target = '';
-    $exe_start_time = test_show_result('cleanup: del of first component "'.TC_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the test view component for user 2
-  if ($cmp_usr2->id > 0) {
-    $result = $cmp_usr2->del($debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: del of first component "'.TC_ADD.'" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the second added test view component
-  if ($cmp2->id > 0) {
-    $result = $cmp2->del($debug-1);
-    $target = '11';
-    //$target = '';
-    $exe_start_time = test_show_result('cleanup: del of second component "'.TC_ADD2.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the second added test view component for user 2
-  if ($cmp2_usr2->id > 0) {
-    $result = $cmp2_usr2->del($debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: del of second component "'.TC_ADD2.'" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the added test view
-  if ($dsp->id > 0) {
-    $result = $dsp->del($debug-1);
-    $target = '111';
-    $exe_start_time = test_show_result('cleanup: del of view "'.TM_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the added test view for user 2
-  if ($dsp_usr2->id > 0) {
-    $result = $dsp_usr2->del($debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('cleanup: del of view "'.TM_ADD.'" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the added test formula
-  $frm = load_formula(TF_ADD, $debug-1);
-  if ($frm->id > 0) {
-    $result = $frm->del($debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('formula->del of "'.TF_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  }
-
-  // request to delete the renamed test formula
-  $frm = load_formula(TF_ADD_RENAMED, $debug-1);
-  if ($frm->id > 0) {
-    $result = $frm->del($debug-1);
-    $target = '1111';
-    $exe_start_time = test_show_result('formula->del of "'.TF_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // request to delete the added test word
-  // todo: if a user has changed the word during the test, delete also the user words
-  $wrd = load_word(TW_ADD, $debug-1);
-  if ($wrd->id > 0) {
-    $result = $wrd->del($debug-1);
-    $target = '';
-    $exe_start_time = test_show_result('word->del of "'.TW_ADD.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-  }
-
-  // request to delete the renamed test word
-  $wrd = load_word(TW_ADD_RENAMED, $debug-1);
-  if ($wrd->id > 0) {
-    $result = $wrd->del($debug-1);
-    $target = '11';
-    $exe_start_time = test_show_result('word->del of "'.TW_ADD_RENAMED.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
-  }
-
-  // reset the auto increase id to avoid too high numbers just by testing
-  //$db_con = new mysql;
-  $db_con->usr_id = $usr->id;         
-
-  // for values
-  $sql_max = 'SELECT MAX(value_id) AS max_id FROM `values`;';
-  $val_max_db = $db_con->get1($sql_max, $debug-1);
-  $next_id = 0;
-  if ($val_max_db['max_id'] > 0) {
-    $next_id = $val_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `values` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for values: '.$next_id.'<br>';
-
-
-  // for words
-  $sql_max = 'SELECT MAX(word_id) AS max_id FROM words;';
-  $wrd_max_db = $db_con->get1($sql_max, $debug-1); 
-  if ($wrd_max_db['max_id'] > 0) {
-    $next_id = $wrd_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `words` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for words: '.$next_id.'<br>';
-
-
-  // for formulas
-  $sql_max = 'SELECT MAX(formula_id) AS max_id FROM formulas;';
-  $wrd_max_db = $db_con->get1($sql_max, $debug-1); 
-  if ($wrd_max_db['max_id'] > 0) {
-    $next_id = $wrd_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `formulas` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for formulas: '.$next_id.'<br>';
-
-  // for formula links
-  $sql_max = 'SELECT MAX(formula_link_id) AS max_id FROM formula_links;';
-  $wrd_max_db = $db_con->get1($sql_max, $debug-1); 
-  if ($wrd_max_db['max_id'] > 0) {
-    $next_id = $wrd_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `formula_links` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for formula_links: '.$next_id.'<br>';
-
-  // for views
-  $sql_max = 'SELECT MAX(view_id) AS max_id FROM views;';
-  $wrd_max_db = $db_con->get1($sql_max, $debug-1); 
-  if ($wrd_max_db['max_id'] > 0) {
-    $next_id = $wrd_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `views` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for views: '.$next_id.'<br>';
-
-  // for view components
-  $sql_max = 'SELECT MAX(view_component_id) AS max_id FROM view_components;';
-  $wrd_max_db = $db_con->get1($sql_max, $debug-1); 
-  if ($wrd_max_db['max_id'] > 0) {
-    $next_id = $wrd_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `view_components` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for view_components: '.$next_id.'<br>';
-
-  // for view component links
-  $sql_max = 'SELECT MAX(view_component_link_id) AS max_id FROM view_component_links;';
-  $wrd_max_db = $db_con->get1($sql_max, $debug-1); 
-  if ($wrd_max_db['max_id'] > 0) {
-    $next_id = $wrd_max_db['max_id'] + 1;
-    $sql = 'ALTER TABLE `view_component_links` auto_increment = '.$next_id.';';
-    $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "test.php", (new Exception)->getTraceAsString(), $debug-1);
-  }
-  echo 'Next database id for view_component_links: '.$next_id.'<br>';
+    echo $db_con->seq_reset(DB_TYPE_VALUE) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_WORD) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_FORMULA) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_FORMULA_LINK) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_VIEW) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_VIEW_COMPONENT) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_VIEW_COMPONENT_LINK) . '<br>';
 
 }

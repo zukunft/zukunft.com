@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_graph_test ($debug = 0) {
+function run_graph_test () {
 
   global $usr;
   global $exe_start_time;
@@ -41,22 +41,22 @@ function run_graph_test ($debug = 0) {
   // step 1: define the phrase list e.g. in this case only word "Company"
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
-  $phr_lst->add_name(TEST_WORD, $debug);
-  $phr_lst->load($debug-1);
+  $phr_lst->add_name(TEST_WORD);
+  $phr_lst->load();
 
   // step 2: get all values related to the phrases
   $val_lst = New value_list;
   $val_lst->usr     = $usr;
   $val_lst->phr_lst = $phr_lst;
-  $val_lst->load_all($debug-1);
-  $wrd_lst_all = $val_lst->phr_lst->wrd_lst_all($debug-1);
+  $val_lst->load_all();
+  $wrd_lst_all = $val_lst->phr_lst->wrd_lst_all();
 
   // step 3: get all phrases used for the value descriptions
   $phr_lst_used      = New phrase_list;
   $phr_lst_used->usr = $usr;
   foreach ($wrd_lst_all->lst AS $wrd) {
     if (!array_key_exists($wrd->id, $phr_lst_used->ids)) {
-      $phr_lst_used->add($wrd->phrase($debug-1), $debug-1);
+      $phr_lst_used->add($wrd->phrase());
     }
   }
   // step 4: get the word links for the used phrases
@@ -65,7 +65,7 @@ function run_graph_test ($debug = 0) {
   $lnk_lst->usr       = $usr;
   $lnk_lst->wrd_lst   = $phr_lst_used;
   $lnk_lst->direction = 'up';
-  $lnk_lst->load($debug-1);
+  $lnk_lst->load();
   $result = $lnk_lst->name();
   // check if at least the basic relations are in the database
   $target = ''.TEST_WORD.' has a balance sheet';
@@ -81,12 +81,12 @@ function run_graph_test ($debug = 0) {
   $phr_lst->add_name(TW_ABB);
   $phr_lst->add_name(TW_SALES);
   $phr_lst->add_name(TW_MIO);
-  $phr_lst->load($debug-1);
+  $phr_lst->load();
   $lnk_lst = New word_link_list;
   $lnk_lst->usr       = $usr;
   $lnk_lst->wrd_lst   = $phr_lst;
   $lnk_lst->direction = 'up';
-  $lnk_lst->load($debug-1);
+  $lnk_lst->load();
   $result = $lnk_lst->name();
   // to be reviewed
   //$target = 'ABB (Company),million (scaling)';
@@ -98,27 +98,27 @@ function run_graph_test ($debug = 0) {
   $ABB = New word_dsp;
   $ABB->usr = $usr;
   $ABB->name = TW_ABB;
-  $ABB->load($debug-1);
+  $ABB->load();
   $is = New verb;
   $is->id= cl(DBL_LINK_TYPE_IS);
   $is->usr = $usr->id;
-  $is->load($debug-1);
+  $is->load();
   $graph = New word_link_list;
   $graph->wrd = $ABB;
   $graph->vrb = $is;
   $graph->usr = $usr;
   $graph->direction = 'down';
-  $graph->load($debug-1);
-  $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id, $debug);
-  $result = $graph->display($back, $debug-1);
+  $graph->load();
+  $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id);
+  $result = $graph->display($back);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
   $exe_start_time = test_show_result('graph->load for ABB down is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // the other side
   $graph->direction = 'up';
-  $graph->load($debug-1);
-  $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id, $debug);
-  $result = $graph->display($back, $debug-1);
+  $graph->load();
+  $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id);
+  $result = $graph->display($back);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
   $exe_start_time = test_show_result('graph->load for ABB up is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

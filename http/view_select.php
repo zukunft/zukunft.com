@@ -34,14 +34,14 @@ if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
 // open database
-$db_con = prg_start("view_select", "", $debug);
+$db_con = prg_start("view_select");
 
   $result = ''; // reset the html code var
   $msg    = ''; // to collect all messages that should be shown to the user immediately
   
   // load the session user parameters
   $usr = New user;
-  $result .= $usr->get($debug-1);
+  $result .= $usr->get();
 
   // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
   if ($usr->id > 0) {
@@ -51,7 +51,7 @@ $db_con = prg_start("view_select", "", $debug);
     $dsp->usr = $usr;
     //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
-    $result .= $dsp->dsp_navbar_no_view($back, $debug-1);
+    $result .= $dsp->dsp_navbar_no_view($back);
     $view_id = 0;
     $word_id = $back;
 
@@ -68,7 +68,7 @@ $db_con = prg_start("view_select", "", $debug);
     if ($word_id > 0) {
       $wrd->usr = $usr;
       $wrd->id  = $word_id;   
-      $wrd->load($debug-1);
+      $wrd->load();
       $result .= dsp_text_h2 ('Select the display format for "'.$wrd->name.'"');
     } else {  
       $result .= dsp_text_h2 ('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
@@ -78,12 +78,12 @@ $db_con = prg_start("view_select", "", $debug);
     $dsp = new view;
     $dsp->usr = $usr;
     $dsp->id  = $view_id;   
-    $result .= $dsp->selector_page ($word_id, $back, $debug-1);
+    $result .= $dsp->selector_page ($word_id, $back);
 
     // show the changes
-    $result .= $wrd->dsp_log_view ($back, $debug-1);
+    $result .= $wrd->dsp_log_view ($back);
   }
 
   echo $result;
   
-prg_end($db_con, $debug);
+prg_end($db_con);

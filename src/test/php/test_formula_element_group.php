@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_element_group_test ($debug = 0) {
+function run_formula_element_group_test () {
 
   global $usr;
   global $exe_start_time;
@@ -36,7 +36,7 @@ function run_formula_element_group_test ($debug = 0) {
   test_header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
   // load increase formula for testing
-  $frm = load_formula(TF_INCREASE, $debug-1);
+  $frm = load_formula(TF_INCREASE);
 
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
@@ -45,7 +45,7 @@ function run_formula_element_group_test ($debug = 0) {
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
   $phr_lst->add_name(TW_2015); 
-  $phr_lst->load($debug-1);
+  $phr_lst->load();
 
   $phr_lst_next = New phrase_list;
   $phr_lst_next->usr = $usr;
@@ -54,14 +54,14 @@ function run_formula_element_group_test ($debug = 0) {
   $phr_lst_next->add_name(TW_CHF);
   $phr_lst_next->add_name(TW_MIO);
   $phr_lst_next->add_name(TW_2016); 
-  $phr_lst_next->load($debug-1);
+  $phr_lst_next->load();
 
   // build the expression which is in this case "percent" = ( "this" - "prior" ) / "prior" 
-  $exp = $frm->expression($debug-1);
+  $exp = $frm->expression();
   // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
-  $elm_grp_lst = $exp->element_grp_lst ($back, $debug-1);
+  $elm_grp_lst = $exp->element_grp_lst ($back);
 
-  $result = $elm_grp_lst->dsp_id($debug-1);
+  $result = $elm_grp_lst->dsp_id();
   $target = 'this / prior';
   $exe_start_time = test_show_contains(', formula_element_group_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -79,28 +79,28 @@ function run_formula_element_group_test ($debug = 0) {
     $exe_start_time = test_show_result('formula_element_group->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
     // test symbol for text replacement in the formula expression text
-    $result = $elm_grp->build_symbol($debug-1);
+    $result = $elm_grp->build_symbol();
     $target = '{f3}';
     $exe_start_time = test_show_result('formula_element_group->build_symbol', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
     // test the display name that can be used for user debugging
-    $result = trim($elm_grp->dsp_names($back, $debug-1));
+    $result = trim($elm_grp->dsp_names($back));
     $target = trim('<a href="/http/formula_edit.php?id=3&back=1">this</a> ');
     $exe_start_time = test_show_result('formula_element_group->dsp_names', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
     
     // test if the values for an element group are displayed correctly
-    $time_phr = $phr_lst->assume_time($debug-1);
-    $result = $elm_grp->dsp_values($back, $time_phr, $debug-1);
+    $time_phr = $phr_lst->assume_time();
+    $result = $elm_grp->dsp_values($back, $time_phr);
     $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
     $exe_start_time = test_show_result('formula_element_group->dsp_values', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-    $time_phr = $phr_lst_next->assume_time($debug-1);
-    $result = $elm_grp->dsp_values($back, $time_phr, $debug-1);
+    $time_phr = $phr_lst_next->assume_time();
+    $result = $elm_grp->dsp_values($back, $time_phr);
     $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a> (2015)';
     $exe_start_time = test_show_result('formula_element_group->dsp_values', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
     
     // remember the figure list for the figure and figure list class test
-    $fig_lst = $elm_grp->figures($debug-1);
+    $fig_lst = $elm_grp->figures();
 
     test_header('Test the figure class (classes/figure.php)');
 
@@ -115,11 +115,11 @@ function run_formula_element_group_test ($debug = 0) {
       $fig = $fig_lst->lst[0];
 
       if (isset($fig)) {
-        $result = $fig->display($back, $debug-1);
+        $result = $fig->display($back);
         $target = "35'481";
         $exe_start_time = test_show_result('figure->display', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
         
-        $result = $fig->display_linked($back, $debug-1);
+        $result = $fig->display_linked($back);
         $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
         $exe_start_time = test_show_result('figure->display_linked', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
       }

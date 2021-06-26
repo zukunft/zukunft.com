@@ -49,241 +49,275 @@ cache table, field and action id to speed up, because this will never change
 */
 
 
-class user_log {
+class user_log
+{
 
-  public  $id          = NULL;  // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
-  public  $usr         = NULL;  // the user who has done the change
-  public  $action      = '';    // text for the user action e.g. "add", "update" or "delete"
-  private $action_id   = NULL;  // database id for the action text
-  public  $table       = '';    // name of the table that has been updated
-  private $table_id    = NULL;  // database id for the table text
-  public  $field       = '';    // name of the field that has been updated 
-  private $field_id    = NULL;  // database id for the field text
-  public  $old_value   = '';    // the field value before the user change
-  public  $old_id      = NULL;  // the reference id before the user change e.g. for fields using a subtable such as status
-  public  $new_value   = '';    // the field value after the user change
-  public  $new_id      = NULL;  // the reference id after the user change e.g. for fields using a subtable such as status
-  public  $std_value   = '';    // the standard field value for all users that does not have changed it
-  public  $std_id      = NULL;  // the standard reference id for all users that does not have changed it
-  public  $row_id      = NULL;  // the reference id of the row in the database table
-  
-  // to save database space the table name is saved as a reference id in the log table
-  private function set_table($debug) {
-    log_debug('user_log->set_table "'.$this->table.'" for '.$this->usr->dsp_id(), $debug-10);
+    public $id = NULL;  // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
+    public $usr = NULL;  // the user who has done the change
+    public $action = '';    // text for the user action e.g. "add", "update" or "delete"
+    private $action_id = NULL;  // database id for the action text
+    public $table = '';    // name of the table that has been updated
+    private $table_id = NULL;  // database id for the table text
+    public $field = '';    // name of the field that has been updated
+    private $field_id = NULL;  // database id for the field text
+    public $old_value = '';    // the field value before the user change
+    public $old_id = NULL;  // the reference id before the user change e.g. for fields using a subtable such as status
+    public $new_value = '';    // the field value after the user change
+    public $new_id = NULL;  // the reference id after the user change e.g. for fields using a subtable such as status
+    public $std_value = '';    // the standard field value for all users that does not have changed it
+    public $std_id = NULL;  // the standard reference id for all users that does not have changed it
+    public $row_id = NULL;  // the reference id of the row in the database table
 
-    global $db_con;
+    // to save database space the table name is saved as a reference id in the log table
+    private function set_table()
+    {
+        if ($this->usr == null) {
+            log_warning('user_log->set_table "' . $this->table . '" but user is missing');
+        } else {
+            log_debug('user_log->set_table "' . $this->table . '" for ' . $this->usr->dsp_id());
+        }
 
-    // check parameter
-    if ($this->table == "") { log_err("missing table name","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0) { log_err("missing user","user_log->set_table", '', (new Exception)->getTraceAsString(), $this->usr); }
-    
-    // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_TABLE);
-    $db_con->usr_id = $this->usr->id;
-    $table_id = $db_con->get_id($this->table, $debug-1);
+        global $db_con;
 
-    // add new table name if needed
-    if ($table_id <= 0) {
-      $table_id = $db_con->add_id ($this->table, $debug-1);
+        // check parameter
+        if ($this->table == "") {
+            log_err("missing table name", "user_log->set_table");
+        }
+        if ($this->usr->id <= 0) {
+            log_err("missing user", "user_log->set_table");
+        }
+
+        // if e.g. a "value" is changed $this->table is "values" and the reference 1 is saved in the log to save space
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_TABLE);
+        $db_con->set_usr($this->usr->id);
+        $table_id = $db_con->get_id($this->table);
+
+        // add new table name if needed
+        if ($table_id <= 0) {
+            $table_id = $db_con->add_id($this->table);
+        }
+        if ($table_id > 0) {
+            $this->table_id = $table_id;
+        } else {
+            log_fatal("Insert to change log failed due to table id failure.", "user_log->add");
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
     }
-    if ($table_id > 0) {
-      $this->table_id = $table_id;
-    } else {
-      log_fatal("Insert to change log failed due to table id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
+
+    private function set_field()
+    {
+        if ($this->usr == null) {
+            log_warning('user_log->set_field "' . $this->table . '" but user is missing');
+        } else {
+            log_debug('user_log->set_field "' . $this->field . '" for table "' . $this->table . '" (' . $this->table_id . ') and user ' . $this->usr->dsp_id());
+        }
+
+        global $db_con;
+
+        // check parameter
+        if ($this->table_id <= 0) {
+            log_err("missing table_id", "user_log->set_field");
+        }
+        if ($this->field == "") {
+            log_err("missing field name", "user_log->set_field");
+        }
+        if ($this->usr->id <= 0) {
+            log_err("missing user", "user_log->set_field");
+        }
+
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_FIELD);
+        $db_con->usr_id = $this->usr->id;
+        $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id);
+
+        // add new field name if needed
+        if ($field_id <= 0) {
+            $field_id = $db_con->add_id_2key($this->field, "table_id", $this->table_id);
+        }
+        if ($field_id > 0) {
+            $this->field_id = $field_id;
+        } else {
+            log_fatal("Insert to change log failed due to field id failure.", "user_log->add");
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
     }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-  }
 
-  private function set_field($debug) {
-    log_debug('user_log->set_field "'.$this->field.'" for table "'.$this->table.'" ('.$this->table_id.') and user '.$this->usr->dsp_id(), $debug-10);
+    private function set_action()
+    {
+        log_debug('user_log->set_action "' . $this->action . '" for ' . $this->usr->id);
 
-    global $db_con;
+        global $db_con;
 
-    // check parameter
-    if ($this->table_id <= 0) { log_err("missing table_id","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->field == "")   { log_err("missing field name","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0)   { log_err("missing user","user_log->set_field", '', (new Exception)->getTraceAsString(), $this->usr); }
+        // check parameter
+        if ($this->action == "") {
+            log_err("missing action name", "user_log->set_action");
+        }
+        if ($this->usr->id <= 0) {
+            log_err("missing user", "user_log->set_action");
+        }
 
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_FIELD);
-    $db_con->usr_id = $this->usr->id;
-    $field_id = $db_con->get_id_2key($this->field, "table_id", $this->table_id, $debug-1);
+        // if e.g. the action is "add" the reference 1 is saved in the log table to save space
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE_ACTION);
+        $db_con->usr_id = $this->usr->id;
+        $action_id = $db_con->get_id($this->action);
 
-    // add new field name if needed
-    if ($field_id <= 0) {
-      $field_id = $db_con->add_id_2key ($this->field, "table_id", $this->table_id, $debug-1);
+        // add new action name if needed
+        if ($action_id <= 0) {
+            $action_id = $db_con->add_id($this->action);
+        }
+        if ($action_id > 0) {
+            $this->action_id = $action_id;
+        } else {
+            log_fatal("Insert to change log failed due to action id failure.", "user_log->set_action");
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
     }
-    if ($field_id > 0) {
-      $this->field_id = $field_id;
-    } else {
-      log_fatal("Insert to change log failed due to field id failure.","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-  }
 
-  private function set_action($debug) {
-    log_debug('user_log->set_action "'.$this->action.'" for '.$this->usr->id, $debug-10);
+    // display the last change related to one object (word, formula, value, verb, ...)
+    // mainly used for testing
+    // to do: if changes on table values are requested include also the table "user_values"
+    function dsp_last($ex_time)
+    {
 
-    global $db_con;
+        global $db_con;
+        $result = '';
 
-    // check parameter
-    if ($this->action == "") { log_err("missing action name","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    if ($this->usr->id <= 0)  { log_err("missing user","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr); }
-    
-    // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE_ACTION);
-    $db_con->usr_id = $this->usr->id;
-    $action_id = $db_con->get_id($this->action, $debug-1);
+        $this->set_table();
+        $this->set_field();
 
-    // add new action name if needed
-    if ($action_id <= 0) {
-      $action_id = $db_con->add_id ($this->action, $debug-1);
-    }
-    if ($action_id > 0) {
-      $this->action_id = $action_id;
-    } else {
-      log_fatal("Insert to change log failed due to action id failure.","user_log->set_action", '', (new Exception)->getTraceAsString(), $this->usr);
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-  }
-
-  // display the last change related to one object (word, formula, value, verb, ...)
-  // mainly used for testing
-  // to do: if changes on table values are requested include also the table "user_values"
-  function dsp_last($ex_time, $debug) {
-
-    global $db_con;
-    $result = '';
-
-    $this->set_table($debug-1);
-    $this->set_field($debug-1);
-
-    $sql = "SELECT c.change_time,
+        $sql = "SELECT c.change_time,
                    u.user_name,
                    c.old_value,
                    c.old_id,
                    c.new_value,
                    c.new_id
               FROM changes c, users u
-             WHERE c.change_field_id = ".$this->field_id."
-               AND c.row_id = ".$this->row_id."
+             WHERE c.change_field_id = " . $this->field_id . "
+               AND c.row_id = " . $this->row_id . "
                AND c.user_id = u.user_id
           ORDER BY c.change_id DESC;";
-    log_debug("user_log->dsp_last get sql (".$sql.")", $debug-14);
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE);
-    $db_con->usr_id = $this->usr->id;         
-    $db_row = $db_con->get1($sql, $debug-5);  
-    if (!$ex_time) {
-      $result .= $db_row['change_time'].' ';
-    }  
-    if ($db_row['user_name'] <> '') {
-      $result .= $db_row['user_name'].' ';
-    }  
-    if ($db_row['old_value'] <> '') {
-      if ($db_row['new_value'] <> '') {
-        $result .= 'changed '.$db_row['old_value'].' to '.$db_row['new_value'];
-      } else {
-        $result .= 'deleted '.$db_row['old_value'];
-      }
-    } else {
-      $result .= 'added '.$db_row['new_value'];
-    }
-    // restore the type before saving the log
-    $db_con->set_type($db_type);
-    return $result;
-  }
-  
-  // log a user change of a word, value or formula
-  function add($debug) {
-    log_debug('user_log->add do "'.$this->action.'" in "'.$this->table.','.$this->field.'" log change from "'.$this->old_value.'" (id '.$this->old_id.') to "'.$this->new_value.'" (id '.$this->new_id.') in row '.$this->row_id, $debug-10);
-
-    global $db_con;
-
-    $this->set_table($debug-10);
-    $this->set_field($debug-10);
-    $this->set_action($debug-10);
-    
-    $sql_fields = array();
-    $sql_values = array();
-    $sql_fields[] =          "user_id";
-    $sql_values[] =    $this->usr->id;
-    $sql_fields[] = "change_action_id";
-    $sql_values[] =  $this->action_id;
-    $sql_fields[] =  "change_field_id";
-    $sql_values[] =   $this->field_id;
-
-    $sql_fields[] =       "old_value";
-    $sql_values[] = $this->old_value;
-    $sql_fields[] =       "new_value";
-    $sql_values[] = $this->new_value;
-
-    if ($this->old_id > 0 OR $this->new_id > 0) {
-      $sql_fields[] =       "old_id";
-      $sql_values[] = $this->old_id;
-      $sql_fields[] =       "new_id";
-      $sql_values[] = $this->new_id;
+        log_debug("user_log->dsp_last get sql (" . $sql . ")");
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->usr_id = $this->usr->id;
+        $db_row = $db_con->get1($sql);
+        if (!$ex_time) {
+            $result .= $db_row['change_time'] . ' ';
+        }
+        if ($db_row['user_name'] <> '') {
+            $result .= $db_row['user_name'] . ' ';
+        }
+        if ($db_row['old_value'] <> '') {
+            if ($db_row['new_value'] <> '') {
+                $result .= 'changed ' . $db_row['old_value'] . ' to ' . $db_row['new_value'];
+            } else {
+                $result .= 'deleted ' . $db_row['old_value'];
+            }
+        } else {
+            $result .= 'added ' . $db_row['new_value'];
+        }
+        // restore the type before saving the log
+        $db_con->set_type($db_type);
+        return $result;
     }
 
-    $sql_fields[] =       "row_id";
-    $sql_values[] = $this->row_id;
-    
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE);
-    $db_con->set_usr($this->usr->id);
-    $log_id = $db_con->insert($sql_fields, $sql_values, $debug-10);
+    // log a user change of a word, value or formula
+    function add(): bool
+    {
+        log_debug('user_log->add do "' . $this->action . '" in "' . $this->table . ',' . $this->field . '" log change from "' . $this->old_value . '" (id ' . $this->old_id . ') to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
 
-    if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters has caused the error
-      log_fatal("Insert to change log failed.","user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString(), $this);
-      log_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
-      log_fatal("Insert to change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add", '', (new Exception)->getTraceAsString(), $this->usr);
-      $result = False;
-    } else {
-      $this->id = $log_id;
-      // restore the type before saving the log
-      $db_con->set_type($db_type);
-      $result = True;
+        global $db_con;
+
+        $this->set_table();
+        $this->set_field();
+        $this->set_action();
+
+        $sql_fields = array();
+        $sql_values = array();
+        $sql_fields[] = "user_id";
+        $sql_values[] = $this->usr->id;
+        $sql_fields[] = "change_action_id";
+        $sql_values[] = $this->action_id;
+        $sql_fields[] = "change_field_id";
+        $sql_values[] = $this->field_id;
+
+        $sql_fields[] = "old_value";
+        $sql_values[] = $this->old_value;
+        $sql_fields[] = "new_value";
+        $sql_values[] = $this->new_value;
+
+        if ($this->old_id > 0 or $this->new_id > 0) {
+            $sql_fields[] = "old_id";
+            $sql_values[] = $this->old_id;
+            $sql_fields[] = "new_id";
+            $sql_values[] = $this->new_id;
+        }
+
+        $sql_fields[] = "row_id";
+        $sql_values[] = $this->row_id;
+
+        //$db_con = new mysql;
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_usr($this->usr->id);
+        $log_id = $db_con->insert($sql_fields, $sql_values);
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->usr == null) {
+                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString(), $this);
+            } else {
+                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+            }
+            $result = False;
+        } else {
+            $this->id = $log_id;
+            // restore the type before saving the log
+            $db_con->set_type($db_type);
+            $result = True;
+        }
+
+        return $result;
     }
-    
-    return $result;
-  }
 
-  // add the row id to an existing log entry 
-  // e.g. because the row id is know after the adding of the real record, 
-  // but the log entry has been created upfront to make sure that logging is complete
-  function add_ref($row_id, $debug) {
-    log_debug("user_log->add_ref (".$row_id." to ".$this->id." for user ".$this->usr->dsp_id().")", $debug-10);
-    global $db_con;
-    //$db_con = new mysql;
-    $db_type = $db_con->get_type();
-    $db_con->set_type(DB_TYPE_CHANGE);
-    $db_con->set_usr($this->usr->id);
-    $log_id = $db_con->update($this->id, "row_id", $row_id, $debug-1);
-    if ($log_id <= 0) {
-      // write the error message in steps to get at least some message if the parameters has caused the error
-      log_fatal("Update of reference in the change log failed.","user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString(), $this);
-      log_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
-      log_fatal("Update of reference in the change log failed with (".$this->usr->dsp_id().",".$this->action.",".$this->table.",".$this->field.",".$this->old_value.",".$this->new_value.",".$this->row_id.")","user_log->add_ref", '', (new Exception)->getTraceAsString(), $this->usr);
-      $result = False;
-    } else {
-      $this->id = $log_id;
-      // restore the type before saving the log
-      $db_con->set_type($db_type);
-      $result = True;
+    // add the row id to an existing log entry
+    // e.g. because the row id is know after the adding of the real record,
+    // but the log entry has been created upfront to make sure that logging is complete
+    function add_ref($row_id): bool
+    {
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id . " for user " . $this->usr->dsp_id() . ")");
+
+        global $db_con;
+        $result = false;
+
+        $db_type = $db_con->get_type();
+        $db_con->set_type(DB_TYPE_CHANGE);
+        $db_con->set_usr($this->usr->id);
+        if ($db_con->update($this->id, "row_id", $row_id)) {
+            // restore the type before saving the log
+            $db_con->set_type($db_type);
+            $result = True;
+        } else {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->usr == null) {
+                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString(), $this);
+            } else {
+                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+            }
+        }
+        return $result;
     }
-    return $result;
-  }
 
-  
+
 }
