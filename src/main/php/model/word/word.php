@@ -257,7 +257,7 @@ class word extends user_sandbox
 
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_link_fields('formula_id', 'phrase_id');
-        $db_con->set_where_link(null,null, 1);
+        $db_con->set_where_link(null, null, 1);
         $sql = $db_con->select();
         $db_row = $db_con->get1($sql);
         $frm = new formula;
@@ -452,7 +452,7 @@ class word extends user_sandbox
 
         if ($this->type_id > 0) {
             $db_con->set_type(DB_TYPE_WORD_TYPE);
-            $db_con->set_fields(array('description','code_id'));
+            $db_con->set_fields(array('description', 'code_id'));
             $db_con->set_where($this->type_id);
             $sql = $db_con->select();
             $db_type = $db_con->get1($sql);
@@ -857,69 +857,42 @@ class word extends user_sandbox
         return $has_cfg;
     }
 
-    // create a database record to save user specific settings for this word
-    private
-    function add_usr_cfg()
-    {
-        $result = false;
-
-        if (!$this->has_usr_cfg()) {
-            log_debug('word->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-
-            global $db_con;
-
-            // check again if there ist not yet a record
-            $db_con->set_type(DB_TYPE_WORD, true);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->id);
-            $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
-            $usr_wrd_id = $db_row['user_id'];
-            if ($usr_wrd_id <= 0) {
-                // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                $log_id = $db_con->insert(array('word_id', 'user_id'), array($this->id, $this->usr->id));
-                if ($log_id <= 0) {
-                    $result = 'Insert of user_word failed.';
-                }
-            }
-        }
-        return $result;
-    }
-
     // check if the database record for the user specific settings can be removed
-    private function del_usr_cfg_if_not_needed(): bool
+    function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('word->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = true;
+        $result = false;
 
         //if ($this->has_usr_cfg) {
 
         // check again if there ist not yet a record
+        // TODO add user id to where
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('plural','description','word_type_id','view_id'));
+        $db_con->set_fields(array('plural', 'description', 'word_type_id', 'view_id'));
         $db_con->set_where($this->id);
         $sql = $db_con->select();
         $usr_wrd_cfg = $db_con->get1($sql);
-        log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_wrd_cfg['word_id'] > 0) {
-            if ($usr_wrd_cfg['plural'] == ''
-                and $usr_wrd_cfg['description'] == ''
-                and $usr_wrd_cfg['word_type_id'] == Null
-                and $usr_wrd_cfg['view_id'] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($usr_wrd_cfg != null) {
+            log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+            if ($usr_wrd_cfg['word_id'] > 0) {
+                if ($usr_wrd_cfg['plural'] == ''
+                    and $usr_wrd_cfg['description'] == ''
+                    and $usr_wrd_cfg['word_type_id'] == Null
+                    and $usr_wrd_cfg['view_id'] == Null) {
+                    // delete the entry in the user sandbox
+                    log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
             }
         }
         //}
         return $result;
     }
 
-    // set the log entry parameters for a value update
+// set the log entry parameters for a value update
     private
     function log_upd_view($view_id): user_log
     {
@@ -953,8 +926,8 @@ class word extends user_sandbox
         return $log;
     }
 
-    // remember the word view, which means to save the view id for this word
-    // each user can define set the view individually, so this is user specific
+// remember the word view, which means to save the view id for this word
+// each user can define set the view individually, so this is user specific
     function save_view($view_id): bool
     {
 
@@ -985,7 +958,7 @@ class word extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word plural
+// set the update parameters for the word plural
     private
     function save_field_plural($db_con, $db_rec, $std_rec): bool
     {
@@ -1005,8 +978,9 @@ class word extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word description
-    private function save_field_description($db_con, $db_rec, $std_rec): bool
+// set the update parameters for the word description
+    private
+    function save_field_description($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
         // if the description is not set, don't overwrite any db entry
@@ -1024,8 +998,8 @@ class word extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word type
-    // to do: log the ref
+// set the update parameters for the word type
+// to do: log the ref
     private
     function save_field_type($db_con, $db_rec, $std_rec): bool
     {
@@ -1046,7 +1020,7 @@ class word extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word view_id
+// set the update parameters for the word view_id
     private
     function save_field_view($db_rec): bool
     {
@@ -1057,7 +1031,7 @@ class word extends user_sandbox
         return $result;
     }
 
-    // save all updated word fields
+// save all updated word fields
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         log_debug('word->save_fields');

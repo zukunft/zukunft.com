@@ -520,30 +520,33 @@ class view extends user_sandbox
     }
 
     // create a database record to save user specific settings for this view
-    function add_usr_cfg()
+    function add_usr_cfg(): bool
     {
-        $result = '';
+        global $db_con;
+        $result = true;
+
         log_debug('view->add_usr_cfg ' . $this->dsp_id());
 
-        global $db_con;
-
-        if (!$this->has_usr_cfg) {
+        if (!$this->has_usr_cfg()) {
 
             // check again if there ist not yet a record
-            $sql = 'SELECT user_id 
-                FROM user_views 
-               WHERE view_id = ' . $this->id . ' 
-                 AND user_id = ' . $this->usr->id . ';';
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
+            $db_con->set_type(DB_TYPE_VIEW, true);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_where($this->id);
+            $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
-            $usr_db_id = $db_row['user_id'];
-            if ($usr_db_id <= 0) {
+            if ($db_row != null) {
+                $this->usr_cfg_id = $db_row['view_id'];
+            }
+            if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW);
                 $log_id = $db_con->insert(array('view_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view failed.');
+                    $result = false;
+                } else {
+                    $result = true;
                 }
             }
         }
@@ -551,7 +554,7 @@ class view extends user_sandbox
     }
 
     // check if the database record for the user specific settings can be removed
-    function del_usr_cfg_if_not_needed()
+    function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('view->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 

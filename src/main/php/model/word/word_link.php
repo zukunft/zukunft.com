@@ -864,11 +864,10 @@ class word_link extends user_sandbox
     }
 
     // create a database record to save user specific settings for this word_link
-    private function add_usr_cfg()
+    function add_usr_cfg(): bool
     {
-
         global $db_con;
-        $result = '';
+        $result = true;
 
         if (!$this->has_usr_cfg()) {
             if (isset($this->from) and isset($this->to)) {
@@ -878,19 +877,23 @@ class word_link extends user_sandbox
             }
 
             // check again if there ist not yet a record
-            $sql = "SELECT word_link_id 
-                FROM user_word_links 
-               WHERE word_link_id = " . $this->id . " 
-                 AND user_id = " . $this->usr->id . ";";
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
+            $db_con->set_type(DB_TYPE_WORD_LINK, true);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_where($this->id);
+            $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
-            if ($db_row['word_link_id'] <= 0) {
+            if ($db_row != null) {
+                $this->usr_cfg_id = $db_row['word_link_id'];
+            }
+            if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK);
                 $log_id = $db_con->insert(array('word_link_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
-                    $result .= 'Insert of user_word_link failed.';
+                    log_err('Insert of user_word_link failed.');
+                    $result = false;
+                } else {
+                    $result = true;
                 }
             }
         }
@@ -898,12 +901,12 @@ class word_link extends user_sandbox
     }
 
     // check if the database record for the user specific settings can be removed
-    private function del_usr_cfg_if_not_needed()
+    function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('word_link->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         //if ($this->has_usr_cfg) {
 
@@ -925,7 +928,7 @@ class word_link extends user_sandbox
                 and $usr_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $result .= $this->del_usr_cfg_exe($db_con);
+                $result = $this->del_usr_cfg_exe($db_con);
             }
         }
         //}

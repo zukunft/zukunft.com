@@ -34,6 +34,8 @@
 */
 
 // TODO Check that calling the update function always expects a boolean as return value
+// TODO check that $db_con->get and $db_con->get1 always can handle a null row result
+// TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
 
 const DB_TYPE_POSTGRES = "PostgreSQL";
 const DB_TYPE_MYSQL = "MySQL";
@@ -478,6 +480,11 @@ class sql_db
     private function set_id_field()
     {
         $this->id_field = $this->get_id_field_name($this->type);
+    }
+
+    function get_id_field(): string
+    {
+        return $this->id_field;
     }
 
     private function set_name_field()
@@ -1222,12 +1229,13 @@ class sql_db
     }
 
     // update some values in a table
+    // $id is the primary id of the db table or an array with the ids of the primary keys
     // return false if the update has failed (and the error messages are logged)
     function update($id, $fields, $values): bool
     {
         global $debug;
 
-        log_debug('sql_db->update of ' . $this->type . ' row ' . $id . ' ' . $fields . ' with "' . $values . '" for user ' . $this->usr_id);
+        log_debug('sql_db->update of ' . $this->type . ' row ' . dsp_var($id) . ' ' . dsp_var($fields) . ' with "' . dsp_var($values) . '" for user ' . $this->usr_id);
 
         $result = true;
 
@@ -1237,7 +1245,7 @@ class sql_db
         $this->set_id_field();
         if ($debug > 0) {
             if ($this->table == "") {
-                log_err("Table not valid for " . $fields . " at " . $id . ".", "zu_sql_update", (new Exception)->getTraceAsString());
+                log_err("Table not valid for " . $fields . " at " . dsp_var($id) . ".", "zu_sql_update", (new Exception)->getTraceAsString());
                 $par_ok = false;
             }
             if ($values === "") {
@@ -1513,7 +1521,7 @@ class sql_db
                 $next_id = $max_row['max_id'] + 1;
                 if ($this->db_type == DB_TYPE_POSTGRES) {
                     $seq_name = $this->table . '_' . $this->id_field . '_seq';
-                    $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART 1;';
+                    $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $next_id . ';';
                     $this->exe($sql);
                 } elseif ($this->db_type == DB_TYPE_MYSQL) {
                     $sql = 'ALTER TABLE ' . $this->name_sql_esc($this->table) . ' auto_increment = ' . $next_id . ';';

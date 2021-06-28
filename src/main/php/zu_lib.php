@@ -338,6 +338,7 @@ global $db_com; // the database connection
 global $usr;    // the session user
 global $debug;  // the debug level
 
+// TODO check the primary index of all user tables
 // TODO load the config, that is not expected to be changed during a session once at startup
 // TODO start the backend only once and react to REST calls from the frontend
 // TODO make use of __DIR__ ?
@@ -899,15 +900,15 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
     return $result;
 }
 
-function log_info($msg_text, $function_name= '', $msg_description = '', $function_trace = '', $usr = null): string
+function log_info($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
     // todo cache the id at program start to avoid endless loops
     $msg_type_id = sql_code_link(DBL_SYSLOG_INFO, "Info");
     $msg_type_id = 1;
-    return log_msg($msg_text, $msg_description= '', $msg_type_id, $function_name, $function_trace, $usr);
+    return log_msg($msg_text, $msg_description = '', $msg_type_id, $function_name, $function_trace, $usr);
 }
 
-function log_warning($msg_text, $function_name= '', $msg_description = '', $function_trace = '', $usr = null): string
+function log_warning($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
     // todo cache the id at program start to avoid endless loops
     $msg_type_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning");
@@ -936,7 +937,7 @@ function log_fatal($msg_text, $function_name, $msg_description = '', $function_t
 
 // should be call from all code that can be accessed by an url
 // return null if the db connection fails or the db is not compatible
-function prg_start($code_name, $style = "")
+function prg_start($code_name, $style = ""): sql_db
 {
     global $sys_time_start, $sys_script;
 
@@ -974,7 +975,7 @@ function prg_start($code_name, $style = "")
     return $db_con;
 }
 
-function prg_start_api($code_name, $style)
+function prg_start_api($code_name, $style): sql_db
 {
     global $sys_time_start, $sys_script;
 
@@ -1610,6 +1611,20 @@ function zu_lst_merge_with_key($lst_1, $lst_2)
     }
     foreach (array_keys($lst_2) as $lst_entry) {
         $result[$lst_entry] = $lst_2[$lst_entry];
+    }
+    return $result;
+}
+
+// best guess formatting of an value for debug lines
+function dsp_var($var_to_format): string
+{
+    $result = '';
+    if ($var_to_format != null) {
+        if (is_array($var_to_format)) {
+            $result = implode(',', $var_to_format);
+        } else {
+            $result = $var_to_format;
+        }
     }
     return $result;
 }

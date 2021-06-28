@@ -35,7 +35,52 @@ function run_unit_tests()
 
     test_header('Test the base library functions (zu_lib.php)');
 
-    test_header('Test sql base functions');
+    test_subheader('Test usr sandbox functions that does not need a database connection');
+
+    // test if two sources are supposed to be the same
+    $src1 = new source;
+    $src1->id = 1;
+    $src1->name = TS_IPCC_AR6_SYNTHESIS;
+    $src2 = new source;
+    $src2->id = 2;
+    $src2->name = TS_IPCC_AR6_SYNTHESIS;
+    $target = true;
+    $result = $src1->is_same($src2);
+    $exe_start_time = test_show_result("are two sources supposed to be the same", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... and they are of course also similar
+    $target = true;
+    $result = $src1->is_similar($src2);
+    $exe_start_time = test_show_result("... and similar", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // a source can have the same name as a word
+    $wrd1 = new word;
+    $wrd1->id = 1;
+    $wrd1->name = TS_IPCC_AR6_SYNTHESIS;
+    $src2 = new source;
+    $src2->id = 2;
+    $src2->name = TS_IPCC_AR6_SYNTHESIS;
+    $target = false;
+    $result = $wrd1->is_same($src2);
+    $exe_start_time = test_show_result("a source is not the same as a word even if they have the same name", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // but a formula should not have the same name as a word
+    $wrd = new word;
+    $wrd->name = TW_MIO;
+    $frm = new formula();
+    $frm->name = TW_MIO;
+    $target = true;
+    $result = $wrd->is_similar($frm);
+    $exe_start_time = test_show_result("a formula should not have the same name as a word", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... but they are not the same
+    $target = false;
+    $result = $wrd->is_same($frm);
+    $exe_start_time = test_show_result("... but they are not the same", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
+
+    test_subheader('Test sql base functions');
 
     // test sf (Sql Formatting) function
     $text = "'4'";
@@ -68,7 +113,8 @@ function run_unit_tests()
     $result = sf($text);
     $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
-    echo "<h3>version control</h3><br>";
+    test_subheader('Test the version control');
+
     prg_version_is_newer_test();
 
     test_header('Unit tests of the database connector');

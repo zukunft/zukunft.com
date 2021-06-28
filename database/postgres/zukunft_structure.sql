@@ -552,7 +552,7 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_description text,
     sys_log_trace       text,
     user_id             bigint             DEFAULT NULL,
-    solver_id           bigint    NOT NULL,
+    solver_id           bigint             DEFAULT NULL,
     sys_log_status_id   bigint             DEFAULT '1'
 );
 
@@ -945,15 +945,15 @@ CREATE TABLE IF NOT EXISTS user_view_component_links
 
 CREATE TABLE IF NOT EXISTS user_words
 (
-    word_id      BIGSERIAL PRIMARY KEY,
+    word_id      bigint NOT NULL,
     user_id      bigint NOT NULL,
-    language_id  bigint NOT NULL,
-    word_name    varchar(200) DEFAULT NULL,
-    plural       varchar(200) DEFAULT NULL,
+    language_id  bigint NOT NULL DEFAULT 1,
+    word_name    varchar(200)    DEFAULT NULL,
+    plural       varchar(200)    DEFAULT NULL,
     description  text,
-    word_type_id bigint       DEFAULT NULL,
-    view_id      bigint       DEFAULT NULL,
-    excluded     smallint     DEFAULT NULL
+    word_type_id bigint          DEFAULT NULL,
+    view_id      bigint          DEFAULT NULL,
+    excluded     smallint        DEFAULT NULL
 );
 
 -- --------------------------------------------------------
@@ -1638,7 +1638,8 @@ CREATE INDEX user_view_component_link_view_idx ON user_view_component_links (vie
 --
 -- Indexes for table user_words
 --
-CREATE INDEX user_word_idx ON user_words (word_id);
+ALTER TABLE user_words
+    ADD CONSTRAINT user_words_pkey PRIMARY KEY (word_id, user_id, language_id);
 CREATE INDEX user_word_user_idx ON user_words (user_id);
 CREATE INDEX user_word_language_idx ON user_words (language_id);
 CREATE INDEX user_word_type_idx ON user_words (word_type_id);

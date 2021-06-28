@@ -1517,27 +1517,32 @@ class formula extends user_sandbox
 
     // create a database record to save user specific settings for this formula
     // TODO combine the reread and the adding in a commit transaction
-    function add_usr_cfg()
+    function add_usr_cfg(): bool
     {
-
         global $db_con;
-        $result = false;
+        $result = true;
 
         if (!$this->has_usr_cfg()) {
             log_debug('formula->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record
-
-            $sql = "SELECT formula_id FROM user_formulas WHERE formula_id = " . $this->id . " AND user_id = " . $this->usr->id . ";";
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
+            $db_con->set_type(DB_TYPE_FORMULA, true);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_where($this->id);
+            $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
-            if ($db_row['formula_id'] <= 0) {
+            if ($db_row != null) {
+                $this->usr_cfg_id = $db_row['formula_id'];
+            }
+            if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA);
                 $log_id = $db_con->insert(array('formula_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
-                    $result = 'Insert of user_formula failed.';
+                    log_err('Insert of user_formula failed.');
+                    $result = false;
+                } else {
+                    $result = true;
                 }
             }
         }
@@ -1545,12 +1550,12 @@ class formula extends user_sandbox
     }
 
     // check if the database record for the user specific settings can be removed
-    function del_usr_cfg_if_not_needed()
+    function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('formula->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = '';
+        $result = false;
 
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
@@ -1578,7 +1583,7 @@ class formula extends user_sandbox
                 and $usr_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('formula->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $result .= $this->del_usr_cfg_exe($db_con);
+                $result = $this->del_usr_cfg_exe($db_con);
             } else {
                 log_debug('formula->del_usr_cfg_if_not_needed not true for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
             }

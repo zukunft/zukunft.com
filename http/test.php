@@ -13,6 +13,8 @@
   - check the correct setup of the base words, numbers and formulas  
   
   TODO
+  - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "Company"
+  - before starting the system test, check that really no user has used any test name and if create a warning and stop the test
   - use YAML export and import for testing the base sets
   - check that the order of the view items cannot be changed by another user
   - add get_xxx functions for all objects and use them

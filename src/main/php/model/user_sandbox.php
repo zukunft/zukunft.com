@@ -34,6 +34,7 @@
 
 // TODO align the function return types with the source (ref) object
 // TODO use the user sandbox also for the word object
+// TODO check if handling of negative ids is correct
 
 class user_sandbox
 {
@@ -133,9 +134,13 @@ class user_sandbox
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_type($this->obj_name);
-                $db_con->set_usr($this->usr->id);
-                if ($db_con->update($this->id, 'user_id', $this->usr->id)) {
-                    $result = true;
+                if ($this->usr == null) {
+                    log_err('Cannot set owner, because not user is set');
+                } else {
+                    $db_con->set_usr($this->usr->id);
+                    if ($db_con->update($this->id, 'user_id', $this->usr->id)) {
+                        $result = true;
+                    }
                 }
             }
         }
@@ -550,6 +555,7 @@ class user_sandbox
             $std = clone $this;
             $std->reset();
             $std->id = $this->id;
+            $std->usr = $this->usr;
             $std->load_standard();
 
             $db_con->set_type($this->obj_name);
@@ -700,14 +706,52 @@ class user_sandbox
 
     // dummy function to create a database record to save user specific settings that is always overwritten by the child class
     // returns false if the creation has failed and true if it was successful or not needed
-    private function add_usr_cfg(): bool
+    function add_usr_cfg(): bool
     {
-        return true;
+        global $db_con;
+        $result = true;
+
+        if (!$this->has_usr_cfg()) {
+            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+                log_debug($this->obj_name . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+            } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
+                if (isset($this->from) and isset($this->to)) {
+                    log_debug($this->obj_name . '->add_usr_cfg for "' . $this->from->name . '"/"' . $this->to->name . '" by user "' . $this->usr->name . '"');
+                } else {
+                    log_debug($this->obj_name . '->add_usr_cfg for "' . $this->id . '" and user "' . $this->usr->name . '"');
+                }
+            } else {
+                log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
+            }
+
+            // check again if there ist not yet a record
+            $db_con->set_type($this->obj_name, true);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_where($this->id);
+            $sql = $db_con->select();
+            $db_row = $db_con->get1($sql);
+            if ($db_row != null) {
+                $this->usr_cfg_id = $db_row[$db_con->get_id_field()];
+            }
+            if (!$this->has_usr_cfg()) {
+                // create an entry in the user sandbox
+                $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                $db_con->set_usr($this->usr->id);
+                $log_id = $db_con->insert(array($db_con->get_id_field(), sql_db::FLD_USER_ID), array($this->id, $this->usr->id));
+                if ($log_id <= 0) {
+                    log_err('Insert of ' . sql_db::USER_PREFIX . $this->obj_name . ' failed.');
+                    $result = false;
+                } else {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
     }
 
     // dummy function to check if the database record for the user specific settings can be removed that is always overwritten by the child class
     // returns false if the deletion has failed and true if it was successful or not needed
-    private function del_usr_cfg_if_not_needed(): bool
+    function del_usr_cfg_if_not_needed(): bool
     {
         return true;
     }
@@ -829,6 +873,7 @@ class user_sandbox
     }
 
     // actually update a field in the main database record or the user sandbox
+    // the usr id is taken into account in sql_db->update (maybe move outside)
     function save_field_do($db_con, $log): bool
     {
         $result = true;
@@ -842,8 +887,18 @@ class user_sandbox
         }
         if ($log->add()) {
             if ($this->can_change()) {
-                $db_con->set_type($this->obj_name);
-                $result = $db_con->update($this->id, $log->field, $new_value);
+                if ($new_value == $std_value) {
+                    if ($this->has_usr_cfg()) {
+                        log_debug($this->obj_name . '->save_field_do remove user change');
+                        $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                        $db_con->set_usr($this->usr->id);
+                        $result = $db_con->update($this->id, $log->field, Null);
+                    }
+                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+                } else {
+                    $db_con->set_type($this->obj_name);
+                    $result = $db_con->update($this->id, $log->field, $new_value);
+                }
             } else {
                 if (!$this->has_usr_cfg()) {
                     if (!$this->add_usr_cfg()) {
@@ -852,15 +907,14 @@ class user_sandbox
                 }
                 if ($result) {
                     $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->usr->id);
                     if ($new_value == $std_value) {
                         log_debug($this->obj_name . '->save_field_do remove user change');
                         $result = $db_con->update($this->id, $log->field, Null);
                     } else {
                         $result = $db_con->update($this->id, $log->field, $new_value);
                     }
-                    if (!$this->del_usr_cfg_if_not_needed()) {
-                        $result = false;
-                    }
+                    $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 }
             }
         }
@@ -1199,55 +1253,142 @@ class user_sandbox
         return $result;
     }
 
-    // check if an object with another unique key already exists
-    // if no similar object is found NULL is returned
-    // if a similar object is found, the object is returned
+    // check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+    private function is_same_std($obj_to_check): bool
+    {
+        $result = false;
+        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+            if ($this->name == $obj_to_check->name) {
+                $result = true;
+            }
+        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
+            if (isset($this->fob)
+                and isset($this->tob)
+                and isset($obj_to_check->fob)
+                and isset($obj_to_check->tob)) {
+                if ($this->fob->id == $obj_to_check->fob->id and
+                    $this->tob->id == $obj_to_check->tob->id) {
+                    $result = true;
+                }
+            } else {
+                log_err('The objects of ' . $this->dsp_id() . ' and ' . $obj_to_check->dsp_id() . ' are not loaded');
+            }
+        }
+        return $result;
+    }
+
+    // check the the given object is by the unique keys the same as the actual object
+    // handles the specials case that for each formula a corresponding word is created (which needs to be check if this is really needed)
+    // so if a formula word "millions" is not the same as the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+    // in short: if two objects are the same by this definition, they are supposed to be merged
+    function is_same($obj_to_check): bool
+    {
+        $result = false;
+        // special case a word should not be combined with a word that is representing a formulas
+        if ($this->obj_name == DB_TYPE_WORD and $obj_to_check->obj_name == DB_TYPE_WORD) {
+            if ($this->name == $obj_to_check->name) {
+                if (isset($this->type_id) and isset($obj_to_check->type_id)) {
+                    if ($this->type_id == $obj_to_check->type_id) {
+                        $result = true;
+                    } else {
+                        if ($this->type_id == DB_TYPE_FORMULA and $obj_to_check->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+                            // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
+                            $result = true;
+                        } elseif ($obj_to_check->type_id == DB_TYPE_FORMULA and $this->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+                            // like above, but the other way round
+                            $result = true;
+                        } elseif ($this->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK) or $obj_to_check->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+                            // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
+                            $result = false;
+                        } else {
+                            // a measure word can be combined with a measure scale word
+                            $result = true;
+                        }
+                    }
+                } else {
+                    log_debug('The type_id of the two objects to compare are not set');
+                    $result = true;
+                }
+            }
+        } elseif ($this->obj_name == $obj_to_check->obj_name) {
+            $result = $this->is_same_std($obj_to_check);
+        }
+        return $result;
+    }
+
+    // just to double check if the get similar function is working correctly
+    // so if the formulas "millions" is compared with the word "millions" this function returns true
+    // in short: if two objects are similar by this definition, they should not be both in the database
+    function is_similar($obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this->obj_name == $obj_to_check->obj_name) {
+                $result = $this->is_same_std($obj_to_check);
+            } else {
+                // create a synthetic unique index over words, phrase, verbs and formulas
+                if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_PHRASE or $this->obj_name == DB_TYPE_FORMULA or $this->obj_name == DB_TYPE_VERB) {
+                    if ($this->name == $obj_to_check->name) {
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    // check if an object with the unique key already exists
+    // returns null if no similar object is found
+    // or returns the object with the same unique key that is not the actual object
     // any warning or error message needs to be created in the calling function
-    // returns the similar object or a message string, why
-    // TODO: temp for the word object (to be overwritten)
+    // e.g. if the user tries to create a formula named "millions"
+    //      but a word with the same name already exists, a term with the word "millions" is returned
+    //      in this case the calling function should suggest the user to name the formula "scale millions"
+    //      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
     function get_similar()
     {
         $result = NULL;
-        log_debug($this->obj_name . '->get_similar ' . $this->dsp_id());
 
+        // check potential duplicate by name
         if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            // for words it needs to be checked if a term (word, verb or formula) with the same name already exist
-            // for formulas the check is not needed, b
-            if ($this->obj_name == DB_TYPE_WORD) {
-                // TODO how to check the type of the child class? probably do an overwrite in the child class
-                if ($this->type_id <> cl(DBL_WORD_TYPE_FORMULA_LINK)) {
-                    $trm = $this->term();
-                    if ($trm->id > 0) {
-                        if ($trm->type <> DB_TYPE_WORD) {
-                            $result = $trm->id_used_msg();
-                        } else {
-                            $this->id = $trm->id;
-                            $result = $trm->obj;
-                            log_debug($this->obj_name . '->get_similar adding word name "' . $this->dsp_id() . '" is OK');
+            // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
+            // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
+            if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_FORMULA) {
+                $similar_trm = $this->term();
+                if ($similar_trm != null) {
+                    if ($similar_trm->obj != null) {
+                        $result = $similar_trm->obj;
+                        if (!$this->is_similar($result)) {
+                            log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
                         }
-                    } else {
-                        log_debug($this->obj_name . '->get_similar no msg for "' . $this->dsp_id() . '"');
                     }
                 }
             } else {
-                // used for view, view_component, ...
+                // used for view, view_component, source, ...
                 $db_chk = clone $this;
                 $db_chk->reset();
-                $db_chk->name = $this->name;
                 $db_chk->usr = $this->usr;
-                // TODO or simple load, because it is user specific??
+                $db_chk->name = $this->name;
+                // check with the standard namespace
                 if ($db_chk->load_standard()) {
                     if ($db_chk->id > 0) {
-                        if ($this->fob != null) {
-                            log_debug($this->obj_name . '->get_similar a ' . $this->obj_name . ' with the name "' . $this->fob->name . '" already exists');
-                        } else {
-                            log_warning($this->obj_name . '->get_similar a ' . $this->obj_name . ', but from object is not set');
-                        }
+                        log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                         $result = $db_chk;
+                    }
+                }
+                // check with the user namespace
+                if ($result == null) {
+                    $db_chk->usr = $this->usr;
+                    if ($db_chk->load()) {
+                        if ($db_chk->id > 0) {
+                            log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                            $result = $db_chk;
+                        }
                     }
                 }
             }
         } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
+            // check for linked objects
             if (!isset($this->fob) or !isset($this->tob)) {
                 log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', 'user_sandbox->get_similar');
             } else {
@@ -1255,11 +1396,20 @@ class user_sandbox
                 $db_chk->reset();
                 $db_chk->fob = $this->fob;
                 $db_chk->tob = $this->tob;
-                $db_chk->usr = $this->usr;
                 if ($db_chk->load_standard()) {
                     if ($db_chk->id > 0) {
-                        log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '"');
+                        log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '" of the standard linkspace');
                         $result = $db_chk;
+                    }
+                }
+                // check with the user linkspace
+                if ($result == null) {
+                    $db_chk->usr = $this->usr;
+                    if ($db_chk->load()) {
+                        if ($db_chk->id > 0) {
+                            log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '" of the user linkspace');
+                            $result = $db_chk;
+                        }
                     }
                 }
             }
@@ -1288,6 +1438,22 @@ class user_sandbox
 
     // add or update a user sandbox object (word, value, formula or ...) in the database
     // returns either the id of the updated or created object or a message with the reason why it has failed that can be shown to the user
+    /*
+     * the save used cases are
+     *
+     * 1. a source is supposed to be saved with without id and         a name  and no source                with the same name already exists -> add the source
+     * 2. a source is supposed to be saved with without id and         a name, but  a source                with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
+     * 3. a word   is supposed to be saved with without id and         a name  and no word, verb or formula with the same name already exists -> add the word
+     * 4. a word   is supposed to be saved with without id and         a name, but  a word                  with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
+     * 5. a word   is supposed to be saved with without id and         a name, but  a verb or formula       with the same name already exists -> ask the user to use another name (or rename the formula)
+     * 6. a source is supposed to be saved with with    id and a changed name -> the source is supposed to be renamed -> check if the new name is already used -> (6a.) if yes,            ask to merge, change the name or cancel the update -> (6b.) if the new name does not exist, ask the user to confirm the changes
+     * 7. a word   is supposed to be saved with with    id and a changed name -> the word   is supposed to be renamed -> check if the new name is already used -> (7a.) if yes for a word, ask to merge, change the name or cancel the update -> (7b.) if the new name does not exist, ask the user to confirm the changes
+     *                                                                                                                                                         -> (7c.) if yes for a verb, ask to        change the name or cancel the update
+     *
+     * TODO add wizards to handle the update chains
+     *
+     */
+
     function save(): string
     {
         log_debug($this->obj_name . '->save ' . $this->dsp_id());
@@ -1304,96 +1470,101 @@ class user_sandbox
         $db_con->set_type($this->obj_name);
         $db_con->set_usr($this->usr->id);
 
-        // check if a new object is supposed to be added
-        if ($this->id <= 0) {
-            // check possible duplicates before adding
+        // create an object to check possible duplicates
+        $similar = null;
+
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($this->id == 0) {
             log_debug($this->obj_name . '->save check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
-            if (is_string($similar)) {
-                $result = $similar;
-            } else {
-                if (isset($similar)) {
-                    if ($similar->id <> 0) {
-                        $this->id = $similar->id;
-                    }
+            if ($similar != null) {
+                // check that the get_similar function has really found a similar object and report
+                if (!$this->is_similar($similar)) {
+                    log_err($this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id());
+                }
+                if ($similar->id <> 0) {
+                    // if similar is found set the id to trigger the updating instead of adding
+                    $similar->load(); // e.g. to get the type_id
+                    $this->id = $similar->id;
+                } else {
+                    $similar = null;
                 }
             }
         }
 
-        // create a new object or update an existing
-        // TODO check if handling of negative ids is correct
+        // create a new object if nothing similar has been found
         if ($this->id == 0) {
             log_debug($this->obj_name . '->save add');
             $result = strval($this->add());
         } else {
-            log_debug($this->obj_name . '->save update');
-            // read the database values to be able to check if something has been changed;
-            // done first, because it needs to be done for user and general object values
-            $db_rec = clone $this;
-            $db_rec->reset();
-            $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
-            if (!$db_rec->load()) {
-                $result = 'Reloading of ' . $this->obj_name . ' failed';
-                log_err($result);
+            // if the similar object is not the same as $this object, suggest to rename $this object
+            if ($similar != null) {
+                log_debug($this->obj_name . '->save got similar and suggest renaming or merge');
+                // if a source already exists update the source
+                // but if a word with the same name of a formula already exists
+                if (!$this->is_same($similar)) {
+                    $result = $similar->id_used_msg();
+                }
             }
+
+            // update the existing object
             if ($result == '') {
-                log_debug($this->obj_name . '->save reloaded from db');
-                if ($this->obj_type == user_sandbox::TYPE_LINK) {
-                    if (!$db_rec->load_objects()) {
-                        $result = 'Reloading of the object for ' . $this->obj_name . ' failed';
+                log_debug($this->obj_name . '->save update');
+
+                // read the database values to be able to check if something has been changed;
+                // done first, because it needs to be done for user and general object values
+                $db_rec = clone $this;
+                $db_rec->reset();
+                $db_rec->id = $this->id;
+                $db_rec->usr = $this->usr;
+                if (!$db_rec->load()) {
+                    $result = 'Reloading of user ' . $this->obj_name . ' failed';
+                    log_err($result);
+                } else {
+                    log_debug($this->obj_name . '->save reloaded from db');
+                    if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                        if (!$db_rec->load_objects()) {
+                            $result = 'Reloading of the object for ' . $this->obj_name . ' failed';
+                            log_err($result);
+                        }
+                        // configure the global database connection object again to overwrite any changes from load_objects
+                        $db_con->set_type($this->obj_name);
+                    }
+                }
+
+                // load the common object
+                $std_rec = clone $this;
+                $std_rec->reset();
+                $std_rec->id = $this->id;
+                $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
+                if ($result == '') {
+                    if (!$std_rec->load_standard()) {
+                        $result = 'Reloading of the default values for ' . $this->obj_name . ' failed';
                         log_err($result);
                     }
-                    // configure the global database connection object again to overwrite any changes from load_objects
-                    $db_con->set_type($this->obj_name);
                 }
-            }
-            $std_rec = clone $this;
-            $std_rec->reset();
-            $std_rec->id = $this->id;
-            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
-            if ($result == '') {
-                if (!$std_rec->load_standard()) {
-                    $result = 'Reloading of the default values for ' . $this->obj_name . ' failed';
-                    log_err($result);
-                }
-            }
-            if ($result == '') {
-                log_debug($this->obj_name . '->save standard loaded');
 
                 // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
-                if ($this->owner_id <= 0) {
-                    $this->owner_id = $std_rec->owner_id;
-                }
+                if ($result == '') {
+                    log_debug($this->obj_name . '->save standard loaded');
 
-                if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                    if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_VERB or $this->obj_name == DB_TYPE_FORMULA) {
-                        // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
-                        if ($db_rec->name <> $this->name) {
-                            // check if a verb, formula or word with the same name is already in the database
-                            // TODO suggest the user a new name to make keeping the name unique easy
-                            $similar = $this->get_similar();
-                            if (isset($similar)) {
-                                if ($similar->id <> 0) {
-                                    $result .= $similar->id_used_msg();
-                                }
-                            }
-                        }
+                    if ($this->owner_id <= 0) {
+                        $this->owner_id = $std_rec->owner_id;
                     }
                 }
-            }
 
-            // check if the id parameters are supposed to be changed
-            if ($result == '') {
-                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
-            }
+                // check if the id parameters are supposed to be changed
+                if ($result == '') {
+                    $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                }
 
-            // if a problem has appeared up to here, don't try to save the values
-            // the problem is shown to the user by the calling interactive script
-            if ($result == '') {
-                if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                    $result = 'Saving of fields for a ' . $this->obj_name . ' failed';
-                    log_err($result);
+                // if a problem has appeared up to here, don't try to save the values
+                // the problem is shown to the user by the calling interactive script
+                if ($result == '') {
+                    if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
+                        $result = 'Saving of fields for a ' . $this->obj_name . ' failed';
+                        log_err($result);
+                    }
                 }
             }
         }

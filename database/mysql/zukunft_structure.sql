@@ -964,7 +964,7 @@ CREATE TABLE IF NOT EXISTS ` sys_log `
     ` solver_id ` int
 (
     11
-) NOT NULL COMMENT 'user id of the user that is trying to solve the problem',
+) DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
     ` sys_log_status_id ` int
 (
     11
@@ -1719,7 +1719,7 @@ CREATE TABLE IF NOT EXISTS ` user_words `
     ` language_id ` int
 (
     11
-) NOT NULL,
+) DEFAULT NULL,
     ` word_name ` varchar
 (
     200

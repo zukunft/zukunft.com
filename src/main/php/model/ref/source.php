@@ -420,27 +420,30 @@ class source extends user_sandbox
     }
 
     // create a database record to save user specific settings for this source
-    private function add_usr_cfg(): bool
+    function add_usr_cfg(): bool
     {
-
         global $db_con;
-
-        $result = false;
+        $result = true;
 
         if (!$this->has_usr_cfg) {
             log_debug('source->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record
-            $sql = "SELECT source_id FROM user_sources WHERE source_id = " . $this->id . " AND user_id = " . $this->usr->id . ";";
-            $db_con->usr_id = $this->usr->id;
+            $db_con->set_type(DB_TYPE_SOURCE, true);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_where($this->id);
+            $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
-            $usr_db_id = $db_row['user_id'];
-            if ($usr_db_id <= 0) {
+            if ($db_row != null) {
+                $this->usr_cfg_id = $db_row['source_id'];
+            }
+            if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
                 $log_id = $db_con->insert('source_id, user_id', $this->id . "," . $this->usr->id);
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
+                    $result = false;
                 } else {
                     $result = true;
                 }
@@ -451,12 +454,12 @@ class source extends user_sandbox
 
     // check if the database record for the user specific settings can be removed
     // returns false if the deletion has failed and true if it was successful or not needed
-    private function del_usr_cfg_if_not_needed(): bool
+    function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('source->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = true;
+        $result = false;
 
         //if ($this->has_usr_cfg) {
 
@@ -477,9 +480,10 @@ class source extends user_sandbox
                 // delete the entry in the user sandbox
                 log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
-                if (!$db_con->delete(array('source_id', 'user_id'), array($this->id, $this->usr->id))) {
-                    $result = false;
-                    $result .= 'Deletion of user_source failed.';
+                if ($db_con->delete(array('source_id', 'user_id'), array($this->id, $this->usr->id))) {
+                    $result = true;
+                } else {
+                    log_err('Deletion of user_source failed.');
                 }
             }
         }
@@ -552,74 +556,6 @@ class source extends user_sandbox
             $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         }
         log_debug('source->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
-    }
-
-    // update a source in the database or create a user source
-    // returns either the id of the updated or created source or a message to the user with the reason, why it has failed
-    function save(): string
-    {
-        log_debug('source->save ' . $this->dsp_id() . ' for user ' . $this->usr->id);
-
-        global $db_con;
-        $result = '';
-
-        // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_SOURCE);
-
-        // check if a new value is supposed to be added
-        if ($this->id <= 0) {
-            // check if a source with the same name is already in the database
-            log_debug('source->save check if a source named ' . $this->dsp_id() . ' already exists');
-            $db_chk = new source;
-            $db_chk->name = $this->name;
-            $db_chk->usr = $this->usr;
-            $db_chk->load();
-            if ($db_chk->id > 0) {
-                $this->id = $db_chk->id;
-            }
-        }
-
-        // create a new source or update an existing
-        if ($this->id <= 0) {
-            $result = strval($this->add());
-        } else {
-            log_debug('source->save update "' . $this->id . '"');
-            // read the database values to be able to check if something has been changed; done first,
-            // because it needs to be done for user and general formulas
-            $db_rec = new source;
-            $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
-            $db_rec->load();
-            log_debug('source->save -> database source "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
-            $std_rec = new source;
-            $std_rec->id = $this->id;
-            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
-            if ($std_rec->load_standard()) {
-                log_debug('source->save -> standard source settings for "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
-            }
-
-            // for a correct user source detection (function can_change) set the owner even if the source has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
-            }
-
-            // check if the id parameters are supposed to be changed
-            if ($result == '') {
-                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
-            }
-
-            // if a problem has appeared up to here, don't try to save the values
-            // the problem is shown to the user by the calling interactive script
-            if ($result == '') {
-                if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                    $result = 'Saving of fields for ' . $this->obj_name . ' failed';
-                    log_err($result);
-                }
-            }
-        }
-
         return $result;
     }
 

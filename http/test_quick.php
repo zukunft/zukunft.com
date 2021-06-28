@@ -51,6 +51,9 @@ if ($usr->id > 0) {
         // start testing the selected system functionality
         // -----------------------------------------------
 
+        // cleanup also before testing to remove any leftovers
+        run_test_cleanup();
+
         run_system_test(); // testing of the basic system functions like ip blocking
         //run_user_test ();   // testing of the user display functions
 
@@ -67,8 +70,9 @@ if ($usr->id > 0) {
         //run_lib_test ();
         run_string_unit_tests(); // test functions not yet split into single unit tests
         run_math_test();
-        /*
+        run_user_sandbox_test();
         run_word_test();
+        /*
         run_word_ui_test ();
         run_word_display_test ();
         run_word_list_test ();

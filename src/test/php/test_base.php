@@ -49,6 +49,7 @@ include_once $root_path . 'src/test/php/test_system.php';
 include_once $root_path . 'src/test/php/test_db_link.php';
 include_once $root_path . 'src/test/php/test_lib.php';
 include_once $root_path . 'src/test/php/test_math.php';
+include_once $root_path . 'src/test/php/test_user_sandbox.php';
 include_once $root_path . 'src/test/php/test_user.php';
 include_once $root_path . 'src/test/php/test_word.php';
 include_once $root_path . 'src/test/php/test_word_ui.php';
@@ -193,6 +194,8 @@ const TV_TEST_SALES_INCREASE_2017_FORMATTED = '90.03 %';
 const TV_NESN_SALES_2016_FORMATTED = '89\'469';
 
 // some source used to test the program
+const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
+const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
 const TS_NESN_2016_ID = 1;
 const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
 
@@ -488,6 +491,12 @@ function test_show_contains($test_text, $target, $result, $exe_start_time, $exe_
 function test_header($header_text)
 {
     echo '<br><br><h2>' . $header_text . '</h2><br>';
+}
+
+// the HTML code to display the he
+function test_subheader($header_text)
+{
+    echo '<br><h3>' . $header_text . '</h3><br>';
 }
 
 // external string diff only for testing

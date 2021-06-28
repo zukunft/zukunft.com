@@ -1801,11 +1801,10 @@ class value extends user_sandbox_display
     }
 
     // create a database record to save a user specific value
-    function add_usr_cfg()
+    function add_usr_cfg(): bool
     {
-
         global $db_con;
-        $result = '';
+        $result = true;
 
         if (!$this->has_usr_cfg()) {
             log_debug('value->add_usr_cfg for "' . $this->id . ' und user ' . $this->usr->name);
@@ -1818,13 +1817,18 @@ class value extends user_sandbox_display
             //$db_con = New mysql;
             $db_con->usr_id = $this->usr->id;
             $db_row = $db_con->get1($sql);
-            $usr_db_id = $db_row['user_id'];
-            if ($usr_db_id <= 0) {
+            if ($db_row != null) {
+                $this->usr_cfg_id = $db_row['user_id'];
+            }
+            if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE);
                 $log_id = $db_con->insert(array('value_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
-                    $result .= 'Insert of user_value failed.';
+                    log_err('Insert of user_value failed.');
+                    $result = false;
+                } else {
+                    $result = true;
                 }
             }
         }
@@ -1833,16 +1837,16 @@ class value extends user_sandbox_display
 
     // check if the database record for the user specific settings can be removed
     // exposed at the moment to user_display.php for consistency check, but this should not be needed
-    function del_usr_cfg_if_not_needed()
+    function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('value->del_usr_cfg_if_not_needed pre check for "' . $this->id . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
         $sql = "SELECT value_id,
-                   user_value,
+                   word_value,
                    source_id,
                    excluded
               FROM user_values
@@ -1853,12 +1857,12 @@ class value extends user_sandbox_display
         $usr_cfg = $db_con->get1($sql);
         log_debug('value->del_usr_cfg_if_not_needed check for "' . $this->id . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg['value_id'] > 0) {
-            if ($usr_cfg['user_value'] == Null
+            if ($usr_cfg['word_value'] == Null
                 and $usr_cfg['source_id'] == Null
                 and $usr_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('value->del_usr_cfg_if_not_needed any more for "' . $this->id . ' und user ' . $this->usr->name);
-                $result .= $this->del_usr_cfg_exe($db_con);
+                $result = $this->del_usr_cfg_exe($db_con);
             }
         }
 
