@@ -29,119 +29,102 @@
   
 */
 
-class verb_list {
+class verb_list
+{
 
-  public $lst        = array(); // array of the loaded word objects 
-  public $usr        = NULL;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    public $lst = array(); // array of the loaded word objects
+    public $usr = NULL;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
-  // search and load fields
-  public $wrd        = NULL;    // to load a list related to this word
-  public $direction  = '';      // "up" or "down" to select the parents or children
-  
-  // load the word parameters from the database for a list of words
-  function load() {
+    // search and load fields
+    public $wrd = NULL;    // to load a list related to this word
+    public $direction = '';      // "up" or "down" to select the parents or children
 
-    global $db_con;
+    // load the word parameters from the database for a list of words
+    function load()
+    {
 
-    // check the all minimal input parameters
-    if (!isset($this->usr)) {
-      log_err("The user id must be set to load a list of verbs.", "verb_list->load");
-    /*  
-    } elseif (!isset($this->wrd) OR $this->direction == '')  {  
-      zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
-    */  
-    } else {
+        global $db_con;
 
-      // set the where clause depending on the values given
-      $sql_where = '';
-      if ($this->direction == "up") {
-        $sql_where = " AND l.to_phrase_id = ".$this->wrd->id;
-      } else {  
-        $sql_where = " AND l.from_phrase_id = ".$this->wrd->id;
-      }
-      $sql = "SELECT v.verb_id,
-                     v.code_id,
-                     v.verb_name,
-                     v.name_plural,
-                     v.name_reverse,
-                     v.name_plural_reverse,
-                     v.formula_name,
-                     v.description
-                FROM word_links l, verbs v  
-               WHERE l.verb_id = v.verb_id 
-                     ".$sql_where." 
-            GROUP BY v.verb_id 
-            ORDER BY v.verb_id;";
-      //$db_con = New mysql;
-      $db_con->usr_id = $this->usr->id;         
-      $db_vrb_lst = $db_con->get($sql);  
-      $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
-      foreach ($db_vrb_lst AS $db_vrb) {
-        $vrb = New verb;
-        $vrb->id          = $db_vrb['verb_id'];
-        $vrb->usr      = $this->usr->id;
-        $vrb->code_id     = $db_vrb['code_id'];
-        $vrb->name        = $db_vrb['verb_name'];
-        $vrb->plural      = $db_vrb['name_plural'];
-        $vrb->reverse     = $db_vrb['name_reverse'];
-        $vrb->rev_plural  = $db_vrb['name_plural_reverse'];
-        $vrb->frm_name    = $db_vrb['formula_name'];
-        $vrb->description = $db_vrb['description'];
-        $this->lst[]      = $vrb;
-        log_debug('verb_list->load added ('.$vrb->name.')');
-      }
-      log_debug('verb_list->load ('.count(".$sql_where."
-                 ).')');
-    }  
-  }
-        
-  // calculates how many times a word is used, because this can be helpful for sorting
-  function calc_usage () {
-    log_debug('verb_list->calc_usage');
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err("The user id must be set to load a list of verbs.", "verb_list->load");
+            /*
+            } elseif (!isset($this->wrd) OR $this->direction == '')  {
+              zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
+            */
+        } else {
 
-    global $db_con;
-
-    $sql = "UPDATE verbs l
-               SET `words` = ( 
-            SELECT COUNT(to_word_id) 
-              FROM word_links t
-             WHERE l.verb_id = t.verb_id);";
-    //$db_con = New mysql;
-    $db_con->usr_id = $this->usr->id;
-    //$result = $db_con->exe($sql, "verb_list->calc_usage", array());
-    $result = $db_con->exe($sql);
-
-    return $result;           
-  }
-  
-  /*
-    display functions
-    -----------------
-  */
-
-  // return a list of the verb ids as an sql compatible text
-  function ids_txt() {
-    $ids = array();
-    foreach ($this->lst AS $vrb) {
-      if ($vrb->id > 0) {
-        $ids[] = $vrb->id;
-      }
+            // set the where clause depending on the values given
+            $sql_where = " s.from_phrase_id = " . $this->wrd->id;
+            if ($this->direction == "up") {
+                $sql_where = " s.to_phrase_id = " . $this->wrd->id;
+            }
+            $db_con->set_type(DB_TYPE_WORD_LINK);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr_num_fields(array('excluded'));
+            $db_con->set_join_fields(array('code_id', 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', 'description'), DB_TYPE_VERB);
+            $db_con->set_fields(array('verb_id'));
+            $db_con->set_where_text('s.to_phrase_id = 2');
+            $sql = $db_con->select();
+            $db_vrb_lst = $db_con->get($sql);
+            $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
+            if ($db_vrb_lst != null) {
+                $vrb_is_lst = array(); // tmp solution to prevent double entry until query has nice distinct
+                foreach ($db_vrb_lst as $db_vrb) {
+                    if (!in_array($db_vrb['verb_id'], $vrb_is_lst)) {
+                        $vrb = new verb;
+                        $vrb->row_mapper($db_vrb);
+                        $vrb->usr = $this->usr->id;
+                        $this->lst[] = $vrb;
+                        $vrb_is_lst[] = $vrb->id;
+                        log_debug('verb_list->load added (' . $vrb->name . ')');
+                    }
+                }
+            }
+            log_debug('verb_list->load (' . ".$sql_where." . ')');
+        }
     }
-    $result = implode(',',$ids);
-    return $result; 
-  }
 
-  // display all verbs and allow an admin to change it
-  function dsp_list () {
-    log_debug('verb_list->dsp_list('.$this->usr.')');
-    $result  = "";
+    // calculates how many times a word is used, because this can be helpful for sorting
+    function calc_usage()
+    {
+        log_debug('verb_list->calc_usage');
 
-    $result .= dsp_list($this->lst, "link_type");
+        global $db_con;
 
-    return $result;
-  }
+        $sql = "UPDATE verbs v
+               SET words = ( 
+            SELECT COUNT(to_phrase_id) 
+              FROM word_links l
+             WHERE v.verb_id = l.verb_id);";
+        $db_con->usr_id = $this->usr->id;
+        return $db_con->exe($sql);
+    }
 
-  
+    /*
+      display functions
+      -----------------
+    */
+
+    // return a list of the verb ids as an sql compatible text
+    function ids_txt(): string
+    {
+        $ids = array();
+        foreach ($this->lst as $vrb) {
+            if ($vrb->id > 0) {
+                $ids[] = $vrb->id;
+            }
+        }
+        return implode(',', $ids);
+    }
+
+    // display all verbs and allow an admin to change it
+    function dsp_list(): string
+    {
+        return dsp_list($this->lst, "link_type");
+    }
+
+
 }
 
 ?>

@@ -312,6 +312,7 @@ const DB_TYPE_FORMULA_VALUE = 'formula_value';
 const DB_TYPE_VIEW = 'view';
 const DB_TYPE_VIEW_COMPONENT = 'view_component';
 const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
+const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
 
 const DB_TYPE_CHANGE = 'change';
 const DB_TYPE_CHANGE_TABLE = 'change_table';

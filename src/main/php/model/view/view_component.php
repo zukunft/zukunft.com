@@ -240,8 +240,8 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    //
-    function load_formula()
+    // load the related formula and returns the name of the formula
+    function load_formula(): string
     {
         $result = '';
         if ($this->formula_id > 0) {
@@ -265,19 +265,12 @@ class view_component extends user_sandbox
         if ($this->id > 0 and isset($this->usr)) {
             log_debug('view_component->assign_dsp_ids for view_component "' . $this->id . '" and user "' . $this->usr->name . '"');
             // this sql is similar to the load statement in view_links.php, maybe combine
-            $sql = "SELECT l.view_component_link_id,
-                     u.view_component_link_id AS user_link_id,
-                     l.user_id,
-                     l.view_id, 
-                     l.view_component_id,
-                     IF(u.excluded IS NULL,      l.excluded,      u.excluded)      AS excluded,
-                     IF(u.order_nbr IS NULL,     l.order_nbr,     u.order_nbr)     AS order_nbr,
-                     IF(u.position_type IS NULL, l.position_type, u.position_type) AS position_type
-                FROM view_component_position_types t, view_component_links l
-           LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
-                                            AND u.user_id = " . $this->usr->id . "  
-               WHERE l.view_component_id = " . $this->id . ";";
-            //$db_con = new mysql;
+            $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+            //$db_con->set_join_fields(array('position_type'), 'position_type');
+            $db_con->set_fields(array('view_id','view_component_id'));
+            $db_con->set_usr_num_fields(array('order_nbr','position_type','excluded'));
+            $db_con->set_where_text('s.view_component_id = 1');
+            $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get($sql);
             foreach ($db_lst as $db_row) {
@@ -425,8 +418,10 @@ class view_component extends user_sandbox
         if ($view_id == '' or $view_id == Null or $view_id == 0) {
             log_err('Cannot get the next position, because the view_id is not set', 'view_component->next_nbr');
         } else {
-            $sql = " SELECT max(m.order_nbr) AS max_order_nbr
-                FROM ( SELECT IF(u.order_nbr IS NULL,     l.order_nbr,     u.order_nbr)     AS order_nbr
+            $sql_avoid_code_check_prefix = "SELECT";
+            $sql = $sql_avoid_code_check_prefix . " max(m.order_nbr) AS max_order_nbr
+                FROM ( SELECT 
+                              " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_NUM) . " 
                           FROM view_component_links l 
                     LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                                       AND u.user_id = " . $this->usr->id . " 

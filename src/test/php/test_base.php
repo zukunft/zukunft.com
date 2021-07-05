@@ -476,7 +476,7 @@ function test_uncolor($result)
 
 // similar to test_show_result, but the target only needs to be part of the result
 // e.g. "ABB" is part of the company word list
-function test_show_contains($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = '')
+function test_show_contains($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = ''): string
 {
     if (strpos($result, $target) === false) {
         $result = $target . ' not found in ' . $result;
@@ -506,53 +506,71 @@ function str_diff($from, $to): array
     $diffMask = array();
 
     $dm = array();
-    $n1 = count($from);
-    $n2 = count($to);
-
-    for ($j = -1; $j < $n2; $j++) $dm[-1][$j] = 0;
-    for ($i = -1; $i < $n1; $i++) $dm[$i][-1] = 0;
-    for ($i = 0; $i < $n1; $i++) {
-        for ($j = 0; $j < $n2; $j++) {
-            if ($from[$i] == $to[$j]) {
-                $ad = $dm[$i - 1][$j - 1];
-                $dm[$i][$j] = $ad + 1;
-            } else {
-                $a1 = $dm[$i - 1][$j];
-                $a2 = $dm[$i][$j - 1];
-                $dm[$i][$j] = max($a1, $a2);
-            }
+    $do_diff = true;
+    if (is_array($from)) {
+        $n1 = count($from);
+    } else {
+        if ($from != "") {
+            log_warning('Array expected in str_diff');
+            $do_diff = false;
+        }
+    }
+    if (is_array($to)) {
+        $n2 = count($to);
+    } else {
+        if ($to != "") {
+            log_warning('Array expected in str_diff');
+            $do_diff = false;
         }
     }
 
-    $i = $n1 - 1;
-    $j = $n2 - 1;
-    while (($i > -1) || ($j > -1)) {
-        if ($j > -1) {
-            if ($dm[$i][$j - 1] == $dm[$i][$j]) {
-                $diffValues[] = $to[$j];
-                $diffMask[] = 1;
-                $j--;
-                continue;
+
+    if ($do_diff) {
+        for ($j = -1; $j < $n2; $j++) $dm[-1][$j] = 0;
+        for ($i = -1; $i < $n1; $i++) $dm[$i][-1] = 0;
+        for ($i = 0; $i < $n1; $i++) {
+            for ($j = 0; $j < $n2; $j++) {
+                if ($from[$i] == $to[$j]) {
+                    $ad = $dm[$i - 1][$j - 1];
+                    $dm[$i][$j] = $ad + 1;
+                } else {
+                    $a1 = $dm[$i - 1][$j];
+                    $a2 = $dm[$i][$j - 1];
+                    $dm[$i][$j] = max($a1, $a2);
+                }
             }
         }
-        if ($i > -1) {
-            if ($dm[$i - 1][$j] == $dm[$i][$j]) {
+
+        $i = $n1 - 1;
+        $j = $n2 - 1;
+        while (($i > -1) || ($j > -1)) {
+            if ($j > -1) {
+                if ($dm[$i][$j - 1] == $dm[$i][$j]) {
+                    $diffValues[] = $to[$j];
+                    $diffMask[] = 1;
+                    $j--;
+                    continue;
+                }
+            }
+            if ($i > -1) {
+                if ($dm[$i - 1][$j] == $dm[$i][$j]) {
+                    $diffValues[] = $from[$i];
+                    $diffMask[] = -1;
+                    $i--;
+                    continue;
+                }
+            }
+            {
                 $diffValues[] = $from[$i];
-                $diffMask[] = -1;
+                $diffMask[] = 0;
                 $i--;
-                continue;
+                $j--;
             }
         }
-        {
-            $diffValues[] = $from[$i];
-            $diffMask[] = 0;
-            $i--;
-            $j--;
-        }
-    }
 
-    $diffValues = array_reverse($diffValues);
-    $diffMask = array_reverse($diffMask);
+        $diffValues = array_reverse($diffValues);
+        $diffMask = array_reverse($diffMask);
+    }
 
     return array('values' => $diffValues, 'view' => $diffMask);
 }

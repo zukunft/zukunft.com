@@ -60,6 +60,10 @@ body {
   background-image: none;
 }
 
+.right_ref {
+  text-align: right;
+}
+
 /* the history of the changes is grey, because it is usually less important */
 .change_hist {
   color: #A9A9A9;

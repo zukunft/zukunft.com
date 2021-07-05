@@ -1281,18 +1281,24 @@ class word_list
         return $result;
     }
 
-// this should create a value matrix
-    function val_matrix($col_lst, $usr)
+    // this should create a value matrix
+    function val_matrix($col_lst, $usr): array
     {
-        log_debug('word_list->val_matrix for ' . $this->dsp_id() . ' with ' . $col_lst->dsp_id() . ' for user ' . $usr->dsp_id());
+        if ($col_lst != null) {
+            log_debug('word_list->val_matrix for ' . $this->dsp_id() . ' with ' . $col_lst->dsp_id());
+        } else {
+            log_debug('word_list->val_matrix for ' . $this->dsp_id());
+        }
         $result = array();
 
         return $result;
     }
 
-    function dsp_val_matrix($val_matrix, $usr)
+    function dsp_val_matrix($val_matrix, $usr): string
     {
-        log_debug('word_list->dsp_val_matrix for ' . $val_matrix->dsp_id() . ' for user ' . $usr->dsp_id());
+        if ($val_matrix != null) {
+            log_debug('word_list->dsp_val_matrix for ' . $val_matrix->dsp_id());
+        }
         $result = '';
 
         return $result;

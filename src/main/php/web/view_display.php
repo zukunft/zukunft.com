@@ -113,7 +113,7 @@ class view_dsp extends view {
     $result = '';
 
     $result .= $this->html_navbar_start();
-    $result .= '<td align="right">';
+    $result .= '<td class="right_ref">';
     if ($this->is_system() AND !$this->usr->is_admin()) {
       $result .= btn_find ('find a word or formula', '/find.php').' - ';
       $result .= ''.$this->name.' ';
@@ -139,7 +139,7 @@ class view_dsp extends view {
     $result = '';
 
     $result .= $this->html_navbar_start();
-    $result .= '<td align="right">';
+    $result .= '<td class="right_ref">';
     $result .= $this->dsp_user($back) ;
     $result .= $this->dsp_logout();
     $result .= '</td>';

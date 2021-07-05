@@ -47,6 +47,27 @@ class verb
     public $frm_name = '';    // short name of the verb for the use in formulas, because there both sides are combined
     public $description = '';    // for the mouse over explain
 
+    // set the class vars based on a database record
+    // $db_row is an array with the database values
+    function row_mapper($db_row) {
+        if ($db_row != null) {
+            if ($db_row['verb_id'] > 0) {
+                $this->id = $db_row['verb_id'];
+                $this->code_id = $db_row['code_id'];
+                $this->name = $db_row['verb_name'];
+                $this->plural = $db_row['name_plural'];
+                $this->reverse = $db_row['name_reverse'];
+                $this->rev_plural = $db_row['name_plural_reverse'];
+                $this->frm_name = $db_row['formula_name'];
+                $this->description = $db_row['description'];
+            } else {
+                $this->id = 0;
+            }
+        } else {
+            $this->id = 0;
+        }
+    }
+
     // load the missing verb parameters from the database
     function load()
     {
@@ -79,23 +100,8 @@ class verb
             } else {
                 $db_con->usr_id = $this->usr->id;
             }
-            $db_lnk = $db_con->get1($sql);
-            if ($db_lnk != null) {
-                if ($db_lnk['verb_id'] > 0) {
-                    $this->id = $db_lnk['verb_id'];
-                    $this->code_id = $db_lnk['code_id'];
-                    $this->name = $db_lnk['verb_name'];
-                    $this->plural = $db_lnk['name_plural'];
-                    $this->reverse = $db_lnk['name_reverse'];
-                    $this->rev_plural = $db_lnk['name_plural_reverse'];
-                    $this->frm_name = $db_lnk['formula_name'];
-                    $this->description = $db_lnk['description'];
-                } else {
-                    $this->id = 0;
-                }
-            } else {
-                $this->id = 0;
-            }
+            $db_row = $db_con->get1($sql);
+            $this->row_mapper($db_row);
             log_debug('verb->load (' . $this->dsp_id() . ')');
         }
         return $result;

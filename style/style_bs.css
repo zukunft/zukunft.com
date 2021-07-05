@@ -17,6 +17,10 @@ a:link {
   color: #161650; 
 }
 
+.right_ref {
+  text-align: right;
+}
+
 /* looks like in bootstrp version 4.1.3 btn-outline-danger is handled differently from btn-outline-success and in Firefox it is still not working, but in Chromium it is fine */
 /*a.btn-outline-danger:link {
   color: #dc3545;

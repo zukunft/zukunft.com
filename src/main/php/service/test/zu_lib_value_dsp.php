@@ -639,7 +639,7 @@ function zuv_tbl_val ($id, $name, $back) {
   log_debug('zuv_tbl_val ('.$id.','.$name.','.$back.')');
   $result  = '';
   $result .= '    <td>'."\n";
-  $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'">'.$name.'</a></div>'."\n";
+  $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'">'.$name.'</a></div>'."\n";
   $result .= '    </td>'."\n";
   return $result;
 }
@@ -649,7 +649,7 @@ function zuv_tbl_val_usr ($id, $name, $back) {
   log_debug('zuv_tbl_val ('.$id.','.$name.','.$back.')');
   $result  = '';
   $result .= '    <td>'."\n";
-  $result .= '      <div align="right"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'" class="user_specific">'.$name.'</a></div>'."\n";
+  $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id='.$id.'&back='.$back.'" class="user_specific">'.$name.'</a></div>'."\n";
   $result .= '    </td>'."\n";
   return $result;
 }

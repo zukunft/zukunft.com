@@ -126,14 +126,14 @@ class value_list_dsp extends value_list
             // display the common words
             // to do: sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
             if (count($common_lst) > 0) {
-                $commen_text = '(in ';
+                $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
                     if ($common_word->id <> $this->phr->id) {
-                        $commen_text .= $common_word->dsp_tbl_row();
+                        $common_text .= $common_word->dsp_tbl_row();
                     }
                 }
-                $commen_text .= ')';
-                $result .= dsp_line_small($commen_text);
+                $common_text .= ')';
+                $result .= dsp_line_small($common_text);
             }
             $result .= '<br>';
 
@@ -154,6 +154,8 @@ class value_list_dsp extends value_list
             $result .= '  </tr>' . "\n";
 
             // temp: display the word tree
+            $last_words = '';
+            $id = 0; // TODO review and rename
             foreach ($row_wrd_lst->lst as $sub_wrd) {
                 $wrd_ids = array();
                 $wrd_ids[] = $this->phr->id;
@@ -200,7 +202,7 @@ class value_list_dsp extends value_list
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number == "") {
-                            $result .= '      <td align="right">' . "\n";
+                            $result .= '      <td class="right_ref">' . "\n";
 
                             // to review
                             $add_phr_lst = clone $common_lst;
@@ -237,19 +239,19 @@ class value_list_dsp extends value_list
 
                 // display the row differentiators
                 $sub_wrd->usr = $this->usr; // to be fixed in the lines before
-                log_debug("value_list_dsp->dsp_table ... get differantiator for " . $sub_wrd->id . " and user " . $sub_wrd->usr->name . ".");
+                log_debug("value_list_dsp->dsp_table ... get differentiator for " . $sub_wrd->id . " and user " . $sub_wrd->usr->name . ".");
                 // get all potential differentiator words
                 $sub_wrd_lst = $sub_wrd->lst();
                 $differentiator_words = $sub_wrd_lst->differentiators_filtered($phr_lst_all);
                 $sub_phr_lst = $sub_wrd_lst->phrase_lst();
                 $differentiator_phrases = $differentiator_words->phrase_lst();
-                log_debug("value_list_dsp->dsp_table ... show differantiator of " . $differentiator_phrases->name() . ".");
+                log_debug("value_list_dsp->dsp_table ... show differentiator of " . $differentiator_phrases->name() . ".");
                 // select only the differentiator words that have a value for the main word
                 //$differentiator_phrases = zu_lst_in($differentiator_phrases, $xtra_phrases);
                 $differentiator_phrases = $differentiator_phrases->filter($xtra_phrases);
 
                 // find direct differentiator words
-                //$differentiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+                //$differentiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERENTIATOR);
                 log_debug("value_list_dsp->dsp_table ... get differentiator type " . $differentiator_phrases->name() . ".");
                 $type_phrases = $sub_phr_lst->differentiators();
 
@@ -258,7 +260,7 @@ class value_list_dsp extends value_list
 
                 //foreach ($type_word_ids as $type_word_id) {
                 foreach ($type_phrases->lst as $type_phr) {
-                    if (sizeof($type_word_ids) > 1) {
+                    if ($type_phr->id <> 1) {
                         $result .= '  <tr>' . "\n";
                         //$result .= '      <td>&nbsp;</td>';
                         $result .= $type_phr->dsp_tbl(0);
@@ -266,6 +268,8 @@ class value_list_dsp extends value_list
                     }
                     // display the differentiator rows that are matching to the word type (e.g. the country)
                     //foreach (array_keys($differentiator_phrases) as $diff_word_id) {
+                    $time_wrd = null;
+                    $diff_phrase = null;
                     foreach ($differentiator_phrases->lst as $diff_phrase) {
                         if ($diff_phrase->is_a($type_phr)) {
                             $result .= '  <tr>' . "\n";
@@ -301,7 +305,7 @@ class value_list_dsp extends value_list
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number == "") {
-                                    $result .= '      <td align="right">' . "\n";
+                                    $result .= '      <td class="right_ref">' . "\n";
 
                                     // to review
                                     $add_phr_lst = $common_lst;
@@ -341,7 +345,7 @@ class value_list_dsp extends value_list
                     // add a new part value for the sub_word
                     if (!empty($differentiator_phrases)) {
                         $result .= '  <tr>' . "\n";
-                        $result .= '      <td align="right">' . "\n";
+                        $result .= '      <td class="right_ref">' . "\n";
 
                         // to review
                         $add_phr_ids = $common_lst->ids;
@@ -351,8 +355,12 @@ class value_list_dsp extends value_list
                         }
 
                         $add_phr_ids[] = $sub_wrd->id;
-                        $add_phr_ids[] = $time_wrd->id;
-                        $add_phr_ids[] = $diff_word_id;
+                        if ($time_wrd != null) {
+                            $add_phr_ids[] = $time_wrd->id;
+                        }
+                        if ($diff_phrase != null) {
+                            $add_phr_ids[] = $diff_phrase->id;
+                        }
                         $type_ids[] = $type_phr->id;
                         $type_ids[] = $type_phr->id;
                         $type_ids[] = $type_phr->id;
@@ -382,7 +390,7 @@ class value_list_dsp extends value_list
             // this extra add value button is needed for the case that all values are filled and due to that there is no other plus sign on the table
             if (isset($val_main)) {
                 foreach ($time_lst->lst as $time_wrd) {
-                    $result .= '      <td align="right">' . "\n";
+                    $result .= '      <td class="right_ref">' . "\n";
                     $result .= $val_main->btn_add($back, debug - 1);
                     $result .= '      </td>' . "\n";
                 }

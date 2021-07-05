@@ -132,8 +132,8 @@ function zuh_top_right_user($view_id, $view_name, $word_id) {
   $result .= '<table style="width:100%">';
   $result .= '<tr><td>';
   $result .= dsp_logo(); 
-  $result .= '</td><td align="right">';
-  //$result  = '<div align="right">';
+  $result .= '</td><td class="right_ref">';
+  //$result  = '<div class="right_ref">';
   if ($_SESSION['logged']) { 
     $result .= '<a href="/http/user.php?id='.$_SESSION['usr_id'].'&back='.$word_id.'">'.$_SESSION['user_name'].'</a>';
   } else {  

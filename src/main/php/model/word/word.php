@@ -80,7 +80,7 @@ class word extends user_sandbox
         $this->view = '';
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['word_id'] > 0) {

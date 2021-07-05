@@ -36,6 +36,7 @@
 // TODO Check that calling the update function always expects a boolean as return value
 // TODO check that $db_con->get and $db_con->get1 always can handle a null row result
 // TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
+// TODO mailnly for data from the internet use prepared statements to prevent SQL injections
 
 const DB_TYPE_POSTGRES = "PostgreSQL";
 const DB_TYPE_MYSQL = "MySQL";
@@ -72,6 +73,7 @@ class sql_db
 
     const FLD_FORMAT_TEXT = "text";       // to force the text formatting of an value for the SQL statement formatting
     const FLD_FORMAT_VAL = "number";      // to force the numeric formatting of an value for the SQL statement formatting
+    const FLD_FORMAT_BOOL = "boolean";    // to force the boolean formatting of an value for the SQL statement formatting
 
     public $db_type = '';                 // the database type which should be used for this connection e.g. postgreSQL or MYSQL
     public $link = NULL;                  // the link object to the database
@@ -88,12 +90,14 @@ class sql_db
     private $field_lst = [];              // list of fields that should be returned in the next select query
     private $usr_field_lst = [];          // list of user specific fields that should be returned in the next select query
     private $usr_num_field_lst = [];      // list of user specific numeric fields that should be returned in the next select query
+    private $usr_bool_field_lst = [];     // list of user specific boolean / tinyint fields that should be returned in the next select query
     private $usr_only_field_lst = [];     // list of fields that are only in the user sandbox
     private $join_field_lst = [];         // list of fields that should be returned in the next select query that are taken from a joined table
     private $join_usr_field_lst = [];     // list of fields that should be returned in the next select query that are taken from a joined table
     private $join_usr_num_field_lst = []; // list of fields that should be returned in the next select query that are taken from a joined table
     private $join_type = '';              // the type name of the table to join
     private $usr_query = false;           // true, if the query is expected to retrieve user specific data
+    private $usr_join_query = false;      // true, if the joined query is also expected to retrieve user specific data
     private $usr_only_query = false;      // true, if the query is expected to retrieve ONLY the user specific data without the standard values
 
     private $fields = '';                 // the fields               SQL statement that is used for the next select query
@@ -164,12 +168,14 @@ class sql_db
     }
 
     // add a list of fields to the result that are taken from another table
+    // must be set AFTER the set_usr_fields, set_usr_num_fields, set_usr_bool_fields, set_usr_bool_fields or set_usr_only_fields for correct handling of $this->usr_join_query
     // $field_lst are the field names that should be included in the result
     // $join_table is the table from where the fields should be taken; use the type name, not the table name
     // $join_field is the index field that should be used for the join that must exist in both tables, default is the id of the joined table
     function set_join_fields($join_field_lst, $join_type, $join_field = '')
     {
         $this->join_field_lst = $join_field_lst;
+        $this->usr_join_query = false;
         $this->join_type = $join_type;
     }
 
@@ -190,18 +196,28 @@ class sql_db
     function set_usr_fields($usr_field_lst)
     {
         $this->usr_query = true;
+        $this->usr_join_query = true;
         $this->usr_field_lst = $usr_field_lst;
     }
 
     function set_usr_num_fields($usr_field_lst)
     {
         $this->usr_query = true;
+        $this->usr_join_query = true;
         $this->usr_num_field_lst = $usr_field_lst;
+    }
+
+    function set_usr_bool_fields($usr_field_lst)
+    {
+        $this->usr_query = true;
+        $this->usr_join_query = true;
+        $this->usr_bool_field_lst = $usr_field_lst;
     }
 
     function set_usr_only_fields($field_lst)
     {
         $this->usr_query = true;
+        $this->usr_join_query = true;
         $this->usr_only_field_lst = $field_lst;
     }
 
@@ -212,22 +228,60 @@ class sql_db
         }
     }
 
-    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL)
+    // interface function for sql_usr_field
+    function get_usr_field($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $field_format = sql_db::FLD_FORMAT_TEXT, $as = ''): string
     {
-        if ($this->db_type == DB_TYPE_POSTGRES) {
-            $this->fields .= " CASE WHEN (" . $usr_tbl . "." . $field . " <> '' IS NOT TRUE) THEN " . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $field;
-        } else {
-            $this->fields .= '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, ' . $stb_tbl . '.' . $field . ', ' . $usr_tbl . '.' . $field . ')    AS ' . $field;
-        }
+        return $this->sql_usr_field($field, $field_format, $stb_tbl, $usr_tbl, $as);
     }
 
+    // internal interface function for sql_usr_field using the class db type settings and text fields
+    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL)
+    {
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_TEXT, $stb_tbl, $usr_tbl);
+    }
+
+    // internal interface function for sql_usr_field using the class db type settings and number fields
     private function set_field_usr_num($field)
     {
-        if ($this->db_type == DB_TYPE_POSTGRES) {
-            $this->fields .= " CASE WHEN (" . sql_db::USR_TBL . "." . $field . " IS NULL) THEN " . sql_db::STD_TBL . "." . $field . " ELSE " . sql_db::USR_TBL . "." . $field . " END AS " . $field;
-        } else {
-            $this->fields .= '         IF(' . sql_db::USR_TBL . '.' . $field . ' IS NULL, ' . sql_db::STD_TBL . '.' . $field . ', ' . sql_db::USR_TBL . '.' . $field . ')    AS ' . $field;
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, sql_db::STD_TBL, sql_db::USR_TBL);
+    }
+
+    // internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
+    private function set_field_usr_bool($field)
+    {
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_BOOL, sql_db::STD_TBL, sql_db::USR_TBL);
+    }
+
+    // return the SQL statement for a field taken from the user sandbox table or from the table with the common values
+    // $db_type is the SQL database type which is in this case independent from the class setting to be able to use it anywhere
+    private function sql_usr_field($field, $field_format, $stb_tbl, $usr_tbl, $as = ''): string
+    {
+        $result = '';
+        if ($as == '') {
+            $as = $field;
         }
+        if ($this->db_type == DB_TYPE_POSTGRES) {
+            if ($field_format == sql_db::FLD_FORMAT_TEXT) {
+                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " <> '' IS NOT TRUE) THEN " . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
+            } elseif ($field_format == sql_db::FLD_FORMAT_VAL) {
+                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN " . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
+            } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
+                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN COALESCE(" . $stb_tbl . "." . $field . ",0) ELSE COALESCE(" . $usr_tbl . "." . $field . ",0) END AS " . $as;
+            } else {
+                log_err('Unexpected field format ' . $field_format);
+            }
+        } elseif ($this->db_type == DB_TYPE_MYSQL) {
+            if ($field_format == sql_db::FLD_FORMAT_TEXT or $field_format == sql_db::FLD_FORMAT_VAL) {
+                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, ' . $stb_tbl . '.' . $field . ', ' . $usr_tbl . '.' . $field . ')    AS ' . $as;
+            } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
+                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, COALESCE(' . $stb_tbl . '.' . $field . ',0), COALESCE(' . $usr_tbl . '.' . $field . ',0))    AS ' . $as;
+            } else {
+                log_err('Unexpected field format ' . $field_format);
+            }
+        } else {
+            log_err('Unexpected database type ' . $this->db_type);
+        }
+        return $result;
     }
 
     private function set_field_statement($has_id)
@@ -299,7 +353,7 @@ class sql_db
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->fields .= ' ' . sql_db::LNK_TBL . '.' . $field;
-            if ($this->usr_query) {
+            if ($this->usr_query and $this->usr_join_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
@@ -317,6 +371,12 @@ class sql_db
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field);
+        }
+
+        foreach ($this->usr_bool_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->set_field_usr_bool($field);
         }
 
         foreach ($this->join_usr_field_lst as $field) {
@@ -390,6 +450,7 @@ class sql_db
         $this->field_lst = [];
         $this->usr_field_lst = [];
         $this->usr_num_field_lst = [];
+        $this->usr_bool_field_lst = [];
         $this->usr_only_field_lst = [];
         $this->join_field_lst = [];
         $this->join_usr_field_lst = [];
@@ -615,8 +676,10 @@ class sql_db
                 if ($this->db_type == DB_TYPE_POSTGRES) {
                     $sql_result = $this->exe($sql, $sql_name, $sql_array);
                     if ($fetch_all) {
-                        while ($sql_row = pg_fetch_array($sql_result)) {
-                            $result[] = $sql_row;
+                        if ($sql_result) {
+                            while ($sql_row = pg_fetch_array($sql_result)) {
+                                $result[] = $sql_row;
+                            }
                         }
                     } else {
                         $result = pg_fetch_array($sql_result);
@@ -761,7 +824,7 @@ class sql_db
         return $result;
     }
 
-    function get_id_from_code($code_id)
+    function get_id_from_code($code_id): string
     {
         $result = '';
         log_debug('sql_db->get_id_from_code for "' . $code_id . '" of the db object "' . $this->type . '"');
@@ -1047,7 +1110,7 @@ class sql_db
             $join_id_field = $this->get_id_field_name($this->join_type);
             $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
-            if ($this->usr_query) {
+            if ($this->usr_query and $this->usr_join_query) {
                 $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::ULK_TBL;
                 $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
             }

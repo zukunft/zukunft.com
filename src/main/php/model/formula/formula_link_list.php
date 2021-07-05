@@ -38,6 +38,28 @@ class formula_link_list
     // search fields
     public $frm = Null; // to select all links for this formula
 
+    // fill the formula link list based on a database records
+    // $db_rows is an array of an array with the database values
+    private function rows_mapper($db_rows)
+    {
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                if ($db_row['formula_link_id'] > 0) {
+                    $frm_lnk = new formula_link;
+                    $frm_lnk->id = $db_row['formula_link_id'];
+                    $frm_lnk->usr = $this->usr;
+                    $frm_lnk->usr_cfg_id = $db_row['user_link_id'];
+                    $frm_lnk->owner_id = $db_row['user_id'];
+                    $frm_lnk->formula_id = $db_row['formula_id'];
+                    $frm_lnk->phrase_id = $db_row['phrase_id'];
+                    $frm_lnk->link_type_id = $db_row['link_type_id'];
+                    $frm_lnk->excluded = $db_row['excluded'];
+                    $this->lst[] = $frm_lnk;
+                }
+            }
+        }
+    }
+
     // load the missing formula parameters from the database
     function load()
     {
@@ -60,55 +82,29 @@ class formula_link_list
             if ($sql_where == '') {
                 log_err("The words assigned to a formula cannot be loaded because the formula is not defined.", "formula_link_list->load");
             } else {
-                if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
-                    $sql = "SELECT DISTINCT 
+                $sql = "SELECT DISTINCT 
                        l.formula_link_id,
                        u.formula_link_id AS user_link_id,
                        l.user_id,
                        l.formula_id, 
                        l.phrase_id,
-                       CASE WHEN (u.link_type_id IS NULL) THEN l.link_type_id ELSE u.link_type_id END AS link_type_id,
-                       CASE WHEN (u.excluded     IS NULL) THEN l.excluded     ELSE u.excluded     END AS excluded
+                    " . $db_con->get_usr_field('link_type_id', 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('excluded', 'l', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM formula_link_types t, formula_links l
              LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
                                                 AND u.user_id = " . $this->usr->id . " 
                   WHERE " . $sql_where . ";";
-                } else {
-                    $sql = "SELECT DISTINCT 
-                       l.formula_link_id,
-                       u.formula_link_id AS user_link_id,
-                       l.user_id,
-                       l.formula_id, 
-                       l.phrase_id,
-                       IF(u.link_type_id IS NULL, l.link_type_id, u.link_type_id) AS link_type_id,
-                       IF(u.excluded     IS NULL, l.excluded,     u.excluded)     AS excluded
-                  FROM formula_link_types t, formula_links l
-             LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
-                                                AND u.user_id = " . $this->usr->id . " 
-                  WHERE " . $sql_where . ";";
-                }
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
                 $db_lst = $db_con->get($sql);
-                foreach ($db_lst as $db_row) {
-                    $frm_lnk = new formula_link;
-                    $frm_lnk->id = $db_row['formula_link_id'];
-                    $frm_lnk->usr = $this->usr;
-                    $frm_lnk->usr_cfg_id = $db_row['user_link_id'];
-                    $frm_lnk->owner_id = $db_row['user_id'];
-                    $frm_lnk->formula_id = $db_row['formula_id'];
-                    $frm_lnk->phrase_id = $db_row['phrase_id'];
-                    $frm_lnk->link_type_id = $db_row['link_type_id'];
-                    $frm_lnk->excluded = $db_row['excluded'];
-                    $this->lst[] = $frm_lnk;
-                }
+                $this->rows_mapper($db_lst);
                 log_debug('formula_link_list->load -> ' . count($this->lst) . ' links loaded');
             }
         }
     }
 
     // get an array with all phrases linked of this list e.g. linked to one formula
-    function phrase_ids($sbx)
+    function phrase_ids($sbx): array
     {
         log_debug('formula_link_list->ids');
         $result = array();

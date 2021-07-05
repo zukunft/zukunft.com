@@ -72,9 +72,9 @@ if ($usr->id > 0) {
         run_math_test();
         run_user_sandbox_test();
         run_word_test();
-        /*
-        run_word_ui_test ();
+        //run_word_ui_test ();
         run_word_display_test ();
+        /*
         run_word_list_test ();
         run_word_link_test ();
         run_ref_test ();
@@ -119,7 +119,7 @@ if ($usr->id > 0) {
         //run_export_test ();
         //run_permission_test ();
         run_ref_test();
-        run_string_unit_tests(); // test functions not yet split into single unit tests
+
         */
 
         // testing cleanup to remove any remaining test records

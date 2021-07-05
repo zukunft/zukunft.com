@@ -47,68 +47,49 @@ class word_link_list
     public $vrb_lst = NULL;    // show the graph elements related to these verbs
     public $direction = 'down';  // either up, down or both
 
-    private function load_lnk_fields($pos)
+    /*
+     * not really used?
+     *
+    private function load_lnk_fields($pos): string
     {
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
-            $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
-                  t" . $pos . ".user_id AS user_id" . $pos . ",
-       CASE WHEN (u" . $pos . ".word_name    <> '' IS NOT TRUE) THEN t" . $pos . ".word_name     ELSE u" . $pos . ".word_name     END AS word_name" . $pos . ",
-       CASE WHEN (u" . $pos . ".plural       <> '' IS NOT TRUE) THEN t" . $pos . ".plural        ELSE u" . $pos . ".plural        END AS plural" . $pos . ",
-       CASE WHEN (u" . $pos . ".description  <> '' IS NOT TRUE) THEN t" . $pos . ".description   ELSE u" . $pos . ".description   END AS description" . $pos . ",
-       CASE WHEN (u" . $pos . ".word_type_id IS           NULL) THEN t" . $pos . ".word_type_id  ELSE u" . $pos . ".word_type_id  END AS word_type_id" . $pos . ",
-       CASE WHEN (u" . $pos . ".excluded     IS           NULL) THEN t" . $pos . ".excluded      ELSE u" . $pos . ".excluded      END AS excluded" . $pos . ",
-                  t" . $pos . ".`values` AS `values" . $pos . "`";
-        } else {
-            $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
-            t" . $pos . ".user_id AS user_id" . $pos . ",
-            IF(u" . $pos . ".word_name IS NULL,     t" . $pos . ".word_name,     u" . $pos . ".word_name)     AS word_name" . $pos . ",
-            IF(u" . $pos . ".plural IS NULL,        t" . $pos . ".plural,        u" . $pos . ".plural)        AS plural" . $pos . ",
-            IF(u" . $pos . ".description IS NULL,   t" . $pos . ".description,   u" . $pos . ".description)   AS description" . $pos . ",
-            IF(u" . $pos . ".word_type_id IS NULL,  t" . $pos . ".word_type_id,  u" . $pos . ".word_type_id)  AS word_type_id" . $pos . ",
-            IF(u" . $pos . ".excluded IS NULL,      t" . $pos . ".excluded,      u" . $pos . ".excluded)      AS excluded" . $pos . ",
-            t" . $pos . ".`values` AS `values" . $pos . "`";
-        }
+        global $db_con;
+
+        $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
+                t" . $pos . ".user_id AS user_id" . $pos . ",
+                " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos) . ",
+                " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos) . ",
+                " . $db_con->get_usr_field('description', 't' . $pos, 'u' . $pos) . ",
+                " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
+                " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
+                  t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
         return $sql;
     }
 
-    private function load_lnk_from($pos)
+    private function load_lnk_from($pos): string
     {
-        $sql = " words t" . $pos . " 
-             LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
+        return " words t" . $pos . " LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
                                            AND u" . $pos . ".user_id = " . $this->usr->id . " ";
-        return $sql;
+    }
+    */
+
+    private function load_wrd_fields($pos): string
+    {
+        global $db_con;
+
+        return "t" . $pos . ".word_id AS word_id" . $pos . ",
+                t" . $pos . ".user_id AS user_id" . $pos . ",
+                " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'word_name' . $pos) . ",
+                " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'plural' . $pos) . ",
+                " . $db_con->get_usr_field('description', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'description' . $pos) . ",
+                " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
+                " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
+                  t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
     }
 
-    private function load_wrd_fields($pos)
+    private function load_wrd_from($pos): string
     {
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
-            $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
-                  t" . $pos . ".user_id AS user_id" . $pos . ",
-       CASE WHEN (u" . $pos . ".word_name    <> '' IS NOT TRUE) THEN t" . $pos . ".word_name,     u" . $pos . ".word_name)     AS word_name" . $pos . ",
-       CASE WHEN (u" . $pos . ".plural       <> '' IS NOT TRUE) THEN t" . $pos . ".plural,        u" . $pos . ".plural)        AS plural" . $pos . ",
-       CASE WHEN (u" . $pos . ".description  <> '' IS NOT TRUE) THEN t" . $pos . ".description,   u" . $pos . ".description)   AS description" . $pos . ",
-       CASE WHEN (u" . $pos . ".word_type_id IS           NULL) THEN t" . $pos . ".word_type_id,  u" . $pos . ".word_type_id)  AS word_type_id" . $pos . ",
-       CASE WHEN (u" . $pos . ".excluded     IS           NULL) THEN t" . $pos . ".excluded,      u" . $pos . ".excluded)      AS excluded" . $pos . ",
-                  t" . $pos . ".`values` AS `values" . $pos . "`";
-        } else {
-            $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
-                  t" . $pos . ".user_id AS user_id" . $pos . ",
-               IF(u" . $pos . ".word_name    IS NULL, t" . $pos . ".word_name,     u" . $pos . ".word_name)     AS word_name" . $pos . ",
-               IF(u" . $pos . ".plural       IS NULL, t" . $pos . ".plural,        u" . $pos . ".plural)        AS plural" . $pos . ",
-               IF(u" . $pos . ".description  IS NULL, t" . $pos . ".description,   u" . $pos . ".description)   AS description" . $pos . ",
-               IF(u" . $pos . ".word_type_id IS NULL, t" . $pos . ".word_type_id,  u" . $pos . ".word_type_id)  AS word_type_id" . $pos . ",
-               IF(u" . $pos . ".excluded     IS NULL, t" . $pos . ".excluded,      u" . $pos . ".excluded)      AS excluded" . $pos . ",
-                  t" . $pos . ".`values` AS `values" . $pos . "`";
-        }
-        return $sql;
-    }
-
-    private function load_wrd_from($pos)
-    {
-        $sql = " words t" . $pos . " 
-             LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
-                                           AND u" . $pos . ".user_id = " . $this->usr->id . " ";
-        return $sql;
+        return " words t" . $pos . " LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
+                                                                       AND u" . $pos . ".user_id = " . $this->usr->id . " ";
     }
 
     // load the word link without the linked objects, because in many cases the object are already loaded by the caller
@@ -200,12 +181,13 @@ class word_link_list
 
                 // load the word link and the destination word with one sql statement to save time
                 // similar to word->load and word_link->load
+                // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
                 $sql = "SELECT l.word_link_id,
                        l.from_phrase_id,
                        l.verb_id,
                        l.to_phrase_id,
                        l.description,
-                       l.name,
+                       l.word_link_name,
                        v.verb_id,
                        v.code_id,
                        v.verb_name,
@@ -214,7 +196,7 @@ class word_link_list
                        v.name_plural_reverse,
                        v.formula_name,
                        v.description,
-                       IF(ul.excluded IS NULL, l.excluded, ul.excluded)    AS excluded,
+                       " . $db_con->get_usr_field('excluded', 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
                        " . $sql_wrd1_fields . "
                        " . $sql_wrd2_fields . "
                   FROM word_links l
@@ -228,8 +210,7 @@ class word_link_list
                    AND " . $sql_wrd2 . " 
                    AND " . $sql_where . "
                        " . $sql_type . " 
-              GROUP BY t2.word_id, l.verb_id
-              ORDER BY v.verb_id, t2.word_name;";
+              ORDER BY l.verb_id, word_link_name;";  // maybe used word_name_t1 and word_name_t2
                 // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
                 //$db_con = New mysql;
                 $db_con->usr_id = $this->usr->id;
@@ -237,79 +218,68 @@ class word_link_list
                 log_debug('word_link_list->load ... sql "' . $sql . '"');
                 $this->lst = array();
                 $this->ids = array();
-                foreach ($db_lst as $db_lnk) {
-                    if (is_null($db_lnk['excluded']) or $db_lnk['excluded'] == 0) {
-                        if ($db_lnk['word_link_id'] > 0) {
-                            $new_link = new word_link;
-                            $new_link->usr = $this->usr;
-                            $new_link->id = $db_lnk['word_link_id'];
-                            $new_link->from_id = $db_lnk['from_phrase_id'];
-                            $new_link->verb_id = $db_lnk['verb_id'];
-                            $new_link->to_id = $db_lnk['to_phrase_id'];
-                            $new_link->description = $db_lnk['description'];
-                            $new_link->name = $db_lnk['name'];
-                            if ($db_lnk['verb_id'] > 0) {
-                                $new_verb = new verb;
-                                $new_verb->usr = $this->usr->id;
-                                $new_verb->id = $db_lnk['verb_id'];
-                                $new_verb->code_id = $db_lnk['code_id'];
-                                $new_verb->name = $db_lnk['verb_name'];
-                                $new_verb->plural = $db_lnk['name_plural'];
-                                $new_verb->reverse = $db_lnk['name_reverse'];
-                                $new_verb->rev_plural = $db_lnk['name_plural_reverse'];
-                                $new_verb->frm_name = $db_lnk['formula_name'];
-                                $new_verb->description = $db_lnk['description'];
-                                $new_link->link_type = $new_verb;
-                            }
-                            if ($db_lnk['word_id'] > 0) {
-                                $new_word = new word_dsp;
-                                $new_word->usr = $this->usr;
-                                $new_word->id = $db_lnk['word_id'];
-                                $new_word->owner = $db_lnk['user_id'];
-                                $new_word->name = $db_lnk['word_name'];
-                                $new_word->plural = $db_lnk['plural'];
-                                $new_word->description = $db_lnk['description'];
-                                $new_word->type_id = $db_lnk['word_type_id'];
-                                $new_word->link_type_id = $db_lnk['verb_id'];
-                                $new_link->from = $new_word;
-                                $new_link->from_name = $new_word->name;
-                            } elseif ($db_lnk['word_id'] < 0) {
-                                $new_word = new word_link;
-                                $new_word->usr = $this->usr;
-                                $new_word->id = $db_lnk['word_id'] * -1;
-                                $new_link->from = $new_word;
-                                $new_link->from_name = $new_word->name;
-                            } else {
-                                if (isset($this->wrd)) {
-                                    log_debug('word_link_list->load ... use "' . $this->wrd->name . '" as from');
-                                    $new_link->from = $this->wrd;
-                                    $new_link->from_name = $this->wrd->name;
+                if ($db_lst != null) {
+                    foreach ($db_lst as $db_lnk) {
+                        if (is_null($db_lnk['excluded']) or $db_lnk['excluded'] == 0) {
+                            if ($db_lnk['word_link_id'] > 0) {
+                                $new_link = new word_link;
+                                $new_link->usr = $this->usr;
+                                $new_link->id = $db_lnk['word_link_id'];
+                                $new_link->from_id = $db_lnk['from_phrase_id'];
+                                $new_link->verb_id = $db_lnk['verb_id'];
+                                $new_link->to_id = $db_lnk['to_phrase_id'];
+                                $new_link->description = $db_lnk['description'];
+                                $new_link->name = $db_lnk['word_link_name'];
+                                if ($db_lnk['verb_id'] > 0) {
+                                    $new_verb = new verb;
+                                    $new_verb->usr = $this->usr->id;
+                                    $new_verb->row_mapper($db_lnk);
                                 }
-                            }
-                            if ($db_lnk['word_id2'] > 0) {
-                                $new_word = new word_dsp;
-                                $new_word->usr = $this->usr;
-                                $new_word->id = $db_lnk['word_id2'];
-                                $new_word->owner = $db_lnk['user_id2'];
-                                $new_word->name = $db_lnk['word_name2'];
-                                $new_word->plural = $db_lnk['plural2'];
-                                $new_word->description = $db_lnk['description2'];
-                                $new_word->type_id = $db_lnk['word_type_id2'];
-                                $new_word->link_type_id = $db_lnk['verb_id'];
-                                //$added_wrd2_lst->add($new_word);
-                                log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk['verb_id'] . ')');
-                                $new_link->to = $new_word;
-                                $new_link->to_name = $new_word->name;
-                            } elseif ($db_lnk['word_id2'] < 0) {
-                                $new_word = new word_link;
-                                $new_word->usr = $this->usr;
-                                $new_word->id = $db_lnk['word_id'] * -1;
-                                $new_link->to = $new_word;
-                                $new_link->to_name = $new_word->name;
+                                if ($db_lnk['word_id1'] > 0) {
+                                    $new_word = new word_dsp;
+                                    $new_word->usr = $this->usr;
+                                    $new_word->row_mapper($db_lnk);
+                                    $new_word->link_type_id = $db_lnk['verb_id'];
+                                    $new_link->from = $new_word;
+                                    $new_link->from_name = $new_word->name;
+                                } elseif ($db_lnk['word_id1'] < 0) {
+                                    $new_word = new word_link;
+                                    $new_word->usr = $this->usr;
+                                    $new_word->id = $db_lnk['word_id1'] * -1; // TODO check if not word_id is correct
+                                    $new_link->from = $new_word;
+                                    $new_link->from_name = $new_word->name;
+                                } else {
+                                    if (isset($this->wrd)) {
+                                        log_debug('word_link_list->load ... use "' . $this->wrd->name . '" as from');
+                                        $new_link->from = $this->wrd;
+                                        $new_link->from_name = $this->wrd->name;
+                                    }
+                                }
+                                if ($db_lnk['word_id2'] > 0) {
+                                    $new_word = new word_dsp;
+                                    $new_word->usr = $this->usr;
+                                    $new_word->id = $db_lnk['word_id2'];
+                                    $new_word->owner_id = $db_lnk['user_id2'];
+                                    $new_word->name = $db_lnk['word_name2'];
+                                    $new_word->plural = $db_lnk['plural2'];
+                                    $new_word->description = $db_lnk['description2'];
+                                    $new_word->type_id = $db_lnk['word_type_id2'];
+                                    $new_word->link_type_id = $db_lnk['verb_id'];
+                                    //$added_wrd2_lst->add($new_word);
+                                    log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk['verb_id'] . ')');
+                                    $new_link->to = $new_word;
+                                    $new_link->to_name = $new_word->name;
+                                } elseif ($db_lnk['word_id2'] < 0) {
+                                    $new_word = new word_link;
+                                    $new_word->usr = $this->usr;
+                                    $new_word->id = $db_lnk['word_id2'] * -1;
+                                    $new_link->to = $new_word;
+                                    $new_link->to_name = $new_word->name;
+                                }
+                                $this->lst[] = $new_link;
+                                $this->ids[] = $new_link->id;
                             }
                         }
-                        $this->lst[] = $new_link;
-                        $this->ids[] = $new_link->id;
                     }
                 }
                 log_debug('word_link_list->load ... done (' . count($this->lst) . ')');
@@ -352,15 +322,14 @@ class word_link_list
     }
 
     // description of the triple list for the user
-    function name()
+    function name(): string
     {
-        $result = implode(",", $this->names());
-        return $result;
+        return implode(",", $this->names());
     }
 
     // return a list of the triple names
     // this function is called from dsp_id, so no other call is allowed
-    function names()
+    function names(): array
     {
         $result = array();
         if (isset($this->lst)) {
@@ -375,7 +344,7 @@ class word_link_list
 
     // shows all words the link to the given word
     // returns the html code to select a word that can be edit
-    function display($back)
+    function display($back): string
     {
         $result = '';
 
@@ -384,12 +353,15 @@ class word_link_list
             log_err("The user id must be set to load a graph.", "word_link_list->load");
         } else {
             if (isset($this->wrd)) {
-                log_debug('graph->display for ' . $this->wrd->name . ' ' . $this->direction . ' and user ' . $this->usr->name);
+                log_debug('graph->display for ' . $this->wrd->name . ' ' . $this->direction . ' and user ' . $this->usr->name . ' called from ' . $back);
             }
             $prev_verb_id = 0;
 
             // loop over the graph elements
             foreach (array_keys($this->lst) as $lnk_id) {
+                // reset the vars
+                $directional_link_type_id = 0;
+
                 $lnk = $this->lst[$lnk_id];
                 // get the next link to detect if there is more than one word linked with the same link type
                 if (count($this->lst) > $lnk_id) {
@@ -438,6 +410,7 @@ class word_link_list
                 $result .= '  </tr>' . "\n";
 
                 // use the last word as a sample for the new word type
+                $last_linked_word_id = 0;
                 if ($lnk->verb_id == cl(DBL_LINK_TYPE_FOLLOW)) {
                     $last_linked_word_id = $lnk->to->id;
                 }
@@ -470,7 +443,7 @@ class word_link_list
     }
 
     // returns the number of phrases in this list
-    function count()
+    function count(): int
     {
         return count($this->lst);
     }
@@ -483,7 +456,7 @@ class word_link_list
     */
 
     // convert the word list object into a phrase list object
-    function phrase_lst()
+    function phrase_lst(): phrase_list
     {
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;

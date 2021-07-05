@@ -174,7 +174,7 @@ function zuu_dsp_par($user_id)
     $usr_row = zu_sql_get($sql);
     $result .= ''; // reset the html code var
 
-    // display the user fields using a table and not using px in css to be independend from any screen solution
+    // display the user fields using a table and not using px in css to be independent from any screen solution
     $result .= zuh_text_h2('User "' . $usr_row[0] . '"');
     $result .= zuh_form_start("user");
     $result .= '<table>';
@@ -217,7 +217,7 @@ function zuu_dsp_sandbox_wrd($user_id, $back_link)
         }
         $result .= '<td>' . $wrd_row[0] . '</td><td>' . $wrd_row[1] . '</td>';
         //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$id.'"><img src="/images/button_del_small.jpg" alt="undo change"></a></td>';
-        $url = "/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$id.'";
+        $url = "/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$back_link.'";
         $result .= '<td>' . zuh_btn_del("Undo your change and use the standard word " . $wrd_row[1], $url) . '</td>';
         $result .= '</tr>';
     }
@@ -260,7 +260,7 @@ function zuu_dsp_sandbox_frm($user_id, $back_link)
         $result .= '<td>' . $wrd_row[1] . '</td>';
         $result .= '<td>' . $wrd_row[2] . '</td>';
         //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$id.'"><img src="/images/button_del_small.jpg" alt="undo change"></a></td>';
-        $url = "/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$id.'";
+        $url = "/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$back_link.'";
         $result .= '<td>' . zuh_btn_del("Undo your change and use the standard formula " . $wrd_row[2], $url) . '</td>';
         $result .= '</tr>';
     }
@@ -479,8 +479,9 @@ function zuu_dsp_errors($user_id, $user_profile, $dsp_type, $back)
 }
 
 // check and update a single user parameter
-function zuu_upd_par($user_id, $usr_par, $usr_row, $fld_pos, $fld_name, $par_name)
+function zuu_upd_par($user_id, $usr_par, $usr_row, $fld_pos, $fld_name, $par_name): bool
 {
+    $result = true;
     if ($usr_row[$fld_pos] <> $usr_par[$par_name] and $usr_par[$par_name] <> "") {
         if (zu_log($user_id, "update", "users", $fld_name, $usr_row[$fld_pos], $usr_par[$par_name], $user_id) > 0) {
             $result = zu_sql_update("users", $user_id, $fld_name, sf($usr_par[$par_name]), $user_id);

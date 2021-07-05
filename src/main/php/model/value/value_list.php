@@ -57,15 +57,15 @@ class value_list {
       $sql = "SELECT v.value_id,
                      u.value_id AS user_value_id,
                      v.user_id,
-                     IF(u.user_value IS NULL,    v.word_value,    u.user_value)    AS word_value,
-                     IF(u.excluded IS NULL,      v.excluded,      u.excluded)      AS excluded,
-                     IF(u.last_update IS NULL,   v.last_update,   u.last_update)   AS last_update,
-                     IF(u.source_id IS NULL,     v.source_id,     u.source_id)     AS source_id,
+                    " . $db_con->get_usr_field('word_value', 'v', 'u') . ",
+                    " . $db_con->get_usr_field('excluded', 'v', 'u') . ",
+                    " . $db_con->get_usr_field('last_update', 'v', 'u') . ",
+                    " . $db_con->get_usr_field('source_id', 'v', 'u') . ",
                      v.phrase_group_id,
                      v.time_word_id,
                      g.word_ids,
                      g.triple_ids
-                FROM phrase_groups g, `values` v 
+                FROM phrase_groups g, " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = ".$this->usr->id." 
                WHERE g.phrase_group_id = v.phrase_group_id 
@@ -104,7 +104,6 @@ class value_list {
   function load_by_phr($limit = 0) {
 
     global $db_con;
-    $sql_where = '';
 
     // the id and the user must be set
     if ($this->phr->id > 0 AND !is_null($this->usr->id)) {
@@ -115,13 +114,13 @@ class value_list {
       $sql = "SELECT v.value_id,
                      u.value_id AS user_value_id,
                      v.user_id,
-                     IF(u.user_value IS NULL,    v.word_value,    u.user_value)    AS word_value,
-                     IF(u.excluded IS NULL,      v.excluded,      u.excluded)      AS excluded,
-                     IF(u.last_update IS NULL,   v.last_update,   u.last_update)   AS last_update,
-                     IF(u.source_id IS NULL,     v.source_id,     u.source_id)     AS source_id,
+                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                      v.phrase_group_id,
                      v.time_word_id
-                FROM `values` v 
+                FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = ".$this->usr->id." 
                WHERE v.value_id IN ( SELECT value_id 
@@ -140,7 +139,7 @@ class value_list {
           $val->usr_cfg_id  = $db_val['user_value_id'];
           $val->owner_id    = $db_val['user_id'];
           $val->usr         = $this->usr;
-          $val->owner       = $db_val['user_id'];
+          $val->owner_id    = $db_val['user_id'];
           $val->number      = $db_val['word_value'];
           $val->source      = $db_val['source_id'];
           $val->last_update = new DateTime($db_val['last_update']);
@@ -165,13 +164,13 @@ class value_list {
         $sql = "SELECT v.value_id,
                       u.value_id AS user_value_id,
                       v.user_id,
-                      IF(u.user_value IS NULL,    v.word_value,    u.user_value)    AS word_value,
-                      IF(u.excluded IS NULL,      v.excluded,      u.excluded)      AS excluded,
-                      IF(u.last_update IS NULL,   v.last_update,   u.last_update)   AS last_update,
-                      IF(u.source_id IS NULL,     v.source_id,     u.source_id)     AS source_id,
+                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.phrase_group_id,
                       v.time_word_id
-                  FROM `values` v 
+                  FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
             LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = ".$this->usr->id." 
                 WHERE v.value_id IN ( SELECT value_id 
@@ -229,19 +228,19 @@ class value_list {
 
       if ($sql_where <> '') {
         $sql = "SELECT DISTINCT v.value_id,
-                       IF(u.user_value IS NULL,    v.word_value,    u.user_value)    AS word_value,
-                       IF(u.excluded IS NULL,      v.excluded,      u.excluded)      AS excluded,
-                       IF(u.last_update IS NULL,   v.last_update,   u.last_update)   AS last_update,
-                       v.source_id,
+                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        v.user_id,
                        v.phrase_group_id,
                        v.time_word_id
-                  FROM `values` v 
+                  FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
              LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = ".$this->usr->id." 
                  WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
                                          FROM ".$sql_from."
-                                              `values` v
+                                              " . $db_con->get_table_name(DB_TYPE_VALUE) . " v
                                               ".$sql_where." )
               ORDER BY v.phrase_group_id, v.time_word_id;";
         log_debug('value_list->load_by_phr_lst sql ('.$sql.')');
@@ -554,24 +553,26 @@ class value_list {
   
   // check the consistency for all values
   // so get the words and triples linked from the word group
-  //    and update the slave table value_phrase_links (which should be renamed to value_phrase_links) 
-  function check_all() {
+  //    and update the slave table value_phrase_links (which should be renamed to value_phrase_links)
+  // TODO split into smaller sections by adding LIMIT to the query and start a loop
+  function check_all(): bool {
 
     global $db_con;
-    $result = '';
+    $result = true;
 
     // the id and the user must be set
-    $sql = "SELECT value_id
-              FROM `values` v;";
-    //$db_con = New mysql;
-    $db_con->usr_id = $this->usr->id;         
-    $db_val_lst = $db_con->get($sql);  
+    $db_con->set_type(DB_TYPE_VALUE);
+    $db_con->set_usr($this->usr->id);
+    $sql = $db_con->select();
+    $db_val_lst = $db_con->get($sql);
     foreach ($db_val_lst AS $db_val) {
       $val = New value;
       $val->id          = $db_val['value_id'];
       $val->usr         = $this->usr;
       $val->load();
-      $result .= $val->check();
+      if (!$val->check()) {
+        $result = false;
+      }
       log_debug('value_list->load_by_phr ('.count($this->lst).')');
     }  
     log_debug('value_list->check_all ('.count($this->lst).')');
@@ -618,12 +619,12 @@ class value_list {
     if ($phr_id > 0 AND !empty($phr_ids) AND !empty($val_ids)) {
       $phr_ids[] = $phr_id; // add the main word to the exclude words
       $sql = "SELECT l.value_id,
-                    IF(u.user_value IS NULL,v.word_value,u.user_value) AS word_value, 
+                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     l.phrase_id, 
                     v.excluded, 
                     u.excluded AS user_excluded 
                 FROM value_phrase_links l,
-                    `values` v 
+                    " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
           LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = ".$user_id." 
               WHERE l.value_id = v.value_id
                 AND l.phrase_id NOT IN (".implode(",",$phr_ids).")

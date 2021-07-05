@@ -32,14 +32,13 @@
 */
 
 // the general html header
-function dsp_header($title, $style = "") {
+function dsp_header($title, $style = ""): string {
   $result  = '<!DOCTYPE html>';
   $result .= '<html lang="en">'; // todo: to be adjusted depending on the display language
-  $result .= '<head>';
   if ($title <> "") {
-    $result .= '  <title>'.$title.' (zukunft.com)</title>';
+    $result .= '<head><title>'.$title.' (zukunft.com)</title>';
   } else {
-    $result .= '  <title>zukunft.com</title>';
+    $result .= '<head><title>zukunft.com</title>';
   }  
   $result .= '  <meta charset="utf-8">';
   if (UI_USE_BOOTSTRAP) {
@@ -89,7 +88,7 @@ function dsp_header($title, $style = "") {
 }
 
 // the general html footer
-function dsp_footer($no_about = false) {
+function dsp_footer($no_about = false): string {
   $result  = '';
   if (UI_USE_BOOTSTRAP) {
     $result  = '    </div>';
@@ -118,7 +117,7 @@ function dsp_footer($no_about = false) {
 }
 
 // the zukunft.com logo with a link to the home page
-function dsp_logo() {
+function dsp_logo(): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= '<a class="navbar-brand" href="/http/view.php" title="zukunft.com">';
@@ -132,7 +131,7 @@ function dsp_logo() {
 }
 
 // the increased zukunft.com logo to display it in the center
-function dsp_logo_big() {
+function dsp_logo_big(): string {
   $result = '';
   $result .= '<a href="/http/view.php" title="zukunft.com Logo">';
   $result .= '<img src="'.ZUH_IMG_LOGO.'" alt="zukunft.com" style="height: 30%;">'; 
@@ -148,17 +147,17 @@ function dsp_logo_big() {
 // ------------------------------------------------------------------
 
 // get the normal table width (should be based on the display size)
-function dsp_tbl_width () {
+function dsp_tbl_width (): string {
   $result = '800px';
   return $result;
 }
-function dsp_tbl_width_half () {
+function dsp_tbl_width_half (): string {
   $result = '400px';
   return $result;
 }
 
 // display an explaining subline e.g. (in mio CHF)
-function dsp_line_small ($line_text) {
+function dsp_line_small ($line_text): string {
   return "<small>".$line_text."</small><br>";
 }
 
@@ -183,7 +182,7 @@ function dsp_text_h1 ($title, $style = '') {
   return $result;
 }
 
-function dsp_text_h2 ($title, $style = '') {
+function dsp_text_h2 ($title, $style = ''): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= "<h4>".$title."</h4>";
@@ -196,7 +195,7 @@ function dsp_text_h2 ($title, $style = '') {
   }  
   return $result;
 }
-function dsp_text_h3 ($title, $style = '') {
+function dsp_text_h3 ($title, $style = ''): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= "<h6>".$title."</h6>";
@@ -211,7 +210,7 @@ function dsp_text_h3 ($title, $style = '') {
 }
 
 // after simple add views e.g. for a value automatically go back to the calling page
-function dsp_go_back($back, $usr) {
+function dsp_go_back($back, $usr): string {
   log_debug('dsp_go_back('.$back.')');
 
   $result = '';
@@ -231,7 +230,7 @@ function dsp_go_back($back, $usr) {
 }
 
 // display a simple text button
-function dsp_btn_text ($btn_name, $call) {
+function dsp_btn_text ($btn_name, $call): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= '<a href="'.$call.'" class="btn btn-outline-secondary btn-space" role="button">'.$btn_name.'</a>';
@@ -242,7 +241,7 @@ function dsp_btn_text ($btn_name, $call) {
 }
 
 // simply to display an error text interactively to the user; use this function always for easy redesign of the error messages
-function dsp_err ($err_text) {
+function dsp_err ($err_text): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= '<font class="text-danger">'.$err_text.'</font>';
@@ -253,7 +252,7 @@ function dsp_err ($err_text) {
 }
 
 // display a list of elements
-function dsp_list ($item_lst, $item_type) {
+function dsp_list ($item_lst, $item_type): string {
   $result  = "";
 
   $edit_script = $item_type."_edit.php";
@@ -271,7 +270,7 @@ function dsp_list ($item_lst, $item_type) {
 function dsp_link_hist_box ($comp_name, $comp_html, 
                             $nbrs_name, $nbrs_html, 
                             $hist_name, $hist_html, 
-                            $link_name, $link_html) {
+                            $link_name, $link_html): string {
                    
   $result  = "";
   
@@ -330,7 +329,7 @@ function dsp_link_hist_box ($comp_name, $comp_html,
 // -----------------------
 
 // simply to display a single word in a table as a header
-function dsp_tbl_head ($link_name) {
+function dsp_tbl_head ($link_name): string {
   log_debug('dsp_tbl_head');
   $result  = '    <th>'."\n";
   $result .= '      '.$link_name."\n";
@@ -339,15 +338,15 @@ function dsp_tbl_head ($link_name) {
 }
 
 // simply to display a single word in a table as a header
-function dsp_tbl_head_right ($link_name) {
+function dsp_tbl_head_right ($link_name): string {
   log_debug('dsp_tbl_head_right');
-  $result  = '    <th align="right">'."\n";
+  $result  = '    <th class="right_ref">'."\n";
   $result .= '      '.$link_name."\n";
   $result .= '    </th>'."\n";
   return $result;
 }
 
-function dsp_tbl_start () {
+function dsp_tbl_start (): string {
   if (UI_USE_BOOTSTRAP) {
     $result = '<table class="table table-striped table-bordered">'."\n";
   } else {  
@@ -356,7 +355,7 @@ function dsp_tbl_start () {
   return $result;
 }
 
-function dsp_tbl_start_half () {
+function dsp_tbl_start_half (): string {
   if (UI_USE_BOOTSTRAP) {
     $result = '<table class="table col-sm-5 table-borderless">'."\n";
   } else {  
@@ -365,7 +364,7 @@ function dsp_tbl_start_half () {
   return $result;
 }
 
-function dsp_tbl_start_hist () {
+function dsp_tbl_start_hist (): string {
   if (UI_USE_BOOTSTRAP) {
     $result = '<table class="table table-borderless text-muted">'."\n";
   } else {  
@@ -375,7 +374,7 @@ function dsp_tbl_start_hist () {
 }
 
 // a table for a list of selectors
-function dsp_tbl_start_select () {
+function dsp_tbl_start_select (): string {
   if (UI_USE_BOOTSTRAP) {
     $result = '<table class="table col-sm-10 table-borderless">'."\n";
   } else {  
@@ -384,7 +383,7 @@ function dsp_tbl_start_select () {
   return $result;
 }
 
-function dsp_tbl_end () {
+function dsp_tbl_end (): string {
   $result = '</table>'."\n";
   return $result;
 }
@@ -394,14 +393,14 @@ function dsp_tbl_end () {
 // -------------------------
 
 // start a html form; the form name must be identical with the php script name
-function dsp_form_start ($form_name) {
+function dsp_form_start ($form_name): string {
   // switch on post forms for private values
   // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
   return '<form action="'.$form_name.'.php" id="'.$form_name.'">';
 }
 
 // end a html form
-function dsp_form_end ($submit_name, $back, $del_call = '') {
+function dsp_form_end ($submit_name, $back, $del_call = ''): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     if ($submit_name == "") {
@@ -436,7 +435,7 @@ function dsp_form_end ($submit_name, $back, $del_call = '') {
   return $result;
 }
 
-function dsp_form_center () {
+function dsp_form_center (): string {
   if (UI_USE_BOOTSTRAP) {
     return '<div class="container text-center">'; 
   } else {  
@@ -445,17 +444,17 @@ function dsp_form_center () {
 }
 
 // add the element id, which should always be using the field "id"
-function dsp_form_id ($id) {
+function dsp_form_id ($id): string {
   return '<input type="hidden" name="id" value="'.$id.'">';
 }
 
 // add the hidden field
-function dsp_form_hidden ($field, $id) {
+function dsp_form_hidden ($field, $id): string {
   return '<input type="hidden" name="'.$field.'" value="'.$id.'">';
 }
 
 // add the text field to a form
-function dsp_form_text ($field, $txt_value, $label, $class, $attribute) {
+function dsp_form_text ($field, $txt_value, $label, $class = "col-sm-4", $attribute = ''): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= dsp_form_fld ($field, $txt_value, $label, $class, $attribute);
@@ -466,7 +465,7 @@ function dsp_form_text ($field, $txt_value, $label, $class, $attribute) {
 }
 
 // add the text big field to a form
-function dsp_form_text_big ($field, $txt_value, $label, $class, $attribute) {
+function dsp_form_text_big ($field, $txt_value, $label, $class = "col-sm-4", $attribute = ''): string {
   $result = '';
   if (UI_USE_BOOTSTRAP) {
     $result .= dsp_form_fld ($field, $txt_value, $label, $class, $attribute);
@@ -477,7 +476,7 @@ function dsp_form_text_big ($field, $txt_value, $label, $class, $attribute) {
 }
 
 // add the field to a form
-function dsp_form_fld ($field, $txt_value, $label, $class, $attribute = '') {
+function dsp_form_fld ($field, $txt_value, $label, $class, $attribute = ''): string {
   $result = '';
   if ($label == '') {
     $label = $field;
@@ -494,7 +493,7 @@ function dsp_form_fld ($field, $txt_value, $label, $class, $attribute = '') {
 }
 
 // add the field to a form
-function dsp_form_fld_checkbox ($field, $is_checked, $label) {
+function dsp_form_fld_checkbox ($field, $is_checked, $label): string {
   $result = '';
   if ($label == '') {
     $label = $field;
@@ -520,7 +519,7 @@ function dsp_form_fld_checkbox ($field, $is_checked, $label) {
 }
 
 // to start a selector field
-function dsp_form_fld_select ($form, $field, $label, $class, $attribute) {
+function dsp_form_fld_select ($form, $field, $label, $class, $attribute): string {
   $result = '';
   // 06.11.2019: removed, check the calling functions
   /*
@@ -541,7 +540,7 @@ function dsp_form_fld_select ($form, $field, $label, $class, $attribute) {
 }
 
 // to end a selector field
-function dsp_form_fld_select_end () {
+function dsp_form_fld_select_end (): string {
   $result = '</select>';
   if (UI_USE_BOOTSTRAP) {
     $result .= '</div>';
@@ -550,7 +549,7 @@ function dsp_form_fld_select_end () {
 }
 
 // display a file selector form
-function dsp_form_file_select () {
+function dsp_form_file_select (): string {
   $result = '';
   /*
   if (UI_USE_BOOTSTRAP) {
@@ -585,7 +584,7 @@ display functions for the unit and integration tests
 
 */
 
-// display the ĥeader for each unit test
+// display the header for each unit test
 function dsp_test_header ($headline) {
   echo '<br><br><h2>'.$headline.'</h2><br>';
 }

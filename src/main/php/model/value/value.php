@@ -710,9 +710,9 @@ class value extends user_sandbox_display
 
     // check the data consistency of this user value
     // e.g. update the value_phrase_links database table based on the group id
-    function check()
+    function check(): bool
     {
-        $result = '';
+        $result = true;
 
         // reload the value to include all changes
         log_debug('value->check id ' . $this->id . ', for user ' . $this->usr->name);
@@ -722,7 +722,9 @@ class value extends user_sandbox_display
         log_debug('value->check phrases loaded');
 
         // remove duplicate entries in value phrase link table
-        $result .= $this->upd_phr_links();
+        if (!$this->upd_phr_links()) {
+            $result = false;
+        }
 
         log_debug('value->check done');
         return $result;
@@ -1171,7 +1173,7 @@ class value extends user_sandbox_display
         log_debug('value->dsp_tbl_std ');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div align="right"><a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -1182,7 +1184,7 @@ class value extends user_sandbox_display
         log_debug('value->dsp_tbl_usr');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div align="right"><a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '" class="user_specific">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '" class="user_specific">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -1251,15 +1253,14 @@ class value extends user_sandbox_display
         $result = ''; // reset the html code var
 
         // get value changes by the user that are not standard
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
-            $sql = "SELECT v.value_id,
-                   CASE WHEN (u.user_value <> '' IS NOT TRUE) THEN v.word_value ELSE u.user_value END AS word_value, 
+        $sql = "SELECT v.value_id,
+                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM value_phrase_links l,
                    value_phrase_links lt,
                    words t,
-                   values v
+                   " . $db_con->get_table_name(DB_TYPE_VALUE) . " v
          LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->usr->id . " 
              WHERE l.phrase_id = " . $wrd_id . "
                AND l.value_id = v.value_id
@@ -1268,24 +1269,6 @@ class value extends user_sandbox_display
                AND lt.phrase_id = t.word_id
                AND (u.excluded IS NULL OR u.excluded = 0) 
              LIMIT " . $size . ";";
-        } else {
-            $sql = "SELECT v.value_id,
-                   IF(u.user_value IS NULL,v.word_value,u.user_value) AS word_value, 
-                   t.word_id,
-                   t.word_name
-              FROM value_phrase_links l,
-                   value_phrase_links lt,
-                   words t,
-                   `values` v
-         LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $this->usr->id . " 
-             WHERE l.phrase_id = " . $wrd_id . "
-               AND l.value_id = v.value_id
-               AND v.value_id = lt.value_id
-               AND lt.phrase_id <> " . $wrd_id . "
-               AND lt.phrase_id = t.word_id
-               AND (u.excluded IS NULL OR u.excluded = 0) 
-             LIMIT " . $size . ";";
-        }
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get($sql);
