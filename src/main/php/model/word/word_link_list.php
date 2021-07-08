@@ -112,6 +112,7 @@ class word_link_list
             $sql_wrd2_fields = '';
             $sql_wrd2_from = '';
             $sql_wrd2 = '';
+            // if the list of original word ids is set, use them for the selection
             if (isset($this->ids)) {
                 $id_txt = implode(",", $this->ids);
                 if ($id_txt <> '') {
