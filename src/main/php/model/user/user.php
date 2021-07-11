@@ -46,24 +46,24 @@ class user
 {
 
     // database fields
-    public $id = NULL;  // the database id of the word link type (verb)
-    public $name = '';    // simply the user name, which cannot be empty
-    public $ip_addr = '';    // simply the ip address used if no user name is given
-    public $email = '';    //
-    public $first_name = '';    //
-    public $last_name = '';    //
-    public $code_id = '';    // the main id to detect system users
-    public $dec_point = '';    // the decimal point char for this user
-    public $thousand_sep = '';    // the thousand separator user for this user
-    public $profile_id = NULL;  // id of the user profile
-    public $source_id = NULL;  // id of the last source used by the user
+    public ?int $id = null;               // the database id of the word link type (verb)
+    public ?string $name = null;          // simply the user name, which cannot be empty
+    public ?string $ip_addr = null;       // simply the ip address used if no user name is given
+    public ?string $email = null;         //
+    public ?string $first_name = null;    //
+    public ?string $last_name = null;     //
+    public ?string $code_id = null;       // the main id to detect system users
+    public ?string $dec_point = null;     // the decimal point char for this user
+    public ?string $thousand_sep = null;  // the thousand separator user for this user
+    public ?int $profile_id = null;       // id of the user profile
+    public ?int $source_id = null;        // id of the last source used by the user
 
     // user setting parameters
-    public $wrd_id = '';    // id of the last word viewed by the user
-    public $vrb_id = '';    // id of the last verb used by the user
+    public ?int $wrd_id = null;           // id of the last word viewed by the user
+    public ?int $vrb_id = null;           // id of the last verb used by the user
 
     // in memory only fields
-    public $wrd = NULL;    // the last word viewed by the user
+    public ?word $wrd = null;             // the last word viewed by the user
 
     //
     private function load_db()
@@ -71,7 +71,7 @@ class user
 
         global $db_con;
 
-        $db_usr = Null;
+        $db_usr = null;
         // select the user either by id, code_id, name or ip
         $sql_where = '';
         if ($this->id > 0) {

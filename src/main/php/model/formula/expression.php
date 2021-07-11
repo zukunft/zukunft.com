@@ -39,13 +39,13 @@ const EXP_ELM_SELECT_VERB_WORD = "verb_words"; // to filter the words and the wo
 class expression
 {
 
-    public $usr_text = '';      // the formula expression in the human readable format
-    public $ref_text = '';      // the formula expression with the database references
-    public $num_text = '';      // the formula expression with all numbers loaded (ready for R)
-    public $err_text = '';      // description of the problems that appeared during the conversion from the human readable to the database reference format
-    public $usr = Null;    // to get the user settings for the conversion
-    public $fv_phr_lst = Null;    // list object of the words that should be added to the formula result
-    public $phr_lst = array(); // list of the word ids that are used for the formula result
+    public ?string $usr_text = null;   // the formula expression in the human readable format
+    public ?string $ref_text = null;   // the formula expression with the database references
+    public ?string $num_text = null;   // the formula expression with all numbers loaded (ready for R)
+    public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human readable to the database reference format
+    public ?user $usr = null;          // to get the user settings for the conversion
+    public ?array $fv_phr_lst = null;  // list object of the words that should be added to the formula result
+    public ?array $phr_lst = null;     // list of the word ids that are used for the formula result
 
     // returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
     // uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
@@ -127,7 +127,7 @@ class expression
     function fv_phr_lst()
     {
         log_debug('expression->fv_phr_lst >' . $this->ref_text . '< and user ' . $this->usr->name . '"');
-        $phr_lst = Null;
+        $phr_lst = null;
         $wrd_ids = array();
 
         // create a local copy of the reference text not to modify the original text
@@ -159,7 +159,7 @@ class expression
     function phr_lst()
     {
         log_debug('expression->phr_lst "' . $this->ref_text . ',u' . $this->usr->name . '"');
-        $phr_lst = Null;
+        $phr_lst = null;
         $wrd_ids = array();
 
         // create a local copy of the reference text not to modify the original text
@@ -236,7 +236,7 @@ class expression
                     $elm_id = zu_str_between($work, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
                     if (is_numeric($elm_id)) {
                         if ($elm_id > 0) {
-                            $elm->type = 'word';
+                            $elm->type = formula_element::TYPE_WORD;
                             $elm->id = $elm_id;
                             $pos = strpos($work, ZUP_CHAR_WORD_START);
                             log_debug('expression->element_lst_all -> wrd pos ' . $pos . '');
@@ -252,7 +252,7 @@ class expression
                         $elm_id = zu_str_between($work, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
                         if (is_numeric($elm_id)) {
                             if ($elm_id > 0) {
-                                $elm->type = 'verb';
+                                $elm->type = formula_element::TYPE_VERB;
                                 $elm->id = $elm_id;
                                 $pos = $new_pos;
                             }
@@ -268,7 +268,7 @@ class expression
                         $elm_id = zu_str_between($work, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
                         if (is_numeric($elm_id)) {
                             if ($elm_id > 0) {
-                                $elm->type = 'formula';
+                                $elm->type = formula_element::TYPE_FORMULA;
                                 $elm->id = $elm_id;
                                 $pos = $new_pos;
                             }

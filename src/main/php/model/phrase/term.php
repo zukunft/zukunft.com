@@ -38,20 +38,19 @@
   
   http://zukunft.com
   
-  todo: load formula word
+  TODO: load formula word
         check triple
-        should
-  
+
 */
 
 class term
 {
 
-    public $id = NULL; // the database id of the word, verb or formula
-    public $usr = NULL; // the person who wants to add a term (word, verb or formula)
-    public $type = '';   // either "word", "verb" or "formula"
-    public $name = '';   // the name used (must be unique for words, verbs and formulas)
-    public $obj = NULL; // the word, verb or formula object
+    public ?int $id = null;      // the database id of the word, verb or formula
+    public ?user $usr = null;    // the person who wants to add a term (word, verb or formula)
+    public ?string $type = null; // either "word", "verb" or "formula"
+    public ?string $name = null; // the name used (must be unique for words, verbs and formulas)
+    public ?object $obj = null;  // the word, verb or formula object
 
     // simply load a formula (separate function, because used twice)
     private function load_frm(): bool

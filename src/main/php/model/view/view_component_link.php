@@ -38,15 +38,16 @@
 class view_component_link extends user_sandbox
 {
 
-    public $view_id = NULL; // the id of the view to which the display item should be linked
-    public $view_component_id = NULL; // the id of the linked display item
-    public $order_nbr = NULL; // to sort the display item
-    public $pos_type_id = NULL; // to to position the display item relative the the previous item (1= side, 2 = below)
-    public $pos_code = NULL; // side or below or ....
+    public ?int $view_id = null;            // the id of the view to which the display item should be linked
+    public ?int $view_component_id = null;  // the id of the linked display item
+    public ?int $order_nbr = null;          // to sort the display item
+    public ?int $pos_type_id = null;        // to to position the display item relative the the previous item (1= side, 2 = below)
+    public ?string $pos_code = null;        // side or below or ....
 
 
     function __construct()
     {
+        parent::__construct();
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_VIEW_COMPONENT_LINK;
         $this->from_name = DB_TYPE_VIEW;
@@ -58,23 +59,23 @@ class view_component_link extends user_sandbox
     // reset the in memory fields used e.g. if some ids are updated
     private function reset_objects()
     {
-        $this->fob = NULL; // the display (view) object (used to save the correct name in the log)
-        $this->tob = NULL; // the display component (view entry) object (used to save the correct name in the log)
+        $this->fob = null; // the display (view) object (used to save the correct name in the log)
+        $this->tob = null; // the display component (view entry) object (used to save the correct name in the log)
     }
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
-        $this->view_id = NULL;
-        $this->view_component_id = NULL;
-        $this->order_nbr = NULL;
-        $this->pos_type_id = NULL;
-        $this->pos_code = NULL;
+        $this->view_id = null;
+        $this->view_component_id = null;
+        $this->order_nbr = null;
+        $this->pos_type_id = null;
+        $this->pos_code = null;
 
         $this->reset_objects();
     }
@@ -217,7 +218,7 @@ class view_component_link extends user_sandbox
     }
 
     // return the html code to display the link name
-    function name_linked($back)
+    function name_linked($back): string
     {
         $result = '';
 
@@ -270,7 +271,7 @@ class view_component_link extends user_sandbox
         return $result;
     }
 
-    function name()
+    function name(): string
     {
         $result = '';
 
@@ -314,7 +315,7 @@ class view_component_link extends user_sandbox
     }
 
     // move one view component
-    private function move($direction)
+    private function move($direction): bool
     {
         $result = false;
 
@@ -381,7 +382,7 @@ class view_component_link extends user_sandbox
                 // actually move the selected component
                 // TODO what happens if the another user has deleted some components?
                 $order_nbr = 0;
-                $prev_entry = Null;
+                $prev_entry = null;
                 $prev_entry_down = false;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
@@ -395,7 +396,7 @@ class view_component_link extends user_sandbox
                             log_debug('view_component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
                             $prev_entry->order_nbr = $order_nbr;
                             $prev_entry->save();
-                            $prev_entry = Null;
+                            $prev_entry = null;
                         }
                         log_debug('view_component_link->move order number of the view component "' . $cmp_lnk->tob->name . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name . '"');
                         $cmp_lnk->order_nbr = $order_nbr - 1;
@@ -438,13 +439,13 @@ class view_component_link extends user_sandbox
     }
 
     // move on view component up
-    function move_up()
+    function move_up(): bool
     {
         return $this->move('up');
     }
 
     // move on view component down
-    function move_down()
+    function move_down(): bool
     {
         return $this->move('down');
     }
@@ -455,7 +456,7 @@ class view_component_link extends user_sandbox
         global $db_con;
         $result = true;
 
-        if (!$this->has_usr_cfg) {
+        if (!$this->has_usr_cfg()) {
             if (isset($this->fob) and isset($this->tob)) {
                 log_debug('view_component_link->add_usr_cfg for "' . $this->fob->name . '"/"' . $this->tob->name . '" by user "' . $this->usr->name . '"');
             } else {

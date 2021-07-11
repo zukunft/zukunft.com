@@ -32,12 +32,17 @@
 class verb_list
 {
 
-    public $lst = array(); // array of the loaded word objects
-    public $usr = NULL;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    const DIRECTION_NO = '';
+    const DIRECTION_UP = 'up';
+    const DIRECTION_DOWN = 'down';
+
+    public ?array $lst = null; // array of the loaded verb objects
+    public ?user $usr = null;  // the user object of the person for whom the verb list is loaded, so to say the viewer
 
     // search and load fields
-    public $wrd = NULL;    // to load a list related to this word
-    public $direction = '';      // "up" or "down" to select the parents or children
+    public ?word $wrd = null;  // to load a list related to this word
+    public ?array $ids = array(); // list of the verb ids to load a list from the database
+    public ?string $direction = self::DIRECTION_NO; // "up" or "down" to select the parents or children
 
     // load the word parameters from the database for a list of words
     function load()
@@ -56,7 +61,7 @@ class verb_list
 
             // set the where clause depending on the values given
             $sql_where = " s.from_phrase_id = " . $this->wrd->id;
-            if ($this->direction == "up") {
+            if ($this->direction == self::DIRECTION_UP) {
                 $sql_where = " s.to_phrase_id = " . $this->wrd->id;
             }
             $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -74,7 +79,7 @@ class verb_list
                     if (!in_array($db_vrb['verb_id'], $vrb_is_lst)) {
                         $vrb = new verb;
                         $vrb->row_mapper($db_vrb);
-                        $vrb->usr = $this->usr->id;
+                        $vrb->usr = $this->usr;
                         $this->lst[] = $vrb;
                         $vrb_is_lst[] = $vrb->id;
                         log_debug('verb_list->load added (' . $vrb->name . ')');
@@ -93,12 +98,37 @@ class verb_list
         global $db_con;
 
         $sql = "UPDATE verbs v
-               SET words = ( 
-            SELECT COUNT(to_phrase_id) 
-              FROM word_links l
-             WHERE v.verb_id = l.verb_id);";
+                   SET words = ( SELECT COUNT(to_phrase_id) 
+                                   FROM word_links l
+                                  WHERE v.verb_id = l.verb_id)
+                 WHERE verb_id > 0;";
         $db_con->usr_id = $this->usr->id;
         return $db_con->exe($sql);
+    }
+
+    /*
+      extract functions
+      -----------------
+    */
+
+    // return the list of the verb ids
+    function ids(): array
+    {
+        $result = array();
+        if ($this->lst != null) {
+            foreach ($this->lst as $vrb) {
+                if ($vrb->id > 0) {
+                    $result[] = $vrb->id;
+                }
+            }
+        }
+        // fallback solution if the load is not yet called e.g. for unit testing
+        if (count($result) <= 0) {
+            if (count($this->ids) > 0) {
+                $result = $this->ids;
+            }
+        }
+        return $result;
     }
 
     /*
@@ -109,13 +139,7 @@ class verb_list
     // return a list of the verb ids as an sql compatible text
     function ids_txt(): string
     {
-        $ids = array();
-        foreach ($this->lst as $vrb) {
-            if ($vrb->id > 0) {
-                $ids[] = $vrb->id;
-            }
-        }
-        return implode(',', $ids);
+        return implode(',', $this->ids());
     }
 
     // display all verbs and allow an admin to change it
@@ -126,5 +150,3 @@ class verb_list
 
 
 }
-
-?>

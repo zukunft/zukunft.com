@@ -32,24 +32,26 @@
 class verb
 {
 
-    public $id = NULL;  // the database id of the word link type (verb)
-    public $usr = NULL;  // not used at the moment, because there should not be any user specific verbs
-    // otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
-    public $code_id = '';    // the main id to detect verbs that have a special behavior
-    public $name = '';    // the verb name to build the "sentence" for the user, which cannot be empty
-    public $plural = '';    // name used if more than one word is shown
-    // e.g. instead of "ABB" "is a" "company"
-    //          use    "ABB", Nestlé" "are" "companies"
-    public $reverse = '';    // name used if displayed the other way round
-    // e.g. for "Country" "has a" "Human Development Index"
-    //      the reverse would be "Human Development Index" "is used for" "Country"
-    public $rev_plural = '';    // the reverse name for many words
-    public $frm_name = '';    // short name of the verb for the use in formulas, because there both sides are combined
-    public $description = '';    // for the mouse over explain
+    public ?int $id = null;           // the database id of the word link type (verb)
+    public ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
+    //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
+    public ?string $code_id = '';     // the main id to detect verbs that have a special behavior
+    public ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
+    public ?string $plural = '';      // name used if more than one word is shown
+    //                                   e.g. instead of "ABB" "is a" "company"
+    //                                        use "ABB", Nestlé" "are" "companies"
+    public ?string $reverse = '';     // name used if displayed the other way round
+    //                                   e.g. for "Country" "has a" "Human Development Index"
+    //                                        the reverse would be "Human Development Index" "is used for" "Country"
+    public ?string $rev_plural = '';  // the reverse name for many words
+    public ?string $frm_name = '';    // short name of the verb for the use in formulas, because there both sides are combined
+    public ?string $description = ''; // for the mouse over explain
 
     // set the class vars based on a database record
     // $db_row is an array with the database values
-    function row_mapper($db_row) {
+    function row_mapper($db_row): bool
+    {
+        $result = false;
         if ($db_row != null) {
             if ($db_row['verb_id'] > 0) {
                 $this->id = $db_row['verb_id'];
@@ -60,20 +62,22 @@ class verb
                 $this->rev_plural = $db_row['name_plural_reverse'];
                 $this->frm_name = $db_row['formula_name'];
                 $this->description = $db_row['description'];
+                $result = true;
             } else {
                 $this->id = 0;
             }
         } else {
             $this->id = 0;
         }
+        return $result;
     }
 
     // load the missing verb parameters from the database
-    function load()
+    function load(): bool
     {
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         // set the where clause depending on the values given
         $sql_where = '';
@@ -101,7 +105,7 @@ class verb
                 $db_con->usr_id = $this->usr->id;
             }
             $db_row = $db_con->get1($sql);
-            $this->row_mapper($db_row);
+            $result = $this->row_mapper($db_row);
             log_debug('verb->load (' . $this->dsp_id() . ')');
         }
         return $result;
@@ -132,16 +136,15 @@ class verb
         return $result;
     }
 
-    function name()
+    function name(): string
     {
         return $this->name;
     }
 
     // create the HTML code to display the formula name with the HTML link
-    function display($back)
+    function display($back): string
     {
-        $result = '<a href="/http/verb_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/verb_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
     // returns the html code to select a word link type
@@ -520,7 +523,7 @@ class verb
                   $this->id = $db_chk->id;
                   $this->owner_id = $db_chk->owner_id;
                   // force the include again
-                  $this->excluded = Null;
+                  $this->excluded = null;
                   $db_rec->excluded = '1';
                   $this->save_field_excluded ($db_con, $db_rec, $std_rec);
                   zu_debug('verb->save_id_if_updated found a display component link with target ids "'.$db_chk->dsp_id().'", so del "'.$db_rec->dsp_id().'" and add '.$this->dsp_id());
@@ -656,12 +659,12 @@ class verb
     }
 
     // exclude or delete a verb
-    function del()
+    function del(): bool
     {
         log_debug('verb->del');
 
         global $db_con;
-        $result = '';
+        $result = false;
 
         $result .= $this->load();
         if ($this->id > 0 and $result == '') {
@@ -672,7 +675,7 @@ class verb
                     //$db_con = new mysql;
                     $db_con->usr_id = $this->usr->id;
                     $db_con->set_type(DB_TYPE_VERB);
-                    $result .= $db_con->delete('verb_id', $this->id);
+                    $result = $db_con->delete('verb_id', $this->id);
                 }
             } else {
                 // todo: create a new verb and request to delete the old

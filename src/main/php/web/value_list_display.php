@@ -61,7 +61,7 @@ class value_list_dsp extends value_list
             log_debug('value_list_dsp->dsp_table "' . $phr_row->name . '" for "' . $this->phr->name . '" and user "' . $this->usr->name . '"');
 
             // init the display vars
-            $val_main = Null; // the "main" value used as a sample for a new value
+            $val_main = null; // the "main" value used as a sample for a new value
             $modal_nbr = 1;   // to create a unique id for each modal form; the total number of modal boxes will not get too high, because the user will only see a limited number of values at once
 
             // create the table headline e.g. cash flow statement

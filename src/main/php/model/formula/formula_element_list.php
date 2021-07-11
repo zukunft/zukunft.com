@@ -29,57 +29,59 @@
   
 */
 
-class formula_element_list {
+class formula_element_list
+{
 
-  public $lst = array(); // the list of formula elements
-  public $usr = NULL;    // the person who has requested the formula elements
-  
-  /*
-  
-  display functions
-  
-  */
-  
-  // return best possible identification for this element list mainly used for debugging
-  function dsp_id () {
-    $id = implode(",",$this->ids());
-    $name = $this->name();
-    if ($name <> '""') {
-      $result = ''.$name.' ('.$id.')';
-    } else {
-      $result = ''.$id.'';
-    }
-    if (isset($this->usr)) {
-      $result .= ' for user '.$this->usr->id.' ('.$this->usr->name.')';
+    public ?array $lst = null; // the list of formula elements
+    public ?user $usr = null;  // the person who has requested the formula elements
+
+    /*
+    display functions
+    */
+
+    // return best possible identification for this element list mainly used for debugging
+    function dsp_id(): string
+    {
+        $id = implode(",", $this->ids());
+        $name = $this->name();
+        if ($name <> '""') {
+            $result = '' . $name . ' (' . $id . ')';
+        } else {
+            $result = '' . $id . '';
+        }
+        if (isset($this->usr)) {
+            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
+        }
+
+        return $result;
     }
 
-    return $result;    
-  }
-  
-  // to show the element name to the user in the most simple form (without any ids)
-  // this function is called from dsp_id, so no other call is allowed
-  function name () {
-    $result = '';
-    if (isset($this->lst)) {
-      foreach ($this->lst AS $elm) {
-        $result .= $elm->name().' ';
-      }
+    // to show the element name to the user in the most simple form (without any ids)
+    // this function is called from dsp_id, so no other call is allowed
+    function name(): string
+    {
+        $result = '';
+        if (isset($this->lst)) {
+            foreach ($this->lst as $elm) {
+                $result .= $elm->name() . ' ';
+            }
+        }
+        return $result;
     }
-    return $result;    
-  }
-  
-  // this function is called from dsp_id, so no other call is allowed
-  function ids () {
-    $result = array();
-    if (isset($this->lst)) {
-      foreach ($this->lst AS $elm) {
-        // use only valid ids
-        if ($elm->id <> 0) {
-          $result[] = $elm->id;
-        }      
-      }      
-    }      
-    return $result;
-  }  
+
+    // this function is called from dsp_id, so no other call is allowed
+    function ids(): array
+    {
+        $result = array();
+        if (isset($this->lst)) {
+            foreach ($this->lst as $elm) {
+                // use only valid ids
+                if ($elm->id <> 0) {
+                    $result[] = $elm->id;
+                }
+            }
+        }
+        return $result;
+    }
 
 }

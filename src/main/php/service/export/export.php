@@ -44,8 +44,8 @@
 class export {
 
   // parameters to filter the export
-  public $usr     = NULL; // the user who wants to im- or export
-  public $phr_lst = NULL; // to export all values related to this phrase
+  public $usr     = null; // the user who wants to im- or export
+  public $phr_lst = null; // to export all values related to this phrase
   
   // export zukunft.com data as object for creating e.g. a json message
   function get () {
@@ -53,7 +53,7 @@ class export {
     global $db_con;
 
     log_debug('export->get');
-    $export_obj = Null;
+    $export_obj = null;
     
     if (count($this->phr_lst) <= 0) {
       log_warning("No words to filter the export are defined.","export->get");

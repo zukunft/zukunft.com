@@ -40,19 +40,19 @@ class val_lnk
 {
 
     // database fields
-    public $id = NULL; // the primary database id of the numeric value, which is the same for the standard and the user specific value
-    public $usr = NULL; // the person for whom the value word is loaded, so to say the viewer
-    public $val_id = NULL; // the id of the linked value
-    public $wrd_id = NULL; // the id of the linked word
+    public ?int $id = null;     // the primary database id of the numeric value, which is the same for the standard and the user specific value
+    public ?user $usr = null;   // the person for whom the value word is loaded, so to say the viewer
+    public ?int $val_id = null; // the id of the linked value
+    public ?int $wrd_id = null; // the id of the linked word
 
     // field for modifications
-    public $val = NULL; // the value object to which ther words are linked
-    public $wrd = NULL; // the word (not the triple) object to be linked to the value
+    public ?value $val = null;  // the value object to which the words are linked
+    public ?word $wrd = null;   // the word (not the triple) object to be linked to the value
 
     // maybe not used at the moment
-    //public $type         = NULL;  //
-    //public $weight       = NULL;  //
-    //public $frm_id       = NULL;  //
+    //public $type         = null;  //
+    //public $weight       = null;  //
+    //public $frm_id       = null;  //
 
     // load the word to value link from the database
     function load()

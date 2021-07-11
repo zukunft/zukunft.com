@@ -33,19 +33,18 @@ class formula extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields
-    public $ref_text = '';    // the formula expression with the names replaced by database references
-    public $usr_text = '';    // the formula expression in the user format
-    public $description = '';    // describes to the user what this formula is doing
-    public $need_all_val = false; // calculate and save the result only if all used values are not null
-    public $last_update = NULL;  // the time of the last update of fields that may influence the calculated results
+    public ?string $ref_text = '';         // the formula expression with the names replaced by database references
+    public ?string $usr_text = '';         // the formula expression in the user format
+    public ?string $description = '';      // describes to the user what this formula is doing
+    public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
+    public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
 
     // in memory only fields
-    public $type_cl = '';    // the code id of the formula type
-    public $type_name = '';    // the name of the formula type
-    public $name_wrd = NULL;  // the word object for the formula name:
-    // because values can only be assigned to words, also for the formula name a word must exist
-    public $needs_fv_upd = false; // true if the formula results needs to be updated
-    public $ref_text_r = '';    // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
+    public ?string $type_cl = '';          // the code id of the formula type
+    public ?word $name_wrd = null;         // the word object for the formula name:
+    //                                        because values can only be assigned to words, also for the formula name a word must exist
+    public bool $needs_fv_upd = false;     // true if the formula results needs to be updated
+    public ?string $ref_text_r = '';       // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
 
     function __construct()
     {
@@ -57,24 +56,24 @@ class formula extends user_sandbox
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
         $this->name = '';
 
         $this->ref_text = '';
         $this->usr_text = '';
         $this->description = '';
-        $this->type_id = NULL;
+        $this->type_id = null;
         $this->need_all_val = false;
-        $this->last_update = NULL;
+        $this->last_update = null;
 
         $this->type_cl = '';
         $this->type_name = '';
-        $this->name_wrd = NULL;
+        $this->name_wrd = null;
 
         $this->needs_fv_upd = false;
         $this->ref_text_r = '';
@@ -260,7 +259,7 @@ class formula extends user_sandbox
     function special_result($phr_lst, $time_phr)
     {
         log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name . " and user " . $this->usr->name . ")");
-        $val = Null;
+        $val = null;
 
         if ($this->type_id > 0) {
             log_debug("formula->special_result -> type (" . $this->type_cl . ")");
@@ -352,7 +351,7 @@ class formula extends user_sandbox
     // lists of all words directly assigned to a formula and where the formula should be used
     function assign_phr_glst_direct($sbx)
     {
-        $phr_lst = Null;
+        $phr_lst = null;
 
         if ($this->id > 0 and isset($this->usr)) {
             log_debug('formula->assign_phr_glst_direct for formula ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
@@ -724,7 +723,7 @@ class formula extends user_sandbox
     //       always create a default result (for the user 0)
     function calc($phr_lst, $back)
     {
-        $result = Null;
+        $result = null;
 
         // check the parameters
         if (!isset($phr_lst)) {
@@ -1875,7 +1874,7 @@ class formula extends user_sandbox
                         $this->id = $db_chk->id;
                         $this->owner_id = $db_chk->owner_id;
                         // force the include again
-                        $this->excluded = Null;
+                        $this->excluded = null;
                         $db_rec->excluded = '1';
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         log_debug('formula->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());

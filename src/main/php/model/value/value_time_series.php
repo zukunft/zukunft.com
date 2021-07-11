@@ -38,9 +38,9 @@ class value_time_series extends user_sandbox_display
 {
 
     // database fields additional to the user sandbox fields for the value object
-    public $source_id = NULL; // the id of source where the value is coming from
-    public $grp_id = NULL; // id of the group of phrases that are linked to this value for fast selections
-    public $last_update = NULL; // the time of the last update of fields that may influence the calculated results
+    public ?int $source_id = null;        // the id of source where the value is coming from
+    public ?int $grp_id = null;           // id of the group of phrases that are linked to this value for fast selections
+    public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
 
     // in memory only fields
 
@@ -53,9 +53,7 @@ class value_time_series extends user_sandbox_display
     }
 
     /*
-
     database load functions that reads the object from the database
-
     */
 
     private function row_mapper($db_row, $map_usr_fields = false)

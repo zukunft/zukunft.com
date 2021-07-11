@@ -46,7 +46,7 @@ function run_word_display_test()
     $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
     $direction = 'up';
-    $target = TEST_WORD;
+    $target = '<table class="table col-sm-5 ';
     $result = $wrd_ZH->dsp_graph($direction, 0);
     $exe_start_time = test_show_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

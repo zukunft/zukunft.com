@@ -44,37 +44,37 @@ class formula_value
 {
 
     // database fields
-    public $id = NULL;  // the unique id for each formula result
-    // (the second unique key is frm_id, src_phr_grp_id, src_time_id, phr_grp_id, time_id, usr_id)
-    public $frm_id = NULL;  // the formula database id used to calculate this result
-    public $usr = NULL;  // the user who wants to see the result because the formula and values can differ for each user; this is
-    public $owner_id = NULL;  // the user for whom the result has been calculated; if Null the result is the standard result
-    public $is_std = True;  // true as long as no user specific value, formula or assignment is used for this result
-    public $src_phr_grp_id = NULL;  // the word group used for calculating the result
-    public $src_time_id = NULL;  // the time word id for calculating the result
-    public $phr_grp_id = NULL;  // the result word group as saved in the database
-    public $time_id = NULL;  // the result time word id as saved in the database, which can differ from the source time
-    public $value = NULL;  // ... and finally the numeric value
-    public $last_update = NULL;  // ... and the time of the last update; all updates up to this time are included in this result
-    public $dirty = NULL;  // true as long as an update is pending
+    public ?int $id = null;                    // the unique id for each formula result
+    //                                            (the second unique key is frm_id, src_phr_grp_id, src_time_id, phr_grp_id, time_id, usr_id)
+    public ?int $frm_id = null;                // the formula database id used to calculate this result
+    public ?user $usr = null;                  // the user who wants to see the result because the formula and values can differ for each user; this is
+    public ?int $owner_id = null;              // the user for whom the result has been calculated; if Null the result is the standard result
+    public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
+    public ?int $src_phr_grp_id = null;        // the word group used for calculating the result
+    public ?int $src_time_id = null;           // the time word id for calculating the result
+    public ?int $phr_grp_id = null;            // the result word group as saved in the database
+    public ?int $time_id = null;               // the result time word id as saved in the database, which can differ from the source time
+    public ?float $value = null;               // ... and finally the numeric value
+    public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
+    public ?bool $dirty = null;                // true as long as an update is pending
 
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
-    public $frm = NULL;  // the formula object used to calculate this result
-    public $src_phr_lst = NULL;  // the source word list obj (not a list of word objects) based on which the result has been calculated
-    public $src_time_phr = NULL;  // the time word object created while loading
-    public $phr_lst = NULL;  // the word list obj (not a list of word objects) filled while loading
-    public $time_phr = NULL;  // the time word object created while loading
-    public $val_missing = False; // true if at least one of the formula values is not set which means is NULL (but zero is a value)
-    public $is_updated = False; // true if the formula value has been calculated, but not yet saved
-    public $ref_text = '';    // the formula text in the database reference format on which the result is based
-    public $num_text = '';    // the formula text filled with numbers used for the result calculation
-    public $last_val_update = NULL;  // the time of the last update of an underlying value, formula result or formula
-    // if this is later than the last update the result needs to be updated
+    public ?formula $frm = null;               // the formula object used to calculate this result
+    public ?phrase_list $src_phr_lst = null;   // the source word list obj (not a list of word objects) based on which the result has been calculated
+    public ?phrase $src_time_phr = null;       // the time word object created while loading
+    public ?phrase_list $phr_lst = null;       // the word list obj (not a list of word objects) filled while loading
+    public ?phrase $time_phr = null;           // the time word object created while loading
+    public ?bool $val_missing = False;         // true if at least one of the formula values is not set which means is NULL (but zero is a value)
+    public ?bool $is_updated = False;          // true if the formula value has been calculated, but not yet saved
+    public ?string $ref_text = null;           // the formula text in the database reference format on which the result is based
+    public ?string $num_text = null;           // the formula text filled with numbers used for the result calculation
+    public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
+    //                                            if this is later than the last update the result needs to be updated
 
-    public $wrd = NULL;  // to get the most interesting result for this word
+    public ?word $wrd = null;  // to get the most interesting result for this word
 
     // to be dismissed
-    public $wrd_ids = array(); // a array of word ids filled while loading the formula value to the memory
+    public ?array $wrd_ids = null; // a array of word ids filled while loading the formula value to the memory
 
     // load the record from the database
     // in a separate function, because this can be called twice from the load function
@@ -150,7 +150,7 @@ class formula_value
                 }
 
                 // set the source group id if the source list is set, but not the group id
-                $phr_grp = Null;
+                $phr_grp = null;
                 if ($this->src_phr_grp_id <= 0 and !empty($this->src_phr_lst->lst)) {
                     $work_phr_lst = clone $this->src_phr_lst;
                     $work_phr_lst->ex_time();
@@ -178,9 +178,9 @@ class formula_value
                 }
 
                 // set the result group id if the result list is set, but not the group id
-                $phr_grp = Null;
+                $phr_grp = null;
                 if ($this->phr_grp_id <= 0) {
-                    $phr_lst = Null;
+                    $phr_lst = null;
                     if (!empty($this->phr_lst->lst)) {
                         $phr_lst = clone $this->phr_lst;
                         $phr_lst->ex_time();
@@ -650,7 +650,7 @@ class formula_value
     }
 
     // this function is called from dsp_id, so no other call is allowed
-    function name($back)
+    function name($back): string
     {
         $result = '';
 
@@ -664,7 +664,7 @@ class formula_value
         return $result;
     }
 
-    function name_linked($back)
+    function name_linked($back): string
     {
         log_debug('formula_value->name_linked ');
         $result = '';
@@ -681,7 +681,7 @@ class formula_value
     }
 
     // html code to show the value with the indication if the value is influence by the user input
-    function display($back)
+    function display($back): string
     {
         $result = '';
         if (!is_null($this->value)) {
@@ -696,7 +696,7 @@ class formula_value
     }
 
     // html code to show the value with the possibility to click for the result explanation
-    function display_linked($back)
+    function display_linked($back): string
     {
         $result = '';
         if (!is_null($this->value)) {
@@ -714,7 +714,7 @@ class formula_value
 
     // explain a formula result to the user
     // create a HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
-    function explain($lead_phr_id, $back)
+    function explain($lead_phr_id, $back): string
     {
         log_debug('formula_value->explain ' . $this->dsp_id() . ' for user ' . $this->usr->name);
         $result = '';
@@ -975,8 +975,8 @@ class formula_value
                             // if there is not yet a general value for all user, save it now
 
                             $fv_no_time = clone $this;
-                            $fv_no_time->src_time_phr = Null;
-                            $fv_no_time->time_phr = Null;
+                            $fv_no_time->src_time_phr = null;
+                            $fv_no_time->time_phr = null;
                             $fv_id_no_time = $fv_no_time->save();
                             if ($debug > 6) {
                                 log_debug('result = ' . $fv_no_time->value . ' saved without time for ' . $fv_no_time->phr_lst->dsp_id() . ' as id "' . $fv_id_no_time . '" based on ' . $fv_no_time->src_phr_lst->dsp_id() . ' for user ' . $fv_no_time->usr->id . ', because default time is ' . $fv_default_time->name . ' for ' . $fv_no_time->phr_lst->dsp_id() . ' for ' . $fv_no_time->phr_lst->dsp_id());

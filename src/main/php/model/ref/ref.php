@@ -36,26 +36,26 @@ class ref
 {
 
     // database fields
-    public $id = NULL; // the database id of the reference
-    public $phr_id = NULL; // the database id of the word, verb or formula
-    public $external_key = '';   // the unique key in the external system
-    public $ref_type_id = NULL; // the id of the ref type
+    public ?int $id = null;               // the database id of the reference
+    public ?int $phr_id = null;           // the database id of the word, verb or formula
+    public ?string $external_key = null;  // the unique key in the external system
+    public ?int $ref_type_id = null;      // the id of the ref type
 
     // in memory only fields
-    public $usr = NULL;     // just needed for logging the changes
-    public $phr = NULL;     // the phrase object
-    public $ref_type = NULL;     // the ref type object
+    public ?user $usr = null;             // just needed for logging the changes
+    public ?phrase $phr = null;           // the phrase object
+    public ?ref_type $ref_type = null;    // the ref type object
 
     function reset()
     {
-        $this->id = NULL;
-        $this->phr_id = NULL;
+        $this->id = null;
+        $this->phr_id = null;
         $this->external_key = '';
-        $this->ref_type_id = NULL;
+        $this->ref_type_id = null;
 
-        $this->usr = NULL;
-        $this->phr = NULL;
-        $this->ref_type = NULL;
+        $this->usr = null;
+        $this->phr = null;
+        $this->ref_type = null;
     }
 
     // test if the name is used already
@@ -312,7 +312,7 @@ class ref
     // get a similar reference
     function get_similar(): ref
     {
-        $result = NULL;
+        $result = null;
         log_debug('ref->get_similar ' . $this->dsp_id());
 
         $db_chk = clone $this;

@@ -73,21 +73,21 @@ class batch_job
 {
 
     // database fields
-    public $id = NULL;  // the database id of the request
-    public $request_time = NULL;  // time when the job has been requested
-    public $start_time = NULL;  // start time of the job execution
-    public $end_time = NULL;  // end time of the job execution
-    public $usr = NULL;  // the user who has done the request and whose data needs to be updated
-    public $type = NULL;  // "update value", "add formula" or ... reference to the type table
-    public $row_id = NULL;  // the id of the related object e.g. if a value has been updated the value_id
+    public ?int $id = null;  // the database id of the request
+    public ?DateTime $request_time = null;  // time when the job has been requested
+    public ?DateTime $start_time = null;    // start time of the job execution
+    public ?DateTime $end_time = null;      // end time of the job execution
+    public ?user $usr = null;               // the user who has done the request and whose data needs to be updated
+    public ?string $type = null;            // "update value", "add formula" or ... reference to the type table
+    public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the value_id
 
     // in memory only fields
-    public $obj = NULL;  // the updated object
+    public ?object $obj = null;             // the updated object
 
     // for calculation request a simple phrase list is used
     // not phrase groups and time because the phrase group and time splitting should only be used to save to the database
-    public $frm = NULL; // the formula object that should be used for updating the result
-    public $phr_lst = NULL; //
+    public ?formula $frm = null;           // the formula object that should be used for updating the result
+    public ?phrase_list $phr_lst = null;   //
 
 
     // request a new calculation
@@ -232,7 +232,7 @@ class batch_job
         return $result;
     }
 
-    function name()
+    function name(): string
     {
         $result = $this->type;
 

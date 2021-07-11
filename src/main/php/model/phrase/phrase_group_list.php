@@ -32,18 +32,16 @@
 class phrase_group_list
 {
 
-    public $lst = array(); // the list of the phrase group objects
-    public $time_lst = array(); // the list of the time phrase (the add function)
-    public $grp_ids = array(); // the list of the phrase group ids
-    public $grp_time_ids = array(); // the list of the phrase group and time ids
-    public $usr = NULL;    // the person for whom the word group list has been created
+    public ?array $lst = null;          // the list of the phrase group objects
+    public ?array $time_lst = null;     // the list of the time phrase (the add function)
+    public ?array $grp_ids = null;      // the list of the phrase group ids
+    public ?array $grp_time_ids = null; // the list of the phrase group and time ids
+    public ?user $usr = null;           // the person for whom the word group list has been created
 
-    public $phr_lst_lst = array(); // list of a list of phrases
+    public ?array $phr_lst_lst = null;  // list of a list of phrases
 
     /*
-
     add functions
-
     */
 
     // combine the group id and the time id to a unique index
@@ -112,7 +110,7 @@ class phrase_group_list
                 } else {
                     $phr_lst = new phrase_list;
                     $phr_lst->usr = $this->usr;
-                    $this->lst[] = Null;
+                    $this->lst[] = null;
                     $this->grp_ids[] = 0;
                 }
                 if (isset($time)) {
@@ -120,7 +118,7 @@ class phrase_group_list
                     $phr_time = $time->phrase();
                     $phr_lst->add($phr_time);
                 } else {
-                    $this->time_lst[] = Null;
+                    $this->time_lst[] = null;
                 }
                 $this->phr_lst_lst[] = $phr_lst;
                 $result = true;
@@ -140,7 +138,7 @@ class phrase_group_list
             if (!in_array($grp->id, $this->grp_ids)) {
                 $this->lst[] = $grp;
                 $this->grp_ids[] = $grp->id;
-                $this->time_lst[] = Null;
+                $this->time_lst[] = null;
                 log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
             } else {
                 log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
@@ -198,7 +196,7 @@ class phrase_group_list
         log_debug('get values because formula is assigned to phrases ' . $phr_linked->name() . ' and phrases ' . $phr_used->name() . ' are used in the formula');
 
         global $db_con;
-        $result = Null;
+        $result = null;
 
         // separate the time words from the phrases
         $time_linked = $phr_linked->time_lst();

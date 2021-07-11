@@ -162,7 +162,7 @@ function run_formula_test()
         $fv = $fv_lst->lst[0];
         $result = $fv->num_text;
     } else {
-        $fv = Null;
+        $fv = null;
         $result = 'result list is empty';
     }
     $target = '=(46000-45548)/45548';

@@ -32,7 +32,7 @@
 class user_list
 {
 
-    public $usr_lst = array();  // the list of users
+    public ?array $usr_lst = null;  // the list of users
 
     // fill the user objects of the list based on an sql
     private function load_sql($sql)
@@ -53,8 +53,8 @@ class user_list
         }
     }
 
-// return a list of all users that have done at least one modification compared to the standard
-    function load_active()
+    // return a list of all users that have done at least one modification compared to the standard
+    function load_active(): array
     {
         log_debug('user_list->load_active');
 
@@ -88,15 +88,14 @@ class user_list
         return $this->usr_lst;
     }
 
-// add a usr with just the id for later mass load
+    // add a usr with just the id for later mass load
     function add_by_id($usr_id)
     {
         $usr = new user;
         $usr->id = $usr_id;
-        $result[] = $usr;
     }
 
-// fill the user objects of the list based on the id
+    // fill the user objects of the list based on the id
     function load_by_id()
     {
 
@@ -107,12 +106,12 @@ class user_list
         $this->load_sql($sql);
     }
 
-    function name()
+    function name(): string
     {
         return implode(",", $this->names());
     }
 
-    function names()
+    function names(): array
     {
         $result = array();
         foreach ($this->usr_lst as $usr) {

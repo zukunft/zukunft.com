@@ -35,10 +35,10 @@
 class dsp_list {
 
   // the parameters
-  public $lst              = Null; // a array of objects that must have id and name
-  public $id_field         = Null; // 
-  public $script_name      = Null; // name of the code that handles the list
-  public $script_parameter = Null; // 
+  public $lst              = null; // a array of objects that must have id and name
+  public $id_field         = null; // 
+  public $script_name      = null; // name of the code that handles the list
+  public $script_parameter = null; // 
   
   // converts a id field name to an edit php script name
   // assuming that ...

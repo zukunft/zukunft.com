@@ -76,9 +76,9 @@ class sql_db
     const FLD_FORMAT_BOOL = "boolean";    // to force the boolean formatting of an value for the SQL statement formatting
 
     public $db_type = '';                 // the database type which should be used for this connection e.g. postgreSQL or MYSQL
-    public $link = NULL;                  // the link object to the database
-    public $usr_id = NULL;                // the user id of the person who request the database changes
-    private $usr_view_id = NULL;          // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    public $link = null;                  // the link object to the database
+    public $usr_id = null;                // the user id of the person who request the database changes
+    private $usr_view_id = null;          // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
     private $type = '';                   // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
     private $table = '';                  // name of the table that is used for the next query
@@ -440,7 +440,7 @@ class sql_db
     // reset the previous settings
     private function reset()
     {
-        $this->usr_view_id = NULL;
+        $this->usr_view_id = null;
         $this->table = '';
         $this->id_field = '';
         $this->id_from_field = '';
@@ -1135,7 +1135,7 @@ class sql_db
     function missing_owner()
     {
         log_debug("sql_db->missing_owner (" . $this->type . ")");
-        $result = Null;
+        $result = null;
 
         $this->set_table();
         $this->set_id_field();

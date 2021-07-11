@@ -33,14 +33,12 @@ class view extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields for the view component
-    public $comment = '';   // the view description that is shown as a mouseover explain to the user
-    public $type_id = NULL; // the id of the view type
-    public $code_id = '';   // to select internal predefined views
+    public ?string $comment = null; // the view description that is shown as a mouseover explain to the user
+    public ?string $code_id = null;   // to select internal predefined views
 
     // in memory only fields
-    public $type_name = '';   //
-    public $cmp_lst = NULL;   // array of the view component objects
-    public $back = NULL;   // the calling stack
+    public ?array $cmp_lst = null;  // array of the view component objects
+    public ?string $back = null;    // the calling stack
 
     function __construct()
     {
@@ -52,21 +50,21 @@ class view extends user_sandbox
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
         $this->name = '';
 
         $this->comment = '';
-        $this->type_id = NULL;
+        $this->type_id = null;
         $this->code_id = '';
 
         $this->type_name = '';
-        $this->cmp_lst = NULL;
-        $this->back = NULL;
+        $this->cmp_lst = null;
+        $this->back = null;
     }
 
     private function row_mapper($db_row, $map_usr_fields = false)

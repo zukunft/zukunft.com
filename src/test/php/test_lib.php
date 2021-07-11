@@ -33,7 +33,7 @@ function run_unit_tests()
 
     global $exe_start_time;
 
-    test_header('Test the base library functions (zu_lib.php)');
+    test_header('Start the zukunft.com unit tests');
 
     test_subheader('Test usr sandbox functions that does not need a database connection');
 

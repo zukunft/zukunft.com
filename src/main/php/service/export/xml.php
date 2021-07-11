@@ -82,12 +82,12 @@ class xml_io
 {
 
     // parameters to filter the export
-    public $usr = NULL; // the user who wants to im- or export
-    public $phr_lst = NULL; // to export all values related to this phrase
+    public $usr = null; // the user who wants to im- or export
+    public $phr_lst = null; // to export all values related to this phrase
 
 
     // to build the xml
-    //public $phr_lst_used = NULL; // all phrases used by the exported values
+    //public $phr_lst_used = null; // all phrases used by the exported values
 
     // export zukunft.com data as xml
     function export()

@@ -53,6 +53,9 @@ if ($debug > 9) {
 $start_time = microtime(true);
 $exe_start_time = $start_time;
 
+// create a list with all prepared sql queries to check if the name is unique
+$sql_names = array();
+
 $error_counter = 0;
 $timeout_counter = 0;
 $total_tests = 0;
@@ -68,5 +71,6 @@ $usr->id = SYSTEM_USER_ID;
 // start unit testing
 // ------------------
 
-run_unit_tests();
 run_string_unit_tests (); // test functions not yet split into single unit tests
+run_word_link_list_unit_tests();
+run_unit_tests();

@@ -31,25 +31,25 @@
   
 */
 
-class word extends user_sandbox
+class word extends word_link_object
 {
 
     // database fields additional to the user sandbox fields
-    public $plural = NULL; // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
-    public $description = NULL; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
-    public $view_id = NULL; // defines the default view for this word
-    public $values = NULL; // the total number of values linked to this word as an indication how common the word is and to sort the words
+    public ?string $plural = null; // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    public ?string $description = null; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
+    public ?int $view_id = null; // defines the default view for this word
+    public ?int $values = null; // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
-    public $type_name = ''; // the name of the word type
-    public $is_wrd = NULL; // the main type object e.g. for "ABB" it is the word object for "Company"
-    public $is_wrd_id = NULL; // the id for the is object
-    public $dsp_pos = NULL; // position of the word on the screen
-    public $dsp_lnk_id = NULL; // position or link id based on which to item is displayed on the screen
-    public $link_type_id = NULL; // used in the word list to know based on which relation the word was added to the list
+    public ?string $type_name = ''; // the name of the word type
+    public ?string $is_wrd = null; // the main type object e.g. for "ABB" it is the word object for "Company"
+    public ?int $is_wrd_id = null; // the id for the is object
+    public ?int $dsp_pos = null; // position of the word on the screen
+    public ?int $dsp_lnk_id = null; // position or link id based on which to item is displayed on the screen
+    public ?int $link_type_id = null; // used in the word list to know based on which relation the word was added to the list
 
     // only used for the export object
-    private $view = ''; // name of the default view for this word
+    private ?string $view = null; // name of the default view for this word
 
     // define the settings for this source object
     function __construct()
@@ -64,18 +64,18 @@ class word extends user_sandbox
     function reset()
     {
         parent::reset();
-        $this->plural = NULL;
-        $this->description = NULL;
-        $this->type_id = NULL;
-        $this->view_id = NULL;
-        $this->values = NULL;
+        $this->plural = null;
+        $this->description = null;
+        $this->type_id = null;
+        $this->view_id = null;
+        $this->values = null;
 
         $this->type_name = '';
-        $this->is_wrd = NULL;
-        $this->is_wrd_id = NULL;
-        $this->dsp_pos = NULL;
-        $this->dsp_lnk_id = NULL;
-        $this->link_type_id = NULL;
+        $this->is_wrd = null;
+        $this->is_wrd_id = null;
+        $this->dsp_pos = null;
+        $this->dsp_lnk_id = null;
+        $this->link_type_id = null;
 
         $this->view = '';
     }
@@ -191,7 +191,7 @@ class word extends user_sandbox
     function view(): view
     {
         log_debug('word->view for ' . $this->dsp_id());
-        $result = Null;
+        $result = null;
 
         $this->load();
         if ($this->view_id > 0) {
@@ -581,7 +581,7 @@ class word extends user_sandbox
     // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
     function is_mainly()
     {
-        $result = Null;
+        $result = null;
         $is_wrd_lst = $this->is();
         if (count($is_wrd_lst->lst) >= 1) {
             $result = $is_wrd_lst->lst[0];
@@ -998,10 +998,9 @@ class word extends user_sandbox
         return $result;
     }
 
-// set the update parameters for the word type
-// to do: log the ref
-    private
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    // set the update parameters for the word type
+    // to do: log the ref
+    private function save_field_type($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
         if ($db_rec->type_id <> $this->type_id) {
@@ -1020,7 +1019,7 @@ class word extends user_sandbox
         return $result;
     }
 
-// set the update parameters for the word view_id
+    // set the update parameters for the word view_id
     private
     function save_field_view($db_rec): bool
     {
@@ -1031,7 +1030,7 @@ class word extends user_sandbox
         return $result;
     }
 
-// save all updated word fields
+    // save all updated word fields
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         log_debug('word->save_fields');

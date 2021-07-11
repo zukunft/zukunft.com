@@ -32,13 +32,13 @@
 
 class user_log_display {
 
-  public $id          = NULL; // the database id of the word, phrase, value or formula object
-  public $obj         = NULL; // the calling object
-  public $usr         = NULL; // the user of the person for whom the value is loaded, so to say the viewer
+  public $id          = null; // the database id of the word, phrase, value or formula object
+  public $obj         = null; // the calling object
+  public $usr         = null; // the user of the person for whom the value is loaded, so to say the viewer
   public $type        = '';   // either "word", "phrase", "value" or "formula" to select the object to display
-  public $page        = NULL; // the page to display
+  public $page        = null; // the page to display
   public $condensed   = True; // display the changes in a few columns with reduced details
-  public $size        = NULL; // the page size
+  public $size        = null; // the page size
   public $call        = '';   // the html page which has call the hist display object
   public $back        = '';   // 
   

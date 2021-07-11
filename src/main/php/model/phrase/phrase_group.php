@@ -38,44 +38,44 @@ class phrase_group
 {
 
     // database fields
-    public $id = NULL;    // the database id of the word group
-    public $grp_name = '';      // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
-    public $auto_name = '';      // the automatically created generic name for the word group, used for a quick display of values
-    public $wrd_id_txt = '';      // text of all linked words in ascending order for fast search (this is the master and the link table "value_phrase_links" is the slave)
-    public $lnk_id_txt = '';      // text of all linked triples in ascending order for fast search (as $wrd_id_txt this is the master and a negative id in "value_phrase_links" is the slave)
-    public $id_order_txt = '';      // the ids from above in the order that the user wants to see them
+    public ?int $id = null;                  // the database id of the word group
+    public ?string $grp_name = null;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
+    public ?string $auto_name = null;        // the automatically created generic name for the word group, used for a quick display of values
+    public ?string $wrd_id_txt = null;       // text of all linked words in ascending order for fast search (this is the master and the link table "value_phrase_links" is the slave)
+    public ?string $lnk_id_txt = null;       // text of all linked triples in ascending order for fast search (as $wrd_id_txt this is the master and a negative id in "value_phrase_links" is the slave)
+    public ?string $id_order_txt = null;     // the ids from above in the order that the user wants to see them
 
     // in memory only fields
-    public $usr = NULL;    // the user object of the person for whom the word and triple list is loaded, so to say the viewer
-    public $ids = array(); // list of the phrase (word (positive id) or triple (negative id)) ids
-    // this is set by the frontend scripts and converted here to retrieve or create a group
-    // the order is always ascending for be able to use this as a index to select the group
-    public $id_order = array(); // the ids from above in the order that the user wants to see them
-    public $wrd_ids = array(); // list of the word ids to load a list of words with one sql statement from the database
-    public $lnk_ids = array(); // list of the triple ids to load a list of words with one sql statement from the database
-    public $phr_lst = NULL;    // the phrase list object
-    public $wrd_lst = NULL;    // the word list object
-    public $lnk_lst = NULL;    // the triple (word_link) object
+    public ?user $usr = null;                // the user object of the person for whom the word and triple list is loaded, so to say the viewer
+    public ?array $ids = null;               // list of the phrase (word (positive id) or triple (negative id)) ids
+    //                                          this is set by the frontend scripts and converted here to retrieve or create a group
+    //                                          the order is always ascending for be able to use this as a index to select the group
+    public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
+    public ?array $wrd_ids = array();        // list of the word ids to load a list of words with one sql statement from the database
+    public ?array $lnk_ids = array();        // list of the triple ids to load a list of words with one sql statement from the database
+    public ?phrase_list $phr_lst = null;     // the phrase list object
+    public ?word_list $wrd_lst = null;       // the word list object
+    public ?word_link_list $lnk_lst = null;  // the triple (word_link) object
 
     private function reset()
     {
-        $this->id = NULL;
+        $this->id = null;
         $this->grp_name = '';
         $this->auto_name = '';
         $this->wrd_id_txt = '';
         $this->lnk_id_txt = '';
         $this->id_order_txt = '';
 
-        $this->usr = NULL;
+        $this->usr = null;
 
         $this->ids = array();
         $this->id_order = array();
         $this->wrd_ids = array();
         $this->lnk_ids = array();
 
-        $this->wrd_lst = NULL;
-        $this->lnk_lst = NULL;
-        $this->phr_lst = NULL;
+        $this->wrd_lst = null;
+        $this->lnk_lst = null;
+        $this->phr_lst = null;
     }
 
     /*
@@ -620,7 +620,7 @@ class phrase_group
     {
 
         global $db_con;
-        $result = Null;
+        $result = null;
 
         if (isset($this->wrd_lst)) {
             if ($this->wrd_lst->lst > 0) {

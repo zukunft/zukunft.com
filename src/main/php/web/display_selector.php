@@ -35,15 +35,15 @@ class selector
 {
 
     // the parameters
-    public $usr = Null; // if 0 (not NULL) for standard values, otherwise for a user specific values
+    public $usr = null; // if 0 (not NULL) for standard values, otherwise for a user specific values
     public $name = '';   // the HTML form field name
     public $form = '';   // the name of the HTML form
     public $label = '';   // the label of the HTML form
     public $bs_class = '';   // to add addition class information for the bootstrap version
     public $attribute = '';   // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public $sql = '';   // query to select the items
-    public $lst = Null; // list of objects from which the user can select
-    public $selected = Null; // id of the selected object
+    public $lst = null; // list of objects from which the user can select
+    public $selected = null; // id of the selected object
     public $dummy_text = '';   // text for the NULL result if allowed
 
     function display(): string

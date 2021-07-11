@@ -44,31 +44,30 @@ class value extends user_sandbox_display
 {
 
     // database fields additional to the user sandbox fields for the value object
-    public $number = NULL; // simply the numeric value
-    public $source_id = NULL; // the id of source where the value is coming from
-    public $grp_id = NULL; // id of the group of phrases that are linked to this value for fast selections
-    public $time_id = NULL; // id of the main time period word for fast time seres creation selections
-    public $time_stamp = NULL; // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
-    public $last_update = NULL; // the time of the last update of fields that may influence the calculated results
+    public ?int $source_id = null;        // the id of source where the value is coming from
+    public ?int $grp_id = null;           // id of the group of phrases that are linked to this value for fast selections
+    public ?int $time_id = null;          // id of the main time period word for fast time seres creation selections
+    public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
+    public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
 
     // derived database fields for fast selection (needs to be verified from time to time to check the database consistency and detect program errors)
     // field set by the front end scripts such as value_add.php or value_edit.php
-    public $ids = NULL; // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
-    public $phr_lst = NULL; // the phrase object list for this value
-    //public $phr_ids       = NULL; // the phrase id list for this value loaded directly from the group
-    public $wrd_lst = NULL; // the word object list for this value
-    public $wrd_ids = NULL; // the word id list for this value loaded directly from the group
-    public $lnk_lst = NULL; // the triple object list  for this value
-    public $lnk_ids = NULL; // the triple id list  for this value loaded directly from the group
-    // public $phr_all_lst  = NULL; // $phr_lst including the time wrd
-    // public $phr_all_ids  = NULL; // $phr_ids including the time id
-    public $grp = NULL; // phrases (word or triple) group object for this value
-    public $time_phr = NULL; // the time (period) word object for this value
-    public $update_time = NULL; // time of the last update, which could also be taken from the change log
-    public $source = NULL; // the source object
+    public ?array $ids = null;            // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
+    public ?array $phr_lst = null;        // the phrase object list for this value
+    //public $phr_ids       = null;       // the phrase id list for this value loaded directly from the group
+    public ?array $wrd_lst = null;        // the word object list for this value
+    public ?array $wrd_ids = null;        // the word id list for this value loaded directly from the group
+    public ?array $lnk_lst = null;        // the triple object list  for this value
+    public ?array $lnk_ids = null;        // the triple id list  for this value loaded directly from the group
+    // public $phr_all_lst  = null;       // $phr_lst including the time wrd
+    // public $phr_all_ids  = null;       // $phr_ids including the time id
+    public ?phrase $grp = null;           // phrases (word or triple) group object for this value
+    public ?phrase $time_phr = null;      // the time (period) word object for this value
+    public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
+    public ?source $source = null;        // the source object
 
     // field for user interaction
-    public $usr_value = '';    // the raw value as the user has entered it including formatting chars such as the thousand separator
+    public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
 
 
     function __construct()
@@ -81,31 +80,31 @@ class value extends user_sandbox_display
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
-        $this->number = NULL;
-        $this->source_id = NULL;
-        $this->grp_id = NULL;
-        $this->time_id = NULL;
-        $this->time_stamp = NULL;
-        $this->last_update = NULL;
+        $this->number = null;
+        $this->source_id = null;
+        $this->grp_id = null;
+        $this->time_id = null;
+        $this->time_stamp = null;
+        $this->last_update = null;
 
-        $this->ids = NULL;
-        $this->phr_lst = NULL;
-        $this->wrd_lst = NULL;
-        $this->wrd_ids = NULL;
-        $this->lnk_lst = NULL;
-        $this->lnk_ids = NULL;
-        $this->grp = NULL;
-        $this->time_phr = NULL;
-        $this->update_time = NULL;
-        $this->source = NULL;
-        $this->share_id = NULL;
-        $this->protection_id = NULL;
+        $this->ids = null;
+        $this->phr_lst = null;
+        $this->wrd_lst = null;
+        $this->wrd_ids = null;
+        $this->lnk_lst = null;
+        $this->lnk_ids = null;
+        $this->grp = null;
+        $this->time_phr = null;
+        $this->update_time = null;
+        $this->source = null;
+        $this->share_id = null;
+        $this->protection_id = null;
 
         $this->usr_value = '';
     }
@@ -374,7 +373,7 @@ class value extends user_sandbox_display
     // what happens if a source is updated
     function load_source()
     {
-        $src = Null;
+        $src = null;
         log_debug('value->load_source for ' . $this->dsp_id());
 
         $do_load = false;
@@ -395,7 +394,7 @@ class value extends user_sandbox_display
                 $src->load();
                 $this->source = $src;
             } else {
-                $this->source = Null;
+                $this->source = null;
             }
         }
 
@@ -1374,7 +1373,7 @@ class value extends user_sandbox_display
             $result .= '  <input type="hidden" name="confirm" value="1">';
 
             // reset the phrase sample settings
-            $main_wrd = Null;
+            $main_wrd = null;
             log_debug("value->dsp_edit main wrd");
 
             // rebuild the value ids if needed

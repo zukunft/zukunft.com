@@ -4,7 +4,22 @@
 
   user_log_link.php - object to save updates of references (links) by the user in the database in a format, so that is can fast be displayed to the user
   -----------------
-  
+
+  A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:
+
+  1. never change a database ID
+  2. never delete a word
+
+
+  Other assumptions are:
+
+  Every user has its sandbox, means a list of all his changes
+
+  The normal word table contain the value, word, formula, verb or links that is used by most users
+  for each normal table there is an overwrite table with the user changes/overwrites
+  maybe for each huge table is also a log table with the hist of the user changes
+
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -29,62 +44,42 @@
   
 */
 
-/*
-
-A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:
-
-1. never change a database ID
-2. never delete a word
-
-
-Other assumptions are:
-
-Every user has its sandbox, means a list of all his changes
-
-The normal word table contain the value, word, formula, verb or links that is used by most users
-for each normal table there is an overwrite table with the user changes/overwrites
-maybe for each huge table is also a log table with the hist of the user changes
-
-
-
-*/
-
 
 class user_log_link
 {
 
-    public $id = NULL; // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
-    public $usr = NULL; // the user who has done the change
-    public $action = '';   // text for the user action e.g. "add", "update" or "delete"
-    private $action_id = NULL; // database id for the action text
-    public $table = '';   // name of the table that has been updated
-    private $table_id = NULL; // database id for the table text
+    public ?int $id = null;                // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
+    public ?user $usr = null;              // the user who has done the change
+    public ?string $action = null;         // text for the user action e.g. "add", "update" or "delete"
+    private ?int $action_id = null;        // database id for the action text
+    public ?string $table = null;          // name of the table that has been updated
+    private ?int $table_id = null;         // database id for the table text
     // object set by the calling function
-    public $old_from = NULL; // the from reference before the user change; should be the object, but is sometimes still the id
-    public $old_link = NULL; // the reference type before the user change
-    public $old_to = NULL; // the to reference before the user change
-    public $new_from = NULL; // the from reference after the user change
-    public $new_link = NULL; // the reference type after the user change
-    public $new_to = NULL; // the to reference after the user change
-    public $std_from = NULL; // the standard from reference for all users that does not have changed it
-    public $std_link = NULL; // the standard reference type for all users that does not have changed it
-    public $std_to = NULL; // the standard to reference for all users that does not have changed it
-    public $row_id = NULL; // the reference id of the row in the database table
+    public ?string $old_from = null;       // the from reference before the user change; should be the object, but is sometimes still the id
+    public ?string $old_link = null;       // the reference type before the user change
+    public ?string $old_to = null;         // the to reference before the user change
+    public ?string $new_from = null;       // the from reference after the user change
+    public ?string $new_link = null;       // the reference type after the user change
+    public ?string $new_to = null;         // the to reference after the user change
+    public ?string $std_from = null;       // the standard from reference for all users that does not have changed it
+    public ?string $std_link = null;       // the standard reference type for all users that does not have changed it
+    public ?string $std_to = null;         // the standard to reference for all users that does not have changed it
+    public ?int $row_id = null;            // the reference id of the row in the database table
     // fields to save the database row that are filled here based on the object
-    public $old_from_id = '';   // old id ref to the from record
-    public $old_link_id = '';   // old id ref to the link record
-    public $old_to_id = '';   // old id ref to the to record
-    public $old_text_from = '';   // fixed description for old_from
-    public $old_text_link = '';   // fixed description for old_link
-    public $old_text_to = '';   // fixed description for old_to
-    public $new_from_id = '';   // new id ref to the from record
-    public $new_link_id = '';   // new id ref to the link record
-    public $new_to_id = '';   // new id ref to the to record
-    public $new_text_from = '';   // fixed description for new_from
-    public $new_text_link = '';   // fixed description for new_link
-    public $new_text_to = '';   // fixed description for new_to
+    public ?int $old_from_id = null;       // old id ref to the from record
+    public ?int $old_link_id = null;       // old id ref to the link record
+    public ?int $old_to_id = null;         // old id ref to the to record
+    public ?int $old_text_from = null;     // fixed description for old_from
+    public ?string $old_text_link = null;  // fixed description for old_link
+    public ?string $old_text_to = null;    // fixed description for old_to
+    public ?int $new_from_id = null;       // new id ref to the from record
+    public ?int $new_link_id = null;       // new id ref to the link record
+    public ?int $new_to_id = null;         // new id ref to the to record
+    public ?string $new_text_from = null;  // fixed description for new_from
+    public ?string $new_text_link = null;  // fixed description for new_link
+    public ?string $new_text_to = null;    // fixed description for new_to
     // to be replaced with new_text_link
-    public $link_text = '';    // is used for fixed links such as the source for values
+    public ?string $link_text = null;      // is used for fixed links such as the source for values
 
     private function dsp_id(): string
     {

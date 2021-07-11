@@ -35,25 +35,25 @@
 class phrase
 {
 
-    public $id = NULL; // if positive the database id of the word or if negative of a triple
-    public $usr = NULL; // the person for whom the word is loaded, so to say the viewer
-    public $name = '';   // simply the word or triple name to reduce the number of "->" on the code
-    public $description = '';   // simply the word or triple description to reduce the number of "->" on the code
-    public $obj = NULL; // if loaded the linked word or triple object
+    public ?int $id = null;            // if positive the database id of the word or if negative of a triple
+    public ?user $usr = null;          // the person for whom the word is loaded, so to say the viewer
+    public ?string $name = null;       // simply the word or triple name to reduce the number of "->" on the code
+    public ?string $description = '';  // simply the word or triple description to reduce the number of "->" on the code
+    public ?object $obj = null;        // if loaded the linked word or triple object
 
     // in memory only fields
-    public $type_name = '';   //
-    public $is_wrd = NULL; // the main type object e.g. for "ABB" it is the word object for "Company"
-    public $is_wrd_id = NULL; // the id for the is object
-    public $dsp_pos = NULL; // position of the word on the screen
-    public $dsp_lnk_id = NULL; // position or link id based on which to item is displayed on the screen
-    public $link_type_id = NULL; // used in the word list to know based on which relation the word was added to the list
+    public ?string $type_name = null;  //
+    public ?string $is_wrd = null;     // the main type object e.g. for "ABB" it is the word object for "Company"
+    public ?int $is_wrd_id = null;     // the id for the is object
+    public ?int $dsp_pos = null;       // position of the word on the screen
+    public ?int $dsp_lnk_id = null;    // position or link id based on which to item is displayed on the screen
+    public ?int $link_type_id = null;  // used in the word list to know based on which relation the word was added to the list
 
     //  load either a word or triple
-    function load()
+    function load(): bool
     {
         log_debug('phrase->load ' . $this->dsp_id());
-        $result = '';
+        $result = false;
         if ($this->id < 0) {
             $lnk = new word_link;
             $lnk->id = $this->id * -1;
@@ -107,7 +107,7 @@ class phrase
     function main_word()
     {
         log_debug('phrase->main_word ' . $this->dsp_id());
-        $result = Null;
+        $result = null;
 
         if ($this->id == 0 or $this->name == '') {
             $this->load();
@@ -128,7 +128,7 @@ class phrase
     function type_id()
     {
         log_debug('phrase->type_id ' . $this->dsp_id());
-        $result = Null;
+        $result = null;
 
         $wrd = $this->main_word();
         $result = $wrd->type_id;
@@ -163,7 +163,7 @@ class phrase
     */
 
     // display the unique id fields
-    function dsp_id()
+    function dsp_id(): string
     {
         $result = '';
 
@@ -182,17 +182,16 @@ class phrase
     }
 
     // return the name (just because all objects should have a name function)
-    function name()
+    function name(): string
     {
         //$result = $this->name;
         $result = '"' . $this->name . '"';
         return $result;
     }
 
-    function name_linked()
+    function name_linked(): string
     {
-        $result = '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
     }
 
     function dsp_tbl()
@@ -218,24 +217,21 @@ class phrase
     }
 
     // return the html code to display a word
-    function display()
+    function display(): string
     {
-        $result = '<a href="/http/view.php?words=' . $this->id . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/view.php?words=' . $this->id . '">' . $this->name . '</a>';
     }
 
     // simply to display a single word or triple link
-    function dsp_link()
+    function dsp_link(): string
     {
-        $result = '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
     }
 
     // similar to dsp_link
     function dsp_link_style($style)
     {
-        $result = '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '" class="' . $style . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '" class="' . $style . '">' . $this->name . '</a>';
     }
 
     // helper function that returns a word list object just with the word object
@@ -479,7 +475,7 @@ class phrase
     // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
     function is_mainly()
     {
-        $result = Null;
+        $result = null;
         $is_wrd_lst = $this->is();
         if (count($is_wrd_lst->lst) >= 1) {
             $result = $is_wrd_lst->lst[0];

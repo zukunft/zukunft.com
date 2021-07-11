@@ -32,23 +32,21 @@
 class formula_value_list
 {
 
-    public $lst = array(); // list of the formula results
+    public ?array $lst = null;   // list of the formula results
 
     // search fields
-    public $usr = NULL; // the person who wants to see the results
-    public $frm_id = NULL; // to get the results of this formula
-    public $phr_id = NULL; // to get the results linked to a phrase
-    public $grp_id = NULL; // to get the results linked to a phrase group
+    public ?user $usr = null;    // the person who wants to see the results
+    public ?int $frm_id = null;  // to get the results of this formula
+    public ?int $phr_id = null;  // to get the results linked to a phrase
+    public ?int $grp_id = null;  // to get the results linked to a phrase group
 
     // private in memory fields to reduce the number of function call parameters within this class
-    public $frm = NULL; // the formula object
+    public ?formula $frm = null; // the formula object
 
 
     /*
-
       load functions
       --------------
-
     */
 
     // load formula results from the database related to one formula or one word
@@ -155,7 +153,7 @@ class formula_value_list
     */
 
     // return best possible id for this element mainly used for debugging
-    function dsp_id()
+    function dsp_id(): string
     {
         global $debug;
         $result = '';
@@ -215,7 +213,7 @@ class formula_value_list
     }
 
     // return a list of the formula result ids
-    function ids()
+    function ids(): array
     {
         $result = array();
         if (isset($this->lst)) {
@@ -230,7 +228,7 @@ class formula_value_list
     }
 
     // return a list of the formula result names
-    function names()
+    function names(): array
     {
         $result = array();
         if (isset($this->lst)) {
@@ -250,7 +248,7 @@ class formula_value_list
     }
 
     // create the html code to show the formula results to the user
-    function display($back)
+    function display($back): string
     {
         log_debug("fv_lst->display (" . count($this->lst) . ")");
         $result = ''; // reset the html code var
@@ -497,7 +495,7 @@ class formula_value_list
         $last_msg_time = time(); // the start time
         $collect_pos = 0;        // to calculate the progress in percent
 
-        $result = Null;
+        $result = null;
 
         // get a list of all words and triples where the formula should be used (assigned words)
         // including all child phrases that should also be included in the assignment e.g. for "Year" include "2018"

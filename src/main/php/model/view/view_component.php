@@ -33,27 +33,25 @@ class view_component extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields for the view component
-    public $comment = '';   // the view component description that is shown as a mouseover explain to the user
-    public $order_nbr = NULL; // the position in the linked view
-    public $type_id = NULL; // the predefined entry type e.g. "formula results"
-    public $word_id_row = NULL; // if the view component uses a related word tree this is the start node
-    // e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
-    public $link_type_id = NULL; // the word link type used to build the word tree started with the $start_word_id
-    public $formula_id = NULL; // to select a formula (no used case at the moment)
-    public $word_id_col = NULL; // for a table to defined which columns should be used (if not defined by the calling word)
-    public $word_id_col2 = NULL; // for a table to defined second columns layer or the second axis in case of a chart
-    // e.g. for a "company cash flow statement" the "col word" could be "Year"
-    // "col2 word" could be "Quarter" to show the Quarters between the year upon request
+    public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
+    public ?int $order_nbr = null;          // the position in the linked view
+    public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
+    //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
+    public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
+    public ?int $formula_id = null;         // to select a formula (no used case at the moment)
+    public ?int $word_id_col = null;        // for a table to defined which columns should be used (if not defined by the calling word)
+    public ?int $word_id_col2 = null;       // for a table to defined second columns layer or the second axis in case of a chart
+    //                                         e.g. for a "company cash flow statement" the "col word" could be "Year"
+    //                                              "col2 word" could be "Quarter" to show the Quarters between the year upon request
 
     // linked fields
-    public $wrd_row = NULL; // the word object for $word_id_row
-    public $wrd_col = NULL; // the word object for $word_id_col
-    public $wrd_col2 = NULL; // the word object for $word_id_col2
-    public $frm = NULL; // the formula object for $formula_id
-    public $link_type_name = '';   //
-    public $type_name = '';   //
-    public $code_id = '';   // the entry type code id
-    public $back = NULL; // the calling stack
+    public ?word $wrd_row = null;           // the word object for $word_id_row
+    public ?word $wrd_col = null;           // the word object for $word_id_col
+    public ?word $wrd_col2 = null;          // the word object for $word_id_col2
+    public ?formula $frm = null;            // the formula object for $formula_id
+    public ?string $link_type_name = null;  //
+    public ?string $code_id = null;         // the entry type code id
+    public ?string $back = null;            // the calling stack
 
     function __construct()
     {
@@ -65,30 +63,30 @@ class view_component extends user_sandbox
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
         $this->name = '';
 
         $this->comment = '';
-        $this->order_nbr = NULL;
-        $this->type_id = NULL;
-        $this->word_id_row = NULL;
-        $this->link_type_id = NULL;
-        $this->formula_id = NULL;
-        $this->word_id_col = NULL;
-        $this->word_id_col2 = NULL;
-        $this->wrd_row = NULL;
-        $this->wrd_col = NULL;
-        $this->wrd_col2 = NULL;
-        $this->frm = NULL;
+        $this->order_nbr = null;
+        $this->type_id = null;
+        $this->word_id_row = null;
+        $this->link_type_id = null;
+        $this->formula_id = null;
+        $this->word_id_col = null;
+        $this->word_id_col2 = null;
+        $this->wrd_row = null;
+        $this->wrd_col = null;
+        $this->wrd_col2 = null;
+        $this->frm = null;
         $this->link_type_name = '';
         $this->type_name = '';
         $this->code_id = '';
-        $this->back = NULL;
+        $this->back = null;
     }
 
     private function row_mapper($db_row, $map_usr_fields = false)

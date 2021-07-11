@@ -779,7 +779,7 @@ function zutl_btn_edit($link_id, $word_id)
 function zut_plural($wrd_id, $user_id)
 {
     log_debug('zut_plural (' . $wrd_id . ',u' . $user_id . ')');
-    $result = NULL;
+    $result = null;
     if ($wrd_id > 0) {
         $wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         // only return a word if the user has not yet excluded the word
@@ -800,7 +800,7 @@ function zut_plural($wrd_id, $user_id)
 function zut_name($wrd_id, $user_id)
 {
     log_debug('zut_name (' . $wrd_id . ',u' . $user_id . ')');
-    $result = NULL;
+    $result = null;
     if ($wrd_id > 0) {
         if ($user_id > 0) {
             $wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
@@ -825,7 +825,7 @@ function zut_name($wrd_id, $user_id)
 function zut_description($wrd_id, $user_id)
 {
     log_debug('zut_description (' . $wrd_id . ',u' . $user_id . ')');
-    $result = NULL;
+    $result = null;
     if ($wrd_id > 0) {
         $wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         // only return a word if the user has not yet excluded the word

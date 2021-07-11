@@ -120,7 +120,7 @@ function run_value_test () {
     test_dsp(', value->load time word', $target, $result, TIMEOUT_LIMIT);
 
     // ... and check the word reloading by group
-    $chk_val->wrd_lst = Null;
+    $chk_val->wrd_lst = null;
     $chk_val->load_phrases();
     if (isset($chk_val->wrd_lst)) {
       $result = implode(',',$chk_val->wrd_lst->names());
@@ -131,7 +131,7 @@ function run_value_test () {
     test_dsp(', value->load_phrases reloaded words', $target, $result, TIMEOUT_LIMIT);
 
     // ... and check the time word reloading
-    $chk_val->time_phr = Null;
+    $chk_val->time_phr = null;
     $chk_val->load_phrases();
     if (isset($chk_val->time_phr)) {
       $result = $chk_val->time_phr->name;

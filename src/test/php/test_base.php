@@ -42,7 +42,13 @@ if ($root_path == '') {
     $root_path = '../';
 }
 
+// set the paths of the program code
+$path_unit = $root_path . 'src/test/php/unit/'; // path of the code for the unit tests
+
 include_once $root_path . 'src/main/php/service/config.php';
+
+// load the unit testing functions
+include_once $path_unit . 'word_link_list.php';
 
 // load the testing functions
 include_once $root_path . 'src/test/php/test_system.php';
@@ -372,7 +378,7 @@ function num2bool($in_txt): bool
 }
 
 // legacy function for test_dsp
-function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = '', $test_type = '')
+function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = '', $test_type = ''): string
 {
     global $error_counter;
     global $timeout_counter;

@@ -32,11 +32,11 @@
 class formula_link_list
 {
 
-    public $lst = array(); // the list of formula word link objects
-    public $usr = Null;    // the user who wants to see or modify the list
+    public ?array $lst = null; // the list of formula word link objects
+    public ?user $usr = null;  // the user who wants to see or modify the list
 
     // search fields
-    public $frm = Null; // to select all links for this formula
+    public ?formula $frm = null; // to select all links for this formula
 
     // fill the formula link list based on a database records
     // $db_rows is an array of an array with the database values

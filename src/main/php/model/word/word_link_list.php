@@ -35,17 +35,20 @@
 
 class word_link_list
 {
+    const DIRECTION_UP = 'up';
+    const DIRECTION_DOWN = 'down';
+    const DIRECTION_BOTH = 'both';
 
-    public $lst = array(); // the list of word links
-    public $usr = NULL;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    public array $lst = array(); // the list of word links
+    public ?user $usr = null;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
     // fields to select a part of the graph
-    public $ids = array(); // list of link ids
-    public $wrd = NULL;    // show the graph elements related to this word
-    public $wrd_lst = NULL;    // show the graph elements related to these words
-    public $vrb = NULL;    // show the graph elements related to this verb
-    public $vrb_lst = NULL;    // show the graph elements related to these verbs
-    public $direction = 'down';  // either up, down or both
+    public array $ids = array();  // list of link ids
+    public ?word $wrd = null;          // show the graph elements related to this word
+    public ?word_list $wrd_lst = null; // show the graph elements related to these words
+    public ?verb $vrb = null;     // show the graph elements related to this verb
+    public ?verb_list $vrb_lst = null; // show the graph elements related to these verbs
+    public string $direction = self::DIRECTION_DOWN;  // either up, down or both
 
     /*
      * not really used?
@@ -81,8 +84,8 @@ class word_link_list
                 " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'word_name' . $pos) . ",
                 " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'plural' . $pos) . ",
                 " . $db_con->get_usr_field('description', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'description' . $pos) . ",
-                " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
-                " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
+                " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
+                " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
                   t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
     }
 
@@ -92,28 +95,83 @@ class word_link_list
                                                                        AND u" . $pos . ".user_id = " . $this->usr->id . " ";
     }
 
-    // load the word link without the linked objects, because in many cases the object are already loaded by the caller
-    function load()
+    // returns the of predefined sql statement (must be corresponding to load_sql)
+    function load_sql_name(): string
     {
-        log_debug('word_link_list->load');
+        $sql_name = '';
+        $sql_name_type = '';
+
+        if (isset($this->ids)) {
+            if (count($this->ids) > 0) {
+                $sql_name = 'word_link_list_by_ids';
+            }
+        }
+        if ($sql_name == '') {
+            if (isset($this->wrd)) {
+                if ($this->direction == self::DIRECTION_DOWN) {
+                    $sql_name = 'word_link_list_word_down';
+                } else if ($this->direction == self::DIRECTION_UP) {
+                    $sql_name = 'word_link_list_word_up';
+                } else if ($this->direction == self::DIRECTION_BOTH) {
+                    $sql_name = 'word_link_list_word_both';
+                    log_warning('Word link search direction ' . $this->direction . ' not yet expected');
+                } else {
+                    log_err('Word link search direction ' . $this->direction . ' not expected');
+                }
+            }
+        }
+        if ($sql_name == '') {
+            if (isset($this->wrd_lst)) {
+                if ($this->wrd_lst->ids_txt() != '') {
+                    if ($this->direction == self::DIRECTION_DOWN) {
+                        $sql_name = 'word_link_list_word_list_down';
+                    } else if ($this->direction == self::DIRECTION_UP) {
+                        $sql_name = 'word_link_list_word_list_up';
+                    } else if ($this->direction == self::DIRECTION_BOTH) {
+                        $sql_name = 'word_link_list_word_list_both';
+                        log_warning('Word link search direction ' . $this->direction . ' not yet expected');
+                    } else {
+                        log_err('Word link search direction ' . $this->direction . ' not expected');
+                    }
+                }
+            }
+        }
+        // with additional verb selection
+        if (isset($this->vrb)) {
+            if ($this->vrb->id > 0) {
+                $sql_name_type = '_and_vrb';
+            }
+        }
+        if ($sql_name_type == '') {
+            if (isset($this->vrb_lst)) {
+                if ($this->vrb_lst->ids_txt() != '') {
+                    $sql_name_type = '_and_vrb_lst';
+                }
+            }
+        }
+        return $sql_name . $sql_name_type;
+    }
+
+    // create the sql statement to fill a word link list
+    function load_sql(): string
+    {
 
         global $db_con;
 
-        // check the all minimal input parameters
-        if (!isset($this->usr)) {
-            log_err("The user id must be set to load a graph.", "word_link_list->load");
-        } else {
-            // set the where clause depending on the defined select values
-            $sql_where = '';
-            $sql_type = '';
-            $sql_wrd1_fields = '';
-            $sql_wrd1_from = '';
-            $sql_wrd1 = '';
-            $sql_wrd2_fields = '';
-            $sql_wrd2_from = '';
-            $sql_wrd2 = '';
-            // if the list of original word ids is set, use them for the selection
-            if (isset($this->ids)) {
+        $result = '';
+
+        // set the where clause depending on the defined select values
+        $sql_where = '';
+        $sql_type = '';
+        $sql_wrd1_fields = '';
+        $sql_wrd1_from = '';
+        $sql_wrd1 = '';
+        $sql_wrd2_fields = '';
+        $sql_wrd2_from = '';
+        $sql_wrd2 = '';
+        // if the list of word link ids is set, use them for a direct selection
+        if (isset($this->ids)) {
+            if (count($this->ids) > 0) {
                 $id_txt = implode(",", $this->ids);
                 if ($id_txt <> '') {
                     $sql_where = 'l.word_link_id IN (' . implode(",", $this->ids) . ')';
@@ -128,22 +186,28 @@ class word_link_list
                     log_debug('word_link_list->load where ids ' . $sql_where);
                 }
             }
-            if ($sql_where == '') {
-                if (isset($this->wrd)) {
-                    $sql_wrd2_fields = $this->load_wrd_fields('2');
-                    $sql_wrd2_from = $this->load_wrd_from('2');
-                    if ($this->direction == 'up') {
-                        $sql_where = 'l.from_phrase_id = ' . $this->wrd->id;
-                        $sql_wrd2 = 'l.to_phrase_id = t2.word_id';
-                    } else {
-                        $sql_where = 'l.to_phrase_id   = ' . $this->wrd->id;
-                        $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
-                    }
-                    log_debug('word_link_list->load where wrd ' . $sql_where);
+        }
+        // .. else if an original word is set, select all related word links depending on the direction
+        // in this case only the fields from the target words needs to be included in the result
+        if ($sql_where == '') {
+            if (isset($this->wrd)) {
+                $sql_wrd2_fields = $this->load_wrd_fields('2');
+                $sql_wrd2_from = $this->load_wrd_from('2');
+                if ($this->direction == self::DIRECTION_UP) {
+                    $sql_where = 'l.from_phrase_id = ' . $this->wrd->id;
+                    $sql_wrd2 = 'l.to_phrase_id = t2.word_id';
+                } else {
+                    $sql_where = 'l.to_phrase_id   = ' . $this->wrd->id;
+                    $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
                 }
+                log_debug('word_link_list->load where wrd ' . $sql_where);
             }
-            if ($sql_where == '') {
-                if (isset($this->wrd_lst)) {
+        }
+        // .. else if a list of original words is given select all word links related to the list
+        // in this case also the fields from the original words needs to be included in the result
+        if ($sql_where == '') {
+            if (isset($this->wrd_lst)) {
+                if ($this->wrd_lst->ids_txt() != '') {
                     log_debug('word_link_list->load based on word list');
                     $sql_wrd1_fields = $this->load_wrd_fields('');
                     $sql_wrd1_from = $this->load_wrd_from('');
@@ -152,7 +216,7 @@ class word_link_list
                     $sql_wrd2_fields = $this->load_wrd_fields('2');
                     $sql_wrd2_from = $this->load_wrd_from('2');
                     log_debug('word_link_list->load based on word list loaded');
-                    if ($this->direction == 'up') {
+                    if ($this->direction == self::DIRECTION_UP) {
                         $sql_where = 'l.from_phrase_id IN (' . $this->wrd_lst->ids_txt() . ')';
                         $sql_wrd1 = 'AND l.from_phrase_id = t.word_id';
                         $sql_wrd2 = 'l.to_phrase_id   = t2.word_id';
@@ -164,26 +228,32 @@ class word_link_list
                     log_debug('word_link_list->load where wrd in ' . $sql_where);
                 }
             }
-            if (isset($this->vrb)) {
-                if ($this->vrb->id > 0) {
-                    $sql_type = 'AND l.verb_id = ' . $this->vrb->id;
-                }
+        }
+
+        // if a verb is set, select only the word links with the given verb
+        if (isset($this->vrb)) {
+            if ($this->vrb->id > 0) {
+                $sql_type = 'AND l.verb_id = ' . $this->vrb->id;
             }
+        }
+        // if a list of verb is set, select the word links included in the list
+        if ($sql_type == '') {
             if (isset($this->vrb_lst)) {
-                if (count($this->vrb_lst->lst) > 0) {
+                if ($this->vrb_lst->ids_txt() != '') {
                     $sql_type = 'AND l.verb_id IN (' . $this->vrb_lst->ids_txt() . ')';
                 }
             }
+        }
 
-            // check the selection criteria and report missing parameters
-            if ($sql_where == '' or $sql_wrd2 == '') {
-                log_err("A word or word list must be set to show a graph.", "word_link_list->load");
-            } else {
+        // check the selection criteria and report missing parameters
+        if ($sql_where == '' or $sql_wrd2 == '') {
+            log_err("A word or word list must be set to show a graph.", "word_link_list->load");
+        } else {
 
-                // load the word link and the destination word with one sql statement to save time
-                // similar to word->load and word_link->load
-                // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
-                $sql = "SELECT l.word_link_id,
+            // load the word link and the destination word with one sql statement to save time
+            // similar to word->load and word_link->load
+            // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
+            $result = "SELECT l.word_link_id,
                        l.from_phrase_id,
                        l.verb_id,
                        l.to_phrase_id,
@@ -212,41 +282,59 @@ class word_link_list
                    AND " . $sql_where . "
                        " . $sql_type . " 
               ORDER BY l.verb_id, word_link_name;";  // maybe used word_name_t1 and word_name_t2
-                // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
-                //$db_con = New mysql;
-                $db_con->usr_id = $this->usr->id;
-                $db_lst = $db_con->get($sql);
-                log_debug('word_link_list->load ... sql "' . $sql . '"');
-                $this->lst = array();
-                $this->ids = array();
-                if ($db_lst != null) {
-                    foreach ($db_lst as $db_lnk) {
-                        if (is_null($db_lnk['excluded']) or $db_lnk['excluded'] == 0) {
-                            if ($db_lnk['word_link_id'] > 0) {
-                                $new_link = new word_link;
-                                $new_link->usr = $this->usr;
-                                $new_link->id = $db_lnk['word_link_id'];
-                                $new_link->from_id = $db_lnk['from_phrase_id'];
-                                $new_link->verb_id = $db_lnk['verb_id'];
-                                $new_link->to_id = $db_lnk['to_phrase_id'];
-                                $new_link->description = $db_lnk['description'];
-                                $new_link->name = $db_lnk['word_link_name'];
-                                if ($db_lnk['verb_id'] > 0) {
-                                    $new_verb = new verb;
-                                    $new_verb->usr = $this->usr->id;
-                                    $new_verb->row_mapper($db_lnk);
-                                }
-                                if ($db_lnk['word_id1'] > 0) {
+            // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
+        }
+        return $result;
+    }
+
+    // load the word link without the linked objects, because in many cases the object are already loaded by the caller
+    // unit tested by
+    function load()
+    {
+        log_debug('word_link_list->load');
+
+        global $db_con;
+
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err("The user id must be set to load a graph.", "word_link_list->load");
+        } else {
+            $db_con->set_usr($this->usr->id);
+            $sql = $this->load_sql();
+            $db_lst = $db_con->get($sql);
+            log_debug('word_link_list->load ... sql "' . $sql . '"');
+            $this->lst = array();
+            $this->ids = array();
+            if ($db_lst != null) {
+                foreach ($db_lst as $db_lnk) {
+                    if (is_null($db_lnk['excluded']) or $db_lnk['excluded'] == 0) {
+                        if ($db_lnk['word_link_id'] > 0) {
+                            $new_link = new word_link;
+                            $new_link->usr = $this->usr;
+                            $new_link->id = $db_lnk['word_link_id'];
+                            $new_link->from_id = $db_lnk['from_phrase_id'];
+                            $new_link->verb_id = $db_lnk['verb_id'];
+                            $new_link->to_id = $db_lnk['to_phrase_id'];
+                            $new_link->description = $db_lnk['description'];
+                            $new_link->name = $db_lnk['word_link_name'];
+                            if ($db_lnk['verb_id'] > 0) {
+                                $new_verb = new verb;
+                                $new_verb->usr = $this->usr;
+                                $new_verb->row_mapper($db_lnk);
+                            }
+                            // if the source word is set, the query result probably does not contain the values of the source word
+                            if (!isset($this->wrd)) {
+                                if ($db_lnk['word_id'] > 0) {
                                     $new_word = new word_dsp;
                                     $new_word->usr = $this->usr;
                                     $new_word->row_mapper($db_lnk);
                                     $new_word->link_type_id = $db_lnk['verb_id'];
                                     $new_link->from = $new_word;
                                     $new_link->from_name = $new_word->name;
-                                } elseif ($db_lnk['word_id1'] < 0) {
+                                } elseif ($db_lnk['word_id'] < 0) {
                                     $new_word = new word_link;
                                     $new_word->usr = $this->usr;
-                                    $new_word->id = $db_lnk['word_id1'] * -1; // TODO check if not word_id is correct
+                                    $new_word->id = $db_lnk['word_id'] * -1; // TODO check if not word_id is correct
                                     $new_link->from = $new_word;
                                     $new_link->from_name = $new_word->name;
                                 } else {
@@ -256,35 +344,35 @@ class word_link_list
                                         $new_link->from_name = $this->wrd->name;
                                     }
                                 }
-                                if ($db_lnk['word_id2'] > 0) {
-                                    $new_word = new word_dsp;
-                                    $new_word->usr = $this->usr;
-                                    $new_word->id = $db_lnk['word_id2'];
-                                    $new_word->owner_id = $db_lnk['user_id2'];
-                                    $new_word->name = $db_lnk['word_name2'];
-                                    $new_word->plural = $db_lnk['plural2'];
-                                    $new_word->description = $db_lnk['description2'];
-                                    $new_word->type_id = $db_lnk['word_type_id2'];
-                                    $new_word->link_type_id = $db_lnk['verb_id'];
-                                    //$added_wrd2_lst->add($new_word);
-                                    log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk['verb_id'] . ')');
-                                    $new_link->to = $new_word;
-                                    $new_link->to_name = $new_word->name;
-                                } elseif ($db_lnk['word_id2'] < 0) {
-                                    $new_word = new word_link;
-                                    $new_word->usr = $this->usr;
-                                    $new_word->id = $db_lnk['word_id2'] * -1;
-                                    $new_link->to = $new_word;
-                                    $new_link->to_name = $new_word->name;
-                                }
-                                $this->lst[] = $new_link;
-                                $this->ids[] = $new_link->id;
                             }
+                            if ($db_lnk['word_id2'] > 0) {
+                                $new_word = new word_dsp;
+                                $new_word->usr = $this->usr;
+                                $new_word->id = $db_lnk['word_id2'];
+                                $new_word->owner_id = $db_lnk['user_id2'];
+                                $new_word->name = $db_lnk['word_name2'];
+                                $new_word->plural = $db_lnk['plural2'];
+                                $new_word->description = $db_lnk['description2'];
+                                $new_word->type_id = $db_lnk['word_type_id2'];
+                                $new_word->link_type_id = $db_lnk['verb_id'];
+                                //$added_wrd2_lst->add($new_word);
+                                log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk['verb_id'] . ')');
+                                $new_link->to = $new_word;
+                                $new_link->to_name = $new_word->name;
+                            } elseif ($db_lnk['word_id2'] < 0) {
+                                $new_word = new word_link;
+                                $new_word->usr = $this->usr;
+                                $new_word->id = $db_lnk['word_id2'] * -1;
+                                $new_link->to = $new_word;
+                                $new_link->to_name = $new_word->name;
+                            }
+                            $this->lst[] = $new_link;
+                            $this->ids[] = $new_link->id;
                         }
                     }
                 }
-                log_debug('word_link_list->load ... done (' . count($this->lst) . ')');
             }
+            log_debug('word_link_list->load ... done (' . count($this->lst) . ')');
         }
     }
 
@@ -301,9 +389,7 @@ class word_link_list
     }
 
     /*
-
     display functions
-
     */
 
     // description of the triple list for debugging
@@ -365,7 +451,8 @@ class word_link_list
 
                 $lnk = $this->lst[$lnk_id];
                 // get the next link to detect if there is more than one word linked with the same link type
-                if (count($this->lst) > $lnk_id) {
+                // TODO check with a unit test if last element is used
+                if (count($this->lst) - 1  > $lnk_id) {
                     $next_lnk = $this->lst[$lnk_id + 1];
                 } else {
                     $next_lnk = $lnk;
@@ -373,29 +460,33 @@ class word_link_list
 
                 // display type header
                 if ($lnk->verb_id <> $prev_verb_id) {
-                    log_debug('graph->display type "' . $lnk->link_type->name . '"');
-
-                    // select the same side of the verb
-                    if ($this->direction == "down") {
-                        $directional_link_type_id = $lnk->verb_id;
+                    if ($lnk->verb == null) {
+                        log_warning('graph->display type is missing');
                     } else {
-                        $directional_link_type_id = $lnk->verb_id * -1;
-                    }
+                        log_debug('graph->display type "' . $lnk->verb->name . '"');
 
-                    // display the link type
-                    if ($lnk->verb_id == $next_lnk->verb_id) {
-                        $result .= $this->wrd->plural;
+                        // select the same side of the verb
                         if ($this->direction == "down") {
-                            $result .= " " . $lnk->link_type->rev_plural;
+                            $directional_link_type_id = $lnk->verb_id;
                         } else {
-                            $result .= " " . $lnk->link_type->plural;
+                            $directional_link_type_id = $lnk->verb_id * -1;
                         }
-                    } else {
-                        $result .= $this->wrd->name;
-                        if ($this->direction == "down") {
-                            $result .= " " . $lnk->link_type->reverse;
+
+                        // display the link type
+                        if ($lnk->verb_id == $next_lnk->verb_id) {
+                            $result .= $this->wrd->plural;
+                            if ($this->direction == "down") {
+                                $result .= " " . $lnk->verb->rev_plural;
+                            } else {
+                                $result .= " " . $lnk->verb->plural;
+                            }
                         } else {
-                            $result .= " " . $lnk->link_type->name;
+                            $result .= $this->wrd->name;
+                            if ($this->direction == "down") {
+                                $result .= " " . $lnk->verb->reverse;
+                            } else {
+                                $result .= " " . $lnk->verb->name;
+                            }
                         }
                     }
                     $result .= dsp_tbl_start_half();
@@ -403,12 +494,16 @@ class word_link_list
                 }
 
                 // display the word
-                log_debug('word->dsp_graph display word ' . $lnk->from->name);
-                $result .= '  <tr>' . "\n";
-                $result .= $lnk->to->dsp_tbl_cell(0);
-                $result .= $lnk->dsp_btn_edit($lnk->from);
-                $result .= $lnk->from->dsp_unlink($lnk->id);
-                $result .= '  </tr>' . "\n";
+                if ($lnk->from == null) {
+                    log_warning('graph->display from is missing');
+                } else {
+                    log_debug('word->dsp_graph display word ' . $lnk->from->name);
+                    $result .= '  <tr>' . "\n";
+                    $result .= $lnk->to->dsp_tbl_cell(0);
+                    $result .= $lnk->dsp_btn_edit($lnk->from);
+                    $result .= $lnk->from->dsp_unlink($lnk->id);
+                    $result .= '  </tr>' . "\n";
+                }
 
                 // use the last word as a sample for the new word type
                 $last_linked_word_id = 0;
@@ -424,10 +519,20 @@ class word_link_list
                       $directional_link_type_id = $directional_link_type_id * -1;
                     } */
                 } else {
-                    $start_id = $lnk->from->id; // to select a similar word for the verb following
+                    if ($lnk->from == null) {
+                        log_warning('graph->display from is missing');
+                    } else {
+                        $start_id = $lnk->from->id; // to select a similar word for the verb following
+                    }
                 }
 
                 if ($lnk->verb_id <> $next_lnk->verb_id) {
+                    $start_id = 0;
+                    if ($lnk->from == null) {
+                        log_warning('graph->display from is missing');
+                    } else {
+                        $start_id = $lnk->from->id;
+                    }
                     // give the user the possibility to add a similar word
                     $result .= '  <tr>';
                     $result .= '    <td>';
@@ -451,9 +556,7 @@ class word_link_list
 
 
     /*
-
     convert functions
-
     */
 
     // convert the word list object into a phrase list object

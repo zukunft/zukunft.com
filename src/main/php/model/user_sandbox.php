@@ -44,38 +44,39 @@ class user_sandbox
     const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
 
     // fields to define the object; should be set in the constructor of the child object
-    public $obj_name = '';   // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
-    public $obj_type = '';   // either a "named" object or a "link" object
-    public $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
+    public ?string $obj_name = null;  // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
+    public ?string $obj_type = null;  // either a "named" object or a "link" object
+    public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
     // database fields that are used in all objects and that have a specific behavior
-    public $id = NULL; // the database id of the object, which is the same for the standard and the user specific object
-    public $usr_cfg_id = NULL; // the database id if there is already some user specific configuration for this object
-    public $usr = NULL; // the person for whom the object is loaded, so to say the viewer
-    public $owner_id = NULL; // the user id of the person who created the object, which is the default object
-    public $share_id = NULL; // id for public, personal, group or private
-    public $protection_id = NULL; // id for no, user, admin or full protection
-    public $excluded = NULL; // the user sandbox for object is implemented, but can be switched off for the complete instance
+    public ?int $id = null; // the database id of the object, which is the same for the standard and the user specific object
+    public ?int $usr_cfg_id = null; // the database id if there is already some user specific configuration for this object
+    public ?user $usr = null; // the person for whom the object is loaded, so to say the viewer
+    public ?int $owner_id = null; // the user id of the person who created the object, which is the default object
+    public ?int $share_id = null; // id for public, personal, group or private
+    public ?int $protection_id = null; // id for no, user, admin or full protection
+    public ?bool $excluded = null; // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
 
     // database fields only used for objects that have a name
-    public $name = '';   // simply the object name, which cannot be empty if it is a named object
+    public ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
 
     // database fields only used for the value object
-    public $number = NULL; // simply the numeric value
+    public ?float $number = null; // simply the numeric value
 
     // database fields only used for objects that link two objects
-    public $fob = NULL; // the object from which this linked object is creating the connection
-    public $tob = NULL; // the object to   which this linked object is creating the connection
-    public $from_name = '';   // the name of the from object type e.g. view for view_component_links
-    public $to_name = '';   // the name of the  to  object type e.g. view for view_component_links
+    // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
+    public ?object $fob = null; // the object from which this linked object is creating the connection
+    public ?object $tob = null; // the object to   which this linked object is creating the connection
+    public ?string $from_name = null;   // the name of the from object type e.g. view for view_component_links
+    public ?string $to_name = '';   // the name of the  to  object type e.g. view for view_component_links
 
     // database fields only used for the type objects such as words, formulas, values, terms and view component links
-    public $type_id = NULL; // the id of the word type e.g. to classify measure words
+    public ?int $type_id = null; // the id of the source type, view type, view component type or word type e.g. to classify measure words
     // or the formula type to link special behavior to special formulas like "this" or "next"
-    public $type_name = ''; // the name of the word type, word link type
+    public ?string $type_name = ''; // the name of the word type, word link type, view type, view component type or formula type
 
 
     // to be overwritten by the child object
@@ -88,18 +89,18 @@ class user_sandbox
     // needed to search for the standard object, because the search is work, value, formula or ... specific
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
         $this->name = '';
 
-        $this->number = NULL;
+        $this->number = null;
 
-        $this->fob = NULL;
-        $this->tob = NULL;
+        $this->fob = null;
+        $this->tob = null;
     }
 
     /*
@@ -1136,7 +1137,7 @@ class user_sandbox
                         $this->owner_id = $db_chk->owner_id;
                         // TODO check which links needs to be updated, because this is a kind of combine objects
                         // force the include again
-                        $this->excluded = Null;
+                        $this->excluded = null;
                         $db_rec->excluded = '1';
                         if ($this->save_field_excluded($db_con, $db_rec, $std_rec)) {
                             log_debug($this->obj_name . '->save_id_if_updated found a ' . $this->obj_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
@@ -1347,7 +1348,7 @@ class user_sandbox
     //      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
     function get_similar()
     {
-        $result = NULL;
+        $result = null;
 
         // check potential duplicate by name
         if ($this->obj_type == user_sandbox::TYPE_NAMED) {

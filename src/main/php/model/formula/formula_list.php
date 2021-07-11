@@ -32,19 +32,22 @@
 class formula_list
 {
 
-    public $lst = array(); // the list of the loaded formula objects
-    public $usr = Null;    // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    public ?array $lst = null;           // the list of the loaded formula objects
+    public ?user $usr = null;            // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
     // fields to select the formulas
-    public $wrd = NULL;    // show the formulas related to this word
-    public $phr_lst = NULL;    // show the formulas related to this phrase list
-    public $ids = array(); // a list of formula ids to load all formulas at once
+    public ?word $wrd = null;            // show the formulas related to this word
+    public ?phrase_list $phr_lst = null; // show the formulas related to this phrase list
+    public ?array $ids = array();        // a list of formula ids to load all formulas at once
 
     // in memory only fields
-    public $back = NULL;    // the calling stack
+    public ?string $back = null;         // the calling stack
 
     // fill the formula list based on a database records
     // $db_rows is an array of an array with the database values
+    /**
+     * @throws Exception
+     */
     private function rows_mapper($db_rows)
     {
         if ($db_rows != null) {
@@ -91,6 +94,9 @@ class formula_list
 
     // load the missing formula parameters from the database
     // todo: if this list contains already some formula, don't add them again!
+    /**
+     * @throws Exception
+     */
     function load()
     {
 
@@ -198,12 +204,11 @@ class formula_list
                 } else {
                     $result .= ' value ' . $formula_value;
                 }
+                $result .= ' ' . $frm->name_linked($this->back);
                 if ($type == 'short') {
-                    $result .= ' ' . $frm->name_linked($this->back);
                     $result .= ' ' . $frm->btn_del($this->back);
                     $result .= ', ';
                 } else {
-                    $result .= ' ' . $frm->name_linked($this->back);
                     $result .= ' (' . $frm->dsp_text($this->back) . ')';
                     $result .= ' ' . $frm->btn_del($this->back);
                     $result .= ' <br> ';

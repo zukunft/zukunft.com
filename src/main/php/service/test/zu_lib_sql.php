@@ -309,7 +309,7 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
 {
     log_debug("sql_insert (tbl:" . $table . ",id_fld:" . $id_field . "," . $value_field . "," . $new_value . "," . $user_id . ")");
 
-    $id_value = NULL;
+    $id_value = null;
     // don't insert empty lines
     if (trim($new_value) <> '') {
         // check if value is already added

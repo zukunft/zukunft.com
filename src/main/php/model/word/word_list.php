@@ -34,20 +34,19 @@ class word_list
 
     // todo: check the consistence usage of the parameter $back
 
-    public $lst = array(); // array of the loaded word objects
+    public ?array $lst = array(); // array of the loaded word objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
-    public $usr = NULL;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    public ?user $usr = null;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
     // search and load fields
-    public $grp_id = NULL;    // to load a list of words with one sql statement from the database that are part of this word group
-    public $ids = array(); // list of the word ids to load a list of words with one sql statement from the database
-    public $incl_is = NULL;    // include all words that are of the category id
-    // e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
-    public $incl_alias = NULL;    // include all alias words that are of the ids
-    public $word_type_id = '';  // include all alias words that are of the ids
+    public ?int $grp_id = null;    // to load a list of words with one sql statement from the database that are part of this word group
+    public ?array $ids = array(); // list of the word ids to load a list of words with one sql statement from the database
+    public ?bool $incl_is = null;    // include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
+    public ?bool $incl_alias = null;    // include all alias words that are of the ids
+    public ?string $word_type_id = '';  // include all alias words that are of the ids
 
-    public $name_lst = array(); // list of the word names to load a list of words with one sql statement from the database
+    public ?array $name_lst = array(); // list of the word names to load a list of words with one sql statement from the database
 
     // load the word parameters from the database for a list of words
     function load()
@@ -407,7 +406,7 @@ class word_list
     }
 
     // returns the number of phrases in this list
-    function count()
+    function count(): int
     {
         return count($this->lst);
     }
@@ -512,8 +511,8 @@ class word_list
       -----------------
     */
 
-// return a list of the word ids
-    function ids()
+    // return a list of the word ids
+    function ids(): array
     {
         $result = array();
         if (isset($this->lst)) {
@@ -521,6 +520,12 @@ class word_list
                 if ($wrd->id > 0) {
                     $result[] = $wrd->id;
                 }
+            }
+        }
+        // fallback solution if the load is not yet called e.g. for unit testing
+        if (count($result) <= 0) {
+            if (count($this->ids) > 0) {
+                $result = $this->ids;
             }
         }
         return $result;
@@ -531,7 +536,7 @@ class word_list
       -----------------
     */
 
-// return best possible id for this element mainly used for debugging
+    // return best possible id for this element mainly used for debugging
     function dsp_id(): string
     {
         $id = $this->ids_txt();
@@ -569,7 +574,7 @@ class word_list
 
 // return a list of the word names
 // this function is called from dsp_id, so no other call is allowed
-    function names()
+    function names(): array
     {
         $result = array();
         if (isset($this->lst)) {
@@ -583,21 +588,19 @@ class word_list
     }
 
 // return one string with all names of the list with the link
-    function name_linked()
+    function name_linked(): string
     {
-        $result = '' . implode(',', $this->names_linked()) . '';
-        return $result;
+        return '' . implode(',', $this->names_linked()) . '';
     }
 
-// return a list of the word ids as an sql compatible text
-    function ids_txt()
+    // return a list of the word ids as an sql compatible text
+    function ids_txt(): string
     {
-        $result = implode(',', $this->ids());
-        return $result;
+        return implode(',', $this->ids());
     }
 
 // return a list of the word names with html links
-    function names_linked()
+    function names_linked(): array
     {
         log_debug('word_list->names_linked (' . count($this->lst) . ')');
         $result = array();
@@ -608,8 +611,8 @@ class word_list
         return $result;
     }
 
-// like names_linked, but without measure and time words
-// because measure words are usually shown after the number
+    // like names_linked, but without measure and time words
+    // because measure words are usually shown after the number
     function names_linked_ex_measure_and_time()
     {
         log_debug('word_list->names_linked_ex_measure_and_time (' . count($this->lst) . ')');
@@ -623,8 +626,8 @@ class word_list
         return $result;
     }
 
-// like names_linked, but only the measure words
-// because measure words are usually shown after the number
+    // like names_linked, but only the measure words
+    // because measure words are usually shown after the number
     function names_linked_measure()
     {
         log_debug('word_list->names_linked_measure (' . count($this->lst) . ')');
@@ -636,7 +639,7 @@ class word_list
         return $result;
     }
 
-// like names_linked, but only the time words
+    // like names_linked, but only the time words
     function names_linked_time()
     {
         log_debug('word_list->names_linked_time (' . count($this->lst) . ')');
@@ -1152,7 +1155,7 @@ class word_list
         return $result;
     }
 
-// filter the measure words out of the list of words
+    // filter the measure words out of the list of words
     function measure_lst()
     {
         log_debug('word_list->measure_lst(' . $this->dsp_id() . ')');
@@ -1174,7 +1177,7 @@ class word_list
         return $result;
     }
 
-// filter the scaling words out of the list of words
+    // filter the scaling words out of the list of words
     function scaling_lst()
     {
         log_debug('word_list->scaling_lst(' . $this->dsp_id() . ')');
@@ -1305,12 +1308,10 @@ class word_list
     }
 
     /*
-
     ??? functions -
-
     */
 
-// get a list of all views used to the words
+    // get a list of all views used to the words
     function view_lst()
     {
         $result = array();
@@ -1342,7 +1343,7 @@ class word_list
 
     */
 
-// get the last time word of the word list
+    // get the last time word of the word list
     function max_time()
     {
         log_debug('word_list->max_time (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
@@ -1360,11 +1361,11 @@ class word_list
         return $max_wrd;
     }
 
-// get the time of the last value related to a word and assigned to a word list
+    // get the time of the last value related to a word and assigned to a word list
     function max_val_time()
     {
         log_debug('word_list->max_val_time ' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
-        $wrd = Null;
+        $wrd = null;
 
         // load the list of all value related to the word list
         $val_lst = new value_list;
@@ -1429,19 +1430,19 @@ class word_list
         return $wrd;
     }
 
-// get the most useful time for the given words
-// so either the last time from the word list
-// or the time of the last "real" (reported) value for the word list
+    // get the most useful time for the given words
+    // so either the last time from the word list
+    // or the time of the last "real" (reported) value for the word list
     function assume_time()
     {
         log_debug('word_list->assume_time for ' . $this->dsp_id());
-        $result = Null;
+        $result = null;
 
         if ($this->has_time()) {
             // get the last time from the word list
             $time_word_lst = $this->time_lst();
             // shortcut, replace with a most_useful function
-            $result = Null;
+            $result = null;
             foreach ($time_word_lst->lst as $time_wrd) {
                 if (is_null($result)) {
                     $result = $time_wrd;
@@ -1466,12 +1467,10 @@ class word_list
     }
 
     /*
-
     convert functions
-
     */
 
-// get the best matching word group ()
+    // get the best matching word group ()
     function get_grp()
     {
         log_debug('word_list->get_grp');

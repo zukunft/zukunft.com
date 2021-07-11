@@ -33,20 +33,21 @@ class formula_link extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields
-    public $formula_id = NULL; // the id of the formula to which the word or triple should be linked
-    public $phrase_id = NULL; // the id of the linked word or triple
+    public ?int $formula_id = null;   // the id of the formula to which the word or triple should be linked
+    public ?int $phrase_id = null;    // the id of the linked word or triple
 
-    public $link_type_id = NULL; // define a special behavior for this link (maybe not needed at the moment)
-    public $link_name = '';   // ???
+    public ?int $link_type_id = null; // define a special behavior for this link (maybe not needed at the moment)
+    public ?string $link_name = null; // ???
 
     /*
     // in memory only fields for searching and reference
-    public $frm           = NULL; // the formula object (used to save the correct name in the log)
-    public $phr           = NULL; // the word object (used to save the correct name in the log)
+    public $frm           = null; // the formula object (used to save the correct name in the log)
+    public $phr           = null; // the word object (used to save the correct name in the log)
     */
 
     function __construct()
     {
+        parent::__construct();
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_FORMULA_LINK;
         $this->from_name = DB_TYPE_FORMULA;
@@ -56,15 +57,15 @@ class formula_link extends user_sandbox
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
-        $this->formula_id = NULL;
-        $this->phrase_id = NULL;
-        $this->link_type_id = NULL;
+        $this->formula_id = null;
+        $this->phrase_id = null;
+        $this->link_type_id = null;
         $this->link_name = '';
 
         $this->reset_objects();
@@ -73,8 +74,8 @@ class formula_link extends user_sandbox
     // reset the in memory fields used e.g. if some ids are updated
     private function reset_objects()
     {
-        $this->fob = NULL;
-        $this->tob = NULL;
+        $this->fob = null;
+        $this->tob = null;
     }
 
     private function row_mapper($db_row, $map_usr_fields = false)
@@ -231,7 +232,7 @@ class formula_link extends user_sandbox
     */
 
     // return the html code to display the link name
-    function name_linked($back)
+    function name_linked($back): string
     {
         $result = '';
 

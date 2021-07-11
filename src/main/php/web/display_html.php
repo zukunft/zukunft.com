@@ -476,7 +476,7 @@ function dsp_form_text_big ($field, $txt_value, $label, $class = "col-sm-4", $at
 }
 
 // add the field to a form
-function dsp_form_fld ($field, $txt_value, $label, $class, $attribute = ''): string {
+function dsp_form_fld ($field, $txt_value, $label, $class = "col-sm-4", $attribute = ''): string {
   $result = '';
   if ($label == '') {
     $label = $field;

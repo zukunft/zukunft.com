@@ -32,31 +32,32 @@
   
 */
 
-class word_link extends user_sandbox
+class word_link extends word_link_object
 {
 
     // the word link object
-    public $usr = NULL; // the user object of the person for whom the triple is loaded, so to say the viewer
-    public $from = NULL; // the first object (either word, triple or group)
-    public $verb = NULL; // the link type object
-    public $to = NULL; // the second object (either word, triple or group)
+    public ?word_link_object $from = null; // the first object (either word, triple or group)
+    public ?verb $verb = null; // the link type object
+    public ?word_link_object $to = null; // the second object (either word, triple or group)
 
     // database fields additional to the user sandbox fields
     // TODO split the db link object from the word link object
-    public $from_id = NULL; // the id of the first phrase (a positive id is a word and a negative a triple)
-    public $verb_id = NULL; // the id of the link_type (negative of only the reverse link is valid)
-    public $to_id = NULL; // the id of the second phrase (a positive id is a word and a negative a triple)
-    public $description = '';   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company); if the description is empty the generic created name is used
-    public $name = '';   // the generic created name or the description if set is saved in the database for faster check on duplicates by using the database unique index function
+    public ?int $from_id = null; // the id of the first phrase (a positive id is a word and a negative a triple)
+    public ?int $verb_id = null; // the id of the link_type (negative of only the reverse link is valid)
+    public ?int $to_id = null; // the id of the second phrase (a positive id is a word and a negative a triple)
+    public ?string $description = null;   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company); if the description is empty the generic created name is used
 
     // in memory only fields
-    public $from_name = '';   // the name of the first object (either word, triple or group)
-    public $verb_name = '';   // the name of the link type object (verb)
-    public $to_name = '';   // the name of the second object (either word, triple or group)
+    public ?string $verb_name = null;   // the name of the link type object (verb)
+
+    // user_sandbox usages
+    // $name is the generic created name or the description if set is saved in the database for faster check on duplicates by using the database unique index function
+    // $from_name the name of the first object (either word, triple or group)
+    // $to_name the name of the second object (either word, triple or group)
 
     // not used any more
-    //public $from_type   = NULL; // the type id of the first word (either word, word link or word group)
-    //public $to_type     = NULL; // the type id of the second word (either word, word link or word group)
+    //public $from_type   = null; // the type id of the first word (either word, word link or word group)
+    //public $to_type     = null; // the type id of the second word (either word, word link or word group)
 
 
     function __construct()
@@ -72,17 +73,17 @@ class word_link extends user_sandbox
     // reset the in memory fields used e.g. if some ids are updated
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
-        $this->from = NULL;
+        $this->from = null;
         $this->from_name = '';
-        $this->verb = NULL;
+        $this->verb = null;
         $this->verb_name = '';
-        $this->to = NULL;
+        $this->to = null;
         $this->to_name = '';
     }
 
@@ -1013,7 +1014,7 @@ class word_link extends user_sandbox
 
         if ($db_rec->name <> $this->name) {
             if ($this->name == '') {
-                $this->name = Null;
+                $this->name = null;
             }
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->name;
@@ -1115,7 +1116,7 @@ class word_link extends user_sandbox
                     $this->id = $db_chk->id;
                     $this->owner_id = $db_chk->owner_id;
                     // force the include again
-                    $this->excluded = Null;
+                    $this->excluded = null;
                     $db_rec->excluded = '1';
                     if ($this->save_field_excluded($db_con, $db_rec, $std_rec)) {
                         log_debug('word_link->save_id_if_updated found a triple with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());

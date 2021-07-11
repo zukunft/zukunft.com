@@ -33,19 +33,17 @@ class source extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields
-    public $url = '';   // the internet link to the source
-    public $comment = '';   // the source description that is shown as a mouseover explain to the user
-    public $type_id = NULL; // the id of the source type
-    public $code_id = '';   // to select internal predefined sources
+    public ?string $url = null;      // the internet link to the source
+    public ?string $comment = null;  // the source description that is shown as a mouseover explain to the user
+    public ?string $code_id = null;  // to select internal predefined sources
 
     // in memory only fields
-    public $type_name = '';   //
-    public $back = NULL; // the calling stack
+    public ?string $back = null; // the calling stack
 
     // define the settings for this source object
     function __construct()
     {
-        $this->obj_type = user_sandbox::TYPE_NAMED;
+        parent::__construct();
         $this->obj_name = DB_TYPE_SOURCE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
@@ -53,21 +51,21 @@ class source extends user_sandbox
 
     function reset()
     {
-        $this->id = NULL;
-        $this->usr_cfg_id = NULL;
-        $this->usr = NULL;
-        $this->owner_id = NULL;
-        $this->excluded = NULL;
+        $this->id = null;
+        $this->usr_cfg_id = null;
+        $this->usr = null;
+        $this->owner_id = null;
+        $this->excluded = null;
 
         $this->name = '';
 
         $this->url = '';
         $this->comment = '';
-        $this->type_id = NULL;
+        $this->type_id = null;
         $this->code_id = '';
 
         $this->type_name = '';
-        $this->back = NULL;
+        $this->back = null;
     }
 
     // map the database object to this source class fields
@@ -382,7 +380,6 @@ class source extends user_sandbox
 
         $result = true;
 
-        $change_user_id = 0;
         if ($this->owner_id > 0) {
             $sql = "SELECT user_id 
                 FROM user_sources 
@@ -425,7 +422,7 @@ class source extends user_sandbox
         global $db_con;
         $result = true;
 
-        if (!$this->has_usr_cfg) {
+        if (!$this->has_usr_cfg()) {
             log_debug('source->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record

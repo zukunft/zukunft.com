@@ -39,8 +39,8 @@
 class file_import {
 
   // parameters to filter the import
-  public $usr      = NULL; // the user who wants to import data
-  public $json_str = NULL; // a string with the json data to import
+  public $usr      = null; // the user who wants to import data
+  public $json_str = null; // a string with the json data to import
   public $words_done = 0;
   public $words_failed = 0;
   public $triples_done = 0;

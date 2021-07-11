@@ -610,7 +610,7 @@ function zuc_math_if($formula, $word_array, $time_phr)
             $operator = zuc_get_operator_pos($inner_part);
             log_debug('zuc_math_if -> operator "' . $operator . '" in "' . $inner_part . '"');
             if ($operator == ZUP_OPER_AND or $operator == ZUP_OPER_OR) {
-                $result = Null; // by default no result
+                $result = null; // by default no result
                 $inner_left_part = zu_str_left_of($inner_part, $operator);
                 $inner_right_part = zu_str_right_of($inner_part, $operator);
                 $inner_left_part = zuc_math_parse($inner_left_part, $word_array, $time_phr);

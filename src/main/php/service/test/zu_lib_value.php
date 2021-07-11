@@ -131,7 +131,7 @@ function zuv_lst_get($val_lst_wrd, $word_ids)
 // todo: combine to one query
 function zuv_value($val_id, $user_id)
 {
-    $result = NULL;
+    $result = null;
     if ($val_id > 0) {
         $value_del = zu_sql_get1("SELECT value_id FROM user_values WHERE value_id = " . $val_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         // only return a value if the user has not yet excluded the values

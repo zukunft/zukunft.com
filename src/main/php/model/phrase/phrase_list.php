@@ -34,17 +34,15 @@
 class phrase_list
 {
 
-    public $lst = array(); // array of the loaded phrase objects
-    // (key is at the moment the database id, but it looks like this has no advantages,
-    // so a normal 0 to n order could have more advantages)
-    public $ids = array(); // array of ids corresponding to the lst->id to load a list of phrases from the database
-    public $usr = NULL;    // the user object of the person for whom the phrase list is loaded, so to say the viewer
+    public ?array $lst = null;  // array of the loaded phrase objects
+    //                             (key is at the moment the database id, but it looks like this has no advantages,
+    //                             so a normal 0 to n order could have more advantages)
+    public ?array $ids = null;  // array of ids corresponding to the lst->id to load a list of phrases from the database
+    public ?user $usr = null;   // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
 
     /*
-
     load function
-
     */
 
     // load the phrases based on the id list or set the id list based on the objects
@@ -263,7 +261,7 @@ class phrase_list
     function foaf_children($verb_id)
     {
         log_debug('phrase_list->foaf_children type ' . $verb_id . '');
-        $added_phr_lst = Null;
+        $added_phr_lst = null;
 
         if ($verb_id > 0) {
             $wrd_lst = $this->wrd_lst_all();
@@ -944,13 +942,13 @@ class phrase_list
     {
         log_debug('phrase_list->time_useful for ' . $this->name());
 
-        $result = Null;
+        $result = null;
 
         $wrd_lst = $this->wrd_lst_all();
         $time_wrds = $wrd_lst->time_lst();
         log_debug('phrase_list->time_useful times ');
         log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids));
-        $result = Null;
+        $result = null;
         foreach ($time_wrds->ids as $time_id) {
             if (is_null($result)) {
                 $time_wrd = new word_dsp;
@@ -988,7 +986,7 @@ class phrase_list
     // to review !!!!
     function assume_time()
     {
-        $time_phr = Null;
+        $time_phr = null;
         $wrd_lst = $this->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time();
         if (isset($time_wrd)) {
@@ -1123,7 +1121,7 @@ class phrase_list
     function get_grp()
     {
         log_debug('phrase_list->get_grp ' . $this->dsp_id());
-        $grp = Null;
+        $grp = null;
 
         // check the needed data consistency
         if (count($this->ids) <> count($this->lst)) {

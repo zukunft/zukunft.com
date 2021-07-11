@@ -52,21 +52,21 @@ cache table, field and action id to speed up, because this will never change
 class user_log
 {
 
-    public $id = NULL;  // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
-    public $usr = NULL;  // the user who has done the change
-    public $action = '';    // text for the user action e.g. "add", "update" or "delete"
-    private $action_id = NULL;  // database id for the action text
-    public $table = '';    // name of the table that has been updated
-    private $table_id = NULL;  // database id for the table text
-    public $field = '';    // name of the field that has been updated
-    private $field_id = NULL;  // database id for the field text
-    public $old_value = '';    // the field value before the user change
-    public $old_id = NULL;  // the reference id before the user change e.g. for fields using a subtable such as status
-    public $new_value = '';    // the field value after the user change
-    public $new_id = NULL;  // the reference id after the user change e.g. for fields using a subtable such as status
-    public $std_value = '';    // the standard field value for all users that does not have changed it
-    public $std_id = NULL;  // the standard reference id for all users that does not have changed it
-    public $row_id = NULL;  // the reference id of the row in the database table
+    public ?int $id = null;            // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
+    public ?user $usr = null;          // the user who has done the change
+    public ?string $action = null;     // text for the user action e.g. "add", "update" or "delete"
+    private ?int $action_id = null;    // database id for the action text
+    public ?string $table = null;      // name of the table that has been updated
+    private ?int $table_id = null;     // database id for the table text
+    public ?string $field = null;      // name of the field that has been updated
+    private ?int $field_id = null;     // database id for the field text
+    public ?string $old_value = null;  // the field value before the user change
+    public ?int $old_id = null;        // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?string $new_value = null;  // the field value after the user change
+    public ?int $new_id = null;        // the reference id after the user change e.g. for fields using a sub table such as status
+    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
+    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+    public ?int $row_id = null;        // the reference id of the row in the database table
 
     // to save database space the table name is saved as a reference id in the log table
     private function set_table()
@@ -184,7 +184,7 @@ class user_log
     // display the last change related to one object (word, formula, value, verb, ...)
     // mainly used for testing
     // to do: if changes on table values are requested include also the table "user_values"
-    function dsp_last($ex_time)
+    function dsp_last($ex_time): string
     {
 
         global $db_con;

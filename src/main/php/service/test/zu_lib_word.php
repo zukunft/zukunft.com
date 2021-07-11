@@ -105,7 +105,7 @@ function zut_names($word_list, $user_id)
 function zut_type($wrd_id, $user_id)
 {
     log_debug('zut_type (' . $wrd_id . ',u' . $user_id . ')');
-    $result = NULL;
+    $result = null;
     if ($wrd_id > 0) {
         $wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         // only return a word if the user has not yet excluded the word
@@ -132,7 +132,7 @@ function zut_type_name($type_id)
 function zut_type_wrd($type_code_id, $user_id)
 {
     log_debug('zut_type_wrd (' . $type_code_id . ',u' . $user_id . ')');
-    $result = NULL;
+    $result = null;
     $type_id = cl($type_code_id);
     /*  if ($wrd_id > 0) {
         $wrd_del  = zu_sql_get1 ("SELECT word_id FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id." AND excluded = 1;");
@@ -442,7 +442,7 @@ function zut_time_id($word_ids, $user_id)
 {
     log_debug('zut_time_id(' . implode(",", $word_ids) . ',u' . $user_id . ')');
 
-    $result = NULL;
+    $result = null;
     // loop over the word ids and add only the time ids to the result array
     foreach ($word_ids as $word_id) {
         if (zut_is_time($word_id)) {

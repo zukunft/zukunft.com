@@ -33,19 +33,19 @@
 class system_error_log
 {
 
-    public $id = NULL;  // the database id of the log entry
-    public $usr = NULL;  // the user who wants to see the error
-    public $usr_id = NULL;  // the user id who was logged in when the error happened
-    public $solver_id = NULL;  // the admin id who has solved the problem
-    public $log_time = NULL;  // timestamp when the issue appeared
-    public $type_id = NULL;  // type of the error
-    public $function_id = NULL;  // the program function where the issue happened
-    public $log_text = '';    // the description of the problem
-    public $log_trace = '';    // the system trace
-    public $status_id = NULL;  // the status of the error
+    public ?int $id = null;             // the database id of the log entry
+    public ?user $usr = null;           // the user who wants to see the error
+    public ?int $usr_id = null;         // the user id who was logged in when the error happened
+    public ?int $solver_id = null;      // the admin id who has solved the problem
+    public ?DateTime $log_time = null;  // timestamp when the issue appeared
+    public ?int $type_id = null;        // type of the error
+    public ?int $function_id = null;    // the program function where the issue happened
+    public ?string $log_text = null;    // the description of the problem
+    public ?string $log_trace = null;   // the system trace
+    public ?int $status_id = null;      // the status of the error
 
-    public $function_name = NULL;  //
-    public $status_name = NULL;  //
+    public ?string $function_name = null;  //
+    public ?string $status_name = null;    //
 
     private function load()
     {
@@ -97,7 +97,7 @@ class system_error_log
     }
 
     // set the main log entry parameters for updating one error field
-    private function log_upd()
+    private function log_upd(): user_log
     {
         log_debug('system_error_log->log_upd');
         $log = new user_log;
@@ -121,10 +121,10 @@ class system_error_log
     }
 
     // set the update parameters for the error status
-    private function save_field_status($db_con, $db_rec)
+    private function save_field_status($db_con, $db_rec): bool
     {
         log_debug('system_error_log->save_field_status');
-        $result = '';
+        $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->status_name;
@@ -133,7 +133,7 @@ class system_error_log
             $log->new_id = $this->status_id;
             $log->row_id = $this->id;
             $log->field = 'sys_log_status_id';
-            $result .= $this->save_field_do($db_con, $log);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
@@ -142,7 +142,7 @@ class system_error_log
     {
 
         global $db_con;
-        $result = "";
+        $result = '';
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->usr->id);
@@ -155,7 +155,9 @@ class system_error_log
             $db_rec->load();
             log_debug("system_error_log->save -> database entry loaded");
 
-            $result .= $this->save_field_status($db_con, $db_rec);
+            if (!$this->save_field_status($db_con, $db_rec)) {
+                $result = 'saving the error log failed';
+            }
         }
         return $result;
     }

@@ -127,14 +127,15 @@
 
   All objects needs to have the functions dsp_id and name. These two functions should never all any debug functionality, because they can be called from the debug functions
   
-  *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is testet by prg_version_is_older_test
+  *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
   
-  TODO
-  complete the database abstraction layer
-  use the user sandbox wherever useful to reduce the code
-  crawl all public available information from the web and add it as user preset to the database
-  rename dsp_text in formula to display
-  rename name_linked in formula_element to name_linked
+  TODO create unit tests for all module classes
+  TODO complete the database abstraction layer
+  TODO name all queries with user data as prepared queries to prevent SQL code injections
+  TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
+  TODO crawl all public available information from the web and add it as user preset to the database
+  TODO rename dsp_text in formula to display
+  TODO rename name_linked in formula_element to name_linked
   
   
 
@@ -453,6 +454,10 @@ if ($debug > 9) {
 include_once $root_path . 'src/main/php/web/display_list.php';
 if ($debug > 9) {
     echo 'class display list loaded<br>';
+}
+include_once $root_path . 'src/main/php/model/helper/word_link_object.php';
+if ($debug > 9) {
+    echo 'class word link object loaded<br>';
 }
 include_once $root_path . 'src/main/php/model/word/word.php';
 if ($debug > 9) {
