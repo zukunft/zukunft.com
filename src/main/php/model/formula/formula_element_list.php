@@ -42,7 +42,7 @@ class formula_element_list
     // return best possible identification for this element list mainly used for debugging
     function dsp_id(): string
     {
-        $id = implode(",", $this->ids());
+        $id = dsp_array($this->ids());
         $name = $this->name();
         if ($name <> '""') {
             $result = '' . $name . ' (' . $id . ')';

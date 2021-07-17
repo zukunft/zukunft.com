@@ -28,14 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 global $db_con;
 
-function run_unit_tests()
+function run_user_sandbox_unit_tests()
 {
 
     global $exe_start_time;
 
-    test_header('Start the zukunft.com unit tests');
-
-    test_subheader('Test usr sandbox functions that does not need a database connection');
+    test_subheader('Test user sandbox functions that does not need a database connection');
 
     // test if two sources are supposed to be the same
     $src1 = new source;
@@ -1758,87 +1756,5 @@ function run_unit_tests()
              WHERE excluded = 0
           ORDER BY p.phrase_name;";
     $exe_start_time = test_show_result('general phrase list query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
-
-}
-
-function run_string_unit_tests()
-{
-
-    global $exe_start_time;
-
-    test_header('Test the old basic zukunft functions (zu_lib.php)');
-
-    echo "<h3>strings</h3><br>";
-
-    // test zu_trim
-    $text = "  This  text  has  many  spaces  ";
-    $target = "This text has many spaces";
-    $result = zu_trim($text);
-    $exe_start_time = test_show_result(", zu_trim", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_left
-    $text = "This are the left 4";
-    $pos = 4;
-    $target = "This";
-    $result = zu_str_left($text, $pos);
-    $exe_start_time = test_show_result(", zu_str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_right
-    $text = "This are the right 7";
-    $pos = 7;
-    $target = "right 7";
-    $result = zu_str_right($text, $pos);
-    $exe_start_time = test_show_result(", zu_str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_left_of
-    $text = "This is left of that ";
-    $maker = " of that";
-    $target = "This is left";
-    $result = zu_str_left_of($text, $maker);
-    $exe_start_time = test_show_result(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_left_of
-    $text = "This is left of that, but not of that";
-    $maker = " of that";
-    $target = "This is left";
-    $result = zu_str_left_of($text, $maker);
-    $exe_start_time = test_show_result(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_right_of
-    $text = "That is right of this";
-    $maker = "That is right ";
-    $target = "of this";
-    $result = zu_str_right_of($text, $maker);
-    $exe_start_time = test_show_result(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_right_of
-    $text = "00000";
-    $maker = "0";
-    $target = "0000";
-    $result = zu_str_right_of($text, $maker);
-    $exe_start_time = test_show_result(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_right_of
-    $text = "The formula id of {f23}.";
-    $maker = "{f";
-    $target = "23}.";
-    $result = zu_str_right_of($text, $maker);
-    $exe_start_time = test_show_result(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_between
-    $text = "The formula id of {f23}.";
-    $maker_start = "{f";
-    $maker_end = "}";
-    $target = "23";
-    $result = zu_str_between($text, $maker_start, $maker_end);
-    $exe_start_time = test_show_result(", zu_str_between: " . $text . "", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-
-    // test zu_str_between
-    $text = "The formula id of {f4} / {f5}.";
-    $maker_start = "{f";
-    $maker_end = "}";
-    $target = "4";
-    $result = zu_str_between($text, $maker_start, $maker_end);
-    $exe_start_time = test_show_result(", zu_str_between: " . $text . "", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

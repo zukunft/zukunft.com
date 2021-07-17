@@ -61,51 +61,52 @@ class sql_db
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [DB_TYPE_WORD_LINK, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
 
-    const USER_PREFIX = "user_";          // prefix used for tables where the user sandbox values are stored
+    const USER_PREFIX = "user_";                 // prefix used for tables where the user sandbox values are stored
 
-    const STD_TBL = "s";                  // prefix used for the standard table where data for all users are stored
-    const USR_TBL = "u";                  // prefix used for the standard table where the user sandbox data is stored
-    const LNK_TBL = "l";                  // prefix used for the table which should be joined in the result
-    const ULK_TBL = "c";                  // prefix used for the table which should be joined in the result of the user sandbox data
+    const STD_TBL = "s";                         // prefix used for the standard table where data for all users are stored
+    const USR_TBL = "u";                         // prefix used for the standard table where the user sandbox data is stored
+    const LNK_TBL = "l";                         // prefix used for the table which should be joined in the result
+    const ULK_TBL = "c";                         // prefix used for the table which should be joined in the result of the user sandbox data
 
-    const FLD_CODE_ID = "code_id";        // field name for the code link
-    const FLD_USER_ID = "user_id";        // field name for the user table foreign key field
+    const FLD_CODE_ID = "code_id";               // field name for the code link
+    const FLD_USER_ID = "user_id";               // field name for the user table foreign key field
 
-    const FLD_FORMAT_TEXT = "text";       // to force the text formatting of an value for the SQL statement formatting
-    const FLD_FORMAT_VAL = "number";      // to force the numeric formatting of an value for the SQL statement formatting
-    const FLD_FORMAT_BOOL = "boolean";    // to force the boolean formatting of an value for the SQL statement formatting
+    const FLD_FORMAT_TEXT = "text";              // to force the text formatting of an value for the SQL statement formatting
+    const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of an value for the SQL statement formatting
+    const FLD_FORMAT_BOOL = "boolean";           // to force the boolean formatting of an value for the SQL statement formatting
 
-    public $db_type = '';                 // the database type which should be used for this connection e.g. postgreSQL or MYSQL
-    public $link = null;                  // the link object to the database
-    public $usr_id = null;                // the user id of the person who request the database changes
-    private $usr_view_id = null;          // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    public ?string $db_type = null;              // the database type which should be used for this connection e.g. postgreSQL or MYSQL
+    public $link = null;                 // the link object to the database
+    public ?int $usr_id = null;                  // the user id of the person who request the database changes
+    private ?int $usr_view_id = null;            // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
-    private $type = '';                   // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
-    private $table = '';                  // name of the table that is used for the next query
-    private $id_field = '';               // primary key field of the table used
-    private $id_from_field = '';          // only for link objects the id field of the source object
-    private $id_to_field = '';            // only for link objects the id field of the destination object
-    private $id_link_field = '';          // only for link objects the id field of the link type object
-    private $name_field = '';             // unique text key field of the table used
-    private $field_lst = [];              // list of fields that should be returned in the next select query
-    private $usr_field_lst = [];          // list of user specific fields that should be returned in the next select query
-    private $usr_num_field_lst = [];      // list of user specific numeric fields that should be returned in the next select query
-    private $usr_bool_field_lst = [];     // list of user specific boolean / tinyint fields that should be returned in the next select query
-    private $usr_only_field_lst = [];     // list of fields that are only in the user sandbox
-    private $join_field_lst = [];         // list of fields that should be returned in the next select query that are taken from a joined table
-    private $join_usr_field_lst = [];     // list of fields that should be returned in the next select query that are taken from a joined table
-    private $join_usr_num_field_lst = []; // list of fields that should be returned in the next select query that are taken from a joined table
-    private $join_type = '';              // the type name of the table to join
-    private $usr_query = false;           // true, if the query is expected to retrieve user specific data
-    private $usr_join_query = false;      // true, if the joined query is also expected to retrieve user specific data
-    private $usr_only_query = false;      // true, if the query is expected to retrieve ONLY the user specific data without the standard values
+    private ?string $type = '';                  // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
+    private ?string $table = '';                 // name of the table that is used for the next query
+    private ?string $id_field = '';              // primary key field of the table used
+    private ?string $id_from_field = '';         // only for link objects the id field of the source object
+    private ?string $id_to_field = '';           // only for link objects the id field of the destination object
+    private ?string $id_link_field = '';         // only for link objects the id field of the link type object
+    private ?string $name_field = '';            // unique text key field of the table used
+    private ?array $field_lst = [];              // list of fields that should be returned in the next select query
+    private ?array $usr_field_lst = [];          // list of user specific fields that should be returned in the next select query
+    private ?array $usr_num_field_lst = [];      // list of user specific numeric fields that should be returned in the next select query
+    private ?array $usr_bool_field_lst = [];     // list of user specific boolean / tinyint fields that should be returned in the next select query
+    private ?array $usr_only_field_lst = [];     // list of fields that are only in the user sandbox
+    private ?array $join_field_lst = [];         // list of fields that should be returned in the next select query that are taken from a joined table
+    private ?array $join_usr_field_lst = [];     // list of fields that should be returned in the next select query that are taken from a joined table
+    private ?array $join_usr_num_field_lst = []; // list of fields that should be returned in the next select query that are taken from a joined table
+    private ?string $join_type = '';             // the type name of the table to join
+    private bool $usr_query = false;             // true, if the query is expected to retrieve user specific data
+    private bool $usr_join_query = false;        // true, if the joined query is also expected to retrieve user specific data
+    private bool $usr_only_query = false;        // true, if the query is expected to retrieve ONLY the user specific data without the standard values
 
-    private $fields = '';                 // the fields               SQL statement that is used for the next select query
-    private $from = '';                   // the from                 SQL statement that is used for the next select query
-    private $join = '';                   // the join                 SQL statement that is used for the next select query
-    private $where = '';                  // the where condition as a SQL statement that is used for the next select query
+    private ?string $fields = '';                // the fields               SQL statement that is used for the next select query
+    private ?string $from = '';                  // the from                 SQL statement that is used for the next select query
+    private ?string $join = '';                  // the join                 SQL statement that is used for the next select query
+    private ?string $where = '';                 // the where condition as a SQL statement that is used for the next select query
+    private ?string $order = '';                 // the order condition as a SQL statement that is used for the next select query
 
-    private $prepared_sql_names = [];     // list of all SQL queries that have already been prepared during the open connection
+    private ?array $prepared_sql_names = [];     // list of all SQL queries that have already been prepared during the open connection
 
     /*
      * basic interface function for the private class parameter
@@ -462,6 +463,7 @@ class sql_db
         $this->from = '';
         $this->join = '';
         $this->where = '';
+        $this->order = '';
     }
 
     function sql_of_code_linked_db_rows()
@@ -930,8 +932,8 @@ class sql_db
         return $sql;
     }
 
-// set the where statement for a later call of the select function
-    function where($fields, $values)
+    // set the where statement for a later call of the select function
+    function where($fields, $values): string
     {
         $result = '';
         if (count($fields) != count($values)) {
@@ -950,11 +952,11 @@ class sql_db
         return $result;
     }
 
-// set the standard where statement to select either by id or name or code_id
-// the type must have been already set e.g. to 'source'
-// TODO check why the request user must be set to search by code_id ?
-// TODO check if test for positive and negative id values is needed; because phrases can have a negative id ?
-    function set_where($id, $name = '', $code_id = '')
+    // set the standard where statement to select either by id or name or code_id
+    // the type must have been already set e.g. to 'source'
+    // TODO check why the request user must be set to search by code_id ?
+    // TODO check if test for positive and negative id values is needed; because phrases can have a negative id ?
+    function set_where($id, $name = '', $code_id = ''): string
     {
         $result = '';
 
@@ -1082,17 +1084,29 @@ class sql_db
         return $this->where;
     }
 
-// set the where statement for a later call of the select function
-// mainly used to overwrite the for special cases, where the set_where function cannot be used
-// TODO prevent code injections
+    // set the where statement for a later call of the select function
+    // mainly used to overwrite the for special cases, where the set_where function cannot be used
+    // TODO prevent code injections e.g. by using only predefined queries
     function set_where_text($where_text)
     {
         $this->where = ' WHERE ' . $where_text;
     }
 
-// create the SQL part for the selected fields
-    private
-    function sql_usr_fields($usr_field_lst)
+    // get the order SQL statement
+    function get_order(): string
+    {
+        return $this->order;
+    }
+
+    // set the order SQL statement
+    function set_order_text($order_text)
+    {
+        $this->order = ' ORDER BY ' . $order_text;
+    }
+
+
+    // create the SQL part for the selected fields
+    private function sql_usr_fields($usr_field_lst)
     {
     }
 
@@ -1127,7 +1141,7 @@ class sql_db
         $sql = 'SELECT';
         $this->set_field_statement($has_id);
         $this->set_from();
-        $sql .= $this->fields . $this->from . $this->join . $this->where . ';';
+        $sql .= $this->fields . $this->from . $this->join . $this->where . $this->order . ';';
         return $sql;
     }
 
@@ -1182,15 +1196,15 @@ class sql_db
             log_debug('sql_db->insert into "' . $this->type . '" SET "' . implode('","', $fields) . '" WITH "' . implode('","', $values) . '" for user ' . $this->usr_id);
             if (count($fields) <> count($values)) {
                 if ($log_err) {
-                    log_fatal('MySQL insert call with different number of fields (' . count($fields) . ': ' . implode(',', $fields) . ') and values (' . count($values) . ': ' . implode(',', $values) . ').', "user_log->add");
+                    log_fatal('MySQL insert call with different number of fields (' . count($fields) . ': ' . dsp_array($fields) . ') and values (' . count($values) . ': ' . dsp_array($values) . ').', "user_log->add");
                 }
             } else {
                 foreach (array_keys($fields) as $i) {
                     $fields[$i] = $fields[$i];
                     $values[$i] = $this->sf($values[$i]);
                 }
-                $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table) . ' (' . implode(',', $fields) . ') 
-                                      VALUES (' . implode(',', $values) . ')';
+                $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table) . ' (' . sql_array($fields) . ') 
+                                      VALUES (' . sql_array($values) . ')';
             }
         } else {
             log_debug('sql_db->insert into "' . $this->type . '" SET "' . $fields . '" WITH "' . $values . '" for user ' . $this->usr_id);
@@ -1365,7 +1379,7 @@ class sql_db
     function delete($id_fields, $id_values): bool
     {
         if (is_array($id_fields)) {
-            log_debug('sql_db->delete in "' . $this->type . '" WHERE "' . implode(",", $id_fields) . '" IS "' . implode(",", $id_values) . '" for user ' . $this->usr_id);
+            log_debug('sql_db->delete in "' . $this->type . '" WHERE "' . dsp_array($id_fields) . '" IS "' . dsp_array($id_values) . '" for user ' . $this->usr_id);
         } else {
             log_debug('sql_db->delete in "' . $this->type . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
@@ -1380,7 +1394,7 @@ class sql_db
             foreach (array_keys($id_fields) as $i) {
                 $del_val = $id_values[$i];
                 if (is_array($del_val)) {
-                    $del_val_txt = ' IN (' . $this->sf(implode(",", $del_val)) . ') ';
+                    $del_val_txt = ' IN (' . $this->sf(sql_array($del_val)) . ') ';
                 } else {
                     $del_val_txt = ' = ' . $this->sf($del_val) . ' ';
                 }

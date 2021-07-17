@@ -191,7 +191,7 @@ class formula_value
                         $phr_lst->ids = $this->wrd_ids;
                         $phr_lst->usr = $this->usr;
                         $phr_lst->load();
-                        log_debug('formula_value->load -> get group by ids ' . implode(',' . $phr_lst->ids));
+                        log_debug('formula_value->load -> get group by ids ' . dsp_array($phr_lst->ids));
                         // ... or to get the most interesting result for this word
                     } elseif (isset($this->wrd) and isset($this->frm)) {
                         if ($this->wrd->id > 0 and $this->frm->id > 0 and isset($this->frm->name_wrd)) {
@@ -732,8 +732,8 @@ class formula_value
         $val_phr_lst = clone $this->phr_lst;
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $val_wrd_lst->add($this->time_phr);
-        $title .= implode(",", $val_wrd_lst->names_linked_ex_measure_and_time());
-        $time_phr = implode(",", $val_wrd_lst->names_linked_time());
+        $title .= dsp_array($val_wrd_lst->names_linked_ex_measure_and_time());
+        $time_phr = dsp_array($val_wrd_lst->names_linked_time());
         if ($time_phr <> '') {
             $title .= ' (' . $time_phr . ')';
         }
@@ -745,9 +745,9 @@ class formula_value
 
         // display the measure and scaling of the value
         if ($val_wrd_lst->has_percent()) {
-            $result .= 'from ' . implode(",", $val_wrd_lst->names_linked_measure());
+            $result .= 'from ' . dsp_array($val_wrd_lst->names_linked_measure());
         } else {
-            $result .= 'in ' . implode(",", $val_wrd_lst->names_linked_measure());
+            $result .= 'in ' . dsp_array($val_wrd_lst->names_linked_measure());
         }
         $result .= '</br></br>' . "\n";
 
@@ -831,7 +831,7 @@ class formula_value
     //      based on the frm id and the word group
     function update_depending()
     {
-        log_debug("formula_value->update_depending (f" . $this->frm_id . ",t" . implode(",", $this->wrd_ids) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->usr->name . ")");
+        log_debug("formula_value->update_depending (f" . $this->frm_id . ",t" . dsp_array($this->wrd_ids) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->usr->name . ")");
 
         global $db_con;
         $result = array();
@@ -853,7 +853,7 @@ class formula_value
         if (!empty($frm_ids)) {
             $sql = "SELECT formula_value_id, formula_id
                 FROM formula_values 
-               WHERE formula_id IN (" . implode(",", $frm_ids) . ")
+               WHERE formula_id IN (" . sql_array($frm_ids) . ")
                  AND phrase_group_id = " . $this->phr_grp_id . "
                  AND time_word_id    = " . $this->time_id . "
                  AND user_id         = " . $this->usr->id . ";";

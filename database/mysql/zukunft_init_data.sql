@@ -41,6 +41,49 @@ INSERT INTO `change_actions` (`change_action_id`, `change_action_name`, `code_id
 (3, 'update', '');
 
 --
+-- Dumping data for table `change_tables`
+--
+
+INSERT INTO `change_tables` (`change_table_id`, `change_table_name`, `description`, `code_id`) VALUES
+(1, 'values', 'number', 'values'),
+(2, 'words', 'word', 'words'),
+(7, 'formulas', 'formula', 'formulas'),
+(8, 'word_links', 'word pair', 'word_links'),
+(9, 'value_word_links', 'value name', 'value_links'),
+(10, 'sources', 'source', 'sources'),
+(11, 'users', 'user', 'users'),
+(12, 'user_words', 'word', 'user_words'),
+(13, 'formula_word_links', 'formula assign', 'formula_links'),
+(14, 'sys_log', 'system error', NULL),
+(15, 'user_formulas', 'formula', 'user_formulas'),
+(16, 'user_values', 'number', 'user_values'),
+(17, 'link_types', 'verb', 'link_types'),
+(18, 'masks', 'view', 'masks'),
+(19, 'mask_entry_links', 'view part', 'mask_entry_links'),
+(21, 'user_masks', 'view', 'user_masks'),
+(22, 'mask_entries', 'view component', 'mask_entries'),
+(23, 'user_mask_entries', 'view component', 'user_mask_entries'),
+(24, 'user_formula_word_links', 'formula assign', 'user_formula_word_links'),
+(25, 'user_value', 'number', 'user_values'),
+(26, 'value', 'number', 'values'),
+(27, 'user_mask_entry_links', 'view part', 'user_mask_entry_links'),
+(28, 'user_word_links', 'word pair', 'user_word_links'),
+(29, 'value_phrase_links', '', NULL),
+(30, '', '', 'user_formula_links'),
+(31, 'formula_links', '', NULL),
+(32, '', '', 'views'),
+(33, '', '', 'user_views'),
+(34, '', '', 'view_entry_links'),
+(35, '', '', 'user_view_entry_links'),
+(36, 'views', '', NULL),
+(37, 'user_views', '', NULL),
+(38, 'view_entries', '', NULL),
+(39, 'user_view_entries', '', NULL),
+(40, 'view_entry_links', '', NULL),
+(41, '', '', 'view_entries'),
+(42, '', '', 'user_view_entries');
+
+--
 -- Dumping data for table `change_fields`
 --
 
@@ -125,49 +168,6 @@ INSERT INTO `change_fields` (`change_field_id`, `change_field_name`, `table_id`,
 (85, 'view_entry_type_id', 39, NULL, ''),
 (86, 'order_nbr', 40, NULL, ''),
 (87, 'position_type', 40, NULL, '');
-
---
--- Dumping data for table `change_tables`
---
-
-INSERT INTO `change_tables` (`change_table_id`, `change_table_name`, `description`, `code_id`) VALUES
-(1, 'values', 'number', 'values'),
-(2, 'words', 'word', 'words'),
-(7, 'formulas', 'formula', 'formulas'),
-(8, 'word_links', 'word pair', 'word_links'),
-(9, 'value_word_links', 'value name', 'value_links'),
-(10, 'sources', 'source', 'sources'),
-(11, 'users', 'user', 'users'),
-(12, 'user_words', 'word', 'user_words'),
-(13, 'formula_word_links', 'formula assign', 'formula_links'),
-(14, 'sys_log', 'system error', NULL),
-(15, 'user_formulas', 'formula', 'user_formulas'),
-(16, 'user_values', 'number', 'user_values'),
-(17, 'link_types', 'verb', 'link_types'),
-(18, 'masks', 'view', 'masks'),
-(19, 'mask_entry_links', 'view part', 'mask_entry_links'),
-(21, 'user_masks', 'view', 'user_masks'),
-(22, 'mask_entries', 'view component', 'mask_entries'),
-(23, 'user_mask_entries', 'view component', 'user_mask_entries'),
-(24, 'user_formula_word_links', 'formula assign', 'user_formula_word_links'),
-(25, 'user_value', 'number', 'user_values'),
-(26, 'value', 'number', 'values'),
-(27, 'user_mask_entry_links', 'view part', 'user_mask_entry_links'),
-(28, 'user_word_links', 'word pair', 'user_word_links'),
-(29, 'value_phrase_links', '', NULL),
-(30, '', '', 'user_formula_links'),
-(31, 'formula_links', '', NULL),
-(32, '', '', 'views'),
-(33, '', '', 'user_views'),
-(34, '', '', 'view_entry_links'),
-(35, '', '', 'user_view_entry_links'),
-(36, 'views', '', NULL),
-(37, 'user_views', '', NULL),
-(38, 'view_entries', '', NULL),
-(39, 'user_view_entries', '', NULL),
-(40, 'view_entry_links', '', NULL),
-(41, '', '', 'view_entries'),
-(42, '', '', 'user_view_entries');
 
 --
 -- Dumping data for table `formula_element_types`

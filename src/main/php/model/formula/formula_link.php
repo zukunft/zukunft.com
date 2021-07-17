@@ -45,6 +45,9 @@ class formula_link extends user_sandbox
     public $phr           = null; // the word object (used to save the correct name in the log)
     */
 
+    /**
+     * formula_link constructor that set the parameters for the user_sandbox object
+     */
     function __construct()
     {
         parent::__construct();
@@ -99,7 +102,10 @@ class formula_link extends user_sandbox
         }
     }
 
-    // load the formula parameters for all users
+    /**
+     * load the standard formula link to check if the user has done some personal changes
+     * e.g. switched off a formula assignment
+     */
     function load_standard(): bool
     {
 
@@ -131,7 +137,11 @@ class formula_link extends user_sandbox
         return $result;
     }
 
-    // load the missing formula parameters from the database
+    /**
+     * load the missing formula link parameters from the database
+     * the formula link can be either identified by the id
+     * or by the IDs of the formula and the assigned phrase
+     */
     function load(): bool
     {
         global $db_con;
@@ -171,7 +181,10 @@ class formula_link extends user_sandbox
         return $result;
     }
 
-    // to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
+    /**
+     * to load the formula and the phase object
+     * if the link object is loaded by an external query like in user_display to show the sandbox
+     */
     function load_objects(): bool
     {
         $result = true;

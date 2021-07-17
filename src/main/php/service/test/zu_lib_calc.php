@@ -344,7 +344,7 @@ function zuc_is_text_only($formula)
 // returns the verb id if the left most part of the formula references to a verb
 function zuc_get_verb($formula, $word_array, $time_word_id)
 {
-    log_debug("zuc_get_verb(" . $formula . "," . implode(",", $word_array) . "," . $time_word_id . ")");
+    log_debug("zuc_get_verb(" . $formula . "," . dsp_array($word_array) . "," . $time_word_id . ")");
     $result = 0;
 
     if (substr($formula, 0, strlen(ZUP_CHAR_LINK_START)) == ZUP_CHAR_LINK_START) {
@@ -360,24 +360,24 @@ function zuc_get_verb($formula, $word_array, $time_word_id)
 // e.g. get all country differentiators of Sales (where "Sales" is the word array and "differentiators" is the verb
 function zuc_get_verb_words($verb_id, $word_array, $time_word_id, $user_id)
 {
-    log_debug("zuc_get_verb_words(" . $verb_id . ":" . implode(",", $word_array) . "," . $time_word_id . ")");
+    log_debug("zuc_get_verb_words(" . $verb_id . ":" . dsp_array($word_array) . "," . $time_word_id . ")");
     $result = array();
 
     // list all words that are linked to the verb e.g. country can be the differentiator for Sales, so Sales would be the result
     $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, "up");
-    log_debug("zuc_get_verb_words -> verb words " . implode(",", $verb_words));
+    log_debug("zuc_get_verb_words -> verb words " . dsp_array($verb_words));
     // list all foaf of the verb
-    $is_a_type = sql_code_link(DBL_LINK_TYPE_IS);
+    $is_a_type = cl(DBL_LINK_TYPE_IS);
     $word_ids = zut_array_ids($verb_words, $user_id);
     foreach ($word_ids as $word_id) {
         log_debug("zuc_get_verb_words -> add word id " . $word_id . " to result");
         $foaf_words = zu_sql_get_lst(zu_sql_words_linked($word_id, $is_a_type, "up"));
-        log_debug("zuc_get_verb_words -> add word id " . $word_id . " to result, which has foaf words " . implode(",", $foaf_words) . " (" . implode(",", array_keys($foaf_words)) . "..");
+        log_debug("zuc_get_verb_words -> add word id " . $word_id . " to result, which has foaf words " . dsp_array($foaf_words) . " (" . dsp_array(array_keys($foaf_words)) . "..");
         // combine so add Sales to the selection words and the countries to the result words
         //$result = array_merge($result, $foaf_words);
         $result = zu_lst_merge_with_key($result, $foaf_words);
     }
-    log_debug("zuc_get_verb_words -> done (" . implode(",", $result) . ")");
+    log_debug("zuc_get_verb_words -> done (" . dsp_array($result) . ")");
 
     return $result;
 }
@@ -385,7 +385,7 @@ function zuc_get_verb_words($verb_id, $word_array, $time_word_id, $user_id)
 // replace the verb related word with the used word
 function zuc_get_verb_word_array($formula, $word_array, $time_word_id)
 {
-    log_debug("zuc_get_verb_word_array (" . $formula . "," . implode(",", $word_array) . "," . $time_word_id . ")");
+    log_debug("zuc_get_verb_word_array (" . $formula . "," . dsp_array($word_array) . "," . $time_word_id . ")");
     $result = array();
 
     if (substr($formula, 0, strlen(ZUP_CHAR_LINK_START)) == ZUP_CHAR_LINK_START) {
@@ -394,7 +394,7 @@ function zuc_get_verb_word_array($formula, $word_array, $time_word_id)
         $verb_id = zu_str_left_of($verb_id, ZUP_CHAR_WORD_END);
         // list all words that are linked to the verb e.g. country can be the differentiator for Sales, so Sales would be the result
         $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, "down");
-        log_debug("zuc_get_verb_word_array -> verb words " . implode(",", $verb_words));
+        log_debug("zuc_get_verb_word_array -> verb words " . dsp_array($verb_words));
         $word_array[] = $verb_words[0];
         log_debug("zuc_get_verb_word_array ... done (" . $word_array . ")");
     }
@@ -423,7 +423,7 @@ function zuc_has_formula($formula)
 // maybe rename to zuc_get_formula_result
 function zuc_frm_val($formula, $word_array, $time_word_id, $user_id)
 {
-    log_debug("zuc_frm_val (" . $formula . "," . implode(",", $word_array) . "," . $time_word_id . ")");
+    log_debug("zuc_frm_val (" . $formula . "," . dsp_array($word_array) . "," . $time_word_id . ")");
 
     $result = $formula;
     $result_user = 0;
@@ -806,7 +806,7 @@ function zuc_part ($formula, $result_type, $word_array, $time_word_id, $user_id)
 // parses a zukunft.com formula and returns the converted result
 function zuc_parse($formula, $result_type, $word_array, $time_word_id, $user_id)
 {
-    log_debug("zuc_parse (" . $formula . " target \"" . $result_type . "\" with words " . implode(",", $word_array) . ":" . $time_word_id . ")");
+    log_debug("zuc_parse (" . $formula . " target \"" . $result_type . "\" with words " . dsp_array($word_array) . ":" . $time_word_id . ")");
 
     $result = $formula;
 
@@ -896,7 +896,7 @@ update "Sales" "water" "annual growth rate"
 // returns a list of all formula results that needs to be updated the numbers in $val_ids_updated has been updated
 function zuc_upd_val_lst($val_ids_updated, $upd_usr)
 {
-    log_debug('zuc_upd_val_lst(v' . implode(",", $val_ids_updated) . ',u' . $upd_usr . ')');
+    log_debug('zuc_upd_val_lst(v' . dsp_array($val_ids_updated) . ',u' . $upd_usr . ')');
     // 1. get all formulas where the value is used
     // include the category words, because a formula linked to "Year" is inheritent to e.g. "2016"
     $val_wrd_lst = zuv_ids_wrd_lst_incl_cat($val_ids_updated, $upd_usr);
@@ -905,9 +905,9 @@ function zuc_upd_val_lst($val_ids_updated, $upd_usr)
     $sql = "SELECT formula_id 
             FROM formula_elements
            WHERE formula_element_type_id = " . $elm_type_id . "
-             AND ref_id IN (" . implode(",", array_keys($val_wrd_lst)) . ");";
+             AND ref_id IN (" . sql_array(array_keys($val_wrd_lst)) . ");";
     $frm_ids = zu_sql_get_ids($sql);
-    log_debug('zuc_upd_val_lst -> formulas (' . implode(",", $frm_ids) . ')');
+    log_debug('zuc_upd_val_lst -> formulas (' . dsp_array($frm_ids) . ')');
     // 2. update the formulas
     $fv_lst = zuc_val_frm_upd($val_wrd_lst, $frm_ids, $upd_usr, "");
     // 3. if the result has changed repeat with 1.
@@ -953,7 +953,7 @@ function zuc_val_upd_frm_result_lst($val_ids_updated, $frm_ids_updated, $upd_usr
 // one calculation request for "Earnings per Share" "ABB" "2016" and one for "Earnings per Share" "ABB" "2017" may be needed
 function zuc_upd_lst_fv($val_wrd_lst, $wrd_id, $frm_ids, $frm_row, $usr_id)
 {
-    log_debug('zuc_upd_lst_fv(vt' . implode(",", $val_wrd_lst) . ',t' . $wrd_id . ',' . implode(",", $frm_ids) . ',u' . $usr_id . ')');
+    log_debug('zuc_upd_lst_fv(vt' . dsp_array($val_wrd_lst) . ',t' . $wrd_id . ',' . dsp_array($frm_ids) . ',u' . $usr_id . ')');
     global $debug;
 
     $result = array();
@@ -1002,7 +1002,7 @@ function zuc_upd_lst_fv($val_wrd_lst, $wrd_id, $frm_ids, $frm_row, $usr_id)
 //       if the value has been update, create a calculation request
 function zuc_upd_lst_val($wrd_id, $frm_wrd_ids, $frm_row, $usr_id)
 {
-    log_debug('zuc_upd_lst_val(t' . $wrd_id . ',' . implode(",", $frm_wrd_ids) . ',u' . $usr_id . ')');
+    log_debug('zuc_upd_lst_val(t' . $wrd_id . ',' . dsp_array($frm_wrd_ids) . ',u' . $usr_id . ')');
 
     global $debug;
 
@@ -1073,7 +1073,7 @@ function zuc_upd_lst_frm_special($frm_id, $frm_text, $usr_id, $wrd_id)
         $special_frm_wrd_ids = array_unique(array_merge($special_frm_wrd_ids, $new_special_frm_wrd_ids));
     }
 
-    log_debug('zuc_upd_lst_frm_special -> (' . implode(",", $special_frm_wrd_ids) . ')');
+    log_debug('zuc_upd_lst_frm_special -> (' . dsp_array($special_frm_wrd_ids) . ')');
     return $special_frm_wrd_ids;
 }
 
@@ -1081,7 +1081,7 @@ function zuc_upd_lst_frm_special($frm_id, $frm_text, $usr_id, $wrd_id)
 // returns a list of all formula results that may needs to be updated if a formula is updated for one user
 function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time, $collect_pos)
 {
-    log_debug('zuc_upd_lst_usr(' . implode(",", $val_wrd_lst) . ',f' . implode(",", $frm_ids_updated) . ',u' . $usr_id . ')');
+    log_debug('zuc_upd_lst_usr(' . dsp_array($val_wrd_lst) . ',f' . dsp_array($frm_ids_updated) . ',u' . $usr_id . ')');
     $result = array();
 
     // loop over the word categories assigned to the formulas
@@ -1103,9 +1103,9 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
 
         // filter the words if just a value has been updated
         if (!empty($val_wrd_lst)) {
-            log_debug('zuc_upd_lst_usr -> update related words (' . implode(",", $val_wrd_lst) . ')');
+            log_debug('zuc_upd_lst_usr -> update related words (' . dsp_array($val_wrd_lst) . ')');
             $used_word_ids = array_intersect($is_word_ids, array_keys($val_wrd_lst));
-            log_debug('zuc_upd_lst_usr -> needed words (' . implode(",", $used_word_ids) . ' instead of ' . implode(",", $is_word_ids) . ')');
+            log_debug('zuc_upd_lst_usr -> needed words (' . dsp_array($used_word_ids) . ' instead of ' . dsp_array($is_word_ids) . ')');
         } else {
             $used_word_ids = $is_word_ids;
         }
@@ -1142,11 +1142,11 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
                 // get all values related to assigned word and to the formula words
                 // and based on this value get the unique word list
                 $frm_wrd_ids = zuf_wrd_ids($frm_row['formula_text'], $usr_id);
-                log_debug('zuc_upd_lst_usr -> frm_wrd_ids1 (' . implode(",", $frm_wrd_ids) . ')');
+                log_debug('zuc_upd_lst_usr -> frm_wrd_ids1 (' . dsp_array($frm_wrd_ids) . ')');
 
                 // add word words for the special formulas
                 $frm_wrd_ids = array_unique(array_merge($frm_wrd_ids, $special_frm_wrd_ids));
-                log_debug('zuc_upd_lst_usr -> frm_wrd_ids2 (' . implode(",", $frm_wrd_ids) . ')');
+                log_debug('zuc_upd_lst_usr -> frm_wrd_ids2 (' . dsp_array($frm_wrd_ids) . ')');
 
                 $result_val = zuc_upd_lst_val($wrd_id, $frm_wrd_ids, $frm_row, $usr_id);
                 $result = array_merge($result, $result_val);
@@ -1164,7 +1164,7 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
 // $frm_ids_updated - formulas that needs to be checked for update
 function zuc_upd_lst($frm_ids_updated, $upd_usr_id)
 {
-    log_debug('zuc_upd_lst(' . implode(",", $frm_ids_updated) . ',u' . $upd_usr_id . ')');
+    log_debug('zuc_upd_lst(' . dsp_array($frm_ids_updated) . ',u' . $upd_usr_id . ')');
     // to inform the user about the progress
     $last_msg_time = time(); // the start time
     $collect_pos = 0;        // to calculate the progress in percent
@@ -1178,7 +1178,7 @@ function zuc_upd_lst($frm_ids_updated, $upd_usr_id)
     // to calculate the base value first
     ksort($usr_lst);
 
-    log_debug('zuc_upd_lst -> active users (' . implode(",", $usr_lst) . ')');
+    log_debug('zuc_upd_lst -> active users (' . dsp_array($usr_lst) . ')');
     foreach (array_keys($usr_lst) as $usr_id) {
         if ($usr_id == 0 or $upd_usr_id == 0 or $upd_usr_id == $usr_id) {
             log_debug('zuc_upd_lst -> user (' . $usr_lst[$usr_id] . ')');
@@ -1328,7 +1328,7 @@ function zuc_frm($frm_id, $frm_text, $wrd_ids, $time_word_id, $user_id) {
 // returns a list of formula results that needs to be updated
 function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr, $back)
 {
-    log_debug("zuc_val_frm_upd (t" . implode(",", $val_wrd_lst) . ",f" . implode(",", $frm_ids) . ",u" . $usr . ")");
+    log_debug("zuc_val_frm_upd (t" . dsp_array($val_wrd_lst) . ",f" . dsp_array($frm_ids) . ",u" . $usr . ")");
     $result = array();
 
     //ob_implicit_flush(true);
@@ -1365,10 +1365,10 @@ function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr, $back)
             $val_result = $fv->value;
             if (is_array($val_result)) {
                 foreach (array_keys($val_result) as $r_key) {
-                    echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . implode(",", $wrd_names) . ") = " . $val_result[$r_key][0] . "<br>";
+                    echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . dsp_array($wrd_names) . ") = " . $val_result[$r_key][0] . "<br>";
                 }
             } else {
-                echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . implode(",", $wrd_names) . ") = " . $val_result . "<br>";
+                echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . dsp_array($wrd_names) . ") = " . $val_result . "<br>";
             }
             $last_msg_time = time();
             //ob_flush();
@@ -1421,10 +1421,10 @@ function zuc_frm_upd($frm_ids_updated, $usr, $back)
 
             if (is_array()) {
                 foreach (array_keys($val_result) as $r_key) {
-                    echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . implode(",", $wrd_names) . ") = " . $val_result[$r_key][0] . "<br>";
+                    echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . dsp_array($wrd_names) . ") = " . $val_result[$r_key][0] . "<br>";
                 }
             } else {
-                echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . implode(",", $wrd_names) . ") = " . $val_result . "<br>";
+                echo "calculate " . round($calc_pct, 2) . "% (" . $r['frm_name'] . " for " . dsp_array($wrd_names) . ") = " . $val_result . "<br>";
             }
             $last_msg_time = time();
             ob_flush();

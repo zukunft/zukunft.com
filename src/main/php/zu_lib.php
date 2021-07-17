@@ -129,14 +129,17 @@
   
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
   
-  TODO create unit tests for all module classes
   TODO complete the database abstraction layer
+  TODO create unit tests for all module classes
   TODO name all queries with user data as prepared queries to prevent SQL code injections
   TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
   TODO crawl all public available information from the web and add it as user preset to the database
   TODO rename dsp_text in formula to display
   TODO rename name_linked in formula_element to name_linked
-  
+  TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
+  TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
+  TODO check all data from an URL or from a user form that it contains no SQL code
+
   
 
   functions of this library
@@ -352,11 +355,18 @@ global $sys_time_start;  // to measure the execution time
 global $sys_time_limit;  // to write too long execution times to the log to improve the code
 global $sys_log_msg_lst; // to avoid to repeat the same message
 
+// for the system log types a dynamic ENUM is used, which means that the database id is read once at system start, because it is expected to change only on an upgrade
+global $sys_log_msg_type_info_id;
+global $sys_log_msg_type_warning_id;
+global $sys_log_msg_type_error_id;
+global $sys_log_msg_type_fatal_error_id;
+
 $sys_script = "";
 $sys_trace = "";
 $sys_time_start = time();
 $sys_time_limit = time() + 2;
 $sys_log_msg_lst = array();
+
 
 global $root_path;
 
@@ -908,37 +918,28 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
 
 function log_info($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
-    // todo cache the id at program start to avoid endless loops
-    $msg_type_id = sql_code_link(DBL_SYSLOG_INFO, "Info");
-    $msg_type_id = 1;
-    return log_msg($msg_text, $msg_description = '', $msg_type_id, $function_name, $function_trace, $usr);
+    global $sys_log_msg_type_info_id;
+    return log_msg($msg_text, $msg_description, $sys_log_msg_type_info_id, $function_name, $function_trace, $usr);
 }
 
 function log_warning($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
-    // todo cache the id at program start to avoid endless loops
-    $msg_type_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning");
-    $msg_type_id = 2;
-    return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+    global $sys_log_msg_type_warning_id;
+    return log_msg($msg_text, $msg_description, $sys_log_msg_type_warning_id, $function_name, $function_trace, $usr);
 }
 
 function log_err($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
-    // todo cache the id at program start to avoid endless loops
-    $msg_type_id = sql_code_link(DBL_SYSLOG_ERROR, "Error");
-    $msg_type_id = 3;
-    return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+    global $sys_log_msg_type_error_id;
+    return log_msg($msg_text, $msg_description, $sys_log_msg_type_error_id, $function_name, $function_trace, $usr);
 }
 
 function log_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null): string
 {
-    // todo cache the id at program start to avoid endless loops
-    // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
-    //$msg_type_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR");
-    //$msg_type_id = 4;
-    //return log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr);
+    global $sys_log_msg_type_fatal_error_id;
     echo 'FATAL ERROR! ' . $msg_text;
-    return 'FATAL ERROR! ' . $msg_text;
+    // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
+    return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, $sys_log_msg_type_fatal_error_id, $function_name, $function_trace, $usr);
 }
 
 // should be call from all code that can be accessed by an url
@@ -946,6 +947,11 @@ function log_fatal($msg_text, $function_name, $msg_description = '', $function_t
 function prg_start($code_name, $style = ""): sql_db
 {
     global $sys_time_start, $sys_script;
+
+    global $sys_log_msg_type_info_id;
+    global $sys_log_msg_type_warning_id;
+    global $sys_log_msg_type_error_id;
+    global $sys_log_msg_type_fatal_error_id;
 
     // resume session (based on cookies)
     session_start();
@@ -976,12 +982,16 @@ function prg_start($code_name, $style = ""): sql_db
     }
 
     // load default records
+    $sys_log_msg_type_info_id = sql_code_link(DBL_SYSLOG_INFO, "Info", $db_con);
+    $sys_log_msg_type_warning_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning", $db_con);
+    $sys_log_msg_type_error_id = sql_code_link(DBL_SYSLOG_ERROR, "Error", $db_con);
+    $sys_log_msg_type_fatal_error_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR", $db_con);
     //verbs_load;
 
     return $db_con;
 }
 
-function prg_start_api($code_name, $style): sql_db
+function prg_start_api($code_name): sql_db
 {
     global $sys_time_start, $sys_script;
 
@@ -1018,8 +1028,8 @@ function prg_end($db_con)
         }
         $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
         //$db_con->insert();
-        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . date("Y-m-d H:i:s", $sys_time_start) . "'," . $sys_script_id . "," . sf($_SERVER['REQUEST_URI']) . ");";
-        $sql_result = $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString());
+        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . sf($_SERVER['REQUEST_URI']) . ");";
+        $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString());
     }
 
     // Free result test
@@ -1081,7 +1091,7 @@ display functions
 */
 
 // to display a boolean var
-function zu_dsp_bool($bool_var)
+function zu_dsp_bool($bool_var): string
 {
     if ($bool_var) {
         $result = 'true';
@@ -1145,12 +1155,10 @@ function prg_version_is_newer_test()
 }
 
 /*
-
 string functions
-
 */
 
-function zu_trim($text)
+function zu_trim($text): string
 {
     return trim(preg_replace('!\s+!', ' ', $text));
 }
@@ -1182,7 +1190,6 @@ function zu_str_right_of($text, $maker)
 function zu_str_between($text, $maker_start, $maker_end)
 {
     log_debug('zu_str_between "' . $text . '", start "' . $maker_start . '" end "' . $maker_end . '"');
-    $result = '';
     $result = zu_str_right_of($text, $maker_start);
     log_debug('zu_str_between -> "' . $result . '" is right of "' . $maker_start . '"');
     $result = zu_str_left_of($result, $maker_end);
@@ -1191,9 +1198,7 @@ function zu_str_between($text, $maker_start, $maker_end)
 }
 
 /*
-
 string functions (to be dismissed)
-
 */
 
 // some small string related functions to shorten code and make the code clearer
@@ -1216,7 +1221,7 @@ function zu_str_is_left($text, $maker)
     return $result;
 }
 
-function zu_str_compute_diff($from, $to)
+function zu_str_compute_diff($from, $to): array
 {
     $diffValues = array();
     $diffMask = array();
@@ -1273,7 +1278,7 @@ function zu_str_compute_diff($from, $to)
     return array('values' => $diffValues, 'mask' => $diffMask);
 }
 
-function zu_str_diff($original_text, $compare_text)
+function zu_str_diff($original_text, $compare_text): string
 {
     $diff = zu_str_compute_diff(str_split($original_text), str_split($compare_text));
     $diffval = $diff['values'];
@@ -1340,10 +1345,40 @@ list functions (to be dismissed / replaced by objects)
 
 */
 
+/**
+ * create a human readable string from an array
+ * @param array $in_array the array that should be formatted
+ * @return string the values comma seperated or "null" if the array is empty
+ */
+function dsp_array($in_array): string {
+    $result = 'null';
+    if ($in_array != null) {
+        if (count($in_array) > 0) {
+            $result = implode(',', $in_array);
+        }
+    }
+    return $result;
+}
+
+/**
+ * prepare an array for an SQL statement
+ * @param array $in_array the array that should be formatted
+ * @return string the values comma seperated or "" if the array is empty
+ */
+function sql_array(array $in_array): string {
+    $result = '';
+    if ($in_array != null) {
+        if (count($in_array) > 0) {
+            $result = implode(',', $in_array);
+        }
+    }
+    return $result;
+}
+
 // get all entries of the list that are not in the second list
-function zu_lst_not_in($in_lst, $exclude_lst)
+function zu_lst_not_in($in_lst, $exclude_lst): array
 {
-    log_debug('zu_lst_not_in(' . implode(",", array_keys($in_lst)) . ',ex' . implode(",", $exclude_lst) . ')');
+    log_debug('zu_lst_not_in(' . dsp_array(array_keys($in_lst)) . ',ex' . dsp_array($exclude_lst) . ')');
     $result = array();
     foreach (array_keys($in_lst) as $lst_entry) {
         if (!in_array($lst_entry, $exclude_lst)) {
@@ -1354,35 +1389,35 @@ function zu_lst_not_in($in_lst, $exclude_lst)
 }
 
 // similar to zu_lst_not_in, but looking at the array value not the key
-function zu_lst_not_in_no_key($in_lst, $exclude_lst)
+function zu_lst_not_in_no_key($in_lst, $exclude_lst): array
 {
-    log_debug('zu_lst_not_in_no_key(' . implode(",", $in_lst) . 'ex' . implode(",", $exclude_lst) . ')');
+    log_debug('zu_lst_not_in_no_key(' . dsp_array($in_lst) . 'ex' . dsp_array($exclude_lst) . ')');
     $result = array();
     foreach ($in_lst as $lst_entry) {
         if (!in_array($lst_entry, $exclude_lst)) {
             $result[] = $lst_entry;
         }
     }
-    log_debug('zu_lst_not_in_no_key -> (' . implode(",", $result) . ')');
+    log_debug('zu_lst_not_in_no_key -> (' . dsp_array($result) . ')');
     return $result;
 }
 
 // similar to zu_lst_not_in, but excluding only one value (diff to in_array????)
-function zu_lst_excluding($in_lst, $exclude_id)
+function zu_lst_excluding($in_lst, $exclude_id): array
 {
-    log_debug('zu_lst_excluding(' . implode(",", $in_lst) . 'ex' . $exclude_id . ')');
+    log_debug('zu_lst_excluding(' . dsp_array($in_lst) . 'ex' . $exclude_id . ')');
     $result = array();
     foreach ($in_lst as $lst_entry) {
         if ($lst_entry <> $exclude_id) {
             $result[] = $lst_entry;
         }
     }
-    log_debug('zu_lst_excluding -> (' . implode(",", $result) . ')');
+    log_debug('zu_lst_excluding -> (' . dsp_array($result) . ')');
     return $result;
 }
 
 // get all entries of the list that are not in the second list
-function zu_lst_in($in_lst, $only_if_lst)
+function zu_lst_in($in_lst, $only_if_lst): array
 {
     $result = array();
     foreach (array_keys($in_lst) as $lst_entry) {
@@ -1394,7 +1429,7 @@ function zu_lst_in($in_lst, $only_if_lst)
 }
 
 // get all entries of the list that are not in the second list
-function zu_lst_in_ids($in_lst, $only_if_ids)
+function zu_lst_in_ids($in_lst, $only_if_ids): array
 {
     $result = array();
     foreach (array_keys($in_lst) as $lst_entry) {
@@ -1406,7 +1441,7 @@ function zu_lst_in_ids($in_lst, $only_if_ids)
 }
 
 // create an url parameter text out of an id array
-function zu_ids_to_url($ids, $par_name)
+function zu_ids_to_url($ids, $par_name): string
 {
     $result = "";
     foreach (array_keys($ids) as $pos) {
@@ -1419,7 +1454,7 @@ function zu_ids_to_url($ids, $par_name)
 }
 
 // flattens a complex array; if the list entry is an array the first field is shown
-function zu_lst_to_array($complex_lst)
+function zu_lst_to_array($complex_lst): array
 {
     //zu_debug("zu_lst_to_array");
     $result = array();
@@ -1436,7 +1471,7 @@ function zu_lst_to_array($complex_lst)
 }
 
 // flattens a complex array; if the list entry is an array the first field is shown
-function zu_ids_not_empty($old_ids)
+function zu_ids_not_empty($old_ids): array
 {
     // fix wrd_ids if needed
     $result = array();
@@ -1449,7 +1484,7 @@ function zu_ids_not_empty($old_ids)
 }
 
 // flattens a complex array; if the list entry is an array the first field is shown
-function zu_ids_not_zero($old_ids)
+function zu_ids_not_zero($old_ids): array
 {
     // fix wrd_ids if needed
     $result = array();
@@ -1463,7 +1498,7 @@ function zu_ids_not_zero($old_ids)
 
 // gets on id list with all word ids from the value list, that already contain the word ids for each value
 // no user id is needed because this is done already in the previous selection
-function zu_val_lst_get_wrd_ids($val_lst)
+function zu_val_lst_get_wrd_ids($val_lst): array
 {
     //zu_debug("zu_val_lst_get_wrd_ids");
     $result = array();
@@ -1482,7 +1517,7 @@ function zu_val_lst_get_wrd_ids($val_lst)
 }
 
 // maybe use array_filter ???
-function zu_lst_common($id_lst1, $id_lst2)
+function zu_lst_common($id_lst1, $id_lst2): array
 {
     //zu_debug("zu_lst_common (".implode(",",$id_lst1)."x".implode(",",$id_lst1).")");
     //zu_debug("zu_lst_to_array");
@@ -1517,7 +1552,7 @@ function zu_lst_get_common_ids($val_lst, $sub_array_pos)
         }
     }
 
-    log_debug("zu_lst_get_common_ids -> (" . implode(",", $result) . ")");
+    log_debug("zu_lst_get_common_ids -> (" . dsp_array($result) . ")");
     return $result;
 }
 
@@ -1542,14 +1577,14 @@ function zu_lst_all_ids($val_lst, $sub_array_pos)
         }
     }
 
-    log_debug("zu_lst_all_ids -> (" . implode(",", $result) . ")");
+    log_debug("zu_lst_all_ids -> (" . dsp_array($result) . ")");
     return $result;
 }
 
 // filter an array with a sub array by the id entries of the subarray
 // if the subarray does not have any value of the filter id_lst it is not included in the result
 // e.g. for a value list with all related words get only those values that are related to on of the time words given in the id_lst
-function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos)
+function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos): array
 {
     log_debug("zu_lst_id_filter (" . zu_lst_dsp($val_lst) . ",t" . zu_lst_dsp($id_lst) . ",pos" . $sub_array_pos . ")");
     $result = array();
@@ -1578,7 +1613,7 @@ function zu_lst_id_filter($val_lst, $id_lst, $sub_array_pos)
 }
 
 // flattens a complex array; if the list entry is an array the first field and the array key is returned
-function zu_lst_to_flat_lst($complex_lst)
+function zu_lst_to_flat_lst($complex_lst): array
 {
     //zu_debug("zu_lst_to_array");
     $result = array();
@@ -1602,14 +1637,14 @@ function zu_lst_dsp($lst_to_dsp)
     if (is_array($lst_to_dsp)) {
         $result_array = zu_lst_to_array($lst_to_dsp);
         //zu_debug("zu_lst_dsp -> converted");
-        $result = implode(",", $result_array);
+        $result = dsp_array($result_array);
     } else {
         $result = $lst_to_dsp;
     }
     return $result;
 }
 
-function zu_lst_merge_with_key($lst_1, $lst_2)
+function zu_lst_merge_with_key($lst_1, $lst_2): array
 {
     $result = array();
     foreach (array_keys($lst_1) as $lst_entry) {
@@ -1627,7 +1662,7 @@ function dsp_var($var_to_format): string
     $result = '';
     if ($var_to_format != null) {
         if (is_array($var_to_format)) {
-            $result = implode(',', $var_to_format);
+            $result = dsp_array($var_to_format);
         } else {
             $result = $var_to_format;
         }

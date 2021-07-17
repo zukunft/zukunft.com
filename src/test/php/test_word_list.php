@@ -45,7 +45,7 @@ function run_word_list_test () {
   $wrd_lst->add_name(TW_MIO);
   $wrd_lst->load();
   $result = $wrd_lst->name();
-  $target = '"'.TW_MIO.'","'.TW_SALES.'","'.TW_ABB.'"'; // order adjusted based on the number of usage
+  $target = '"'.TW_ABB.'","'.TW_MIO.'","'.TW_SALES.'"'; // order adjusted based on the number of usage
   $exe_start_time = test_show_result('word_list->load by names for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
   // test load by word list by group id
@@ -54,7 +54,7 @@ function run_word_list_test () {
   $wrd_lst->usr = $usr;
   $wrd_lst->grp_id = $wrd_grp_id;
   $wrd_lst->load();
-  $result = implode(',',$wrd_lst->names());
+  $result = dsp_array($wrd_lst->names());
   $target = "million,Sales,ABB"; // order adjusted based on the number of usage
   $exe_start_time = test_show_result('word_list->load by word group id for "'.$wrd_grp_id.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); */
 
@@ -64,7 +64,7 @@ function run_word_list_test () {
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
   $wrd_lst->add_by_type(Null, cl(DBL_LINK_TYPE_IS), "up");
-  $result = implode(',',$wrd_lst->names());
+  $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result('word_list->add_by_type for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -74,7 +74,7 @@ function run_word_list_test () {
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
   $wrd_lst->foaf_parents(cl(DBL_LINK_TYPE_IS));
-  $result = implode(',',$wrd_lst->names());
+  $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result('word_list->foaf_parent for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -84,7 +84,7 @@ function run_word_list_test () {
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
   $wrd_lst->parents(cl(DBL_LINK_TYPE_IS), 1);
-  $result = implode(',',$wrd_lst->names());
+  $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result('word_list->parents for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -116,7 +116,7 @@ function run_word_list_test () {
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
   $lst_is = $wrd_lst->is();
-  $result = implode(',',$lst_is->names());
+  $result = dsp_array($lst_is->names());
   $target = TEST_WORD; // order adjusted based on the number of usage
   $exe_start_time = test_show_result('word_list->is for '.$wrd_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

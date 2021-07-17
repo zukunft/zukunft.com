@@ -44,7 +44,7 @@ class formula_element_group_list
     {
         $id  = '';
         if ($this->ids() != null) {
-            $id = implode(",", $this->ids());
+            $id = dsp_array($this->ids());
         }
         $name = $this->name();
         if ($name <> '""') {

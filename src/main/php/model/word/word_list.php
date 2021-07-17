@@ -32,6 +32,9 @@
 class word_list
 {
 
+    const DIRECTION_UP = 'up';
+    const DIRECTION_DOWN = 'down';
+
     // todo: check the consistence usage of the parameter $back
 
     public ?array $lst = array(); // array of the loaded word objects
@@ -48,32 +51,54 @@ class word_list
 
     public ?array $name_lst = array(); // list of the word names to load a list of words with one sql statement from the database
 
-    // load the word parameters from the database for a list of words
-    function load()
+    /**
+     * create the SQL selection statement or the name for the predefined SQL statement
+     * @param bool $get_name use true to get the unique name of the selection query
+     */
+    function load_sql_where(bool $get_name = false): string
     {
-
-        global $db_con;
         $sql_where = '';
+        $sql_name = '';
 
-        // fix ids if needed
-        $this->ids = zu_ids_not_empty($this->ids);
-
-        // set the where clause depending on the values given
         if (!empty($this->ids) and !is_null($this->usr->id)) {
-            $id_text = implode(",", $this->ids);
-            $sql_where = "t.word_id IN (" . $id_text . ")";
+            $sql_name = 'word_list_by_ids';
+            $id_text = sql_array($this->ids);
+            $sql_where = "s.word_id IN (" . $id_text . ")";
             log_debug('word_list->load sql (' . $sql_where . ')');
         } elseif (!is_null($this->grp_id)) {
-            $sql_where = "t.word_id IN ( SELECT word_id 
+            $sql_name = 'word_list_by_group';
+            $sql_where = "s.word_id IN ( SELECT word_id 
                                     FROM phrase_group_word_links
                                     WHERE phrase_group_id = " . $this->grp_id . ")";
             log_debug('word_list->load sql (' . $sql_where . ')');
         } elseif (!empty($this->name_lst) and !is_null($this->usr->id)) {
+            $sql_name = 'word_list_by_names';
             $name_text = implode("','", $this->name_lst);
-            $sql_where = "t.word_name IN ('" . $name_text . "')";
+            $sql_where = "s.word_name IN ('" . $name_text . "')";
         } elseif ($this->word_type_id > 0 and !is_null($this->usr->id)) {
-            $sql_where = "t.word_type_id = " . $this->word_type_id . "";
+            $sql_name = 'word_list_by_type_id';
+            $sql_where = "s.word_type_id = " . $this->word_type_id . "";
+        } else {
+            log_warning("Selection criteria for the word list missing", "word_list->load");
         }
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql_where;
+        }
+        return $result;
+    }
+
+    // create the sql statement to fill a word list
+    function load_sql(): string
+    {
+        global $db_con;
+
+        $result = '';
+
+        // set the where clause depending on the values given
+        $sql_where = $this->load_sql_where();
 
         if ($sql_where == '') {
             // the id list can be empty, because not needed to check this always in the calling function, so maybe in a later stage this could be an info
@@ -83,39 +108,33 @@ class word_list
                 log_info("The list of database ids should not be empty.", "word_list->load");
             }
         } else {
-            // TODO create SQL with sql_db
-            if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
-                $sql = "SELECT t.word_id,
-                    u.word_id AS user_word_id,
-                    t.user_id,
-                    CASE WHEN (u.word_name    <> '' IS NOT TRUE) THEN t.word_name    ELSE u.word_name    END AS word_name,
-                    CASE WHEN (u.plural       <> '' IS NOT TRUE) THEN t.plural       ELSE u.plural       END AS plural,
-                    CASE WHEN (u.description  <> '' IS NOT TRUE) THEN t.description  ELSE u.description  END AS description,
-                    CASE WHEN (u.word_type_id IS           NULL) THEN t.word_type_id ELSE u.word_type_id END AS word_type_id,
-                    CASE WHEN (u.excluded     IS           NULL) THEN t.excluded     ELSE u.excluded     END AS excluded,
-                    t.values
-                FROM words t 
-          LEFT JOIN user_words u ON u.word_id = t.word_id 
-                                AND u.user_id = " . $this->usr->id . " 
-              WHERE " . $sql_where . "
-          ORDER BY t.values DESC, word_name;";
-            } else {
-                $sql = "SELECT t.word_id,
-                     u.word_id AS user_word_id,
-                     t.user_id,
-                     IF(u.word_name    IS NULL,  t.word_name,     u.word_name)     AS word_name,
-                     IF(u.plural       IS NULL,  t.plural,        u.plural)        AS plural,
-                     IF(u.description  IS NULL,  t.description,   u.description)   AS description,
-                     IF(u.word_type_id IS NULL,  t.word_type_id,  u.word_type_id)  AS word_type_id,
-                     IF(u.excluded     IS NULL,  t.excluded,      u.excluded)      AS excluded,
-                     t.values
-                FROM words t 
-          LEFT JOIN user_words u ON u.word_id = t.word_id 
-                                AND u.user_id = " . $this->usr->id . " 
-              WHERE " . $sql_where . "
-          ORDER BY t.values DESC, word_name;";
-            }
-            $db_con->usr_id = $this->usr->id;
+            $db_con->set_type(DB_TYPE_WORD);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr_fields(array('plural', 'description'));
+            $db_con->set_usr_num_fields(array('word_type_id', 'excluded'));
+            $db_con->set_fields(array('values'));
+            $db_con->set_where_text($sql_where);
+            $db_con->set_order_text('s.values DESC, word_name');
+            $result = $db_con->select();
+        }
+        return $result;
+    }
+
+    // load the word parameters from the database for a list of words
+    function load()
+    {
+
+        global $db_con;
+
+        // fix ids if needed
+        $this->ids = zu_ids_not_empty($this->ids);
+
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err("The user must be set.", "word_list->load");
+        } else {
+            $db_con->set_usr($this->usr->id);
+            $sql = $this->load_sql();
             $db_wrd_lst = $db_con->get($sql);
             $this->lst = array();
             $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
@@ -152,9 +171,62 @@ class word_list
         }
     }
 
-// combine this with the load function if possible
-// load the word parameters from the database for a list of words
-// maybe reuse parts of word_link_list.php
+    // create the sql statement to add related words to a word list
+    function add_by_type_sql($verb_id, $direction, bool $get_name = false): string
+    {
+        global $db_con;
+
+        $sql_name = '';
+        $sql_where = '';
+        $sql_wrd = '';
+        if ($direction == self::DIRECTION_UP) {
+            $sql_name = 'word_list_add_up';
+            $sql_where = 'l.from_phrase_id IN (' . $this->ids_txt() . ')';
+            $sql_wrd = 'l.to_phrase_id';
+        } elseif ($direction == self::DIRECTION_DOWN)  {
+            $sql_name = 'word_list_add_down';
+            $sql_where = 'l.to_phrase_id IN (' . $this->ids_txt() . ')';
+            $sql_wrd = 'l.from_phrase_id';
+        } else {
+            log_err('Unknown direction '. $direction);
+        }
+        // verbs can have a negative id for the reverse selection
+        if ($verb_id <> 0) {
+            $sql_name .= '_by_verb';
+            $sql_type = 'AND l.verb_id = ' . $verb_id;
+        } else {
+            $sql_type = '';
+        }
+        $sql = "SELECT 
+                         s.word_id,
+                         s.user_id,
+                         " . $db_con->get_usr_field("word_name", "s", "u") . ",
+                         " . $db_con->get_usr_field("plural", "s", "u") . ",
+                         " . $db_con->get_usr_field("description", "s", "u") . ",
+                         " . $db_con->get_usr_field("word_type_id", "s", "u", sql_db::FLD_FORMAT_VAL) . ",
+                         " . $db_con->get_usr_field("excluded", "s", "u", sql_db::FLD_FORMAT_VAL) . ",
+                         l.verb_id,
+                         s." . $db_con->get_table_name(DB_TYPE_VALUE) . "
+                    FROM word_links l, 
+                         words s 
+               LEFT JOIN user_words u ON s.word_id = u.word_id 
+                                     AND u.user_id = " . $this->usr->id . " 
+                   WHERE " . $sql_wrd . " = s.word_id 
+                     AND " . $sql_where . "
+                         " . $sql_type . " 
+                ORDER BY s.values DESC, s.word_name;";
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    // combine this with the load function if possible
+    // load the word parameters from the database for a list of words
+    // maybe reuse parts of word_link_list.php
     function add_by_type($added_wrd_lst, $verb_id, $direction)
     {
 
@@ -172,57 +244,7 @@ class word_list
         } elseif (count($this->lst) <= 0) {
             log_warning("The word list is empty, so nothing could be found.", "word_list->add_by_type");
         } else {
-            if ($direction == 'up') {
-                $sql_where = 'l.from_phrase_id IN (' . $this->ids_txt() . ')';
-                $sql_wrd = 'l.to_phrase_id';
-            } else {
-                $sql_where = 'l.to_phrase_id IN (' . $this->ids_txt() . ')';
-                $sql_wrd = 'l.from_phrase_id';
-            }
-            // verbs can have a negative id for the reverse selection
-            if ($verb_id <> 0) {
-                $sql_type = 'AND l.verb_id = ' . $verb_id;
-            } else {
-                $sql_type = '';
-            }
-            if ($db_con->db_type == DB_TYPE_POSTGRES) {
-                $sql = "SELECT t.word_id,
-                     t.user_id,
-                     CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN t.word_name    ELSE u.word_name    END AS word_name,
-                     CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN t.plural       ELSE u.plural       END AS plural,
-                     CASE WHEN (u.description <> '' IS NOT TRUE) THEN t.description  ELSE u.description  END AS description,
-                     CASE WHEN (u.word_type_id      IS     NULL) THEN t.word_type_id ELSE u.word_type_id END AS word_type_id,
-                     CASE WHEN (u.excluded          IS     NULL) THEN t.excluded     ELSE u.excluded     END AS excluded,
-                     l.verb_id,
-                     t.values
-                FROM word_links l, 
-                     words t 
-           LEFT JOIN user_words u ON u.word_id = t.word_id 
-                                 AND u.user_id = " . $this->usr->id . " 
-               WHERE " . $sql_wrd . " = t.word_id 
-                 AND " . $sql_where . "
-                     " . $sql_type . " 
-            ORDER BY t.values DESC, t.word_name;";
-            } else {
-                $sql = "SELECT t.word_id,
-                     t.user_id,
-                     IF(u.word_name IS NULL,     t.word_name,     u.word_name)     AS word_name,
-                     IF(u.plural IS NULL,        t.plural,        u.plural)        AS plural,
-                     IF(u.description IS NULL,   t.description,   u.description)   AS description,
-                     IF(u.word_type_id IS NULL,  t.word_type_id,  u.word_type_id)  AS word_type_id,
-                     IF(u.excluded IS NULL,      t.excluded,      u.excluded)      AS excluded,
-                     l.verb_id,
-                     t.values
-                FROM word_links l, 
-                     words t 
-           LEFT JOIN user_words u ON u.word_id = t.word_id 
-                                 AND u.user_id = " . $this->usr->id . " 
-               WHERE " . $sql_wrd . " = t.word_id 
-                 AND " . $sql_where . "
-                     " . $sql_type . " 
-            GROUP BY t.word_id, t.word_name, l.verb_id, t.values
-            ORDER BY t.values DESC, t.word_name;";
-            }
+            $sql = $this->add_by_type_sql($verb_id, $direction);
             log_debug('word_list->add_by_type -> add with "' . $sql);
             $db_con->usr_id = $this->usr->id;
             $db_wrd_lst = $db_con->get($sql);
@@ -293,7 +315,7 @@ class word_list
 
     */
 
-// build one level of a word tree
+    // build one level of a word tree
     private function foaf_level($level, $added_wrd_lst, $verb_id, $direction, $max_level)
     {
         log_debug('word_list->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_wrd_lst->name() . ')');
@@ -321,8 +343,8 @@ class word_list
         return $added_wrd_lst;
     }
 
-// returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
-// ex foaf_parent
+    // returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
+    // ex foaf_parent
     function foaf_parents($verb_id)
     {
         log_debug('word_list->foaf_parents (type id ' . $verb_id . ')');
@@ -335,9 +357,9 @@ class word_list
         return $added_wrd_lst;
     }
 
-// similar to foaf_parents, but for only one level
-// $level is the number of levels that should be looked into
-// ex foaf_parent_step
+    // similar to foaf_parents, but for only one level
+    // $level is the number of levels that should be looked into
+    // ex foaf_parent_step
     function parents($verb_id, $level)
     {
         log_debug('word_list->parents(' . $verb_id . ')');
@@ -349,8 +371,8 @@ class word_list
         return $added_wrd_lst;
     }
 
-// similar to foaf_parent, but the other way round e.g. for "Companies" it will return "ABB Ltd." and others if the link type is "are"
-// ex foaf_child
+    // similar to foaf_parent, but the other way round e.g. for "Companies" it will return "ABB Ltd." and others if the link type is "are"
+    // ex foaf_child
     function foaf_children($verb_id)
     {
         log_debug('word_list->foaf_children type ' . $verb_id . '');
@@ -442,7 +464,7 @@ class word_list
         return $wrd_lst;
     }
 
-// add all potential differentiator words of the word lst e.g. get "energy" for "sector"
+    // add all potential differentiator words of the word lst e.g. get "energy" for "sector"
     function differentiators()
     {
         log_debug('word_list->differentiators for ' . $this->dsp_id());
@@ -452,7 +474,7 @@ class word_list
         return $wrd_lst;
     }
 
-// same as differentiators, but including the sub types e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
+    // same as differentiators, but including the sub types e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
     function differentiators_all()
     {
         log_debug('word_list->differentiators_all for ' . $this->dsp_id());
@@ -496,7 +518,7 @@ class word_list
         return $wrd_lst;
     }
 
-// similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
+    // similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
     function differentiators_filtered($filter_lst)
     {
         log_debug('word_list->differentiators_filtered for ' . $this->dsp_id());
@@ -552,7 +574,7 @@ class word_list
         return $result;
     }
 
-// return one string with all names of the list
+    // return one string with all names of the list
     function name(): string
     {
         global $debug;
@@ -572,8 +594,8 @@ class word_list
         return $result;
     }
 
-// return a list of the word names
-// this function is called from dsp_id, so no other call is allowed
+    // return a list of the word names
+    // this function is called from dsp_id, so no other call is allowed
     function names(): array
     {
         $result = array();
@@ -587,19 +609,19 @@ class word_list
         return $result;
     }
 
-// return one string with all names of the list with the link
+    // return one string with all names of the list with the link
     function name_linked(): string
     {
-        return '' . implode(',', $this->names_linked()) . '';
+        return '' . dsp_array($this->names_linked()) . '';
     }
 
     // return a list of the word ids as an sql compatible text
     function ids_txt(): string
     {
-        return implode(',', $this->ids());
+        return sql_array( $this->ids());
     }
 
-// return a list of the word names with html links
+    // return a list of the word names with html links
     function names_linked(): array
     {
         log_debug('word_list->names_linked (' . count($this->lst) . ')');
@@ -607,13 +629,13 @@ class word_list
         foreach ($this->lst as $wrd) {
             $result[] = $wrd->display();
         }
-        log_debug('word_list->names_linked (' . implode(",", $result) . ')');
+        log_debug('word_list->names_linked (' . dsp_array($result) . ')');
         return $result;
     }
 
     // like names_linked, but without measure and time words
     // because measure words are usually shown after the number
-    function names_linked_ex_measure_and_time()
+    function names_linked_ex_measure_and_time(): array
     {
         log_debug('word_list->names_linked_ex_measure_and_time (' . count($this->lst) . ')');
         $wrd_lst_ex = clone $this;
@@ -622,40 +644,39 @@ class word_list
         $wrd_lst_ex->ex_scaling();
         $wrd_lst_ex->ex_percent(); // the percent sign is normally added to the value
         $result = $wrd_lst_ex->names_linked();
-        log_debug('word_list->names_linked_ex_measure_and_time (' . implode(",", $result) . ')');
+        log_debug('word_list->names_linked_ex_measure_and_time (' . dsp_array($result) . ')');
         return $result;
     }
 
     // like names_linked, but only the measure words
     // because measure words are usually shown after the number
-    function names_linked_measure()
+    function names_linked_measure(): array
     {
         log_debug('word_list->names_linked_measure (' . count($this->lst) . ')');
         $wrd_lst_scale = $this->scaling_lst();
         $wrd_lst_measure = $this->measure_lst();
         $wrd_lst_measure->merge($wrd_lst_scale);
         $result = $wrd_lst_measure->names_linked();
-        log_debug('word_list->names_linked_measure (' . implode(",", $result) . ')');
+        log_debug('word_list->names_linked_measure (' . dsp_array($result) . ')');
         return $result;
     }
 
     // like names_linked, but only the time words
-    function names_linked_time()
+    function names_linked_time(): array
     {
         log_debug('word_list->names_linked_time (' . count($this->lst) . ')');
         $wrd_lst_time = $this->time_lst();
         $result = $wrd_lst_time->names_linked();
-        log_debug('word_list->names_linked_time (' . implode(",", $result) . ')');
+        log_debug('word_list->names_linked_time (' . dsp_array($result) . ')');
         return $result;
     }
 
-// similar to zuh_selector but using a list not a query
-    function dsp_selector($name, $form, $selected)
+    // similar to zuh_selector but using a list not a query
+    function dsp_selector($name, $form, $selected): string
     {
         log_debug('word_list->dsp_selector(' . $name . ',' . $form . ',s' . $selected . ')');
-        $result = '';
 
-        $result .= '<select name="' . $name . '" form="' . $form . '">';
+        $result = '<select name="' . $name . '" form="' . $form . '">';
 
         foreach ($this->lst as $wrd) {
             if ($wrd->id == $selected) {
@@ -672,11 +693,11 @@ class word_list
         return $result;
     }
 
-// todo: use word_link_list->display instead
-// list of related words filtered by a link type
-// returns the html code
-// database link must be open
-    function name_table($word_id, $verb_id, $direction, $user_id, $back)
+    // todo: use word_link_list->display instead
+    // list of related words filtered by a link type
+    // returns the html code
+    // database link must be open
+    function name_table($word_id, $verb_id, $direction, $user_id, $back): string
     {
         log_debug('word_list->name_table (t' . $word_id . ',v' . $verb_id . ',' . $direction . ',u' . $user_id . ')');
         $result = '';
@@ -752,8 +773,8 @@ class word_list
         return $result;
     }
 
-// display a list of words that match to the given pattern
-    function dsp_like($word_pattern, $user_id)
+    // display a list of words that match to the given pattern
+    function dsp_like($word_pattern, $user_id): string
     {
         log_debug('word_dsp->dsp_like (' . $word_pattern . ',u' . $user_id . ')');
 
@@ -796,9 +817,9 @@ class word_list
         return $result;
     }
 
-// return the first value related to the word lst
-// or an array with the value and the user_id if the result is user specific
-    function value()
+    // return the first value related to the word lst
+    // or an array with the value and the user_id if the result is user specific
+    function value(): value
     {
         $val = new value;
         $val->ids = $this->ids;
@@ -809,8 +830,8 @@ class word_list
         return $val;
     }
 
-// get the "best" value for the word list and scale it e.g. convert "2.1 mio" to "2'100'000"
-    function value_scaled()
+    // get the "best" value for the word list and scale it e.g. convert "2.1 mio" to "2'100'000"
+    function value_scaled(): value
     {
         log_debug("word_list->value_scaled " . $this->dsp_id() . " for " . $this->usr->name . ".");
 
@@ -830,15 +851,14 @@ class word_list
         return $val;
     }
 
-// return an url with the word ids
-    function id_url_long()
+    // return an url with the word ids
+    function id_url_long(): string
     {
-        $result = zu_ids_to_url($this->ids, "word");
-        return $result;
+        return zu_ids_to_url($this->ids, "word");
     }
 
-// true if the word is part of the word list
-    function does_contain($wrd_to_check)
+    // true if the word is part of the word list
+    function does_contain($wrd_to_check): bool
     {
         $result = false;
 
@@ -851,7 +871,7 @@ class word_list
         return $result;
     }
 
-// add one word to the word list, but only if it is not yet part of the word list
+    // add one word to the word list, but only if it is not yet part of the word list
     function add($wrd_to_add)
     {
         log_debug('word_list->add ' . $wrd_to_add->dsp_id());
@@ -863,7 +883,7 @@ class word_list
         }
     }
 
-// add one word by the id to the word list, but only if it is not yet part of the word list
+    // add one word by the id to the word list, but only if it is not yet part of the word list
     function add_id($wrd_id_to_add)
     {
         log_debug('word_list->add_id (' . $wrd_id_to_add . ')');
@@ -879,7 +899,7 @@ class word_list
         }
     }
 
-// add one word to the word list defined by the word name
+    // add one word to the word list defined by the word name
     function add_name($wrd_name_to_add)
     {
         log_debug('word_list->add_name (' . $wrd_name_to_add . ')');
@@ -895,7 +915,7 @@ class word_list
         }
     }
 
-// merge as a function, because the array_merge does not create a object
+    // merge as a function, because the array_merge does not create a object
     function merge($new_wrd_lst)
     {
         log_debug('word_list->merge ' . $new_wrd_lst->name() . ' to ' . $this->dsp_id() . '"');
@@ -905,8 +925,8 @@ class word_list
         }
     }
 
-// filters a word list e.g. out of "2014", "2015", "2016", "2017" with the filter "2016", "2017","2018" the result is "2016", "2017"
-    function filter($filter_lst)
+    // filters a word list e.g. out of "2014", "2015", "2016", "2017" with the filter "2016", "2017","2018" the result is "2016", "2017"
+    function filter($filter_lst): word_list
     {
         log_debug('word_list->filter of ' . $filter_lst->dsp_id() . ' and ' . $this->dsp_id());
         $result = clone $this;
@@ -941,7 +961,7 @@ class word_list
         return $result;
     }
 
-// diff as a function, because it seems the array_diff does not work for an object list
+    // diff as a function, because it seems the array_diff does not work for an object list
     /*
     $del_wrd_lst is the list of words that should be removed from this list object
     e.g. if the the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
@@ -977,7 +997,7 @@ class word_list
         log_debug('word_list->diff -> ' . $this->dsp_id());
     }
 
-// similar to diff, but using an id array to exclude instead of a word list object
+    // similar to diff, but using an id array to exclude instead of a word list object
     function diff_by_ids($del_wrd_ids)
     {
         foreach ($del_wrd_ids as $del_wrd_id) {
@@ -991,11 +1011,11 @@ class word_list
             }
         }
         $this->ids = array_diff($this->ids, $del_wrd_ids);
-        log_debug('word_list->diff_by_ids -> ' . $this->dsp_id() . ' (' . implode(",", $this->ids) . ')');
+        log_debug('word_list->diff_by_ids -> ' . $this->dsp_id() . ' (' . dsp_array($this->ids) . ')');
     }
 
-// look at a word list and remove the general word, if there is a more specific word also part of the list e.g. remove "Country", but keep "Switzerland"
-    function keep_only_specific()
+    // look at a word list and remove the general word, if there is a more specific word also part of the list e.g. remove "Country", but keep "Switzerland"
+    function keep_only_specific(): array
     {
         log_debug('word_list->keep_only_specific (' . $this->dsp_id() . ')');
 
@@ -1013,12 +1033,12 @@ class word_list
             }
         }
 
-        log_debug('word_list->keep_only_specific -> (' . implode(",", $result) . ')');
+        log_debug('word_list->keep_only_specific -> (' . dsp_array($result) . ')');
         return $result;
     }
 
-// true if a word lst contains a time word
-    function has_time()
+    // true if a word lst contains a time word
+    function has_time(): bool
     {
         log_debug('word_list->has_time for ' . $this->dsp_id());
         $result = false;
@@ -1035,8 +1055,8 @@ class word_list
         return $result;
     }
 
-// true if a word lst contains a measure word
-    function has_measure()
+    // true if a word lst contains a measure word
+    function has_measure(): bool
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
@@ -1052,8 +1072,8 @@ class word_list
         return $result;
     }
 
-// true if a word lst contains a scaling word
-    function has_scaling()
+    // true if a word lst contains a scaling word
+    function has_scaling(): bool
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
@@ -1069,8 +1089,8 @@ class word_list
         return $result;
     }
 
-// true if a word lst contains a percent scaling word, which is used for a predefined formatting of the value
-    function has_percent()
+    // true if a word lst contains a percent scaling word, which is used for a predefined formatting of the value
+    function has_percent(): bool
     {
         $result = false;
         // loop over the word ids and add only the time ids to the result array
@@ -1086,29 +1106,12 @@ class word_list
         return $result;
     }
 
-// to be replaced by time_lst
-    function time_lst_old()
-    {
-        log_debug('word_list->time_lst_old(' . $this->dsp_id() . ')');
-
-        $result = array();
-        $time_type = cl(DBL_WORD_TYPE_TIME);
-        // loop over the word ids and add only the time ids to the result array
-        foreach ($this->lst as $wrd) {
-            if ($wrd->type_id == $time_type) {
-                $result[] = $wrd;
-            }
-        }
-        //zu_debug('word_list->time_lst_old -> ('.zu_lst_dsp($result).')');
-        return $result;
-    }
-
-// filter the time words out of the list of words
-    function time_lst()
+    // filter the time words out of the list of words
+    function time_lst(): phrase_list
     {
         log_debug('word_list->time_lst for words "' . $this->dsp_id() . '"');
 
-        $result = new word_list;
+        $result = new phrase_list;
         $result->usr = $this->usr;
         $time_type = cl(DBL_WORD_TYPE_TIME);
         // loop over the word ids and add only the time ids to the result array
@@ -1128,8 +1131,10 @@ class word_list
         return $result;
     }
 
-// create a useful list of time word
-    function time_useful()
+    /**
+     * create a useful list of time phrases
+     */
+    function time_useful(): word_list
     {
         log_debug('word_list->time_useful for ' . $this->dsp_id());
 
@@ -1156,7 +1161,7 @@ class word_list
     }
 
     // filter the measure words out of the list of words
-    function measure_lst()
+    function measure_lst(): word_list
     {
         log_debug('word_list->measure_lst(' . $this->dsp_id() . ')');
 
@@ -1178,7 +1183,7 @@ class word_list
     }
 
     // filter the scaling words out of the list of words
-    function scaling_lst()
+    function scaling_lst(): word_list
     {
         log_debug('word_list->scaling_lst(' . $this->dsp_id() . ')');
 
@@ -1201,8 +1206,8 @@ class word_list
         return $result;
     }
 
-// filter the percent words out of the list of words
-    function percent_lst()
+    // filter the percent words out of the list of words
+    function percent_lst(): word_list
     {
         log_debug('word_list->percent_lst(' . $this->dsp_id() . ')');
 
@@ -1223,7 +1228,7 @@ class word_list
         return $result;
     }
 
-// Exclude all time words out of the list of words
+    // Exclude all time words out of the list of words
     function ex_time()
     {
         $del_wrd_lst = $this->time_lst();
@@ -1231,7 +1236,7 @@ class word_list
         log_debug('word_list->ex_time -> ' . $this->dsp_id());
     }
 
-// Exclude all measure words out of the list of words
+    // Exclude all measure words out of the list of words
     function ex_measure()
     {
         $del_wrd_lst = $this->measure_lst();
@@ -1239,7 +1244,7 @@ class word_list
         log_debug('word_list->ex_measure -> ' . $this->dsp_id());
     }
 
-// Exclude all scaling words out of the list of words
+    // Exclude all scaling words out of the list of words
     function ex_scaling()
     {
         $del_wrd_lst = $this->scaling_lst();
@@ -1247,7 +1252,7 @@ class word_list
         log_debug('word_list->ex_scaling -> ' . $this->dsp_id());
     }
 
-// remove the percent words from this word list
+    // remove the percent words from this word list
     function ex_percent()
     {
         $del_wrd_lst = $this->percent_lst();
@@ -1255,8 +1260,8 @@ class word_list
         log_debug('word_list->ex_percent -> ' . $this->dsp_id());
     }
 
-// sort a word list by name
-    function wlsort()
+    // sort a word list by name
+    function wlsort(): array
     {
         log_debug('word_list->wlsort (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
         $name_lst = array();
@@ -1267,7 +1272,7 @@ class word_list
             $pos++;
         }
         asort($name_lst);
-        log_debug('word_list->wlsort names sorted "' . implode('","', $name_lst) . '" (' . implode(',', array_keys($name_lst)) . ')');
+        log_debug('word_list->wlsort names sorted "' . implode('","', $name_lst) . '" (' . dsp_array(array_keys($name_lst)) . ')');
         foreach (array_keys($name_lst) as $sorted_id) {
             log_debug('word_list->wlsort get ' . $sorted_id);
             $wrd_to_add = $this->lst[$sorted_id];
@@ -1285,7 +1290,7 @@ class word_list
     }
 
     // this should create a value matrix
-    function val_matrix($col_lst, $usr): array
+    function val_matrix($col_lst): array
     {
         if ($col_lst != null) {
             log_debug('word_list->val_matrix for ' . $this->dsp_id() . ' with ' . $col_lst->dsp_id());
@@ -1297,14 +1302,12 @@ class word_list
         return $result;
     }
 
-    function dsp_val_matrix($val_matrix, $usr): string
+    function dsp_val_matrix($val_matrix): string
     {
         if ($val_matrix != null) {
             log_debug('word_list->dsp_val_matrix for ' . $val_matrix->dsp_id());
         }
-        $result = '';
-
-        return $result;
+        return '';
     }
 
     /*
@@ -1312,7 +1315,7 @@ class word_list
     */
 
     // get a list of all views used to the words
-    function view_lst()
+    function view_lst(): array
     {
         $result = array();
         log_debug('word_list->view_lst');
@@ -1433,10 +1436,9 @@ class word_list
     // get the most useful time for the given words
     // so either the last time from the word list
     // or the time of the last "real" (reported) value for the word list
-    function assume_time()
+    function assume_time(): word
     {
         log_debug('word_list->assume_time for ' . $this->dsp_id());
-        $result = null;
 
         if ($this->has_time()) {
             // get the last time from the word list
@@ -1471,7 +1473,7 @@ class word_list
     */
 
     // get the best matching word group ()
-    function get_grp()
+    function get_grp(): phrase_group
     {
         log_debug('word_list->get_grp');
 
@@ -1502,8 +1504,8 @@ class word_list
         return $grp;
     }
 
-// convert the word list object into a phrase list object
-    function phrase_lst()
+    // convert the word list object into a phrase list object
+    function phrase_lst(): phrase_list
     {
         log_debug('word_list->phrase_lst ' . $this->dsp_id());
         $phr_lst = new phrase_list;

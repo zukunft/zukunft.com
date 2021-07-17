@@ -101,14 +101,14 @@ class user_list
 
         $sql = "SELECT user_id, user_name, code_id 
               FROM users
-            WHERE user_id IN(" . implode(",", $this->usr_lst) . ")
+            WHERE user_id IN(" . sql_array($this->usr_lst) . ")
          ORDER BY user_id;";
         $this->load_sql($sql);
     }
 
     function name(): string
     {
-        return implode(",", $this->names());
+        return dsp_array($this->names());
     }
 
     function names(): array

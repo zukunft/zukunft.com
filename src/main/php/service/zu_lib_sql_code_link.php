@@ -249,11 +249,12 @@ $dbl_protection_types = array();
 // don't use it for the first call to make sure that the description is in the database
 function cl($code_id)
 {
-    return sql_code_link($code_id, "", 0);
+    global $db_con;
+    return sql_code_link($code_id, "", $db_con);
 }
 
 // return the default description for any code link
-function sql_code_link_description($code_id)
+function sql_code_link_description($code_id): string
 {
     $result = '';
 
@@ -278,15 +279,21 @@ function sql_code_link_description($code_id)
 }
 
 
-// returns the pk / row_id for a given code_id
-// if the code_id does not exist the missing record is created
-// the code_id is always saved in the 20 char long field code_id
 // TODO check automatically that the code links are unique
-function sql_code_link($code_id, $description)
+/**
+ * returns the pk / row_id for a given code_id
+ * if the code_id does not exist the missing record is created
+ * the code_id is always saved in the 20 char long field code_id
+ * the short form is the cl function without description and db_con as parameter
+ *
+ * @param $code_id
+ * @param $description
+ * @param $db_con
+ * @return int|mixed
+ */
+function sql_code_link($code_id, $description, $db_con)
 {
     log_debug("sql_code_link (" . $code_id . "," . $description . ")");
-
-    global $db_con;
 
     $row_id = 0;
 
@@ -514,6 +521,3 @@ function sql_code_link($code_id, $description)
 
     return $row_id;
 }
-
-
-?>

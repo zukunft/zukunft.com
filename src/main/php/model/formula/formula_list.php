@@ -113,7 +113,7 @@ class formula_list
             $sql_where = 'f.formula_id > 0';
             if (count($this->ids) > 0) {
                 $sql_from = 'formulas f';
-                $sql_where = 'f.formula_id IN (' . implode(',', $this->ids) . ')';
+                $sql_where = 'f.formula_id IN (' . sql_array($this->ids) . ')';
             } elseif (isset($this->wrd)) {
                 $sql_from = 'formula_links l, formulas f';
                 $sql_where = 'l.phrase_id = ' . $this->wrd->id . ' AND l.formula_id = f.formula_id';
@@ -171,7 +171,7 @@ class formula_list
 
     function name(): string
     {
-        return implode(",", $this->names());
+        return dsp_array($this->names());
     }
 
     // this function is called from dsp_id, so no other call is allowed

@@ -243,7 +243,7 @@ class formula_value_list
                 }
             }
         }
-        log_debug('fv_lst->names (' . implode(",", $result) . ')');
+        log_debug('fv_lst->names (' . dsp_array($result) . ')');
         return $result;
     }
 
@@ -308,7 +308,7 @@ class formula_value_list
     // ex zuc_upd_lst_val
     function add_frm_val($phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
-        log_debug('fv_lst->add_frm_val(t' . $phr_id . ',' . implode(",", $frm_phr_ids) . ',u' . $this->usr->id . ')');
+        log_debug('fv_lst->add_frm_val(t' . $phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->usr->id . ')');
 
         global $debug;
 
@@ -580,7 +580,7 @@ class formula_value_list
         $usr_lst = new user_list;
         $usr_lst->load_active();
 
-        log_debug('active users (' . implode(",", $usr_lst->names()) . ')');
+        log_debug('active users (' . dsp_array($usr_lst->names()) . ')');
         foreach ($usr_lst->usr_lst as $usr) {
             // check
             $usr_calc_needed = False;

@@ -56,8 +56,8 @@ class formula_element_group
     // display the unique id fields
     function dsp_id(): string
     {
-        $id = implode(",", $this->ids());
-        $name = implode(",", $this->names());
+        $id = dsp_array($this->ids());
+        $name = dsp_array($this->names());
         $phr_name = '';
         if (isset($this->phr_lst)) {
             $phr_name = $this->phr_lst->name();
@@ -84,7 +84,7 @@ class formula_element_group
     // show the element group name to the user in the most simple form (without any ids)
     function name(): string
     {
-        return implode(",", $this->names());
+        return dsp_array($this->names());
     }
 
     // list of the formula element names independent from the element type

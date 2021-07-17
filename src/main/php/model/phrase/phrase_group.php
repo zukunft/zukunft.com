@@ -97,21 +97,21 @@ class phrase_group
                 $this->lnk_ids[] = $id * -1;
             }
         }
-        log_debug('phrase_group->set_ids_to_wrd_or_lnk_ids split "' . implode(",", $this->ids) . '" to "' . implode(",", $this->wrd_ids) . '" and "' . implode(",", $this->lnk_ids) . '"');
+        log_debug('phrase_group->set_ids_to_wrd_or_lnk_ids split "' . dsp_array($this->ids) . '" to "' . dsp_array($this->wrd_ids) . '" and "' . dsp_array($this->lnk_ids) . '"');
     }
 
     // the opposite of set_ids_to_wrd_or_lnk_ids
     private function set_ids_from_wrd_or_lnk_ids()
     {
-        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "' . implode(",", $this->wrd_ids) . '"');
+        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "' . dsp_array($this->wrd_ids) . '"');
         if (isset($this->wrd_ids)) {
             $this->ids = zu_ids_not_zero($this->wrd_ids);
         } else {
             $this->ids = array();
         }
-        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids done words "' . implode(",", $this->ids) . '"');
+        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids done words "' . dsp_array($this->ids) . '"');
         if (isset($this->lnk_ids)) {
-            log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triples "' . implode(",", $this->lnk_ids) . '"');
+            log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triples "' . dsp_array($this->lnk_ids) . '"');
             foreach ($this->lnk_ids as $id) {
                 if (trim($id) <> '') {
                     log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triple "' . $id . '"');
@@ -124,14 +124,14 @@ class phrase_group
                 }
             }
         }
-        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "' . implode(",", $this->wrd_ids) . '" done');
+        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "' . dsp_array($this->wrd_ids) . '" done');
     }
 
     // load the word list based on the word id array
     private function set_wrd_lst()
     {
         if (isset($this->wrd_ids)) {
-            log_debug('phrase_group->set_wrd_lst for "' . implode(",", $this->wrd_ids) . '"');
+            log_debug('phrase_group->set_wrd_lst for "' . dsp_array($this->wrd_ids) . '"');
 
             // ignore double word entries
             $this->wrd_ids = array_unique($this->wrd_ids);
@@ -163,7 +163,7 @@ class phrase_group
     private function set_lnk_lst()
     {
         if (isset($this->lnk_ids)) {
-            log_debug('phrase_group->set_lnk_lst for "' . implode(",", $this->lnk_ids) . '"');
+            log_debug('phrase_group->set_lnk_lst for "' . dsp_array($this->lnk_ids) . '"');
 
             // ignore double word entries
             $this->lnk_ids = array_unique($this->lnk_ids);
@@ -194,18 +194,18 @@ class phrase_group
     // create the wrd_id_txt based on the wrd_ids
     private function set_wrd_id_txt()
     {
-        log_debug('phrase_group->set_wrd_id_txt for "' . implode(",", $this->wrd_ids) . '"');
+        log_debug('phrase_group->set_wrd_id_txt for "' . dsp_array($this->wrd_ids) . '"');
 
         // make sure that the ids have always the same order
         asort($this->wrd_ids);
 
-        $wrd_id_txt = implode(",", $this->wrd_ids);
+        $wrd_id_txt = dsp_array($this->wrd_ids);
         log_debug('phrase_group->set_wrd_id_txt test text "' . $wrd_id_txt . '"');
 
         if (strlen($wrd_id_txt) > 255) {
             log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
         } else {
-            $this->wrd_id_txt = implode(",", $this->wrd_ids);
+            $this->wrd_id_txt = dsp_array($this->wrd_ids);
         }
         log_debug('phrase_group->set_wrd_id_txt to "' . $this->wrd_id_txt . '"');
     }
@@ -298,17 +298,17 @@ class phrase_group
     }
 
     // for building the where clause don't use the sf function to force the string format search
-    private function set_lst_where()
+    private function set_lst_where(): string
     {
         log_debug('phrase_group->set_lst_where');
         $sql_where = '';
         if ($this->wrd_id_txt <> '' and $this->lnk_id_txt <> '') {
-            $sql_where = "g.word_ids   = '" . $this->wrd_id_txt . "'
-                AND g.triple_ids = '" . $this->lnk_id_txt . "'";
+            $sql_where = "word_ids   = '" . $this->wrd_id_txt . "'
+                AND triple_ids = '" . $this->lnk_id_txt . "'";
         } elseif ($this->wrd_id_txt <> '') {
-            $sql_where = "g.word_ids   = '" . $this->wrd_id_txt . "'";
+            $sql_where = "word_ids   = '" . $this->wrd_id_txt . "'";
         } elseif ($this->lnk_id_txt <> '') {
-            $sql_where = "g.triple_ids = '" . $this->lnk_id_txt . "'";
+            $sql_where = "triple_ids = '" . $this->lnk_id_txt . "'";
         }
         log_debug('phrase_group->set_lst_where -> ' . $sql_where);
         return $sql_where;
@@ -428,7 +428,7 @@ class phrase_group
             // set the where clause depending on the values given
             $sql_where = '';
             if ($this->id > 0) {
-                $sql_where = "g.phrase_group_id = " . $this->id;
+                $sql_where = "phrase_group_id = " . $this->id;
             }
             $sql_where = $this->load_by_selector($sql_where);
             log_debug('phrase_group->load where ' . $sql_where);
@@ -607,7 +607,7 @@ class phrase_group
 
     // set the group id (and create a new group if needed)
     // ex grp_id that returns the id
-    function get_id()
+    function get_id(): int
     {
         log_debug('phrase_group->get_id ' . $this->dsp_id());
         $this->get();
@@ -1036,11 +1036,11 @@ class phrase_group
                 //$sql_result = $db_con->exe($sql, 'phrase_group->save_phr_links', array());
                 $sql_result = $db_con->exe($sql);
                 if ($sql_result === False) {
-                    $result .= 'Error adding new group links "' . implode(',', $add_ids) . '" for ' . $this->id . '.';
+                    $result .= 'Error adding new group links "' . dsp_array($add_ids) . '" for ' . $this->id . '.';
                 }
             }
         }
-        log_debug('phrase_group->save_phr_links -> added links "' . implode(',', $add_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('phrase_group->save_phr_links -> added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
 
         // remove the links not needed any more
         if (count($del_ids) > 0) {
@@ -1048,14 +1048,14 @@ class phrase_group
             $del_nbr = 0;
             $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE phrase_group_id = ' . $this->id . '
-                 AND ' . $field_name . ' IN (' . implode(',', $del_ids) . ');';
+                 AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
             //$sql_result = $db_con->exe($sql, "phrase_group->delete_phr_links", array());
             $sql_result = $db_con->exe($sql);
             if ($sql_result === False) {
-                $result .= 'Error removing group links "' . implode(',', $del_ids) . '" from ' . $this->id . '.';
+                $result .= 'Error removing group links "' . dsp_array($del_ids) . '" from ' . $this->id . '.';
             }
         }
-        log_debug('phrase_group->save_phr_links -> deleted links "' . implode(',', $del_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('phrase_group->save_phr_links -> deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
 
     }
 

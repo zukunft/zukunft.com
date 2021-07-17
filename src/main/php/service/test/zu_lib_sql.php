@@ -669,7 +669,7 @@ function zu_sql_log_field($table_name, $row_id, $user_id, $field_name, $new_valu
 // $word_lst is an array of word ids 
 function zu_sql_val_add($new_value, $word_lst)
 {
-    log_debug('zu_sql_val_add(' . $new_value . ',' . implode(',', $word_lst) . ')');
+    log_debug('zu_sql_val_add(' . $new_value . ',' . dsp_array($word_lst) . ')');
     $result = 0;
 
     // todo: log the change
@@ -1096,14 +1096,14 @@ function zu_sql_word_lst_values($word_ids, $value_ids, $user_id)
 }
 
 // add extra words to row words if the extra word is a differentiator
-function zu_sql_word_lst_add_differantiator($word_lst, $xtra_words)
+function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
 {
-    log_debug('zu_sql_word_lst_add_differantiator(' . $word_lst . ',' . $xtra_words . ')');
+    log_debug('zu_sql_word_lst_add_differentiator(' . $word_lst . ',' . $xtra_words . ')');
 
-    $is_a_type = sql_code_link(DBL_LINK_TYPE_IS);
-    $differantiator_type = sql_code_link(DBL_LINK_TYPE_DIFFERENTIATOR);
+    $is_a_type = cl(DBL_LINK_TYPE_IS);
+    $differentiator_type = cl(DBL_LINK_TYPE_DIFFERENTIATOR);
 
-    // add all words that are "is a" to the $differantiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
+    // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
     echo 'extra: ' . implode(",", $xtra_words) . '<br>';
     $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, "down");
     $added_words = zu_lst_not_in($added_words, $xtra_words);
@@ -1116,7 +1116,7 @@ function zu_sql_word_lst_add_differantiator($word_lst, $xtra_words)
         $added_words = zu_lst_not_in($added_words, $xtra_words);
     }
 
-    $differentiator_words = zu_sql_word_lst_linked($xtra_words, $differantiator_type, "down");
+    $differentiator_words = zu_sql_word_lst_linked($xtra_words, $differentiator_type, "down");
     echo '+diff: ' . implode(",", $differentiator_words) . '<br>';
 
     $result = array();
@@ -1130,7 +1130,7 @@ function zu_sql_word_lst_add_differantiator($word_lst, $xtra_words)
     }
     return $result;
 
-    log_debug('zu_sql_word_lst_add_differantiator ... done (' . implode(",", $result) . ')');
+    log_debug('zu_sql_word_lst_add_differentiator ... done (' . implode(",", $result) . ')');
 
     return $result;
 }

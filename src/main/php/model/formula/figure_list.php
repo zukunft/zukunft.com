@@ -74,7 +74,7 @@ class figure_list
     // return a list of the figure list ids as an sql compatible text
     function ids_txt(): string
     {
-        return implode(',', $this->ids());
+        return dsp_array($this->ids());
     }
 
     // this function is called from dsp_id, so no other call is allowed

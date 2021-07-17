@@ -480,14 +480,14 @@ function zuv_table ($word_id, $related_word_id, $user_id) {
     // display the row differentiators
     log_debug("zuv_table ... get differentiator for ".$sub_word_id.".");
     // get all potential differentiator words
-    $differentiator_words = zut_db_differantiator_words_filtered($sub_word_id, $all_word_ids, $user_id);
+    $differentiator_words = zut_db_differentiator_words_filtered($sub_word_id, $all_word_ids, $user_id);
     //$differentiator_words = zut_db_differentiator_words($sub_word_id);
     log_debug("zuv_table ... show differentiator of ".explode(",",$differentiator_words).".");
     // select only the differentiator words that have a value for the main word
     $differentiator_words = zu_lst_in($differentiator_words, $xtra_words);
 
     // find direct differentiator words
-    $differentiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERANTIATOR);
+    $differentiator_type = cl(SQL_LINK_TYPE_DIFFERANTIATOR);
     $type_word_ids = array_keys(zu_sql_get_lst(zu_sql_words_linked($sub_word_id, $differentiator_type, "up")));
     log_debug("zuv_table -> differentiator types ".implode(",",$type_word_ids).".");
     

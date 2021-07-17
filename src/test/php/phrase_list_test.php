@@ -77,14 +77,14 @@ function run_phrase_list_test()
     $wrd_lst->load();
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_parents = $phr_lst->foaf_parents(cl(DBL_LINK_TYPE_IS));
-    $result = implode(',', $lst_parents->names());
+    $result = dsp_array($lst_parents->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
     $exe_start_time = test_show_result('phrase_list->foaf_parents for ' . $phr_lst->name() . ' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
     // ... same using is
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_is = $phr_lst->is();
-    $result = implode(',', $lst_is->names());
+    $result = dsp_array($lst_is->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
     $exe_start_time = test_show_result('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -95,7 +95,7 @@ function run_phrase_list_test()
     $wrd_lst->load();
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_is = $phr_lst->is();
-    $result = implode(',', $lst_is->names());
+    $result = dsp_array($lst_is->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
     $exe_start_time = test_show_result('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

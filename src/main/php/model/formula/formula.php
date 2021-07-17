@@ -670,7 +670,7 @@ class formula extends user_sandbox
                     if ($this->need_all_val) {
                         log_debug('calculate ' . $this->name_linked($back) . ' only if all numbers are given');
                         if ($fv->val_missing) {
-                            log_debug('got some numbers for ' . $this->name_linked($back) . ' and ' . implode(",", $fv->wrd_ids));
+                            log_debug('got some numbers for ' . $this->name_linked($back) . ' and ' . dsp_array($fv->wrd_ids));
                         } else {
                             if ($fv->is_std) {
                                 log_debug('got all numbers for ' . $this->name_linked($back) . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text);
@@ -1234,7 +1234,7 @@ class formula extends user_sandbox
             $new_wrd_id = $this->get_word($frm_text);
         }
 
-        log_debug('formula->wrd_ids -> (' . implode(",", $result) . ')');
+        log_debug('formula->wrd_ids -> (' . dsp_array($result) . ')');
         return $result;
     }
 
@@ -1254,7 +1254,7 @@ class formula extends user_sandbox
             $new_frm_id = $this->get_formula($frm_text);
         }
 
-        log_debug('formula->ids -> (' . implode(",", $result) . ')');
+        log_debug('formula->ids -> (' . dsp_array($result) . ')');
         return $result;
     }
 
@@ -1277,7 +1277,7 @@ class formula extends user_sandbox
                 $elm_ids = $this->wrd_ids($frm_text, $frm_usr_id);
                 break;
         }
-        log_debug('formula->element_refresh_type -> got (' . implode(",", $elm_ids) . ') of type ' . $element_type . ' from text');
+        log_debug('formula->element_refresh_type -> got (' . dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
         if ($frm_usr_id > 0) {
@@ -1293,11 +1293,11 @@ class formula extends user_sandbox
         foreach ($db_lst as $db_row) {
             $elm_db_ids[] = $db_row['ref_id'];
         }
-        log_debug('formula->element_refresh_type -> got (' . implode(",", $elm_db_ids) . ') of type ' . $element_type . ' from database');
+        log_debug('formula->element_refresh_type -> got (' . dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
 
         // add missing links
         $elm_add_ids = array_diff($elm_ids, $elm_db_ids);
-        log_debug('formula->element_refresh_type -> add ' . $element_type . ' (' . implode(",", $elm_add_ids) . ')');
+        log_debug('formula->element_refresh_type -> add ' . $element_type . ' (' . dsp_array($elm_add_ids) . ')');
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
@@ -1321,7 +1321,7 @@ class formula extends user_sandbox
 
         // delete links not needed any more
         $elm_del_ids = array_diff($elm_db_ids, $elm_ids);
-        log_debug('formula->element_refresh_type -> del ' . $element_type . ' (' . implode(",", $elm_del_ids) . ')');
+        log_debug('formula->element_refresh_type -> del ' . $element_type . ' (' . dsp_array($elm_del_ids) . ')');
         foreach ($elm_del_ids as $elm_del_id) {
             $field_names = array();
             $field_values = array();

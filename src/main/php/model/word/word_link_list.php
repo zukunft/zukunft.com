@@ -172,9 +172,9 @@ class word_link_list
         // if the list of word link ids is set, use them for a direct selection
         if (isset($this->ids)) {
             if (count($this->ids) > 0) {
-                $id_txt = implode(",", $this->ids);
+                $id_txt = sql_array($this->ids);
                 if ($id_txt <> '') {
-                    $sql_where = 'l.word_link_id IN (' . implode(",", $this->ids) . ')';
+                    $sql_where = 'l.word_link_id IN (' . $id_txt . ')';
                     $sql_wrd1_fields = $this->load_wrd_fields('');
                     $sql_wrd1_from = $this->load_wrd_from('');
                     $sql_wrd1 = 'AND l.from_phrase_id = t.word_id';
@@ -309,7 +309,9 @@ class word_link_list
                 foreach ($db_lst as $db_lnk) {
                     if (is_null($db_lnk['excluded']) or $db_lnk['excluded'] == 0) {
                         if ($db_lnk['word_link_id'] > 0) {
+                            // create one work link object and fill it
                             $new_link = new word_link;
+                            // fill the fields used for searching
                             $new_link->usr = $this->usr;
                             $new_link->id = $db_lnk['word_link_id'];
                             $new_link->from_id = $db_lnk['from_phrase_id'];
@@ -317,13 +319,21 @@ class word_link_list
                             $new_link->to_id = $db_lnk['to_phrase_id'];
                             $new_link->description = $db_lnk['description'];
                             $new_link->name = $db_lnk['word_link_name'];
+                            // fill the verb
                             if ($db_lnk['verb_id'] > 0) {
                                 $new_verb = new verb;
                                 $new_verb->usr = $this->usr;
                                 $new_verb->row_mapper($db_lnk);
+                                $new_link->verb = $new_verb;
+                                $new_link->verb_name = $new_verb->name;
                             }
+                            // fill the from word
                             // if the source word is set, the query result probably does not contain the values of the source word
-                            if (!isset($this->wrd)) {
+                            if (isset($this->wrd)) {
+                                log_debug('word_link_list->load ... use "' . $this->wrd->name . '" as from');
+                                $new_link->from = $this->wrd;
+                                $new_link->from_name = $this->wrd->name;
+                            } else {
                                 if ($db_lnk['word_id'] > 0) {
                                     $new_word = new word_dsp;
                                     $new_word->usr = $this->usr;
@@ -338,13 +348,10 @@ class word_link_list
                                     $new_link->from = $new_word;
                                     $new_link->from_name = $new_word->name;
                                 } else {
-                                    if (isset($this->wrd)) {
-                                        log_debug('word_link_list->load ... use "' . $this->wrd->name . '" as from');
-                                        $new_link->from = $this->wrd;
-                                        $new_link->from_name = $this->wrd->name;
-                                    }
+                                    log_warning('word_link_list->load word missing');
                                 }
                             }
+                            // fill the to word
                             if ($db_lnk['word_id2'] > 0) {
                                 $new_word = new word_dsp;
                                 $new_word->usr = $this->usr;
@@ -397,7 +404,7 @@ class word_link_list
     {
         $result = '';
 
-        $id = implode(",", $this->ids);
+        $id = dsp_array( $this->ids);
         $name = $this->name();
         if ($name <> '') {
             $result .= '"' . $name . '" (' . $id . ')';
@@ -411,7 +418,7 @@ class word_link_list
     // description of the triple list for the user
     function name(): string
     {
-        return implode(",", $this->names());
+        return dsp_array( $this->names());
     }
 
     // return a list of the triple names
@@ -512,6 +519,7 @@ class word_link_list
                 }
 
                 // in case of the verb "following" continue the series after the last element
+                $start_id = 0;
                 if ($lnk->verb_id == cl(DBL_LINK_TYPE_FOLLOW)) {
                     $start_id = $last_linked_word_id;
                     // and link with the same direction (looks like not needed!)
@@ -527,7 +535,6 @@ class word_link_list
                 }
 
                 if ($lnk->verb_id <> $next_lnk->verb_id) {
-                    $start_id = 0;
                     if ($lnk->from == null) {
                         log_warning('graph->display from is missing');
                     } else {

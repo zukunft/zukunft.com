@@ -46,18 +46,18 @@ if ($sql == false) {
 // the code link always is done with the field "code_id"
 // this way the user can give the record another name without using the code link
 // maybe the code link should be shown to the user for
-sql_code_link(DBL_VIEW_WORD_ADD,     "Add new words");
-sql_code_link(DBL_VIEW_WORD_EDIT,    "Word Edit");
-sql_code_link(DBL_VIEW_VALUE_ADD,    "Add new values");
-sql_code_link(DBL_VIEW_VALUE_EDIT,   "Value Edit");
-sql_code_link(DBL_VIEW_FORMULA_ADD,  "Add new formula");
-sql_code_link(DBL_VIEW_FORMULA_EDIT, "Formula Edit");
-sql_code_link(DBL_VIEW_ADD,          "Add new view");
-sql_code_link(DBL_VIEW_EDIT,         "view Edit");
-sql_code_link(DBL_VIEW_IMPORT,       "Import");
+sql_code_link(DBL_VIEW_WORD_ADD,     "Add new words", $db_con);
+sql_code_link(DBL_VIEW_WORD_EDIT,    "Word Edit", $db_con);
+sql_code_link(DBL_VIEW_VALUE_ADD,    "Add new values", $db_con);
+sql_code_link(DBL_VIEW_VALUE_EDIT,   "Value Edit", $db_con);
+sql_code_link(DBL_VIEW_FORMULA_ADD,  "Add new formula", $db_con);
+sql_code_link(DBL_VIEW_FORMULA_EDIT, "Formula Edit", $db_con);
+sql_code_link(DBL_VIEW_ADD,          "Add new view", $db_con);
+sql_code_link(DBL_VIEW_EDIT,         "view Edit", $db_con);
+sql_code_link(DBL_VIEW_IMPORT,       "Import", $db_con);
 
-sql_code_link(DBL_WORD_TYPE_TIME,    "Time Word");
-sql_code_link(DBL_LINK_TYPE_IS,      "is a");
+sql_code_link(DBL_WORD_TYPE_TIME,    "Time Word", $db_con);
+sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
 
 // create test records
 // these records are used for the test cases

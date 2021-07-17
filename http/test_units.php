@@ -71,6 +71,4 @@ $usr->id = SYSTEM_USER_ID;
 // start unit testing
 // ------------------
 
-run_string_unit_tests (); // test functions not yet split into single unit tests
-run_word_link_list_unit_tests();
 run_unit_tests();

@@ -13,6 +13,8 @@
   - check the correct setup of the base words, numbers and formulas  
   
   TODO
+  - separate unit, db_unit and integration tests
+  - use always synthetic reserved words and values for testing that are removed after the tests
   - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "Company"
   - before starting the system test, check that really no user has used any test name and if create a warning and stop the test
   - use YAML export and import for testing the base sets

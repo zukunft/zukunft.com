@@ -53,15 +53,15 @@ class value extends user_sandbox_display
     // derived database fields for fast selection (needs to be verified from time to time to check the database consistency and detect program errors)
     // field set by the front end scripts such as value_add.php or value_edit.php
     public ?array $ids = null;            // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
-    public ?array $phr_lst = null;        // the phrase object list for this value
+    public ?phrase_list $phr_lst = null;  // the phrase object list for this value
     //public $phr_ids       = null;       // the phrase id list for this value loaded directly from the group
-    public ?array $wrd_lst = null;        // the word object list for this value
+    public ?word_list $wrd_lst = null;    // the word object list for this value
     public ?array $wrd_ids = null;        // the word id list for this value loaded directly from the group
     public ?array $lnk_lst = null;        // the triple object list  for this value
     public ?array $lnk_ids = null;        // the triple id list  for this value loaded directly from the group
     // public $phr_all_lst  = null;       // $phr_lst including the time wrd
     // public $phr_all_ids  = null;       // $phr_ids including the time id
-    public ?phrase $grp = null;           // phrases (word or triple) group object for this value
+    public ?phrase_group $grp = null;     // phrases (word or triple) group object for this value
     public ?phrase $time_phr = null;      // the time (period) word object for this value
     public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
     public ?source $source = null;        // the source object
@@ -176,7 +176,7 @@ class value extends user_sandbox_display
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-        $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', 'protection_type_id', 'excluded'));
+        $db_con->set_usr_num_fields(array('word_value', 'source_id', 'last_update', 'protection_type_id', 'excluded'));
         $db_con->set_usr_only_fields(array('share_type_id'));
         $db_con->set_where_text($sql_where);
         $sql = $db_con->select();
@@ -186,6 +186,85 @@ class value extends user_sandbox_display
         if ($this->id > 0) {
             log_debug('value->load_rec -> got ' . $this->number . ' with id ' . $this->id);
         }
+    }
+
+    /**
+     * create the SQL to select a phrase group
+     * @return string
+     */
+    function load_sql_group(bool $get_name = false): string
+    {
+        log_debug('value->load try best guess');
+        $sql_grp = '';
+        if ($this->phr_lst != null) {
+            $phr_lst = clone $this->phr_lst;
+            if ($this->time_id <= 0) {
+                $time_phr = $this->phr_lst->time_useful();
+                $this->time_id = $time_phr->id;
+            }
+            $phr_lst->ex_time();
+
+            // the phrase groups with the least number of additional words that have at least one formula value
+            $sql_grp_from = '';
+            $sql_grp_where = '';
+            $pos = 1;
+            foreach ($phr_lst->lst as $phr) {
+                if ($sql_grp_from <> '') {
+                    $sql_grp_from .= ',';
+                }
+                $sql_grp_from .= 'phrase_group_word_links l' . $pos;
+                $pos_prior = $pos - 1;
+                if ($sql_grp_where <> '') {
+                    $sql_grp_where .= ' AND l' . $pos_prior . '.phrase_group_id = l' . $pos . '.phrase_group_id AND ';
+                }
+                $sql_grp_where .= ' l' . $pos . '.word_id = ' . $phr->id;
+                $pos++;
+            }
+            $sql_avoid_code_check_prefix = "SELECT";
+            $sql_grp = $sql_avoid_code_check_prefix . ' l1.phrase_group_id 
+                          FROM ' . $sql_grp_from . ' 
+                         WHERE ' . $sql_grp_where;
+        }
+        return $sql_grp;
+    }
+
+    /**
+     * create the SQL to load a single value
+     * @return string the SQL statement or the name of the SQL statement
+     */
+    function load_sql(bool $get_name = false): string
+    {
+        global $db_con;
+
+        $sql_name = '';
+
+        $sql_grp = $this->load_sql_group();
+
+        // todo:
+        // count the number of phrases per group
+        // and add the user specific phrase links
+        // select also the time
+        $sql_time = '';
+        $sql_avoid_code_check_prefix = "SELECT";
+
+        if (isset($this->time_stamp)) {
+            $sql_val = "SELECT value_time_series_id 
+                            FROM value_time_series
+                          WHERE phrase_group_id IN (" . $sql_grp . ");";
+        } else {
+            if ($this->time_id > 0) {
+                $sql_time = ' AND time_word_id = ' . $this->time_id . ' ';
+            }
+            $sql_val = $sql_avoid_code_check_prefix . " value_id 
+                            FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . "
+                          WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
+        }
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql_val;
+        }
+        return $result;
     }
 
     // load the missing value parameters from the database
@@ -234,50 +313,9 @@ class value extends user_sandbox_display
                 // if not direct value is found try to get a more specific value
                 // similar to formula_value
                 if ($this->id <= 0 and isset($this->phr_lst)) {
-                    log_debug('value->load try best guess');
-                    $phr_lst = clone $this->phr_lst;
-                    if ($this->time_id <= 0) {
-                        $time_phr = $this->phr_lst->time_useful();
-                        $this->time_id = $time_phr->id;
-                    }
-                    $phr_lst->ex_time();
-                    if (count($phr_lst->lst) > 0) {
-                        // the phrase groups with the least number of additional words that have at least one formula value
-                        $sql_grp_from = '';
-                        $sql_grp_where = '';
-                        $pos = 1;
-                        foreach ($phr_lst->lst as $phr) {
-                            if ($sql_grp_from <> '') {
-                                $sql_grp_from .= ',';
-                            }
-                            $sql_grp_from .= 'phrase_group_word_links l' . $pos;
-                            $pos_prior = $pos - 1;
-                            if ($sql_grp_where <> '') {
-                                $sql_grp_where .= ' AND l' . $pos_prior . '.phrase_group_id = l' . $pos . '.phrase_group_id AND ';
-                            }
-                            $sql_grp_where .= ' l' . $pos . '.word_id = ' . $phr->id;
-                            $pos++;
-                        }
-                        $sql_grp = 'SELECT l1.phrase_group_id 
-                          FROM ' . $sql_grp_from . ' 
-                         WHERE ' . $sql_grp_where;
-                        // todo:
-                        // count the number of phrases per group
-                        // and add the user specific phrase links
-                        // select also the time
-                        $sql_time = '';
-                        if (isset($this->time_stamp)) {
-                            $sql_val = "SELECT value_time_series_id 
-                            FROM `value_time_series`
-                          WHERE phrase_group_id IN (" . $sql_grp . ");";
-                        } else {
-                            if ($this->time_id > 0) {
-                                $sql_time = ' AND time_word_id = ' . $this->time_id . ' ';
-                            }
-                            $sql_val = "SELECT value_id 
-                            FROM `values`
-                          WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
-                        }
+                    if (count($this->phr_lst->lst) > 0) {
+
+                        $sql_val = $this->load_sql();
                         log_debug('value->load sql val "' . $sql_val . '"');
                         //$db_con = new mysql;
                         $db_con->usr_id = $this->usr->id;
@@ -583,7 +621,7 @@ class value extends user_sandbox_display
 
     // rebuild the word and triple list based on the word and triple ids
     // add set the time_id if needed
-    function set_grp_by_ids()
+    function set_grp_by_ids(): string
     {
         $result = '';
         if (!isset($this->grp)) {
@@ -599,7 +637,7 @@ class value extends user_sandbox_display
                     /* actually not needed
                     $this->set_lst_by_grp();
                     if (isset($this->wrd_lst)) {
-                        zu_debug('value->set_grp_by_ids -> got '.$this->wrd_lst->name().' for '.implode(',',$this->ids).'');
+                        zu_debug('value->set_grp_by_ids -> got '.$this->wrd_lst->name().' for '.dsp_array($this->ids).'');
                     }
                     */
                 }
@@ -1359,7 +1397,7 @@ class value extends user_sandbox_display
                 log_debug('value->dsp_edit id ' . $this->id . ' with "' . $this->grp->name() . '"@"' . $this->time_phr->name . '"and user ' . $this->usr->id);
             } else {
                 $this->load_time_phrase();
-                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . implode(',', $this->ids) . ' and user ' . $this->usr->id);
+                log_debug('value->dsp_edit id ' . $this->id . ' with phrase ids ' . dsp_array($this->ids) . ' and user ' . $this->usr->id);
             }
         }
         $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes
@@ -1963,12 +2001,12 @@ class value extends user_sandbox_display
                 //$sql_result = $db_con->exe($sql, "value->upd_phr_links", array());
                 $sql_result = $db_con->exe($sql);
                 if ($sql_result === False) {
-                    log_err('Error adding new group links "' . implode(',', $add_ids) . '" for ' . $this->id);
+                    log_err('Error adding new group links "' . dsp_array($add_ids) . '" for ' . $this->id);
                     $result = false;
                 }
             }
         }
-        log_debug('value->upd_phr_links -> added links "' . implode(',', $add_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('value->upd_phr_links -> added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
 
         // remove the links not needed any more
         if (count($del_ids) > 0) {
@@ -1976,15 +2014,15 @@ class value extends user_sandbox_display
             $del_nbr = 0;
             $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE value_id = ' . $this->id . '
-                 AND ' . $field_name . ' IN (' . implode(',', $del_ids) . ');';
+                 AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
             //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());
             $sql_result = $db_con->exe($sql);
             if ($sql_result === False) {
-                og_err('Error removing group links "' . implode(',', $del_ids) . '" from ' . $this->id);
+                log_err('Error removing group links "' . dsp_array($del_ids) . '" from ' . $this->id);
                 $result = false;
             }
         }
-        log_debug('value->upd_phr_links -> deleted links "' . implode(',', $del_ids) . '" lead to ' . implode(",", $db_ids));
+        log_debug('value->upd_phr_links -> deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
 
         log_debug('value->upd_phr_links -> done');
         return $result;

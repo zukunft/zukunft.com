@@ -46,7 +46,7 @@ function run_word_display_test()
     $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
     $direction = 'up';
-    $target = '<table class="table col-sm-5 ';
+    $target = TEST_WORD;
     $result = $wrd_ZH->dsp_graph($direction, 0);
     $exe_start_time = test_show_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
@@ -61,34 +61,44 @@ function run_word_display_test()
     $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
     // ... and the graph display for 2012
-    $wrd_2012 = new word_dsp;
-    $wrd_2012->name = TW_2012;
-    $wrd_2012->usr = $usr;
-    $wrd_2012->load();
+    $wrd_2013 = new word_dsp;
+    $wrd_2013->name = TW_2013;
+    $wrd_2013->usr = $usr;
+    $wrd_2013->load();
     $direction = 'down';
-    //$target = zut_html_list_related($wrd_2012->id, $direction, $usr->id);
-    $target = 'HTML code';
-    $result = $wrd_2012->dsp_graph($direction, 0);
+    //$target = zut_html_list_related($wrd_2013->id, $direction, $usr->id);
+    $target = ' is followed by<table class="table col-sm-5 table-borderless">
+  <tr>
+    <td>
+      <a href="/http/view.php?words=17" title="">2014</a>
+    </td>
+    <td>
+<a href="/http/link_edit.php?id=2196&back=16" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+    <td>
+<a href="/http/link_del.php?id=2196&back=16" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+  </tr>
+';
+    $result = $wrd_2013->dsp_graph($direction, 0);
     $diff = str_diff($result, $target);
     if ($diff['view'] != null) {
         if ($diff['view'][0] == 0) {
             $target = $result;
         }
     }
-    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2012->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2013->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
     // ... and the other side
     $direction = 'up';
-    //$target = zut_html_list_related($wrd_2012->id, $direction, $usr->id);
-    $target = 'HTML code';
-    $result = $wrd_2012->dsp_graph($direction, 0);
+    //$target = zut_html_list_related($wrd_2013->id, $direction, $usr->id);
+    $target = '';
+    $result = $wrd_2013->dsp_graph($direction, 0);
     $diff = str_diff($result, $target);
     if ($diff['view'] != null) {
         if ($diff['view'][0] == 0) {
             $target = $result;
         }
     }
-    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2012->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2013->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
     // the value table for ABB
     $wrd_ZH = new word_dsp;
@@ -139,7 +149,7 @@ function run_word_display_test()
     $sel->selected = $phr_ABB->id;
     $sel->dummy_text = '... please select';
     $result .= $sel->display();
-    $target = TW_ABB;
+    $target = TP_ZH_INS;
     $exe_start_time = test_show_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $wrd_ZH->name . ' selected', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 
 }

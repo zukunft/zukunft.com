@@ -198,7 +198,7 @@ class value_list_dsp extends value_list
                         $grp->usr = $this->usr;
                         $grp->ids = $val_wrd_ids;
                         $grp->load();
-                        log_debug("value_list_dsp->dsp_table val ids " . implode(",", $val_wrd_ids) . " = " . $grp->id . ".");
+                        log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number == "") {
@@ -251,7 +251,7 @@ class value_list_dsp extends value_list
                 $differentiator_phrases = $differentiator_phrases->filter($xtra_phrases);
 
                 // find direct differentiator words
-                //$differentiator_type = sql_code_link(SQL_LINK_TYPE_DIFFERENTIATOR);
+                //$differentiator_type = cl(SQL_LINK_TYPE_DIFFERENTIATOR);
                 log_debug("value_list_dsp->dsp_table ... get differentiator type " . $differentiator_phrases->name() . ".");
                 $type_phrases = $sub_phr_lst->differentiators();
 
@@ -301,7 +301,7 @@ class value_list_dsp extends value_list
                                 $grp->usr = $this->usr;
                                 $grp->ids = $val_wrd_ids;
                                 $grp->load();
-                                log_debug("value_list_dsp->dsp_table val ids " . implode(",", $val_wrd_ids) . " = " . $grp->id . ".");
+                                log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number == "") {

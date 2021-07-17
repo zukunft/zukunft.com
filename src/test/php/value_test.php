@@ -107,10 +107,10 @@ function run_value_test () {
     // ... and check the number
     $result = $chk_val->number;
     $target = TV_ABB_SALES_AUTO_2013;
-    test_dsp(', value->load for "'.implode(',',$chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load for "'.dsp_array($chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT);
 
     // ... and check the words loaded
-    $result = implode(',',$chk_val->wrd_lst->names());
+    $result = dsp_array($chk_val->wrd_lst->names());
     $target = 'million,CHF,Sales,ABB,Discrete Automation and Motion';
     test_dsp(', value->load words', $target, $result, TIMEOUT_LIMIT);
 
@@ -123,7 +123,7 @@ function run_value_test () {
     $chk_val->wrd_lst = null;
     $chk_val->load_phrases();
     if (isset($chk_val->wrd_lst)) {
-      $result = implode(',',$chk_val->wrd_lst->names());
+      $result = dsp_array($chk_val->wrd_lst->names());
     } else {
       $result = '';
     }
@@ -148,7 +148,7 @@ function run_value_test () {
   $grp = $wrd_lst->get_grp();
   if ($grp->id == 0) {
       $result = 'No word list found.';
-      $target = implode(',', $wrd_lst->names());
+      $target = dsp_array($wrd_lst->names());
       test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
   } else {
       $val = new value;
@@ -161,10 +161,10 @@ function run_value_test () {
           $result = 'No value found for ' . $val->dsp_id() . '.';
       } else {
           if (isset($val->wrd_lst)) {
-              $result = implode(',', $val->wrd_lst->names());
+              $result = dsp_array($val->wrd_lst->names());
           }
       }
-      $target = implode(',', $wrd_lst->names());
+      $target = dsp_array($wrd_lst->names());
       test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
   }
 
@@ -177,11 +177,11 @@ function run_value_test () {
   $result = '';
   if ($val->id > 0) {
     if (isset($val->wrd_lst)) {
-      $result = implode(',',$val->wrd_lst->names());
+      $result = dsp_array($val->wrd_lst->names());
     }
   }
-  $target = implode(',',$wrd_lst->names());
-  test_dsp(', value->load for ids '.implode(',',$wrd_lst->ids).'', $target, $result, TIMEOUT_LIMIT);
+  $target = dsp_array($wrd_lst->names());
+  test_dsp(', value->load for ids '.dsp_array($wrd_lst->ids).'', $target, $result, TIMEOUT_LIMIT);
   
 
   // test the formatting of a value (percent)

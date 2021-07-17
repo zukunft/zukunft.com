@@ -60,16 +60,17 @@ class verb_list
         } else {
 
             // set the where clause depending on the values given
-            $sql_where = " s.from_phrase_id = " . $this->wrd->id;
+            // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
+            $sql_where = " s.to_phrase_id = " . $this->wrd->id;
             if ($this->direction == self::DIRECTION_UP) {
-                $sql_where = " s.to_phrase_id = " . $this->wrd->id;
+                $sql_where = " s.from_phrase_id = " . $this->wrd->id;
             }
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
             $db_con->set_usr_num_fields(array('excluded'));
             $db_con->set_join_fields(array('code_id', 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', 'description'), DB_TYPE_VERB);
             $db_con->set_fields(array('verb_id'));
-            $db_con->set_where_text('s.to_phrase_id = 2');
+            $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
             $db_vrb_lst = $db_con->get($sql);
             $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
@@ -139,7 +140,7 @@ class verb_list
     // return a list of the verb ids as an sql compatible text
     function ids_txt(): string
     {
-        return implode(',', $this->ids());
+        return sql_array( $this->ids());
     }
 
     // display all verbs and allow an admin to change it

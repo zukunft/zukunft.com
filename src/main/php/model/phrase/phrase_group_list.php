@@ -236,8 +236,8 @@ class phrase_group_list
         // create the time selection
         $sql_time = '';
         if (count($time_linked->ids) > 0 and count($time_used->ids) > 0) {
-            $sql_time = 'v.time_word_id IN (' . implode(',', $time_linked->ids) . ')
-               AND v.time_word_id IN (' . implode(',', $time_used->ids) . ')';
+            $sql_time = 'v.time_word_id IN (' . sql_array($time_linked->ids) . ')
+               AND v.time_word_id IN (' . sql_array($time_used->ids) . ')';
         } else {
             // dito group
         }

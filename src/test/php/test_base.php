@@ -47,13 +47,18 @@ $path_unit = $root_path . 'src/test/php/unit/'; // path of the code for the unit
 
 include_once $root_path . 'src/main/php/service/config.php';
 
-// load the unit testing functions
+// load the unit testing modules
+include_once $path_unit . 'unit_tests.php';
+include_once $path_unit . 'test_lib.php';
+include_once $path_unit . 'user_sandbox.php';
+include_once $path_unit . 'phrase_list.php';
+include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link_list.php';
+include_once $path_unit . 'value.php';
 
 // load the testing functions
 include_once $root_path . 'src/test/php/test_system.php';
 include_once $root_path . 'src/test/php/test_db_link.php';
-include_once $root_path . 'src/test/php/test_lib.php';
 include_once $root_path . 'src/test/php/test_math.php';
 include_once $root_path . 'src/test/php/test_user_sandbox.php';
 include_once $root_path . 'src/test/php/test_user.php';
@@ -311,9 +316,9 @@ function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_ty
     }
     if (is_array($target)) {
         if ($test_type == 'contains') {
-            $txt .= " should contain \"" . implode(",", $target) . "\"";
+            $txt .= " should contain \"" . dsp_array($target) . "\"";
         } else {
-            $txt .= " should be \"" . implode(",", $target) . "\"";
+            $txt .= " should be \"" . dsp_array($target) . "\"";
         }
     } else {
         if ($test_type == 'contains') {
@@ -346,7 +351,7 @@ function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_ty
             }
             $txt .= "\"";
         } else {
-            $txt .= "\"" . implode(",", $result) . "\"";
+            $txt .= "\"" . dsp_array($result) . "\"";
         }
     } else {
         $txt .= "\"" . $result . "\"";
@@ -407,9 +412,9 @@ function test_show_result($test_text, $target, $result, $exe_start_time, $exe_ma
     }
     if (is_array($target)) {
         if ($test_type == 'contains') {
-            echo " should contain \"" . implode(",", $target) . "\"";
+            echo " should contain \"" . dsp_array($target) . "\"";
         } else {
-            echo " should be \"" . implode(",", $target) . "\"";
+            echo " should be \"" . dsp_array($target) . "\"";
         }
     } else {
         if ($test_type == 'contains') {
@@ -442,7 +447,7 @@ function test_show_result($test_text, $target, $result, $exe_start_time, $exe_ma
             }
             echo "\"";
         } else {
-            echo "\"" . implode(",", $result) . "\"";
+            echo "\"" . dsp_array($result) . "\"";
         }
     } else {
         echo "\"" . $result . "\"";
@@ -506,13 +511,17 @@ function test_subheader($header_text)
 }
 
 // external string diff only for testing
+// TODO review or remove
 function str_diff($from, $to): array
 {
     $diffValues = array();
     $diffMask = array();
 
     $dm = array();
-    $do_diff = true;
+    $do_diff = false;
+    if ($from != $to) {
+        $do_diff = true;
+    }
     if (is_array($from)) {
         $n1 = count($from);
     } else {

@@ -971,7 +971,7 @@ CREATE TABLE IF NOT EXISTS user_word_links
     excluded       smallint     DEFAULT NULL
 );
 
-COMMENT ON COLUMN user_word_links.name is 'the used unique name (either user created or generic based on the underlying)';
+COMMENT ON COLUMN user_word_links.word_link_name is 'the used unique name (either user created or generic based on the underlying)';
 
 -- --------------------------------------------------------
 
@@ -1375,7 +1375,7 @@ CREATE TABLE IF NOT EXISTS word_links
 
 COMMENT ON COLUMN word_links.word_link_condition_id is 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN word_links.word_link_condition_type_id is 'maybe not needed';
-COMMENT ON COLUMN word_links.name is 'the used unique name (either user created or generic based on the underlying)';
+COMMENT ON COLUMN word_links.word_link_name is 'the used unique name (either user created or generic based on the underlying)';
 
 -- --------------------------------------------------------
 

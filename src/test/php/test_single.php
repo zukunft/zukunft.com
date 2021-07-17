@@ -50,7 +50,7 @@ if ($usr->id <= 0) {
     $grp = $wrd_lst->get_grp();
     if ($grp->id == 0) {
         $result = 'No word list found.';
-        $target = implode(',', $wrd_lst->names());
+        $target = sql_array($wrd_lst->names());
         test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
     } else {
         $val = new value;
@@ -63,10 +63,10 @@ if ($usr->id <= 0) {
             $result = 'No value found for ' . $val->dsp_id() . '.';
         } else {
             if (isset($val->wrd_lst)) {
-                $result = implode(',', $val->wrd_lst->names());
+                $result = sql_array($val->wrd_lst->names());
             }
         }
-        $target = implode(',', $wrd_lst->names());
+        $target = sql_array($wrd_lst->names());
         test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
     }
 

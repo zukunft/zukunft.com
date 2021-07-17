@@ -387,9 +387,14 @@ class word extends word_link_object
     }
 
     // return the html code to display a word
-    function display($back): string
+    function display($back = ''): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
+        if ($back != '') {
+            $result = '<a href="/http/view.php?words=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
+        } else {
+            $result = '<a href="/http/view.php?words=' . $this->id . '">' . $this->name . '</a>';
+        }
+        return $result;
     }
 
     /*
@@ -506,7 +511,7 @@ class word extends word_link_object
     }
 
     // just to fix a problem if a phrase list contains a word
-    function type_id()
+    function type_id(): int
     {
         return $this->type_id;
     }

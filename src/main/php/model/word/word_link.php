@@ -62,6 +62,7 @@ class word_link extends word_link_object
 
     function __construct()
     {
+        parent::__construct();
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_WORD_LINK;
         $this->from_name = DB_TYPE_PHRASE;

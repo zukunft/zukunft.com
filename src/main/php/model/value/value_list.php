@@ -779,12 +779,12 @@ class value_list
                     }
                     log_debug('value_list->html -> removed ' . $this->phr->id);
                     $dsp_phr_lst->diff_by_ids($common_phr_ids);
-                    log_debug('value_list->html -> removed ' . implode(',', $this->phr->id));
+                    log_debug('value_list->html -> removed ' . dsp_array($this->phr->id));
                     // remove the words of the privious row, because it should not be shown on each line
                     if (isset($last_phr_lst->ids)) {
                         $dsp_phr_lst->diff_by_ids($last_phr_lst->ids);
                     }
-                    log_debug('value_list->html -> removed ' . implode(',', $this->phr->id));
+                    log_debug('value_list->html -> removed ' . dsp_array($this->phr->id));
 
                     //if (isset($val->time_phr)) {
                     log_debug('value_list->html -> add time ' . $val->id);

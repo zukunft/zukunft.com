@@ -366,7 +366,7 @@ class user
     function upd_pars($usr_par)
     {
         log_debug('user->upd_pars');
-        log_debug('user->upd_pars(u' . $this->id . ',p' . implode(",", $usr_par) . ')');
+        log_debug('user->upd_pars(u' . $this->id . ',p' . dsp_array($usr_par) . ')');
 
         global $db_con;
 

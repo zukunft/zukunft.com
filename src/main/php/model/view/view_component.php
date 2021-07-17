@@ -254,7 +254,7 @@ class view_component extends user_sandbox
     }
 
     // list of all view ids that are directly assigned to this view component
-    function assign_dsp_ids()
+    function assign_dsp_ids(): array
     {
 
         global $db_con;
@@ -267,7 +267,7 @@ class view_component extends user_sandbox
             //$db_con->set_join_fields(array('position_type'), 'position_type');
             $db_con->set_fields(array('view_id','view_component_id'));
             $db_con->set_usr_num_fields(array('order_nbr','position_type','excluded'));
-            $db_con->set_where_text('s.view_component_id = 1');
+            $db_con->set_where($this->id);
             $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get($sql);
@@ -286,13 +286,10 @@ class view_component extends user_sandbox
     }
 
     // return the html code to display a view name with the link
-    function name_linked($back)
+    function name_linked($back): string
     {
-        $result = '';
 
-        $result .= '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-
-        return $result;
+        return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
     //
