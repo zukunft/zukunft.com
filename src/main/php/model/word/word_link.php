@@ -388,7 +388,7 @@ class word_link extends word_link_object
     }
 
     // recursive function to include the foaf words for this triple
-    function wrd_lst()
+    function wrd_lst(): word_list
     {
         log_debug('word_link->wrd_lst ' . $this->dsp_id());
         $wrd_lst = new word_list;

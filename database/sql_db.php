@@ -229,7 +229,9 @@ class sql_db
         }
     }
 
-    // interface function for sql_usr_field
+    /**
+     * interface function for sql_usr_field
+     */
     function get_usr_field($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $field_format = sql_db::FLD_FORMAT_TEXT, $as = ''): string
     {
         return $this->sql_usr_field($field, $field_format, $stb_tbl, $usr_tbl, $as);
@@ -978,9 +980,15 @@ class sql_db
                 $result .= sql_db::FLD_CODE_ID . ' != NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
+            /*
+             * because the object name can be user specific,
+             * don't use the standard name for the the selection e.g. s.view_name
+             * use instead the user specific name e.g. view_name
+             * TODO check if this works as expected for MySQL
             if ($this->usr_query or $this->join <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
+            */
             $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
             /*
             if ($this->db_type == DB_TYPE_POSTGRES) {

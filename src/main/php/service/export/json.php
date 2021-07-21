@@ -39,7 +39,7 @@ class json_io
 {
 
     // parameters to filter the export
-    public $usr = null; // the user who wants to im- or export
+    public ?user $usr = null; // the user who wants to im- or export
     public $phr_lst = null; // to export all values related to this phrase
 
     // export zukunft.com data as json
@@ -69,5 +69,3 @@ class json_io
     }
 
 }
-
-?>

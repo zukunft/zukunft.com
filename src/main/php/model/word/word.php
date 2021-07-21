@@ -33,6 +33,8 @@
 
 class word extends word_link_object
 {
+    // persevered view name for unit and integration tests
+    const TEST_NAME = 'System Test Word';
 
     // database fields additional to the user sandbox fields
     public ?string $plural = null; // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated

@@ -36,100 +36,122 @@
   
 */
 
-class file_import {
+class file_import
+{
 
-  // parameters to filter the import
-  public $usr      = null; // the user who wants to import data
-  public $json_str = null; // a string with the json data to import
-  public $words_done = 0;
-  public $words_failed = 0;
-  public $triples_done = 0;
-  public $triples_failed = 0;
-  public $formulas_done = 0;
-  public $formulas_failed = 0;
-  public $sources_done = 0;
-  public $sources_failed = 0;
-  public $values_done = 0;
-  public $values_failed = 0;
-  public $views_done = 0;
-  public $views_failed = 0;
-  
-  // import zukunft.com data as object for creating e.g. a json message
-  function put () {
-    log_debug('import->put');
-    $result = '';
+    // parameters to filter the import
+    public ?user $usr = null; // the user who wants to import data
+    public ?string $json_str = null; // a string with the json data to import
+    public ?int $words_done = 0;
+    public ?int $words_failed = 0;
+    public ?int $triples_done = 0;
+    public ?int $triples_failed = 0;
+    public ?int $formulas_done = 0;
+    public ?int $formulas_failed = 0;
+    public ?int $sources_done = 0;
+    public ?int $sources_failed = 0;
+    public ?int $values_done = 0;
+    public ?int $values_failed = 0;
+    public ?int $views_done = 0;
+    public ?int $views_failed = 0;
 
-    $json_array = json_decode($this->json_str, true);
-    foreach ($json_array AS $key => $json_obj) {
-      if ($key == 'version') {
-        if (prg_version_is_newer($json_obj)) {
-          $result .= 'Import file has been created with version '.$json_obj.', which is newer than this, which is '.PRG_VERSION.' ';
+    // import zukunft.com data as object for creating e.g. a json message
+    function put(): string
+    {
+        log_debug('import->put');
+        $result = '';
+
+        $json_array = json_decode($this->json_str, true);
+        foreach ($json_array as $key => $json_obj) {
+            if ($key == 'version') {
+                if (prg_version_is_newer($json_obj)) {
+                    $result .= 'Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION . ' ';
+                }
+            } elseif ($key == 'pod') {
+            } elseif ($key == 'time') {
+            } elseif ($key == 'user') {
+                // TODO does it need to be checked
+                //if ($usr->name <> $json_obj) {
+                //}
+            } elseif ($key == 'selection') {
+            } elseif ($key == 'words') {
+                foreach ($json_obj as $word) {
+                    $wrd = new word;
+                    $wrd->usr = $this->usr;
+                    $import_result = $wrd->import_obj($word);
+                    if ($import_result == '') {
+                        $this->words_done++;
+                    } else {
+                        $this->words_failed++;
+                    }
+                    $result .= $import_result;
+                }
+            } elseif ($key == 'triples') {
+                foreach ($json_obj as $triple) {
+                    $wrd_lnk = new word_link;
+                    $wrd_lnk->usr = $this->usr;
+                    $import_result = $wrd_lnk->import_obj($triple);
+                    if ($import_result == '') {
+                        $this->triples_done++;
+                    } else {
+                        $this->triples_failed++;
+                    }
+                    $result .= $import_result;
+                }
+            } elseif ($key == 'formulas') {
+                foreach ($json_obj as $formula) {
+                    $frm = new formula;
+                    $frm->usr = $this->usr;
+                    $import_result = $frm->import_obj($formula);
+                    if ($import_result == '') {
+                        $this->formulas_done++;
+                    } else {
+                        $this->formulas_failed++;
+                    }
+                    $result .= $import_result;
+                }
+            } elseif ($key == 'sources') {
+                foreach ($json_obj as $value) {
+                    $src = new source;
+                    $src->usr = $this->usr;
+                    $import_result = $src->import_obj($value);
+                    if ($import_result == '') {
+                        $this->sources_done++;
+                    } else {
+                        $this->sources_failed++;
+                    }
+                    $result .= $import_result;
+                }
+            } elseif ($key == 'values') {
+                foreach ($json_obj as $value) {
+                    $val = new value;
+                    $val->usr = $this->usr;
+                    $import_result = $val->import_obj($value);
+                    if ($import_result == '') {
+                        $this->values_done++;
+                    } else {
+                        $this->values_failed++;
+                    }
+                    $result .= $import_result;
+                }
+            } elseif ($key == 'views') {
+                foreach ($json_obj as $view) {
+                    $view_obj = new view;
+                    $view_obj->usr = $this->usr;
+                    $import_result = $view_obj->import_obj($view);
+                    if ($import_result == '') {
+                        $this->views_done++;
+                    } else {
+                        $this->views_failed++;
+                    }
+                    $result .= $import_result;
+                }
+            } else {
+                $result .= 'Unknown element ' . $key . ' ';
+            }
         }
-      } elseif ($key == 'pod') {
-      } elseif ($key == 'time') {
-      } elseif ($key == 'user') {
-        // TODO does it need to be checked
-        //if ($usr->name <> $json_obj) {
-        //}
-      } elseif ($key == 'selection') {
-      } elseif ($key == 'words') {
-        foreach ($json_obj AS $word) {
-          $wrd = New word;
-          $wrd->usr = $this->usr;
-          $import_result = $wrd->import_obj($word);
-          if ($import_result == '') { $this->words_done++; } else { $this->words_failed++; }
-          $result .= $import_result;
-        }
-      } elseif ($key == 'triples') {
-        foreach ($json_obj AS $triple) {
-          $wrd_lnk = New word_link;
-          $wrd_lnk->usr = $this->usr;
-          $import_result = $wrd_lnk->import_obj($triple);
-          if ($import_result == '') { $this->triples_done++; } else { $this->triples_failed++; }
-          $result .= $import_result;
-        }
-      } elseif ($key == 'formulas') {
-        foreach ($json_obj AS $formula) {
-          $frm = New formula;
-          $frm->usr = $this->usr;
-          $import_result = $frm->import_obj($formula);
-          if ($import_result == '') { $this->formulas_done++; } else { $this->formulas_failed++; }
-          $result .= $import_result;
-        }
-      } elseif ($key == 'sources') {
-        foreach ($json_obj AS $value) {
-          $src = New source;
-          $src->usr = $this->usr;
-          $import_result = $src->import_obj($value);
-          if ($import_result == '') { $this->sources_done++; } else { $this->sources_failed++; }
-          $result .= $import_result;
-        }
-      } elseif ($key == 'values') {
-        foreach ($json_obj AS $value) {
-          $val = New value;
-          $val->usr = $this->usr;
-          $import_result = $val->import_obj($value);
-          if ($import_result == '') { $this->values_done++; } else { $this->values_failed++; }
-          $result .= $import_result;
-        }
-      } elseif ($key == 'views') {
-        foreach ($json_obj AS $view) {
-          $view_obj = New view;
-          $view_obj->usr = $this->usr;
-          $import_result = $view_obj->import_obj($view);
-          if ($import_result == '') { $this->views_done++; } else { $this->views_failed++; }
-          $result .= $import_result;
-        }
-      } else {
-        $result .= 'Unknown element '.$key.' ';
-      }
+
+        return $result;
     }
-    
-    return $result;    
-  }
-  
 
-  
 }
-
-?>

@@ -2,7 +2,7 @@
 
 /*
 
-  test/unit/value.php - TESTing of the VALUE functions
+  test/unit/value.php - unit testing of the VALUE functions
   -------------------
   
 

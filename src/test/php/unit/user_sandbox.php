@@ -355,7 +355,7 @@ function run_user_sandbox_unit_tests()
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE s.source_name = 'wikidata';";
+                  WHERE source_name = 'wikidata';";
     $exe_start_time = test_show_result('PostgreSQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
 
     // ... same for search by code_id
@@ -779,7 +779,7 @@ function run_user_sandbox_unit_tests()
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE s.source_name = 'wikidata';";
+                  WHERE source_name = 'wikidata';";
     $exe_start_time = test_show_result('MySQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
 
     // ... same for search by code_id
@@ -1094,14 +1094,14 @@ function run_user_sandbox_unit_tests()
     $created_sql = "SELECT 
                        f.formula_id,
                        f.formula_name,
-                    " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
-                    " . $db_con->get_usr_field('resolved_text', 'f', 'u') . ",
-                    " . $db_con->get_usr_field('description', 'f', 'u') . ",
-                    " . $db_con->get_usr_field('formula_type_id', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('code_id', 't', 'c') . ",
-                    " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
+                       " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
+                       " . $db_con->get_usr_field('resolved_text', 'f', 'u') . ",
+                       " . $db_con->get_usr_field('description', 'f', 'u') . ",
+                       " . $db_con->get_usr_field('formula_type_id', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field('code_id', 't', 'c') . ",
+                       " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field('excluded', 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM " . $sql_from . " 
              LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
                                       AND u.user_id = 1 

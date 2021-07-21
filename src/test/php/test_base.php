@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+// TODO move the names and values for testing to the single objects and check that they cannot be used by an user
+
 global $debug;
 global $root_path;
 
@@ -55,6 +57,7 @@ include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'value.php';
+include_once $path_unit . 'view.php';
 
 // load the testing functions
 include_once $root_path . 'src/test/php/test_system.php';

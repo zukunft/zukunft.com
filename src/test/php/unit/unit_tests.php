@@ -35,6 +35,7 @@ function run_unit_tests()
     run_string_unit_tests (); // test functions not yet split into single unit tests
     run_word_list_unit_tests();
     run_word_link_list_unit_tests();
+    run_view_unit_tests();
     //run_value_unit_tests();
     run_user_sandbox_unit_tests();
 }

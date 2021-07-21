@@ -31,6 +31,8 @@
 
 class view extends user_sandbox
 {
+    // persevered view name for unit and integration tests
+    const TEST_NAME = 'System Test View';
 
     // database fields additional to the user sandbox fields for the view component
     public ?string $comment = null; // the view description that is shown as a mouseover explain to the user
@@ -42,7 +44,7 @@ class view extends user_sandbox
 
     function __construct()
     {
-        $this->obj_type = user_sandbox::TYPE_NAMED;
+        parent::__construct();
         $this->obj_name = DB_TYPE_VIEW;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
@@ -88,7 +90,9 @@ class view extends user_sandbox
         }
     }
 
-    // load the view parameters for all users
+    /**
+     * load the view parameters for all users
+     */
     function load_standard(): bool
     {
 
@@ -109,7 +113,43 @@ class view extends user_sandbox
         return $result;
     }
 
-    // load the missing view parameters from the database
+    /**
+     * create an SQL statement to retrieve the parameters of a view from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = 'view_by_';
+        if ($this->id != 0) {
+            $sql_name .= 'id';
+        } elseif ($this->code_id != '') {
+            $sql_name .= 'code_id';
+        } elseif ($this->name != '') {
+            $sql_name .= 'name';
+        }
+
+        $db_con->set_type(DB_TYPE_VIEW);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr_fields(array('comment'));
+        $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
+        $db_con->set_where($this->id, $this->name, $this->code_id);
+        $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * load the missing view parameters from the database
+     * based either on the id or the view name
+     */
     function load(): bool
     {
 
@@ -123,12 +163,7 @@ class view extends user_sandbox
             log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a view.", "view->load");
         } else {
 
-            $db_con->set_type(DB_TYPE_VIEW);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_usr_fields(array('comment'));
-            $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
-            $db_con->set_where($this->id, $this->name, $this->code_id);
-            $sql = $db_con->select();
+            $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_view = $db_con->get1($sql);
@@ -142,28 +177,31 @@ class view extends user_sandbox
         return $result;
     }
 
-    // load all parts of this view for this user
-    function load_components()
+    /**
+     * create an SQL statement to retrieve all view components of a view
+     *
+     * @param sql_db $db_con as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_components_sql(sql_db $db_con, bool $get_name = false): string
     {
-        log_debug('view->load_components for ' . $this->dsp_id());
-
-        global $db_con;
-
         // TODO make the order user specific
+        $sql_name = 'view_components_by_view_id';
         $sql = " SELECT e.view_component_id, 
                     u.view_component_id AS user_entry_id,
                     e.user_id, 
-                    IF(y.order_nbr IS NULL, l.order_nbr, y.order_nbr) AS order_nbr,
-                    IF(u.view_component_name IS NULL,    e.view_component_name,    u.view_component_name)    AS view_component_name,
-                    IF(u.view_component_type_id IS NULL, e.view_component_type_id, u.view_component_type_id) AS view_component_type_id,
-                    IF(c.code_id IS NULL,            t.code_id,            c.code_id)            AS code_id,
-                    IF(u.word_id_row IS NULL,        e.word_id_row,        u.word_id_row)        AS word_id_row,
-                    IF(u.link_type_id IS NULL,       e.link_type_id,       u.link_type_id)       AS link_type_id,
-                    IF(u.formula_id IS NULL,         e.formula_id,         u.formula_id)         AS formula_id,
-                    IF(u.word_id_col IS NULL,        e.word_id_col,        u.word_id_col)        AS word_id_col,
-                    IF(u.word_id_col2 IS NULL,       e.word_id_col2,       u.word_id_col2)       AS word_id_col2,
-                    IF(y.excluded IS NULL,           l.excluded,           y.excluded)           AS link_excluded,
-                    IF(u.excluded IS NULL,           e.excluded,           u.excluded)           AS excluded
+                    " . $db_con->get_usr_field('order_nbr', 'l', 'y', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('view_component_name', 'e', 'u') . ",
+                    " . $db_con->get_usr_field('view_component_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('code_id', 't', 'c') . ",
+                    " . $db_con->get_usr_field('word_id_row', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('link_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('formula_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('word_id_col', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('word_id_col2', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('excluded', 'l', 'y', sql_db::FLD_FORMAT_VAL, 'link_excluded') . ",
+                    " . $db_con->get_usr_field('excluded', 'e', 'u', sql_db::FLD_FORMAT_VAL) . "
                FROM view_component_links l            
           LEFT JOIN user_view_component_links y ON y.view_component_link_id = l.view_component_link_id 
                                                AND y.user_id = " . $this->usr->id . ", 
@@ -174,10 +212,29 @@ class view extends user_sandbox
           LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id
               WHERE l.view_id = " . $this->id . " 
                 AND l.view_component_id = e.view_component_id 
-           ORDER BY IF(y.order_nbr IS NULL, l.order_nbr, y.order_nbr);";
-        log_debug("view->load_components ... " . $sql);
-        //$db_con = New mysql;
+           ORDER BY order_nbr;";
+        log_debug("view->load_components_sql ... " . $sql);
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * load all parts of this view for this user
+     * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
+     */
+    function load_components(): bool
+    {
+        log_debug('view->load_components for ' . $this->dsp_id());
+
+        global $db_con;
+        $result = true;
+
         $db_con->usr_id = $this->usr->id;
+        $sql = $this->load_components_sql($db_con);
         $db_lst = $db_con->get($sql);
         $this->cmp_lst = array();
         foreach ($db_lst as $db_entry) {
@@ -197,47 +254,23 @@ class view extends user_sandbox
                 $new_entry->word_id_col = $db_entry['word_id_col'];
                 $new_entry->word_id_col2 = $db_entry['word_id_col2'];
                 $new_entry->code_id = $db_entry['code_id'];
-                $new_entry->load_phrases();
+                if (!$new_entry->load_phrases()) {
+                    $result = false;
+                }
                 $this->cmp_lst[] = $new_entry;
             }
         }
         log_debug('view->load_components ' . count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
 
-        return $this->cmp_lst;
-    }
-
-    // return the beginning html code for the view_type;
-    // the view type defines something like the basic setup of a view
-    // e.g. the catch view does not have the header, whereas all other views have
-    function dsp_type_open()
-    {
-        log_debug('view->dsp_type_open (' . $this->type_id . ')');
-        $result = '';
-        // move to database !!
-        // but avoid security leaks
-        // maybe use a view component for that
-        if ($this->type_id == 1) {
-            $result .= '<h1>';
-        }
         return $result;
     }
 
-    function dsp_type_close()
-    {
-        log_debug('view->dsp_type_close (' . $this->type_id . ')');
-        $result = '';
-        // move to a view component function
-        // for the word array build an object
-        if ($this->type_id == 1) {
-            $result = $result . '<br><br>';
-            //$result = $result . '<a href="/http/view.php?words='.implode (",", $word_array).'&type=3">Really?</a>';
-            $result = $result . '</h1>';
-        }
-        return $result;
-    }
+    /*
+    object display functions
+    */
 
     // TODO review (get the object instead)
-    function type_name()
+    private function type_name()
     {
 
         global $db_con;
@@ -254,42 +287,13 @@ class view extends user_sandbox
         return $this->type_name;
     }
 
-    // return the html code of all view components
-    function dsp_entries($wrd, $back)
+    /**
+     * return the html code to display a view name with the link
+     */
+    function name_linked($wrd, $back): string
     {
-        log_debug('view->dsp_entries "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' for user "' . $this->usr->name . '"');
 
-        $result = '';
-        $word_array = array();
-        $this->load_components();
-        foreach ($this->cmp_lst as $cmp) {
-            log_debug('view->dsp_entries ... "' . $cmp->name . '" type "' . $cmp->type_id . '"');
-
-            // list of all possible view components
-            $result .= $cmp->text();        // just to display a simple text
-            $result .= $cmp->word_name($wrd); // show the word name and give the user the possibility to change the word name
-            $result .= $cmp->table($wrd); // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-            $result .= $cmp->num_list($wrd, $back); // a word list with some key numbers e.g. all companies with the PE ratio
-            $result .= $cmp->formulas($wrd); // display all formulas related to the given word
-            $result .= $cmp->formula_values($wrd); // show a list of formula results related to a word
-            $result .= $cmp->word_children($wrd); // show all words that are based on the given start word
-            $result .= $cmp->word_parents($wrd); // show all word that this words is based on
-            $result .= $cmp->json_export($wrd, $back); // offer to configure and create an JSON file
-            $result .= $cmp->xml_export($wrd, $back); // offer to configure and create an XML file
-            $result .= $cmp->csv_export($wrd, $back); // offer to configure and create an CSV file
-            $result .= $cmp->all($wrd, $back); // shows all: all words that link to the given word and all values related to the given word
-        }
-
-        log_debug('view->dsp_entries ... done');
-        return $result;
-    }
-
-    // return the html code to display a view name with the link
-    function name_linked($wrd, $back)
-    {
-        $result = '';
-
-        $result .= '<a href="/http/view_edit.php?id=' . $this->id;
+        $result = '<a href="/http/view_edit.php?id=' . $this->id;
         if (isset($wrd)) {
             $result .= '&word=' . $wrd->id;
         }
@@ -298,128 +302,20 @@ class view extends user_sandbox
         return $result;
     }
 
-    // returns the html code for a view: this is the main function of this lib
-    // view_id is used to force the display to a set form; e.g. display the sectors of a company instead of the balance sheet
-    // view_type_id is used to .... remove???
-    // word_id - id of the starting word to display; can be a single word, a comma separated list of word ids, a word group or a word triple
-    function display($wrd, $back)
+    /**
+     * display the unique id fields
+     */
+    function name(): string
     {
-        log_debug('view->display "' . $wrd->name . '" with the view ' . $this->dsp_id() . ' (type ' . $this->type_id . ')  for user "' . $this->usr->name . '"');
-        $result = '';
-
-        // check and correct the parameters
-        if ($back == '') {
-            $back = $wrd->id;
-        }
-
-        if ($this->id <= 0) {
-            log_err("The view id must be loaded to display it.", "view->display");
-        } else {
-            // display always the view name in the top right corner and allow the user to edit the view
-            $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($back);
-            $result .= $this->dsp_entries($wrd, $back);
-            $result .= $this->dsp_type_close();
-        }
-        log_debug('view->display ... done');
-
-        return $result;
+        return '"' . $this->name . '"';
     }
 
-    // create an object for the export
-    function export_obj()
-    {
-        log_debug('view->export_obj ' . $this->dsp_id());
-        $result = new view();
-
-        // add the view parameters
-        $result->name = $this->name;
-        $result->comment = $this->comment;
-        $result->obj_type = $this->type_name();
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
-        }
-
-        // add the view components used
-        $this->load_components();
-        $exp_cmp_lst = array();
-        foreach ($this->cmp_lst as $cmp) {
-            $exp_cmp_lst[] = $cmp->export_obj();
-        }
-        $result->view_components = $exp_cmp_lst;
-
-        log_debug('view->export_obj -> ' . json_encode($result));
-        return $result;
-    }
-
-    // import a view from an object
-    function import_obj($json_obj)
-    {
-        log_debug('view->import_obj');
-        $result = '';
-
-        foreach ($json_obj as $key => $value) {
-
-            if ($key == 'name') {
-                $this->name = $value;
-            }
-            if ($key == 'comment') {
-                $this->comment = $value;
-            }
-            /* TODO
-            if ($key == 'type')    { $this->type_id = cl($value); }
-            if ($key == 'code_id') {
-            }
-            if ($key == 'view_components') {
-            }
-            */
-        }
-
-        if ($result == '') {
-            $this->save();
-            log_debug('view->import_obj -> ' . $this->dsp_id());
-        } else {
-            log_debug('view->import_obj -> ' . $result);
-        }
-
-        return $result;
-    }
-
-    /*
-
-    display functions
-
-    */
-
-    // display the unique id fields
-    function dsp_id(): string
-    {
-        $result = '';
-
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
-        }
-        return $result;
-    }
-
-    function name()
-    {
-        $result = '"' . $this->name . '"';
-        return $result;
-    }
-
-    // move one view component one place up
-    // in case of an error the error message is returned
-    // if everything is fine an empty string is returned
-    function entry_up($view_component_id)
+    /**
+     * move one view component one place up
+     * in case of an error the error message is returned
+     * if everything is fine an empty string is returned
+     */
+    function entry_up($view_component_id): string
     {
         $result = '';
         // check the all minimal input parameters
@@ -440,8 +336,10 @@ class view extends user_sandbox
         return $result;
     }
 
-    // move one view component one place down
-    function entry_down($view_component_id)
+    /**
+     * move one view component one place down
+     */
+    function entry_down($view_component_id): string
     {
         $result = '';
         // check the all minimal input parameters
@@ -462,8 +360,10 @@ class view extends user_sandbox
         return $result;
     }
 
-    // create a selection page where the user can select a view that should be used for a word
-    function selector_page($wrd_id, $back)
+    /**
+     * create a selection page where the user can select a view that should be used for a word
+     */
+    function selector_page($wrd_id, $back): string
     {
         log_debug('view->selector_page (' . $this->id . ',' . $wrd_id . ')');
 
@@ -502,8 +402,84 @@ class view extends user_sandbox
         return $result;
     }
 
-    // true if the view is part of the view element list
-    function is_in_list($dsp_lst)
+    /*
+    import & export functions
+    */
+
+    /**
+     * import a view from a JSON object
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj($json_obj): bool
+    {
+        log_debug('view->import_obj');
+        $result = false;
+
+        foreach ($json_obj as $key => $value) {
+
+            if ($key == 'name') {
+                $this->name = $value;
+            }
+            if ($key == 'comment') {
+                $this->comment = $value;
+            }
+            /* TODO
+            if ($key == 'type')    { $this->type_id = cl($value); }
+            if ($key == 'code_id') {
+            }
+            if ($key == 'view_components') {
+            }
+            */
+        }
+
+        if ($result == '') {
+            if ($this->save()) {
+                $result = true;
+                log_debug('view->import_obj -> ' . $this->dsp_id());
+            }
+        } else {
+            log_debug('view->import_obj -> ' . $result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an object for the export
+     */
+    function export_obj(): view
+    {
+        log_debug('view->export_obj ' . $this->dsp_id());
+        $result = new view();
+
+        // add the view parameters
+        $result->name = $this->name;
+        $result->comment = $this->comment;
+        $result->obj_type = $this->type_name();
+        if ($this->code_id <> '') {
+            $result->code_id = $this->code_id;
+        }
+
+        // add the view components used
+        $this->load_components();
+        $exp_cmp_lst = array();
+        foreach ($this->cmp_lst as $cmp) {
+            $exp_cmp_lst[] = $cmp->export_obj();
+        }
+        $result->cmp_lst = $exp_cmp_lst;
+
+        log_debug('view->export_obj -> ' . json_encode($result));
+        return $result;
+    }
+
+    /*
+    logic functions
+    */
+
+    /**
+     * true if the view is part of the view element list
+     */
+    function is_in_list($dsp_lst): bool
     {
         $result = false;
 
@@ -517,7 +493,13 @@ class view extends user_sandbox
         return $result;
     }
 
-    // create a database record to save user specific settings for this view
+    /*
+    saving functions
+    */
+
+    /**
+     * create a database record to save user specific settings for this view
+     */
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -551,7 +533,9 @@ class view extends user_sandbox
         return $result;
     }
 
-    // check if the database record for the user specific settings can be removed
+    /**
+     * check if the database record for the user specific settings can be removed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('view->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -587,7 +571,9 @@ class view extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the view comment
+    /**
+     * set the update parameters for the view comment
+     */
     function save_field_comment($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -603,7 +589,9 @@ class view extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word type
+    /**
+     * set the update parameters for the word type
+     */
     function save_field_type($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -622,7 +610,9 @@ class view extends user_sandbox
         return $result;
     }
 
-    // save all updated view fields excluding the name, because already done when adding a view
+    /**
+     * save all updated view fields excluding the name, because already done when adding a view
+     */
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);

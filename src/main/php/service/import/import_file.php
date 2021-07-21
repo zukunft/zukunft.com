@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 # import a single json file
-function import_json_file($filename)
+function import_json_file($filename): string
 {
     global $usr;
 
@@ -56,7 +56,7 @@ function import_json_file($filename)
 # even if a user has overwritten some of these definitions the technical import should be possible
 # TODO load this configuration on first start of zukunft
 # TODO add a check bottom for admin to reload the base configuration
-function import_base_config()
+function import_base_config(): string
 {
     $result = '';
 

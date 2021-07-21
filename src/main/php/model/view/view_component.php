@@ -183,14 +183,19 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // load the related word and formula objects
-    function load_phrases()
+    /**
+     * load the related word and formula objects
+     * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
+     */
+    function load_phrases(): bool
     {
+        $result = true;
         $this->load_wrd_row();
         $this->load_wrd_col();
         $this->load_wrd_col2();
         $this->load_formula();
         log_debug('view_component->load_phrases done for ' . $this->dsp_id());
+        return $result;
     }
 
     //
