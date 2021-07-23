@@ -129,6 +129,8 @@ class view extends user_sandbox
             $sql_name .= 'code_id';
         } elseif ($this->name != '') {
             $sql_name .= 'name';
+        } else {
+            log_err('Either the id, code_id or name must be set to get a view');
         }
 
         $db_con->set_type(DB_TYPE_VIEW);
@@ -408,9 +410,11 @@ class view extends user_sandbox
 
     /**
      * import a view from a JSON object
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
      * @return bool true if the import has been successfully saved to the database
      */
-    function import_obj($json_obj): bool
+    function import_obj(array $json_obj, bool $do_save = true): bool
     {
         log_debug('view->import_obj');
         $result = false;
@@ -432,7 +436,7 @@ class view extends user_sandbox
             */
         }
 
-        if ($result == '') {
+        if ($result == '' and $do_save) {
             if ($this->save()) {
                 $result = true;
                 log_debug('view->import_obj -> ' . $this->dsp_id());
@@ -445,28 +449,30 @@ class view extends user_sandbox
     }
 
     /**
-     * create an object for the export
+     * export mapper: create an object for the export
      */
-    function export_obj(): view
+    function export_obj(bool $do_load = true): view_exp
     {
         log_debug('view->export_obj ' . $this->dsp_id());
-        $result = new view();
+        $result = new view_exp();
 
         // add the view parameters
         $result->name = $this->name;
         $result->comment = $this->comment;
-        $result->obj_type = $this->type_name();
+        $result->type = $this->type_name();
         if ($this->code_id <> '') {
             $result->code_id = $this->code_id;
         }
 
         // add the view components used
-        $this->load_components();
-        $exp_cmp_lst = array();
-        foreach ($this->cmp_lst as $cmp) {
-            $exp_cmp_lst[] = $cmp->export_obj();
+        if ($do_load) {
+            $this->load_components();
         }
-        $result->cmp_lst = $exp_cmp_lst;
+        if ($this->cmp_lst != null) {
+            foreach ($this->cmp_lst as $cmp) {
+                $result->view_components[] = $cmp->export_obj();
+            }
+        }
 
         log_debug('view->export_obj -> ' . json_encode($result));
         return $result;

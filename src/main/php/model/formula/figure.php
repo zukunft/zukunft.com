@@ -39,7 +39,7 @@ class figure
     public ?float $number = null;         // the numeric value
     public ?string $symbol = null;        // the reference text that has lead to the value
     public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
-    public ?DateTime $time_wrd = null;    // the time word object, if the figure value time is adjusted by a special formula
+    public ?word $time_wrd = null;        // the time word object, if the figure value time is adjusted by a special formula
     public ?object $obj = null;           // the value or formula result object
 
     /*
@@ -53,7 +53,7 @@ class figure
         $result = $this->type;
         $result .= ' ' . $this->number;
         $result .= ' ' . $this->symbol;
-        $result .= ' ' . $this->last_update;
+        $result .= ' ' . $this->last_update->format('Y-m-d H:i:s');
         if (isset($this->obj)) {
             $result .= $this->obj->dsp_id();
         }

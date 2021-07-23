@@ -55,7 +55,7 @@ class view_component extends user_sandbox
 
     function __construct()
     {
-        $this->obj_type = user_sandbox::TYPE_NAMED;
+        parent::__construct();
         $this->obj_name = 'view_component';
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
@@ -421,7 +421,7 @@ class view_component extends user_sandbox
             $sql_avoid_code_check_prefix = "SELECT";
             $sql = $sql_avoid_code_check_prefix . " max(m.order_nbr) AS max_order_nbr
                 FROM ( SELECT 
-                              " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_NUM) . " 
+                              " . $db_con->get_usr_field("order_nbr", "l", "u", sql_db::FLD_FORMAT_VAL) . " 
                           FROM view_component_links l 
                     LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                                       AND u.user_id = " . $this->usr->id . " 

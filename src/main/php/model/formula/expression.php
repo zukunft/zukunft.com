@@ -74,22 +74,19 @@ class expression
     private function get_wrd_id($ref_text)
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
-        $result = $this->get_ref_id($ref_text, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
-        return $result;
+        return $this->get_ref_id($ref_text, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
     }
 
     private function get_frm_id($ref_text)
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
-        $result = $this->get_ref_id($ref_text, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
-        return $result;
+        return $this->get_ref_id($ref_text, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
     }
 
     private function get_lnk_id($ref_text)
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
-        $result = $this->get_ref_id($ref_text, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
-        return $result;
+        return $this->get_ref_id($ref_text, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
     }
 
     // find the position of the formula indicator "="

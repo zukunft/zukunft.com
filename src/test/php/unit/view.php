@@ -209,6 +209,39 @@ function run_view_unit_tests()
     $exe_start_time = test_show_result('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
 
     /*
+     * Im- and Export tests
+     */
+
+    test_subheader('Im- and Export tests');
+
+    $dsp_json = '{
+      "name": "car cost agreement",
+      "comment": "view the cost agreement of car usage",
+      "type": "detail view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    }';
+    $dsp_exp_json = '{
+        "comment":"view the cost agreement of car usage",
+        "code_id":"",
+        "type":"",
+        "view_components":null,"name":"car cost agreement"
+      }';
+    $json_import_array = json_decode($dsp_json, true);
+    $dsp = new view_dsp;
+    $dsp->import_obj($json_import_array, false);
+    $json_export_string = json_encode($dsp->export_obj(false));
+    //$result = json_decode($dsp_json) == json_decode($json_export_string);
+    $result = json_decode($dsp_exp_json) == json_decode($json_export_string);
+    $target = true;
+    $exe_start_time = test_show_result('view->import check name', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+
+    /*
      * Display tests
      */
 

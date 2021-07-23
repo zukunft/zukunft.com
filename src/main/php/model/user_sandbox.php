@@ -396,10 +396,37 @@ class user_sandbox
     }
 
     /*
-
     save functions
-
     */
+
+    function changer_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = $this->obj_name . '_changer';
+        if ($this->owner_id > 0) {
+            $sql_name .= '_ex_owner';
+        }
+
+        $sql_avoid_code_check_prefix = "SELECT";
+        if ($this->owner_id > 0) {
+            $sql = $sql_avoid_code_check_prefix . ' user_id 
+                FROM user_' . $this->obj_name . 's 
+               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
+                 AND user_id <> ' . $this->owner_id . '
+                 AND (excluded <> 1 OR excluded is NULL)';
+        } else {
+            $sql = $sql_avoid_code_check_prefix . ' user_id 
+                FROM user_' . $this->obj_name . 's 
+               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
+                 AND (excluded <> 1 OR excluded is NULL)';
+        }
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
 
     // if the object has been changed by someone else than the owner the user id is returned
     // but only return the user id if the user has not also excluded it
@@ -410,21 +437,8 @@ class user_sandbox
         global $db_con;
 
         $db_con->set_type($this->obj_name);
-        if ($this->owner_id > 0) {
-
-            $sql = 'SELECT user_id 
-                FROM user_' . $this->obj_name . 's 
-               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
-                 AND user_id <> ' . $this->owner_id . '
-                 AND (excluded <> 1 OR excluded is NULL)';
-        } else {
-            $sql = 'SELECT user_id 
-                FROM user_' . $this->obj_name . 's 
-               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
-                 AND (excluded <> 1 OR excluded is NULL)';
-        }
-        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
+        $sql = $this->changer_sql($db_con);
         $db_row = $db_con->get1($sql);
         $user_id = $db_row['user_id'];
 

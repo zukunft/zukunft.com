@@ -32,6 +32,7 @@ function run_user_sandbox_unit_tests()
 {
 
     global $exe_start_time;
+    global $sql_names;
 
     test_subheader('Test user sandbox functions that does not need a database connection');
 
@@ -1756,5 +1757,49 @@ function run_user_sandbox_unit_tests()
              WHERE excluded = 0
           ORDER BY p.phrase_name;";
     $exe_start_time = test_show_result('general phrase list query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // the word changer query (used in user_sandbox->changer_sql)
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $wrd = new word;
+    $wrd->id = 1;
+    $created_sql =$wrd->changer_sql($db_con);
+    $expected_sql = "SELECT user_id 
+                FROM user_words 
+               WHERE word_id = 1
+                 AND (excluded <> 1 OR excluded is NULL)";
+    $exe_start_time = test_show_result('word changer query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... and check if the prepared sql name is unique
+    $result = false;
+    $sql_name = $wrd->changer_sql($db_con, true);
+    if (!in_array($sql_name, $sql_names)) {
+        $result = true;
+        $sql_names[] = $sql_name;
+    }
+    $target = true;
+    $exe_start_time = test_show_result('user_sandbox->word_changer_sql check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+
+    // the word changer ex owner query (used in user_sandbox->changer_sql)
+    $db_con->db_type = DB_TYPE_POSTGRES;
+    $wrd = new word;
+    $wrd->id = 1;
+    $wrd->owner_id = 2;
+    $created_sql =$wrd->changer_sql($db_con);
+    $expected_sql = "SELECT user_id 
+                FROM user_words 
+               WHERE word_id = 1
+                 AND user_id <> 2
+                 AND (excluded <> 1 OR excluded is NULL)";
+    $exe_start_time = test_show_result('word changer ex owner query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+
+    // ... and check if the prepared sql name is unique
+    $result = false;
+    $sql_name = $wrd->changer_sql($db_con, true);
+    if (!in_array($sql_name, $sql_names)) {
+        $result = true;
+        $sql_names[] = $sql_name;
+    }
+    $target = true;
+    $exe_start_time = test_show_result('user_sandbox->word_changer_sql ex owner check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
 
 }
