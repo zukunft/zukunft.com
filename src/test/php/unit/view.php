@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+use Swaggest\JsonDiff\JsonDiff;
+
 function run_view_unit_tests()
 {
 
@@ -217,7 +219,7 @@ function run_view_unit_tests()
     $dsp_json = '{
       "name": "car cost agreement",
       "comment": "view the cost agreement of car usage",
-      "type": "detail view",
+      "type": "dsp_type_default",
       "view_components": [
         {
           "pos": "0",
@@ -227,16 +229,16 @@ function run_view_unit_tests()
       ]
     }';
     $dsp_exp_json = '{
+        "name":"car cost agreement",
         "comment":"view the cost agreement of car usage",
+        "type":"dsp_type_default",
         "code_id":"",
-        "type":"",
-        "view_components":null,"name":"car cost agreement"
+        "view_components":null
       }';
     $json_import_array = json_decode($dsp_json, true);
     $dsp = new view_dsp;
     $dsp->import_obj($json_import_array, false);
     $json_export_string = json_encode($dsp->export_obj(false));
-    //$result = json_decode($dsp_json) == json_decode($json_export_string);
     $result = json_decode($dsp_exp_json) == json_decode($json_export_string);
     $target = true;
     $exe_start_time = test_show_result('view->import check name', $target, $result, $exe_start_time, TIMEOUT_LIMIT);

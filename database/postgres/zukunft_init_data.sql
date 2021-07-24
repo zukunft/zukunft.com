@@ -419,12 +419,12 @@ INSERT INTO view_link_types (view_link_type_id, type_name, comment) VALUES
 -- Dumping data for table 'view_types'
 --
 
-INSERT INTO view_types (view_type_id, type_name, description, code_id) VALUES
-    (1, 'entry view', 'These masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'dsp_type_entry'),
-    (2, 'presentation view', '', NULL),
-    (3, 'detail view', 'the standard mask without additional functionalities', 'dsp_type_mask_default'),
-    (4, 'word default', 'A default mask for new words', 'dsp_type_word_default'),
-    (5, '', '', 'dsp_type_default');
+INSERT INTO view_types (view_type_id, view_type_name, description, code_id) VALUES
+    (1, 'standard', 'the base display mask without additional functionalities', 'dsp_type_default'),
+    (2, 'entry view', 'these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'dsp_type_entry'),
+    (3, 'edit', 'a edit mask that is used to change data', 'dsp_type_mask_default'),
+    (4, 'presentation', 'with auto forward', 'dsp_type_presentation'),
+    (5, 'word default', 'a default mask for new words', 'dsp_type_word_default');
 
 --
 -- Dumping data for table 'word_types'

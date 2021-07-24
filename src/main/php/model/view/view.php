@@ -278,7 +278,7 @@ class view extends user_sandbox
         global $db_con;
 
         if ($this->type_id > 0) {
-            $sql = "SELECT type_name, description
+            $sql = "SELECT view_type_name, description, code_id
                 FROM view_types
                WHERE view_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
@@ -287,6 +287,46 @@ class view extends user_sandbox
             $this->type_name = $db_type['type_name'];
         }
         return $this->type_name;
+    }
+
+    /**
+     * get the view type code id based on the database id set in this object
+     * @return string
+     */
+    private function type_code_id(): string
+    {
+        global $view_types;
+
+        $result = '';
+
+        if ($this->type_id > 0) {
+            if (array_key_exists($this->type_id, $view_types)) {
+                $dsp_type = $view_types[$this->type_id];
+                $result = $dsp_type->code_id;
+            } else {
+                log_err('view type with id ' . $this->type_id . ' not found');
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the view type database id based on the code id
+     * @param string $code_id
+     * @return int
+     */
+    private function type_id_by_code_id(string $code_id): int
+    {
+        global $view_types_hash;
+
+        $id = 0;
+        if (array_key_exists($code_id, $view_types_hash)) {
+            $id = $view_types_hash[$code_id];
+        } else {
+            log_err('view type with code id ' . $code_id . ' not found');
+        }
+
+        return $id;
     }
 
     /**
@@ -424,6 +464,9 @@ class view extends user_sandbox
             if ($key == 'name') {
                 $this->name = $value;
             }
+            if ($key == 'type') {
+                $this->type_id = $this->type_id_by_code_id($value);
+            }
             if ($key == 'comment') {
                 $this->comment = $value;
             }
@@ -459,7 +502,7 @@ class view extends user_sandbox
         // add the view parameters
         $result->name = $this->name;
         $result->comment = $this->comment;
-        $result->type = $this->type_name();
+        $result->type = $this->type_code_id();
         if ($this->code_id <> '') {
             $result->code_id = $this->code_id;
         }

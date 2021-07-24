@@ -103,8 +103,9 @@ const DBL_VIEW_COMPONENT_DEL = "dsp_view_entry_del";
 // views types; using view type instead of a single view, because there maybe several default views for words
 const DBL_VIEW_TYPE_DEFAULT = "dsp_type_default";
 const DBL_VIEW_TYPE_ENTRY = "dsp_type_entry";
-const DBL_VIEW_TYPE_WORD_DEFAULT = "dsp_type_word_default";
 const DBL_VIEW_TYPE_MASK_DEFAULT = "dsp_type_mask_default";
+const DBL_VIEW_TYPE_PRESENT = "dsp_type_presentation";
+const DBL_VIEW_TYPE_WORD_DEFAULT = "dsp_type_word_default";
 
 // views component types                  
 const DBL_VIEW_COMP_TYPE_TEXT = "dsp_comp_type_text";
@@ -336,6 +337,8 @@ function sql_code_link($code_id, $description, $db_con)
     }
     if ($code_id == DBL_VIEW_TYPE_DEFAULT
         or $code_id == DBL_VIEW_TYPE_ENTRY
+        or $code_id == DBL_VIEW_TYPE_MASK_DEFAULT
+        or $code_id == DBL_VIEW_TYPE_PRESENT
         or $code_id == DBL_VIEW_TYPE_WORD_DEFAULT) {
         $db_type = "view_type";
     }

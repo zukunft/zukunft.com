@@ -71,6 +71,8 @@ function db_upgrade_0_0_3($db_con)
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     $sql = 'ALTER TABLE value_time_series RENAME value_time_serie_id TO value_time_series_id;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE public.view_types RENAME type_name TO view_type_name;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {

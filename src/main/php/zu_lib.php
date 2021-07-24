@@ -105,7 +105,13 @@
   e.g. use company as the first splitter and than ABB, Daimler, ... as the second or CO2 as the second tree
        in this case the CO2 balance of ABB will be on the "Company ABB server", but all other CO2 data will be on en "environment server"
   the word graph should stay on the main server for consistency reasons     
-       
+
+  code links
+  ----------
+
+  types (like words types or view types) are used to assign coded functionality to some words or views. This implies
+  that a type always must have a code_id. This code_id is also used for system im- and export.
+
   function naming
   ---------------
   
@@ -314,6 +320,7 @@ const DB_TYPE_FORMULA_LINK = 'formula_link';
 const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
 const DB_TYPE_FORMULA_VALUE = 'formula_value';
 const DB_TYPE_VIEW = 'view';
+const DB_TYPE_VIEW_TYPE = 'view_type';
 const DB_TYPE_VIEW_COMPONENT = 'view_component';
 const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
 const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
@@ -392,6 +399,7 @@ include_once $root_path . 'src/main/php/model/user/user_log_link.php';
 include_once $root_path . 'src/main/php/web/user_log_display.php';
 include_once $root_path . 'src/main/php/model/user_sandbox.php';
 include_once $root_path . 'src/main/php/model/user_sandbox_exp_named.php';
+include_once $root_path . 'src/main/php/model/user_type.php';
 include_once $root_path . 'src/main/php/web/user_sandbox_display.php';
 include_once $root_path . 'src/main/php/model/system/system_error_log.php';
 include_once $root_path . 'src/main/php/model/system/system_error_log_list.php';
@@ -436,6 +444,7 @@ include_once $root_path . 'src/main/php/model/formula/figure_list.php';
 include_once $root_path . 'src/main/php/model/system/batch_job.php';
 include_once $root_path . 'src/main/php/model/system/batch_job_list.php';
 include_once $root_path . 'src/main/php/model/view/view.php';
+include_once $root_path . 'src/main/php/model/view/view_types.php';
 include_once $root_path . 'src/main/php/model/view/view_exp.php';
 include_once $root_path . 'src/main/php/web/view_display.php';
 include_once $root_path . 'src/main/php/model/view/view_component.php';
@@ -449,6 +458,11 @@ include_once $root_path . 'src/main/php/service/config.php';
 
 // used at the moment, but to be replaced with R-Project call
 include_once $root_path . 'src/main/php/service/zu_lib_calc_math.php';
+
+// potentially to be loaded by composer
+//include_once $root_path . 'src/main/php/utils/json-diff/JsonDiff.php';
+//include_once $root_path . 'src/main/php/utils/json-diff/JsonPatch.php';
+//include_once $root_path . 'src/main/php/utils/json-diff/JsonPointer.php';
 
 // libraries that may be useful in the future
 /*
@@ -791,6 +805,10 @@ function prg_start($code_name, $style = ""): sql_db
     $sys_log_msg_type_error_id = sql_code_link(DBL_SYSLOG_ERROR, "Error", $db_con);
     $sys_log_msg_type_fatal_error_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR", $db_con);
     //verbs_load;
+
+    // load the type database enum
+    // these tables are expected to be so small that it is more efficient to load all database records once at start
+    init_view_types($db_con);
 
     return $db_con;
 }
@@ -1154,7 +1172,8 @@ list functions (to be dismissed / replaced by objects)
  * @param array $in_array the array that should be formatted
  * @return string the values comma seperated or "null" if the array is empty
  */
-function dsp_array($in_array): string {
+function dsp_array($in_array): string
+{
     $result = 'null';
     if ($in_array != null) {
         if (count($in_array) > 0) {
@@ -1169,7 +1188,8 @@ function dsp_array($in_array): string {
  * @param array $in_array the array that should be formatted
  * @return string the values comma seperated or "" if the array is empty
  */
-function sql_array(array $in_array): string {
+function sql_array(array $in_array): string
+{
     $result = '';
     if ($in_array != null) {
         if (count($in_array) > 0) {

@@ -2254,7 +2254,7 @@ CREATE TABLE IF NOT EXISTS ` view_types `
 (
     11
 ) NOT NULL,
-    ` type_name ` varchar
+    ` view_type_name ` varchar
 (
     200
 ) NOT NULL,

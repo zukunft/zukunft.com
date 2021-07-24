@@ -32,7 +32,11 @@ function run_unit_tests()
 {
     test_header('Start the zukunft.com unit tests');
 
-    run_string_unit_tests (); // test functions not yet split into single unit tests
+    // prepare the unit tests
+    unit_text_init_view_types();
+
+    // do the unit tests
+    run_string_unit_tests(); // test functions not yet split into single unit tests
     run_word_list_unit_tests();
     run_word_link_list_unit_tests();
     run_view_unit_tests();

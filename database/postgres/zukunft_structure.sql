@@ -1267,10 +1267,10 @@ CREATE TABLE IF NOT EXISTS view_link_types
 
 CREATE TABLE IF NOT EXISTS view_types
 (
-    view_type_id BIGSERIAL PRIMARY KEY,
-    type_name    varchar(200) NOT NULL,
-    description  text         NOT NULL,
-    code_id      varchar(100) DEFAULT NULL
+    view_type_id   BIGSERIAL PRIMARY KEY,
+    view_type_name varchar(200) NOT NULL,
+    description    text         NOT NULL,
+    code_id        varchar(100) DEFAULT NULL
 );
 
 COMMENT ON TABLE view_types is 'to group the masks a link a basic format';
