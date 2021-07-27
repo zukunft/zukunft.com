@@ -34,6 +34,7 @@ function run_unit_tests()
 
     // prepare the unit tests
     unit_text_init_view_types();
+    unit_text_init_view_component_types();
 
     // do the unit tests
     run_string_unit_tests(); // test functions not yet split into single unit tests

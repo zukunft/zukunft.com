@@ -222,24 +222,21 @@ function run_view_unit_tests()
       "type": "dsp_type_default",
       "view_components": [
         {
-          "pos": "0",
+          "position": 1,
           "name": "Name",
-          "code_id": "word_name"
+          "type": "",
+          "row": "",
+          "column": "",
+          "column2": "",
+          "comment": ""
         }
       ]
     }';
-    $dsp_exp_json = '{
-        "name":"car cost agreement",
-        "comment":"view the cost agreement of car usage",
-        "type":"dsp_type_default",
-        "code_id":"",
-        "view_components":null
-      }';
     $json_import_array = json_decode($dsp_json, true);
     $dsp = new view_dsp;
     $dsp->import_obj($json_import_array, false);
     $json_export_string = json_encode($dsp->export_obj(false));
-    $result = json_decode($dsp_exp_json) == json_decode($json_export_string);
+    $result = json_decode($dsp_json) == json_decode($json_export_string);
     $target = true;
     $exe_start_time = test_show_result('view->import check name', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
 

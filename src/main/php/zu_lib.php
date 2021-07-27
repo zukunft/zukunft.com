@@ -444,12 +444,14 @@ include_once $root_path . 'src/main/php/model/formula/figure_list.php';
 include_once $root_path . 'src/main/php/model/system/batch_job.php';
 include_once $root_path . 'src/main/php/model/system/batch_job_list.php';
 include_once $root_path . 'src/main/php/model/view/view.php';
-include_once $root_path . 'src/main/php/model/view/view_types.php';
 include_once $root_path . 'src/main/php/model/view/view_exp.php';
+include_once $root_path . 'src/main/php/model/view/view_types.php';
 include_once $root_path . 'src/main/php/web/view_display.php';
 include_once $root_path . 'src/main/php/model/view/view_component.php';
+include_once $root_path . 'src/main/php/model/view/view_component_exp.php';
 include_once $root_path . 'src/main/php/model/view/view_component_dsp.php';
 include_once $root_path . 'src/main/php/model/view/view_component_link.php';
+include_once $root_path . 'src/main/php/model/view/view_component_types.php';
 
 // include all other libraries that are usually needed
 include_once $root_path . 'db_link/zu_lib_sql_link.php';
@@ -809,6 +811,7 @@ function prg_start($code_name, $style = ""): sql_db
     // load the type database enum
     // these tables are expected to be so small that it is more efficient to load all database records once at start
     init_view_types($db_con);
+    init_view_component_types($db_con);
 
     return $db_con;
 }

@@ -33,8 +33,8 @@ class view_component extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields for the view component
-    public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
     public ?int $order_nbr = null;          // the position in the linked view
+    public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
     public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
     //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
     public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
@@ -201,7 +201,7 @@ class view_component extends user_sandbox
     //
     function load_wrd_row()
     {
-        $result = '';
+        $result = false;
         if ($this->word_id_row > 0) {
             $wrd_row = new word_dsp;
             $wrd_row->id = $this->word_id_row;
@@ -213,8 +213,13 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    //
-    function load_wrd_col()
+    /**
+     * used for a table component
+     * load the word object that defines the column names
+     * e.g. "year" to display the yearly values
+     * @return string the name of the loaded word
+     */
+    function load_wrd_col(): string
     {
         $result = '';
         if ($this->word_id_col > 0) {
@@ -229,7 +234,7 @@ class view_component extends user_sandbox
     }
 
     //
-    function load_wrd_col2()
+    function load_wrd_col2(): string
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
@@ -256,6 +261,25 @@ class view_component extends user_sandbox
             $result = $frm->name;
         }
         return $result;
+    }
+
+    /**
+     * get the view component type database id based on the code id
+     * @param string $code_id
+     * @return int
+     */
+    private function type_id_by_code_id(string $code_id): int
+    {
+        global $view_component_types_hash;
+
+        $id = 0;
+        if (array_key_exists($code_id, $view_component_types_hash)) {
+            $id = $view_component_types_hash[$code_id];
+        } else {
+            log_err('view component type with code id ' . $code_id . ' not found');
+        }
+
+        return $id;
     }
 
     // list of all view ids that are directly assigned to this view component
@@ -317,23 +341,66 @@ class view_component extends user_sandbox
         return $this->type_name;
     }
 
+    /*
+    import & export functions
+    */
+
+    /**
+     *  */
+    /**
+     * import a view component from a JSON object
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
+    {
+        $result = false;
+
+        foreach ($json_obj as $key => $value) {
+
+            if ($key == 'name') {
+                $this->name = $value;
+            }
+            if ($key == 'position') {
+                $this->order_nbr = $value;
+            }
+            if ($key == 'type') {
+                if ($value != '') {
+                    $this->type_id = $this->type_id_by_code_id($value);
+                }
+            }
+            if ($key == 'comment') {
+                $this->comment = $value;
+            }
+        }
+
+        if ($result == '' and $do_save) {
+            if ($this->save()) {
+                $result = true;
+                log_debug('view_component->import_obj -> ' . $this->dsp_id());
+            }
+        } else {
+            log_debug('view_component->import_obj -> ' . $result);
+        }
+
+        return $result;
+    }
+
     // create an object for the export
-    function export_obj()
+    function export_obj(): view_component_exp
     {
         log_debug('view_component->export_obj ' . $this->dsp_id());
-        $result = new view_component();
+        $result = new view_component_exp();
 
         // add the component parameters
         $this->load_phrases();
         if ($this->order_nbr >= 0) {
-            $result->pos = $this->order_nbr;
+            $result->position = $this->order_nbr;
         }
         $result->name = $this->name;
         if ($this->type_name() <> '') {
-            $result->obj_type = $this->type_name();
-        }
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
+            $result->type = $this->type_name();
         }
         if (isset($this->wrd_row)) {
             $result->row = $this->wrd_row->name;
@@ -352,40 +419,13 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // import a view from an object
-    function import_obj()
-    {
-    }
-
     /*
-
     display functions
-
     */
 
-    // display the unique id fields
-    function dsp_id(): string
+    function name(): string
     {
-        $result = '';
-
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        if (isset($this->usr)) {
-            $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
-        }
-        return $result;
-    }
-
-    function name()
-    {
-        $result = '"' . $this->name . '"';
-        return $result;
+        return '"' . $this->name . '"';
     }
 
     // not used at the moment
@@ -403,18 +443,19 @@ class view_component extends user_sandbox
       } */
 
     /*
-
       to link and unlink a view_component
-
     */
 
-    // returns the next free order number for a new view component
+    /**
+     * returns the next free order number for a new view component
+     */
     function next_nbr($view_id)
     {
         log_debug('view_component->next_nbr for view "' . $view_id . '"');
 
         global $db_con;
 
+        $result = 1;
         if ($view_id == '' or $view_id == Null or $view_id == 0) {
             log_err('Cannot get the next position, because the view_id is not set', 'view_component->next_nbr');
         } else {
@@ -478,10 +519,9 @@ class view_component extends user_sandbox
     }
 
     // link a view component to a view
-    function link($dsp, $order_nbr)
+    function link($dsp, $order_nbr): string
     {
         log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
-        $result = '';
 
         $dsp_lnk = new view_component_link;
         $dsp_lnk->fob = $dsp;
@@ -489,16 +529,13 @@ class view_component extends user_sandbox
         $dsp_lnk->usr = $this->usr;
         $dsp_lnk->order_nbr = $order_nbr;
         $dsp_lnk->pos_type_id = 1; // to be reviewed
-        $result = '';
-        $result .= $dsp_lnk->save();
-
-        return $result;
+        return $dsp_lnk->save();
     }
 
     // remove a view component from a view
     // to do: check if the view component is not linked anywhere else
     // and if yes, delete the view component after confirmation
-    function unlink($dsp)
+    function unlink($dsp): string
     {
         $result = '';
 

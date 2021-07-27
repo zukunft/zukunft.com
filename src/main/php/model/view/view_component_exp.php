@@ -2,8 +2,8 @@
 
 /*
 
-  view_exp.php - the simple export object for a view
-  ------------
+  view_component_exp.php - the simple export object for a view component including the position that is save in the component link
+  ----------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,22 +29,27 @@
   
 */
 
-class view_exp extends user_sandbox_exp_named
+class view_component_exp extends user_sandbox_exp_named
 {
 
     // field names used for JSON creation
-    public ?string $comment = '';
+    public ?int $position = 0;
     public ?string $type = '';
-    public ?array $view_components = null;
+    public ?string $row = '';
+    public ?string $column = '';
+    public ?string $column2 = '';
+    public ?string $comment = '';
 
     function reset()
     {
         parent::reset();
 
-        $this->comment = '';
+        $this->position = 0;
         $this->type = '';
-
-        $this->view_components = null;
+        $this->row = '';
+        $this->column = '';
+        $this->column2 = '';
+        $this->comment = '';
     }
 
 }

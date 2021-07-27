@@ -39,7 +39,7 @@ class view extends user_sandbox
     public ?string $code_id = null;   // to select internal predefined views
 
     // in memory only fields
-    public ?array $cmp_lst = null;  // array of the view component objects
+    public ?array $cmp_lst = null;  // array of the view component objects in correct order
     public ?string $back = null;    // the calling stack
 
     function __construct()
@@ -352,6 +352,27 @@ class view extends user_sandbox
         return '"' . $this->name . '"';
     }
 
+    /*
+    component functions
+    */
+
+    /**
+     * add a new component to this view
+     * @param view_component $cmp the view component that should be added
+     * @param int|null $pos is set the position, where the
+     * @return bool true if the new component link has been saved to the database
+     */
+    function add_cmp(view_component $cmp, ?int $pos = null): bool
+    {
+        $result = false;
+        if ($pos == null) {
+            $this->cmp_lst[] = $cmp;
+        }
+        // compare with the database links and save the differences
+
+        return $result;
+    }
+
     /**
      * move one view component one place up
      * in case of an error the error message is returned
@@ -450,6 +471,8 @@ class view extends user_sandbox
 
     /**
      * import a view from a JSON object
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return bool true if the import has been successfully saved to the database
@@ -465,23 +488,31 @@ class view extends user_sandbox
                 $this->name = $value;
             }
             if ($key == 'type') {
-                $this->type_id = $this->type_id_by_code_id($value);
+                if ($value != '') {
+                    $this->type_id = $this->type_id_by_code_id($value);
+                }
             }
             if ($key == 'comment') {
                 $this->comment = $value;
             }
-            /* TODO
-            if ($key == 'type')    { $this->type_id = cl($value); }
-            if ($key == 'code_id') {
-            }
             if ($key == 'view_components') {
+                $json_lst = $value;
+                foreach ($json_lst as $key_cmp => $value_cmp) {
+                    $cmp = new view_component();
+                    $cmp->import_obj($value_cmp, $do_save);
+                    $this->cmp_lst[] = $cmp;
+                    if (count($this->cmp_lst) != $cmp->order_nbr) {
+                        log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . 'but it is at position ' . count($this->cmp_lst));
+                    }
+                }
             }
-            */
         }
 
         if ($result == '' and $do_save) {
             if ($this->save()) {
                 $result = true;
+                // TODO save also the links
+                //$dsp_lnk = new view_component_link();
                 log_debug('view->import_obj -> ' . $this->dsp_id());
             }
         } else {
