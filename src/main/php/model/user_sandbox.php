@@ -40,7 +40,7 @@ class user_sandbox
 {
 
     const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
-    const TYPE_LINK = 'link';  // for user sandbox objects that link two objects like formula links
+    const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
     const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
 
     // fields to define the object; should be set in the constructor of the child object

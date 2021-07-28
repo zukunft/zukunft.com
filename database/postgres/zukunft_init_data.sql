@@ -384,7 +384,7 @@ INSERT INTO view_components (view_component_id, user_id, view_component_name, co
 
 INSERT INTO view_component_position_types (view_component_position_type_id, type_name, description) VALUES
 (1, 'below', ''),
-(2, 'Right', 'is right of the previous entry');
+(2, 'side', 'is right of the previous entry (or left for right to left languages)');
 
 --
 -- Dumping data for table 'view_component_types'

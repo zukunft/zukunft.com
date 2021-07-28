@@ -33,7 +33,6 @@ class view_component extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields for the view component
-    public ?int $order_nbr = null;          // the position in the linked view
     public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
     public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
     //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
@@ -43,6 +42,10 @@ class view_component extends user_sandbox
     public ?int $word_id_col2 = null;       // for a table to defined second columns layer or the second axis in case of a chart
     //                                         e.g. for a "company cash flow statement" the "col word" could be "Year"
     //                                              "col2 word" could be "Quarter" to show the Quarters between the year upon request
+
+    // database fields repeated from the component link for a easy to use in memory view object
+    public ?int $order_nbr = null;          // the position in the linked view
+    public ?int $pos_type = null;           // the position in the linked view
 
     // linked fields
     public ?word $wrd_row = null;           // the word object for $word_id_row

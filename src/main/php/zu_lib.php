@@ -98,6 +98,13 @@
   Admin edit: for word_links (verbs), word_types, link_types, formula_types there is only one valid record and only an admin user is allowed to change it, which is also because these tables have a code id
   
   Sources: every user can change it, but there is only one valid row
+
+  Saving: there are several methods to save user data
+    - not user specific data like verbs, which are saved with the standard process
+    - user specific data like formulas, which are saved base on the user sandbox functions
+    - user specific data, which change very rarely and has code functionality linked like view types
+    - not user specific data, which change only with a program update like the view component position type
+
   
   Fixed server splitting (if not hadoop is used as the backend)
   To split the load between to several servers it is suggested to move one word and all it's related values and results to a second server
@@ -135,6 +142,8 @@
   
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
   
+  TODO load all types like view types, formulas types once at program start in the hash tables
+  TODO create all export objects and add all import export unit tests
   TODO complete the database abstraction layer
   TODO create unit tests for all module classes
   TODO name all queries with user data as prepared queries to prevent SQL code injections
@@ -145,6 +154,7 @@
   TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
   TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
   TODO check all data from an URL or from a user form that it contains no SQL code
+  TODO move the init database fillings to on class instead of on SQL statement for each database
 
   
 

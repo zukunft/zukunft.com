@@ -362,11 +362,25 @@ class view extends user_sandbox
      * @param int|null $pos is set the position, where the
      * @return bool true if the new component link has been saved to the database
      */
-    function add_cmp(view_component $cmp, ?int $pos = null): bool
+    function add_cmp(view_component $cmp, ?int $pos = null, bool $do_save = true): bool
     {
         $result = false;
         if ($pos == null) {
             $this->cmp_lst[] = $cmp;
+            if (count($this->cmp_lst) != $cmp->order_nbr) {
+                log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . 'but it is at position ' . count($this->cmp_lst));
+            } else {
+                if ($do_save) {
+                    $cmp->save();
+                    $cmp_lnk = new view_component_link();
+                    $cmp_lnk->view_id = $this->id;
+                    $cmp_lnk->view_component_id = $cmp->id;
+                    $cmp_lnk->order_nbr = $cmp->order_nbr;
+                    $cmp_lnk->pos_type_id = 0;
+                    $cmp_lnk->pos_code = '';
+                    $cmp_lnk->save();
+                }
+            }
         }
         // compare with the database links and save the differences
 
@@ -497,13 +511,11 @@ class view extends user_sandbox
             }
             if ($key == 'view_components') {
                 $json_lst = $value;
-                foreach ($json_lst as $key_cmp => $value_cmp) {
+                foreach ($json_lst as $json_cmp) {
                     $cmp = new view_component();
-                    $cmp->import_obj($value_cmp, $do_save);
-                    $this->cmp_lst[] = $cmp;
-                    if (count($this->cmp_lst) != $cmp->order_nbr) {
-                        log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . 'but it is at position ' . count($this->cmp_lst));
-                    }
+                    $cmp->import_obj($json_cmp, $do_save);
+                    // on import first add all view components to the view object and save them all at once
+                    $this->add_cmp($cmp, null, false);
                 }
             }
         }
@@ -534,9 +546,6 @@ class view extends user_sandbox
         $result->name = $this->name;
         $result->comment = $this->comment;
         $result->type = $this->type_code_id();
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
-        }
 
         // add the view components used
         if ($do_load) {

@@ -38,10 +38,13 @@
 class view_component_link extends user_sandbox
 {
 
+    const POS_BELOW = 1;  // the view component is placed below the previous component
+    const POS_SIDE = 2;   // the view component is placed on the right (or left for right to left writing) side of the previous component
+
     public ?int $view_id = null;            // the id of the view to which the display item should be linked
     public ?int $view_component_id = null;  // the id of the linked display item
     public ?int $order_nbr = null;          // to sort the display item
-    public ?int $pos_type_id = null;        // to to position the display item relative the the previous item (1= side, 2 = below)
+    public ?int $pos_type_id = null;        // to to position the display item relative the the previous item (1 = below, 2= side, )
     public ?string $pos_code = null;        // side or below or ....
 
 
