@@ -126,12 +126,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
-
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 
 // load the main functions
 include_once '../src/main/php/zu_lib.php';
@@ -212,7 +207,7 @@ if ($usr->id > 0) {
         // testing cleanup to remove any remaining test records
         run_test_cleanup();
 
-        // start the integration tests by loading the the base and sample data
+        // start the integration tests by loading the base and sample data
         run_import_test(unserialize(TEST_IMPORT_FILE_LIST));
 
         // display the test results

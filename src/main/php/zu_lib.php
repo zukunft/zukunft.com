@@ -155,6 +155,7 @@
   TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
   TODO check all data from an URL or from a user form that it contains no SQL code
   TODO move the init database fillings to on class instead of on SQL statement for each database
+  TODO prevent XSS attacks and script attacks
 
   
 
@@ -280,7 +281,8 @@
   - review user authentication (use fidoalliance.org/fido2/)
   - review the database indices and the foreign keys
   - include a list of basic values in test.php e.g. CO2 of rice
-  
+  - allow personal groups up to 100 persons and to join up 20 named groups
+
 
   This file is part of zukunft.com - calc with words
 
@@ -330,10 +332,10 @@ const DB_TYPE_FORMULA_LINK = 'formula_link';
 const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
 const DB_TYPE_FORMULA_VALUE = 'formula_value';
 const DB_TYPE_VIEW = 'view';
-const DB_TYPE_VIEW_TYPE = 'view_types';
+const DB_TYPE_VIEW_TYPE = 'view_type';
 const DB_TYPE_VIEW_COMPONENT = 'view_component';
 const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
-const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_types';
+const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
 
 const DB_TYPE_CHANGE = 'change';
 const DB_TYPE_CHANGE_TABLE = 'change_table';

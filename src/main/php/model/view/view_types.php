@@ -58,7 +58,7 @@ function init_view_types($db_con): bool
     if ($db_lst != null) {
         foreach ($db_lst as $db_entry) {
             $dsp_type = new view_types();
-            $dsp_type->name = $db_entry['view_type_name'];
+            $dsp_type->name = $db_entry['type_name'];
             $dsp_type->comment = $db_entry['description'];
             $dsp_type->code_id = $db_entry['code_id'];
             $view_types[$db_entry['view_type_id']] = $dsp_type;

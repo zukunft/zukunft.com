@@ -270,7 +270,7 @@ INSERT INTO sys_log_types (sys_log_type_id, type_name, code_id) VALUES
 -- Dumping data for table 'users'
 --
 
-INSERT INTO users (user_id, user_name, code_id, password, email, email_verified, email_alternativ, ip_address, mobile_number, mobile_verified, first_name, last_name, street, place, country_id, post_verified, official_id, user_official_id_type_id, official_verified, user_type_id, last_word_id, last_mask_id, isactive, dt, last_logoff, user_profile_id, source_id, activation_key, activation_key_timeout) VALUES
+INSERT INTO users (user_id, user_name, code_id, password, email, email_verified, email_alternative, ip_address, mobile_number, mobile_verified, first_name, last_name, street, place, country_id, post_verified, official_id, user_official_id_type_id, official_verified, user_type_id, last_word_id, last_mask_id, is_active, dt, last_logoff, user_profile_id, source_id, activation_key, activation_key_timeout) VALUES
 (1, 'zukunft.com system batch job', 'system', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, '2018-02-05 08:32:36', NULL, NULL, NULL, NULL, NULL),
 (2, 'zukunft.com system test', 'system_test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2018-06-25 12:01:14', NULL, NULL, NULL, NULL, NULL);
 
@@ -390,7 +390,7 @@ INSERT INTO view_component_position_types (view_component_position_type_id, type
 -- Dumping data for table 'view_component_types'
 --
 
-INSERT INTO view_component_types (view_component_type_id, view_component_type_name, description, code_id) VALUES
+INSERT INTO view_component_types (view_component_type_id, type_name, description, code_id) VALUES
     (1, 'word selector', '', 'dsp_comp_type_word_select'),
     (2, 'view selector', 'to select an existing mask e.g. to set the default view', 'dsp_comp_type_view_select'),
     (3, 'text', 'simply to display a variable text', 'dsp_comp_type_text'),
@@ -419,7 +419,7 @@ INSERT INTO view_link_types (view_link_type_id, type_name, comment) VALUES
 -- Dumping data for table 'view_types'
 --
 
-INSERT INTO view_types (view_type_id, view_type_name, description, code_id) VALUES
+INSERT INTO view_types (view_type_id, type_name, description, code_id) VALUES
     (1, 'standard', 'the base display mask without additional functionalities', 'dsp_type_default'),
     (2, 'entry view', 'these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'dsp_type_entry'),
     (3, 'edit', 'a edit mask that is used to change data', 'dsp_type_mask_default'),
@@ -452,6 +452,6 @@ INSERT INTO word_types (word_type_id, type_name, description, code_id, scaling_f
 -- Setting the initial IP blocking for testing
 --
 
-INSERT INTO user_blocked_ips (user_blocked_id, ip_from, ip_to, reason, isactive) VALUES
+INSERT INTO user_blocked_ips (user_blocked_id, ip_from, ip_to, reason, is_active) VALUES
     (1, '66.249.64.95', '66.249.64.95', 'too much damage from this IP', 1);
 

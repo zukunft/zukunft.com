@@ -1128,7 +1128,7 @@ CREATE TABLE IF NOT EXISTS ` users `
 (
     4
 ) DEFAULT NULL,
-    ` email_alternativ ` varchar
+    ` email_alternative ` varchar
 (
     200
 ) DEFAULT NULL,
@@ -1192,7 +1192,7 @@ CREATE TABLE IF NOT EXISTS ` users `
 (
     11
 ) DEFAULT NULL COMMENT 'the last mask that the user has used',
-    ` isactive ` tinyint
+    ` is_active ` tinyint
 (
     4
 ) NOT NULL DEFAULT '0',
@@ -1253,7 +1253,7 @@ CREATE TABLE IF NOT EXISTS ` user_blocked_ips `
     45
 ) NOT NULL,
     ` reason ` text NOT NULL,
-    ` isactive ` tinyint
+    ` is_active ` tinyint
 (
     4
 ) DEFAULT '1'
@@ -1483,7 +1483,7 @@ CREATE TABLE IF NOT EXISTS ` user_requests `
 (
     11
 ) NOT NULL,
-    ` rkey ` varchar
+    ` request_key ` varchar
 (
     20
 ) NOT NULL,
@@ -2212,7 +2212,7 @@ CREATE TABLE IF NOT EXISTS ` view_component_types `
 (
     11
 ) NOT NULL,
-    ` view_component_type_name ` varchar
+    ` type_name ` varchar
 (
     100
 ) NOT NULL,
@@ -2254,7 +2254,7 @@ CREATE TABLE IF NOT EXISTS ` view_types `
 (
     11
 ) NOT NULL,
-    ` view_type_name ` varchar
+    ` type_name ` varchar
 (
     200
 ) NOT NULL,

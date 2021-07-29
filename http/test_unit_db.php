@@ -36,6 +36,9 @@ if (isset($_GET['debug'])) {
 }
 include_once '../src/main/php/zu_lib.php';
 
+// open database and display header
+$db_con = prg_start("unit testing with database reading");
+
 // load the testing functions
 include_once '../src/test/php/test_base.php';
 
@@ -50,15 +53,22 @@ $error_counter = 0;
 $timeout_counter = 0;
 $total_tests = 0;
 
-// just to test the database abstraction layer, but without real connection to any database
-
-$db_con= New sql_db;
-$db_con->db_type = SQL_DB_TYPE;
+// load the session user parameters
 $usr = new user;
-$usr->id = SYSTEM_USER_ID;
+$result = $usr->get();
 
-// --------------------------------------------------
-// start unit testing without writing to the database
-// --------------------------------------------------
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+    if ($usr->is_admin()) {
 
-run_unit_db_tests();
+        // --------------------------------------------------
+        // start unit testing without writing to the database
+        // --------------------------------------------------
+
+        run_unit_db_tests();
+
+    }
+}
+
+// Closing connection
+prg_end($db_con);

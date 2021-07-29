@@ -641,7 +641,7 @@ CREATE TABLE IF NOT EXISTS users
     password                 varchar(200)          DEFAULT NULL,
     email                    varchar(200)          DEFAULT NULL,
     email_verified           smallint              DEFAULT NULL,
-    email_alternativ         varchar(200)          DEFAULT NULL,
+    email_alternative        varchar(200)          DEFAULT NULL,
     ip_address               varchar(50)           DEFAULT NULL,
     mobile_number            varchar(50)           DEFAULT NULL,
     mobile_verified          smallint              DEFAULT NULL,
@@ -657,7 +657,7 @@ CREATE TABLE IF NOT EXISTS users
     user_type_id             bigint                DEFAULT NULL,
     last_word_id             bigint                DEFAULT NULL,
     last_mask_id             bigint                DEFAULT NULL,
-    isactive                 smallint     NOT NULL DEFAULT '0',
+    is_active                smallint     NOT NULL DEFAULT '0',
     dt                       timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_logoff              timestamp    NULL     DEFAULT NULL,
     user_profile_id          bigint                DEFAULT NULL,
@@ -698,7 +698,7 @@ CREATE TABLE IF NOT EXISTS user_blocked_ips
     ip_from         varchar(45) NOT NULL,
     ip_to           varchar(45) NOT NULL,
     reason          text        NOT NULL,
-    isactive        smallint DEFAULT '1'
+    is_active       smallint DEFAULT '1'
 );
 
 -- --------------------------------------------------------
@@ -824,11 +824,11 @@ CREATE TABLE IF NOT EXISTS user_profiles
 
 CREATE TABLE IF NOT EXISTS user_requests
 (
-    id     bigint      NOT NULL,
-    uid    bigint      NOT NULL,
-    rkey   varchar(20) NOT NULL,
-    expire timestamp   NOT NULL,
-    type   varchar(20) NOT NULL
+    id          bigint      NOT NULL,
+    uid         bigint      NOT NULL,
+    request_key varchar(20) NOT NULL,
+    expire      timestamp   NOT NULL,
+    type        varchar(20) NOT NULL
 );
 
 -- --------------------------------------------------------
@@ -1239,7 +1239,7 @@ COMMENT ON TABLE view_component_position_types is 'sideways or down';
 CREATE TABLE IF NOT EXISTS view_component_types
 (
     view_component_type_id   BIGSERIAL PRIMARY KEY,
-    view_component_type_name varchar(100) NOT NULL,
+    type_name varchar(100) NOT NULL,
     description              text         NOT NULL,
     code_id                  varchar(100) NOT NULL
 );
@@ -1267,10 +1267,10 @@ CREATE TABLE IF NOT EXISTS view_link_types
 
 CREATE TABLE IF NOT EXISTS view_types
 (
-    view_type_id   BIGSERIAL PRIMARY KEY,
-    view_type_name varchar(200) NOT NULL,
-    description    text         NOT NULL,
-    code_id        varchar(100) DEFAULT NULL
+    view_type_id BIGSERIAL PRIMARY KEY,
+    type_name    varchar(200) NOT NULL,
+    description  text         NOT NULL,
+    code_id      varchar(100) DEFAULT NULL
 );
 
 COMMENT ON TABLE view_types is 'to group the masks a link a basic format';

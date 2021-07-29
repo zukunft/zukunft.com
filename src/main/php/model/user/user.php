@@ -167,7 +167,7 @@ class user
                    ip_to,
                    reason
               FROM user_blocked_ips 
-             WHERE isactive = 1;";
+             WHERE is_active = 1;";
         $db_con->usr_id = $this->id;
         $ip_lst = $db_con->get($sql);
         foreach ($ip_lst as $ip_range) {

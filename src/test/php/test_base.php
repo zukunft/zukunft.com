@@ -46,6 +46,7 @@ if ($root_path == '') {
 
 // set the paths of the program code
 $path_unit = $root_path . 'src/test/php/unit/'; // path of the code for the unit tests
+$path_unit_db = $root_path . 'src/test/php/unit_db/'; // path of the code for the unit tests with database real only
 
 include_once $root_path . 'src/main/php/service/config.php';
 
@@ -58,6 +59,10 @@ include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'view.php';
+
+// load the unit testing modules with database real only
+include_once $path_unit_db . 'unit_db_tests.php';
+include_once $path_unit_db . 'view.php';
 
 // load the testing functions
 include_once $root_path . 'src/test/php/test_system.php';

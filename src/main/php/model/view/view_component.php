@@ -332,7 +332,7 @@ class view_component extends user_sandbox
         global $db_con;
 
         if ($this->type_id > 0) {
-            $sql = "SELECT view_component_type_name, description
+            $sql = "SELECT type_name, description
                 FROM view_component_types
                WHERE view_component_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
@@ -434,7 +434,7 @@ class view_component extends user_sandbox
     // not used at the moment
     /*  private function link_type_name() {
         if ($this->type_id > 0) {
-          $sql = "SELECT view_component_type_name
+          $sql = "SELECT type_name
                     FROM view_component_types
                    WHERE view_component_type_id = ".$this->type_id.";";
           $db_con = new mysql;

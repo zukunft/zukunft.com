@@ -55,11 +55,11 @@ function init_view_component_types($db_con)
     $view_component_types_hash = array();
     foreach ($db_lst as $db_entry) {
         $dsp_cmp_type = new view_component_types();
-        $dsp_cmp_type->name = $db_entry['view_type_name'];
+        $dsp_cmp_type->name = $db_entry['type_name'];
         $dsp_cmp_type->comment = $db_entry['description'];
         $dsp_cmp_type->code_id = $db_entry['code_id'];
-        $view_component_types[$db_entry['view_type_id']] = $dsp_cmp_type;
-        $view_component_types_hash[$db_entry['code_id']] = $db_entry['view_type_id'];
+        $view_component_types[$db_entry['view_component_type_id']] = $dsp_cmp_type;
+        $view_component_types_hash[$db_entry['code_id']] = $db_entry['view_component_type_id'];
     }
 
 }

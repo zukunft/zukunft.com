@@ -36,7 +36,7 @@
 // TODO Check that calling the update function always expects a boolean as return value
 // TODO check that $db_con->get and $db_con->get1 always can handle a null row result
 // TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
-// TODO mailnly for data from the internet use prepared statements to prevent SQL injections
+// TODO mainly for data from the internet use prepared statements to prevent SQL injections
 
 const DB_TYPE_POSTGRES = "PostgreSQL";
 const DB_TYPE_MYSQL = "MySQL";
@@ -71,9 +71,9 @@ class sql_db
     const FLD_CODE_ID = "code_id";               // field name for the code link
     const FLD_USER_ID = "user_id";               // field name for the user table foreign key field
 
-    const FLD_FORMAT_TEXT = "text";              // to force the text formatting of an value for the SQL statement formatting
-    const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of an value for the SQL statement formatting
-    const FLD_FORMAT_BOOL = "boolean";           // to force the boolean formatting of an value for the SQL statement formatting
+    const FLD_FORMAT_TEXT = "text";              // to force the text formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_BOOL = "boolean";           // to force the boolean formatting of a value for the SQL statement formatting
 
     public ?string $db_type = null;              // the database type which should be used for this connection e.g. postgreSQL or MYSQL
     public $link = null;                 // the link object to the database
@@ -87,14 +87,14 @@ class sql_db
     private ?string $id_to_field = '';           // only for link objects the id field of the destination object
     private ?string $id_link_field = '';         // only for link objects the id field of the link type object
     private ?string $name_field = '';            // unique text key field of the table used
-    private ?array $field_lst = [];              // list of fields that should be returned in the next select query
-    private ?array $usr_field_lst = [];          // list of user specific fields that should be returned in the next select query
-    private ?array $usr_num_field_lst = [];      // list of user specific numeric fields that should be returned in the next select query
-    private ?array $usr_bool_field_lst = [];     // list of user specific boolean / tinyint fields that should be returned in the next select query
+    private ?array $field_lst = [];              // list of fields that should be returned to the next select query
+    private ?array $usr_field_lst = [];          // list of user specific fields that should be returned to the next select query
+    private ?array $usr_num_field_lst = [];      // list of user specific numeric fields that should be returned to the next select query
+    private ?array $usr_bool_field_lst = [];     // list of user specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst = [];     // list of fields that are only in the user sandbox
-    private ?array $join_field_lst = [];         // list of fields that should be returned in the next select query that are taken from a joined table
-    private ?array $join_usr_field_lst = [];     // list of fields that should be returned in the next select query that are taken from a joined table
-    private ?array $join_usr_num_field_lst = []; // list of fields that should be returned in the next select query that are taken from a joined table
+    private ?array $join_field_lst = [];         // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join_usr_field_lst = [];     // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join_usr_num_field_lst = []; // list of fields that should be returned to the next select query that are taken from a joined table
     private ?string $join_type = '';             // the type name of the table to join
     private bool $usr_query = false;             // true, if the query is expected to retrieve user specific data
     private bool $usr_join_query = false;        // true, if the joined query is also expected to retrieve user specific data
@@ -147,13 +147,13 @@ class sql_db
         $this->usr_view_id = $usr_id;
     }
 
-    // to change the user view independent from the session user (can only be called by admin users)
+    // to change the user view independent of the session user (can only be called by admin users)
     function set_view_usr($usr_id)
     {
         $this->usr_view_id = $usr_id;
     }
 
-    // define the fields that should be returned in an select query
+    // define the fields that should be returned in a select query
     function set_fields($field_lst)
     {
         $this->field_lst = $field_lst;
@@ -570,7 +570,7 @@ class sql_db
         if ($result == 'view_type_name') {
             $result = 'type_name';
         }
-        if ($result == 'view_entry_type_name') {
+        if ($result == 'view_component_type_name') {
             $result = 'type_name';
         }
         if ($result == 'sys_log_type_name') {

@@ -1449,7 +1449,7 @@ function zu_sql_view_types()
 // returns all view entry types 
 function zu_sql_view_component_types()
 {
-    $query = "SELECT view_component_type_id, view_component_type_name "
+    $query = "SELECT view_component_type_id, type_name "
         . "  FROM view_component_types;";
     return $query;
 }

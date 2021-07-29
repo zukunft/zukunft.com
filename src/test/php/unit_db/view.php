@@ -39,12 +39,12 @@ function run_view_unit_db_tests()
     test_subheader('View types tests');
 
     // load the view types
-    $result = init_view_types();
+    $result = init_view_types($db_con);
     $target = true;
     $exe_start_time = test_show_result('unit_db_view->init_view_types', $target, $result, $exe_start_time);
 
     // ... and check if at least the most critical is loaded
-    $result = $view_types_hash[DBL_VIEW_TYPE_ENTRY];
+    $result = $view_types_hash[DBL_VIEW_TYPE_DEFAULT];
     $target = 1;
     $exe_start_time = test_show_result('unit_db_view->check ' . DBL_VIEW_TYPE_ENTRY, $result, $target, $exe_start_time);
 
