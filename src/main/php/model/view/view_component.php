@@ -163,7 +163,7 @@ class view_component extends user_sandbox
 
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_join_usr_fields(array('code_id'), 'view_component_type');
+            $db_con->set_join_usr_fields(array('code_id'), 'view_component_types');
             $db_con->set_fields(array('comment'));
             $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
             $db_con->set_where($this->id, $this->name);

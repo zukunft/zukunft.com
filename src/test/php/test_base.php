@@ -386,7 +386,7 @@ function num2bool($in_txt): bool
 }
 
 // legacy function for test_dsp
-function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = '', $test_type = ''): string
+function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time = TIMEOUT_LIMIT, $comment = '', $test_type = ''): string
 {
     global $error_counter;
     global $timeout_counter;

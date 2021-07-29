@@ -32,7 +32,7 @@
 $view_types = [];
 $view_types_hash = [];
 
-class view_type extends user_type
+class view_types extends user_type
 {
     // persevered view name for unit and integration tests
     const TEST_NAME = 'System Test View Type';
@@ -42,10 +42,12 @@ class view_type extends user_type
 /**
  * reload the global view_types array from the database e.g. because a translation has changed
  */
-function init_view_types($db_con)
+function init_view_types($db_con): bool
 {
     global $view_types;
     global $view_types_hash;
+
+    $result = false;
 
     $db_con->set_type(DB_TYPE_VIEW_TYPE);
     $db_con->set_fields(array('description', 'code_id'));
@@ -53,15 +55,20 @@ function init_view_types($db_con)
     $db_lst = $db_con->get($sql);
     $view_types = array();
     $view_types_hash = array();
-    foreach ($db_lst as $db_entry) {
-        $dsp_type = new view_type();
-        $dsp_type->name = $db_entry['view_type_name'];
-        $dsp_type->comment = $db_entry['description'];
-        $dsp_type->code_id = $db_entry['code_id'];
-        $view_types[$db_entry['view_type_id']] = $dsp_type;
-        $view_types_hash[$db_entry['code_id']] = $db_entry['view_type_id'];
+    if ($db_lst != null) {
+        foreach ($db_lst as $db_entry) {
+            $dsp_type = new view_types();
+            $dsp_type->name = $db_entry['view_type_name'];
+            $dsp_type->comment = $db_entry['description'];
+            $dsp_type->code_id = $db_entry['code_id'];
+            $view_types[$db_entry['view_type_id']] = $dsp_type;
+            $view_types_hash[$db_entry['code_id']] = $db_entry['view_type_id'];
+        }
+        if (count($view_types) > 0) {
+            $result = true;
+        }
     }
-
+    return $result;
 }
 
 /**
@@ -74,10 +81,10 @@ function unit_text_init_view_types()
 
     $view_types = array();
     $view_types_hash = array();
-    $dsp_type = new view_type();
-    $dsp_type->name = view_type::TEST_NAME;
-    $dsp_type->code_id = view_type::TEST_TYPE;
+    $dsp_type = new view_types();
+    $dsp_type->name = view_types::TEST_NAME;
+    $dsp_type->code_id = view_types::TEST_TYPE;
     $view_types[1] = $dsp_type;
-    $view_types_hash[view_type::TEST_TYPE] = 1;
+    $view_types_hash[view_types::TEST_TYPE] = 1;
 
 }

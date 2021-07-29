@@ -12,7 +12,7 @@
    
   In English "reduce to the max"
   
-  The code use for zukunft.com should be as simple as possible and have as less dependencies as possible,
+  The code use for zukunft.com should be as simple as possible and have as less dependencies and each part as capsuled as possible,
   so basically follow the Zen of Python https://www.python.org/dev/peps/pep-0020/
   So you the minimal requirements are a LAMP server (https://wiki.debian.org/LaMp) and an HTML (using some HTML5 features) browser.
   If you see anything that does not look simple to you, 
@@ -330,10 +330,10 @@ const DB_TYPE_FORMULA_LINK = 'formula_link';
 const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
 const DB_TYPE_FORMULA_VALUE = 'formula_value';
 const DB_TYPE_VIEW = 'view';
-const DB_TYPE_VIEW_TYPE = 'view_type';
+const DB_TYPE_VIEW_TYPE = 'view_types';
 const DB_TYPE_VIEW_COMPONENT = 'view_component';
 const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
-const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
+const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_types';
 
 const DB_TYPE_CHANGE = 'change';
 const DB_TYPE_CHANGE_TABLE = 'change_table';

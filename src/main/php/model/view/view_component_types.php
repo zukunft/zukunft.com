@@ -32,7 +32,7 @@
 $view_component_types = [];
 $view_component_types_hash = [];
 
-class view_component_type extends user_type
+class view_component_types extends user_type
 {
     // persevered view name for unit and integration tests
     const TEST_NAME = 'System Test View Component Type';
@@ -54,7 +54,7 @@ function init_view_component_types($db_con)
     $view_component_types = array();
     $view_component_types_hash = array();
     foreach ($db_lst as $db_entry) {
-        $dsp_cmp_type = new view_component_type();
+        $dsp_cmp_type = new view_component_types();
         $dsp_cmp_type->name = $db_entry['view_type_name'];
         $dsp_cmp_type->comment = $db_entry['description'];
         $dsp_cmp_type->code_id = $db_entry['code_id'];
@@ -74,10 +74,10 @@ function unit_text_init_view_component_types()
 
     $view_component_types = array();
     $view_component_types_hash = array();
-    $dsp_type = new view_component_type();
-    $dsp_type->name = view_component_type::TEST_NAME;
-    $dsp_type->code_id = view_component_type::TEST_TYPE;
+    $dsp_type = new view_component_types();
+    $dsp_type->name = view_component_types::TEST_NAME;
+    $dsp_type->code_id = view_component_types::TEST_TYPE;
     $view_component_types[1] = $dsp_type;
-    $view_component_types_hash[view_component_type::TEST_TYPE] = 1;
+    $view_component_types_hash[view_component_types::TEST_TYPE] = 1;
 
 }
