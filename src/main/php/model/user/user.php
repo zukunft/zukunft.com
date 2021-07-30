@@ -118,7 +118,7 @@ class user
                 $this->id = 0;
             } else {
                 $this->id = $db_usr['user_id'];
-                $this->code_id = $db_usr['code_id'];
+                $this->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->name = $db_usr['user_name'];
                 $this->ip_addr = $db_usr['ip_address'];
                 $this->email = $db_usr['email'];

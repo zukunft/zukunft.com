@@ -79,6 +79,8 @@ function db_upgrade_0_0_3($db_con)
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     $sql = 'ALTER TABLE public.view_component_types RENAME view_component_type_name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE public.formula_types RENAME name TO type_name;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
@@ -96,7 +98,7 @@ function db_upgrade_0_0_4($db_con)
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
-        $result = 'Database upgrade to 0.0.3 has failed';
+        $result = 'Database upgrade to 0.0.4 has failed';
     }
 
     return $result;

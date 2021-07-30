@@ -137,9 +137,9 @@ class formula extends user_sandbox
                 $this->owner_id = $db_row['user_id'];
                 $this->ref_text = $db_row['formula_text'];
                 $this->usr_text = $db_row['resolved_text'];
-                $this->description = $db_row['description'];
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->type_id = $db_row['formula_type_id'];
-                $this->type_cl = $db_row['code_id'];
+                $this->type_cl = $db_row[sql_db::FLD_CODE_ID];
                 $this->last_update = new DateTime($db_row['last_update']);
                 $this->excluded = $db_row['excluded'];
                 // TODO create a boolean converter for shorter code here
@@ -167,8 +167,8 @@ class formula extends user_sandbox
         $result = false;
 
         $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', 'description', 'formula_type_id', 'all_values_needed', 'last_update', 'excluded')); // the user_id should be included to all user sandbox tables to detect the owner of the standard value
-        $db_con->set_join_fields(array('code_id'), 'formula_type');
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', 'excluded')); // the user_id should be included to all user sandbox tables to detect the owner of the standard value
+        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -197,8 +197,8 @@ class formula extends user_sandbox
             // the formula name should be excluded from the user sandbox to avoid confusion
             $db_con->set_type(DB_TYPE_FORMULA);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_join_usr_fields(array('code_id'), 'formula_type');
-            $db_con->set_usr_fields(array('formula_text', 'resolved_text', 'description'));
+            $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
+            $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
             $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', 'excluded'));
             $db_con->set_where($this->id, $this->name);
             $sql = $db_con->select();
@@ -1576,7 +1576,7 @@ class formula extends user_sandbox
         if ($usr_cfg['formula_id'] > 0) {
             if ($usr_cfg['formula_text'] == ''
                 and $usr_cfg['resolved_text'] == ''
-                and $usr_cfg['description'] == ''
+                and $usr_cfg[sql_db::FLD_DESCRIPTION] == ''
                 and $usr_cfg['formula_type_id'] == Null
                 and $usr_cfg['all_values_needed'] == Null
                 and $usr_cfg['excluded'] == Null) {
@@ -1695,7 +1695,7 @@ class formula extends user_sandbox
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
-            $log->field = 'description';
+            $log->field = sql_db::FLD_DESCRIPTION;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

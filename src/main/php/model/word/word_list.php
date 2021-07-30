@@ -110,7 +110,7 @@ class word_list
         } else {
             $db_con->set_type(DB_TYPE_WORD);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_usr_fields(array('plural', 'description'));
+            $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
             $db_con->set_usr_num_fields(array('word_type_id', 'excluded'));
             $db_con->set_fields(array('values'));
             $db_con->set_where_text($sql_where);
@@ -148,7 +148,7 @@ class word_list
                         $new_word->owner_id = $db_wrd['user_id'];
                         $new_word->name = $db_wrd['word_name'];
                         $new_word->plural = $db_wrd['plural'];
-                        $new_word->description = $db_wrd['description'];
+                        $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];
                         $new_word->type_id = $db_wrd['word_type_id'];
                         $this->lst[] = $new_word;
                         $this->ids[] = $new_word->id;
@@ -259,7 +259,7 @@ class word_list
                             $new_word->owner_id = $db_wrd['user_id'];
                             $new_word->name = $db_wrd['word_name'];
                             $new_word->plural = $db_wrd['plural'];
-                            $new_word->description = $db_wrd['description'];
+                            $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];
                             $new_word->type_id = $db_wrd['word_type_id'];
                             $new_word->link_type_id = $db_wrd['verb_id'];
                             $this->lst[] = $new_word;

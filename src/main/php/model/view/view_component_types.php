@@ -42,25 +42,19 @@ class view_component_types extends user_type
 /**
  * reload the global view_component_types array from the database e.g. because a translation has changed
  */
-function init_view_component_types($db_con)
+function init_view_component_types($db_con): bool
 {
     global $view_component_types;
     global $view_component_types_hash;
 
-    $db_con->set_type(DB_TYPE_VIEW_COMPONENT_TYPE);
-    $db_con->set_fields(array('description', 'code_id'));
-    $sql = $db_con->select();
-    $db_lst = $db_con->get($sql);
-    $view_component_types = array();
-    $view_component_types_hash = array();
-    foreach ($db_lst as $db_entry) {
-        $dsp_cmp_type = new view_component_types();
-        $dsp_cmp_type->name = $db_entry['type_name'];
-        $dsp_cmp_type->comment = $db_entry['description'];
-        $dsp_cmp_type->code_id = $db_entry['code_id'];
-        $view_component_types[$db_entry['view_component_type_id']] = $dsp_cmp_type;
-        $view_component_types_hash[$db_entry['code_id']] = $db_entry['view_component_type_id'];
+    $result = false;
+    $typ_lst = new user_type_list();
+    $view_component_types = $typ_lst->load_types(DB_TYPE_VIEW_COMPONENT_TYPE, $db_con);
+    $view_component_types_hash = $typ_lst->get_hash($view_component_types);
+    if (count($view_component_types_hash) > 0) {
+        $result = true;
     }
+    return $result;
 
 }
 

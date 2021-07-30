@@ -46,11 +46,11 @@ function cfg_get($code_id, $usr, $db_con)
 
     // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
     $db_con->set_type(DB_TYPE_CONFIG);
-    $db_con->set_fields(array('code_id','value'));
-    $db_con->where(array('code_id'),array($code_id));
+    $db_con->set_fields(array(sql_db::FLD_CODE_ID,'value'));
+    $db_con->where(array(sql_db::FLD_CODE_ID),array($code_id));
     $sql = $db_con->select(false);
     $db_row = $db_con->get1($sql);
-    $db_code_id = $db_row['code_id'];
+    $db_code_id = $db_row[sql_db::FLD_CODE_ID];
     $db_value = $db_row['value'];
     // if no value exists create it with the default value (a configuration value should never be empty)
     if ($db_code_id == '') {
@@ -58,9 +58,9 @@ function cfg_get($code_id, $usr, $db_con)
         $db_description = cfg_default_description($code_id, $usr);
         $db_con->insert(
             array(
-                'code_id',
+                sql_db::FLD_CODE_ID,
                 'value',
-                'description'),
+                sql_db::FLD_DESCRIPTION),
             array(
                 $code_id,
                 $db_value,

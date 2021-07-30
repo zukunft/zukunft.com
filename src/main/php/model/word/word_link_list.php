@@ -61,7 +61,7 @@ class word_link_list
                 t" . $pos . ".user_id AS user_id" . $pos . ",
                 " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos) . ",
                 " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos) . ",
-                " . $db_con->get_usr_field('description', 't' . $pos, 'u' . $pos) . ",
+                " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos) . ",
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
                 " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
                   t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
@@ -83,7 +83,7 @@ class word_link_list
                 t" . $pos . ".user_id AS user_id" . $pos . ",
                 " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'word_name' . $pos) . ",
                 " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'plural' . $pos) . ",
-                " . $db_con->get_usr_field('description', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'description' . $pos) . ",
+                " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sql_db::FLD_DESCRIPTION . $pos) . ",
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
                 " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
                   t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
@@ -317,7 +317,7 @@ class word_link_list
                             $new_link->from_id = $db_lnk['from_phrase_id'];
                             $new_link->verb_id = $db_lnk['verb_id'];
                             $new_link->to_id = $db_lnk['to_phrase_id'];
-                            $new_link->description = $db_lnk['description'];
+                            $new_link->description = $db_lnk[sql_db::FLD_DESCRIPTION];
                             $new_link->name = $db_lnk['word_link_name'];
                             // fill the verb
                             if ($db_lnk['verb_id'] > 0) {

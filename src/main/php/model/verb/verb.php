@@ -55,13 +55,13 @@ class verb
         if ($db_row != null) {
             if ($db_row['verb_id'] > 0) {
                 $this->id = $db_row['verb_id'];
-                $this->code_id = $db_row['code_id'];
+                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
                 $this->name = $db_row['verb_name'];
                 $this->plural = $db_row['name_plural'];
                 $this->reverse = $db_row['name_reverse'];
                 $this->rev_plural = $db_row['name_plural_reverse'];
                 $this->frm_name = $db_row['formula_name'];
-                $this->description = $db_row['description'];
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $result = true;
             } else {
                 $this->id = 0;
@@ -96,7 +96,7 @@ class verb
             // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
             $db_con->set_type(DB_TYPE_VERB);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('code_id', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', 'description'));
+            $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
             if (!isset($this->usr)) {
@@ -479,7 +479,7 @@ class verb
             $log->new_value = $this->description;
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id;
-            $log->field = 'description';
+            $log->field = sql_db::FLD_DESCRIPTION;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

@@ -832,7 +832,7 @@ function zut_description($wrd_id, $user_id)
         if ($wrd_id <> $wrd_del) {
             $result = zu_sql_get1("SELECT description FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
             if ($result == NULL) {
-                $result = zu_sql_get_field('word', $wrd_id, 'description');
+                $result = zu_sql_get_field('word', $wrd_id, sql_db::FLD_DESCRIPTION);
             }
         }
     }

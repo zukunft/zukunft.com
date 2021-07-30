@@ -70,6 +70,8 @@ class sql_db
 
     const FLD_CODE_ID = "code_id";               // field name for the code link
     const FLD_USER_ID = "user_id";               // field name for the user table foreign key field
+    const FLD_DESCRIPTION = "description";       // field name for the any description
+    const FLD_TYPE_NAME = "type_name";           // field name for the user specific name of a type; types are used to assign code to a db row
 
     const FLD_FORMAT_TEXT = "text";              // to force the text formatting of a value for the SQL statement formatting
     const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of a value for the SQL statement formatting
@@ -525,7 +527,7 @@ class sql_db
         log_debug("sql_db->set_table to (" . $this->table . ")");
     }
 
-    private function get_id_field_name($type): string
+    public function get_id_field_name($type): string
     {
         // exceptions for user overwrite tables
         if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)) {
@@ -562,22 +564,22 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = 'type_name';
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'word_type_name') {
-            $result = 'type_name';
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = 'type_name';
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_component_type_name') {
-            $result = 'type_name';
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = 'type_name';
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = 'name';
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_statuss_name') {
             $result = 'sys_log_status_name';

@@ -89,7 +89,7 @@ class word extends word_link_object
                 $this->id = $db_row['word_id'];
                 $this->name = $db_row['word_name'];
                 $this->plural = $db_row['plural'];
-                $this->description = $db_row['description'];
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->type_id = $db_row['word_type_id'];
                 $this->view_id = $db_row['view_id'];
                 $this->excluded = $db_row['excluded'];
@@ -113,7 +113,7 @@ class word extends word_link_object
         $result = '';
 
         $db_con->set_type(DB_TYPE_WORD);
-        $db_con->set_fields(array('plural', 'description', 'word_type_id', 'view_id', 'excluded'));
+        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id', 'excluded'));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -143,7 +143,7 @@ class word extends word_link_object
             $db_con->set_type(DB_TYPE_WORD);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(array('values'));
-            $db_con->set_usr_fields(array('plural', 'description'));
+            $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
             $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded'));
             $db_con->set_where($this->id, $this->name);
             $sql = $db_con->select();
@@ -442,11 +442,11 @@ class word extends word_link_object
         if ($this->type_id > 0) {
             $db_con->set_type(DB_TYPE_WORD_TYPE);
             //$db_con->set_usr($this->usr->id);
-            //$db_con->set_fields(array('description'));
+            //$db_con->set_fields(array(sql_db::FLD_DESCRIPTION));
             $db_con->set_where($this->type_id);
             $sql = $db_con->select();
             $db_type = $db_con->get1($sql);
-            $this->type_name = $db_type['type_name'];
+            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         return $this->type_name;
     }
@@ -459,11 +459,11 @@ class word extends word_link_object
 
         if ($this->type_id > 0) {
             $db_con->set_type(DB_TYPE_WORD_TYPE);
-            $db_con->set_fields(array('description', 'code_id'));
+            $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
             $db_con->set_where($this->type_id);
             $sql = $db_con->select();
             $db_type = $db_con->get1($sql);
-            $result = $db_type['code_id'];
+            $result = $db_type[sql_db::FLD_CODE_ID];
         }
         return $result;
     }
@@ -878,7 +878,7 @@ class word extends word_link_object
         // TODO add user id to where
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('plural', 'description', 'word_type_id', 'view_id'));
+        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id'));
         $db_con->set_where($this->id);
         $sql = $db_con->select();
         $usr_wrd_cfg = $db_con->get1($sql);
@@ -886,7 +886,7 @@ class word extends word_link_object
             log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
             if ($usr_wrd_cfg['word_id'] > 0) {
                 if ($usr_wrd_cfg['plural'] == ''
-                    and $usr_wrd_cfg['description'] == ''
+                    and $usr_wrd_cfg[sql_db::FLD_DESCRIPTION] == ''
                     and $usr_wrd_cfg['word_type_id'] == Null
                     and $usr_wrd_cfg['view_id'] == Null) {
                     // delete the entry in the user sandbox
@@ -998,7 +998,7 @@ class word extends word_link_object
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id;
-                $log->field = 'description';
+                $log->field = sql_db::FLD_DESCRIPTION;
                 $result = $this->save_field_do($db_con, $log);
             }
         }

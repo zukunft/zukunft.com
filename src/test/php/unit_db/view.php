@@ -3,7 +3,7 @@
 /*
 
   test/unit_db/view.php - database unit testing of the view functions
-  --------------------
+  ---------------------
 
 
 zukunft.com - calc with words
@@ -33,6 +33,7 @@ function run_view_unit_db_tests()
     global $exe_start_time;
 
     global $view_types_hash;
+    global $view_component_types_hash;
 
     test_header('Unit database tests of the view class (src/main/php/model/value/view.php)');
 
@@ -44,9 +45,21 @@ function run_view_unit_db_tests()
     $exe_start_time = test_show_result('unit_db_view->init_view_types', $target, $result, $exe_start_time);
 
     // ... and check if at least the most critical is loaded
-    $result = $view_types_hash[DBL_VIEW_TYPE_DEFAULT];
+    $result = $view_types_hash[view_types::TEST_TYPE];
     $target = 1;
-    $exe_start_time = test_show_result('unit_db_view->check ' . DBL_VIEW_TYPE_ENTRY, $result, $target, $exe_start_time);
+    $exe_start_time = test_show_result('unit_db_view->check ' . view_types::TEST_TYPE, $result, $target, $exe_start_time);
+
+    test_subheader('View component types tests');
+
+    // load the view component types
+    $result = init_view_component_types($db_con);
+    $target = true;
+    $exe_start_time = test_show_result('unit_db_view->init_view_component_types', $target, $result, $exe_start_time);
+
+    // ... and check if at least the most critical is loaded
+    $result = $view_component_types_hash[view_component_types::TEST_TYPE];
+    $target = 3;
+    $exe_start_time = test_show_result('unit_db_view->check ' . view_component_types::TEST_TYPE, $result, $target, $exe_start_time);
 
 }
 

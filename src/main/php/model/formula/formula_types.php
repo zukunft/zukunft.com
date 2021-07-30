@@ -36,7 +36,7 @@ class formula_types extends user_type
 {
     // persevered view name for unit and integration tests
     const TEST_NAME = 'System Test Formula Type';
-    const TEST_TYPE = DBL_VIEW_TYPE_DEFAULT;
+    const TEST_TYPE = DBL_FORMULA_TYPE_CALC;
 }
 
 /**
@@ -47,20 +47,14 @@ function init_formula_types($db_con)
     global $formula_types;
     global $formula_types_hash;
 
-    $db_con->set_type(DB_TYPE_VIEW_TYPE);
-    $db_con->set_fields(array('description', 'code_id'));
-    $sql = $db_con->select();
-    $db_lst = $db_con->get($sql);
-    $formula_types = array();
-    $formula_types_hash = array();
-    foreach ($db_lst as $db_entry) {
-        $frm_type = new view_types();
-        $frm_type->name = $db_entry['formula_type_name'];
-        $frm_type->comment = $db_entry['description'];
-        $frm_type->code_id = $db_entry['code_id'];
-        $formula_types[$db_entry['formula_type_id']] = $frm_type;
-        $formula_types_hash[$db_entry['code_id']] = $db_entry['formula_type_id'];
+    $result = false;
+    $typ_lst = new user_type_list();
+    $formula_types = $typ_lst->load_types(DB_TYPE_FORMULA_TYPE, $db_con);
+    $formula_types_hash = $typ_lst->get_hash($formula_types);
+    if (count($formula_types_hash) > 0) {
+        $result = true;
     }
+    return $result;
 
 }
 
@@ -74,10 +68,10 @@ function unit_text_init_formula_types()
 
     $formula_types = array();
     $formula_types_hash = array();
-    $frm_type = new view_types();
-    $frm_type->name = view_types::TEST_NAME;
-    $frm_type->code_id = view_types::TEST_TYPE;
+    $frm_type = new formula_types();
+    $frm_type->name = formula_types::TEST_NAME;
+    $frm_type->code_id = formula_types::TEST_TYPE;
     $formula_types[1] = $frm_type;
-    $formula_types_hash[view_types::TEST_TYPE] = 1;
+    $formula_types_hash[formula_types::TEST_TYPE] = 1;
 
 }

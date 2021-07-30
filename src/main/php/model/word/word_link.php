@@ -98,7 +98,7 @@ class word_link extends word_link_object
                 $this->to_id = $db_row['to_phrase_id'];
                 $this->verb_id = $db_row['verb_id'];
                 $this->name = $db_row['word_link_name'];
-                $this->description = $db_row['description'];
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_word_link_id'];
@@ -284,7 +284,7 @@ class word_link extends word_link_object
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_fields(array('description', 'excluded'));
+            $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'excluded'));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
 
@@ -362,7 +362,7 @@ class word_link extends word_link_object
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_usr_fields(array('description'));
+            $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
             $db_con->set_usr_num_fields(array('excluded'));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
@@ -926,7 +926,7 @@ class word_link extends word_link_object
         log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg['word_link_id'] > 0) {
             if ($usr_cfg['word_link_name'] == Null
-                and $usr_cfg['description'] == Null
+                and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
                 and $usr_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -1038,7 +1038,7 @@ class word_link extends word_link_object
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
-            $log->field = 'description';
+            $log->field = sql_db::FLD_DESCRIPTION;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;

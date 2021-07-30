@@ -303,7 +303,7 @@ class view_component_link extends user_sandbox
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
             $db_type = $db_con->get1($sql);
-            $this->type_name = $db_type['type_name'];
+            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         log_debug('view_component_link->pos_type_name done');
         return $this->type_name;

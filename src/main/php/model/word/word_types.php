@@ -36,7 +36,7 @@ class word_types extends user_type
 {
     // persevered view name for unit and integration tests
     const TEST_NAME = 'System Test word Type';
-    const TEST_TYPE = DBL_VIEW_TYPE_DEFAULT;
+    const TEST_TYPE = DBL_WORD_TYPE_NORMAL;
 }
 
 /**
@@ -47,20 +47,14 @@ function init_word_types($db_con)
     global $word_types;
     global $word_types_hash;
 
-    $db_con->set_type(DB_TYPE_VIEW_TYPE);
-    $db_con->set_fields(array('description', 'code_id'));
-    $sql = $db_con->select();
-    $db_lst = $db_con->get($sql);
-    $word_types = array();
-    $word_types_hash = array();
-    foreach ($db_lst as $db_entry) {
-        $wrd_type = new view_types();
-        $wrd_type->name = $db_entry['word_type_name'];
-        $wrd_type->comment = $db_entry['description'];
-        $wrd_type->code_id = $db_entry['code_id'];
-        $word_types[$db_entry['word_type_id']] = $wrd_type;
-        $word_types_hash[$db_entry['code_id']] = $db_entry['word_type_id'];
+    $result = false;
+    $typ_lst = new user_type_list();
+    $word_types = $typ_lst->load_types(DB_TYPE_WORD_TYPE, $db_con);
+    $word_types_hash = $typ_lst->get_hash($word_types);
+    if (count($word_types_hash) > 0) {
+        $result = true;
     }
+    return $result;
 
 }
 
@@ -74,10 +68,10 @@ function unit_text_init_word_types()
 
     $word_types = array();
     $word_types_hash = array();
-    $wrd_type = new view_types();
-    $wrd_type->name = view_types::TEST_NAME;
-    $wrd_type->code_id = view_types::TEST_TYPE;
+    $wrd_type = new word_types();
+    $wrd_type->name = word_types::TEST_NAME;
+    $wrd_type->code_id = word_types::TEST_TYPE;
     $word_types[1] = $wrd_type;
-    $word_types_hash[view_types::TEST_TYPE] = 1;
+    $word_types_hash[word_types::TEST_TYPE] = 1;
 
 }

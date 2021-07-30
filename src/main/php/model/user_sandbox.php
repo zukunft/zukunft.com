@@ -302,7 +302,7 @@ class user_sandbox
             $db_con->usr_id = $this->usr->id;
             $db_row = $db_con->get1($sql);
             if (isset($db_row)) {
-                $result .= $db_row['code_id'];
+                $result .= $db_row[sql_db::FLD_CODE_ID];
             } else {
                 $result .= DBL_SHARE_PUBLIC;
             }
@@ -358,7 +358,7 @@ class user_sandbox
             $db_con->usr_id = $this->usr->id;
             $db_row = $db_con->get1($sql);
             if (isset($db_row)) {
-                $result .= $db_row['code_id'];
+                $result .= $db_row[sql_db::FLD_CODE_ID];
             } else {
                 $result .= DBL_PROTECT_NO;
             }

@@ -163,7 +163,7 @@ class view_component extends user_sandbox
 
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_join_usr_fields(array('code_id'), 'view_component_types');
+            $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_types');
             $db_con->set_fields(array('comment'));
             $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
             $db_con->set_where($this->id, $this->name);
@@ -338,7 +338,7 @@ class view_component extends user_sandbox
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
             $db_type = $db_con->get1($sql);
-            $this->type_name = $db_type['type_name'];
+            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         log_debug('view_component->type_name done');
         return $this->type_name;
@@ -440,7 +440,7 @@ class view_component extends user_sandbox
           $db_con = new mysql;
           $db_con->usr_id = $this->usr->id;
           $db_type = $db_con->get1($sql);
-          $this->type_name = $db_type['type_name'];
+          $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         return $this->type_name;
       } */

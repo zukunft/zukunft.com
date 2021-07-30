@@ -78,7 +78,7 @@ class source extends user_sandbox
                 $this->url = $db_row['url'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['source_type_id'];
-                $this->code_id = $db_row['code_id'];
+                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_source_id'];
                     $this->owner_id = $db_row['user_id'];
@@ -99,7 +99,7 @@ class source extends user_sandbox
         $result = false;
 
         $db_con->set_type(DB_TYPE_SOURCE);
-        $db_con->set_fields(array('url', 'comment', 'source_type_id', 'code_id'));
+        $db_con->set_fields(array('url', 'comment', 'source_type_id', sql_db::FLD_CODE_ID));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -126,7 +126,7 @@ class source extends user_sandbox
 
             $db_con->set_type(DB_TYPE_SOURCE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('code_id'));
+            $db_con->set_fields(array(sql_db::FLD_CODE_ID));
             $db_con->set_usr_fields(array('url', 'comment'));
             $db_con->set_usr_num_fields(array('source_type_id'));
             $db_con->set_where($this->id, $this->name, $this->code_id);
@@ -206,7 +206,7 @@ class source extends user_sandbox
             }
             /* TODO
             if ($key == 'type')    { $this->type_id = cl($value); }
-            if ($key == 'code_id') {
+            if ($key == sql_db::FLD_CODE_ID) {
             }
             */
         }

@@ -126,7 +126,7 @@ class view extends user_sandbox
         if ($this->id != 0) {
             $sql_name .= 'id';
         } elseif ($this->code_id != '') {
-            $sql_name .= 'code_id';
+            $sql_name .= sql_db::FLD_CODE_ID;
         } elseif ($this->name != '') {
             $sql_name .= 'name';
         } else {
@@ -196,7 +196,7 @@ class view extends user_sandbox
                     " . $db_con->get_usr_field('order_nbr', 'l', 'y', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('view_component_name', 'e', 'u') . ",
                     " . $db_con->get_usr_field('view_component_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('code_id', 't', 'c') . ",
+                    " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
                     " . $db_con->get_usr_field('word_id_row', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('link_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('formula_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
@@ -255,7 +255,7 @@ class view extends user_sandbox
                 $new_entry->formula_id = $db_entry['formula_id'];
                 $new_entry->word_id_col = $db_entry['word_id_col'];
                 $new_entry->word_id_col2 = $db_entry['word_id_col2'];
-                $new_entry->code_id = $db_entry['code_id'];
+                $new_entry->code_id = $db_entry[sql_db::FLD_CODE_ID];
                 if (!$new_entry->load_phrases()) {
                     $result = false;
                 }
@@ -278,13 +278,13 @@ class view extends user_sandbox
         global $db_con;
 
         if ($this->type_id > 0) {
-            $sql = "SELECT view_type_name, description, code_id
+            $sql = "SELECT type_name, description, code_id
                 FROM view_types
                WHERE view_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
             $db_type = $db_con->get1($sql);
-            $this->type_name = $db_type['type_name'];
+            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         return $this->type_name;
     }

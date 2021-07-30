@@ -151,7 +151,7 @@ class user_log_display {
           
           // pick the useful field name
           $txt_fld = '';
-          if ($db_row['code_id'] == "value") {
+          if ($db_row[sql_db::FLD_CODE_ID] == "value") {
             $txt_fld .= $db_row['type'].' value';
             /* because changing the words creates a new value there is no need to display the words here
             if ($db_row['row_id'] > 0) {

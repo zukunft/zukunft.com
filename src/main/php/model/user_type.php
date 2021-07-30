@@ -44,11 +44,4 @@ class user_type
     public ?string $name = '';     // simply the type name as shown to the user
     public ?string $comment = '';  // to explain the type to the user as a tooltip
 
-    /**
-     * force the types to reload the names and translations from the database
-     */
-    function init()
-    {
-
-    }
 }

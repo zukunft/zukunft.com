@@ -60,9 +60,9 @@ class formula_list
                         $frm->name = $db_row['formula_name'];
                         $frm->ref_text = $db_row['formula_text'];
                         $frm->usr_text = $db_row['resolved_text'];
-                        $frm->description = $db_row['description'];
+                        $frm->description = $db_row[sql_db::FLD_DESCRIPTION];
                         $frm->type_id = $db_row['formula_type_id'];
-                        $frm->type_cl = $db_row['code_id'];
+                        $frm->type_cl = $db_row[sql_db::FLD_CODE_ID];
                         $frm->last_update = new DateTime($db_row['last_update']);
                         if ($db_row['all_values_needed'] == 1) {
                             $frm->need_all_val = true;
@@ -75,7 +75,7 @@ class formula_list
                                         FROM formula_types
                                         WHERE formula_type_id = ".$frm->type_id.";";
                           $db_type = $db_con->get1($sql_type, $frm->usr_id);
-                          $frm->type_cl  = $db_type['code_id'];
+                          $frm->type_cl  = $db_type[sql_db::FLD_CODE_ID];
                         }
                         */
                         if ($frm->name <> '') {
@@ -139,9 +139,9 @@ class formula_list
                        f.formula_name,
                     " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
                     " . $db_con->get_usr_field('resolved_text', 'f', 'u') . ",
-                    " . $db_con->get_usr_field('description', 'f', 'u') . ",
+                    " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 'f', 'u') . ",
                     " . $db_con->get_usr_field('formula_type_id', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('code_id', 't', 'c') . ",
+                    " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
                     " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('excluded', 'f', 'u', sql_db::FLD_FORMAT_VAL) . "

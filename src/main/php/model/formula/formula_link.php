@@ -232,7 +232,7 @@ class formula_link extends user_sandbox
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
             $db_type = $db_con->get1($sql);
-            $this->link_name = $db_type['type_name'];
+            $this->link_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         log_debug('formula_link->link_type_name done');
         return $this->link_name;

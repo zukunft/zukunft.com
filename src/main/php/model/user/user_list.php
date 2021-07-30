@@ -47,7 +47,7 @@ class user_list
                 $usr = new user;
                 $usr->id = $db_usr['user_id'];
                 $usr->name = $db_usr['user_name'];
-                $usr->code_id = $db_usr['code_id'];
+                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->usr_lst[] = $usr;
             }
         }

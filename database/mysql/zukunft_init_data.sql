@@ -191,11 +191,11 @@ INSERT INTO `formula_link_types` (`formula_link_type_id`, `type_name`, `code_id`
 --
 
 INSERT INTO `formula_types` (`formula_type_id`, `name`, `description`, `code_id`) VALUES
-(1, 'calc', 'a normal calculation formula', ''),
-(2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'),
-(3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'),
-(4, 'this', 'selects the assumed time term', 'time_this'),
-(5, 'const', 'used to define a const value that is not supposed to be changed like pi', '');
+(1, 'calc', 'a normal calculation formula', 'frm_type_default'),
+(2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'frm_type_time_next'),
+(3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'frm_type_time_prior'),
+(4, 'this', 'selects the assumed time term', 'frm_type_time_this'),
+(5, 'const', 'used to define a const value that is not supposed to be changed like pi', 'frm_type_const');
 
 --
 -- Dumping data for table `languages`

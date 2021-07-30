@@ -316,8 +316,8 @@ const FIRST_VERSION = "0.0.3"; // the first program version which has a basic up
 // TODO use const for all object names
 const DB_TYPE_USER = 'user';
 const DB_TYPE_WORD = 'word';
-const DB_TYPE_WORD_LINK = 'word_link';
 const DB_TYPE_WORD_TYPE = 'word_type';
+const DB_TYPE_WORD_LINK = 'word_link';
 const DB_TYPE_VERB = 'verb';
 const DB_TYPE_PHRASE = 'phrase';
 const DB_TYPE_PHRASE_GROUP = 'phrase_group';
@@ -328,6 +328,7 @@ const DB_TYPE_SOURCE = 'source';
 const DB_TYPE_SOURCE_TYPE = 'source_type';
 const DB_TYPE_REF = 'ref';
 const DB_TYPE_FORMULA = 'formula';
+const DB_TYPE_FORMULA_TYPE = 'formula_type';
 const DB_TYPE_FORMULA_LINK = 'formula_link';
 const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
 const DB_TYPE_FORMULA_VALUE = 'formula_value';
@@ -336,6 +337,7 @@ const DB_TYPE_VIEW_TYPE = 'view_type';
 const DB_TYPE_VIEW_COMPONENT = 'view_component';
 const DB_TYPE_VIEW_COMPONENT_LINK = 'view_component_link';
 const DB_TYPE_VIEW_COMPONENT_TYPE = 'view_component_type';
+const DB_TYPE_VIEW_COMPONENT_LINK_TYPE = 'view_component_link_type';
 
 const DB_TYPE_CHANGE = 'change';
 const DB_TYPE_CHANGE_TABLE = 'change_table';
@@ -412,6 +414,7 @@ include_once $root_path . 'src/main/php/web/user_log_display.php';
 include_once $root_path . 'src/main/php/model/user_sandbox.php';
 include_once $root_path . 'src/main/php/model/user_sandbox_exp_named.php';
 include_once $root_path . 'src/main/php/model/user_type.php';
+include_once $root_path . 'src/main/php/model/user_type_list.php';
 include_once $root_path . 'src/main/php/web/user_sandbox_display.php';
 include_once $root_path . 'src/main/php/model/system/system_error_log.php';
 include_once $root_path . 'src/main/php/model/system/system_error_log_list.php';
@@ -422,6 +425,7 @@ include_once $root_path . 'src/main/php/web/display_selector.php';
 include_once $root_path . 'src/main/php/web/display_list.php';
 include_once $root_path . 'src/main/php/model/helper/word_link_object.php';
 include_once $root_path . 'src/main/php/model/word/word.php';
+include_once $root_path . 'src/main/php/model/word/word_types.php';
 include_once $root_path . 'src/main/php/web/word_display.php';
 include_once $root_path . 'src/main/php/model/word/word_list.php';
 include_once $root_path . 'src/main/php/model/word/word_link.php';
@@ -442,6 +446,7 @@ include_once $root_path . 'src/main/php/model/ref/ref.php';
 include_once $root_path . 'src/main/php/model/ref/ref_type.php';
 include_once $root_path . 'src/main/php/model/formula/expression.php';
 include_once $root_path . 'src/main/php/model/formula/formula.php';
+include_once $root_path . 'src/main/php/model/formula/formula_types.php';
 include_once $root_path . 'src/main/php/model/formula/formula_list.php';
 include_once $root_path . 'src/main/php/model/formula/formula_link.php';
 include_once $root_path . 'src/main/php/model/formula/formula_link_list.php';
@@ -462,8 +467,9 @@ include_once $root_path . 'src/main/php/web/view_display.php';
 include_once $root_path . 'src/main/php/model/view/view_component.php';
 include_once $root_path . 'src/main/php/model/view/view_component_exp.php';
 include_once $root_path . 'src/main/php/model/view/view_component_dsp.php';
-include_once $root_path . 'src/main/php/model/view/view_component_link.php';
 include_once $root_path . 'src/main/php/model/view/view_component_types.php';
+include_once $root_path . 'src/main/php/model/view/view_component_link.php';
+include_once $root_path . 'src/main/php/model/view/view_component_link_types.php';
 
 // include all other libraries that are usually needed
 include_once $root_path . 'db_link/zu_lib_sql_link.php';
@@ -822,8 +828,12 @@ function prg_start($code_name, $style = ""): sql_db
 
     // load the type database enum
     // these tables are expected to be so small that it is more efficient to load all database records once at start
+    init_word_types($db_con);
+    init_formula_types($db_con);
     init_view_types($db_con);
     init_view_component_types($db_con);
+    // not yet needed?
+    //init_view_component_link_types($db_con);
 
     return $db_con;
 }

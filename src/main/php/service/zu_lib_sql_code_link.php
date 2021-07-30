@@ -142,9 +142,11 @@ const DBL_WORD_TYPE_NEXT = "wrd_type_next";
 const DBL_WORD_TYPE_THIS = "wrd_type_this";
 const DBL_WORD_TYPE_PREV = "wrd_type_previous";
 
+const DBL_FORMULA_TYPE_CALC= "frm_type_default";
 const DBL_FORMULA_TYPE_NEXT = "frm_type_time_next";
 const DBL_FORMULA_TYPE_THIS = "frm_type_time_this";
 const DBL_FORMULA_TYPE_PREV = "frm_type_time_prior";
+const DBL_FORMULA_TYPE_CONST = "frm_type_const";
 
 const DBL_FORMULA_PART_TYPE_WORD = "frm_elm_word";
 const DBL_FORMULA_PART_TYPE_VERB = "frm_elm_verb";

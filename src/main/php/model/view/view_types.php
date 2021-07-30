@@ -48,25 +48,12 @@ function init_view_types($db_con): bool
     global $view_types_hash;
 
     $result = false;
+    $typ_lst = new user_type_list();
+    $view_types = $typ_lst->load_types(DB_TYPE_VIEW_TYPE, $db_con);
+    $view_types_hash = $typ_lst->get_hash($view_types);
 
-    $db_con->set_type(DB_TYPE_VIEW_TYPE);
-    $db_con->set_fields(array('description', 'code_id'));
-    $sql = $db_con->select();
-    $db_lst = $db_con->get($sql);
-    $view_types = array();
-    $view_types_hash = array();
-    if ($db_lst != null) {
-        foreach ($db_lst as $db_entry) {
-            $dsp_type = new view_types();
-            $dsp_type->name = $db_entry['type_name'];
-            $dsp_type->comment = $db_entry['description'];
-            $dsp_type->code_id = $db_entry['code_id'];
-            $view_types[$db_entry['view_type_id']] = $dsp_type;
-            $view_types_hash[$db_entry['code_id']] = $db_entry['view_type_id'];
-        }
-        if (count($view_types) > 0) {
-            $result = true;
-        }
+    if (count($view_types_hash) > 0) {
+        $result = true;
     }
     return $result;
 }

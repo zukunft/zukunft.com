@@ -2,10 +2,8 @@
 
 /*
 
-  unit_db_tests.php - run all unit database read only tests in a useful order
-  -----------------
-
-  the zukunft.com unit tests should test all class methods, that can be tested without writing to the database
+  test/unit_db/word.php - database unit testing of the word, word_link and phrase functions
+  ---------------------
 
 
 zukunft.com - calc with words
@@ -28,12 +26,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_unit_db_tests()
+function run_word_unit_db_tests()
 {
-    test_header('Start the zukunft.com unit database read only tests');
 
-    // do the database unit tests
-    run_word_unit_db_tests();
-    run_formula_unit_db_tests();
-    run_view_unit_db_tests();
+    global $db_con;
+    global $exe_start_time;
+
+    global $word_types_hash;
+
+    test_header('Unit database tests of the word class (src/main/php/model/word/word.php)');
+
+    test_subheader('Word types tests');
+
+    // load the word types
+    $result = init_word_types($db_con);
+    $target = true;
+    $exe_start_time = test_show_result('unit_db_word->init_view_types', $target, $result, $exe_start_time);
+
+    // ... and check if at least the most critical is loaded
+    $result = $word_types_hash[word_types::TEST_TYPE];
+    $target = 1;
+    $exe_start_time = test_show_result('unit_db_word->check ' . word_types::TEST_TYPE, $result, $target, $exe_start_time);
+
 }
+

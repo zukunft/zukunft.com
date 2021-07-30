@@ -97,8 +97,8 @@ function load_ref_types()
                 $ref_type->usr = $usr;
                 $ref_type->id = $db_row['ref_type_id']; // TODO needed??
                 $ref_type->name = $db_row['ref_type_name'];
-                $ref_type->description = $db_row['description'];
-                $ref_type->code_id = $db_row['code_id'];
+                $ref_type->description = $db_row[sql_db::FLD_DESCRIPTION];
+                $ref_type->code_id = $db_row[sql_db::FLD_CODE_ID];
                 $ref_type->url = $db_row['base_url'];
                 $ref_type_lst[$id] = $ref_type;
                 $ref_type_name_lst[$name] = $id;

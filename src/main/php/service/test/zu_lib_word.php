@@ -125,7 +125,7 @@ function zut_type($wrd_id, $user_id)
 function zut_type_name($type_id)
 {
     log_debug('zut_type_name(' . $type_id . ')');
-    return zu_sql_get_field('word_type', $type_id, 'type_name');
+    return zu_sql_get_field('word_type', $type_id, sql_db::FLD_TYPE_NAME);
 }
 
 // return the first word of a predefined type e.g. the word "other" based on the code_id of the word type
