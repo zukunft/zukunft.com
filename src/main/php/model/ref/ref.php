@@ -127,7 +127,7 @@ class ref
     }
 
     // import a link to external database from a imported object
-    function import_obj($json_obj): bool
+    function import_obj($json_obj, bool $do_save = true): bool
     {
         $result = false;
 
@@ -148,9 +148,11 @@ class ref
         }
         // to be able to log the object names
         if ($this->load_objects()) {
-            if ($this->save() > 0) {
-                log_debug('ref->import_obj -> ' . $this->dsp_id());
-                $result = true;
+            if ($do_save) {
+                if ($this->save() > 0) {
+                    log_debug('ref->import_obj -> ' . $this->dsp_id());
+                    $result = true;
+                }
             }
         }
 

@@ -54,7 +54,6 @@ function run_phrase_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     test_header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
@@ -81,7 +80,7 @@ function run_phrase_test()
     $phr->load();
     $result = $phr->name;
     $target = TEST_WORD;
-    $exe_start_time = test_show_result('phrase->load word by id ' . $wrd_company->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
     $target = ' <td> <a href="/http/view.php?words=1" title="">' . TEST_WORD . '</a> </td> ';
@@ -92,7 +91,7 @@ function run_phrase_test()
     if ($diff['view'][0] == 0) {
         $target = $result;
     }
-    $exe_start_time = test_show_result('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
 
     // test the phrase display functions (triple side)
     $phr = new phrase;
@@ -101,7 +100,7 @@ function run_phrase_test()
     $phr->load();
     $result = $phr->name;
     $target = TP_ZH_INS;
-    $exe_start_time = test_show_result('phrase->load triple by id ' . $zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
     $target = ' <td> <a href="/http/view.php?link=313" title="' . TP_ZH_INS . '">' . TP_ZH_INS . '</a> </td> ';
@@ -112,7 +111,7 @@ function run_phrase_test()
     if ($diff['view'][0] == 0) {
         $target = $result;
     }
-    $exe_start_time = test_show_result('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
 
     // test the phrase selector
     $form_name = 'test_phrase_selector';
@@ -124,7 +123,7 @@ function run_phrase_test()
     $phr->load();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
     $target = TP_ZH_INS;
-    $exe_start_time = test_show_contains(', phrase->dsp_selector ' . $result . ' with ' . TP_ZH_INS . ' selected contains ' . TP_ZH_INS . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+    test_dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . TP_ZH_INS . ' selected contains ' . TP_ZH_INS . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
     $wrd_ABB = new word_dsp;
@@ -138,13 +137,13 @@ function run_phrase_test()
     $wrd_company->load();
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
     $target = TP_ZH_INS;
-    $exe_start_time = test_show_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . TP_ZH_INS . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
+    test_dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . TP_ZH_INS . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test getting the parent for phrase Vestas
     $phr = load_phrase(TW_VESTAS);
     $is_phr = $phr->is_mainly();
     $result = $is_phr->name;
     $target = TEST_WORD;
-    $exe_start_time = test_show_result('phrase->is_mainly for ' . $phr->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->is_mainly for ' . $phr->name, $target, $result);
 
 }

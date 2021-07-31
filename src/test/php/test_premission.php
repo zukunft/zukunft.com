@@ -30,8 +30,7 @@ function run_permission_test () {
 
   global $usr;
   global $usr2;
-  global $exe_start_time;
-  
+
   global $error_counter;
   global $timeout_counter;
   global $total_tests;

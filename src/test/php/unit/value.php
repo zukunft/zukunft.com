@@ -30,7 +30,6 @@ function run_value_unit_tests()
 {
 
     global $usr;
-    global $exe_start_time;
     global $sql_names;
 
     test_header('Unit tests of the value class (src/main/php/model/value/value.php)');
@@ -50,7 +49,7 @@ function run_value_unit_tests()
     $expected_sql = "SELECT value_id 
                             FROM values
                           WHERE phrase_group_id IN (1) ;";
-    $exe_start_time = test_show_result('value->load_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('value->load_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -60,7 +59,7 @@ function run_value_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('value->load_sql by group and time', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('value->load_sql by group and time', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -71,7 +70,7 @@ function run_value_unit_tests()
     $expected_sql = $sql_avoid_code_check_prefix . " value_id 
                             FROM `values`
                           WHERE phrase_group_id IN (1) ;";
-    $exe_start_time = test_show_result('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
 }
 

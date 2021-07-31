@@ -37,7 +37,6 @@ function run_word_link_test()
 
     global $usr;
     global $usr2;
-    global $exe_start_time;
 
     test_header('Test the word link class (classes/word_link.php)');
 
@@ -61,12 +60,12 @@ function run_word_link_test()
     $lnk_canton->load();
     $target = TW_ZH . ' (Canton)';
     $result = $lnk_canton->name;
-    $exe_start_time = test_show_result('triple->load for Canton Zurich', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    test_dsp('triple->load for Canton Zurich', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... now test the Canton Zurich using the name function
     $target = TW_ZH . ' (Canton)';
     $result = $lnk_canton->name();
-    $exe_start_time = test_show_result('triple->load for Canton Zurich using the function', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->load for Canton Zurich using the function', $target, $result);
 
     // ... now test the Insurance Zurich
     $lnk_company = new word_link;
@@ -77,12 +76,12 @@ function run_word_link_test()
     $lnk_company->load();
     $target = TP_ZH_INS;
     $result = $lnk_company->name;
-    $exe_start_time = test_show_result('triple->load for ' . TP_ZH_INS . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->load for ' . TP_ZH_INS . '', $target, $result);
 
     // ... now test the Insurance Zurich using the name function
     $target = TP_ZH_INS;
     $result = $lnk_company->name();
-    $exe_start_time = test_show_result('triple->load for ' . TP_ZH_INS . ' using the function', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->load for ' . TP_ZH_INS . ' using the function', $target, $result);
 
     // link the added word to the test word
     $wrd_added = load_word(TW_ADD_RENAMED);
@@ -98,7 +97,7 @@ function run_word_link_test()
     $lnk->to_id = $wrd->id;
     $result = $lnk->save();
     $target = '11';
-    $exe_start_time = test_show_result('triple->save "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('triple->save "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     echo "... and also testing the user log link class (classes/user_log_link.php)<br>";
 
@@ -111,7 +110,7 @@ function run_word_link_test()
     $log->usr = $usr;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job linked ' . TW_ADD_RENAMED . ' to ' . TEST_WORD . '';
-    $exe_start_time = test_show_result('triple->save logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->save logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result);
 
     // ... check if the link is shown correctly
 
@@ -123,7 +122,7 @@ function run_word_link_test()
     $lnk->load();
     $result = $lnk->name;
     $target = '' . TW_ADD_RENAMED . ' (' . TEST_WORD . ')';
-    $exe_start_time = test_show_result('triple->load', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->load', $target, $result);
     // ... check if the link is shown correctly also for the second user
     $lnk2 = new word_link;
     $lnk2->usr = $usr2;
@@ -133,7 +132,7 @@ function run_word_link_test()
     $lnk2->load();
     $result = $lnk2->name;
     $target = '' . TW_ADD_RENAMED . ' (' . TEST_WORD . ')';
-    $exe_start_time = test_show_result('triple->load for user "' . $usr2->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->load for user "' . $usr2->name . '"', $target, $result);
 
     // ... check if the value update has been triggered
 
@@ -146,7 +145,7 @@ function run_word_link_test()
     $lnk->load();
     $result = $lnk->del();
     $target = '111';
-    $exe_start_time = test_show_result('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" by user "' . $usr2->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" by user "' . $usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
     $log = new user_log_link;
@@ -157,7 +156,7 @@ function run_word_link_test()
     $log->usr = $usr2;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test unlinked ' . TW_ADD_RENAMED . ' from ' . TEST_WORD . '';
-    $exe_start_time = test_show_result('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr2->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr2->name . '"', $target, $result);
 
 
     // ... check if the link is really not used any more for the second user
@@ -169,7 +168,7 @@ function run_word_link_test()
     $lnk2->load();
     $result = $lnk2->name();
     $target = '';
-    $exe_start_time = test_show_result('triple->load "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" for user "' . $usr2->name . '" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
+    test_dsp('triple->load "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" for user "' . $usr2->name . '" not any more', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the value update for the second user has been triggered
 
@@ -184,7 +183,7 @@ function run_word_link_test()
     $lnk->load();
     $result = $lnk->name;
     $target = '' . TW_ADD_RENAMED . ' (' . TEST_WORD . ')';
-    $exe_start_time = test_show_result('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" is still used for user "' . $usr->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_SEMI);
+    test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" is still used for user "' . $usr->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the values for the first user are still the same
 
@@ -197,7 +196,7 @@ function run_word_link_test()
     $lnk->load();
     $result = $lnk->del();
     $target = '11';
-    $exe_start_time = test_show_result('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
     $log = new user_log_link;
@@ -208,7 +207,7 @@ function run_word_link_test()
     $log->usr = $usr;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job unlinked ' . TW_ADD_RENAMED . ' from ' . TEST_WORD . '';
-    $exe_start_time = test_show_result('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users
     $lnk = new word_link;
@@ -219,7 +218,7 @@ function run_word_link_test()
     $lnk->load();
     $result = $lnk->name;
     $target = '';
-    $exe_start_time = test_show_result('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" for user "' . $usr->name . '" not used any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" for user "' . $usr->name . '" not used any more', $target, $result);
 
 
     // ... and the values have been updated
@@ -232,7 +231,7 @@ function run_word_link_test()
     $phr->load();
     $result = $frm->link_phr($phr);
     $target = '1';
-    $exe_start_time = test_show_result('triple->link_phr "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+    test_dsp('triple->link_phr "'.$phr->name.'" to "'.$frm->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     */
     // ... if the second user changes the link
 

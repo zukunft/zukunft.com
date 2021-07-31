@@ -30,8 +30,7 @@ function run_view_component_link_test () {
 
   global $usr;
   global $usr2;
-  global $exe_start_time;
-  
+
   test_header('Test the view component link class (classes/view_component_link.php)');
   
   // prepare testing by creating the view and components needed for testing
@@ -42,7 +41,7 @@ function run_view_component_link_test () {
   $order_nbr = $cmp->next_nbr($dsp->id);
   $result = $cmp->link($dsp, $order_nbr);
   $target = '111';
-  $exe_start_time = test_show_result('view component_link->link "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  test_dsp('view component_link->link "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // ... check the correct logging
   $log = New user_log_link;
@@ -52,21 +51,21 @@ function run_view_component_link_test () {
   $log->usr = $usr;
   $result = $log->dsp_last(true);
   $target = 'zukunft.com system batch job linked Mask Test to Mask Component Test';
-  $exe_start_time = test_show_result('view component_link->link_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component_link->link_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result);
 
   // ... check if the link is shown correctly
   $cmp = load_view_component(TC_ADD_RENAMED);
   $dsp_lst = $cmp->assign_dsp_ids();
   $result = $dsp->is_in_list($dsp_lst);
   $target = true; 
-  $exe_start_time = test_show_result('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr->name.'"', $target, $result);
 
   // ... check if the link is shown correctly also for the second user
   $cmp = load_view_component_usr(TC_ADD_RENAMED, $usr2);
   $dsp_lst = $cmp->assign_dsp_ids();
   $result = $dsp->is_in_list($dsp_lst);
   $target = true; 
-  $exe_start_time = test_show_result('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr2->name.'"', $target, $result);
 
   // ... check if the value update has been triggered
 
@@ -78,7 +77,7 @@ function run_view_component_link_test () {
   $dsp->load();
   $result = $cmp->unlink($dsp);
   $target = '';
-  $exe_start_time = test_show_result('view component_link->unlink "'.$dsp->name.'" from "'.$cmp->name.'" by user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  test_dsp('view component_link->unlink "'.$dsp->name.'" from "'.$cmp->name.'" by user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // ... check if the removal of the link for the second user has been logged
   $log = New user_log_link;
@@ -88,7 +87,7 @@ function run_view_component_link_test () {
   $log->usr = $usr2;
   $result = $log->dsp_last(true);
   $target = 'zukunft.com system test unlinked Mask Test from Mask Component Test';
-  $exe_start_time = test_show_result('view component_link->unlink_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'" and user "'.$usr2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component_link->unlink_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'" and user "'.$usr2->name.'"', $target, $result);
 
 
   // ... check if the link is really not used any more for the second user
@@ -96,7 +95,7 @@ function run_view_component_link_test () {
   $dsp_lst = $cmp->assign_dsp_ids();
   $result = $dsp->is_in_list($dsp_lst);
   $target = false; 
-  $exe_start_time = test_show_result('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr2->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr2->name.'" not any more', $target, $result);
 
 
   // ... check if the value update for the second user has been triggered
@@ -106,14 +105,14 @@ function run_view_component_link_test () {
   $dsp_lst = $cmp->assign_dsp_ids();
   $result = $dsp->is_in_list($dsp_lst);
   $target = true; 
-  $exe_start_time = test_show_result('view component->assign_dsp_ids still contains "'.$dsp->name.'" for user "'.$usr->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component->assign_dsp_ids still contains "'.$dsp->name.'" for user "'.$usr->name.'"', $target, $result);
 
   // ... check if the values for the first user are still the same
 
   // if the first user also removes the link, both records should be deleted
   $result = $cmp->unlink($dsp);
   $target = '11';
-  $exe_start_time = test_show_result('view component_link->unlink "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  test_dsp('view component_link->unlink "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check the correct logging
   $log = New user_log_link;
@@ -123,14 +122,14 @@ function run_view_component_link_test () {
   $log->usr = $usr;
   $result = $log->dsp_last(true);
   $target = 'zukunft.com system batch job unlinked Mask Test from Mask Component Test';
-  $exe_start_time = test_show_result('view component_link->unlink_dsp logged of "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component_link->unlink_dsp logged of "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result);
 
   // check if the view component is not used any more for both users
   $cmp = load_view_component(TC_ADD_RENAMED);
   $dsp_lst = $cmp->assign_dsp_ids();
   $result = $dsp->is_in_list($dsp_lst);
   $target = false; 
-  $exe_start_time = test_show_result('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr->name.'" not any more', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('view component->assign_dsp_ids contains "'.$dsp->name.'" for user "'.$usr->name.'" not any more', $target, $result);
 
   // --------------------------------------------------------------------
   // check if changing the view component order can be done for each user
@@ -150,19 +149,19 @@ function run_view_component_link_test () {
     $result = $cmp2->comment;
   }
   $target = 'Just added a second view component for testing';
-  $exe_start_time = test_show_result('view_component->save for adding a second one "'.$cmp2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  test_dsp('view_component->save for adding a second one "'.$cmp2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // insert the link again for the first user
   $order_nbr = $cmp->next_nbr($dsp->id);
   $result = $cmp->link($dsp, $order_nbr);
   $target = '111';
-  $exe_start_time = test_show_result('view component_link->link_dsp again for user 1 "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  test_dsp('view component_link->link_dsp again for user 1 "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // add a second element for the first user to test the order change
   $order_nbr2 = $cmp2->next_nbr($dsp->id);
   $result = $cmp2->link($dsp, $order_nbr2);
   $target = '111';
-  $exe_start_time = test_show_result('view component_link->link_dsp the second for user 1 "'.$dsp->name.'" to "'.$cmp2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+  test_dsp('view component_link->link_dsp the second for user 1 "'.$dsp->name.'" to "'.$cmp2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if the order of the view components are correct for the first user
   if (isset($dsp)) {
@@ -175,7 +174,7 @@ function run_view_component_link_test () {
         $target = TC_ADD2;
       }
       $result = $entry->name;
-      $exe_start_time = test_show_result('view component order for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+      test_dsp('view component order for user 1', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
       $pos = $pos + 1;
     }
   }
@@ -191,7 +190,7 @@ function run_view_component_link_test () {
         $target = TC_ADD2;
       }
       $result = $entry->name;
-      $exe_start_time = test_show_result('view component order for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+      test_dsp('view component order for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
       $pos = $pos + 1;
     }
   }
@@ -206,7 +205,7 @@ function run_view_component_link_test () {
     $result = $cmp_lnk->move_up(); // TODO force to reload the entry list
     //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
     $target = '1';
-    $exe_start_time = test_show_result('view component order changed for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+    test_dsp('view component order changed for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
   }
 
   // check if the order of the view components is changed for the second user
@@ -220,7 +219,7 @@ function run_view_component_link_test () {
         $target = TC_ADD_RENAMED;
       }
       $result = $entry->name;
-      $exe_start_time = test_show_result('view component order for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+      test_dsp('view component order for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
       $pos = $pos + 1;
     }
   }
@@ -236,7 +235,7 @@ function run_view_component_link_test () {
         $target = TC_ADD2;
       }
       $result = $entry->name;
-      $exe_start_time = test_show_result('view component order for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); 
+      test_dsp('view component order for user 1', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
       $pos = $pos + 1;
     }
   }
@@ -259,12 +258,12 @@ function run_view_component_link_test () {
   // unlink the first component
   $result = $cmp->unlink($dsp);
   $target = '11';
-  $exe_start_time = test_show_result('view component_link->unlink again first component "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  test_dsp('view component_link->unlink again first component "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // unlink the second component
   $result = $cmp2->unlink($dsp);
   $target = '111';
-  $exe_start_time = test_show_result('view component_link->unlink again second component "'.$dsp->name.'" from "'.$cmp2->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+  test_dsp('view component_link->unlink again second component "'.$dsp->name.'" from "'.$cmp2->name.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
   
 
   // the code changes and tests for view component link should be moved the view_component_link

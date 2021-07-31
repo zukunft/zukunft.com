@@ -31,7 +31,6 @@ global $db_con;
 function run_user_sandbox_unit_tests()
 {
 
-    global $exe_start_time;
     global $sql_names;
 
     test_subheader('Test user sandbox functions that does not need a database connection');
@@ -45,12 +44,12 @@ function run_user_sandbox_unit_tests()
     $src2->name = TS_IPCC_AR6_SYNTHESIS;
     $target = true;
     $result = $src1->is_same($src2);
-    $exe_start_time = test_show_result("are two sources supposed to be the same", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("are two sources supposed to be the same", $target, $result);
 
     // ... and they are of course also similar
     $target = true;
     $result = $src1->is_similar($src2);
-    $exe_start_time = test_show_result("... and similar", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("... and similar", $target, $result);
 
     // a source can have the same name as a word
     $wrd1 = new word;
@@ -61,7 +60,7 @@ function run_user_sandbox_unit_tests()
     $src2->name = TS_IPCC_AR6_SYNTHESIS;
     $target = false;
     $result = $wrd1->is_same($src2);
-    $exe_start_time = test_show_result("a source is not the same as a word even if they have the same name", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("a source is not the same as a word even if they have the same name", $target, $result);
 
     // but a formula should not have the same name as a word
     $wrd = new word;
@@ -70,12 +69,12 @@ function run_user_sandbox_unit_tests()
     $frm->name = TW_MIO;
     $target = true;
     $result = $wrd->is_similar($frm);
-    $exe_start_time = test_show_result("a formula should not have the same name as a word", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("a formula should not have the same name as a word", $target, $result);
 
     // ... but they are not the same
     $target = false;
     $result = $wrd->is_same($frm);
-    $exe_start_time = test_show_result("... but they are not the same", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("... but they are not the same", $target, $result);
 
     // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
 
@@ -85,32 +84,32 @@ function run_user_sandbox_unit_tests()
     $text = "'4'";
     $target = "'''4'''";
     $result = sf($text);
-    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sf: ".$text."", $target, $result);
 
     $text = "'4'";
     $target = "4";
     $result = sf($text, sql_db::FLD_FORMAT_VAL);
-    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sf: ".$text."", $target, $result);
 
     $text = "2021";
     $target = "'2021'";
     $result = sf($text, sql_db::FLD_FORMAT_TEXT);
-    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sf: ".$text."", $target, $result);
 
     $text = "four";
     $target = "'four'";
     $result = sf($text);
-    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sf: ".$text."", $target, $result);
 
     $text = "'four'";
     $target = "'''four'''";
     $result = sf($text);
-    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sf: ".$text."", $target, $result);
 
     $text = " ";
     $target = "NULL";
     $result = sf($text);
-    $exe_start_time = test_show_result(", sf: ".$text."", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sf: ".$text."", $target, $result);
 
     test_subheader('Test the version control');
 
@@ -131,7 +130,7 @@ function run_user_sandbox_unit_tests()
     $db_con->set_where(null,'Test User');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
-    $exe_start_time = test_show_result('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -140,7 +139,7 @@ function run_user_sandbox_unit_tests()
     $db_con->set_where(null,'Test User');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
-    $exe_start_time = test_show_result('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a simple SQL max select creation for PostgreSQL without where
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -148,7 +147,7 @@ function run_user_sandbox_unit_tests()
     $db_con->set_fields(array('MAX(value_id) AS max_id'));
     $created_sql = $db_con->select(false);
     $expected_sql = "SELECT MAX(value_id) AS max_id FROM values;";
-    $exe_start_time = test_show_result('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -157,7 +156,7 @@ function run_user_sandbox_unit_tests()
     $created_sql = $db_con->select(false);
     $sql_avoid_code_check_prefix = "SELECT";
     $expected_sql = $sql_avoid_code_check_prefix. " MAX(value_id) AS max_id FROM `values`;";
-    $exe_start_time = test_show_result('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a simple SQL select creation for PostgreSQL without the standard id and name identification
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -166,7 +165,7 @@ function run_user_sandbox_unit_tests()
     $db_con->where(array(sql_db::FLD_CODE_ID), array(CFG_VERSION_DB));
     $created_sql = $db_con->select(false);
     $expected_sql = "SELECT value FROM config WHERE code_id = 'version_database';";
-    $exe_start_time = test_show_result('non id PostgreSQL select', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('non id PostgreSQL select', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -175,7 +174,7 @@ function run_user_sandbox_unit_tests()
     $db_con->where(array(sql_db::FLD_CODE_ID), array(CFG_VERSION_DB));
     $created_sql = $db_con->select(false);
     $expected_sql = "SELECT `value` FROM config WHERE code_id = 'version_database';";
-    $exe_start_time = test_show_result('non id MySQL select', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('non id MySQL select', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a simple SQL select creation for PostgreSQL with the standard id and name identification
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -185,7 +184,7 @@ function run_user_sandbox_unit_tests()
     $expected_sql = "SELECT source_type_id, source_type_name
                 FROM source_types
                WHERE source_type_id = 2;";
-    $exe_start_time = test_show_result('PostgreSQL select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL select based on id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -195,7 +194,7 @@ function run_user_sandbox_unit_tests()
     $expected_sql = "SELECT source_type_id, source_type_name
                 FROM source_types
                WHERE source_type_id = 2;";
-    $exe_start_time = test_show_result('MySQL select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL select based on id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a simple SQL select of the user defined word for PostgreSQL by the id
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -213,7 +212,7 @@ function run_user_sandbox_unit_tests()
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $exe_start_time = test_show_result('PostgreSQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -231,7 +230,7 @@ function run_user_sandbox_unit_tests()
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $exe_start_time = test_show_result('MySQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a very simple SQL select of the user defined word for PostgreSQL by the id
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -244,7 +243,7 @@ function run_user_sandbox_unit_tests()
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $exe_start_time = test_show_result('PostgreSQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -257,7 +256,7 @@ function run_user_sandbox_unit_tests()
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $exe_start_time = test_show_result('MySQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a simple SQL select the formulas linked to a phrase
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -271,7 +270,7 @@ function run_user_sandbox_unit_tests()
                         phrase_id
                    FROM formula_links
                   WHERE phrase_id = 1;';
-    $exe_start_time = test_show_result('PostgreSQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -285,7 +284,7 @@ function run_user_sandbox_unit_tests()
                     phrase_id
                FROM formula_links
               WHERE phrase_id = 1;';
-    $exe_start_time = test_show_result('MySQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test a list of links SQL select creation for PostgreSQL selected by a linked object
     /*
@@ -307,7 +306,7 @@ function run_user_sandbox_unit_tests()
                      ".$sql_where." 
             GROUP BY v.verb_id 
             ORDER BY v.verb_id;";
-    $exe_start_time = test_show_result('PostgreSQL select based on id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL select based on id', zu_trim($expected_sql), zu_trim($created_sql));
     */
 
     /*
@@ -335,7 +334,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.source_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL user sandbox select', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user sandbox select', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for search by name
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -357,7 +356,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE source_name = 'wikidata';";
-    $exe_start_time = test_show_result('PostgreSQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for search by code_id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -379,7 +378,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.code_id = 'wikidata' AND s.code_id != NULL;";
-    $exe_start_time = test_show_result('PostgreSQL user sandbox select by code_id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user sandbox select by code_id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for all users by id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -395,7 +394,7 @@ function run_user_sandbox_unit_tests()
                         source_type_id
                    FROM sources 
                   WHERE source_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL all user select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL all user select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... similar with joined fields
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -417,7 +416,7 @@ function run_user_sandbox_unit_tests()
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                WHERE formula_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for user sandbox data (should match with the parameters in formula->load)
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -445,7 +444,7 @@ function run_user_sandbox_unit_tests()
              LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
                WHERE s.formula_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL user sandbox join select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user sandbox join select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
@@ -471,7 +470,7 @@ function run_user_sandbox_unit_tests()
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
               WHERE s.phrase_group_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL user sandbox value select by where text', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user sandbox value select by where text', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for the a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -492,7 +491,7 @@ function run_user_sandbox_unit_tests()
            LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                       AND u.user_id = 1 
                WHERE s.word_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL user sandbox link select by where text', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL user sandbox link select by where text', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW);
@@ -506,7 +505,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM views
                WHERE view_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL view load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view load SQL creation
     $db_con->set_type(DB_TYPE_VIEW);
@@ -526,7 +525,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_views u ON s.view_id = u.view_id 
                                     AND u.user_id = 1 
                   WHERE s.view_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL view load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -542,7 +541,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM view_component_links 
                WHERE view_component_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL view_component_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view_component_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same but select by the link ids
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -558,7 +557,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM view_component_links 
                WHERE view_id = 2 AND view_component_id = 3;";
-    $exe_start_time = test_show_result('PostgreSQL view_component_link load_standard select by link ids', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view_component_link load_standard select by link ids', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component_link load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -579,7 +578,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
                   WHERE s.view_component_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL view_component_link load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view_component_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the formula_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -594,7 +593,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL formula_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL formula_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the formula_link load SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -614,7 +613,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1 
                   WHERE s.formula_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL formula_link load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL formula_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -633,7 +632,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM view_components
                WHERE view_component_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL view_component load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view_component load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -662,7 +661,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id 
               LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id 
                   WHERE s.view_component_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL view_component load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL view_component load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -679,7 +678,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM word_links 
                WHERE word_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL word_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL word_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the word_link load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -702,7 +701,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
                   WHERE word_link_id = 1;";
-    $exe_start_time = test_show_result('PostgreSQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the verb_list load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -730,7 +729,7 @@ function run_user_sandbox_unit_tests()
                                              AND u.user_id = 1 
                   LEFT JOIN verbs l ON s.verb_id = l.verb_id 
                       WHERE s.to_phrase_id = 2;";
-    $exe_start_time = test_show_result('PostgreSQL verb_list load', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('PostgreSQL verb_list load', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
      * Start of the corresponding MySQL tests
@@ -758,7 +757,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.source_id = 1;";
-    $exe_start_time = test_show_result('MySQL user sandbox select', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user sandbox select', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for search by name
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -781,7 +780,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE source_name = 'wikidata';";
-    $exe_start_time = test_show_result('MySQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for search by code_id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -804,7 +803,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.code_id = 'wikidata';";
-    $exe_start_time = test_show_result('MySQL user sandbox select by code_id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user sandbox select by code_id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for all users by id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -820,7 +819,7 @@ function run_user_sandbox_unit_tests()
                         source_type_id
                    FROM sources 
                   WHERE source_id = 1;";
-    $exe_start_time = test_show_result('MySQL all user select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL all user select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... similar with joined fields
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -842,7 +841,7 @@ function run_user_sandbox_unit_tests()
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                WHERE formula_id = 1;";
-    $exe_start_time = test_show_result('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for user sandbox data
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -871,7 +870,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
               LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id 
                   WHERE s.formula_id = 1;";
-    $exe_start_time = test_show_result('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
@@ -897,7 +896,7 @@ function run_user_sandbox_unit_tests()
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
               WHERE s.phrase_group_id = 1;";
-    $exe_start_time = test_show_result('MySQL user sandbox value select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user sandbox value select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for the a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -919,7 +918,7 @@ function run_user_sandbox_unit_tests()
            LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                       AND u.user_id = 1 
                WHERE s.word_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL user sandbox link select by where text', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL user sandbox link select by where text', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -936,7 +935,7 @@ function run_user_sandbox_unit_tests()
                         excluded
                    FROM view_component_links 
                   WHERE view_component_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL view_component_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL view_component_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component_link load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -956,7 +955,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
                   WHERE s.view_component_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL view_component_link load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL view_component_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the formula_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -971,7 +970,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL formula_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL formula_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the formula_link load SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -992,7 +991,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1
                   WHERE s.formula_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL formula_link load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL formula_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -1011,7 +1010,7 @@ function run_user_sandbox_unit_tests()
                      excluded
                 FROM view_components
                WHERE view_component_id = 1;";
-    $exe_start_time = test_show_result('MySQL view_component load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL view_component load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the view_component load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -1040,7 +1039,7 @@ function run_user_sandbox_unit_tests()
              LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id
              LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id
                  WHERE s.view_component_id = 1;";
-    $exe_start_time = test_show_result('MySQL view_component load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL view_component load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -1058,7 +1057,7 @@ function run_user_sandbox_unit_tests()
                         excluded
                    FROM word_links 
                   WHERE word_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL word_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL word_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the word_link load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -1082,7 +1081,7 @@ function run_user_sandbox_unit_tests()
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
                   WHERE word_link_id = 1;";
-    $exe_start_time = test_show_result('MySQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('MySQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
      * Build sample queries in the PostgreSQL format to use the database syntax check of the IDE
@@ -1127,7 +1126,7 @@ function run_user_sandbox_unit_tests()
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
                  WHERE l.phrase_id = 1 AND l.formula_id = f.formula_id
               GROUP BY f.formula_id;";
-    $exe_start_time = test_show_result('formula list load query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula list load query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the value list load query
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1174,7 +1173,7 @@ function run_user_sandbox_unit_tests()
                                    GROUP BY value_id )
             ORDER BY v.phrase_group_id, v.time_word_id
                LIMIT 10;";
-    $exe_start_time = test_show_result('value list load query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('value list load query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word query
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1192,7 +1191,7 @@ function run_user_sandbox_unit_tests()
                   LEFT JOIN user_words u ON u.word_id = w.word_id
                                         AND u.user_id = 1
                    GROUP BY word_name ;";
-    $exe_start_time = test_show_result('phrase load word query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word link query
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1210,7 +1209,7 @@ function run_user_sandbox_unit_tests()
                  LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                             AND u.user_id = 1
                   GROUP BY word_link_name ;";
-    $exe_start_time = test_show_result('phrase load word link query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word link query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word link query by type
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1235,7 +1234,7 @@ function run_user_sandbox_unit_tests()
                          WHERE l.to_phrase_id = 2 
                            AND l.verb_id = 2 ) AS a 
                          WHERE (excluded <> 1 OR excluded is NULL);";
-    $exe_start_time = test_show_result('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the view component link query by type (used in word_display->assign_dsp_ids)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1257,7 +1256,7 @@ function run_user_sandbox_unit_tests()
            LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                             AND u.user_id = 1  
                WHERE s.view_component_id = 1;";
-    $exe_start_time = test_show_result('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the view component link max order number query (used in word_display->next_nbr)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1275,7 +1274,7 @@ function run_user_sandbox_unit_tests()
                            LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                                                 AND u.user_id = 1
                                WHERE l.view_id = 1 ) AS m;";
-    $exe_start_time = test_show_result('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word link query by phrase
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1354,7 +1353,7 @@ function run_user_sandbox_unit_tests()
                             AND w.word_id = a.id    
                        GROUP BY word_name ) AS w 
                     WHERE (excluded <> 1 OR excluded is NULL);";
-    $exe_start_time = test_show_result('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the time word selector query by type (used in word_display->dsp_time_selector)
     // $sql_avoid_code_check_prefix is used to avoid SQL code checks by the IDE on the query building process,
@@ -1391,7 +1390,7 @@ function run_user_sandbox_unit_tests()
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    
           ORDER BY name;";
-    $exe_start_time = test_show_result('time word selector query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('time word selector query by type', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the verb selector query (used in word_display->selector_link)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1421,7 +1420,7 @@ function run_user_sandbox_unit_tests()
              WHERE name_reverse <> '' 
                AND name_reverse <> verb_name) AS links
           ORDER BY words DESC, name;";
-    $exe_start_time = test_show_result('verb selector query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('verb selector query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the word link list load query (used in word_link_list->load)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1506,7 +1505,7 @@ function run_user_sandbox_unit_tests()
                        AND l.verb_id = 2 
               GROUP BY t2.word_id, l.verb_id
               ORDER BY l.verb_id, word_name;";
-    $exe_start_time = test_show_result('word link list load query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word link list load query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word link query by ...
     // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
@@ -1589,7 +1588,7 @@ function run_user_sandbox_unit_tests()
                         AND l.to_phrase_id   = 3
                         AND l.verb_id = 2
                    ORDER BY l.verb_id, word_name;";
-    $exe_start_time = test_show_result('phrase load word link query by ...', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase load word link query by ...', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the general phrase list query (as created in phrase->sql_list)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1629,7 +1628,7 @@ function run_user_sandbox_unit_tests()
                    ) AS p
              WHERE excluded = 0
           ORDER BY p.phrase_name;";
-    $exe_start_time = test_show_result('general phrase list query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('general phrase list query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the general phrase list query by type (as created in phrase->sql_list)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1756,7 +1755,7 @@ function run_user_sandbox_unit_tests()
                          WHERE excluded = 0  ) AS p
              WHERE excluded = 0
           ORDER BY p.phrase_name;";
-    $exe_start_time = test_show_result('general phrase list query by type', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('general phrase list query by type', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the word changer query (used in user_sandbox->changer_sql)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1767,7 +1766,7 @@ function run_user_sandbox_unit_tests()
                 FROM user_words 
                WHERE word_id = 1
                  AND (excluded <> 1 OR excluded is NULL)";
-    $exe_start_time = test_show_result('word changer query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word changer query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -1777,7 +1776,7 @@ function run_user_sandbox_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('user_sandbox->word_changer_sql check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user_sandbox->word_changer_sql check sql name', $result, $target);
 
     // the word changer ex owner query (used in user_sandbox->changer_sql)
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -1790,7 +1789,7 @@ function run_user_sandbox_unit_tests()
                WHERE word_id = 1
                  AND user_id <> 2
                  AND (excluded <> 1 OR excluded is NULL)";
-    $exe_start_time = test_show_result('word changer ex owner query', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word changer ex owner query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -1800,6 +1799,6 @@ function run_user_sandbox_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('user_sandbox->word_changer_sql ex owner check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user_sandbox->word_changer_sql ex owner check sql name', $result, $target);
 
 }

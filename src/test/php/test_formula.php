@@ -40,7 +40,6 @@ function run_formula_test()
 
     global $usr;
     global $usr2;
-    global $exe_start_time;
 
     test_header('Test the formula class (classes/formula.php)');
 
@@ -53,12 +52,12 @@ function run_formula_test()
     $frm->load();
     $result = $frm->usr_text;
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
-    $exe_start_time = test_show_result('formula->load for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load for "' . $frm->name . '"', $target, $result);
 
     // test the formula type
     $result = zu_dsp_bool($frm->is_special());
     $target = zu_dsp_bool(false);
-    $exe_start_time = test_show_result('formula->is_special for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->is_special for "' . $frm->name . '"', $target, $result);
 
     $exp = $frm->expression();
     $frm_lst = $exp->element_special_following_frm($back);
@@ -67,7 +66,7 @@ function run_formula_test()
         $elm_frm = $frm_lst->lst[0];
         $result = zu_dsp_bool($elm_frm->is_special());
         $target = zu_dsp_bool(true);
-        $exe_start_time = test_show_result('formula->is_special for "' . $elm_frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula->is_special for "' . $elm_frm->name . '"', $target, $result);
 
         $phr_lst->usr = $usr;
         $phr_lst->add_name(TW_ABB);
@@ -81,7 +80,7 @@ function run_formula_test()
         //echo $result.'<br>';
         $target = TW_2016;
         // todo: get the best matching number
-        //$exe_start_time = test_show_result('formula->special_result for "'.$elm_frm->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        //test_dsp('formula->special_result for "'.$elm_frm->name.'"', $target, $result);
 
         if (count($frm_lst->lst) > 1) {
             //$elm_frm_next = $frm_lst->lst[1];
@@ -93,7 +92,7 @@ function run_formula_test()
         $result = $time_phr->name;
         $target = TW_2015; // todo: check why $elm_frm_next = $frm_lst->lst[1]; is not working
         $target = TW_2014;
-        $exe_start_time = test_show_result('formula->special_time_phr for "' . $elm_frm_next->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula->special_time_phr for "' . $elm_frm_next->name . '"', $target, $result);
     }
 
     $phr_lst = $frm->special_phr_lst($phr_lst);
@@ -103,7 +102,7 @@ function run_formula_test()
         $result = $phr_lst->name();
     }
     $target = '"' . TW_ABB . '","' . TW_SALES . '","' . TW_2014 . '"';
-    $exe_start_time = test_show_result('formula->special_phr_lst for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->special_phr_lst for "' . $frm->name . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_lst_direct();
     if (!isset($phr_lst)) {
@@ -112,7 +111,7 @@ function run_formula_test()
         $result = $phr_lst->name();
     }
     $target = '"Year"';
-    $exe_start_time = test_show_result('formula->assign_phr_lst_direct for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->assign_phr_lst_direct for "' . $frm->name . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_ulst_direct();
     if (!isset($phr_lst)) {
@@ -121,7 +120,7 @@ function run_formula_test()
         $result = $phr_lst->name();
     }
     $target = '"Year"';
-    $exe_start_time = test_show_result('formula->assign_phr_ulst_direct for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->assign_phr_ulst_direct for "' . $frm->name . '"', $target, $result);
 
     // loading another formula (Price Earning ratio ) to have more test cases
     $frm_pe = load_formula(TF_PE);
@@ -137,13 +136,13 @@ function run_formula_test()
     $phr_lst = $phr_lst_all->filter($phr_lst);
     $result = $phr_lst->name();
     $target = '"' . TW_ABB . '"';
-    $exe_start_time = test_show_result('formula->assign_phr_lst for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->assign_phr_lst for "' . $frm->name . '"', $target, $result);
 
     $phr_lst_all = $frm_pe->assign_phr_ulst();
     $phr_lst = $phr_lst_all->filter($phr_lst);
     $result = $phr_lst->name();
     $target = '"' . TW_ABB . '"';
-    $exe_start_time = test_show_result('formula->assign_phr_ulst for "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->assign_phr_ulst for "' . $frm->name . '"', $target, $result);
 
     // test the calculation of one value
     $phr_lst = new phrase_list;
@@ -166,13 +165,13 @@ function run_formula_test()
         $result = 'result list is empty';
     }
     $target = '=(46000-45548)/45548';
-    $exe_start_time = test_show_result('formula->to_num "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->to_num "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     if (isset($fv_lst->lst)) {
         $fv = $fv->save_if_updated();
         $result = $fv->value;
         $target = '0.0099236';
-        $exe_start_time = test_show_result('formula_value->save_if_updated "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula_value->save_if_updated "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
     }
 
     $fv_lst = $frm->calc($phr_lst, $back);
@@ -182,26 +181,26 @@ function run_formula_test()
         $result = '';
     }
     $target = '0.0099235970843945';
-    $exe_start_time = test_show_result('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the display functions
     $frm = load_formula(TF_INCREASE);
     $exp = $frm->expression();
     $result = $exp->dsp_id();
     $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t19}=({f3}-{f5})/{f5})';
-    $exe_start_time = test_show_result('formula->expression for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->expression for ' . $frm->name() . '', $target, $result);
 
     $result = $frm->name();
     $target = 'increase';
-    $exe_start_time = test_show_result('formula->name for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->name for ' . $frm->name() . '', $target, $result);
 
     $result = $frm->dsp_text($back);
     $target = '"percent" = ( <a href="/http/formula_edit.php?id=3&back=1">this</a> - <a href="/http/formula_edit.php?id=5&back=1">prior</a> ) / <a href="/http/formula_edit.php?id=5&back=1">prior</a>';
-    $exe_start_time = test_show_result('formula->dsp_text for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->dsp_text for ' . $frm->name() . '', $target, $result);
 
     $result = $frm->name_linked($back);
     $target = '<a href="/http/formula_edit.php?id=52&back=1">increase</a>';
-    $exe_start_time = test_show_result('formula->display for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->display for ' . $frm->name() . '', $target, $result);
 
     $wrd = new word_dsp;
     $wrd->usr = $usr;
@@ -212,13 +211,13 @@ function run_formula_test()
     $target = '-3.29 %'; /* TODO temp fix */
     $target = '0.01';  /* temp fix. */
     $target = '0 %';  /* temp fix. */
-    $exe_start_time = test_show_result('formula->dsp_result for ' . $frm->name() . ' and ' . $wrd->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->dsp_result for ' . $frm->name() . ' and ' . $wrd->name() . '', $target, $result);
 
     /* TODO reactivate
     $result = $frm->btn_edit();
     $target = '<a href="/http/formula_edit.php?id=52&back=" title="Change formula increase"><img src="../images/button_edit.svg" alt="Change formula increase"></a>';
     $target = 'data-icon="edit"';
-    $exe_start_time = test_show_contains(', formula->btn_edit for '.$frm->name().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', formula->btn_edit for '.$frm->name().'', $target, $result);
     */
 
     $page = 1;
@@ -226,24 +225,24 @@ function run_formula_test()
     $call = '/http/test.php';
     $result = $frm->dsp_hist($page, $size, $call, $back);
     $target = 'changed to';
-    $exe_start_time = test_show_contains(', formula->dsp_hist for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', formula->dsp_hist for ' . $frm->name() . '', $target, $result);
 
     $result = $frm->dsp_hist_links($page, $size, $call, $back);
     $target = 'link';
     //$result = $hist_page;
-    $exe_start_time = test_show_contains(', formula->dsp_hist_links for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', formula->dsp_hist_links for ' . $frm->name() . '', $target, $result);
 
     $add = 0;
     $result = $frm->dsp_edit($add, $wrd, $back);
     $target = 'Formula "increase"';
     //$result = $edit_page;
-    $exe_start_time = test_show_contains(', formula->dsp_edit for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+    test_dsp_contains(', formula->dsp_edit for ' . $frm->name() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test formula refresh functions
 
     $result = $frm->element_refresh($frm->ref_text);
     $target = '';
-    $exe_start_time = test_show_result('formula->element_refresh for ' . $frm->name() . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->element_refresh for ' . $frm->name() . '', $target, $result);
 
 
     // to link and unlink a formula is tested in the formula_link section
@@ -258,13 +257,13 @@ function run_formula_test()
         $result = $frm->usr_text;
     }
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
-    $exe_start_time = test_show_result('formula->save for adding "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('formula->save for adding "' . $frm->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the formula name has been saved
     $frm = load_formula(TF_ADD);
     $result = $frm->usr_text;
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
-    $exe_start_time = test_show_result('formula->load the added "' . $frm->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); // time limit???
+    test_dsp('formula->load the added "' . $frm->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
     // ... check the correct logging
     $log = new user_log;
@@ -274,7 +273,7 @@ function run_formula_test()
     $log->usr = $usr;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job added Test Formula';
-    $exe_start_time = test_show_result('formula->save adding logged for "' . TF_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->save adding logged for "' . TF_ADD . '"', $target, $result);
 
     // check if adding the same formula again creates a correct error message
     $frm = new formula;
@@ -285,13 +284,13 @@ function run_formula_test()
     // use the next line if system config is non standard
     //$target = 'A formula with the name "'.TF_ADD.'" already exists. Please use another name.';
     $target = '11111';
-    $exe_start_time = test_show_result('formula->save adding "' . $frm->name . '" again', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('formula->save adding "' . $frm->name . '" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the formula linked word has been created
     $wrd = load_word(TF_ADD);
     $result = $wrd->type_id;
     $target = cl(DBL_WORD_TYPE_FORMULA_LINK);
-    $exe_start_time = test_show_result('word->load of the word "' . $frm->name . '" has the formula type', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load of the word "' . $frm->name . '" has the formula type', $target, $result);
 
 
     // check if the formula can be renamed
@@ -299,7 +298,7 @@ function run_formula_test()
     $frm->name = TF_ADD_RENAMED;
     $result = $frm->save();
     $target = '11';
-    $exe_start_time = test_show_result('formula->save rename "' . TF_ADD . '" to "' . TF_ADD_RENAMED . '".', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('formula->save rename "' . TF_ADD . '" to "' . TF_ADD_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if the formula renaming was successful
     $frm_renamed = new formula;
@@ -310,7 +309,7 @@ function run_formula_test()
         $result = $frm_renamed->name;
     }
     $target = TF_ADD_RENAMED;
-    $exe_start_time = test_show_result('formula->load renamed formula "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load renamed formula "' . TF_ADD_RENAMED . '"', $target, $result);
 
     // ... and if the formula renaming has been logged
     $log = new user_log;
@@ -320,7 +319,7 @@ function run_formula_test()
     $log->usr = $usr;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job changed Test Formula to Formula Test';
-    $exe_start_time = test_show_result('formula->save rename logged for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->save rename logged for "' . TF_ADD_RENAMED . '"', $target, $result);
 
     // check if the formula parameters can be added
     $frm_renamed->usr_text = '= "this"';
@@ -329,25 +328,25 @@ function run_formula_test()
     $frm_renamed->need_all_val = True;
     $result = $frm_renamed->save();
     $target = '1111111';
-    $exe_start_time = test_show_result('formula->save all formula fields beside the name for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('formula->save all formula fields beside the name for "' . TF_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if the formula parameters have been added
     $frm_reloaded = load_formula(TF_ADD_RENAMED);
     $result = $frm_reloaded->usr_text;
     $target = '= "this"';
-    $exe_start_time = test_show_result('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->ref_text;
     $target = '={f3}';
-    $exe_start_time = test_show_result('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->description;
     $target = TF_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
     $target = cl(DBL_FORMULA_TYPE_THIS);
-    $exe_start_time = test_show_result('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
-    $exe_start_time = test_show_result('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result);
 
     // ... and if the formula parameter adding have been logged
     $log = new user_log;
@@ -359,27 +358,27 @@ function run_formula_test()
     // use the next line if system config is non standard
     $target = 'zukunft.com system batch job changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
     $target = 'zukunft.com system batch job changed "percent" = 1 - ( "this" / "prior" ) to = "this"';
-    $exe_start_time = test_show_result('formula->load resolved_text for "' . TF_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load resolved_text for "' . TF_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'formula_text';
     $result = $log->dsp_last(true);
     // use the next line if system config is non standard
     $target = 'zukunft.com system batch job changed {t19}=( {f3} - {f5} ) / {f5} to ={f3}';
     $target = 'zukunft.com system batch job changed {t19}=1-({f3}/{f5}) to ={f3}';
-    $exe_start_time = test_show_result('formula->load formula_text for "' . TF_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load formula_text for "' . TF_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'description';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job added Formula Test description';
-    $exe_start_time = test_show_result('formula->load description for "' . TF_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load description for "' . TF_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'formula_type_id';
     $result = $log->dsp_last(true);
     // to review what is correct
     $target = 'zukunft.com system batch job changed calc to this';
     $target = 'zukunft.com system batch job added this';
-    $exe_start_time = test_show_result('formula->load formula_type_id for "' . TF_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load formula_type_id for "' . TF_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'all_values_needed';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job changed 0 to 1';
-    $exe_start_time = test_show_result('formula->load all_values_needed for "' . TF_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load all_values_needed for "' . TF_ADD_RENAMED . '" logged', $target, $result);
 
     // check if a user specific formula is created if another user changes the formula
     $frm_usr2 = new formula;
@@ -392,7 +391,7 @@ function run_formula_test()
     $frm_usr2->need_all_val = False;
     $result = $frm_usr2->save();
     $target = '1111111111';
-    $exe_start_time = test_show_result('formula->save all formula fields for user 2 beside the name for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('formula->save all formula fields for user 2 beside the name for "' . TF_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if a user specific formula changes have been saved
     $frm_usr2_reloaded = new formula;
@@ -401,37 +400,37 @@ function run_formula_test()
     $frm_usr2_reloaded->load();
     $result = $frm_usr2_reloaded->usr_text;
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
-    $exe_start_time = test_show_result('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
     $target = '{t19}=({f3}-{f5})/{f5}';
-    $exe_start_time = test_show_result('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
     $target = TF_ADD_RENAMED . ' description2';
-    $exe_start_time = test_show_result('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
     $target = cl(DBL_FORMULA_TYPE_NEXT);
-    $exe_start_time = test_show_result('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = False;
-    $exe_start_time = test_show_result('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result);
 
     // ... and the formula for the original user remains unchanged
     $frm_reloaded = load_formula(TF_ADD_RENAMED);
     $result = $frm_reloaded->usr_text;
     $target = '= "this"';
-    $exe_start_time = test_show_result('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->ref_text;
     $target = '={f3}';
-    $exe_start_time = test_show_result('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->description;
     $target = TF_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
     $target = cl(DBL_FORMULA_TYPE_THIS);
-    $exe_start_time = test_show_result('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
-    $exe_start_time = test_show_result('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result);
 
     // check if undo all specific changes removes the user formula
     $frm_usr2 = new formula;
@@ -444,7 +443,7 @@ function run_formula_test()
     $frm_usr2->need_all_val = True;
     $result = $frm_usr2->save();
     $target = '111111111';
-    $exe_start_time = test_show_result('formula->save undo the user formula fields beside the name for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('formula->save undo the user formula fields beside the name for "' . TF_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if a user specific formula changes have been saved
     $frm_usr2_reloaded = new formula;
@@ -453,19 +452,19 @@ function run_formula_test()
     $frm_usr2_reloaded->load();
     $result = $frm_usr2_reloaded->usr_text;
     $target = '= "this"';
-    $exe_start_time = test_show_result('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load usr_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->ref_text;
     $target = '={f3}';
-    $exe_start_time = test_show_result('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load ref_text for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->description;
     $target = TF_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
     $target = cl(DBL_FORMULA_TYPE_THIS);
-    $exe_start_time = test_show_result('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = True;
-    $exe_start_time = test_show_result('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula->load need_all_val for "' . TF_ADD_RENAMED . '"', $target, $result);
 
     // redo the user specific formula changes
     // check if the user specific changes can be removed with one click
@@ -478,7 +477,6 @@ function run_formula_list_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     test_header('est the formula list class (classes/formula_list.php)');
 
@@ -496,6 +494,6 @@ function run_formula_list_test()
     $frm_lst->load();
     $result = $frm_lst->display();
     $target = TF_PE;
-    $exe_start_time = test_show_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+    test_dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

@@ -101,7 +101,7 @@ class user_log_display {
       // get word changes by the user that are not standard
       $sql = "SELECT c.change_id, 
                      c.change_time AS time, 
-                     u.user_name AS user, 
+                     u.user_name, 
                      a.change_action_name AS type, 
                      t.description AS type_table, 
                      f.description AS type_field, 

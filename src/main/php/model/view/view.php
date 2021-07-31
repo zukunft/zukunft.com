@@ -496,6 +496,10 @@ class view extends user_sandbox
         log_debug('view->import_obj');
         $result = false;
 
+        // reset the all parameters for the word object but keep the user
+        $usr = $this->usr;
+        $this->reset();
+        $this->usr = $usr;
         foreach ($json_obj as $key => $value) {
 
             if ($key == 'name') {
@@ -520,7 +524,7 @@ class view extends user_sandbox
             }
         }
 
-        if ($result == '' and $do_save) {
+        if ($do_save) {
             if ($this->save()) {
                 $result = true;
                 // TODO save also the links

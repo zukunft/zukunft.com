@@ -30,7 +30,6 @@ function run_word_list_unit_tests()
 {
 
     global $usr;
-    global $exe_start_time;
     global $sql_names;
 
     test_header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
@@ -61,7 +60,7 @@ function run_word_list_unit_tests()
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    $exe_start_time = test_show_result('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -71,7 +70,7 @@ function run_word_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_list->load_sql_name by IDs', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->load_sql_name by IDs', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -98,7 +97,7 @@ function run_word_list_unit_tests()
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    $exe_start_time = test_show_result('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
 
     // sql to load by word list by phrase group
     $db_con->db_type = DB_TYPE_POSTGRES;
@@ -123,7 +122,7 @@ function run_word_list_unit_tests()
                                          FROM phrase_group_word_links
                                         WHERE phrase_group_id = 1)
                ORDER BY s.values DESC, word_name;";
-    $exe_start_time = test_show_result('word_list->load_sql by phrase group', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->load_sql by phrase group', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -133,7 +132,7 @@ function run_word_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_list->load_sql_name by phrase group', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->load_sql_name by phrase group', $result, $target);
 
     // TODO add the missing word list loading SQL
 
@@ -159,7 +158,7 @@ function run_word_list_unit_tests()
                  AND l.from_phrase_id IN (7)
                  AND l.verb_id = 2 
             ORDER BY s.values DESC, s.word_name;";
-    $exe_start_time = test_show_result('word_list->add_by_type_sql by verb and up', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->add_by_type_sql by verb and up', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -169,7 +168,7 @@ function run_word_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_list->add_by_type_sql by verb and up', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_list->add_by_type_sql by verb and up', $result, $target);
 
 
 

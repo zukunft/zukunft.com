@@ -142,7 +142,9 @@
   
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
   
-  TODO load all types like view types, formulas types once at program start in the hash tables
+  TODO add unit testes for im- and export of all objects
+  TODO add an im- and export code_id that is only unique for each type
+  TODO use the type hash tables for words, formulas, view and components
   TODO create all export objects and add all import export unit tests
   TODO complete the database abstraction layer
   TODO create unit tests for all module classes
@@ -156,8 +158,11 @@
   TODO check all data from an URL or from a user form that it contains no SQL code
   TODO move the init database fillings to on class instead of on SQL statement for each database
   TODO prevent XSS attacks and script attacks
+  TODO check the primary index of all user tables
+  TODO load the config, that is not expected to be changed during a session once at startup
+  TODO start the backend only once and react to REST calls from the frontend
+  TODO make use of __DIR__ ?
 
-  
 
   functions of this library
   ---------
@@ -327,10 +332,12 @@ const DB_TYPE_VALUE_PHRASE_LINK = 'value_phrase_link';
 const DB_TYPE_SOURCE = 'source';
 const DB_TYPE_SOURCE_TYPE = 'source_type';
 const DB_TYPE_REF = 'ref';
+const DB_TYPE_REF_TYPE = 'ref_type';
 const DB_TYPE_FORMULA = 'formula';
 const DB_TYPE_FORMULA_TYPE = 'formula_type';
 const DB_TYPE_FORMULA_LINK = 'formula_link';
 const DB_TYPE_FORMULA_ELEMENT = 'formula_element';
+const DB_TYPE_FORMULA_ELEMENT_TYPE = 'formula_element_type';
 const DB_TYPE_FORMULA_VALUE = 'formula_value';
 const DB_TYPE_VIEW = 'view';
 const DB_TYPE_VIEW_TYPE = 'view_type';
@@ -363,11 +370,6 @@ const SYSTEM_USER_ID = 1; //
 global $db_com; // the database connection
 global $usr;    // the session user
 global $debug;  // the debug level
-
-// TODO check the primary index of all user tables
-// TODO load the config, that is not expected to be changed during a session once at startup
-// TODO start the backend only once and react to REST calls from the frontend
-// TODO make use of __DIR__ ?
 
 // global vars for system control
 global $sys_script;      // name php script that has been call this library
@@ -982,23 +984,21 @@ function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION
 // unit_test for prg_version_is_newer
 function prg_version_is_newer_test()
 {
-    global $exe_start_time;
-
     $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
     $target = 'false';
-    $exe_start_time = test_show_result('prg_version 0.0.1 is newer than ' . PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('prg_version 0.0.1 is newer than ' . PRG_VERSION, $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION));
     $target = 'false';
-    $exe_start_time = test_show_result('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION));
     $target = 'true';
-    $exe_start_time = test_show_result('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9'));
     $target = 'true';
-    $exe_start_time = test_show_result('prg_version 0.1.0 is newer than 0.0.9', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('prg_version 0.1.0 is newer than 0.0.9', $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1'));
     $target = 'false';
-    $exe_start_time = test_show_result('prg_version 0.2.3 is newer than 1.1.1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('prg_version 0.2.3 is newer than 1.1.1', $target, $result);
 }
 
 /*

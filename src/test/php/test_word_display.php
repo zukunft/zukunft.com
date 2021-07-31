@@ -34,7 +34,6 @@ function run_word_display_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     test_header('Test the word display class (classes/word_display.php)');
 
@@ -48,7 +47,7 @@ function run_word_display_test()
     $direction = 'up';
     $target = TEST_WORD;
     $result = $wrd_ZH->dsp_graph($direction, 0);
-    $exe_start_time = test_show_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the other side
     $wrd_ZH = new word_dsp;
@@ -58,7 +57,7 @@ function run_word_display_test()
     $direction = 'down';
     $target = '';
     $result = $wrd_ZH->dsp_graph($direction, 0);
-    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the graph display for 2012
     $wrd_2013 = new word_dsp;
@@ -85,7 +84,7 @@ function run_word_display_test()
             $target = $result;
         }
     }
-    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2013->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2013->name, $target, $result);
 
     // ... and the other side
     $direction = 'up';
@@ -98,7 +97,7 @@ function run_word_display_test()
             $target = $result;
         }
     }
-    $exe_start_time = test_show_result('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2013->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2013->name, $target, $result);
 
     // the value table for ABB
     $wrd_ZH = new word_dsp;
@@ -115,8 +114,8 @@ function run_word_display_test()
     */
     $target = "ABB";
     $result = $wrd_ZH->dsp_val_list($wrd_year, 0);
-    //$exe_start_time = test_show_result('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
-    $exe_start_time = test_show_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+    //test_dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
+    test_dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // the value table for Company
     /*
@@ -132,7 +131,7 @@ function run_word_display_test()
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);
-    $exe_start_time = test_show_result('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
     */
 
 
@@ -150,6 +149,6 @@ function run_word_display_test()
     $sel->dummy_text = '... please select';
     $result .= $sel->display();
     $target = TP_ZH_INS;
-    $exe_start_time = test_show_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $wrd_ZH->name . ' selected', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $wrd_ZH->name . ' selected', $target, $result);
 
 }

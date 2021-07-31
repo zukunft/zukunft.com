@@ -30,7 +30,6 @@ function run_term_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     test_header('est the term class (classes/term.php)');
 
@@ -44,7 +43,7 @@ function run_term_test()
     $term->load();
     $target = 'A word with the name "' . TEST_WORD . '" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $exe_start_time = test_show_contains(', term->load for id ' . $wrd_company->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', term->load for id ' . $wrd_company->id, $target, $result);
 
     // ... check also for a triple
     $term = new term;
@@ -53,7 +52,7 @@ function run_term_test()
     $term->load();
     $target = 'A triple with the name "Zurich (' . TW_CITY . ')" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $exe_start_time = test_show_contains(', term->load for id ' . $wrd_company->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', term->load for id ' . $wrd_company->id, $target, $result);
 
     // ... check also for a verb
     $term = new term;
@@ -62,7 +61,7 @@ function run_term_test()
     $term->load();
     $target = 'A verb with the name "is a" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $exe_start_time = test_show_contains(', term->load for id ' . $wrd_company->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', term->load for id ' . $wrd_company->id, $target, $result);
 
     // ... check also for a formula
     $term = new term;
@@ -72,6 +71,6 @@ function run_term_test()
     // each formula name has also a word
     $target = 'A formula with the name "increase" already exists. Please use another name.';
     $result = $term->id_used_msg();
-    $exe_start_time = test_show_contains(', term->load for id ' . $wrd_company->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', term->load for id ' . $wrd_company->id, $target, $result);
 
 }

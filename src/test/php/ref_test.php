@@ -29,8 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_ref_test () {
 
   global $usr;
-  global $exe_start_time;
-  
+
   dsp_test_header ('Test the ref class (src/main/php/model/ref/ref.php)');
 
   // load by phrase and type
@@ -43,7 +42,7 @@ function run_ref_test () {
   $ref->load();
   $result = $ref->external_key;
   $target = TR_WIKIDATA_ABB;
-  $exe_start_time = test_show_result('ref->load "'.TW_ABB.'" in '.TRT_WIKIDATA, $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
+  test_dsp('ref->load "'.TW_ABB.'" in '.TRT_WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
   
   if ($ref->id > 0) {
     // load by id and test the loading of the objects
@@ -53,10 +52,10 @@ function run_ref_test () {
     $ref2->load();
     $result = $ref2->phr->name;
     $target = TW_ABB;
-    $exe_start_time = test_show_result('ref->load_object ', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
+    test_dsp('ref->load_object ', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
     $result = $ref2->ref_type->name;
     $target = TRT_WIKIDATA;
-    $exe_start_time = test_show_result('ref->load_object ', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
+    test_dsp('ref->load_object ', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
   }
 
 }

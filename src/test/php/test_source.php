@@ -35,8 +35,7 @@ function create_base_sources () {
 function run_source_test () {
 
   global $usr;
-  global $exe_start_time;
-  
+
   test_header('Test the source class (src/main/php/model/ref/source.php)');
 
   $src = New source;
@@ -45,6 +44,6 @@ function run_source_test () {
   $src->load();
   $result = $src->name;
   $target = TS_NESN_2016_NAME;
-  $exe_start_time = test_show_result('source->load of ID "'.TS_NESN_2016_ID.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE_LONG);
+  test_dsp('source->load of ID "'.TS_NESN_2016_ID.'"', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
 }

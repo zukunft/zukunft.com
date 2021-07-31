@@ -67,7 +67,6 @@ function run_word_test()
 
     global $usr1;
     global $usr2;
-    global $exe_start_time;
 
     test_header('Test the word class (classes/word.php)');
 
@@ -85,7 +84,7 @@ function run_word_test()
     $wrd2->load();
     $target = TEST_WORD;
     $result = $wrd2->name;
-    $exe_start_time = test_show_result('word->load of ' . $wrd_company->id . ' by id ' . $wrd1->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load of ' . $wrd_company->id . ' by id ' . $wrd1->id, $target, $result);
 
     // load by name
     $wrd_company = test_word(TEST_WORD);
@@ -96,70 +95,70 @@ function run_word_test()
     $wrd->main_wrd_from_txt($wrd_company->id . ',' . $wrd_company->id);
     $target = TEST_WORD;
     $result = $wrd1->name;
-    $exe_start_time = test_show_result('word->main_wrd_from_txt', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->main_wrd_from_txt', $target, $result);
 
     // display
     $back = 1;
     $target = '<a href="/http/view.php?words=' . $wrd_company->id . '&back=1">' . TEST_WORD . '</a>';
     $result = $wrd_company->display($back);
-    $exe_start_time = test_show_result('word->display "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->display "' . TEST_WORD . '"', $target, $result);
 
     // word type
     $wrd_2013 = test_word(TW_2013);
     $target = True;
     $result = $wrd_2013->is_type(DBL_WORD_TYPE_TIME);
-    $exe_start_time = test_show_result('word->is_type for ' . TW_2013 . ' and "' . DBL_WORD_TYPE_TIME . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_type for ' . TW_2013 . ' and "' . DBL_WORD_TYPE_TIME . '"', $target, $result);
 
     // is time
     $target = True;
     $result = $wrd_2013->is_time();
-    $exe_start_time = test_show_result('word->is_time for ' . TW_2013 . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_time for ' . TW_2013 . '', $target, $result);
 
     // is not measure
     $target = False;
     $result = $wrd_2013->is_measure();
-    $exe_start_time = test_show_result('word->is_measure for ' . TW_2013 . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_measure for ' . TW_2013 . '', $target, $result);
 
     // is measure
     $wrd_CHF = test_word(TW_CHF);
     $target = True;
     $result = $wrd_CHF->is_measure();
-    $exe_start_time = test_show_result('word->is_measure for ' . TW_CHF . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_measure for ' . TW_CHF . '', $target, $result);
 
     // is not scaling
     $target = False;
     $result = $wrd_CHF->is_scaling();
-    $exe_start_time = test_show_result('word->is_scaling for ' . TW_CHF . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_scaling for ' . TW_CHF . '', $target, $result);
 
     // is scaling
     $wrd_mio = test_word(TW_MIO);
     $target = True;
     $result = $wrd_mio->is_scaling();
-    $exe_start_time = test_show_result('word->is_scaling for ' . TW_MIO . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_scaling for ' . TW_MIO . '', $target, $result);
 
     // is not percent
     $target = False;
     $result = $wrd_mio->is_percent();
-    $exe_start_time = test_show_result('word->is_percent for ' . TW_MIO . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_percent for ' . TW_MIO . '', $target, $result);
 
     // is percent
     $wrd_pct = test_word(TW_PCT);
     $target = True;
     $result = $wrd_pct->is_percent();
-    $exe_start_time = test_show_result('word->is_percent for ' . TW_PCT . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->is_percent for ' . TW_PCT . '', $target, $result);
 
     // next word
     $wrd_2014 = test_word(TW_2014);
     $target = $wrd_2014->name;
     $wrd_next = $wrd_2013->next();
     $result = $wrd_next->name;
-    $exe_start_time = test_show_result('word->next for ' . TW_2013 . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->next for ' . TW_2013 . '', $target, $result);
 
     // prior word
     $target = $wrd_2013->name;
     $wrd_prior = $wrd_2014->prior();
     $result = $wrd_prior->name;
-    $exe_start_time = test_show_result('word->prior for ' . TW_2014 . '', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->prior for ' . TW_2014 . '', $target, $result);
 
     // word children
     $wrd_company = test_word(TEST_WORD);
@@ -171,7 +170,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->children for "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->children for "' . TEST_WORD . '"', $target, $result, TIMEOUT_LIMIT_DB, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // ... word children excluding the start word
     $target = '';
@@ -180,7 +179,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->children for "' . TEST_WORD . '" excluding the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->children for "' . TEST_WORD . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // word are
     $wrd_lst = $wrd_company->are();
@@ -190,7 +189,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->are for "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->are for "' . TEST_WORD . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // ... word are including the start word
     $target = $wrd_company->name;
@@ -199,7 +198,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->are for "' . TEST_WORD . '" including the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->are for "' . TEST_WORD . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // word parents
     $wrd_ABB = test_word(TW_ABB);
@@ -211,7 +210,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->parents for "' . TW_ABB . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->parents for "' . TW_ABB . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // ... word parents excluding the start word
     $target = '';
@@ -220,7 +219,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->parents for "' . TW_ABB . '" excluding the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->parents for "' . TW_ABB . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // word is
     $wrd_ZH = test_word(TW_ZH);
@@ -232,7 +231,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->is for "' . TW_ZH . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->is for "' . TW_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // ... word is including the start word
     $target = $wrd_ZH->name;
@@ -242,7 +241,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->is for "' . TW_ZH . '" including the start word', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->is for "' . TW_ZH . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // word is part
     $wrd_cf = test_word(TW_CF);
@@ -254,7 +253,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    $exe_start_time = test_show_result('word->is_part for "' . TW_TAX . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->is_part for "' . TW_TAX . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
 
     // save a new word
     $wrd_new = new word;
@@ -263,7 +262,7 @@ function run_word_test()
     $result = num2bool($wrd_new->save());
     //$target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
     $target = true;
-    $exe_start_time = test_show_result('word->save for "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    test_dsp('word->save for "' . TEST_WORD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     // test the creation of a new word
     $wrd_add = new word;
@@ -271,7 +270,7 @@ function run_word_test()
     $wrd_add->usr = $usr1;
     $result = num2bool($wrd_add->save());
     $target = true;
-    $exe_start_time = test_show_result('word->save for "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    test_dsp('word->save for "' . TEST_WORD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     echo "... and also testing the user log class (classes/user_log.php)<br>";
 
@@ -285,7 +284,7 @@ function run_word_test()
         $result = $log->dsp_last(true);
     }
     $target = 'zukunft.com system batch job added ' . TW_ADD . '';
-    $exe_start_time = test_show_result('word->save logged for "' . TW_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->save logged for "' . TW_ADD . '"', $target, $result);
 
     // ... test if the new word has been created
     $wrd_added = load_word(TW_ADD);
@@ -294,13 +293,13 @@ function run_word_test()
         $result = $wrd_added->name;
     }
     $target = TW_ADD;
-    $exe_start_time = test_show_result('word->load of added word "' . TW_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load of added word "' . TW_ADD . '"', $target, $result);
 
     // check if the word can be renamed
     $wrd_added->name = TW_ADD_RENAMED;
     $result = num2bool($wrd_added->save());
     $target = true;
-    $exe_start_time = test_show_result('word->save rename "' . TW_ADD . '" to "' . TW_ADD_RENAMED . '".', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    test_dsp('word->save rename "' . TW_ADD . '" to "' . TW_ADD_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the word renaming was successful
     $wrd_renamed = new word;
@@ -312,7 +311,7 @@ function run_word_test()
         }
     }
     $target = TW_ADD_RENAMED;
-    $exe_start_time = test_show_result('word->load renamed word "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load renamed word "' . TW_ADD_RENAMED . '"', $target, $result);
 
     // check if the word renaming has been logged
     $log = new user_log;
@@ -322,7 +321,7 @@ function run_word_test()
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job changed ' . TW_ADD . ' to ' . TW_ADD_RENAMED . '';
-    $exe_start_time = test_show_result('word->save rename logged for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->save rename logged for "' . TW_ADD_RENAMED . '"', $target, $result);
 
     // check if the word parameters can be added
     $wrd_renamed->plural = TW_ADD_RENAMED . 's';
@@ -330,19 +329,19 @@ function run_word_test()
     $wrd_renamed->type_id = cl(DBL_WORD_TYPE_OTHER);
     $result = num2bool($wrd_renamed->save());
     $target = true;
-    $exe_start_time = test_show_result('word->save all word fields beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('word->save all word fields beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the word parameters have been added
     $wrd_reloaded = load_word(TW_ADD_RENAMED);
     $result = $wrd_reloaded->plural;
     $target = TW_ADD_RENAMED . 's';
-    $exe_start_time = test_show_result('word->load plural for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load plural for "' . TW_ADD_RENAMED . '"', $target, $result);
     $result = $wrd_reloaded->description;
     $target = TW_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('word->load description for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load description for "' . TW_ADD_RENAMED . '"', $target, $result);
     $result = $wrd_reloaded->type_id;
     $target = cl(DBL_WORD_TYPE_OTHER);
-    $exe_start_time = test_show_result('word->load type_id for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '"', $target, $result);
 
     // check if the word parameter adding have been logged
     $log = new user_log;
@@ -352,16 +351,16 @@ function run_word_test()
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job added ' . TW_ADD_RENAMED . 's';
-    $exe_start_time = test_show_result('word->load plural for "' . TW_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load plural for "' . TW_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'description';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job added ' . TW_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('word->load description for "' . TW_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
-    $exe_start_time = test_show_result('word->load ref_2 for "' . TW_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load description for "' . TW_ADD_RENAMED . '" logged', $target, $result);
+    test_dsp('word->load ref_2 for "' . TW_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'word_type_id';
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job added differentiator filler';
-    $exe_start_time = test_show_result('word->load type_id for "' . TW_ADD_RENAMED . '" logged', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '" logged', $target, $result);
 
     // check if a user specific word is created if another user changes the word
     $wrd_usr2 = new word;
@@ -373,7 +372,7 @@ function run_word_test()
     $wrd_usr2->type_id = cl(DBL_WORD_TYPE_TIME);
     $result = num2bool($wrd_usr2->save());
     $target = true;
-    $exe_start_time = test_show_result('word->save all word fields for user 2 beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('word->save all word fields for user 2 beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific word changes have been saved
     $wrd_usr2_reloaded = new word;
@@ -382,25 +381,25 @@ function run_word_test()
     $wrd_usr2_reloaded->load();
     $result = $wrd_usr2_reloaded->plural;
     $target = TW_ADD_RENAMED . 's2';
-    $exe_start_time = test_show_result('word->load plural for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load plural for "' . TW_ADD_RENAMED . '"', $target, $result);
     $result = $wrd_usr2_reloaded->description;
     $target = TW_ADD_RENAMED . ' description2';
-    $exe_start_time = test_show_result('word->load description for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load description for "' . TW_ADD_RENAMED . '"', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
     $target = cl(DBL_WORD_TYPE_TIME);
-    $exe_start_time = test_show_result('word->load type_id for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '"', $target, $result);
 
     // check the word for the original user remains unchanged
     $wrd_reloaded = load_word(TW_ADD_RENAMED);
     $result = $wrd_reloaded->plural;
     $target = TW_ADD_RENAMED . 's';
-    $exe_start_time = test_show_result('word->load plural for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load plural for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $wrd_reloaded->description;
     $target = TW_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('word->load description for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load description for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $wrd_reloaded->type_id;
     $target = cl(DBL_WORD_TYPE_OTHER);
-    $exe_start_time = test_show_result('word->load type_id for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user word
     $wrd_usr2 = new word;
@@ -412,7 +411,7 @@ function run_word_test()
     $wrd_usr2->type_id = cl(DBL_WORD_TYPE_OTHER);
     $result = num2bool($wrd_usr2->save());
     $target = true;
-    $exe_start_time = test_show_result('word->save undo the user word fields beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+    test_dsp('word->save undo the user word fields beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific word changes have been saved
     $wrd_usr2_reloaded = new word;
@@ -421,13 +420,13 @@ function run_word_test()
     $wrd_usr2_reloaded->load();
     $result = $wrd_usr2_reloaded->plural;
     $target = TW_ADD_RENAMED . 's';
-    $exe_start_time = test_show_result('word->load plural for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load plural for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $wrd_usr2_reloaded->description;
     $target = TW_ADD_RENAMED . ' description';
-    $exe_start_time = test_show_result('word->load description for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load description for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
     $target = cl(DBL_WORD_TYPE_OTHER);
-    $exe_start_time = test_show_result('word->load type_id for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result);
 
     // TODO redo the user specific word changes
     // check if the user specific changes can be removed with one click

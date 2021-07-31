@@ -29,8 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_phrase_group_list_test () {
 
   global $usr;
-  global $exe_start_time;
-  
+
   test_header('Test the phrase group list class (src/main/php/model/phrase/phrase_group_list.php)');
 
   // define some phrase groups for testing
@@ -73,7 +72,7 @@ function run_phrase_group_list_test () {
   $grp_lst->add($abb_grp);
   $result = $grp_lst->name();
   $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TW_ZH.'';
-  $exe_start_time = test_show_result('phrase_group_list->add of '.$abb_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$abb_grp->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp('phrase_group_list->add of '.$abb_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$abb_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
   // test add a phrase group to a phrase group list
@@ -84,7 +83,7 @@ function run_phrase_group_list_test () {
   $grp_lst->add($ins_grp);
   $result = $grp_lst->name();
   $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TW_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TP_ZH_INS.'';
-  $exe_start_time = test_show_result('phrase_group_list->add of '.$zh_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$ins_grp->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('phrase_group_list->add of '.$zh_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$ins_grp->dsp_id(), $target, $result);
 
 
   // test getting the common phrases of several group
@@ -111,6 +110,6 @@ function run_phrase_group_list_test () {
   $phr_lst = $grp_lst->common_phrases();
   $result = $phr_lst->name();
   $target = '"'.TW_MIO.'","'.TW_CHF.'"';
-  $exe_start_time = test_show_result('phrase_group_list->common_phrases of '.$grp_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('phrase_group_list->common_phrases of '.$grp_lst->dsp_id(), $target, $result);
 
 }

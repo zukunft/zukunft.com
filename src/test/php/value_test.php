@@ -63,7 +63,7 @@ function run_value_test () {
     $val->load();
     $result = $val->number;
     $target = TV_ABB_SALES_2013;
-    test_dsp(', value->load for value id "'.$abb_sales->id.'"', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load for value id "'.$abb_sales->id.'"', $target, $result);
 
     // test load by word list first to get the value id
     $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
@@ -73,7 +73,7 @@ function run_value_test () {
     $val_by_wrd_lst->load();
     $result = $val_by_wrd_lst->number;
     $target = TV_ABB_SALES_2014;
-    test_dsp(', value->load for another word list '.$wrd_lst->name(), $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load for another word list '.$wrd_lst->name(), $target, $result);
 
     // test load by value id
     $val = New value;
@@ -82,7 +82,7 @@ function run_value_test () {
     $val->load();
     $result = $val->number;
     $target = TV_ABB_SALES_2014;
-    test_dsp(', value->load for value id "'.$abb_sales->id.'"', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load for value id "'.$abb_sales->id.'"', $target, $result);
 
     // test rebuild_grp_id by value id
     $result = $val->check();
@@ -107,17 +107,17 @@ function run_value_test () {
     // ... and check the number
     $result = $chk_val->number;
     $target = TV_ABB_SALES_AUTO_2013;
-    test_dsp(', value->load for "'.dsp_array($chk_wrd_lst->names()).'"', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load for "'.dsp_array($chk_wrd_lst->names()).'"', $target, $result);
 
     // ... and check the words loaded
     $result = dsp_array($chk_val->wrd_lst->names());
     $target = 'million,CHF,Sales,ABB,Discrete Automation and Motion';
-    test_dsp(', value->load words', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load words', $target, $result);
 
     // ... and check the time word
     $result = $chk_val->time_phr->name;
     $target = TW_2013;
-    test_dsp(', value->load time word', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load time word', $target, $result);
 
     // ... and check the word reloading by group
     $chk_val->wrd_lst = null;
@@ -128,7 +128,7 @@ function run_value_test () {
       $result = '';
     }
     $target = 'million,CHF,Sales,ABB,Discrete Automation and Motion';
-    test_dsp(', value->load_phrases reloaded words', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load_phrases reloaded words', $target, $result);
 
     // ... and check the time word reloading
     $chk_val->time_phr = null;
@@ -139,7 +139,7 @@ function run_value_test () {
       $result = '';
     }
     $target = TW_2013;
-    test_dsp(', value->load_phrases reloaded time word', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load_phrases reloaded time word', $target, $result);
   }
 
   // test load the word list object
@@ -149,7 +149,7 @@ function run_value_test () {
   if ($grp->id == 0) {
       $result = 'No word list found.';
       $target = dsp_array($wrd_lst->names());
-      test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
+      test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result);
   } else {
       $val = new value;
       $val->grp = $grp;
@@ -165,7 +165,7 @@ function run_value_test () {
           }
       }
       $target = dsp_array($wrd_lst->names());
-      test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result, TIMEOUT_LIMIT);
+      test_dsp(', value->load for group id "' . $grp->id . '"', $target, $result);
   }
 
   // test load the word list object via word ids
@@ -181,7 +181,7 @@ function run_value_test () {
     }
   }
   $target = dsp_array($wrd_lst->names());
-  test_dsp(', value->load for ids '.dsp_array($wrd_lst->ids).'', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->load for ids '.dsp_array($wrd_lst->ids).'', $target, $result);
   
 
   // test the formatting of a value (percent)
@@ -192,7 +192,7 @@ function run_value_test () {
   $pct_val->load();
   $result = $pct_val->display(0);
   $target = TV_DAN_SALES_USA_2016;
-  test_dsp(', value->val_formatted for a word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->val_formatted for a word list '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test the scaling of a value
   $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
@@ -207,7 +207,7 @@ function run_value_test () {
   $mio_val->load();
   $result = $mio_val->scale($dest_wrd_lst);
   $target = TV_ABB_SALES_2014 * 1000000;
-  test_dsp(', value->val_scaling for a word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->val_scaling for a word list '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test the figure object creation
   $wrd_lst = load_word_list(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2014));
@@ -219,24 +219,24 @@ function run_value_test () {
   $result = $fig->display_linked('1');
   $target = '';
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  test_dsp(', value->figure->display_linked for word list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->figure->display_linked for word list '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test the HTML code creation
   $result = $mio_val->display(0);
   $target = number_format(TV_ABB_SALES_2014,0,DEFAULT_DEC_POINT,DEFAULT_THOUSAND_SEP);
-  test_dsp(', value->display', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->display', $target, $result);
 
   // test the HTML code creation including the hyperlink
   $result = $mio_val->display_linked('1');
   $target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  test_dsp(', value->display_linked', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->display_linked', $target, $result);
 
   // convert the user input for the database
   $mio_val->usr_value = '46 000';
   $result = $mio_val->convert();
   $target = TV_ABB_SALES_2014;
-  test_dsp(', value->convert user input', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->convert user input', $target, $result);
 
   // test adding a value in the database 
   // as it is call from value_add.php with all phrases in an id list including the time phrase, 
@@ -263,7 +263,7 @@ function run_value_test () {
     $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job added 123456789';
-  test_dsp(', value->save logged for "'.$wrd_lst->name().'"', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->save logged for "'.$wrd_lst->name().'"', $target, $result);
 
   // ... check if the value has been added
   $added_val = New value;
@@ -309,7 +309,7 @@ function run_value_test () {
     $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job added 234567890';
-  test_dsp(', value->save logged for "'.$wrd_lst2->name().'"', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->save logged for "'.$wrd_lst2->name().'"', $target, $result);
 
   // ... check if the value has been added
   $added_val2 = New value;
@@ -342,7 +342,7 @@ function run_value_test () {
     $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job changed 123456789 to 987654321';
-  test_dsp(', value->save logged for "'.TW_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->save logged for "'.TW_ADD_RENAMED.'"', $target, $result);
 
   // ... check if the value has really been updated
   $added_val = New value;
@@ -387,7 +387,7 @@ function run_value_test () {
     $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system test changed 987654321 to 23456';
-  test_dsp(', value->save logged for user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->save logged for user "'.$usr2->name.'"', $target, $result);
 
   // ... check if the value has really been updated
   $added_val_usr2 = New value;
@@ -431,7 +431,7 @@ function run_value_test () {
     $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system test changed 23456 to 987654321';
-  test_dsp(', value->save logged for user "'.$usr2->name.'"', $target, $result, TIMEOUT_LIMIT);
+  test_dsp(', value->save logged for user "'.$usr2->name.'"', $target, $result);
 
   // ... check if the value has really been changed back
   $added_val_usr2 = New value;

@@ -19,6 +19,7 @@
     },
     {
       "name": "second",
+      "plural": "seconds",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [

@@ -33,7 +33,6 @@ function run_test_cleanup()
 
     global $usr;
     global $usr2;
-    global $exe_start_time;
 
     global $test_val_lst;
 
@@ -52,7 +51,7 @@ function run_test_cleanup()
                 if ($val->id > 0) {
                     $result = $val->del();
                     $target = '11';
-                    $exe_start_time = test_show_result('value->del test value for "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+                    test_dsp('value->del test value for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
                 }
             }
         }
@@ -95,14 +94,14 @@ function run_test_cleanup()
     if ($dsp->id > 0 and $cmp->id > 0) {
         $result = $cmp->unlink($dsp);
         $target = '';
-        $exe_start_time = test_show_result('cleanup: unlink first component "' . $cmp->name . '" from "' . $dsp->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+        test_dsp('cleanup: unlink first component "' . $cmp->name . '" from "' . $dsp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
     // check if the test components have been unlinked for user 2
     if ($dsp_usr2->id > 0 and $cmp_usr2->id > 0) {
         $result = $cmp_usr2->unlink($dsp_usr2);
         $target = '';
-        $exe_start_time = test_show_result('cleanup: unlink first component "' . $cmp_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+        test_dsp('cleanup: unlink first component "' . $cmp_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
     // unlink the second component
@@ -112,14 +111,14 @@ function run_test_cleanup()
     if ($dsp->id > 0 and $cmp2->id > 0) {
         $result = $cmp2->unlink($dsp);
         $target = '';
-        $exe_start_time = test_show_result('cleanup: unlink second component "' . $cmp2->name . '" from "' . $dsp->name . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+        test_dsp('cleanup: unlink second component "' . $cmp2->name . '" from "' . $dsp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
     // unlink the second component for user 2
     if ($dsp_usr2->id > 0 and $cmp2_usr2->id > 0) {
         $result = $cmp2_usr2->unlink($dsp_usr2);
         $target = '';
-        $exe_start_time = test_show_result('cleanup: unlink second component "' . $cmp2_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI);
+        test_dsp('cleanup: unlink second component "' . $cmp2_usr2->name . '" from "' . $dsp_usr2->name . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
     // request to delete the test view component
@@ -127,14 +126,14 @@ function run_test_cleanup()
         $result = $cmp->del();
         $target = '111';
         //$target = '';
-        $exe_start_time = test_show_result('cleanup: del of first component "' . TC_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('cleanup: del of first component "' . TC_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the test view component for user 2
     if ($cmp_usr2->id > 0) {
         $result = $cmp_usr2->del();
         $target = '';
-        $exe_start_time = test_show_result('cleanup: del of first component "' . TC_ADD . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('cleanup: del of first component "' . TC_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the second added test view component
@@ -142,28 +141,28 @@ function run_test_cleanup()
         $result = $cmp2->del();
         $target = '11';
         //$target = '';
-        $exe_start_time = test_show_result('cleanup: del of second component "' . TC_ADD2 . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('cleanup: del of second component "' . TC_ADD2 . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the second added test view component for user 2
     if ($cmp2_usr2->id > 0) {
         $result = $cmp2_usr2->del();
         $target = '';
-        $exe_start_time = test_show_result('cleanup: del of second component "' . TC_ADD2 . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('cleanup: del of second component "' . TC_ADD2 . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the added test view
     if ($dsp->id > 0) {
         $result = $dsp->del();
         $target = '111';
-        $exe_start_time = test_show_result('cleanup: del of view "' . TM_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('cleanup: del of view "' . TM_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the added test view for user 2
     if ($dsp_usr2->id > 0) {
         $result = $dsp_usr2->del();
         $target = '';
-        $exe_start_time = test_show_result('cleanup: del of view "' . TM_ADD . '" for user 2', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('cleanup: del of view "' . TM_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the added test formula
@@ -171,7 +170,7 @@ function run_test_cleanup()
     if ($frm->id > 0) {
         $result = $frm->del();
         $target = '';
-        $exe_start_time = test_show_result('formula->del of "' . TF_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula->del of "' . TF_ADD . '"', $target, $result);
     }
 
     // request to delete the renamed test formula
@@ -179,7 +178,7 @@ function run_test_cleanup()
     if ($frm->id > 0) {
         $result = $frm->del();
         $target = '1111';
-        $exe_start_time = test_show_result('formula->del of "' . TF_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('formula->del of "' . TF_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the added test word
@@ -188,7 +187,7 @@ function run_test_cleanup()
     if ($wrd->id > 0) {
         $result = $wrd->del();
         $target = '';
-        $exe_start_time = test_show_result('word->del of "' . TW_ADD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('word->del of "' . TW_ADD . '"', $target, $result);
     }
 
     // request to delete the renamed test word
@@ -196,7 +195,7 @@ function run_test_cleanup()
     if ($wrd->id > 0) {
         $result = $wrd->del();
         $target = true;
-        $exe_start_time = test_show_result('word->del of "' . TW_ADD_RENAMED . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+        test_dsp('word->del of "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     echo $db_con->seq_reset(DB_TYPE_VALUE) . '<br>';

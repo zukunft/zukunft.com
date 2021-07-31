@@ -39,10 +39,10 @@ const EXP_ELM_SELECT_VERB_WORD = "verb_words"; // to filter the words and the wo
 class expression
 {
 
-    public ?string $usr_text = null;   // the formula expression in the human readable format
+    public ?string $usr_text = null;   // the formula expression in the human-readable format
     public ?string $ref_text = null;   // the formula expression with the database references
     public ?string $num_text = null;   // the formula expression with all numbers loaded (ready for R)
-    public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human readable to the database reference format
+    public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
     public ?user $usr = null;          // to get the user settings for the conversion
     public ?array $fv_phr_lst = null;  // list object of the words that should be added to the formula result
     public ?array $phr_lst = null;     // list of the word ids that are used for the formula result

@@ -30,7 +30,6 @@ function  run_user_sandbox_test()
 {
 
     global $usr1;
-    global $exe_start_time;
 
     test_header('Test the user sandbox class (classes/user_sandbox.php)');
 
@@ -45,12 +44,12 @@ function  run_user_sandbox_test()
     $wrd2->name = TW_MIO;
     $target = false;
     $result = $wrd1->is_same($wrd2);
-    $exe_start_time = test_show_result("a word is not the same as the same word that represents a formula", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("a word is not the same as the same word that represents a formula", $target, $result);
 
     // ... but it is similar
     $target = true;
     $result = $wrd1->is_similar($wrd2);
-    $exe_start_time = test_show_result("... but it is similar", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp("... but it is similar", $target, $result);
 
     test_subheader('Test the saving function');
 
@@ -60,7 +59,7 @@ function  run_user_sandbox_test()
     $src->usr = $usr1;
     $result = num2bool($src->save());
     $target = true;
-    $exe_start_time = test_show_result('user_sandbox->save create a new source', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user_sandbox->save create a new source', $target, $result);
 
     // remember the id
     $src_id = 0;
@@ -76,7 +75,7 @@ function  run_user_sandbox_test()
         $result = $src->name;
     }
     $target = TS_IPCC_AR6_SYNTHESIS;
-    $exe_start_time = test_show_result('user_sandbox->save check created source', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user_sandbox->save check created source', $target, $result);
 
     // update the source url by name (user_sandbox->save case 2)
     $src = new source;
@@ -85,7 +84,7 @@ function  run_user_sandbox_test()
     $src->url = TS_IPCC_AR6_SYNTHESIS_URL;
     $result = num2bool($src->save());
     $target = true;
-    $exe_start_time = test_show_result('user_sandbox->save update the source url by name', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user_sandbox->save update the source url by name', $target, $result);
 
     // remember the id
     $src_id = 0;
@@ -101,7 +100,7 @@ function  run_user_sandbox_test()
         $result = $src->url;
     }
     $target = TS_IPCC_AR6_SYNTHESIS_URL;
-    $exe_start_time = test_show_result('user_sandbox->save check if the source url has been updates', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user_sandbox->save check if the source url has been updates', $target, $result);
 
 }
 

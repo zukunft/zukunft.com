@@ -298,6 +298,8 @@ function sql_code_link($code_id, $description, $db_con)
 {
     log_debug("sql_code_link (" . $code_id . "," . $description . ")");
 
+    global $word_types_hash;
+
     $row_id = 0;
 
     // set the table name and the id field
@@ -335,14 +337,14 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_VIEW_ADD
         or $code_id == DBL_VIEW_EDIT
         or $code_id == DBL_VIEW_DEL) {
-        $db_type = "view";
+        $db_type = DB_TYPE_VIEW;
     }
     if ($code_id == DBL_VIEW_TYPE_DEFAULT
         or $code_id == DBL_VIEW_TYPE_ENTRY
         or $code_id == DBL_VIEW_TYPE_MASK_DEFAULT
         or $code_id == DBL_VIEW_TYPE_PRESENT
         or $code_id == DBL_VIEW_TYPE_WORD_DEFAULT) {
-        $db_type = "view_type";
+        $db_type = DB_TYPE_VIEW_TYPE;
     }
     if ($code_id == DBL_VIEW_COMP_TYPE_TEXT
         or $code_id == DBL_VIEW_COMP_TYPE_WORD
@@ -357,7 +359,7 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_VIEW_COMP_TYPE_JSON_EXPORT
         or $code_id == DBL_VIEW_COMP_TYPE_XML_EXPORT
         or $code_id == DBL_VIEW_COMP_TYPE_CSV_EXPORT) {
-        $db_type = "view_component_type";
+        $db_type = DB_TYPE_VIEW_COMPONENT_TYPE;
     }
     if ($code_id == DBL_WORD_TYPE_NORMAL
         or $code_id == DBL_WORD_TYPE_TIME
@@ -373,7 +375,7 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_WORD_TYPE_NEXT
         or $code_id == DBL_WORD_TYPE_THIS
         or $code_id == DBL_WORD_TYPE_PREV) {
-        $db_type = "word_type";
+        $db_type = DB_TYPE_WORD_TYPE;
     }
 
     if ($code_id == DBL_SHARE_PUBLIC
@@ -392,18 +394,18 @@ function sql_code_link($code_id, $description, $db_con)
 
     if ($code_id == DBL_REF_WIKIPEDIA
         or $code_id == DBL_REF_WIKIDATA) {
-        $db_type = "ref_type";
+        $db_type = DB_TYPE_REF_TYPE;
     }
 
     if ($code_id == DBL_FORMULA_TYPE_NEXT
         or $code_id == DBL_FORMULA_TYPE_THIS
         or $code_id == DBL_FORMULA_TYPE_PREV) {
-        $db_type = "formula_type";
+        $db_type = DB_TYPE_FORMULA_TYPE;
     }
     if ($code_id == DBL_FORMULA_PART_TYPE_WORD
         or $code_id == DBL_FORMULA_PART_TYPE_VERB
         or $code_id == DBL_FORMULA_PART_TYPE_FORMULA) {
-        $db_type = "formula_element_type";
+        $db_type = DB_TYPE_FORMULA_ELEMENT_TYPE;
     }
     if ($code_id == DBL_SYSLOG_INFO
         or $code_id == DBL_SYSLOG_WARNING
@@ -485,41 +487,46 @@ function sql_code_link($code_id, $description, $db_con)
     if ($table_name == '' and $db_type == '') {
         log_debug('table name for code_id ' . $code_id . ' (' . $db_type . ') not found <br>');
     } else {
-        //$db_con = new mysql;
-        // remember the db_type
-        $db_value_type = $db_con->get_type();
-        $db_con->usr_id = SYSTEM_USER_ID;
-        $db_con->set_type($db_type);
-
-        // get the row_id
-        $row_id = $db_con->get_id_from_code($code_id);
-
-        // insert the missing row if needed
-        if ($row_id <= 0) {
-            if ($db_type == 'view') {
-                $db_con->insert(array(DBL_FIELD, 'user_id'), array($code_id, SYSTEM_USER_ID));
-            } else {
-                // TODO for sys_log_type include the name db field
-                $db_con->insert(DBL_FIELD, $code_id);
-            }
-            log_debug('inserted ' . $code_id . '<br>');
-            // get the id of the inserted row
-            $row_id = $db_con->get_id_from_code($code_id);
-            log_debug('inserted ' . $code_id . ' as ' . $row_id . '<br>');
+        // get the preloaded types directly from the hash
+        if ($db_type == DB_TYPE_WORD_TYPE) {
+            $row_id = $word_types_hash[$code_id];
         } else {
-            log_debug('found ' . $code_id . ' as ' . $row_id . '<br>');
-        }
+            //$db_con = new mysql;
+            // remember the db_type
+            $db_value_type = $db_con->get_type();
+            $db_con->usr_id = SYSTEM_USER_ID;
+            $db_con->set_type($db_type);
 
-        // set the name as default
-        if ($row_id > 0 and $description <> '') {
-            $row_name = $db_con->get_name($row_id);
-            if ($row_name == '') {
-                log_debug('add ' . $description . '<br>');
-                $db_con->update_name($row_id, $description);
+            // get the row_id
+            $row_id = $db_con->get_id_from_code($code_id);
+
+            // insert the missing row if needed
+            if ($row_id <= 0) {
+                if ($db_type == 'view') {
+                    $db_con->insert(array(DBL_FIELD, 'user_id'), array($code_id, SYSTEM_USER_ID));
+                } else {
+                    // TODO for sys_log_type include the name db field
+                    $db_con->insert(DBL_FIELD, $code_id);
+                }
+                log_debug('inserted ' . $code_id . '<br>');
+                // get the id of the inserted row
+                $row_id = $db_con->get_id_from_code($code_id);
+                log_debug('inserted ' . $code_id . ' as ' . $row_id . '<br>');
+            } else {
+                log_debug('found ' . $code_id . ' as ' . $row_id . '<br>');
             }
+
+            // set the name as default
+            if ($row_id > 0 and $description <> '') {
+                $row_name = $db_con->get_name($row_id);
+                if ($row_name == '') {
+                    log_debug('add ' . $description . '<br>');
+                    $db_con->update_name($row_id, $description);
+                }
+            }
+            // restore the db_type
+            $db_con->set_type($db_value_type);
         }
-        // restore the db_type
-        $db_con->set_type($db_value_type);
     }
 
     log_debug("sql_code_link ... done");

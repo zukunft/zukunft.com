@@ -9,7 +9,7 @@
   ----
   
   test_exe_time    - show the execution time for the last test and create a warning if it took too long
-  test_show_result - simply to display the function test result
+  test_dsp - simply to display the function test result
   test_show_db_id  - to get a database id because this may differ from instance to instance
 
 
@@ -54,9 +54,10 @@ include_once $root_path . 'src/main/php/service/config.php';
 include_once $path_unit . 'unit_tests.php';
 include_once $path_unit . 'test_lib.php';
 include_once $path_unit . 'user_sandbox.php';
-include_once $path_unit . 'phrase_list.php';
+include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link_list.php';
+include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'view.php';
 
@@ -295,14 +296,19 @@ function test_start()
 // function to support testing
 // ---------------------------
 
-// display the result of one test e.g. if adding a value has been successful
-function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_type = '')
+/**
+ * display the result of one test e.g. if adding a value has been successful
+ *
+ * @return bool true if the test result is fine
+ */
+function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $comment = '', $test_type = ''): bool
 {
     global $error_counter;
     global $timeout_counter;
     global $total_tests;
     global $exe_start_time;
 
+    $test_result = false;
     $txt = '';
     $result = test_uncolor($result);
     if (is_numeric($result) && is_numeric($target)) {
@@ -318,6 +324,7 @@ function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_ty
             $timeout_counter++;
         } else {
             $txt .= '<p style="color:green">OK' . $msg;
+            $test_result = true;
         }
     } else {
         $txt .= '<p style="color:red">Error' . $msg;
@@ -379,7 +386,7 @@ function test_dsp($msg, $target, $result, $exe_max_time, $comment = '', $test_ty
     flush();
     $total_tests++;
     $exe_start_time = $new_start_time;
-    return $new_start_time;
+    return $test_result;
 }
 
 // to test if the save result is fine which is the case if the text is only a number or empty
@@ -390,90 +397,6 @@ function num2bool($in_txt): bool
         $result = true;
     }
     return $result;
-}
-
-// legacy function for test_dsp
-function test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time = TIMEOUT_LIMIT, $comment = '', $test_type = ''): string
-{
-    global $error_counter;
-    global $timeout_counter;
-    global $total_tests;
-
-    $result = test_uncolor($result);
-    if (is_numeric($result) && is_numeric($target)) {
-        $result = round($result, 7);
-        $target = round($target, 7);
-    }
-    // check if executed in a reasonable time and if the result is fine
-    $new_start_time = microtime(true);
-    $since_start = $new_start_time - $exe_start_time;
-    if ($result == $target) {
-        if ($since_start > $exe_max_time) {
-            echo '<p style="color:orange">TIMEOUT, ' . $test_text;
-            $timeout_counter++;
-        } else {
-            echo '<p style="color:green">OK, ' . $test_text;
-        }
-    } else {
-        $diff_text = zu_str_diff($target, $result);
-        echo '<p style="color:red">Error, ' . $test_text . ' at ' . $diff_text;
-        $error_counter++;
-        // todo: create a ticket
-    }
-    if (is_array($target)) {
-        if ($test_type == 'contains') {
-            echo " should contain \"" . dsp_array($target) . "\"";
-        } else {
-            echo " should be \"" . dsp_array($target) . "\"";
-        }
-    } else {
-        if ($test_type == 'contains') {
-            echo " should contain \"" . $target . "\"";
-        } else {
-            echo " should be \"" . $target . "\"";
-        }
-    }
-    if ($result == $target) {
-        if ($test_type == 'contains') {
-            echo " and it contains ";
-        } else {
-            echo " and it is ";
-        }
-    } else {
-        if ($test_type == 'contains') {
-            echo ", but does not contain ";
-        } else {
-            echo ", but it is ";
-        }
-    }
-    if (is_array($result)) {
-        if (is_array($result[0])) {
-            echo "\"";
-            foreach ($result as $result_item) {
-                if ($result_item <> $result[0]) {
-                    echo ",";
-                }
-                echo implode(":", $result_item);
-            }
-            echo "\"";
-        } else {
-            echo "\"" . dsp_array($result) . "\"";
-        }
-    } else {
-        echo "\"" . $result . "\"";
-    }
-    if ($comment <> '') {
-        echo ' (' . $comment . ')';
-    }
-
-    // show the execution time
-    echo ', took ';
-    echo round($since_start, 4) . ' seconds';
-
-    echo "</p>";
-    flush();
-    $total_tests++;
-    return $new_start_time;
 }
 
 // display the difference between strings excluding non display chars
@@ -497,15 +420,14 @@ function test_uncolor($result)
 
 // similar to test_show_result, but the target only needs to be part of the result
 // e.g. "ABB" is part of the company word list
-function test_show_contains($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment = ''): string
+function test_dsp_contains($test_text, $target, $result, $exe_max_time, $comment = ''): bool
 {
     if (strpos($result, $target) === false) {
         $result = $target . ' not found in ' . $result;
     } else {
         $result = $target;
     }
-    $new_start_time = test_show_result($test_text, $target, $result, $exe_start_time, $exe_max_time, $comment, 'contains');
-    return $new_start_time;
+    return test_dsp($test_text, $target, $result, $exe_max_time, $comment, 'contains');
 }
 
 // the HTML code to display the he
@@ -624,7 +546,6 @@ function load_word($wrd_name): word
 
 function test_word($wrd_name, $wrd_type_code_id = null): word
 {
-    global $exe_start_time;
     $wrd = load_word($wrd_name);
     if ($wrd->id == 0) {
         $wrd->name = $wrd_name;
@@ -635,7 +556,7 @@ function test_word($wrd_name, $wrd_type_code_id = null): word
         $wrd->save();
     }
     $target = $wrd_name;
-    $exe_start_time = test_show_result('word', $target, $wrd->name, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word', $target, $wrd->name);
     return $wrd;
 }
 
@@ -652,7 +573,6 @@ function load_formula($frm_name): formula
 // get or create a formula
 function test_formula($frm_name, $frm_text): formula
 {
-    global $exe_start_time;
     $frm = load_formula($frm_name);
     if ($frm->id == 0) {
         $frm->name = $frm_name;
@@ -661,7 +581,7 @@ function test_formula($frm_name, $frm_text): formula
         $frm->save();
     }
     $target = $frm_name;
-    $exe_start_time = test_show_result('formula', $target, $frm->name, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula', $target, $frm->name);
     return $frm;
 }
 
@@ -677,10 +597,9 @@ function load_phrase($phr_name): phrase
 
 function test_phrase($phr_name): phrase
 {
-    global $exe_start_time;
     $phr = load_phrase($phr_name);
     $target = $phr_name;
-    $exe_start_time = test_show_result('phrase', $target, $phr->name, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase', $target, $phr->name);
     return $phr;
 }
 
@@ -702,7 +621,7 @@ function test_word_list($array_of_word_str): word_list
     $wrd_lst = load_word_list($array_of_word_str);
     $target = '"' . implode('","', $array_of_word_str) . '"';
     $result = $wrd_lst->name();
-    test_dsp(', word list', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', word list', $target, $result);
     return $wrd_lst;
 }
 
@@ -724,7 +643,7 @@ function test_phrase_list($array_of_word_str): phrase_list
     $phr_lst = load_phrase_list($array_of_word_str);
     $target = '"' . implode('","', $array_of_word_str) . '"';
     $result = $phr_lst->name();
-    test_dsp(', phrase list', $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', phrase list', $target, $result);
     return $phr_lst;
 }
 
@@ -744,7 +663,7 @@ function test_value($array_of_word_str, $target): value
     $phr_lst = load_phrase_list($array_of_word_str);
     $val = load_value($array_of_word_str);
     $result = $val->number;
-    test_dsp(', value->load for a phrase list ' . $phr_lst->name(), $target, $result, TIMEOUT_LIMIT);
+    test_dsp(', value->load for a phrase list ' . $phr_lst->name(), $target, $result);
     return $val;
 }
 
@@ -772,14 +691,13 @@ function load_source($src_name): source
 
 function test_source($src_name): source
 {
-    global $exe_start_time;
     $src = load_source($src_name);
     if ($src->id == 0) {
         $src->name = $src_name;
         $src->save();
     }
     $target = $src_name;
-    $exe_start_time = test_show_result('phrase', $target, $src->name, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase', $target, $src->name);
     return $src;
 }
 
@@ -817,14 +735,13 @@ function get_view($dsp_name): view
 
 function test_view($dsp_name): view
 {
-    global $exe_start_time;
     $dsp = load_view($dsp_name);
     if ($dsp->id == 0) {
         $dsp->name = $dsp_name;
         $dsp->save();
     }
     $target = $dsp_name;
-    $exe_start_time = test_show_result('view', $target, $dsp->name, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view', $target, $dsp->name);
     return $dsp;
 }
 
@@ -862,10 +779,9 @@ function get_view_component($cmp_name): view_component
 
 function test_view_component($cmp_name): view_component
 {
-    global $exe_start_time;
     $cmp = load_view_component($cmp_name);
     $target = $cmp_name;
-    $exe_start_time = test_show_result('view component', $target, $cmp->name, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view component', $target, $cmp->name);
     return $cmp;
 }
 
@@ -874,7 +790,6 @@ function test_view_component($cmp_name): view_component
 function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocreate = true)
 {
     global $usr;
-    global $exe_start_time;
 
     $result = '';
 
@@ -935,7 +850,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
             }
         }
     }
-    $exe_start_time = test_show_result('word link', $target, $result->description(), $exe_start_time, TIMEOUT_LIMIT_DB);
+    test_dsp('word link', $target, $result->description(), TIMEOUT_LIMIT_DB);
     return $result;
 }
 
@@ -943,7 +858,6 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
 function test_formula_link($formula_name, $word_name, $autocreate = true): string
 {
     global $usr;
-    global $exe_start_time;
 
     $result = '';
 
@@ -964,7 +878,7 @@ function test_formula_link($formula_name, $word_name, $autocreate = true): strin
         if ($frm_lnk->id > 0) {
             $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
             $target = $formula_name . ' is linked to ' . $word_name;
-            $exe_start_time = test_show_result('formula_link', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+            test_dsp('formula_link', $target, $result);
         } else {
             if ($autocreate) {
                 $frm_lnk->save();

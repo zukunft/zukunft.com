@@ -30,7 +30,6 @@ function run_formula_unit_db_tests()
 {
 
     global $db_con;
-    global $exe_start_time;
 
     global $formula_types_hash;
 
@@ -41,12 +40,12 @@ function run_formula_unit_db_tests()
     // load the formula types
     $result = init_formula_types($db_con);
     $target = true;
-    $exe_start_time = test_show_result('unit_db_formula->init_view_types', $target, $result, $exe_start_time);
+    test_dsp('unit_db_formula->init_view_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = $formula_types_hash[formula_types::TEST_TYPE];
     $target = 1;
-    $exe_start_time = test_show_result('unit_db_formula->check ' . formula_types::TEST_TYPE, $result, $target, $exe_start_time);
+    test_dsp('unit_db_formula->check ' . formula_types::TEST_TYPE, $result, $target);
 
 }
 

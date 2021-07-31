@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_word_list_test () {
 
   global $usr;
-  global $exe_start_time;
 
   test_header('Test the word list class (classes/word_list.php)');
 
@@ -46,7 +45,7 @@ function run_word_list_test () {
   $wrd_lst->load();
   $result = $wrd_lst->name();
   $target = '"'.TW_ABB.'","'.TW_MIO.'","'.TW_SALES.'"'; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result('word_list->load by names for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->load by names for '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test load by word list by group id
   /*$wrd_grp_id = $wrd_lst->grp_id;
@@ -56,7 +55,7 @@ function run_word_list_test () {
   $wrd_lst->load();
   $result = dsp_array($wrd_lst->names());
   $target = "million,Sales,ABB"; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result('word_list->load by word group id for "'.$wrd_grp_id.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB_MULTI); */
+  test_dsp('word_list->load by word group id for "'.$wrd_grp_id.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); */
 
   // test add by type
   $wrd_lst = New word_list;
@@ -66,7 +65,7 @@ function run_word_list_test () {
   $wrd_lst->add_by_type(Null, cl(DBL_LINK_TYPE_IS), "up");
   $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result('word_list->add_by_type for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->add_by_type for "'.TW_ABB.'" up', $target, $result);
 
   // test add parent
   $wrd_lst = New word_list;
@@ -76,7 +75,7 @@ function run_word_list_test () {
   $wrd_lst->foaf_parents(cl(DBL_LINK_TYPE_IS));
   $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result('word_list->foaf_parent for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->foaf_parent for "'.TW_ABB.'" up', $target, $result);
 
   // test add parent step
   $wrd_lst = New word_list;
@@ -86,7 +85,7 @@ function run_word_list_test () {
   $wrd_lst->parents(cl(DBL_LINK_TYPE_IS), 1);
   $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result('word_list->parents for "'.TW_ABB.'" up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->parents for "'.TW_ABB.'" up', $target, $result);
 
   // test add child and contains
   $wrd_lst = New word_list;
@@ -97,7 +96,7 @@ function run_word_list_test () {
   $ABB = load_word(TW_ABB);
   $result = $wrd_lst->does_contain($ABB);
   $target = true; 
-  $exe_start_time = test_show_result('word_list->foaf_children is "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->foaf_children is "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result);
 
   // test direct children
   $wrd_lst = New word_list;
@@ -108,7 +107,7 @@ function run_word_list_test () {
   $ABB = load_word(TW_ABB);
   $result = $wrd_lst->does_contain($ABB);
   $target = true; 
-  $exe_start_time = test_show_result('word_list->children is "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->children is "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result);
 
   // test is
   $wrd_lst = New word_list;
@@ -118,7 +117,7 @@ function run_word_list_test () {
   $lst_is = $wrd_lst->is();
   $result = dsp_array($lst_is->names());
   $target = TEST_WORD; // order adjusted based on the number of usage
-  $exe_start_time = test_show_result('word_list->is for '.$wrd_lst->name().' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->is for '.$wrd_lst->name().' up', $target, $result);
 
   // test are
   $wrd_lst = New word_list;
@@ -129,7 +128,7 @@ function run_word_list_test () {
   $ABB = load_word(TW_ABB);
   $result = $lst_are->does_contain($ABB);
   $target = true; 
-  $exe_start_time = test_show_result('word_list->are "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->are "'.implode('","',$wrd_lst->names()).'", which contains '.TW_ABB.' ', $target, $result);
 
   // ....
 
@@ -146,7 +145,7 @@ function run_word_list_test () {
   $wrd_lst_ex->ex_time();
   $result = $wrd_lst_ex->name();
   $target = '"'.TW_MIO.'","'.TW_CHF.'","'.TW_SALES.'","'.TW_ABB.'"'; // also the creation should be tested, but how?
-  $exe_start_time = test_show_result('word_list->ex_time for '.$wrd_lst->name(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->ex_time for '.$wrd_lst->name(), $target, $result);
 
   // test group id
   $wrd_lst = New word_list;
@@ -162,20 +161,20 @@ function run_word_list_test () {
   $grp->ids = $wrd_lst->ids;         
   $result = $grp->get_id();
   $target = "2116"; // also the creation should be tested, but how?
-  $exe_start_time = test_show_result('phrase_group->get_id for "'.implode('","',$wrd_lst->names()).'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('phrase_group->get_id for "'.implode('","',$wrd_lst->names()).'"', $target, $result);
 
   // test word list value
   $val = $wrd_lst->value();
   $result = $val->number;
   $target = TV_ABB_SALES_2014;
-  $exe_start_time = test_show_result('word_list->value for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->value for '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test word list value scaled
   // review !!!
   $val = $wrd_lst->value_scaled();
   $result = $val->number;
   $target = TV_ABB_SALES_2014;
-  $exe_start_time = test_show_result('word_list->value_scaled for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->value_scaled for '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test another group value
   $wrd_lst = New word_list;
@@ -189,7 +188,7 @@ function run_word_list_test () {
   $val = $wrd_lst->value();
   $result = $val->number;
   $target = TV_NESN_SALES_2016;
-  $exe_start_time = test_show_result('word_list->value for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->value for '.$wrd_lst->dsp_id().'', $target, $result);
 
   // test assume time
   $wrd_lst = New word_list;
@@ -201,7 +200,7 @@ function run_word_list_test () {
   $abb_last_year = $wrd_lst->assume_time();
   $result = $abb_last_year->name;
   $target = TW_2017;
-  $exe_start_time = test_show_result('word_list->assume_time for '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  test_dsp('word_list->assume_time for '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT_DB);
 
 
   // word sort
@@ -210,7 +209,7 @@ function run_word_list_test () {
   $wrd_lst->wlsort();
   $target = '"'.TW_CANTON.'","'.TW_CITY.'","'.TEST_WORD.'"';
   $result = $wrd_lst->name();
-  $exe_start_time = test_show_result('word_list->sort for "'.$wrd_ZH->name.'"', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('word_list->sort for "'.$wrd_ZH->name.'"', $target, $result);
 
   /*
    * test the class functions not yet tested above
@@ -241,7 +240,7 @@ function run_word_list_test () {
   $wrd_lst->diff($del_wrd_lst);
   $result = $wrd_lst->names();
   $target = '';
-  $exe_start_time = test_show_result('word_list->diff of '.$wrd_lst->dsp_id().' with '.$del_wrd_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+  test_dsp('word_list->diff of '.$wrd_lst->dsp_id().' with '.$del_wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
 
 }
 

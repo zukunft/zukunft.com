@@ -30,7 +30,6 @@ function run_view_unit_db_tests()
 {
 
     global $db_con;
-    global $exe_start_time;
 
     global $view_types_hash;
     global $view_component_types_hash;
@@ -42,24 +41,24 @@ function run_view_unit_db_tests()
     // load the view types
     $result = init_view_types($db_con);
     $target = true;
-    $exe_start_time = test_show_result('unit_db_view->init_view_types', $target, $result, $exe_start_time);
+    test_dsp('unit_db_view->init_view_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = $view_types_hash[view_types::TEST_TYPE];
     $target = 1;
-    $exe_start_time = test_show_result('unit_db_view->check ' . view_types::TEST_TYPE, $result, $target, $exe_start_time);
+    test_dsp('unit_db_view->check ' . view_types::TEST_TYPE, $result, $target);
 
     test_subheader('View component types tests');
 
     // load the view component types
     $result = init_view_component_types($db_con);
     $target = true;
-    $exe_start_time = test_show_result('unit_db_view->init_view_component_types', $target, $result, $exe_start_time);
+    test_dsp('unit_db_view->init_view_component_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = $view_component_types_hash[view_component_types::TEST_TYPE];
     $target = 3;
-    $exe_start_time = test_show_result('unit_db_view->check ' . view_component_types::TEST_TYPE, $result, $target, $exe_start_time);
+    test_dsp('unit_db_view->check ' . view_component_types::TEST_TYPE, $result, $target);
 
 }
 

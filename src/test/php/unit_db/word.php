@@ -30,7 +30,6 @@ function run_word_unit_db_tests()
 {
 
     global $db_con;
-    global $exe_start_time;
 
     global $word_types_hash;
 
@@ -41,12 +40,12 @@ function run_word_unit_db_tests()
     // load the word types
     $result = init_word_types($db_con);
     $target = true;
-    $exe_start_time = test_show_result('unit_db_word->init_view_types', $target, $result, $exe_start_time);
+    test_dsp('unit_db_word->init_view_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = $word_types_hash[word_types::TEST_TYPE];
     $target = 1;
-    $exe_start_time = test_show_result('unit_db_word->check ' . word_types::TEST_TYPE, $result, $target, $exe_start_time);
+    test_dsp('unit_db_word->check ' . word_types::TEST_TYPE, $result, $target);
 
 }
 

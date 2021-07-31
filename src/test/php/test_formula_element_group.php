@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_formula_element_group_test () {
 
   global $usr;
-  global $exe_start_time;
 
   $back = 0;
 
@@ -63,7 +62,7 @@ function run_formula_element_group_test () {
 
   $result = $elm_grp_lst->dsp_id();
   $target = 'this / prior';
-  $exe_start_time = test_show_contains(', formula_element_group_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 
   test_header('Test the formula element group class (classes/formula_element_group.php)');
@@ -76,28 +75,28 @@ function run_formula_element_group_test () {
     // test debug id first
     $result = $elm_grp->dsp_id();
     $target = '"this" (3) and "ABB","Sales","CHF","million","2015"';
-    $exe_start_time = test_show_result('formula_element_group->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_group->dsp_id', $target, $result);
 
     // test symbol for text replacement in the formula expression text
     $result = $elm_grp->build_symbol();
     $target = '{f3}';
-    $exe_start_time = test_show_result('formula_element_group->build_symbol', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_group->build_symbol', $target, $result);
 
     // test the display name that can be used for user debugging
     $result = trim($elm_grp->dsp_names($back));
     $target = trim('<a href="/http/formula_edit.php?id=3&back=1">this</a> ');
-    $exe_start_time = test_show_result('formula_element_group->dsp_names', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_group->dsp_names', $target, $result);
     
     // test if the values for an element group are displayed correctly
     $time_phr = $phr_lst->assume_time();
     $result = $elm_grp->dsp_values($back, $time_phr);
     $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
-    $exe_start_time = test_show_result('formula_element_group->dsp_values', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_group->dsp_values', $target, $result);
 
     $time_phr = $phr_lst_next->assume_time();
     $result = $elm_grp->dsp_values($back, $time_phr);
     $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a> (2015)';
-    $exe_start_time = test_show_result('formula_element_group->dsp_values', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_group->dsp_values', $target, $result);
     
     // remember the figure list for the figure and figure list class test
     $fig_lst = $elm_grp->figures();
@@ -117,16 +116,16 @@ function run_formula_element_group_test () {
       if (isset($fig)) {
         $result = $fig->display($back);
         $target = "35'481";
-        $exe_start_time = test_show_result('figure->display', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('figure->display', $target, $result);
         
         $result = $fig->display_linked($back);
         $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
-        $exe_start_time = test_show_result('figure->display_linked', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('figure->display_linked', $target, $result);
       }
     } else {
       $result = 'figure list is empty';
       $target = 'this (3) and "ABB","Sales","CHF","million","2015"@';
-      $exe_start_time = test_show_result('formula_element_group->figures', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+      test_dsp('formula_element_group->figures', $target, $result);
     }
 
 
@@ -145,16 +144,16 @@ function run_formula_element_group_test () {
     $result = str_replace("'","&#39;",$result);
     $target = str_replace("'","&#39;",$target);
     */
-    $exe_start_time = test_show_result('figure_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('figure_list->dsp_id', $target, $result);
 
     $result = $fig_lst->display();
     $target = "35'481 ";
-    $exe_start_time = test_show_result('figure_list->display', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('figure_list->display', $target, $result);
 
   } else {
     $result = 'formula element group list is empty';
     $target = 'this (3) and "ABB","Sales","CHF","million","2015"@';
-    $exe_start_time = test_show_result('formula_element_group->dsp_names', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_group->dsp_names', $target, $result);
   }
 
 }

@@ -34,7 +34,6 @@ function run_user_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     $back = 0;
 
@@ -43,7 +42,7 @@ function run_user_test()
 
     $result = $usr->dsp_edit($back);
     $target = TEST_USER_NAME;
-    $exe_start_time = test_show_contains(', user_display->dsp_edit', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', user_display->dsp_edit', $target, $result);
 
     // display system user names
     echo "based on<br>";
@@ -56,7 +55,7 @@ function run_user_test()
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);
     $target = '';
-    test_dsp(', usr->ip_check', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(', usr->ip_check', $target, $result);
 
     // TODO add a test signup process to
 

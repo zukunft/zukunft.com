@@ -30,7 +30,6 @@ function run_phrase_list_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     test_header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
@@ -61,13 +60,13 @@ function run_phrase_list_test()
     $phr_lst->load();
     $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . TP_ZH_INS . '"';
     $result = $phr_lst->name();
-    $exe_start_time = test_show_result('phrase->load via id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->load via id', $target, $result);
 
     // ... the complete word list, which means split the triples into single words
     $wrd_lst_all = $phr_lst->wrd_lst_all();
     $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . TW_ZH . '","' . TEST_WORD . '"';
     $result = $wrd_lst_all->name();
-    $exe_start_time = test_show_result('phrase->wrd_lst_all of list above', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase->wrd_lst_all of list above', $target, $result);
 
 
     // test getting the parent for phrase list with ABB
@@ -79,14 +78,14 @@ function run_phrase_list_test()
     $lst_parents = $phr_lst->foaf_parents(cl(DBL_LINK_TYPE_IS));
     $result = dsp_array($lst_parents->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('phrase_list->foaf_parents for ' . $phr_lst->name() . ' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase_list->foaf_parents for ' . $phr_lst->name() . ' up', $target, $result);
 
     // ... same using is
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_is = $phr_lst->is();
     $result = dsp_array($lst_is->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result);
 
     // ... same with Coca Cola
     $wrd_lst = new word_list;
@@ -97,7 +96,7 @@ function run_phrase_list_test()
     $lst_is = $phr_lst->is();
     $result = dsp_array($lst_is->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result);
 
     // test the excluding function
     $phr_lst = new phrase_list;
@@ -112,18 +111,18 @@ function run_phrase_list_test()
     $phr_lst_ex->ex_time();
     $target = '"' . TW_ABB . '","' . TW_SALES . '","' . TW_CHF . '","' . TW_MIO . '"';
     $result = $phr_lst_ex->name();
-    $exe_start_time = test_show_result('phrase_list->ex_time of ' . $phr_lst->name(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase_list->ex_time of ' . $phr_lst->name(), $target, $result);
 
     $phr_lst_ex = clone $phr_lst;
     $phr_lst_ex->ex_measure();
     $target = '"' . TW_ABB . '","' . TW_SALES . '","' . TW_MIO . '","' . TW_2017 . '"';
     $result = $phr_lst_ex->name();
-    $exe_start_time = test_show_result('phrase_list->ex_measure of ' . $phr_lst->name(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase_list->ex_measure of ' . $phr_lst->name(), $target, $result);
 
     $phr_lst_ex = clone $phr_lst;
     $phr_lst_ex->ex_scaling();
     $target = '"' . TW_ABB . '","' . TW_SALES . '","' . TW_CHF . '","' . TW_2017 . '"';
     $result = $phr_lst_ex->name();
-    $exe_start_time = test_show_result('phrase_list->ex_scaling of ' . $phr_lst->name(), $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('phrase_list->ex_scaling of ' . $phr_lst->name(), $target, $result);
 
 }

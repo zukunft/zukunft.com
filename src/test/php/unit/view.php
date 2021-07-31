@@ -32,7 +32,6 @@ function run_view_unit_tests()
 {
 
     global $usr;
-    global $exe_start_time;
     global $sql_names;
 
     test_header('Unit tests of the view class (src/main/php/model/value/view.php)');
@@ -62,7 +61,7 @@ function run_view_unit_tests()
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
                       WHERE s.view_id = 2;";
-    $exe_start_time = test_show_result('view->load_sql by view id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -72,7 +71,7 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('view->load_sql by view id check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_sql by view id check sql name', $result, $target);
 
     // sql to load the view by code id
     $dsp = new view;
@@ -93,7 +92,7 @@ function run_view_unit_tests()
                                                           AND u.user_id = 1 
                       WHERE s.code_id = '" . DBL_VIEW_WORD . "' 
                         AND s.code_id != NULL;";
-    $exe_start_time = test_show_result('view->load_sql by code id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_sql by code id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -103,7 +102,7 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('view->load_sql by code id check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_sql by code id check sql name', $result, $target);
 
     // sql to load the view by name
     $dsp = new view;
@@ -124,7 +123,7 @@ function run_view_unit_tests()
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
                       WHERE view_name = '" . view::TEST_NAME . "';";
-    $exe_start_time = test_show_result('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -134,7 +133,7 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('view->load_sql by name check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_sql by name check sql name', $result, $target);
 
     // sql to load the view components
     $dsp = new view;
@@ -167,7 +166,7 @@ function run_view_unit_tests()
               WHERE l.view_id = 2 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY order_nbr;";
-    $exe_start_time = test_show_result('view->load_components_sql by view id', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_components_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -177,7 +176,7 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('view->load_components_sql check sql name', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_components_sql check sql name', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
     $db_con->db_type = DB_TYPE_MYSQL;
@@ -208,7 +207,7 @@ function run_view_unit_tests()
               WHERE l.view_id = 2 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY order_nbr;";
-    $exe_start_time = test_show_result('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
      * Im- and Export tests
@@ -238,7 +237,7 @@ function run_view_unit_tests()
     $json_export_string = json_encode($dsp->export_obj(false));
     $result = json_decode($dsp_json) == json_decode($json_export_string);
     $target = true;
-    $exe_start_time = test_show_result('view->import check name', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->import check name', $target, $result);
 
     /*
      * Display tests
@@ -257,7 +256,7 @@ function run_view_unit_tests()
     $wrd->name = word::TEST_NAME;
     $result = $dsp->display($wrd, 1);
     $target = '';
-    $exe_start_time = test_show_result('view->display', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('view->display', $target, $result);
     */
 
 }

@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function run_formula_element_test () {
 
-  global $exe_start_time;
-
   $back = 0;
   
   test_header('Test the formula element class (classes/formula_element.php)');
@@ -56,7 +54,7 @@ function run_formula_element_test () {
         } elseif ($pos == 3) {
           $target = 'formula "Total Sales" (19) for user zukunft.com system batch job';
         } 
-        $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula_element->dsp_id', $target, $result);
         
         $result = $elm->name();
         if ($pos == 0) {
@@ -68,7 +66,7 @@ function run_formula_element_test () {
         } elseif ($pos == 3) {
           $target = 'Total Sales';
         } 
-        $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula_element->dsp_id', $target, $result);
         
         $result = $elm->name_linked($back);
         if ($pos == 0) {
@@ -80,26 +78,24 @@ function run_formula_element_test () {
         } elseif ($pos == 3) {
           $target = '<a href="/http/formula_edit.php?id=19&back=1">Total Sales</a>';
         } 
-        $exe_start_time = test_show_result('formula_element->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+        test_dsp('formula_element->dsp_id', $target, $result);
         
         $pos++;
       }
     } else {
       $result = 'formula element list is empty';
       $target = '';
-      $exe_start_time = test_show_result('expression->element_lst', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+      test_dsp('expression->element_lst', $target, $result);
     }
   } else {
     $result = 'formula element list not set';
     $target = '';
-    $exe_start_time = test_show_result('expression->element_lst', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('expression->element_lst', $target, $result);
   }
 
 }
 
 function run_formula_element_list_test () {
-
-  global $exe_start_time;
 
   $back = 0;
 
@@ -113,11 +109,11 @@ function run_formula_element_list_test () {
   if (isset($elm_lst)) {
     $result = $elm_lst->dsp_id();
     $target = 'Sales can be used as a differentiator for Sector Total Sales';
-    $exe_start_time = test_show_contains(', formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', formula_element_list->dsp_id', $target, $result);
   } else {
     $result = 'formula element list not set';
     $target = '';
-    $exe_start_time = test_show_result('formula_element_list->dsp_id', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('formula_element_list->dsp_id', $target, $result);
   }
 
 }

@@ -30,7 +30,6 @@ function run_word_link_list_unit_tests()
 {
 
     global $usr;
-    global $exe_start_time;
     global $sql_names;
 
     test_header('Unit tests of the word link list class (src/main/php/model/word/word_link_list.php)');
@@ -88,7 +87,7 @@ function run_word_link_list_unit_tests()
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.word_link_id  IN (1,2,3)                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -98,7 +97,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by IDs', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by IDs', $result, $target);
 
     // sql to load by word link list by word and up
     $wrd = new word();
@@ -141,7 +140,7 @@ function run_word_link_list_unit_tests()
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id = 1                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by word and up', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by word and up', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -151,7 +150,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by word and up', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by word and up', $result, $target);
 
     // sql to load by word link list by word and down
     $wrd = new word();
@@ -194,7 +193,7 @@ function run_word_link_list_unit_tests()
                       AND l.from_phrase_id   = t2.word_id 
                       AND l.to_phrase_id = 2                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by word and down', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by word and down', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -204,7 +203,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by word and down', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by word and down', $result, $target);
 
     // sql to load by word link list by word list and up
     $wrd_lst = new word_list();
@@ -258,7 +257,7 @@ function run_word_link_list_unit_tests()
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id IN (1,2)
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by word list and up', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by word list and up', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -268,7 +267,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by word list and up', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by word list and up', $result, $target);
 
     // sql to load by word link list by word list and down
     $wrd_lst = new word_list();
@@ -322,7 +321,7 @@ function run_word_link_list_unit_tests()
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by word list and down', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by word list and down', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -332,7 +331,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by word list and down', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by word list and down', $result, $target);
 
     // sql to load by word link list by word list and down filtered by a verb
     $wrd_lst = new word_list();
@@ -390,7 +389,7 @@ function run_word_link_list_unit_tests()
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id = 2 
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by word list and down filtered by a verb', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by word list and down filtered by a verb', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -400,7 +399,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by word list and down filtered by a verb', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by word list and down filtered by a verb', $result, $target);
 
     // sql to load by word link list by word list and down filtered by a verb list
     $wrd_lst = new word_list();
@@ -458,7 +457,7 @@ function run_word_link_list_unit_tests()
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id IN (1,2) 
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $exe_start_time = test_show_result('word_link_list->load_sql by word list and down filtered by a verb list', zu_trim($expected_sql), zu_trim($created_sql), $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql by word list and down filtered by a verb list', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -468,7 +467,7 @@ function run_word_link_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    $exe_start_time = test_show_result('word_link_list->load_sql_name by word list and down filtered by a verb list', $result, $target, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('word_link_list->load_sql_name by word list and down filtered by a verb list', $result, $target);
 
 }
 

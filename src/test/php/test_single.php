@@ -38,7 +38,7 @@ if ($usr->id <= 0) {
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);
     $target = '';
-    test_dsp(', usr->ip_check', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(', usr->ip_check', $target, $result);
 
     test_word(TW_ABB);
     test_word(TW_SALES);
@@ -77,7 +77,7 @@ if ($usr->id <= 0) {
     $result = $wrd_new->save();
     //$target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
     $target = '';
-    $exe_start_time = test_show_result('word->save for "' . TEST_WORD . '"', $target, $result, $exe_start_time, TIMEOUT_LIMIT_DB);
+    test_dsp('word->save for "' . TEST_WORD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 }
 
 echo $result;

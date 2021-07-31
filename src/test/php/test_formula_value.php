@@ -29,8 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_formula_value_test () {
 
   global $usr;
-  global $exe_start_time;
-  
+
   test_header('Test the formula value class (classes/formula_value.php)');
 
   // test load result without time
@@ -57,7 +56,7 @@ function run_formula_value_test () {
   //$result = $abb_up->phr_grp_id;
   $target = '-0.046588314872749';
   $target = '';
-  $exe_start_time = test_show_result('value->val_formatted ex time for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, $exe_start_time, TIMEOUT_LIMIT_LONG);
+  test_dsp('value->val_formatted ex time for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, TIMEOUT_LIMIT_LONG);
 
   // test load result with time
   $phr_lst->add_name(TW_2014); 
@@ -79,9 +78,9 @@ function run_formula_value_test () {
   //$result = $abb_up->phr_grp_id;
   $target = '0.0099235970843945';
   if (isset($time_phr) and isset($phr_lst) and isset($abb_up_grp)) {
-    $exe_start_time = test_show_result('value->val_formatted incl time ('.$time_phr->dsp_id().') for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('value->val_formatted incl time ('.$time_phr->dsp_id().') for '.$phr_lst->dsp_id().' (group id '.$abb_up_grp->id.')', $target, $result);
   } else {
-    $exe_start_time = test_show_result('value->val_formatted incl time for ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('value->val_formatted incl time for ', $target, $result);
   }
 
   // test the scaling
@@ -107,7 +106,7 @@ function run_formula_value_test () {
   //$result = $mio_val->check();
   $result = $mio_val->scale($dest_wrd_lst);
   $target = '46000000000';
-  $exe_start_time = test_show_result('value->val_scaling for a tern list '.$wrd_lst->dsp_id().'', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp('value->val_scaling for a tern list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT_PAGE);
 
   // test getting the "best guess" value
   // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -124,7 +123,7 @@ function run_formula_value_test () {
   $val_best_guess->load();
   $result = $val_best_guess->number;
   $target = '46000';
-  $exe_start_time = test_show_result('value->load the best guess for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp('value->load the best guess for '.$phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
   /* 
 
@@ -143,8 +142,7 @@ function run_formula_value_test () {
 function run_formula_value_list_test () {
 
   global $usr;
-  global $exe_start_time;
-  
+
   test_header('Test the formula value list class (classes/formula_value_list.php)');
 
   // todo add PE frm test
@@ -156,6 +154,6 @@ function run_formula_value_list_test () {
   $fv_lst->load();
   $result = $fv_lst->dsp_id();
   $target = '"Sales","percent","increase","'.TW_ADD_RENAMED.'","2017"';
-  $exe_start_time = test_show_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

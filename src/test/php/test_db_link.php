@@ -29,14 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_db_link_test()
 {
 
-    global $exe_start_time;
-
     test_header('Test database link functions (zu_lib_sql_code_link.php)');
 
     // test code link
     $id = DBL_SYSLOG_TBL_WORD;
     $target = 2;
     $result = cl($id);
-    $exe_start_time = test_show_result(", sql_code_link " . $id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp(", sql_code_link " . $id, $target, $result);
 
 }

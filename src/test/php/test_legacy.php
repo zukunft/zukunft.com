@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function run_legacy_test () {
 
-  global $exe_start_time;
-
   /*
   echo "<h2>check word groups</h2><br>";
 
@@ -49,7 +47,7 @@ function run_legacy_test () {
   $time_word_id = $word_2016;
   $target = TV_NESN_SALES_2016;
   $result = zuc_get_formula($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $target, $result);
 
   // test zuf_2num_value
   $formula_part_text = "{t6}{l12}";
@@ -58,7 +56,7 @@ function run_legacy_test () {
   $time_word_id = $word_2016;
   $target = 5;
   $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
   // test zuf_2num_value
   $formula_part_text = "{t6}{l12}{t83}";
@@ -67,7 +65,7 @@ function run_legacy_test () {
   $time_word_id = $word_2016;
   $target = 5;
   $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
   // test zuf_2num_value
   $formula_part_text = "{f19}";
@@ -76,7 +74,7 @@ function run_legacy_test () {
   $time_word_id = $word_2016;
   $target = TV_NESN_SALES_2016;
   $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
   // test zuf_2num_value
   $formula_part_text = "/{f19}";
@@ -85,7 +83,7 @@ function run_legacy_test () {
   $time_word_id = $word_2016;
   $target = TV_NESN_SALES_2016;
   $result = zuf_2num_value($formula_part_text, $context_word_lst, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
 
   // test if zuf_2num still does a simple calculation
   $frm_id = 0;
@@ -94,7 +92,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $target = 4;
   $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -103,7 +101,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $target = 3;
   $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -112,7 +110,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $target = 2;
   $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -121,7 +119,7 @@ function run_legacy_test () {
   $word_array = array($word_nesn);
   $time_word_id = $word_2016;
   $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -131,7 +129,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $debug = false;
   $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -141,7 +139,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $debug = false;
   $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -151,7 +149,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $debug = false;
   $result = zuf_2num($math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -160,7 +158,7 @@ function run_legacy_test () {
   $time_word_id = 0;
   $debug = false;
   $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula with id ".$frm_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula with id ".$frm_id, $target, $result);
 
   // test zuf_2num
   $frm_id = 0;
@@ -169,13 +167,13 @@ function run_legacy_test () {
   $time_word_id = 0;
   $debug = false;
   $result = zuf_2num($frm_id, $math_text, $word_array, $time_word_id, $usr->id);
-  $exe_start_time = test_show_result(", zuf_2num: the result for formula with id ".$frm_id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuf_2num: the result for formula with id ".$frm_id, $target, $result);
 
   // test zuc_has_operator
   $math_text = "3 - 1";
   $target = true;
   $result = zuc_has_operator($math_text);
-  $exe_start_time = test_show_result(", zuc_has_operator: the result for formula \"".$math_text."\"", $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zuc_has_operator: the result for formula \"".$math_text."\"", $target, $result);
 
   */
 
@@ -187,37 +185,37 @@ function run_legacy_test () {
   $id = "2";
   $target = "is a";
   $result = zul_name($id);
-  $exe_start_time = test_show_result(", zul_name of id ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zul_name of id ".$id, $target, $result);
 
   // test zul_plural 
   $id = "2";
   $target = "are";
   $result = zul_plural($id);
-  $exe_start_time = test_show_result(", zul_plural of id ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zul_plural of id ".$id, $target, $result);
 
   // test zul_reverse 
   $id = "2";
   $target = "are";
   $result = zul_reverse($id);
-  $exe_start_time = test_show_result(", zul_reverse of id ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zul_reverse of id ".$id, $target, $result);
 
   // test zul_reverse 
   $id = "1";
   $target = "is used for";
   $result = zul_reverse($id);
-  $exe_start_time = test_show_result(", zul_reverse of id ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zul_reverse of id ".$id, $target, $result);
 
   // test zul_plural_reverse 
   $id = "2";
   $target = "are";
   $result = zul_plural_reverse($id);
-  $exe_start_time = test_show_result(", zul_plural_reverse of id ".$id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp(", zul_plural_reverse of id ".$id, $target, $result);
 
   // test zul_type
   /*$name = "is a";
   $target = "2";
   $result = zul_type($name);
-  $exe_start_time = test_show_result(", zul_type of id ".$name, $target, $result, $exe_start_time, TIMEOUT_LIMIT); */
+  test_dsp(", zul_type of id ".$name, $target, $result); */
 
   // add functions
   // word_list / word chain

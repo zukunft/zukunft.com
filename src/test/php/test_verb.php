@@ -29,8 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_verb_test () {
 
   global $usr;
-  global $exe_start_time;
-  
+
   test_header('Test the verb class (classes/verb.php)');
 
   // check the loading of the "is a" verb
@@ -40,7 +39,7 @@ function run_verb_test () {
   $vrb->load();
   $target = 'is a';
   $result = $vrb->name;
-  $exe_start_time = test_show_result('verb->load ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('verb->load ', $target, $result);
 
 
   test_header('Test the verb list class (classes/verb_list.php)');
@@ -56,6 +55,6 @@ function run_verb_test () {
       $result = $vrb->name;
     }
   }
-  $exe_start_time = test_show_result('verb_list->load ', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('verb_list->load ', $target, $result);
 
 }

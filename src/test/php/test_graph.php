@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_graph_test () {
 
   global $usr;
-  global $exe_start_time;
 
   $back = 0;
 
@@ -69,11 +68,11 @@ function run_graph_test () {
   $result = $lnk_lst->name();
   // check if at least the basic relations are in the database
   $target = ''.TEST_WORD.' has a balance sheet';
-  test_show_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
   $target = 'Company has a forecast';
-  test_show_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
   $target = 'Company uses employee';
-  $exe_start_time = test_show_contains(', word '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp_contains(', word '.$phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
   // similar to above, but just for ABB
   $phr_lst = New phrase_list;
@@ -91,7 +90,7 @@ function run_graph_test () {
   // to be reviewed
   //$target = 'ABB (Company),million (scaling)';
   $target = 'Sales is part of cash flow statement';
-  $exe_start_time = test_show_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, $exe_start_time, TIMEOUT_LIMIT_PAGE);
+  test_dsp_contains(', word_link_list->load for '.$phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
   // load the words related to ABB in compare with the old function
@@ -112,7 +111,7 @@ function run_graph_test () {
   $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id);
   $result = $graph->display($back);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result('graph->load for ABB down is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('graph->load for ABB down is', $target, $result);
 
   // the other side
   $graph->direction = 'up';
@@ -120,6 +119,6 @@ function run_graph_test () {
   $target = zut_html_list_related ($ABB->id, $graph->direction, $usr->id);
   $result = $graph->display($back);
   $diff = str_diff($result, $target); if ($diff['view'][0] == 0) { $target = $result; }
-  $exe_start_time = test_show_result('graph->load for ABB up is', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+  test_dsp('graph->load for ABB up is', $target, $result);
 
 }

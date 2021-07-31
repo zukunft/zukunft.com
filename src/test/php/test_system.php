@@ -30,7 +30,6 @@ function run_system_test()
 {
 
     global $usr;
-    global $exe_start_time;
 
     echo "<h1>Consistency check of the \"zukunft.com\" code</h1><br>";
 
@@ -65,14 +64,14 @@ function run_system_test()
     if ($usr_test->id > 0) {
         $result = 'permitted!';
     }
-    $exe_start_time = test_show_result('IP blocking for ' . $usr_test->ip_addr, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('IP blocking for ' . $usr_test->ip_addr, $target, $result);
 
 
     test_header('Test the user class (classes/user.php)');
 
     $target = '<a href="/http/user.php?id=' . TEST_USER_ID . '">zukunft.com system batch job</a>';
     $result = $usr->display();
-    $exe_start_time = test_show_result('user->load for id ' . $wrd_company->id, $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp('user->load for id ' . $wrd_company->id, $target, $result);
 
 
     test_header('Test the user list class (classes/user_list.php)');
@@ -81,6 +80,6 @@ function run_system_test()
     $usr_lst->load_active();
     $result = $usr_lst->name();
     $target = TEST_USER_DESCRIPTION;
-    $exe_start_time = test_show_contains(', user_list->load_active', $target, $result, $exe_start_time, TIMEOUT_LIMIT);
+    test_dsp_contains(', user_list->load_active', $target, $result);
 
 }

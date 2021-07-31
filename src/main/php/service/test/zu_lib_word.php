@@ -128,27 +128,6 @@ function zut_type_name($type_id)
     return zu_sql_get_field('word_type', $type_id, sql_db::FLD_TYPE_NAME);
 }
 
-// return the first word of a predefined type e.g. the word "other" based on the code_id of the word type
-function zut_type_wrd($type_code_id, $user_id)
-{
-    log_debug('zut_type_wrd (' . $type_code_id . ',u' . $user_id . ')');
-    $result = null;
-    $type_id = cl($type_code_id);
-    /*  if ($wrd_id > 0) {
-        $wrd_del  = zu_sql_get1 ("SELECT word_id FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id." AND excluded = 1;");
-        // only return a word if the user has not yet excluded the word
-        if ($wrd_id <> $wrd_del) {
-          $result = zu_sql_get1 ("SELECT word_type_id FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id." AND (excluded is NULL OR excluded = 0);");
-          if ($result == NULL) {
-            $result = zu_sql_get_field ('word', $wrd_id, 'word_type_id');
-          }
-        }
-      } */
-
-    log_debug('zut_type (' . $wrd_id . '->' . $result . ')');
-    return $result;
-}
-
 // return the word category name based on the verb is
 function zut_is_name($id)
 {

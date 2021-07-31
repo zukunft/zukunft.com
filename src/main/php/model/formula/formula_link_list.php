@@ -61,11 +61,12 @@ class formula_link_list
     }
 
     // load the missing formula parameters from the database
-    function load()
+    function load(): bool
     {
 
         global $db_con;
 
+        $result = false;
         // check the all minimal input parameters are set
         if (!isset($this->usr)) {
             log_err("The user id must be set to load a list of formula links.", "formula_link_list->load");
@@ -98,9 +99,11 @@ class formula_link_list
                 $db_con->usr_id = $this->usr->id;
                 $db_lst = $db_con->get($sql);
                 $this->rows_mapper($db_lst);
+                $result = true;
                 log_debug('formula_link_list->load -> ' . count($this->lst) . ' links loaded');
             }
         }
+        return $result;
     }
 
     // get an array with all phrases linked of this list e.g. linked to one formula

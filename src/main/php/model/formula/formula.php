@@ -48,7 +48,7 @@ class formula extends user_sandbox
 
     function __construct()
     {
-        $this->obj_type = user_sandbox::TYPE_NAMED;
+        parent::__construct();
         $this->obj_name = DB_TYPE_FORMULA;
 
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
@@ -580,7 +580,7 @@ class formula extends user_sandbox
                                             // get the standard value
                                             // $fig_std = ...;
                                             $fv_std = clone $fv;
-                                            $fv_std->usr = 0;
+                                            $fv_std->usr = null;
                                             $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
                                             if ($fv_std->last_val_update < $fig->last_update) {
                                                 $fv_std->last_val_update = $fig->last_update;
@@ -606,7 +606,7 @@ class formula extends user_sandbox
                                             // get the standard value
                                             // $fig_std = ...;
                                             $fv_std = clone $fv_master;
-                                            $fv_std->usr = 0;
+                                            $fv_std->usr = null;
                                             $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
                                             if ($fv_std->last_val_update < $fig->last_update) {
                                                 $fv_std->last_val_update = $fig->last_update;
@@ -662,7 +662,7 @@ class formula extends user_sandbox
             }
             // calculate only if any parameter has been updated since last calculation
             if ($fv->num_text == '') {
-                // if num text is empty nothing needs to be done, but actually this should never happen
+                log_err('num text is empty nothing needs to be done, but actually this should never happen');
             } else {
                 if ($fv->last_val_update > $fv->last_update) {
                     // check if all needed value exist

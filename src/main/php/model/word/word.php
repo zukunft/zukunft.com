@@ -37,27 +37,28 @@ class word extends word_link_object
     const TEST_NAME = 'System Test Word';
 
     // database fields additional to the user sandbox fields
-    public ?string $plural = null; // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    public ?string $plural = null;      // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
     public ?string $description = null; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
-    public ?int $view_id = null; // defines the default view for this word
-    public ?int $values = null; // the total number of values linked to this word as an indication how common the word is and to sort the words
+    public ?int $view_id = null;        // defines the default view for this word
+    public ?int $values = null;         // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
-    public ?string $type_name = ''; // the name of the word type
-    public ?string $is_wrd = null; // the main type object e.g. for "ABB" it is the word object for "Company"
-    public ?int $is_wrd_id = null; // the id for the is object
-    public ?int $dsp_pos = null; // position of the word on the screen
-    public ?int $dsp_lnk_id = null; // position or link id based on which to item is displayed on the screen
+    public ?string $type_name = '';   // the name of the word type
+    public ?string $is_wrd = null;    // the main type object e.g. for "ABB" it is the word object for "Company"
+    public ?int $is_wrd_id = null;    // the id for the parent (verb "is") object
+    public ?int $dsp_pos = null;      // position of the word on the screen
+    public ?int $dsp_lnk_id = null;   // position or link id based on which to item is displayed on the screen
     public ?int $link_type_id = null; // used in the word list to know based on which relation the word was added to the list
 
     // only used for the export object
     private ?string $view = null; // name of the default view for this word
 
-    // define the settings for this source object
+    /**
+     * define the settings for this word object
+     */
     function __construct()
     {
         parent::__construct();
-        //$this->obj_type = user_sandbox::TYPE_NAMED;
         $this->obj_name = DB_TYPE_WORD;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
@@ -125,7 +126,43 @@ class word extends word_link_object
         return $result;
     }
 
-    // load the missing word parameters from the database
+    /**
+     * create an SQL statement to retrieve the parameters of a word from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = 'word_by_';
+        if ($this->id != 0) {
+            $sql_name .= 'id';
+        } elseif ($this->name != '') {
+            $sql_name .= 'name';
+        } else {
+            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
+        }
+
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array('values'));
+        $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded'));
+        $db_con->set_where($this->id, $this->name);
+        $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * load the missing word parameters from the database
+     */
     function load(): bool
     {
         global $db_con;
@@ -134,19 +171,13 @@ class word extends word_link_object
         // check the all minimal input parameters
         if (!isset($this->usr)) {
             // don't use too specific error text, because for each unique error text a new message is created
-            //zu_err('The user id must be set to load word '.$this->dsp_id().'.', "word->load");
+            //log_err('The user id must be set to load word '.$this->dsp_id().'.', "word->load");
             log_err('The user id must be set to load word.', "word->load");
         } elseif ($this->id <= 0 and $this->name == '') {
             log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         } else {
 
-            $db_con->set_type(DB_TYPE_WORD);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('values'));
-            $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-            $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded'));
-            $db_con->set_where($this->id, $this->name);
-            $sql = $db_con->select();
+            $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
                 // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
@@ -165,7 +196,9 @@ class word extends word_link_object
         return $result;
     }
 
-    // return the main word object based on a id text e.g. used in view.php to get the word to display
+    /**
+     * return the main word object based on a id text e.g. used in view.php to get the word to display
+     */
     function main_wrd_from_txt($id_txt)
     {
         if ($id_txt <> '') {
@@ -184,12 +217,12 @@ class word extends word_link_object
     }
 
     /*
-
     data retrieval functions
-
     */
 
-    // get the view object for this word
+    /**
+     * get the view object for this word
+     */
     function view(): view
     {
         log_debug('word->view for ' . $this->dsp_id());
@@ -210,6 +243,11 @@ class word extends word_link_object
     }
 
     // TODO review, because is it needed? get the view used by most users for this word
+
+    /**
+     * get the suggested view
+     * @return int|mixed
+     */
     function view_id()
     {
         log_debug('word->view_id for ' . $this->dsp_id());
@@ -235,7 +273,9 @@ class word extends word_link_object
         return $view_id;
     }
 
-    // get a list of all values related to this word
+    /**
+     * get a list of all values related to this word
+     */
     function val_lst(): value_list
     {
         log_debug('word->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
@@ -305,12 +345,19 @@ class word extends word_link_object
         return $result;
     }
 
-    // import a word from a json data word object
-    function import_obj($json_obj): bool
+    /**
+     * import a word from a json data word object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
     {
         log_debug('word->import_obj');
+        $result = false;
 
-        // set the all parameters for the word object excluding the usr
+        // reset the all parameters for the word object but keep the user
         $usr = $this->usr;
         $this->reset();
         $this->usr = $usr;
@@ -349,7 +396,9 @@ class word extends word_link_object
         if ($this->type_id == 0) {
             $this->type_id = cl(DBL_WORD_TYPE_NORMAL);
         }
-        $result = num2bool($this->save());
+        if ($do_save) {
+            $result = num2bool($this->save());
+        }
 
         if ($result) {
             log_debug('word->import_obj -> saved ' . $this->dsp_id());
@@ -366,7 +415,7 @@ class word extends word_link_object
                                 $ref_obj->usr = $this->usr;
                                 $ref_obj->phr_id = $this->id;
                                 $ref_obj->phr = $this->phrase();
-                                $result = $ref_obj->import_obj($ref_data);
+                                $result = $ref_obj->import_obj($ref_data, $do_save);
                             }
                         }
                     }
