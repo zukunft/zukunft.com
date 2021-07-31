@@ -89,7 +89,7 @@ class system_error_log_list
          LEFT JOIN users a             ON l.solver_id           = a.user_id
          LEFT JOIN sys_log_functions f ON l.sys_log_function_id = f.sys_log_function_id
              WHERE " . $user_sql . " 
-                  (l.sys_log_status_id <> " . cl(DBL_ERR_CLOSED) . " OR l.sys_log_status_id IS NULL)
+                  (l.sys_log_status_id <> " . clo(DBL_ERR_CLOSED) . " OR l.sys_log_status_id IS NULL)
           ORDER BY l.sys_log_time DESC
              LIMIT " . $this->size . ";";
         //$db_con = New mysql;
@@ -123,8 +123,8 @@ class system_error_log_list
                     $result .= '<td>' . $db_row["sys_log_function_name"] . '</td>';
                     $result .= '<td>' . $db_row["solver_name"] . '</td>';
                     $result .= '<td>' . $db_row["sys_log_status_name"] . '</td>';
-                    if ($this->usr->profile_id == cl(DBL_USER_ADMIN)) {
-                        $result .= '<td><a href="/http/error_update.php?id=' . $db_row["sys_log_id"] . '&status=' . cl(DBL_ERR_CLOSED) . '&back=' . $this->back . '">close</a></td>';
+                    if ($this->usr->profile_id == clo(DBL_USER_ADMIN)) {
+                        $result .= '<td><a href="/http/error_update.php?id=' . $db_row["sys_log_id"] . '&status=' . clo(DBL_ERR_CLOSED) . '&back=' . $this->back . '">close</a></td>';
                     }
 
                     $result .= '</tr>';

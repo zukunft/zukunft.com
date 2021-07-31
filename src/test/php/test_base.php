@@ -552,7 +552,7 @@ function test_word($wrd_name, $wrd_type_code_id = null): word
         $wrd->save();
     }
     if ($wrd_type_code_id != null) {
-        $wrd->type_id = cl($wrd_type_code_id);
+        $wrd->type_id = clo($wrd_type_code_id);
         $wrd->save();
     }
     $target = $wrd_name;
@@ -809,7 +809,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
 
     // load the verb
     $vrb = new verb;
-    $vrb->id = cl($verb);
+    $vrb->id = clo($verb);
     $vrb->usr = $usr;
     $vrb->load();
     $lnk_test = new word_link;
@@ -819,7 +819,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
     } else {
         // check if the forward link exists
         $lnk_test->from_id = $wrd_from->id;
-        $lnk_test->verb_id = cl($verb);
+        $lnk_test->verb_id = clo($verb);
         $lnk_test->to_id = $wrd_to->id;
         $lnk_test->usr = $usr;
         $lnk_test->load();
@@ -828,7 +828,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
         } else {
             // check if the backward link exists
             $lnk_test->from_id = $wrd_to->id;
-            $lnk_test->verb_id = cl($verb);
+            $lnk_test->verb_id = clo($verb);
             $lnk_test->to_id = $wrd_from->id;
             $lnk_test->usr = $usr;
             $lnk_test->load();
@@ -836,7 +836,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
             // create the link if requested
             if ($lnk_test->id <= 0 and $autocreate) {
                 $lnk_test->from_id = $wrd_from->id;
-                $lnk_test->verb_id = cl($verb);
+                $lnk_test->verb_id = clo($verb);
                 $lnk_test->to_id = $wrd_to->id;
                 $lnk_test->save();
                 $lnk_test->load();

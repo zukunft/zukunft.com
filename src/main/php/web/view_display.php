@@ -550,7 +550,7 @@ class view_dsp extends view
 
         // use the default settings if needed
         if ($this->type_id <= 0) {
-            $this->type_id = cl(DBL_VIEW_TYPE_DEFAULT);
+            $this->type_id = clo(DBL_VIEW_TYPE_DEFAULT);
         }
 
         // the header to add or change a view

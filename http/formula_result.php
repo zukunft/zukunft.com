@@ -47,7 +47,7 @@ $db_con = prg_start("formula_result");
     // show the header
     $dsp = new view_dsp;
     $dsp->usr = $session_usr;
-    $dsp->id = cl(DBL_VIEW_FORMULA_EXPLAIN);
+    $dsp->id = clo(DBL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
     

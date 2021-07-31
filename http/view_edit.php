@@ -49,7 +49,7 @@ $db_con = prg_start("view_edit");
 
     // prepare the display to edit the view
     $dsp = new view_dsp;
-    $dsp->id = cl(DBL_VIEW_ADD);
+    $dsp->id = clo(DBL_VIEW_ADD);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];

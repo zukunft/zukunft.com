@@ -243,7 +243,7 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(DBL_USER_ADMIN)) {
+        if ($this->profile_id == clo(DBL_USER_ADMIN)) {
             $result = true;
         }
         return $result;
@@ -258,7 +258,7 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(DBL_USER_ADMIN)) {
+        if ($this->profile_id == clo(DBL_USER_ADMIN)) {
             $result = true;
         }
         return $result;

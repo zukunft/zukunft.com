@@ -478,6 +478,7 @@ include_once $root_path . 'src/main/php/model/view/view_component_link_types.php
 
 // include all other libraries that are usually needed
 include_once $root_path . 'db_link/zu_lib_sql_link.php';
+include_once $root_path . 'src/main/php/service/db_code_link.php';
 include_once $root_path . 'src/main/php/service/zu_lib_sql_code_link.php';
 include_once $root_path . 'src/main/php/service/config.php';
 
@@ -710,7 +711,7 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
         $sys_log_id = 0;
 
         $sys_log_msg_lst[] = $msg_type_text;
-        $log_level = cl(LOG_LEVEL);
+        $log_level = clo(LOG_LEVEL);
         if ($msg_type_id > $log_level) {
             $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
             $function_id = $db_con->get_id($function_name);
@@ -744,7 +745,7 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
             //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
             //$sys_log_id = mysqli_insert_id();
         }
-        $msg_level = cl(MSG_LEVEL);
+        $msg_level = clo(MSG_LEVEL);
         if ($msg_type_id >= $msg_level) {
             echo "Zukunft.com has detected an critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
             if ($sys_log_id > 0) {

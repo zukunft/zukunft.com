@@ -80,7 +80,7 @@ $db_con = prg_start("view");
             $view_id = $wrd->view_id();
             if ($view_id <= 0) {
               // if no one has set a view for this word, use the fallback view
-              $view_id = cl(DBL_VIEW_WORD);
+              $view_id = clo(DBL_VIEW_WORD);
             }
           }
         }
@@ -96,7 +96,7 @@ $db_con = prg_start("view");
         
         // use a fallback if the view is empty
         if ($dsp_text == '' OR $dsp->name == '') {
-          $view_id = cl(DEFAULT_VIEW);
+          $view_id = clo(DEFAULT_VIEW);
           $dsp->id = $view_id;
           $dsp->load();
           $dsp_text = $dsp->display($wrd, $back);

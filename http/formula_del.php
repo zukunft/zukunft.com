@@ -45,7 +45,7 @@ $db_con = prg_start("formula_del");
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(DBL_VIEW_FORMULA_DEL);
+    $dsp->id = clo(DBL_VIEW_FORMULA_DEL);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];

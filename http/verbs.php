@@ -49,7 +49,7 @@ $db_con = prg_start("verbs");
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(DBL_VIEW_VERBS);
+    $dsp->id = clo(DBL_VIEW_VERBS);
     $dsp->usr = $usr;
     $dsp->load();
         

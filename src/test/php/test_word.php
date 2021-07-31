@@ -106,8 +106,8 @@ function run_word_test()
     // word type
     $wrd_2013 = test_word(TW_2013);
     $target = True;
-    $result = $wrd_2013->is_type(DBL_WORD_TYPE_TIME);
-    test_dsp('word->is_type for ' . TW_2013 . ' and "' . DBL_WORD_TYPE_TIME . '"', $target, $result);
+    $result = $wrd_2013->is_type(word_type_list::DBL_TIME);
+    test_dsp('word->is_type for ' . TW_2013 . ' and "' . word_type_list::DBL_TIME . '"', $target, $result);
 
     // is time
     $target = True;
@@ -326,7 +326,7 @@ function run_word_test()
     // check if the word parameters can be added
     $wrd_renamed->plural = TW_ADD_RENAMED . 's';
     $wrd_renamed->description = TW_ADD_RENAMED . ' description';
-    $wrd_renamed->type_id = cl(DBL_WORD_TYPE_OTHER);
+    $wrd_renamed->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
     $result = num2bool($wrd_renamed->save());
     $target = true;
     test_dsp('word->save all word fields beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -340,7 +340,7 @@ function run_word_test()
     $target = TW_ADD_RENAMED . ' description';
     test_dsp('word->load description for "' . TW_ADD_RENAMED . '"', $target, $result);
     $result = $wrd_reloaded->type_id;
-    $target = cl(DBL_WORD_TYPE_OTHER);
+    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
     test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '"', $target, $result);
 
     // check if the word parameter adding have been logged
@@ -369,7 +369,7 @@ function run_word_test()
     $wrd_usr2->load();
     $wrd_usr2->plural = TW_ADD_RENAMED . 's2';
     $wrd_usr2->description = TW_ADD_RENAMED . ' description2';
-    $wrd_usr2->type_id = cl(DBL_WORD_TYPE_TIME);
+    $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
     $result = num2bool($wrd_usr2->save());
     $target = true;
     test_dsp('word->save all word fields for user 2 beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -386,7 +386,7 @@ function run_word_test()
     $target = TW_ADD_RENAMED . ' description2';
     test_dsp('word->load description for "' . TW_ADD_RENAMED . '"', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
-    $target = cl(DBL_WORD_TYPE_TIME);
+    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
     test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '"', $target, $result);
 
     // check the word for the original user remains unchanged
@@ -398,7 +398,7 @@ function run_word_test()
     $target = TW_ADD_RENAMED . ' description';
     test_dsp('word->load description for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $wrd_reloaded->type_id;
-    $target = cl(DBL_WORD_TYPE_OTHER);
+    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
     test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user word
@@ -408,7 +408,7 @@ function run_word_test()
     $wrd_usr2->load();
     $wrd_usr2->plural = TW_ADD_RENAMED . 's';
     $wrd_usr2->description = TW_ADD_RENAMED . ' description';
-    $wrd_usr2->type_id = cl(DBL_WORD_TYPE_OTHER);
+    $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
     $result = num2bool($wrd_usr2->save());
     $target = true;
     test_dsp('word->save undo the user word fields beside the name for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -425,7 +425,7 @@ function run_word_test()
     $target = TW_ADD_RENAMED . ' description';
     test_dsp('word->load description for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
-    $target = cl(DBL_WORD_TYPE_OTHER);
+    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
     test_dsp('word->load type_id for "' . TW_ADD_RENAMED . '" unchanged now also for user 2', $target, $result);
 
     // TODO redo the user specific word changes

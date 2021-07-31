@@ -84,8 +84,8 @@ class term
         $wrd->usr = $this->usr;
         $wrd->load();
         if ($wrd->id > 0) {
-            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(DBL_WORD_TYPE_FORMULA_LINK));
-            if ($wrd->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK));
+            if ($wrd->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
                 if ($this->load_frm()) {
                     $result = $this->obj->id;
                 }

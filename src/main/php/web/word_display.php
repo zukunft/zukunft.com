@@ -156,7 +156,6 @@ class word_dsp extends word
     {
         log_debug('word_dsp->dsp_selector -> for form ' . $form_name . '' . $pos);
         global $db_con;
-        global $word_type_list;
 
         $result = '';
 
@@ -171,7 +170,7 @@ class word_dsp extends word
         if ($type->id > 0) {
             $sql_from = "word_links l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id 
-                        AND l.verb_id = " . cl(DBL_LINK_TYPE_IS) . "              
+                        AND l.verb_id = " . clo(DBL_LINK_TYPE_IS) . "              
                         AND l.to_phrase_id = " . $type->id;
         } else {
             $sql_from = "words w";
@@ -185,7 +184,7 @@ class word_dsp extends word
                        FROM " . $sql_from . "   
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
                                         AND u.user_id = " . $this->usr->id . " 
-                      WHERE w.word_type_id = " . $word_type_list->id(word_type_list::DBL_TIME) . "
+                      WHERE w.word_type_id = " . cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME) . "
                         " . $sql_where_and . "            
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    
@@ -571,7 +570,7 @@ class word_dsp extends word
             $result .= dsp_form_hidden("back", $back);
             $result .= dsp_form_hidden("confirm", '1');
             $result .= '<div class="form-row">';
-            if ($this->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+            if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
                 $result .= dsp_form_hidden("name", $this->name);
                 $result .= '  to change the name of "' . $this->name . '" rename the ';
                 $frm = $this->formula();
@@ -581,7 +580,7 @@ class word_dsp extends word
                 $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-4");
             }
             $result .= dsp_form_text("plural", $this->plural, "Plural:", "col-sm-4");
-            if ($this->type_id == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+            if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
                 $result .= ' type: ' . $this->type_name;
             } else {
                 $result .= $this->dsp_type_selector('word_edit', "col-sm-4");

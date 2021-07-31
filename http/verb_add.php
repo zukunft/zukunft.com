@@ -49,7 +49,7 @@ $db_con = prg_start("link_type_add");
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(DBL_VIEW_VERB_ADD);
+    $dsp->id = clo(DBL_VIEW_VERB_ADD);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the calling word which should be displayed after saving

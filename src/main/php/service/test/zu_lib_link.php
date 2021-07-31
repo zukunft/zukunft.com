@@ -190,7 +190,7 @@ function zul_calc_usage () {
           SELECT COUNT(to_word_id) 
             FROM word_links t
            WHERE l.verb_id = t.verb_id);";
-  $result = zu_sql_exe($sql, cl(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zul_calc_usage", (new Exception)->getTraceAsString());
+  $result = zu_sql_exe($sql, clo(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zul_calc_usage", (new Exception)->getTraceAsString());
   
   return $result;           
 }

@@ -218,8 +218,8 @@ function zuv_scale($user_value, $value_words, $user_id)
                     $r_part_wrd_id = zuf_2num_get_word($r_part);
 
                     // test if it is a valid scale formula
-                    if (zut_is_type($l_part_wrd_id, DBL_WORD_TYPE_SCALING_HIDDEN)
-                        and zut_is_type($r_part_wrd_id, DBL_WORD_TYPE_SCALING)) {
+                    if (zut_is_type($l_part_wrd_id, word_type_list::DBL_SCALING_HIDDEN)
+                        and zut_is_type($r_part_wrd_id, word_type_list::DBL_SCALING)) {
                         $wrd_symbol = ZUP_CHAR_WORD_START . $r_part_wrd_id . ZUP_CHAR_WORD_END;
                         log_debug('zuv_scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $user_value . ')');
                         $r_part = str_replace($wrd_symbol, $user_value, $r_part);

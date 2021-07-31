@@ -153,7 +153,7 @@ function zu_sql_exe($sql, $user_id, $log_level, $function_name, $function_trace)
         $sql = str_replace("'", "", $sql);
         $sql = str_replace("\"", "", $sql);
         $msg_text .= " (" . $sql . ")";
-        $msg_type_id = cl($log_level);
+        $msg_type_id = clo($log_level);
         $result = log_msg($msg_text, $msg_type_id, $function_name, $function_trace, $user_id);
         log_debug("zu_sql_exe -> error (" . $result . ")");
     }
@@ -1100,8 +1100,8 @@ function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
 {
     log_debug('zu_sql_word_lst_add_differentiator(' . $word_lst . ',' . $xtra_words . ')');
 
-    $is_a_type = cl(DBL_LINK_TYPE_IS);
-    $differentiator_type = cl(DBL_LINK_TYPE_DIFFERENTIATOR);
+    $is_a_type = clo(DBL_LINK_TYPE_IS);
+    $differentiator_type = clo(DBL_LINK_TYPE_DIFFERENTIATOR);
 
     // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
     echo 'extra: ' . implode(",", $xtra_words) . '<br>';

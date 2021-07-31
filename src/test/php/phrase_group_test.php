@@ -80,7 +80,7 @@ function run_phrase_group_test()
     $wrd_zh = load_word(TW_ZH);
     $lnk_company = new word_link;
     $lnk_company->from_id = $wrd_zh->id;
-    $lnk_company->verb_id = cl(DBL_LINK_TYPE_IS);
+    $lnk_company->verb_id = clo(DBL_LINK_TYPE_IS);
     $lnk_company->to_id = $wrd_company->id;
     $lnk_company->usr = $usr;
     $lnk_company->load();

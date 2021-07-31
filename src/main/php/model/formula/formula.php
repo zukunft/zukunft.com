@@ -115,7 +115,7 @@ class formula extends user_sandbox
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word_dsp;
         $name_wrd->name = $this->name;
-        $name_wrd->type_id = cl(DBL_WORD_TYPE_FORMULA_LINK);
+        $name_wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
         $name_wrd->usr = $this->usr;
         $name_wrd->save();
         if ($name_wrd->id > 0) {
@@ -1268,7 +1268,7 @@ class formula extends user_sandbox
         $result = true;
 
         // read the elements from the formula text
-        $elm_type_id = cl($element_type);
+        $elm_type_id = clo($element_type);
         switch ($element_type) {
             case DBL_FORMULA_PART_TYPE_FORMULA:
                 $elm_ids = $this->frm_ids($frm_text, $frm_usr_id);

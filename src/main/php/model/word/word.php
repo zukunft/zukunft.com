@@ -487,7 +487,7 @@ class word extends word_link_object
     function btn_add($back): string
     {
         global $word_types;
-        $vrb_is = cl(DBL_LINK_TYPE_IS);
+        $vrb_is = clo(DBL_LINK_TYPE_IS);
         $wrd_type = $word_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name;
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
@@ -623,7 +623,7 @@ class word extends word_link_object
     {
         log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
         $wrd_lst = $this->lst();
-        $parent_wrd_lst = $wrd_lst->foaf_parents(cl(DBL_LINK_TYPE_IS));
+        $parent_wrd_lst = $wrd_lst->foaf_parents(clo(DBL_LINK_TYPE_IS));
         log_debug('word->parents are ' . $parent_wrd_lst->name() . ' for ' . $this->dsp_id());
         return $parent_wrd_lst;
     }
@@ -654,7 +654,7 @@ class word extends word_link_object
     {
         log_debug('word->children for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
         $wrd_lst = $this->lst();
-        $child_wrd_lst = $wrd_lst->foaf_children(cl(DBL_LINK_TYPE_IS));
+        $child_wrd_lst = $wrd_lst->foaf_children(clo(DBL_LINK_TYPE_IS));
         log_debug('word->children are ' . $child_wrd_lst->name() . ' for ' . $this->dsp_id());
         return $child_wrd_lst;
     }
@@ -705,7 +705,7 @@ class word extends word_link_object
         global $db_con;
         $result = new word_dsp;
 
-        $link_id = cl(DBL_LINK_TYPE_FOLLOW);
+        $link_id = clo(DBL_LINK_TYPE_FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -725,7 +725,7 @@ class word extends word_link_object
         global $db_con;
         $result = new word_dsp;
 
-        $link_id = cl(DBL_LINK_TYPE_FOLLOW);
+        $link_id = clo(DBL_LINK_TYPE_FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -744,7 +744,7 @@ class word extends word_link_object
     function is_part()
     {
         log_debug('word->is(' . $this->dsp_id() . ', user ' . $this->usr->id . ')');
-        $link_type_id = cl(DBL_LINK_TYPE_CONTAIN);
+        $link_type_id = clo(DBL_LINK_TYPE_CONTAIN);
         $wrd_lst = $this->lst();
         $is_wrd_lst = $wrd_lst->foaf_parents($link_type_id);
 

@@ -52,7 +52,7 @@ function run_batch_job_test () {
   // test adding a batch job
   $job = new batch_job;
   $job->obj = $val;
-  $job->type = cl(DBL_JOB_VALUE_UPDATE);
+  $job->type = clo(DBL_JOB_VALUE_UPDATE);
   $result = $job->add();
   if ($result > 0) {
     $target = $result;

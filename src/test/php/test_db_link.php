@@ -34,7 +34,7 @@ function run_db_link_test()
     // test code link
     $id = DBL_SYSLOG_TBL_WORD;
     $target = 2;
-    $result = cl($id);
+    $result = clo($id);
     test_dsp(", sql_code_link " . $id, $target, $result);
 
 }

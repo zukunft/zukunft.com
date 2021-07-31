@@ -48,7 +48,7 @@ $db_con = prg_start("word_edit");
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(DBL_VIEW_WORD_EDIT);
+    $dsp->id = clo(DBL_VIEW_WORD_EDIT);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)

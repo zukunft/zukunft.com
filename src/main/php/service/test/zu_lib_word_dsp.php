@@ -236,7 +236,7 @@ function zut_html_list_related($id, $direction, $user_id): string
         }
 
         // in case of the verb "following" continue the series
-        if ($link_type_id == cl(DBL_LINK_TYPE_FOLLOW)) {
+        if ($link_type_id == clo(DBL_LINK_TYPE_FOLLOW)) {
             $start_id = $link_type_id * -1;
         } else {
             $start_id = $id;
@@ -282,14 +282,14 @@ function zut_html_list_related($id, $direction, $user_id): string
             //$result .= zut_html($word_entry[0], $word_entry[1]);
             // use the last word as a sample for the new word type
             $word_type_id = $word_entry[2];
-            if ($link_type_id == cl(DBL_LINK_TYPE_FOLLOW)) {
+            if ($link_type_id == clo(DBL_LINK_TYPE_FOLLOW)) {
                 $last_linked_word_id = $word_entry[0];
             }
         }
         log_debug('zut_html_list_related btn done');
 
         // in case of the verb "following" continue the series after the last element
-        if ($link_type_id == cl(DBL_LINK_TYPE_FOLLOW)) {
+        if ($link_type_id == clo(DBL_LINK_TYPE_FOLLOW)) {
             $start_id = $last_linked_word_id;
             /*      if ($directional_link_type_id > 0) {
                     $directional_link_type_id = $directional_link_type_id * -1;
@@ -323,7 +323,7 @@ function zut_dsp_like($word_pattern, $user_id)
     $sql = " ( SELECT t.word_id, t.word_name AS name, 'word' AS type
                FROM words t 
               WHERE t.word_name like '" . $word_pattern . "%' 
-                AND t.word_type_id <> " . cl(DBL_WORD_TYPE_FORMULA_LINK) . ")
+                AND t.word_type_id <> " . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK) . ")
      UNION ( SELECT f.formula_id, f.formula_name AS name, 'formula' AS type
                FROM formulas f 
               WHERE f.formula_name like '" . $word_pattern . "%' )
@@ -599,7 +599,7 @@ function zut_dsp_edit($wrd_id, $user_id, $back_link)
         $result .= zuh_form_start("word_edit");
         $result .= zuh_form_hidden("id", $wrd_id);
         $result .= zuh_form_hidden("back", $back_link);
-        if ($wrd_type == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+        if ($wrd_type == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
             $result .= zuh_form_hidden("name", $wrd_name);
             $result .= '  to change the name of "' . $wrd_name . '" rename the ';
             $result .= zuf_dsp(zuf_id($wrd_name, $user_id), "formula", $user_id, $back_link);
@@ -608,7 +608,7 @@ function zut_dsp_edit($wrd_id, $user_id, $back_link)
             $result .= '  rename to:<input type="text" name="name" value="' . $wrd_name . '">';
         }
         $result .= '  plural:<input type="text" name="plural" value="' . $wrd_plural . '">';
-        if ($wrd_type == cl(DBL_WORD_TYPE_FORMULA_LINK)) {
+        if ($wrd_type == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
             $result .= ' type: ' . zut_type_name($wrd_type);
         } else {
             $result .= zuh_selector("type", "word_edit", "SELECT word_type_id, type_name FROM word_types;", $wrd_type, "");
@@ -655,7 +655,7 @@ function zut_dsp_hist($wrd_id, $size, $back_link)
                  change_actions a,
                  change_fields f,
                  users u
-           WHERE (f.table_id = " . cl(DBL_SYSLOG_TBL_WORD) . " OR f.table_id = " . cl(DBL_SYSLOG_TBL_WORD_USR) . ")
+           WHERE (f.table_id = " . clo(DBL_SYSLOG_TBL_WORD) . " OR f.table_id = " . clo(DBL_SYSLOG_TBL_WORD_USR) . ")
              AND f.change_field_id  = c.change_field_id 
              AND c.row_id  = " . $wrd_id . " 
              AND c.change_action_id = a.change_action_id 
@@ -716,8 +716,8 @@ function zut_dsp_hist_links($wrd_id, $size, $back_link)
             FROM change_links c,
                  change_actions a,
                  users u
-           WHERE (c.change_table_id = " . cl(DBL_SYSLOG_TBL_WORD) . "      OR c.change_table_id = " . cl(DBL_SYSLOG_TBL_WORD_USR) . " 
-               OR c.change_table_id = " . cl(DBL_SYSLOG_TBL_WORD_LINK) . " )
+           WHERE (c.change_table_id = " . clo(DBL_SYSLOG_TBL_WORD) . "      OR c.change_table_id = " . clo(DBL_SYSLOG_TBL_WORD_USR) . " 
+               OR c.change_table_id = " . clo(DBL_SYSLOG_TBL_WORD_LINK) . " )
              AND (c.old_from_id = " . $wrd_id . " OR c.new_from_id = " . $wrd_id . " OR c.old_to_id = " . $wrd_id . " OR c.new_to_id = " . $wrd_id . ")
              AND c.change_action_id = a.change_action_id 
              AND c.user_id = u.user_id 

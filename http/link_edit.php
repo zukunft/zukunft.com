@@ -47,7 +47,7 @@ $db_con = prg_start("link_edit");
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = cl(DBL_VIEW_LINK_EDIT);
+    $dsp->id = clo(DBL_VIEW_LINK_EDIT);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished

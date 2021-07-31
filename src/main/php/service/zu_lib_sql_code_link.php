@@ -125,23 +125,6 @@ const DBL_VIEW_COMP_TYPE_CSV_EXPORT = "dsp_comp_type_csv_export";
 const DBL_VIEW_COMP_TYPE_VIEW_SELECT = "dsp_comp_type_view_select";
 const DBL_VIEW_COMP_TYPE_LINK = "dsp_comp_type_link";
 
-const DBL_WORD_TYPE_NORMAL = "wrd_type_default";
-const DBL_WORD_TYPE_TIME = "wrd_type_time";
-const DBL_WORD_TYPE_TIME_JUMP = "wrd_type_time_jump";
-const DBL_WORD_TYPE_PERCENT = "wrd_type_percent";
-const DBL_WORD_TYPE_MEASURE = "wrd_type_measure";
-const DBL_WORD_TYPE_SCALING = "wrd_type_scaling";
-const DBL_WORD_TYPE_SCALING_HIDDEN = "wrd_type_scaling_hidden";
-const DBL_WORD_TYPE_SCALING_PCT = "wrd_type_scaling_percent";
-const DBL_WORD_TYPE_SCALED_MEASURE = "wrd_type_scaled_measure";
-const DBL_WORD_TYPE_FORMULA_LINK = "wrd_type_formula_link";
-const DBL_WORD_TYPE_CALC = "wrd_type_calc";
-const DBL_WORD_TYPE_LAYER = "wrd_type_view";
-const DBL_WORD_TYPE_OTHER = "wrd_type_type_other";
-const DBL_WORD_TYPE_NEXT = "wrd_type_next";
-const DBL_WORD_TYPE_THIS = "wrd_type_this";
-const DBL_WORD_TYPE_PREV = "wrd_type_previous";
-
 const DBL_FORMULA_TYPE_CALC= "frm_type_default";
 const DBL_FORMULA_TYPE_NEXT = "frm_type_time_next";
 const DBL_FORMULA_TYPE_THIS = "frm_type_time_this";
@@ -231,6 +214,7 @@ const DBL_JOB_FORMULA_UNLINK = "job_formula_unlink";
 const DBL_JOB_WORD_LINK = "job_word_link";
 const DBL_JOB_WORD_UNLINK = "job_word_unlink";
 
+
 // fixed settings without code id for the triple links
 const DBL_TRIPLE_LINK_IS_WORD = 1;
 const DBL_TRIPLE_LINK_IS_TRIPLE = 2;
@@ -250,7 +234,7 @@ $dbl_protection_types = array();
 
 // shortcut name for sql_code_link for better code reading
 // don't use it for the first call to make sure that the description is in the database
-function cl($code_id)
+function clo($code_id)
 {
     global $db_con;
     return sql_code_link($code_id, "", $db_con);
@@ -360,22 +344,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_VIEW_COMP_TYPE_XML_EXPORT
         or $code_id == DBL_VIEW_COMP_TYPE_CSV_EXPORT) {
         $db_type = DB_TYPE_VIEW_COMPONENT_TYPE;
-    }
-    if ($code_id == DBL_WORD_TYPE_NORMAL
-        or $code_id == DBL_WORD_TYPE_TIME
-        or $code_id == DBL_WORD_TYPE_TIME_JUMP
-        or $code_id == DBL_WORD_TYPE_MEASURE
-        or $code_id == DBL_WORD_TYPE_PERCENT
-        or $code_id == DBL_WORD_TYPE_MEASURE
-        or $code_id == DBL_WORD_TYPE_SCALING
-        or $code_id == DBL_WORD_TYPE_SCALING_HIDDEN
-        or $code_id == DBL_WORD_TYPE_SCALING_PCT
-        or $code_id == DBL_WORD_TYPE_FORMULA_LINK
-        or $code_id == DBL_WORD_TYPE_OTHER
-        or $code_id == DBL_WORD_TYPE_NEXT
-        or $code_id == DBL_WORD_TYPE_THIS
-        or $code_id == DBL_WORD_TYPE_PREV) {
-        $db_type = DB_TYPE_WORD_TYPE;
     }
 
     if ($code_id == DBL_SHARE_PUBLIC

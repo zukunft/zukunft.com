@@ -54,7 +54,7 @@ function run_word_link_test()
     // ... now test the Canton Zurich
     $lnk_canton = new word_link;
     $lnk_canton->from_id = $wrd_zh->id;
-    $lnk_canton->verb_id = cl(DBL_LINK_TYPE_IS);
+    $lnk_canton->verb_id = clo(DBL_LINK_TYPE_IS);
     $lnk_canton->to_id = $wrd_canton->id;
     $lnk_canton->usr = $usr;
     $lnk_canton->load();
@@ -70,7 +70,7 @@ function run_word_link_test()
     // ... now test the Insurance Zurich
     $lnk_company = new word_link;
     $lnk_company->from_id = $wrd_zh->id;
-    $lnk_company->verb_id = cl(DBL_LINK_TYPE_IS);
+    $lnk_company->verb_id = clo(DBL_LINK_TYPE_IS);
     $lnk_company->to_id = $wrd_company->id;
     $lnk_company->usr = $usr;
     $lnk_company->load();
@@ -87,7 +87,7 @@ function run_word_link_test()
     $wrd_added = load_word(TW_ADD_RENAMED);
     $wrd = load_word(TEST_WORD);
     $vrb = new verb;
-    $vrb->id = cl(DBL_LINK_TYPE_IS);
+    $vrb->id = clo(DBL_LINK_TYPE_IS);
     $vrb->usr = $usr->id;
     $vrb->load();
     $lnk = new word_link;

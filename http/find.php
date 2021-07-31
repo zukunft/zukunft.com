@@ -59,7 +59,7 @@ if ($db_con == null) {
         // show view header
         $dsp = new view_dsp;
         $dsp->usr = $usr;
-        $dsp->id = cl(DBL_VIEW_WORD_FIND);
+        $dsp->id = clo(DBL_VIEW_WORD_FIND);
         $result .= $dsp->dsp_navbar($back);
 
         $find_str = $_GET['pattern'];

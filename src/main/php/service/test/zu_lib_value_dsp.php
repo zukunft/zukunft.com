@@ -144,7 +144,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
         } else {
           // if no word group is found, use the word type time if the word is a time word
           if (zut_is_time($wrd_ids[$pos])) {
-            $wrd_lst = zut_type_lst(cl(word_type_list::DBL_TIME));
+            $wrd_lst = zut_type_lst(clo(word_type_list::DBL_TIME));
           }
         }
 
@@ -330,7 +330,7 @@ function zuv_dsp ($num_value, $format_word_id) {
   log_debug('zuv_dsp ('.$num_value.','.$format_word_id.')');
   $result = $num_value;
   if (is_numeric($num_value)) {
-    if ($format_word_id == cl(DBL_WORD_TYPE_PERCENT)) {
+    if ($format_word_id == clo(word_type_list::DBL_PERCENT)) {
       $result = round($num_value*100,2)."%";
     }
   }
@@ -761,8 +761,8 @@ function zuv_dsp_hist($val_id, $size, $back_link) {
                  change_actions a,
                  change_fields f,
                  users u
-           WHERE (f.table_id = ".cl(DBL_SYSLOG_TBL_VALUE)." 
-               OR f.table_id = ".cl(DBL_SYSLOG_TBL_VALUE_USR).")
+           WHERE (f.table_id = ".clo(DBL_SYSLOG_TBL_VALUE)." 
+               OR f.table_id = ".clo(DBL_SYSLOG_TBL_VALUE_USR).")
              AND f.change_field_id  = c.change_field_id 
              AND c.row_id  = ".$val_id." 
              AND c.change_action_id = a.change_action_id 
@@ -814,9 +814,9 @@ function zuv_dsp_hist_links($val_id, $size, $back_link) {
             FROM change_links c,
                  change_actions a,
                  users u
-           WHERE (c.change_table_id = ".cl(DBL_SYSLOG_TBL_VALUE)." 
-               OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VALUE_USR)." 
-               OR c.change_table_id = ".cl(DBL_SYSLOG_TBL_VALUE_LINK)." )
+           WHERE (c.change_table_id = ".clo(DBL_SYSLOG_TBL_VALUE)." 
+               OR c.change_table_id = ".clo(DBL_SYSLOG_TBL_VALUE_USR)." 
+               OR c.change_table_id = ".clo(DBL_SYSLOG_TBL_VALUE_LINK)." )
              AND (c.old_from_id = ".$val_id." OR c.new_from_id = ".$val_id.")
              AND c.change_action_id = a.change_action_id 
              AND c.user_id = u.user_id 

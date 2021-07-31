@@ -141,7 +141,7 @@ function run_view_component_test () {
   $cmp_renamed->usr = $usr;
   $cmp_renamed->load();
   $cmp_renamed->comment = 'Just added for testing the user sandbox';
-  $cmp_renamed->type_id = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
+  $cmp_renamed->type_id = clo(DBL_VIEW_COMP_TYPE_WORD_NAME);
   $result = $cmp_renamed->save();
   $target = '11';
   test_dsp('view_component->save all view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_LONG);
@@ -155,7 +155,7 @@ function run_view_component_test () {
   $target = 'Just added for testing the user sandbox';
   test_dsp('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result);
   $result = $cmp_reloaded->type_id;
-  $target = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
+  $target = clo(DBL_VIEW_COMP_TYPE_WORD_NAME);
   test_dsp('view_component->load type_id for "'.TC_ADD_RENAMED.'"', $target, $result);
 
   // check if the view_component parameter adding have been logged
@@ -178,7 +178,7 @@ function run_view_component_test () {
   $cmp_usr2->usr = $usr2;
   $cmp_usr2->load();
   $cmp_usr2->comment = 'Just changed for testing the user sandbox';
-  $cmp_usr2->type_id = cl(DBL_VIEW_COMP_TYPE_FORMULAS);
+  $cmp_usr2->type_id = clo(DBL_VIEW_COMP_TYPE_FORMULAS);
   $result = $cmp_usr2->save();
   $target = '11';
   test_dsp('view_component->save all view_component fields for user 2 beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -192,7 +192,7 @@ function run_view_component_test () {
   $target = 'Just changed for testing the user sandbox';
   test_dsp('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result);
   $result = $cmp_usr2_reloaded->type_id;
-  $target = cl(DBL_VIEW_COMP_TYPE_FORMULAS);
+  $target = clo(DBL_VIEW_COMP_TYPE_FORMULAS);
   test_dsp('view_component->load type_id for "'.TC_ADD_RENAMED.'"', $target, $result);
 
   // check the view_component for the original user remains unchanged
@@ -204,7 +204,7 @@ function run_view_component_test () {
   $target = 'Just added for testing the user sandbox';
   test_dsp('view_component->load comment for "'.TC_ADD_RENAMED.'"', $target, $result);
   $result = $cmp_reloaded->type_id;
-  $target = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
+  $target = clo(DBL_VIEW_COMP_TYPE_WORD_NAME);
   test_dsp('view_component->load type_id for "'.TC_ADD_RENAMED.'"', $target, $result);
 
   // check if undo all specific changes removes the user view_component
@@ -213,7 +213,7 @@ function run_view_component_test () {
   $cmp_usr2->usr = $usr2;
   $cmp_usr2->load();
   $cmp_usr2->comment = 'Just added for testing the user sandbox';
-  $cmp_usr2->type_id = cl(DBL_VIEW_COMP_TYPE_WORD_NAME);
+  $cmp_usr2->type_id = clo(DBL_VIEW_COMP_TYPE_WORD_NAME);
   $result = $cmp_usr2->save();
   $target = '11';
   test_dsp('view_component->save undo the user view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);

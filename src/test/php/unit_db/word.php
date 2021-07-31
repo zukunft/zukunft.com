@@ -31,8 +31,6 @@ function run_word_unit_db_tests()
 
     global $db_con;
 
-    global $word_types;
-
     test_header('Unit database tests of the word class (src/main/php/model/word/word.php)');
 
     test_subheader('Word types tests');
@@ -44,7 +42,7 @@ function run_word_unit_db_tests()
     test_dsp('unit_db_word->init_view_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = $word_types->id(word_type_list::DBL_NORMAL);
+    $result = cl(db_cl::WORD_TYPE, word_type_list::DBL_NORMAL);
     $target = 1;
     test_dsp('unit_db_word->check ' . word_type_list::DBL_NORMAL, $result, $target);
 

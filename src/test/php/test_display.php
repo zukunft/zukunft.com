@@ -49,7 +49,7 @@ function run_display_test () {
 
   // test if a simple text component can be created
   $cmp = new view_component_dsp;
-  $cmp->type_id = cl(DBL_VIEW_COMP_TYPE_TEXT);
+  $cmp->type_id = clo(DBL_VIEW_COMP_TYPE_TEXT);
   $cmp->name = TS_NESN_2016_NAME;
   $result = $cmp->text();
   $target = ' '.TS_NESN_2016_NAME;

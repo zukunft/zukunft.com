@@ -141,7 +141,7 @@ function zut_is_name($id)
 function zut_is_id($id)
 {
     log_debug('zut_is_id(' . $id . ')');
-    $link_id = cl(DBL_LINK_TYPE_IS);
+    $link_id = clo(DBL_LINK_TYPE_IS);
     $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $id, 'verb_id', $link_id);
     return $result;
 }
@@ -150,7 +150,7 @@ function zut_is_id($id)
 function zut_next_id($wrd_id, $user_id)
 {
     log_debug('zut_next_id(' . $wrd_id . ',u' . $user_id . ')');
-    $link_id = cl(DBL_LINK_TYPE_FOLLOW);
+    $link_id = clo(DBL_LINK_TYPE_FOLLOW);
     $result = zu_sql_get_value_2key('word_links', 'from_phrase_id', 'to_phrase_id', $wrd_id, 'verb_id', $link_id);
     return $result;
 }
@@ -159,7 +159,7 @@ function zut_next_id($wrd_id, $user_id)
 function zut_prior_id($wrd_id, $user_id)
 {
     log_debug('zut_prior_id(' . $wrd_id . ',u' . $user_id . ')');
-    $link_id = cl(DBL_LINK_TYPE_FOLLOW);
+    $link_id = clo(DBL_LINK_TYPE_FOLLOW);
     $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $wrd_id, 'verb_id', $link_id);
     return $result;
 }
@@ -352,7 +352,7 @@ function zut_is_type($word_id, $type)
 
     $result = false;
     $word_type = zu_sql_get_value("words", "word_type_id", "word_id", $word_id);
-    if ($word_type == cl($type)) {
+    if ($word_type == clo($type)) {
         $result = true;
     }
     return $result;
@@ -371,7 +371,7 @@ function zut_time_lst($word_lst)
     log_debug('zut_time_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $time_type = cl(word_type_list::DBL_TIME);
+    $time_type = clo(word_type_list::DBL_TIME);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];
@@ -595,8 +595,8 @@ function zut_has_scaling($word_ids)
     // loop over the word ids and add only the time ids to the result array
     foreach ($word_ids as $word_id) {
         if ($result == false) {
-            if (zut_is_type($word_id, DBL_WORD_TYPE_SCALING, $debug - 1)
-                or zut_is_type($word_id, DBL_WORD_TYPE_SCALING_HIDDEN)) {
+            if (zut_is_type($word_id, word_type_list::DBL_SCALING, $debug - 1)
+                or zut_is_type($word_id, word_type_list::DBL_SCALING_HIDDEN)) {
                 $result = true;
             }
         }
@@ -611,8 +611,8 @@ function zut_scale_lst($word_lst)
     log_debug('zut_scale_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $scale_type = cl(DBL_WORD_TYPE_SCALING);
-    $scale_type_hidden = cl(DBL_WORD_TYPE_SCALING_HIDDEN);
+    $scale_type = clo(word_type_list::DBL_SCALING);
+    $scale_type_hidden = clo(word_type_list::DBL_SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];
@@ -630,8 +630,8 @@ function zut_scale_id($wrd_ids, $user_id)
     log_debug('zut_scale_id (' . implode(",", $wrd_ids) . ',u' . $user_id . ')');
 
     $result = -1;
-    $scale_type = cl(DBL_WORD_TYPE_SCALING);
-    $scale_type_hidden = cl(DBL_WORD_TYPE_SCALING_HIDDEN);
+    $scale_type = clo(word_type_list::DBL_SCALING);
+    $scale_type_hidden = clo(word_type_list::DBL_SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach ($wrd_ids as $word_id) {
         $word_type = zut_type($word_id, $user_id);
@@ -705,7 +705,7 @@ function zut_calc_usage()
           SELECT COUNT(value_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);";
-    $result = zu_sql_exe($sql, cl(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
+    $result = zu_sql_exe($sql, clo(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
 
     return $result;
 }

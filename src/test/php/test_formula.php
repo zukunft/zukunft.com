@@ -289,7 +289,7 @@ function run_formula_test()
     // check if the formula linked word has been created
     $wrd = load_word(TF_ADD);
     $result = $wrd->type_id;
-    $target = cl(DBL_WORD_TYPE_FORMULA_LINK);
+    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
     test_dsp('word->load of the word "' . $frm->name . '" has the formula type', $target, $result);
 
 
@@ -324,7 +324,7 @@ function run_formula_test()
     // check if the formula parameters can be added
     $frm_renamed->usr_text = '= "this"';
     $frm_renamed->description = TF_ADD_RENAMED . ' description';
-    $frm_renamed->type_id = cl(DBL_FORMULA_TYPE_THIS);
+    $frm_renamed->type_id = clo(DBL_FORMULA_TYPE_THIS);
     $frm_renamed->need_all_val = True;
     $result = $frm_renamed->save();
     $target = '1111111';
@@ -342,7 +342,7 @@ function run_formula_test()
     $target = TF_ADD_RENAMED . ' description';
     test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
-    $target = cl(DBL_FORMULA_TYPE_THIS);
+    $target = clo(DBL_FORMULA_TYPE_THIS);
     test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
@@ -387,7 +387,7 @@ function run_formula_test()
     $frm_usr2->load();
     $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
     $frm_usr2->description = TF_ADD_RENAMED . ' description2';
-    $frm_usr2->type_id = cl(DBL_FORMULA_TYPE_NEXT);
+    $frm_usr2->type_id = clo(DBL_FORMULA_TYPE_NEXT);
     $frm_usr2->need_all_val = False;
     $result = $frm_usr2->save();
     $target = '1111111111';
@@ -408,7 +408,7 @@ function run_formula_test()
     $target = TF_ADD_RENAMED . ' description2';
     test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
-    $target = cl(DBL_FORMULA_TYPE_NEXT);
+    $target = clo(DBL_FORMULA_TYPE_NEXT);
     test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = False;
@@ -426,7 +426,7 @@ function run_formula_test()
     $target = TF_ADD_RENAMED . ' description';
     test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->type_id;
-    $target = cl(DBL_FORMULA_TYPE_THIS);
+    $target = clo(DBL_FORMULA_TYPE_THIS);
     test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_reloaded->need_all_val;
     $target = True;
@@ -439,7 +439,7 @@ function run_formula_test()
     $frm_usr2->load();
     $frm_usr2->usr_text = '= "this"';
     $frm_usr2->description = TF_ADD_RENAMED . ' description';
-    $frm_usr2->type_id = cl(DBL_FORMULA_TYPE_THIS);
+    $frm_usr2->type_id = clo(DBL_FORMULA_TYPE_THIS);
     $frm_usr2->need_all_val = True;
     $result = $frm_usr2->save();
     $target = '111111111';
@@ -460,7 +460,7 @@ function run_formula_test()
     $target = TF_ADD_RENAMED . ' description';
     test_dsp('formula->load description for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->type_id;
-    $target = cl(DBL_FORMULA_TYPE_THIS);
+    $target = clo(DBL_FORMULA_TYPE_THIS);
     test_dsp('formula->load type_id for "' . TF_ADD_RENAMED . '"', $target, $result);
     $result = $frm_usr2_reloaded->need_all_val;
     $target = True;

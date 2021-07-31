@@ -651,7 +651,7 @@ class sql_db
                     $sql = str_replace("'", "", $sql);
                     $sql = str_replace("\"", "", $sql);
                     $msg_text .= " (" . $sql . ")";
-                    $msg_type_id = cl($log_level);
+                    $msg_type_id = clo($log_level);
                     $result = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $msg_type_id, $sql_name, $function_trace, $this->usr_id);
                     log_debug("sql_db->exe -> error (" . $result . ")");
                 }

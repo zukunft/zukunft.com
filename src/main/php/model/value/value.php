@@ -127,8 +127,8 @@ class value extends user_sandbox_display
                     $this->share_id = $db_row['share_type_id'];
                     $this->protection_id = $db_row['protection_type_id'];
                 } else {
-                    $this->share_id = cl(DBL_SHARE_PUBLIC);
-                    $this->protection_id = cl(DBL_PROTECT_NO);
+                    $this->share_id = clo(DBL_SHARE_PUBLIC);
+                    $this->protection_id = clo(DBL_PROTECT_NO);
                 }
             } else {
                 $this->id = 0;
@@ -901,13 +901,13 @@ class value extends user_sandbox_display
 
         // add the share type
         log_debug('value->export_obj get share');
-        if ($this->share_id > 0 and $this->share_id <> cl(DBL_SHARE_PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> clo(DBL_SHARE_PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
         log_debug('value->export_obj get protection');
-        if ($this->protection_id > 0 and $this->protection_id <> cl(DBL_PROTECT_NO)) {
+        if ($this->protection_id > 0 and $this->protection_id <> clo(DBL_PROTECT_NO)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -988,7 +988,7 @@ class value extends user_sandbox_display
                     $wrd->load();
                     if ($wrd->id == 0) {
                         $wrd->name = $value;
-                        $wrd->type_id = $word_types->id(word_type_list::DBL_TIME);
+                        $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
                         $wrd->save();
                     }
                     if ($wrd->id == 0) {
@@ -1008,11 +1008,11 @@ class value extends user_sandbox_display
             }
 
             if ($key == 'share') {
-                $this->share_id = cl($value);
+                $this->share_id = clo($value);
             }
 
             if ($key == 'protection') {
-                $this->protection_id = cl($value);
+                $this->protection_id = clo($value);
                 if ($value <> DBL_PROTECT_NO) {
                     $get_ownership = true;
                 }
@@ -2126,7 +2126,7 @@ class value extends user_sandbox_display
         log_debug('value->save_field_trigger_update group id "' . $this->grp_id . '" for user ' . $this->usr->name . '');
         if ($this->id > 0) {
             $job = new batch_job;
-            $job->type = cl(DBL_JOB_VALUE_UPDATE);
+            $job->type = clo(DBL_JOB_VALUE_UPDATE);
             //$job->usr  = $this->usr;
             $job->obj = $this;
             $job->add();

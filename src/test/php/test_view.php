@@ -148,7 +148,7 @@ function run_view_test()
 
     // check if the view parameters can be added
     $dsp_renamed->comment = 'Just added for testing the user sandbox';
-    $dsp_renamed->type_id = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
+    $dsp_renamed->type_id = clo(DBL_VIEW_TYPE_WORD_DEFAULT);
     $result = $dsp_renamed->save();
     $target = '11';
     test_dsp('view->save all view fields beside the name for "' . TM_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -162,7 +162,7 @@ function run_view_test()
     $target = 'Just added for testing the user sandbox';
     test_dsp('view->load comment for "' . TM_ADD_RENAMED . '"', $target, $result);
     $result = $dsp_reloaded->type_id;
-    $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
+    $target = clo(DBL_VIEW_TYPE_WORD_DEFAULT);
     test_dsp('view->load type_id for "' . TM_ADD_RENAMED . '"', $target, $result);
 
     // check if the view parameter adding have been logged
@@ -185,7 +185,7 @@ function run_view_test()
     $dsp_usr2->usr = $usr2;
     $dsp_usr2->load();
     $dsp_usr2->comment = 'Just changed for testing the user sandbox';
-    $dsp_usr2->type_id = cl(DBL_VIEW_TYPE_ENTRY);
+    $dsp_usr2->type_id = clo(DBL_VIEW_TYPE_ENTRY);
     $result = $dsp_usr2->save();
     $target = '11';
     test_dsp('view->save all view fields for user 2 beside the name for "' . TM_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -199,7 +199,7 @@ function run_view_test()
     $target = 'Just changed for testing the user sandbox';
     test_dsp('view->load comment for "' . TM_ADD_RENAMED . '"', $target, $result);
     $result = $dsp_usr2_reloaded->type_id;
-    $target = cl(DBL_VIEW_TYPE_ENTRY);
+    $target = clo(DBL_VIEW_TYPE_ENTRY);
     test_dsp('view->load type_id for "' . TM_ADD_RENAMED . '"', $target, $result);
 
     // check the view for the original user remains unchanged
@@ -211,7 +211,7 @@ function run_view_test()
     $target = 'Just added for testing the user sandbox';
     test_dsp('view->load comment for "' . TM_ADD_RENAMED . '"', $target, $result);
     $result = $dsp_reloaded->type_id;
-    $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
+    $target = clo(DBL_VIEW_TYPE_WORD_DEFAULT);
     test_dsp('view->load type_id for "' . TM_ADD_RENAMED . '"', $target, $result);
 
     // check if undo all specific changes removes the user view
@@ -220,7 +220,7 @@ function run_view_test()
     $dsp_usr2->usr = $usr2;
     $dsp_usr2->load();
     $dsp_usr2->comment = 'Just added for testing the user sandbox';
-    $dsp_usr2->type_id = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
+    $dsp_usr2->type_id = clo(DBL_VIEW_TYPE_WORD_DEFAULT);
     $result = $dsp_usr2->save();
     $target = '11';
     test_dsp('view->save undo the user view fields beside the name for "' . TM_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -234,7 +234,7 @@ function run_view_test()
     $target = 'Just added for testing the user sandbox';
     test_dsp('view->load comment for "' . TM_ADD_RENAMED . '"', $target, $result);
     $result = $dsp_usr2_reloaded->type_id;
-    $target = cl(DBL_VIEW_TYPE_WORD_DEFAULT);
+    $target = clo(DBL_VIEW_TYPE_WORD_DEFAULT);
     test_dsp('view->load type_id for "' . TM_ADD_RENAMED . '"', $target, $result);
 
     // redo the user specific view changes
