@@ -1109,11 +1109,13 @@ class word_list
     // filter the time words out of the list of words
     function time_lst(): phrase_list
     {
+        global $word_types;
+
         log_debug('word_list->time_lst for words "' . $this->dsp_id() . '"');
 
         $result = new phrase_list;
         $result->usr = $this->usr;
-        $time_type = cl(DBL_WORD_TYPE_TIME);
+        $time_type = $word_types->id(word_type_list::DBL_TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $time_type) {

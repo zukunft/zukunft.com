@@ -56,7 +56,7 @@ sql_code_link(DBL_VIEW_ADD,          "Add new view", $db_con);
 sql_code_link(DBL_VIEW_EDIT,         "view Edit", $db_con);
 sql_code_link(DBL_VIEW_IMPORT,       "Import", $db_con);
 
-sql_code_link(DBL_WORD_TYPE_TIME,    "Time Word", $db_con);
+sql_code_link(word_type_list::DBL_TIME,    "Time Word", $db_con);
 sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
 
 // create test records

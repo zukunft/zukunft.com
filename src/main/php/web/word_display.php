@@ -156,6 +156,7 @@ class word_dsp extends word
     {
         log_debug('word_dsp->dsp_selector -> for form ' . $form_name . '' . $pos);
         global $db_con;
+        global $word_type_list;
 
         $result = '';
 
@@ -184,7 +185,7 @@ class word_dsp extends word
                        FROM " . $sql_from . "   
                   LEFT JOIN user_words u ON u.word_id = w.word_id 
                                         AND u.user_id = " . $this->usr->id . " 
-                      WHERE w.word_type_id = " . cl(DBL_WORD_TYPE_TIME) . "
+                      WHERE w.word_type_id = " . $word_type_list->id(word_type_list::DBL_TIME) . "
                         " . $sql_where_and . "            
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    

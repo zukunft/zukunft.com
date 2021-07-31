@@ -144,7 +144,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
         } else {
           // if no word group is found, use the word type time if the word is a time word
           if (zut_is_time($wrd_ids[$pos])) {
-            $wrd_lst = zut_type_lst(cl(DBL_WORD_TYPE_TIME));
+            $wrd_lst = zut_type_lst(cl(word_type_list::DBL_TIME));
           }
         }
 

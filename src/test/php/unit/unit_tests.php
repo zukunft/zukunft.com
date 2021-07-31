@@ -28,12 +28,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+/**
+ * create word type array for the unit tests without database connection
+ */
+function unit_test_init_word_types()
+{
+    global $word_types;
+
+    $word_types = new word_type_list();
+    $word_types->load_dummy();
+
+}
+
 function run_unit_tests()
 {
     test_header('Start the zukunft.com unit tests');
 
     // prepare the unit tests
-    unit_text_init_word_types();
+    unit_test_init_word_types();
     unit_text_init_formula_types();
     unit_text_init_view_types();
     unit_text_init_view_component_types();

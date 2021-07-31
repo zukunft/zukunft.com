@@ -78,8 +78,9 @@ function run_word_unit_tests()
       "name": "second",
       "type": "measure",
       "plural": "seconds",
-      "plural": "seconds",
+      "description": "The second (symbol: s, abbreviation: sec) is the base unit of time in the International System of Units",
       "protection": "admin_protection",
+      "view": "measure",
       "refs": [
         {
           "name": "Second",
@@ -87,13 +88,20 @@ function run_word_unit_tests()
         }
       ]
     }';
+    $dsp_json = '{
+      "name": "second",
+      "type": "measure",
+      "plural": "seconds",
+      "description": "The second (symbol: s, abbreviation: sec) is the base unit of time in the International System of Units",
+      "view": "measure"
+    }';
     $json_import_array = json_decode($dsp_json, true);
     $wrd = new word_dsp;
     $wrd->import_obj($json_import_array, false);
     $json_export_string = json_encode($wrd->export_obj(false));
     $result = json_decode($dsp_json) == json_decode($json_export_string);
     $target = true;
-    //test_dsp('word->import check name', $target, $result);
+    test_dsp('word->import check name', $target, $result);
 
 
     test_subheader('Display tests');

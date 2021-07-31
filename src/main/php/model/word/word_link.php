@@ -450,6 +450,8 @@ class word_link extends word_link_object
     // import a view from an object
     function import_obj($json_obj)
     {
+        global $word_types;
+
         log_debug('word_link->import_obj');
         $result = '';
 
@@ -472,7 +474,7 @@ class word_link extends word_link_object
                     $wrd->load();
                     if ($wrd->id == 0) {
                         $wrd->name = $value;
-                        $wrd->type_id = cl(DBL_WORD_TYPE_NORMAL);
+                        $wrd->type_id = $word_types->default_id();
                         $wrd->save();
                     }
                     if ($wrd->id == 0) {
@@ -500,7 +502,7 @@ class word_link extends word_link_object
                     $wrd->load();
                     if ($wrd->id == 0) {
                         $wrd->name = $value;
-                        $wrd->type_id = cl(DBL_WORD_TYPE_NORMAL);
+                        $wrd->type_id = $word_types->default_id();
                         $wrd->save();
                     }
                     if ($wrd->id == 0) {

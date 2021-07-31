@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -29,50 +29,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // --------------------------------------
 // start testing the system functionality 
 // --------------------------------------
-  
-function run_word_ui_test () {
 
-  global $usr;
+function run_word_ui_test()
+{
 
-  test_header('Test the word frontend scripts (e.g. /word_add.php)');
+    global $usr;
+    global $word_types;
 
-  // call the add word page and check if at least some keywords are returned
-  $wrd_ABB = New word_dsp;
-  $wrd_ABB->name = TW_ABB;
-  $wrd_ABB->usr = $usr;
-  $wrd_ABB->load();
-  $vrb_is = cl(DBL_LINK_TYPE_IS);
-  $wrd_type = cl(DBL_WORD_TYPE_NORMAL);
-  $result = file_get_contents('https://zukunft.com/http/word_add.php?verb='.$vrb_is.'&word='.$wrd_ABB->id.'&type=1&back='.$wrd_ABB->id.'');
-  $target = TW_ABB;
-  test_dsp_contains(', frontend word_add.php '.$result.' contains at least '.$wrd_ABB->name, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    test_header('Test the word frontend scripts (e.g. /word_add.php)');
 
-  // test the edit word frontend
-  $result = file_get_contents('https://zukunft.com/http/word_edit.php?id='.$wrd_ABB->id.'&back='.$wrd_ABB->id.'');
-  $target = TW_ABB;
-  test_dsp_contains(', frontend word_edit.php '.$result.' contains at least '.$wrd_ABB->name, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    // call the add word page and check if at least some keywords are returned
+    $wrd_ABB = new word_dsp;
+    $wrd_ABB->name = TW_ABB;
+    $wrd_ABB->usr = $usr;
+    $wrd_ABB->load();
+    $vrb_is = cl(DBL_LINK_TYPE_IS);
+    $wrd_type = $word_types->default_id();
+    $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd_ABB->id . '&type=1&back=' . $wrd_ABB->id . '');
+    $target = TW_ABB;
+    test_dsp_contains(', frontend word_add.php ' . $result . ' contains at least ' . $wrd_ABB->name, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
-  // test the del word frontend
-  $result = file_get_contents('https://zukunft.com/http/word_del.php?id='.$wrd_ABB->id.'&back='.$wrd_ABB->id.'');
-  $target = TW_ABB;
-  test_dsp_contains(', frontend word_del.php '.$result.' contains at least '.$wrd_ABB->name, $target, $result, TIMEOUT_LIMIT_PAGE);
+    // test the edit word frontend
+    $result = file_get_contents('https://zukunft.com/http/word_edit.php?id=' . $wrd_ABB->id . '&back=' . $wrd_ABB->id . '');
+    $target = TW_ABB;
+    test_dsp_contains(', frontend word_edit.php ' . $result . ' contains at least ' . $wrd_ABB->name, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
-  test_header('Test the display list class (classes/display_list.php)');
+    // test the del word frontend
+    $result = file_get_contents('https://zukunft.com/http/word_del.php?id=' . $wrd_ABB->id . '&back=' . $wrd_ABB->id . '');
+    $target = TW_ABB;
+    test_dsp_contains(', frontend word_del.php ' . $result . ' contains at least ' . $wrd_ABB->name, $target, $result, TIMEOUT_LIMIT_PAGE);
 
-  // not yet used
-  /*
-  $phr_corp = load_phrase(TEST_WORD);
-  $phr_ABB  = load_phrase(TW_ABB,    );
-  $sel = New selector;
-  $sel->usr        = $usr;
-  $sel->form       = 'test_form';
-  $sel->name       = 'select_company';  
-  $sel->sql        = $phr_corp->sql_list ($phr_corp);
-  $sel->selected   = $phr_ABB->id;
-  $sel->dummy_text = '... please select';
-  $result .= $sel->display ();
-  $target = TW_ABB;
-  test_dsp_contains(', display_selector->display of all '.$phr_corp->name.' with '.$wrd_ABB->name.' selected', $target, $result);
-  */
-  
+    test_header('Test the display list class (classes/display_list.php)');
+
+    // not yet used
+    /*
+    $phr_corp = load_phrase(TEST_WORD);
+    $phr_ABB  = load_phrase(TW_ABB,    );
+    $sel = New selector;
+    $sel->usr        = $usr;
+    $sel->form       = 'test_form';
+    $sel->name       = 'select_company';
+    $sel->sql        = $phr_corp->sql_list ($phr_corp);
+    $sel->selected   = $phr_ABB->id;
+    $sel->dummy_text = '... please select';
+    $result .= $sel->display ();
+    $target = TW_ABB;
+    test_dsp_contains(', display_selector->display of all '.$phr_corp->name.' with '.$wrd_ABB->name.' selected', $target, $result);
+    */
+
 }

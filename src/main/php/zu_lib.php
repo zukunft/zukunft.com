@@ -141,9 +141,11 @@
   All objects needs to have the functions dsp_id and name. These two functions should never all any debug functionality, because they can be called from the debug functions
   
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
-  
+
+  TODO review types again and capsule
   TODO add unit testes for im- and export of all objects
   TODO add an im- and export code_id that is only unique for each type
+  TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
   TODO use the type hash tables for words, formulas, view and components
   TODO create all export objects and add all import export unit tests
   TODO complete the database abstraction layer
@@ -427,7 +429,8 @@ include_once $root_path . 'src/main/php/web/display_selector.php';
 include_once $root_path . 'src/main/php/web/display_list.php';
 include_once $root_path . 'src/main/php/model/helper/word_link_object.php';
 include_once $root_path . 'src/main/php/model/word/word.php';
-include_once $root_path . 'src/main/php/model/word/word_types.php';
+include_once $root_path . 'src/main/php/model/word/word_exp.php';
+include_once $root_path . 'src/main/php/model/word/word_type_list.php';
 include_once $root_path . 'src/main/php/web/word_display.php';
 include_once $root_path . 'src/main/php/model/word/word_list.php';
 include_once $root_path . 'src/main/php/model/word/word_link.php';
@@ -793,6 +796,8 @@ function prg_start($code_name, $style = ""): sql_db
     global $sys_log_msg_type_error_id;
     global $sys_log_msg_type_fatal_error_id;
 
+    global $word_types;
+
     // resume session (based on cookies)
     session_start();
 
@@ -830,7 +835,8 @@ function prg_start($code_name, $style = ""): sql_db
 
     // load the type database enum
     // these tables are expected to be so small that it is more efficient to load all database records once at start
-    init_word_types($db_con);
+    $word_types = new word_type_list();
+    $word_types->load($db_con);
     init_formula_types($db_con);
     init_view_types($db_con);
     init_view_component_types($db_con);

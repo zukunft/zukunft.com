@@ -361,7 +361,7 @@ function zut_is_type($word_id, $type)
 // return true if the word has the type "time"
 function zut_is_time($word_id)
 {
-    $result = zut_is_type($word_id, DBL_WORD_TYPE_TIME);
+    $result = zut_is_type($word_id, word_type_list::DBL_TIME);
     return $result;
 }
 
@@ -371,7 +371,7 @@ function zut_time_lst($word_lst)
     log_debug('zut_time_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $time_type = cl(DBL_WORD_TYPE_TIME);
+    $time_type = cl(word_type_list::DBL_TIME);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];

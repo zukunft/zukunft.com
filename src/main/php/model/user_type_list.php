@@ -33,14 +33,19 @@
 class user_type_list
 {
 
-    private array $type_hash = [];
+    // persevered word type name for unit and integration tests
+    const TEST_NAME = 'System Test Type Name';
+    const TEST_TYPE = 'System Test Type Code ID';
+
+    public array $type_list = [];
+    public array $type_hash = [];
 
     /**
      * force the types to reload the names and translations from the database
      */
     function load_types(string $db_type, sql_db $db_con): array
     {
-        $type_list = [];
+        $this->type_list = [];
         $db_con->set_type($db_type);
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         $sql = $db_con->select();
@@ -51,20 +56,80 @@ class user_type_list
                 $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
                 $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
                 $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
-                $type_list[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
+                $this->type_list[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
             }
         }
-        return $type_list;
+        return $this->type_list;
     }
 
     function get_hash(array $type_list): array
     {
-        $type_hash = [];
+        $this->type_hash = [];
         if ($type_list != null) {
             foreach ($type_list as $key => $type) {
-                $type_hash[$type->code_id] = $key;
+                $this->type_hash[$type->code_id] = $key;
             }
         }
-        return $type_hash;
+        return $this->type_hash;
+    }
+
+    /**
+     * reload the type list from the database e.g. because a translation has changed and fill the hash table
+     */
+    function load($db_con): bool
+    {
+        $result = false;
+        $this->type_list = $this->load_types(DB_TYPE_WORD_TYPE, $db_con);
+        $this->type_hash = $this->get_hash($this->type_list);
+        if (count($this->type_hash) > 0) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    function id(string $code_id): int
+    {
+        $result = 0;
+        if ($code_id != '' and $code_id != null) {
+            if (array_key_exists($code_id, $this->type_hash)) {
+                $result = $this->type_hash[$code_id];
+            } else {
+                log_err('Type id not found for ' . $code_id . ' in ' . dsp_array($this->type_hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+        return $result;
+    }
+
+    function code_id(int $id): string
+    {
+        $result = '';
+        if ($id > 0) {
+            if (array_key_exists($id, $this->type_list)) {
+                $type = $this->type_list[$id];
+                $result = $type->code_id;
+            } else {
+                log_err('Type code id not found for ' . $id . ' in ' . dsp_array($this->type_list));
+            }
+        } else {
+            log_debug('Type id not not set');
+        }
+        return $result;
+    }
+
+    /**
+     * create dummy type list for the unit tests without database connection
+     */
+    function load_dummy()
+    {
+        $this->type_list = array();
+        $this->type_hash = array();
+        $type = new user_type();
+        $type->name = user_type_list::TEST_NAME;
+        $type->code_id = user_type_list::TEST_TYPE;
+        $this->type_list[1] = $type;
+        $this->type_hash[user_type_list::TEST_TYPE] = 1;
+
     }
 }

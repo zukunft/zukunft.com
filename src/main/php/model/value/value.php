@@ -825,8 +825,8 @@ class value extends user_sandbox_display
                                             $r_wrd = $wrd_lst->lst[0];
 
                                             // test if it is a valid scale formula
-                                            if ($fv_wrd->is_type(DBL_WORD_TYPE_SCALING_HIDDEN)
-                                                and $r_wrd->is_type(DBL_WORD_TYPE_SCALING)) {
+                                            if ($fv_wrd->is_type(word_type_list::DBL_SCALING_HIDDEN)
+                                                and $r_wrd->is_type(word_type_list::DBL_SCALING)) {
                                                 $wrd_symbol = ZUP_CHAR_WORD_START . $r_wrd->id . ZUP_CHAR_WORD_END;
                                                 log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
@@ -924,6 +924,8 @@ class value extends user_sandbox_display
     // import a value from an external object
     function import_obj($json_obj)
     {
+        global $word_types;
+
         log_debug('value->import_obj');
         $result = '';
 
@@ -945,7 +947,7 @@ class value extends user_sandbox_display
                         $wrd->load();
                         if ($wrd->id == 0) {
                             $wrd->name = $phr_name;
-                            $wrd->type_id = cl(DBL_WORD_TYPE_NORMAL);
+                            $wrd->type_id = $word_types->default_id();
                             $wrd->save();
                         }
                         if ($wrd->id == 0) {
@@ -986,7 +988,7 @@ class value extends user_sandbox_display
                     $wrd->load();
                     if ($wrd->id == 0) {
                         $wrd->name = $value;
-                        $wrd->type_id = cl(DBL_WORD_TYPE_TIME);
+                        $wrd->type_id = $word_types->id(word_type_list::DBL_TIME);
                         $wrd->save();
                     }
                     if ($wrd->id == 0) {

@@ -443,22 +443,22 @@ INSERT INTO `view_types` (`view_type_id`, `type_name`, `description`, `code_id`)
 --
 
 INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`, `scaling_factor`, `word_symbol`) VALUES
-(1, 'standard', 'for words that have need no special behaviour', 'wrd_type_default', NULL, ''),
-(2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'wrd_type_time', NULL, ''),
-(3, 'measure type', 'a measure word such as meter, kilogram, ...', 'wrd_type_measure', NULL, ''),
-(4, 'time jump', 'these terms describes a change of a timestamp term', 'wrd_type_time_jump', NULL, ''),
+(1, 'standard', 'for words that have need no special behaviour', 'default', NULL, ''),
+(2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'time', NULL, ''),
+(3, 'measure type', 'a measure word such as meter, kilogram, ...', 'measure', NULL, ''),
+(4, 'time jump', 'these terms describes a change of a timestamp term', 'time_jump', NULL, ''),
 (5, 'calc', 'a calculated word in R; e.g. this year returns always a different term', NULL, NULL, ''),
-(6, 'format percent', 'terms that forces the result to be formatted in percent', 'wrd_type_percent', NULL, ''),
-(7, 'scaling', 'a scaling word such as millions, one, ...', 'wrd_type_scaling', NULL, ''),
-(8, 'hidden scaling', '"one" is needed as a scaling word for correct calculations, but it is not useful to display it', 'wrd_type_scaling_hidden', NULL, ''),
-(9, 'view / layer', 'word to separate the number layers and to change the view.\r\nE.g. -as reported- are exactly the numbers as they come from the external source\r\n-detailed- are the most granular splitting of the -as reported- numbers\r\n-projection- show the changes and includes the estimates to make a forecast\r\n', 'wrd_type_view', NULL, ''),
-(10, 'formula link', 'A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten', 'wrd_type_formula_link', NULL, ''),
-(11, 'differentiator filler', 'these terms are used to fill up a differentiator list, so most likely the erm linked will be named "other"', 'wrd_type_type_other', NULL, ''),
-(12, 'this', 'not sure, why this is needed', 'wrd_type_this', NULL, ''),
-(13, 'next', 'not sure, why this is needed', 'wrd_type_next', NULL, ''),
-(14, 'prior', 'not sure, why this is needed', 'wrd_type_previous', NULL, ''),
-(15, 'scaling word percent', 'all words that represent percent', 'wrd_type_scaling_percent', 100, '%'),
-(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'wrd_type_scaled_measure', 0, '');
+(6, 'format percent', 'terms that forces the result to be formatted in percent', 'percent', NULL, ''),
+(7, 'scaling', 'a scaling word such as millions, one, ...', 'scaling', NULL, ''),
+(8, 'hidden scaling', '"one" is needed as a scaling word for correct calculations, but it is not useful to display it', 'scaling_hidden', NULL, ''),
+(9, 'view / layer', 'word to separate the number layers and to change the view.\r\nE.g. -as reported- are exactly the numbers as they come from the external source\r\n-detailed- are the most granular splitting of the -as reported- numbers\r\n-projection- show the changes and includes the estimates to make a forecast\r\n', 'view', NULL, ''),
+(10, 'formula link', 'A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten', 'formula_link', NULL, ''),
+(11, 'differentiator filler', 'these terms are used to fill up a differentiator list, so most likely the erm linked will be named "other"', 'type_other', NULL, ''),
+(12, 'this', 'not sure, why this is needed', 'this', NULL, ''),
+(13, 'next', 'not sure, why this is needed', 'next', NULL, ''),
+(14, 'prior', 'not sure, why this is needed', 'previous', NULL, ''),
+(15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%'),
+(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, '');
 
 --
 -- Setting the initial IP blocking for testing

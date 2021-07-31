@@ -51,7 +51,7 @@ class word extends word_link_object
     public ?int $link_type_id = null; // used in the word list to know based on which relation the word was added to the list
 
     // only used for the export object
-    private ?string $view = null; // name of the default view for this word
+    private ?view $view = null; // name of the default view for this word
 
     /**
      * define the settings for this word object
@@ -80,7 +80,7 @@ class word extends word_link_object
         $this->dsp_lnk_id = null;
         $this->link_type_id = null;
 
-        $this->view = '';
+        $this->view = null;
     }
 
     function row_mapper($db_row, $map_usr_fields = false)
@@ -223,7 +223,7 @@ class word extends word_link_object
     /**
      * get the view object for this word
      */
-    function view(): view
+    function load_view(): view
     {
         log_debug('word->view for ' . $this->dsp_id());
         $result = null;
@@ -234,8 +234,10 @@ class word extends word_link_object
             $result = new view;
             $result->usr = $this->usr;
             $result->id = $this->view_id;
-            $result->load();
-            log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
+            if ($result->load()) {
+                $this->view = $result;
+                log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
+            }
         }
 
         log_debug('word->view done');
@@ -314,37 +316,6 @@ class word extends word_link_object
         return $frm;
     }
 
-    // create a word object for the export
-    function export_obj(): word
-    {
-        log_debug('word->export_obj');
-        $result = new word();
-
-        if ($this->name <> '') {
-            $result->name = $this->name;
-        }
-        if ($this->plural <> '') {
-            $result->plural = $this->plural;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if (isset($this->type_id)) {
-            if ($this->type_id <> cl(DBL_WORD_TYPE_NORMAL)) {
-                $result->obj_type = $this->type_code_id();
-            }
-        }
-        if ($this->view_id > 0) {
-            $wrd_view = $this->view();
-            if (isset($wrd_view)) {
-                $result->view = $wrd_view->name;
-            }
-        }
-
-        log_debug('word->export_obj -> ' . json_encode($result));
-        return $result;
-    }
-
     /**
      * import a word from a json data word object
      *
@@ -354,6 +325,8 @@ class word extends word_link_object
      */
     function import_obj(array $json_obj, bool $do_save = true): bool
     {
+        global $word_types;
+
         log_debug('word->import_obj');
         $result = false;
 
@@ -366,7 +339,7 @@ class word extends word_link_object
                 $this->name = $value;
             }
             if ($key == 'type') {
-                $this->type_id = cl($value);
+                $this->type_id = $word_types->id($value);
             }
             if ($key == 'plural') {
                 if ($value <> '') {
@@ -382,19 +355,22 @@ class word extends word_link_object
                 $wrd_view = new view;
                 $wrd_view->name = $value;
                 $wrd_view->usr = $this->usr;
-                $wrd_view->load();
-                if ($wrd_view->id == 0) {
-                    log_err('Cannot find view "' . $value . '" when importing ' . $this->dsp_id(), 'word->import_obj');
-                } else {
-                    $this->view_id = $wrd_view->id;
+                if ($do_save) {
+                    $wrd_view->load();
+                    if ($wrd_view->id == 0) {
+                        log_err('Cannot find view "' . $value . '" when importing ' . $this->dsp_id(), 'word->import_obj');
+                    } else {
+                        $this->view_id = $wrd_view->id;
+                    }
                 }
+                $this->view = $wrd_view;
             }
         }
 
         // save the word in the database
         // set the default type if no type is specified
         if ($this->type_id == 0) {
-            $this->type_id = cl(DBL_WORD_TYPE_NORMAL);
+            $this->type_id = $word_types->default_id();
         }
         if ($do_save) {
             $result = num2bool($this->save());
@@ -425,10 +401,45 @@ class word extends word_link_object
         return $result;
     }
 
+    /**
+     * create a word object for the export
+     */
+    function export_obj(): word_exp
+    {
+        global $word_types;
+
+        log_debug('word->export_obj');
+        $result = new word_exp();
+
+        if ($this->name <> '') {
+            $result->name = $this->name;
+        }
+        if ($this->plural <> '') {
+            $result->plural = $this->plural;
+        }
+        if ($this->description <> '') {
+            $result->description = $this->description;
+        }
+        if (isset($this->type_id)) {
+            if ($this->type_id <> $word_types->default_id()) {
+                $result->type = $this->type_code_id();
+            }
+        }
+        if ($this->view_id > 0) {
+            $this->view = $this->load_view();
+        }
+        if (isset($this->view)) {
+            $result->view = $this->view->name;
+        }
+
+
+        log_debug('word->export_obj -> ' . json_encode($result));
+        return $result;
+    }
+
+
     /*
-
     display functions
-
     */
 
     // return the name (just because all objects should have a name function)
@@ -475,8 +486,9 @@ class word extends word_link_object
     // e.g. if this word is "Company" to add another company
     function btn_add($back): string
     {
+        global $word_types;
         $vrb_is = cl(DBL_LINK_TYPE_IS);
-        $wrd_type = cl(DBL_WORD_TYPE_NORMAL); // maybe base it on the other linked words
+        $wrd_type = $word_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name;
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
         return btn_add($wrd_add_title, $wrd_add_call);
@@ -502,28 +514,19 @@ class word extends word_link_object
 
     function type_code_id()
     {
-
-        global $db_con;
-        $result = '';
-
-        if ($this->type_id > 0) {
-            $db_con->set_type(DB_TYPE_WORD_TYPE);
-            $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
-            $db_con->set_where($this->type_id);
-            $sql = $db_con->select();
-            $db_type = $db_con->get1($sql);
-            $result = $db_type[sql_db::FLD_CODE_ID];
-        }
-        return $result;
+        global $word_types;
+        return $word_types->code_id($this->type_id);
     }
 
     // return true if the word has the given type
     function is_type($type): bool
     {
+        global $word_types;
+
         log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')');
 
         $result = false;
-        if ($this->type_id == cl($type)) {
+        if ($this->type_id == $word_types->id($type)) {
             $result = true;
             log_debug('word->is_type (' . $this->dsp_id() . ' is ' . $type . ')');
         }
@@ -533,7 +536,7 @@ class word extends word_link_object
     // return true if the word has the type "time"
     function is_time(): bool
     {
-        return $this->is_type(DBL_WORD_TYPE_TIME);
+        return $this->is_type(word_type_list::DBL_TIME);
     }
 
     // return true if the word has the type "measure" (e.g. "meter" or "CHF")
@@ -541,15 +544,15 @@ class word extends word_link_object
     // in case of add, it is checked that the added value does not have a different measure
     function is_measure(): bool
     {
-        return $this->is_type(DBL_WORD_TYPE_MEASURE);
+        return $this->is_type(word_type_list::DBL_MEASURE);
     }
 
     // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(DBL_WORD_TYPE_SCALING)
-            or $this->is_type(DBL_WORD_TYPE_SCALING_HIDDEN)) {
+        if ($this->is_type(word_type_list::DBL_SCALING)
+            or $this->is_type(word_type_list::DBL_SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -558,7 +561,7 @@ class word extends word_link_object
     // return true if the word has the type "scaling_percent" (e.g. "percent")
     function is_percent(): bool
     {
-        return $this->is_type(DBL_WORD_TYPE_SCALING_PCT);
+        return $this->is_type(word_type_list::DBL_SCALING_PCT);
     }
 
     // just to fix a problem if a phrase list contains a word
@@ -764,6 +767,8 @@ class word extends word_link_object
     // true if the word has any none default settings such as a special type
     function has_cfg(): bool
     {
+        global $word_types;
+
         $has_cfg = false;
         if (isset($this->plural)) {
             if ($this->plural <> '') {
@@ -776,7 +781,7 @@ class word extends word_link_object
             }
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> cl(DBL_WORD_TYPE_NORMAL)) {
+            if ($this->type_id <> $word_types->default_id()) {
                 $has_cfg = true;
             }
         }

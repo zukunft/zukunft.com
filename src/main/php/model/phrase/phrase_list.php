@@ -915,10 +915,12 @@ class phrase_list
     // to be replaced by time_lst
     function time_lst_old()
     {
+        global $word_types;
+
         log_debug('phrase_list->time_lst_old(' . $this->dsp_id() . ')');
 
         $result = array();
-        $time_type = cl(DBL_WORD_TYPE_TIME);
+        $time_type = $word_types->id(word_type_list::DBL_TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
             if ($phr->type_id() == $time_type) {
