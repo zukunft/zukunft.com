@@ -36,7 +36,7 @@ class view_component_link_types extends user_type
 {
     // persevered view name for unit and integration tests
     const TEST_NAME = 'System Test View Component Link Type';
-    const TEST_TYPE = DBL_VIEW_COMP_TYPE_TEXT;
+    const TEST_TYPE = 'System Test View Component Link Type';
 }
 
 /**

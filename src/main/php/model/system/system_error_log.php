@@ -108,7 +108,7 @@ class system_error_log
         return $log;
     }
 
-    // actually update a error field in the main database record or the user sandbox
+    // actually update an error field in the main database record or the user sandbox
     private function save_field_do($db_con, $log): bool
     {
         $result = true;

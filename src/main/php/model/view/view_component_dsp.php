@@ -37,7 +37,7 @@ class view_component_dsp extends view_component
     function text(): string
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_TEXT)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_TEXT)) {
             log_debug('view_component_dsp->text (' . $this->dsp_id() . ')');
             $result .= " " . $this->name;
         }
@@ -48,7 +48,7 @@ class view_component_dsp extends view_component
     function word_name($wrd): string
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_WORD_NAME)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORD_NAME)) {
             if (!isset($wrd)) {
                 $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
             } else {
@@ -74,7 +74,7 @@ class view_component_dsp extends view_component
     function table($phr): string
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_VALUES_RELATED)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_VALUES_RELATED)) {
             log_debug('view_component_dsp->table of view component ' . $this->dsp_id() . ' for "' . $phr->name . '" with columns "' . $this->wrd_row->name . '" and user "' . $this->usr->name . '"');
             $val_lst = new value_list_dsp;
             $val_lst->phr = $phr;
@@ -89,7 +89,7 @@ class view_component_dsp extends view_component
     {
         $result = '';
 
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_WORD_VALUE)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORD_VALUE)) {
             log_debug('view_component_dsp->num_list in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
 
             // check the parameters
@@ -126,7 +126,7 @@ class view_component_dsp extends view_component
     function formulas($wrd, $back): string
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_FORMULAS)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_FORMULAS)) {
             log_debug('view_component_dsp->formulas in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= dsp_text_h2('Formulas');
 
@@ -153,7 +153,7 @@ class view_component_dsp extends view_component
     function formula_values($wrd, $back)
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_FORMULA_RESULTS)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_FORMULA_RESULTS)) {
             log_debug('view_component_dsp->formula_values in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= "<br><br>calculated values<br>";
             $frm_val_lst = new formula_value_list;
@@ -172,7 +172,7 @@ class view_component_dsp extends view_component
     {
         $result = '';
 
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_WORDS_DOWN)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORDS_DOWN)) {
             log_debug('view_component_dsp->word_children in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= $wrd->dsp_graph("down");
         }
@@ -184,7 +184,7 @@ class view_component_dsp extends view_component
     function word_parents($wrd)
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_WORDS_DOWN)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORDS_DOWN)) {
             log_debug('view_component_dsp->word_parents in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= $wrd->dsp_graph("up",);
         }
@@ -195,7 +195,7 @@ class view_component_dsp extends view_component
     function json_export($wrd, $back)
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_JSON_EXPORT)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_JSON_EXPORT)) {
             log_debug('view_component_dsp->json_export in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $result .= $wrd->config_json_export($back);
@@ -208,7 +208,7 @@ class view_component_dsp extends view_component
     function xml_export($wrd, $back)
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_XML_EXPORT)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_XML_EXPORT)) {
             log_debug('view_component_dsp->xml_export in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $result .= $wrd->config_xml_export($back);
@@ -221,7 +221,7 @@ class view_component_dsp extends view_component
     function csv_export($wrd, $back)
     {
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_CSV_EXPORT)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_CSV_EXPORT)) {
             log_debug('view_component_dsp->csv_export in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $result .= $wrd->config_csv_export($back);
@@ -235,7 +235,7 @@ class view_component_dsp extends view_component
     {
         log_debug('view_component_dsp->all for word ' . $phr->name);
         $result = '';
-        if ($this->type_id == clo(DBL_VIEW_COMP_TYPE_VALUES_ALL)) {
+        if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_VALUES_ALL)) {
             log_debug('view_component_dsp->all in view ' . $this->dsp_id() . ' for word ' . $phr->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
             $phrases_down = $phr->dsp_graph("down");

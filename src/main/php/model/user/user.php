@@ -143,7 +143,7 @@ class user
         return $this->load();
     }
 
-    private function ip_in_range($ip_addr, $min, $max)
+    private function ip_in_range($ip_addr, $min, $max): bool
     {
         $result = false;
         if (ip2long(trim($min)) <= ip2long(trim($ip_addr)) && ip2long(trim($ip_addr)) <= ip2long(trim($max))) {

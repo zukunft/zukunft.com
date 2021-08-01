@@ -101,24 +101,6 @@ const DBL_VIEW_COMPONENT_ADD = "dsp_view_entry_add";
 const DBL_VIEW_COMPONENT_EDIT = "dsp_view_entry_edit";
 const DBL_VIEW_COMPONENT_DEL = "dsp_view_entry_del";
 
-// views component types
-const DBL_VIEW_COMP_TYPE_TEXT = "dsp_comp_type_text";
-const DBL_VIEW_COMP_TYPE_WORD = "dsp_comp_type_fixed";
-const DBL_VIEW_COMP_TYPE_WORD_SELECT = "dsp_comp_type_word_select";
-const DBL_VIEW_COMP_TYPE_WORDS_UP = "dsp_comp_type_word_list_up";
-const DBL_VIEW_COMP_TYPE_WORDS_DOWN = "dsp_comp_type_word_list_down";
-const DBL_VIEW_COMP_TYPE_WORD_NAME = "dsp_comp_type_word_name";
-const DBL_VIEW_COMP_TYPE_WORD_VALUE = "dsp_comp_type_word_value_list"; // a list of
-const DBL_VIEW_COMP_TYPE_VALUES_ALL = "dsp_comp_type_values_all";
-const DBL_VIEW_COMP_TYPE_VALUES_RELATED = "dsp_comp_type_values_related";
-const DBL_VIEW_COMP_TYPE_FORMULAS = "dsp_comp_type_formula_list";
-const DBL_VIEW_COMP_TYPE_FORMULA_RESULTS = "dsp_comp_type_formula_results";
-const DBL_VIEW_COMP_TYPE_JSON_EXPORT = "dsp_comp_type_json_export";
-const DBL_VIEW_COMP_TYPE_XML_EXPORT = "dsp_comp_type_xml_export";
-const DBL_VIEW_COMP_TYPE_CSV_EXPORT = "dsp_comp_type_csv_export";
-const DBL_VIEW_COMP_TYPE_VIEW_SELECT = "dsp_comp_type_view_select";
-const DBL_VIEW_COMP_TYPE_LINK = "dsp_comp_type_link";
-
 const DBL_FORMULA_PART_TYPE_WORD = "frm_elm_word";
 const DBL_FORMULA_PART_TYPE_VERB = "frm_elm_verb";
 const DBL_FORMULA_PART_TYPE_FORMULA = "frm_elm_formula";
@@ -310,21 +292,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_VIEW_EDIT
         or $code_id == DBL_VIEW_DEL) {
         $db_type = DB_TYPE_VIEW;
-    }
-    if ($code_id == DBL_VIEW_COMP_TYPE_TEXT
-        or $code_id == DBL_VIEW_COMP_TYPE_WORD
-        or $code_id == DBL_VIEW_COMP_TYPE_WORDS_UP
-        or $code_id == DBL_VIEW_COMP_TYPE_WORDS_DOWN
-        or $code_id == DBL_VIEW_COMP_TYPE_WORD_NAME
-        or $code_id == DBL_VIEW_COMP_TYPE_WORD_VALUE
-        or $code_id == DBL_VIEW_COMP_TYPE_VALUES_ALL
-        or $code_id == DBL_VIEW_COMP_TYPE_VALUES_RELATED
-        or $code_id == DBL_VIEW_COMP_TYPE_FORMULAS
-        or $code_id == DBL_VIEW_COMP_TYPE_FORMULA_RESULTS
-        or $code_id == DBL_VIEW_COMP_TYPE_JSON_EXPORT
-        or $code_id == DBL_VIEW_COMP_TYPE_XML_EXPORT
-        or $code_id == DBL_VIEW_COMP_TYPE_CSV_EXPORT) {
-        $db_type = DB_TYPE_VIEW_COMPONENT_TYPE;
     }
 
     if ($code_id == DBL_SHARE_PUBLIC

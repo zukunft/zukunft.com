@@ -279,7 +279,7 @@ class view extends user_sandbox
 
         if ($this->type_id > 0) {
             $sql = "SELECT type_name, description, code_id
-                FROM view_typelist
+                FROM view_types
                WHERE view_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
