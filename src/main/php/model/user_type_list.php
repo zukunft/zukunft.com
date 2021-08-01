@@ -33,7 +33,7 @@
 class user_type_list
 {
 
-    // persevered word type name for unit and integration tests
+    // persevered type name and code id for unit and integration tests
     const TEST_NAME = 'System Test Type Name';
     const TEST_TYPE = 'System Test Type Code ID';
 
@@ -74,12 +74,15 @@ class user_type_list
     }
 
     /**
-     * reload the type list from the database e.g. because a translation has changed and fill the hash table
+     * reload a type list from the database e.g. because a translation has changed and fill the hash table
+     * @param string $db_type the database table type name to select either word, formula, view, ...
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @return bool true if load was successful
      */
-    function load($db_con): bool
+    function load_by_db(string $db_type, sql_db $db_con): bool
     {
         $result = false;
-        $this->type_list = $this->load_types(DB_TYPE_WORD_TYPE, $db_con);
+        $this->type_list = $this->load_types($db_type, $db_con);
         $this->type_hash = $this->get_hash($this->type_list);
         if (count($this->type_hash) > 0) {
             $result = true;

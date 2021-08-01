@@ -218,7 +218,7 @@ function run_view_unit_tests()
     $dsp_json = '{
       "name": "car cost agreement",
       "comment": "view the cost agreement of car usage",
-      "type": "dsp_type_default",
+      "type": "default",
       "view_components": [
         {
           "position": 1,

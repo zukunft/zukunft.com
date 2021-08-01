@@ -2,7 +2,7 @@
 
 /*
 
-  word_types.php - to link coded functionality to a word or a word link, which means to every phrase
+  formula_types.php - to link coded functionality to a formula
   -----------------
   
   This file is part of zukunft.com - calc with words
@@ -29,27 +29,16 @@
   
 */
 
-global $word_types;
+global $formula_types;
 
-class word_type_list extends user_type_list
+class formula_type_list extends user_type_list
 {
-    // list of the word types that have a coded functionality
-    const DBL_NORMAL = "default";
-    const DBL_TIME = "time";
-    const DBL_TIME_JUMP = "time_jump";
-    const DBL_PERCENT = "percent";
-    const DBL_MEASURE = "measure";
-    const DBL_SCALING = "scaling";
-    const DBL_SCALING_HIDDEN = "scaling_hidden";
-    const DBL_SCALING_PCT = "scaling_percent";
-    const DBL_SCALED_MEASURE = "scaled_measure";
-    const DBL_FORMULA_LINK = "formula_link";
-    const DBL_CALC = "calc";
-    const DBL_LAYER = "view";
-    const DBL_OTHER = "type_other";
-    const DBL_NEXT = "next";
-    const DBL_THIS = "this";
-    const DBL_PREV = "previous";
+    // list of the formula types that have a coded functionality
+    const DBL_CALC= "default";
+    const DBL_NEXT = "time_next";
+    const DBL_THIS = "time_this";
+    const DBL_PREV = "time_prior";
+    const DBL_CONST = "const";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -58,31 +47,26 @@ class word_type_list extends user_type_list
      */
     function load(sql_db $db_con): bool
     {
-        return parent::load_by_db(DB_TYPE_WORD_TYPE, $db_con);
+        return parent::load_by_db(DB_TYPE_FORMULA_TYPE, $db_con);
     }
 
     /**
-     * adding the word types used for unit tests to the dummy list
+     * adding the formula types used for unit tests to the dummy list
      */
     function load_dummy() {
         parent::load_dummy();
         $type = new user_type();
-        $type->name = word_type_list::DBL_NORMAL;
-        $type->code_id = word_type_list::DBL_NORMAL;
+        $type->name = formula_type_list::DBL_CALC;
+        $type->code_id = formula_type_list::DBL_CALC;
         $this->type_list[2] = $type;
-        $this->type_hash[word_type_list::DBL_NORMAL] = 2;
-        $type = new user_type();
-        $type->name = word_type_list::DBL_MEASURE;
-        $type->code_id = word_type_list::DBL_MEASURE;
-        $this->type_list[3] = $type;
-        $this->type_hash[word_type_list::DBL_MEASURE] = 3;
+        $this->type_hash[formula_type_list::DBL_CALC] = 2;
     }
 
     /**
      * return the database id of the default word type
      */
     function default_id(): int {
-        return parent::id(word_type_list::DBL_NORMAL);
+        return parent::id(formula_type_list::DBL_CALC);
     }
 
 }

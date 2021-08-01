@@ -54,7 +54,7 @@
 */
 
 const LOG_LEVEL = "log_warning"; // starting from this criticality level messages are written to the log for debugging
-const MSG_LEVEL = "error";       // in case of a error or fatal error
+const MSG_LEVEL = "error";       // in case of an error or fatal error
 // additional the message a link to the system log shown
 // so that the user can track when the error is solved
 
@@ -100,14 +100,8 @@ const DBL_VIEW_DEL = "dsp_view_del";
 const DBL_VIEW_COMPONENT_ADD = "dsp_view_entry_add";
 const DBL_VIEW_COMPONENT_EDIT = "dsp_view_entry_edit";
 const DBL_VIEW_COMPONENT_DEL = "dsp_view_entry_del";
-// views types; using view type instead of a single view, because there maybe several default views for words
-const DBL_VIEW_TYPE_DEFAULT = "dsp_type_default";
-const DBL_VIEW_TYPE_ENTRY = "dsp_type_entry";
-const DBL_VIEW_TYPE_MASK_DEFAULT = "dsp_type_mask_default";
-const DBL_VIEW_TYPE_PRESENT = "dsp_type_presentation";
-const DBL_VIEW_TYPE_WORD_DEFAULT = "dsp_type_word_default";
 
-// views component types                  
+// views component types
 const DBL_VIEW_COMP_TYPE_TEXT = "dsp_comp_type_text";
 const DBL_VIEW_COMP_TYPE_WORD = "dsp_comp_type_fixed";
 const DBL_VIEW_COMP_TYPE_WORD_SELECT = "dsp_comp_type_word_select";
@@ -124,12 +118,6 @@ const DBL_VIEW_COMP_TYPE_XML_EXPORT = "dsp_comp_type_xml_export";
 const DBL_VIEW_COMP_TYPE_CSV_EXPORT = "dsp_comp_type_csv_export";
 const DBL_VIEW_COMP_TYPE_VIEW_SELECT = "dsp_comp_type_view_select";
 const DBL_VIEW_COMP_TYPE_LINK = "dsp_comp_type_link";
-
-const DBL_FORMULA_TYPE_CALC= "frm_type_default";
-const DBL_FORMULA_TYPE_NEXT = "frm_type_time_next";
-const DBL_FORMULA_TYPE_THIS = "frm_type_time_this";
-const DBL_FORMULA_TYPE_PREV = "frm_type_time_prior";
-const DBL_FORMULA_TYPE_CONST = "frm_type_const";
 
 const DBL_FORMULA_PART_TYPE_WORD = "frm_elm_word";
 const DBL_FORMULA_PART_TYPE_VERB = "frm_elm_verb";
@@ -224,7 +212,7 @@ const DBL_TRIPLE_LINK_IS_GROUP = 3;
 // e.g. the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
 const DBL_FLD_FORMULA_ALL_NEEDED = "all_values_needed";
 const DBL_FLD_FORMULA_TYPE = "frm_type";
-// e.g. the formula field "ref_txt" is more a internal field, which should not be shown to the user (only to an admin for debugging)
+// e.g. the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
 const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
 
 
@@ -323,13 +311,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_VIEW_DEL) {
         $db_type = DB_TYPE_VIEW;
     }
-    if ($code_id == DBL_VIEW_TYPE_DEFAULT
-        or $code_id == DBL_VIEW_TYPE_ENTRY
-        or $code_id == DBL_VIEW_TYPE_MASK_DEFAULT
-        or $code_id == DBL_VIEW_TYPE_PRESENT
-        or $code_id == DBL_VIEW_TYPE_WORD_DEFAULT) {
-        $db_type = DB_TYPE_VIEW_TYPE;
-    }
     if ($code_id == DBL_VIEW_COMP_TYPE_TEXT
         or $code_id == DBL_VIEW_COMP_TYPE_WORD
         or $code_id == DBL_VIEW_COMP_TYPE_WORDS_UP
@@ -365,11 +346,6 @@ function sql_code_link($code_id, $description, $db_con)
         $db_type = DB_TYPE_REF_TYPE;
     }
 
-    if ($code_id == DBL_FORMULA_TYPE_NEXT
-        or $code_id == DBL_FORMULA_TYPE_THIS
-        or $code_id == DBL_FORMULA_TYPE_PREV) {
-        $db_type = DB_TYPE_FORMULA_TYPE;
-    }
     if ($code_id == DBL_FORMULA_PART_TYPE_WORD
         or $code_id == DBL_FORMULA_PART_TYPE_VERB
         or $code_id == DBL_FORMULA_PART_TYPE_FORMULA) {

@@ -1262,7 +1262,7 @@ CREATE TABLE IF NOT EXISTS view_link_types
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_types
+-- Table structure for table view_typelist
 --
 
 CREATE TABLE IF NOT EXISTS view_types

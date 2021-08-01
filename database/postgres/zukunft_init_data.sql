@@ -178,11 +178,11 @@ INSERT INTO formula_link_types (formula_link_type_id, type_name, code_id, formul
 --
 
 INSERT INTO formula_types (formula_type_id, name, description, code_id) VALUES
-(1, 'calc', 'a normal calculation formula', 'frm_type_default'),
-(2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'frm_type_time_next'),
-(3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'frm_type_time_prior'),
-(4, 'this', 'selects the assumed time term', 'frm_type_time_this'),
-(5, 'const', 'used to define a const value that is not supposed to be changed like pi', 'frm_type_const');
+(1, 'calc', 'a normal calculation formula', 'default'),
+(2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'),
+(3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'),
+(4, 'this', 'selects the assumed time term', 'time_this'),
+(5, 'const', 'used to define a const value that is not supposed to be changed like pi', 'const');
 
 --
 -- Dumping data for table 'languages'
@@ -391,22 +391,22 @@ INSERT INTO view_component_position_types (view_component_position_type_id, type
 --
 
 INSERT INTO view_component_types (view_component_type_id, type_name, description, code_id) VALUES
-    (1, 'word selector', '', 'dsp_comp_type_word_select'),
-    (2, 'view selector', 'to select an existing mask e.g. to set the default view', 'dsp_comp_type_view_select'),
-    (3, 'text', 'simply to display a variable text', 'dsp_comp_type_text'),
-    (4, 'fixed word', 'just display a word as a text', 'dsp_comp_type_fixed'),
-    (5, 'linked word', 'display a word and offer a link', 'dsp_comp_type_link'),
-    (6, 'formula results', 'show the results of a formula', 'dsp_comp_type_formula_results'),
-    (7, 'word list up', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'dsp_comp_type_word_list_up'),
-    (8, 'word name', 'show the word name and give the user the possibility to change the word name', 'dsp_comp_type_word_name'),
-    (9, 'word list down', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'dsp_comp_type_word_list_down'),
-    (10, 'all relations', 'show the complete list of all relations', 'dsp_comp_type_values_all'),
-    (11, 'values related to', 'display all values that are related to a defined term', 'dsp_comp_type_values_related'),
-    (12, 'formulas', 'show all related formulas', 'dsp_comp_type_formula_list'),
-    (13, 'word value list', 'A list of words with some key values e.g. a company list with the PE ratio', 'dsp_comp_type_word_value_list'),
-    (14, 'XML export', 'offer to configure and start the XML export of a phrase and all related words, numbers and formulas', 'dsp_comp_type_xml_export'),
-    (15, 'CSV export', 'to define the main phrase, the column and row for the CSV export', 'dsp_comp_type_csv_export'),
-    (16, 'JSON Export', 'To start or configure the JSON export', 'dsp_comp_type_json_export');
+    (1, 'word selector', '', 'word_select'),
+    (2, 'view selector', 'to select an existing mask e.g. to set the default view', 'view_select'),
+    (3, 'text', 'simply to display a variable text', 'text'),
+    (4, 'fixed word', 'just display a word as a text', 'fixed'),
+    (5, 'linked word', 'display a word and offer a link', 'link'),
+    (6, 'formula results', 'show the results of a formula', 'formula_results'),
+    (7, 'word list up', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'word_list_up'),
+    (8, 'word name', 'show the word name and give the user the possibility to change the word name', 'word_name'),
+    (9, 'word list down', 'Show a list of words related with a specified word link type; e.g. For company list all ABB and others, because they are linked with is a', 'word_list_down'),
+    (10, 'all relations', 'show the complete list of all relations', 'values_all'),
+    (11, 'values related to', 'display all values that are related to a defined term', 'values_related'),
+    (12, 'formulas', 'show all related formulas', 'formula_list'),
+    (13, 'word value list', 'A list of words with some key values e.g. a company list with the PE ratio', 'word_value_list'),
+    (14, 'XML export', 'offer to configure and start the XML export of a phrase and all related words, numbers and formulas', 'xml_export'),
+    (15, 'CSV export', 'to define the main phrase, the column and row for the CSV export', 'csv_export'),
+    (16, 'JSON Export', 'To start or configure the JSON export', 'json_export');
 
 --
 -- Dumping data for table 'view_link_types'
@@ -420,11 +420,11 @@ INSERT INTO view_link_types (view_link_type_id, type_name, comment) VALUES
 --
 
 INSERT INTO view_types (view_type_id, type_name, description, code_id) VALUES
-    (1, 'standard', 'the base display mask without additional functionalities', 'dsp_type_default'),
-    (2, 'entry view', 'these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'dsp_type_entry'),
-    (3, 'edit', 'a edit mask that is used to change data', 'dsp_type_mask_default'),
-    (4, 'presentation', 'with auto forward', 'dsp_type_presentation'),
-    (5, 'word default', 'a default mask for new words', 'dsp_type_word_default');
+    (1, 'standard', 'the base display mask without additional functionalities', 'default'),
+    (2, 'entry view', 'these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'entry'),
+    (3, 'edit', 'a edit mask that is used to change data', 'mask_default'),
+    (4, 'presentation', 'with auto forward', 'presentation'),
+    (5, 'word default', 'a default mask for new words', 'word_default');
 
 --
 -- Dumping data for table 'word_types'

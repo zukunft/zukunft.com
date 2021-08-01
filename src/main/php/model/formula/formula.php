@@ -263,13 +263,13 @@ class formula extends user_sandbox
 
         if ($this->type_id > 0) {
             log_debug("formula->special_result -> type (" . $this->type_cl . ")");
-            if ($this->type_cl == DBL_FORMULA_TYPE_THIS) {
+            if ($this->type_cl == formula_type_list::DBL_THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
                 log_debug("formula->special_result -> this (" . $time_phr->name . ")");
                 $val = $val_phr_lst->value_scaled();
             }
-            if ($this->type_cl == DBL_FORMULA_TYPE_NEXT) {
+            if ($this->type_cl == formula_type_list::DBL_NEXT) {
                 $val_phr_lst = clone $phr_lst;
                 $next_wrd = $time_phr->next();
                 if ($next_wrd->id > 0) {
@@ -278,7 +278,7 @@ class formula extends user_sandbox
                     $val = $val_phr_lst->value_scaled();
                 }
             }
-            if ($this->type_cl == DBL_FORMULA_TYPE_PREV) {
+            if ($this->type_cl == formula_type_list::DBL_PREV) {
                 $val_phr_lst = clone $phr_lst;
                 $prior_wrd = $time_phr->prior();
                 if ($prior_wrd->id > 0) {
@@ -304,15 +304,15 @@ class formula extends user_sandbox
             if ($time_phr->id <= 0) {
                 log_err('No time defined for ' . $time_phr->dsp_id() . '.', 'formula->special_time_phr');
             } else {
-                if ($this->type_cl == DBL_FORMULA_TYPE_THIS) {
+                if ($this->type_cl == formula_type_list::DBL_THIS) {
                     $result = $time_phr;
                 }
-                if ($this->type_cl == DBL_FORMULA_TYPE_NEXT) {
+                if ($this->type_cl == formula_type_list::DBL_NEXT) {
                     $this_wrd = $time_phr->main_word();
                     $next_wrd = $this_wrd->next();
                     $result = $next_wrd->phrase();
                 }
-                if ($this->type_cl == DBL_FORMULA_TYPE_PREV) {
+                if ($this->type_cl == formula_type_list::DBL_PREV) {
                     $this_wrd = $time_phr->main_word();
                     $prior_wrd = $this_wrd->prior();
                     $result = $prior_wrd->phrase();

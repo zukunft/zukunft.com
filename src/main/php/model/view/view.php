@@ -279,7 +279,7 @@ class view extends user_sandbox
 
         if ($this->type_id > 0) {
             $sql = "SELECT type_name, description, code_id
-                FROM view_types
+                FROM view_typelist
                WHERE view_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
@@ -296,18 +296,7 @@ class view extends user_sandbox
     private function type_code_id(): string
     {
         global $view_types;
-
-        $result = '';
-
-        if ($this->type_id > 0) {
-            if (array_key_exists($this->type_id, $view_types)) {
-                $dsp_type = $view_types[$this->type_id];
-                $result = $dsp_type->code_id;
-            } else {
-                log_err('view type with id ' . $this->type_id . ' not found');
-            }
-        }
-        return $result;
+        return $view_types->code_id($this->type_id);
     }
 
     /**
@@ -317,16 +306,8 @@ class view extends user_sandbox
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $view_types_hash;
-
-        $id = 0;
-        if (array_key_exists($code_id, $view_types_hash)) {
-            $id = $view_types_hash[$code_id];
-        } else {
-            log_err('view type with code id ' . $code_id . ' not found');
-        }
-
-        return $id;
+        global $view_types;
+        return $view_types->id($code_id);
     }
 
     /**

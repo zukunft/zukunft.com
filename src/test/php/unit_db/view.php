@@ -31,34 +31,33 @@ function run_view_unit_db_tests()
 
     global $db_con;
 
-    global $view_types_hash;
-    global $view_component_types_hash;
-
     test_header('Unit database tests of the view class (src/main/php/model/value/view.php)');
 
     test_subheader('View types tests');
 
     // load the view types
-    $result = init_view_types($db_con);
+    $lst = new view_type_list();
+    $result = $lst->load($db_con);
     $target = true;
     test_dsp('unit_db_view->init_view_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = $view_types_hash[view_types::TEST_TYPE];
+    $result = cl(db_cl::VIEW_TYPE, view_type_list::DBL_DEFAULT);
     $target = 1;
-    test_dsp('unit_db_view->check ' . view_types::TEST_TYPE, $result, $target);
+    test_dsp('unit_db_view->check ' . view_type_list::DBL_DEFAULT, $result, $target);
 
     test_subheader('View component types tests');
 
     // load the view component types
-    $result = init_view_component_types($db_con);
+    $cmp_lst = new view_component_type_list();
+    $result = $cmp_lst->load($db_con);
     $target = true;
     test_dsp('unit_db_view->init_view_component_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = $view_component_types_hash[view_component_types::TEST_TYPE];
+    $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_TEXT);
     $target = 3;
-    test_dsp('unit_db_view->check ' . view_component_types::TEST_TYPE, $result, $target);
+    test_dsp('unit_db_view->check ' . view_component_type_list::DBL_TEXT, $result, $target);
 
 }
 

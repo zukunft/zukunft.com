@@ -40,15 +40,54 @@ function unit_test_init_word_types()
 
 }
 
+/**
+ * create formula type array for the unit tests without database connection
+ */
+function unit_test_init_formula_types()
+{
+    global $formula_types;
+
+    $formula_types = new formula_type_list();
+    $formula_types->load_dummy();
+
+}
+
+/**
+ * create view type array for the unit tests without database connection
+ */
+function unit_test_init_view_types()
+{
+    global $view_types;
+
+    $view_types = new view_type_list();
+    $view_types->load_dummy();
+
+}
+
+/**
+ * create view component type array for the unit tests without database connection
+ */
+function unit_test_init_view_component_types()
+{
+    global $view_component_types;
+
+    $view_component_types = new view_component_type_list();
+    $view_component_types->load_dummy();
+
+}
+
+/**
+ * run all unit test in a useful order
+ */
 function run_unit_tests()
 {
     test_header('Start the zukunft.com unit tests');
 
     // prepare the unit tests
     unit_test_init_word_types();
-    unit_text_init_formula_types();
-    unit_text_init_view_types();
-    unit_text_init_view_component_types();
+    unit_test_init_formula_types();
+    unit_test_init_view_types();
+    unit_test_init_view_component_types();
     unit_text_init_view_component_link_types();
 
     // do the unit tests

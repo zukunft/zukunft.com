@@ -451,7 +451,7 @@ include_once $root_path . 'src/main/php/model/ref/ref.php';
 include_once $root_path . 'src/main/php/model/ref/ref_type.php';
 include_once $root_path . 'src/main/php/model/formula/expression.php';
 include_once $root_path . 'src/main/php/model/formula/formula.php';
-include_once $root_path . 'src/main/php/model/formula/formula_types.php';
+include_once $root_path . 'src/main/php/model/formula/formula_type_list.php';
 include_once $root_path . 'src/main/php/model/formula/formula_list.php';
 include_once $root_path . 'src/main/php/model/formula/formula_link.php';
 include_once $root_path . 'src/main/php/model/formula/formula_link_list.php';
@@ -467,12 +467,12 @@ include_once $root_path . 'src/main/php/model/system/batch_job.php';
 include_once $root_path . 'src/main/php/model/system/batch_job_list.php';
 include_once $root_path . 'src/main/php/model/view/view.php';
 include_once $root_path . 'src/main/php/model/view/view_exp.php';
-include_once $root_path . 'src/main/php/model/view/view_types.php';
+include_once $root_path . 'src/main/php/model/view/view_type_list.php';
 include_once $root_path . 'src/main/php/web/view_display.php';
 include_once $root_path . 'src/main/php/model/view/view_component.php';
 include_once $root_path . 'src/main/php/model/view/view_component_exp.php';
 include_once $root_path . 'src/main/php/model/view/view_component_dsp.php';
-include_once $root_path . 'src/main/php/model/view/view_component_types.php';
+include_once $root_path . 'src/main/php/model/view/view_component_type_list.php';
 include_once $root_path . 'src/main/php/model/view/view_component_link.php';
 include_once $root_path . 'src/main/php/model/view/view_component_link_types.php';
 
@@ -798,6 +798,9 @@ function prg_start($code_name, $style = ""): sql_db
     global $sys_log_msg_type_fatal_error_id;
 
     global $word_types;
+    global $formula_types;
+    global $view_types;
+    global $view_component_types;
 
     // resume session (based on cookies)
     session_start();
@@ -838,9 +841,12 @@ function prg_start($code_name, $style = ""): sql_db
     // these tables are expected to be so small that it is more efficient to load all database records once at start
     $word_types = new word_type_list();
     $word_types->load($db_con);
-    init_formula_types($db_con);
-    init_view_types($db_con);
-    init_view_component_types($db_con);
+    $formula_types = new formula_type_list();
+    $formula_types->load($db_con);
+    $view_types = new view_type_list();
+    $view_types->load($db_con);
+    $view_component_types = new view_component_type_list();
+    $view_component_types->load($db_con);
     // not yet needed?
     //init_view_component_link_types($db_con);
 

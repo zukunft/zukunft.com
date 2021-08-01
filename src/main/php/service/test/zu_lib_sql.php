@@ -1442,7 +1442,7 @@ function zu_sql_views_user()
 function zu_sql_view_types()
 {
     $query = "SELECT view_type_id, type_name "
-        . "  FROM view_types;";
+        . "  FROM view_typelist;";
     return $query;
 }
 

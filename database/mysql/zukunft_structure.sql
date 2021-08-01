@@ -2245,7 +2245,7 @@ CREATE TABLE IF NOT EXISTS ` view_link_types `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `view_types`
+-- Table structure for table `view_typelist`
 --
 
 CREATE TABLE IF NOT EXISTS ` view_types `
@@ -2929,7 +2929,7 @@ ALTER TABLE ` view_link_types `
     ADD PRIMARY KEY (` view_link_type_id `);
 
 --
--- Indexes for table `view_types`
+-- Indexes for table `view_typelist`
 --
 ALTER TABLE ` view_types `
     ADD PRIMARY KEY (` view_type_id `);
@@ -3249,7 +3249,7 @@ ALTER TABLE ` view_component_types `
 ALTER TABLE ` view_link_types `
     MODIFY ` view_link_type_id ` int (11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `view_types`
+-- AUTO_INCREMENT for table `view_typelist`
 --
 ALTER TABLE ` view_types `
     MODIFY ` view_type_id ` int (11) NOT NULL AUTO_INCREMENT;

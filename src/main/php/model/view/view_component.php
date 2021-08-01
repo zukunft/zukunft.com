@@ -273,16 +273,8 @@ class view_component extends user_sandbox
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $view_component_types_hash;
-
-        $id = 0;
-        if (array_key_exists($code_id, $view_component_types_hash)) {
-            $id = $view_component_types_hash[$code_id];
-        } else {
-            log_err('view component type with code id ' . $code_id . ' not found');
-        }
-
-        return $id;
+        global $view_component_types;
+        return $view_component_types->id($code_id);
     }
 
     // list of all view ids that are directly assigned to this view component

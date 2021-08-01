@@ -82,6 +82,7 @@ function db_upgrade_0_0_3($db_con)
     $sql = 'ALTER TABLE public.formula_types RENAME name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
+    // TODO check and change view component type code ids
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';

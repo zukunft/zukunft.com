@@ -31,11 +31,30 @@
 
 class db_cl
 {
+    // list of all user types that are used
     const WORD_TYPE = "word_type";
+    const FORMULA_TYPE = "formula_type";
+    const VIEW_TYPE = "view_type";
+    const VIEW_COMPONENT_TYPE = "view_component_type";
 
     function word_type_id(string $code_id) {
         global $word_types;
         return $word_types->id($code_id);
+    }
+
+    function formula_type_id(string $code_id) {
+        global $formula_types;
+        return $formula_types->id($code_id);
+    }
+
+    function view_type_id(string $code_id) {
+        global $view_types;
+        return $view_types->id($code_id);
+    }
+
+    function view_component_type_id(string $code_id) {
+        global $view_component_types;
+        return $view_component_types->id($code_id);
     }
 
 }
@@ -56,6 +75,15 @@ function cl(string $type, string $code_id): int
     switch ($type) {
         case db_cl::WORD_TYPE:
             $result = $db_code_link->word_type_id($code_id);
+            break;
+        case db_cl::FORMULA_TYPE:
+            $result = $db_code_link->formula_type_id($code_id);
+            break;
+        case db_cl::VIEW_TYPE:
+            $result = $db_code_link->view_type_id($code_id);
+            break;
+        case db_cl::VIEW_COMPONENT_TYPE:
+            $result = $db_code_link->view_component_type_id($code_id);
             break;
     }
     return $result;

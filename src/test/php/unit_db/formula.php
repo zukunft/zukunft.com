@@ -31,21 +31,20 @@ function run_formula_unit_db_tests()
 
     global $db_con;
 
-    global $formula_types_hash;
-
     test_header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
 
     test_subheader('formula types tests');
 
     // load the formula types
-    $result = init_formula_types($db_con);
+    $lst = new formula_type_list();
+    $result = $lst->load($db_con);
     $target = true;
     test_dsp('unit_db_formula->init_view_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = $formula_types_hash[formula_types::TEST_TYPE];
+    $result = cl(db_cl::FORMULA_TYPE, formula_type_list::DBL_CALC);
     $target = 1;
-    test_dsp('unit_db_formula->check ' . formula_types::TEST_TYPE, $result, $target);
+    test_dsp('unit_db_formula->check ' . formula_type_list::DBL_CALC, $result, $target);
 
 }
 
