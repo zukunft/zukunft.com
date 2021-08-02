@@ -29,6 +29,7 @@
   
 */
 
+// TODO switch to one array format
 $view_component_link_types = [];
 $view_component_link_types_hash = [];
 

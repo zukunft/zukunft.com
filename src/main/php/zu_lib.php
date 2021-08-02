@@ -359,6 +359,8 @@ const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
 const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
 
+const DB_TYPE_PROTECTION = 'protection_type';
+
 const DB_TYPE_USER_PREFIX = 'user_';
 
 const DB_FIELD_EXT_ID = '_id';
@@ -378,7 +380,7 @@ global $sys_script;      // name php script that has been call this library
 global $sys_trace;       // names of the php functions
 global $sys_time_start;  // to measure the execution time
 global $sys_time_limit;  // to write too long execution times to the log to improve the code
-global $sys_log_msg_lst; // to avoid to repeat the same message
+global $sys_log_msg_lst; // to avoid repeating the same message
 
 // for the system log types a dynamic ENUM is used, which means that the database id is read once at system start, because it is expected to change only on an upgrade
 global $sys_log_msg_type_info_id;
@@ -399,96 +401,103 @@ if ($root_path == '') {
     $root_path = '../';
 }
 
+// set the paths of the program code
+$path_php = $root_path . 'src/main/php/'; // path of the main php source code
+
 // database links
 include_once $root_path . 'database/sql_db.php';
-include_once $root_path . 'src/main/php/db/db_check.php';
+include_once $path_php . 'db/db_check.php';
 // service
-include_once $root_path . 'src/main/php/service/import/import_file.php';
-include_once $root_path . 'src/main/php/service/import/import.php';
-include_once $root_path . 'src/main/php/service/export/export.php';
-include_once $root_path . 'src/main/php/service/export/json.php';
-include_once $root_path . 'src/main/php/service/export/xml.php';
+include_once $path_php . 'service/import/import_file.php';
+include_once $path_php . 'service/import/import.php';
+include_once $path_php . 'service/export/export.php';
+include_once $path_php . 'service/export/json.php';
+include_once $path_php . 'service/export/xml.php';
 // classes
-include_once $root_path . 'src/main/php/model/user/user.php';
-include_once $root_path . 'src/main/php/web/user_display.php';
-include_once $root_path . 'src/main/php/model/user/user_list.php';
-include_once $root_path . 'src/main/php/model/user/user_log.php';
-include_once $root_path . 'src/main/php/model/user/user_log_link.php';
-include_once $root_path . 'src/main/php/web/user_log_display.php';
-include_once $root_path . 'src/main/php/model/user_sandbox.php';
-include_once $root_path . 'src/main/php/model/user_sandbox_exp_named.php';
-include_once $root_path . 'src/main/php/model/user_type.php';
-include_once $root_path . 'src/main/php/model/user_type_list.php';
-include_once $root_path . 'src/main/php/web/user_sandbox_display.php';
-include_once $root_path . 'src/main/php/model/system/system_error_log.php';
-include_once $root_path . 'src/main/php/model/system/system_error_log_list.php';
-include_once $root_path . 'src/main/php/web/display_interface.php';
-include_once $root_path . 'src/main/php/web/display_html.php';
-include_once $root_path . 'src/main/php/web/display_button.php';
-include_once $root_path . 'src/main/php/web/display_selector.php';
-include_once $root_path . 'src/main/php/web/display_list.php';
-include_once $root_path . 'src/main/php/model/helper/word_link_object.php';
-include_once $root_path . 'src/main/php/model/word/word.php';
-include_once $root_path . 'src/main/php/model/word/word_exp.php';
-include_once $root_path . 'src/main/php/model/word/word_type_list.php';
-include_once $root_path . 'src/main/php/web/word_display.php';
-include_once $root_path . 'src/main/php/model/word/word_list.php';
-include_once $root_path . 'src/main/php/model/word/word_link.php';
-include_once $root_path . 'src/main/php/model/word/word_link_list.php';
-include_once $root_path . 'src/main/php/model/phrase/phrase.php';
-include_once $root_path . 'src/main/php/model/phrase/phrase_list.php';
-include_once $root_path . 'src/main/php/model/phrase/phrase_group.php';
-include_once $root_path . 'src/main/php/model/phrase/phrase_group_list.php';
-include_once $root_path . 'src/main/php/model/verb/verb.php';
-include_once $root_path . 'src/main/php/model/verb/verb_list.php';
-include_once $root_path . 'src/main/php/model/phrase/term.php';
-include_once $root_path . 'src/main/php/model/value/value.php';
-include_once $root_path . 'src/main/php/model/value/value_list.php';
-include_once $root_path . 'src/main/php/web/value_list_display.php';
-include_once $root_path . 'src/main/php/model/value/value_phrase_link.php';
-include_once $root_path . 'src/main/php/model/ref/source.php';
-include_once $root_path . 'src/main/php/model/ref/ref.php';
-include_once $root_path . 'src/main/php/model/ref/ref_type.php';
-include_once $root_path . 'src/main/php/model/formula/expression.php';
-include_once $root_path . 'src/main/php/model/formula/formula.php';
-include_once $root_path . 'src/main/php/model/formula/formula_type_list.php';
-include_once $root_path . 'src/main/php/model/formula/formula_list.php';
-include_once $root_path . 'src/main/php/model/formula/formula_link.php';
-include_once $root_path . 'src/main/php/model/formula/formula_link_list.php';
-include_once $root_path . 'src/main/php/model/formula/formula_value.php';
-include_once $root_path . 'src/main/php/model/formula/formula_value_list.php';
-include_once $root_path . 'src/main/php/model/formula/formula_element.php';
-include_once $root_path . 'src/main/php/model/formula/formula_element_list.php';
-include_once $root_path . 'src/main/php/model/formula/formula_element_group.php';
-include_once $root_path . 'src/main/php/model/formula/formula_element_group_list.php';
-include_once $root_path . 'src/main/php/model/formula/figure.php';
-include_once $root_path . 'src/main/php/model/formula/figure_list.php';
-include_once $root_path . 'src/main/php/model/system/batch_job.php';
-include_once $root_path . 'src/main/php/model/system/batch_job_list.php';
-include_once $root_path . 'src/main/php/model/view/view.php';
-include_once $root_path . 'src/main/php/model/view/view_exp.php';
-include_once $root_path . 'src/main/php/model/view/view_type_list.php';
-include_once $root_path . 'src/main/php/web/view_display.php';
-include_once $root_path . 'src/main/php/model/view/view_component.php';
-include_once $root_path . 'src/main/php/model/view/view_component_exp.php';
-include_once $root_path . 'src/main/php/model/view/view_component_dsp.php';
-include_once $root_path . 'src/main/php/model/view/view_component_type_list.php';
-include_once $root_path . 'src/main/php/model/view/view_component_link.php';
-include_once $root_path . 'src/main/php/model/view/view_component_link_types.php';
+include_once $path_php . 'model/user/user.php';
+include_once $path_php . 'model/user/user_type.php';
+include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/user/user_list.php';
+include_once $path_php . 'model/user/user_log.php';
+include_once $path_php . 'model/user/user_log_link.php';
+include_once $path_php . 'web/user_display.php';
+include_once $path_php . 'web/user_log_display.php';
+include_once $path_php . 'model/sandbox/protection_type_list.php';
+include_once $path_php . 'model/sandbox/user_sandbox.php';
+include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
+include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
+include_once $path_php . 'web/user_sandbox_display.php';
+include_once $path_php . 'model/system/system_error_log.php';
+include_once $path_php . 'model/system/system_error_log_list.php';
+include_once $path_php . 'web/display_interface.php';
+include_once $path_php . 'web/display_html.php';
+include_once $path_php . 'web/display_button.php';
+include_once $path_php . 'web/display_selector.php';
+include_once $path_php . 'web/display_list.php';
+include_once $path_php . 'model/helper/word_link_object.php';
+include_once $path_php . 'model/word/word.php';
+include_once $path_php . 'model/word/word_exp.php';
+include_once $path_php . 'model/word/word_type_list.php';
+include_once $path_php . 'web/word_display.php';
+include_once $path_php . 'model/word/word_list.php';
+include_once $path_php . 'model/word/word_link.php';
+include_once $path_php . 'model/word/word_link_list.php';
+include_once $path_php . 'model/phrase/phrase.php';
+include_once $path_php . 'model/phrase/phrase_list.php';
+include_once $path_php . 'model/phrase/phrase_group.php';
+include_once $path_php . 'model/phrase/phrase_group_list.php';
+include_once $path_php . 'model/verb/verb.php';
+include_once $path_php . 'model/verb/verb_list.php';
+include_once $path_php . 'model/phrase/term.php';
+include_once $path_php . 'model/value/value.php';
+include_once $path_php . 'model/value/value_list.php';
+include_once $path_php . 'web/value_list_display.php';
+include_once $path_php . 'model/value/value_phrase_link.php';
+include_once $path_php . 'model/ref/source.php';
+include_once $path_php . 'model/ref/ref.php';
+include_once $path_php . 'model/ref/ref_exp.php';
+include_once $path_php . 'model/ref/ref_type.php';
+include_once $path_php . 'model/ref/ref_type_list.php';
+include_once $path_php . 'model/formula/expression.php';
+include_once $path_php . 'model/formula/formula.php';
+include_once $path_php . 'model/formula/formula_type_list.php';
+include_once $path_php . 'model/formula/formula_list.php';
+include_once $path_php . 'model/formula/formula_link.php';
+include_once $path_php . 'model/formula/formula_link_list.php';
+include_once $path_php . 'model/formula/formula_value.php';
+include_once $path_php . 'model/formula/formula_value_list.php';
+include_once $path_php . 'model/formula/formula_element.php';
+include_once $path_php . 'model/formula/formula_element_list.php';
+include_once $path_php . 'model/formula/formula_element_group.php';
+include_once $path_php . 'model/formula/formula_element_group_list.php';
+include_once $path_php . 'model/formula/figure.php';
+include_once $path_php . 'model/formula/figure_list.php';
+include_once $path_php . 'model/system/batch_job.php';
+include_once $path_php . 'model/system/batch_job_list.php';
+include_once $path_php . 'model/view/view.php';
+include_once $path_php . 'model/view/view_exp.php';
+include_once $path_php . 'model/view/view_type_list.php';
+include_once $path_php . 'web/view_display.php';
+include_once $path_php . 'model/view/view_component.php';
+include_once $path_php . 'model/view/view_component_exp.php';
+include_once $path_php . 'model/view/view_component_dsp.php';
+include_once $path_php . 'model/view/view_component_type_list.php';
+include_once $path_php . 'model/view/view_component_link.php';
+include_once $path_php . 'model/view/view_component_link_types.php';
 
 // include all other libraries that are usually needed
 include_once $root_path . 'db_link/zu_lib_sql_link.php';
-include_once $root_path . 'src/main/php/service/db_code_link.php';
-include_once $root_path . 'src/main/php/service/zu_lib_sql_code_link.php';
-include_once $root_path . 'src/main/php/service/config.php';
+include_once $path_php . 'service/db_code_link.php';
+include_once $path_php . 'service/zu_lib_sql_code_link.php';
+include_once $path_php . 'service/config.php';
 
 // used at the moment, but to be replaced with R-Project call
-include_once $root_path . 'src/main/php/service/zu_lib_calc_math.php';
+include_once $path_php . 'service/zu_lib_calc_math.php';
 
 // potentially to be loaded by composer
-//include_once $root_path . 'src/main/php/utils/json-diff/JsonDiff.php';
-//include_once $root_path . 'src/main/php/utils/json-diff/JsonPatch.php';
-//include_once $root_path . 'src/main/php/utils/json-diff/JsonPointer.php';
+//include_once $path_php . 'utils/json-diff/JsonDiff.php';
+//include_once $path_php . 'utils/json-diff/JsonPatch.php';
+//include_once $path_php . 'utils/json-diff/JsonPointer.php';
 
 // libraries that may be useful in the future
 /*
@@ -801,6 +810,8 @@ function prg_start($code_name, $style = ""): sql_db
     global $formula_types;
     global $view_types;
     global $view_component_types;
+    global $ref_types;
+    global $protection_types;
 
     // resume session (based on cookies)
     session_start();
@@ -849,6 +860,10 @@ function prg_start($code_name, $style = ""): sql_db
     $view_component_types->load($db_con);
     // not yet needed?
     //init_view_component_link_types($db_con);
+    $ref_types = new ref_type_list();
+    $ref_types->load($db_con);
+    $protection_types = new protection_type_list();
+    $protection_types->load($db_con);
 
     return $db_con;
 }

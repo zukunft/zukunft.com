@@ -39,7 +39,7 @@ function run_view_unit_db_tests()
     $lst = new view_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_view->init_view_types', $target, $result);
+    test_dsp('unit_db_view->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW_TYPE, view_type_list::DBL_DEFAULT);
@@ -52,12 +52,12 @@ function run_view_unit_db_tests()
     $cmp_lst = new view_component_type_list();
     $result = $cmp_lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_view->init_view_component_types', $target, $result);
+    test_dsp('unit_db_view_component->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_TEXT);
     $target = 3;
-    test_dsp('unit_db_view->check ' . view_component_type_list::DBL_TEXT, $result, $target);
+    test_dsp('unit_db_view_component->check ' . view_component_type_list::DBL_TEXT, $result, $target);
 
 }
 

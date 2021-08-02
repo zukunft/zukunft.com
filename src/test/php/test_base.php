@@ -47,6 +47,7 @@ if ($root_path == '') {
 // set the paths of the program code
 $path_unit = $root_path . 'src/test/php/unit/'; // path of the code for the unit tests
 $path_unit_db = $root_path . 'src/test/php/unit_db/'; // path of the code for the unit tests with database real only
+$path_test = $root_path . 'src/test/php/'; // path of the code for the general tests and test setup
 
 include_once $root_path . 'src/main/php/service/config.php';
 
@@ -60,52 +61,55 @@ include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'view.php';
+include_once $path_unit . 'ref.php';
 
 // load the unit testing modules with database real only
 include_once $path_unit_db . 'unit_db_tests.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'view.php';
+include_once $path_unit_db . 'ref.php';
+include_once $path_unit_db . 'protection.php';
 
 // load the testing functions
-include_once $root_path . 'src/test/php/test_system.php';
-include_once $root_path . 'src/test/php/test_db_link.php';
-include_once $root_path . 'src/test/php/test_math.php';
-include_once $root_path . 'src/test/php/test_user_sandbox.php';
-include_once $root_path . 'src/test/php/test_user.php';
-include_once $root_path . 'src/test/php/test_word.php';
-include_once $root_path . 'src/test/php/test_word_ui.php';
-include_once $root_path . 'src/test/php/test_word_display.php';
-include_once $root_path . 'src/test/php/test_word_list.php';
-include_once $root_path . 'src/test/php/test_word_link.php';
-include_once $root_path . 'src/test/php/phrase_test.php';
-include_once $root_path . 'src/test/php/phrase_list_test.php';
-include_once $root_path . 'src/test/php/phrase_group_test.php';
-include_once $root_path . 'src/test/php/phrase_group_list_test.php';
-include_once $root_path . 'src/test/php/ref_test.php';
-include_once $root_path . 'src/test/php/test_graph.php';
-include_once $root_path . 'src/test/php/test_verb.php';
-include_once $root_path . 'src/test/php/test_term.php';
-include_once $root_path . 'src/test/php/value_test.php';
-include_once $root_path . 'src/test/php/value_test_ui.php';
-include_once $root_path . 'src/test/php/test_source.php';
-include_once $root_path . 'src/test/php/test_expression.php';
-include_once $root_path . 'src/test/php/test_formula.php';
-include_once $root_path . 'src/test/php/test_formula_ui.php';
-include_once $root_path . 'src/test/php/test_formula_link.php';
-include_once $root_path . 'src/test/php/test_formula_trigger.php';
-include_once $root_path . 'src/test/php/test_formula_value.php';
-include_once $root_path . 'src/test/php/test_formula_element.php';
-include_once $root_path . 'src/test/php/test_formula_element_group.php';
-include_once $root_path . 'src/test/php/test_batch.php';
-include_once $root_path . 'src/test/php/test_view.php';
-include_once $root_path . 'src/test/php/test_view_component.php';
-include_once $root_path . 'src/test/php/test_view_component_link.php';
-include_once $root_path . 'src/test/php/test_display.php';
-include_once $root_path . 'src/test/php/test_import.php';
-include_once $root_path . 'src/test/php/test_export.php';
-include_once $root_path . 'src/test/php/test_legacy.php';
-include_once $root_path . 'src/test/php/test_cleanup.php';
+include_once $path_test . 'test_system.php';
+include_once $path_test . 'test_db_link.php';
+include_once $path_test . 'test_math.php';
+include_once $path_test . 'test_user_sandbox.php';
+include_once $path_test . 'test_user.php';
+include_once $path_test . 'test_word.php';
+include_once $path_test . 'test_word_ui.php';
+include_once $path_test . 'test_word_display.php';
+include_once $path_test . 'test_word_list.php';
+include_once $path_test . 'test_word_link.php';
+include_once $path_test . 'phrase_test.php';
+include_once $path_test . 'phrase_list_test.php';
+include_once $path_test . 'phrase_group_test.php';
+include_once $path_test . 'phrase_group_list_test.php';
+include_once $path_test . 'ref_test.php';
+include_once $path_test . 'test_graph.php';
+include_once $path_test . 'test_verb.php';
+include_once $path_test . 'test_term.php';
+include_once $path_test . 'value_test.php';
+include_once $path_test . 'value_test_ui.php';
+include_once $path_test . 'test_source.php';
+include_once $path_test . 'test_expression.php';
+include_once $path_test . 'test_formula.php';
+include_once $path_test . 'test_formula_ui.php';
+include_once $path_test . 'test_formula_link.php';
+include_once $path_test . 'test_formula_trigger.php';
+include_once $path_test . 'test_formula_value.php';
+include_once $path_test . 'test_formula_element.php';
+include_once $path_test . 'test_formula_element_group.php';
+include_once $path_test . 'test_batch.php';
+include_once $path_test . 'test_view.php';
+include_once $path_test . 'test_view_component.php';
+include_once $path_test . 'test_view_component_link.php';
+include_once $path_test . 'test_display.php';
+include_once $path_test . 'test_import.php';
+include_once $path_test . 'test_export.php';
+include_once $path_test . 'test_legacy.php';
+include_once $path_test . 'test_cleanup.php';
 
 // libraries that can be dismissed, but still used to compare the result with the result of the legacy function
 include_once $root_path . 'src/main/php/service/test/zu_lib_word_dsp.php';

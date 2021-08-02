@@ -34,7 +34,7 @@ function run_ref_test () {
 
   // load by phrase and type
   $wrd_abb = load_word(TW_ABB);
-  $ref_type = get_ref_type_by_name(TRT_WIKIDATA);
+  $ref_type = get_ref_type(TRT_WIKIDATA);
   $ref = New ref;
   $ref->usr         = $usr;
   $ref->phr_id      = $wrd_abb->id;

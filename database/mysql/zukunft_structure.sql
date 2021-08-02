@@ -782,7 +782,7 @@ CREATE TABLE IF NOT EXISTS ` ref_types `
 (
     11
 ) NOT NULL,
-    ` ref_type_name ` varchar
+    ` type_name ` varchar
 (
     200
 ) NOT NULL,

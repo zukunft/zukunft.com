@@ -81,6 +81,10 @@ function db_upgrade_0_0_3($db_con)
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     $sql = 'ALTER TABLE public.formula_types RENAME name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE public.ref_types RENAME ref_type_name TO type_name;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE public.protection_types RENAME protection_type_name TO type_name;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
     // TODO check and change view component type code ids
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);

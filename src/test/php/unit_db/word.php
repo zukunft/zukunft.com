@@ -39,7 +39,7 @@ function run_word_unit_db_tests()
     $lst = new word_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_word->init_view_types', $target, $result);
+    test_dsp('unit_db_word->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::WORD_TYPE, word_type_list::DBL_NORMAL);

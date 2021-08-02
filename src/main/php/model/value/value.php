@@ -128,7 +128,7 @@ class value extends user_sandbox_display
                     $this->protection_id = $db_row['protection_type_id'];
                 } else {
                     $this->share_id = clo(DBL_SHARE_PUBLIC);
-                    $this->protection_id = clo(DBL_PROTECT_NO);
+                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
                 }
             } else {
                 $this->id = 0;
@@ -389,6 +389,7 @@ class value extends user_sandbox_display
     function load_objects(): bool
     {
         $this->load_phrases();
+        return true;
     }
 
     // load the phrase objects for this value if needed
@@ -907,7 +908,7 @@ class value extends user_sandbox_display
 
         // add the protection type
         log_debug('value->export_obj get protection');
-        if ($this->protection_id > 0 and $this->protection_id <> clo(DBL_PROTECT_NO)) {
+        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1013,7 +1014,7 @@ class value extends user_sandbox_display
 
             if ($key == 'protection') {
                 $this->protection_id = clo($value);
-                if ($value <> DBL_PROTECT_NO) {
+                if ($value <> protection_type_list::DBL_NO) {
                     $get_ownership = true;
                 }
             }

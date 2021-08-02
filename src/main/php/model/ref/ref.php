@@ -117,8 +117,8 @@ class ref
         }
         if (!isset($this->ref_type)) {
             if ($this->ref_type_id > 0) {
-                $this->ref_type = get_ref_type($this->ref_type_id);
-                log_debug('ref->load_objects -> ref_type ' . $this->ref_type->dsp_id() . ' loaded');
+                $this->ref_type = get_ref_type_by_id($this->ref_type_id);
+                log_debug('ref->load_objects -> ref_type ' . $this->ref_type->name . ' loaded');
             }
         }
 
@@ -126,7 +126,7 @@ class ref
         return $result;
     }
 
-    // import a link to external database from a imported object
+    // import a link to external database from an imported object
     function import_obj($json_obj, bool $do_save = true): bool
     {
         $result = false;
@@ -137,11 +137,12 @@ class ref
                 $this->external_key = $value;
             }
             if ($key == 'type') {
-                $this->ref_type = get_ref_type_by_name($value);
+                $this->ref_type = get_ref_type($value);
+
                 if (!isset($this->ref_type)) {
                     log_err('Reference type for ' . $value . ' not found', 'ref->import_obj');
                 } else {
-                    $this->ref_type_id = $this->ref_type->id;
+                    $this->ref_type_id = get_ref_type_id($value);
                 }
                 log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type_id . ')');
             }
@@ -159,13 +160,31 @@ class ref
         return $result;
     }
 
+    /**
+     * create a reference object for export (so excluding e.g. the database id)
+     * @return ref_exp a reduced reference object for the JSON message creation
+     */
+    function export_obj(): ref_exp
+    {
+        $result = new ref_exp();
+
+        if ($this->external_key <> '') {
+            $result->name = $this->external_key;
+        }
+        if ($this->ref_type <> '') {
+            $result->type = $this->ref_type->code_id;
+        }
+
+        return $result;
+    }
+
     /*
-
     display functions
-
     */
 
-    // display the unique id fields
+    /**
+     * display the unique id fields
+     */
     function dsp_id(): string
     {
         $result = $this->name();

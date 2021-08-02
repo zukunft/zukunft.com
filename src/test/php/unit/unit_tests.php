@@ -77,6 +77,30 @@ function unit_test_init_view_component_types()
 }
 
 /**
+ * create ref type array for the unit tests without database connection
+ */
+function unit_test_init_ref_types()
+{
+    global $ref_types;
+
+    $ref_types = new ref_type_list();
+    $ref_types->load_dummy();
+
+}
+
+/**
+ * create protection type array for the unit tests without database connection
+ */
+function unit_test_init_protection_types()
+{
+    global $protection_types;
+
+    $protection_types = new protection_type_list();
+    $protection_types->load_dummy();
+
+}
+
+/**
  * run all unit test in a useful order
  */
 function run_unit_tests()
@@ -89,6 +113,8 @@ function run_unit_tests()
     unit_test_init_view_types();
     unit_test_init_view_component_types();
     unit_text_init_view_component_link_types();
+    unit_test_init_ref_types();
+    unit_test_init_protection_types();
 
     // do the unit tests
     run_string_unit_tests(); // test functions not yet split into single unit tests
@@ -98,4 +124,5 @@ function run_unit_tests()
     run_view_unit_tests();
     //run_value_unit_tests();
     run_user_sandbox_unit_tests();
+    run_ref_unit_tests();
 }

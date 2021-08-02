@@ -2,11 +2,11 @@
 
 /*
 
-  test/unit_db/formula.php - database unit testing of the formula functions
-  ------------------------
+  test/unit/ref.php - unit testing of the reference functions
+  -----------------
+  
 
-
-zukunft.com - calc with formulas
+zukunft.com - calc with words
 
 copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_unit_db_tests()
+function run_ref_unit_tests()
 {
 
-    global $db_con;
+    test_header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
 
-    test_header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
 
-    test_subheader('formula types tests');
+    test_subheader('Im- and Export tests');
 
-    // load the formula types
-    $lst = new formula_type_list();
-    $result = $lst->load($db_con);
+    $dsp_json = '{
+          "name": "Second",
+          "type": "wikipedia"
+        }';
+    $json_import_array = json_decode($dsp_json, true);
+    $ref = new ref;
+    $ref->import_obj($json_import_array, false);
+    $json_export_string = json_encode($ref->export_obj(false));
+    $result = json_decode($dsp_json) == json_decode($json_export_string);
     $target = true;
-    test_dsp('unit_db_formula->load_types', $target, $result);
-
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::FORMULA_TYPE, formula_type_list::DBL_CALC);
-    $target = 1;
-    test_dsp('unit_db_formula->check ' . formula_type_list::DBL_CALC, $result, $target);
+    test_dsp('word->import check name', $target, $result);
 
 }
 

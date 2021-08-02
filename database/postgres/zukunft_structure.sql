@@ -447,11 +447,11 @@ CREATE TABLE IF NOT EXISTS refs
 
 CREATE TABLE IF NOT EXISTS ref_types
 (
-    ref_type_id   BIGSERIAL PRIMARY KEY,
-    ref_type_name varchar(200) NOT NULL,
-    code_id       varchar(100) NOT NULL,
-    description   text         NOT NULL,
-    base_url      text         NOT NULL
+    ref_type_id BIGSERIAL PRIMARY KEY,
+    type_name   varchar(200) NOT NULL,
+    code_id     varchar(100) NOT NULL,
+    description text         NOT NULL,
+    base_url    text         NOT NULL
 );
 
 -- --------------------------------------------------------
@@ -1238,10 +1238,10 @@ COMMENT ON TABLE view_component_position_types is 'sideways or down';
 
 CREATE TABLE IF NOT EXISTS view_component_types
 (
-    view_component_type_id   BIGSERIAL PRIMARY KEY,
-    type_name varchar(100) NOT NULL,
-    description              text         NOT NULL,
-    code_id                  varchar(100) NOT NULL
+    view_component_type_id BIGSERIAL PRIMARY KEY,
+    type_name              varchar(100) NOT NULL,
+    description            text         NOT NULL,
+    code_id                varchar(100) NOT NULL
 );
 
 COMMENT ON TABLE view_component_types is 'fixed text, term or formula result';

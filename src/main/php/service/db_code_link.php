@@ -36,25 +36,73 @@ class db_cl
     const FORMULA_TYPE = "formula_type";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "view_component_type";
+    const REF_TYPE = "ref_type";
+    const PROTECTION_TYPE = "protection_type";
 
-    function word_type_id(string $code_id) {
+    function word_type_id(string $code_id)
+    {
         global $word_types;
         return $word_types->id($code_id);
     }
 
-    function formula_type_id(string $code_id) {
+    function formula_type_id(string $code_id)
+    {
         global $formula_types;
         return $formula_types->id($code_id);
     }
 
-    function view_type_id(string $code_id) {
+    function view_type_id(string $code_id)
+    {
         global $view_types;
         return $view_types->id($code_id);
     }
 
-    function view_component_type_id(string $code_id) {
+    function view_component_type_id(string $code_id)
+    {
         global $view_component_types;
         return $view_component_types->id($code_id);
+    }
+
+    function ref_type_id(string $code_id)
+    {
+        global $ref_types;
+        return $ref_types->id($code_id);
+    }
+
+    function protection_type_id(string $code_id)
+    {
+        global $protection_types;
+        return $protection_types->id($code_id);
+    }
+
+    function word_type(int $id)
+    {
+        global $word_types;
+        return $word_types->get($id);
+    }
+
+    function formula_type(int $id)
+    {
+        global $formula_types;
+        return $formula_types->get($id);
+    }
+
+    function view_type(int $id)
+    {
+        global $view_types;
+        return $view_types->get($id);
+    }
+
+    function view_component_type(int $id)
+    {
+        global $view_component_types;
+        return $view_component_types->get($id);
+    }
+
+    function protection_type(int $id)
+    {
+        global $protection_types;
+        return $protection_types->get($id);
     }
 
 }
@@ -85,7 +133,44 @@ function cl(string $type, string $code_id): int
         case db_cl::VIEW_COMPONENT_TYPE:
             $result = $db_code_link->view_component_type_id($code_id);
             break;
+        case db_cl::REF_TYPE:
+            $result = $db_code_link->ref_type_id($code_id);
+            break;
+        case db_cl::PROTECTION_TYPE:
+            $result = $db_code_link->protection_type_id($code_id);
+            break;
     }
     return $result;
 }
 
+/**
+ * get a predefined type object e.g. word type, formula type, ...
+ *
+ * @param string $type e.g. word_type or formulas_type to select the list of unique code ids
+ * @param string $code_id the code id that must be unique within the given type
+ * @return user_type the loaded type object
+ */
+function get_type(string $type, string $code_id): user_type
+{
+    $result = null;
+    $db_code_link = new db_cl();
+    switch ($type) {
+        case db_cl::WORD_TYPE:
+            $result = $db_code_link->word_type($db_code_link->word_type_id($code_id));
+            break;
+        case db_cl::FORMULA_TYPE:
+            $result = $db_code_link->formula_type($db_code_link->formula_type_id($code_id));
+            break;
+        case db_cl::VIEW_TYPE:
+            $result = $db_code_link->view_type($db_code_link->view_type_id($code_id));
+            break;
+        case db_cl::VIEW_COMPONENT_TYPE:
+            $result = $db_code_link->view_component_type($db_code_link->view_component_type_id($code_id));
+            break;
+        // db_cl::REF_TYPE is excluded here because it returns an extended object
+        case db_cl::PROTECTION_TYPE:
+            $result = $db_code_link->protection_type($db_code_link->protection_type_id($code_id));
+            break;
+    }
+    return $result;
+}

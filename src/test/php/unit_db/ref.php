@@ -2,11 +2,11 @@
 
 /*
 
-  test/unit_db/formula.php - database unit testing of the formula functions
-  ------------------------
+  test/unit_db/ref.php - database unit testing of reference types
+  --------------------
 
 
-zukunft.com - calc with formulas
+zukunft.com - calc with words
 
 copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_unit_db_tests()
+function run_ref_unit_db_tests()
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
+    test_header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
 
-    test_subheader('formula types tests');
+    test_subheader('Reference types tests');
 
-    // load the formula types
-    $lst = new formula_type_list();
+    // load the ref types
+    $lst = new ref_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_formula->load_types', $target, $result);
+    test_dsp('unit_db_ref->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::FORMULA_TYPE, formula_type_list::DBL_CALC);
+    $result = cl(db_cl::WORD_TYPE, word_type_list::DBL_NORMAL);
     $target = 1;
-    test_dsp('unit_db_formula->check ' . formula_type_list::DBL_CALC, $result, $target);
+    test_dsp('unit_db_ref->check ' . word_type_list::DBL_NORMAL, $result, $target);
 
 }
 

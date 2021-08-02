@@ -2,11 +2,11 @@
 
 /*
 
-  test/unit_db/formula.php - database unit testing of the formula functions
-  ------------------------
+  test/unit_db/protection.php - database unit testing of the protection handling
+  ---------------------
 
 
-zukunft.com - calc with formulas
+zukunft.com - calc with words
 
 copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
 
@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_unit_db_tests()
+function run_protection_unit_db_tests()
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
+    test_header('Unit database tests of the protection handling');
 
-    test_subheader('formula types tests');
+    test_subheader('Protection types tests');
 
-    // load the formula types
-    $lst = new formula_type_list();
+    // load the protection types
+    $lst = new protection_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_formula->load_types', $target, $result);
+    test_dsp('unit_db_protection->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::FORMULA_TYPE, formula_type_list::DBL_CALC);
+    $result = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
     $target = 1;
-    test_dsp('unit_db_formula->check ' . formula_type_list::DBL_CALC, $result, $target);
+    test_dsp('unit_db_protection->check ' . protection_type_list::DBL_NO, $result, $target);
 
 }
 

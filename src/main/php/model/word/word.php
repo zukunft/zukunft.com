@@ -52,6 +52,7 @@ class word extends word_link_object
 
     // only used for the export object
     private ?view $view = null; // name of the default view for this word
+    private ?array $ref_lst = [];
 
     /**
      * define the settings for this word object
@@ -80,7 +81,11 @@ class word extends word_link_object
         $this->dsp_lnk_id = null;
         $this->link_type_id = null;
 
+        $this->share_id = null;
+        $this->protection_id = null;
+
         $this->view = null;
+        $this->ref_lst = null;
     }
 
     function row_mapper($db_row, $map_usr_fields = false)
@@ -98,6 +103,11 @@ class word extends word_link_object
                     $this->usr_cfg_id = $db_row['user_word_id'];
                     // TODO probably the owner of the standard word also needs to be loaded
                     $this->owner_id = $db_row['user_id'];
+                    $this->share_id = $db_row['share_type_id'];
+                    $this->protection_id = $db_row['protection_type_id'];
+                } else {
+                    $this->share_id = clo(DBL_SHARE_PUBLIC);
+                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
                 }
             } else {
                 $this->id = 0;
@@ -326,6 +336,7 @@ class word extends word_link_object
     function import_obj(array $json_obj, bool $do_save = true): bool
     {
         global $word_types;
+        global $protection_types;
 
         log_debug('word->import_obj');
         $result = false;
@@ -350,6 +361,9 @@ class word extends word_link_object
                 if ($value <> '') {
                     $this->description = $value;
                 }
+            }
+            if ($key == 'protection') {
+                $this->protection_id = $protection_types->id($value);
             }
             if ($key == 'view') {
                 $wrd_view = new view;
@@ -376,15 +390,15 @@ class word extends word_link_object
             $result = num2bool($this->save());
         }
 
-        if ($result) {
+        if ($result or !$do_save) {
             log_debug('word->import_obj -> saved ' . $this->dsp_id());
 
             // add related  parameters to the word object
-            if ($this->id <= 0) {
+            if ($this->id <= 0 and $do_save) {
                 log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj');
             } else {
                 foreach ($json_obj as $key => $value) {
-                    if ($result) {
+                    if ($result or !$do_save) {
                         if ($key == 'refs') {
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref;
@@ -392,6 +406,7 @@ class word extends word_link_object
                                 $ref_obj->phr_id = $this->id;
                                 $ref_obj->phr = $this->phrase();
                                 $result = $ref_obj->import_obj($ref_data, $do_save);
+                                $this->ref_lst[] = $ref_obj;
                             }
                         }
                     }
@@ -403,8 +418,10 @@ class word extends word_link_object
 
     /**
      * create a word object for the export
+     * @param bool $do_load can be set to false for unit testing
+     * @return word_exp a reduced word object that can be used to create a JSON message
      */
-    function export_obj(): word_exp
+    function export_obj(bool $do_load = true): word_exp
     {
         global $word_types;
 
@@ -425,11 +442,29 @@ class word extends word_link_object
                 $result->type = $this->type_code_id();
             }
         }
+
+        // add the share type
+        if ($this->share_id > 0 and $this->share_id <> clo(DBL_SHARE_PUBLIC)) {
+            $result->share = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO)) {
+            $result->protection = $this->protection_type_code_id();
+        }
+
         if ($this->view_id > 0) {
-            $this->view = $this->load_view();
+            if ($do_load) {
+                $this->view = $this->load_view();
+            }
         }
         if (isset($this->view)) {
             $result->view = $this->view->name;
+        }
+        if (isset($this->ref_lst)) {
+            foreach ($this->ref_lst as $ref) {
+                $result->refs[] = $ref->export_obj();
+            }
         }
 
 
@@ -442,7 +477,9 @@ class word extends word_link_object
     display functions
     */
 
-    // return the name (just because all objects should have a name function)
+    /**
+     * return the name (just because all objects should have a name function)
+     */
     function name(): string
     {
         return $this->name;

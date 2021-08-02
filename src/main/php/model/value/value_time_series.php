@@ -72,7 +72,7 @@ class value_time_series extends user_sandbox_display
                     $this->protection_id = $db_row['protection_type_id'];
                 } else {
                     $this->share_id = clo(DBL_SHARE_PUBLIC);
-                    $this->protection_id = clo(DBL_PROTECT_NO);
+                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
                 }
             } else {
                 $this->id = 0;

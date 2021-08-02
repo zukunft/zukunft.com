@@ -581,6 +581,12 @@ class sql_db
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'ref_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'protection_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'sys_log_statuss_name') {
             $result = 'sys_log_status_name';
         }

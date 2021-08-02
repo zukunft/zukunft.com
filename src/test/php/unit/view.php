@@ -219,6 +219,8 @@ function run_view_unit_tests()
       "name": "car cost agreement",
       "comment": "view the cost agreement of car usage",
       "type": "default",
+      "share": "",
+      "protection": "",
       "view_components": [
         {
           "position": 1,
@@ -227,6 +229,8 @@ function run_view_unit_tests()
           "row": "",
           "column": "",
           "column2": "",
+          "share": "",
+          "protection": "",
           "comment": ""
         }
       ]

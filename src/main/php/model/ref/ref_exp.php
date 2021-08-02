@@ -2,7 +2,7 @@
 
 /*
 
-  word_exp.php - the simple export object for a word
+  ref_exp.php - the simple export object for an external reference
   ------------
   
   This file is part of zukunft.com - calc with words
@@ -29,26 +29,17 @@
   
 */
 
-class word_exp extends user_sandbox_exp_named
+class ref_exp extends user_sandbox_exp_link
 {
 
     // field names used for JSON creation
-    public ?string $plural = '';
-    public ?string $description = '';
     public ?string $type = '';
-    public ?string $view = '';
-    public ?array $refs = [];
 
     function reset()
     {
         parent::reset();
 
-        $this->plural = '';
-        $this->description = '';
         $this->type = '';
-
-        $this->view = '';
-        $this->refs = [];
     }
 
 }

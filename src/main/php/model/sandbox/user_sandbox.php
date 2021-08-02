@@ -85,7 +85,7 @@ class user_sandbox
         $this->obj_type = user_sandbox::TYPE_NAMED;
     }
 
-    // reset the the search values of this object
+    // reset the search values of this object
     // needed to search for the standard object, because the search is work, value, formula or ... specific
     function reset()
     {
@@ -339,33 +339,13 @@ class user_sandbox
         return $result;
     }
 
-    // load the protection type and return the protection code id
+    /**
+     * return the protection type code id
+     */
     function protection_type_code_id(): string
     {
-        log_debug('value->protection_type_code_id for ' . $this->dsp_id());
-
-        global $db_con;
-        $result = '';
-
-        // use the default share type if not set
-        if ($this->protection_id <= 0) {
-            $result = DBL_PROTECT_NO;
-        } else {
-            $sql = "SELECT code_id
-                FROM protection_types 
-              WHERE protection_type_id = " . $this->protection_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql);
-            if (isset($db_row)) {
-                $result .= $db_row[sql_db::FLD_CODE_ID];
-            } else {
-                $result .= DBL_PROTECT_NO;
-            }
-        }
-
-        log_debug('value->protection_type_code_id for ' . $this->dsp_id() . ' got ' . $result);
-        return $result;
+        global $protection_types;
+        return $protection_types->code_id($this->protection_id);
     }
 
     // load the protection type and return the protection code id
@@ -378,7 +358,7 @@ class user_sandbox
 
         // use the default share type if not set
         if ($this->protection_id <= 0) {
-            $this->protection_id = clo(DBL_PROTECT_NO);
+            $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
         }
 
         $sql = "SELECT protection_type_name

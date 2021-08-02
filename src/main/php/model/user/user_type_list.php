@@ -105,18 +105,34 @@ class user_type_list
         return $result;
     }
 
-    function code_id(int $id): string
+    /**
+     * pick a type from the preloaded object list
+     * @param int $id the database id of the expected type
+     * @return user_type the type object
+     */
+    function get(int $id): user_type
     {
-        $result = '';
+        $result = null;
         if ($id > 0) {
             if (array_key_exists($id, $this->type_list)) {
-                $type = $this->type_list[$id];
-                $result = $type->code_id;
+                $result = $this->type_list[$id];
             } else {
-                log_err('Type code id not found for ' . $id . ' in ' . dsp_array($this->type_list));
+                log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->type_list));
             }
         } else {
             log_debug('Type id not not set');
+        }
+        return $result;
+    }
+
+    function code_id(int $id): string
+    {
+        $result = '';
+        $type = $this->get($id);
+        if ($type != null) {
+            $result = $type->code_id;
+        } else {
+            log_err('Type code id not found for ' . $id . ' in ' . dsp_array($this->type_list));
         }
         return $result;
     }

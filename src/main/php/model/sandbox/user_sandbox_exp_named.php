@@ -2,9 +2,10 @@
 
 /*
 
-  word_exp.php - the simple export object for a word
-  ------------
+  user_sandbox_exp_named.php - the superclass for the simple export objects
+  --------------------------
   
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -29,26 +30,20 @@
   
 */
 
-class word_exp extends user_sandbox_exp_named
+class user_sandbox_exp_named
 {
 
     // field names used for JSON creation
-    public ?string $plural = '';
-    public ?string $description = '';
-    public ?string $type = '';
-    public ?string $view = '';
-    public ?array $refs = [];
+    public ?string $name = '';       // simply the object name, which cannot be empty if it is a named object
+    public ?string $share = '';      // the share permissions of the object
+    public ?string $protection= '';  // the protection of the given object
 
+    // reset the search values of this object
     function reset()
     {
-        parent::reset();
-
-        $this->plural = '';
-        $this->description = '';
-        $this->type = '';
-
-        $this->view = '';
-        $this->refs = [];
+        $this->name = '';
+        $this->share = '';
+        $this->protection = '';
     }
 
 }

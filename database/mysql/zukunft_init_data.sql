@@ -228,7 +228,7 @@ INSERT INTO `protection_types` (`protection_type_id`, `protection_type_name`, `c
 -- Dumping data for table `ref_types`
 --
 
-INSERT INTO `ref_types` (`ref_type_id`, `ref_type_name`, `code_id`, `description`, `base_url`) VALUES
+INSERT INTO `ref_types` (`ref_type_id`, `type_name`, `code_id`, `description`, `base_url`) VALUES
 (1, 'wikipedia', 'wikipedia', 'wikipedia', 'https://en.wikipedia.org/wiki/'),
 (2, 'wikidata', 'wikidata', 'wikidata', 'https://www.wikidata.org/wiki/');
 

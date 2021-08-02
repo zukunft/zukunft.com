@@ -121,17 +121,7 @@ const DBL_SHARE_PERSONAL = "share_personal";
 const DBL_SHARE_GROUP = "share_group";
 const DBL_SHARE_PRIVATE = "share_private";
 
-// protection types                            
-const DBL_PROTECT_NO = "no_protection";
-const DBL_PROTECT_USER = "user_protection";
-const DBL_PROTECT_ADMIN = "admin_protection";
-const DBL_PROTECT_NO_CHANGE = "no_change";
-
-// links to external systems
-const DBL_REF_WIKIPEDIA = "ref_wikipedia";
-const DBL_REF_WIKIDATA = "ref_wikidata";
-
-// user profiles                          
+// user profiles
 const DBL_USER_NORMAL = "usr_role_normal";
 const DBL_USER_ADMIN = "usr_role_admin";
 const DBL_USER_DEV = "usr_role_dev";
@@ -299,18 +289,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_SHARE_GROUP
         or $code_id == DBL_SHARE_PRIVATE) {
         $db_type = "share_type";
-    }
-
-    if ($code_id == DBL_PROTECT_NO
-        or $code_id == DBL_PROTECT_USER
-        or $code_id == DBL_PROTECT_ADMIN
-        or $code_id == DBL_PROTECT_NO_CHANGE) {
-        $db_type = "protection_type";
-    }
-
-    if ($code_id == DBL_REF_WIKIPEDIA
-        or $code_id == DBL_REF_WIKIDATA) {
-        $db_type = DB_TYPE_REF_TYPE;
     }
 
     if ($code_id == DBL_FORMULA_PART_TYPE_WORD
