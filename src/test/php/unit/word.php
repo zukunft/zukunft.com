@@ -79,7 +79,7 @@ function run_word_unit_tests()
       "type": "measure",
       "plural": "seconds",
       "description": "The second (symbol: s, abbreviation: sec) is the base unit of time in the International System of Units",
-      "share": "",
+      "share": "personal",
       "protection": "admin_protection",
       "view": "measure",
       "refs": [

@@ -420,7 +420,7 @@ COMMENT ON TABLE phrase_group_word_links is 'master to link words to a term_grou
 CREATE TABLE IF NOT EXISTS protection_types
 (
     protection_type_id   BIGSERIAL PRIMARY KEY,
-    protection_type_name varchar(200) NOT NULL,
+    type_name varchar(200) NOT NULL,
     code_id              varchar(100) NOT NULL,
     description          text         NOT NULL
 );
@@ -480,12 +480,12 @@ CREATE TABLE IF NOT EXISTS sessions
 CREATE TABLE IF NOT EXISTS share_types
 (
     share_type_id   BIGSERIAL PRIMARY KEY,
-    share_type_name varchar(200) NOT NULL,
+    type_name varchar(200) NOT NULL,
     code_id         varchar(100) NOT NULL,
     description     text
 );
 
-COMMENT ON COLUMN share_types.share_type_name is 'the name of the share type as displayed for the user';
+COMMENT ON COLUMN share_types.type_name is 'the name of the share type as displayed for the user';
 COMMENT ON COLUMN share_types.code_id is 'the code link';
 COMMENT ON COLUMN share_types.description is 'to explain the code action of the share type';
 
@@ -1262,7 +1262,7 @@ CREATE TABLE IF NOT EXISTS view_link_types
 -- --------------------------------------------------------
 
 --
--- Table structure for table view_typelist
+-- Table structure for table view_type_list
 --
 
 CREATE TABLE IF NOT EXISTS view_types
@@ -1531,7 +1531,7 @@ CREATE INDEX ref_type_idx ON refs (ref_type_id);
 --
 -- Indexes for table ref_types
 --
-CREATE UNIQUE INDEX ref_type_name_idx ON ref_types (ref_type_name, code_id);
+CREATE UNIQUE INDEX ref_type_name_idx ON ref_types (type_name, code_id);
 
 --
 -- Indexes for table source_values

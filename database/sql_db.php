@@ -584,6 +584,9 @@ class sql_db
         if ($result == 'ref_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'share_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'protection_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }

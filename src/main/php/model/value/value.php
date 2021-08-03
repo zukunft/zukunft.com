@@ -127,7 +127,7 @@ class value extends user_sandbox_display
                     $this->share_id = $db_row['share_type_id'];
                     $this->protection_id = $db_row['protection_type_id'];
                 } else {
-                    $this->share_id = clo(DBL_SHARE_PUBLIC);
+                    $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
                     $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
                 }
             } else {
@@ -902,7 +902,7 @@ class value extends user_sandbox_display
 
         // add the share type
         log_debug('value->export_obj get share');
-        if ($this->share_id > 0 and $this->share_id <> clo(DBL_SHARE_PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

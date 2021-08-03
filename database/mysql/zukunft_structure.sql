@@ -733,7 +733,7 @@ CREATE TABLE IF NOT EXISTS ` protection_types `
 (
     11
 ) NOT NULL,
-    ` protection_type_name ` varchar
+    ` type_name ` varchar
 (
     200
 ) NOT NULL,
@@ -841,7 +841,7 @@ CREATE TABLE IF NOT EXISTS ` share_types `
 (
     11
 ) NOT NULL,
-    ` share_type_name ` varchar
+    ` type_name ` varchar
 (
     200
 ) NOT NULL COMMENT 'the name of the share type as displayed for the user',

@@ -89,6 +89,18 @@ function unit_test_init_ref_types()
 }
 
 /**
+ * create share type array for the unit tests without database connection
+ */
+function unit_test_init_share_types()
+{
+    global $share_types;
+
+    $share_types = new share_type_list();
+    $share_types->load_dummy();
+
+}
+
+/**
  * create protection type array for the unit tests without database connection
  */
 function unit_test_init_protection_types()
@@ -114,6 +126,7 @@ function run_unit_tests()
     unit_test_init_view_component_types();
     unit_text_init_view_component_link_types();
     unit_test_init_ref_types();
+    unit_test_init_share_types();
     unit_test_init_protection_types();
 
     // do the unit tests

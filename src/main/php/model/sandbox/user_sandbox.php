@@ -286,30 +286,8 @@ class user_sandbox
     // load the share type and return the share code id
     function share_type_code_id(): string
     {
-        log_debug('value->share_type_code_id for ' . $this->dsp_id());
-
-        global $db_con;
-        $result = '';
-
-        // use the default share type if not set
-        if ($this->share_id <= 0) {
-            $result .= DBL_SHARE_PUBLIC;
-        } else {
-            $sql = "SELECT code_id
-                FROM share_types 
-              WHERE share_type_id = " . $this->share_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql);
-            if (isset($db_row)) {
-                $result .= $db_row[sql_db::FLD_CODE_ID];
-            } else {
-                $result .= DBL_SHARE_PUBLIC;
-            }
-        }
-
-        log_debug('value->share_type_code_id for ' . $this->dsp_id() . ' got ' . $result);
-        return $result;
+        global $share_types;
+        return $share_types->code_id($this->share_id);
     }
 
     // load the share type and return the share code id
@@ -322,10 +300,10 @@ class user_sandbox
 
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = clo(DBL_SHARE_PUBLIC);
+            $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
         }
 
-        $sql = "SELECT share_type_name 
+        $sql = "SELECT type_name 
               FROM share_types 
              WHERE share_type_id = " . $this->share_id . ";";
         //$db_con = new mysql;
@@ -361,7 +339,7 @@ class user_sandbox
             $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
         }
 
-        $sql = "SELECT protection_type_name
+        $sql = "SELECT type_name
               FROM protection_types 
              WHERE protection_type_id = " . $this->protection_id . ";";
         //$db_con = new mysql;

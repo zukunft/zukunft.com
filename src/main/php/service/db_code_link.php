@@ -37,6 +37,7 @@ class db_cl
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "view_component_type";
     const REF_TYPE = "ref_type";
+    const SHARE_TYPE = "share_type";
     const PROTECTION_TYPE = "protection_type";
 
     function word_type_id(string $code_id)
@@ -69,6 +70,12 @@ class db_cl
         return $ref_types->id($code_id);
     }
 
+    function share_type_id(string $code_id)
+    {
+        global $share_types;
+        return $share_types->id($code_id);
+    }
+
     function protection_type_id(string $code_id)
     {
         global $protection_types;
@@ -97,6 +104,12 @@ class db_cl
     {
         global $view_component_types;
         return $view_component_types->get($id);
+    }
+
+    function share_type(int $id)
+    {
+        global $share_types;
+        return $share_types->get($id);
     }
 
     function protection_type(int $id)
@@ -136,6 +149,9 @@ function cl(string $type, string $code_id): int
         case db_cl::REF_TYPE:
             $result = $db_code_link->ref_type_id($code_id);
             break;
+        case db_cl::SHARE_TYPE:
+            $result = $db_code_link->share_type_id($code_id);
+            break;
         case db_cl::PROTECTION_TYPE:
             $result = $db_code_link->protection_type_id($code_id);
             break;
@@ -168,6 +184,9 @@ function get_type(string $type, string $code_id): user_type
             $result = $db_code_link->view_component_type($db_code_link->view_component_type_id($code_id));
             break;
         // db_cl::REF_TYPE is excluded here because it returns an extended object
+        case db_cl::SHARE_TYPE:
+            $result = $db_code_link->share_type($db_code_link->share_type_id($code_id));
+            break;
         case db_cl::PROTECTION_TYPE:
             $result = $db_code_link->protection_type($db_code_link->protection_type_id($code_id));
             break;

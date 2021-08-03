@@ -106,7 +106,7 @@ class word extends word_link_object
                     $this->share_id = $db_row['share_type_id'];
                     $this->protection_id = $db_row['protection_type_id'];
                 } else {
-                    $this->share_id = clo(DBL_SHARE_PUBLIC);
+                    $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
                     $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
                 }
             } else {
@@ -336,6 +336,7 @@ class word extends word_link_object
     function import_obj(array $json_obj, bool $do_save = true): bool
     {
         global $word_types;
+        global $share_types;
         global $protection_types;
 
         log_debug('word->import_obj');
@@ -361,6 +362,9 @@ class word extends word_link_object
                 if ($value <> '') {
                     $this->description = $value;
                 }
+            }
+            if ($key == 'share') {
+                $this->share_id = $share_types->id($value);
             }
             if ($key == 'protection') {
                 $this->protection_id = $protection_types->id($value);
@@ -444,7 +448,7 @@ class word extends word_link_object
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> clo(DBL_SHARE_PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

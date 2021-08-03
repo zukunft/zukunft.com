@@ -115,12 +115,6 @@ const DBL_LINK_TYPE_CAN_BE = "vrb_can_be";
 // predefined words                       
 const DBL_WORD_OTHER = "other";  // replaced by a word type
 
-// share types                            
-const DBL_SHARE_PUBLIC = "share_public";
-const DBL_SHARE_PERSONAL = "share_personal";
-const DBL_SHARE_GROUP = "share_group";
-const DBL_SHARE_PRIVATE = "share_private";
-
 // user profiles
 const DBL_USER_NORMAL = "usr_role_normal";
 const DBL_USER_ADMIN = "usr_role_admin";
@@ -282,13 +276,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_VIEW_EDIT
         or $code_id == DBL_VIEW_DEL) {
         $db_type = DB_TYPE_VIEW;
-    }
-
-    if ($code_id == DBL_SHARE_PUBLIC
-        or $code_id == DBL_SHARE_PERSONAL
-        or $code_id == DBL_SHARE_GROUP
-        or $code_id == DBL_SHARE_PRIVATE) {
-        $db_type = "share_type";
     }
 
     if ($code_id == DBL_FORMULA_PART_TYPE_WORD

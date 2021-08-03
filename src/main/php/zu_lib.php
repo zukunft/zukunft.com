@@ -359,6 +359,7 @@ const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
 const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
 
+const DB_TYPE_SHARE = 'share_type';
 const DB_TYPE_PROTECTION = 'protection_type';
 
 const DB_TYPE_USER_PREFIX = 'user_';
@@ -422,10 +423,11 @@ include_once $path_php . 'model/user/user_log.php';
 include_once $path_php . 'model/user/user_log_link.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
-include_once $path_php . 'model/sandbox/protection_type_list.php';
 include_once $path_php . 'model/sandbox/user_sandbox.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
+include_once $path_php . 'model/sandbox/share_type_list.php';
+include_once $path_php . 'model/sandbox/protection_type_list.php';
 include_once $path_php . 'web/user_sandbox_display.php';
 include_once $path_php . 'model/system/system_error_log.php';
 include_once $path_php . 'model/system/system_error_log_list.php';
@@ -811,6 +813,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $view_types;
     global $view_component_types;
     global $ref_types;
+    global $share_types;
     global $protection_types;
 
     // resume session (based on cookies)
@@ -862,6 +865,8 @@ function prg_start($code_name, $style = ""): sql_db
     //init_view_component_link_types($db_con);
     $ref_types = new ref_type_list();
     $ref_types->load($db_con);
+    $share_types = new share_type_list();
+    $share_types->load($db_con);
     $protection_types = new protection_type_list();
     $protection_types->load($db_con);
 

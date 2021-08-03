@@ -69,6 +69,7 @@ include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
+include_once $path_unit_db . 'share.php';
 include_once $path_unit_db . 'protection.php';
 
 // load the testing functions

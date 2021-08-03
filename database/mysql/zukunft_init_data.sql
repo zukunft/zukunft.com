@@ -217,7 +217,7 @@ INSERT INTO `languages_forms` (`languages_form_id`, `languages_form_name`, `code
 -- Dumping data for table `protection_types`
 --
 
-INSERT INTO `protection_types` (`protection_type_id`, `protection_type_name`, `code_id`, `description`) VALUES
+INSERT INTO `protection_types` (`protection_type_id`, `type_name`, `code_id`, `description`) VALUES
 (1, 'no protection', 'no_protection', 'anyone can take the ownership '),
 (2, 'user', 'user_protection', 'only users with a login and a confirmed email can take over the ownership'),
 (3, 'admin', 'admin_protection', 'only user with admin permission can take the ownership'),
@@ -239,7 +239,7 @@ INSERT INTO `ref_types` (`ref_type_id`, `type_name`, `code_id`, `description`, `
 -- Dumping data for table `share_types`
 --
 
-INSERT INTO `share_types` (`share_type_id`, `share_type_name`, `code_id`, `description`) VALUES
+INSERT INTO `share_types` (`share_type_id`, `type_name`, `code_id`, `description`) VALUES
 (1, 'public', 'public', 'value can be seen and used by everyone (default)'),
 (2, 'personal', 'personal', 'value can be seen by everyone, but is linked to the user'),
 (3, 'group', 'group', 'only a closed group of users can seen and use the values'),
