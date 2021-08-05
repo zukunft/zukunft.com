@@ -322,6 +322,7 @@ const FIRST_VERSION = "0.0.3"; // the first program version which has a basic up
 // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
 // TODO use const for all object names
 const DB_TYPE_USER = 'user';
+const DB_TYPE_USER_PROFILE = 'user_profile';
 const DB_TYPE_WORD = 'word';
 const DB_TYPE_WORD_TYPE = 'word_type';
 const DB_TYPE_WORD_LINK = 'word_link';
@@ -418,6 +419,7 @@ include_once $path_php . 'service/export/xml.php';
 include_once $path_php . 'model/user/user.php';
 include_once $path_php . 'model/user/user_type.php';
 include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/user/user_profile_list.php';
 include_once $path_php . 'model/user/user_list.php';
 include_once $path_php . 'model/user/user_log.php';
 include_once $path_php . 'model/user/user_log_link.php';

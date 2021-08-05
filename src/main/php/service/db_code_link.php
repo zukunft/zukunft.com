@@ -39,6 +39,7 @@ class db_cl
     const REF_TYPE = "ref_type";
     const SHARE_TYPE = "share_type";
     const PROTECTION_TYPE = "protection_type";
+    const USER_PROFILE = "user_profile_type";
 
     function word_type_id(string $code_id)
     {

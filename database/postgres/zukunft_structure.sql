@@ -419,10 +419,10 @@ COMMENT ON TABLE phrase_group_word_links is 'master to link words to a term_grou
 
 CREATE TABLE IF NOT EXISTS protection_types
 (
-    protection_type_id   BIGSERIAL PRIMARY KEY,
-    type_name varchar(200) NOT NULL,
-    code_id              varchar(100) NOT NULL,
-    description          text         NOT NULL
+    protection_type_id BIGSERIAL PRIMARY KEY,
+    type_name          varchar(200) NOT NULL,
+    code_id            varchar(100) NOT NULL,
+    description        text         NOT NULL
 );
 
 -- --------------------------------------------------------
@@ -479,10 +479,10 @@ CREATE TABLE IF NOT EXISTS sessions
 
 CREATE TABLE IF NOT EXISTS share_types
 (
-    share_type_id   BIGSERIAL PRIMARY KEY,
-    type_name varchar(200) NOT NULL,
-    code_id         varchar(100) NOT NULL,
-    description     text
+    share_type_id BIGSERIAL PRIMARY KEY,
+    type_name     varchar(200) NOT NULL,
+    code_id       varchar(100) NOT NULL,
+    description   text
 );
 
 COMMENT ON COLUMN share_types.type_name is 'the name of the share type as displayed for the user';
@@ -810,10 +810,10 @@ COMMENT ON TABLE user_phrase_group_word_links is 'view for fast group selection 
 
 CREATE TABLE IF NOT EXISTS user_profiles
 (
-    profile_id        BIGSERIAL PRIMARY KEY,
-    user_profile_name varchar(200) NOT NULL,
-    code_id           varchar(50)  NOT NULL,
-    comment           text
+    profile_id  BIGSERIAL PRIMARY KEY,
+    type_name   varchar(200) NOT NULL,
+    code_id     varchar(50)  NOT NULL,
+    description text
 );
 
 -- --------------------------------------------------------

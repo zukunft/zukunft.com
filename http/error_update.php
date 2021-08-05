@@ -50,7 +50,7 @@ $db_con = prg_start("error_update");
     $dsp->id = clo(DBL_VIEW_ERR_UPD);
     $result .= $dsp->dsp_navbar($back);
     
-    if ($usr->id > 0 AND $usr->profile_id == clo(DBL_USER_ADMIN)) {
+    if ($usr->id > 0 AND $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
       // update the error if requested
       if ($log_id > 0 AND $status_id > 0) {
         $err_entry = New system_error_log;

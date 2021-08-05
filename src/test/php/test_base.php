@@ -65,6 +65,7 @@ include_once $path_unit . 'ref.php';
 
 // load the unit testing modules with database real only
 include_once $path_unit_db . 'unit_db_tests.php';
+include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'view.php';

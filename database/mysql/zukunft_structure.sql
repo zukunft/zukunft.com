@@ -1456,7 +1456,7 @@ CREATE TABLE IF NOT EXISTS ` user_profiles `
 (
     11
 ) NOT NULL,
-    ` user_profile_name ` varchar
+    ` type_name ` varchar
 (
     200
 ) NOT NULL,
@@ -1464,7 +1464,7 @@ CREATE TABLE IF NOT EXISTS ` user_profiles `
 (
     50
 ) NOT NULL,
-    ` comment ` text
+    ` description ` text
     ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

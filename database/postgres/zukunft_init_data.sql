@@ -285,7 +285,7 @@ INSERT INTO user_official_types (user_official_type_id, type_name, code_id, comm
 -- Dumping data for table 'user_profiles'
 --
 
-INSERT INTO user_profiles (profile_id, user_profile_name, code_id, comment) VALUES
+INSERT INTO user_profiles (profile_id, type_name, code_id, description) VALUES
 (1, 'normal user', 'normal', NULL),
 (2, 'admin', 'admin', 'Administrator that can add and change verbs and sees the code_id'),
 (3, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production system');

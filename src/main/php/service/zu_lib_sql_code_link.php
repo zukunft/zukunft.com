@@ -115,12 +115,7 @@ const DBL_LINK_TYPE_CAN_BE = "vrb_can_be";
 // predefined words                       
 const DBL_WORD_OTHER = "other";  // replaced by a word type
 
-// user profiles
-const DBL_USER_NORMAL = "usr_role_normal";
-const DBL_USER_ADMIN = "usr_role_admin";
-const DBL_USER_DEV = "usr_role_dev";
-
-// single special users                   
+// single special users
 const DBL_USER_SYSTEM_TEST = "usr_system_test";
 const DBL_USER_SYSTEM = "usr_system";
 
@@ -289,11 +284,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_SYSLOG_FATAL_ERROR
         or $code_id == LOG_LEVEL) {
         $db_type = "sys_log_type";
-    }
-
-    if ($code_id == DBL_USER_ADMIN
-        or $code_id == DBL_USER_DEV) {
-        $db_type = "user_profile";
     }
 
     if ($code_id == DBL_USER_SYSTEM) {

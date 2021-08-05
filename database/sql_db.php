@@ -590,6 +590,9 @@ class sql_db
         if ($result == 'protection_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'profile_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'sys_log_statuss_name') {
             $result = 'sys_log_status_name';
         }
