@@ -244,7 +244,7 @@ class view_component_dsp extends view_component
                 $result .= $phrases_down . $phrases_up;
             } else {
                 $result .= "The type of " . $phr->name . " is not jet defined. Please define what it is: ";
-                $type_is = clo(DBL_LINK_TYPE_IS);
+                $type_is = cl(db_cl::VERB, verb::DBL_IS);
                 $result .= btn_add("Please link " . $phr->name . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
             }
             $result .= '<br><br>values<br>';

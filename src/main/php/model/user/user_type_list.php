@@ -37,15 +37,18 @@ class user_type_list
     const TEST_NAME = 'System Test Type Name';
     const TEST_TYPE = 'System Test Type Code ID';
 
-    public array $type_list = [];
+    public array $lst = [];
     public array $type_hash = [];
 
     /**
-     * force the types to reload the names and translations from the database
+     * force to reload the type names and translations from the database
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type the database name e.g. the table name without s
+     * @return array the list of types
      */
-    function load_types(string $db_type, sql_db $db_con): array
+    private function load_list(sql_db $db_con, string $db_type): array
     {
-        $this->type_list = [];
+        $this->lst = [];
         $db_con->set_type($db_type);
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         $sql = $db_con->select();
@@ -56,10 +59,10 @@ class user_type_list
                 $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
                 $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
                 $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
-                $this->type_list[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
+                $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
             }
         }
-        return $this->type_list;
+        return $this->lst;
     }
 
     function get_hash(array $type_list): array
@@ -79,11 +82,11 @@ class user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load_by_db(string $db_type, sql_db $db_con): bool
+    function load(sql_db $db_con, string $db_type): bool
     {
         $result = false;
-        $this->type_list = $this->load_types($db_type, $db_con);
-        $this->type_hash = $this->get_hash($this->type_list);
+        $this->lst = $this->load_list($db_con, $db_type);
+        $this->type_hash = $this->get_hash($this->lst);
         if (count($this->type_hash) > 0) {
             $result = true;
         }
@@ -114,10 +117,10 @@ class user_type_list
     {
         $result = null;
         if ($id > 0) {
-            if (array_key_exists($id, $this->type_list)) {
-                $result = $this->type_list[$id];
+            if (array_key_exists($id, $this->lst)) {
+                $result = $this->lst[$id];
             } else {
-                log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->type_list));
+                log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->lst));
             }
         } else {
             log_debug('Type id not not set');
@@ -132,7 +135,7 @@ class user_type_list
         if ($type != null) {
             $result = $type->code_id;
         } else {
-            log_err('Type code id not found for ' . $id . ' in ' . dsp_array($this->type_list));
+            log_err('Type code id not found for ' . $id . ' in ' . dsp_array($this->lst));
         }
         return $result;
     }
@@ -142,12 +145,12 @@ class user_type_list
      */
     function load_dummy()
     {
-        $this->type_list = array();
+        $this->lst = array();
         $this->type_hash = array();
         $type = new user_type();
         $type->name = user_type_list::TEST_NAME;
         $type->code_id = user_type_list::TEST_TYPE;
-        $this->type_list[1] = $type;
+        $this->lst[1] = $type;
         $this->type_hash[user_type_list::TEST_TYPE] = 1;
 
     }

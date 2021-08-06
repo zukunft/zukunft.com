@@ -142,8 +142,10 @@
   
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
 
+  TODO create a verbs hash list
+  TODO add unit testes for im- and export of all objects (value and formulas missing)
   TODO review types again and capsule
-  TODO add unit testes for im- and export of all objects
+  TODO replace all clo() with cl()
   TODO add an im- and export code_id that is only unique for each type
   TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
   TODO use the type hash tables for words, formulas, view and components
@@ -814,6 +816,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $formula_types;
     global $view_types;
     global $view_component_types;
+    global $view_component_link_types;
     global $ref_types;
     global $share_types;
     global $protection_types;
@@ -864,7 +867,8 @@ function prg_start($code_name, $style = ""): sql_db
     $view_component_types = new view_component_type_list();
     $view_component_types->load($db_con);
     // not yet needed?
-    //init_view_component_link_types($db_con);
+    //$view_component_link_types = new view_component_link_type_list();
+    //$view_component_link_types->load($db_con);
     $ref_types = new ref_type_list();
     $ref_types->load($db_con);
     $share_types = new share_type_list();
@@ -893,6 +897,22 @@ function prg_start_api($code_name): sql_db
     log_debug($code_name . ' ... database link open');
 
     return $db_con;
+}
+
+/**
+ * load the user specific data that is not supposed to be changed very rarely user
+ * so if changed all data is reloaded once
+ */
+function load_usr_data()
+{
+    global $db_con;
+    global $usr;
+    global $verbs;
+
+    $verbs = new verb_list();
+    $verbs->usr = $usr;
+    $verbs->load($db_con);
+
 }
 
 function prg_end($db_con)

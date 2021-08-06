@@ -602,7 +602,7 @@ class word_link extends word_link_object
             if ($this->description <> '') {
                 $result = $this->description;
                 // or use special verb based generic description
-            } elseif ($this->verb_id == clo(DBL_LINK_TYPE_IS)) {
+            } elseif ($this->verb_id == cl(db_cl::VERB, verb::DBL_IS)) {
                 $result = $this->from_name . ' (' . $this->to_name . ')';
                 // or use the standard generic description
             } else {

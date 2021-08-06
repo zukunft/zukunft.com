@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -34,7 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-  function err_dsp($err_id, $user_id) {
+function err_dsp($err_id, $user_id)
+{
 
     global $db_con;
     $result = "";
@@ -42,61 +43,66 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     $sql = "SELECT l.sys_log_text, l.sys_log_description, s.sys_log_status_name, l.sys_log_trace
               FROM sys_log l 
          LEFT JOIN sys_log_status s ON l.sys_log_status_id = s.sys_log_status_id
-             WHERE l.sys_log_id = ".$err_id.";";
+             WHERE l.sys_log_id = " . $err_id . ";";
     //$db_con = New mysql;
-    $db_con->usr_id = $user_id;         
-    $db_err = $db_con->get1($sql);  
+    $db_con->usr_id = $user_id;
+    $db_err = $db_con->get1($sql);
 
-    $result .= dsp_text_h2("Status of error #".$err_id.': '.$db_err['sys_log_status_name']);
-    $result .= '"'.$db_err['sys_log_text'].'" <br>';
-    if ($db_err['sys_log_description'] <> 'NULL') { $result .= '"'.$db_err['sys_log_description'].'" <br>'; }
+    $result .= dsp_text_h2("Status of error #" . $err_id . ': ' . $db_err['sys_log_status_name']);
+    $result .= '"' . $db_err['sys_log_text'] . '" <br>';
+    if ($db_err['sys_log_description'] <> 'NULL') {
+        $result .= '"' . $db_err['sys_log_description'] . '" <br>';
+    }
     $result .= '<br>';
     $result .= 'Program trace:<br>';
-    $result .= ''.$db_err['sys_log_trace'].' ';
+    $result .= '' . $db_err['sys_log_trace'] . ' ';
     //echo "<font color=green>OK</font>" .$test_text;
     //echo "<font color=red>Error</font>".$test_text;
-    
-    return $result;
-  }
 
-  
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php';  if ($debug > 1) { echo 'lib loaded<br>'; }
+    return $result;
+}
+
+
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 $db_con = prg_start("error_log");
 
-  $result = ''; // reset the html code var
+$result = ''; // reset the html code var
 
-  $err_id = $_GET['id'];           
-  $back   = $_GET['back'];           
-  
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+$err_id = $_GET['id'];
+$back = $_GET['back'];
 
-  if ($back <= 0) {
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
+
+if ($back <= 0) {
     $back = 1; // replace with the fallback word id
-  }
-  $wrd = New word;
-  $wrd->usr = $usr;  
-  $wrd->id = $back;  
-  $wrd->load();
-  
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
-    if ($err_id > 0) {
-      log_debug("error_log -> (".$err_id.")");
-      // prepare the display to edit the view
-      $dsp = new view_dsp;
-      $dsp->usr = $usr;
-      $dsp->id = clo(DBL_VIEW_ERR_LOG);
-      $result .= $dsp->dsp_navbar($back);
-      //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
-      $result .= err_dsp($err_id, $usr->id);
-    }
-  }
+}
+$wrd = new word;
+$wrd->usr = $usr;
+$wrd->id = $back;
+$wrd->load();
 
-  echo $result;
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+    if ($err_id > 0) {
+        log_debug("error_log -> (" . $err_id . ")");
+
+        load_usr_data();
+
+        // prepare the display to edit the view
+        $dsp = new view_dsp;
+        $dsp->usr = $usr;
+        $dsp->id = clo(DBL_VIEW_ERR_LOG);
+        $result .= $dsp->dsp_navbar($back);
+        //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
+        $result .= err_dsp($err_id, $usr->id);
+    }
+}
+
+echo $result;
 
 // Closing connection
 prg_end($db_con);

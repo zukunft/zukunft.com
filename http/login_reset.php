@@ -30,15 +30,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
-if ($debug > 0) {
-    echo 'libs loaded<br>';
-}
 
 //include("auth.php");
 // all taken from

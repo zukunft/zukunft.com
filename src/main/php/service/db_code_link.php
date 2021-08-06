@@ -33,6 +33,7 @@ class db_cl
 {
     // list of all user types that are used
     const WORD_TYPE = "word_type";
+    const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "view_component_type";
@@ -45,6 +46,12 @@ class db_cl
     {
         global $word_types;
         return $word_types->id($code_id);
+    }
+
+    function verb_id(string $code_id)
+    {
+        global $verbs;
+        return $verbs->id($code_id);
     }
 
     function formula_type_id(string $code_id)
@@ -138,6 +145,9 @@ function cl(string $type, string $code_id): int
         case db_cl::WORD_TYPE:
             $result = $db_code_link->word_type_id($code_id);
             break;
+        case db_cl::VERB:
+            $result = $db_code_link->verb_id($code_id);
+            break;
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type_id($code_id);
             break;
@@ -175,6 +185,11 @@ function get_type(string $type, string $code_id): user_type
         case db_cl::WORD_TYPE:
             $result = $db_code_link->word_type($db_code_link->word_type_id($code_id));
             break;
+        /* switched off, because it returns an extended object
+        case db_cl::VERB:
+            $result = $db_code_link->verb($db_code_link->verb_id($code_id));
+            break;
+        */
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type($db_code_link->formula_type_id($code_id));
             break;

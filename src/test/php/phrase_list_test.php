@@ -40,7 +40,7 @@ function run_phrase_list_test()
     $wrd_zh = load_word(TW_ZH);
     $lnk_company = new word_link;
     $lnk_company->from_id = $wrd_zh->id;
-    $lnk_company->verb_id = clo(DBL_LINK_TYPE_IS);
+    $lnk_company->verb_id = cl(db_cl::VERB, verb::DBL_IS);
     $lnk_company->to_id = $wrd_company->id;
     $lnk_company->usr = $usr;
     $lnk_company->load();
@@ -75,7 +75,7 @@ function run_phrase_list_test()
     $wrd_lst->add_name(TW_ABB);
     $wrd_lst->load();
     $phr_lst = $wrd_lst->phrase_lst();
-    $lst_parents = $phr_lst->foaf_parents(clo(DBL_LINK_TYPE_IS));
+    $lst_parents = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
     $result = dsp_array($lst_parents->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
     test_dsp('phrase_list->foaf_parents for ' . $phr_lst->name() . ' up', $target, $result);

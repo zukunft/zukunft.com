@@ -1,16 +1,9 @@
 <?php
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 $root_path = '/home/timon/git/zukunft.com/';
-include_once $root_path.'src/main/php/zu_lib.php';
-if ($debug > 0) {
-    echo 'libs loaded<br>';
-}
+include_once $root_path . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("test_single");
@@ -25,8 +18,10 @@ if ($usr->id <= 0) {
     $result = log_err('User has is not permitted', 'test_single');
 } else {
 
+    load_usr_data();
+
     // load the testing functions
-    include_once $root_path.'src/test/php/test_base.php';
+    include_once $root_path . 'src/test/php/test_base.php';
     if ($debug > 9) {
         echo 'test base loaded<br>';
     }

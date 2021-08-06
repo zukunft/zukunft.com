@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,114 +30,128 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_component_edit");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
-  
-  // load the session user
-  $usr = New user;
-  $result .= $usr->get();
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// load the session user
+$usr = new user;
+$result .= $usr->get();
+
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
     $upd_result = '';
+
+    load_usr_data();
 
     // get the view component id
     if (!isset($_GET['id'])) {
-      log_info("The view component id must be set to display a view.", "view_component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
-    } else {  
-      // init the display object to show the standard elements such as the header
-      $dsp = new view_dsp;
-      $dsp->usr = $usr;
-          
-      // create the view component object to apply the user changes to it
-      $cmp = new view_component_dsp;
-      $cmp->id  = $_GET['id'];
-      $cmp->usr = $usr;
-      $result .= $cmp->load();
+        log_info("The view component id must be set to display a view.", "view_component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
+    } else {
+        // init the display object to show the standard elements such as the header
+        $dsp = new view_dsp;
+        $dsp->usr = $usr;
 
-      // get the word used as a sample the illustrate the changes
-      $wrd = New word;
-      if (isset($_GET['word'])) {
-        $wrd->id   = $_GET['word']; 
-        $wrd->usr  = $usr;
-        $result   .= $wrd->load();
-      } else {
-        // get the default word for the view $dsp
-      }
+        // create the view component object to apply the user changes to it
+        $cmp = new view_component_dsp;
+        $cmp->id = $_GET['id'];
+        $cmp->usr = $usr;
+        $result .= $cmp->load();
 
-      // the calling stack to move back to page where the user has come from after editing the view component is done
-      $back = $_GET['back'];    
-
-      // save the direct changes
-      // link or unlink a view
-      $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
-      if ($dsp_link_id > 0) {
-        $dsp_link = new view_dsp;
-        $dsp_link->id  = $dsp_link_id;
-        $dsp_link->usr = $usr;
-        $result .= $dsp_link->load();
-        $order_nbr = $cmp->next_nbr($dsp_link_id);
-        $upd_result = $cmp->link($dsp_link, $order_nbr);
-      }
-
-      $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view 
-      if ($dsp_unlink_id > 0) {
-        $dsp_unlink = new view_dsp;
-        $dsp_unlink->id  = $dsp_unlink_id;
-        $dsp_unlink->usr = $usr;
-        $result .= $dsp_unlink->load();
-        $upd_result .= $cmp->unlink($dsp_unlink);
-      }
-
-      // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
-      $cmp_name  = $_GET['name'];       
-      if ($cmp_name <> '') {
-
-        // save the user changes in the database
-        $upd_result = '';
-
-        // get other field parameters
-        if (isset($_GET['name']))     { $cmp->name        = $_GET['name']; }
-        if (isset($_GET['comment']))  { $cmp->comment     = $_GET['comment']; }
-        if (isset($_GET['type']))     { $cmp->type_id     = $_GET['type']; } // 
-        if (isset($_GET['word_row'])) { $cmp->word_id_row = $_GET['word_row']; } // 
-        if (isset($_GET['word_col'])) { $cmp->word_id_col = $_GET['word_col']; } // 
-          
-        // save the changes
-        $upd_result .= $cmp->save();
-
-        // if update was fine ...
-        if (str_replace ('1','',$upd_result) == '') {
-          // ... display the calling page (switched off because it seems more useful it the user goes back by selecting the related word)
-          // $result .= dsp_go_back($back, $usr);
-        } else { 
-          // ... or in case of a problem prepare to show the message
-          $msg .= $upd_result;
+        // get the word used as a sample the illustrate the changes
+        $wrd = new word;
+        if (isset($_GET['word'])) {
+            $wrd->id = $_GET['word'];
+            $wrd->usr = $usr;
+            $result .= $wrd->load();
+        } else {
+            // get the default word for the view $dsp
         }
-      }  
 
-      // if nothing yet done display the add view (and any message on the top)
-      if ($result == '')  {
-        // in view edit views the view cannot be changed
-        $result .= $dsp->dsp_navbar_no_view($wrd->id);
-        $result .= dsp_err($msg);
+        // the calling stack to move back to page where the user has come from after editing the view component is done
+        $back = $_GET['back'];
 
-        // if the user has requested to use this display component also in another view, $add_link is greater than 0
-        $add_link = 0;
-        if (isset($_GET['add_link'])) { $add_link = $_GET['add_link']; }
-      
-        // show the word and its relations, so that the user can change it
-        $result .= $cmp->dsp_edit ($add_link, $wrd, $back);
-      }  
+        // save the direct changes
+        // link or unlink a view
+        $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
+        if ($dsp_link_id > 0) {
+            $dsp_link = new view_dsp;
+            $dsp_link->id = $dsp_link_id;
+            $dsp_link->usr = $usr;
+            $result .= $dsp_link->load();
+            $order_nbr = $cmp->next_nbr($dsp_link_id);
+            $upd_result = $cmp->link($dsp_link, $order_nbr);
+        }
+
+        $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
+        if ($dsp_unlink_id > 0) {
+            $dsp_unlink = new view_dsp;
+            $dsp_unlink->id = $dsp_unlink_id;
+            $dsp_unlink->usr = $usr;
+            $result .= $dsp_unlink->load();
+            $upd_result .= $cmp->unlink($dsp_unlink);
+        }
+
+        // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
+        $cmp_name = $_GET['name'];
+        if ($cmp_name <> '') {
+
+            // save the user changes in the database
+            $upd_result = '';
+
+            // get other field parameters
+            if (isset($_GET['name'])) {
+                $cmp->name = $_GET['name'];
+            }
+            if (isset($_GET['comment'])) {
+                $cmp->comment = $_GET['comment'];
+            }
+            if (isset($_GET['type'])) {
+                $cmp->type_id = $_GET['type'];
+            } //
+            if (isset($_GET['word_row'])) {
+                $cmp->word_id_row = $_GET['word_row'];
+            } //
+            if (isset($_GET['word_col'])) {
+                $cmp->word_id_col = $_GET['word_col'];
+            } //
+
+            // save the changes
+            $upd_result .= $cmp->save();
+
+            // if update was fine ...
+            if (str_replace('1', '', $upd_result) == '') {
+                // ... display the calling page (switched off because it seems more useful it the user goes back by selecting the related word)
+                // $result .= dsp_go_back($back, $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg .= $upd_result;
+            }
+        }
+
+        // if nothing yet done display the add view (and any message on the top)
+        if ($result == '') {
+            // in view edit views the view cannot be changed
+            $result .= $dsp->dsp_navbar_no_view($wrd->id);
+            $result .= dsp_err($msg);
+
+            // if the user has requested to use this display component also in another view, $add_link is greater than 0
+            $add_link = 0;
+            if (isset($_GET['add_link'])) {
+                $add_link = $_GET['add_link'];
+            }
+
+            // show the word and its relations, so that the user can change it
+            $result .= $cmp->dsp_edit($add_link, $wrd, $back);
+        }
     }
-  }
-  
-  echo $result;
-  
+}
+
+echo $result;
+
 prg_end($db_con);

@@ -170,7 +170,7 @@ class word_dsp extends word
         if ($type->id > 0) {
             $sql_from = "word_links l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id 
-                        AND l.verb_id = " . clo(DBL_LINK_TYPE_IS) . "              
+                        AND l.verb_id = " . cl(db_cl::VERB, verb::DBL_IS) . "              
                         AND l.to_phrase_id = " . $type->id;
         } else {
             $sql_from = "words w";

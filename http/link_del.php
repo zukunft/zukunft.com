@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -29,21 +29,23 @@
   
 */
 
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("link_del");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
@@ -59,27 +61,27 @@ $db_con = prg_start("link_del");
     // delete the link or ask for confirmation
     if ($link_id > 0) {
 
-      // create the source object to have an object to update the parameters
-      $lnk = New word_link;
-      $lnk->id  = $link_id;
-      $lnk->usr = $usr;
-      $lnk->load();
-      
-      if ($confirm == 1) {
-        $lnk->del();  
+        // create the source object to have an object to update the parameters
+        $lnk = new word_link;
+        $lnk->id = $link_id;
+        $lnk->usr = $usr;
+        $lnk->load();
 
-        $result .= dsp_go_back($back, $usr);
-      } else {  
-        // display the view header
-        $result .= $dsp->dsp_navbar($back);
+        if ($confirm == 1) {
+            $lnk->del();
 
-        $result .= $lnk->dsp_del($back);  
-      }
+            $result .= dsp_go_back($back, $usr);
+        } else {
+            // display the view header
+            $result .= $dsp->dsp_navbar($back);
+
+            $result .= $lnk->dsp_del($back);
+        }
     } else {
-      $result .= dsp_go_back($back, $usr);
+        $result .= dsp_go_back($back, $usr);
     }
-  }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

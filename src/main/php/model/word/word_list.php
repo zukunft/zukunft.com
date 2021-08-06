@@ -402,7 +402,7 @@ class word_list
     // returns a list of words that are related to this word list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
     function is()
     {
-        $wrd_lst = $this->foaf_parents(clo(DBL_LINK_TYPE_IS));
+        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
         log_debug('word_list->is -> (' . $this->dsp_id() . ' is ' . $wrd_lst->name() . ')');
         return $wrd_lst;
     }
@@ -412,7 +412,7 @@ class word_list
     function are()
     {
         log_debug('word_list->are for ' . $this->dsp_id());
-        $wrd_lst = $this->foaf_children(clo(DBL_LINK_TYPE_IS));
+        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_IS));
         $wrd_lst->merge($this);
         log_debug('word_list->are -> (' . $this->dsp_id() . ' are ' . $wrd_lst->name() . ')');
         return $wrd_lst;
@@ -421,7 +421,7 @@ class word_list
     // returns a list of words that are related to this word list
     function contains()
     {
-        $wrd_lst = $this->foaf_children(clo(DBL_LINK_TYPE_CONTAIN));
+        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_CONTAIN));
         $wrd_lst->merge($this);
         log_debug('word_list->contains -> (' . $this->dsp_id() . ' contains ' . $wrd_lst->name() . ')');
         return $wrd_lst;
@@ -468,7 +468,7 @@ class word_list
     function differentiators()
     {
         log_debug('word_list->differentiators for ' . $this->dsp_id());
-        $wrd_lst = $this->foaf_children(clo(DBL_LINK_TYPE_DIFFERENTIATOR));
+        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
         $wrd_lst->merge($this);
         log_debug('word_list->differentiators -> ' . $wrd_lst->dsp_id() . ' for ' . $this->dsp_id());
         return $wrd_lst;
@@ -479,7 +479,7 @@ class word_list
     {
         log_debug('word_list->differentiators_all for ' . $this->dsp_id());
         // this first time get all related items
-        $wrd_lst = $this->foaf_children(clo(DBL_LINK_TYPE_DIFFERENTIATOR));
+        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
         log_debug('word_list->differentiators -> children ' . $wrd_lst->dsp_id());
         if (count($wrd_lst->lst) > 0) {
             $wrd_lst = $wrd_lst->are();
@@ -496,7 +496,7 @@ class word_list
             $loops = 0;
             log_debug('word_list->differentiators -> added ' . $added_lst->dsp_id() . ' to ' . $wrd_lst->name());
             do {
-                $next_lst = $added_lst->foaf_children(clo(DBL_LINK_TYPE_DIFFERENTIATOR));
+                $next_lst = $added_lst->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
                 log_debug('word_list->differentiators -> sub children ' . $wrd_lst->dsp_id());
                 if (count($next_lst->lst) > 0) {
                     $next_lst = $next_lst->are();

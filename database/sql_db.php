@@ -78,7 +78,8 @@ class sql_db
     const FLD_FORMAT_BOOL = "boolean";           // to force the boolean formatting of a value for the SQL statement formatting
 
     public ?string $db_type = null;              // the database type which should be used for this connection e.g. postgreSQL or MYSQL
-    public $link = null;                 // the link object to the database
+    public $link = null;                         // the link object to the database
+    public mysqli $mysql;                        // the MySQL object to the database
     public ?int $usr_id = null;                  // the user id of the person who request the database changes
     private ?int $usr_view_id = null;            // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 

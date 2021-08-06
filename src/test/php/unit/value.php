@@ -72,5 +72,29 @@ function run_value_unit_tests()
                           WHERE phrase_group_id IN (1) ;";
     test_dsp('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
+    /*
+     * Im- and Export tests
+     */
+
+    test_subheader('Im- and Export tests');
+
+    $dsp_json = '{
+      "words": [
+        "speed of light",
+        "m/s"
+      ],
+      "time": "1983",
+      "number": "299792458",
+      "share": "public",
+      "source": "The International System of Units"
+    }';
+    $json_import_array = json_decode($dsp_json, true);
+    $val = new value;
+    $val->import_obj($json_import_array, false);
+    $json_export_string = json_encode($val->export_obj(false));
+    $result = json_decode($dsp_json) == json_decode($json_export_string);
+    $target = true;
+    test_dsp('view->import check name', $target, $result);
+
 }
 

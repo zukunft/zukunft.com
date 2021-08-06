@@ -29,27 +29,71 @@
   
 */
 
-class verb_list
+global $verbs;
+
+class verb_list extends user_type_list
 {
 
+    // search directions to get related words (phrases)
     const DIRECTION_NO = '';
     const DIRECTION_UP = 'up';
     const DIRECTION_DOWN = 'down';
 
-    public ?array $lst = null; // array of the loaded verb objects
-    public ?user $usr = null;  // the user object of the person for whom the verb list is loaded, so to say the viewer
+    public array $hash = []; // hash list with the code id for fast selection
+    public ?user $usr = null;   // the user object of the person for whom the verb list is loaded, so to say the viewer
 
     // search and load fields
     public ?word $wrd = null;  // to load a list related to this word
     public ?array $ids = array(); // list of the verb ids to load a list from the database
     public ?string $direction = self::DIRECTION_NO; // "up" or "down" to select the parents or children
 
+    /**
+     * overwrite the user_type_list function to include the specific fields like the name_plural
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type the database name e.g. the table name without s
+     * @return array the list of reference types
+     */
+    private function load_list(sql_db $db_con, string $db_type): array
+    {
+        $this->lst = [];
+        // set the where clause depending on the values given
+        // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
+        $sql_where = " s.to_phrase_id = " . $this->wrd->id;
+        if ($this->direction == self::DIRECTION_UP) {
+            $sql_where = " s.from_phrase_id = " . $this->wrd->id;
+        }
+        $db_con->set_type($db_type);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_usr_num_fields(array('excluded'));
+        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION), DB_TYPE_VERB);
+        $db_con->set_fields(array('verb_id'));
+        $db_con->set_where_text($sql_where);
+        $sql = $db_con->select();
+        $db_vrb_lst = $db_con->get($sql);
+        $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
+        if ($db_vrb_lst != null) {
+            $vrb_is_lst = array(); // tmp solution to prevent double entry until query has nice distinct
+            foreach ($db_vrb_lst as $db_vrb) {
+                if (!in_array($db_vrb['verb_id'], $vrb_is_lst)) {
+                    $vrb = new verb;
+                    $vrb->row_mapper($db_vrb);
+                    $vrb->usr = $this->usr;
+                    $this->lst[] = $vrb;
+                    $vrb_is_lst[] = $vrb->id;
+                    log_debug('verb_list->load added (' . $vrb->name . ')');
+                }
+            }
+        }
+        log_debug('verb_list->load (' . ".$sql_where." . ')');
+        return $this->lst;
+    }
+
+
     // load the word parameters from the database for a list of words
-    function load()
+    function load(sql_db $db_con, string $db_type = DB_TYPE_WORD_LINK): bool
     {
 
-        global $db_con;
-
+        $result = false;
         // check the all minimal input parameters
         if (!isset($this->usr)) {
             log_err("The user id must be set to load a list of verbs.", "verb_list->load");
@@ -58,37 +102,25 @@ class verb_list
               zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
-
-            // set the where clause depending on the values given
-            // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
-            $sql_where = " s.to_phrase_id = " . $this->wrd->id;
-            if ($this->direction == self::DIRECTION_UP) {
-                $sql_where = " s.from_phrase_id = " . $this->wrd->id;
+            $this->lst = $this->load_list($db_con, $db_type);
+            $this->type_hash = $this->get_hash($this->lst);
+            if (count($this->type_hash) > 0) {
+                $result = true;
             }
-            $db_con->set_type(DB_TYPE_WORD_LINK);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_usr_num_fields(array('excluded'));
-            $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION), DB_TYPE_VERB);
-            $db_con->set_fields(array('verb_id'));
-            $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
-            $db_vrb_lst = $db_con->get($sql);
-            $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
-            if ($db_vrb_lst != null) {
-                $vrb_is_lst = array(); // tmp solution to prevent double entry until query has nice distinct
-                foreach ($db_vrb_lst as $db_vrb) {
-                    if (!in_array($db_vrb['verb_id'], $vrb_is_lst)) {
-                        $vrb = new verb;
-                        $vrb->row_mapper($db_vrb);
-                        $vrb->usr = $this->usr;
-                        $this->lst[] = $vrb;
-                        $vrb_is_lst[] = $vrb->id;
-                        log_debug('verb_list->load added (' . $vrb->name . ')');
-                    }
-                }
-            }
-            log_debug('verb_list->load (' . ".$sql_where." . ')');
         }
+        return $result;
+    }
+
+    /**
+     * adding the verbs used for unit tests to the dummy list
+     */
+    function load_dummy() {
+        parent::load_dummy();
+        $type = new verb();
+        $type->name = verb::DBL_IS;
+        $type->code_id = verb::DBL_IS;
+        $this->lst[2] = $type;
+        $this->type_hash[verb::DBL_IS] = 2;
     }
 
     // calculates how many times a word is used, because this can be helpful for sorting
@@ -137,10 +169,10 @@ class verb_list
       -----------------
     */
 
-    // return a list of the verb ids as an sql compatible text
+    // return a list of the verb ids as a sql compatible text
     function ids_txt(): string
     {
-        return sql_array( $this->ids());
+        return sql_array($this->ids());
     }
 
     // display all verbs and allow an admin to change it

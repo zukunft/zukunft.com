@@ -141,7 +141,7 @@ function zut_is_name($id)
 function zut_is_id($id)
 {
     log_debug('zut_is_id(' . $id . ')');
-    $link_id = clo(DBL_LINK_TYPE_IS);
+    $link_id = cl(db_cl::VERB, verb::DBL_IS);
     $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $id, 'verb_id', $link_id);
     return $result;
 }
@@ -150,7 +150,7 @@ function zut_is_id($id)
 function zut_next_id($wrd_id, $user_id)
 {
     log_debug('zut_next_id(' . $wrd_id . ',u' . $user_id . ')');
-    $link_id = clo(DBL_LINK_TYPE_FOLLOW);
+    $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
     $result = zu_sql_get_value_2key('word_links', 'from_phrase_id', 'to_phrase_id', $wrd_id, 'verb_id', $link_id);
     return $result;
 }
@@ -159,7 +159,7 @@ function zut_next_id($wrd_id, $user_id)
 function zut_prior_id($wrd_id, $user_id)
 {
     log_debug('zut_prior_id(' . $wrd_id . ',u' . $user_id . ')');
-    $link_id = clo(DBL_LINK_TYPE_FOLLOW);
+    $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
     $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $wrd_id, 'verb_id', $link_id);
     return $result;
 }

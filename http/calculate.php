@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -28,18 +28,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("calculate");
 
-  // load the requesting user
-  $usr = New user;
-  $usr_id    = $_GET['user']; // to force another user view for testing the formula calculation
+// load the requesting user
+$usr = new user;
+$usr_id = $_GET['user']; // to force another user view for testing the formula calculation
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
+
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // start displaying while calculating
@@ -57,38 +60,38 @@ $db_con = prg_start("calculate");
 
     foreach ($frm_lst as $frm_request) {
 
-      // build the calculation queue
-      $calc_fv_lst = new formula_value_list;
-      $calc_fv_lst->usr = $usr;
-      $calc_fv_lst->frm = $frm_request;
-      $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
-      log_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")");
+        // build the calculation queue
+        $calc_fv_lst = new formula_value_list;
+        $calc_fv_lst->usr = $usr;
+        $calc_fv_lst->frm = $frm_request;
+        $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
+        log_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")");
 
-      // execute the queue
-      foreach ($calc_lst->lst as $r) {
+        // execute the queue
+        foreach ($calc_lst->lst as $r) {
 
-        // calculate one formula result
-        $frm = clone $r->frm;
-        $fv_lst = $frm->calc($r->wrd_lst);
+            // calculate one formula result
+            $frm = clone $r->frm;
+            $fv_lst = $frm->calc($r->wrd_lst);
 
-        // show the user the progress every two seconds
-        if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
-          $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
-          echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names() . ")<br>";
-          ob_flush();
-          flush();
-          $last_msg_time = time();
+            // show the user the progress every two seconds
+            if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
+                $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
+                echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names() . ")<br>";
+                ob_flush();
+                flush();
+                $last_msg_time = time();
+            }
+
+            $calc_pos++;
         }
-
-        $calc_pos++;
-      }
     }
     ob_end_flush();
 
     // display the finish message
     echo "<br>";
     echo "calculation finished.";
-  }
+}
 
 // Closing connection
 prg_end($db_con);

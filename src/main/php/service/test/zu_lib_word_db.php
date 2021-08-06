@@ -190,7 +190,7 @@ function zut_db_tree ($word_id, $link_type_id, $user_id) {
 // id array of all words that the given word is related to e.g. for the id of "ABB Ltd." it will return the id of "Company"
 function zut_ids_is ($word_id, $user_id) {
   log_debug('zut_ids_is(t'.$word_id.')');
-  $link_type_id = clo(DBL_LINK_TYPE_IS);
+  $link_type_id = cl(db_cl::VERB, verb::DBL_IS);
   $result = zut_db_tree_up ($word_id, $link_type_id, $user_id);
 
   log_debug('zut_ids_is -> ('.implode(",",$result).')');
@@ -200,7 +200,7 @@ function zut_ids_is ($word_id, $user_id) {
 // word ids that ARE of the type of the given word e.g. for "Company" it will be "ABB Ltd." and others
 function zut_ids_are ($word_id, $user_id) {
   log_debug('zut_ids_are(t'.$word_id.',u'.$user_id.')');
-  $link_type_id = clo(DBL_LINK_TYPE_IS);
+  $link_type_id = cl(db_cl::VERB, verb::DBL_IS);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id);
 
   log_debug('zut_ids_are -> ('.implode(",",$result).')');
@@ -221,7 +221,7 @@ function zut_lst_are ($word_id, $user_id) {
 // all word ids that are part of the given word e.g. for "cash flow statement" it will be "Sales" and others
 function zut_ids_contains ($word_id, $user_id) {
   log_debug('zut_ids_contains(t'.$word_id.')');
-  $link_type_id = clo(DBL_LINK_TYPE_CONTAIN);
+  $link_type_id = cl(db_cl::VERB, verb::DBL_CONTAIN);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id);
 
   log_debug('zut_ids_contains -> ('.implode(",",$result).')');
@@ -293,7 +293,7 @@ function zut_db_lst_differentiators_filtered ($word_ids, $filter_ids, $user_id) 
   log_debug('zut_db_lst_differentiators_filtered -> ('.implode(",",$result).')');
   return $result;
 }
-
+/*
 // returns a sorted list of words as an array of word ids 
 function zut_db_list ($start_word, $number_of_words) {
   log_debug('zut_db_list');
@@ -312,6 +312,7 @@ function zut_db_list ($start_word, $number_of_words) {
   return $result;
     
 }
+*/
 
 // get the word ids of a word group
 function zutg_wrd_ids ($wrd_grp_id, $user_id) {
@@ -330,7 +331,7 @@ function zut_foaf_parent($word_id) {
   log_debug('zut_foaf_parent('.$word_id.')');
 
   $result = array();
-  $parent_type = clo(DBL_LINK_TYPE_IS);
+  $parent_type = cl(db_cl::VERB, verb::DBL_IS);
 
   // find direct parent words
   $result = zu_sql_get_lst(zu_sql_words_linked($word_id, $parent_type, "down"));
@@ -352,14 +353,14 @@ function zut_db_differentiator_words($word_id) {
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
-  $differentiator_type = clo(DBL_LINK_TYPE_DIFFERENTIATOR);
+  $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
 
   // find direct differentiator words
   $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, "up"));
   log_debug('zut_db_differentiator_words ... words linked ('.implode(",",$word_lst).')');
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
-  $is_a_type = clo(DBL_LINK_TYPE_IS);
+  $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
 
   // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
@@ -386,7 +387,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
-  $differentiator_type = clo(DBL_LINK_TYPE_DIFFERENTIATOR);
+  $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
   log_debug('zut_db_differentiator_words_filtered ... type ('.$differentiator_type.')');
 
   // find direct differentiator words
@@ -398,7 +399,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   }
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
-  $is_a_type = clo(DBL_LINK_TYPE_IS);
+  $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
 
   // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator

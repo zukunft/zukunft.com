@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,8 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 9) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
+
 $db_con = prg_start("start test.php");
 
 /*
@@ -89,23 +90,22 @@ $db_con = prg_start("start test.php");
 </div>
 
 */
-?>	
+?>
 
 <script>
-$('#tokenfield').tokenfield({
-  autocomplete: {
-    source: ['red','blue','green','yellow','violet','brown','purple','black','white'],
-    delay: 100
-  },
-  showAutocompleteOnFocus: true
-})
-</script> 
+    $('#tokenfield').tokenfield({
+        autocomplete: {
+            source: ['red', 'blue', 'green', 'yellow', 'violet', 'brown', 'purple', 'black', 'white'],
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+    })
+</script>
 
-<input type="text" class="form-control" id="tokenfield" value="red,green,blue" />
+<input type="text" class="form-control" id="tokenfield" value="red,green,blue"/>
 
 
-
-<?php 
+<?php
 
 /*
 

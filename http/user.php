@@ -26,15 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
-if ($debug > 1) {
-    echo 'lib loaded<br>';
-}
 
 $db_con = prg_start("user");
 
@@ -61,6 +54,8 @@ $dsp_usr = $usr->dsp_user();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
     log_debug("user -> (" . $usr->id . ")");
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;

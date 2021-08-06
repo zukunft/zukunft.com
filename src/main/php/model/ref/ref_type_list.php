@@ -39,10 +39,13 @@ class ref_type_list extends user_type_list
 
     /**
      * overwrite the user_type_list function to include the specific fields like the url
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type the database name e.g. the table name without s
+     * @return array the list of reference types
      */
-    function load_types(string $db_type, sql_db $db_con): array
+    private function load_list(sql_db $db_con, string $db_type): array
     {
-        $this->type_list = [];
+        $this->lst = [];
         $db_con->set_type($db_type);
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, 'base_url'));
         $sql = $db_con->select();
@@ -54,10 +57,10 @@ class ref_type_list extends user_type_list
                 $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
                 $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
                 $type_obj->url = $db_entry['base_url'];
-                $this->type_list[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
+                $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
             }
         }
-        return $this->type_list;
+        return $this->lst;
     }
 
     /**
@@ -66,26 +69,16 @@ class ref_type_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load_by_db(string $db_type, sql_db $db_con): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_REF_TYPE): bool
     {
         $result = false;
         global $ref_types;
-        $ref_types = $this->load_types($db_type, $db_con);
+        $ref_types = $this->load_list($db_con, $db_type);
         $this->type_hash = parent::get_hash($ref_types);
         if (count($this->type_hash) > 0) {
             $result = true;
         }
         return $result;
-    }
-
-    /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con): bool
-    {
-        return $this->load_by_db(DB_TYPE_REF_TYPE, $db_con);
     }
 
     /**
@@ -96,7 +89,7 @@ class ref_type_list extends user_type_list
         $type = new ref_type();
         $type->name = ref_type_list::DBL_WIKIPEDIA;
         $type->code_id = ref_type_list::DBL_WIKIPEDIA;
-        $this->type_list[2] = $type;
+        $this->lst[2] = $type;
         $this->type_hash[ref_type_list::DBL_WIKIPEDIA] = 2;
     }
 
@@ -117,10 +110,10 @@ class ref_type_list extends user_type_list
         global $ref_types;
         $result = null;
         if ($id > 0) {
-            if (array_key_exists($id, $ref_types->type_list)) {
-                $result = $ref_types->type_list[$id];
+            if (array_key_exists($id, $ref_types->lst)) {
+                $result = $ref_types->lst[$id];
             } else {
-                log_err('Ref type with is ' . $id . ' not found in ' . dsp_array($ref_types->type_list));
+                log_err('Ref type with is ' . $id . ' not found in ' . dsp_array($ref_types->lst));
             }
         } else {
             log_debug('Ref type id not not set');

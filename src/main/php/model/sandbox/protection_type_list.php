@@ -45,9 +45,9 @@ class protection_type_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_PROTECTION): bool
     {
-        return parent::load_by_db(DB_TYPE_PROTECTION, $db_con);
+        return parent::load($db_con, $db_type);
     }
 
     /**
@@ -55,17 +55,17 @@ class protection_type_list extends user_type_list
      */
     function load_dummy()
     {
-        $this->type_list = array();
+        $this->lst = array();
         $this->type_hash = array();
         $type = new user_type();
         $type->name = protection_type_list::DBL_NO;
         $type->code_id = protection_type_list::DBL_NO;
-        $this->type_list[2] = $type;
+        $this->lst[2] = $type;
         $this->type_hash[protection_type_list::DBL_NO] = 2;
         $type = new user_type();
         $type->name = protection_type_list::DBL_ADMIN;
         $type->code_id = protection_type_list::DBL_ADMIN;
-        $this->type_list[3] = $type;
+        $this->lst[3] = $type;
         $this->type_hash[protection_type_list::DBL_ADMIN] = 3;
 
     }

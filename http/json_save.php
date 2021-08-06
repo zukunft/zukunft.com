@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,54 +26,56 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start_api("json_save");
 
-  // load the session user parameters
-  $usr = New user;
-  $result = $usr->get();
+// load the session user parameters
+$usr = new user;
+$result = $usr->get();
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET['words'];
-    log_debug("json_save(".$phrases.")");
-    $word_names = explode(",",$phrases);
-    
+    log_debug("json_save(" . $phrases . ")");
+    $word_names = explode(",", $phrases);
+
     // get all related Phrases
-    $phr_lst = New phrase_list;
+    $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
-    foreach ($word_names AS $wrd_name) {
-      if ($wrd_name <> '') {
-        $phr_lst->add_name($wrd_name);
-      }  
+    foreach ($word_names as $wrd_name) {
+        if ($wrd_name <> '') {
+            $phr_lst->add_name($wrd_name);
+        }
     }
-    
+
     if (count($phr_lst->lst) > 0) {
-      $phr_lst->load();
-      $phr_lst = $phr_lst->are();
-    
-      log_debug("json_save.php ... phrase loaded.");
-      $json_export = New json_io;
-      $json_export->usr     = $usr;
-      $json_export->phr_lst = $phr_lst;
-      $result = $json_export->export();
+        $phr_lst->load();
+        $phr_lst = $phr_lst->are();
+
+        log_debug("json_save.php ... phrase loaded.");
+        $json_export = new json_io;
+        $json_export->usr = $usr;
+        $json_export->phr_lst = $phr_lst;
+        $result = $json_export->export();
     } else {
-      $result .= log_info('No JSON can be created, because no word or triple is given.','', (new Exception)->getTraceAsString(), $this->usr);
+        $result .= log_info('No JSON can be created, because no word or triple is given.', '', (new Exception)->getTraceAsString(), $this->usr);
     }
 
     if ($result <> '') {
-      echo $result;
+        echo $result;
     } else {
-      // TODO replace with proper error message
-      print(json_encode($phrases));
+        // TODO replace with proper error message
+        print(json_encode($phrases));
     }
 
-  }
+}
 
 // Closing connection
 prg_end_api($db_con);

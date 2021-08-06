@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,24 +30,26 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("value");
 
-  // get the parameters
-  $wrd_names = $_GET['t']; 
-  log_debug("value for ".$wrd_names);
-  
-  $result = ''; // reset the html code var
+// get the parameters
+$wrd_names = $_GET['t'];
+log_debug("value for " . $wrd_names);
 
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+$result = ''; // reset the html code var
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
+
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
@@ -55,24 +57,24 @@ $db_con = prg_start("value");
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
-        
+
     $result .= $dsp->dsp_navbar($back);
 
     if ($wrd_names <> '') {
 
-      // load the words
-      $wrd_lst = New word_list;
-      $wrd_lst->name_lst = explode(",",$wrd_names);
-      $wrd_lst->usr = $usr;
-      $wrd_lst->load();
-      
-      $result .= $wrd_lst->name_linked();   
-      $result .= ' = ';   
-      $val = $wrd_lst->value();   
-      $result .= $val->display_linked($back);   
-    }  
-  }
+        // load the words
+        $wrd_lst = new word_list;
+        $wrd_lst->name_lst = explode(",", $wrd_names);
+        $wrd_lst->usr = $usr;
+        $wrd_lst->load();
 
-  echo $result;
+        $result .= $wrd_lst->name_linked();
+        $result .= ' = ';
+        $val = $wrd_lst->value();
+        $result .= $val->display_linked($back);
+    }
+}
+
+echo $result;
 
 prg_end($db_con);

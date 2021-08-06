@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,21 +30,23 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("source_del");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
@@ -52,34 +54,34 @@ $db_con = prg_start("source_del");
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
-        
+
     // get the parameters
-    $src_id  = $_GET['id']; 
+    $src_id = $_GET['id'];
     $confirm = $_GET['confirm'];
-  
+
     if ($src_id > 0) {
 
-      // create the source object to have an object to update the parameters
-      $src = New source;
-      $src->id  = $src_id;
-      $src->usr = $usr;
-      $src->load();
-      
-      if ($confirm == 1) {
-        $src->del();  
-    
-        $result .= dsp_go_back($back, $usr);
-      } else {
-        // display the view header
-        $result .= $dsp->dsp_navbar($back);
+        // create the source object to have an object to update the parameters
+        $src = new source;
+        $src->id = $src_id;
+        $src->usr = $usr;
+        $src->load();
 
-        $result .= btn_yesno("Delete ".$src->name."? ", "/http/source_del.php?id=".$src_id."&back=".$back);
-      }
+        if ($confirm == 1) {
+            $src->del();
+
+            $result .= dsp_go_back($back, $usr);
+        } else {
+            // display the view header
+            $result .= $dsp->dsp_navbar($back);
+
+            $result .= btn_yesno("Delete " . $src->name . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
+        }
     } else {
-      $result .= dsp_go_back($back, $usr);
-    }  
-  }
+        $result .= dsp_go_back($back, $usr);
+    }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

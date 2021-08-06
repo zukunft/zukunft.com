@@ -44,9 +44,9 @@ class user_profile_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_USER_PROFILE): bool
     {
-        return parent::load_by_db(DB_TYPE_USER_PROFILE, $db_con);
+        return parent::load($db_con, $db_type);
     }
 
     /**
@@ -54,12 +54,12 @@ class user_profile_list extends user_type_list
      */
     function load_dummy()
     {
-        $this->type_list = array();
+        $this->lst = array();
         $this->type_hash = array();
         $type = new user_type();
         $type->name = user_profile_list::DBL_NORMAL;
         $type->code_id = user_profile_list::DBL_NORMAL;
-        $this->type_list[2] = $type;
+        $this->lst[2] = $type;
         $this->type_hash[user_profile_list::DBL_NORMAL] = 2;
 
     }

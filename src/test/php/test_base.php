@@ -67,6 +67,7 @@ include_once $path_unit . 'ref.php';
 include_once $path_unit_db . 'unit_db_tests.php';
 include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
+include_once $path_unit_db . 'verb.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';

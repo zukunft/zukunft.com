@@ -45,9 +45,9 @@ class formula_type_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_FORMULA_TYPE): bool
     {
-        return parent::load_by_db(DB_TYPE_FORMULA_TYPE, $db_con);
+        return parent::load($db_con, $db_type);
     }
 
     /**
@@ -58,7 +58,7 @@ class formula_type_list extends user_type_list
         $type = new user_type();
         $type->name = formula_type_list::DBL_CALC;
         $type->code_id = formula_type_list::DBL_CALC;
-        $this->type_list[2] = $type;
+        $this->lst[2] = $type;
         $this->type_hash[formula_type_list::DBL_CALC] = 2;
     }
 

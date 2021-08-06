@@ -4,7 +4,9 @@
 
   view_component_link_types.php - to define the behaviour if a component is linked to a view
   -----------------------------
-  
+
+    // TODO check if really needed
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -29,50 +31,18 @@
   
 */
 
-// TODO switch to one array format
-$view_component_link_types = [];
-$view_component_link_types_hash = [];
+global $view_component_link_types;
 
-class view_component_link_types extends user_type
+class view_component_link_type_list extends user_type_list
 {
-    // persevered view name for unit and integration tests
-    const TEST_NAME = 'System Test View Component Link Type';
-    const TEST_TYPE = 'System Test View Component Link Type';
-}
-
-/**
- * reload the global view_component_link_types array from the database e.g. because a translation has changed
- */
-function init_view_component_link_types($db_con): bool
-{
-    global $view_component_link_types;
-    global $view_component_link_types_hash;
-
-    $result = false;
-    $typ_lst = new user_type_list();
-    $view_component_link_types = $typ_lst->load_types(DB_TYPE_VIEW_COMPONENT_LINK_TYPE, $db_con);
-    $view_component_link_types_hash = $typ_lst->get_hash($view_component_link_types);
-    if (count($view_component_link_types_hash) > 0) {
-        $result = true;
+    /**
+     * overwrite the general user type list load function to keep the link to the table type capsuled
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @return bool true if load was successful
+     */
+    function load(sql_db $db_con, string $db_type = DB_TYPE_VIEW_COMPONENT_LINK_TYPE): bool
+    {
+        return parent::load($db_con, $db_type);
     }
-    return $result;
-
-}
-
-/**
- * create view component link type array for the unit tests without database connection
- */
-function unit_text_init_view_component_link_types()
-{
-    global $view_component_link_types;
-    global $view_component_link_types_hash;
-
-    $view_component_link_types = array();
-    $view_component_link_types_hash = array();
-    $dsp_lnk_type = new view_component_link_types();
-    $dsp_lnk_type->name = view_component_link_types::TEST_NAME;
-    $dsp_lnk_type->code_id = view_component_link_types::TEST_TYPE;
-    $view_component_link_types[1] = $dsp_lnk_type;
-    $view_component_link_types_hash[view_component_link_types::TEST_TYPE] = 1;
 
 }

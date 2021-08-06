@@ -30,15 +30,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
-if ($debug > 0) {
-    echo 'libs loaded<br>';
-}
 
 // open database 
 $db_con = prg_start("signup", "center_form");
@@ -51,11 +44,11 @@ $result .= $usr->get();
 
 // get the parameters
 if (isset($_POST['submit'])) {
-    # search the database to see if the user name has been taken or not 
+    # search the database to see if the username has been taken or not
     $sql = sprintf("SELECT * FROM users WHERE user_name='%s' LIMIT 1", mysqli_real_escape_string($_POST['user_name']));
     $sql_result = mysqli_query($sql);
     $row = mysqli_fetch_array($sql_result);
-    #check too see what fields have been left empty, and if the passwords match 
+    #check to see what fields have been left empty, and if the passwords match
     $usr_name = $_POST['user_name'];
     if ($row || empty($_POST['user_name'])
         || empty($_POST['email'])

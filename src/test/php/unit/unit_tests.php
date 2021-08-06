@@ -41,6 +41,18 @@ function unit_test_init_word_types()
 }
 
 /**
+ * create verb array for the unit tests without database connection
+ */
+function unit_test_init_verbs()
+{
+    global $verbs;
+
+    $verbs = new verb_list();
+    $verbs->load_dummy();
+
+}
+
+/**
  * create formula type array for the unit tests without database connection
  */
 function unit_test_init_formula_types()
@@ -73,6 +85,18 @@ function unit_test_init_view_component_types()
 
     $view_component_types = new view_component_type_list();
     $view_component_types->load_dummy();
+
+}
+
+/**
+ * create view component link type array for the unit tests without database connection
+ */
+function unit_test_init_view_component_link_types()
+{
+    global $view_component_link_types;
+
+    $view_component_link_types = new view_component_link_type_list();
+    $view_component_link_types->load_dummy();
 
 }
 
@@ -121,10 +145,11 @@ function run_unit_tests()
 
     // prepare the unit tests
     unit_test_init_word_types();
+    unit_test_init_verbs();
     unit_test_init_formula_types();
     unit_test_init_view_types();
     unit_test_init_view_component_types();
-    unit_text_init_view_component_link_types();
+    unit_test_init_view_component_link_types();
     unit_test_init_ref_types();
     unit_test_init_share_types();
     unit_test_init_protection_types();

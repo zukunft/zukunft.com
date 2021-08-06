@@ -56,9 +56,9 @@ class word_type_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_WORD_TYPE): bool
     {
-        return parent::load_by_db(DB_TYPE_WORD_TYPE, $db_con);
+        return parent::load($db_con, $db_type);
     }
 
     /**
@@ -69,12 +69,12 @@ class word_type_list extends user_type_list
         $type = new user_type();
         $type->name = word_type_list::DBL_NORMAL;
         $type->code_id = word_type_list::DBL_NORMAL;
-        $this->type_list[2] = $type;
+        $this->lst[2] = $type;
         $this->type_hash[word_type_list::DBL_NORMAL] = 2;
         $type = new user_type();
         $type->name = word_type_list::DBL_MEASURE;
         $type->code_id = word_type_list::DBL_MEASURE;
-        $this->type_list[3] = $type;
+        $this->lst[3] = $type;
         $this->type_hash[word_type_list::DBL_MEASURE] = 3;
     }
 

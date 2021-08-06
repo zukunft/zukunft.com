@@ -367,7 +367,7 @@ function zuc_get_verb_words($verb_id, $word_array, $time_word_id, $user_id)
     $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, "up");
     log_debug("zuc_get_verb_words -> verb words " . dsp_array($verb_words));
     // list all foaf of the verb
-    $is_a_type = clo(DBL_LINK_TYPE_IS);
+    $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
     $word_ids = zut_array_ids($verb_words, $user_id);
     foreach ($word_ids as $word_id) {
         log_debug("zuc_get_verb_words -> add word id " . $word_id . " to result");

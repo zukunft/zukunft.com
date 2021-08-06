@@ -34,7 +34,7 @@ function run_verb_test () {
 
   // check the loading of the "is a" verb
   $vrb = New verb;
-  $vrb->id= clo(DBL_LINK_TYPE_IS);
+  $vrb->id= cl(db_cl::VERB, verb::DBL_IS);
   $vrb->usr = $usr->id;
   $vrb->load();
   $target = 'is a';

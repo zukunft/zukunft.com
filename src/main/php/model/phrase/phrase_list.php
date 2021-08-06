@@ -292,7 +292,7 @@ class phrase_list
     // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
     function is()
     {
-        $phr_lst = $this->foaf_parents(clo(DBL_LINK_TYPE_IS));
+        $phr_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
         log_debug('phrase_list->is -> (' . $this->dsp_id() . ' is ' . $phr_lst->name() . ')');
         return $phr_lst;
     }
@@ -302,7 +302,7 @@ class phrase_list
     function are()
     {
         log_debug('phrase_list->are -> ' . $this->dsp_id());
-        $phr_lst = $this->foaf_children(clo(DBL_LINK_TYPE_IS));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_IS));
         log_debug('phrase_list->are -> ' . $this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug('phrase_list->are -> ' . $this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -312,7 +312,7 @@ class phrase_list
     // returns a list of phrases that are related to this phrase list
     function contains()
     {
-        $phr_lst = $this->foaf_children(clo(DBL_LINK_TYPE_CONTAIN));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_CONTAIN));
         $phr_lst->merge($this);
         log_debug('phrase_list->contains -> (' . $this->dsp_id() . ' contains ' . $phr_lst->name() . ')');
         return $phr_lst;
@@ -359,7 +359,7 @@ class phrase_list
     function differentiators()
     {
         log_debug('phrase_list->differentiators for ' . $this->dsp_id());
-        $phr_lst = $this->foaf_children(clo(DBL_LINK_TYPE_DIFFERENTIATOR));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
         log_debug('phrase_list->differentiators merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug('phrase_list->differentiators -> ' . $phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -371,7 +371,7 @@ class phrase_list
     {
         log_debug('phrase_list->differentiators_all for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->foaf_children(clo(DBL_LINK_TYPE_DIFFERENTIATOR));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
         $phr_lst = $phr_lst->are();
         $phr_lst = $phr_lst->contains();
         $added_lst = $phr_lst->diff($this);
@@ -380,7 +380,7 @@ class phrase_list
             $loops = 0;
             log_debug('phrase_list->differentiators -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->foaf_children(clo(DBL_LINK_TYPE_DIFFERENTIATOR));
+                $next_lst = $added_lst->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
                 $next_lst = $next_lst->are();
                 $next_lst = $next_lst->contains();
                 $added_lst = $next_lst->diff($phr_lst);

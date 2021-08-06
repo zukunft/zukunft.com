@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -29,21 +29,23 @@
   
 */
 
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("link_edit");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
@@ -53,48 +55,48 @@ $db_con = prg_start("link_edit");
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the link object to have an place to update the parameters
-    $lnk = New word_link;
-    $lnk->id  = $_GET['id'];
+    $lnk = new word_link;
+    $lnk->id = $_GET['id'];
     $lnk->usr = $usr;
     $lnk->load();
-    
+
     // edit the link or ask for confirmation
     if ($lnk->id <= 0) {
-      $result .= log_err("No triple found to change because the id is missing.", "link_edit.php");
+        $result .= log_err("No triple found to change because the id is missing.", "link_edit.php");
     } else {
-    
-      if ($_GET['confirm'] == 1) {
-      
-        // get the parameters
-        $lnk->from_id = $_GET['phrase1']; // the word or triple linked from
-        $lnk->verb_id = $_GET['verb'];    // the link type (verb)
-        $lnk->to_id   = $_GET['phrase2']; // the word or triple linked to
 
-        // save the changes
-        $upd_result = $lnk->save();
-      
-        // if update was successful ...
-        if (str_replace ('1','',$upd_result) == '') {
-          // ... display the calling view
-          $result .= dsp_go_back($back, $usr);
-        } else {
-          // ... or in case of a problem prepare to show the message
-          $msg .= $upd_result;
+        if ($_GET['confirm'] == 1) {
+
+            // get the parameters
+            $lnk->from_id = $_GET['phrase1']; // the word or triple linked from
+            $lnk->verb_id = $_GET['verb'];    // the link type (verb)
+            $lnk->to_id = $_GET['phrase2']; // the word or triple linked to
+
+            // save the changes
+            $upd_result = $lnk->save();
+
+            // if update was successful ...
+            if (str_replace('1', '', $upd_result) == '') {
+                // ... display the calling view
+                $result .= dsp_go_back($back, $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg .= $upd_result;
+            }
         }
-      }  
-        
-      // if nothing yet done display the add view (and any message on the top)
-      if ($result == '')  {
-        // display the view header
-        $result .= $dsp->dsp_navbar($back);
-        $result .= dsp_err($msg);
 
-        // display the word link to allow the user to change it
-        $result .= $lnk->dsp_edit($back);
-      } 
+        // if nothing yet done display the add view (and any message on the top)
+        if ($result == '') {
+            // display the view header
+            $result .= $dsp->dsp_navbar($back);
+            $result .= dsp_err($msg);
+
+            // display the word link to allow the user to change it
+            $result .= $lnk->dsp_edit($back);
+        }
     }
-  }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

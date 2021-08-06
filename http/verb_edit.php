@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,21 +30,23 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("verb_edit");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
-  
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
+
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
@@ -52,55 +54,63 @@ $db_con = prg_start("verb_edit");
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change is finished
-        
+
     // create the verb object to have an place to update the parameters
-    $vrb = New verb;
-    $vrb->id  = $_GET['id'];
+    $vrb = new verb;
+    $vrb->id = $_GET['id'];
     $vrb->usr = $usr;
     $vrb->load();
 
     if ($vrb->id <= 0) {
-      $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");
+        $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");
     } else {
 
-      // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-      if ($_GET['name'] <> '') {
+        // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
+        if ($_GET['name'] <> '') {
 
-        // get the parameters (but if not set, use the database value)
-        if (isset($_GET['name']))           { $vrb->name       = $_GET['name']; }
-        if (isset($_GET['plural']))         { $vrb->plural     = $_GET['plural']; }
-        if (isset($_GET['reverse']))        { $vrb->reverse    = $_GET['reverse']; }
-        if (isset($_GET['plural_reverse'])) { $vrb->rev_plural = $_GET['plural_reverse']; }
+            // get the parameters (but if not set, use the database value)
+            if (isset($_GET['name'])) {
+                $vrb->name = $_GET['name'];
+            }
+            if (isset($_GET['plural'])) {
+                $vrb->plural = $_GET['plural'];
+            }
+            if (isset($_GET['reverse'])) {
+                $vrb->reverse = $_GET['reverse'];
+            }
+            if (isset($_GET['plural_reverse'])) {
+                $vrb->rev_plural = $_GET['plural_reverse'];
+            }
 
-        // save the changes
-        $upd_result = $vrb->save();
-      
-        // if update was successful ...
-        if (str_replace ('1','',$upd_result) == '') {
-          // remember the verb for the next values to add
-          $usr->set_verb ($vrb->id);
+            // save the changes
+            $upd_result = $vrb->save();
 
-          // ... and display the calling view
-          $result .= dsp_go_back($back, $usr);
-        } else {
-          // ... or in case of a problem prepare to show the message
-          $msg .= $upd_result;
+            // if update was successful ...
+            if (str_replace('1', '', $upd_result) == '') {
+                // remember the verb for the next values to add
+                $usr->set_verb($vrb->id);
+
+                // ... and display the calling view
+                $result .= dsp_go_back($back, $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg .= $upd_result;
+            }
+
         }
-          
-      } 
 
-      // if nothing yet done display the add view (and any message on the top)
-      if ($result == '')  {
-        // show the header
-        $result .= $dsp->dsp_navbar($back);
-        $result .= dsp_err($msg);
+        // if nothing yet done display the add view (and any message on the top)
+        if ($result == '') {
+            // show the header
+            $result .= $dsp->dsp_navbar($back);
+            $result .= dsp_err($msg);
 
-        // show the verb and its relations, so that the user can change it
-        $result .= $vrb->dsp_edit ($back);
-      }  
+            // show the verb and its relations, so that the user can change it
+            $result .= $vrb->dsp_edit($back);
+        }
     }
-  }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

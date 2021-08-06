@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,57 +30,59 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("value_del");
 
-  $result = ''; // reset the html code var
+$result = ''; // reset the html code var
 
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
     $dsp->id = clo(DBL_VIEW_VALUE_DEL);
     $dsp->usr = $usr;
     $dsp->load();
-    $back    = $_GET['back'];  // the page from which the value deletion has been called
-        
+    $back = $_GET['back'];  // the page from which the value deletion has been called
+
     // get the parameters
-    $val_id  = $_GET['id']; 
+    $val_id = $_GET['id'];
     $confirm = $_GET['confirm'];
-  
+
     if ($val_id > 0) {
 
-      // create the value object to have an object to update the parameters
-      $val = New value;
-      $val->id  = $val_id;
-      $val->usr = $usr;
-      $val->load();
-      
-      if ($confirm == 1) {
-        // actually delete the value (at least for this user)
-        $val->del();  
-    
-        $result .= dsp_go_back($back, $usr);
-      } else {
-        // display the view header
-        $result .= $dsp->dsp_navbar($back);
+        // create the value object to have an object to update the parameters
+        $val = new value;
+        $val->id = $val_id;
+        $val->usr = $usr;
+        $val->load();
 
-        $val->load_phrases();
-        $result .= btn_yesno('Delete '.$val->number.' for '.$val->phr_lst->name().'? ', '/http/value_del.php?id='.$val_id.'&back='.$back);
-      }
+        if ($confirm == 1) {
+            // actually delete the value (at least for this user)
+            $val->del();
+
+            $result .= dsp_go_back($back, $usr);
+        } else {
+            // display the view header
+            $result .= $dsp->dsp_navbar($back);
+
+            $val->load_phrases();
+            $result .= btn_yesno('Delete ' . $val->number . ' for ' . $val->phr_lst->name() . '? ', '/http/value_del.php?id=' . $val_id . '&back=' . $back);
+        }
     } else {
-      $result .= dsp_go_back($back, $usr);
-    }  
-  }
+        $result .= dsp_go_back($back, $usr);
+    }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

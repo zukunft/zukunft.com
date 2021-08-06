@@ -30,16 +30,8 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
-if ($debug > 0) {
-    echo 'libs loaded<br>';
-}
-
 
 // open database 
 $db_con = prg_start("login_activate", "center_form");
@@ -93,7 +85,7 @@ if (isset($_POST['submit'])) {
             //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
             $db_con->set_type(DB_TYPE_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
-            $db_con->update($usr_id, array('password','activation_key','activation_key_timeout'),array($pw_hash,'','NOW()'));
+            $db_con->update($usr_id, array('password', 'activation_key', 'activation_key_timeout'), array($pw_hash, '', 'NOW()'));
             /*
             $sql = sprintf("UPDATE users
                           SET password       = '%s',

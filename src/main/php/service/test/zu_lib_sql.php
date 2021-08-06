@@ -635,7 +635,7 @@ function zu_sql_get_field($type, $id, $field_name)
 
     return $result;
 }
-
+/*
 // save a change in the log table
 // must be called BEFORE the change is done in the database
 function zu_sql_log_field($table_name, $row_id, $user_id, $field_name, $new_value)
@@ -659,6 +659,7 @@ function zu_sql_log_field($table_name, $row_id, $user_id, $field_name, $new_valu
 
     return $result;
 }
+*/
 
 // table specific functions
 // ------------------------
@@ -1100,8 +1101,8 @@ function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
 {
     log_debug('zu_sql_word_lst_add_differentiator(' . $word_lst . ',' . $xtra_words . ')');
 
-    $is_a_type = clo(DBL_LINK_TYPE_IS);
-    $differentiator_type = clo(DBL_LINK_TYPE_DIFFERENTIATOR);
+    $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
+    $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
 
     // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
     echo 'extra: ' . implode(",", $xtra_words) . '<br>';

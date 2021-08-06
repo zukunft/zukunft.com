@@ -236,7 +236,7 @@ function zut_html_list_related($id, $direction, $user_id): string
         }
 
         // in case of the verb "following" continue the series
-        if ($link_type_id == clo(DBL_LINK_TYPE_FOLLOW)) {
+        if ($link_type_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
             $start_id = $link_type_id * -1;
         } else {
             $start_id = $id;
@@ -282,14 +282,14 @@ function zut_html_list_related($id, $direction, $user_id): string
             //$result .= zut_html($word_entry[0], $word_entry[1]);
             // use the last word as a sample for the new word type
             $word_type_id = $word_entry[2];
-            if ($link_type_id == clo(DBL_LINK_TYPE_FOLLOW)) {
+            if ($link_type_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
                 $last_linked_word_id = $word_entry[0];
             }
         }
         log_debug('zut_html_list_related btn done');
 
         // in case of the verb "following" continue the series after the last element
-        if ($link_type_id == clo(DBL_LINK_TYPE_FOLLOW)) {
+        if ($link_type_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
             $start_id = $last_linked_word_id;
             /*      if ($directional_link_type_id > 0) {
                     $directional_link_type_id = $directional_link_type_id * -1;
@@ -343,6 +343,7 @@ function zut_dsp_like($word_pattern, $user_id)
     return $result;
 }
 
+/*
 // list of related words filtered by a link type
 function zut_dsp_list_wrd_val($wrd_id, $col_wrd_id, $user_id)
 {
@@ -400,6 +401,7 @@ function zut_dsp_list_wrd_val($wrd_id, $col_wrd_id, $user_id)
                           echo $wrd_grp_id."<br>";
                           $in_value = zuv_wrd_group_result($wrd_grp_id, 0, $user_id, 20);
                         } */
+                        /*
                 $value = $in_value['num'];
                 if ($value <> 0) {
                     //$back_link = $row_wrd_id;
@@ -434,9 +436,10 @@ function zut_dsp_list_wrd_val($wrd_id, $col_wrd_id, $user_id)
       $result .= '  </tr>';
 
       $result .= '</table><br> ';
-    */
+    */ /*
     return $result;
 }
+ */
 
 // returns the html code to select a word
 // database link must be open

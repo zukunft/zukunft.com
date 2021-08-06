@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -33,21 +33,23 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("link_add");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // load the session user parameters
-  $usr = New user;
-  echo $usr->get(); // if the usr identification fails, show any message immediately because this should never happen
+// load the session user parameters
+$usr = new user;
+echo $usr->get(); // if the usr identification fails, show any message immediately because this should never happen
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // prepare the display
     $dsp = new view_dsp;
@@ -57,46 +59,52 @@ $db_con = prg_start("link_add");
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
-    $lnk = New word_link;
-    $lnk->usr     = $usr;
+    $lnk = new word_link;
+    $lnk->usr = $usr;
 
     // load the parameters to the triple object to display it again in case of an error
-    if (isset($_GET['from']))   { $lnk->from_id = $_GET['from']; }   // the word or triple to be linked
-    if (isset($_GET['verb']))   { $lnk->verb_id = $_GET['verb']; }   // the link type (verb)
-    if (isset($_GET['phrase'])) { $lnk->to_id   = $_GET['phrase']; }
-          
+    if (isset($_GET['from'])) {
+        $lnk->from_id = $_GET['from'];
+    }   // the word or triple to be linked
+    if (isset($_GET['verb'])) {
+        $lnk->verb_id = $_GET['verb'];
+    }   // the link type (verb)
+    if (isset($_GET['phrase'])) {
+        $lnk->to_id = $_GET['phrase'];
+    }
+
     // if the user has pressed save at least once
     if ($_GET['confirm'] == 1) {
 
-      // check essential parameters
-      if ($lnk->from_id == 0 OR $lnk->verb_id == 0 OR $lnk->to_id == 0) {
-        $msg .= 'Please select two words and a verb.';
-      } else {
-    
-        $add_result = $lnk->save();
-
-        // if adding was successful ...
-        if (str_replace ('1','',$add_result) == '') {
-          // ... and display the calling view
-          $result .= dsp_go_back($back, $usr);
+        // check essential parameters
+        if ($lnk->from_id == 0 or $lnk->verb_id == 0 or $lnk->to_id == 0) {
+            $msg .= 'Please select two words and a verb.';
         } else {
-          // ... or in case of a problem prepare to show the message
-          $msg .= $add_result;
+
+            $add_result = $lnk->save();
+
+            // if adding was successful ...
+            if (str_replace('1', '', $add_result) == '') {
+                // ... and display the calling view
+                $result .= dsp_go_back($back, $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg .= $add_result;
+            }
         }
-      }
     }
-    
+
     // if nothing yet done display the add view (and any message on the top)
-    if ($result == '')  {
-      // display the add view again
-      $result .= $dsp->dsp_navbar($back);
-      $result .= dsp_err($msg);
+    if ($result == '') {
+        // display the add view again
+        $result .= $dsp->dsp_navbar($back);
+        $result .= dsp_err($msg);
 
-      // display the form to create a new triple
-      $result .= $lnk->dsp_add ($back);
+        // display the form to create a new triple
+        $result .= $lnk->dsp_add($back);
     }
-  }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

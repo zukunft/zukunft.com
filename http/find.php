@@ -26,15 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-if (isset($_GET['debug'])) {
-    $debug = $_GET['debug'];
-} else {
-    $debug = 0;
-}
+$debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
-if ($debug > 0) {
-    echo 'libs loaded<br>';
-}
 
 $result = ''; // reset the html code var
 
@@ -45,7 +38,7 @@ $db_con = prg_start("find");
 // TODO but first reduce the API files
 // TODO but first resolve all testing error
 if ($db_con == null) {
-    $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER,"find.php");
+    $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER, "find.php");
 } else {
     $back = $_GET['back'];
 
@@ -55,6 +48,8 @@ if ($db_con == null) {
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
+
+        load_usr_data();
 
         // show view header
         $dsp = new view_dsp;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,19 +30,21 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 $db_con = prg_start("formula_result");
 
-  $result = ''; // reset the html code var
+$result = ''; // reset the html code var
 
-  // load the session user parameters
-  $session_usr = New user;
-  $result .= $session_usr->get();
+// load the session user parameters
+$session_usr = new user;
+$result .= $session_usr->get();
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($session_usr->id > 0) {
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($session_usr->id > 0) {
+
+    load_usr_data();
 
     // show the header
     $dsp = new view_dsp;
@@ -50,36 +52,36 @@ $db_con = prg_start("formula_result");
     $dsp->id = clo(DBL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
-    
+
     // get the parameters
-    $frm_val_id   = $_GET['id'];      // id of the formula result if known already
-    $frm_id       = $_GET['formula']; // id of the formula which values should be explained
-    $phr_id       = $_GET['word'];    // id of the leading word used to order the result explaining
+    $frm_val_id = $_GET['id'];      // id of the formula result if known already
+    $frm_id = $_GET['formula']; // id of the formula which values should be explained
+    $phr_id = $_GET['word'];    // id of the leading word used to order the result explaining
     //$wrd_group_id = $_GET['group'];   // id of the word group (excluding and time word)
-    $time_id      = $_GET['time'];    // id of the time word for which the value is valid (always the end of the period e.g. a value for 2016 is valid at the end of the year)
+    $time_id = $_GET['time'];    // id of the time word for which the value is valid (always the end of the period e.g. a value for 2016 is valid at the end of the year)
 
     // explain the result
-    if ($frm_val_id > 0 OR $frm_id > 0) {
-      $fv = New formula_value;
-      $fv->id = $frm_val_id;
-      $fv->usr = $session_usr;
-      $fv->load();
-      if ($fv->id > 0) {
-        $result .= $fv->explain($phr_id, $back);
-      } else {
-        $result .= log_err("Formula result with id ".$frm_val_id.' not found.', "formula_result.php");
-      }
-      log_debug('formula_result.php explained (id'.$fv->id.' for user '.$session_usr->name.')');
+    if ($frm_val_id > 0 or $frm_id > 0) {
+        $fv = new formula_value;
+        $fv->id = $frm_val_id;
+        $fv->usr = $session_usr;
+        $fv->load();
+        if ($fv->id > 0) {
+            $result .= $fv->explain($phr_id, $back);
+        } else {
+            $result .= log_err("Formula result with id " . $frm_val_id . ' not found.', "formula_result.php");
+        }
+        log_debug('formula_result.php explained (id' . $fv->id . ' for user ' . $session_usr->name . ')');
     } else {
-      // ... or complain about a wrong call
-      $url_txt = "";
-      foreach($_GET as $key => $value) {
-        $url_txt .= $key.'='.$value.',';
-      }
-      $result .= log_err("Wrong parameters: ".$url_txt, "formula_result.php");
+        // ... or complain about a wrong call
+        $url_txt = "";
+        foreach ($_GET as $key => $value) {
+            $url_txt .= $key . '=' . $value . ',';
+        }
+        $result .= log_err("Wrong parameters: " . $url_txt, "formula_result.php");
     }
-  }
+}
 
-  echo $result;
+echo $result;
 
 prg_end($db_con);

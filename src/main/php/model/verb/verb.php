@@ -32,6 +32,13 @@
 class verb
 {
 
+    // predefined word link types or verbs
+    const DBL_IS = "vrb_is";
+    const DBL_CONTAIN = "vrb_contains";
+    const DBL_FOLLOW = "vrb_follow";
+    const DBL_DIFFERENTIATOR = "vrb_can_contain";
+    const DBL_CAN_BE = "vrb_can_be";
+
     public ?int $id = null;           // the database id of the word link type (verb)
     public ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
     //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb

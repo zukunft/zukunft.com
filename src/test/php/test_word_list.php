@@ -62,7 +62,7 @@ function run_word_list_test () {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
-  $wrd_lst->add_by_type(Null, clo(DBL_LINK_TYPE_IS), "up");
+  $wrd_lst->add_by_type(Null, cl(db_cl::VERB, verb::DBL_IS), "up");
   $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   test_dsp('word_list->add_by_type for "'.TW_ABB.'" up', $target, $result);
@@ -72,7 +72,7 @@ function run_word_list_test () {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
-  $wrd_lst->foaf_parents(clo(DBL_LINK_TYPE_IS));
+  $wrd_lst->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
   $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   test_dsp('word_list->foaf_parent for "'.TW_ABB.'" up', $target, $result);
@@ -82,7 +82,7 @@ function run_word_list_test () {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TW_ABB);
   $wrd_lst->load();
-  $wrd_lst->parents(clo(DBL_LINK_TYPE_IS), 1);
+  $wrd_lst->parents(cl(db_cl::VERB, verb::DBL_IS), 1);
   $result = dsp_array($wrd_lst->names());
   $target = TW_ABB.",".TEST_WORD; // order adjusted based on the number of usage
   test_dsp('word_list->parents for "'.TW_ABB.'" up', $target, $result);
@@ -92,7 +92,7 @@ function run_word_list_test () {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TEST_WORD);
   $wrd_lst->load();
-  $wrd_lst->foaf_children(clo(DBL_LINK_TYPE_IS));
+  $wrd_lst->foaf_children(cl(db_cl::VERB, verb::DBL_IS));
   $ABB = load_word(TW_ABB);
   $result = $wrd_lst->does_contain($ABB);
   $target = true; 
@@ -103,7 +103,7 @@ function run_word_list_test () {
   $wrd_lst->usr = $usr;
   $wrd_lst->add_name(TEST_WORD);
   $wrd_lst->load();
-  $wrd_lst->children(clo(DBL_LINK_TYPE_IS), 1,);
+  $wrd_lst->children(cl(db_cl::VERB, verb::DBL_IS), 1,);
   $ABB = load_word(TW_ABB);
   $result = $wrd_lst->does_contain($ABB);
   $target = true; 

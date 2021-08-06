@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,21 +30,23 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+$debug = $_GET['debug'] ?? 0;
+include_once '../src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("view_select");
 
-  $result = ''; // reset the html code var
-  $msg    = ''; // to collect all messages that should be shown to the user immediately
-  
-  // load the session user parameters
-  $usr = New user;
-  $result .= $usr->get();
+$result = ''; // reset the html code var
+$msg = ''; // to collect all messages that should be shown to the user immediately
 
-  // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-  if ($usr->id > 0) {
+// load the session user parameters
+$usr = new user;
+$result .= $usr->get();
+
+// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+if ($usr->id > 0) {
+
+    load_usr_data();
 
     // in view edit views the view cannot be changed
     $dsp = new view_dsp;
@@ -57,33 +59,33 @@ $db_con = prg_start("view_select");
 
     // get the view id used until now and the word id
     if (isset($_GET['id'])) {
-      $view_id = $_GET['id'];
+        $view_id = $_GET['id'];
     }
     if (isset($_GET['word'])) {
-      $word_id = $_GET['word'];
+        $word_id = $_GET['word'];
     }
 
     // show the word name
-    $wrd = New word_dsp;
+    $wrd = new word_dsp;
     if ($word_id > 0) {
-      $wrd->usr = $usr;
-      $wrd->id  = $word_id;   
-      $wrd->load();
-      $result .= dsp_text_h2 ('Select the display format for "'.$wrd->name.'"');
-    } else {  
-      $result .= dsp_text_h2 ('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
+        $wrd->usr = $usr;
+        $wrd->id = $word_id;
+        $wrd->load();
+        $result .= dsp_text_h2('Select the display format for "' . $wrd->name . '"');
+    } else {
+        $result .= dsp_text_h2('The word is missing for which the display format should be changed. If you can explain how to reproduce this error message, please report the steps on https://github.com/zukunft/zukunft.com/issues.');
     }
 
     // allow to change to type
     $dsp = new view;
     $dsp->usr = $usr;
-    $dsp->id  = $view_id;   
-    $result .= $dsp->selector_page ($word_id, $back);
+    $dsp->id = $view_id;
+    $result .= $dsp->selector_page($word_id, $back);
 
     // show the changes
-    $result .= $wrd->dsp_log_view ($back);
-  }
+    $result .= $wrd->dsp_log_view($back);
+}
 
-  echo $result;
-  
+echo $result;
+
 prg_end($db_con);
