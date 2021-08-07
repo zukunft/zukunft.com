@@ -72,7 +72,7 @@ class verb_list extends user_type_list
         $db_vrb_lst = $db_con->get($sql);
         $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
         if ($db_vrb_lst != null) {
-            $vrb_is_lst = array(); // tmp solution to prevent double entry until query has nice distinct
+            $vrb_is_lst = array(); // tmp solution to prevent double entry utils query has nice distinct
             foreach ($db_vrb_lst as $db_vrb) {
                 if (!in_array($db_vrb['verb_id'], $vrb_is_lst)) {
                     $vrb = new verb;

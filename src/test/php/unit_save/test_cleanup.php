@@ -51,7 +51,7 @@ function run_test_cleanup()
                 if ($val->id > 0) {
                     $result = $val->del();
                     $target = '11';
-                    test_dsp('value->del test value for "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+                    test_dsp('value->del test value for "' . word::TEST_NAME_CHANGED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
                 }
             }
         }
@@ -183,19 +183,19 @@ function run_test_cleanup()
 
     // request to delete the added test word
     // todo: if a user has changed the word during the test, delete also the user words
-    $wrd = load_word(TW_ADD);
+    $wrd = load_word(word::TEST_NAME_ADD);
     if ($wrd->id > 0) {
         $result = $wrd->del();
         $target = '';
-        test_dsp('word->del of "' . TW_ADD . '"', $target, $result);
+        test_dsp('word->del of "' . word::TEST_NAME_ADD . '"', $target, $result);
     }
 
     // request to delete the renamed test word
-    $wrd = load_word(TW_ADD_RENAMED);
+    $wrd = load_word(word::TEST_NAME_CHANGED);
     if ($wrd->id > 0) {
         $result = $wrd->del();
         $target = true;
-        test_dsp('word->del of "' . TW_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
+        test_dsp('word->del of "' . word::TEST_NAME_CHANGED . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     echo $db_con->seq_reset(DB_TYPE_VALUE) . '<br>';

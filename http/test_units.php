@@ -34,7 +34,7 @@ include_once '../src/main/php/zu_lib.php';
 
 
 // load the testing functions
-include_once '../src/test/php/test_base.php';
+include_once '../src/test/php/utils/test_base.php';
 
 // ---------------
 // prepare testing

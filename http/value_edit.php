@@ -80,7 +80,7 @@ if ($usr->id > 0) {
         $type_ids = array(); // word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
         // if the type id is -1 the word is not supposed to be adjusted e.g. when editing a table cell
         if (isset($_GET['phrase1'])) {
-            // ... either from the url to allow editing without saving to the database until the user confirmed
+            // ... either from the url to allow editing without saving to the database utils the user confirmed
             $phr_pos = 1;
             while (isset($_GET['phrase' . $phr_pos])) {
                 $phr_ids[] = $_GET['phrase' . $phr_pos];

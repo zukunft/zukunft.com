@@ -57,7 +57,7 @@ if ($usr->id > 0) {
     $view_id = 0;
     $word_id = $back;
 
-    // get the view id used until now and the word id
+    // get the view id used utils now and the word id
     if (isset($_GET['id'])) {
         $view_id = $_GET['id'];
     }

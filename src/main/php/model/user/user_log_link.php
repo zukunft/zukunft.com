@@ -181,7 +181,7 @@ class user_log_link
         $db_con->set_type($db_type);
     }
 
-    // functions used until each call is done with the object instead of the id
+    // functions used utils each call is done with the object instead of the id
     private function set_usr()
     {
         log_debug('user_log_link->set_usr for ' . $this->usr->dsp_id());

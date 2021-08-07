@@ -63,7 +63,7 @@ function run_word_ui_test()
 
     // not yet used
     /*
-    $phr_corp = load_phrase(TEST_WORD);
+    $phr_corp = load_phrase(word::TEST_NAME_READ);
     $phr_ABB  = load_phrase(TW_ABB,    );
     $sel = New selector;
     $sel->usr        = $usr;

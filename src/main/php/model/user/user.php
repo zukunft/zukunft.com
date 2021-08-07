@@ -10,9 +10,9 @@
   if a user has added 2 formula and both are accepted by at least one other user and no one has complained, he can change formulas and words, including linking of words
   if a user has linked a 10 words and all got accepted by one other user and no one has complained, he can request new verbs and he must have an validated address
 
-  if a user got 10 pending word or formula discussion, he can no longer add words or formula until the open discussions are less than 10
-  if a user got 5 pending word or formula discussion, he can no longer change words or formula until the open discussions are less than 5
-  if a user got 2 pending verb discussion, he can no longer add verbs until the open discussions are less than 2
+  if a user got 10 pending word or formula discussion, he can no longer add words or formula utils the open discussions are less than 10
+  if a user got 5 pending word or formula discussion, he can no longer change words or formula utils the open discussions are less than 5
+  if a user got 2 pending verb discussion, he can no longer add verbs utils the open discussions are less than 2
 
   the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
 

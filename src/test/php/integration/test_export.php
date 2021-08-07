@@ -34,7 +34,7 @@ function run_export_test () {
 
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
-  $phr_lst->add_name(TEST_WORD);
+  $phr_lst->add_name(word::TEST_NAME_READ);
   $phr_lst->load();
   $xml_export = New xml_io;
   $xml_export->usr     = $usr;

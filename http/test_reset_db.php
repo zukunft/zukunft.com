@@ -67,7 +67,7 @@ if ($usr->id > 0) {
     if ($usr->is_admin()) {
 
         // load the testing base functions
-        include_once '../src/test/php/test_base.php';
+        include_once '../src/test/php/utils/test_base.php';
 
         // use the system user for the database updates
         $usr = new user;

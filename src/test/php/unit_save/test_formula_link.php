@@ -44,7 +44,7 @@ function run_formula_link_test () {
   // link the test formula to another word
   $frm = load_formula(TF_ADD_RENAMED);
   $phr = New phrase;
-  $phr->name = TW_ADD_RENAMED;
+  $phr->name = word::TEST_NAME_CHANGED;
   $phr->usr = $usr2;
   $phr->load();
   $result = $frm->link_phr($phr);
@@ -58,7 +58,7 @@ function run_formula_link_test () {
   $log->new_to_id = $phr->id;
   $log->usr = $usr;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system batch job linked Formula Test to '.TW_ADD_RENAMED.'';
+  $target = 'zukunft.com system batch job linked Formula Test to '.word::TEST_NAME_CHANGED.'';
   test_dsp('formula_link->link_phr logged for "'.$phr->name.'" to "'.$frm->name.'"', $target, $result);
 
   // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -109,7 +109,7 @@ function run_formula_link_test () {
   $frm->name = TF_ADD_RENAMED;
   $frm->load();
   $phr = New phrase;
-  $phr->name = TW_ADD_RENAMED;
+  $phr->name = word::TEST_NAME_CHANGED;
   $phr->usr = $usr2;
   $phr->load();
   $result = $frm->unlink_phr($phr);
@@ -123,7 +123,7 @@ function run_formula_link_test () {
   $log->old_to_id = $phr->id;
   $log->usr = $usr2;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system test unlinked Formula Test from '.TW_ADD_RENAMED.'';
+  $target = 'zukunft.com system test unlinked Formula Test from '.word::TEST_NAME_CHANGED.'';
   test_dsp('formula_link->unlink_phr logged for "'.$phr->name.'" to "'.$frm->name.'" and user "'.$usr2->name.'"', $target, $result);
 
 
@@ -161,7 +161,7 @@ function run_formula_link_test () {
   $log->old_to_id = $phr->id;
   $log->usr = $usr;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system batch job unlinked Formula Test from '.TW_ADD_RENAMED.'';
+  $target = 'zukunft.com system batch job unlinked Formula Test from '.word::TEST_NAME_CHANGED.'';
   test_dsp('formula_link->unlink_phr logged of "'.$phr->name.'" from "'.$frm->name.'"', $target, $result);
 
   // check if the formula is not used any more for both users
@@ -178,7 +178,7 @@ function run_formula_link_test () {
   /*
   $frm = load_formula(TF_ADD_RENAMED);
   $phr = New phrase;
-  $phr->name = TW_ADD_RENAMED;
+  $phr->name = word::TEST_NAME_CHANGED;
   $phr->usr = $usr2;
   $phr->load();
   $result = $frm->link_phr($phr);

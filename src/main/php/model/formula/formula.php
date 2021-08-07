@@ -29,7 +29,7 @@
   
 */
 
-class formula extends user_sandbox
+class formula extends user_sandbox_description
 {
 
     // list of the formula types that have a coded functionality
@@ -377,7 +377,7 @@ class formula extends user_sandbox
         $result = clone $phr_lst;
 
         foreach ($phr_lst->lst as $phr) {
-            // temp solution until the real reason is found why the phrase list elements are missing the user settings
+            // temp solution utils the real reason is found why the phrase list elements are missing the user settings
             if (!isset($phr->usr)) {
                 $phr->usr = $this->usr;
             }
@@ -627,7 +627,7 @@ class formula extends user_sandbox
                                 // for the first previous result, just fill in the first number
                                 if ($fig_nbr == 1) {
 
-                                    // if the result has been the standard result until now
+                                    // if the result has been the standard result utils now
                                     if ($fv->is_std) {
                                         // ... and the value is user specific
                                         if (!$fig->is_std) {
@@ -653,7 +653,7 @@ class formula extends user_sandbox
                                     }
                                     log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                                 } else {
-                                    // if the result has been the standard result until now
+                                    // if the result has been the standard result utils now
                                     if ($fv_master->is_std) {
                                         // ... and the value is user specific
                                         if (!$fig->is_std) {
@@ -1541,24 +1541,6 @@ class formula extends user_sandbox
             if ($result) {
                 $result = $this->save_field_trigger_update($db_con);
             }
-        }
-        return $result;
-    }
-
-    /**
-     * set the update parameters for the formula description
-     */
-    function save_field_description($db_con, $db_rec, $std_rec): bool
-    {
-        $result = true;
-        if ($db_rec->description <> $this->description) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->description;
-            $log->new_value = $this->description;
-            $log->std_value = $std_rec->description;
-            $log->row_id = $this->id;
-            $log->field = sql_db::FLD_DESCRIPTION;
-            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }

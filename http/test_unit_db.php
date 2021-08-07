@@ -36,7 +36,7 @@ include_once '../src/main/php/zu_lib.php';
 $db_con = prg_start("unit testing with database reading");
 
 // load the testing functions
-include_once '../src/test/php/test_base.php';
+include_once '../src/test/php/utils/test_base.php';
 
 // ---------------
 // prepare testing

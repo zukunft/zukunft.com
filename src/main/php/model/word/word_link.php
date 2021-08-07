@@ -6,7 +6,7 @@
   -------------
   
   A link can also be used in replacement for a word
-  e.g. Zurich (Company) where the the link "Zurich is a company" is used 
+  e.g. "Zurich (Company)" where the link "Zurich is a company" is used
   
   This file is part of zukunft.com - calc with words
 
@@ -36,9 +36,9 @@ class word_link extends word_link_object
 {
 
     // the word link object
-    public ?word_link_object $from = null; // the first object (either word, triple or group)
+    public ?phrase $from = null; // the first object (either word, triple or group)
     public ?verb $verb = null; // the link type object
-    public ?word_link_object $to = null; // the second object (either word, triple or group)
+    public ?phrase $to = null; // the second object (either word, triple or group)
 
     // database fields additional to the user sandbox fields
     // TODO split the db link object from the word link object
@@ -103,11 +103,11 @@ class word_link extends word_link_object
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_word_link_id'];
                     $this->owner_id = $db_row['user_id'];
-                    //$this->share_id = $db_row['share_type_id'];
-                    //$this->protection_id = $db_row['protection_type_id'];
+                    $this->share_id = $db_row['share_type_id'];
+                    $this->protection_id = $db_row['protection_type_id'];
                 } else {
-                    //$this->share_id = cl(DBL_SHARE_PUBLIC);
-                    //$this->protection_id = cl(DBL_PROTECT_NO);
+                    $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
+                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
                 }
             } else {
                 $this->id = 0;
@@ -117,8 +117,10 @@ class word_link extends word_link_object
         }
     }
 
-    // if needed reverse the order if the user has entered it the other way round
-    // e.g. "Cask Flow Statement" "contains" "Taxes" instead of "Taxes" "is part of" "Cask Flow Statement"
+    /**
+     * if needed reverse the order if the user has entered it the other way round
+     * e.g. "Cask Flow Statement" "contains" "Taxes" instead of "Taxes" "is part of" "Cask Flow Statement"
+     */
     private function check_order()
     {
         if ($this->verb_id < 0) {
@@ -139,14 +141,16 @@ class word_link extends word_link_object
         }
     }
 
-    // load the word link without the linked objects, because in many cases the object are already loaded by the caller
-    // similar to term->load, but with a different use of verbs
+    /**
+     * load the word link without the linked objects, because in many cases the object are already loaded by the caller
+     * similar to term->load, but with a different use of verbs
+     */
     function load_objects(): bool
     {
         log_debug('word_link->load_objects.' . $this->from_id . ' ' . $this->verb_id . ' ' . $this->to_id . '');
         $result = true;
 
-        // after every load call from outside the class the order should be check and reversed if needed
+        // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
         // load word from
@@ -157,7 +161,7 @@ class word_link extends word_link_object
                 $wrd->usr = $this->usr;
                 $wrd->load();
                 if ($wrd->name <> '') {
-                    $this->from = $wrd;
+                    $this->from = $wrd->phrase();
                     $this->from_name = $wrd->name;
                 } else {
                     log_err('Failed to load first word of phrase ' . $this->dsp_id());
@@ -169,7 +173,7 @@ class word_link extends word_link_object
                 $lnk->usr = $this->usr;
                 $lnk->load();
                 if ($lnk->id > 0) {
-                    $this->from = $lnk;
+                    $this->from = $lnk->phrase();
                     $this->from_name = $lnk->name();
                 } else {
                     log_err('Failed to load first phrase of phrase ' . $this->dsp_id());
@@ -211,7 +215,7 @@ class word_link extends word_link_object
                 $wrd_to->usr = $this->usr;
                 $wrd_to->load();
                 if ($wrd_to->name <> '') {
-                    $this->to = $wrd_to;
+                    $this->to = $wrd_to->phrase();
                     $this->to_name = $wrd_to->name;
                 } else {
                     log_err('Failed to load second word of phrase ' . $this->dsp_id());
@@ -223,7 +227,7 @@ class word_link extends word_link_object
                 $lnk->usr = $this->usr;
                 $lnk->load();
                 if ($lnk->id > 0) {
-                    $this->to = $lnk;
+                    $this->to = $lnk->phrase();
                     $this->to_name = $lnk->name();
                 } else {
                     log_err('Failed to load second phrase of phrase ' . $this->dsp_id());
@@ -242,7 +246,7 @@ class word_link extends word_link_object
                     // set a dummy word
                     $wrd_to = new word_dsp;
                     $wrd_to->usr = $this->usr;
-                    $this->to = $wrd_to;
+                    $this->to = $wrd_to->phrase();
                 }
             }
         }
@@ -254,7 +258,7 @@ class word_link extends word_link_object
         global $db_con;
         $result = false;
 
-        // after every load call from outside the class the order should be check and reversed if needed
+        // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
         // set the where clause depending on the values given
@@ -308,19 +312,23 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // load the word link without the linked objects, because in many cases the object are already loaded by the caller
-    function load(): bool
+    /**
+     * create an SQL statement to retrieve the parameters of a triple from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
     {
-        global $db_con;
-        $result = false;
-
-        // after every load call from outside the class the order should be check and reversed if needed
-        $this->check_order();
+        $sql_name = 'word_link_by_';
 
         // set the where clause depending on the values given
+        $sql = '';
         $sql_where = '';
         if ($this->id > 0 and !is_null($this->usr->id)) {
             $sql_where = "s.word_link_id = " . $this->id;
+            $sql_name .= 'id';
             // search for a forward link e.g. Taxes is part of Cask Flow Statement
         } elseif ($this->from_id <> 0
             and $this->verb_id > 0
@@ -329,6 +337,7 @@ class word_link extends word_link_object
             $sql_where = "s.from_phrase_id = " . sf($this->from_id) . "
                       AND s.verb_id        = " . sf($this->verb_id) . "
                       AND s.to_phrase_id   = " . sf($this->to_id);
+            $sql_name .= 'link_id';
             // search for a backward link e.g. Cask Flow Statement contains Taxes
         } elseif ($this->from_id <> 0
             and $this->verb_id < 0
@@ -337,9 +346,10 @@ class word_link extends word_link_object
             $sql_where = "s.from_phrase_id = " . sf($this->to_id) . "
                       AND s.verb_id        = " . sf($this->verb_id) . "
                       AND s.to_phrase_id   = " . sf($this->from_id);
+            $sql_name .= 'reverse_id';
             /*
             // if the search including the type is not requested, try without the type
-            } elseif ($this->from_id  <> 0
+            elseif ($this->from_id  <> 0
                   AND $this->verb_id   > 0
                   AND $this->to_id    <> 0
                   AND !is_null($this->usr->id)) {
@@ -349,15 +359,10 @@ class word_link extends word_link_object
             */
         } elseif ($this->name <> '' and !is_null($this->usr->id)) {
             $sql_where = "s.word_link_name = " . sf($this->name, sql_db::FLD_FORMAT_TEXT);
+            $sql_name .= 'name';
         }
 
-        if ($sql_where == '') {
-            if (is_null($this->usr->id)) {
-                log_err("The user id must be set to load a word.", "word_link->load");
-            } else {
-                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from_id . ',' . $this->verb_id . ',' . $this->to_id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
-            }
-        } else {
+        if ($sql_where != '') {
             // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
@@ -366,6 +371,36 @@ class word_link extends word_link_object
             $db_con->set_usr_num_fields(array('excluded'));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
+        }
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * load the word link without the linked objects, because in many cases the object are already loaded by the caller
+     */
+    function load(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // after every load call from outside the class the order should be checked and reversed if needed
+        $this->check_order();
+
+        $sql = $this->load_sql($db_con);
+
+        if ($sql == '') {
+            if (is_null($this->usr->id)) {
+                log_err("The user id must be set to load a word.", "word_link->load");
+            } else {
+                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from_id . ',' . $this->verb_id . ',' . $this->to_id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
+            }
+        } else {
             $db_lnk = $db_con->get1($sql);
             $this->row_mapper($db_lnk, true);
             if ($this->id > 0) {
@@ -387,7 +422,9 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // recursive function to include the foaf words for this triple
+    /**
+     * recursive function to include the foaf words for this triple
+     */
     function wrd_lst(): word_list
     {
         log_debug('word_link->wrd_lst ' . $this->dsp_id());
@@ -427,28 +464,10 @@ class word_link extends word_link_object
     }
 
 
-    // create an object for the export
-    function export_obj()
-    {
-        log_debug('word_link->export_obj');
-        $result = new word_link();
-
-        if ($this->name <> '') {
-            $result->name = $this->name;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        $result->from = $this->from_name;
-        $result->verb = $this->verb->name;
-        $result->to = $this->to_name;
-
-        log_debug('word_link->export_obj -> ' . json_encode($result));
-        return $result;
-    }
-
-    // import a view from an object
-    function import_obj($json_obj)
+    /**
+     * import a view from an object
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
     {
         global $word_types;
 
@@ -480,7 +499,7 @@ class word_link extends word_link_object
                     if ($wrd->id == 0) {
                         log_err('Cannot add from word "' . $value . '" when importing ' . $this->dsp_id(), 'word_link->import_obj');
                     } else {
-                        $this->from = $wrd;
+                        $this->from = $wrd->phrase();
                         $this->from_id = $wrd->id;
                         $this->from_name = $wrd->name;
                     }
@@ -508,7 +527,7 @@ class word_link extends word_link_object
                     if ($wrd->id == 0) {
                         log_err('Cannot add to word "' . $value . '" when importing ' . $this->dsp_id(), 'word_link->import_obj');
                     } else {
-                        $this->to = $wrd;
+                        $this->to = $wrd->phrase();
                         $this->to_id = $wrd->id;
                         $this->to_name = $wrd->name;
                     }
@@ -536,7 +555,7 @@ class word_link extends word_link_object
                 }
             }
         }
-        if ($result == '') {
+        if ($result == '' and $do_save) {
             $this->save();
             log_debug('word_link->import_obj -> ' . $this->dsp_id());
         } else {
@@ -546,14 +565,37 @@ class word_link extends word_link_object
         return $result;
     }
 
+    /**
+     * create a triple object for the export
+     * @return word_link_exp a reduced triple object that can be used to create a JSON message
+     */
+    function export_obj(): word_link_exp
+    {
+        log_debug('word_link->export_obj');
+        $result = new word_link_exp();
+
+        if ($this->name <> '') {
+            $result->name = $this->name;
+        }
+        if ($this->description <> '') {
+            $result->description = $this->description;
+        }
+        $result->from = $this->from_name;
+        $result->verb = $this->verb->name;
+        $result->to = $this->to_name;
+
+        log_debug('word_link->export_obj -> ' . json_encode($result));
+        return $result;
+    }
+
     /*
-
     display functions
-
     */
 
-    // display the unique id fields
-    // TODO check if $this->load_objects(); needs to be called from the calling function upfront
+    /**
+     * display the unique id fields
+     * TODO check if $this->load_objects(); needs to be called from the calling function upfront
+     */
     function dsp_id(): string
     {
         $result = '';
@@ -573,9 +615,11 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // either the user edited description or the
-    // Australia is a Country
-    function name()
+    /**
+     * either the user edited description or the
+     * Australia is a Country
+     */
+    function name(): string
     {
         $result = '';
 
@@ -591,9 +635,11 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // same as name, but only for non debug usage
-    // TODO check if name or name_usr should be used
-    function name_usr()
+    /**
+     * same as name, but only for non debug usage
+     * TODO check if name or name_usr should be used
+     */
+    function name_usr(): string
     {
         $result = '';
 
@@ -613,16 +659,20 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // returns either the user defined description or the dynamic created description
-    // TODO check where the function or the db value should be used
-    function description()
+    /**
+     * returns either the user defined description or the dynamic created description
+     * TODO check where the function or the db value should be used
+     */
+    function description(): string
     {
         return $this->name_usr();
     }
 
-    // display one link to the user by returning the HTML code for the link to the calling function
-    // to do: include the user sandbox in the selection
-    private function dsp()
+    /**
+     * display one link to the user by returning the HTML code for the link to the calling function
+     * TODO include the user sandbox in the selection
+     */
+    private function dsp(): string
     {
         log_debug("word_link->dsp " . $this->id . ".");
 
@@ -639,8 +689,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // similar to dsp, but display the reverse expression
-    private function dsp_r()
+    /**
+     * similar to dsp, but display the reverse expression
+     */
+    private function dsp_r(): string
     {
         log_debug("word_link->dsp_r " . $this->id . ".");
 
@@ -657,8 +709,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // display a bottom to edit the word link in a table cell
-    function dsp_btn_edit($wrd)
+    /**
+     * display a bottom to edit the word link in a table cell
+     */
+    function dsp_btn_edit($wrd): string
     {
         log_debug("word_link->dsp_btn_edit (" . $this->id . ",b" . $wrd->id . ")");
         $result = ''; // reset the html code var
@@ -671,8 +725,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // display a form to create a triple
-    function dsp_add($back)
+    /**
+     * display a form to create a triple
+     */
+    function dsp_add($back): string
     {
         log_debug("word_link->dsp_add.");
         $result = ''; // reset the html code var
@@ -703,8 +759,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // display a form to adjust the link between too words or triples
-    function dsp_edit($back)
+    /**
+     * display a form to adjust the link between too words or triples
+     */
+    function dsp_edit($back): string
     {
         log_debug("word_link->dsp_edit id " . $this->id . " for user" . $this->usr->id . ".");
         $result = ''; // reset the html code var
@@ -740,8 +798,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // display a form to adjust the link between too words or triples
-    function dsp_del($back)
+    /**
+     * display a form to adjust the link between too words or triples
+     */
+    function dsp_del($back): string
     {
         log_debug("word_link->dsp_del " . $this->id . ".");
         $result = ''; // reset the html code var
@@ -752,15 +812,18 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // simply to display a single triple in a table
-    function dsp_link()
+    /**
+     * simply to display a single triple in a table
+     */
+    function dsp_link(): string
     {
-        $result = '<a href="/http/view.php?link=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
-        return $result;
+        return '<a href="/http/view.php?link=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
     }
 
-    // simply to display a single triple in a table
-    function dsp_tbl($intent)
+    /**
+     * simply to display a single triple in a table
+     */
+    function dsp_tbl($intent): string
     {
         log_debug('word_link->dsp_tbl');
         $result = '    <td>' . "\n";
@@ -773,7 +836,7 @@ class word_link extends word_link_object
         return $result;
     }
 
-    function dsp_tbl_row()
+    function dsp_tbl_row(): string
     {
         $result = '  <tr>' . "\n";
         $result .= $this->dsp_tbl(0);
@@ -782,13 +845,13 @@ class word_link extends word_link_object
     }
 
     /*
-
     convert functions
-
     */
 
-    // convert the word object into a phrase object
-    function phrase()
+    /**
+     * convert the word object into a phrase object
+     */
+    function phrase(): phrase
     {
         $phr = new phrase;
         $phr->usr = $this->usr;
@@ -800,12 +863,12 @@ class word_link extends word_link_object
     }
 
     /*
-
     save functions
-
     */
 
-    // true if no one has used this triple
+    /**
+     * true if no one has used this triple
+     */
     function not_used(): bool
     {
         log_debug('word_link->not_used (' . $this->id . ')');
@@ -814,7 +877,9 @@ class word_link extends word_link_object
         return $this->not_changed();
     }
 
-    // true if no other user has modified the triple
+    /**
+     * true if no other user has modified the triple
+     */
     function not_changed(): bool
     {
         log_debug('word_link->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
@@ -844,8 +909,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // true if the user is the owner and no one else has changed the word_link
-    // because if another user has changed the word_link and the original value is changed, maybe the user word_link also needs to be updated
+    /**
+     * true if the user is the owner and no one else has changed the word_link
+     * because if another user has changed the word_link and the original value is changed, maybe the user word_link also needs to be updated
+     */
     function can_change(): bool
     {
         log_debug('word_link->can_change ' . $this->dsp_id() . ' by user "' . $this->usr->name . '" (id ' . $this->usr->id . ', owner id ' . $this->owner_id . ')');
@@ -857,7 +924,9 @@ class word_link extends word_link_object
         return $can_change;
     }
 
-    // true if a record for a user specific configuration already exists in the database
+    /**
+     * true if a record for a user specific configuration already exists in the database
+     */
     function has_usr_cfg(): bool
     {
         $has_cfg = false;
@@ -867,7 +936,9 @@ class word_link extends word_link_object
         return $has_cfg;
     }
 
-    // create a database record to save user specific settings for this word_link
+    /**
+     * create a database record to save user specific settings for this word_link
+     */
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -904,7 +975,9 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // check if the database record for the user specific settings can be removed
+    /**
+     * check if the database record for the user specific settings can be removed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('word_link->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -939,9 +1012,11 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // set the log entry parameter for a new value
-    // e.g. that the user can see "added ABB is a Company"
-    function log_add()
+    /**
+     * set the log entry parameter for a new value
+     * e.g. that the user can see "added ABB is a Company"
+     */
+    function log_add(): user_log_link
     {
         log_debug('word_link->log_add for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
         $log = new user_log_link;
@@ -957,8 +1032,10 @@ class word_link extends word_link_object
         return $log;
     }
 
-    // set the main log entry parameters for updating the triple itself
-    function log_upd()
+    /**
+     * set the main log entry parameters for updating the triple itself
+     */
+    function log_upd(): user_log_link
     {
         $log = new user_log_link;
         $log->usr = $this->usr;
@@ -972,9 +1049,11 @@ class word_link extends word_link_object
         return $log;
     }
 
-    // set the log entry parameter to delete a triple
-    // e.g. that the user can see "ABB is a Company not any more"
-    function log_del()
+    /**
+     * set the log entry parameter to delete a triple
+     * e.g. that the user can see "ABB is a Company not anymore"
+     */
+    function log_del(): user_log_link
     {
         log_debug('word_link->log_del for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
         $log = new user_log_link;
@@ -990,7 +1069,9 @@ class word_link extends word_link_object
         return $log;
     }
 
-    // set the main log entry parameters for updating one display word link field
+    /**
+     * set the main log entry parameters for updating one display word link field
+     */
     function log_upd_field(): user_log
     {
         $log = new user_log;
@@ -1005,8 +1086,10 @@ class word_link extends word_link_object
         return $log;
     }
 
-    // set the update parameters for the phrase link name
-    private function save_field_name($db_con, $db_rec, $std_rec)
+    /**
+     * set the update parameters for the phrase link name
+     */
+    private function save_field_name($db_con, $db_rec, $std_rec): string
     {
         $result = '';
 
@@ -1030,10 +1113,12 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // set the update parameters for the phrase link description
-    private function save_field_description($db_con, $db_rec, $std_rec)
+    /**
+     * set the update parameters for the phrase link description
+     */
+    function save_field_description($db_con, $db_rec, $std_rec): bool
     {
-        $result = '';
+        $result = true;
         if ($db_rec->description <> $this->description) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->description;
@@ -1041,12 +1126,14 @@ class word_link extends word_link_object
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
             $log->field = sql_db::FLD_DESCRIPTION;
-            $result .= $this->save_field_do($db_con, $log);
+            $result = $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
-    // save all updated word_link fields excluding id fields (from, verb and to), because already done when adding a word_link
+    /**
+     * save all updated word_link fields excluding id fields (from, verb and to), because already done when adding a word_link
+     */
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = $this->save_field_name($db_con, $db_rec, $std_rec);
@@ -1061,8 +1148,10 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // save updated the word_link id fields (from, verb and to)
-    // should only be called if the user is the owner and nobody has used the triple
+    /**
+     * save updated the word_link id fields (from, verb and to)
+     * should only be called if the user is the owner and nobody has used the triple
+     */
     function save_id_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1093,7 +1182,9 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // check if the id parameters are supposed to be changed
+    /**
+     * check if the id parameters are supposed to be changed
+     */
     function save_id_if_updated($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -1115,10 +1206,10 @@ class word_link extends word_link_object
                     log_err($result);
                 }
                 if ($result = '') {
-                    // .. and use it for the update
+                    // ... and use it for the update
                     $this->id = $db_chk->id;
                     $this->owner_id = $db_chk->owner_id;
-                    // force the include again
+                    // force including again
                     $this->excluded = null;
                     $db_rec->excluded = '1';
                     if ($this->save_field_excluded($db_con, $db_rec, $std_rec)) {
@@ -1142,7 +1233,7 @@ class word_link extends word_link_object
                         $result = 'Failed to delete the unused work link';
                         log_err($result);
                     }
-                    // .. and create a deletion request for all users ???
+                    // ... and create a deletion request for all users ???
 
                     // ... and create a new triple
                     $this->id = 0;
@@ -1157,7 +1248,9 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // add a new triple to the database
+    /**
+     * add a new triple to the database
+     */
     function add(): int
     {
         log_debug('word_link->add new word_link for "' . $this->from->name . '" ' . $this->verb->name . ' "' . $this->to->name . '"');
@@ -1202,7 +1295,9 @@ class word_link extends word_link_object
         return $result;
     }
 
-    // update a triple in the database or create a user triple
+    /**
+     * update a triple in the database or create a user triple
+     */
     function save(): string
     {
         log_debug('word_link->save "' . $this->description . '" for user ' . $this->usr->id);
@@ -1244,7 +1339,7 @@ class word_link extends word_link_object
             }
         }
 
-        // try to save the link only if no question has been raised until now
+        // try to save the link only if no question has been raised utils now
         if ($result == '') {
             // check if a new value is supposed to be added
             if ($this->id <= 0) {

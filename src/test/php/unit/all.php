@@ -2,7 +2,7 @@
 
 /*
 
-  unit_tests.php - run all unit tests in a useful order
+  all.php - run all unit tests in a useful order
   --------------
 
   the zukunft.com unit tests should test all class methods, that can be tested without database access
@@ -157,8 +157,10 @@ function run_unit_tests()
     // do the unit tests
     run_string_unit_tests(); // test functions not yet split into single unit tests
     run_word_unit_tests();
+    run_word_link_unit_tests();
     run_word_list_unit_tests();
     run_word_link_list_unit_tests();
+    //run_phrase_list_unit_tests();
     run_view_unit_tests();
     //run_value_unit_tests();
     run_formula_unit_tests();

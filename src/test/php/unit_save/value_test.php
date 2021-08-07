@@ -36,7 +36,7 @@ function run_value_test () {
   test_header('Test the value class (classes/value.php)');
   
   // prepare the unit tests and create all base objects if needed for the testing
-  test_word(TW_ADD_RENAMED);
+  test_word(word::TEST_NAME_CHANGED);
   test_word(TW_ABB);
   test_word(TW_SALES);
   test_word(TW_PRICE);
@@ -241,7 +241,7 @@ function run_value_test () {
   // test adding a value in the database 
   // as it is call from value_add.php with all phrases in an id list including the time phrase, 
   // so the time phrase must be excluded
-  $wrd_lst = load_word_list(array(TW_ADD_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2014));
+  $wrd_lst = load_word_list(array(word::TEST_NAME_CHANGED, TW_SALES, TW_CHF, TW_MIO, TW_2014));
   $phr_lst = $wrd_lst->phrase_lst();
   $add_val = New value;
   $add_val->ids = $phr_lst->ids;
@@ -278,7 +278,7 @@ function run_value_test () {
   $test_val_lst[] = $added_val->id;
 
   // test if a value with the same phrases, but different time can be added
-  $wrd_lst2 = load_word_list(array(TW_ADD_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2015));
+  $wrd_lst2 = load_word_list(array(word::TEST_NAME_CHANGED, TW_SALES, TW_CHF, TW_MIO, TW_2015));
   $phr_lst2 = $wrd_lst2->phrase_lst();
   $add_val2 = New value;
   $add_val2->ids = $phr_lst2->ids;
@@ -342,7 +342,7 @@ function run_value_test () {
     $result = $log->dsp_last(true);
   }
   $target = 'zukunft.com system batch job changed 123456789 to 987654321';
-  test_dsp(', value->save logged for "'.TW_ADD_RENAMED.'"', $target, $result);
+  test_dsp(', value->save logged for "'.word::TEST_NAME_CHANGED.'"', $target, $result);
 
   // ... check if the value has really been updated
   $added_val = New value;
@@ -351,12 +351,12 @@ function run_value_test () {
   $added_val->load();
   $result = $added_val->number;
   $target = '987654321';
-  test_dsp(', value->load the value previous updated for "'.TW_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); 
+  test_dsp(', value->load the value previous updated for "'.word::TEST_NAME_CHANGED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if a user specific value is created if another user changes the value
   /*$wrd_lst = New word_list;
   $wrd_lst->usr = $usr;
-  $wrd_lst->add_name(TW_ADD_RENAMED);
+  $wrd_lst->add_name(word::TEST_NAME_CHANGED);
   $wrd_lst->add_name(TW_SALES);
   $wrd_lst->add_name(TW_CHF);
   $wrd_lst->add_name(TW_MIO);

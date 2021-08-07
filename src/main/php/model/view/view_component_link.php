@@ -543,7 +543,6 @@ class view_component_link extends user_sandbox
     }
 
     // set the update parameters for the word type
-    private
     function save_field_type($db_con, $db_rec, $std_rec): bool
     {
         $result = true;

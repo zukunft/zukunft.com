@@ -428,6 +428,7 @@ include_once $path_php . 'model/user/user_log_link.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
 include_once $path_php . 'model/sandbox/user_sandbox.php';
+include_once $path_php . 'model/sandbox/user_sandbox_description.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
 include_once $path_php . 'model/sandbox/share_type_list.php';
@@ -447,6 +448,7 @@ include_once $path_php . 'model/word/word_type_list.php';
 include_once $path_php . 'web/word_display.php';
 include_once $path_php . 'model/word/word_list.php';
 include_once $path_php . 'model/word/word_link.php';
+include_once $path_php . 'model/word/word_link_exp.php';
 include_once $path_php . 'model/word/word_link_list.php';
 include_once $path_php . 'model/phrase/phrase.php';
 include_once $path_php . 'model/phrase/phrase_list.php';
@@ -650,7 +652,8 @@ define("BASE_CONFIG_FILES", serialize(array('units.json')));
 
 # list of all static import files for testing the system consistency
 define("PATH_TEST_IMPORT_FILES", $root_path . 'src/test/resources/');
-define("TEST_IMPORT_FILE_LIST", serialize(array('companies.json',
+define("TEST_IMPORT_FILE_LIST", serialize(array(
+    'companies.json',
     'ABB_2013.json',
     'ABB_2017.json',
     'ABB_2019.json',

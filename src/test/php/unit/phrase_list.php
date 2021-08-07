@@ -44,3 +44,20 @@ function test_unit_create_phrase_list(): phrase_list
     $phr_lst->add($phr2);
     return $phr_lst;
 }
+
+function run_phrase_list_unit_tests()
+{
+
+    test_header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
+
+
+    test_subheader('Selection tests');
+
+    $phr_lst = test_unit_create_phrase_list();
+    $phr_lst->ex_time();
+    $result = true;
+    $target = true;
+    test_dsp('word->import check name', $target, $result);
+
+}
+

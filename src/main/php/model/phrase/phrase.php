@@ -5,7 +5,7 @@
   phrase.php - either a word or a triple
   ----------
   
-  this is not save in a separate table
+  this is not saved in a separate table
   e.g. to build a selector the entries are caught either from the words or word_links table
   
   This file is part of zukunft.com - calc with words
@@ -114,7 +114,7 @@ class phrase
         }
         if ($this->id < 0) {
             $lnk = $this->obj;
-            $lnk->load_objects(); // try do be on the save side and it is anyway checked if loading is really needed
+            $lnk->load_objects(); // try to be on the save side and it is anyway checked if loading is really needed
             $result = $lnk->from;
         } elseif ($this->id > 0) {
             $result = $this->obj;
@@ -123,6 +123,24 @@ class phrase
         }
         log_debug('phrase->main_word done ' . $result->dsp_id());
         return $result;
+    }
+
+    /**
+     * to enable the recursive function in work_link
+     */
+    function wrd_lst(): word_list
+    {
+        $wrd_lst = new word_list;
+        $wrd_lst->usr = $this->usr;
+        if ($this->id < 0) {
+            $sub_wrd_lst = $this->wrd_lst();
+            foreach ($sub_wrd_lst as $wrd) {
+                $wrd_lst->add($wrd);
+            }
+        } else {
+            $wrd_lst->add($this->obj);
+        }
+        return $wrd_lst;
     }
 
     function type_id()
@@ -485,16 +503,13 @@ class phrase
     }
 
     /*
-
     word replication functions
-
     */
 
     function is_time()
     {
         $wrd = $this->main_word();
-        $result = $wrd->is_time();
-        return $result;
+        return $wrd->is_time();
     }
 
     // return true if the word has the type "measure" (e.g. "meter" or "CHF")
@@ -503,24 +518,21 @@ class phrase
     function is_measure()
     {
         $wrd = $this->main_word();
-        $result = $wrd->is_measure();
-        return $result;
+        return $wrd->is_measure();
     }
 
     // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
     function is_scaling()
     {
         $wrd = $this->main_word();
-        $result = $wrd->is_scaling();
-        return $result;
+        return $wrd->is_scaling();
     }
 
     // return true if the word has the type "scaling_percent" (e.g. "percent")
     function is_percent()
     {
         $wrd = $this->main_word();
-        $result = $wrd->is_percent();
-        return $result;
+        return $wrd->is_percent();
     }
 
     // create a selector that contains the time words
@@ -531,8 +543,7 @@ class phrase
     {
 
         $wrd = $this->main_word();
-        $result = $wrd->dsp_time_selector($type, $form_name, $pos, $back);
-        return $result;
+        return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
     }
 
 

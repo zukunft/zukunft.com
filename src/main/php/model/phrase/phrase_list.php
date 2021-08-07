@@ -94,7 +94,9 @@ class phrase_list
         return $result;
     }
 
-    // build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
+    /**
+     * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
+     */
     function wrd_lst_all(): word_list
     {
         log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
@@ -824,7 +826,7 @@ class phrase_list
 
         $result = $this->ids();
         foreach ($this->lst as $phr) {
-            // temp workaround until the reason is found, why the user is sometimes not set
+            // temp workaround utils the reason is found, why the user is sometimes not set
             if (!isset($phr->usr)) {
                 $phr->usr = $this->usr;
             }
@@ -958,7 +960,7 @@ class phrase_list
                 $time_wrd->id = $time_id;
                 $time_wrd->usr = $this->usr;
                 $time_wrd->load();
-                // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differenciate this, "Q1 (Quarter)" should be returned
+                // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
             } else {
                 log_warning("The word list contains more time word than supported by the program.", "phrase_list->time_useful");
@@ -972,13 +974,13 @@ class phrase_list
         // sort
         //print_r($phrase_lst);
 
-        // get the most ofter time type e.g. years if the list contains more than 5 years
+        // get the most often time type e.g. years if the list contains more than 5 years
         //$type_most_used = zut_time_type_most_used ($phrase_lst);
 
         // if nothing special is defined try to select 20 % outlook to the future
-        // get latest time without estimate
+        // get the latest time without estimate
         // check the number of none estimate results
-        // if the hist is longer than it should be define the start phrase
+        // if the hist is longer than it should be, define the start phrase
         // fill from the start phrase the default number of phrases
 
 

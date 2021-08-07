@@ -84,7 +84,7 @@ function run_word_link_test()
     test_dsp('triple->load for ' . TP_ZH_INS . ' using the function', $target, $result);
 
     // link the added word to the test word
-    $wrd_added = load_word(TW_ADD_RENAMED);
+    $wrd_added = load_word(word::TEST_NAME_CHANGED);
     $wrd = load_word(TEST_WORD);
     $vrb = new verb;
     $vrb->id = cl(db_cl::VERB, verb::DBL_IS);
@@ -109,7 +109,7 @@ function run_word_link_test()
     $log->new_to_id = $wrd->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job linked ' . TW_ADD_RENAMED . ' to ' . TEST_WORD . '';
+    $target = 'zukunft.com system batch job linked ' . word::TEST_NAME_CHANGED . ' to ' . TEST_WORD . '';
     test_dsp('triple->save logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result);
 
     // ... check if the link is shown correctly
@@ -121,7 +121,7 @@ function run_word_link_test()
     $lnk->to_id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
-    $target = '' . TW_ADD_RENAMED . ' (' . TEST_WORD . ')';
+    $target = '' . word::TEST_NAME_CHANGED . ' (' . TEST_WORD . ')';
     test_dsp('triple->load', $target, $result);
     // ... check if the link is shown correctly also for the second user
     $lnk2 = new word_link;
@@ -131,7 +131,7 @@ function run_word_link_test()
     $lnk2->to_id = $wrd->id;
     $lnk2->load();
     $result = $lnk2->name;
-    $target = '' . TW_ADD_RENAMED . ' (' . TEST_WORD . ')';
+    $target = '' . word::TEST_NAME_CHANGED . ' (' . TEST_WORD . ')';
     test_dsp('triple->load for user "' . $usr2->name . '"', $target, $result);
 
     // ... check if the value update has been triggered
@@ -155,7 +155,7 @@ function run_word_link_test()
     $log->old_to_id = $wrd->id;
     $log->usr = $usr2;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test unlinked ' . TW_ADD_RENAMED . ' from ' . TEST_WORD . '';
+    $target = 'zukunft.com system test unlinked ' . word::TEST_NAME_CHANGED . ' from ' . TEST_WORD . '';
     test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr2->name . '"', $target, $result);
 
 
@@ -182,7 +182,7 @@ function run_word_link_test()
     $lnk->to_id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
-    $target = '' . TW_ADD_RENAMED . ' (' . TEST_WORD . ')';
+    $target = '' . word::TEST_NAME_CHANGED . ' (' . TEST_WORD . ')';
     test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" is still used for user "' . $usr->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the values for the first user are still the same
@@ -206,7 +206,7 @@ function run_word_link_test()
     $log->old_to_id = $wrd->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job unlinked ' . TW_ADD_RENAMED . ' from ' . TEST_WORD . '';
+    $target = 'zukunft.com system batch job unlinked ' . word::TEST_NAME_CHANGED . ' from ' . TEST_WORD . '';
     test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users
@@ -226,7 +226,7 @@ function run_word_link_test()
     // insert the link again for the first user
     $frm = load_formula(TF_ADD_RENAMED);
     $phr = New phrase;
-    $phr->name = TW_ADD_RENAMED;
+    $phr->name = word::TEST_NAME_CHANGED;
     $phr->usr = $usr2;
     $phr->load();
     $result = $frm->link_phr($phr);

@@ -2,7 +2,7 @@
 
 /*
 
-  unit_db_tests.php - run all unit database read only tests in a useful order
+  all.php - run all unit database read only tests in a useful order
   -----------------
 
   the zukunft.com unit tests should test all class methods, that can be tested without writing to the database
@@ -33,12 +33,12 @@ function run_unit_db_tests()
     test_header('Start the zukunft.com unit database read only tests');
 
     // do the database unit tests
-    run_user_unit_db_tests();
-    run_word_unit_db_tests();
-    run_verb_unit_db_tests();
     run_formula_unit_db_tests();
-    run_view_unit_db_tests();
+    run_protection_unit_db_tests();
     run_ref_unit_db_tests();
     run_share_unit_db_tests();
-    run_protection_unit_db_tests();
+    run_user_unit_db_tests();
+    run_verb_unit_db_tests();
+    run_view_unit_db_tests();
+    run_word_unit_db_tests();
 }

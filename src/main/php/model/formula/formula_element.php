@@ -39,8 +39,8 @@ class formula_element
     public ?int $id = null;          // the database id of the word, verb or formula
     public ?user $usr = null;        // the person who has requested the formula element
     public string $type = '';        // either "word", "verb" or "formula" to direct the links
-    public ?string $name = null;     // the user name of the formula element
-    public ?string $dsp_name = null; // the user name of the formula element with the HTML link
+    public ?string $name = null;     // the username of the formula element
+    public ?string $dsp_name = null; // the username of the formula element with the HTML link
     public ?string $back = null;     // link to what should be display after this action is finished
     public ?string $symbol = null;   // the database reference symbol for formula expressions
     public ?object $obj = null;      // the word, verb or formula object
@@ -98,9 +98,7 @@ class formula_element
     }
 
     /*
-
     display functions
-
     */
 
     // return best possible id for this element mainly used for debugging
@@ -123,7 +121,7 @@ class formula_element
     }
 
     // to show the element name to the user in the most simple form (without any ids)
-    function name()
+    function name(): string
     {
         $result = '';
 
@@ -149,7 +147,7 @@ class formula_element
     }
 
     // return the HTML code for the element name including a link to inspect the element
-    function name_linked($back)
+    function name_linked($back): string
     {
         $result = '';
 

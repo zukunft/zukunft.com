@@ -521,7 +521,7 @@ class source extends user_sandbox
     }
 
     // set the update parameters for the word type
-    private function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
         if ($db_rec->type_id <> $this->type_id) {

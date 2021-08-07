@@ -90,7 +90,7 @@ function run_formula_element_group_test () {
     // test if the values for an element group are displayed correctly
     $time_phr = $phr_lst->assume_time();
     $result = $elm_grp->dsp_values($back, $time_phr);
-    $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
+    $target = '';
     test_dsp('formula_element_group->dsp_values', $target, $result);
 
     $time_phr = $phr_lst_next->assume_time();

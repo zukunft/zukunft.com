@@ -4,10 +4,10 @@
 
   user_sandbox.php - the superclass for handling user specific objects including the database saving
   ----------------
-  
+
   This superclass should be used by the classes words, formula, ... to enable user specific values and links
-  
-  
+
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -18,18 +18,18 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
+
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
-  
+
   Copyright (c) 1995-2021 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
-  
+
   http://zukunft.com
-  
+
 */
 
 // TODO align the function return types with the source (ref) object
@@ -839,7 +839,53 @@ class user_sandbox
         return $log;
     }
 
-    // dummy function to save all updated word fields, which is always overwritten by the child class
+    /**
+     * check if this object uses any preserved names and if return a message to the user
+     *
+     * @return string
+     */
+    private function check_preserved(): string
+    {
+        $result = '';
+        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+            if ($this->obj_name == DB_TYPE_WORD) {
+                if ($this->name == word::TEST_NAME_ADD) {
+                    $result = word::TEST_NAME_ADD . ' is a reserved name for system testing. Please use another name';
+                }
+                if ($this->name == word::TEST_NAME_CHANGED) {
+                    $result = word::TEST_NAME_CHANGED . ' is a reserved name for system testing. Please use another name';
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * set the update parameters for the word type
+     * TODO: log the ref
+     */
+    function save_field_type($db_con, $db_rec, $std_rec): bool
+    {
+        $result = true;
+        if ($db_rec->type_id <> $this->type_id) {
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->type_name();
+            $log->old_id = $db_rec->type_id;
+            $log->new_value = $this->type_name();
+            $log->new_id = $this->type_id;
+            $log->std_value = $std_rec->type_name();
+            $log->std_id = $std_rec->type_id;
+            $log->row_id = $this->id;
+            $log->field = 'word_type_id';
+            $result = $this->save_field_do($db_con, $log);
+            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')');
+        }
+        return $result;
+    }
+
+    /**
+     * dummy function to save all updated word fields, which is always overwritten by the child class
+     */
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         return true;
@@ -1432,111 +1478,116 @@ class user_sandbox
         log_debug($this->obj_name . '->save ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
 
-        // load the objects if needed
-        if ($this->obj_type == user_sandbox::TYPE_LINK) {
-            $db_con->load_objects();
-        }
+        // check the preserved names
+        $result = $this->check_preserved();
 
-        // configure the global database connection object for the select, insert, update and delete queries
-        $db_con->set_type($this->obj_name);
-        $db_con->set_usr($this->usr->id);
+        if ($result == '') {
 
-        // create an object to check possible duplicates
-        $similar = null;
-
-        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
-        if ($this->id == 0) {
-            log_debug($this->obj_name . '->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar();
-            if ($similar != null) {
-                // check that the get_similar function has really found a similar object and report
-                if (!$this->is_similar($similar)) {
-                    log_err($this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id());
-                }
-                if ($similar->id <> 0) {
-                    // if similar is found set the id to trigger the updating instead of adding
-                    $similar->load(); // e.g. to get the type_id
-                    $this->id = $similar->id;
-                } else {
-                    $similar = null;
-                }
+            // load the objects if needed
+            if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                $db_con->load_objects();
             }
-        }
 
-        // create a new object if nothing similar has been found
-        if ($this->id == 0) {
-            log_debug($this->obj_name . '->save add');
-            $result = strval($this->add());
-        } else {
-            // if the similar object is not the same as $this object, suggest to rename $this object
-            if ($similar != null) {
-                log_debug($this->obj_name . '->save got similar and suggest renaming or merge');
-                // if a source already exists update the source
-                // but if a word with the same name of a formula already exists
-                if (!$this->is_same($similar)) {
-                    $result = $similar->id_used_msg();
+            // configure the global database connection object for the select, insert, update and delete queries
+            $db_con->set_type($this->obj_name);
+            $db_con->set_usr($this->usr->id);
+
+            // create an object to check possible duplicates
+            $similar = null;
+
+            // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+            if ($this->id == 0) {
+                log_debug($this->obj_name . '->save check possible duplicates before adding ' . $this->dsp_id());
+                $similar = $this->get_similar();
+                if ($similar != null) {
+                    // check that the get_similar function has really found a similar object and report
+                    if (!$this->is_similar($similar)) {
+                        log_err($this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id());
+                    }
+                    if ($similar->id <> 0) {
+                        // if similar is found set the id to trigger the updating instead of adding
+                        $similar->load(); // e.g. to get the type_id
+                        $this->id = $similar->id;
+                    } else {
+                        $similar = null;
+                    }
                 }
             }
 
-            // update the existing object
-            if ($result == '') {
-                log_debug($this->obj_name . '->save update');
+            // create a new object if nothing similar has been found
+            if ($this->id == 0) {
+                log_debug($this->obj_name . '->save add');
+                $result = strval($this->add());
+            } else {
+                // if the similar object is not the same as $this object, suggest renaming $this object
+                if ($similar != null) {
+                    log_debug($this->obj_name . '->save got similar and suggest renaming or merge');
+                    // if a source already exists update the source
+                    // but if a word with the same name of a formula already exists
+                    if (!$this->is_same($similar)) {
+                        $result = $similar->id_used_msg();
+                    }
+                }
 
-                // read the database values to be able to check if something has been changed;
-                // done first, because it needs to be done for user and general object values
-                $db_rec = clone $this;
-                $db_rec->reset();
-                $db_rec->id = $this->id;
-                $db_rec->usr = $this->usr;
-                if (!$db_rec->load()) {
-                    $result = 'Reloading of user ' . $this->obj_name . ' failed';
-                    log_err($result);
-                } else {
-                    log_debug($this->obj_name . '->save reloaded from db');
-                    if ($this->obj_type == user_sandbox::TYPE_LINK) {
-                        if (!$db_rec->load_objects()) {
-                            $result = 'Reloading of the object for ' . $this->obj_name . ' failed';
+                // update the existing object
+                if ($result == '') {
+                    log_debug($this->obj_name . '->save update');
+
+                    // read the database values to be able to check if something has been changed;
+                    // done first, because it needs to be done for user and general object values
+                    $db_rec = clone $this;
+                    $db_rec->reset();
+                    $db_rec->id = $this->id;
+                    $db_rec->usr = $this->usr;
+                    if (!$db_rec->load()) {
+                        $result = 'Reloading of user ' . $this->obj_name . ' failed';
+                        log_err($result);
+                    } else {
+                        log_debug($this->obj_name . '->save reloaded from db');
+                        if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                            if (!$db_rec->load_objects()) {
+                                $result = 'Reloading of the object for ' . $this->obj_name . ' failed';
+                                log_err($result);
+                            }
+                            // configure the global database connection object again to overwrite any changes from load_objects
+                            $db_con->set_type($this->obj_name);
+                        }
+                    }
+
+                    // load the common object
+                    $std_rec = clone $this;
+                    $std_rec->reset();
+                    $std_rec->id = $this->id;
+                    $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
+                    if ($result == '') {
+                        if (!$std_rec->load_standard()) {
+                            $result = 'Reloading of the default values for ' . $this->obj_name . ' failed';
                             log_err($result);
                         }
-                        // configure the global database connection object again to overwrite any changes from load_objects
-                        $db_con->set_type($this->obj_name);
                     }
-                }
 
-                // load the common object
-                $std_rec = clone $this;
-                $std_rec->reset();
-                $std_rec->id = $this->id;
-                $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
-                if ($result == '') {
-                    if (!$std_rec->load_standard()) {
-                        $result = 'Reloading of the default values for ' . $this->obj_name . ' failed';
-                        log_err($result);
+                    // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
+                    if ($result == '') {
+                        log_debug($this->obj_name . '->save standard loaded');
+
+                        if ($this->owner_id <= 0) {
+                            $this->owner_id = $std_rec->owner_id;
+                        }
                     }
-                }
 
-                // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
-                if ($result == '') {
-                    log_debug($this->obj_name . '->save standard loaded');
-
-                    if ($this->owner_id <= 0) {
-                        $this->owner_id = $std_rec->owner_id;
+                    // check if the id parameters are supposed to be changed
+                    if ($result == '') {
+                        $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
                     }
-                }
 
-                // check if the id parameters are supposed to be changed
-                if ($result == '') {
-                    $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
-                }
-
-                // if a problem has appeared up to here, don't try to save the values
-                // the problem is shown to the user by the calling interactive script
-                if ($result == '') {
-                    if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                        $result = 'Saving of fields for a ' . $this->obj_name . ' failed';
-                        log_err($result);
+                    // if a problem has appeared up to here, don't try to save the values
+                    // the problem is shown to the user by the calling interactive script
+                    if ($result == '') {
+                        if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
+                            $result = 'Saving of fields for a ' . $this->obj_name . ' failed';
+                            log_err($result);
+                        }
                     }
                 }
             }
@@ -1614,7 +1665,7 @@ class user_sandbox
         global $db_con;
         $result = false;
 
-        // refresh the object with the database to include all updates until now (TODO start of lock for commit here)
+        // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
         if (!$this->load()) {
             log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $result . '.', (new Exception)->getTraceAsString(), $this->usr);
@@ -1695,3 +1746,5 @@ class user_sandbox
     }
 
 }
+
+

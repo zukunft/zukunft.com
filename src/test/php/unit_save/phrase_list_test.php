@@ -34,7 +34,7 @@ function run_phrase_list_test()
     test_header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
     // load the main test word
-    $wrd_company = test_word(TEST_WORD);
+    $wrd_company = test_word(word::TEST_NAME_READ);
 
     // prepare test by loading Insurance Zurich
     $wrd_zh = load_word(TW_ZH);

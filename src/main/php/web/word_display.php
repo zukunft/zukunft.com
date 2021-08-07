@@ -366,7 +366,7 @@ class word_dsp extends word
 
         // loop over the link types
         if ($vrb_lst == null) {
-            $result .= 'Nothing linked to ' . $this->name() . ' until now. Click here to link it.';
+            $result .= 'Nothing linked to ' . $this->name() . ' utils now. Click here to link it.';
         } else {
             foreach ($vrb_lst->lst as $vrb) {
                 log_debug('word_dsp->dsp_graph verb ' . $vrb->name);
@@ -581,7 +581,7 @@ class word_dsp extends word
             }
             $result .= dsp_form_text("plural", $this->plural, "Plural:", "col-sm-4");
             if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
-                $result .= ' type: ' . $this->type_name;
+                $result .= ' type: ' . $this->type_name();
             } else {
                 $result .= $this->dsp_type_selector('word_edit', "col-sm-4");
             }

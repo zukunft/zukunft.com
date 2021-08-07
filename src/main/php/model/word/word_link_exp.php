@@ -2,10 +2,9 @@
 
 /*
 
-  word_link_object.php - a base object that can be used for word links, so either a word, triple or group
-  --------------------
+  word_link_exp.php - the simple export object for a triple
+  -----------------
   
-
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -30,7 +29,23 @@
   
 */
 
-class word_link_object extends user_sandbox_description
+class word_link_exp extends user_sandbox_exp_link
 {
+
+    // field names used for JSON creation
+    public ?string $description = '';
+    public ?string $from = '';
+    public ?string $verb = '';
+    public ?string $to = '';
+
+    function reset()
+    {
+        parent::reset();
+
+        $this->description = '';
+        $this->from = '';
+        $this->verb = '';
+        $this->to = '';
+    }
 
 }

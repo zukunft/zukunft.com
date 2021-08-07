@@ -69,7 +69,7 @@ function run_formula_value_test () {
     $abb_up->time_id = $time_phr->id;
     //$abb_up->wrd_lst = $phr_lst;
     $abb_up->usr = $usr;
-    $abb_up->usr->id = $usr->id; // temp solution until the value is saved automatically for all users
+    $abb_up->usr->id = $usr->id; // temp solution utils the value is saved automatically for all users
     $abb_up->load();
     $result = $abb_up->value;
   } else {
@@ -153,7 +153,7 @@ function run_formula_value_list_test () {
   $fv_lst->usr = $usr;
   $fv_lst->load();
   $result = $fv_lst->dsp_id();
-  $target = '"Sales","percent","increase","'.TW_ADD_RENAMED.'","2017"';
+  $target = '"Sales","percent","increase","'.word::TEST_NAME_CHANGED.'","2017"';
   test_dsp_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

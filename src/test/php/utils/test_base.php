@@ -45,18 +45,30 @@ if ($root_path == '') {
 }
 
 // set the paths of the program code
-$path_unit = $root_path . 'src/test/php/unit/'; // path of the code for the unit tests
-$path_unit_db = $root_path . 'src/test/php/unit_db/'; // path of the code for the unit tests with database real only
-$path_test = $root_path . 'src/test/php/'; // path of the code for the general tests and test setup
+$path_test = $root_path . 'src/test/php/utils/';            // for the general tests and test setup
+$path_unit = $root_path . 'src/test/php/unit/';             // for unit tests
+$path_unit_db = $root_path . 'src/test/php/unit_db/';       // for the unit tests with database real only
+$path_unit_dsp = $root_path . 'src/test/php/unit_display/'; // for the unit tests that create HTML code
+$path_unit_ui = $root_path . 'src/test/php/unit_ui/';       // for the unit tests that create JSON messages for the frontend
+$path_unit_save = $root_path . 'src/test/php/unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
+$path_it = $root_path . 'src/test/php/integration/';        // for integration tests
+$path_dev = $root_path . 'src/test/php/dev/';               // for test still in development
 
 include_once $root_path . 'src/main/php/service/config.php';
 
+// load the other test utility modules (beside this base configuration module)
+include_once $path_test . 'test_system.php';
+include_once $path_test . 'test_db_link.php';
+include_once $path_test . 'test_user.php';
+include_once $path_test . 'test_user_sandbox.php';
+
 // load the unit testing modules
-include_once $path_unit . 'unit_tests.php';
+include_once $path_unit . 'all.php';
 include_once $path_unit . 'test_lib.php';
 include_once $path_unit . 'user_sandbox.php';
 include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
+include_once $path_unit . 'word_link.php';
 include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'value.php';
@@ -65,7 +77,7 @@ include_once $path_unit . 'view.php';
 include_once $path_unit . 'ref.php';
 
 // load the unit testing modules with database real only
-include_once $path_unit_db . 'unit_db_tests.php';
+include_once $path_unit_db . 'all.php';
 include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'verb.php';
@@ -75,45 +87,46 @@ include_once $path_unit_db . 'ref.php';
 include_once $path_unit_db . 'share.php';
 include_once $path_unit_db . 'protection.php';
 
-// load the testing functions
-include_once $path_test . 'test_system.php';
-include_once $path_test . 'test_db_link.php';
-include_once $path_test . 'test_math.php';
-include_once $path_test . 'test_user_sandbox.php';
-include_once $path_test . 'test_user.php';
-include_once $path_test . 'test_word.php';
-include_once $path_test . 'test_word_ui.php';
-include_once $path_test . 'test_word_display.php';
-include_once $path_test . 'test_word_list.php';
-include_once $path_test . 'test_word_link.php';
-include_once $path_test . 'phrase_test.php';
-include_once $path_test . 'phrase_list_test.php';
-include_once $path_test . 'phrase_group_test.php';
-include_once $path_test . 'phrase_group_list_test.php';
-include_once $path_test . 'ref_test.php';
-include_once $path_test . 'test_graph.php';
-include_once $path_test . 'test_verb.php';
-include_once $path_test . 'test_term.php';
-include_once $path_test . 'value_test.php';
-include_once $path_test . 'value_test_ui.php';
-include_once $path_test . 'test_source.php';
-include_once $path_test . 'test_expression.php';
-include_once $path_test . 'test_formula.php';
-include_once $path_test . 'test_formula_ui.php';
-include_once $path_test . 'test_formula_link.php';
-include_once $path_test . 'test_formula_trigger.php';
-include_once $path_test . 'test_formula_value.php';
-include_once $path_test . 'test_formula_element.php';
-include_once $path_test . 'test_formula_element_group.php';
-include_once $path_test . 'test_batch.php';
-include_once $path_test . 'test_view.php';
-include_once $path_test . 'test_view_component.php';
-include_once $path_test . 'test_view_component_link.php';
-include_once $path_test . 'test_display.php';
-include_once $path_test . 'test_import.php';
-include_once $path_test . 'test_export.php';
-include_once $path_test . 'test_legacy.php';
-include_once $path_test . 'test_cleanup.php';
+// load the testing functions for creating HTML code
+include_once $path_unit_dsp . 'test_display.php';
+
+// load the testing functions for creating JSON messages for the frontend code
+include_once $path_unit_ui . 'test_formula_ui.php';
+include_once $path_unit_ui . 'test_word_ui.php';
+include_once $path_unit_ui . 'value_test_ui.php';
+
+// load the testing functions that save data to the database
+include_once $path_unit_save . 'test_math.php';
+include_once $path_unit_save . 'test_word.php';
+include_once $path_unit_save . 'test_word_display.php';
+include_once $path_unit_save . 'test_word_list.php';
+include_once $path_unit_save . 'test_word_link.php';
+include_once $path_unit_save . 'phrase_test.php';
+include_once $path_unit_save . 'phrase_list_test.php';
+include_once $path_unit_save . 'phrase_group_test.php';
+include_once $path_unit_save . 'phrase_group_list_test.php';
+include_once $path_unit_save . 'ref_test.php';
+include_once $path_unit_save . 'test_graph.php';
+include_once $path_unit_save . 'test_verb.php';
+include_once $path_unit_save . 'test_term.php';
+include_once $path_unit_save . 'value_test.php';
+include_once $path_unit_save . 'test_source.php';
+include_once $path_unit_save . 'test_expression.php';
+include_once $path_unit_save . 'test_formula.php';
+include_once $path_unit_save . 'test_formula_link.php';
+include_once $path_unit_save . 'test_formula_trigger.php';
+include_once $path_unit_save . 'test_formula_value.php';
+include_once $path_unit_save . 'test_formula_element.php';
+include_once $path_unit_save . 'test_formula_element_group.php';
+include_once $path_unit_save . 'test_batch.php';
+include_once $path_unit_save . 'test_view.php';
+include_once $path_unit_save . 'test_view_component.php';
+include_once $path_unit_save . 'test_view_component_link.php';
+include_once $path_unit_save . 'test_cleanup.php';
+
+// load the integration test functions
+include_once $path_it . 'test_import.php';
+include_once $path_it . 'test_export.php';
 
 // libraries that can be dismissed, but still used to compare the result with the result of the legacy function
 include_once $root_path . 'src/main/php/service/test/zu_lib_word_dsp.php';
@@ -128,6 +141,9 @@ include_once $root_path . 'src/main/php/service/test/zu_lib_value_db.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_value_dsp.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_user.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_html.php';
+
+// load the test functions still in development
+include_once $path_dev . 'test_legacy.php';
 
 // the fixed system user used for testing
 const TEST_USER_ID = "1";
@@ -232,8 +248,6 @@ const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
 
 // settings for add, change and deletion tests
 // these names should not exist in the database
-const TW_ADD = "Test Company";
-const TW_ADD_RENAMED = "Company Test";
 const TF_ADD = "Test Formula";
 const TF_ADD_RENAMED = "Formula Test";
 const TM_ADD = "Test Mask";
@@ -438,13 +452,13 @@ function test_dsp_contains($test_text, $target, $result, $exe_max_time, $comment
     return test_dsp($test_text, $target, $result, $exe_max_time, $comment, 'contains');
 }
 
-// the HTML code to display the he
+// the HTML code to display the header text
 function test_header($header_text)
 {
     echo '<br><br><h2>' . $header_text . '</h2><br>';
 }
 
-// the HTML code to display the he
+// the HTML code to display the subheader text
 function test_subheader($header_text)
 {
     echo '<br><h3>' . $header_text . '</h3><br>';

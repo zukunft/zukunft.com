@@ -33,7 +33,7 @@ function run_display_test () {
   test_header('Test the view_display class (classes/view_display.php)');
 
   // test the usage of a view to create the HTML code
-  $wrd     = load_word(TEST_WORD);
+  $wrd     = load_word(word::TEST_NAME_READ);
   $wrd_abb = load_word(TW_ABB);
   $dsp = new view;
   $dsp->name = 'Company ratios';
@@ -60,30 +60,30 @@ function run_display_test () {
 
   test_header('Test the display button class (classes/display_button.php )');
 
-  $target = '<a href="/http/view.php" title="Add test"><img src="../../../images/button_add.svg" alt="Add test"></a>';
+  $target = '<a href="/http/view.php" title="Add test"><img src="../../../../images/button_add.svg" alt="Add test"></a>';
   $target = '<a href="/http/view.php" title="Add test">';
   $result = btn_add('Add test', '/http/view.php');
   test_dsp_contains(", btn_add", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Edit test"><img src="../../../images/button_edit.svg" alt="Edit test"></a>';
+  $target = '<a href="/http/view.php" title="Edit test"><img src="../../../../images/button_edit.svg" alt="Edit test"></a>';
   $target = '<a href="/http/view.php" title="Edit test">';
   $result = btn_edit('Edit test', '/http/view.php');
   test_dsp_contains(", btn_edit", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Del test"><img src="../../../images/button_del.svg" alt="Del test"></a>';
+  $target = '<a href="/http/view.php" title="Del test"><img src="../../../../images/button_del.svg" alt="Del test"></a>';
   $target = '<a href="/http/view.php" title="Del test">';
   $result = btn_del('Del test', '/http/view.php');
   test_dsp_contains(", btn_del", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Undo test"><img src="../../../images/button_undo.svg" alt="Undo test"></a>';
+  $target = '<a href="/http/view.php" title="Undo test"><img src="../../../../images/button_undo.svg" alt="Undo test"></a>';
   $result = btn_undo('Undo test', '/http/view.php');
   test_dsp(", btn_undo", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Find test"><img src="../../../images/button_find.svg" alt="Find test"></a>';
+  $target = '<a href="/http/view.php" title="Find test"><img src="../../../../images/button_find.svg" alt="Find test"></a>';
   $result = btn_find('Find test', '/http/view.php');
   test_dsp(", btn_find", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Show all test"><img src="../../../images/button_filter_off.svg" alt="Show all test"></a>';
+  $target = '<a href="/http/view.php" title="Show all test"><img src="../../../../images/button_filter_off.svg" alt="Show all test"></a>';
   $result = btn_unfilter('Show all test', '/http/view.php');
   test_dsp(", btn_unfilter", $target, $result);
 
@@ -91,14 +91,14 @@ function run_display_test () {
   $result = btn_yesno('YesNo test', '/http/view.php');
   test_dsp(", btn_yesno", $target, $result);
 
-  $target = '<a href="/http/view.php?words=1" title="back"><img src="../../../images/button_back.svg" alt="back"></a>';
+  $target = '<a href="/http/view.php?words=1" title="back"><img src="../../../../images/button_back.svg" alt="back"></a>';
   $result = btn_back('');
   test_dsp(", btn_back", $target, $result);
 
 
   test_header('Test the display HTML class (classes/display_html.php )');
 
-  $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../style/style.css" /> </head> <body class="center_form">'));
+  $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../../style/style.css" /> </head> <body class="center_form">'));
   $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
   $result = htmlspecialchars(trim(dsp_header('Header test', 'center_form')));
   test_dsp_contains(", dsp_header", $target, $result);

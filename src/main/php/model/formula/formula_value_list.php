@@ -314,7 +314,7 @@ class formula_value_list
 
         $result = array();
 
-        // temp until the call is reviewed
+        // temp utils the call is reviewed
         $wrd = new word_dsp;
         $wrd->id = $phr_id;
         $wrd->usr = $this->usr;

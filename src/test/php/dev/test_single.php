@@ -67,12 +67,12 @@ if ($usr->id <= 0) {
 
     // save a new word
     $wrd_new = new word;
-    $wrd_new->name = TEST_WORD;
+    $wrd_new->name = word::TEST_NAME_READ;
     $wrd_new->usr = $usr;
     $result = $wrd_new->save();
-    //$target = 'A word with the name "'.TEST_WORD.'" already exists. Please use another name.';
+    //$target = 'A word with the name "'.word::TEST_NAME_READ.'" already exists. Please use another name.';
     $target = '';
-    test_dsp('word->save for "' . TEST_WORD . '"', $target, $result, TIMEOUT_LIMIT_DB);
+    test_dsp('word->save for "' . word::TEST_NAME_READ . '"', $target, $result, TIMEOUT_LIMIT_DB);
 }
 
 echo $result;

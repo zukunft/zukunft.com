@@ -371,7 +371,7 @@ class value extends user_sandbox_display
                     // todo:
                     // check if there are any matching values at all
                     // if yes, get the most often used phrase
-                    // repeat adding a phrase until a number is found
+                    // repeat adding a phrase utils a number is found
                 }
             }
         }
@@ -804,7 +804,7 @@ class value extends user_sandbox_display
                         log_debug('value->scale -> word (' . $scale_wrd->name . ')');
                         if ($scale_wrd->id > 0) {
                             $frm = $scale_wrd->formula();
-                            $frm->usr = $this->usr; // temp solution until the bug of not setting is found
+                            $frm->usr = $this->usr; // temp solution utils the bug of not setting is found
                             if (!isset($frm)) {
                                 log_warning('No scaling formula defined for "' . $scale_wrd->name . '".', "value->scale");
                             } else {
@@ -1781,7 +1781,7 @@ class value extends user_sandbox_display
     // this value object is defined as the standard value
     function set_std()
     {
-        // if a user has been using the standard value until now, just create a message, that the standard value has been changes and offer him to use the old standard value also in the future
+        // if a user has been using the standard value utils now, just create a message, that the standard value has been changes and offer him to use the old standard value also in the future
         // delete all user values that are matching the new standard
         // save the new standard value in the database
     }

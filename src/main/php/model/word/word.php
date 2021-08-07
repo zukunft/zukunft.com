@@ -33,17 +33,17 @@
 
 class word extends word_link_object
 {
-    // persevered view name for unit and integration tests
-    const TEST_NAME = 'System Test Word';
+    // persevered word names for unit and integration tests
+    const TEST_NAME_READ = 'Mathematical constant';
+    const TEST_NAME_ADD = 'System Test Word';
+    const TEST_NAME_CHANGED = 'System Test Word Renamed';
 
     // database fields additional to the user sandbox fields
     public ?string $plural = null;      // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
-    public ?string $description = null; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
     public ?int $view_id = null;        // defines the default view for this word
     public ?int $values = null;         // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
-    public ?string $type_name = '';   // the name of the word type
     public ?string $is_wrd = null;    // the main type object e.g. for "ABB" it is the word object for "Company"
     public ?int $is_wrd_id = null;    // the id for the parent (verb "is") object
     public ?int $dsp_pos = null;      // position of the word on the screen
@@ -69,12 +69,10 @@ class word extends word_link_object
     {
         parent::reset();
         $this->plural = null;
-        $this->description = null;
         $this->type_id = null;
         $this->view_id = null;
         $this->values = null;
 
-        $this->type_name = '';
         $this->is_wrd = null;
         $this->is_wrd_id = null;
         $this->dsp_pos = null;
@@ -117,7 +115,9 @@ class word extends word_link_object
         }
     }
 
-    // load the word parameters for all users
+    /**
+     * load the word parameters for all users
+     */
     function load_standard(): bool
     {
         global $db_con;
@@ -207,7 +207,7 @@ class word extends word_link_object
     }
 
     /**
-     * return the main word object based on a id text e.g. used in view.php to get the word to display
+     * return the main word object based on an id text e.g. used in view.php to get the word to display
      */
     function main_wrd_from_txt($id_txt)
     {
@@ -300,9 +300,11 @@ class word extends word_link_object
         return $val_lst;
     }
 
-    // if there is just one formula linked to the word, get it
-    // TODO allow also to retrieve a list of formulas
-    // TOTO get the user specific list of formulas
+    /**
+     * if there is just one formula linked to the word, get it
+     * TODO allow also to retrieve a list of formulas
+     * TODO get the user specific list of formulas
+     */
     function formula(): formula
     {
         log_debug('word->formula for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
@@ -501,13 +503,13 @@ class word extends word_link_object
     }
 
     /*
-    // offer the user to export the word and the relations as an xml file
+    // offer the user to export the word and the relations as a xml file
     function config_json_export($back): string
     {
         return 'Export as <a href="/http/get_json.php?words=' . $this->name . '&back=' . $back . '">JSON</a>';
     }
 
-    // offer the user to export the word and the relations as an xml file
+    // offer the user to export the word and the relations as a xml file
     function config_xml_export($back)
     {
         $result = '';
@@ -515,7 +517,7 @@ class word extends word_link_object
         return $result;
     }
 
-    // offer the user to export the word and the relations as an xml file
+    // offer the user to export the word and the relations as a xml file
     function config_csv_export($back)
     {
         $result = '<a href="/http/get_csv.php?words=' . $this->name . '&back=' . $back . '">CSV</a>';
@@ -523,8 +525,10 @@ class word extends word_link_object
     }
     */
 
-    // to add a word linked to this word
-    // e.g. if this word is "Company" to add another company
+    /**
+     * to add a word linked to this word
+     * e.g. if this word is "Company" to add another company
+     */
     function btn_add($back): string
     {
         global $word_types;
@@ -535,31 +539,29 @@ class word extends word_link_object
         return btn_add($wrd_add_title, $wrd_add_call);
     }
 
-    //
-    private function type_name()
+    /**
+     * get the name of the word type
+     * @return string the name of the word type
+     */
+    function type_name(): string
     {
-
-        global $db_con;
-
-        if ($this->type_id > 0) {
-            $db_con->set_type(DB_TYPE_WORD_TYPE);
-            //$db_con->set_usr($this->usr->id);
-            //$db_con->set_fields(array(sql_db::FLD_DESCRIPTION));
-            $db_con->set_where($this->type_id);
-            $sql = $db_con->select();
-            $db_type = $db_con->get1($sql);
-            $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
-        }
-        return $this->type_name;
+        global $word_types;
+        return $word_types->name($this->type_id);
     }
 
-    function type_code_id()
+    /**
+     * get the code_id of the word type
+     * @return string the code_id of the word type
+     */
+    function type_code_id(): string
     {
         global $word_types;
         return $word_types->code_id($this->type_id);
     }
 
-    // return true if the word has the given type
+    /**
+     * return true if the word has the given type
+     */
     function is_type($type): bool
     {
         global $word_types;
@@ -574,21 +576,27 @@ class word extends word_link_object
         return $result;
     }
 
-    // return true if the word has the type "time"
+    /**
+     * return true if the word has the type "time"
+     */
     function is_time(): bool
     {
         return $this->is_type(word_type_list::DBL_TIME);
     }
 
-    // return true if the word has the type "measure" (e.g. "meter" or "CHF")
-    // in case of a division, these words are excluded from the result
-    // in case of add, it is checked that the added value does not have a different measure
+    /**
+     * return true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * in case of a division, these words are excluded from the result
+     * in case of add, it is checked that the added value does not have a different measure
+     */
     function is_measure(): bool
     {
         return $this->is_type(word_type_list::DBL_MEASURE);
     }
 
-    // return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+    /**
+     * return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+     */
     function is_scaling(): bool
     {
         $result = false;
@@ -599,19 +607,23 @@ class word extends word_link_object
         return $result;
     }
 
-    // return true if the word has the type "scaling_percent" (e.g. "percent")
+    /**
+     * return true if the word has the type "scaling_percent" (e.g. "percent")
+     */
     function is_percent(): bool
     {
         return $this->is_type(word_type_list::DBL_SCALING_PCT);
     }
 
-    // just to fix a problem if a phrase list contains a word
+    /**
+     * just to fix a problem if a phrase list contains a word
+     */
     function type_id(): int
     {
         return $this->type_id;
     }
 
-    /*
+    /**
       tree building function
       ----------------------
 
@@ -650,7 +662,9 @@ class word extends word_link_object
 
     */
 
-    // helper function that returns a word list object just with the word object
+    /**
+     * helper function that returns a word list object just with the word object
+     */
     function lst(): word_list
     {
         $wrd_lst = new word_list;
@@ -659,7 +673,9 @@ class word extends word_link_object
         return $wrd_lst;
     }
 
-    // returns a list of words that are related to this word e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich"
+    /**
+     * returns a list of words that are related to this word e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich"
+     */
     function parents()
     {
         log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
@@ -669,7 +685,9 @@ class word extends word_link_object
         return $parent_wrd_lst;
     }
 
-    // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+    /**
+     * returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+     */
     function is()
     {
         $wrd_lst = $this->parents();
@@ -678,7 +696,9 @@ class word extends word_link_object
         return $wrd_lst;
     }
 
-    // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+    /**
+     * returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+     */
     function is_mainly()
     {
         $result = null;
@@ -690,7 +710,9 @@ class word extends word_link_object
         return $result;
     }
 
-    // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and others, but not "Company"
+    /**
+     * returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and others, but not "Company"
+     */
     function children()
     {
         log_debug('word->children for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
@@ -700,7 +722,9 @@ class word extends word_link_object
         return $child_wrd_lst;
     }
 
-    // returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and "Company"
+    /**
+     * returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and "Company"
+     */
     function are()
     {
         $wrd_lst = $this->children();
@@ -708,7 +732,9 @@ class word extends word_link_object
         return $wrd_lst;
     }
 
-    // makes sure that all combinations of "are" and "contains" are included
+    /**
+     * makes sure that all combinations of "are" and "contains" are included
+     */
     function are_and_contains()
     {
         log_debug('word->are_and_contains for ' . $this->dsp_id());
@@ -738,7 +764,9 @@ class word extends word_link_object
         return $wrd_lst;
     }
 
-    // return the follow word id based on the predefined verb following
+    /**
+     * return the follow word id based on the predefined verb following
+     */
     function next(): word_dsp
     {
         log_debug('word->next ' . $this->dsp_id() . ' and user ' . $this->usr->name);
@@ -758,7 +786,9 @@ class word extends word_link_object
         return $result;
     }
 
-    // return the follow word id based on the predefined verb following
+    /**
+     * return the follow word id based on the predefined verb following
+     */
     function prior(): word_dsp
     {
         log_debug('word->prior(' . $this->dsp_id() . ',u' . $this->usr->id . ')');
@@ -778,10 +808,12 @@ class word extends word_link_object
         return $result;
     }
 
-    // returns the more general word as defined by "is part of"
-    // e.g. for "Meilen (District) it will return "Zürich (Canton)"
-    // for the value selection this should be tested level by level
-    // to use by default the most specific value
+    /**
+     * returns the more general word as defined by "is part of"
+     * e.g. for "Meilen (District)" it will return "Zürich (Canton)"
+     * for the value selection this should be tested level by level
+     * to use by default the most specific value
+     */
     function is_part()
     {
         log_debug('word->is(' . $this->dsp_id() . ', user ' . $this->usr->id . ')');
@@ -793,7 +825,9 @@ class word extends word_link_object
         return $is_wrd_lst;
     }
 
-    // returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
+    /**
+     * returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
+     */
     function link_types($direction): verb_list
     {
         log_debug('word->link_types ' . $this->dsp_id() . ' and user ' . $this->usr->id);
@@ -808,7 +842,9 @@ class word extends word_link_object
         return $vrb_lst;
     }
 
-    // true if the word has any none default settings such as a special type
+    /**
+     * true if the word has any none default settings such as a special type
+     */
     function has_cfg(): bool
     {
         global $word_types;
@@ -838,12 +874,12 @@ class word extends word_link_object
     }
 
     /*
-
     convert functions
-
     */
 
-    // convert the word object into a phrase object
+    /**
+     * convert the word object into a phrase object
+     */
     function phrase(): phrase
     {
         $phr = new phrase;
@@ -856,9 +892,7 @@ class word extends word_link_object
     }
 
     /*
-
     save functions
-
     */
 
     function not_used(): bool
@@ -880,8 +914,10 @@ class word extends word_link_object
         return $this->not_changed();
     }
 
-    // true if no other user has modified the word
-    // assuming that in this case not confirmation from the other users for a word rename is needed
+    /**
+     * true if no other user has modified the word
+     * assuming that in this case not confirmation from the other users for a word rename is needed
+     */
     function not_changed(): bool
     {
         log_debug('word->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
@@ -912,9 +948,11 @@ class word extends word_link_object
         return $result;
     }
 
-    // to be dismissed!
-    // if the value has been changed by someone else than the owner the user id is returned
-    // but only return the user id if the user has not also excluded it
+    /**
+     * to be dismissed!
+     * if the value has been changed by someone else than the owner the user id is returned
+     * but only return the user id if the user has not also excluded it
+     */
     function changer()
     {
         log_debug('word->changer (' . $this->id . ')');
@@ -935,8 +973,10 @@ class word extends word_link_object
         return $user_id;
     }
 
-    // true if the user is the owner and no one else has changed the word
-    // because if another user has changed the word and the original value is changed, maybe the user word also needs to be updated
+    /**
+     * true if the user is the owner and no one else has changed the word
+     * because if another user has changed the word and the original value is changed, maybe the user word also needs to be updated
+     */
     function can_change(): bool
     {
         log_debug('word->can_change (' . $this->id . ',u' . $this->usr->id . ')');
@@ -952,7 +992,9 @@ class word extends word_link_object
         return $can_change;
     }
 
-    // true if a record for a user specific configuration already exists in the database
+    /**
+     * true if a record for a user specific configuration already exists in the database
+     */
     function has_usr_cfg(): bool
     {
         $has_cfg = false;
@@ -962,7 +1004,9 @@ class word extends word_link_object
         return $has_cfg;
     }
 
-    // check if the database record for the user specific settings can be removed
+    /**
+     * check if the database record for the user specific settings can be removed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('word->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -997,7 +1041,9 @@ class word extends word_link_object
         return $result;
     }
 
-// set the log entry parameters for a value update
+    /**
+     * set the log entry parameters for a value update
+     */
     private
     function log_upd_view($view_id): user_log
     {
@@ -1031,8 +1077,10 @@ class word extends word_link_object
         return $log;
     }
 
-// remember the word view, which means to save the view id for this word
-// each user can define set the view individually, so this is user specific
+    /**
+     * remember the word view, which means to save the view id for this word
+     * each user can define set the view individually, so this is user specific
+     */
     function save_view($view_id): bool
     {
 
@@ -1063,9 +1111,10 @@ class word extends word_link_object
         return $result;
     }
 
-// set the update parameters for the word plural
-    private
-    function save_field_plural($db_con, $db_rec, $std_rec): bool
+    /**
+     * set the update parameters for the word plural
+     */
+    private function save_field_plural($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
         // if the plural is not set, don't overwrite any db entry
@@ -1083,50 +1132,10 @@ class word extends word_link_object
         return $result;
     }
 
-// set the update parameters for the word description
-    private
-    function save_field_description($db_con, $db_rec, $std_rec): bool
-    {
-        $result = true;
-        // if the description is not set, don't overwrite any db entry
-        if ($this->description <> Null) {
-            if ($this->description <> $db_rec->description) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->description;
-                $log->new_value = $this->description;
-                $log->std_value = $std_rec->description;
-                $log->row_id = $this->id;
-                $log->field = sql_db::FLD_DESCRIPTION;
-                $result = $this->save_field_do($db_con, $log);
-            }
-        }
-        return $result;
-    }
-
-    // set the update parameters for the word type
-    // to do: log the ref
-    private function save_field_type($db_con, $db_rec, $std_rec): bool
-    {
-        $result = true;
-        if ($db_rec->type_id <> $this->type_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id;
-            $log->field = 'word_type_id';
-            $result = $this->save_field_do($db_con, $log);
-            log_debug('word->save_field_type changed type to "' . $log->new_value . '" (' . $log->new_id . ')');
-        }
-        return $result;
-    }
-
-    // set the update parameters for the word view_id
-    private
-    function save_field_view($db_rec): bool
+    /**
+     * set the update parameters for the word view_id
+     */
+    private function save_field_view($db_rec): bool
     {
         $result = true;
         if ($db_rec->view_id <> $this->view_id) {
@@ -1135,7 +1144,9 @@ class word extends word_link_object
         return $result;
     }
 
-    // save all updated word fields
+    /**
+     * save all updated word fields
+     */
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         log_debug('word->save_fields');
