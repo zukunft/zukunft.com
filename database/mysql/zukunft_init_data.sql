@@ -195,7 +195,7 @@ INSERT INTO `formula_types` (`formula_type_id`, `name`, `description`, `code_id`
 (2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'),
 (3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'),
 (4, 'this', 'selects the assumed time term', 'time_this'),
-(5, 'const', 'used to define a const value that is not supposed to be changed like pi', 'const');
+(5, 'reversible', 'a formula that can ba included also in the reversed version e.g. "minute = second / 60" and "second = minute * 60"', 'reversible');
 
 --
 -- Dumping data for table `languages`
@@ -458,7 +458,8 @@ INSERT INTO `word_types` (`word_type_id`, `type_name`, `description`, `code_id`,
 (13, 'next', 'not sure, why this is needed', 'next', NULL, ''),
 (14, 'prior', 'not sure, why this is needed', 'previous', NULL, ''),
 (15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%'),
-(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, '');
+(16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, ''),
+(17, 'math constant', 'A mathematical constant is a key number whose value is fixed by an unambiguous definition', 'constant', 0, '');
 
 --
 -- Setting the initial IP blocking for testing

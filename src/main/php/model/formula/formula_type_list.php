@@ -33,12 +33,6 @@ global $formula_types;
 
 class formula_type_list extends user_type_list
 {
-    // list of the formula types that have a coded functionality
-    const DBL_CALC= "default";
-    const DBL_NEXT = "time_next";
-    const DBL_THIS = "time_this";
-    const DBL_PREV = "time_prior";
-    const DBL_CONST = "const";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -56,17 +50,22 @@ class formula_type_list extends user_type_list
     function load_dummy() {
         parent::load_dummy();
         $type = new user_type();
-        $type->name = formula_type_list::DBL_CALC;
-        $type->code_id = formula_type_list::DBL_CALC;
+        $type->name = formula::CALC;
+        $type->code_id = formula::CALC;
         $this->lst[2] = $type;
-        $this->type_hash[formula_type_list::DBL_CALC] = 2;
+        $this->type_hash[formula::CALC] = 2;
+        $type = new user_type();
+        $type->name = formula::REV;
+        $type->code_id = formula::REV;
+        $this->lst[3] = $type;
+        $this->type_hash[formula::REV] = 3;
     }
 
     /**
      * return the database id of the default word type
      */
     function default_id(): int {
-        return parent::id(formula_type_list::DBL_CALC);
+        return parent::id(formula::CALC);
     }
 
 }

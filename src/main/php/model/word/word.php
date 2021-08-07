@@ -385,11 +385,11 @@ class word extends word_link_object
             }
         }
 
-        // save the word in the database
         // set the default type if no type is specified
         if ($this->type_id == 0) {
             $this->type_id = $word_types->default_id();
         }
+        // save the word in the database
         if ($do_save) {
             $result = num2bool($this->save());
         }

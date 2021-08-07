@@ -35,6 +35,7 @@ class word_type_list extends user_type_list
 {
     // list of the word types that have a coded functionality
     const DBL_NORMAL = "default";
+    const DBL_MATH_CONST = "constant";
     const DBL_TIME = "time";
     const DBL_TIME_JUMP = "time_jump";
     const DBL_PERCENT = "percent";

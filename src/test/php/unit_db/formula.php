@@ -42,9 +42,9 @@ function run_formula_unit_db_tests()
     test_dsp('unit_db_formula->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::FORMULA_TYPE, formula_type_list::DBL_CALC);
+    $result = cl(db_cl::FORMULA_TYPE, formula::CALC);
     $target = 1;
-    test_dsp('unit_db_formula->check ' . formula_type_list::DBL_CALC, $result, $target);
+    test_dsp('unit_db_formula->check ' . formula::CALC, $result, $target);
 
 }
 

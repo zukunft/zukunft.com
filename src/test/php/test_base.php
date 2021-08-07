@@ -60,6 +60,7 @@ include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'value.php';
+include_once $path_unit . 'formula.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'ref.php';
 

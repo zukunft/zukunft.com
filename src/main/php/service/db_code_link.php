@@ -5,6 +5,8 @@
   db_code_link.php - class that links the upfront loaded type list
   ----------------
 
+  TODO check automatically that all rows with code_id are existing in the database and add any missing rows
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -42,54 +44,67 @@ class db_cl
     const PROTECTION_TYPE = "protection_type";
     const USER_PROFILE = "user_profile_type";
 
-    function word_type_id(string $code_id)
+    /**
+     * get the database row id for a given code_id
+     * mainly used to group the access to the global vars within this class
+     *
+     * @param string $code_id the code_id string that must only be unique within the type
+     * @return int the database row id
+     */
+    function word_type_id(string $code_id): int
     {
         global $word_types;
         return $word_types->id($code_id);
     }
 
-    function verb_id(string $code_id)
+    function verb_id(string $code_id): int
     {
         global $verbs;
         return $verbs->id($code_id);
     }
 
-    function formula_type_id(string $code_id)
+    function formula_type_id(string $code_id): int
     {
         global $formula_types;
         return $formula_types->id($code_id);
     }
 
-    function view_type_id(string $code_id)
+    function view_type_id(string $code_id): int
     {
         global $view_types;
         return $view_types->id($code_id);
     }
 
-    function view_component_type_id(string $code_id)
+    function view_component_type_id(string $code_id): int
     {
         global $view_component_types;
         return $view_component_types->id($code_id);
     }
 
-    function ref_type_id(string $code_id)
+    function ref_type_id(string $code_id): int
     {
         global $ref_types;
         return $ref_types->id($code_id);
     }
 
-    function share_type_id(string $code_id)
+    function share_type_id(string $code_id): int
     {
         global $share_types;
         return $share_types->id($code_id);
     }
 
-    function protection_type_id(string $code_id)
+    function protection_type_id(string $code_id): int
     {
         global $protection_types;
         return $protection_types->id($code_id);
     }
 
+    /**
+     * the type object base on the given database row id
+     *
+     * @param int $id the database row id
+     * @return mixed the type object
+     */
     function word_type(int $id)
     {
         global $word_types;
@@ -124,6 +139,60 @@ class db_cl
     {
         global $protection_types;
         return $protection_types->get($id);
+    }
+
+    /**
+     * get the user specific name of a database row selected by the database id
+     *
+     * @param int $id
+     * @return string
+     */
+    function word_type_name(int $id): string
+    {
+        global $word_types;
+        return $word_types->name($id);
+    }
+
+    function verb_name(int $id): string
+    {
+        global $verbs;
+        return $verbs->name($id);
+    }
+
+    function formula_type_name(int $id): string
+    {
+        global $formula_types;
+        return $formula_types->name($id);
+    }
+
+    function view_type_name(int $id): string
+    {
+        global $view_types;
+        return $view_types->name($id);
+    }
+
+    function view_component_type_name(int $id): string
+    {
+        global $view_component_types;
+        return $view_component_types->name($id);
+    }
+
+    function ref_type_name(int $id): string
+    {
+        global $ref_types;
+        return $ref_types->name($id);
+    }
+
+    function share_type_name(int $id): string
+    {
+        global $share_types;
+        return $share_types->name($id);
+    }
+
+    function protection_type_name(int $id): string
+    {
+        global $protection_types;
+        return $protection_types->name($id);
     }
 
 }
@@ -165,6 +234,47 @@ function cl(string $type, string $code_id): int
             break;
         case db_cl::PROTECTION_TYPE:
             $result = $db_code_link->protection_type_id($code_id);
+            break;
+    }
+    return $result;
+}
+
+/**
+ * get the user specific name of a code linked database row
+ * e.g. cl_name(db_cl::)
+ *
+ * @param string $type
+ * @param int $id
+ * @return int
+ */
+function cl_name(string $type, int $id): int
+{
+    $result = '';
+    $db_code_link = new db_cl();
+    switch ($type) {
+        case db_cl::WORD_TYPE:
+            $result = $db_code_link->word_type_name($id);
+            break;
+        case db_cl::VERB:
+            $result = $db_code_link->verb_name($id);
+            break;
+        case db_cl::FORMULA_TYPE:
+            $result = $db_code_link->formula_type_name($id);
+            break;
+        case db_cl::VIEW_TYPE:
+            $result = $db_code_link->view_type_name($id);
+            break;
+        case db_cl::VIEW_COMPONENT_TYPE:
+            $result = $db_code_link->view_component_type_name($id);
+            break;
+        case db_cl::REF_TYPE:
+            $result = $db_code_link->ref_type_name($id);
+            break;
+        case db_cl::SHARE_TYPE:
+            $result = $db_code_link->share_type_name($id);
+            break;
+        case db_cl::PROTECTION_TYPE:
+            $result = $db_code_link->protection_type_name($id);
             break;
     }
     return $result;

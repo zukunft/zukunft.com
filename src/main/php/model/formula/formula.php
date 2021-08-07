@@ -32,6 +32,13 @@
 class formula extends user_sandbox
 {
 
+    // list of the formula types that have a coded functionality
+    const CALC = "default";    // a normal calculation formula
+    const NEXT = "time_next";  //time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
+    const THIS = "time_this";  // selects the assumed time term
+    const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
+    const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
+
     // database fields additional to the user sandbox fields
     public ?string $ref_text = '';         // the formula expression with the names replaced by database references
     public ?string $usr_text = '';         // the formula expression in the user format
@@ -79,7 +86,9 @@ class formula extends user_sandbox
         $this->ref_text_r = '';
     }
 
-    // load the corresponding name word for the formula name
+    /**
+     * load the corresponding name word for the formula name
+     */
     function load_wrd(): bool
     {
         $result = true;
@@ -106,7 +115,9 @@ class formula extends user_sandbox
     }
 
 
-    // create the corresponding name word for the formula name
+    /**
+     * create the corresponding name word for the formula name
+     */
     function create_wrd(): bool
     {
         log_debug('formula->create_wrd create formula linked word ' . $this->dsp_id());
@@ -160,7 +171,9 @@ class formula extends user_sandbox
         }
     }
 
-    // load the formula parameters for all users
+    /**
+     * load the formula parameters for all users
+     */
     function load_standard(): bool
     {
         global $db_con;
@@ -181,7 +194,44 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // load the missing formula parameters from the database
+    /**
+     * create an SQL statement to retrieve the parameters of a formula from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+
+        $sql_name = 'formula_by_';
+        if ($this->id != 0) {
+            $sql_name .= 'id';
+        } elseif ($this->name != '') {
+            $sql_name .= 'name';
+        } else {
+            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
+        }
+        // the formula name should be excluded from the user sandbox to avoid confusion
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
+        $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', 'excluded'));
+        $db_con->set_where($this->id, $this->name);
+        $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * load the missing formula parameters from the database
+     */
     function load(): bool
     {
         global $db_con;
@@ -194,14 +244,7 @@ class formula extends user_sandbox
             log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a formula.", "formula->load");
         } else {
 
-            // the formula name should be excluded from the user sandbox to avoid confusion
-            $db_con->set_type(DB_TYPE_FORMULA);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
-            $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
-            $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', 'excluded'));
-            $db_con->set_where($this->id, $this->name);
-            $sql = $db_con->select();
+            $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1($sql);
@@ -223,28 +266,24 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // reload the formula type name from the database
-    // TODO include this in the load function
+    /**
+     * get the formula type name from the database
+     */
     function formula_type_name()
     {
-        global $db_con;
+        $result = '';
 
-        log_debug('formula->formula_type_name do');
         if ($this->type_id > 0) {
-            $sql = "SELECT name, description
-                FROM formula_types
-               WHERE formula_type_id = " . $this->type_id . ";";
-            //$db_con = new mysql;
-            $db_type = $db_con->get1($sql);
-            $this->type_name = $db_type['name'];
+            $result = cl_name(db_cl::FORMULA_TYPE, $this->type_id);
         }
-        log_debug('formula->formula_type_name done ' . $this->type_name);
-        return $this->type_name;
+        return $result;
     }
 
-    // return the true if the formula has a special type and the result is a kind of hardcoded
-    // e.g. "this" or "next" where the value of this or the following time word is returned
-    function is_special()
+    /**
+     * return the true if the formula has a special type and the result is a kind of hardcoded
+     * e.g. "this" or "next" where the value of this or the following time word is returned
+     */
+    function is_special(): bool
     {
         $result = false;
         if ($this->type_cl <> "") {
@@ -254,8 +293,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // return the result of a special formula
-    // e.g. "this" or "next" where the value of this or the following time word is returned
+    /**
+     * return the result of a special formula
+     * e.g. "this" or "next" where the value of this or the following time word is returned
+     */
     function special_result($phr_lst, $time_phr)
     {
         log_debug("formula->special_result (" . $this->id . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name . " and user " . $this->usr->name . ")");
@@ -263,13 +304,13 @@ class formula extends user_sandbox
 
         if ($this->type_id > 0) {
             log_debug("formula->special_result -> type (" . $this->type_cl . ")");
-            if ($this->type_cl == formula_type_list::DBL_THIS) {
+            if ($this->type_cl == formula::THIS) {
                 $val_phr_lst = clone $phr_lst;
                 $val_phr_lst->add($time_phr); // the time word should be added at the end, because ...
                 log_debug("formula->special_result -> this (" . $time_phr->name . ")");
                 $val = $val_phr_lst->value_scaled();
             }
-            if ($this->type_cl == formula_type_list::DBL_NEXT) {
+            if ($this->type_cl == formula::NEXT) {
                 $val_phr_lst = clone $phr_lst;
                 $next_wrd = $time_phr->next();
                 if ($next_wrd->id > 0) {
@@ -278,7 +319,7 @@ class formula extends user_sandbox
                     $val = $val_phr_lst->value_scaled();
                 }
             }
-            if ($this->type_cl == formula_type_list::DBL_PREV) {
+            if ($this->type_cl == formula::PREV) {
                 $val_phr_lst = clone $phr_lst;
                 $prior_wrd = $time_phr->prior();
                 if ($prior_wrd->id > 0) {
@@ -293,8 +334,10 @@ class formula extends user_sandbox
         return $val;
     }
 
-    // return the time word id used for the special formula results
-    // e.g. "this" or "next" where the value of this or the following time word is returned
+    /**
+     * return the time word id used for the special formula results
+     * e.g. "this" or "next" where the value of this or the following time word is returned
+     */
     function special_time_phr($time_phr)
     {
         log_debug('formula->special_time_phr "' . $this->type_cl . '" for ' . $time_phr->dsp_id() . '');
@@ -304,15 +347,15 @@ class formula extends user_sandbox
             if ($time_phr->id <= 0) {
                 log_err('No time defined for ' . $time_phr->dsp_id() . '.', 'formula->special_time_phr');
             } else {
-                if ($this->type_cl == formula_type_list::DBL_THIS) {
+                if ($this->type_cl == formula::THIS) {
                     $result = $time_phr;
                 }
-                if ($this->type_cl == formula_type_list::DBL_NEXT) {
+                if ($this->type_cl == formula::NEXT) {
                     $this_wrd = $time_phr->main_word();
                     $next_wrd = $this_wrd->next();
                     $result = $next_wrd->phrase();
                 }
-                if ($this->type_cl == formula_type_list::DBL_PREV) {
+                if ($this->type_cl == formula::PREV) {
                     $this_wrd = $time_phr->main_word();
                     $prior_wrd = $this_wrd->prior();
                     $result = $prior_wrd->phrase();
@@ -324,8 +367,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // get all phrases included by a special formula element for a list of phrases
-    // e.g. if the list of phrases is "2016" and "2017" and the special formulas are "prior" and "next" the result should be "2015", "2016","2017" and "2018"
+    /**
+     * get all phrases included by a special formula element for a list of phrases
+     * e.g. if the list of phrases is "2016" and "2017" and the special formulas are "prior" and "next" the result should be "2015", "2016","2017" and "2018"
+     */
     function special_phr_lst($phr_lst)
     {
         log_debug('formula->special_phr_lst for ' . $phr_lst->dsp_id());
@@ -348,8 +393,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // lists of all words directly assigned to a formula and where the formula should be used
-    function assign_phr_glst_direct($sbx)
+    /**
+     * lists of all words directly assigned to a formula and where the formula should be used
+     */
+    function assign_phr_glst_direct($sbx): phrase_list
     {
         $phr_lst = null;
 
@@ -375,23 +422,27 @@ class formula extends user_sandbox
         return $phr_lst;
     }
 
-    // the complete list of a phrases assigned to a formula
-    function assign_phr_lst_direct()
+    /**
+     * the complete list of a phrases assigned to a formula
+     */
+    function assign_phr_lst_direct(): phrase_list
     {
-        $phr_lst = $this->assign_phr_glst_direct(false);
-        return $phr_lst;
+        return $this->assign_phr_glst_direct(false);
     }
 
-    // the user specific list of a phrases assigned to a formula
-    function assign_phr_ulst_direct()
+    /**
+     * the user specific list of a phrases assigned to a formula
+     */
+    function assign_phr_ulst_direct(): phrase_list
     {
-        $phr_lst = $this->assign_phr_glst_direct(true);
-        return $phr_lst;
+        return $this->assign_phr_glst_direct(true);
     }
 
-    // returns a list of all words that the formula is assigned to
-    // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the word list
-    function assign_phr_glst($sbx)
+    /**
+     * returns a list of all words that the formula is assigned to
+     * e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the word list
+     */
+    function assign_phr_glst($sbx): phrase_list
     {
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;
@@ -423,18 +474,20 @@ class formula extends user_sandbox
     }
 
 
-    // the complete list of a phrases assigned to a formula
-    function assign_phr_lst()
+    /**
+     * the complete list of a phrases assigned to a formula
+     */
+    function assign_phr_lst(): phrase_list
     {
-        $phr_lst = $this->assign_phr_glst(false);
-        return $phr_lst;
+        return $this->assign_phr_glst(false);
     }
 
-    // the user specific list of a phrases assigned to a formula
-    function assign_phr_ulst()
+    /**
+     * the user specific list of a phrases assigned to a formula
+     */
+    function assign_phr_ulst(): phrase_list
     {
-        $phr_lst = $this->assign_phr_glst(true);
-        return $phr_lst;
+        return $this->assign_phr_glst(true);
     }
 
 
@@ -444,24 +497,26 @@ class formula extends user_sandbox
     }
 
 
-    // delete all formula values (results) for this formula
-    function fv_del()
+    /**
+     * delete all formula values (results) for this formula
+     */
+    function fv_del(): bool
     {
         log_debug("formula->fv_del (" . $this->id . ")");
 
         global $db_con;
 
-        $result = '';
         $db_con->set_type(DB_TYPE_FORMULA_VALUE);
         $db_con->set_usr($this->usr->id);
-        $result .= $db_con->delete('formula_id', $this->id);
-        return $result;
+        return $db_con->delete('formula_id', $this->id);
     }
 
 
-    // fill the formula in the reference format with numbers
-    // to do: verbs
-    function to_num($phr_lst, $back)
+    /**
+     * fill the formula in the reference format with numbers
+     * TODO verbs
+     */
+    function to_num($phr_lst, $back): formula_value_list
     {
         log_debug('get numbers for ' . $this->name_linked($back) . ' and ' . $phr_lst->name_linked());
 
@@ -713,15 +768,17 @@ class formula extends user_sandbox
   */
 
 
-    // calculate the result for one formula for one user
-    // and save the result in the database
-    // the $phr_lst is the context for the value retrieval and it also contains any time words
-    // the time words are only separated right before saving to the database
-    // always returns an array of formula values
-    // todo: check if calculation is really needed
-    //       if one of the result words is a scaling word, remove all value scaling words
-    //       always create a default result (for the user 0)
-    function calc($phr_lst, $back)
+    /**
+     * calculate the result for one formula for one user
+     * and save the result in the database
+     * the $phr_lst is the context for the value retrieval and it also contains any time words
+     * the time words are only separated right before saving to the database
+     * always returns an array of formula values
+     * TODO check if calculation is really needed
+     *      if one of the result words is a scaling word, remove all value scaling words
+     *      always create a default result (for the user 0)
+     */
+    function calc($phr_lst, $back): array
     {
         $result = null;
 
@@ -830,8 +887,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // return the formula expression as an expression element
-    function expression()
+    /**
+     * return the formula expression as an expression element
+     */
+    function expression(): expression
     {
         $exp = new expression;
         $exp->ref_text = $this->ref_text;
@@ -841,27 +900,98 @@ class formula extends user_sandbox
         return $exp;
     }
 
-    // create an object for the export
-    function export_obj(): formula
+    /**
+     * import a formula from a JSON object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
     {
+        global $formula_types;
+        global $share_types;
+        global $protection_types;
+
+        log_debug('formula->import_obj');
+        $result = false;
+
+        // reset the all parameters for the formula object but keep the user
+        $usr = $this->usr;
+        $this->reset();
+        $this->usr = $usr;
+        foreach ($json_obj as $key => $value) {
+            if ($key == 'name') {
+                $this->name = $value;
+            }
+            if ($key == 'type') {
+                $this->type_id = $formula_types->id($value);
+            }
+            if ($key == 'expression') {
+                if ($value <> '') {
+                    $this->usr_text = $value;
+                }
+            }
+            if ($key == 'description') {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+            if ($key == 'share') {
+                $this->share_id = $share_types->id($value);
+            }
+            if ($key == 'protection') {
+                $this->protection_id = $protection_types->id($value);
+            }
+        }
+
+        // set the default type if no type is specified
+        if ($this->type_id == 0) {
+            $this->type_id = $formula_types->default_id();
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an object for the export
+     */
+    function export_obj(bool $do_load = true): formula_exp
+    {
+        global $formula_types;
+
         log_debug('formula->export_obj');
-        $result = new formula();
+        $result = new formula_exp();
 
         if ($this->name <> '') {
             $result->name = $this->name;
         }
+        if (isset($this->type_id)) {
+            if ($this->type_id <> $formula_types->default_id()) {
+                $result->type = $formula_types->code_id($this->type_id);
+            }
+        }
         if ($this->usr_text <> '') {
-            $result->usr_text = $this->usr_text;
+            $result->expression = $this->usr_text;
         }
         if ($this->description <> '') {
             $result->description = $this->description;
         }
-        $phr_lst = $this->assign_phr_lst_direct();
-        foreach ($phr_lst->lst as $phr) {
-            if ($phr->id > 0) {
+
+        // add the share type
+        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
+            $result->share = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO)) {
+            $result->protection = $this->protection_type_code_id();
+        }
+
+        if ($do_load) {
+            $phr_lst = $this->assign_phr_lst_direct();
+            foreach ($phr_lst->lst as $phr) {
                 $result->assigned_word = $phr->name();
-            } else {
-                $result->assigned_triple = $phr->name();
             }
         }
 
@@ -869,313 +999,13 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // import a view from an object
-    function import_obj()
-    {
-    }
-
     /*
-
-    display functions
-
+    probably to be replaced with expression functions
     */
 
-    // show the formula name to the user in the most simple form (without any ids)
-    function name(): string
-    {
-        return $this->name;
-    }
-
-    // create the HTML code to display the formula name with the HTML link
-    function name_linked($back = 0): string
-    {
-        return '<a href="/http/formula_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
-    // create the HTML code to display the formula text in the human readable format including links to the formula elements
-    function dsp_text($back)
-    {
-        log_debug('formula->dsp_text');
-        $result = $this->usr_text;
-
-        $exp = $this->expression();
-        $elm_lst = $exp->element_lst($back);
-        foreach ($elm_lst->lst as $elm) {
-            log_debug("formula->display -> replace " . $elm->name . " with " . $elm->name_linked($back) . ".");
-            $result = str_replace('"' . $elm->name . '"', $elm->name_linked($back), $result);
-        }
-
-        log_debug('formula->dsp_text -> ' . $result);
-        return $result;
-    }
-
-    // display the most interesting formula result for one word
-    function dsp_result($wrd, $back): string
-    {
-        log_debug('formula->dsp_result for "' . $wrd->name . '" and formula ' . $this->dsp_id());
-        $fv = new formula_value;
-        $fv->frm = $this;
-        $fv->wrd = $wrd;
-        $fv->usr = $this->usr;
-        log_debug('formula->dsp_result load fv');
-        $fv->load();
-        log_debug('formula->dsp_result display');
-        return $fv->display($back);
-    }
-
-    // create the HTML code for a button to change the formula
-    function btn_edit($back)
-    {
-        $result = btn_edit('Change formula ' . $this->name, '/http/formula_edit.php?id=' . $this->id . '&back=' . $back);
-        return $result;
-    }
-
-    // create the HTML code for a button to change the formula
-    function btn_del($back)
-    {
-        $result = btn_del('Delete formula ' . $this->name, '/http/formula_del.php?id=' . $this->id . '&back=' . $back);
-        return $result;
-    }
-
-    // allow the user to unlink a word
-    function dsp_unlink_phr($phr_id, $back)
-    {
-        log_debug('formula->dsp_unlink_phr(' . $phr_id . ')');
-        $result = '    <td>' . "\n";
-        $result .= btn_del("unlink word", "/http/formula_edit.php?id=" . $this->id . "&unlink_phrase=" . $phr_id . "&back=" . $back);
-        $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-    // display the formula type selector
-    function dsp_type_selector($script, $class)
-    {
-        $result = '';
-        $sel = new selector;
-        $sel->usr = $this->usr;
-        $sel->form = $script;
-        $sel->name = "type";
-        $sel->label = "Formula type:";
-        $sel->bs_class = $class;
-        $sel->sql = sql_lst("formula_type");
-        $sel->selected = $this->type_id;
-        $sel->dummy_text = 'select a predefined type if needed';
-        $result .= $sel->display() . ' ';
-        return $result;
-    }
-
-    // display the history of a formula
-    function dsp_hist($page, $size, $call, $back)
-    {
-        log_debug("formula->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
-        $log_dsp = new user_log_display;
-        $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'formula';
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist();
-
-        log_debug("formula->dsp_hist -> done");
-        return $result;
-    }
-
-    // display the link history of a formula
-    function dsp_hist_links($page, $size, $call, $back)
-    {
-        log_debug("formula->dsp_hist_links for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
-        $log_dsp = new user_log_display;
-        $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'formula';
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
-
-        log_debug("formula->dsp_hist_links -> done");
-        return $result;
-    }
-
-    // list all words linked to the formula and allow to unlink or add new words
-    function dsp_used4words($add, $wrd, $back)
-    {
-        log_debug("formula->dsp_used4words " . $this->ref_text . " for " . $wrd->name . ",back:" . $back . " and user " . $this->usr->name . ".");
-        $result = '';
-
-        $phr_lst = $this->assign_phr_ulst_direct();
-        log_debug("formula->dsp_used4words words linked loaded");
-
-        // list all linked words
-        $result .= dsp_tbl_start_half();
-        foreach ($phr_lst->lst as $phr_linked) {
-            $result .= '  <tr>' . "\n";
-            $result .= $phr_linked->dsp_tbl(0);
-            $result .= $this->dsp_unlink_phr($phr_linked->id, $back);
-            $result .= '  </tr>' . "\n";
-        }
-
-        // give the user the possibility to add a similar word
-        log_debug("formula->dsp_used4words user");
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        if ($add == 1 or $wrd->id > 0) {
-            $sel = new selector;
-            $sel->usr = $this->usr;
-            $sel->form = "formula_edit"; // ??? to review
-            $sel->name = 'link_phrase';
-            $sel->dummy_text = 'select a word where the formula should also be used';
-            $sel->sql = sql_lst_usr("word", $this->usr);
-            if ($wrd->id > 0) {
-                $sel->selected = $wrd->id;
-            } else {
-                $sel->selected = 0;
-            }
-            $result .= $sel->display();
-        } else {
-            if ($this->id > 0) {
-                $result .= '      ' . btn_add('add new', '/http/formula_edit.php?id=' . $this->id . '&add_link=1&back=' . $back);
-            }
-        }
-        $result .= '    </td>';
-        $result .= '  </tr>';
-
-        $result .= dsp_tbl_end();
-
-        log_debug("formula->dsp_used4words -> done");
-        return $result;
-    }
-
-    // test and refresh the formula and show some sample values by returning the HTML code
-
-    function dsp_test_and_samples($back): string
-    {
-        log_debug("formula->dsp_test_and_samples " . $this->ref_text . ".");
-        $result = '<br>';
-
-        $result .= dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->usr->id . '&back=' . $back);
-        $result .= dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $this->usr->id . '&back=' . $back . '&refresh=1');
-
-        $result .= '<br><br>';
-
-        // display some sample values
-        log_debug("formula->dsp_test_and_samples value list");
-        $fv_lst = new formula_value_list;
-        $fv_lst->frm_id = $this->id;
-        $fv_lst->usr = $this->usr;
-        log_debug("formula->dsp_test_and_samples load results for formula id (" . $fv_lst->frm_id . ")");
-        $fv_lst->load(SQL_ROW_LIMIT);
-        $sample_val = $fv_lst->display($back);
-        if (trim($sample_val) <> "") {
-            // just the be on the save side load the related word and create it if needed
-            $this->load_wrd();
-            if (!isset($this->name_wrd)) {
-                $this->create_wrd();
-            }
-
-            $result .= dsp_text_h3("Results for " . $this->name_wrd->dsp_link(), "change_hist");
-            $result .= $sample_val;
-        }
-
-        log_debug("formula->dsp_test_and_samples -> done");
-        return $result;
-    }
-
-    // create the HTML code for the form to adjust a formula
-    // $add is the number of new words to be linked
-    // $wrd is the word that should be linked (used for a new formula)
-    function dsp_edit($add, $wrd, $back)
-    {
-        log_debug("formula->dsp_edit " . $this->ref_text . " for " . $wrd->name . ", back:" . $back . " and user " . $this->usr->name . ".");
-        $result = '';
-
-        $resolved_text = str_replace('"', '&quot;', $this->usr_text);
-
-        // add new or change an existing formula
-        if ($this->id <= 0) {
-            $script = "formula_add";
-            $result .= dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
-        } else {
-            $script = "formula_edit";
-            $result .= dsp_text_h2('Formula "' . $this->name . '"');
-        }
-        $result .= '<div class="row">';
-
-        // when changing a view show the fields only on the left side
-        if ($this->id > 0) {
-            $result .= '<div class="col-sm-7">';
-        }
-
-        // formula fields
-        $result .= dsp_form_start($script);
-        $result .= dsp_form_hidden("id", $this->id);
-        $result .= dsp_form_hidden("word", $wrd->id);
-        $result .= dsp_form_hidden("confirm", 1);
-        if (trim($back) <> '') {
-            $result .= dsp_form_hidden("back", $back);
-        }
-        $result .= '<div class="form-row">';
-        $result .= dsp_form_fld("formula_name", $this->name, "Formula name:", "col-sm-8");
-        $result .= $this->dsp_type_selector($script, "col-sm-4");
-        $result .= '</div>';
-        $result .= dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
-        // predefined formulas like "this" or "next" should only be changed by an admin
-        // todo check if formula user or login user should be used
-        if (!$this->is_special() or $this->usr->is_admin()) {
-            $result .= dsp_form_fld("formula_text", $resolved_text, "Expression:", "col-sm-10");
-        }
-        $result .= dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
-        $result .= '<br><br>';
-        $result .= dsp_form_end('', $back);
-
-        // list the assigned words
-        if ($this->id > 0) {
-            $result .= '</div>';
-
-            // list all words linked to the formula and allow to unlink or add new words
-            $comp_html = $this->dsp_used4words($add, $wrd, $back);
-            // allow to test and refresh the formula and show some sample values
-            $numbers_html = $this->dsp_test_and_samples($back);
-            // display the user changes
-            $changes = $this->dsp_hist(0, SQL_ROW_LIMIT, '', $back);
-            if (trim($changes) <> "") {
-                $hist_html = $changes;
-            } else {
-                $hist_html = 'Nothing changed yet.';
-            }
-            $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
-            if (trim($changes) <> "") {
-                $link_html = $changes;
-            } else {
-                $link_html = 'No word have been added or removed yet.';
-            }
-            $result .= dsp_link_hist_box('Usage', $comp_html,
-                'Test', $numbers_html,
-                'Changes', $hist_html,
-                'Link changes', $link_html);
-        }
-
-        $result .= '</div>';   // of row
-        $result .= '<br><br>'; // this a usually a small for, so the footer can be moved away
-
-        log_debug("formula->dsp_edit -> done.");
-        return $result;
-    }
-
-    /*
-
-  probably to be replace with expression functions
-
-  */
-
-    // returns a positive word id if the formula string in the database format contains a word link
+    /**
+     * returns a positive word id if the formula string in the database format contains a word link
+     */
     function get_word($formula)
     {
         log_debug("formula->get_word (" . $formula . ")");
@@ -1218,8 +1048,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // extracts an array with the word ids from a given formula text
-    function wrd_ids($frm_text, $user_id)
+    /**
+     * extracts an array with the word ids from a given formula text
+     */
+    function wrd_ids($frm_text, $user_id): array
     {
         log_debug('formula->wrd_ids (' . $frm_text . ',u' . $user_id . ')');
         $result = array();
@@ -1238,8 +1070,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // extracts an array with the formula ids from a given formula text
-    function frm_ids($frm_text, $user_id)
+    /**
+     * extracts an array with the formula ids from a given formula text
+     */
+    function frm_ids($frm_text, $user_id): array
     {
         log_debug('formula->ids (' . $frm_text . ',u' . $user_id . ')');
         $result = array();
@@ -1258,8 +1092,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // update formula links
-    // part of element_refresh for one element type and one user
+    /**
+     * update formula links
+     * part of element_refresh for one element type and one user
+     */
     function element_refresh_type($frm_text, $element_type, $frm_usr_id, $db_usr_id): bool
     {
         log_debug('formula->element_refresh_type (f' . $this->id . '' . $frm_text . ',' . $element_type . ',u' . $frm_usr_id . ')');
@@ -1345,7 +1181,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // extracts an array with the word ids from a given formula text
+    /**
+     * extracts an array with the word ids from a given formula text
+     */
     function element_refresh($frm_text): bool
     {
         log_debug('formula->element_refresh (f' . $this->id . '' . $frm_text . ',u' . $this->usr->id . ')');
@@ -1383,13 +1221,13 @@ class formula extends user_sandbox
 
 
     /*
+     * link functions - add or remove a link to a word (this is user specific, so use the user sandbox)
+     */
 
-  link functions - add or remove a link to a word (this is user specific, so use the user sandbox)
-
-  */
-
-    // link this formula to a word or triple
-    function link_phr($phr)
+    /**
+     * link this formula to a word or triple
+     */
+    function link_phr($phr): bool
     {
         $result = '';
         if (isset($phr) and isset($this->usr)) {
@@ -1403,7 +1241,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // unlink this formula from a word or triple
+    /**
+     * unlink this formula from a word or triple
+     */
     function unlink_phr($phr)
     {
         $result = '';
@@ -1421,12 +1261,12 @@ class formula extends user_sandbox
     }
 
     /*
+     * save functions - to update the formula in the database and for the user sandbox
+     */
 
-  save functions - to update the formula in the database and for the user sandbox
-
-  */
-
-    // update the database reference text based on the user text
+    /**
+     * update the database reference text based on the user text
+     */
     function set_ref_text(): string
     {
         $result = '';
@@ -1460,8 +1300,10 @@ class formula extends user_sandbox
         return $this->not_changed();
     }
 
-    // true if no other user has modified the formula
-    // assuming that in this case not confirmation from the other users for a formula rename is needed
+    /**
+     * true if no other user has modified the formula
+     * assuming that in this case not confirmation from the other users for a formula rename is needed
+     */
     function not_changed(): bool
     {
         log_debug('formula->not_changed (' . $this->id . ')');
@@ -1491,8 +1333,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // true if the user is the owner and no one else has changed the formula
-    // because if another user has changed the formula and the original value is changed, maybe the user formula also needs to be updated
+    /**
+     * true if the user is the owner and no one else has changed the formula
+     * because if another user has changed the formula and the original value is changed, maybe the user formula also needs to be updated
+     */
     function can_change(): bool
     {
         log_debug('formula->can_change ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
@@ -1504,7 +1348,9 @@ class formula extends user_sandbox
         return $can_change;
     }
 
-    // true if a record for a user specific configuration already exists in the database
+    /**
+     * true if a record for a user specific configuration already exists in the database
+     */
     function has_usr_cfg(): bool
     {
         $has_cfg = false;
@@ -1514,8 +1360,10 @@ class formula extends user_sandbox
         return $has_cfg;
     }
 
-    // create a database record to save user specific settings for this formula
-    // TODO combine the reread and the adding in a commit transaction
+    /**
+     * create a database record to save user specific settings for this formula
+     * TODO combine the reread and the adding in a commit transaction
+     */
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -1548,7 +1396,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // check if the database record for the user specific settings can be removed
+    /**
+     * check if the database record for the user specific settings can be removed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('formula->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -1591,7 +1441,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // simply remove a user adjustment without check
+    /**
+     * simply remove a user adjustment without check
+     */
     function del_usr_cfg_exe($db_con): bool
     {
 
@@ -1612,7 +1464,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // remove user adjustment and log it (used by user.php to undo the user changes)
+    /**
+     * remove user adjustment and log it (used by user.php to undo the user changes)
+     */
     function del_usr_cfg(): bool
     {
 
@@ -1635,7 +1489,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // update the time stamp to trigger an update of the depending results
+    /**
+     * update the time stamp to trigger an update of the depending results
+     */
     function save_field_trigger_update($db_con): bool
     {
         $this->last_update = new DateTime();
@@ -1647,7 +1503,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the formula text as written by the user if needed
+    /**
+     * set the update parameters for the formula text as written by the user if needed
+     */
     function save_field_usr_text($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1664,7 +1522,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the formula in the database reference format
+    /**
+     * set the update parameters for the formula in the database reference format
+     */
     function save_field_ref_text($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1685,7 +1545,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-// set the update parameters for the formula description
+    /**
+     * set the update parameters for the formula description
+     */
     function save_field_description($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1701,8 +1563,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-// set the update parameters for the formula type
-// todo: save the reference also in the log
+    /**
+     * set the update parameters for the formula type
+     * todo: save the reference also in the log
+     */
     function save_field_type($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1722,7 +1586,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-// set the update parameters that define if all formula values are needed to calculate a result
+    /**
+     * set the update parameters that define if all formula values are needed to calculate a result
+     */
     function save_field_need_all($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1755,7 +1621,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // save all updated formula fields
+    /**
+     * save all updated formula fields
+     */
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = $this->save_field_usr_text($db_con, $db_rec, $std_rec);
@@ -1778,7 +1646,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the formula text as written by the user if needed
+    /**
+     * set the update parameters for the formula text as written by the user if needed
+     */
     function save_field_name($db_con, $db_rec, $std_rec)
     {
         $result = '';
@@ -1810,8 +1680,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // updated the view component name (which is the id field)
-    // should only be called if the user is the owner and nobody has used the display component link
+    /**
+     * updated the view component name (which is the id field)
+     * should only be called if the user is the owner and nobody has used the display component link
+     */
     function save_id_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1844,7 +1716,9 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // check if the id parameters are supposed to be changed
+    /**
+     * check if the id parameters are supposed to be changed
+     */
     function save_id_if_updated($db_con, $db_rec, $std_rec): string
     {
         log_debug('formula->save_id_if_updated has name changed from "' . $db_rec->name . '" to ' . $this->dsp_id());
@@ -1910,10 +1784,11 @@ class formula extends user_sandbox
         return $result;
     }
 
-    // create a new formula
-    // the user sandbox function is overwritten because the formula text should never be null
-    // and the corresponding formula word is created
-
+    /**
+     * create a new formula
+     * the user sandbox function is overwritten because the formula text should never be null
+     * and the corresponding formula word is created
+     */
     function add(): int
     {
         log_debug('formula->add ' . $this->dsp_id());
@@ -1959,8 +1834,10 @@ class formula extends user_sandbox
         return $result;
     }
 
-// add or update a formula in the database or create a user formula
-// overwrite the user_sandbox function to create the formula ref text; maybe combine later
+    /**
+     * add or update a formula in the database or create a user formula
+     * overwrite the user_sandbox function to create the formula ref text; maybe combine later
+     */
     function save(): string
     {
         log_debug('formula->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->usr->name);
@@ -2045,7 +1922,7 @@ class formula extends user_sandbox
 
     }
 
-// TODO user specific???
+    // TODO user specific???
     function del_links(): bool
     {
         $result = false;

@@ -7,6 +7,28 @@
   ],
   "words": [
     {
+      "name": "Mathematical constant",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mathematical_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Pi",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Pi",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "SI base unit",
       "type": "measure",
       "protection": "admin_protection",
@@ -968,6 +990,12 @@
   "triples": [
     {
       "name": "",
+      "from": "Pi",
+      "verb": "is a",
+      "to": "Mathematical constant"
+    },
+    {
+      "name": "",
       "from": "second",
       "verb": "is a",
       "to": "SI base unit"
@@ -1131,11 +1159,23 @@
   ],
   "sources": [
     {
+      "name": "The On-Line Encyclopedia of Integer Sequences",
+      "url": "https://oeis.org/"
+    },
+    {
       "name": "The International System of Units",
       "url": "https://www.bipm.org/utils/common/pdf/si_brochure_8_en.pdf"
     }
   ],
   "values": [
+    {
+      "words": [
+        "Pi"
+      ],
+      "number": "3.14159265358979323846264338327950288419716939937510",
+      "share": "public",
+      "source": "The On-Line Encyclopedia of Integer Sequences"
+    },
     {
       "words": [
         "hyperfine transition frequency of Cs",

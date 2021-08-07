@@ -93,6 +93,12 @@ class user_type_list
         return $result;
     }
 
+    /**
+     * return the database row id based on the code_id
+     *
+     * @param string $code_id
+     * @return int
+     */
     function id(string $code_id): int
     {
         $result = 0;
@@ -104,6 +110,24 @@ class user_type_list
             }
         } else {
             log_debug('Type code id not not set');
+        }
+        return $result;
+    }
+
+    /**
+     * return user specific type name based on the database row id
+     *
+     * @param int $id
+     * @return string
+     */
+    function name(int $id): string
+    {
+        $result = '';
+        $type = $this->get($id);
+        if ($type != null) {
+            $result = $type->name;
+        } else {
+            log_debug('Type id ' . $id . ' not found');
         }
         return $result;
     }
@@ -123,7 +147,7 @@ class user_type_list
                 log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->lst));
             }
         } else {
-            log_debug('Type id not not set');
+            log_debug('Type id not set');
         }
         return $result;
     }

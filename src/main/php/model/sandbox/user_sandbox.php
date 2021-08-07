@@ -44,18 +44,18 @@ class user_sandbox
     const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
 
     // fields to define the object; should be set in the constructor of the child object
-    public ?string $obj_name = null;  // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
-    public ?string $obj_type = null;  // either a "named" object or a "link" object
+    public ?string $obj_name = null;       // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
+    public ?string $obj_type = null;       // either a "named" object or a "link" object
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
     // database fields that are used in all objects and that have a specific behavior
-    public ?int $id = null; // the database id of the object, which is the same for the standard and the user specific object
-    public ?int $usr_cfg_id = null; // the database id if there is already some user specific configuration for this object
-    public ?user $usr = null; // the person for whom the object is loaded, so to say the viewer
-    public ?int $owner_id = null; // the user id of the person who created the object, which is the default object
-    public ?int $share_id = null; // id for public, personal, group or private
+    public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
+    public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
+    public ?user $usr = null;          // the person for whom the object is loaded, so to say the viewer
+    public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
+    public ?int $share_id = null;      // id for public, personal, group or private
     public ?int $protection_id = null; // id for no, user, admin or full protection
-    public ?bool $excluded = null; // the user sandbox for object is implemented, but can be switched off for the complete instance
+    public ?bool $excluded = null;     // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
@@ -68,10 +68,10 @@ class user_sandbox
 
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
-    public ?object $fob = null; // the object from which this linked object is creating the connection
-    public ?object $tob = null; // the object to   which this linked object is creating the connection
-    public ?string $from_name = null;   // the name of the from object type e.g. view for view_component_links
-    public ?string $to_name = '';   // the name of the  to  object type e.g. view for view_component_links
+    public ?object $fob = null;        // the object from which this linked object is creating the connection
+    public ?object $tob = null;        // the object to   which this linked object is creating the connection
+    public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
+    public ?string $to_name = '';      // the name of the  to  object type e.g. view for view_component_links
 
     // database fields only used for the type objects such as words, formulas, values, terms and view component links
     public ?int $type_id = null; // the id of the source type, view type, view component type or word type e.g. to classify measure words

@@ -466,6 +466,7 @@ include_once $path_php . 'model/ref/ref_type.php';
 include_once $path_php . 'model/ref/ref_type_list.php';
 include_once $path_php . 'model/formula/expression.php';
 include_once $path_php . 'model/formula/formula.php';
+include_once $path_php . 'model/formula/formula_exp.php';
 include_once $path_php . 'model/formula/formula_type_list.php';
 include_once $path_php . 'model/formula/formula_list.php';
 include_once $path_php . 'model/formula/formula_link.php';
@@ -478,6 +479,7 @@ include_once $path_php . 'model/formula/formula_element_group.php';
 include_once $path_php . 'model/formula/formula_element_group_list.php';
 include_once $path_php . 'model/formula/figure.php';
 include_once $path_php . 'model/formula/figure_list.php';
+include_once $path_php . 'web/formula_display.php';
 include_once $path_php . 'model/system/batch_job.php';
 include_once $path_php . 'model/system/batch_job_list.php';
 include_once $path_php . 'model/view/view.php';
@@ -1252,7 +1254,7 @@ list functions (to be dismissed / replaced by objects)
  * @param array $in_array the array that should be formatted
  * @return string the values comma seperated or "null" if the array is empty
  */
-function dsp_array($in_array): string
+function dsp_array(?array $in_array): string
 {
     $result = 'null';
     if ($in_array != null) {
