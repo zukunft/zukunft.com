@@ -73,12 +73,11 @@ function run_word_link_unit_tests()
 
     test_subheader('Im- and Export tests');
 
-    $json_in_msg = file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/triple/pi.json');
-    $json_in_array = json_decode($json_in_msg, true);
+    $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/triple/pi.json'), true);
     $lnk = new word_link;
-    $lnk->import_obj($json_in_array, false);
-    $json_ex_msg = json_encode($lnk->export_obj(false));
-    $result = json_decode($json_in_msg) == json_decode($json_ex_msg);
+    $lnk->import_obj($json_in, false);
+    $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
+    $result = json_is_similar($json_in, $json_ex);
     $target = true;
     test_dsp('word_link->import check name', $target, $result);
 }

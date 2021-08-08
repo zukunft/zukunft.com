@@ -411,6 +411,8 @@ $path_php = $root_path . 'src/main/php/'; // path of the main php source code
 // database links
 include_once $root_path . 'database/sql_db.php';
 include_once $path_php . 'db/db_check.php';
+// utils
+include_once $path_php . 'utils/json_utils.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';

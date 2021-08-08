@@ -129,4 +129,48 @@ function run_string_unit_tests()
     $target = 'null';
     $result = dsp_array($test_array);
     test_dsp(", dsp_array: ", $target, $result);
+
+    test_subheader('json');
+
+    // test json_clean
+    $json_text = '{
+  "remove empty field": "",
+  "remove empty array": [],
+  "keep array": [
+    {
+      "remove empty start field": "",
+      "keep middle field": "with value",
+      "remove empty end field": ""
+    }
+  ],
+  "keep non empty field": "with value"
+}';
+    $json_target = '{
+  "keep array": [
+    {
+      "keep middle field": "with value"
+    }
+  ],
+  "keep non empty field": "with value"
+}';
+    $json_check = '{
+  "keep array": [
+    {
+      "remove empty start field": "",
+      "keep middle field": "with value"
+    }
+  ],
+  "keep non empty field": "with value"
+}';
+    $json_array = json_decode($json_text, true);
+    $json_clean = json_clean($json_array);
+    $result = $json_clean == json_decode($json_target, true);
+    $target = true;
+    test_dsp(", json_clean", $target, $result);
+
+    // ... plausibility check
+    $result = $json_clean == json_decode($json_check, true);
+    $target = false;
+    test_dsp(", json_clean - false test", $target, $result);
+
 }
