@@ -463,14 +463,47 @@ class word_link extends word_link_object
         return $wrd_lst;
     }
 
+    /**
+     * get a phrase based on the name (and save it if needed and requested)
+     *
+     * @param string $name the name of the phrase
+     * @param bool $do_save to switch off saving for unit testing
+     * @return phrase the created phrase object
+     */
+    private function import_phrase(string $name, bool $do_save = true): phrase
+    {
+        global $word_types;
+
+        $result = new phrase;
+        $result->name = $name;
+        $result->usr = $this->usr;
+        if ($do_save) {
+            $result->load();
+            if ($result->id == 0) {
+                $wrd = new word;
+                $wrd->name = $name;
+                $wrd->usr = $this->usr;
+                $wrd->load();
+                if ($wrd->id == 0) {
+                    $wrd->name = $name;
+                    $wrd->type_id = $word_types->default_id();
+                    $wrd->save();
+                }
+                if ($wrd->id == 0) {
+                    log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'word_link->import_obj');
+                } else {
+                    $result = $wrd->phrase();
+                }
+            }
+        }
+        return $result;
+    }
 
     /**
      * import a view from an object
      */
     function import_obj(array $json_obj, bool $do_save = true): bool
     {
-        global $word_types;
-
         log_debug('word_link->import_obj');
         $result = '';
 
@@ -482,77 +515,35 @@ class word_link extends word_link_object
                 $this->description = $value;
             }
             if ($key == 'from') {
-                $phr_from = new phrase;
-                $phr_from->name = $value;
-                $phr_from->usr = $this->usr;
-                $phr_from->load();
-                if ($phr_from->id == 0) {
-                    $wrd = new word;
-                    $wrd->name = $value;
-                    $wrd->usr = $this->usr;
-                    $wrd->load();
-                    if ($wrd->id == 0) {
-                        $wrd->name = $value;
-                        $wrd->type_id = $word_types->default_id();
-                        $wrd->save();
-                    }
-                    if ($wrd->id == 0) {
-                        log_err('Cannot add from word "' . $value . '" when importing ' . $this->dsp_id(), 'word_link->import_obj');
-                    } else {
-                        $this->from = $wrd->phrase();
-                        $this->from_id = $wrd->id;
-                        $this->from_name = $wrd->name;
-                    }
-                } else {
-                    $this->from = $phr_from;
-                    $this->from_id = $phr_from->id;
-                    $this->from_name = $phr_from->name;
-                }
+                $this->from = $this->import_phrase($value, $do_save);
+                // remove if possible
+                $this->from_id = $this->from->id;
+                $this->from_name = $this->from->name;
             }
             if ($key == 'to') {
-                $phr_to = new phrase;
-                $phr_to->name = $value;
-                $phr_to->usr = $this->usr;
-                $phr_to->load();
-                if ($phr_to->id == 0) {
-                    $wrd = new word;
-                    $wrd->name = $value;
-                    $wrd->usr = $this->usr;
-                    $wrd->load();
-                    if ($wrd->id == 0) {
-                        $wrd->name = $value;
-                        $wrd->type_id = $word_types->default_id();
-                        $wrd->save();
-                    }
-                    if ($wrd->id == 0) {
-                        log_err('Cannot add to word "' . $value . '" when importing ' . $this->dsp_id(), 'word_link->import_obj');
-                    } else {
-                        $this->to = $wrd->phrase();
-                        $this->to_id = $wrd->id;
-                        $this->to_name = $wrd->name;
-                    }
-                } else {
-                    $this->to = $phr_to;
-                    $this->to_id = $phr_to->id;
-                    $this->to_name = $phr_to->name;
-                }
+                $this->to = $this->import_phrase($value, $do_save);
+                // remove if possible
+                $this->to_id = $this->to->id;
+                $this->to_name = $this->to->name;
             }
             if ($key == 'verb') {
                 $vrb = new verb;
                 $vrb->name = $value;
                 $vrb->usr = $this->usr;
-                $vrb->load();
-                if ($vrb->id <= 0) {
-                    // TODO add an error message
-                    $result .= ' verb "' . $value . '" not found';
-                    if ($this->name <> '') {
-                        $result .= ' for triple "' . $this->name . '"';
+                if ($do_save) {
+                    $vrb->load();
+                    if ($vrb->id <= 0) {
+                        // TODO add an error message
+                        $result .= ' verb "' . $value . '" not found';
+                        if ($this->name <> '') {
+                            $result .= ' for triple "' . $this->name . '"';
+                        }
+                    } else {
+                        $this->verb_id = $vrb->id;
+                        $this->verb_name = $vrb->name;
                     }
-                } else {
-                    $this->verb = $vrb;
-                    $this->verb_id = $vrb->id;
-                    $this->verb_name = $vrb->name;
                 }
+                $this->verb = $vrb;
             }
         }
         if ($result == '' and $do_save) {
