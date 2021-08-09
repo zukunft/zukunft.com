@@ -160,7 +160,7 @@ function run_unit_tests()
     run_word_link_unit_tests();
     run_word_list_unit_tests();
     run_word_link_list_unit_tests();
-    //run_phrase_list_unit_tests();
+    run_phrase_list_unit_tests();
     run_view_unit_tests();
     //run_value_unit_tests();
     run_formula_unit_tests();

@@ -28,20 +28,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /**
  * create the standard phrase list test object without database connection
+ * TODO base the creation on resources
  */
 function test_unit_create_phrase_list(): phrase_list
 {
     global $usr;
     $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
-    $phr1 = new phrase();
-    $phr1->id = 1;
-    $phr1->usr = $usr;
-    $phr_lst->add($phr1);
-    $phr2 = new phrase();
-    $phr2->id = 2;
-    $phr2->usr = $usr;
-    $phr_lst->add($phr2);
+    $wrd1 = new word();
+    $wrd1->id = 1;
+    $wrd1->name = word::TEST_NAME_ADD;
+    $wrd1->usr = $usr;
+    $phr_lst->add($wrd1->phrase());
+    $wrd2 = new word();
+    $wrd2->id = 2;
+    $wrd1->name = word::TEST_NAME_CHANGED;
+    $wrd2->usr = $usr;
+    $wrd2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+    $phr_lst->add($wrd2->phrase());
     return $phr_lst;
 }
 
