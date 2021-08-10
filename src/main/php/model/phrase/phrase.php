@@ -171,12 +171,12 @@ class phrase
         $result = false;
         $this->name = $json_value;
         if ($do_save) {
-            $this->load();
+            $result = $this->load();
             if ($this->id == 0) {
                 $wrd = new word;
                 $wrd->name = $json_value;
                 $wrd->usr = $this->usr;
-                $wrd->load();
+                $result = $wrd->load();
                 if ($wrd->id == 0) {
                     $wrd->name = $json_value;
                     $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
@@ -188,6 +188,8 @@ class phrase
                     $this->id = $wrd->id;
                 }
             }
+        } else {
+            $result = true;
         }
 
         return $result;

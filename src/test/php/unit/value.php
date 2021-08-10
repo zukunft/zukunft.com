@@ -46,9 +46,13 @@ function run_value_unit_tests()
     $val->time_id = 4;
     $val->usr = $usr;
     $created_sql = $val->load_sql();
-    $expected_sql = "SELECT value_id 
-                            FROM values
-                          WHERE phrase_group_id IN (1) ;";
+    $expected_sql = "SELECT
+                            value_id 
+                       FROM values
+                      WHERE phrase_group_id IN (SELECT l1.phrase_group_id 
+                                                  FROM phrase_group_word_links l1 
+                                                 WHERE l1.word_id = 1)  
+                        AND time_word_id = 4 ;";
     test_dsp('value->load_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
@@ -68,31 +72,25 @@ function run_value_unit_tests()
     $created_sql = $val->load_sql();
     $sql_avoid_code_check_prefix = "SELECT";
     $expected_sql = $sql_avoid_code_check_prefix . " value_id 
-                            FROM `values`
-                          WHERE phrase_group_id IN (1) ;";
+                           FROM values
+                          WHERE phrase_group_id IN (SELECT l1.phrase_group_id 
+                                                      FROM phrase_group_word_links l1 
+                                                     WHERE l1.word_id = 1) 
+                            AND time_word_id = 4 ;";
     test_dsp('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
-     * Im- and Export tests
+     * im- and export tests
      */
 
     test_subheader('Im- and Export tests');
 
-    $dsp_json = '{
-      "words": [
-        "speed of light",
-        "m/s"
-      ],
-      "time": "1983",
-      "number": "299792458",
-      "share": "public",
-      "source": "The International System of Units"
-    }';
-    $json_import_array = json_decode($dsp_json, true);
+    $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/value/speed_of_light.json'), true);
     $val = new value;
-    $val->import_obj($json_import_array, false);
-    $json_export_string = json_encode($val->export_obj(false));
-    $result = json_decode($dsp_json) == json_decode($json_export_string);
+    $val->usr = $usr;
+    $val->import_obj($json_in, false);
+    $json_ex = json_decode(json_encode($val->export_obj(false)), true);
+    $result = json_is_similar($json_in, $json_ex);
     $target = true;
     test_dsp('view->import check name', $target, $result);
 

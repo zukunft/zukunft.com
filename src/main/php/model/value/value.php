@@ -140,10 +140,8 @@ class value extends user_sandbox_display
 
 
     /*
-
-    database load functions that reads the object from the database
-
-    */
+     * database load functions that reads the object from the database
+     */
 
     // load the standard value use by most users
     function load_standard(): bool
@@ -379,11 +377,8 @@ class value extends user_sandbox_display
     }
 
     /*
-
-  load object functions that extends the database load functions
-
-  */
-
+     * load object functions that extends the database load functions
+     */
 
     // called from the user sandbox
     function load_objects(): bool
@@ -538,7 +533,7 @@ class value extends user_sandbox_display
     }
 
     // load the source and return the source name
-    function source_name()
+    function source_name(): string
     {
         $result = '';
         log_debug('value->source_name');
@@ -857,16 +852,131 @@ class value extends user_sandbox_display
         return $result;
     }
 
+    /**
+     * import a value from an external object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
+    {
+        global $share_types;
+        global $protection_types;
+
+        log_debug('value->import_obj');
+        $result = false;
+
+        $get_ownership = false;
+        foreach ($json_obj as $key => $value) {
+
+            if ($key == 'words') {
+                $phr_lst = new phrase_list;
+                $phr_lst->usr = $this->usr;
+                $result = $phr_lst->import_lst($value, $do_save);
+                if ($do_save) {
+                    $phr_grp = $phr_lst->get_grp();
+                    log_debug('value->import_obj got word group ' . $phr_grp->dsp_id());
+                    $this->grp = $phr_grp;
+                    $this->grp_id = $phr_grp->id;
+                    log_debug('value->import_obj set grp id to ' . $this->grp_id);
+                }
+                $this->phr_lst = $phr_lst;
+            }
+
+            if ($key == 'timestamp') {
+                if (strtotime($value)) {
+                    $this->time_stamp = strtotime($value);
+                } else {
+                    log_err('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                }
+            }
+
+            if ($key == 'time') {
+                $phr = new phrase;
+                $phr->usr = $this->usr;
+                if (!$phr->import_obj($value, $do_save)) {
+                    $result = false;
+                } else {
+                    $this->time_id = $phr->id;
+                }
+                $this->time_phr = $phr;
+            }
+
+            if ($key == 'number') {
+                $this->number = $value;
+            }
+
+            if ($key == 'share') {
+                $this->share_id = $share_types->id($value);
+            }
+
+            if ($key == 'protection') {
+                $this->protection_id = $protection_types->id($value);
+                if ($value <> protection_type_list::DBL_NO) {
+                    $get_ownership = true;
+                }
+            }
+
+            if ($key == 'source') {
+                $src = new source;
+                $src->usr = $this->usr;
+                $src->name = $value;
+                if ($do_save) {
+                    $src->load();
+                    if ($src->id == 0) {
+                        $src->save();
+                    }
+                        $this->source_id = $src->id;
+                }
+                $this->source = $src;
+            }
+
+
+        }
+
+        if ($result == true and $do_save) {
+            $this->save();
+            log_debug('value->import_obj -> ' . $this->dsp_id());
+        } else {
+            log_debug('value->import_obj -> ' . $result);
+        }
+
+        // try to get the ownership if requested
+        if ($get_ownership) {
+            $this->take_ownership();
+        }
+
+        return $result;
+    }
+
     // create an object for the export
-    function export_obj()
+    function export_obj(bool $do_load = true): value_exp
     {
         log_debug('value->export_obj');
-        $result = new value();
+        $result = new value_exp();
 
         // reload the value parameters
-        $this->load();
-        log_debug('value->export_obj load phrases');
-        $this->load_phrases();
+        if ($do_load) {
+            $this->load();
+            log_debug('value->export_obj load phrases');
+            $this->load_phrases();
+        }
+
+        // add the phrases
+        log_debug('value->export_obj get phrases');
+        $phr_lst = array();
+        // TODO use either word and triple export_obj function or phrase
+        if ($this->phr_lst != null) {
+            if (count($this->phr_lst->lst) > 0) {
+                foreach ($this->phr_lst->lst as $phr) {
+                    $phr_lst[] = $phr->name;
+                }
+                if (count($phr_lst) > 0) {
+                    $result->words = $phr_lst;
+                }
+            }
+        }
 
         // add the words
         log_debug('value->export_obj get words');
@@ -899,11 +1009,15 @@ class value extends user_sandbox_display
 
         // add the time
         if (isset($this->time_phr)) {
+            /*
             $phr = new phrase;
             $phr->usr = $this->usr;
             $phr->id = $this->time_id;
-            $phr->load();
-            $result->time = $phr->name;
+            if ($do_load) {
+                $phr->load();
+            }
+            */
+            $result->time = $this->time_phr->name;
             log_debug('value->export_obj got time ' . $this->time_phr->dsp_id());
         }
 
@@ -924,98 +1038,17 @@ class value extends user_sandbox_display
 
         // add the source
         log_debug('value->export_obj get source');
-        if ($this->source_id > 0) {
-            $result->source = $this->source_name();
+        if ($this->source != null) {
+            $result->source = $this->source->name;
         }
 
         log_debug('value->export_obj -> ' . json_encode($result));
         return $result;
     }
 
-    /**
-     * import a value from an external object
-     *
-     * @param array $json_obj an array with the data of the json object
-     * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
-     */
-    function import_obj(array $json_obj, bool $do_save = true): bool
-    {
-        global $word_types;
-
-        log_debug('value->import_obj');
-        $result = false;
-
-        $get_ownership = false;
-        foreach ($json_obj as $key => $value) {
-
-            if ($key == 'words') {
-                $phr_lst = new phrase_list;
-                $phr_lst->usr = $this->usr;
-                $result = $phr_lst->import_lst($value, $do_save);
-                $phr_grp = $phr_lst->get_grp();
-                log_debug('value->import_obj got word group ' . $phr_grp->dsp_id());
-                $this->grp = $phr_grp;
-                $this->grp_id = $phr_grp->id;
-                $this->phr_lst = $phr_lst;
-                log_debug('value->import_obj set grp id to ' . $this->grp_id);
-            }
-
-            if ($key == 'timestamp') {
-                if (strtotime($value)) {
-                    $this->time_stamp = strtotime($value);
-                } else {
-                    log_err('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
-                }
-            }
-
-            if ($key == 'time') {
-                $phr = new phrase;
-                $phr->usr = $this->usr;
-                if (!$phr->import_obj($value, $do_save)) {
-                    $result = false;
-                } else {
-                    $this->time_phr = $phr;
-                    $this->time_id = $phr->id;
-                }
-            }
-
-            if ($key == 'number') {
-                $this->number = $value;
-            }
-
-            if ($key == 'share') {
-                $this->share_id = clo($value);
-            }
-
-            if ($key == 'protection') {
-                $this->protection_id = clo($value);
-                if ($value <> protection_type_list::DBL_NO) {
-                    $get_ownership = true;
-                }
-            }
-        }
-
-        if ($result == true and $do_save) {
-            $this->save();
-            log_debug('value->import_obj -> ' . $this->dsp_id());
-        } else {
-            log_debug('value->import_obj -> ' . $result);
-        }
-
-        // try to get the ownership if requested
-        if ($get_ownership) {
-            $this->take_ownership();
-        }
-
-        return $result;
-    }
-
     /*
-
-  display functions
-
-  */
+     *  display functions
+     */
 
     // create and return the description for this value for debugging
     function dsp_id(): string

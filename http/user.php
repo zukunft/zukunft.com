@@ -143,9 +143,9 @@ if ($usr->id > 0) {
     // allow admins to test the system consistence
     if ($usr->is_admin()) {
         $result .= dsp_text_h2('<br>System testing<br>');
-        $result .= dsp_text_h3('<br>Perform all unit <a href="/http/test.php">tests</a><br>');
-        $result .= dsp_text_h3('<br>Perform critical unit and integration <a href="/http/test_quick.php">tests</a><br>');
-        $result .= dsp_text_h3('<br>Force <a href="/http/test_base_config.php">reloading</a> the base configuration e.g. to check that the units definition are still OK.<br>');
+        $result .= dsp_text_h3('<br>Perform all unit <a href="/test/test.php">tests</a><br>');
+        $result .= dsp_text_h3('<br>Perform critical unit and integration <a href="/test/test_quick.php">tests</a><br>');
+        $result .= dsp_text_h3('<br>Force <a href="/test/test_base_config.php">reloading</a> the base configuration e.g. to check that the units definition are still OK.<br>');
         $result .= dsp_text_h3('<br>');
     }
 

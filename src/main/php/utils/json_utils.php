@@ -19,9 +19,9 @@ function json_clean(array $in_json): array
 
 /**
  * check if the import JSON array matches the export JSON array
- * @param array $json_in
- * @param array $json_ex
- * @return bool
+ * @param array $json_in a JSON array that is can contain empty field
+ * @param array $json_ex a JSON that can have other empty field than $json_in and in a different order
+ * @return bool true if the JSON have the same meaning
  */
 function json_is_similar(array $json_in, array $json_ex): bool
 {

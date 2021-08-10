@@ -73,10 +73,15 @@ class word_type_list extends user_type_list
         $this->lst[2] = $type;
         $this->type_hash[word_type_list::DBL_NORMAL] = 2;
         $type = new user_type();
+        $type->name = word_type_list::DBL_TIME;
+        $type->code_id = word_type_list::DBL_TIME;
+        $this->lst[3] = $type;
+        $this->type_hash[word_type_list::DBL_TIME] = 3;
+        $type = new user_type();
         $type->name = word_type_list::DBL_MEASURE;
         $type->code_id = word_type_list::DBL_MEASURE;
-        $this->lst[3] = $type;
-        $this->type_hash[word_type_list::DBL_MEASURE] = 3;
+        $this->lst[4] = $type;
+        $this->type_hash[word_type_list::DBL_MEASURE] = 4;
     }
 
     /**

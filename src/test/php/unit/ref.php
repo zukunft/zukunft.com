@@ -34,15 +34,11 @@ function run_ref_unit_tests()
 
     test_subheader('Im- and Export tests');
 
-    $dsp_json = '{
-          "name": "Second",
-          "type": "wikipedia"
-        }';
-    $json_import_array = json_decode($dsp_json, true);
+    $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/ref/wikipedia.json'), true);
     $ref = new ref;
-    $ref->import_obj($json_import_array, false);
-    $json_export_string = json_encode($ref->export_obj(false));
-    $result = json_decode($dsp_json) == json_decode($json_export_string);
+    $ref->import_obj($json_in, false);
+    $json_ex = json_decode(json_encode($ref->export_obj(false)), true);
+    $result = json_is_similar($json_in, $json_ex);
     $target = true;
     test_dsp('word->import check name', $target, $result);
 

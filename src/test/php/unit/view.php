@@ -210,36 +210,16 @@ function run_view_unit_tests()
     test_dsp('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
-     * Im- and Export tests
+     * im- and export tests
      */
 
     test_subheader('Im- and Export tests');
 
-    $dsp_json = '{
-      "name": "car cost agreement",
-      "comment": "view the cost agreement of car usage",
-      "type": "default",
-      "share": "",
-      "protection": "",
-      "view_components": [
-        {
-          "position": 1,
-          "name": "Name",
-          "type": "",
-          "row": "",
-          "column": "",
-          "column2": "",
-          "share": "",
-          "protection": "",
-          "comment": ""
-        }
-      ]
-    }';
-    $json_import_array = json_decode($dsp_json, true);
+    $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/view/car_costs.json'), true);
     $dsp = new view_dsp;
-    $dsp->import_obj($json_import_array, false);
-    $json_export_string = json_encode($dsp->export_obj(false));
-    $result = json_decode($dsp_json) == json_decode($json_export_string);
+    $dsp->import_obj($json_in, false);
+    $json_ex = json_decode(json_encode($dsp->export_obj(false)), true);
+    $result = json_is_similar($json_in, $json_ex);
     $target = true;
     test_dsp('view->import check name', $target, $result);
 

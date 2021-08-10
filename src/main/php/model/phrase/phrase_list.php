@@ -1223,13 +1223,15 @@ class phrase_list
         return $grp;
     }
 
-    // return all phrases that are part of each phrase group of the list
-    function common($filter_lst)
+    /**
+     * return all phrases that are part of each phrase group of the list
+     */
+    function common($filter_lst): array
     {
+        $result = array();
         if (is_array($this->lst) and is_array($filter_lst->lst)) {
             log_debug('phrase_list->common of ' . $this->name() . ' and ' . $filter_lst->name());
             if (count($this->lst) > 0) {
-                $result = array();
                 foreach ($this->lst as $phr) {
                     if (isset($phr)) {
                         log_debug('phrase_list->common check if "' . $phr->name . '" is in ' . $filter_lst->name());

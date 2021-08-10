@@ -74,12 +74,11 @@ function run_word_unit_tests()
 
     test_subheader('Im- and Export tests');
 
-    $json_msg = file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/word/second.json');
-    $json_import_array = json_decode($json_msg, true);
+    $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/word/second.json'), true);
     $wrd = new word_dsp;
-    $wrd->import_obj($json_import_array, false);
-    $json_export_string = json_encode($wrd->export_obj(false));
-    $result = json_decode($json_msg) == json_decode($json_export_string);
+    $wrd->import_obj($json_in, false);
+    $json_ex = json_decode(json_encode($wrd->export_obj(false)), true);
+    $result = json_is_similar($json_in, $json_ex);
     $target = true;
     test_dsp('word->import check name', $target, $result);
 

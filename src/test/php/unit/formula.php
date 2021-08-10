@@ -78,19 +78,11 @@ function run_formula_unit_tests()
 
     test_subheader('Im- and Export tests');
 
-    $dsp_json = '{
-      "name": "scale minute to sec",
-      "expression": "\"second\" = \"minute\" * 60",
-      "description": "scale from minute to second and the other way round",
-      "type": "reversible",
-      "share": "personal",
-      "protection": "admin_protection"
-    }';
-    $json_import_array = json_decode($dsp_json, true);
+    $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
     $frm = new formula;
-    $frm->import_obj($json_import_array, false);
-    $json_export_string = json_encode($frm->export_obj(false));
-    $result = json_decode($dsp_json) == json_decode($json_export_string);
+    $frm->import_obj($json_in, false);
+    $json_ex = json_decode(json_encode($frm->export_obj(false)), true);
+    $result = json_is_similar($json_in, $json_ex);
     $target = true;
     test_dsp('formula->import check name', $target, $result);
 
