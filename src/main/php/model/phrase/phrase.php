@@ -156,9 +156,45 @@ class phrase
     }
 
     /*
+      im- and export functions
+    */
 
+    /**
+     * import a phrase object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(string $json_value, bool $do_save = true): bool
+    {
+        $result = false;
+        $this->name = $json_value;
+        if ($do_save) {
+            $this->load();
+            if ($this->id == 0) {
+                $wrd = new word;
+                $wrd->name = $json_value;
+                $wrd->usr = $this->usr;
+                $wrd->load();
+                if ($wrd->id == 0) {
+                    $wrd->name = $json_value;
+                    $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+                    $wrd->save();
+                }
+                if ($wrd->id == 0) {
+                    log_err('Cannot add time word "' . $json_value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                } else {
+                    $this->id = $wrd->id;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /*
     data retrieval functions
-
     */
 
     // get a list of all values related to this phrase

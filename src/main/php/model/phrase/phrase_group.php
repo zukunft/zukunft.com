@@ -949,7 +949,11 @@ class phrase_group
             // write new group
             if ($this->wrd_id_txt <> '' or $this->lnk_id_txt <> '') {
                 //$db_con = new mysql;
-                $db_con->usr_id = $this->usr->id;
+                if ($this->usr == null) {
+                    log_err('User missing when saving phrase group');
+                } else {
+                    $db_con->usr_id = $this->usr->id;
+                }
                 $db_con->set_type(DB_TYPE_PHRASE_GROUP);
                 $this->id = $db_con->insert(array('word_ids', 'triple_ids', 'auto_description'),
                     array($this->wrd_id_txt, $this->lnk_id_txt, $this->auto_name));

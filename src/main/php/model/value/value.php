@@ -871,20 +871,30 @@ class value extends user_sandbox_display
         // add the words
         log_debug('value->export_obj get words');
         $wrd_lst = array();
-        foreach ($this->wrd_lst->lst as $wrd) {
-            $wrd_lst[] = $wrd->name();
-        }
-        if (count($wrd_lst) > 0) {
-            $result->words = $wrd_lst;
+        // TODO use the triple export_obj function
+        if ($this->wrd_lst != null) {
+            if (count($this->wrd_lst->lst) > 0) {
+                foreach ($this->wrd_lst->lst as $wrd) {
+                    $wrd_lst[] = $wrd->name();
+                }
+                if (count($wrd_lst) > 0) {
+                    $result->words = $wrd_lst;
+                }
+            }
         }
 
         // add the triples
         $triples_lst = array();
-        foreach ($this->lnk_lst->lst as $lnk) {
-            $triples_lst[] = $lnk->name();
-        }
-        if (count($triples_lst) > 0) {
-            $result->triples = $triples_lst;
+        // TODO use the triple export_obj function
+        if ($this->lnk_lst != null) {
+            if (count($this->lnk_lst->lst) > 0) {
+                foreach ($this->lnk_lst->lst as $lnk) {
+                    $triples_lst[] = $lnk->name();
+                }
+                if (count($triples_lst) > 0) {
+                    $result->triples = $triples_lst;
+                }
+            }
         }
 
         // add the time
@@ -922,13 +932,19 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // import a value from an external object
-    function import_obj($json_obj)
+    /**
+     * import a value from an external object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
     {
         global $word_types;
 
         log_debug('value->import_obj');
-        $result = '';
+        $result = false;
 
         $get_ownership = false;
         foreach ($json_obj as $key => $value) {
@@ -936,31 +952,7 @@ class value extends user_sandbox_display
             if ($key == 'words') {
                 $phr_lst = new phrase_list;
                 $phr_lst->usr = $this->usr;
-                foreach ($value as $phr_name) {
-                    $phr = new phrase;
-                    $phr->name = $phr_name;
-                    $phr->usr = $this->usr;
-                    $phr->load();
-                    if ($phr->id == 0) {
-                        $wrd = new word;
-                        $wrd->name = $phr_name;
-                        $wrd->usr = $this->usr;
-                        $wrd->load();
-                        if ($wrd->id == 0) {
-                            $wrd->name = $phr_name;
-                            $wrd->type_id = $word_types->default_id();
-                            $wrd->save();
-                        }
-                        if ($wrd->id == 0) {
-                            log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
-                        } else {
-                            $phr_lst->add($wrd);
-                        }
-                    } else {
-                        $phr_lst->add($phr);
-                    }
-                }
-                log_debug('value->import_obj got words ' . $phr_lst->dsp_id());
+                $result = $phr_lst->import_lst($value, $do_save);
                 $phr_grp = $phr_lst->get_grp();
                 log_debug('value->import_obj got word group ' . $phr_grp->dsp_id());
                 $this->grp = $phr_grp;
@@ -979,25 +971,9 @@ class value extends user_sandbox_display
 
             if ($key == 'time') {
                 $phr = new phrase;
-                $phr->name = $value;
                 $phr->usr = $this->usr;
-                $phr->load();
-                if ($phr->id == 0) {
-                    $wrd = new word;
-                    $wrd->name = $value;
-                    $wrd->usr = $this->usr;
-                    $wrd->load();
-                    if ($wrd->id == 0) {
-                        $wrd->name = $value;
-                        $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
-                        $wrd->save();
-                    }
-                    if ($wrd->id == 0) {
-                        log_err('Cannot add time word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
-                    } else {
-                        $this->time_phr = $wrd->phrase();
-                        $this->time_id = $wrd->id;
-                    }
+                if (!$phr->import_obj($value, $do_save)) {
+                    $result = false;
                 } else {
                     $this->time_phr = $phr;
                     $this->time_id = $phr->id;
@@ -1020,7 +996,7 @@ class value extends user_sandbox_display
             }
         }
 
-        if ($result == '') {
+        if ($result == true and $do_save) {
             $this->save();
             log_debug('value->import_obj -> ' . $this->dsp_id());
         } else {

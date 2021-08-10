@@ -408,6 +408,79 @@ class phrase_list
     }
 
     /*
+      im- and export functions
+    */
+
+    /**
+     * import a phrase list from a the inner part of a JSON array object
+     *
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_lst(array $json_obj, bool $do_save = true): bool
+    {
+        global $word_types;
+
+        $result = false;
+        foreach ($json_obj as $value) {
+            if ($value != '') {
+                $phr = new phrase();
+                $phr->name = $value;
+                $phr->usr = $this->usr;
+                if ($do_save) {
+                    $phr->load();
+                    if ($phr->id == 0) {
+                        $wrd = new word;
+                        $wrd->name = $value;
+                        $wrd->usr = $this->usr;
+                        $wrd->load();
+                        if ($wrd->id == 0) {
+                            $wrd->name = $value;
+                            $wrd->type_id = $word_types->default_id();
+                            $wrd->save();
+                        }
+                        if ($wrd->id == 0) {
+                            log_err('Cannot add word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                        } else {
+                            $phr = $wrd->phrase();
+                        }
+                    }
+                }
+                $this->add($phr);
+            }
+        }
+
+        // save the word in the database
+        if ($do_save) {
+            $result = num2bool($this->save());
+        }
+
+        return $result;
+    }
+
+    /**
+     * import a phrase list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
+    {
+        $result = false;
+        foreach ($json_obj as $key => $value) {
+            if ($key == 'words') {
+                $result = $this->import_lst($value, $do_save);
+            }
+        }
+
+        return $result;
+    }
+
+
+    /*
       extract functions
       -----------------
     */
