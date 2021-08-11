@@ -6,7 +6,7 @@
   ----------
   
   offer the user the long or the short version
-  the short version is using one time ids for words, triples and groups
+  the short version is using one time id for words, triples and groups
   
   add the instance id, user id and time stamp to the export file
     
@@ -45,7 +45,7 @@ class export
 {
 
     // parameters to filter the export
-    public ?user $usr = null; // the user who wants to im- or export
+    public ?user $usr = null;            // the user who wants to im- or export
     public ?phrase_list $phr_lst = null; // to export all values related to this phrase
 
     // export zukunft.com data as object for creating e.g. a json message
@@ -55,7 +55,7 @@ class export
         global $db_con;
 
         log_debug('export->get');
-        $export_obj = (object) [];
+        $export_obj = (object)[];
 
         if ($this->phr_lst != null) {
             if (count($this->phr_lst->lst) <= 0) {
@@ -67,7 +67,7 @@ class export
                 $export_obj->pod = cfg_get(CFG_SITE_NAME, $this->usr, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $this->usr->name;
-                $export_obj->selection = $this->phr_lst->names(); // must be set by before the call TODO not nice
+                $export_obj->selection = $this->phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
 
                 // 1.1. collect all personal values - value that cannot be seen by other user
 
@@ -82,24 +82,13 @@ class export
                 $this->phr_lst->merge($val_lst->phr_lst_all());
                 $wrd_lst = $this->phr_lst->wrd_lst_all();
 
-                // 4. export all words that have a special type or any other non default setting
+                // 4. export all words that have a special type or any other non default setting (standard words are created automatically on import with just the name)
                 log_debug('export->get typed words');
-                $exp_words = array();
-                foreach ($wrd_lst->lst as $wrd) {
-                    if (get_class($wrd) == 'word' or get_class($wrd) == 'word_dsp') {
-                        if ($wrd->has_cfg()) {
-                            $exp_wrd = $wrd->export_obj();
-                            if (isset($exp_wrd)) {
-                                $exp_words[] = $exp_wrd;
-                            }
-                        }
-                    } else {
-                        log_err('The function wrd_lst_all returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
+                if ($wrd_lst != null) {
+                    $exp_words = $wrd_lst->export_obj();
+                    if (count($exp_words) > 0) {
+                        $export_obj->words = $exp_words;
                     }
-                }
-                log_debug('export->get typed words done');
-                if (count($exp_words) > 0) {
-                    $export_obj->words = $exp_words;
                 }
 
                 // 5. export all word relations

@@ -143,9 +143,9 @@
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
 
   TODO create a verbs hash list
-  TODO add unit testes for im- and export of all objects (value and formulas missing)
-  TODO review types again and capsule
+  TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
   TODO replace all clo() with cl()
+  TODO split the database from the memory object to save memory
   TODO add an im- and export code_id that is only unique for each type
   TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
   TODO use the type hash tables for words, formulas, view and components

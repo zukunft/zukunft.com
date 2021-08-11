@@ -529,6 +529,34 @@ class word_list
     }
 
     /*
+      im- and export functions
+    */
+
+    /**
+     * create a list of word objects for the export
+     * @param bool $do_load can be set to false for unit testing
+     * @return word_exp a reduced word object that can be used to create a JSON message
+     */
+    function export_obj(bool $do_load = true): array
+    {
+        $exp_words = array();
+        foreach ($this->lst as $wrd) {
+            if (get_class($wrd) == 'word' or get_class($wrd) == 'word_dsp') {
+                if ($wrd->has_cfg()) {
+                    $exp_wrd = $wrd->export_obj();
+                    if (isset($exp_wrd)) {
+                        $exp_words[] = $exp_wrd;
+                    }
+                }
+            } else {
+                log_err('The function wrd_lst->export_obj returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
+            }
+        }
+        return $exp_words;
+    }
+
+
+    /*
       extract functions
       -----------------
     */
@@ -1433,10 +1461,14 @@ class word_list
         return $wrd;
     }
 
-    // get the most useful time for the given words
-    // so either the last time from the word list
-    // or the time of the last "real" (reported) value for the word list
-    function assume_time(): word
+    /**
+     * get the most useful time for the given words
+     * so either the last time from the word list
+     * or the time of the last "real" (reported) value for the word list
+     *
+     * always returns a phrase to avoid converting in the calling function
+     */
+    function assume_time(): phrase
     {
         log_debug('word_list->assume_time for ' . $this->dsp_id());
 
@@ -1444,24 +1476,25 @@ class word_list
             // get the last time from the word list
             $time_word_lst = $this->time_lst();
             // shortcut, replace with a most_useful function
-            $result = null;
+            $wrd = null;
             foreach ($time_word_lst->lst as $time_wrd) {
-                if (is_null($result)) {
-                    $result = $time_wrd;
-                    $result->usr = $this->usr;
+                if (is_null($wrd)) {
+                    $wrd = $time_wrd;
+                    $wrd->usr = $this->usr;
                 } else {
                     log_warning("The word list contains more time word than supported by the program.", "word_list->assume_time");
                 }
             }
-            log_debug('time ' . $result->name . ' assumed for ' . $this->name_linked());
+            log_debug('time ' . $wrd->name . ' assumed for ' . $this->name_linked());
         } else {
             // get the time of the last "real" (reported) value for the word list
-            $result = $this->max_val_time();
-            log_debug('the assumed time "' . $result->name . '" is the last non estimated value of ' . $this->names_linked());
+            $wrd = $this->max_val_time();
+            log_debug('the assumed time "' . $wrd->name . '" is the last non estimated value of ' . $this->names_linked());
         }
 
-        if (isset($result)) {
-            log_debug('word_list->assume_time -> time used "' . $result->name . '" (' . $result->id . ')');
+        if (isset($wrd)) {
+            log_debug('word_list->assume_time -> time used "' . $wrd->name . '" (' . $wrd->id . ')');
+            $result = $wrd->phrase();
         } else {
             log_debug('word_list->assume_time -> no time found');
         }

@@ -10,6 +10,7 @@
   because it is expected that there will be much less user values than standard values
   
   TODO: what happens if a user (not the value owner) is adding a word to the value
+  TODO: split the object to a time term value and a time stamp value for memory saving
   
   if the value is not used at all the adding of the new word is logged and the group change is updated without logging
   if the value is used, adding, changing or deleting a word creates a new value or updates an existing value 
@@ -52,6 +53,11 @@ class value extends user_sandbox_display
 
     // derived database fields for fast selection (needs to be verified from time to time to check the database consistency and detect program errors)
     // field set by the front end scripts such as value_add.php or value_edit.php
+    public ?phrase_group $grp = null;     // phrases (word or triple) group object for this value
+    public ?phrase $time_phr = null;      // the time (period) word object for this value
+    public ?source $source = null;        // the source object
+
+    // legacy derived database fields
     public ?array $ids = null;            // list of the word or triple ids (if > 0 id of a word if < 0 id of a triple)
     public ?phrase_list $phr_lst = null;  // the phrase object list for this value
     //public $phr_ids       = null;       // the phrase id list for this value loaded directly from the group
@@ -61,10 +67,7 @@ class value extends user_sandbox_display
     public ?array $lnk_ids = null;        // the triple id list  for this value loaded directly from the group
     // public $phr_all_lst  = null;       // $phr_lst including the time wrd
     // public $phr_all_ids  = null;       // $phr_ids including the time id
-    public ?phrase_group $grp = null;     // phrases (word or triple) group object for this value
-    public ?phrase $time_phr = null;      // the time (period) word object for this value
     public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
-    public ?source $source = null;        // the source object
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
@@ -72,6 +75,7 @@ class value extends user_sandbox_display
 
     function __construct()
     {
+        parent::__construct();
         $this->obj_type = user_sandbox::TYPE_VALUE;
         $this->obj_name = DB_TYPE_VALUE;
 
@@ -143,7 +147,9 @@ class value extends user_sandbox_display
      * database load functions that reads the object from the database
      */
 
-    // load the standard value use by most users
+    /**
+     * load the standard value use by most users for the given phrase group and time
+     */
     function load_standard(): bool
     {
         global $db_con;
@@ -165,8 +171,10 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // load the record from the database
-    // in a separate function, because this can be called twice from the load function
+    /**
+     * load the record from the database
+     * in a separate function, because this can be called twice from the load function
+     */
     function load_rec($sql_where)
     {
         global $db_con;
@@ -193,6 +201,8 @@ class value extends user_sandbox_display
     function load_sql_group(bool $get_name = false): string
     {
         log_debug('value->load try best guess');
+        $sql_name = 'value_phrase_group_by_';
+
         $sql_grp = '';
         if ($this->phr_lst != null) {
             $phr_lst = clone $this->phr_lst;
@@ -216,6 +226,8 @@ class value extends user_sandbox_display
                     $sql_grp_where .= ' AND l' . $pos_prior . '.phrase_group_id = l' . $pos . '.phrase_group_id AND ';
                 }
                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $phr->id;
+                // TODO add the number of words??
+                $sql_name .= 'word_id';
                 $pos++;
             }
             $sql_avoid_code_check_prefix = "SELECT";
@@ -223,7 +235,12 @@ class value extends user_sandbox_display
                           FROM ' . $sql_grp_from . ' 
                          WHERE ' . $sql_grp_where;
         }
-        return $sql_grp;
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql_grp;
+        }
+        return $result;
     }
 
     /**
@@ -265,7 +282,9 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // load the missing value parameters from the database
+    /**
+     * load the missing value parameters from the database
+     */
     function load(): bool
     {
 
@@ -335,11 +354,12 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // get the best matching value
-    // 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
-    // 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
-    // e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
-    //      because most values for "ABB", "Sales" are in ,"million","CHF"
+    /**
+     * get the best matching value
+     * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
+     * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
+     *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
+     *    because most values for "ABB", "Sales" are in ,"million","CHF"
     function load_best()
     {
         log_debug('value->load_best for ' . $this->dsp_id());
@@ -380,7 +400,9 @@ class value extends user_sandbox_display
      * load object functions that extends the database load functions
      */
 
-    // called from the user sandbox
+    /**
+     * called from the user sandbox
+     */
     function load_objects(): bool
     {
         $this->load_phrases();
@@ -469,10 +491,7 @@ class value extends user_sandbox_display
                 }
                 if (isset($this->wrd_lst)) {
                     if (isset($this->lnk_lst)) {
-                        log_debug('value->load_grp_by_id -> both');
-                        log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' ');
-                        log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' and triples ' . $this->lnk_lst->name() . ' ');
-                        log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' and triples ' . $this->lnk_lst->name() . ' by group ' . $this->grp_id . ' for "' . $this->usr->name . '"');
+                        log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' and triples ' . dsp_array($this->lnk_lst) . ' by group ' . $this->grp_id . ' for "' . $this->usr->name . '"');
                     } else {
                         log_debug('value->load_grp_by_id with words ' . $this->wrd_lst->name() . ' by group ' . $this->grp_id . ' for "' . $this->usr->name . '"');
                     }
@@ -702,44 +721,9 @@ class value extends user_sandbox_display
         log_debug('value->load_wrd_lst -> done (trace ' . (new Exception)->getTraceAsString() . ')');
     }
 
-    // to be dismissed
-    // a list of all word links related to a given value with the id of the linked word
-    // used by value_edit.php
-    function wrd_link_lst()
-    {
-        log_debug("value->wrd_link_lst (" . $this->id . " and user " . $this->usr->name . ")");
-
-        global $db_con;
-        $result = array();
-
-        if ($this->id > 0) {
-            $sql = "SELECT l.value_phrase_link_id,
-                    t.word_id
-                FROM value_phrase_links l
-          LEFT JOIN words t      ON l.phrase_id = t.word_id  
-          LEFT JOIN user_words u ON t.phrase_id = u.word_id AND u.user_id  = " . $this->usr->id . "  
-              WHERE l.value_id = " . $this->id . " 
-            GROUP BY t.word_id, t.values, t.word_name
-            ORDER BY t.values, t.word_name;";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($sql);
-            foreach ($db_lst as $db_row) {
-                $id = $db_row['value_phrase_link_id'];
-                $result[$id] = $db_row['word_id'];
-            }
-        } else {
-            log_err("Missing value id", "value->wrd_link_lst");
-        }
-
-        return $result;
-    }
-
     /*
-
-  consistency check functions
-
-  */
+     * consistency check functions
+     */
 
     // check the data consistency of this user value
     // e.g. update the value_phrase_links database table based on the group id

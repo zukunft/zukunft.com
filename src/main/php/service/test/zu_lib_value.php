@@ -645,30 +645,7 @@ function zuv_ids_wrd_lst_incl_cat($val_ids, $user_id)
     return $wrd_lst;
 }
 
-// a list of all word links related to a given value with the id of the linked word
-function zuv_wrd_link_lst($val_id, $user_id)
-{
-    log_debug("zuv_wrd_link_lst (" . $val_id . ",u" . $user_id . ")");
-    $result = array();
-
-    if ($val_id > 0) {
-        $sql = "SELECT l.value_phrase_link_id,
-                   t.word_id
-              FROM value_phrase_links l
-         LEFT JOIN words t      ON l.phrase_id = t.word_id  
-         LEFT JOIN user_words u ON t.word_id = u.word_id AND u.user_id  = " . $user_id . "  
-             WHERE l.value_id = " . $val_id . " 
-          GROUP BY t.word_id
-          ORDER BY t.values, t.word_name;";
-        $result = zu_sql_get_lst($sql);
-    } else {
-        log_err("Missing value id", "zuv_wrd_link_lst");
-    }
-
-    return $result;
-}
-
-// lists all words related to a given value 
+// lists all words related to a given value
 function zuv_wrd_ids($val_id, $user_id)
 {
     log_debug("zuv_wrd_ids (" . $val_id . ",u" . $user_id . ")");

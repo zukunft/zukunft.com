@@ -34,11 +34,11 @@
 class phrase_list
 {
 
-    public array $lst = array();  // array of the loaded phrase objects
-    //                             (key is at the moment the database id, but it looks like this has no advantages,
-    //                             so a normal 0 to n order could have more advantages)
-    public array $ids = array();  // array of ids corresponding to the lst->id to load a list of phrases from the database
-    public ?user $usr = null;   // the user object of the person for whom the phrase list is loaded, so to say the viewer
+    public array $lst = array();   // array of the loaded phrase objects
+    //                                (key is at the moment the database id, but it looks like this has no advantages,
+    //                                so a normal 0 to n order could have more advantages)
+    public ?array $ids = array();  // array of ids corresponding to the lst->id to load a list of phrases from the database
+    public ?user $usr = null;      // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
 
     /*
