@@ -460,6 +460,7 @@ include_once $path_php . 'model/verb/verb.php';
 include_once $path_php . 'model/verb/verb_list.php';
 include_once $path_php . 'model/phrase/term.php';
 include_once $path_php . 'model/value/value.php';
+include_once $path_php . 'model/value/value_dsp.php';
 include_once $path_php . 'model/value/value_exp.php';
 include_once $path_php . 'model/value/value_list.php';
 include_once $path_php . 'web/value_list_display.php';
