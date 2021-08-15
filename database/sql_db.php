@@ -1655,7 +1655,7 @@ function sf($field_value, $force_type = '')
     $result = $field_value;
     if ($db_con->db_type == DB_TYPE_POSTGRES) {
         $result = $db_con->postgres_format($result, $force_type);
-    } elseif ($db_con->db_type == DB_TYPE_POSTGRES) {
+    } elseif ($db_con->db_type == DB_TYPE_MYSQL) {
         $result = $db_con->mysqli_format($result, $force_type);
     } else {
         log_err('Unknown database type ' . $db_con->db_type);

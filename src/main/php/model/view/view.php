@@ -31,6 +31,44 @@
 
 class view extends user_sandbox
 {
+    // list of the view used by the program that are never supposed to be changed
+    const START = "start";
+    const WORD = "word_dsp";
+    const WORD_ADD = "word_add";
+    const WORD_EDIT = "word_edit";
+    const WORD_FIND = "word_find";
+    const WORD_DEL = "word_del";
+    const VALUE_ADD = "value_add";
+    const VALUE_EDIT = "value_edit";
+    const VALUE_DEL = "value_del";
+    const VALUE_DISPLAY = "value";
+    const FORMULA_ADD = "formula_add";
+    const FORMULA_EDIT = "formula_edit";
+    const FORMULA_DEL = "formula_del";
+    const FORMULA_EXPLAIN = "formula_explain";
+    const FORMULA_TEST = "formula_test";
+    const SOURCE_ADD = "source_add";
+    const SOURCE_EDIT = "source_edit";
+    const SOURCE_DEL = "source_del";
+    const VERBS = "verbs";
+    const VERB_ADD = "verb_add";
+    const VERB_EDIT = "verb_edit";
+    const VERB_DEL = "verb_del";
+    const LINK_ADD = "triple_add";
+    const LINK_EDIT = "triple_edit";
+    const LINK_DEL = "triple_del";
+    const USER = "user";
+    const ERR_LOG = "error_log";
+    const ERR_UPD = "error_update";
+    const IMPORT = "import";
+    // views to edit views
+    const ADD = "view_add";
+    const EDIT = "view_edit";
+    const DEL = "view_del";
+    const COMPONENT_ADD = "view_entry_add";
+    const COMPONENT_EDIT = "view_entry_edit";
+    const COMPONENT_DEL = "view_entry_del";
+
     // persevered view name for unit and integration tests
     const TEST_NAME = 'System Test View';
 
@@ -69,7 +107,7 @@ class view extends user_sandbox
         $this->back = null;
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['view_id'] > 0) {
@@ -77,6 +115,7 @@ class view extends user_sandbox
                 $this->name = $db_row['view_name'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_type_id'];
+                $this->code_id = $db_row['code_id'];
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_id'];
@@ -101,7 +140,7 @@ class view extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('comment', 'view_type_id', 'excluded'));
+        $db_con->set_fields(array('comment', 'view_type_id', 'code_id', 'excluded'));
         $db_con->set_where($this->id, $this->name, $this->code_id);
         $sql = $db_con->select();
 
@@ -135,6 +174,7 @@ class view extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array('code_id'));
         $db_con->set_usr_fields(array('comment'));
         $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
         $db_con->set_where($this->id, $this->name, $this->code_id);

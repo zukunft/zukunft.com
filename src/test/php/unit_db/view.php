@@ -30,8 +30,23 @@ function run_view_unit_db_tests()
 {
 
     global $db_con;
+    global $usr;
 
     test_header('Unit database tests of the view class (src/main/php/model/value/view.php)');
+
+    test_subheader('System view tests');
+
+    // load the views used by the system e.g. change word
+    $lst = new view_list();
+    $lst->usr = $usr;
+    $result = $lst->load($db_con);
+    $target = true;
+    test_dsp('unit_db_view->load', $target, $result);
+
+    // ... and check if at least the most critical is loaded
+    $result = cl(db_cl::VIEW, view::WORD);
+    $target = 31;
+    test_dsp('unit_db_view->check' . view::WORD, $result, $target);
 
     test_subheader('View types tests');
 
@@ -44,7 +59,7 @@ function run_view_unit_db_tests()
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW_TYPE, view_type_list::DBL_DEFAULT);
     $target = 1;
-    test_dsp('unit_db_view->check ' . view_type_list::DBL_DEFAULT, $result, $target);
+    test_dsp('unit_db_view->check type' . view_type_list::DBL_DEFAULT, $result, $target);
 
     test_subheader('View component types tests');
 
@@ -57,7 +72,7 @@ function run_view_unit_db_tests()
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_TEXT);
     $target = 3;
-    test_dsp('unit_db_view_component->check ' . view_component_type_list::DBL_TEXT, $result, $target);
+    test_dsp('unit_db_view_component->check component type' . view_component_type_list::DBL_TEXT, $result, $target);
 
 }
 

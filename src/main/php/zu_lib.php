@@ -494,6 +494,7 @@ include_once $path_php . 'model/system/batch_job.php';
 include_once $path_php . 'model/system/batch_job_list.php';
 include_once $path_php . 'model/view/view.php';
 include_once $path_php . 'model/view/view_exp.php';
+include_once $path_php . 'model/view/view_list.php';
 include_once $path_php . 'model/view/view_type_list.php';
 include_once $path_php . 'web/view_display.php';
 include_once $path_php . 'model/view/view_component.php';
@@ -835,6 +836,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $share_types;
     global $protection_types;
     global $verbs;
+    global $system_views;
 
     // resume session (based on cookies)
     session_start();
@@ -893,8 +895,11 @@ function prg_start($code_name, $style = ""): sql_db
     $protection_types = new protection_type_list();
     $protection_types->load($db_con);
 
+    // preload the little more complex objects
     $verbs = new verb_list();
     $verbs->load($db_con);
+    //$system_views = new view_list();
+    //$system_views->load($db_con);
 
     return $db_con;
 }
@@ -928,10 +933,15 @@ function load_usr_data()
     global $db_con;
     global $usr;
     global $verbs;
+    global $system_views;
 
     $verbs = new verb_list();
     $verbs->usr = $usr;
     $verbs->load($db_con);
+
+    $system_views = new view_list();
+    $system_views->usr = $usr;
+    $system_views->load($db_con);
 
 }
 

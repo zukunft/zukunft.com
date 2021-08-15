@@ -37,6 +37,7 @@ class db_cl
     const WORD_TYPE = "word_type";
     const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
+    const VIEW = "view";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "view_component_type";
     const REF_TYPE = "ref_type";
@@ -67,6 +68,12 @@ class db_cl
     {
         global $formula_types;
         return $formula_types->id($code_id);
+    }
+
+    function view_id(string $code_id): int
+    {
+        global $system_views;
+        return $system_views->id($code_id);
     }
 
     function view_type_id(string $code_id): int
@@ -177,6 +184,12 @@ class db_cl
         return $formula_types->name($id);
     }
 
+    function view_name(int $id): string
+    {
+        global $system_views;
+        return $system_views->name($id);
+    }
+
     function view_type_name(int $id): string
     {
         global $view_types;
@@ -241,6 +254,9 @@ function cl(string $type, string $code_id): int
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type_id($code_id);
             break;
+        case db_cl::VIEW:
+            $result = $db_code_link->view_id($code_id);
+            break;
         case db_cl::VIEW_TYPE:
             $result = $db_code_link->view_type_id($code_id);
             break;
@@ -285,6 +301,9 @@ function cl_name(string $type, int $id): int
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type_name($id);
             break;
+        case db_cl::VIEW:
+            $result = $db_code_link->view_name($id);
+            break;
         case db_cl::VIEW_TYPE:
             $result = $db_code_link->view_type_name($id);
             break;
@@ -325,6 +344,9 @@ function get_type(string $type, string $code_id): user_type
         /* switched off, because it returns an extended object
         case db_cl::VERB:
             $result = $db_code_link->verb($db_code_link->verb_id($code_id));
+            break;
+        case db_cl::VIEW:
+            $result = $db_code_link->view($db_code_link->view_type_id($code_id));
             break;
         */
         case db_cl::FORMULA_TYPE:

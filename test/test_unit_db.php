@@ -61,6 +61,8 @@ if ($usr->id > 0) {
         // start unit testing without writing to the database
         // --------------------------------------------------
 
+        load_usr_data();
+
         run_unit_db_tests();
 
         // display the test results

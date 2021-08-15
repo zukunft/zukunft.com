@@ -77,6 +77,18 @@ function unit_test_init_formula_types()
 }
 
 /**
+ * create an array of the system views for the unit tests without database connection
+ */
+function unit_test_init_views()
+{
+    global $system_views;
+
+    $system_views = new view_list();
+    $system_views->load_dummy();
+
+}
+
+/**
  * create view type array for the unit tests without database connection
  */
 function unit_test_init_view_types()
@@ -160,6 +172,7 @@ function run_unit_tests()
     unit_test_init_word_types();
     unit_test_init_verbs();
     unit_test_init_formula_types();
+    unit_test_init_views();
     unit_test_init_view_types();
     unit_test_init_view_component_types();
     unit_test_init_view_component_link_types();
