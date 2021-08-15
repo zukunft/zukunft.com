@@ -103,8 +103,8 @@ class word_link extends word_link_object
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_word_link_id'];
                     $this->owner_id = $db_row['user_id'];
-                    $this->share_id = $db_row['share_type_id'];
-                    $this->protection_id = $db_row['protection_type_id'];
+                    $this->share_id = $db_row[sql_db::FLD_SHARE];
+                    $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
                     $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
                     $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
@@ -368,7 +368,7 @@ class word_link extends word_link_object
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
             $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
-            $db_con->set_usr_num_fields(array('excluded'));
+            $db_con->set_usr_num_fields(array('excluded',sql_db::FLD_SHARE,sql_db::FLD_PROTECT));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
         }

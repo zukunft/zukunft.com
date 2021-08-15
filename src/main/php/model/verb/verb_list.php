@@ -53,7 +53,7 @@ class verb_list extends user_type_list
      * @param string $db_type the database name e.g. the table name without s
      * @return array the list of reference types
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    private function load_work_link_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
         // set the where clause depending on the values given
@@ -89,8 +89,11 @@ class verb_list extends user_type_list
     }
 
 
-    // load the word parameters from the database for a list of words
-    function load(sql_db $db_con, string $db_type = DB_TYPE_WORD_LINK): bool
+    /**
+     * load a list of verbs that are used by a given word
+     *
+     */
+    function load_work_links(sql_db $db_con, string $db_type = DB_TYPE_WORD_LINK): bool
     {
 
         $result = false;
@@ -102,13 +105,48 @@ class verb_list extends user_type_list
               zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
-            $this->lst = $this->load_list($db_con, $db_type);
+            $this->lst = $this->load_work_link_list($db_con, $db_type);
             $this->type_hash = $this->get_hash($this->lst);
             if (count($this->type_hash) > 0) {
                 $result = true;
             }
         }
         return $result;
+    }
+
+    /**
+     * force to reload the complete list of verbs from the database
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type the database name e.g. the table name without s
+     * @return array the list of types
+     */
+    private function load_list(sql_db $db_con, string $db_type): array
+    {
+        $this->lst = [];
+        $db_con->set_type($db_type);
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION));
+        $sql = $db_con->select();
+        $db_lst = $db_con->get($sql);
+        if ($db_lst != null) {
+            foreach ($db_lst as $db_row) {
+                $vrb = new verb();
+                $vrb->row_mapper($db_row);
+                $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
+            }
+        }
+        return $this->lst;
+    }
+
+    function load(sql_db $db_con, string $db_type = DB_TYPE_VERB): bool
+    {
+        $result = false;
+        $this->lst = $this->load_list($db_con, $db_type);
+        $this->type_hash = $this->get_hash($this->lst);
+        if (count($this->type_hash) > 0) {
+            $result = true;
+        }
+        return $result;
+
     }
 
     /**

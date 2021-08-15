@@ -52,9 +52,11 @@ function run_word_link_unit_tests()
                             s.from_phrase_id,  
                             s.to_phrase_id,  
                             s.verb_id,  
-                            CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name,  
-                            CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description,  
-                            CASE WHEN (u.excluded IS NULL) THEN s.excluded ELSE u.excluded END AS excluded 
+                            CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name     ELSE u.word_link_name     END AS word_link_name,  
+                            CASE WHEN (u.description <> ''    IS NOT TRUE) THEN s.description        ELSE u.description        END AS description,  
+                            CASE WHEN (u.excluded             IS     NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,
+                            CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id      ELSE u.share_type_id      END AS share_type_id,  
+                            CASE WHEN (u.protection_type_id   IS     NULL) THEN s.protection_type_id ELSE u.protection_type_id END AS protection_type_id 
                        FROM word_links s LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                                                     AND u.user_id = 1 
                       WHERE s.word_link_id = 2;";

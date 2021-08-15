@@ -62,3 +62,6 @@ $usr->id = SYSTEM_USER_ID;
 // ------------------
 
 run_unit_tests();
+
+// display the test results
+zu_test_dsp_result();

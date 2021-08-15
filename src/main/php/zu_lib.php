@@ -42,17 +42,18 @@
                              or in the db (DataBase) format with database id references
                              or in the math (MATHematical) format, which should contain only numeric values
   
-  vrb (VeRB)               - a predicate (mostly just a verb) that defines the type that links two words;
+  vrb (VeRB)               - a predicate (mostly just a verb) that defines the type of links two words;
                              by default a verb can be used forward and backward e.g. ABB is a company and companies are ABB, ...
                              if the reverse name is empty, the verb can only be used the forward way
                              if a link should only be used one way for one phrase link, the negative verb is saved
                              verbs are also named as word_links
-  lnk (LiNK)               - a triple, so a word, connected to another word with a verb (word_link.php is the related class)
-  phr (PHRase)             - either a word or triple mainly used for selection
+  lnk (LiNK)               - a triple/sentence, so a word connected to another word with a verb (word_link.php is the related class)
+  phr (PHRase)             - transformed triple or word in order to use them together as one object
   grp (GrouP)              - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
-  trm (TeRM)               - either a work, verb or triple (formula names have always a corresponding phrase)
+  trm (TeRM)               - either a word, verb or triple (formula names have always a corresponding phrase)
+                             (verb X creates term X so if word X wants to be added there already is a term X, therefore blocking the input)
   exp (EXPression)         - a formula text that implies a data selection and lead to a number
-  elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements
+  elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements (cancel? replace with term?)
   fv (Formula Value)       - the calculated result of a formula (rename to result? and if use RESult)
   fig (FIGure)             - either a value set by the user or a calculated formula result
   usr (USeR)               - the person who is logged in
@@ -61,11 +62,11 @@
 
   sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
   uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
-
+                             (useless?)
   id (IDentifier)          - internal prime key of a database row
   ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
-  glst (Get LiST)          - is used to name the private internal functions that can also create the user list
   lst (LiST)               - an array of objects
+  glst (Get LiST)          - is used to name the private internal functions that can also create the user list
   ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
                              the user list should only be used to display something and never for checking if an item exists
                              this is the short for for sbx_lst
@@ -143,6 +144,8 @@
   *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
 
   TODO create a verbs hash list
+  TODO load the database code links from csv
+  TODO create the unit tests for the core elements such as word, value, formula, view
   TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
   TODO replace all clo() with cl()
   TODO split the database from the memory object to save memory
@@ -166,6 +169,7 @@
   TODO load the config, that is not expected to be changed during a session once at startup
   TODO start the backend only once and react to REST calls from the frontend
   TODO make use of __DIR__ ?
+  TODO create a User Interface API
 
 
   functions of this library
@@ -821,6 +825,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $sys_log_msg_type_error_id;
     global $sys_log_msg_type_fatal_error_id;
 
+    global $user_profiles;
     global $word_types;
     global $formula_types;
     global $view_types;
@@ -829,6 +834,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $ref_types;
     global $share_types;
     global $protection_types;
+    global $verbs;
 
     // resume session (based on cookies)
     session_start();
@@ -867,6 +873,8 @@ function prg_start($code_name, $style = ""): sql_db
 
     // load the type database enum
     // these tables are expected to be so small that it is more efficient to load all database records once at start
+    $user_profiles = new user_profile_list();
+    $user_profiles->load($db_con);
     $word_types = new word_type_list();
     $word_types->load($db_con);
     $formula_types = new formula_type_list();
@@ -884,6 +892,9 @@ function prg_start($code_name, $style = ""): sql_db
     $share_types->load($db_con);
     $protection_types = new protection_type_list();
     $protection_types->load($db_con);
+
+    $verbs = new verb_list();
+    $verbs->load($db_con);
 
     return $db_con;
 }

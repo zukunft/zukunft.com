@@ -998,7 +998,7 @@ class user_sandbox
             $log->std_value = $std_rec->share_type_name();
             $log->std_id = $std_rec->share_id;
             $log->row_id = $this->id;
-            $log->field = 'share_type_id';
+            $log->field = sql_db::FLD_SHARE;
 
             // save_field_do is not used because the share type can only be set on the user record
             if ($log->new_id > 0) {
@@ -1041,7 +1041,7 @@ class user_sandbox
             $log->std_value = $std_rec->protection_type_name();
             $log->std_id = $std_rec->protection_id;
             $log->row_id = $this->id;
-            $log->field = 'protection_type_id';
+            $log->field = sql_db::FLD_PROTECT;
             $result .= $this->save_field_do($db_con, $log);
         }
 

@@ -47,8 +47,8 @@ class user
 
     // database fields
     public ?int $id = null;               // the database id of the word link type (verb)
-    public ?string $name = null;          // simply the user name, which cannot be empty
-    public ?string $ip_addr = null;       // simply the ip address used if no user name is given
+    public ?string $name = null;          // simply the username, which cannot be empty
+    public ?string $ip_addr = null;       // simply the ip address used if no username is given
     public ?string $email = null;         //
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
@@ -156,7 +156,7 @@ class user
 
     // return the message, why the if is not permitted
     // exposed as public mainly for testing
-    public function ip_check($ip_addr)
+    public function ip_check($ip_addr): string
     {
         log_debug('user->ip_check (' . $ip_addr . ')');
 
@@ -220,7 +220,7 @@ class user
                 $this->get_ip();
                 $this->load();
                 if ($this->id <= 0) {
-                    // use the ip address as the user name and add the user
+                    // use the ip address as the username and add the user
                     $this->name = $this->ip_addr;
                     $upd_result = $this->save();
                     // adding a new user automatically is normal, so the result does not need to be shown to the user
@@ -235,7 +235,7 @@ class user
     }
 
     // true if the user has admin rights
-    function is_admin()
+    function is_admin(): bool
     {
         log_debug('user->is_admin (' . $this->id . ')');
         $result = false;
@@ -250,7 +250,7 @@ class user
     }
 
     // true if the user has the right to import data
-    function can_import()
+    function can_import(): bool
     {
         log_debug('user->can_import (' . $this->id . ')');
         $result = false;
@@ -265,7 +265,7 @@ class user
     }
 
     // load the last word used by the user
-    function last_wrd()
+    function last_wrd(): word_dsp
     {
         if ($this->wrd_id <= 0) {
             $this->wrd_id = DEFAULT_WORD_ID;
@@ -332,7 +332,7 @@ class user
     }
 
     // set the main log entry parameters for updating one word field
-    private function log_upd()
+    private function log_upd(): user_log
     {
         log_debug('user->log_upd user ' . $this->name);
         $log = new user_log;

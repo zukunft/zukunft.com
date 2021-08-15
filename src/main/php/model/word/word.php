@@ -101,8 +101,8 @@ class word extends word_link_object
                     $this->usr_cfg_id = $db_row['user_word_id'];
                     // TODO probably the owner of the standard word also needs to be loaded
                     $this->owner_id = $db_row['user_id'];
-                    $this->share_id = $db_row['share_type_id'];
-                    $this->protection_id = $db_row['protection_type_id'];
+                    $this->share_id = $db_row[sql_db::FLD_SHARE];
+                    $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
                     $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
                     $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
@@ -158,7 +158,7 @@ class word extends word_link_object
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('values'));
         $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded'));
+        $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded',sql_db::FLD_SHARE,sql_db::FLD_PROTECT));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -838,7 +838,7 @@ class word extends word_link_object
         $vrb_lst->wrd = clone $this;
         $vrb_lst->usr = $this->usr;
         $vrb_lst->direction = $direction;
-        $vrb_lst->load($db_con);
+        $vrb_lst->load_work_links($db_con);
         return $vrb_lst;
     }
 

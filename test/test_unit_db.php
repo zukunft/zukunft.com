@@ -63,6 +63,9 @@ if ($usr->id > 0) {
 
         run_unit_db_tests();
 
+        // display the test results
+        zu_test_dsp_result();
+
     }
 }
 

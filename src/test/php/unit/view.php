@@ -122,7 +122,8 @@ function run_view_unit_tests()
                             CASE WHEN (u.excluded        IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
-                      WHERE view_name = '" . view::TEST_NAME . "';";
+                      WHERE (u.view_name = '" . view::TEST_NAME . "'
+                         OR (s.view_name = '" . view::TEST_NAME . "' AND u.view_name IS NULL));";
     test_dsp('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique

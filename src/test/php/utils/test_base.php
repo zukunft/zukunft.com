@@ -442,7 +442,7 @@ function test_uncolor($result)
 
 // similar to test_show_result, but the target only needs to be part of the result
 // e.g. "ABB" is part of the company word list
-function test_dsp_contains($test_text, $target, $result, $exe_max_time, $comment = ''): bool
+function test_dsp_contains($test_text, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $comment = ''): bool
 {
     if (strpos($result, $target) === false) {
         $result = $target . ' not found in ' . $result;
@@ -898,7 +898,7 @@ function test_formula_link($formula_name, $word_name, $autocreate = true): strin
         $frm_lnk->tob = $phr;
         $frm_lnk->load();
         if ($frm_lnk->id > 0) {
-            $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
+            $result = $frm_lnk->fob->name . ' is linked to ' . $frm_lnk->tob->name;
             $target = $formula_name . ' is linked to ' . $word_name;
             test_dsp('formula_link', $target, $result);
         } else {
@@ -915,7 +915,7 @@ function test_formula_link($formula_name, $word_name, $autocreate = true): strin
 // testing functions to create the main time value
 // -----------------------------------------------
 
-function zu_test_time_setup()
+function zu_test_time_setup(): string
 {
     global $usr, $db_con;
     $result = '';

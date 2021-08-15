@@ -128,8 +128,8 @@ class value extends user_sandbox_display
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_value_id'];
                     $this->owner_id = $db_row['user_id'];
-                    $this->share_id = $db_row['share_type_id'];
-                    $this->protection_id = $db_row['protection_type_id'];
+                    $this->share_id = $db_row[sql_db::FLD_SHARE];
+                    $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
                     $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
                     $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
@@ -158,7 +158,7 @@ class value extends user_sandbox_display
         if ($this->id > 0) {
             $db_con->set_type(DB_TYPE_VALUE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('value_id', 'user_id', 'word_value', 'source_id', 'last_update', 'excluded', 'protection_type_id'));
+            $db_con->set_fields(array('value_id', 'user_id', 'word_value', 'source_id', 'last_update', 'excluded', sql_db::FLD_PROTECT));
             $db_con->where(array('value_id'), array($this->id));
             $sql = $db_con->select();
 
@@ -182,8 +182,8 @@ class value extends user_sandbox_display
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-        $db_con->set_usr_num_fields(array('word_value', 'source_id', 'last_update', 'protection_type_id', 'excluded'));
-        $db_con->set_usr_only_fields(array('share_type_id'));
+        $db_con->set_usr_num_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, 'excluded'));
+        $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
         $db_con->set_where_text($sql_where);
         $sql = $db_con->select();
 
@@ -951,7 +951,9 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // create an object for the export
+    /**
+     * create an object for the export
+     */
     function export_obj(bool $do_load = true): value_exp
     {
         log_debug('value->export_obj');
@@ -1051,19 +1053,27 @@ class value extends user_sandbox_display
      *  display functions
      */
 
-    // create and return the description for this value for debugging
+    /**
+     * create and return the description for this value for debugging
+     */
     function dsp_id(): string
     {
         $result = '';
 
-        //$this->load_phrases();
+        if ($this->phr_lst != null)
+        {
+            $result .= $this->phr_lst->dsp_id();
+        }
+        $result .= $this->usr_value;
 
         return $result;
     }
 
-    // create and return the description for this value
-    // TODO check if $this->load_phrases() needs to be called before calling this function
-    function name()
+    /**
+     * create and return the description for this value
+     * TODO check if $this->load_phrases() needs to be called before calling this function
+     */
+    function name(): string
     {
         $result = '';
         if (isset($this->grp)) {
@@ -1080,13 +1090,11 @@ class value extends user_sandbox_display
     }
 
     /*
-
-  get functions that returns other linked objects
-
-  */
+     *  get functions that returns other linked objects
+     */
 
     // create and return the figure object for the value
-    function figure()
+    function figure(): figure
     {
         log_debug('value->figure');
         $fig = new figure;
@@ -1148,7 +1156,7 @@ class value extends user_sandbox_display
     log_del      - set the log object for excluding this record
     need_usr_cfg - true if at least one field differs between the standard record and the user specific record
     has_usr_cfg  - true if a record for user specific setting exists
-    add_usr_cfg  - to created a record for user specific settings
+    add_usr_cfg  - to create a record for user specific settings
     del_usr_cfg  - to delete the record for user specific settings, because it is not needed any more
 
     Default steps to save a value

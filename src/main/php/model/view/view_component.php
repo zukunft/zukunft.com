@@ -109,8 +109,8 @@ class view_component extends user_sandbox
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_component_id'];
                     $this->owner_id = $db_row['user_id'];
-                    //$this->share_id = $db_row['share_type_id'];
-                    //$this->protection_id = $db_row['protection_type_id'];
+                    //$this->share_id = $db_row[sql_db::FLD_SHARE];
+                    //$this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
                     //$this->share_id = cl(DBL_SHARE_PUBLIC);
                     //$this->protection_id = cl(DBL_PROTECT_NO);
@@ -163,7 +163,7 @@ class view_component extends user_sandbox
 
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_types');
+            $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_type');
             $db_con->set_fields(array('comment'));
             $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
             $db_con->set_where($this->id, $this->name);

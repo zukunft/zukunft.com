@@ -30,6 +30,7 @@ function run_verb_unit_db_tests()
 {
 
     global $db_con;
+    global $usr;
 
     test_header('Unit database tests of the verb class (src/main/php/model/verb/verb.php)');
 
@@ -37,13 +38,14 @@ function run_verb_unit_db_tests()
 
     // load the verb types
     $lst = new verb_list();
+    $lst->usr = $usr;
     $result = $lst->load($db_con);
     $target = true;
     test_dsp('unit_db_verb_list->load', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::WORD_TYPE, verb::DBL_IS);
-    $target = 1;
+    $result = cl(db_cl::VERB, verb::DBL_IS);
+    $target = 2;
     test_dsp('unit_db_verb_list->check ' . verb::DBL_IS, $result, $target);
 
 }

@@ -77,19 +77,35 @@ function db_upgrade_0_0_3($db_con)
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     $sql = 'ALTER TABLE users RENAME email_alternativ TO email_alternative;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
-    $sql = 'ALTER TABLE public.view_component_types RENAME view_component_type_name TO type_name;';
+    $sql = 'ALTER TABLE view_component_types RENAME view_component_type_name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
-    $sql = 'ALTER TABLE public.formula_types RENAME name TO type_name;';
+    $sql = 'ALTER TABLE formula_types RENAME name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
-    $sql = 'ALTER TABLE public.ref_types RENAME ref_type_name TO type_name;';
+    $sql = 'ALTER TABLE ref_types RENAME ref_type_name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
-    $sql = 'ALTER TABLE public.share_types RENAME share_type_name TO type_name;';
+    $sql = 'ALTER TABLE share_types RENAME share_type_name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
-    $sql = 'ALTER TABLE public.protection_types RENAME protection_type_name TO type_name;';
+    $sql = 'ALTER TABLE protection_types RENAME protection_type_name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     $sql = 'ALTER TABLE user_profiles RENAME user_profile_name TO type_name;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     $sql = 'ALTER TABLE user_profiles RENAME commen TO description;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE user_words ADD COLUMN share_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE user_words ADD COLUMN protection_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE words ADD COLUMN share_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE words ADD COLUMN protection_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE user_word_links ADD COLUMN share_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE user_word_links ADD COLUMN protection_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE word_links ADD COLUMN share_type_id smallint;';
+    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $sql = 'ALTER TABLE word_links ADD COLUMN protection_type_id smallint;';
     $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
     // TODO check and change view component type code ids
@@ -117,3 +133,13 @@ function db_upgrade_0_0_4($db_con)
 
 // create the database and fill it with the base configuration data
 //function db_create() {}
+
+/**
+ * fill the database with all rows that have a code id and code linked
+ */
+function db_fill_code_links() {
+    // load the csv
+    // check if the column names match the table names
+    // select the rows where the code id is missing
+    // add the missing rows
+}

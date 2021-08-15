@@ -355,7 +355,8 @@ function run_user_sandbox_unit_tests()
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE source_name = 'wikidata';";
+                  WHERE (u.source_name = 'wikidata' 
+                     OR (s.source_name = 'wikidata' AND u.source_name IS NULL));";
     test_dsp('PostgreSQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for search by code_id
@@ -449,9 +450,9 @@ function run_user_sandbox_unit_tests()
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
     $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-    $db_con->set_usr_num_fields(array('word_value', 'source_id', 'protection_type_id', 'last_update'));
+    $db_con->set_usr_num_fields(array('word_value', 'source_id', sql_db::FLD_PROTECT, 'last_update'));
     $db_con->set_usr_bool_fields(array('excluded'));
-    $db_con->set_usr_only_fields(array('share_type_id'));
+    $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
     $db_con->set_where_text('s.phrase_group_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -779,7 +780,8 @@ function run_user_sandbox_unit_tests()
                    FROM sources s 
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
-                  WHERE source_name = 'wikidata';";
+                  WHERE (u.source_name = 'wikidata' 
+                     OR (s.source_name = 'wikidata' AND u.source_name IS NULL));";
     test_dsp('MySQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for search by code_id
@@ -875,8 +877,8 @@ function run_user_sandbox_unit_tests()
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
     $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-    $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', 'protection_type_id', 'excluded'));
-    $db_con->set_usr_only_fields(array('share_type_id'));
+    $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, 'excluded'));
+    $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
     $db_con->set_where_text('s.phrase_group_id = 1');
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";

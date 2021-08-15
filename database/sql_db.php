@@ -72,6 +72,8 @@ class sql_db
     const FLD_USER_ID = "user_id";               // field name for the user table foreign key field
     const FLD_DESCRIPTION = "description";       // field name for the any description
     const FLD_TYPE_NAME = "type_name";           // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_SHARE = "share_type_id";           // field name for the share permission
+    const FLD_PROTECT = "protection_type_id";    // field name for the protection level
 
     const FLD_FORMAT_TEXT = "text";              // to force the text formatting of a value for the SQL statement formatting
     const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of a value for the SQL statement formatting
@@ -440,7 +442,7 @@ class sql_db
     }
 
     /*
-     * setup the environment
+     * set up the environment
      */
 
     // reset the previous settings
@@ -997,23 +999,19 @@ class sql_db
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             /*
              * because the object name can be user specific,
-             * don't use the standard name for the the selection e.g. s.view_name
+             * don't use the standard name for the selection e.g. s.view_name
              * use instead the user specific name e.g. view_name
-             * TODO check if this works as expected for MySQL
+             */
             if ($this->usr_query or $this->join <> '') {
-                $result .= sql_db::STD_TBL . '.';
+                $result .= '(' . sql_db::USR_TBL . '.';
+                $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
+                $result .= ' OR (' . sql_db::STD_TBL . '.';
+                $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
+                $result .= ' AND ' . sql_db::USR_TBL . '.';
+                $result .= $this->name_field . " IS NULL))";
+            } else {
+                $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
             }
-            */
-            $result .= $this->name_field . " = " . $this->sf($name, sql_db::FLD_FORMAT_TEXT);
-            /*
-            if ($this->db_type == DB_TYPE_POSTGRES) {
-                $result .= ' AND ';
-                if ($this->usr_query or $this->join <> '') {
-                    $result .= sql_db::STD_TBL . '.';
-                }
-                  $result .= $this->name_field . ' != NULL';
-            }
-            */
         }
         if ($this->usr_only_query) {
             $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->usr_view_id;

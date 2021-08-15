@@ -1,0 +1,4 @@
+change_action_id, change_action_name, code_id
+1, 'add', ''
+2, 'del', ''
+3, 'update', ''

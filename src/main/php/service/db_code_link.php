@@ -99,6 +99,12 @@ class db_cl
         return $protection_types->id($code_id);
     }
 
+    function user_profile_id(string $code_id): int
+    {
+        global $user_profiles;
+        return $user_profiles->id($code_id);
+    }
+
     /**
      * the type object base on the given database row id
      *
@@ -139,6 +145,12 @@ class db_cl
     {
         global $protection_types;
         return $protection_types->get($id);
+    }
+
+    function user_profile(int $id)
+    {
+        global $user_profiles;
+        return $user_profiles->get($id);
     }
 
     /**
@@ -195,6 +207,12 @@ class db_cl
         return $protection_types->name($id);
     }
 
+    function user_profile_name(int $id): string
+    {
+        global $user_profiles;
+        return $user_profiles->name($id);
+    }
+
 }
 
 
@@ -211,6 +229,9 @@ function cl(string $type, string $code_id): int
     $result = 0;
     $db_code_link = new db_cl();
     switch ($type) {
+        case db_cl::USER_PROFILE:
+            $result = $db_code_link->user_profile_id($code_id);
+            break;
         case db_cl::WORD_TYPE:
             $result = $db_code_link->word_type_id($code_id);
             break;
@@ -252,6 +273,9 @@ function cl_name(string $type, int $id): int
     $result = '';
     $db_code_link = new db_cl();
     switch ($type) {
+        case db_cl::USER_PROFILE:
+            $result = $db_code_link->user_profile_name($id);
+            break;
         case db_cl::WORD_TYPE:
             $result = $db_code_link->word_type_name($id);
             break;
@@ -292,6 +316,9 @@ function get_type(string $type, string $code_id): user_type
     $result = null;
     $db_code_link = new db_cl();
     switch ($type) {
+        case db_cl::USER_PROFILE:
+            $result = $db_code_link->user_profile($db_code_link->user_profile_id($code_id));
+            break;
         case db_cl::WORD_TYPE:
             $result = $db_code_link->word_type($db_code_link->word_type_id($code_id));
             break;

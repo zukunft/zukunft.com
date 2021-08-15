@@ -117,17 +117,20 @@ class user_type_list
     /**
      * return user specific type name based on the database row id
      *
-     * @param int $id
+     * @param int|null $id
      * @return string
      */
-    function name(int $id): string
+    function name(?int $id): string
     {
         $result = '';
-        $type = $this->get($id);
-        if ($type != null) {
-            $result = $type->name;
-        } else {
-            log_debug('Type id ' . $id . ' not found');
+        if ($id != null) {
+
+            $type = $this->get($id);
+            if ($type != null) {
+                $result = $type->name;
+            } else {
+                log_debug('Type id ' . $id . ' not found');
+            }
         }
         return $result;
     }

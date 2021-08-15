@@ -945,15 +945,17 @@ CREATE TABLE IF NOT EXISTS user_view_component_links
 
 CREATE TABLE IF NOT EXISTS user_words
 (
-    word_id      bigint NOT NULL,
-    user_id      bigint NOT NULL,
-    language_id  bigint NOT NULL DEFAULT 1,
-    word_name    varchar(200)    DEFAULT NULL,
-    plural       varchar(200)    DEFAULT NULL,
-    description  text,
-    word_type_id bigint          DEFAULT NULL,
-    view_id      bigint          DEFAULT NULL,
-    excluded     smallint        DEFAULT NULL
+    word_id            bigint   NOT NULL,
+    user_id            bigint   NOT NULL,
+    language_id        bigint   NOT NULL DEFAULT 1,
+    word_name          varchar(200)      DEFAULT NULL,
+    plural             varchar(200)      DEFAULT NULL,
+    description        text,
+    word_type_id       bigint            DEFAULT NULL,
+    view_id            bigint            DEFAULT NULL,
+    excluded           smallint          DEFAULT NULL,
+    share_type_id      smallint          DEFAULT NULL,
+    protection_type_id smallint NOT NULL DEFAULT '1'
 );
 
 -- --------------------------------------------------------
@@ -964,11 +966,13 @@ CREATE TABLE IF NOT EXISTS user_words
 
 CREATE TABLE IF NOT EXISTS user_word_links
 (
-    word_link_id   BIGSERIAL PRIMARY KEY,
-    user_id        bigint       DEFAULT NULL,
-    description    text,
-    word_link_name varchar(200) DEFAULT NULL,
-    excluded       smallint     DEFAULT NULL
+    word_link_id       BIGSERIAL PRIMARY KEY,
+    user_id            bigint            DEFAULT NULL,
+    description        text,
+    word_link_name     varchar(200)      DEFAULT NULL,
+    excluded           smallint          DEFAULT NULL,
+    share_type_id      smallint          DEFAULT NULL,
+    protection_type_id smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON COLUMN user_word_links.word_link_name is 'the used unique name (either user created or generic based on the underlying)';
@@ -1301,15 +1305,17 @@ COMMENT ON COLUMN view_word_links.type_id is '1 = from_term_id is link the terms
 
 CREATE TABLE IF NOT EXISTS words
 (
-    word_id      BIGSERIAL PRIMARY KEY,
-    user_id      bigint       DEFAULT NULL,
-    word_name    varchar(200) NOT NULL,
-    plural       varchar(200) DEFAULT NULL,
-    description  text         DEFAULT NULL,
-    word_type_id bigint       DEFAULT NULL,
-    view_id      bigint       DEFAULT NULL,
-    values       bigint       DEFAULT NULL,
-    excluded     smallint     DEFAULT NULL
+    word_id            BIGSERIAL PRIMARY KEY,
+    user_id            bigint                DEFAULT NULL,
+    word_name          varchar(200) NOT NULL,
+    plural             varchar(200)          DEFAULT NULL,
+    description        text                  DEFAULT NULL,
+    word_type_id       bigint                DEFAULT NULL,
+    view_id            bigint                DEFAULT NULL,
+    values             bigint                DEFAULT NULL,
+    excluded           smallint              DEFAULT NULL,
+    share_type_id      smallint              DEFAULT NULL,
+    protection_type_id smallint     NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE words is 'probably all text of th db';
@@ -1362,15 +1368,17 @@ COMMENT ON COLUMN word_del_requests.user_id is 'the user who has requested the t
 CREATE TABLE IF NOT EXISTS word_links
 (
     word_link_id                BIGSERIAL PRIMARY KEY,
-    user_id                     bigint       DEFAULT NULL,
-    from_phrase_id              bigint NOT NULL,
-    verb_id                     bigint NOT NULL,
-    to_phrase_id                bigint NOT NULL,
-    word_link_condition_id      bigint       DEFAULT NULL,
-    word_link_condition_type_id bigint       DEFAULT NULL,
+    user_id                     bigint            DEFAULT NULL,
+    from_phrase_id              bigint   NOT NULL,
+    verb_id                     bigint   NOT NULL,
+    to_phrase_id                bigint   NOT NULL,
+    word_link_condition_id      bigint            DEFAULT NULL,
+    word_link_condition_type_id bigint            DEFAULT NULL,
     description                 text,
-    word_link_name              varchar(200) DEFAULT NULL,
-    excluded                    smallint     DEFAULT NULL
+    word_link_name              varchar(200)      DEFAULT NULL,
+    excluded                    smallint          DEFAULT NULL,
+    share_type_id               smallint          DEFAULT NULL,
+    protection_type_id          smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON COLUMN word_links.word_link_condition_id is 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
