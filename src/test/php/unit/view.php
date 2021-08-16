@@ -77,7 +77,7 @@ function run_view_unit_tests()
     // sql to load the view by code id
     $dsp = new view;
     $dsp->id = 0;
-    $dsp->code_id = DBL_VIEW_WORD;
+    $dsp->code_id = view::WORD;
     $dsp->usr = $usr;
     $db_con->db_type = DB_TYPE_POSTGRES;
     $created_sql = $dsp->load_sql($db_con);
@@ -92,7 +92,7 @@ function run_view_unit_tests()
                             CASE WHEN (u.excluded        IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
-                      WHERE s.code_id = '" . DBL_VIEW_WORD . "' 
+                      WHERE s.code_id = '" . view::WORD . "' 
                         AND s.code_id != NULL;";
     test_dsp('view->load_sql by code id', zu_trim($expected_sql), zu_trim($created_sql));
 

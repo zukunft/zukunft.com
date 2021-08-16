@@ -62,45 +62,6 @@ const MSG_LEVEL = "error";       // in case of an error or fatal error
 const DBL_FIELD = "code_id";
 
 
-// link to the predefined edit views
-// the code ids must unique over all types 
-const DBL_VIEW_START = "dsp_start";
-const DBL_VIEW_WORD = "dsp_word";
-const DBL_VIEW_WORD_ADD = "dsp_word_add";
-const DBL_VIEW_WORD_EDIT = "dsp_word_edit";
-const DBL_VIEW_WORD_FIND = "dsp_word_find";
-const DBL_VIEW_WORD_DEL = "dsp_word_del";
-const DBL_VIEW_VALUE_ADD = "dsp_value_add";
-const DBL_VIEW_VALUE_EDIT = "dsp_value_edit";
-const DBL_VIEW_VALUE_DEL = "dsp_value_del";
-const DBL_VIEW_VALUE_DISPLAY = "dsp_value";
-const DBL_VIEW_FORMULA_ADD = "dsp_formula_add";
-const DBL_VIEW_FORMULA_EDIT = "dsp_formula_edit";
-const DBL_VIEW_FORMULA_DEL = "dsp_formula_del";
-const DBL_VIEW_FORMULA_EXPLAIN = "dsp_formula_explain";
-const DBL_VIEW_FORMULA_TEST = "dsp_formula_test";
-const DBL_VIEW_SOURCE_ADD = "dsp_source_add";
-const DBL_VIEW_SOURCE_EDIT = "dsp_source_edit";
-const DBL_VIEW_SOURCE_DEL = "dsp_source_del";
-const DBL_VIEW_VERBS = "dsp_verbs";
-const DBL_VIEW_VERB_ADD = "dsp_verb_add";
-const DBL_VIEW_VERB_EDIT = "dsp_verb_edit";
-const DBL_VIEW_VERB_DEL = "dsp_verb_del";
-const DBL_VIEW_LINK_ADD = "dsp_triple_add";
-const DBL_VIEW_LINK_EDIT = "dsp_triple_edit";
-const DBL_VIEW_LINK_DEL = "dsp_triple_del";
-const DBL_VIEW_USER = "dsp_user";
-const DBL_VIEW_ERR_LOG = "dsp_error_log";
-const DBL_VIEW_ERR_UPD = "dsp_error_update";
-const DBL_VIEW_IMPORT = "dsp_import";
-// views to edit views                     
-const DBL_VIEW_ADD = "dsp_view_add";
-const DBL_VIEW_EDIT = "dsp_view_edit";
-const DBL_VIEW_DEL = "dsp_view_del";
-const DBL_VIEW_COMPONENT_ADD = "dsp_view_entry_add";
-const DBL_VIEW_COMPONENT_EDIT = "dsp_view_entry_edit";
-const DBL_VIEW_COMPONENT_DEL = "dsp_view_entry_del";
-
 const DBL_FORMULA_PART_TYPE_WORD = "frm_elm_word";
 const DBL_FORMULA_PART_TYPE_VERB = "frm_elm_verb";
 const DBL_FORMULA_PART_TYPE_FORMULA = "frm_elm_formula";
@@ -238,41 +199,6 @@ function sql_code_link($code_id, $description, $db_con)
     // set the table name and the id field
     $table_name = '';
     $db_type = '';
-    if ($code_id == DBL_VIEW_START
-        or $code_id == DBL_VIEW_WORD
-        or $code_id == DBL_VIEW_WORD_ADD
-        or $code_id == DBL_VIEW_WORD_EDIT
-        or $code_id == DBL_VIEW_WORD_FIND
-        or $code_id == DBL_VIEW_WORD_DEL
-        or $code_id == DBL_VIEW_VALUE_ADD
-        or $code_id == DBL_VIEW_VALUE_EDIT
-        or $code_id == DBL_VIEW_VALUE_DEL
-        or $code_id == DBL_VIEW_VALUE_DISPLAY
-        or $code_id == DBL_VIEW_FORMULA_ADD
-        or $code_id == DBL_VIEW_FORMULA_EDIT
-        or $code_id == DBL_VIEW_FORMULA_DEL
-        or $code_id == DBL_VIEW_FORMULA_EXPLAIN
-        or $code_id == DBL_VIEW_FORMULA_TEST
-        or $code_id == DBL_VIEW_SOURCE_ADD
-        or $code_id == DBL_VIEW_SOURCE_EDIT
-        or $code_id == DBL_VIEW_SOURCE_DEL
-        or $code_id == DBL_VIEW_VERBS
-        or $code_id == DBL_VIEW_VERB_ADD
-        or $code_id == DBL_VIEW_VERB_EDIT
-        or $code_id == DBL_VIEW_VERB_DEL
-        or $code_id == DBL_VIEW_LINK_ADD
-        or $code_id == DBL_VIEW_LINK_EDIT
-        or $code_id == DBL_VIEW_LINK_DEL
-        or $code_id == DBL_VIEW_USER
-        or $code_id == DBL_VIEW_ERR_LOG
-        or $code_id == DBL_VIEW_ERR_UPD
-        or $code_id == DBL_VIEW_IMPORT
-        or $code_id == DBL_VIEW_ADD
-        or $code_id == DBL_VIEW_EDIT
-        or $code_id == DBL_VIEW_DEL) {
-        $db_type = DB_TYPE_VIEW;
-    }
-
     if ($code_id == DBL_FORMULA_PART_TYPE_WORD
         or $code_id == DBL_FORMULA_PART_TYPE_VERB
         or $code_id == DBL_FORMULA_PART_TYPE_FORMULA) {

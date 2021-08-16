@@ -95,7 +95,7 @@ if ($usr->id > 0) {
         // prepare the display to edit the view
         $dsp = new view_dsp;
         $dsp->usr = $usr;
-        $dsp->id = clo(DBL_VIEW_ERR_LOG);
+        $dsp->id = cl(db_cl::VIEW, view::ERR_LOG);
         $result .= $dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id);

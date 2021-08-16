@@ -48,7 +48,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_IMPORT);
+    $dsp->id = cl(db_cl::VIEW, view::IMPORT);
     $dsp->usr = $usr;
     $dsp->load();
 

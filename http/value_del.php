@@ -49,7 +49,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_VALUE_DEL);
+    $dsp->id = cl(db_cl::VIEW, view::VALUE_DEL);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];  // the page from which the value deletion has been called

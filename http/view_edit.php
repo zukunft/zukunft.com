@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display to edit the view
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_ADD);
+    $dsp->id = cl(db_cl::VIEW, view::ADD);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];

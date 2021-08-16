@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_VERBS);
+    $dsp->id = cl(db_cl::VIEW, view::VERBS);
     $dsp->usr = $usr;
     $dsp->load();
 

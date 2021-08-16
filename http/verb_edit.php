@@ -50,7 +50,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_VERB_EDIT);
+    $dsp->id = cl(db_cl::VIEW, view::VERB_EDIT);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change is finished

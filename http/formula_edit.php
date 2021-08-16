@@ -48,7 +48,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_FORMULA_EDIT);
+    $dsp->id = cl(db_cl::VIEW, view::FORMULA_EDIT);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];

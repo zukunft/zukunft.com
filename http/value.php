@@ -53,7 +53,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_VALUE_DISPLAY);
+    $dsp->id = cl(db_cl::VIEW, view::VALUE_DISPLAY);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called

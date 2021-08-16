@@ -67,7 +67,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_WORD_ADD);
+    $dsp->id = cl(db_cl::VIEW, view::WORD_ADD);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the calling page which should be displayed after saving

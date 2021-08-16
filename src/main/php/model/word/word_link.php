@@ -1014,9 +1014,9 @@ class word_link extends word_link_object
         $log->usr = $this->usr;
         $log->action = 'add';
         $log->table = 'word_links';
-        $log->new_from = $this->from;
-        $log->new_link = $this->verb;
-        $log->new_to = $this->to;
+        $log->new_from = $this->from->name;
+        $log->new_link = $this->verb->name;
+        $log->new_to = $this->to->name;
         $log->row_id = 0;
         $log->add();
 

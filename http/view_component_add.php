@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     // init the display object to show the standard elements such as the header
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_COMPONENT_ADD);
+    $dsp->id = cl(db_cl::VIEW, view::COMPONENT_ADD);
     $dsp->usr = $usr;
     $dsp->load();
     // the calling stack to move back to page where the user has come from after adding the view component is done

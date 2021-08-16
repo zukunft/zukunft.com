@@ -82,7 +82,7 @@ if ($usr->id > 0) {
                     $view_id = $wrd->view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
-                        $view_id = clo(DBL_VIEW_WORD);
+                        $view_id = cl(db_cl::VIEW, view::WORD);
                     }
                 }
             }

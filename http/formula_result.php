@@ -49,7 +49,7 @@ if ($session_usr->id > 0) {
     // show the header
     $dsp = new view_dsp;
     $dsp->usr = $session_usr;
-    $dsp->id = clo(DBL_VIEW_FORMULA_EXPLAIN);
+    $dsp->id = cl(db_cl::VIEW, view::FORMULA_EXPLAIN);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
 

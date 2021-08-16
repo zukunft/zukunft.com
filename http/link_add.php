@@ -53,7 +53,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $dsp = new view_dsp;
-    $dsp->id = clo(DBL_VIEW_LINK_ADD);
+    $dsp->id = cl(db_cl::VIEW, view::LINK_ADD);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];      // the calling word which should be displayed after saving

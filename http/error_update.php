@@ -49,7 +49,7 @@ if ($usr->id > 0) {
 
     $dsp = new view_dsp;
     $dsp->usr = $usr;
-    $dsp->id = clo(DBL_VIEW_ERR_UPD);
+    $dsp->id = cl(db_cl::VIEW, view::ERR_UPD);
     $result .= $dsp->dsp_navbar($back);
 
     if ($usr->id > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {

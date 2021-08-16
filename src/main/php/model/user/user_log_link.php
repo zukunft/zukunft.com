@@ -55,21 +55,21 @@ class user_log_link
     public ?string $table = null;          // name of the table that has been updated
     private ?int $table_id = null;         // database id for the table text
     // object set by the calling function
-    public ?string $old_from = null;       // the from reference before the user change; should be the object, but is sometimes still the id
-    public ?string $old_link = null;       // the reference type before the user change
-    public ?string $old_to = null;         // the to reference before the user change
-    public ?string $new_from = null;       // the from reference after the user change
-    public ?string $new_link = null;       // the reference type after the user change
-    public ?string $new_to = null;         // the to reference after the user change
-    public ?string $std_from = null;       // the standard from reference for all users that does not have changed it
-    public ?string $std_link = null;       // the standard reference type for all users that does not have changed it
-    public ?string $std_to = null;         // the standard to reference for all users that does not have changed it
+    public ?object $old_from = null;       // the from reference before the user change; should be the object, but is sometimes still the id
+    public ?object $old_link = null;       // the reference type before the user change
+    public ?object $old_to = null;         // the to reference before the user change
+    public ?object $new_from = null;       // the from reference after the user change
+    public ?object $new_link = null;       // the reference type after the user change
+    public ?object $new_to = null;         // the to reference after the user change
+    public ?object $std_from = null;       // the standard from reference for all users that does not have changed it
+    public ?object $std_link = null;       // the standard reference type for all users that does not have changed it
+    public ?object $std_to = null;         // the standard to reference for all users that does not have changed it
     public ?int $row_id = null;            // the reference id of the row in the database table
     // fields to save the database row that are filled here based on the object
     public ?int $old_from_id = null;       // old id ref to the from record
     public ?int $old_link_id = null;       // old id ref to the link record
     public ?int $old_to_id = null;         // old id ref to the to record
-    public ?int $old_text_from = null;     // fixed description for old_from
+    public ?string $old_text_from = null;     // fixed description for old_from
     public ?string $old_text_link = null;  // fixed description for old_link
     public ?string $old_text_to = null;    // fixed description for old_to
     public ?int $new_from_id = null;       // new id ref to the from record
@@ -374,54 +374,78 @@ class user_log_link
         if ($this->table == "words"
             or $this->table == "word_links") {
             if ($this->action == "add" or $this->action == "update") {
-                $this->new_text_from = $this->new_from->name;
-                $this->new_text_link = $this->new_link->name;
-                $this->new_text_to = $this->new_to->name;
-                $this->new_from_id = $this->new_from->id;
-                $this->new_link_id = $this->new_link->id;
-                $this->new_to_id = $this->new_to->id;
+                if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
+                    $this->new_text_from = $this->new_from->name;
+                    $this->new_text_link = $this->new_link->name;
+                    $this->new_text_to = $this->new_to->name;
+                    $this->new_from_id = $this->new_from->id;
+                    $this->new_link_id = $this->new_link->id;
+                    $this->new_to_id = $this->new_to->id;
+                } else {
+                    log_err('Object(s) missing when trying to log a triple add action');
+                }
             }
             if ($this->action == "del" or $this->action == "update") {
-                $this->old_text_from = $this->old_from->name;
-                $this->old_text_link = $this->old_link->name;
-                $this->old_text_to = $this->old_to->name;
-                $this->old_from_id = $this->old_from->id;
-                $this->old_link_id = $this->old_link->id;
-                $this->old_to_id = $this->old_to->id;
+                if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
+                    $this->old_text_from = $this->old_from->name;
+                    $this->old_text_link = $this->old_link->name;
+                    $this->old_text_to = $this->old_to->name;
+                    $this->old_from_id = $this->old_from->id;
+                    $this->old_link_id = $this->old_link->id;
+                    $this->old_to_id = $this->old_to->id;
+                } else {
+                    log_err('Object(s) missing when trying to log a triple del action');
+                }
             }
         }
         if ($this->table == "refs") {
             if ($this->action == "add" or $this->action == "update") {
-                $this->new_text_from = $this->new_from->name;
-                $this->new_text_link = $this->new_link->name;
-                $this->new_text_to = $this->new_to->external_key;
-                $this->new_from_id = $this->new_from->id;
-                $this->new_link_id = $this->new_link->id;
-                $this->new_to_id = $this->new_to->id;
+                if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
+                    $this->new_text_from = $this->new_from->name;
+                    $this->new_text_link = $this->new_link->name;
+                    $this->new_text_to = $this->new_to->external_key;
+                    $this->new_from_id = $this->new_from->id;
+                    $this->new_link_id = $this->new_link->id;
+                    $this->new_to_id = $this->new_to->id;
+                } else {
+                    log_err('Object(s) missing when trying to log a ref add action');
+                }
             }
             if ($this->action == "del" or $this->action == "update") {
-                $this->old_text_from = $this->old_from->name;
-                $this->old_text_link = $this->old_link->name;
-                $this->old_text_to = $this->old_to->external_key;
-                $this->old_from_id = $this->old_from->id;
-                $this->old_link_id = $this->old_link->id;
-                $this->old_to_id = $this->old_to->id;
+                if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
+                    $this->old_text_from = $this->old_from->name;
+                    $this->old_text_link = $this->old_link->name;
+                    $this->old_text_to = $this->old_to->external_key;
+                    $this->old_from_id = $this->old_from->id;
+                    $this->old_link_id = $this->old_link->id;
+                    $this->old_to_id = $this->old_to->id;
+                } else {
+                    log_err('Object(s) missing when trying to log a ref del action');
+                }
             }
         }
         if ($this->table == "view_component_links"
             or $this->table == "value_phrase_links"
             or $this->table == "formula_links") {
             if ($this->action == "add" or $this->action == "update") {
-                $this->new_text_from = $this->new_from->name;
-                $this->new_text_to = $this->new_to->name;
-                $this->new_from_id = $this->new_from->id;
-                $this->new_to_id = $this->new_to->id;
+                if ($this->new_from != null and $this->new_to != null) {
+                    $this->new_text_from = $this->new_from->name;
+                    $this->new_text_to = $this->new_to->name;
+                    $this->new_from_id = $this->new_from->id;
+                    $this->new_to_id = $this->new_to->id;
+                } else {
+                    log_err('Object(s) missing when trying to log an add action');
+                }
             }
             if ($this->action == "del" or $this->action == "update") {
-                $this->old_text_from = $this->old_from->name;
-                $this->old_text_to = $this->old_to->name;
-                $this->old_from_id = $this->old_from->id;
-                $this->old_to_id = $this->old_to->id;
+                if ($this->old_from != null and $this->old_to != null) {
+                    $this->old_text_from = $this->old_from->name;
+                    $this->old_text_to = $this->old_to->name;
+                    $this->old_from_id = $this->old_from->id;
+                    $this->old_to_id = $this->old_to->id;
+                } else {
+                    log_err('Object(s) missing when trying to log an del action');
+                }
             }
         }
         if ($this->table == "values" and $this->link_text == "source") {
