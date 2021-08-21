@@ -578,11 +578,11 @@ CREATE TABLE IF NOT EXISTS sys_log_functions
 
 CREATE TABLE IF NOT EXISTS sys_log_status
 (
-    sys_log_status_id   BIGSERIAL PRIMARY KEY,
-    sys_log_status_name varchar(200) NOT NULL,
-    code_id             varchar(50)  NOT NULL,
-    comment             text         NOT NULL,
-    action              varchar(200) DEFAULT NULL
+    sys_log_status_id BIGSERIAL PRIMARY KEY,
+    type_name         varchar(200) NOT NULL,
+    code_id           varchar(50)  NOT NULL,
+    description       text         NOT NULL,
+    action            varchar(200) DEFAULT NULL
 );
 
 COMMENT ON TABLE sys_log_status is 'Status of internal errors';

@@ -29,6 +29,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /**
+ * create the system log status list for the unit tests without database connection
+ */
+function unit_test_init_sys_log_status()
+{
+    global $sys_log_stati;
+
+    $sys_log_stati = new sys_log_status();
+    $sys_log_stati->load_dummy();
+
+}
+
+/**
  * create the user profiles for the unit tests without database connection
  */
 function unit_test_init_user_profiles()
@@ -168,6 +180,7 @@ function run_unit_tests()
     test_header('Start the zukunft.com unit tests');
 
     // prepare the unit tests
+    unit_test_init_sys_log_status();
     unit_test_init_user_profiles();
     unit_test_init_word_types();
     unit_test_init_verbs();

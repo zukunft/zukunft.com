@@ -598,11 +598,11 @@ CREATE TABLE IF NOT EXISTS `sys_log_functions`
 
 CREATE TABLE IF NOT EXISTS `sys_log_status`
 (
-    `sys_log_status_id`   int(11)      NOT NULL,
-    `sys_log_status_name` varchar(200) NOT NULL,
-    `code_id`             varchar(50)  NOT NULL,
-    `comment`             text         NOT NULL,
-    `action`              varchar(200) DEFAULT NULL COMMENT 'description of the action to get to this status'
+    `sys_log_status_id` int(11)      NOT NULL,
+    `type_name`         varchar(200) NOT NULL,
+    `code_id`           varchar(50)  NOT NULL,
+    `description`       text         NOT NULL,
+    `action`            varchar(200) DEFAULT NULL COMMENT 'description of the action to get to this status'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='Status of internal errors';

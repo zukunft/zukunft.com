@@ -98,7 +98,7 @@ if ($usr->id > 0) {
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $dsp->name == '') {
-                $view_id = clo(DEFAULT_VIEW);
+                $view_id = cl(db_cl::VIEW, view::START);
                 $dsp->id = $view_id;
                 $dsp->load();
                 $dsp_text = $dsp->display($wrd, $back);

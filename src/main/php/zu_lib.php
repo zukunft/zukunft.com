@@ -362,6 +362,7 @@ const DB_TYPE_CHANGE_ACTION = 'change_action';
 const DB_TYPE_CHANGE_LINK = 'change_link';
 const DB_TYPE_CONFIG = 'config';
 const DB_TYPE_SYS_LOG = 'sys_log';
+const DB_TYPE_SYS_LOG_STATUS = 'sys_log_status';
 const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
 const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
@@ -417,6 +418,8 @@ include_once $root_path . 'database/sql_db.php';
 include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
+include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/system/system_error_log_status_list.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';
@@ -426,7 +429,6 @@ include_once $path_php . 'service/export/xml.php';
 // classes
 include_once $path_php . 'model/user/user.php';
 include_once $path_php . 'model/user/user_type.php';
-include_once $path_php . 'model/user/user_type_list.php';
 include_once $path_php . 'model/user/user_profile_list.php';
 include_once $path_php . 'model/user/user_list.php';
 include_once $path_php . 'model/user/user_log.php';
@@ -595,10 +597,6 @@ const DEFAULT_WORD_ID = 1;
 const DEFAULT_WORD_TYPE_ID = 1;
 const DEFAULT_DEC_POINT = ".";
 const DEFAULT_THOUSAND_SEP = "'";
-
-// some standard settings used as a fallback
-// move to code link?
-const DEFAULT_VIEW = "dsp_start";
 
 // text conversion const (used to convert word, verbs or formula text to a database reference)
 const ZUP_CHAR_WORD = '"';    // or a zukunft verb or a zukunft formula
@@ -837,6 +835,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $protection_types;
     global $verbs;
     global $system_views;
+    global $sys_log_stati;
 
     // resume session (based on cookies)
     session_start();
@@ -867,6 +866,9 @@ function prg_start($code_name, $style = ""): sql_db
     }
 
     // load default records
+    $sys_log_stati = new sys_log_status();
+    $sys_log_stati->load($db_con);
+
     $sys_log_msg_type_info_id = sql_code_link(DBL_SYSLOG_INFO, "Info", $db_con);
     $sys_log_msg_type_warning_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning", $db_con);
     $sys_log_msg_type_error_id = sql_code_link(DBL_SYSLOG_ERROR, "Error", $db_con);

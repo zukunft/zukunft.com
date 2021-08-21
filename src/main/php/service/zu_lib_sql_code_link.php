@@ -76,14 +76,7 @@ const DBL_WORD_OTHER = "other";  // replaced by a word type
 const DBL_USER_SYSTEM_TEST = "usr_system_test";
 const DBL_USER_SYSTEM = "usr_system";
 
-// system log stati
-// TODO use a real enum because it is internal and no user can add something new
-const DBL_ERR_NEW = "log_status_new";
-const DBL_ERR_ASSIGNED = "log_status_assigned";
-const DBL_ERR_RESOLVED = "log_status_resolved";
-const DBL_ERR_CLOSED = "log_status_closed";
-
-// system log types                       
+// system log types
 // TODO use a real enum because it is internal and no user can add something new
 const DBL_SYSLOG_INFO = "log_info";
 const DBL_SYSLOG_WARNING = "log_warning";
@@ -217,13 +210,6 @@ function sql_code_link($code_id, $description, $db_con)
         $db_type = "user";
     }
 
-    if ($code_id == DBL_ERR_NEW
-        or $code_id == DBL_ERR_ASSIGNED
-        or $code_id == DBL_ERR_RESOLVED
-        or $code_id == DBL_ERR_CLOSED) {
-        $db_type = "sys_log_status";
-    }
-
     if ($code_id == DBL_SYSLOG_TBL_VALUE
         or $code_id == DBL_SYSLOG_TBL_VALUE_USR
         or $code_id == DBL_SYSLOG_TBL_VALUE_LINK
@@ -255,10 +241,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_JOB_WORD_LINK
         or $code_id == DBL_JOB_WORD_UNLINK) {
         $db_type = "calc_and_cleanup_task_type";
-    }
-
-    if ($code_id == DBL_ERR_CLOSED) {
-        $db_type = "sys_log_status";
     }
 
     /*  if ($code_id == EVENT_TYPE_TRADE_MISSING

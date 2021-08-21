@@ -249,7 +249,7 @@ INSERT INTO source_types (source_type_id, source_type_name, code_id) VALUES
 -- Dumping data for table 'sys_log_status'
 --
 
-INSERT INTO sys_log_status (sys_log_status_id, sys_log_status_name, code_id, comment, action) VALUES
+INSERT INTO sys_log_status (sys_log_status_id, type_name, code_id, description, action) VALUES
 (1, 'new', 'log_status_new', 'the error has just being logged and no one has yet looked at it ', NULL),
 (2, 'assigned', 'log_status_assigned', 'A developer is looking at the error.', 'assign to'),
 (3, 'resolved', 'log_status_resolved', 'the error is supposed to be corrected', 'resolve'),

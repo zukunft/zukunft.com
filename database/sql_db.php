@@ -596,8 +596,8 @@ class sql_db
         if ($result == 'profile_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
-        if ($result == 'sys_log_statuss_name') {
-            $result = 'sys_log_status_name';
+        if ($result == 'sys_log_status_name') {
+            $result = sql_db::FLD_TYPE_NAME;
         }
         log_debug("sql_db->set_name_field to (" . $result . ")");
         $this->name_field = $result;

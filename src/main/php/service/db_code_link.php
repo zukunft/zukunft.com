@@ -44,6 +44,7 @@ class db_cl
     const SHARE_TYPE = "share_type";
     const PROTECTION_TYPE = "protection_type";
     const USER_PROFILE = "user_profile_type";
+    const LOG_STATUS = "system_log_status";
 
     /**
      * get the database row id for a given code_id
@@ -52,6 +53,18 @@ class db_cl
      * @param string $code_id the code_id string that must only be unique within the type
      * @return int the database row id
      */
+    function sys_log_status_id(string $code_id): int
+    {
+        global $sys_log_stati;
+        return $sys_log_stati->id($code_id);
+    }
+
+    function user_profile_id(string $code_id): int
+    {
+        global $user_profiles;
+        return $user_profiles->id($code_id);
+    }
+
     function word_type_id(string $code_id): int
     {
         global $word_types;
@@ -106,18 +119,24 @@ class db_cl
         return $protection_types->id($code_id);
     }
 
-    function user_profile_id(string $code_id): int
-    {
-        global $user_profiles;
-        return $user_profiles->id($code_id);
-    }
-
     /**
      * the type object base on the given database row id
      *
      * @param int $id the database row id
      * @return mixed the type object
      */
+    function sys_log_status(int $id)
+    {
+        global $sys_log_stati;
+        return $sys_log_stati->get($id);
+    }
+
+    function user_profile(int $id)
+    {
+        global $user_profiles;
+        return $user_profiles->get($id);
+    }
+
     function word_type(int $id)
     {
         global $word_types;
@@ -154,18 +173,24 @@ class db_cl
         return $protection_types->get($id);
     }
 
-    function user_profile(int $id)
-    {
-        global $user_profiles;
-        return $user_profiles->get($id);
-    }
-
     /**
      * get the user specific name of a database row selected by the database id
      *
      * @param int $id
      * @return string
      */
+    function sys_log_status_name(int $id): string
+    {
+        global $sys_log_stati;
+        return $sys_log_stati->name($id);
+    }
+
+    function user_profile_name(int $id): string
+    {
+        global $user_profiles;
+        return $user_profiles->name($id);
+    }
+
     function word_type_name(int $id): string
     {
         global $word_types;
@@ -220,12 +245,6 @@ class db_cl
         return $protection_types->name($id);
     }
 
-    function user_profile_name(int $id): string
-    {
-        global $user_profiles;
-        return $user_profiles->name($id);
-    }
-
 }
 
 
@@ -242,6 +261,9 @@ function cl(string $type, string $code_id): int
     $result = 0;
     $db_code_link = new db_cl();
     switch ($type) {
+        case db_cl::LOG_STATUS:
+            $result = $db_code_link->sys_log_status_id($code_id);
+            break;
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile_id($code_id);
             break;
@@ -289,6 +311,9 @@ function cl_name(string $type, int $id): int
     $result = '';
     $db_code_link = new db_cl();
     switch ($type) {
+        case db_cl::LOG_STATUS:
+            $result = $db_code_link->sys_log_status_name($id);
+            break;
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile_name($id);
             break;
@@ -335,6 +360,9 @@ function get_type(string $type, string $code_id): user_type
     $result = null;
     $db_code_link = new db_cl();
     switch ($type) {
+        case db_cl::LOG_STATUS:
+            $result = $db_code_link->sys_log_status($db_code_link->sys_log_status_id($code_id));
+            break;
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile($db_code_link->user_profile_id($code_id));
             break;
