@@ -831,7 +831,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
 
     // load the verb
     $vrb = new verb;
-    $vrb->id = clo($verb);
+    $vrb->id = cl(db_cl::VERB, $verb);
     $vrb->usr = $usr;
     $vrb->load();
     $lnk_test = new word_link;
@@ -841,16 +841,22 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
     } else {
         // check if the forward link exists
         $lnk_test->from_id = $wrd_from->id;
-        $lnk_test->verb_id = clo($verb);
+        $lnk_test->verb_id = cl(db_cl::VERB, $verb);
         $lnk_test->to_id = $wrd_to->id;
         $lnk_test->usr = $usr;
         $lnk_test->load();
         if ($lnk_test->id > 0) {
+            // refresh the given name if needed
+            if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
+                $lnk_test->description = $phrase_name;
+                $lnk_test->save();
+                $lnk_test->load();
+            }
             $result = $lnk_test;
         } else {
             // check if the backward link exists
             $lnk_test->from_id = $wrd_to->id;
-            $lnk_test->verb_id = clo($verb);
+            $lnk_test->verb_id = cl(db_cl::VERB, $verb);
             $lnk_test->to_id = $wrd_from->id;
             $lnk_test->usr = $usr;
             $lnk_test->load();
@@ -858,7 +864,7 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
             // create the link if requested
             if ($lnk_test->id <= 0 and $autocreate) {
                 $lnk_test->from_id = $wrd_from->id;
-                $lnk_test->verb_id = clo($verb);
+                $lnk_test->verb_id = cl(db_cl::VERB, $verb);
                 $lnk_test->to_id = $wrd_to->id;
                 $lnk_test->save();
                 $lnk_test->load();
@@ -867,8 +873,8 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
                     $lnk_test->description = $phrase_name;
                     $lnk_test->save();
                     $lnk_test->load();
-                    $result = $lnk_test;
                 }
+                $result = $lnk_test;
             }
         }
     }
@@ -930,10 +936,10 @@ function zu_test_time_setup(): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             test_word(strval($this_year));
-            $wrd_lnk = test_word_link(TW_YEAR, DBL_LINK_TYPE_IS, $this_year, true, '');
+            $wrd_lnk = test_word_link(TW_YEAR, verb::DBL_IS, $this_year, true, '');
             $result = $wrd_lnk->name;
             if ($prev_year <> '') {
-                test_word_link($prev_year, DBL_LINK_TYPE_FOLLOW, $this_year, true, '');
+                test_word_link($prev_year, verb::DBL_FOLLOW, $this_year, true, '');
             }
             $prev_year = $this_year;
         }
@@ -961,4 +967,24 @@ function zu_test_dsp_result()
     echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';
     echo '<br>';
     echo '<br>';
+}
+
+// display the test results
+function test_dsp_result()
+{
+
+    global $start_time;
+    global $error_counter;
+    global $timeout_counter;
+    global $total_tests;
+
+    echo "\n";
+    $since_start = microtime(true) - $start_time;
+    echo round($since_start, 4) . ' seconds for testing zukunft.com';
+    echo "\n";
+    echo $total_tests . ' test cases';
+    echo "\n";
+    echo $timeout_counter . ' timeouts';
+    echo "\n";
+    echo $error_counter . ' errors';
 }

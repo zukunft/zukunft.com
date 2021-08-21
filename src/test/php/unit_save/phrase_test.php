@@ -29,13 +29,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function create_base_phrases()
 {
     echo "<h2>Check if all base phrases are correct</h2><br>";
-    test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CANTON, TP_ZH_CANTON);
-    test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CITY, TP_ZH_CITY);
-    test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TEST_WORD, TP_ZH_INS, TP_ZH_INS);
-    test_word_link(TW_ABB, DBL_LINK_TYPE_IS, TEST_WORD, TP_ABB);
-    test_word_link(TW_2014, DBL_LINK_TYPE_FOLLOW, TW_2013, TP_FOLLOW);
+    test_word_link(TW_ZH, verb::DBL_IS, TW_CANTON, TP_ZH_CANTON);
+    test_word_link(TW_ZH, verb::DBL_IS, TW_CITY, TP_ZH_CITY);
+    test_word_link(TW_ZH, verb::DBL_IS, TEST_WORD, TP_ZH_INS, TP_ZH_INS);
+    test_word_link(TW_ABB, verb::DBL_IS, TEST_WORD, TP_ABB);
+    test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
-    test_word_link(TW_TAX, DBL_LINK_TYPE_CONTAIN, TW_CF,TP_TAXES);
+    test_word_link(TW_TAX, verb::DBL_CONTAIN, TW_CF,TP_TAXES);
     echo "<br><br>";
 
     echo "<h2>Check if all base phrases are correct</h2><br>";

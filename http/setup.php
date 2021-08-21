@@ -57,7 +57,7 @@ sql_code_link(view::EDIT,         "view Edit", $db_con);
 sql_code_link(view::IMPORT,       "Import", $db_con);
 
 sql_code_link(word_type_list::DBL_TIME,    "Time Word", $db_con);
-sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
+//sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
 
 // create test records
 // these records are used for the test cases

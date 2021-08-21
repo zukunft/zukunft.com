@@ -62,36 +62,35 @@ const MSG_LEVEL = "error";       // in case of an error or fatal error
 const DBL_FIELD = "code_id";
 
 
+// move to reaL EMUN, because it is only internal
 const DBL_FORMULA_PART_TYPE_WORD = "frm_elm_word";
 const DBL_FORMULA_PART_TYPE_VERB = "frm_elm_verb";
 const DBL_FORMULA_PART_TYPE_FORMULA = "frm_elm_formula";
 
-// predefined word link types or verbs    
-const DBL_LINK_TYPE_IS = "vrb_is";
-const DBL_LINK_TYPE_CONTAIN = "vrb_contains";
-const DBL_LINK_TYPE_FOLLOW = "vrb_follow";
-const DBL_LINK_TYPE_DIFFERENTIATOR = "vrb_can_contain";
-const DBL_LINK_TYPE_CAN_BE = "vrb_can_be";
-
-// predefined words                       
+// predefined words
+// TODO move to word type
 const DBL_WORD_OTHER = "other";  // replaced by a word type
 
 // single special users
+// TODO move to user role
 const DBL_USER_SYSTEM_TEST = "usr_system_test";
 const DBL_USER_SYSTEM = "usr_system";
 
-// system log stati                       
+// system log stati
+// TODO use a real enum because it is internal and no user can add something new
 const DBL_ERR_NEW = "log_status_new";
 const DBL_ERR_ASSIGNED = "log_status_assigned";
 const DBL_ERR_RESOLVED = "log_status_resolved";
 const DBL_ERR_CLOSED = "log_status_closed";
 
 // system log types                       
+// TODO use a real enum because it is internal and no user can add something new
 const DBL_SYSLOG_INFO = "log_info";
 const DBL_SYSLOG_WARNING = "log_warning";
 const DBL_SYSLOG_ERROR = "log_error";
 const DBL_SYSLOG_FATAL_ERROR = "log_fatal";
 
+// TODO use a real enum because it is internal and no user can add something new
 const DBL_SYSLOG_TBL_USR = "users";
 const DBL_SYSLOG_TBL_VALUE = "values";
 const DBL_SYSLOG_TBL_VALUE_USR = "user_values";
@@ -113,6 +112,7 @@ const DBL_SYSLOG_TBL_VIEW_COMPONENT_USR = "user_view_components";
 
 
 // the batch job types to keep the dependencies updated and the database clean
+// TODO use a real enum because it is internal and no user can add something new
 const DBL_JOB_VALUE_UPDATE = "job_value_update";
 const DBL_JOB_VALUE_ADD = "job_value_add";
 const DBL_JOB_VALUE_DEL = "job_value_del";
@@ -126,6 +126,7 @@ const DBL_JOB_WORD_UNLINK = "job_word_unlink";
 
 
 // fixed settings without code id for the triple links
+// TODO use a real enum because it is internal and no user can add something new
 const DBL_TRIPLE_LINK_IS_WORD = 1;
 const DBL_TRIPLE_LINK_IS_TRIPLE = 2;
 const DBL_TRIPLE_LINK_IS_GROUP = 3;
@@ -258,13 +259,6 @@ function sql_code_link($code_id, $description, $db_con)
 
     if ($code_id == DBL_ERR_CLOSED) {
         $db_type = "sys_log_status";
-    }
-
-    if ($code_id == DBL_LINK_TYPE_IS
-        or $code_id == DBL_LINK_TYPE_CONTAIN
-        or $code_id == DBL_LINK_TYPE_FOLLOW
-        or $code_id == DBL_LINK_TYPE_DIFFERENTIATOR) {
-        $db_type = "verb";
     }
 
     /*  if ($code_id == EVENT_TYPE_TRADE_MISSING

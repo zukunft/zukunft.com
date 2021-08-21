@@ -49,7 +49,7 @@ function run_word_link_test()
     $wrd_canton = load_word(TW_CANTON);
 
     // test the City of Zurich
-    $lnk_city = test_word_link(TW_ZH, DBL_LINK_TYPE_IS, TW_CITY, false, TP_ZH_CITY);
+    $lnk_city = test_word_link(TW_ZH, verb::DBL_IS, TW_CITY, false, TP_ZH_CITY);
 
     // ... now test the Canton Zurich
     $lnk_canton = new word_link;
