@@ -901,7 +901,7 @@ function zuc_upd_val_lst($val_ids_updated, $upd_usr)
     // include the category words, because a formula linked to "Year" is inheritent to e.g. "2016"
     $val_wrd_lst = zuv_ids_wrd_lst_incl_cat($val_ids_updated, $upd_usr);
 
-    $elm_type_id = clo(DBL_FORMULA_PART_TYPE_WORD);
+    $elm_type_id = formula_element_type::WORD;
     $sql = "SELECT formula_id 
             FROM formula_elements
            WHERE formula_element_type_id = " . $elm_type_id . "

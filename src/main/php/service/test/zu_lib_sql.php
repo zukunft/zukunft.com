@@ -153,8 +153,7 @@ function zu_sql_exe($sql, $user_id, $log_level, $function_name, $function_trace)
         $sql = str_replace("'", "", $sql);
         $sql = str_replace("\"", "", $sql);
         $msg_text .= " (" . $sql . ")";
-        $msg_type_id = clo($log_level);
-        $result = log_msg($msg_text, $msg_type_id, $function_name, $function_trace, $user_id);
+        $result = log_msg($msg_text, $log_level, $function_name, $function_trace, $user_id);
         log_debug("zu_sql_exe -> error (" . $result . ")");
     }
 

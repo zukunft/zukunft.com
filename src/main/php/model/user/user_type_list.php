@@ -185,4 +185,5 @@ class user_type_list
         $this->type_hash[user_type_list::TEST_TYPE] = 1;
 
     }
+
 }

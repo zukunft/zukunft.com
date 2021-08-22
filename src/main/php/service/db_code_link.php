@@ -34,6 +34,7 @@
 class db_cl
 {
     // list of all user types that are used
+    const SYS_USER = "system_user";
     const WORD_TYPE = "word_type";
     const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
@@ -59,6 +60,12 @@ class db_cl
     {
         global $sys_log_stati;
         return $sys_log_stati->id($code_id);
+    }
+
+    function sys_usr_id(string $code_id): int
+    {
+        global $system_users;
+        return $system_users->id($code_id);
     }
 
     function user_profile_id(string $code_id): int
@@ -211,6 +218,12 @@ class db_cl
         return $sys_log_stati->name($id);
     }
 
+    function sys_usr_name(int $id): string
+    {
+        global $system_users;
+        return $system_users->name($id);
+    }
+
     function user_profile_name(int $id): string
     {
         global $user_profiles;
@@ -302,6 +315,9 @@ function cl(string $type, string $code_id): int
         case db_cl::LOG_STATUS:
             $result = $db_code_link->sys_log_status_id($code_id);
             break;
+        case db_cl::SYS_USER:
+            $result = $db_code_link->sys_usr_id($code_id);
+            break;
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile_id($code_id);
             break;
@@ -357,6 +373,9 @@ function cl_name(string $type, int $id): int
     switch ($type) {
         case db_cl::LOG_STATUS:
             $result = $db_code_link->sys_log_status_name($id);
+            break;
+        case db_cl::SYS_USER:
+            $result = $db_code_link->sys_usr_name($id);
             break;
         case db_cl::USER_PROFILE:
             $result = $db_code_link->user_profile_name($id);

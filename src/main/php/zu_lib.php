@@ -5,296 +5,33 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
-  this code follows the principle of Antoine de Saint-Exupéry 
-
-  "Il semble que la perfection soit atteinte non quand il n'y a plus rien à ajouter, 
-   mais quand il n'y a plus rien à retrancher." 
-   
-  In English "reduce to the max"
-  
-  The code use for zukunft.com should be as simple as possible and have as less dependencies and each part as capsuled as possible,
-  so basically follow the Zen of Python https://www.python.org/dev/peps/pep-0020/
-  So you the minimal requirements are a LAMP server (https://wiki.debian.org/LaMp) and an HTML (using some HTML5 features) browser.
-  If you see anything that does not look simple to you, 
-  please request a change on https://github.com/zukunft/zukunft.com
-  or write an email to timon@zukunft.com
-  
-  
-  General coding principles:
-   - init:        each function first collect the global vars, initiate the result variable and create a debug message if requested
-   - check input: each method should check the consistency of the input parameters at the beginning
-   - debug:       all methods have a "debug" message after the input check for easy debugging
-   - $debug-1:    a call of the next level function should be with debug-1 so that the user can dig into step by step
-   - $debug-10:   up to a debug level of 10 the debug messages should be a kind of user readable
-                  debug levels above 10 are used for programmer debugging
-   - each code file start with a table of contents and the copyright
-   - each function should be tested in test.php
-   - debug messages are display immediately using echo (always via the function zu_debug)
-   - all other function usually return html code that is displayed only by one of the 8 main interface scripts
-  
-  Naming conventions:
-  -------------------
-  wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
-                             and used to retrieve the numeric values
-  val (VALue)              - a numeric value the can be used for calculations
-  frm (FoRMula)            - a formula in the zukunft.com format,
-                             which can be either in the usr (USeR) format with real words
-                             or in the db (DataBase) format with database id references
-                             or in the math (MATHematical) format, which should contain only numeric values
-  
-  vrb (VeRB)               - a predicate (mostly just a verb) that defines the type of links two words;
-                             by default a verb can be used forward and backward e.g. ABB is a company and companies are ABB, ...
-                             if the reverse name is empty, the verb can only be used the forward way
-                             if a link should only be used one way for one phrase link, the negative verb is saved
-                             verbs are also named as word_links
-  lnk (LiNK)               - a triple/sentence, so a word connected to another word with a verb (word_link.php is the related class)
-  phr (PHRase)             - transformed triple or word in order to use them together as one object
-  grp (GrouP)              - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
-  trm (TeRM)               - either a word, verb or triple (formula names have always a corresponding phrase)
-                             (verb X creates term X so if word X wants to be added there already is a term X, therefore blocking the input)
-  exp (EXPression)         - a formula text that implies a data selection and lead to a number
-  elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements (cancel? replace with term?)
-  fv (Formula Value)       - the calculated result of a formula (rename to result? and if use RESult)
-  fig (FIGure)             - either a value set by the user or a calculated formula result
-  usr (USeR)               - the person who is logged in
-  log                      - to save all changes in a user readable format
-  src (SouRCe)             - url or description where a value is taken from
-
-  sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
-  uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
-                             (useless?)
-  id (IDentifier)          - internal prime key of a database row
-  ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
-  lst (LiST)               - an array of objects
-  glst (Get LiST)          - is used to name the private internal functions that can also create the user list
-  ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
-                             the user list should only be used to display something and never for checking if an item exists
-                             this is the short for for sbx_lst
-
-  dsp (DiSPlay)            - a view/mask that is shown to the user
-  ui (UserInterface)       - the definition of the user interface, mainly used to display either the JavaScript based single page design, the bootstrap based HTML design, the design based on pure HTML code or a pure text output for testing
-  djs (DiSPlay JavaScript) - functions for the vue.js JavaScript user interface implementation
-  dbs (DiSPlay BootStrap)  - functions for the bootstrap user interface implementation
-  dsp (DiSPlay html)       - functions for the pure html user interface implementation
-                             a view object or a function that return HTML code that can be displayed
-  dtx (DiSPlay TeXt)       - functions for the text interface implementation mainly for debugging
-  cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
-  dsl (DSp cmp Link)       - link of a view component to a view
-  btn (BuTtoN)             - button
-  tbl (TaBLe)              - HTML code for a table
-  
-  cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
-  sf (Sql Format)          - to convert a text for the database
-  
-  
-  database change setup
-  ---------------------
-  
-  User Sandbox: values, formulas, formula_links, views and view elements are included in the user sandbox, which means, each user can exclude or adjust single entries
-  
-  to avoid confusion words, formula names, word_links (verbs) and value_phrase_links are excluded from the user sandbox, but a normal user can change the name, which will hopefully not happen often. 
-  
-  for words, formulas and verbs the user can add a specific name in any language
-  
-  Admin edit: for word_links (verbs), word_types, link_types, formula_types there is only one valid record and only an admin user is allowed to change it, which is also because these tables have a code id
-  
-  Sources: every user can change it, but there is only one valid row
-
-  Saving: there are several methods to save user data
-    - not user specific data like verbs, which are saved with the standard process
-    - user specific data like formulas, which are saved base on the user sandbox functions
-    - user specific data, which change very rarely and has code functionality linked like view types
-    - not user specific data, which change only with a program update like the view component position type
-
-  
-  Fixed server splitting (if not hadoop is used as the backend)
-  To split the load between to several servers it is suggested to move one word and all it's related values and results to a second server
-  further splitting can be done by another word to split in hierarchy order 
-  e.g. use company as the first splitter and than ABB, Daimler, ... as the second or CO2 as the second tree
-       in this case the CO2 balance of ABB will be on the "Company ABB server", but all other CO2 data will be on en "environment server"
-  the word graph should stay on the main server for consistency reasons     
-
-  code links
-  ----------
-
-  types (like words types or view types) are used to assign coded functionality to some words or views. This implies
-  that a type always must have a code_id. This code_id is also used for system im- and export.
-
-  function naming
-  ---------------
-  
-  all classes should have these functions: 
-  
-  load                  - based on given id setting load an existing object; if no object is found, return null
-  load_*_types          - load all types once from the database, because types are supposed to change almost never or with a program version change
-                          e.g. the global function load_ref_types load all possible reference type to external databases
-  get                   - based on given id setting load an existing object; if not found in database create it
-  get_*_type            - get a type object by the id
-  get_*_type_by_name    - get a type object by the code id
-  get_*_type_by_code_id - get a type object by the code id
-  save                  - update all changes in the database; if not found in database create it
-  dsp_id                - like name, but with some ids for better debugging
-  name                  - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
-  name_linked           - like name, but with HTML link to the single objects
-  display               - the result and the name of the object e.g. ABB, Sales: 46'000
-  display_linked        - like display, but with HTML links to the related objects
-
-  All objects needs to have the functions dsp_id and name. These two functions should never all any debug functionality, because they can be called from the debug functions
-  
-  *_test         - the unit test function which should be below each function e.g. the function prg_version_is_older is tested by prg_version_is_older_test
-
-  TODO create a verbs hash list
-  TODO load the database code links from csv
-  TODO create the unit tests for the core elements such as word, value, formula, view
-  TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
-  TODO replace all clo() with cl()
-  TODO split the database from the memory object to save memory
-  TODO add an im- and export code_id that is only unique for each type
-  TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
-  TODO use the type hash tables for words, formulas, view and components
-  TODO create all export objects and add all import export unit tests
-  TODO complete the database abstraction layer
-  TODO create unit tests for all module classes
-  TODO name all queries with user data as prepared queries to prevent SQL code injections
-  TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
-  TODO crawl all public available information from the web and add it as user preset to the database
-  TODO rename dsp_text in formula to display
-  TODO rename name_linked in formula_element to name_linked
-  TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
-  TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
-  TODO check all data from an URL or from a user form that it contains no SQL code
-  TODO move the init database fillings to on class instead of on SQL statement for each database
-  TODO prevent XSS attacks and script attacks
-  TODO check the primary index of all user tables
-  TODO load the config, that is not expected to be changed during a session once at startup
-  TODO start the backend only once and react to REST calls from the frontend
-  TODO make use of __DIR__ ?
-  TODO create a User Interface API
-
-
-  functions of this library
-  ---------
-  
-  prefix for functions in this library: zu_* 
-
-  This library contains general functions like debug or string
-  that could also be taken from another framework
-  
-  all functions that could potentially go wrong have the parameter debug,
-  so that the administrator can find out more details about what has gone wrong
-  a positive debug value means that the user wants to see some debug message
-  
-
-  debug functions
-  -----
-  
-  zu_debug   - for interactive debugging (since version 0.0.3 based on a global $debug var, because meanwhile the PhpStorm has a debugger)
-  zu_msg     - write a message to the system log for later debugging
-  zu_info    - info message
-  zu_warning - log a warning message if log level is set to warning
-  zu_err     - log an error message
-  zu_fatal   - log an fatal error message and call a database cleanup
-  zu_start   - open the database and display the header
-  zu_end     - close the database
-  
-  display functions - that all objects should have
-  -------
-  
-  name        - the most useful name of the object for the user
-  dsp_id      - the name including the database id for debugging
-  zu_dsp_bool - 
-  
-  
-  admin
-  - use once loaded arrays for all tables that are never expected to be changed like the type tables
-  - allow the admin user to set the default value
-  - create a daily? task that finds the median value, sets it as the default and recreate the user values
-  - add median_user and set_owner to all user sandbox objects
-  - check which functions can be private in the user_sandbox
-  - use private zukunft data to manage the zukunft payments for keeping data private and 
-  - don't check ip address if someone is trying to login
-
-  Technical
-  - move the JSON object creation to the classes
-  - use the SQL LIMIT clause in all SQL statements and ...
-  - ... auto page if result size is above the limit
-  - capsule all function so that all parameters are checked before the start
-  
-  usability
-  - add a view element that show the value differences related to a word; e.g. where other user use other values and formula results for ABB
-
-  UI
-  - review UI concept: click only for view, double click for change and right click for more related change functions (or three line menu)
-
-  view
-  - move the edit and add view to the change view mask instead show a pencil to edit the view
-  - add a select box the the view name in the page header e.g. select box to select the view with a line to add a new view 
-  - add for values, words, formulas, ... the tab "compare" additional to "Changes"
-  
-  Table view
-  - a table headline should show a mouseover message e.g. the "not unhappy ratio" should show explain what it is if the mouse is moved over the word
-  - allow to add a sub row to the table view and allow to select a formula for the sub row
-
-  value view
-  - when displaying a value allow several display formats (template formatting including ...
-  - ... sub values for related formula result
-  - ... other user plus minus indicator
-  - ... other user range chart)
-  - show the values of other users also if the user has just an IP
-
-  word view
-  - set and compare the default view for words e.g. the view for company should be company list
-  - in link_edit.php?id=313 allow to change the name for the phrase and show the history
-  - rename word_links to phrase links, because it should always be possible to link a phrase
-  
-  formula
-  
-  log
-  - add paging to the log view
-  - combine changes and changes usage to one list
-  - allow also to see the log of deleted words, values and formulas
-  - in the log view show in an mondial view the details of the change
-  - move the undo button in the formula log view to the row
-  - display the changes on display elements
-  
-  export
-  - export yaml
-  - for xml export use the parameters: standard values, your values or values of all users; topic word or all words
-  
-  import
-  - if an admin does the import he has the possibility to be the owner for all imported values
-
-  features
-  - allow paying users to protect their values and offer them to a group of users
-    - the user can set the default to open or closed 
-    - the user can open or close all values related to a word
-  - each user can define uo to 100 users as "preferred trust"
-  - for each user show all values, formulas, words where the user has different settings than the other users and allow to move back to the standard
-  - it should be possible to link an existing formula to a word/phrase (plus on formula should allow also to link an existing formula)
-  - make the phrase to value links for fast searching user specific 
-  - allow to undo just von change or to revert all changes (of this formulas or all formulas, words, values) up to this point of time
-  - display in the formula (value, word) the values of other users
-  - check the correct usage of verbs (see definition)
-  - for the speed check use the speed log table with the url and the execution time if above a threshold
-  - for wishes use the github issue tracker
-  - base increase (this, prior) on the default time jump (e.g. for turnover the time jump would be "yoy")
-
-  Bugs
-  - solve the view sorting issue by combining the user settings for view, link and components
-    e.g. if a user changes the mask, he probably wants that the complete mask is unchanged
-  - bug: display linked words does not display the downward words e.g. "Company main ratio" does not show "Target Price"
-  - don't write the same log message several times during the same call
-  - don't write too many log message in on php script call
-  - fix error when linking an existing formula to a phase
-  - review the user sandbox for values
-  - remove all old zu_ function calls
-
-
-  Prio 2:
-  - review user authentication (use fidoalliance.org/fido2/)
-  - review the database indices and the foreign keys
-  - include a list of basic values in test.php e.g. CO2 of rice
-  - allow personal groups up to 100 persons and to join up 20 named groups
+TODO create a verbs hash list
+TODO load the database code links from csv
+TODO create the unit tests for the core elements such as word, value, formula, view
+TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
+TODO replace all clo() with cl()
+TODO split the database from the memory object to save memory
+TODO add an im- and export code_id that is only unique for each type
+TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
+TODO use the type hash tables for words, formulas, view and components
+TODO create all export objects and add all import export unit tests
+TODO complete the database abstraction layer
+TODO create unit tests for all module classes
+TODO name all queries with user data as prepared queries to prevent SQL code injections
+TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
+TODO crawl all public available information from the web and add it as user preset to the database
+TODO rename dsp_text in formula to display
+TODO rename name_linked in formula_element to name_linked
+TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
+TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
+TODO check all data from an URL or from a user form that it contains no SQL code
+TODO move the init database fillings to on class instead of on SQL statement for each database
+TODO prevent XSS attacks and script attacks
+TODO check the primary index of all user tables
+TODO load the config, that is not expected to be changed during a session once at startup
+TODO start the backend only once and react to REST calls from the frontend
+TODO make use of __DIR__ ?
+TODO create a User Interface API
 
 
   This file is part of zukunft.com - calc with words
@@ -320,10 +57,6 @@
   http://zukunft.com
 
 */
-
-const PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
-const NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
-const FIRST_VERSION = "0.0.3"; // the first program version which has a basic upgrade process
 
 // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
 // TODO use const for all object names
@@ -514,6 +247,9 @@ include_once $path_php . 'service/config.php';
 
 // used at the moment, but to be replaced with R-Project call
 include_once $path_php . 'service/zu_lib_calc_math.php';
+
+// settings
+include_once $path_php . 'application.php';
 
 // potentially to be loaded by composer
 //include_once $path_php . 'utils/json-diff/JsonDiff.php';
@@ -710,7 +446,7 @@ function log_debug($msg_text, $debug_overwrite = null)
 // $function_trace  is the complete system trace to get more details
 // $usr             is the user id who has probably seen the error message
 // return           the text that can be shown to the user in the navigation bar
-function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $function_trace, $usr): string
+function log_msg($msg_text, $msg_description, $msg_log_level, $function_name, $function_trace, $usr): string
 {
 
     global $sys_log_msg_lst;
@@ -738,8 +474,7 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
         $sys_log_id = 0;
 
         $sys_log_msg_lst[] = $msg_type_text;
-        $log_level = clo(LOG_LEVEL);
-        if ($msg_type_id > $log_level) {
+        if ($msg_log_level > LOG_LEVEL) {
             $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
             $function_id = $db_con->get_id($function_name);
             if ($function_id <= 0) {
@@ -754,7 +489,7 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
             $fields = array();
             $values = array();
             $fields[] = "sys_log_type_id";
-            $values[] = $msg_type_id;
+            $values[] = $msg_log_level;
             $fields[] = "sys_log_function_id";
             $values[] = $function_id;
             $fields[] = "sys_log_text";
@@ -772,16 +507,17 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
             //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
             //$sys_log_id = mysqli_insert_id();
         }
-        $msg_level = clo(MSG_LEVEL);
-        if ($msg_type_id >= $msg_level) {
+        if ($msg_log_level >= MSG_LEVEL) {
             echo "Zukunft.com has detected an critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
             if ($sys_log_id > 0) {
                 echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
             }
         } else {
-            $dsp = new view_dsp;
-            $result .= $dsp->dsp_navbar_simple();
-            $result .= $msg_text . " (by " . $function_name . ").<br><br>";
+            if ($msg_log_level >= DSP_LEVEL) {
+                $dsp = new view_dsp;
+                $result .= $dsp->dsp_navbar_simple();
+                $result .= $msg_text . " (by " . $function_name . ").<br><br>";
+            }
         }
     }
     return $result;
@@ -815,6 +551,7 @@ function prg_start($code_name, $style = ""): sql_db
 {
     global $sys_time_start, $sys_script;
 
+    global $system_users;
     global $user_profiles;
     global $word_types;
     global $formula_types;
@@ -861,6 +598,8 @@ function prg_start($code_name, $style = ""): sql_db
     // load default records
     $sys_log_stati = new sys_log_status();
     $sys_log_stati->load($db_con);
+    $system_users = new user_list();
+    $system_users->load_system($db_con);
 
     // load the type database enum
     // these tables are expected to be so small that it is more efficient to load all database records once at start

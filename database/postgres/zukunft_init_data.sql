@@ -157,15 +157,6 @@ INSERT INTO change_fields (change_field_id, change_field_name, table_id, descrip
 (87, 'position_type', 40, NULL, '');
 
 --
--- Dumping data for table 'formula_element_types'
---
-
-INSERT INTO formula_element_types (formula_element_type_id, formula_element_type_name, code_id, description) VALUES
-(1, 'word', 'word', 'a reference to a word'),
-(2, 'verb', 'term_link', 'a reference to a term link'),
-(3, 'formula', 'formula', 'a reference to a formula');
-
---
 -- Dumping data for table 'formula_link_types'
 --
 

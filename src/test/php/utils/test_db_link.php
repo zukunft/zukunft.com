@@ -32,9 +32,9 @@ function run_db_link_test()
     test_header('Test database link functions (zu_lib_sql_code_link.php)');
 
     // test code link
-    $id = DBL_SYSLOG_TBL_WORD;
+    $id = change_log_table::WORD;
     $target = 2;
-    $result = clo($id);
+    $result = cl(db_cl::LOG_TABLE, $id);
     test_dsp(", sql_code_link " . $id, $target, $result);
 
 }

@@ -228,22 +228,6 @@ CREATE TABLE IF NOT EXISTS `formula_elements`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`formula_element_types`
---
-
-CREATE TABLE IF NOT EXISTS `formula_element_types`
-(
-    `formula_element_type_id`   int(11)      NOT NULL,
-    `formula_element_type_name` varchar(200) NOT NULL,
-    `code_id`                   varchar(100) DEFAULT NULL,
-    `description`               text
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table`formula_links`
 --
 
@@ -1300,7 +1284,7 @@ CREATE TABLE IF NOT EXISTS `view_link_types`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`view_typelist`
+-- Table structure for table`view_type_list`
 --
 
 CREATE TABLE IF NOT EXISTS `view_types`
@@ -1565,12 +1549,6 @@ ALTER TABLE `formula_elements`
     ADD KEY `formula_element_type_id` (`formula_element_type_id`);
 
 --
--- Indexes for table`formula_element_types`
---
-ALTER TABLE `formula_element_types`
-    ADD PRIMARY KEY (`formula_element_type_id`);
-
---
 -- Indexes for table`formula_links`
 --
 ALTER TABLE `formula_links`
@@ -1662,7 +1640,7 @@ ALTER TABLE `refs`
 --
 ALTER TABLE `ref_types`
     ADD PRIMARY KEY (`ref_type_id`),
-    ADD UNIQUE KEY `ref_type_name` (`ref_type_name`, `code_id`);
+    ADD UNIQUE KEY `ref_type_name` (`type_name`, `code_id`);
 
 --
 -- Indexes for table`sessions`
@@ -1994,7 +1972,7 @@ ALTER TABLE `view_link_types`
     ADD PRIMARY KEY (`view_link_type_id`);
 
 --
--- Indexes for table`view_typelist`
+-- Indexes for table`view_type_list`
 --
 ALTER TABLE `view_types`
     ADD PRIMARY KEY (`view_type_id`);
@@ -2096,11 +2074,6 @@ ALTER TABLE `formulas`
 --
 ALTER TABLE `formula_elements`
     MODIFY `formula_element_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table`formula_element_types`
---
-ALTER TABLE `formula_element_types`
-    MODIFY `formula_element_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`formula_links`
 --
@@ -2317,7 +2290,7 @@ ALTER TABLE `view_component_types`
 ALTER TABLE `view_link_types`
     MODIFY `view_link_type_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`view_typelist`
+-- AUTO_INCREMENT for table`view_type_list`
 --
 ALTER TABLE `view_types`
     MODIFY `view_type_id` int(11) NOT NULL AUTO_INCREMENT;
@@ -2381,9 +2354,7 @@ ALTER TABLE `formulas`
 -- Constraints for table`formula_elements`
 --
 ALTER TABLE `formula_elements`
-    ADD CONSTRAINT `formula_elements_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`),
-    ADD CONSTRAINT `formula_elements_fk_2` FOREIGN KEY (`formula_element_type_id`) REFERENCES `formula_element_types` (`formula_element_type_id`) ON
-        DELETE NO ACTION;
+    ADD CONSTRAINT `formula_elements_fk_1` FOREIGN KEY (`formula_id`) REFERENCES `formulas` (`formula_id`);
 
 --
 -- Constraints for table`formula_links`
@@ -2422,9 +2393,7 @@ ALTER TABLE `refs`
 --
 ALTER TABLE `source_values`
     ADD CONSTRAINT `source_values_fk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`value_id`) REFERENCES `
-values
-` (`value_id`),
+    ADD CONSTRAINT `source_values_fk_1` FOREIGN KEY (`value_id`) REFERENCES `values` (`value_id`),
     ADD CONSTRAINT `source_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`);
 
 --

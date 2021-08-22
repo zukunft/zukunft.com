@@ -29,6 +29,16 @@
   
 */
 
+// TODO review
+// table fields where the change should be encoded before shown to the user
+// e.g. the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
+const DBL_FLD_FORMULA_ALL_NEEDED = "all_values_needed";
+const DBL_FLD_FORMULA_TYPE = "frm_type";
+// e.g. the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
+const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
+
+
+
 class formula extends user_sandbox_description
 {
 
@@ -1104,9 +1114,9 @@ class formula extends user_sandbox_description
         $result = true;
 
         // read the elements from the formula text
-        $elm_type_id = clo($element_type);
+        $elm_type_id = $element_type;
         switch ($element_type) {
-            case DBL_FORMULA_PART_TYPE_FORMULA:
+            case formula_element_type::FORMULA:
                 $elm_ids = $this->frm_ids($frm_text, $frm_usr_id);
                 break;
             default:
@@ -1192,11 +1202,11 @@ class formula extends user_sandbox_description
         $result = true;
 
         // refresh the links for the standard formula used if the user has not changed the formula
-        $result = $this->element_refresh_type($frm_text, DBL_FORMULA_PART_TYPE_WORD, 0, $this->usr->id);
+        $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, 0, $this->usr->id);
 
         // update formula links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, DBL_FORMULA_PART_TYPE_FORMULA, 0, $this->usr->id);
+            $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, 0, $this->usr->id);
         }
 
         // refresh the links for the user specific formula
@@ -1207,11 +1217,11 @@ class formula extends user_sandbox_description
         foreach ($db_lst as $db_row) {
             // update word links of the user formula
             if ($result) {
-                $result = $this->element_refresh_type($frm_text, DBL_FORMULA_PART_TYPE_WORD, $db_row['user_id'], $this->usr->id);
+                $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, $db_row['user_id'], $this->usr->id);
             }
             // update formula links of the standard formula
             if ($result) {
-                $result = $this->element_refresh_type($frm_text, DBL_FORMULA_PART_TYPE_FORMULA, $db_row['user_id'], $this->usr->id);
+                $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, $db_row['user_id'], $this->usr->id);
             }
         }
 

@@ -181,7 +181,7 @@ function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_rever
   return $verb_id;
 }
 
-// calulates how many times a word is used, because this can be helpful for sorting
+// calculates how many times a word is used, because this can be helpful for sorting
 function zul_calc_usage () {
   log_debug('zul_calc_usage');
   
@@ -190,9 +190,7 @@ function zul_calc_usage () {
           SELECT COUNT(to_word_id) 
             FROM word_links t
            WHERE l.verb_id = t.verb_id);";
-  $result = zu_sql_exe($sql, clo(DBL_USER_SYSTEM), sys_log_level::ERROR, "zul_calc_usage", (new Exception)->getTraceAsString());
-  
-  return $result;           
+  return zu_sql_exe($sql, cl(db_cl::SYS_USER, user::SYSTEM), sys_log_level::ERROR, "zul_calc_usage", (new Exception)->getTraceAsString());
 }
 
 

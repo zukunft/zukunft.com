@@ -352,7 +352,7 @@ function zut_is_type($word_id, $type)
 
     $result = false;
     $word_type = zu_sql_get_value("words", "word_type_id", "word_id", $word_id);
-    if ($word_type == clo($type)) {
+    if ($word_type == cl(db_cl::WORD_TYPE, $type)) {
         $result = true;
     }
     return $result;
@@ -371,7 +371,7 @@ function zut_time_lst($word_lst)
     log_debug('zut_time_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $time_type = clo(word_type_list::DBL_TIME);
+    $time_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];
@@ -611,8 +611,8 @@ function zut_scale_lst($word_lst)
     log_debug('zut_scale_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $scale_type = clo(word_type_list::DBL_SCALING);
-    $scale_type_hidden = clo(word_type_list::DBL_SCALING_HIDDEN);
+    $scale_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
+    $scale_type_hidden = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];
@@ -630,8 +630,8 @@ function zut_scale_id($wrd_ids, $user_id)
     log_debug('zut_scale_id (' . implode(",", $wrd_ids) . ',u' . $user_id . ')');
 
     $result = -1;
-    $scale_type = clo(word_type_list::DBL_SCALING);
-    $scale_type_hidden = clo(word_type_list::DBL_SCALING_HIDDEN);
+    $scale_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
+    $scale_type_hidden = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach ($wrd_ids as $word_id) {
         $word_type = zut_type($word_id, $user_id);
@@ -695,7 +695,7 @@ function zut_names_to_lst($word_names, $user_id)
     return $result;
 }
 
-// calulates how many times a word is used, because this can be helpful for sorting
+// calculates how many times a word is used, because this can be helpful for sorting
 function zut_calc_usage()
 {
     log_debug('zut_calc_usage');
@@ -705,9 +705,7 @@ function zut_calc_usage()
           SELECT COUNT(value_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);";
-    $result = zu_sql_exe($sql, clo(DBL_USER_SYSTEM), sys_log_level::ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
-
-    return $result;
+    return zu_sql_exe($sql, cl(db_cl::SYS_USER, user::SYSTEM), sys_log_level::ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
 }
 
 // returns an array with only the time word

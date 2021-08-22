@@ -669,8 +669,7 @@ class sql_db
                     $sql = str_replace("'", "", $sql);
                     $sql = str_replace("\"", "", $sql);
                     $msg_text .= " (" . $sql . ")";
-                    $msg_type_id = clo($log_level);
-                    $result = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $msg_type_id, $sql_name, $function_trace, $this->usr_id);
+                    $result = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $this->usr_id);
                     log_debug("sql_db->exe -> error (" . $result . ")");
                 }
             } else {
@@ -855,7 +854,7 @@ class sql_db
 
         $this->set_table();
         $this->set_id_field();
-        $result .= $this->get_value($this->id_field, DBL_FIELD, $code_id);
+        $result .= $this->get_value($this->id_field, self::FLD_CODE_ID, $code_id);
 
         log_debug('sql_db->get_id_from_code is "' . $result . '"');
         return $result;

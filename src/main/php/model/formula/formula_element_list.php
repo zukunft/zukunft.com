@@ -85,3 +85,35 @@ class formula_element_list
     }
 
 }
+
+class formula_element_type extends BasicEnum
+{
+    const WORD = 1;
+    const VERB = 2;
+    const FORMULA = 3;
+    const TRIPLE = 4;
+
+    protected static function get_description($value): string {
+        $result = parent::get_description($value);
+
+        switch ($value) {
+
+            // system log
+            case formula_element_type::WORD:
+                $result = 'a reference to a simple word';
+                break;
+            case formula_element_type::VERB:
+                $result = 'a reference to predicate';
+                break;
+            case formula_element_type::FORMULA:
+                $result = 'a reference to another formula';
+                break;
+            case formula_element_type::TRIPLE:
+                $result = 'a reference to word link';
+                break;
+        }
+
+        return $result;
+    }
+}
+

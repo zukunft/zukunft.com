@@ -45,6 +45,10 @@
 class user
 {
 
+    // list of the system users that have a coded functionality
+    const SYSTEM = "system";
+    const SYSTEM_TEST = "system_test";
+
     // database fields
     public ?int $id = null;               // the database id of the word link type (verb)
     public ?string $name = null;          // simply the username, which cannot be empty
@@ -64,6 +68,11 @@ class user
 
     // in memory only fields
     public ?word $wrd = null;             // the last word viewed by the user
+
+    function row_mapper()
+    {
+
+    }
 
     //
     private function load_db()

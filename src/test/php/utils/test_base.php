@@ -575,7 +575,7 @@ function test_word($wrd_name, $wrd_type_code_id = null): word
         $wrd->save();
     }
     if ($wrd_type_code_id != null) {
-        $wrd->type_id = clo($wrd_type_code_id);
+        $wrd->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
         $wrd->save();
     }
     $target = $wrd_name;

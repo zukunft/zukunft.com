@@ -53,77 +53,6 @@
   
 */
 
-const LOG_LEVEL = "log_warning"; // starting from this criticality level messages are written to the log for debugging
-const MSG_LEVEL = "error";       // in case of an error or fatal error
-// additional the message a link to the system log shown
-// so that the user can track when the error is solved
-
-// addition reserved field names for zukunft
-const DBL_FIELD = "code_id";
-
-
-// move to reaL EMUN, because it is only internal
-const DBL_FORMULA_PART_TYPE_WORD = "frm_elm_word";
-const DBL_FORMULA_PART_TYPE_VERB = "frm_elm_verb";
-const DBL_FORMULA_PART_TYPE_FORMULA = "frm_elm_formula";
-
-// predefined words
-// TODO move to word type
-const DBL_WORD_OTHER = "other";  // replaced by a word type
-
-// single special users
-// TODO move to user role
-const DBL_USER_SYSTEM_TEST = "usr_system_test";
-const DBL_USER_SYSTEM = "usr_system";
-
-// TODO use a real enum because it is internal and no user can add something new
-const DBL_SYSLOG_TBL_USR = "users";
-const DBL_SYSLOG_TBL_VALUE = "values";
-const DBL_SYSLOG_TBL_VALUE_USR = "user_values";
-const DBL_SYSLOG_TBL_VALUE_LINK = "value_links";
-const DBL_SYSLOG_TBL_WORD = "words";
-const DBL_SYSLOG_TBL_WORD_USR = "user_words";
-const DBL_SYSLOG_TBL_WORD_LINK = "word_links";
-const DBL_SYSLOG_TBL_WORD_LINK_USR = "user_word_links";
-const DBL_SYSLOG_TBL_FORMULA = "formulas";
-const DBL_SYSLOG_TBL_FORMULA_USR = "user_formulas";
-const DBL_SYSLOG_TBL_FORMULA_LINK = "formula_links";
-const DBL_SYSLOG_TBL_FORMULA_LINK_USR = "user_formula_links";
-const DBL_SYSLOG_TBL_VIEW = "views";
-const DBL_SYSLOG_TBL_VIEW_USR = "user_views";
-const DBL_SYSLOG_TBL_VIEW_LINK = "view_component_links";
-const DBL_SYSLOG_TBL_VIEW_LINK_USR = "user_view_component_links";
-const DBL_SYSLOG_TBL_VIEW_COMPONENT = "view_components";
-const DBL_SYSLOG_TBL_VIEW_COMPONENT_USR = "user_view_components";
-
-
-// fixed settings without code id for the triple links
-// TODO use a real enum because it is internal and no user can add something new
-const DBL_TRIPLE_LINK_IS_WORD = 1;
-const DBL_TRIPLE_LINK_IS_TRIPLE = 2;
-const DBL_TRIPLE_LINK_IS_GROUP = 3;
-
-// table fields where the change should be encoded before shown to the user
-// e.g. the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
-const DBL_FLD_FORMULA_ALL_NEEDED = "all_values_needed";
-const DBL_FLD_FORMULA_TYPE = "frm_type";
-// e.g. the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
-const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
-
-
-// global list of database values that cannot be changed by the user 
-// these need to be loaded only once to the frontend because only a system upgrade can change them
-$dbl_protection_types = array();
-
-// shortcut name for sql_code_link for better code reading
-// don't use it for the first call to make sure that the description is in the database
-function clo($code_id)
-{
-    global $db_con;
-    return sql_code_link($code_id, "", $db_con);
-}
-
-
 // TODO check automatically that the code links are unique
 /**
  * returns the pk / row_id for a given code_id
@@ -147,34 +76,10 @@ function sql_code_link($code_id, $description, $db_con)
     // set the table name and the id field
     $table_name = '';
     $db_type = '';
-    if ($code_id == DBL_FORMULA_PART_TYPE_WORD
-        or $code_id == DBL_FORMULA_PART_TYPE_VERB
-        or $code_id == DBL_FORMULA_PART_TYPE_FORMULA) {
-        $db_type = DB_TYPE_FORMULA_ELEMENT_TYPE;
-    }
 
-    if ($code_id == DBL_USER_SYSTEM) {
+    if ($code_id == "dummy") {
+        $table_name = "user";
         $db_type = "user";
-    }
-
-    if ($code_id == DBL_SYSLOG_TBL_VALUE
-        or $code_id == DBL_SYSLOG_TBL_VALUE_USR
-        or $code_id == DBL_SYSLOG_TBL_VALUE_LINK
-        or $code_id == DBL_SYSLOG_TBL_WORD
-        or $code_id == DBL_SYSLOG_TBL_WORD_USR
-        or $code_id == DBL_SYSLOG_TBL_WORD_LINK
-        or $code_id == DBL_SYSLOG_TBL_WORD_LINK_USR
-        or $code_id == DBL_SYSLOG_TBL_FORMULA
-        or $code_id == DBL_SYSLOG_TBL_FORMULA_USR
-        or $code_id == DBL_SYSLOG_TBL_FORMULA_LINK
-        or $code_id == DBL_SYSLOG_TBL_FORMULA_LINK_USR
-        or $code_id == DBL_SYSLOG_TBL_VIEW
-        or $code_id == DBL_SYSLOG_TBL_VIEW_USR
-        or $code_id == DBL_SYSLOG_TBL_VIEW_LINK
-        or $code_id == DBL_SYSLOG_TBL_VIEW_LINK_USR
-        or $code_id == DBL_SYSLOG_TBL_VIEW_COMPONENT
-        or $code_id == DBL_SYSLOG_TBL_VIEW_COMPONENT_USR) {
-        $db_type = "change_table";
     }
 
     /*  if ($code_id == EVENT_TYPE_TRADE_MISSING
@@ -205,10 +110,10 @@ function sql_code_link($code_id, $description, $db_con)
             // insert the missing row if needed
             if ($row_id <= 0) {
                 if ($db_type == 'view') {
-                    $db_con->insert(array(DBL_FIELD, 'user_id'), array($code_id, SYSTEM_USER_ID));
+                    $db_con->insert(array(sql_db::FLD_CODE_ID, 'user_id'), array($code_id, SYSTEM_USER_ID));
                 } else {
                     // TODO for sys_log_type include the name db field
-                    $db_con->insert(DBL_FIELD, $code_id);
+                    $db_con->insert(sql_db::FLD_CODE_ID, $code_id);
                 }
                 log_debug('inserted ' . $code_id . '<br>');
                 // get the id of the inserted row

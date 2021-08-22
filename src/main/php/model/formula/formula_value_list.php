@@ -581,7 +581,7 @@ class formula_value_list
         $usr_lst->load_active();
 
         log_debug('active users (' . dsp_array($usr_lst->names()) . ')');
-        foreach ($usr_lst->usr_lst as $usr) {
+        foreach ($usr_lst->lst as $usr) {
             // check
             $usr_calc_needed = False;
             if ($usr->id == $this->usr->id) {

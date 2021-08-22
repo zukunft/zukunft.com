@@ -266,7 +266,7 @@ function run_legacy_test () {
   $word_percent      = zu_sql_get_id ("word",    TW_PCT         ); test_show_db_id("Word percent",      $word_percent);
   $word_CHF          = zu_sql_get_id ("word",    TW_CHF         ); test_show_db_id("Word CHF",          $word_CHF);
   //$formula_value     = zu_sql_get_id ("formula", "value",       $debug); test_show_db_id("Formula Value",     $formula_value);
-  $word_type_time    = clo(word_type_list::DBL_TIME);                         test_show_db_id("Word Type Time",    $word_type_time);
-  $word_type_percent = clo(word_type_list::DBL_PERCENT);                      test_show_db_id("Word Type Percent", $word_type_percent);
+  $word_type_time    = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);                         test_show_db_id("Word Type Time",    $word_type_time);
+  $word_type_percent = cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT);                      test_show_db_id("Word Type Percent", $word_type_percent);
  
 }

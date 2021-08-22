@@ -41,6 +41,18 @@ function unit_test_init_sys_log_status()
 }
 
 /**
+ * create the system user list for the unit tests without database connection
+ */
+function unit_test_init_sys_users()
+{
+    global $system_users;
+
+    $system_users = new user_list();
+    $system_users->load_dummy();
+
+}
+
+/**
  * create the user profiles for the unit tests without database connection
  */
 function unit_test_init_user_profiles()
@@ -205,6 +217,7 @@ function run_unit_tests()
 
     // prepare the unit tests
     unit_test_init_sys_log_status();
+    unit_test_init_sys_users();
     unit_test_init_user_profiles();
     unit_test_init_word_types();
     unit_test_init_verbs();

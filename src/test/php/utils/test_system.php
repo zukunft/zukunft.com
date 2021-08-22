@@ -78,7 +78,7 @@ function run_system_test()
 
     $usr_lst = new user_list;
     $usr_lst->load_active();
-    $result = $usr_lst->name();
+    $result = $usr_lst->name_lst();
     $target = TEST_USER_DESCRIPTION;
     test_dsp_contains(', user_list->load_active', $target, $result);
 
