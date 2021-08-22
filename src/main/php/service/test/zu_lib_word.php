@@ -705,7 +705,7 @@ function zut_calc_usage()
           SELECT COUNT(value_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);";
-    $result = zu_sql_exe($sql, clo(DBL_USER_SYSTEM), DBL_SYSLOG_ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
+    $result = zu_sql_exe($sql, clo(DBL_USER_SYSTEM), sys_log_level::ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
 
     return $result;
 }

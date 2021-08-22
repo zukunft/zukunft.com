@@ -32,8 +32,8 @@ $sql = $db_con->sql_of_code_linked_db_rows();
 if ($sql == false) {
     log_err('Cannot read the initial database data file', 'setup');
 } else {
-    //$sql_result = $db_con->exe($sql, 'code_linked_db_rows', array(), DBL_SYSLOG_FATAL_ERROR);
-    $sql_result = $db_con->exe($sql, '', array(), DBL_SYSLOG_FATAL_ERROR);
+    //$sql_result = $db_con->exe($sql, 'code_linked_db_rows', array(), sys_log_level::FATAL);
+    $sql_result = $db_con->exe($sql, '', array(), sys_log_level::FATAL);
 }
 
 

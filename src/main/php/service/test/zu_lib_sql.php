@@ -173,7 +173,7 @@ function zudb_get($sql, $user_id)
 
     $result = false;
     if ($sql <> "") {
-        $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zudb_get", (new Exception)->getTraceAsString());
+        $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zudb_get", (new Exception)->getTraceAsString());
         while ($sql_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
             $result[] = $sql_row;
         }
@@ -203,7 +203,7 @@ function zudb_get1($sql, $user_id)
 
     $result = false;
     if ($sql <> "") {
-        $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zudb_get1", (new Exception)->getTraceAsString());
+        $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zudb_get1", (new Exception)->getTraceAsString());
         $result = mysqli_fetch_array($sql_result, MySQLi_ASSOC);
     }
 
@@ -226,7 +226,7 @@ function zu_sql_insert($table, $fields, $values, $user_id)
 
     $sql = 'INSERT INTO ' . $table . ' (' . $fields . ') '
         . ' VALUES (' . $values . ');';
-    $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_insert", (new Exception)->getTraceAsString());
+    $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_insert", (new Exception)->getTraceAsString());
     if ($sql_result) {
         $result = mysqli_insert_id();
     } else {
@@ -244,7 +244,7 @@ function zu_sql_add_user($user_name)
 
     $sql = "INSERT INTO users (user_name) VALUES ('" . $user_name . "');";
     log_debug("zu_sql_update ... exec " . $sql);
-    $sql_result = zu_sql_exe($sql, 0, DBL_SYSLOG_FATAL_ERROR, "zu_sql_add_user", (new Exception)->getTraceAsString());
+    $sql_result = zu_sql_exe($sql, 0, sys_log_level::FATAL, "zu_sql_add_user", (new Exception)->getTraceAsString());
     // log the changes???
     $result = mysqli_insert_id();
 
@@ -292,7 +292,7 @@ function zu_sql_update($table, $id, $fields, $values, $user_id): bool
         } else {
             $sql = 'UPDATE ' . $table . ' SET ' . $fields . ' = ' . sf($values) . ' WHERE ' . $id_field . ' = ' . sf($id) . ';';
         }
-        $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_update", (new Exception)->getTraceAsString());
+        $result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_update", (new Exception)->getTraceAsString());
     }
 
     log_debug("zu_sql_update -> done (" . $result . ")");
@@ -320,7 +320,7 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
         } else {
             log_debug("sql_insert -> do insert " . $new_value . "");
             $sql = "INSERT INTO " . zu_sql_table_name($table) . " (" . $value_field . ") VALUES (" . sf($new_value) . ");";
-            $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "sql_insert", (new Exception)->getTraceAsString());
+            $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "sql_insert", (new Exception)->getTraceAsString());
             if (!$result) {
                 if ($table <> 'events') {
                     //echo event_add("Insert ".$table." ".$value_field." ".$new_value." failt", "Cannot insert into ".$table." the ".$value_field." ".$new_value." because: ".mysqli_error().".", EVENT_TYPE_SQL_ERROR, date('Y-m-d H:i:s'), "Please contact your system administrator.", "", "", "", "", "");
@@ -378,7 +378,7 @@ function zu_sql_get_all($sql)
         log_debug('zu_sql_get_all (' . substr($sql, 0, 100) . ' ... )');
     }
 
-    $result = zu_sql_exe($sql, $usr->id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_get_all", (new Exception)->getTraceAsString());
+    $result = zu_sql_exe($sql, $usr->id, sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
 
     log_debug("zu_sql_get_all ... done");
 
@@ -436,7 +436,7 @@ function zu_sql_get_lst($sql)
     $result = array();
     if ($sql <> "") {
         $user_id = zuu_id();
-        $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_get_lst", (new Exception)->getTraceAsString());
+        $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_get_lst", (new Exception)->getTraceAsString());
         while ($value_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             $result[$value_entry[0]] = $value_entry[1];
         }
@@ -488,7 +488,7 @@ function zu_sql_get_ids($sql)
     $result = array();
     if ($sql <> "") {
         $user_id = zuu_id();
-        $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_FATAL_ERROR, "zu_sql_get_ids", (new Exception)->getTraceAsString());
+        $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_get_ids", (new Exception)->getTraceAsString());
         while ($value_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             if (!in_array($value_entry[0], $result)) {
                 $result[] = $value_entry[0];

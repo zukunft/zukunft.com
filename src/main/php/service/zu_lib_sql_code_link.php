@@ -76,13 +76,6 @@ const DBL_WORD_OTHER = "other";  // replaced by a word type
 const DBL_USER_SYSTEM_TEST = "usr_system_test";
 const DBL_USER_SYSTEM = "usr_system";
 
-// system log types
-// TODO use a real enum because it is internal and no user can add something new
-const DBL_SYSLOG_INFO = "log_info";
-const DBL_SYSLOG_WARNING = "log_warning";
-const DBL_SYSLOG_ERROR = "log_error";
-const DBL_SYSLOG_FATAL_ERROR = "log_fatal";
-
 // TODO use a real enum because it is internal and no user can add something new
 const DBL_SYSLOG_TBL_USR = "users";
 const DBL_SYSLOG_TBL_VALUE = "values";
@@ -144,31 +137,6 @@ function clo($code_id)
     return sql_code_link($code_id, "", $db_con);
 }
 
-// return the default description for any code link
-function sql_code_link_description($code_id): string
-{
-    $result = '';
-
-    switch ($code_id) {
-
-        // system log
-        case DBL_SYSLOG_INFO:
-            $result = 'info';
-            break;
-        case DBL_SYSLOG_WARNING:
-            $result = 'Warning';
-            break;
-        case DBL_SYSLOG_ERROR:
-            $result = 'Error';
-            break;
-        case DBL_SYSLOG_FATAL_ERROR:
-            $result = 'FATAL ERROR';
-            break;
-    }
-
-    return $result;
-}
-
 
 // TODO check automatically that the code links are unique
 /**
@@ -197,13 +165,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_FORMULA_PART_TYPE_VERB
         or $code_id == DBL_FORMULA_PART_TYPE_FORMULA) {
         $db_type = DB_TYPE_FORMULA_ELEMENT_TYPE;
-    }
-    if ($code_id == DBL_SYSLOG_INFO
-        or $code_id == DBL_SYSLOG_WARNING
-        or $code_id == DBL_SYSLOG_ERROR
-        or $code_id == DBL_SYSLOG_FATAL_ERROR
-        or $code_id == LOG_LEVEL) {
-        $db_type = "sys_log_type";
     }
 
     if ($code_id == DBL_USER_SYSTEM) {

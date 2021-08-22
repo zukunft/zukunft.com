@@ -614,7 +614,7 @@ class sql_db
     // add the writing of potential sql errors to the sys log table to the sql execution
     // includes the user to be able to ask the user for details how the error has been created
     // the log level is given by the calling function because after some errors the program may nevertheless continue
-    function exe($sql, $sql_name = '', $sql_array = array(), $log_level = DBL_SYSLOG_ERROR)
+    function exe($sql, $sql_name = '', $sql_array = array(), $log_level = sys_log_level::ERROR)
     {
         log_debug("sql_db->exe (" . $sql . " named " . $sql_name . " for  user " . $this->usr_id . ")");
 
@@ -1279,8 +1279,8 @@ class sql_db
 
                 } else {
                     $sql = $sql . ';';
-                    //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), DBL_SYSLOG_FATAL_ERROR);
-                    $sql_result = $this->exe($sql, '', array(), DBL_SYSLOG_FATAL_ERROR);
+                    //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
+                    $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
                     if ($sql_result) {
                         $result = mysqli_insert_id();
                         log_debug('sql_db->insert -> done "' . $result . '"');
@@ -1377,8 +1377,8 @@ class sql_db
             }
             $sql = $sql_upd . $sql_set . $sql_where . ';';
             log_debug('sql_db->update sql "' . $sql . '"');
-            //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), DBL_SYSLOG_FATAL_ERROR);
-            $sql_result = $this->exe($sql, '', array(), DBL_SYSLOG_FATAL_ERROR);
+            //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
+            $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
             if (!$sql_result) {
                 $result = false;
             }
@@ -1431,8 +1431,8 @@ class sql_db
         }
 
         log_debug('sql_db->delete sql "' . $sql . '"');
-        //$sql_result = $this->exe($sql, 'delete_' . $this->name_sql_esc($this->table), array(), DBL_SYSLOG_FATAL_ERROR);
-        $sql_result = $this->exe($sql, '', array(), DBL_SYSLOG_FATAL_ERROR);
+        //$sql_result = $this->exe($sql, 'delete_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
+        $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
         if ($sql_result) {
             $result = true;
             log_debug('sql_db->delete -> done "' . $result . '"');

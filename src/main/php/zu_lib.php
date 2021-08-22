@@ -391,12 +391,6 @@ global $sys_time_start;  // to measure the execution time
 global $sys_time_limit;  // to write too long execution times to the log to improve the code
 global $sys_log_msg_lst; // to avoid repeating the same message
 
-// for the system log types a dynamic ENUM is used, which means that the database id is read once at system start, because it is expected to change only on an upgrade
-global $sys_log_msg_type_info_id;
-global $sys_log_msg_type_warning_id;
-global $sys_log_msg_type_error_id;
-global $sys_log_msg_type_fatal_error_id;
-
 $sys_script = "";
 $sys_trace = "";
 $sys_time_start = time();
@@ -419,6 +413,7 @@ include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
@@ -789,28 +784,24 @@ function log_msg($msg_text, $msg_description, $msg_type_id, $function_name, $fun
 
 function log_info($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
-    global $sys_log_msg_type_info_id;
-    return log_msg($msg_text, $msg_description, $sys_log_msg_type_info_id, $function_name, $function_trace, $usr);
+    return log_msg($msg_text, $msg_description, sys_log_level::INFO, $function_name, $function_trace, $usr);
 }
 
 function log_warning($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
-    global $sys_log_msg_type_warning_id;
-    return log_msg($msg_text, $msg_description, $sys_log_msg_type_warning_id, $function_name, $function_trace, $usr);
+    return log_msg($msg_text, $msg_description, sys_log_level::WARNING, $function_name, $function_trace, $usr);
 }
 
 function log_err($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
 {
-    global $sys_log_msg_type_error_id;
-    return log_msg($msg_text, $msg_description, $sys_log_msg_type_error_id, $function_name, $function_trace, $usr);
+    return log_msg($msg_text, $msg_description, sys_log_level::ERROR, $function_name, $function_trace, $usr);
 }
 
 function log_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null): string
 {
-    global $sys_log_msg_type_fatal_error_id;
     echo 'FATAL ERROR! ' . $msg_text;
     // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
-    return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, $sys_log_msg_type_fatal_error_id, $function_name, $function_trace, $usr);
+    return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, sys_log_level::FATAL, $function_name, $function_trace, $usr);
 }
 
 // should be call from all code that can be accessed by an url
@@ -818,11 +809,6 @@ function log_fatal($msg_text, $function_name, $msg_description = '', $function_t
 function prg_start($code_name, $style = ""): sql_db
 {
     global $sys_time_start, $sys_script;
-
-    global $sys_log_msg_type_info_id;
-    global $sys_log_msg_type_warning_id;
-    global $sys_log_msg_type_error_id;
-    global $sys_log_msg_type_fatal_error_id;
 
     global $user_profiles;
     global $word_types;
@@ -868,12 +854,6 @@ function prg_start($code_name, $style = ""): sql_db
     // load default records
     $sys_log_stati = new sys_log_status();
     $sys_log_stati->load($db_con);
-
-    $sys_log_msg_type_info_id = sql_code_link(DBL_SYSLOG_INFO, "Info", $db_con);
-    $sys_log_msg_type_warning_id = sql_code_link(DBL_SYSLOG_WARNING, "Warning", $db_con);
-    $sys_log_msg_type_error_id = sql_code_link(DBL_SYSLOG_ERROR, "Error", $db_con);
-    $sys_log_msg_type_fatal_error_id = sql_code_link(DBL_SYSLOG_FATAL_ERROR, "FATAL ERROR", $db_con);
-    //verbs_load;
 
     // load the type database enum
     // these tables are expected to be so small that it is more efficient to load all database records once at start
@@ -965,7 +945,7 @@ function prg_end($db_con)
         $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
         //$db_con->insert();
         $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . sf($_SERVER['REQUEST_URI']) . ");";
-        $db_con->exe($sql, DBL_SYSLOG_FATAL_ERROR, "zu_end", (new Exception)->getTraceAsString());
+        $db_con->exe($sql, sys_log_level::FATAL, "zu_end", (new Exception)->getTraceAsString());
     }
 
     // Free result test

@@ -88,7 +88,7 @@ function db_upgrade_0_0_3($db_con)
     $sql .= "UPDATE sys_log_status SET code_id = 'new' WHERE code_id = 'log_status_new'; UPDATE sys_log_status SET code_id = 'assigned' WHERE code_id = 'log_status_assigned'; UPDATE sys_log_status SET code_id = 'resolved' WHERE code_id = 'log_status_resolved'; UPDATE sys_log_status SET code_id = 'closed' WHERE code_id = 'log_status_closed';";
     $sql .= 'ALTER TABLE public.sys_log_status RENAME comment TO description;';
     $sql .= 'ALTER TABLE public.sys_log_status RENAME sys_log_status_name TO type_name;';
-    $db_con->exe($sql, DBL_SYSLOG_INFO, 'db_upgrade_0_0_3');
+    $db_con->exe($sql, sys_log_level::INFO, 'db_upgrade_0_0_3');
     // TODO create table user_value_time_series
     // TODO check and change view component type code ids
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);

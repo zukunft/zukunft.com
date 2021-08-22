@@ -186,7 +186,7 @@ class val_lnk
                     WHERE value_id = " . $this->val->id . " 
                       AND phrase_id  = " . $this->wrd->id . " 
                       AND value_phrase_link_id <> " . $this->id . ";";
-            $sql_result = $db_con->exe($sql_del, $this->usr->id, DBL_SYSLOG_ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
+            $sql_result = $db_con->exe($sql_del, $this->usr->id, sys_log_level::ERROR, "val_lnk->update", (new Exception)->getTraceAsString());
             $db_row = $db_con->get1($sql);
             $this->id = $db_row['value_phrase_link_id'];
             if ($this->id > 0) {

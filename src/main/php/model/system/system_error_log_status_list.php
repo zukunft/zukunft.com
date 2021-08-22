@@ -70,4 +70,3 @@ class sys_log_status extends user_type_list
     }
 
 }
-

@@ -96,7 +96,7 @@ function zuv_db_add($new_value, $wrd_ids, $user_id) {
   if ($log_id > 0) {
     // insert the value
     $sql = "INSERT INTO `values` (word_value, user_id, last_update) VALUES ('".$new_value."', ".$user_id.", Now());";
-    $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_add", (new Exception)->getTraceAsString());
+    $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_add", (new Exception)->getTraceAsString());
     if ($result) {
       // update the reference in the log
       $val_id = mysqli_insert_id();
@@ -127,7 +127,7 @@ function zuvt_db_add($val_id, $wrd_id, $user_id) {
                               $val_id, "", $wrd_id, $val_id, "word");
     if ($log_id > 0) {
       $sql = "INSERT INTO value_phrase_links (value_id, phrase_id) VALUES (".$val_id.", ".$wrd_id.");";
-      $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuvt_db_add", (new Exception)->getTraceAsString());
+      $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuvt_db_add", (new Exception)->getTraceAsString());
       if ($result) {
         // update the reference in the log
         $val_wrd_id = mysqli_insert_id();
@@ -169,7 +169,7 @@ function zuv_db_upd($val_id, $new_value, $user_id) {
           if ($new_value == $std_value) {
             // remove the user execption
             $sql = "DELETE FROM `user_values` WHERE value_id = ".$val_id." AND  user_id = ".$user_id.";";
-            $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
+            $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
           }  
         }
       }
@@ -180,20 +180,20 @@ function zuv_db_upd($val_id, $new_value, $user_id) {
         if ($user_value_id <= 0) {
           // create an entry in the user sandbox
           $sql = "INSERT INTO `user_values` (value_id, user_id, user_value, last_update) VALUES (".$val_id.",".$user_id.",".$new_value.", Now());";
-          $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
+          $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
         } else {
           $std_value = zuv_value_all($val_id);
           if ($new_value == $std_value) {
             // remove the user execption
             $sql = "DELETE FROM `user_values` WHERE value_id = ".$val_id." AND  user_id = ".$user_id.";";
-            $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
+            $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
           } else {
             $sql = "UPDATE `user_values` 
                        SET user_value = ".$new_value.", 
                            last_update = Now()
                      WHERE value_id = ".$val_id." 
                        AND user_id = ".$user_id.";";
-            $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
+            $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_upd", (new Exception)->getTraceAsString());
           }
         }
       }  
@@ -217,7 +217,7 @@ function zuvt_db_upd($link_id, $val_id, $wrd_new_id, $user_id) {
                SET phrase_id  = ".$wrd_new_id."  
              WHERE value_id = ".$val_id." 
                AND value_phrase_link_id  = ".$link_id.";";
-    $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuvt_db_upd", (new Exception)->getTraceAsString());
+    $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuvt_db_upd", (new Exception)->getTraceAsString());
 
     // check dublicates
     $link_id = zu_sql_get1("SELECT value_phrase_link_id FROM value_phrase_links WHERE value_id  = ".$val_id." AND phrase_id  = ".$wrd_old_id.";");
@@ -225,7 +225,7 @@ function zuvt_db_upd($link_id, $val_id, $wrd_new_id, $user_id) {
       $sql = "DELETE FROM value_phrase_links 
                WHERE value_id = ".$val_id." 
                  AND phrase_id  = ".$wrd_old_id.";";
-      $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuvt_db_upd", (new Exception)->getTraceAsString());
+      $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuvt_db_upd", (new Exception)->getTraceAsString());
       $link_id = zu_sql_get1("SELECT value_phrase_link_id FROM value_phrase_links WHERE value_id  = ".$val_id." AND phrase_id  = ".$wrd_old_id.";");
       if ($link_id > 0) {
         log_err("Dublicate words (".$wrd_old_id.") for value ".$val_id." found and the automatic removal failed.","zuvt_db_upd");
@@ -301,7 +301,7 @@ function zuv_db_usr_check ($val_id, $user_id) {
   if (($result_std[0] == $result_usr[0] OR $result_usr[0] === NULL)
   AND ($result_std[1] == $result_usr[1] OR $result_usr[1] === NULL)) {
     $sql_del = "DELETE FROM `user_values` WHERE value_id = ".$val_id." AND user_id = ".$user_id.";";
-    $result = zu_sql_exe($sql_std, $user_id, DBL_SYSLOG_ERROR, "zuv_db_usr_check", (new Exception)->getTraceAsString());
+    $result = zu_sql_exe($sql_std, $user_id, sys_log_level::ERROR, "zuv_db_usr_check", (new Exception)->getTraceAsString());
   }
 
   return $result;
@@ -339,14 +339,14 @@ function zuv_db_del($val_id, $user_id) {
         if (zuv_can_change($val_id, $user_id)) {
           // delete all links (maybe log it ???); the function $vl->del (ex. zuvt_db_del) is not called, because this would check a clash with other values for each word link
           $sql = "DELETE FROM `value_phrase_links` WHERE value_id = ".$val_id.";";
-          $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_del", (new Exception)->getTraceAsString());        
+          $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_del", (new Exception)->getTraceAsString());
           // delete the value itself
           $sql = "DELETE FROM `values` WHERE value_id = ".$val_id.";";
-          $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_del", (new Exception)->getTraceAsString()); 
+          $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_del", (new Exception)->getTraceAsString());
         } else {
           // add the user exclusion
           $sql = "INSERT INTO `user_values` (value_id, user_id, excluded, last_update) VALUES (".$val_id.", ".$user_id.", 1, NOW());";
-          $sql_result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_del", (new Exception)->getTraceAsString()); 
+          $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_del", (new Exception)->getTraceAsString());
           // request the exclude cleanup for this value because this may take longer due to depending formula results
           $sql_result = zuv_db_usr_check ($val_id, $user_id);
         }
@@ -365,7 +365,7 @@ function zuv_db_user_del($val_id, $user_id) {
     $new_value = zuv_value_all($val_id,           );
     if (zu_log($user_id, "update", "values", "word_value", $old_value, $new_value, $val_id) > 0 ) {
       $sql = "DELETE FROM `user_values` WHERE value_id = ".$val_id." AND  user_id = ".$user_id.";";
-      $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuv_db_user_del", (new Exception)->getTraceAsString());
+      $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuv_db_user_del", (new Exception)->getTraceAsString());
     }  
   }
 
@@ -385,7 +385,7 @@ function zuvt_db_del($val_id, $wrd_id, $user_id) {
                               "",  "", "", $val_id, "word");
     if ($log_id > 0) {
       $sql = "DELETE FROM `value_phrase_links` WHERE value_id = ".$val_id." AND word_id = ".$wrd_id.";";
-      $result = zu_sql_exe($sql, $user_id, DBL_SYSLOG_ERROR, "zuvt_db_del");
+      $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuvt_db_del");
       if ($result) {
         // todo: call the word group creation 
       }
