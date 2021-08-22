@@ -173,6 +173,18 @@ function unit_test_init_protection_types()
 }
 
 /**
+ * create job type array for the unit tests without database connection
+ */
+function unit_test_init_job_types()
+{
+    global $job_types;
+
+    $job_types = new user_type_list();
+    $job_types->load_dummy();
+
+}
+
+/**
  * run all unit test in a useful order
  */
 function run_unit_tests()
@@ -192,6 +204,7 @@ function run_unit_tests()
     unit_test_init_ref_types();
     unit_test_init_share_types();
     unit_test_init_protection_types();
+    unit_test_init_job_types();
 
     // do the unit tests
     run_string_unit_tests(); // test functions not yet split into single unit tests

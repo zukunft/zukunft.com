@@ -97,20 +97,6 @@ const DBL_SYSLOG_TBL_VIEW_COMPONENT = "view_components";
 const DBL_SYSLOG_TBL_VIEW_COMPONENT_USR = "user_view_components";
 
 
-// the batch job types to keep the dependencies updated and the database clean
-// TODO use a real enum because it is internal and no user can add something new
-const DBL_JOB_VALUE_UPDATE = "job_value_update";
-const DBL_JOB_VALUE_ADD = "job_value_add";
-const DBL_JOB_VALUE_DEL = "job_value_del";
-const DBL_JOB_FORMULA_UPDATE = "job_formula_update";
-const DBL_JOB_FORMULA_ADD = "job_formula_add";
-const DBL_JOB_FORMULA_DEL = "job_formula_del";
-const DBL_JOB_FORMULA_LINK = "job_formula_link";
-const DBL_JOB_FORMULA_UNLINK = "job_formula_unlink";
-const DBL_JOB_WORD_LINK = "job_word_link";
-const DBL_JOB_WORD_UNLINK = "job_word_unlink";
-
-
 // fixed settings without code id for the triple links
 // TODO use a real enum because it is internal and no user can add something new
 const DBL_TRIPLE_LINK_IS_WORD = 1;
@@ -189,19 +175,6 @@ function sql_code_link($code_id, $description, $db_con)
         or $code_id == DBL_SYSLOG_TBL_VIEW_COMPONENT
         or $code_id == DBL_SYSLOG_TBL_VIEW_COMPONENT_USR) {
         $db_type = "change_table";
-    }
-
-    if ($code_id == DBL_JOB_VALUE_UPDATE
-        or $code_id == DBL_JOB_VALUE_ADD
-        or $code_id == DBL_JOB_VALUE_DEL
-        or $code_id == DBL_JOB_FORMULA_UPDATE
-        or $code_id == DBL_JOB_FORMULA_ADD
-        or $code_id == DBL_JOB_FORMULA_DEL
-        or $code_id == DBL_JOB_FORMULA_LINK
-        or $code_id == DBL_JOB_FORMULA_UNLINK
-        or $code_id == DBL_JOB_WORD_LINK
-        or $code_id == DBL_JOB_WORD_UNLINK) {
-        $db_type = "calc_and_cleanup_task_type";
     }
 
     /*  if ($code_id == EVENT_TYPE_TRADE_MISSING

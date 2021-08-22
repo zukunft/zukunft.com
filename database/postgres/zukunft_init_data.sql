@@ -7,16 +7,16 @@
 --
 
 INSERT INTO calc_and_cleanup_task_types (calc_and_cleanup_task_type_id, calc_and_cleanup_task_type_name, description, code_id) VALUES
-(1, 'update value', 'if a value is updated all the depending formula values should be calculated again', 'job_value_update'),
-(2, 'add value', '1. check if used in formulas and if yes, create new formula results\r\n2. calculate the new formula results', 'job_value_add'),
-(3, 'exclude a value', 'check if used for a formula result and if yes either remove the formula result or update it', 'job_value_del'),
-(4, 'update formula', NULL, 'job_formula_update'),
-(5, 'add formula', NULL, 'job_formula_add'),
-(6, 'exclude formula', NULL, 'job_formula_del'),
-(7, 'link formula', NULL, 'job_formula_link'),
-(8, 'unlink a formula', NULL, 'job_formula_unlink'),
-(9, 'link a word', NULL, 'job_word_link'),
-(10, 'unlink word', NULL, 'job_word_unlink');
+(1, 'update value', 'if a value is updated all the depending formula values should be calculated again', 'value_update'),
+(2, 'add value', '1. check if used in formulas and if yes, create new formula results\r\n2. calculate the new formula results', 'value_add'),
+(3, 'exclude a value', 'check if used for a formula result and if yes either remove the formula result or update it', 'value_del'),
+(4, 'update formula', NULL, 'formula_update'),
+(5, 'add formula', NULL, 'formula_add'),
+(6, 'exclude formula', NULL, 'formula_del'),
+(7, 'link formula', NULL, 'formula_link'),
+(8, 'unlink a formula', NULL, 'formula_unlink'),
+(9, 'link a word', NULL, 'word_link'),
+(10, 'unlink word', NULL, 'word_unlink');
 
 --
 -- Dumping data for table 'change_actions'

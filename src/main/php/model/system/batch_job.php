@@ -182,7 +182,7 @@ class batch_job
         $result = $db_con->update($this->id, 'start_time', 'Now()');
 
         log_debug('batch_job->exe -> ' . $this->type . ' with ' . $result);
-        if ($this->type == clo(DBL_JOB_VALUE_UPDATE)) {
+        if ($this->type == cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE)) {
             $this->exe_val_upd();
         } else {
             log_err('Job type "' . $this->type . '" not defined.', 'batch_job->exe');

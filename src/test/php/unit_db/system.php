@@ -46,5 +46,18 @@ function run_system_unit_db_tests()
     $target = 1;
     test_dsp('unit_db_sys_log->check ' . sys_log_status::NEW, $result, $target);
 
+    test_subheader('System batch job type tests');
+
+    // load the batch job type list
+    $lst = new job_type_list();
+    $result = $lst->load($db_con);
+    $target = true;
+    test_dsp('unit_db_sys_job_type->load', $target, $result);
+
+    // ... and check if at least the most critical is loaded
+    $result = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
+    $target = 1;
+    test_dsp('unit_db_sys_job_type->check ' . job_type_list::VALUE_UPDATE, $result, $target);
+
 }
 

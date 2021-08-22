@@ -361,6 +361,8 @@ const DB_TYPE_CHANGE_FIELD = 'change_field';
 const DB_TYPE_CHANGE_ACTION = 'change_action';
 const DB_TYPE_CHANGE_LINK = 'change_link';
 const DB_TYPE_CONFIG = 'config';
+const DB_TYPE_BATCH_JOB = 'calc_and_cleanup_task_type';
+const DB_TYPE_BATCH_JOB_TYPE = 'calc_and_cleanup_task_type';
 const DB_TYPE_SYS_LOG = 'sys_log';
 const DB_TYPE_SYS_LOG_STATUS = 'sys_log_status';
 const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
@@ -489,6 +491,7 @@ include_once $path_php . 'model/formula/figure_list.php';
 include_once $path_php . 'web/formula_display.php';
 include_once $path_php . 'model/system/batch_job.php';
 include_once $path_php . 'model/system/batch_job_list.php';
+include_once $path_php . 'model/system/batch_job_type_list.php';
 include_once $path_php . 'model/view/view.php';
 include_once $path_php . 'model/view/view_exp.php';
 include_once $path_php . 'model/view/view_list.php';
@@ -822,6 +825,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $verbs;
     global $system_views;
     global $sys_log_stati;
+    global $job_types;
 
     // resume session (based on cookies)
     session_start();
@@ -876,6 +880,8 @@ function prg_start($code_name, $style = ""): sql_db
     $share_types->load($db_con);
     $protection_types = new protection_type_list();
     $protection_types->load($db_con);
+    $job_types = new job_type_list();
+    $job_types->load($db_con);
 
     // preload the little more complex objects
     $verbs = new verb_list();

@@ -43,10 +43,10 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
 
 CREATE TABLE IF NOT EXISTS `calc_and_cleanup_task_types`
 (
-    `calc_and_cleanup_task_type_id`   int(11)      NOT NULL,
-    `calc_and_cleanup_task_type_name` varchar(200) NOT NULL,
-    `description`                     text,
-    `code_id`                         varchar(50)  NOT NULL
+    `calc_and_cleanup_task_type_id` int(11)      NOT NULL,
+    `type_name`                     varchar(200) NOT NULL,
+    `description`                   text,
+    `code_id`                       varchar(50)  NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;

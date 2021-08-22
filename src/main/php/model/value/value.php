@@ -1575,7 +1575,7 @@ class value extends user_sandbox_display
         log_debug('value->save_field_trigger_update group id "' . $this->grp_id . '" for user ' . $this->usr->name . '');
         if ($this->id > 0) {
             $job = new batch_job;
-            $job->type = clo(DBL_JOB_VALUE_UPDATE);
+            $job->type = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
             //$job->usr  = $this->usr;
             $job->obj = $this;
             $job->add();

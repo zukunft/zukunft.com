@@ -599,6 +599,9 @@ class sql_db
         if ($result == 'sys_log_status_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'calc_and_cleanup_task_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         log_debug("sql_db->set_name_field to (" . $result . ")");
         $this->name_field = $result;
     }
