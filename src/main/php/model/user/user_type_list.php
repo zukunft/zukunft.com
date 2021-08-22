@@ -56,7 +56,11 @@ class user_type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_obj = new user_type();
-                $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
+                if ($db_type == db_cl::LOG_TABLE) {
+                    $type_obj->name = $db_entry['change_table_name'];
+                } else {
+                    $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
+                }
                 $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
                 $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
                 $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;

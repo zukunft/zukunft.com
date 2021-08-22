@@ -179,8 +179,20 @@ function unit_test_init_job_types()
 {
     global $job_types;
 
-    $job_types = new user_type_list();
+    $job_types = new job_type_list();
     $job_types->load_dummy();
+
+}
+
+/**
+ * create log table array for the unit tests without database connection
+ */
+function unit_test_init_log_tables()
+{
+    global $change_log_tables;
+
+    $change_log_tables = new change_log_table();
+    $change_log_tables->load_dummy();
 
 }
 
@@ -205,6 +217,7 @@ function run_unit_tests()
     unit_test_init_share_types();
     unit_test_init_protection_types();
     unit_test_init_job_types();
+    unit_test_init_log_tables();
 
     // do the unit tests
     run_string_unit_tests(); // test functions not yet split into single unit tests

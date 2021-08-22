@@ -367,6 +367,7 @@ const DB_TYPE_SYS_LOG = 'sys_log';
 const DB_TYPE_SYS_LOG_STATUS = 'sys_log_status';
 const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
 const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
+const DB_TYPE_CHANGE_LOG_TABLE = 'change_table';
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
 
 const DB_TYPE_SHARE = 'share_type';
@@ -417,6 +418,7 @@ include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/user/user_type_list.php';
 include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
+include_once $path_php . 'model/change/log_table.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';
@@ -826,6 +828,7 @@ function prg_start($code_name, $style = ""): sql_db
     global $system_views;
     global $sys_log_stati;
     global $job_types;
+    global $change_log_tables;
 
     // resume session (based on cookies)
     session_start();
@@ -882,6 +885,8 @@ function prg_start($code_name, $style = ""): sql_db
     $protection_types->load($db_con);
     $job_types = new job_type_list();
     $job_types->load($db_con);
+    $change_log_tables = new change_log_table();
+    $change_log_tables->load($db_con);
 
     // preload the little more complex objects
     $verbs = new verb_list();

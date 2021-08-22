@@ -761,8 +761,8 @@ function zuv_dsp_hist($val_id, $size, $back_link) {
                  change_actions a,
                  change_fields f,
                  users u
-           WHERE (f.table_id = ".clo(DBL_SYSLOG_TBL_VALUE)." 
-               OR f.table_id = ".clo(DBL_SYSLOG_TBL_VALUE_USR).")
+           WHERE (f.table_id = ".cl(db_cl::LOG_TABLE, change_log_table::VALUE)." 
+               OR f.table_id = ".cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR).")
              AND f.change_field_id  = c.change_field_id 
              AND c.row_id  = ".$val_id." 
              AND c.change_action_id = a.change_action_id 
@@ -814,9 +814,9 @@ function zuv_dsp_hist_links($val_id, $size, $back_link) {
             FROM change_links c,
                  change_actions a,
                  users u
-           WHERE (c.change_table_id = ".clo(DBL_SYSLOG_TBL_VALUE)." 
-               OR c.change_table_id = ".clo(DBL_SYSLOG_TBL_VALUE_USR)." 
-               OR c.change_table_id = ".clo(DBL_SYSLOG_TBL_VALUE_LINK)." )
+           WHERE (c.change_table_id = ".cl(db_cl::LOG_TABLE, change_log_table::VALUE)." 
+               OR c.change_table_id = ".cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR)." 
+               OR c.change_table_id = ".cl(db_cl::LOG_TABLE, change_log_table::VALUE_LINK)." )
              AND (c.old_from_id = ".$val_id." OR c.new_from_id = ".$val_id.")
              AND c.change_action_id = a.change_action_id 
              AND c.user_id = u.user_id 

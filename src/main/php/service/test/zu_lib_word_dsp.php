@@ -658,7 +658,7 @@ function zut_dsp_hist($wrd_id, $size, $back_link)
                  change_actions a,
                  change_fields f,
                  users u
-           WHERE (f.table_id = " . clo(DBL_SYSLOG_TBL_WORD) . " OR f.table_id = " . clo(DBL_SYSLOG_TBL_WORD_USR) . ")
+           WHERE (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ")
              AND f.change_field_id  = c.change_field_id 
              AND c.row_id  = " . $wrd_id . " 
              AND c.change_action_id = a.change_action_id 
@@ -719,8 +719,8 @@ function zut_dsp_hist_links($wrd_id, $size, $back_link)
             FROM change_links c,
                  change_actions a,
                  users u
-           WHERE (c.change_table_id = " . clo(DBL_SYSLOG_TBL_WORD) . "      OR c.change_table_id = " . clo(DBL_SYSLOG_TBL_WORD_USR) . " 
-               OR c.change_table_id = " . clo(DBL_SYSLOG_TBL_WORD_LINK) . " )
+           WHERE (c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . "      OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . " 
+               OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_LINK) . " )
              AND (c.old_from_id = " . $wrd_id . " OR c.new_from_id = " . $wrd_id . " OR c.old_to_id = " . $wrd_id . " OR c.new_to_id = " . $wrd_id . ")
              AND c.change_action_id = a.change_action_id 
              AND c.user_id = u.user_id 

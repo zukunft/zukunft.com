@@ -45,6 +45,7 @@ class db_cl
     const PROTECTION_TYPE = "protection_type";
     const USER_PROFILE = "user_profile_type";
     const LOG_STATUS = "system_log_status";
+    const LOG_TABLE = "change_table";
     const JOB_TYPE = "job_type";
 
     /**
@@ -126,6 +127,12 @@ class db_cl
         return $job_types->id($code_id);
     }
 
+    function log_table_id(string $code_id): int
+    {
+        global $change_log_tables;
+        return $change_log_tables->id($code_id);
+    }
+
     /**
      * the type object base on the given database row id
      *
@@ -184,6 +191,12 @@ class db_cl
     {
         global $job_types;
         return $job_types->get($id);
+    }
+
+    function log_table(int $id)
+    {
+        global $change_log_tables;
+        return $change_log_tables->get($id);
     }
 
     /**
@@ -264,6 +277,12 @@ class db_cl
         return $job_types->name($id);
     }
 
+    function log_table_name(int $id): string
+    {
+        global $change_log_tables;
+        return $change_log_tables->name($id);
+    }
+
 }
 
 
@@ -315,6 +334,9 @@ function cl(string $type, string $code_id): int
             break;
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type_id($code_id);
+            break;
+        case db_cl::LOG_TABLE:
+            $result = $db_code_link->log_table_id($code_id);
             break;
     }
     return $result;
@@ -369,6 +391,9 @@ function cl_name(string $type, int $id): int
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type_name($id);
             break;
+        case db_cl::LOG_TABLE:
+            $result = $db_code_link->log_table_name($id);
+            break;
     }
     return $result;
 }
@@ -420,6 +445,9 @@ function get_type(string $type, string $code_id): user_type
             break;
         case db_cl::JOB_TYPE:
             $result = $db_code_link->job_type($db_code_link->job_type_id($code_id));
+            break;
+        case db_cl::LOG_TABLE:
+            $result = $db_code_link->log_table($db_code_link->log_table_id($code_id));
             break;
     }
     return $result;

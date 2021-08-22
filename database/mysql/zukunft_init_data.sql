@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 -- Dumping data for table `calc_and_cleanup_task_types`
 --
 
-INSERT INTO `calc_and_cleanup_task_types` (`calc_and_cleanup_task_type_id`, `calc_and_cleanup_task_type_name`, `description`, `code_id`) VALUES
+INSERT INTO `calc_and_cleanup_task_types` (`calc_and_cleanup_task_type_id`, `type_name`, `description`, `code_id`) VALUES
 (1, 'update value', 'if a value is updated all the depending formula values should be calculated again', 'value_update'),
 (2, 'add value', '1. check if used in formulas and if yes, create new formula results\r\n2. calculate the new formula results', 'value_add'),
 (3, 'exclude a value', 'check if used for a formula result and if yes either remove the formula result or update it', 'value_del'),
@@ -44,7 +44,7 @@ INSERT INTO `change_actions` (`change_action_id`, `change_action_name`, `code_id
 -- Dumping data for table `change_tables`
 --
 
-INSERT INTO `change_tables` (`change_table_id`, `change_table_name`, `description`, `code_id`) VALUES
+INSERT INTO `change_tables` (`change_table_id`, `type_name`, `description`, `code_id`) VALUES
 (1, 'values', 'number', 'values'),
 (2, 'words', 'word', 'words'),
 (7, 'formulas', 'formula', 'formulas'),
