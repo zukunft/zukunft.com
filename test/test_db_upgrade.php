@@ -2,10 +2,8 @@
 
 /*
 
-  test_unit_db.php - for unit testing that only read from the database
-  ----------------
-
-  because these tests are read from the database and it does not read any critical data we don't care if the is called by any user
+  test_db_upgrade.php - to test the database upgrades
+  -------------------
 
 
 zukunft.com - calc with words
@@ -33,7 +31,7 @@ $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
 // open database and display header
-$db_con = prg_start("unit testing with database reading");
+$db_con = prg_start("database upgrade testing");
 
 // load the testing functions
 include_once '../src/test/php/utils/test_base.php';
@@ -57,13 +55,7 @@ $result = $usr->get();
 if ($usr->id > 0) {
     if ($usr->is_admin()) {
 
-        // --------------------------------------------------
-        // start unit testing without writing to the database
-        // --------------------------------------------------
-
-        load_usr_data();
-
-        run_unit_db_tests();
+        db_upgrade_0_0_3($db_con);
 
         // display the test results
         zu_test_dsp_result();

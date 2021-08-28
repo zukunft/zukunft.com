@@ -2,11 +2,9 @@
 
 /*
 
-  all.php - run all unit database read only tests in a useful order
-  -----------------
-
-  the zukunft.com unit tests should test all class methods, that can be tested without writing to the database
-
+  test/unit_db/sql_db.php - unit testing of the SQL abstraction layer functions with the current database
+  -----------------------
+  
 
 zukunft.com - calc with words
 
@@ -28,19 +26,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_unit_db_tests()
+function run_sql_db_unit_db_tests()
 {
-    test_header('Start the zukunft.com unit database read only tests');
 
-    // do the database unit tests
-    run_system_unit_db_tests();
-    run_sql_db_unit_db_tests();
-    run_formula_unit_db_tests();
-    run_protection_unit_db_tests();
-    run_ref_unit_db_tests();
-    run_share_unit_db_tests();
-    run_user_unit_db_tests();
-    run_verb_unit_db_tests();
-    run_view_unit_db_tests();
-    run_word_unit_db_tests();
+    global $db_con;
+
+    test_header('Unit database tests of the SQL abstraction layer class (database/sql_db.php)');
+
+    test_subheader('Database upgrade functions');
+
+    $result = $db_con->has_column('user_values','user_value');
+    $target = false;
+    test_dsp('sql_db->change_column_name', $target, $result);
+
+    $result = $db_con->has_column('user_values','word_value');
+    $target = true;
+    test_dsp('sql_db->change_column_name', $target, $result);
+
+    $result = $db_con->change_column_name('user_values','user_value','word_value');
+    $target = true;
+    test_dsp('sql_db->change_column_name', $target, $result);
+
 }
+

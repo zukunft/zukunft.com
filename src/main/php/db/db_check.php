@@ -58,47 +58,54 @@ function db_check($db_con)
 
 // upgrade the database from any version prior of 0.0.3
 // the version 0.0.3 is the first version, which has an build in upgrade process
-function db_upgrade_0_0_3($db_con)
+function db_upgrade_0_0_3($db_con): string
 {
     global $usr;
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-    $sql = 'ALTER TABLE user_values RENAME user_value TO word_value;';
-    $sql .= 'ALTER TABLE word_links RENAME name TO word_link_name';
-    $sql .= 'ALTER TABLE user_word_links RENAME name TO word_link_name';
-    $sql .= 'ALTER TABLE value_time_series RENAME value_time_serie_id TO value_time_series_id;';
-    $sql .= 'ALTER TABLE user_blocked_ips RENAME isactive TO is_active;';
-    $sql .= 'ALTER TABLE users RENAME isactive TO is_active;';
-    $sql .= 'ALTER TABLE users RENAME email_alternativ TO email_alternative;';
-    $sql .= 'ALTER TABLE view_component_types RENAME view_component_type_name TO type_name;';
-    $sql .= 'ALTER TABLE formula_types RENAME name TO type_name;';
-    $sql .= 'ALTER TABLE ref_types RENAME ref_type_name TO type_name;';
-    $sql .= 'ALTER TABLE share_types RENAME share_type_name TO type_name;';
-    $sql .= 'ALTER TABLE protection_types RENAME protection_type_name TO type_name;';
-    $sql .= 'ALTER TABLE user_profiles RENAME user_profile_name TO type_name;';
-    $sql .= 'ALTER TABLE user_profiles RENAME commen TO description;';
-    $sql .= 'ALTER TABLE user_words ADD COLUMN share_type_id smallint;';
-    $sql .= 'ALTER TABLE user_words ADD COLUMN protection_type_id smallint;';
-    $sql .= 'ALTER TABLE words ADD COLUMN share_type_id smallint;';
-    $sql .= 'ALTER TABLE words ADD COLUMN protection_type_id smallint;';
-    $sql .= 'ALTER TABLE user_word_links ADD COLUMN share_type_id smallint;';
-    $sql .= 'ALTER TABLE user_word_links ADD COLUMN protection_type_id smallint;';
-    $sql .= 'ALTER TABLE word_links ADD COLUMN share_type_id smallint;';
-    $sql .= 'ALTER TABLE word_links ADD COLUMN protection_type_id smallint;';
-    $sql .= "UPDATE sys_log_status SET code_id = 'new' WHERE code_id = 'log_status_new'; UPDATE sys_log_status SET code_id = 'assigned' WHERE code_id = 'log_status_assigned'; UPDATE sys_log_status SET code_id = 'resolved' WHERE code_id = 'log_status_resolved'; UPDATE sys_log_status SET code_id = 'closed' WHERE code_id = 'log_status_closed';";
-    $sql .= 'ALTER TABLE public.sys_log_status RENAME comment TO description;';
-    $sql .= 'ALTER TABLE public.sys_log_status RENAME sys_log_status_name TO type_name;';
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'value_update'::character varying WHERE calc_and_cleanup_task_type_id = '1';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'value_add'::character varying WHERE calc_and_cleanup_task_type_id = '2';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'value_del'::character varying WHERE calc_and_cleanup_task_type_id = '3';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_update'::character varying WHERE calc_and_cleanup_task_type_id = '4';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_add'::character varying WHERE calc_and_cleanup_task_type_id = '5';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_del'::character varying WHERE calc_and_cleanup_task_type_id = '6';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_link'::character varying WHERE calc_and_cleanup_task_type_id = '7';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_unlink'::character varying WHERE calc_and_cleanup_task_type_id = '8';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'word_link'::character varying WHERE calc_and_cleanup_task_type_id = '9';";
-    $sql .= "UPDATE calc_and_cleanup_task_types SET code_id = 'word_unlink'::character varying WHERE calc_and_cleanup_task_type_id = '10';";    $db_con->exe($sql, sys_log_level::INFO, 'db_upgrade_0_0_3');
-    $sql .= 'ALTER TABLE calc_and_cleanup_task_types RENAME calc_and_cleanup_task_type_name TO type_name;';
+    $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
+    $db_con->change_column_name('user_values','user_value','word_value');
+    $db_con->change_column_name('user_value','user_value','word_value;');
+    $db_con->change_column_name('word_links','name','word_link_name');
+    $db_con->change_column_name('user_word_links','name','word_link_name');
+    $db_con->change_column_name('value_time_series','value_time_serie_id','value_time_series_id;');
+    $db_con->change_column_name('user_blocked_ips','isactive','is_active;');
+    $db_con->change_column_name('users','isactive','is_active;');
+    $db_con->change_column_name('users','email_alternativ','email_alternative;');
+    $db_con->change_column_name('view_component_types','view_component_type_name','type_name;');
+    $db_con->change_column_name('formula_types','name','type_name;');
+    $db_con->change_column_name('ref_types','ref_type_name','type_name;');
+    $db_con->change_column_name('share_types','share_type_name','type_name;');
+    $db_con->change_column_name('protection_types','protection_type_name','type_name;');
+    $db_con->change_column_name('user_profiles','user_profile_name','type_name;');
+    $db_con->change_column_name('user_profiles','commen','description;');
+    $db_con->change_column_name('public.sys_log_status','comment','description;');
+    $db_con->change_column_name('public.sys_log_status','sys_log_status_name','type_name;');
+    $db_con->change_column_name('calc_and_cleanup_task_types','calc_and_cleanup_task_type_name','type_name;');
+    $sql_lst = array();
+
+    $sql_lst[] = 'ALTER TABLE user_words ADD COLUMN share_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE user_words ADD COLUMN protection_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE words ADD COLUMN share_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE words ADD COLUMN protection_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE user_word_links ADD COLUMN share_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE user_word_links ADD COLUMN protection_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE word_links ADD COLUMN share_type_id smallint;';
+    $sql_lst[] = 'ALTER TABLE word_links ADD COLUMN protection_type_id smallint;';
+    $sql_lst[] = "UPDATE sys_log_status SET code_id = 'new' WHERE code_id = 'log_status_new'; UPDATE sys_log_status SET code_id = 'assigned' WHERE code_id = 'log_status_assigned'; UPDATE sys_log_status SET code_id = 'resolved' WHERE code_id = 'log_status_resolved'; UPDATE sys_log_status SET code_id = 'closed' WHERE code_id = 'log_status_closed';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'value_update'::character varying WHERE calc_and_cleanup_task_type_id = '1';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'value_add'::character varying WHERE calc_and_cleanup_task_type_id = '2';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'value_del'::character varying WHERE calc_and_cleanup_task_type_id = '3';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_update'::character varying WHERE calc_and_cleanup_task_type_id = '4';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_add'::character varying WHERE calc_and_cleanup_task_type_id = '5';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_del'::character varying WHERE calc_and_cleanup_task_type_id = '6';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_link'::character varying WHERE calc_and_cleanup_task_type_id = '7';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_unlink'::character varying WHERE calc_and_cleanup_task_type_id = '8';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'word_link'::character varying WHERE calc_and_cleanup_task_type_id = '9';";
+    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'word_unlink'::character varying WHERE calc_and_cleanup_task_type_id = '10';";
+    foreach ($sql_lst as $sql) {
+        $db_con->exe($sql, sys_log_level::INFO, $process_name);
+    }
     // TODO create table user_value_time_series
     // TODO check and change view component type code ids
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
@@ -129,7 +136,8 @@ function db_upgrade_0_0_4($db_con)
 /**
  * fill the database with all rows that have a code id and code linked
  */
-function db_fill_code_links() {
+function db_fill_code_links()
+{
     // load the csv
     // check if the column names match the table names
     // select the rows where the code id is missing

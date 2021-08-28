@@ -515,6 +515,9 @@ class sql_db
         if ($result == 'configs') {
             $result = 'config';
         }
+        if ($result == 'user_valuess') {
+            $result = 'user_values';
+        }
         return $result;
     }
 
@@ -1634,6 +1637,49 @@ class sql_db
             }
         }
         return $msg;
+    }
+
+    /**
+     * check if a column name exists
+     * @param string $table_name
+     * @param string $column_name
+     * @return bool true if the column name exists in the given table
+     */
+    function has_column(string $table_name, string $column_name): bool
+    {
+        $result = false;
+        $sql_check ="SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
+        $sql_result = $this->get1($sql_check);
+        if ($sql_result) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to change the name of a column
+     *
+     * @param string $table_name
+     * @param string $from_column_name
+     * @param string $to_column_name
+     * @return bool true if the renaming has been sucessful or is not needed
+     */
+    function change_column_name(string $table_name, string $from_column_name, string $to_column_name): bool
+    {
+        $result = false;
+
+        // adjust the parameters to the used database used
+        $table_name = $this->get_table_name($table_name);
+
+        // check if the old column name is still valid
+        if ($this->has_column($table_name, $from_column_name)) {
+            $sql = 'ALTER TABLE ' . $table_name . ' RENAME ' . $from_column_name . ' TO ' . $to_column_name . ';';
+            $this->exe($sql);
+        } else {
+            $result = true;
+        }
+
+        return $result;
     }
 }
 
