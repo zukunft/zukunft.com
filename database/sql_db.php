@@ -105,11 +105,11 @@ class sql_db
     private bool $usr_join_query = false;        // true, if the joined query is also expected to retrieve user specific data
     private bool $usr_only_query = false;        // true, if the query is expected to retrieve ONLY the user specific data without the standard values
 
-    private ?string $fields = '';                // the fields               SQL statement that is used for the next select query
-    private ?string $from = '';                  // the from                 SQL statement that is used for the next select query
-    private ?string $join = '';                  // the join                 SQL statement that is used for the next select query
-    private ?string $where = '';                 // the where condition as a SQL statement that is used for the next select query
-    private ?string $order = '';                 // the order condition as a SQL statement that is used for the next select query
+    private ?string $fields = '';                // the fields                SQL statement that is used for the next select query
+    private ?string $from = '';                  // the FROM                  SQL statement that is used for the next select query
+    private ?string $join = '';                  // the JOIN                  SQL statement that is used for the next select query
+    private ?string $where = '';                 // the WHERE condition as an SQL statement that is used for the next select query
+    private ?string $order = '';                 // the WHERE condition as an SQL statement that is used for the next select query
 
     private ?array $prepared_sql_names = [];     // list of all SQL queries that have already been prepared during the open connection
 
@@ -1657,12 +1657,37 @@ class sql_db
     }
 
     /**
+     * acc a database column but only if needed
+     * @param string $table_name
+     * @param string $column_name
+     * @param string $type_name
+     * @return bool true if the adding has been successful or is not needed
+     */
+    function add_column(string $table_name, string $column_name, string $type_name): bool
+    {
+        $result = false;
+
+        // adjust the parameters to the used database used
+        $table_name = $this->get_table_name($table_name);
+
+        // check if the old column name is still valid
+        if (!$this->has_column($table_name, $column_name)) {
+            $sql = 'ALTER TABLE ' . $table_name . ' ADD COLUMN ' . $column_name . ' ' . $type_name . ';';
+            $this->exe($sql);
+        } else {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * create an SQL statement to change the name of a column
      *
      * @param string $table_name
      * @param string $from_column_name
      * @param string $to_column_name
-     * @return bool true if the renaming has been sucessful or is not needed
+     * @return bool true if the renaming has been successful or is not needed
      */
     function change_column_name(string $table_name, string $from_column_name, string $to_column_name): bool
     {
@@ -1681,6 +1706,26 @@ class sql_db
 
         return $result;
     }
+
+    function remove_prefix(string $table_name, string $column_name, string $prefix_name): bool
+    {
+        $result = false;
+
+        $sql_select = "SELECT " .  $column_name . " FROM " .  $table_name . ";";
+        $db_row_lst = $this->get($sql_select);
+        foreach ($db_row_lst as $db_row) {
+            $db_row_name = $db_row[$column_name];
+            $new_name = zu_str_right_of($db_row_name, $prefix_name);
+            if ($new_name != '' and $new_name != $db_row_name) {
+                $sql = "UPDATE " . $table_name . " SET code_id = '" . $new_name . "' WHERE code_id = '" . $db_row_name . "';";
+                $this->exe($sql);
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
 }
 
 

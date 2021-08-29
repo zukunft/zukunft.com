@@ -5,11 +5,9 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
-TODO create a verbs hash list
 TODO load the database code links from csv
 TODO create the unit tests for the core elements such as word, value, formula, view
 TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
-TODO replace all clo() with cl()
 TODO split the database from the memory object to save memory
 TODO add an im- and export code_id that is only unique for each type
 TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki

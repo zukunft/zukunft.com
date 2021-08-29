@@ -64,6 +64,14 @@ function db_upgrade_0_0_3($db_con): string
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
+    $db_con->add_column('user_words', 'share_type_id', 'smallint;');
+    $db_con->add_column('user_words', 'protection_type_id', 'smallint;');
+    $db_con->add_column('words', 'share_type_id', 'smallint;');
+    $db_con->add_column('words', 'protection_type_id', 'smallint;');
+    $db_con->add_column('user_word_links', 'share_type_id', 'smallint;');
+    $db_con->add_column('user_word_links', 'protection_type_id', 'smallint;');
+    $db_con->add_column('word_links', 'share_type_id', 'smallint;');
+    $db_con->add_column('word_links', 'protection_type_id', 'smallint;');
     $db_con->change_column_name('user_values','user_value','word_value');
     $db_con->change_column_name('user_value','user_value','word_value;');
     $db_con->change_column_name('word_links','name','word_link_name');
@@ -82,32 +90,10 @@ function db_upgrade_0_0_3($db_con): string
     $db_con->change_column_name('public.sys_log_status','comment','description;');
     $db_con->change_column_name('public.sys_log_status','sys_log_status_name','type_name;');
     $db_con->change_column_name('calc_and_cleanup_task_types','calc_and_cleanup_task_type_name','type_name;');
-    $sql_lst = array();
-
-    $sql_lst[] = 'ALTER TABLE user_words ADD COLUMN share_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE user_words ADD COLUMN protection_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE words ADD COLUMN share_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE words ADD COLUMN protection_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE user_word_links ADD COLUMN share_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE user_word_links ADD COLUMN protection_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE word_links ADD COLUMN share_type_id smallint;';
-    $sql_lst[] = 'ALTER TABLE word_links ADD COLUMN protection_type_id smallint;';
-    $sql_lst[] = "UPDATE sys_log_status SET code_id = 'new' WHERE code_id = 'log_status_new'; UPDATE sys_log_status SET code_id = 'assigned' WHERE code_id = 'log_status_assigned'; UPDATE sys_log_status SET code_id = 'resolved' WHERE code_id = 'log_status_resolved'; UPDATE sys_log_status SET code_id = 'closed' WHERE code_id = 'log_status_closed';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'value_update'::character varying WHERE calc_and_cleanup_task_type_id = '1';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'value_add'::character varying WHERE calc_and_cleanup_task_type_id = '2';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'value_del'::character varying WHERE calc_and_cleanup_task_type_id = '3';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_update'::character varying WHERE calc_and_cleanup_task_type_id = '4';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_add'::character varying WHERE calc_and_cleanup_task_type_id = '5';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_del'::character varying WHERE calc_and_cleanup_task_type_id = '6';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_link'::character varying WHERE calc_and_cleanup_task_type_id = '7';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'formula_unlink'::character varying WHERE calc_and_cleanup_task_type_id = '8';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'word_link'::character varying WHERE calc_and_cleanup_task_type_id = '9';";
-    $sql_lst[] = "UPDATE calc_and_cleanup_task_types SET code_id = 'word_unlink'::character varying WHERE calc_and_cleanup_task_type_id = '10';";
-    foreach ($sql_lst as $sql) {
-        $db_con->exe($sql, sys_log_level::INFO, $process_name);
-    }
+    $db_con->remove_prefix('sys_log_status', 'code_id', 'log_status_');
+    $db_con->remove_prefix('calc_and_cleanup_task_types', 'code_id', 'job_');
+    $db_con->remove_prefix('view_component_types', 'code_id', 'dsp_comp_type_');
     // TODO create table user_value_time_series
-    // TODO check and change view component type code ids
     $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';
@@ -117,7 +103,7 @@ function db_upgrade_0_0_3($db_con): string
 }
 
 // upgrade the database from any version prior of 0.0.4
-function db_upgrade_0_0_4($db_con)
+function db_upgrade_0_0_4($db_con): string
 {
     global $usr;
 
