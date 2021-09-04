@@ -1288,6 +1288,7 @@ class word_link extends word_link_object
 
     /**
      * update a triple in the database or create a user triple
+     * @return string an empty string if everything is fine otherwise the message that should be shown to the user
      */
     function save(): string
     {

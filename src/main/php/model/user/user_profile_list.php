@@ -55,12 +55,12 @@ class user_profile_list extends user_type_list
     function load_dummy()
     {
         $this->lst = array();
-        $this->type_hash = array();
+        $this->hash = array();
         $type = new user_type();
         $type->name = user_profile_list::DBL_NORMAL;
         $type->code_id = user_profile_list::DBL_NORMAL;
         $this->lst[2] = $type;
-        $this->type_hash[user_profile_list::DBL_NORMAL] = 2;
+        $this->hash[user_profile_list::DBL_NORMAL] = 2;
 
     }
 

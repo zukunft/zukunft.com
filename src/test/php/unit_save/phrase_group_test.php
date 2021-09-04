@@ -34,7 +34,7 @@ function run_phrase_group_test()
     test_header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
     // load the main test word
-    $wrd_company = test_word(word::TEST_NAME_READ);
+    $wrd_company = test_word(word::TN_READ);
 
     // test getting the group id based on ids
     $wrd_lst = new word_list;

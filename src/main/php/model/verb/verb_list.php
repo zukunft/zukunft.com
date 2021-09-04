@@ -39,7 +39,6 @@ class verb_list extends user_type_list
     const DIRECTION_UP = 'up';
     const DIRECTION_DOWN = 'down';
 
-    public array $hash = []; // hash list with the code id for fast selection
     public ?user $usr = null;   // the user object of the person for whom the verb list is loaded, so to say the viewer
 
     // search and load fields
@@ -106,8 +105,8 @@ class verb_list extends user_type_list
             */
         } else {
             $this->lst = $this->load_work_link_list($db_con, $db_type);
-            $this->type_hash = $this->get_hash($this->lst);
-            if (count($this->type_hash) > 0) {
+            $this->hash = $this->get_hash($this->lst);
+            if (count($this->hash) > 0) {
                 $result = true;
             }
         }
@@ -141,8 +140,8 @@ class verb_list extends user_type_list
     {
         $result = false;
         $this->lst = $this->load_list($db_con, $db_type);
-        $this->type_hash = $this->get_hash($this->lst);
-        if (count($this->type_hash) > 0) {
+        $this->hash = $this->get_hash($this->lst);
+        if (count($this->hash) > 0) {
             $result = true;
         }
         return $result;
@@ -158,7 +157,7 @@ class verb_list extends user_type_list
         $type->name = verb::DBL_IS;
         $type->code_id = verb::DBL_IS;
         $this->lst[2] = $type;
-        $this->type_hash[verb::DBL_IS] = 2;
+        $this->hash[verb::DBL_IS] = 2;
     }
 
     // calculates how many times a word is used, because this can be helpful for sorting
@@ -202,6 +201,39 @@ class verb_list extends user_type_list
         return $result;
     }
 
+    /**
+     * get a single verb from this list
+     * a kind of replacement for the user_type_list->get() function but for the verb object
+     *
+     * @param string $code_id
+     * @return verb the verb object or null if no match is found
+     */
+    function get_verb(string $code_id): verb
+    {
+        $result = null;
+        if ($code_id != '' and $code_id != null) {
+            if (array_key_exists($code_id, $this->hash)) {
+                $id = $this->hash[$code_id];
+                if ($id > 0) {
+                    if (array_key_exists($id, $this->lst)) {
+                        $result = $this->lst[$id];
+                    } else {
+                        log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->lst));
+                    }
+                } else {
+                    log_debug('Type id not set');
+                }
+            } else {
+                log_err('Type id not found for ' . $code_id . ' in ' . dsp_array($this->hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+
+        return $result;
+    }
+
+
     /*
       display functions
       -----------------
@@ -218,6 +250,5 @@ class verb_list extends user_type_list
     {
         return dsp_list($this->lst, "link_type");
     }
-
 
 }

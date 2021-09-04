@@ -64,7 +64,7 @@ class job_type_list extends user_type_list
         $type->name = job_type_list::VALUE_UPDATE;
         $type->code_id = job_type_list::VALUE_UPDATE;
         $this->lst[2] = $type;
-        $this->type_hash[job_type_list::VALUE_UPDATE] = 2;
+        $this->hash[job_type_list::VALUE_UPDATE] = 2;
     }
 
     /**

@@ -34,9 +34,16 @@
 class word extends word_link_object
 {
     // persevered word names for unit and integration tests
-    const TEST_NAME_READ = 'Mathematical constant';
-    const TEST_NAME_ADD = 'System Test Word';
-    const TEST_NAME_CHANGED = 'System Test Word Renamed';
+    const TN_READ = 'Mathematical constant';
+    const TN_ADD = 'System Test Word';
+    const TN_RENAMED = 'System Test Word Renamed';
+    const TN_PARENT = 'System Test Word Child';
+    const TN_2021 = 'System Test Time Word e.g. 2021';
+    const TN_2022 = 'Another System Test Time Word e.g. 2022';
+    const TN_CHF = 'System Test Measure Word e.g. CHF';
+    const TN_MIO = 'System Test Scaling Word e.g. millions';
+    const TN_PCT = 'System Test Percent Word';
+    const RESERVED_WORDS = array(self::TN_READ, self::TN_ADD, self::TN_RENAMED, self::TN_PARENT, self::TN_2021, self::TN_2022, self::TN_CHF, self::TN_MIO, self::TN_PCT);
 
     // database fields additional to the user sandbox fields
     public ?string $plural = null;      // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
@@ -49,6 +56,7 @@ class word extends word_link_object
     public ?int $dsp_pos = null;      // position of the word on the screen
     public ?int $dsp_lnk_id = null;   // position or link id based on which to item is displayed on the screen
     public ?int $link_type_id = null; // used in the word list to know based on which relation the word was added to the list
+
 
     // only used for the export object
     private ?view $view = null; // name of the default view for this word
@@ -158,7 +166,7 @@ class word extends word_link_object
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('values'));
         $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded',sql_db::FLD_SHARE,sql_db::FLD_PROTECT));
+        $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded', sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -208,6 +216,7 @@ class word extends word_link_object
 
     /**
      * return the main word object based on an id text e.g. used in view.php to get the word to display
+     * TODO: check if needed and review
      */
     function main_wrd_from_txt($id_txt)
     {
@@ -624,43 +633,42 @@ class word extends word_link_object
     }
 
     /**
-      tree building function
-      ----------------------
-
-      Overview for words, triples and phrases and it's lists
-
-               children and            parents return the direct parents and children   without the original phrase(s)
-          foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
-                    are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
-               contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
-                                    is part of return the    all parents                without the original phrase(s) for the specific verb "contains"
-                   next and              prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
-            followed_by and        follower_of return the    all parents and children   without the original phrase(s) for the specific verb "follows"
-      differentiated_by and differentiator_for return the    all parents and children   without the original phrase(s) for the specific verb "can_contain"
-
-      Samples
-
-      the        parents of  "ABB" can be "public limited company"
-      the   foaf_parents of  "ABB" can be "public limited company" and "company"
-                    "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
-      the       children for "company" can include "public limited company"
-      the  foaf_children for "company" can include "public limited company" and "ABB"
-                   "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
-
-              "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
-            "is part of" for "assets" is "balance sheet" but not "assets"
-
-                "next" for "2016" is "2017"
-               "prior" for "2017" is "2016"
-      "is followed by" for "2016" is "2017" and "2018"
-      "is follower of" for "2016" is "2015" and "2014"
-
-      "wind energy" and "energy" "can be differentiator for" "sector"
-                        "sector" "can be differentiated_by"  "wind energy" and "energy"
-
-      if "wind energy" "is part of" "energy"
-
-    */
+     * tree building function
+     * ----------------------
+     *
+     * Overview for words, triples and phrases and it's lists
+     *
+     * children and            parents return the direct parents and children   without the original phrase(s)
+     * foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
+     * are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
+     * contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
+     * is part of return the    all parents                without the original phrase(s) for the specific verb "contains"
+     * next and              prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
+     * followed_by and        follower_of return the    all parents and children   without the original phrase(s) for the specific verb "follows"
+     * differentiated_by and differentiator_for return the    all parents and children   without the original phrase(s) for the specific verb "can_contain"
+     *
+     * Samples
+     *
+     * the        parents of  "ABB" can be "public limited company"
+     * the   foaf_parents of  "ABB" can be "public limited company" and "company"
+     * "is" of  "ABB" can be "public limited company" and "company" and "ABB" (used to get all related values)
+     * the       children for "company" can include "public limited company"
+     * the  foaf_children for "company" can include "public limited company" and "ABB"
+     * "are" for "company" can include "public limited company" and "ABB" and "company" (used to get all related values)
+     *
+     * "contains" for "balance sheet" is "assets" and "liabilities" and "company" and "balance sheet" (used to get all related values)
+     * "is part of" for "assets" is "balance sheet" but not "assets"
+     *
+     * "next" for "2016" is "2017"
+     * "prior" for "2017" is "2016"
+     * "is followed by" for "2016" is "2017" and "2018"
+     * "is follower of" for "2016" is "2015" and "2014"
+     *
+     * "wind energy" and "energy" "can be differentiator for" "sector"
+     * "sector" "can be differentiated_by"  "wind energy" and "energy"
+     *
+     * if "wind energy" "is part of" "energy"
+     */
 
     /**
      * helper function that returns a word list object just with the word object
@@ -707,6 +715,29 @@ class word extends word_link_object
             $result = $is_wrd_lst->lst[0];
         }
         log_debug('word->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
+        return $result;
+    }
+
+    /**
+     * add a child word to this word
+     * @param word $child the word that should be added as a child
+     * @return bool
+     */
+    function add_child(word $child): bool
+    {
+        global $verbs;
+
+        $result = false;
+        $wrd_lst = $this->children();
+        if (!$wrd_lst->does_contain($child)) {
+            $wrd_lnk = new word_link();
+            $wrd_lnk->from = $this->phrase();
+            $wrd_lnk->verb = $verbs->get_verbs(verb::DBL_IS);
+            $wrd_lnk->to = $child->phrase();
+            if ($wrd_lnk->save() == '') {
+               $result = true;
+            }
+        }
         return $result;
     }
 

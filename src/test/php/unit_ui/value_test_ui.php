@@ -42,7 +42,7 @@ function run_value_ui_test () {
   $phr_lst_abb = clone $phr_lst_added;
   $phr_lst_abb->add_name(TW_ABB);
   $phr_lst_abb->load();
-  $phr_lst_added->add_name(word::TEST_NAME_CHANGED);
+  $phr_lst_added->add_name(word::TN_RENAMED);
   $phr_lst_added->load();
   $val_added = New value;
   $val_added->ids = $phr_lst_added->ids;
@@ -56,8 +56,8 @@ function run_value_ui_test () {
   // call the add value page and check if at least some basic keywords are returned
   $back = 0;
   $result = file_get_contents('https://zukunft.com/http/value_add.php?back='.$back.$phr_lst_added->id_url_long().'');
-  $target = word::TEST_NAME_CHANGED;
-  test_dsp_contains(', frontend value_add.php '.$result.' contains at least '.word::TEST_NAME_CHANGED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+  $target = word::TN_RENAMED;
+  test_dsp_contains(', frontend value_add.php '.$result.' contains at least '.word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
   $result = file_get_contents('https://zukunft.com/http/value_add.php?back='.$back.$phr_lst_abb->id_url_long().'');
   $target = TW_ABB;
@@ -65,8 +65,8 @@ function run_value_ui_test () {
 
   // test the edit value frontend
   $result = file_get_contents('https://zukunft.com/http/value_edit.php?id='.$val_added->id.'&back='.$back.'');
-  $target = word::TEST_NAME_CHANGED;
-  test_dsp_contains(', frontend value_edit.php '.$result.' contains at least '.word::TEST_NAME_CHANGED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+  $target = word::TN_RENAMED;
+  test_dsp_contains(', frontend value_edit.php '.$result.' contains at least '.word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
   $result = file_get_contents('https://zukunft.com/http/value_edit.php?id='.$val_ABB->id.'&back='.$back.'');
   $target = TW_ABB;
@@ -74,8 +74,8 @@ function run_value_ui_test () {
 
   // test the del value frontend
   $result = file_get_contents('https://zukunft.com/http/value_del.php?id='.$val_added->id.'&back='.$back.'');
-  $target = word::TEST_NAME_CHANGED;
-  test_dsp_contains(', frontend value_del.php '.$result.' contains at least '.word::TEST_NAME_CHANGED, $target, $result, TIMEOUT_LIMIT_PAGE);
+  $target = word::TN_RENAMED;
+  test_dsp_contains(', frontend value_del.php '.$result.' contains at least '.word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE);
 
   $result = file_get_contents('https://zukunft.com/http/value_del.php?id='.$val_ABB->id.'&back='.$back.'');
   $target = TW_ABB;

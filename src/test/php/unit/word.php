@@ -77,7 +77,7 @@ function run_word_unit_tests()
     $wrd = new word;
     $wrd->id = 0;
     $wrd->usr = $usr;
-    $wrd->name = word::TEST_NAME_READ;
+    $wrd->name = word::TN_READ;
     $db_con->db_type = DB_TYPE_POSTGRES;
     $created_sql = $wrd->load_sql($db_con);
     $expected_sql = "SELECT 
@@ -95,8 +95,8 @@ function run_word_unit_tests()
                             CASE WHEN (u.protection_type_id IS     NULL) THEN s.protection_type_id ELSE u.protection_type_id END AS protection_type_id 
                        FROM words s LEFT JOIN user_words u ON s.word_id = u.word_id 
                                                           AND u.user_id = 1 
-                      WHERE (u.word_name = '" . word::TEST_NAME_READ . "'
-                         OR (s.word_name = '" . word::TEST_NAME_READ . "' AND u.word_name IS NULL));";
+                      WHERE (u.word_name = '" . word::TN_READ . "'
+                         OR (s.word_name = '" . word::TN_READ . "' AND u.word_name IS NULL));";
     test_dsp('word->load_sql by word name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique

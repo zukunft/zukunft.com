@@ -35,7 +35,7 @@ function run_formula_trigger_test () {
   // prepare the calculation trigger test
   $phr_lst1 = New phrase_list;
   $phr_lst1->usr = $usr;
-  $phr_lst1->add_name(word::TEST_NAME_CHANGED);
+  $phr_lst1->add_name(word::TN_RENAMED);
   $phr_lst1->add_name(TW_SALES);
   $phr_lst1->add_name(TW_CHF);
   $phr_lst1->add_name(TW_MIO);

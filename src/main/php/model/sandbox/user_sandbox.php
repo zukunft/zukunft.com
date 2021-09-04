@@ -849,11 +849,8 @@ class user_sandbox
         $result = '';
         if ($this->obj_type == user_sandbox::TYPE_NAMED) {
             if ($this->obj_name == DB_TYPE_WORD) {
-                if ($this->name == word::TEST_NAME_ADD) {
-                    $result = word::TEST_NAME_ADD . ' is a reserved name for system testing. Please use another name';
-                }
-                if ($this->name == word::TEST_NAME_CHANGED) {
-                    $result = word::TEST_NAME_CHANGED . ' is a reserved name for system testing. Please use another name';
+                if (in_array($this->name, word::RESERVED_WORDS)) {
+                    $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
                 }
             }
         }

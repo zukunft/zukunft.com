@@ -153,7 +153,7 @@ function run_formula_value_list_test () {
   $fv_lst->usr = $usr;
   $fv_lst->load();
   $result = $fv_lst->dsp_id();
-  $target = '"Sales","percent","increase","'.word::TEST_NAME_CHANGED.'","2017"';
+  $target = '"Sales","percent","increase","'.word::TN_RENAMED.'","2017"';
   test_dsp_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

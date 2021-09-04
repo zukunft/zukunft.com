@@ -74,8 +74,8 @@ class ref_type_list extends user_type_list
         $result = false;
         global $ref_types;
         $ref_types = $this->load_list($db_con, $db_type);
-        $this->type_hash = parent::get_hash($ref_types);
-        if (count($this->type_hash) > 0) {
+        $this->hash = parent::get_hash($ref_types);
+        if (count($this->hash) > 0) {
             $result = true;
         }
         return $result;
@@ -90,7 +90,7 @@ class ref_type_list extends user_type_list
         $type->name = ref_type_list::DBL_WIKIPEDIA;
         $type->code_id = ref_type_list::DBL_WIKIPEDIA;
         $this->lst[2] = $type;
-        $this->type_hash[ref_type_list::DBL_WIKIPEDIA] = 2;
+        $this->hash[ref_type_list::DBL_WIKIPEDIA] = 2;
     }
 
     /**

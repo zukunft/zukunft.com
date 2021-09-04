@@ -72,7 +72,7 @@ class change_log_table extends user_type_list
         $type->name = change_log_table::VALUE;
         $type->code_id = change_log_table::VALUE;
         $this->lst[2] = $type;
-        $this->type_hash[change_log_table::VALUE] = 2;
+        $this->hash[change_log_table::VALUE] = 2;
     }
 
     /**

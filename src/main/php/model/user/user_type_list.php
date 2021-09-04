@@ -38,7 +38,7 @@ class user_type_list
     const TEST_TYPE = 'System Test Type Code ID';
 
     public array $lst = [];
-    public array $type_hash = [];
+    public array $hash = []; // hash list with the code id for fast selection
 
     /**
      * force to reload the type names and translations from the database
@@ -71,13 +71,13 @@ class user_type_list
 
     function get_hash(array $type_list): array
     {
-        $this->type_hash = [];
+        $this->hash = [];
         if ($type_list != null) {
             foreach ($type_list as $key => $type) {
-                $this->type_hash[$type->code_id] = $key;
+                $this->hash[$type->code_id] = $key;
             }
         }
-        return $this->type_hash;
+        return $this->hash;
     }
 
     /**
@@ -90,8 +90,8 @@ class user_type_list
     {
         $result = false;
         $this->lst = $this->load_list($db_con, $db_type);
-        $this->type_hash = $this->get_hash($this->lst);
-        if (count($this->type_hash) > 0) {
+        $this->hash = $this->get_hash($this->lst);
+        if (count($this->hash) > 0) {
             $result = true;
         }
         return $result;
@@ -107,10 +107,10 @@ class user_type_list
     {
         $result = 0;
         if ($code_id != '' and $code_id != null) {
-            if (array_key_exists($code_id, $this->type_hash)) {
-                $result = $this->type_hash[$code_id];
+            if (array_key_exists($code_id, $this->hash)) {
+                $result = $this->hash[$code_id];
             } else {
-                log_err('Type id not found for ' . $code_id . ' in ' . dsp_array($this->type_hash));
+                log_err('Type id not found for ' . $code_id . ' in ' . dsp_array($this->hash));
             }
         } else {
             log_debug('Type code id not not set');
@@ -177,12 +177,12 @@ class user_type_list
     function load_dummy()
     {
         $this->lst = array();
-        $this->type_hash = array();
+        $this->hash = array();
         $type = new user_type();
         $type->name = user_type_list::TEST_NAME;
         $type->code_id = user_type_list::TEST_TYPE;
         $this->lst[1] = $type;
-        $this->type_hash[user_type_list::TEST_TYPE] = 1;
+        $this->hash[user_type_list::TEST_TYPE] = 1;
 
     }
 

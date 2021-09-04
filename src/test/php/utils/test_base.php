@@ -163,6 +163,7 @@ Setting that should be moved to the system config table
 // switch for the email testing
 const TEST_EMAIL = FALSE; // if set to true an email will be send in case of errors and once a day an "everything fine" email is send
 
+// TODO move the test names to the single objects and check for reserved names to avoid conflicts
 // the basic test record for doing the pre check
 // the word "Company" is assumed to have the ID 1
 const TEST_WORD = "Company";

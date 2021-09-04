@@ -8,6 +8,7 @@
 TODO load the database code links from csv
 TODO create the unit tests for the core elements such as word, value, formula, view
 TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
+TODO for import offer to use all time phrases e.g. "year of fixation": 1975 for "speed of light"
 TODO split the database from the memory object to save memory
 TODO add an im- and export code_id that is only unique for each type
 TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
@@ -30,6 +31,8 @@ TODO load the config, that is not expected to be changed during a session once a
 TODO start the backend only once and react to REST calls from the frontend
 TODO make use of __DIR__ ?
 TODO create a User Interface API
+TODO offer to use FreeOTP for two factor authentication
+
 
 
   This file is part of zukunft.com - calc with words

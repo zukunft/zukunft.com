@@ -53,12 +53,12 @@ class formula_type_list extends user_type_list
         $type->name = formula::CALC;
         $type->code_id = formula::CALC;
         $this->lst[2] = $type;
-        $this->type_hash[formula::CALC] = 2;
+        $this->hash[formula::CALC] = 2;
         $type = new user_type();
         $type->name = formula::REV;
         $type->code_id = formula::REV;
         $this->lst[3] = $type;
-        $this->type_hash[formula::REV] = 3;
+        $this->hash[formula::REV] = 3;
     }
 
     /**

@@ -72,8 +72,8 @@ class view_list extends user_type_list
     {
         $result = false;
         $this->lst = $this->load_list($db_con, $db_type);
-        $this->type_hash = $this->get_hash($this->lst);
-        if (count($this->type_hash) > 0) {
+        $this->hash = $this->get_hash($this->lst);
+        if (count($this->hash) > 0) {
             $result = true;
         }
         return $result;
@@ -88,7 +88,7 @@ class view_list extends user_type_list
         $dsp->name = view::WORD;
         $dsp->code_id = view::WORD;
         $this->lst[2] = $dsp;
-        $this->type_hash[view::WORD] = 2;
+        $this->hash[view::WORD] = 2;
     }
 
     /**

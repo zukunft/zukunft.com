@@ -33,7 +33,7 @@ function run_display_test () {
   test_header('Test the view_display class (classes/view_display.php)');
 
   // test the usage of a view to create the HTML code
-  $wrd     = load_word(word::TEST_NAME_READ);
+  $wrd     = load_word(word::TN_READ);
   $wrd_abb = load_word(TW_ABB);
   $dsp = new view;
   $dsp->name = 'Company ratios';

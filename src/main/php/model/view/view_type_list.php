@@ -59,7 +59,7 @@ class view_type_list extends user_type_list
         $type->name = view_type_list::DBL_DEFAULT;
         $type->code_id = view_type_list::DBL_DEFAULT;
         $this->lst[2] = $type;
-        $this->type_hash[view_type_list::DBL_DEFAULT] = 2;
+        $this->hash[view_type_list::DBL_DEFAULT] = 2;
     }
 
     /**

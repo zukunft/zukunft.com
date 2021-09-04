@@ -56,17 +56,17 @@ class protection_type_list extends user_type_list
     function load_dummy()
     {
         $this->lst = array();
-        $this->type_hash = array();
+        $this->hash = array();
         $type = new user_type();
         $type->name = protection_type_list::DBL_NO;
         $type->code_id = protection_type_list::DBL_NO;
         $this->lst[2] = $type;
-        $this->type_hash[protection_type_list::DBL_NO] = 2;
+        $this->hash[protection_type_list::DBL_NO] = 2;
         $type = new user_type();
         $type->name = protection_type_list::DBL_ADMIN;
         $type->code_id = protection_type_list::DBL_ADMIN;
         $this->lst[3] = $type;
-        $this->type_hash[protection_type_list::DBL_ADMIN] = 3;
+        $this->hash[protection_type_list::DBL_ADMIN] = 3;
 
     }
 

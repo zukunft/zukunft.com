@@ -37,12 +37,12 @@ function test_unit_create_phrase_list(): phrase_list
     $phr_lst->usr = $usr;
     $wrd1 = new word();
     $wrd1->id = 1;
-    $wrd1->name = word::TEST_NAME_ADD;
+    $wrd1->name = word::TN_ADD;
     $wrd1->usr = $usr;
     $phr_lst->add($wrd1->phrase());
     $wrd2 = new word();
     $wrd2->id = 2;
-    $wrd1->name = word::TEST_NAME_CHANGED;
+    $wrd1->name = word::TN_RENAMED;
     $wrd2->usr = $usr;
     $wrd2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
     $phr_lst->add($wrd2->phrase());

@@ -70,7 +70,7 @@ class view_component_type_list extends user_type_list
         $type->name = view_component_type_list::DBL_TEXT;
         $type->code_id = view_component_type_list::DBL_TEXT;
         $this->lst[2] = $type;
-        $this->type_hash[view_component_type_list::DBL_TEXT] = 2;
+        $this->hash[view_component_type_list::DBL_TEXT] = 2;
     }
 
     /**

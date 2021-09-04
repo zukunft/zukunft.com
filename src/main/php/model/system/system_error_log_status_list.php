@@ -58,7 +58,7 @@ class sys_log_status extends user_type_list
         $type->name = sys_log_status::NEW;
         $type->code_id = sys_log_status::NEW;
         $this->lst[2] = $type;
-        $this->type_hash[sys_log_status::NEW] = 2;
+        $this->hash[sys_log_status::NEW] = 2;
     }
 
     /**

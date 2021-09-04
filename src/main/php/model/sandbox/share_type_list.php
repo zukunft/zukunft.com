@@ -56,17 +56,17 @@ class share_type_list extends user_type_list
     function load_dummy()
     {
         $this->lst = array();
-        $this->type_hash = array();
+        $this->hash = array();
         $type = new user_type();
         $type->name = share_type_list::DBL_PUBLIC;
         $type->code_id = share_type_list::DBL_PUBLIC;
         $this->lst[2] = $type;
-        $this->type_hash[share_type_list::DBL_PUBLIC] = 2;
+        $this->hash[share_type_list::DBL_PUBLIC] = 2;
         $type = new user_type();
         $type->name = share_type_list::DBL_PERSONAL;
         $type->code_id = share_type_list::DBL_PERSONAL;
         $this->lst[3] = $type;
-        $this->type_hash[share_type_list::DBL_PERSONAL] = 3;
+        $this->hash[share_type_list::DBL_PERSONAL] = 3;
 
     }
 
