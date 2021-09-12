@@ -54,7 +54,7 @@ function create_base_words()
     test_word(TW_MIO, word_type_list::DBL_SCALING);
     test_word(TW_K, word_type_list::DBL_SCALING);
     test_word(TW_M, word_type_list::DBL_SCALING);
-    test_word(TW_PCT, word_type_list::DBL_SCALING_PCT);
+    test_word(TW_PCT, word_type_list::DBL_PERCENT);
     test_word(TW_CF);
     test_word(TW_TAX);
     test_word(TW_SECT_AUTO);
@@ -132,6 +132,7 @@ function run_word_test()
 
     // next word
     $wrd_time_next = test_word(word::TN_2022, word_type_list::DBL_TIME);
+    test_word_link(word::TN_2022, verb::DBL_FOLLOW, word::TN_2021);
     $target = $wrd_time_next->name;
     $wrd_next = $wrd_time->next();
     $result = $wrd_next->name;

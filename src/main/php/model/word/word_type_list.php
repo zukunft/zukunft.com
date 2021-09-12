@@ -42,7 +42,7 @@ class word_type_list extends user_type_list
     const DBL_MEASURE = "measure";
     const DBL_SCALING = "scaling";
     const DBL_SCALING_HIDDEN = "scaling_hidden";
-    const DBL_SCALING_PCT = "scaling_percent";
+    const DBL_SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
     const DBL_SCALED_MEASURE = "scaled_measure";
     const DBL_FORMULA_LINK = "formula_link";
     const DBL_CALC = "calc";

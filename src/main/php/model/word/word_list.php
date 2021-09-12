@@ -1241,7 +1241,7 @@ class word_list
 
         $result = new word_list;
         $result->usr = $this->usr;
-        $percent_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_PCT);
+        $percent_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $percent_type) {

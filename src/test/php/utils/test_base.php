@@ -812,7 +812,7 @@ function test_view_component($cmp_name): view_component
 
 // check if a word link exists and if not and requested create it
 // $phrase_name should be set if the standard name for the link should not be used
-function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocreate = true)
+function test_word_link($from, $verb, $to, $target = '', $phrase_name = '', $autocreate = true)
 {
     global $usr;
 
@@ -881,7 +881,15 @@ function test_word_link($from, $verb, $to, $target, $phrase_name = '', $autocrea
             }
         }
     }
-    test_dsp('word link', $target, $result->description(), TIMEOUT_LIMIT_DB);
+    // fallback setting of target f
+    $result_text = '';
+    if (isset($lnk_test)) {
+        $result_text = $lnk_test->description();
+        if ($target == '') {
+            $target = $lnk_test->name();
+        }
+    }
+    test_dsp('word link', $target, $result_text, TIMEOUT_LIMIT_DB);
     return $result;
 }
 

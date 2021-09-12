@@ -846,11 +846,15 @@ class user_sandbox
      */
     private function check_preserved(): string
     {
+        global $usr;
+
         $result = '';
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            if ($this->obj_name == DB_TYPE_WORD) {
-                if (in_array($this->name, word::RESERVED_WORDS)) {
-                    $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
+        if (!$usr->is_admin()) {
+            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+                if ($this->obj_name == DB_TYPE_WORD) {
+                    if (in_array($this->name, word::RESERVED_WORDS)) {
+                        $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
+                    }
                 }
             }
         }

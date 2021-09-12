@@ -258,6 +258,21 @@ class user
         return $result;
     }
 
+    // true if the user is a system user e.g. the reserved word names can be used
+    function is_system(): bool
+    {
+        log_debug('user->is_system (' . $this->id . ')');
+        $result = false;
+
+        if (!isset($this->profile_id)) {
+            $this->load();
+        }
+        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+            $result = true;
+        }
+        return $result;
+    }
+
     // true if the user has the right to import data
     function can_import(): bool
     {

@@ -38,6 +38,7 @@ class user_profile_list extends user_type_list
     const DBL_NORMAL = "normal";
     const DBL_ADMIN = "admin";
     const DBL_DEV = "dev";
+    const DBL_SYSTEM = "system"; // reserved system users e.g. for internal testing
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled

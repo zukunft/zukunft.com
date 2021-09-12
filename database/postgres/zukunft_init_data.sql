@@ -261,9 +261,9 @@ INSERT INTO sys_log_types (sys_log_type_id, type_name, code_id) VALUES
 -- Dumping data for table 'users'
 --
 
-INSERT INTO users (user_id, user_name, code_id, password, email, email_verified, email_alternative, ip_address, mobile_number, mobile_verified, first_name, last_name, street, place, country_id, post_verified, official_id, user_official_id_type_id, official_verified, user_type_id, last_word_id, last_mask_id, is_active, dt, last_logoff, user_profile_id, source_id, activation_key, activation_key_timeout) VALUES
-(1, 'zukunft.com system batch job', 'system', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, '2018-02-05 08:32:36', NULL, NULL, NULL, NULL, NULL),
-(2, 'zukunft.com system test', 'system_test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2018-06-25 12:01:14', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO users (user_id, user_name, user_profile_id, code_id, password, email, email_verified, email_alternative, ip_address, mobile_number, mobile_verified, first_name, last_name, street, place, country_id, post_verified, official_id, user_official_id_type_id, official_verified, user_type_id, last_word_id, last_mask_id, is_active, dt, last_logoff, source_id, activation_key, activation_key_timeout) VALUES
+(1, 'zukunft.com system batch job', 4, 'system', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, '2018-02-05 08:32:36', NULL, NULL, NULL, NULL, NULL),
+(2, 'zukunft.com system test', 4, 'system_test', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 0, '2018-06-25 12:01:14', NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Dumping data for table 'user_official_types'
@@ -279,7 +279,8 @@ INSERT INTO user_official_types (user_official_type_id, type_name, code_id, comm
 INSERT INTO user_profiles (profile_id, type_name, code_id, description) VALUES
 (1, 'normal user', 'normal', NULL),
 (2, 'admin', 'admin', 'Administrator that can add and change verbs and sees the code_id'),
-(3, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production system');
+(3, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production system'),
+(4, 'system', 'system', 'User to log internal tasks not directly initiated by an user like system testing and cleanup');
 
 --
 -- Dumping data for table 'user_types'

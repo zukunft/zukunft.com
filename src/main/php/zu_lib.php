@@ -6,6 +6,7 @@
   __________
 
 TODO load the database code links from csv
+TODO add im- and export of users and move the system user loading to one json
 TODO create the unit tests for the core elements such as word, value, formula, view
 TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
 TODO for import offer to use all time phrases e.g. "year of fixation": 1975 for "speed of light"

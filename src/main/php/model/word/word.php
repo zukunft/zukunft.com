@@ -621,7 +621,7 @@ class word extends word_link_object
      */
     function is_percent(): bool
     {
-        return $this->is_type(word_type_list::DBL_SCALING_PCT);
+        return $this->is_type(word_type_list::DBL_PERCENT);
     }
 
     /**
