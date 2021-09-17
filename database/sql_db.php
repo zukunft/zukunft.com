@@ -769,6 +769,8 @@ class sql_db
         if (strpos($sql, "LIMIT") === FALSE) {
             if (substr($sql, -1) == ";") {
                 $sql = substr($sql, 0, -1) . " LIMIT 1;";
+            } else {
+                $sql = $sql . " LIMIT 1;";
             }
         }
 
@@ -1213,7 +1215,7 @@ class sql_db
     // TODO include the data retrieval part for creating this insert statement into the transaction statement
     // add the return type (allowed since php version 7.0
     // if $log_err is false, no further errors will reported to prevent endless looping from the error logging itself
-    function insert($fields, $values, $log_err = true)
+    function insert($fields, $values, $log_err = true): int
     {
         $result = 0;
         $sql = '';

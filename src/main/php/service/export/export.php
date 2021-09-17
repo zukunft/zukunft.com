@@ -64,7 +64,7 @@ class export
 
                 // 1. create the header
                 $export_obj->version = PRG_VERSION;
-                $export_obj->pod = cfg_get(CFG_SITE_NAME, $this->usr, $db_con);
+                $export_obj->pod = cfg_get(CFG_SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $this->usr->name;
                 $export_obj->selection = $this->phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()

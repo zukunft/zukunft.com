@@ -37,7 +37,7 @@ function db_check($db_con): string
     $do_consistency_check = false;
 
     // get the db version and start the upgrade process if needed
-    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
+    $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
         $do_consistency_check = true;
         if (prg_version_is_newer($db_version)) {
@@ -53,7 +53,7 @@ function db_check($db_con): string
             log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
         }
     } else {
-        $last_consistency_check = cfg_get(CFG_LAST_CONSISTENCY_CHECK, $usr, $db_con);
+        $last_consistency_check = cfg_get(CFG_LAST_CONSISTENCY_CHECK, $db_con);
         if (strtotime($last_consistency_check) < strtotime("now") - 1) {
             $do_consistency_check = true;
         }
@@ -106,7 +106,7 @@ function db_upgrade_0_0_3($db_con): string
     $db_con->remove_prefix('calc_and_cleanup_task_types', 'code_id', 'job_');
     $db_con->remove_prefix('view_component_types', 'code_id', 'dsp_comp_type_');
     // TODO create table user_value_time_series
-    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
+    $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';
     }
@@ -122,7 +122,7 @@ function db_upgrade_0_0_4($db_con): string
     global $usr;
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
-    $db_version = cfg_get(CFG_VERSION_DB, $usr, $db_con);
+    $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.4 has failed';
     }

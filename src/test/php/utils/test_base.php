@@ -938,7 +938,7 @@ function zu_test_time_setup(): string
     $result = '';
     $this_year = date('Y');
     $prev_year = '';
-    $test_years = cfg_get('test_years', $usr, $db_con);
+    $test_years = cfg_get('test_years', $db_con);
     if ($test_years == '') {
         log_warning('Configuration of test years is missing', 'test_base->zu_test_time_setup');
     } else {
