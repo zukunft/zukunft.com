@@ -1,0 +1,17 @@
+{
+  "version": "0.0.3",
+  "time": "2020-09-12 10:41:00",
+  "user": "system",
+  "users": [
+    {
+      "name": "zukunft.com system",
+      "description": "the internal zukunft.com system user mainly used as a log entry for the initial setup and batch jobs",
+      "profile": "system"
+    },
+    {
+      "name": "zukunft.com system test",
+      "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+      "profile": "system test"
+    }
+  ]
+}

@@ -143,7 +143,7 @@ function zuu_is_admin($user_id)
     $result = false;
 
     $user_profile = zuu_profile($user_id);
-    if ($user_profile == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+    if ($user_profile == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
         $result = true;
     }
     return $result;
@@ -464,7 +464,7 @@ function zuu_dsp_errors($user_id, $user_profile, $dsp_type, $back)
             $result .= '<td>' . $wrd_row["sys_log_function_name"] . '</td>';
             $result .= '<td>' . $wrd_row["solver_name"] . '</td>';
             $result .= '<td>' . $wrd_row["sys_log_status_name"] . '</td>';
-            if ($user_profile == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+            if ($user_profile == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
                 $result .= '<td><a href="/http/error_update.php?id=' . $wrd_row["sys_log_id"] . '&status=' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED) . '&back=' . $back . '">close</a></td>';
             }
 

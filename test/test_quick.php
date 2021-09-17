@@ -57,6 +57,9 @@ if ($usr->id > 0) {
         run_system_test(); // testing of the basic system functions like ip blocking
         //run_user_test ();   // testing of the user display functions
 
+        // temp
+        db_fill_code_links();
+
         // creating the test data
         create_base_words();
         create_base_phrases();
@@ -70,7 +73,7 @@ if ($usr->id > 0) {
         run_string_unit_tests(); // test functions not yet split into single unit tests
         run_math_test();
         run_user_sandbox_test();
-        //run_word_test();
+        run_word_test();
         //run_word_ui_test ();
         //run_word_display_test ();
         //run_word_list_test ();

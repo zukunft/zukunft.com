@@ -123,7 +123,7 @@ class system_error_log_list
                     $result .= '<td>' . $db_row["sys_log_function_name"] . '</td>';
                     $result .= '<td>' . $db_row["solver_name"] . '</td>';
                     $result .= '<td>' . $db_row["sys_log_status_name"] . '</td>';
-                    if ($this->usr->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+                    if ($this->usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
                         $result .= '<td><a href="/http/error_update.php?id=' . $db_row["sys_log_id"] . '&status=' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED) . '&back=' . $this->back . '">close</a></td>';
                     }
 

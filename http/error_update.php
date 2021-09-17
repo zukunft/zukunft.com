@@ -52,7 +52,7 @@ if ($usr->id > 0) {
     $dsp->id = cl(db_cl::VIEW, view::ERR_UPD);
     $result .= $dsp->dsp_navbar($back);
 
-    if ($usr->id > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+    if ($usr->id > 0 and $usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new system_error_log;

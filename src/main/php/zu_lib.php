@@ -33,6 +33,7 @@ TODO start the backend only once and react to REST calls from the frontend
 TODO make use of __DIR__ ?
 TODO create a User Interface API
 TODO offer to use FreeOTP for two factor authentication
+TODO change config files from json to yaml to complete "reduce to the max"
 
 
 
@@ -163,6 +164,7 @@ include_once $path_php . 'service/export/xml.php';
 // classes
 include_once $path_php . 'model/user/user.php';
 include_once $path_php . 'model/user/user_type.php';
+include_once $path_php . 'model/user/user_profile.php';
 include_once $path_php . 'model/user/user_profile_list.php';
 include_once $path_php . 'model/user/user_list.php';
 include_once $path_php . 'model/user/user_log.php';
@@ -303,7 +305,7 @@ e.g. if this setting is true
      and user 2 creates "Nestlé" with id 2
      now the user 1 changes "Nestle" to "Nestlé"
      1. "Nestle" will be deleted, because it is not used any more
-     2. "Nestlé" with id 2 will not be excluded any more
+     2. "Nestlé" with id 2 will not be excluded anymore
      
 */
 const UI_CAN_CHANGE_VALUE = TRUE;
@@ -318,8 +320,9 @@ const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 
 // program configuration names
-const CFG_SITE_NAME = 'site_name';             // the name of the pod
-const CFG_VERSION_DB = 'version_database';      // the version of the database at the moment to trigger an update script if needed
+const CFG_SITE_NAME = 'site_name';                           // the name of the pod
+const CFG_VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed
+const CFG_LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
 
 // data retrieval settings
 const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined
@@ -393,6 +396,11 @@ const ZUH_IMG_DEL_FA = "fa-times-circle";
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define("PATH_BASE_CONFIG_FILES", $root_path . 'src/main/resources/');
+const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
+define("BASE_CODE_LINK_FILES", serialize(array(
+    'user_profiles',
+    'task_types')));
+const BASE_CODE_LINK_FILE_TYPE = '.csv';
 define("BASE_CONFIG_FILES", serialize(array('units.json')));
 
 # list of all static import files for testing the system consistency
@@ -878,6 +886,7 @@ function zu_str_right($text, $pos)
     return substr($text, $pos * -1);
 }
 
+// TODO rename to the php 8.0 function str_starts_with
 function zu_str_is_left($text, $maker)
 {
     $result = false;
@@ -1012,9 +1021,9 @@ list functions (to be dismissed / replaced by objects)
 */
 
 /**
- * create a human readable string from an array
- * @param array $in_array the array that should be formatted
- * @return string the values comma seperated or "null" if the array is empty
+ * create a human-readable string from an array
+ * @param array|null $in_array the array that should be formatted
+ * @return string the value comma seperated or "null" if the array is empty
  */
 function dsp_array(?array $in_array): string
 {
@@ -1038,6 +1047,22 @@ function sql_array(array $in_array): string
     if ($in_array != null) {
         if (count($in_array) > 0) {
             $result = implode(',', $in_array);
+        }
+    }
+    return $result;
+}
+
+/**
+ * trim each array value and exclude empty values
+ * @param array $in_array with leading spaces or empty strings
+ * @return array without leading spaces or empty strings
+ */
+function array_trim(array $in_array): array
+{
+    $result = array();
+    for ($i = 0; $i < count($in_array); $i++) {
+        if (trim($in_array[$i]) != '') {
+            $result[] = trim($in_array[$i]);
         }
     }
     return $result;
@@ -1334,6 +1359,16 @@ function dsp_var($var_to_format): string
         } else {
             $result = $var_to_format;
         }
+    }
+    return $result;
+}
+
+// port php 8 function to 7.4
+function str_ends_with(string $long_string, string $postfix): bool
+{
+    $result = false;
+    if (substr($long_string, strlen($postfix) * -1) == $postfix) {
+        $result = true;
     }
     return $result;
 }

@@ -243,6 +243,23 @@ class user
         return $result;
     }
 
+    /**
+     * import a user from a json data user object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param user_profile $profile the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, user_profile $profile, bool $do_save = true): bool
+    {
+        log_debug('user->import_obj');
+        $result = false;
+
+        return $result;
+    }
+
+
     // true if the user has admin rights
     function is_admin(): bool
     {
@@ -252,7 +269,7 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
             $result = true;
         }
         return $result;
@@ -267,7 +284,7 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
             $result = true;
         }
         return $result;
@@ -282,7 +299,7 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
             $result = true;
         }
         return $result;

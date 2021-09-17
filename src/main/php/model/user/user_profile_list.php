@@ -2,8 +2,8 @@
 
 /*
 
-  user_profile_list.php - a database based enum list for the data user profile types
-  ------------------------
+  user_profile_list.php - a list of possible user profiles with the database id
+  ---------------------
 
 
   This file is part of zukunft.com - calc with words
@@ -34,11 +34,6 @@ global $user_profiles;
 
 class user_profile_list extends user_type_list
 {
-    // list of the user profiles that have a coded functionality
-    const DBL_NORMAL = "normal";
-    const DBL_ADMIN = "admin";
-    const DBL_DEV = "dev";
-    const DBL_SYSTEM = "system"; // reserved system users e.g. for internal testing
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -58,10 +53,10 @@ class user_profile_list extends user_type_list
         $this->lst = array();
         $this->hash = array();
         $type = new user_type();
-        $type->name = user_profile_list::DBL_NORMAL;
-        $type->code_id = user_profile_list::DBL_NORMAL;
+        $type->name = user_profile::NORMAL;
+        $type->code_id = user_profile::NORMAL;
         $this->lst[2] = $type;
-        $this->hash[user_profile_list::DBL_NORMAL] = 2;
+        $this->hash[user_profile::NORMAL] = 2;
 
     }
 
@@ -69,7 +64,7 @@ class user_profile_list extends user_type_list
      * return the database id of the default word type
      */
     function default_id(): int {
-        return parent::id(user_profile_list::DBL_NORMAL);
+        return parent::id(user_profile::NORMAL);
     }
 
 }

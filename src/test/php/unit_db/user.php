@@ -42,9 +42,9 @@ function run_user_unit_db_tests()
     test_dsp('unit_db_user_profile->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::USER_PROFILE, user_profile_list::DBL_NORMAL);
+    $result = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
     $target = 1;
-    test_dsp('unit_db_user_profile->check ' . user_profile_list::DBL_NORMAL, $result, $target);
+    test_dsp('unit_db_user_profile->check ' . user_profile::NORMAL, $result, $target);
 
 }
 

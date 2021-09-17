@@ -421,7 +421,8 @@ class sql_db
         if ($this->db_type == DB_TYPE_POSTGRES) {
             $this->link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
         } else {
-            $this->link = mysqli_connect('localhost', SQL_DB_USER, SQL_DB_PASSWD, 'zukunft') or die('Could not connect: ' . mysqli_error());
+            $this->mysql = new mysqli();
+            $this->link = mysqli_connect('localhost', SQL_DB_USER, SQL_DB_PASSWD, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
         }
 
         log_debug("sql_db->open -> done");
@@ -658,7 +659,7 @@ class sql_db
             } elseif ($this->db_type == DB_TYPE_MYSQL) {
                 // TODO review to used at least $sql_array
                 if ($sql_name == '') {
-                    $result = mysqli_query($sql);
+                    $result = mysqli_query($this->mysql, $sql);
                 } else {
                     // TODO review this untested part, so that it can be used
                     $stmt = mysqli_prepare($this->link, $sql);
@@ -668,7 +669,7 @@ class sql_db
                     $result = $stmt->get_result();
                 }
                 if (!$result) {
-                    $msg_text = mysqli_error();
+                    $msg_text = mysqli_error($this->mysql);
                     $sql = str_replace("'", "", $sql);
                     $sql = str_replace("\"", "", $sql);
                     $msg_text .= " (" . $sql . ")";
@@ -1648,7 +1649,7 @@ class sql_db
     function has_column(string $table_name, string $column_name): bool
     {
         $result = false;
-        $sql_check ="SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
+        $sql_check = "SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
         $sql_result = $this->get1($sql_check);
         if ($sql_result) {
             $result = true;
@@ -1711,7 +1712,7 @@ class sql_db
     {
         $result = false;
 
-        $sql_select = "SELECT " .  $column_name . " FROM " .  $table_name . ";";
+        $sql_select = "SELECT " . $column_name . " FROM " . $table_name . ";";
         $db_row_lst = $this->get($sql_select);
         foreach ($db_row_lst as $db_row) {
             $db_row_name = $db_row[$column_name];
@@ -1723,6 +1724,37 @@ class sql_db
             }
         }
 
+        return $result;
+    }
+
+    function get_column_names(string $table_name): array
+    {
+        $result = array();
+        $sql = "select column_name from information_schema.columns where table_name = '" . $table_name . "';";
+        $col_rows = $this->get($sql);
+        if ($col_rows != null) {
+            foreach ($col_rows as $col_row) {
+                $result[] = $col_row['column_name'];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if at least all given column names are in the table
+     * @param string $table_name the name of the table which is expected to have the give column names
+     * @param array $expected_columns of the column names that are expected to exist in the given table
+     * @return bool true if everything is fine
+     */
+    function check_column_names(string $table_name, array $expected_columns): bool
+    {
+        $result = true;
+        $real_columns = $this->get_column_names($table_name);
+        $missing_columns = array_diff($expected_columns, $real_columns);
+        if (count($missing_columns) > 0) {
+            log_warning('Database column ' . dsp_array($missing_columns) . ' missing');
+            $result = false;
+        }
         return $result;
     }
 

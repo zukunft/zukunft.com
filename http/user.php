@@ -174,7 +174,7 @@ if ($usr->id > 0) {
     }
 
     // display all program issues if the user is an admin
-    if ($usr->profile_id == cl(db_cl::USER_PROFILE, user_profile_list::DBL_ADMIN)) {
+    if ($usr->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
         $errors_all = $dsp_usr->dsp_errors("other", SQL_ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
