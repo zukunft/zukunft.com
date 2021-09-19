@@ -332,10 +332,10 @@ CREATE TABLE IF NOT EXISTS languages
 -- --------------------------------------------------------
 
 --
--- Table structure for table languages_forms
+-- Table structure for table language_forms
 --
 
-CREATE TABLE IF NOT EXISTS languages_forms
+CREATE TABLE IF NOT EXISTS language_forms
 (
     languages_form_id   BIGSERIAL PRIMARY KEY,
     languages_form_name varchar(200) DEFAULT NULL,
@@ -343,7 +343,7 @@ CREATE TABLE IF NOT EXISTS languages_forms
     language_id         bigint NOT NULL
 );
 
-COMMENT ON COLUMN languages_forms.languages_form_name is 'type of adjustment of a term in a language e.g. plural';
+COMMENT ON COLUMN language_forms.languages_form_name is 'type of adjustment of a term in a language e.g. plural';
 
 -- --------------------------------------------------------
 

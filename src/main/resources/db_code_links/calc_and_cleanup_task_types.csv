@@ -1,0 +1,11 @@
+calc_and_cleanup_task_type_id, type_name, description, code_id
+1, 'update value', 'if a value is updated all the depending formula values should be calculated again', 'value_update'
+2, 'add value', '1. check if used in formulas and if yes, create new formula results\r\n2. calculate the new formula results', 'value_add'
+3, 'exclude a value', 'check if used for a formula result and if yes either remove the formula result or update it', 'value_del'
+4, 'update formula', NULL, 'formula_update'
+5, 'add formula', NULL, 'formula_add'
+6, 'exclude formula', NULL, 'formula_del'
+7, 'link formula', NULL, 'formula_link'
+8, 'unlink a formula', NULL, 'formula_unlink'
+9, 'link a word', NULL, 'word_link'
+10, 'unlink word', NULL, 'word_unlink'

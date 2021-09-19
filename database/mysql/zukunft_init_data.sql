@@ -16,31 +16,6 @@ SET time_zone = "+00:00";
 --
 
 --
--- Dumping data for table `calc_and_cleanup_task_types`
---
-
-INSERT INTO `calc_and_cleanup_task_types` (`calc_and_cleanup_task_type_id`, `type_name`, `description`, `code_id`) VALUES
-(1, 'update value', 'if a value is updated all the depending formula values should be calculated again', 'value_update'),
-(2, 'add value', '1. check if used in formulas and if yes, create new formula results\r\n2. calculate the new formula results', 'value_add'),
-(3, 'exclude a value', 'check if used for a formula result and if yes either remove the formula result or update it', 'value_del'),
-(4, 'update formula', NULL, 'formula_update'),
-(5, 'add formula', NULL, 'formula_add'),
-(6, 'exclude formula', NULL, 'formula_del'),
-(7, 'link formula', NULL, 'formula_link'),
-(8, 'unlink a formula', NULL, 'formula_unlink'),
-(9, 'link a word', NULL, 'word_link'),
-(10, 'unlink word', NULL, 'word_unlink');
-
---
--- Dumping data for table `change_actions`
---
-
-INSERT INTO `change_actions` (`change_action_id`, `change_action_name`, `code_id`) VALUES
-(1, 'add', ''),
-(2, 'del', ''),
-(3, 'update', '');
-
---
 -- Dumping data for table `change_tables`
 --
 
@@ -176,33 +151,6 @@ INSERT INTO `change_fields` (`change_field_id`, `change_field_name`, `table_id`,
 INSERT INTO `formula_link_types` (`formula_link_type_id`, `type_name`, `code_id`, `formula_id`, `word_type_id`, `link_type_id`, `description`) VALUES
 (1, '', NULL, 0, 0, 0, 'default'),
 (2, '', NULL, 0, 4, 5, 'increase needs to know for which time period the increase should be calculated');
-
---
--- Dumping data for table `formula_types`
---
-
-INSERT INTO `formula_types` (`formula_type_id`, `name`, `description`, `code_id`) VALUES
-(1, 'calc', 'a normal calculation formula', 'default'),
-(2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'),
-(3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'),
-(4, 'this', 'selects the assumed time term', 'time_this'),
-(5, 'reversible', 'a formula that can ba included also in the reversed version e.g. "minute = second / 60" and "second = minute * 60"', 'reversible');
-
---
--- Dumping data for table `languages`
---
-
-INSERT INTO `languages` (`language_id`, `language_name`, `code_id`, `wikimedia_code`, `description`) VALUES
-(1, 'English', 'en', 'en', 'the system language, so each word must be unique for all users in this language'),
-(2, 'UK English', 'en_uk', '', 'the users can use this (and the other) languages to create its own namespace. So one user may use "Zurich" in UK English for "Kanton Zurich" and another user may use "Zurich" in UK English for "Zurich AG".'),
-(3, 'German', 'de', 'de', 'a normal translation to German');
-
---
--- Dumping data for table `languages_forms`
---
-
-INSERT INTO `languages_forms` (`languages_form_id`, `languages_form_name`, `code_id`, `language_id`) VALUES
-(1, 'plural', 'plural', 1);
 
 --
 -- Dumping data for table `protection_types`

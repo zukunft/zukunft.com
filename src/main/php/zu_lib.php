@@ -400,8 +400,14 @@ const ZUH_IMG_DEL_FA = "fa-times-circle";
 define("PATH_BASE_CONFIG_FILES", $root_path . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 define("BASE_CODE_LINK_FILES", serialize(array(
-    'user_profiles',
-    'task_types')));
+    'calc_and_cleanup_task_types',
+    'change_actions',
+    'formula_types',
+    'language_forms',
+    'languages',
+    'task_types',
+    'user_profiles'
+)));
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 define("BASE_CONFIG_FILES", serialize(array('units.json')));
 

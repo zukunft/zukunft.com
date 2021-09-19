@@ -1,0 +1,4 @@
+language_id, language_name, code_id, wikimedia_code, description
+1, 'English', 'en', 'en', 'the system language, so each word must be unique for all users in this language'
+2, 'UK English', 'en_uk', '', 'the users can use this (and the other) languages to create its own namespace. So one user may use "Zurich" in UK English for "Kanton Zurich" and another user may use "Zurich" in UK English for "Zurich AG".'
+3, 'German', 'de', 'de', 'a normal translation to German'

@@ -335,10 +335,10 @@ CREATE TABLE IF NOT EXISTS `languages`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`languages_forms`
+-- Table structure for table`language_forms`
 --
 
-CREATE TABLE IF NOT EXISTS `languages_forms`
+CREATE TABLE IF NOT EXISTS `language_forms`
 (
     `languages_form_id`   int(11) NOT NULL,
     `languages_form_name` varchar(200) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
@@ -1591,9 +1591,9 @@ ALTER TABLE `languages`
     ADD PRIMARY KEY (`language_id`);
 
 --
--- Indexes for table`languages_forms`
+-- Indexes for table`language_forms`
 --
-ALTER TABLE `languages_forms`
+ALTER TABLE `language_forms`
     ADD PRIMARY KEY (`languages_form_id`);
 
 --
@@ -2105,9 +2105,9 @@ ALTER TABLE `import_source`
 ALTER TABLE `languages`
     MODIFY `language_id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table`languages_forms`
+-- AUTO_INCREMENT for table`language_forms`
 --
-ALTER TABLE `languages_forms`
+ALTER TABLE `language_forms`
     MODIFY `languages_form_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table`phrase_groups`

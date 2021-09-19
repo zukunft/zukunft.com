@@ -1,0 +1,6 @@
+formula_type_id, name, description, code_id
+1, 'calc', 'a normal calculation formula', 'default'
+2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'
+3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'
+4, 'this', 'selects the assumed time term', 'time_this'
+5, 'reversible', 'a formula that can ba included also in the reversed version e.g. "minute = second / 60" and "second = minute * 60"', 'reversible'

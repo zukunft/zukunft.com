@@ -148,11 +148,12 @@ function db_fill_code_links(sql_db $db_con)
 
         $row = 1;
         $table_name = $csv_file_name;
+        $db_type = substr($table_name,0,-1);
         if (($handle = fopen($csv_path, "r")) !== FALSE) {
             $continue = true;
             $id_col_name = '';
             $col_names = array();
-            while (($data = fgetcsv($handle)) !== FALSE) {
+            while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
                 if ($continue) {
                     if ($row == 1) {
                         // check if the csv column names match the table names
@@ -177,7 +178,6 @@ function db_fill_code_links(sql_db $db_con)
                         $db_row = $db_con->get1($sql);
                         // create the db row if needed
                         if ($db_row == null) {
-                            $db_con->set_type(substr($table_name,0,-1));
                             // check the order
                             for ($i = 0; $i < count($data); $i++) {
                                 $col_name = $col_names[$i];
@@ -187,6 +187,7 @@ function db_fill_code_links(sql_db $db_con)
                                     $update_col_values[] = $data[$i];
                                 }
                             }
+                            $db_con->set_type($db_type);
                             $db_con->insert($update_col_names, $update_col_values);
 
                         } else {
@@ -201,6 +202,7 @@ function db_fill_code_links(sql_db $db_con)
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
+                                $db_con->set_type($db_type);
                                 $db_con->update($id, $update_col_names, $update_col_values);
                             }
                         }
