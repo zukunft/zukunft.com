@@ -1,0 +1,3 @@
+formula_link_type_id, type_name, code_id, formula_id, word_type_id, link_type_id, description
+1, '', NULL, 0, 0, 0, 'default'
+2, 'time period based', NULL, 0, 4, 5, 'increase needs to know for which time period the increase should be calculated'

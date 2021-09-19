@@ -1,0 +1,5 @@
+protection_type_id, type_name, code_id, description
+1, 'no protection', 'no_protection', 'anyone can take the ownership '
+2, 'user', 'user_protection', 'only users with a login and a confirmed email can take over the ownership'
+3, 'admin', 'admin_protection', 'only user with admin permission can take the ownership'
+4, 'no change', 'no_change', 'no change of the ownership is allowed'

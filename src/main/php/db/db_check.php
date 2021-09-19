@@ -148,7 +148,13 @@ function db_fill_code_links(sql_db $db_con)
 
         $row = 1;
         $table_name = $csv_file_name;
-        $db_type = substr($table_name,0,-1);
+        // TODO change table names to singular form
+        if ($table_name == 'sys_log_status') {
+            $db_type = $table_name;
+        } else {
+            $db_type = substr($table_name, 0, -1);
+        }
+        echo $table_name;
         if (($handle = fopen($csv_path, "r")) !== FALSE) {
             $continue = true;
             $id_col_name = '';
@@ -194,7 +200,11 @@ function db_fill_code_links(sql_db $db_con)
                             // check, which values needs to be updates
                             for ($i = 1; $i < count($data); $i++) {
                                 $col_name = $col_names[$i];
-                                $db_value = $db_row[$col_name];
+                                if (array_key_exists($col_name,$db_row)) {
+                                    $db_value = $db_row[$col_name];
+                                } else {
+                                    log_err('Column check did not work for ' . $col_name);
+                                }
                                 if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
                                     $update_col_names[] = $col_name;
                                     $update_col_values[] = trim($data[$i]);

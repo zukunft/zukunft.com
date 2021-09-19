@@ -5,8 +5,9 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
-TODO load the database code links from csv
+TODO create json config files for the default and system views
 TODO add JSON im- and export port for verbs
+TODO allow to load user via im- and export, but make sure that no one can get higher privileges
 TODO replace to id search with object based search e.g. use wrd_lnk->from->id instead of wrd_lnk->from_id
 TODO add im- and export of users and move the system user loading to one json
 TODO create the unit tests for the core elements such as word, value, formula, view
@@ -402,11 +403,24 @@ const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 define("BASE_CODE_LINK_FILES", serialize(array(
     'calc_and_cleanup_task_types',
     'change_actions',
+    'formula_link_types',
     'formula_types',
     'language_forms',
     'languages',
+    'protection_types',
+    'ref_types',
+    'share_types',
+    'source_types',
+    'sys_log_status',
+    'sys_log_types',
     'task_types',
-    'user_profiles'
+    'user_official_types',
+    'user_profiles',
+    'user_types',
+    'view_component_position_types',
+    'view_component_types',
+    'view_types',
+    'word_types'
 )));
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 define("BASE_CONFIG_FILES", serialize(array('units.json')));

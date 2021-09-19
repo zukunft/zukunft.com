@@ -1,0 +1,6 @@
+sys_log_type_id, type_name, code_id
+0, 'undefined', 'undefined'
+1, 'Info', 'log_info'
+2, 'Warning', 'log_warning'
+3, 'Error', 'log_error'
+4, 'FATAL ERROR', 'log_fatal'

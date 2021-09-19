@@ -1421,7 +1421,7 @@ CREATE TABLE IF NOT EXISTS `word_types`
     `description`    text,
     `code_id`        varchar(100) DEFAULT NULL,
     `scaling_factor` int(11)      DEFAULT NULL COMMENT 'e.g. for percent the scaling factor is 100',
-    `word_symbol`    varchar(5)   NOT NULL COMMENT 'e.g. for percent the symbol is %'
+    `word_symbol`    varchar(5)   DEFAULT NULL COMMENT 'e.g. for percent the symbol is %'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;

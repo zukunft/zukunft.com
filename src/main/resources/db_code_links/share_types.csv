@@ -1,0 +1,5 @@
+share_type_id, type_name, code_id, description
+1, 'public', 'public', 'value can be seen and used by everyone (default)'
+2, 'personal', 'personal', 'value can be seen by everyone, but is linked to the user'
+3, 'group', 'group', 'only a closed group of users can seen and use the values'
+4, 'private', 'private', 'only the user itself can see und use the value'

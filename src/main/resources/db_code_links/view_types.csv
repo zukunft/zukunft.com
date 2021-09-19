@@ -1,0 +1,6 @@
+view_type_id, type_name, description, code_id
+1, 'standard', 'the base display mask without additional functionalities', 'default'
+2, 'entry view', 'these masks are used for the zukunft.com entry page. If a totally new user opens zukunft.com the first time, he will see a random mask of this type.', 'entry'
+3, 'edit', 'a edit mask that is used to change data', 'mask_default'
+4, 'presentation', 'with auto forward', 'presentation'
+5, 'word default', 'a default mask for new words', 'word_default'

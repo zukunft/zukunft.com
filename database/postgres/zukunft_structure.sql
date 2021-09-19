@@ -1399,7 +1399,7 @@ CREATE TABLE IF NOT EXISTS word_types
     description    text,
     code_id        varchar(100) DEFAULT NULL,
     scaling_factor bigint       DEFAULT NULL,
-    word_symbol    varchar(5)   NOT NULL
+    word_symbol    varchar(5)   DEFAULT NULL
 );
 
 COMMENT ON COLUMN word_types.scaling_factor is 'e.g. for percent the scaling factor is 100';

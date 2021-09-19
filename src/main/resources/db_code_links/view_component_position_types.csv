@@ -1,0 +1,3 @@
+view_component_position_type_id, type_name, description
+1, 'below', ''
+2, 'side', 'is right of the previous entry (or left for right to left languages)'

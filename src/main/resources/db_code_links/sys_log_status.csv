@@ -1,0 +1,5 @@
+sys_log_status_id, type_name, code_id, description, action
+1, 'new', 'new', 'the error has just being logged and no one has yet looked at it ', NULL
+2, 'assigned', 'assigned', 'A developer is looking at the error.', 'assign to'
+3, 'resolved', 'resolved', 'the error is supposed to be corrected', 'resolve'
+4, 'closed', 'closed', 'a second person (other than the developer) has confirmed that the problem is solved.', 'close'
