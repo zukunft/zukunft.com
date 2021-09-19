@@ -1,0 +1,21 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-19 21:17:00",
+  "user": "timon",
+  "selection": [
+    "country base setup"
+  ],
+  "views": [
+    {
+      "name": "Country ratios",
+      "comment": "List all countries with the main ratios",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    }
+  ]
+}

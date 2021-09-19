@@ -1,0 +1,35 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-19 21:09:00",
+  "user": "timon",
+  "selection": [
+    "company base setup"
+  ],
+  "views": [
+    {
+      "name": "Company sheet",
+      "comment": "The income statement, balance sheet or cash flow sheet of a big company",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        },
+        {
+          "pos": "0",
+          "name": "Cash Flow Statement"
+        }
+      ]
+    },
+    {
+      "name": "Company list with main ratios",
+      "comment": "List the most interesting companies with the main ratios",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Company with ratios"
+        }
+      ]
+    }
+  ]
+}

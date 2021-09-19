@@ -419,11 +419,18 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'user_types',
     'view_component_position_types',
     'view_component_types',
+    'view_link_types',
     'view_types',
     'word_types'
 )));
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
-define("BASE_CONFIG_FILES", serialize(array('units.json')));
+define("BASE_CONFIG_FILES", serialize(array(
+    'system_views.json',
+    'units.json',
+    'time_definition.json',
+    'country.json',
+    'company.json'
+)));
 
 # list of all static import files for testing the system consistency
 define("PATH_TEST_IMPORT_FILES", $root_path . 'src/test/resources/');

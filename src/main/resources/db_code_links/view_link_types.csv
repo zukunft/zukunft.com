@@ -1,0 +1,3 @@
+view_link_type_id, type_name, comment
+1, 'main word', 'use the main word as start for the view'
+2, 'selected word', 'use the selected words of the main view as a selector for the sub view'

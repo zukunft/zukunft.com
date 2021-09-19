@@ -1,0 +1,185 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-19 19:10:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "system views"
+  ],
+  "views": [
+    {
+      "name": "Word",
+      "comment": "the default view for words",
+      "code_id": "word"
+    },
+    {
+      "name": "Add New Word",
+      "code_id": "word_add"
+    },
+    {
+      "name": "Change Word",
+      "code_id": "word_edit"
+    },
+    {
+      "name": "Search",
+      "comment": "The search page for all words and formulas",
+      "code_id": "word_find"
+    },
+    {
+      "name": "Delete Word",
+      "comment": "Exclude or delete a word",
+      "code_id": "word_del"
+    },
+    {
+      "name": "Add New Number",
+      "code_id": "value_add"
+    },
+    {
+      "name": "Change Number",
+      "code_id": "value_edit"
+    },
+    {
+      "name": "Delete Number",
+      "code_id": "value_del"
+    },
+    {
+      "name": "Add New Formula",
+      "code_id": "formula_add"
+    },
+    {
+      "name": "Change Formula",
+      "code_id": "formula_edit"
+    },
+    {
+      "name": "Explain Formula Result",
+      "comment": "Explain the formula result",
+      "code_id": "formula_explain"
+    },
+    {
+      "name": "Formula test",
+      "comment": "To debug the formula",
+      "code_id": "formula_test"
+    },
+    {
+      "name": "Delete Formula",
+      "comment": "To confirm the exclusion or deleting of a formula",
+      "code_id": "formula_del"
+    },
+    {
+      "name": "Add New View",
+      "code_id": "view_add"
+    },
+    {
+      "name": "Change View",
+      "code_id": "view_edit"
+    },
+    {
+      "name": "Delete view",
+      "code_id": "view_del"
+    },
+    {
+      "name": "Add New Source",
+      "code_id": "source_add"
+    },
+    {
+      "name": "Change Source",
+      "code_id": "source_edit"
+    },
+    {
+      "name": "Delete Source",
+      "comment": "Delete an external data source",
+      "code_id": "source_del"
+    },
+    {
+      "name": "",
+      "comment": "to change the user settings",
+      "code_id": "user"
+    },
+    {
+      "name": "System Error List",
+      "comment": "List the system errors and allow the user to change the status",
+      "code_id": "error_update"
+    },
+    {
+      "name": "Error Log",
+      "comment": "simple confirm page for a new error that has been logged in the database",
+      "code_id": "error_log"
+    },
+    {
+      "name": "Add New Verb",
+      "code_id": "verb_add"
+    },
+    {
+      "name": "Change Verb",
+      "comment": "Rename a tern link type",
+      "code_id": "verb_edit"
+    },
+    {
+      "name": "Verb List",
+      "comment": "List all available ways how to link two words",
+      "code_id": "verbs"
+    },
+    {
+      "name": "Delete verb",
+      "comment": "Exclude or delete a verb",
+      "code_id": "verb_del"
+    },
+    {
+      "name": "Add New Triple",
+      "code_id": "triple_add"
+    },
+    {
+      "name": "Change Triple",
+      "comment": "Rename a triple",
+      "code_id": "triple_edit"
+    },
+    {
+      "name": "Delete triple",
+      "comment": "Exclude or delete a triple",
+      "code_id": "triple_del"
+    },
+    {
+      "name": "Start view",
+      "comment": "A dynamic start mask that shows a interesting fact",
+      "type": "entry view",
+      "code_id": "entry_view",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        }
+      ]
+    },
+    {
+      "name": "complete",
+      "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
+      "view_components": [
+        {
+          "pos": "0",
+          "name": "Name",
+          "code_id": "word_name"
+        },
+        {
+          "pos": "1",
+          "name": "Words related"
+        },
+        {
+          "pos": "2",
+          "name": "Formulas"
+        },
+        {
+          "pos": "3",
+          "name": "Calculated Results"
+        },
+        {
+          "pos": "4",
+          "name": "JSON Export"
+        },
+        {
+          "pos": "5",
+          "name": "XML Export"
+        }
+      ]
+    }
+  ]
+}
