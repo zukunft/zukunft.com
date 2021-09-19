@@ -39,9 +39,9 @@ function run_phrase_list_test()
     // prepare test by loading Insurance Zurich
     $wrd_zh = load_word(TW_ZH);
     $lnk_company = new word_link;
-    $lnk_company->from_id = $wrd_zh->id;
-    $lnk_company->verb_id = cl(db_cl::VERB, verb::DBL_IS);
-    $lnk_company->to_id = $wrd_company->id;
+    $lnk_company->from->id = $wrd_zh->id;
+    $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_company->to->id = $wrd_company->id;
     $lnk_company->usr = $usr;
     $lnk_company->load();
     $triple_sample_id = $lnk_company->id;
@@ -75,7 +75,7 @@ function run_phrase_list_test()
     $wrd_lst->add_name(TW_ABB);
     $wrd_lst->load();
     $phr_lst = $wrd_lst->phrase_lst();
-    $lst_parents = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
+    $lst_parents = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
     $result = dsp_array($lst_parents->names());
     $target = TEST_WORD; // order adjusted based on the number of usage
     test_dsp('phrase_list->foaf_parents for ' . $phr_lst->name() . ' up', $target, $result);

@@ -383,7 +383,7 @@ class phrase
                                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                                                 AND u.user_id = ' . $this->usr->id . '
                                          WHERE l.to_phrase_id = ' . $type->id . ' 
-                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::DBL_IS) . ' ) AS a 
+                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -395,7 +395,7 @@ class phrase
                                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                                                 AND u.user_id = ' . $this->usr->id . '
                                          WHERE l.to_phrase_id <> ' . $type->id . ' 
-                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::DBL_IS) . '
+                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -422,7 +422,7 @@ class phrase
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                                 AND u.user_id = ' . $this->usr->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . cl(db_cl::VERB, verb::DBL_IS) . '
+                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*

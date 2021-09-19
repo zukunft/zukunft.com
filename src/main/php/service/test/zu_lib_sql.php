@@ -1100,23 +1100,23 @@ function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
 {
     log_debug('zu_sql_word_lst_add_differentiator(' . $word_lst . ',' . $xtra_words . ')');
 
-    $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
+    $is_a_type = cl(db_cl::VERB, verb::IS_A);
     $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
 
     // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
     echo 'extra: ' . implode(",", $xtra_words) . '<br>';
-    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, "down");
+    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, verb::DIRECTION_DOWN);
     $added_words = zu_lst_not_in($added_words, $xtra_words);
     // while (!empty($added_words)) {
     if (!empty($added_words)) {
         echo 'added: ' . implode(",", $added_words) . '<br>';
         $xtra_words = zu_lst_merge_with_key($added_words, $xtra_words);
         echo 'combi: ' . implode(",", $xtra_words) . '<br>';
-        $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, "down");
+        $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, verb::DIRECTION_DOWN);
         $added_words = zu_lst_not_in($added_words, $xtra_words);
     }
 
-    $differentiator_words = zu_sql_word_lst_linked($xtra_words, $differentiator_type, "down");
+    $differentiator_words = zu_sql_word_lst_linked($xtra_words, $differentiator_type, verb::DIRECTION_DOWN);
     echo '+diff: ' . implode(",", $differentiator_words) . '<br>';
 
     $result = array();
@@ -1316,7 +1316,7 @@ function zu_sql_word_lst_linked($word_lst, $verb_id, $direction)
             $sql_link = " ";
         }
 
-        if ($direction == "up") {
+        if ($direction == verb::DIRECTION_UP) {
             $sql_dir = " l.from_phrase_id = t.word_id AND l.to_phrase_id   IN (" . implode(",", array_keys($word_lst)) . ") ";
         } else {
             $sql_dir = " l.to_phrase_id   = t.word_id AND l.from_phrase_id IN (" . implode(",", array_keys($word_lst)) . ") ";
@@ -1348,7 +1348,7 @@ function zu_sql_word_ids_linked($word_lst, $verb_id, $direction)
             $sql_link = " ";
         }
 
-        if ($direction == "up") {
+        if ($direction == verb::DIRECTION_UP) {
             $sql_dir = " l.from_phrase_id = t.word_id AND l.to_phrase_id   IN (" . implode(",", $word_lst) . ") ";
         } else {
             $sql_dir = " l.to_phrase_id   = t.word_id AND l.from_phrase_id IN (" . implode(",", $word_lst) . ") ";
@@ -1395,7 +1395,7 @@ function zu_sql_words_linked($word_id, $verb_id, $direction, $user_id)
             $sql_link = " ";
         }
 
-        if ($direction == "down") {
+        if ($direction == verb::DIRECTION_DOWN) {
             $sql_dir = " l.from_phrase_id = t.word_id AND l.to_phrase_id   = " . $word_id . " ";
         } else {
             $sql_dir = " l.to_phrase_id   = t.word_id AND l.from_phrase_id = " . $word_id . " ";

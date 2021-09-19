@@ -141,7 +141,7 @@ function zut_is_name($id)
 function zut_is_id($id)
 {
     log_debug('zut_is_id(' . $id . ')');
-    $link_id = cl(db_cl::VERB, verb::DBL_IS);
+    $link_id = cl(db_cl::VERB, verb::IS_A);
     $result = zu_sql_get_value_2key('word_links', 'to_phrase_id', 'from_phrase_id', $id, 'verb_id', $link_id);
     return $result;
 }

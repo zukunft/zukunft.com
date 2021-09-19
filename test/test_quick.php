@@ -70,7 +70,7 @@ if ($usr->id > 0) {
         run_string_unit_tests(); // test functions not yet split into single unit tests
         run_math_test();
         run_user_sandbox_test();
-        //run_word_test();
+        run_word_test();
         //run_word_ui_test ();
         //run_word_display_test ();
         //run_word_list_test ();

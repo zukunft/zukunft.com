@@ -34,17 +34,12 @@ global $verbs;
 class verb_list extends user_type_list
 {
 
-    // search directions to get related words (phrases)
-    const DIRECTION_NO = '';
-    const DIRECTION_UP = 'up';
-    const DIRECTION_DOWN = 'down';
-
     public ?user $usr = null;   // the user object of the person for whom the verb list is loaded, so to say the viewer
 
     // search and load fields
     public ?word $wrd = null;  // to load a list related to this word
     public ?array $ids = array(); // list of the verb ids to load a list from the database
-    public ?string $direction = self::DIRECTION_NO; // "up" or "down" to select the parents or children
+    public ?string $direction = verb::DIRECTION_NO; // "up" or "down" to select the parents or children
 
     /**
      * overwrite the user_type_list function to include the specific fields like the name_plural
@@ -58,7 +53,7 @@ class verb_list extends user_type_list
         // set the where clause depending on the values given
         // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
         $sql_where = " s.to_phrase_id = " . $this->wrd->id;
-        if ($this->direction == self::DIRECTION_UP) {
+        if ($this->direction == verb::DIRECTION_UP) {
             $sql_where = " s.from_phrase_id = " . $this->wrd->id;
         }
         $db_con->set_type($db_type);
@@ -154,10 +149,10 @@ class verb_list extends user_type_list
     function load_dummy() {
         parent::load_dummy();
         $type = new verb();
-        $type->name = verb::DBL_IS;
-        $type->code_id = verb::DBL_IS;
+        $type->name = verb::IS_A;
+        $type->code_id = verb::IS_A;
         $this->lst[2] = $type;
-        $this->hash[verb::DBL_IS] = 2;
+        $this->hash[verb::IS_A] = 2;
     }
 
     // calculates how many times a word is used, because this can be helpful for sorting

@@ -79,9 +79,9 @@ function run_phrase_group_test()
     // if a new group is created in needed when a triple is added
     $wrd_zh = load_word(TW_ZH);
     $lnk_company = new word_link;
-    $lnk_company->from_id = $wrd_zh->id;
-    $lnk_company->verb_id = cl(db_cl::VERB, verb::DBL_IS);
-    $lnk_company->to_id = $wrd_company->id;
+    $lnk_company->from->id = $wrd_zh->id;
+    $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_company->to->id = $wrd_company->id;
     $lnk_company->usr = $usr;
     $lnk_company->load();
     $wrd_lst = new word_list;

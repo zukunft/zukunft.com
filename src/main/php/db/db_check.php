@@ -70,7 +70,7 @@ function db_check($db_con): string
 
 // upgrade the database from any version prior of 0.0.3
 // the version 0.0.3 is the first version, which has a build in upgrade process
-function db_upgrade_0_0_3($db_con): string
+function db_upgrade_0_0_3(sql_db $db_con): string
 {
     global $usr;
 
@@ -105,6 +105,8 @@ function db_upgrade_0_0_3($db_con): string
     $db_con->remove_prefix('sys_log_status', 'code_id', 'log_status_');
     $db_con->remove_prefix('calc_and_cleanup_task_types', 'code_id', 'job_');
     $db_con->remove_prefix('view_component_types', 'code_id', 'dsp_comp_type_');
+    $db_con->change_code_id('verbs', 'vrb_contains', 'is_part_of');
+
     // TODO create table user_value_time_series
     $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {

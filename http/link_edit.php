@@ -68,9 +68,9 @@ if ($usr->id > 0) {
         if ($_GET['confirm'] == 1) {
 
             // get the parameters
-            $lnk->from_id = $_GET['phrase1']; // the word or triple linked from
-            $lnk->verb_id = $_GET['verb'];    // the link type (verb)
-            $lnk->to_id = $_GET['phrase2']; // the word or triple linked to
+            $lnk->from->id = $_GET['phrase1']; // the word or triple linked from
+            $lnk->verb->id = $_GET['verb'];    // the link type (verb)
+            $lnk->to->id = $_GET['phrase2']; // the word or triple linked to
 
             // save the changes
             $upd_result = $lnk->save();

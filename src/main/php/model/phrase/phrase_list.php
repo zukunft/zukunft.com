@@ -294,7 +294,7 @@ class phrase_list
     // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
     function is()
     {
-        $phr_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
+        $phr_lst = $this->foaf_parents(cl(db_cl::VERB, verb::IS_A));
         log_debug('phrase_list->is -> (' . $this->dsp_id() . ' is ' . $phr_lst->name() . ')');
         return $phr_lst;
     }
@@ -304,7 +304,7 @@ class phrase_list
     function are()
     {
         log_debug('phrase_list->are -> ' . $this->dsp_id());
-        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_IS));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_A));
         log_debug('phrase_list->are -> ' . $this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug('phrase_list->are -> ' . $this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -314,7 +314,7 @@ class phrase_list
     // returns a list of phrases that are related to this phrase list
     function contains()
     {
-        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_CONTAIN));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
         $phr_lst->merge($this);
         log_debug('phrase_list->contains -> (' . $this->dsp_id() . ' contains ' . $phr_lst->name() . ')');
         return $phr_lst;

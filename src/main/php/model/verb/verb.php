@@ -33,11 +33,16 @@ class verb
 {
 
     // predefined word link types or verbs
-    const DBL_IS = "vrb_is";
-    const DBL_CONTAIN = "vrb_contains";
+    const IS_A = "vrb_is";
+    const IS_PART_OF = "is_part_of";
     const DBL_FOLLOW = "vrb_follow";
     const DBL_DIFFERENTIATOR = "vrb_can_contain";
     const DBL_CAN_BE = "vrb_can_be";
+
+    // search directions to get related words (phrases)
+    const DIRECTION_NO = '';
+    const DIRECTION_DOWN = 'down';    // or forward  to get a list of 'to' phrases
+    const DIRECTION_UP = 'up';        // or backward to get a list of 'from' phrases based on a given to phrase
 
     public ?int $id = null;           // the database id of the word link type (verb)
     public ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs

@@ -812,45 +812,44 @@ function test_view_component($cmp_name): view_component
 
 // check if a word link exists and if not and requested create it
 // $phrase_name should be set if the standard name for the link should not be used
-function test_word_link($from, $verb, $to, $target = '', $phrase_name = '', $autocreate = true)
+function test_word_link($from_name, $verb_code_id, $to_name, $target = '', $phrase_name = '', $autocreate = true)
 {
     global $usr;
+    global $verbs;
 
     $result = '';
 
     // create the words if needed
-    $wrd_from = load_word($from);
+    $wrd_from = load_word($from_name);
     if ($wrd_from->id <= 0 and $autocreate) {
-        $wrd_from->name = $from;
+        $wrd_from->name = $from_name;
         $wrd_from->save();
         $wrd_from->load();
     }
-    $wrd_to = load_word($to);
+    $wrd_to = load_word($to_name);
     if ($wrd_to->id <= 0 and $autocreate) {
-        $wrd_to->name = $to;
+        $wrd_to->name = $to_name;
         $wrd_to->save();
         $wrd_to->load();
     }
+    $from = $wrd_from->phrase();
+    $to = $wrd_to->phrase();
 
-    // load the verb
-    $vrb = new verb;
-    $vrb->id = cl(db_cl::VERB, $verb);
-    $vrb->usr = $usr;
-    $vrb->load();
+    $vrb = $verbs->get_verb($verb_code_id);
+
     $lnk_test = new word_link;
-
-    if ($wrd_from->id == 0 or $wrd_to->id == 0) {
-        log_err("Words " . $from . " and " . $to . " cannot be created");
+    if ($from->id == 0 or $to->id == 0) {
+        log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
     } else {
         // check if the forward link exists
-        $lnk_test->from_id = $wrd_from->id;
-        $lnk_test->verb_id = cl(db_cl::VERB, $verb);
-        $lnk_test->to_id = $wrd_to->id;
+        $lnk_test->from = $from;
+        $lnk_test->verb = $vrb;
+        $lnk_test->to = $to;
         $lnk_test->usr = $usr;
         $lnk_test->load();
         if ($lnk_test->id > 0) {
             // refresh the given name if needed
-            if ($lnk_test->id <> 0 and $phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
+            if ($phrase_name <> '' and $lnk_test->description() <> $phrase_name) {
                 $lnk_test->description = $phrase_name;
                 $lnk_test->save();
                 $lnk_test->load();
@@ -858,17 +857,17 @@ function test_word_link($from, $verb, $to, $target = '', $phrase_name = '', $aut
             $result = $lnk_test;
         } else {
             // check if the backward link exists
-            $lnk_test->from_id = $wrd_to->id;
-            $lnk_test->verb_id = cl(db_cl::VERB, $verb);
-            $lnk_test->to_id = $wrd_from->id;
+            $lnk_test->from = $to;
+            $lnk_test->verb = $vrb;
+            $lnk_test->to = $from;
             $lnk_test->usr = $usr;
             $lnk_test->load();
             $result = $lnk_test;
             // create the link if requested
             if ($lnk_test->id <= 0 and $autocreate) {
-                $lnk_test->from_id = $wrd_from->id;
-                $lnk_test->verb_id = cl(db_cl::VERB, $verb);
-                $lnk_test->to_id = $wrd_to->id;
+                $lnk_test->from = $from;
+                $lnk_test->verb = $vrb;
+                $lnk_test->to = $to;
                 $lnk_test->save();
                 $lnk_test->load();
                 // refresh the given name if needed
@@ -947,7 +946,7 @@ function zu_test_time_setup(): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             test_word(strval($this_year));
-            $wrd_lnk = test_word_link(TW_YEAR, verb::DBL_IS, $this_year, true, '');
+            $wrd_lnk = test_word_link(TW_YEAR, verb::IS_A, $this_year, true, '');
             $result = $wrd_lnk->name;
             if ($prev_year <> '') {
                 test_word_link($prev_year, verb::DBL_FOLLOW, $this_year, true, '');

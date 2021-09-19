@@ -97,7 +97,7 @@ if ($usr->id > 0) {
             $msg .= 'Either enter a name for the new word or select an existing word to link.';
         }
         /*
-        For easy adding of new words it is no longer needed to link a word to an existing word. Instead a special page with the unlinked words should be added.
+        For easy adding of new words it is no longer needed to link a word to an existing word. Instead, a special page with the unlinked words should be added.
         if ($vrb_id == 0) {
           $msg .= 'Link missing; Please press back and select a word link, because all new words must be linked in a defined way to an existing word. ';
         }
@@ -135,24 +135,24 @@ if ($usr->id > 0) {
             // check link of the existing word already exists
             $lnk_test = new word_link;
             $lnk_test->usr = $usr;
-            $lnk_test->from_id = $wrd_id;
-            $lnk_test->verb_id = $vrb_id;
-            $lnk_test->to_id = $wrd_to;
+            $lnk_test->from->id = $wrd_id;
+            $lnk_test->verb->id = $vrb_id;
+            $lnk_test->to->id = $wrd_to;
             $lnk_test->load();
             if ($lnk_test->id > 0) {
                 $lnk_test->load_objects();
                 log_debug('word_add -> check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
-                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb_name . ' ' . $lnk_test->to_name . '" already exists. ';
+                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name . ' ' . $lnk_test->to_name . '" already exists. ';
             }
             $lnk_rev = new word_link;
             $lnk_rev->usr = $usr;
-            $lnk_rev->from_id = $wrd_to;
-            $lnk_rev->verb_id = $vrb_id;
-            $lnk_rev->to_id = $wrd_id;
+            $lnk_rev->from->id = $wrd_to;
+            $lnk_rev->verb->id = $vrb_id;
+            $lnk_rev->to->id = $wrd_id;
             $lnk_rev->load();
             if ($lnk_rev->id > 0) {
                 $lnk_rev->load_objects();
-                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb_name . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
+                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }
 
@@ -173,9 +173,9 @@ if ($usr->id > 0) {
                 log_debug('word_add -> word ' . $wrd->id . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new word_link;
                 $lnk->usr = $usr;
-                $lnk->from_id = $wrd->id;
-                $lnk->verb_id = $vrb_id;
-                $lnk->to_id = $wrd_to;
+                $lnk->from->id = $wrd->id;
+                $lnk->verb->id = $vrb_id;
+                $lnk->to->id = $wrd_to;
                 $add_result .= $lnk->save();
             }
 

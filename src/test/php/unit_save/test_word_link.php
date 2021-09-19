@@ -49,13 +49,13 @@ function run_word_link_test()
     $wrd_canton = load_word(TW_CANTON);
 
     // test the City of Zurich
-    $lnk_city = test_word_link(TW_ZH, verb::DBL_IS, TW_CITY, false, TP_ZH_CITY);
+    $lnk_city = test_word_link(TW_ZH, verb::IS_A, TW_CITY, false, TP_ZH_CITY);
 
     // ... now test the Canton Zurich
     $lnk_canton = new word_link;
-    $lnk_canton->from_id = $wrd_zh->id;
-    $lnk_canton->verb_id = cl(db_cl::VERB, verb::DBL_IS);
-    $lnk_canton->to_id = $wrd_canton->id;
+    $lnk_canton->from->id = $wrd_zh->id;
+    $lnk_canton->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_canton->to->id = $wrd_canton->id;
     $lnk_canton->usr = $usr;
     $lnk_canton->load();
     $target = TW_ZH . ' (Canton)';
@@ -69,9 +69,9 @@ function run_word_link_test()
 
     // ... now test the Insurance Zurich
     $lnk_company = new word_link;
-    $lnk_company->from_id = $wrd_zh->id;
-    $lnk_company->verb_id = cl(db_cl::VERB, verb::DBL_IS);
-    $lnk_company->to_id = $wrd_company->id;
+    $lnk_company->from->id = $wrd_zh->id;
+    $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
+    $lnk_company->to->id = $wrd_company->id;
     $lnk_company->usr = $usr;
     $lnk_company->load();
     $target = TP_ZH_INS;
@@ -87,14 +87,14 @@ function run_word_link_test()
     $wrd_added = load_word(word::TN_RENAMED);
     $wrd = load_word(TEST_WORD);
     $vrb = new verb;
-    $vrb->id = cl(db_cl::VERB, verb::DBL_IS);
+    $vrb->id = cl(db_cl::VERB, verb::IS_A);
     $vrb->usr = $usr->id;
     $vrb->load();
     $lnk = new word_link;
     $lnk->usr = $usr;
-    $lnk->from_id = $wrd_added->id;
-    $lnk->verb_id = $vrb->id;
-    $lnk->to_id = $wrd->id;
+    $lnk->from->id = $wrd_added->id;
+    $lnk->verb->id = $vrb->id;
+    $lnk->to->id = $wrd->id;
     $result = $lnk->save();
     $target = '11';
     test_dsp('triple->save "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -116,9 +116,9 @@ function run_word_link_test()
 
     $lnk = new word_link;
     $lnk->usr = $usr;
-    $lnk->from_id = $wrd_added->id;
-    $lnk->verb_id = $vrb->id;
-    $lnk->to_id = $wrd->id;
+    $lnk->from->id = $wrd_added->id;
+    $lnk->verb->id = $vrb->id;
+    $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
@@ -126,9 +126,9 @@ function run_word_link_test()
     // ... check if the link is shown correctly also for the second user
     $lnk2 = new word_link;
     $lnk2->usr = $usr2;
-    $lnk2->from_id = $wrd_added->id;
-    $lnk2->verb_id = $vrb->id;
-    $lnk2->to_id = $wrd->id;
+    $lnk2->from->id = $wrd_added->id;
+    $lnk2->verb->id = $vrb->id;
+    $lnk2->to->id = $wrd->id;
     $lnk2->load();
     $result = $lnk2->name;
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
@@ -139,9 +139,9 @@ function run_word_link_test()
     // if second user removes the new link
     $lnk = new word_link;
     $lnk->usr = $usr2;
-    $lnk->from_id = $wrd_added->id;
-    $lnk->verb_id = $vrb->id;
-    $lnk->to_id = $wrd->id;
+    $lnk->from->id = $wrd_added->id;
+    $lnk->verb->id = $vrb->id;
+    $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->del();
     $target = '111';
@@ -162,9 +162,9 @@ function run_word_link_test()
     // ... check if the link is really not used any more for the second user
     $lnk2 = new word_link;
     $lnk2->usr = $usr2;
-    $lnk2->from_id = $wrd_added->id;
-    $lnk2->verb_id = $vrb->id;
-    $lnk2->to_id = $wrd->id;
+    $lnk2->from->id = $wrd_added->id;
+    $lnk2->verb->id = $vrb->id;
+    $lnk2->to->id = $wrd->id;
     $lnk2->load();
     $result = $lnk2->name();
     $target = '';
@@ -177,9 +177,9 @@ function run_word_link_test()
     // ... check if the link is still used for the first user
     $lnk = new word_link;
     $lnk->usr = $usr;
-    $lnk->from_id = $wrd_added->id;
-    $lnk->verb_id = $vrb->id;
-    $lnk->to_id = $wrd->id;
+    $lnk->from->id = $wrd_added->id;
+    $lnk->verb->id = $vrb->id;
+    $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
@@ -190,9 +190,9 @@ function run_word_link_test()
     // if the first user also removes the link, both records should be deleted
     $lnk = new word_link;
     $lnk->usr = $usr;
-    $lnk->from_id = $wrd_added->id;
-    $lnk->verb_id = $vrb->id;
-    $lnk->to_id = $wrd->id;
+    $lnk->from->id = $wrd_added->id;
+    $lnk->verb->id = $vrb->id;
+    $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->del();
     $target = '11';
@@ -212,9 +212,9 @@ function run_word_link_test()
     // check if the formula is not used any more for both users
     $lnk = new word_link;
     $lnk->usr = $usr;
-    $lnk->from_id = $wrd_added->id;
-    $lnk->verb_id = $vrb->id;
-    $lnk->to_id = $wrd->id;
+    $lnk->from->id = $wrd_added->id;
+    $lnk->verb->id = $vrb->id;
+    $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
     $target = '';

@@ -144,100 +144,126 @@ function run_word_test()
     $result = $wrd_prior->name;
     test_dsp('word->prior for ' . word::TN_2022 . '', $target, $result);
 
-    // word children
+    // create a parent test word
     $wrd_parent = test_word(word::TN_PARENT);
     $wrd_parent->add_child($wrd_read);
-    $wrd_lst = $wrd_parent->children();
+
+    // word children, so get all children of a parent
+    // e.g. Zurich is s children of Canton
+    $phr_lst = $wrd_parent->children();
     $target = word::TN_READ;
-    if ($wrd_lst->does_contain($wrd_read)) {
-        $result = word::TN_READ;
+    if ($phr_lst->does_contain($wrd_read)) {
+        $result = $wrd_read->name();
     } else {
         $result = '';
     }
-    test_dsp('word->children for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT_DB, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->children for "' . word::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id() . '');
 
-    // ... word children excluding the start word
+    // ... word children excluding the start word, so the list of children should not include the parent
+    // e.g. the list of Cantons does not include the word Canton itself
     $target = '';
-    if ($wrd_lst->does_contain($wrd_read)) {
-        $result = $wrd_read->name;
+    if ($phr_lst->does_contain($wrd_parent)) {
+        $result = $wrd_read->name();
     } else {
         $result = '';
     }
-    test_dsp('word->children for "' . word::TN_READ . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->children for "' . word::TN_PARENT . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
-    // word are
-    $wrd_lst = $wrd_parent->are();
+    // word are, which includes all words related to the parent
+    // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
+    //      "Cantons are Zurich, Bern, ... and valid is also everything related to the Word Canton itself"
+    $phr_lst = $wrd_parent->are();
     $target = $wrd_read->name;
-    if ($wrd_lst->does_contain($wrd_read)) {
+    if ($phr_lst->does_contain($wrd_parent)) {
         $result = $wrd_read->name;
     } else {
         $result = '';
     }
-    test_dsp('word->are for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->are for "' . word::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // ... word are including the start word
+    // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
     $target = $wrd_read->name;
-    if ($wrd_lst->does_contain($wrd_read)) {
+    if ($phr_lst->does_contain($wrd_read)) {
         $result = $wrd_read->name;
     } else {
         $result = '';
     }
-    test_dsp('word->are for "' . word::TN_READ . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->are for "' . word::TN_PARENT . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // word parents
-    $wrd_ABB = test_word(TW_ABB);
-    $wrd_read = test_word(word::TN_READ);
-    $wrd_lst = $wrd_ABB->parents();
-    $target = $wrd_read->name;
-    if ($wrd_lst->does_contain($wrd_read)) {
-        $result = $wrd_read->name;
+    $phr_lst = $wrd_read->parents();
+    $target = $wrd_parent->name;
+    if ($phr_lst->does_contain($wrd_parent)) {
+        $result = $wrd_parent->name;
     } else {
         $result = '';
     }
-    test_dsp('word->parents for "' . TW_ABB . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->parents for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // ... word parents excluding the start word
     $target = '';
-    if ($wrd_lst->does_contain($wrd_ABB)) {
-        $result = $wrd_ABB->name;
+    if ($phr_lst->does_contain($wrd_read)) {
+        $result = $wrd_read->name;
     } else {
         $result = '';
     }
-    test_dsp('word->parents for "' . TW_ABB . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->parents for "' . word::TN_READ . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
-    // word is
-    $wrd_ZH = test_word(TW_ZH);
-    $wrd_canton = test_word(TW_CANTON);
+    // create category test words for "Zurich is a Canton" and "Zurich is a City"
+    // which implies that Canton contains Zurich and City contains Zurich
+    // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
+    // and 'System Test Word Member e.g. Zurich' as member
+    $wrd_canton = test_word(word::TN_CATEGORY);
+    $wrd_city = test_word(word::TN_ANOTHER_CATEGORY);
+    $wrd_ZH = test_word(word::TN_MEMBER);
+    test_word_link(word::TN_MEMBER, verb::IS_A, word::TN_CATEGORY);
+    test_word_link(word::TN_MEMBER, verb::IS_A, word::TN_ANOTHER_CATEGORY);
+
+    // word is e.g. Zurich as a Canton ...
     $target = $wrd_canton->name;
-    $wrd_lst = $wrd_ZH->is();
-    if ($wrd_lst->does_contain($wrd_canton)) {
+    $phr_lst = $wrd_ZH->is();
+    if ($phr_lst->does_contain($wrd_canton)) {
         $result = $wrd_canton->name;
     } else {
         $result = '';
     }
-    test_dsp('word->is for "' . TW_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->is "' . word::TN_MEMBER . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+
+    // ... and Zurich is a City
+    $target = $wrd_city->name;
+    $phr_lst = $wrd_ZH->is();
+    if ($phr_lst->does_contain($wrd_city)) {
+        $result = $wrd_city->name;
+    } else {
+        $result = '';
+    }
+    test_dsp('word->and is "' . word::TN_MEMBER . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // ... word is including the start word
     $target = $wrd_ZH->name;
-    // TODO check if not Zurich Insurance should be the result
-    if ($wrd_lst->does_contain($wrd_read)) {
+    if ($phr_lst->does_contain($wrd_ZH)) {
         $result = $wrd_ZH->name;
     } else {
         $result = '';
     }
-    test_dsp('word->is for "' . TW_ZH . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->is for "' . word::TN_MEMBER . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+
+    // create the test words and relations for a parent child relation without inheritance
+    // e.g. ...
+    $wrd_cf = test_word(word::TN_PARENT_NON_INHERITANCE);
+    $wrd_tax = test_word(word::TN_CHILD_NON_INHERITANCE);
+    test_word_link(word::TN_CHILD_NON_INHERITANCE, verb::IS_PART_OF, word::TN_PARENT_NON_INHERITANCE);
 
     // word is part
-    $wrd_cf = test_word(TW_CF);
-    $wrd_tax = test_word(TW_TAX);
     $target = $wrd_cf->name;
-    $wrd_lst = $wrd_tax->is_part();
-    if ($wrd_lst->does_contain($wrd_cf)) {
+    $phr_lst = $wrd_tax->is_part();
+    if ($phr_lst->does_contain($wrd_cf)) {
         $result = $wrd_cf->name;
     } else {
         $result = '';
     }
-    test_dsp('word->is_part for "' . TW_TAX . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $wrd_lst->dsp_id() . '');
+    test_dsp('word->is_part for "' . word::TN_CHILD_NON_INHERITANCE . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // save a new word
     $wrd_new = new word;

@@ -41,23 +41,7 @@ class word_link extends word_link_object
     public ?phrase $to = null; // the second object (either word, triple or group)
 
     // database fields additional to the user sandbox fields
-    // TODO split the db link object from the word link object
-    public ?int $from_id = null; // the id of the first phrase (a positive id is a word and a negative a triple)
-    public ?int $verb_id = null; // the id of the link_type (negative of only the reverse link is valid)
-    public ?int $to_id = null; // the id of the second phrase (a positive id is a word and a negative a triple)
     public ?string $description = null;   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company); if the description is empty the generic created name is used
-
-    // in memory only fields
-    public ?string $verb_name = null;   // the name of the link type object (verb)
-
-    // user_sandbox usages
-    // $name is the generic created name or the description if set is saved in the database for faster check on duplicates by using the database unique index function
-    // $from_name the name of the first object (either word, triple or group)
-    // $to_name the name of the second object (either word, triple or group)
-
-    // not used any more
-    //public $from_type   = null; // the type id of the first word (either word, word link or word group)
-    //public $to_type     = null; // the type id of the second word (either word, word link or word group)
 
 
     function __construct()
@@ -65,10 +49,11 @@ class word_link extends word_link_object
         parent::__construct();
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_WORD_LINK;
-        $this->from_name = DB_TYPE_PHRASE;
-        $this->to_name = DB_TYPE_PHRASE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
+
+        // also create the link objects because there is now case where they are supposed to be null
+        $this->create_objects();
     }
 
     // reset the in memory fields used e.g. if some ids are updated
@@ -80,12 +65,14 @@ class word_link extends word_link_object
         $this->owner_id = null;
         $this->excluded = null;
 
-        $this->from = null;
-        $this->from_name = '';
-        $this->verb = null;
-        $this->verb_name = '';
-        $this->to = null;
-        $this->to_name = '';
+        $this->create_objects();
+    }
+
+    private function create_objects()
+    {
+        $this->from = new phrase();
+        $this->verb = new verb();
+        $this->to = new phrase();
     }
 
     private function row_mapper($db_row, $map_usr_fields = false)
@@ -94,9 +81,9 @@ class word_link extends word_link_object
             if ($db_row['word_link_id'] > 0) {
                 $this->id = $db_row['word_link_id'];
                 $this->owner_id = $db_row['user_id'];
-                $this->from_id = $db_row['from_phrase_id'];
-                $this->to_id = $db_row['to_phrase_id'];
-                $this->verb_id = $db_row['verb_id'];
+                $this->from->id = $db_row['from_phrase_id'];
+                $this->to->id = $db_row['to_phrase_id'];
+                $this->verb->id = $db_row['verb_id'];
                 $this->name = $db_row['word_link_name'];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->excluded = $db_row['excluded'];
@@ -123,20 +110,20 @@ class word_link extends word_link_object
      */
     private function check_order()
     {
-        if ($this->verb_id < 0) {
+        if ($this->verb->id < 0) {
             $to = $this->to;
-            $to_id = $this->to_id;
-            $to_name = $this->to_name;
+            $to_id = $this->to->id;
+            $to_name = $this->to->name;
             $this->to = $this->from;
-            $this->to_id = $this->from_id;
-            $this->to_name = $this->from_name;
-            $this->verb_id = $this->verb_id * -1;
+            $this->to->id = $this->from->id;
+            $this->to->name = $this->from->name;
+            $this->verb->id = $this->verb->id * -1;
             if (isset($this->verb)) {
-                $this->verb_name = $this->verb->reverse;
+                $this->verb->name = $this->verb->reverse;
             }
             $this->from = $to;
-            $this->from_id = $to_id;
-            $this->from_name = $to_name;
+            $this->from->id = $to_id;
+            $this->from->name = $to_name;
             log_debug('word_link->check_order -> reversed');
         }
     }
@@ -147,34 +134,34 @@ class word_link extends word_link_object
      */
     function load_objects(): bool
     {
-        log_debug('word_link->load_objects.' . $this->from_id . ' ' . $this->verb_id . ' ' . $this->to_id . '');
+        log_debug('word_link->load_objects.' . $this->from->id . ' ' . $this->verb->id . ' ' . $this->to->id . '');
         $result = true;
 
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
         // load word from
-        if (!isset($this->from) and $this->from_id <> 0 and !is_null($this->usr->id)) {
-            if ($this->from_id > 0) {
+        if (!isset($this->from) and $this->from->id <> 0 and !is_null($this->usr->id)) {
+            if ($this->from->id > 0) {
                 $wrd = new word_dsp;
-                $wrd->id = $this->from_id;
+                $wrd->id = $this->from->id;
                 $wrd->usr = $this->usr;
                 $wrd->load();
                 if ($wrd->name <> '') {
                     $this->from = $wrd->phrase();
-                    $this->from_name = $wrd->name;
+                    $this->from->name = $wrd->name;
                 } else {
                     log_err('Failed to load first word of phrase ' . $this->dsp_id());
                     $result = false;
                 }
-            } elseif ($this->from_id < 0) {
+            } elseif ($this->from->id < 0) {
                 $lnk = new word_link;
-                $lnk->id = $this->from_id * -1;
+                $lnk->id = $this->from->id * -1;
                 $lnk->usr = $this->usr;
                 $lnk->load();
                 if ($lnk->id > 0) {
                     $this->from = $lnk->phrase();
-                    $this->from_name = $lnk->name();
+                    $this->from->name = $lnk->name();
                 } else {
                     log_err('Failed to load first phrase of phrase ' . $this->dsp_id());
                     $result = false;
@@ -185,50 +172,50 @@ class word_link extends word_link_object
                 $phr->usr = $this->usr;
                 $this->from = $phr;
             }
-            log_debug('word_link->load_objects -> from ' . $this->from_name);
+            log_debug('word_link->load_objects -> from ' . $this->from->name);
         } else {
             if (!isset($this->from)) {
-                log_err("The word (" . $this->from_id . ") must be set before it can be loaded.", "word_link->load_objects");
+                log_err("The word (" . $this->from->id . ") must be set before it can be loaded.", "word_link->load_objects");
             }
         }
 
         // load verb
-        if (!isset($this->verb) and $this->verb_id <> 0 and !is_null($this->usr->id)) {
+        if (!isset($this->verb) and $this->verb->id <> 0 and !is_null($this->usr->id)) {
             $vrb = new verb;
-            $vrb->id = $this->verb_id;
+            $vrb->id = $this->verb->id;
             $vrb->usr = $this->usr;
             $vrb->load();
             $this->verb = $vrb;
-            $this->verb_name = $vrb->name;
-            log_debug('word_link->load_objects -> verb ' . $this->verb_name);
+            $this->verb->name = $vrb->name;
+            log_debug('word_link->load_objects -> verb ' . $this->verb->name);
         } else {
             if (!isset($this->verb)) {
-                log_err("The verb (" . $this->verb_id . ") must be set before it can be loaded.", "word_link->load_objects");
+                log_err("The verb (" . $this->verb->id . ") must be set before it can be loaded.", "word_link->load_objects");
             }
         }
 
         // load word to
-        if (!isset($this->to) and $this->to_id <> 0 and !is_null($this->usr->id)) {
-            if ($this->to_id > 0) {
+        if (!isset($this->to) and $this->to->id <> 0 and !is_null($this->usr->id)) {
+            if ($this->to->id > 0) {
                 $wrd_to = new word_dsp;
-                $wrd_to->id = $this->to_id;
+                $wrd_to->id = $this->to->id;
                 $wrd_to->usr = $this->usr;
                 $wrd_to->load();
                 if ($wrd_to->name <> '') {
                     $this->to = $wrd_to->phrase();
-                    $this->to_name = $wrd_to->name;
+                    $this->to->name = $wrd_to->name;
                 } else {
                     log_err('Failed to load second word of phrase ' . $this->dsp_id());
                     $result = false;
                 }
-            } elseif ($this->to_id < 0) {
+            } elseif ($this->to->id < 0) {
                 $lnk = new word_link;
-                $lnk->id = $this->to_id * -1;
+                $lnk->id = $this->to->id * -1;
                 $lnk->usr = $this->usr;
                 $lnk->load();
                 if ($lnk->id > 0) {
                     $this->to = $lnk->phrase();
-                    $this->to_name = $lnk->name();
+                    $this->to->name = $lnk->name();
                 } else {
                     log_err('Failed to load second phrase of phrase ' . $this->dsp_id());
                     $result = false;
@@ -239,16 +226,34 @@ class word_link extends word_link_object
                 $phr_to->usr = $this->usr;
                 $this->to = $phr_to;
             }
-            log_debug('word_link->load_objects -> to ' . $this->to_name);
+            log_debug('word_link->load_objects -> to ' . $this->to->name);
         } else {
             if (!isset($this->to)) {
-                if ($this->to_id == 0) {
+                if ($this->to->id == 0) {
                     // set a dummy word
                     $wrd_to = new word_dsp;
                     $wrd_to->usr = $this->usr;
                     $this->to = $wrd_to->phrase();
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @return true if no link objects is missing
+     */
+    private function has_objects(): bool
+    {
+        $result = true;
+        if ($this->from == null) {
+            $result = false;
+        }
+        if ($this->verb == null) {
+            $result = false;
+        }
+        if ($this->to == null) {
+            $result = false;
         }
         return $result;
     }
@@ -261,29 +266,33 @@ class word_link extends word_link_object
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
+        //
+
         // set the where clause depending on the values given
         // TODO create with $db_con->set_where_link
         $sql_where = '';
         if ($this->id > 0) {
             $sql_where = "word_link_id = " . $this->id;
-        } elseif ($this->from_id <> 0
-            and $this->verb_id > 0
-            and $this->to_id <> 0) {
-            $sql_where = "from_phrase_id = " . sf($this->from_id) . "
-                      AND verb_id        = " . sf($this->verb_id) . "
-                      AND to_phrase_id   = " . sf($this->to_id);
-            // search for a backward link e.g. Cask Flow Statement contains Taxes
-        } elseif ($this->from_id <> 0
-            and $this->verb_id < 0
-            and $this->to_id <> 0) {
+        } elseif ($this->has_objects()) {
+            if ($this->from->id <> 0
+                and $this->verb->id > 0
+                and $this->to->id <> 0) {
+                $sql_where = "from_phrase_id = " . sf($this->from->id) . "
+                      AND verb_id        = " . sf($this->verb->id) . "
+                      AND to_phrase_id   = " . sf($this->to->id);
+                // search for a backward link e.g. Cask Flow Statement contains Taxes
+            } elseif ($this->from->id <> 0
+                and $this->verb->id < 0
+                and $this->to->id <> 0) {
 
-            $sql_where = "from_phrase_id = " . sf($this->to_id) . "
-                      AND verb_id        = " . sf($this->verb_id) . "
-                      AND to_phrase_id   = " . sf($this->from_id);
+                $sql_where = "from_phrase_id = " . sf($this->to->id) . "
+                      AND verb_id        = " . sf($this->verb->id) . "
+                      AND to_phrase_id   = " . sf($this->from->id);
+            }
         }
 
         if ($sql_where == '') {
-            log_err('The database ID (' . $this->id . ') or the word and verb ids (' . $this->from_id . ',' . $this->verb_id . ',' . $this->to_id . ') must be set to load a triple.', "word_link->load");
+            log_err('The database ID (' . $this->id . ') or the word and verb ids (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') must be set to load a triple.', "word_link->load");
         } else {
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
@@ -330,32 +339,32 @@ class word_link extends word_link_object
             $sql_where = "s.word_link_id = " . $this->id;
             $sql_name .= 'id';
             // search for a forward link e.g. Taxes is part of Cask Flow Statement
-        } elseif ($this->from_id <> 0
-            and $this->verb_id > 0
-            and $this->to_id <> 0
+        } elseif ($this->from->id <> 0
+            and $this->verb->id > 0
+            and $this->to->id <> 0
             and !is_null($this->usr->id)) {
-            $sql_where = "s.from_phrase_id = " . sf($this->from_id) . "
-                      AND s.verb_id        = " . sf($this->verb_id) . "
-                      AND s.to_phrase_id   = " . sf($this->to_id);
+            $sql_where = "s.from_phrase_id = " . sf($this->from->id) . "
+                      AND s.verb_id        = " . sf($this->verb->id) . "
+                      AND s.to_phrase_id   = " . sf($this->to->id);
             $sql_name .= 'link_id';
             // search for a backward link e.g. Cask Flow Statement contains Taxes
-        } elseif ($this->from_id <> 0
-            and $this->verb_id < 0
-            and $this->to_id <> 0
+        } elseif ($this->from->id <> 0
+            and $this->verb->id < 0
+            and $this->to->id <> 0
             and !is_null($this->usr->id)) {
-            $sql_where = "s.from_phrase_id = " . sf($this->to_id) . "
-                      AND s.verb_id        = " . sf($this->verb_id) . "
-                      AND s.to_phrase_id   = " . sf($this->from_id);
+            $sql_where = "s.from_phrase_id = " . sf($this->to->id) . "
+                      AND s.verb_id        = " . sf($this->verb->id) . "
+                      AND s.to_phrase_id   = " . sf($this->from->id);
             $sql_name .= 'reverse_id';
             /*
             // if the search including the type is not requested, try without the type
-            elseif ($this->from_id  <> 0
-                  AND $this->verb_id   > 0
-                  AND $this->to_id    <> 0
+            elseif ($this->from->id  <> 0
+                  AND $this->verb->id   > 0
+                  AND $this->to->id    <> 0
                   AND !is_null($this->usr->id)) {
-              $sql_where  =      "s.from_phrase_id = ".sf($this->from_id)."
-                              AND s.verb_id        = ".sf($this->verb_id)."
-                              AND s.to_phrase_id   = ".sf($this->to_id);
+              $sql_where  =      "s.from_phrase_id = ".sf($this->from->id)."
+                              AND s.verb_id        = ".sf($this->verb->id)."
+                              AND s.to_phrase_id   = ".sf($this->to->id);
             */
         } elseif ($this->name <> '' and !is_null($this->usr->id)) {
             $sql_where = "s.word_link_name = " . sf($this->name, sql_db::FLD_FORMAT_TEXT);
@@ -368,7 +377,7 @@ class word_link extends word_link_object
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
             $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
-            $db_con->set_usr_num_fields(array('excluded',sql_db::FLD_SHARE,sql_db::FLD_PROTECT));
+            $db_con->set_usr_num_fields(array('excluded', sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
         }
@@ -398,7 +407,7 @@ class word_link extends word_link_object
             if (is_null($this->usr->id)) {
                 log_err("The user id must be set to load a word.", "word_link->load");
             } else {
-                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from_id . ',' . $this->verb_id . ',' . $this->to_id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
+                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
             }
         } else {
             $db_lnk = $db_con->get1($sql);
@@ -516,15 +525,9 @@ class word_link extends word_link_object
             }
             if ($key == 'from') {
                 $this->from = $this->import_phrase($value, $do_save);
-                // remove if possible
-                $this->from_id = $this->from->id;
-                $this->from_name = $this->from->name;
             }
             if ($key == 'to') {
                 $this->to = $this->import_phrase($value, $do_save);
-                // remove if possible
-                $this->to_id = $this->to->id;
-                $this->to_name = $this->to->name;
             }
             if ($key == 'verb') {
                 $vrb = new verb;
@@ -539,8 +542,8 @@ class word_link extends word_link_object
                             $result .= ' for triple "' . $this->name . '"';
                         }
                     } else {
-                        $this->verb_id = $vrb->id;
-                        $this->verb_name = $vrb->name;
+                        $this->verb->id = $vrb->id;
+                        $this->verb->name = $vrb->name;
                     }
                 }
                 $this->verb = $vrb;
@@ -571,9 +574,9 @@ class word_link extends word_link_object
         if ($this->description <> '') {
             $result->description = $this->description;
         }
-        $result->from = $this->from_name;
+        $result->from = $this->from->name;
         $result->verb = $this->verb->name;
-        $result->to = $this->to_name;
+        $result->to = $this->to->name;
 
         log_debug('word_link->export_obj -> ' . json_encode($result));
         return $result;
@@ -591,12 +594,12 @@ class word_link extends word_link_object
     {
         $result = '';
 
-        if ($this->from_name <> '' and $this->verb_name <> '' and $this->to_name <> '') {
-            $result .= $this->from_name . ' '; // e.g. Australia
-            $result .= $this->verb_name . ' '; // e.g. is a
-            $result .= $this->to_name;       // e.g. Country
+        if ($this->from->name <> '' and $this->verb->name <> '' and $this->to->name <> '') {
+            $result .= $this->from->name . ' '; // e.g. Australia
+            $result .= $this->verb->name . ' '; // e.g. is a
+            $result .= $this->to->name;       // e.g. Country
         }
-        $result .= ' (' . $this->from_id . ',' . $this->verb_id . ',' . $this->to_id;
+        $result .= ' (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id;
         if ($this->id > 0) {
             $result .= ' -> ' . $this->id . ')';
         }
@@ -607,8 +610,9 @@ class word_link extends word_link_object
     }
 
     /**
-     * either the user edited description or the
-     * Australia is a Country
+     * either the user edited description
+     * or the generic name e.g. Australia is a Country
+     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
      */
     function name(): string
     {
@@ -618,32 +622,12 @@ class word_link extends word_link_object
             // use the user defined description
             if ($this->description <> '') {
                 $result = $this->description;
-            } else {
-                $result = $this->from_name . ' ' . $this->verb_name . ' ' . $this->to_name;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * same as name, but only for non debug usage
-     * TODO check if name or name_usr should be used
-     */
-    function name_usr(): string
-    {
-        $result = '';
-
-        if ($this->excluded <> 1) {
-            // use the user defined description
-            if ($this->description <> '') {
-                $result = $this->description;
                 // or use special verb based generic description
-            } elseif ($this->verb_id == cl(db_cl::VERB, verb::DBL_IS)) {
-                $result = $this->from_name . ' (' . $this->to_name . ')';
+            } elseif ($this->verb->id == cl(db_cl::VERB, verb::IS_A)) {
+                $result = $this->from->name . ' (' . $this->to->name . ')';
                 // or use the standard generic description
             } else {
-                $result = $this->from_name . ' ' . $this->verb_name . ' ' . $this->to_name;
+                $result = $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name;
             }
         }
 
@@ -656,7 +640,7 @@ class word_link extends word_link_object
      */
     function description(): string
     {
-        return $this->name_usr();
+        return $this->name();
     }
 
     /**
@@ -673,9 +657,9 @@ class word_link extends word_link_object
         $this->load_objects();
 
         // prepare to show the word link
-        $result .= $this->from_name . ' '; // e.g. Australia
-        $result .= $this->verb_name . ' '; // e.g. is a
-        $result .= $this->to_name;       // e.g. Country
+        $result .= $this->from->name . ' '; // e.g. Australia
+        $result .= $this->verb->name . ' '; // e.g. is a
+        $result .= $this->to->name;       // e.g. Country
 
         return $result;
     }
@@ -693,9 +677,9 @@ class word_link extends word_link_object
         $this->load_objects();
 
         // prepare to show the word link
-        $result .= $this->to_name . ' ';   // e.g. Countries
-        $result .= $this->verb_name . ' '; // e.g. are
-        $result .= $this->from_name;     // e.g. Australia (and others)
+        $result .= $this->to->name . ' ';   // e.g. Countries
+        $result .= $this->verb->name . ' '; // e.g. are
+        $result .= $this->from->name;     // e.g. Australia (and others)
 
         return $result;
     }
@@ -731,11 +715,11 @@ class word_link extends word_link_object
         $form_name = 'link_add';
         //$result .= 'Create a combined word (semantic triple):<br>';
         $result .= '<br>Define a new relation for <br><br>';
-        $result .= '<b>' . $this->from_name . '</b> ';
+        $result .= '<b>' . $this->from->name . '</b> ';
         $result .= dsp_form_start($form_name);
         $result .= dsp_form_hidden("back", $back);
         $result .= dsp_form_hidden("confirm", '1');
-        $result .= dsp_form_hidden("from", $this->from_id);
+        $result .= dsp_form_hidden("from", $this->from->id);
         $result .= '<div class="form-row">';
         if (isset($this->verb)) {
             $result .= $this->verb->dsp_selector('both', $form_name, "col-sm-6", $back);
@@ -766,7 +750,7 @@ class word_link extends word_link_object
         // prepare to show the word link
         if ($this->id > 0) {
             $form_name = 'link_edit';
-            $result .= dsp_text_h2('Change "' . $this->from_name . ' ' . $this->verb_name . ' ' . $this->to_name . '" to ');
+            $result .= dsp_text_h2('Change "' . $this->from->name . ' ' . $this->verb->name . ' ' . $this->to->name . '" to ');
             $result .= dsp_form_start($form_name);
             $result .= dsp_form_hidden("back", $back);
             $result .= dsp_form_hidden("confirm", '1');
@@ -1014,9 +998,9 @@ class word_link extends word_link_object
         $log->usr = $this->usr;
         $log->action = 'add';
         $log->table = 'word_links';
-        $log->new_from = $this->from->name;
-        $log->new_link = $this->verb->name;
-        $log->new_to = $this->to->name;
+        $log->new_from = $this->from;
+        $log->new_link = $this->verb;
+        $log->new_to = $this->to;
         $log->row_id = 0;
         $log->add();
 
@@ -1146,10 +1130,10 @@ class word_link extends word_link_object
     function save_id_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
-        if ($db_rec->from_id <> $this->from_id
-            or $db_rec->verb_id <> $this->verb_id
-            or $db_rec->to_id <> $this->to_id) {
-            log_debug('word_link->save_id_fields to "' . $this->to_name . '" (' . $this->to_id . ') from "' . $db_rec->to_name . '" (' . $db_rec->to_id . ') standard ' . $std_rec->to_name . '" (' . $std_rec->to_id . ')');
+        if ($db_rec->from->id <> $this->from->id
+            or $db_rec->verb->id <> $this->verb->id
+            or $db_rec->to->id <> $this->to->id) {
+            log_debug('word_link->save_id_fields to "' . $this->to->name . '" (' . $this->to->id . ') from "' . $db_rec->to->name . '" (' . $db_rec->to->id . ') standard ' . $std_rec->to->name . '" (' . $std_rec->to->id . ')');
             $log = $this->log_upd();
             $log->old_from = $db_rec->from;
             $log->new_from = $this->from;
@@ -1180,9 +1164,9 @@ class word_link extends word_link_object
     {
         $result = '';
 
-        if ($db_rec->from_id <> $this->from_id
-            or $db_rec->verb_id <> $this->verb_id
-            or $db_rec->to_id <> $this->to_id) {
+        if ($db_rec->from->id <> $this->from->id
+            or $db_rec->verb->id <> $this->verb->id
+            or $db_rec->to->id <> $this->to->id) {
             $this->reset();
             // check if target link already exists
             log_debug('word_link->save_id_if_updated check if target link already exists ' . $this->dsp_id() . ' (has been "' . $db_rec->dsp_id() . '")');
@@ -1257,7 +1241,7 @@ class word_link extends word_link_object
             $this->id = $db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
                 array($this->from->id, $this->verb->id, $this->to->id, $this->usr->id));
             // TODO make sure on all add functions that the database object is always set
-            //array($this->from_id, $this->verb_id, $this->to_id, $this->usr->id));
+            //array($this->from->id, $this->verb->id, $this->to->id, $this->usr->id));
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
@@ -1310,9 +1294,9 @@ class word_link extends word_link_object
             // check if the same triple is already in the database
             $db_chk_rev = clone $this;
             $db_chk_rev->from = $this->to;
-            $db_chk_rev->from_id = $this->to_id;
+            $db_chk_rev->from->id = $this->to->id;
             $db_chk_rev->to = $this->from;
-            $db_chk_rev->to_id = $this->from_id;
+            $db_chk_rev->to->id = $this->from->id;
             $db_chk_rev->load_standard();
             if ($db_chk_rev->id > 0) {
                 $this->id = $db_chk_rev->id;

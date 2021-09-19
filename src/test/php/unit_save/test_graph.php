@@ -99,7 +99,7 @@ function run_graph_test () {
   $ABB->name = TW_ABB;
   $ABB->load();
   $is = New verb;
-  $is->id= cl(db_cl::VERB, verb::DBL_IS);
+  $is->id= cl(db_cl::VERB, verb::IS_A);
   $is->usr = $usr->id;
   $is->load();
   $graph = New word_link_list;

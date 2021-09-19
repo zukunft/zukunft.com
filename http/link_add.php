@@ -64,20 +64,20 @@ if ($usr->id > 0) {
 
     // load the parameters to the triple object to display it again in case of an error
     if (isset($_GET['from'])) {
-        $lnk->from_id = $_GET['from'];
+        $lnk->from->id = $_GET['from'];
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
-        $lnk->verb_id = $_GET['verb'];
+        $lnk->verb->id = $_GET['verb'];
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
-        $lnk->to_id = $_GET['phrase'];
+        $lnk->to->id = $_GET['phrase'];
     }
 
     // if the user has pressed save at least once
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($lnk->from_id == 0 or $lnk->verb_id == 0 or $lnk->to_id == 0) {
+        if ($lnk->from->id == 0 or $lnk->verb->id == 0 or $lnk->to->id == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 

@@ -1720,10 +1720,21 @@ class sql_db
             $db_row_name = $db_row[$column_name];
             $new_name = zu_str_right_of($db_row_name, $prefix_name);
             if ($new_name != '' and $new_name != $db_row_name) {
-                $sql = "UPDATE " . $table_name . " SET code_id = '" . $new_name . "' WHERE code_id = '" . $db_row_name . "';";
-                $this->exe($sql);
-                $result = true;
+                $result = $this->change_code_id($table_name, $db_row_name, $new_name);
             }
+        }
+
+        return $result;
+    }
+
+    function change_code_id(string $table_name, string $old_code_id, string $new_code_id): bool
+    {
+        $result = false;
+
+        if ($new_code_id != '' and $old_code_id != '' and $old_code_id != $new_code_id) {
+            $sql = "UPDATE " . $table_name . " SET code_id = '" . $new_code_id . "' WHERE code_id = '" . $old_code_id . "';";
+            $this->exe($sql);
+            $result = true;
         }
 
         return $result;
@@ -1754,7 +1765,8 @@ class sql_db
         $real_columns = $this->get_column_names($table_name);
         $missing_columns = array_diff($expected_columns, $real_columns);
         if (count($missing_columns) > 0) {
-            log_warning('Database column ' . dsp_array($missing_columns) . ' missing');
+            // TODO add $this
+            // log_warning('Database column ' . dsp_array($missing_columns) . ' missing');
             $result = false;
         }
         return $result;

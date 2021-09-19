@@ -187,9 +187,9 @@ class user_dsp extends user
                 // create the word_link objects with the minimal parameter needed
                 $wrd_usr = new word_link;
                 $wrd_usr->id = $sbx_row['id'];
-                $wrd_usr->from_id = $sbx_row['from_phrase_id'];
-                $wrd_usr->verb_id = $sbx_row['verb_id'];
-                $wrd_usr->to_id = $sbx_row['to_phrase_id'];
+                $wrd_usr->from->id = $sbx_row['from_phrase_id'];
+                $wrd_usr->verb->id = $sbx_row['verb_id'];
+                $wrd_usr->to->id = $sbx_row['to_phrase_id'];
                 $wrd_usr->name = $sbx_row['usr_name'];
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
                 $wrd_usr->usr = $this;

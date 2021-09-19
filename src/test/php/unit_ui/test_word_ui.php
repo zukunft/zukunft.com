@@ -43,7 +43,7 @@ function run_word_ui_test()
     $wrd_ABB->name = TW_ABB;
     $wrd_ABB->usr = $usr;
     $wrd_ABB->load();
-    $vrb_is = cl(db_cl::VERB, verb::DBL_IS);
+    $vrb_is = cl(db_cl::VERB, verb::IS_A);
     $wrd_type = $word_types->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd_ABB->id . '&type=1&back=' . $wrd_ABB->id . '');
     $target = TW_ABB;

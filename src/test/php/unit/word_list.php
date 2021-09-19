@@ -140,7 +140,7 @@ function run_word_list_unit_tests()
     $wrd_lst = new word_list;
     $wrd_lst->usr = $usr;
     $wrd_lst->ids = [7];
-    $created_sql = $wrd_lst->add_by_type_sql(2, word_list::DIRECTION_UP);
+    $created_sql = $wrd_lst->add_by_type_sql(2, verb::DIRECTION_UP);
     $expected_sql = "SELECT s.word_id,
                      s.user_id,
                      CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN s.word_name    ELSE u.word_name    END AS word_name,
@@ -162,7 +162,7 @@ function run_word_list_unit_tests()
 
     // ... and check if the prepared sql name is unique
     $result = false;
-    $sql_name = $wrd_lst->add_by_type_sql(2, word_list::DIRECTION_UP,true);
+    $sql_name = $wrd_lst->add_by_type_sql(2, verb::DIRECTION_UP,true);
     if (!in_array($sql_name, $sql_names)) {
         $result = true;
         $sql_names[] = $sql_name;

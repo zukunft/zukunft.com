@@ -314,9 +314,9 @@ class word_link_list
                             // fill the fields used for searching
                             $new_link->usr = $this->usr;
                             $new_link->id = $db_lnk['word_link_id'];
-                            $new_link->from_id = $db_lnk['from_phrase_id'];
-                            $new_link->verb_id = $db_lnk['verb_id'];
-                            $new_link->to_id = $db_lnk['to_phrase_id'];
+                            $new_link->from->id = $db_lnk['from_phrase_id'];
+                            $new_link->verb->id = $db_lnk['verb_id'];
+                            $new_link->to->id = $db_lnk['to_phrase_id'];
                             $new_link->description = $db_lnk[sql_db::FLD_DESCRIPTION];
                             $new_link->name = $db_lnk['word_link_name'];
                             // fill the verb
@@ -325,7 +325,6 @@ class word_link_list
                                 $new_verb->usr = $this->usr;
                                 $new_verb->row_mapper($db_lnk);
                                 $new_link->verb = $new_verb;
-                                $new_link->verb_name = $new_verb->name;
                             }
                             // fill the from word
                             // if the source word is set, the query result probably does not contain the values of the source word
@@ -473,7 +472,7 @@ class word_link_list
                         log_debug('graph->display type "' . $lnk->verb->name . '"');
 
                         // select the same side of the verb
-                        if ($this->direction == "down") {
+                        if ($this->direction == verb::DIRECTION_DOWN) {
                             $directional_link_type_id = $lnk->verb_id;
                         } else {
                             $directional_link_type_id = $lnk->verb_id * -1;
@@ -482,14 +481,14 @@ class word_link_list
                         // display the link type
                         if ($lnk->verb_id == $next_lnk->verb_id) {
                             $result .= $this->wrd->plural;
-                            if ($this->direction == "down") {
+                            if ($this->direction == verb::DIRECTION_DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
                             } else {
                                 $result .= " " . $lnk->verb->plural;
                             }
                         } else {
                             $result .= $this->wrd->name;
-                            if ($this->direction == "down") {
+                            if ($this->direction == verb::DIRECTION_DOWN) {
                                 $result .= " " . $lnk->verb->reverse;
                             } else {
                                 $result .= " " . $lnk->verb->name;

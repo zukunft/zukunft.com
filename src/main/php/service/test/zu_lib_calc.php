@@ -364,14 +364,14 @@ function zuc_get_verb_words($verb_id, $word_array, $time_word_id, $user_id)
     $result = array();
 
     // list all words that are linked to the verb e.g. country can be the differentiator for Sales, so Sales would be the result
-    $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, "up");
+    $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, verb::DIRECTION_UP);
     log_debug("zuc_get_verb_words -> verb words " . dsp_array($verb_words));
     // list all foaf of the verb
-    $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
+    $is_a_type = cl(db_cl::VERB, verb::IS_A);
     $word_ids = zut_array_ids($verb_words, $user_id);
     foreach ($word_ids as $word_id) {
         log_debug("zuc_get_verb_words -> add word id " . $word_id . " to result");
-        $foaf_words = zu_sql_get_lst(zu_sql_words_linked($word_id, $is_a_type, "up"));
+        $foaf_words = zu_sql_get_lst(zu_sql_words_linked($word_id, $is_a_type, verb::DIRECTION_UP));
         log_debug("zuc_get_verb_words -> add word id " . $word_id . " to result, which has foaf words " . dsp_array($foaf_words) . " (" . dsp_array(array_keys($foaf_words)) . "..");
         // combine so add Sales to the selection words and the countries to the result words
         //$result = array_merge($result, $foaf_words);
@@ -393,7 +393,7 @@ function zuc_get_verb_word_array($formula, $word_array, $time_word_id)
         $verb_id = zu_str_right_of($formula, ZUP_CHAR_WORD_START);
         $verb_id = zu_str_left_of($verb_id, ZUP_CHAR_WORD_END);
         // list all words that are linked to the verb e.g. country can be the differentiator for Sales, so Sales would be the result
-        $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, "down");
+        $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, verb::DIRECTION_DOWN);
         log_debug("zuc_get_verb_word_array -> verb words " . dsp_array($verb_words));
         $word_array[] = $verb_words[0];
         log_debug("zuc_get_verb_word_array ... done (" . $word_array . ")");

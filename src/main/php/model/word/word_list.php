@@ -4,6 +4,8 @@
 
   word_list.php - a list of word objects
   -------------
+
+  actually only used for phrase splitting; in most other cases phrase_list is used
   
   This file is part of zukunft.com - calc with words
 
@@ -31,9 +33,6 @@
 
 class word_list
 {
-
-    const DIRECTION_UP = 'up';
-    const DIRECTION_DOWN = 'down';
 
     // todo: check the consistence usage of the parameter $back
 
@@ -171,7 +170,9 @@ class word_list
         }
     }
 
-    // create the sql statement to add related words to a word list
+    /**
+     * create the sql statement to add related words to a word list
+     */
     function add_by_type_sql($verb_id, $direction, bool $get_name = false): string
     {
         global $db_con;
@@ -179,11 +180,11 @@ class word_list
         $sql_name = '';
         $sql_where = '';
         $sql_wrd = '';
-        if ($direction == self::DIRECTION_UP) {
+        if ($direction == verb::DIRECTION_UP) {
             $sql_name = 'word_list_add_up';
             $sql_where = 'l.from_phrase_id IN (' . $this->ids_txt() . ')';
             $sql_wrd = 'l.to_phrase_id';
-        } elseif ($direction == self::DIRECTION_DOWN)  {
+        } elseif ($direction == verb::DIRECTION_DOWN)  {
             $sql_name = 'word_list_add_down';
             $sql_where = 'l.to_phrase_id IN (' . $this->ids_txt() . ')';
             $sql_wrd = 'l.from_phrase_id';
@@ -351,7 +352,7 @@ class word_list
         $level = 0;
         $added_wrd_lst = new word_list; // list of the added word ids
         $added_wrd_lst->usr = $this->usr;
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, 'up', 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_UP, 0);
 
         log_debug('word_list->foaf_parents -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -365,7 +366,7 @@ class word_list
         log_debug('word_list->parents(' . $verb_id . ')');
         $added_wrd_lst = new word_list; // list of the added word ids
         $added_wrd_lst->usr = $this->usr;
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, 'up', $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_UP, $level);
 
         log_debug('word_list->parents -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -379,7 +380,7 @@ class word_list
         $level = 0;
         $added_wrd_lst = new word_list; // list of the added word ids
         $added_wrd_lst->usr = $this->usr;
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, 'down', 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, 0);
 
         log_debug('word_list->foaf_children -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -393,7 +394,7 @@ class word_list
         log_debug('word_list->children type ' . $verb_id . '');
         $added_wrd_lst = new word_list; // list of the added word ids
         $added_wrd_lst->usr = $this->usr;
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, 'down', $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, $level);
 
         log_debug('word_list->children -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -402,7 +403,7 @@ class word_list
     // returns a list of words that are related to this word list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
     function is()
     {
-        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
+        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::IS_A));
         log_debug('word_list->is -> (' . $this->dsp_id() . ' is ' . $wrd_lst->name() . ')');
         return $wrd_lst;
     }
@@ -412,7 +413,7 @@ class word_list
     function are()
     {
         log_debug('word_list->are for ' . $this->dsp_id());
-        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_IS));
+        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_A));
         $wrd_lst->merge($this);
         log_debug('word_list->are -> (' . $this->dsp_id() . ' are ' . $wrd_lst->name() . ')');
         return $wrd_lst;
@@ -421,7 +422,7 @@ class word_list
     // returns a list of words that are related to this word list
     function contains()
     {
-        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_CONTAIN));
+        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug('word_list->contains -> (' . $this->dsp_id() . ' contains ' . $wrd_lst->name() . ')');
         return $wrd_lst;
@@ -748,7 +749,7 @@ class word_list
 
         /*
         foreach ($this->lst AS $wrd) {
-          if ($direction == "up") {
+          if ($direction == verb::DIRECTION_UP) {
             $directional_verb_id = $wrd->verb_id;
           } else {
             $directional_verb_id = $wrd->verb_id * -1;
@@ -758,14 +759,14 @@ class word_list
           $num_rows = mysqli_num_rows($sql_result);
           if ($num_rows > 1) {
             $result .= zut_plural ($word_id, $user_id);
-            if ($direction == "up") {
+            if ($direction == verb::DIRECTION_UP) {
               $result .= " " . zul_plural_reverse($verb_id);
             } else {
               $result .= " " . zul_plural($verb_id);
             }
           } else {
             $result .= zut_name ($word_id, $user_id);
-            if ($direction == "up") {
+            if ($direction == verb::DIRECTION_UP) {
               $result .= " " . zul_reverse($verb_id);
             } else {
               $result .= " " . zul_name($verb_id);

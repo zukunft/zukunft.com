@@ -174,7 +174,7 @@ class view_component_dsp extends view_component
 
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORDS_DOWN)) {
             log_debug('view_component_dsp->word_children in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
-            $result .= $wrd->dsp_graph("down");
+            $result .= $wrd->dsp_graph(verb::DIRECTION_DOWN);
         }
 
         return $result;
@@ -186,7 +186,7 @@ class view_component_dsp extends view_component
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORDS_DOWN)) {
             log_debug('view_component_dsp->word_parents in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
-            $result .= $wrd->dsp_graph("up",);
+            $result .= $wrd->dsp_graph(verb::DIRECTION_UP);
         }
         return $result;
     }
@@ -238,13 +238,13 @@ class view_component_dsp extends view_component
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_VALUES_ALL)) {
             log_debug('view_component_dsp->all in view ' . $this->dsp_id() . ' for word ' . $phr->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
-            $phrases_down = $phr->dsp_graph("down");
-            $phrases_up = $phr->dsp_graph("up",);
+            $phrases_down = $phr->dsp_graph(verb::DIRECTION_DOWN);
+            $phrases_up = $phr->dsp_graph(verb::DIRECTION_UP,);
             if ($phrases_down <> '' or $phrases_up <> '') {
                 $result .= $phrases_down . $phrases_up;
             } else {
                 $result .= "The type of " . $phr->name . " is not jet defined. Please define what it is: ";
-                $type_is = cl(db_cl::VERB, verb::DBL_IS);
+                $type_is = cl(db_cl::VERB, verb::IS_A);
                 $result .= btn_add("Please link " . $phr->name . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
             }
             $result .= '<br><br>values<br>';
@@ -265,7 +265,7 @@ class view_component_dsp extends view_component
     */
 
 
-    // allow the user to unlick a view
+    // allow the user to unlink a view
     function btn_unlink($view_id, $wrd, $back)
     {
         log_debug('view_component_dsp->btn_unlink(me' . $this->id . ',m' . $view_id . ',t' . $wrd->id . ')');

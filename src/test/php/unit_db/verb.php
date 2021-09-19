@@ -44,9 +44,9 @@ function run_verb_unit_db_tests()
     test_dsp('unit_db_verb_list->load', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::VERB, verb::DBL_IS);
+    $result = cl(db_cl::VERB, verb::IS_A);
     $target = 2;
-    test_dsp('unit_db_verb_list->check ' . verb::DBL_IS, $result, $target);
+    test_dsp('unit_db_verb_list->check ' . verb::IS_A, $result, $target);
 
 }
 

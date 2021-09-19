@@ -190,7 +190,7 @@ function zut_db_tree ($word_id, $link_type_id, $user_id) {
 // id array of all words that the given word is related to e.g. for the id of "ABB Ltd." it will return the id of "Company"
 function zut_ids_is ($word_id, $user_id) {
   log_debug('zut_ids_is(t'.$word_id.')');
-  $link_type_id = cl(db_cl::VERB, verb::DBL_IS);
+  $link_type_id = cl(db_cl::VERB, verb::IS_A);
   $result = zut_db_tree_up ($word_id, $link_type_id, $user_id);
 
   log_debug('zut_ids_is -> ('.implode(",",$result).')');
@@ -200,7 +200,7 @@ function zut_ids_is ($word_id, $user_id) {
 // word ids that ARE of the type of the given word e.g. for "Company" it will be "ABB Ltd." and others
 function zut_ids_are ($word_id, $user_id) {
   log_debug('zut_ids_are(t'.$word_id.',u'.$user_id.')');
-  $link_type_id = cl(db_cl::VERB, verb::DBL_IS);
+  $link_type_id = cl(db_cl::VERB, verb::IS_A);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id);
 
   log_debug('zut_ids_are -> ('.implode(",",$result).')');
@@ -221,7 +221,7 @@ function zut_lst_are ($word_id, $user_id) {
 // all word ids that are part of the given word e.g. for "cash flow statement" it will be "Sales" and others
 function zut_ids_contains ($word_id, $user_id) {
   log_debug('zut_ids_contains(t'.$word_id.')');
-  $link_type_id = cl(db_cl::VERB, verb::DBL_CONTAIN);
+  $link_type_id = cl(db_cl::VERB, verb::IS_PART_OF);
   $result = zut_db_tree ($word_id, $link_type_id, $user_id);
 
   log_debug('zut_ids_contains -> ('.implode(",",$result).')');
@@ -331,10 +331,10 @@ function zut_foaf_parent($word_id) {
   log_debug('zut_foaf_parent('.$word_id.')');
 
   $result = array();
-  $parent_type = cl(db_cl::VERB, verb::DBL_IS);
+  $parent_type = cl(db_cl::VERB, verb::IS_A);
 
   // find direct parent words
-  $result = zu_sql_get_lst(zu_sql_words_linked($word_id, $parent_type, "down"));
+  $result = zu_sql_get_lst(zu_sql_words_linked($word_id, $parent_type, verb::DIRECTION_DOWN));
   
   // find the indirect parents
   foreach (array_keys($result) AS $parent_id) {
@@ -356,15 +356,15 @@ function zut_db_differentiator_words($word_id) {
   $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
 
   // find direct differentiator words
-  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, "up"));
+  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, verb::DIRECTION_UP));
   log_debug('zut_db_differentiator_words ... words linked ('.implode(",",$word_lst).')');
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
-  $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
+  $is_a_type = cl(db_cl::VERB, verb::IS_A);
 
   // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
-  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, "up");
+  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, verb::DIRECTION_UP);
   $word_lst = zu_lst_merge_with_key($word_lst, $sub_words);
   //echo 'combi: '.implode(",",$word_lst).'<br>';
 
@@ -372,7 +372,7 @@ function zut_db_differentiator_words($word_id) {
   // while (!empty($added_words)) {
 /*  if (!empty($added_words)) {
     $xtra_words = zu_lst_merge_with_key($added_words, $xtra_words);
-    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, "down");
+    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, verb::DIRECTION_DOWN);
     $added_words = zu_lst_not_in($added_words, $xtra_words);
   } */
   
@@ -391,7 +391,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   log_debug('zut_db_differentiator_words_filtered ... type ('.$differentiator_type.')');
 
   // find direct differentiator words
-  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, "up"));
+  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, verb::DIRECTION_UP));
   if (count($word_lst) > 0) {
     log_debug('zut_db_differentiator_words_filtered ... words linked ('.implode(",",$word_lst).')');
   } else {  
@@ -399,11 +399,11 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   }
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
-  $is_a_type = cl(db_cl::VERB, verb::DBL_IS);
+  $is_a_type = cl(db_cl::VERB, verb::IS_A);
 
   // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
-  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, "up");
+  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, verb::DIRECTION_UP);
   log_debug('zut_db_differentiator_words_filtered ... sub words ('.implode(",",$sub_words).')');
   $sub_words= zu_lst_in_ids($sub_words, $filter_ids);
   log_debug('zut_db_differentiator_words_filtered ... sub words filtered ('.implode(",",$sub_words).')');
@@ -415,7 +415,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   // while (!empty($added_words)) {
 /*  if (!empty($added_words)) {
     $xtra_words = zu_lst_merge_with_key($added_words, $xtra_words);
-    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, "down");
+    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, verb::DIRECTION_DOWN);
     $added_words = zu_lst_not_in($added_words, $xtra_words);
   } */
   

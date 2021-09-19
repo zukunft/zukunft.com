@@ -37,7 +37,12 @@ class word extends word_link_object
     const TN_READ = 'Mathematical constant';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
-    const TN_PARENT = 'System Test Word Child';
+    const TN_PARENT = 'System Test Word Parent';
+    const TN_CATEGORY = 'System Test Word Category e.g. Canton';
+    const TN_MEMBER = 'System Test Word Member e.g. Zurich';
+    const TN_ANOTHER_CATEGORY = 'System Test Word Another Category e.g. City';
+    const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
+    const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'Another System Test Time Word e.g. 2022';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
@@ -541,7 +546,7 @@ class word extends word_link_object
     function btn_add($back): string
     {
         global $word_types;
-        $vrb_is = cl(db_cl::VERB, verb::DBL_IS);
+        $vrb_is = cl(db_cl::VERB, verb::IS_A);
         $wrd_type = $word_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name;
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
@@ -671,48 +676,52 @@ class word extends word_link_object
      */
 
     /**
-     * helper function that returns a word list object just with the word object
+     * helper function that returns a phrase list object just with the word object
      */
-    function lst(): word_list
+    private function lst(): phrase_list
     {
-        $wrd_lst = new word_list;
-        $wrd_lst->usr = $this->usr;
-        $wrd_lst->add($this);
-        return $wrd_lst;
+        $phr_lst = new phrase_list;
+        $phr_lst->usr = $this->usr;
+        $phr_lst->add($this->phrase());
+        return $phr_lst;
     }
 
     /**
-     * returns a list of words that are related to this word e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich"
+     * returns a list of words (actually phrases) that are related to this word
+     * e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich" itself
      */
-    function parents()
+    function parents(): phrase_list
     {
         log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
-        $wrd_lst = $this->lst();
-        $parent_wrd_lst = $wrd_lst->foaf_parents(cl(db_cl::VERB, verb::DBL_IS));
-        log_debug('word->parents are ' . $parent_wrd_lst->name() . ' for ' . $this->dsp_id());
-        return $parent_wrd_lst;
+        $phr_lst = $this->lst();
+        $parent_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
+        log_debug('word->parents are ' . $parent_phr_lst->name() . ' for ' . $this->dsp_id());
+        return $parent_phr_lst;
     }
 
     /**
-     * returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+     * TODO maybe collect the single words or this is a third case
+     * returns a list of words that are related to this word
+     * e.g. for "Zurich" it will return "Canton", "City" and "Company" and "Zurich" itself
+     *      to be able to collect all relations to the given word e.g. Zurich
      */
-    function is()
+    function is(): phrase_list
     {
-        $wrd_lst = $this->parents();
-        //$wrd_lst->add($this,);
-        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $wrd_lst->name());
-        return $wrd_lst;
+        $phr_lst = $this->parents();
+        $phr_lst->add($this);
+        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->name());
+        return $phr_lst;
     }
 
     /**
      * returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
      */
-    function is_mainly()
+    function is_mainly(): phrase_list
     {
         $result = null;
-        $is_wrd_lst = $this->is();
-        if (count($is_wrd_lst->lst) >= 1) {
-            $result = $is_wrd_lst->lst[0];
+        $is_phr_lst = $this->is();
+        if (count($is_phr_lst->lst) >= 1) {
+            $result = $is_phr_lst->lst[0];
         }
         log_debug('word->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
         return $result;
@@ -720,6 +729,7 @@ class word extends word_link_object
 
     /**
      * add a child word to this word
+     * e.g. Zurich (child) is a Canton (Parent)
      * @param word $child the word that should be added as a child
      * @return bool
      */
@@ -731,9 +741,10 @@ class word extends word_link_object
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new word_link();
-            $wrd_lnk->from = $this->phrase();
-            $wrd_lnk->verb = $verbs->get_verbs(verb::DBL_IS);
-            $wrd_lnk->to = $child->phrase();
+            $wrd_lnk->from = $child->phrase();
+            $wrd_lnk->verb = $verbs->get_verb(verb::IS_A);
+            $wrd_lnk->to = $this->phrase();
+            $wrd_lnk->usr = $this->usr;
             if ($wrd_lnk->save() == '') {
                $result = true;
             }
@@ -742,21 +753,24 @@ class word extends word_link_object
     }
 
     /**
-     * returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and others, but not "Company"
+     * @return phrase_list a list of words that are related to this word
+     * e.g. for "Canton" it will return "Zurich (Canton)" and others, but not "Canton" itself
      */
-    function children()
+    function children(): phrase_list
     {
         log_debug('word->children for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
-        $wrd_lst = $this->lst();
-        $child_wrd_lst = $wrd_lst->foaf_children(cl(db_cl::VERB, verb::DBL_IS));
-        log_debug('word->children are ' . $child_wrd_lst->name() . ' for ' . $this->dsp_id());
-        return $child_wrd_lst;
+        $phr_lst = $this->lst();
+        $child_phr_lst = $phr_lst->foaf_children(cl(db_cl::VERB, verb::IS_A));
+        log_debug('word->children are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
+        return $child_phr_lst;
     }
 
     /**
-     * returns a list of words that are related to this word e.g. for "Company" it will return "ABB" and "Company"
+     * @return phrase_list a list of words that are related to the given word
+     * e.g. for "Canton" it will return "Zurich (Canton)" and "Canton", but not "Zurich (City)"
+     * used to collect e.g. all formulas used for Canton
      */
-    function are()
+    function are(): phrase_list
     {
         $wrd_lst = $this->children();
         $wrd_lst->add($this);
@@ -765,34 +779,35 @@ class word extends word_link_object
 
     /**
      * makes sure that all combinations of "are" and "contains" are included
+     * @return phrase_list all phrases linked with are and contains
      */
-    function are_and_contains()
+    function are_and_contains(): phrase_list
     {
         log_debug('word->are_and_contains for ' . $this->dsp_id());
 
         // this first time get all related items
-        $wrd_lst = $this->lst();
-        $wrd_lst = $wrd_lst->are();
-        $wrd_lst = $wrd_lst->contains();
-        $added_lst = $wrd_lst->diff($this->lst());
+        $phr_lst = $this->lst();
+        $phr_lst = $phr_lst->are();
+        $phr_lst = $phr_lst->contains();
+        $added_lst = $phr_lst->diff($this->lst());
         // ... and after that get only for the new
         if (count($added_lst->lst) > 0) {
             $loops = 0;
-            log_debug('word->are_and_contains -> added ' . $added_lst->name() . ' to ' . $wrd_lst->name());
+            log_debug('word->are_and_contains -> added ' . $added_lst->name() . ' to ' . $phr_lst->name());
             do {
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $next_lst = $next_lst->contains();
-                $added_lst = $next_lst->diff($wrd_lst);
+                $added_lst = $next_lst->diff($phr_lst);
                 if (count($added_lst->lst) > 0) {
-                    log_debug('word->are_and_contains -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
+                    log_debug('word->are_and_contains -> add ' . $added_lst->name() . ' to ' . $phr_lst->name());
                 }
-                $wrd_lst->merge($added_lst);
+                $phr_lst->merge($added_lst);
                 $loops++;
             } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
         }
-        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
-        return $wrd_lst;
+        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
+        return $phr_lst;
     }
 
     /**
@@ -845,15 +860,14 @@ class word extends word_link_object
      * for the value selection this should be tested level by level
      * to use by default the most specific value
      */
-    function is_part()
+    function is_part(): phrase_list
     {
         log_debug('word->is(' . $this->dsp_id() . ', user ' . $this->usr->id . ')');
-        $link_type_id = cl(db_cl::VERB, verb::DBL_CONTAIN);
-        $wrd_lst = $this->lst();
-        $is_wrd_lst = $wrd_lst->foaf_parents($link_type_id);
+        $phr_lst = $this->lst();
+        $is_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_PART_OF));
 
-        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_wrd_lst->name() . ')');
-        return $is_wrd_lst;
+        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_phr_lst->name() . ')');
+        return $is_phr_lst;
     }
 
     /**
