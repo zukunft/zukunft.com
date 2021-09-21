@@ -4,6 +4,8 @@
 
   verb.php - predicate object to link two words
   --------
+
+  TODO maybe move the reverse to a linked predicate
   
   This file is part of zukunft.com - calc with words
 
@@ -33,11 +35,11 @@ class verb
 {
 
     // predefined word link types or verbs
-    const IS_A = "vrb_is";
+    const IS_A = "is";
     const IS_PART_OF = "is_part_of";
-    const DBL_FOLLOW = "vrb_follow";
-    const DBL_DIFFERENTIATOR = "vrb_can_contain";
-    const DBL_CAN_BE = "vrb_can_be";
+    const DBL_FOLLOW = "follow";
+    const DBL_DIFFERENTIATOR = "can_contain";
+    const DBL_CAN_BE = "can_be";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
@@ -58,6 +60,7 @@ class verb
     public ?string $rev_plural = '';  // the reverse name for many words
     public ?string $frm_name = '';    // short name of the verb for the use in formulas, because there both sides are combined
     public ?string $description = ''; // for the mouse over explain
+    public int $usage = 0; // how often this current used has used the verb (until now just the usage of all users)
 
     // set the class vars based on a database record
     // $db_row is an array with the database values
@@ -74,6 +77,7 @@ class verb
                 $this->rev_plural = $db_row['name_plural_reverse'];
                 $this->frm_name = $db_row['formula_name'];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+                $this->usage = $db_row['words'];
                 $result = true;
             } else {
                 $this->id = 0;
@@ -108,7 +112,7 @@ class verb
             // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
             $db_con->set_type(DB_TYPE_VERB);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION));
+            $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
             if (!isset($this->usr)) {
@@ -124,9 +128,7 @@ class verb
     }
 
     /*
-
     display functions
-
     */
 
     // display the unique id fields (used also for debugging)
@@ -161,44 +163,23 @@ class verb
 
     // returns the html code to select a word link type
     // database link must be open
-    function dsp_selector($side, $form, $class, $back)
+    function dsp_selector($side, $form, $class, $back): string
     {
+        global $verbs;
+
         log_debug('verb->dsp_selector -> for verb id ' . $this->id);
         $result = '';
 
-        if ($side == 'forward') {
-            // TODO: add the PostgreSQL version
-            $sql = "SELECT * FROM (
-              SELECT verb_id AS id, 
-                    IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name,
-                    words
-                FROM verbs ) AS links
-            ORDER BY words DESC, name;";
-        } else {
-            $sql = "SELECT * FROM (
-            SELECT verb_id AS id, 
-                   IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name,
-                   words
-              FROM verbs 
-      UNION SELECT verb_id * -1 AS id, 
-                   CONCAT(name_reverse, ' (', verb_name, ')') AS name,
-                   words
-              FROM verbs 
-             WHERE name_reverse <> '' 
-               AND name_reverse <> verb_name) AS links
-          ORDER BY words DESC, name;";
-        }
         $sel = new selector;
         $sel->usr = $this->usr;
         $sel->form = $form;
         $sel->name = 'verb';
         $sel->label = "Verb:";
         $sel->bs_class = $class;
-        $sel->sql = $sql;
+        $sel->lst = $verbs->selector_list($side);
         $sel->selected = $this->id;
         $sel->dummy_text = '';
         $result .= $sel->display();
-        log_debug('verb->dsp_selector -> select sql ' . $sql);
 
         log_debug('verb->dsp_selector -> admin id ' . $this->id);
         if (isset($this->usr)) {
@@ -213,7 +194,7 @@ class verb
     }
 
     // show the html form to add or edit a new verb
-    function dsp_edit($back)
+    function dsp_edit($back): string
     {
         log_debug('verb->dsp_edit ' . $this->dsp_id());
         $result = '';
@@ -221,12 +202,11 @@ class verb
         if ($this->id <= 0) {
             $script = "verb_add";
             $result .= dsp_text_h2('Add verb (word link type)');
-            $result .= dsp_form_start($script);
         } else {
             $script = "verb_edit";
             $result .= dsp_text_h2('Change verb (word link type)');
-            $result .= dsp_form_start($script);
         }
+        $result .= dsp_form_start($script);
         $result .= dsp_tbl_start_half();
         $result .= '  <tr>';
         $result .= '    <td>';
@@ -263,15 +243,17 @@ class verb
         $result .= '  <input type="hidden" name="back" value="' . $back . '">';
         $result .= '  <input type="hidden" name="confirm" value="1">';
         $result .= dsp_tbl_end();
-        $result .= dsp_form_end();
+        $result .= dsp_form_end('', $back);
 
         log_debug('verb->dsp_edit ... done');
         return $result;
     }
 
-    // get the term corresponding to this verb name
-    // so in this case, if a word or formula with the same name already exists, get it
-    private function term()
+    /**
+     * get the term corresponding to this verb name
+     * so in this case, if a word or formula with the same name already exists, get it
+     */
+    private function term(): term
     {
         $trm = new term;
         $trm->name = $this->name;
@@ -281,9 +263,7 @@ class verb
     }
 
     /*
-
     save functions
-
     */
 
     // true if no one has used this verb
@@ -298,7 +278,6 @@ class verb
         $sql = "SELECT words 
               FROM verbs 
              WHERE verb_id = " . $this->id . ";";
-        //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
         $used_by_words = $db_row['words'];
@@ -312,7 +291,7 @@ class verb
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->owner_id . ')');
+        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->usr->id . ')');
 
         global $db_con;
         $result = true;
@@ -341,7 +320,7 @@ class verb
     {
         log_debug('verb->can_change ' . $this->id);
         $can_change = false;
-        if ($this->not_used and $this->not_changed) {
+        if ($this->usage == 0) {
             $can_change = true;
         }
 
@@ -697,5 +676,3 @@ class verb
     }
 
 }
-
-?>

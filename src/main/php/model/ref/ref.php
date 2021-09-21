@@ -35,27 +35,36 @@
 class ref
 {
 
+    // persevered reference names for unit and integration tests
+    const TEST_REF_NAME = 'System Test Reference Name';
+
     // database fields
     public ?int $id = null;               // the database id of the reference
-    public ?int $phr_id = null;           // the database id of the word, verb or formula
     public ?string $external_key = null;  // the unique key in the external system
-    public ?int $ref_type_id = null;      // the id of the ref type
 
     // in memory only fields
     public ?user $usr = null;             // just needed for logging the changes
-    public ?phrase $phr = null;           // the phrase object
-    public ?ref_type $ref_type = null;    // the ref type object
+    public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
+    public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
+
+    function __construct()
+    {
+        $this->create_objects();
+    }
 
     function reset()
     {
         $this->id = null;
-        $this->phr_id = null;
         $this->external_key = '';
-        $this->ref_type_id = null;
 
         $this->usr = null;
-        $this->phr = null;
-        $this->ref_type = null;
+        $this->create_objects();
+    }
+
+    private function create_objects()
+    {
+        $this->phr = new phrase();
+        $this->ref_type = new ref_type();
     }
 
     // test if the name is used already
@@ -65,15 +74,15 @@ class ref
         $result = false;
 
         // check if the minimal input parameters are set
-        if ($this->id <= 0 and ($this->phr_id <= 0 or $this->ref_type_id <= 0)) {
-            log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr_id . ') AND the reference type id (' . $this->ref_type_id . ') must be set to load a reference.', 'ref->load');
+        if ($this->id <= 0 and ($this->phr->id <= 0 or $this->ref_type->id <= 0)) {
+            log_err('Either the database ID (' . $this->id . ') or the phrase id (' . $this->phr->id . ') AND the reference type id (' . $this->ref_type->id . ') must be set to load a reference.', 'ref->load');
         } else {
 
             $db_con->set_type(DB_TYPE_REF);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('phrase_id', 'ref_type_id');
             $db_con->set_fields(array('external_key'));
-            $db_con->set_where_link($this->id, $this->phr_id, $this->ref_type_id);
+            $db_con->set_where_link($this->id, $this->phr->id, $this->ref_type->id);
             $sql = $db_con->select();
 
             if ($db_con->get_where() <> '') {
@@ -81,9 +90,9 @@ class ref
                 if ($db_ref != null) {
                     if ($db_ref['ref_id'] > 0) {
                         $this->id = $db_ref['ref_id'];
-                        $this->phr_id = $db_ref['phrase_id'];
+                        $this->phr->id = $db_ref['phrase_id'];
                         $this->external_key = $db_ref['external_key'];
-                        $this->ref_type_id = $db_ref['ref_type_id'];
+                        $this->ref_type = get_ref_type_by_id($db_ref['ref_type_id']);
                         if ($this->load_objects()) {
                             $result = true;
                             log_debug('ref->load -> done ' . $this->dsp_id());
@@ -102,10 +111,10 @@ class ref
     {
         $result = true;
 
-        if (!isset($this->phr)) {
-            if ($this->phr_id <> 0) {
+        if ($this->phr->name == null or $this->phr->name == '') {
+            if ($this->phr->id <> 0) {
                 $phr = new phrase;
-                $phr->id = $this->phr_id;
+                $phr->id = $this->phr->id;
                 $phr->usr = $this->usr;
                 if ($phr->load()) {
                     $this->phr = $phr;
@@ -113,12 +122,6 @@ class ref
                 } else {
                     $result = false;
                 }
-            }
-        }
-        if (!isset($this->ref_type)) {
-            if ($this->ref_type_id > 0) {
-                $this->ref_type = get_ref_type_by_id($this->ref_type_id);
-                log_debug('ref->load_objects -> ref_type ' . $this->ref_type->name . ' loaded');
             }
         }
 
@@ -142,9 +145,9 @@ class ref
                 if (!isset($this->ref_type)) {
                     log_err('Reference type for ' . $value . ' not found', 'ref->import_obj');
                 } else {
-                    $this->ref_type_id = get_ref_type_id($value);
+                    $this->ref_type = get_ref_type($value);
                 }
-                log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type_id . ')');
+                log_debug('ref->import_obj -> ref_type set based on ' . $value . ' (' . $this->ref_type->name . ')');
             }
         }
         // to be able to log the object names
@@ -206,18 +209,18 @@ class ref
         if (isset($this->phr)) {
             $result .= 'ref of "' . $this->phr->name . '"';
         } else {
-            if (isset($this->phr_id)) {
-                if ($this->phr_id > 0) {
-                    $result .= 'ref of phrase id ' . $this->phr_id . ' ';
+            if (isset($this->phr->id)) {
+                if ($this->phr->id > 0) {
+                    $result .= 'ref of phrase id ' . $this->phr->id . ' ';
                 }
             }
         }
         if (isset($this->ref_type)) {
             $result .= 'to "' . $this->ref_type->name . '"';
         } else {
-            if (isset($this->ref_type_id)) {
-                if ($this->ref_type_id > 0) {
-                    $result .= 'to type id ' . $this->ref_type_id . ' ';
+            if (isset($this->ref_type)) {
+                if ($this->ref_type->id > 0) {
+                    $result .= 'to type id ' . $this->ref_type->id . ' ';
                 }
             }
         }
@@ -316,7 +319,7 @@ class ref
 
             $this->id = $db_con->insert(
                 array('phrase_id', 'external_key', 'ref_type_id'),
-                array($this->phr_id, $this->external_key, $this->ref_type_id));
+                array($this->phr->id, $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
                 if ($log->add_ref($this->id)) {
@@ -331,15 +334,15 @@ class ref
     }
 
     // get a similar reference
-    function get_similar(): ref
+    function get_similar(): ?ref
     {
         $result = null;
         log_debug('ref->get_similar ' . $this->dsp_id());
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->phr_id = $this->phr_id;
-        $db_chk->ref_type_id = $this->ref_type_id;
+        $db_chk->phr = $this->phr;
+        $db_chk->ref_type = $this->ref_type;
         $db_chk->usr = $this->usr;
         $db_chk->load();
         if ($db_chk->id > 0) {

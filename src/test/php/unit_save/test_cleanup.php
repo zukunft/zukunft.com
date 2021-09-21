@@ -165,6 +165,14 @@ function run_test_cleanup()
         test_dsp('cleanup: del of view "' . TM_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
+    // request to delete the added test reference
+    $ref = load_ref(word::TN_ADD, ref_type::WIKIDATA);
+    if ($ref->id > 0) {
+        $result = $ref->del();
+        $target = true;
+        test_dsp('ref->del of "' . TF_ADD . '"', $target, $result);
+    }
+
     // request to delete the added test formula
     $frm = load_formula(TF_ADD);
     if ($frm->id > 0) {
@@ -186,7 +194,7 @@ function run_test_cleanup()
     $wrd = load_word(word::TN_ADD);
     if ($wrd->id > 0) {
         $result = $wrd->del();
-        $target = '';
+        $target = '1';
         test_dsp('word->del of "' . word::TN_ADD . '"', $target, $result);
     }
 

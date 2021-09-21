@@ -1,0 +1,126 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-19 23:17:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "system verbs"
+  ],
+  "verbs": [
+    {
+      "name": "not set"
+    },
+    {
+      "name": "has a",
+      "code_id": "",
+      "name_plural_reverse": "is used for",
+      "name_plural": "has",
+      "name_reverse": "is used for"
+    },
+    {
+      "name": "is a",
+      "code_id": "vrb_is",
+      "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
+      "name_plural_reverse": "are",
+      "name_plural": "are",
+      "name_reverse": "are"
+    },
+    {
+      "name": "is time jump for",
+      "code_id": "",
+      "description": "is the default time jump for",
+      "formula_name": "time jump",
+      "name_plural_reverse": "have the default time jump",
+      "name_plural": "are the time jump for",
+      "name_reverse": "has the default time jump"
+    },
+    {
+      "name": "is term jump for",
+      "code_id": "",
+      "description": "is the default term jump for"
+    },
+    {
+      "name": "term type needed",
+      "code_id": "",
+      "description": "the formula needs the linked term type"
+    },
+    {
+      "name": "is follower of",
+      "code_id": "vrb_follow",
+      "description": "is follower of",
+      "formula_name": "follower",
+      "name_plural_reverse": "is followed by",
+      "name_plural": "is follower of",
+      "name_reverse": "is followed by"
+    },
+    {
+      "name": "is part of",
+      "code_id": "is_part_of",
+      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
+      "name_plural_reverse": "contains",
+      "name_plural": "is part of",
+      "name_reverse": "contains"
+    },
+    {
+      "name": "uses",
+      "code_id": "",
+      "name_plural_reverse": "are used by",
+      "name_plural": "uses",
+      "name_reverse": "is used by"
+    },
+    {
+      "name": "issue",
+      "code_id": "",
+      "name_plural_reverse": "are issued by",
+      "name_plural": "issues",
+      "name_reverse": "is issued by"
+    },
+    {
+      "name": "is measure type for",
+      "code_id": "",
+      "description": "is the default measure type for",
+      "name_plural_reverse": "have the measure type",
+      "name_plural": "are measure type for",
+      "name_reverse": "has the measure type"
+    },
+    {
+      "name": "is an acronym for",
+      "code_id": "",
+      "description": "is an acronym for",
+      "name_plural_reverse": "are an acronyms of",
+      "name_plural": "are an acronyms for",
+      "name_reverse": "is an acronym of"
+    },
+    {
+      "name": "can be used as a differentiator for",
+      "code_id": "vrb_can_contain",
+      "description": "similar to contains, but in a table view the row will not be shown if there is no corresponding value",
+      "formula_name": "differentiator",
+      "name_plural_reverse": "can be differentiated by",
+      "name_plural": "can be used as a differentiator for",
+      "name_reverse": "can be differentiated by"
+    },
+    {
+      "name": "influences",
+      "code_id": "",
+      "name_plural_reverse": "is influenced by",
+      "name_plural": "influences",
+      "name_reverse": "is influenced by"
+    },
+    {
+      "name": "is alias of",
+      "code_id": "",
+      "name_plural_reverse": "is alias of",
+      "name_plural": "is alias of",
+      "name_reverse": "is alias of"
+    },
+    {
+      "name": "can be",
+      "code_id": "",
+      "description": "vrb_can_be",
+      "name_plural_reverse": "can be",
+      "name_plural": "can be",
+      "name_reverse": "can be"
+    }
+  ]
+}
+

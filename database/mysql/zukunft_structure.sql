@@ -144,10 +144,10 @@ CREATE TABLE IF NOT EXISTS `change_links`
 
 CREATE TABLE IF NOT EXISTS `change_tables`
 (
-    `change_table_id`   int(11)       NOT NULL,
-    `change_table_name` varchar(100)  NOT NULL COMMENT 'the real name',
-    `description`       varchar(1000) NOT NULL COMMENT 'the user readable name',
-    `code_id`           varchar(50) DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming'
+    `change_table_id`   int(11)      NOT NULL,
+    `change_table_name` varchar(100) NOT NULL COMMENT 'the real name',
+    `description`       varchar(1000) DEFAULT NULL COMMENT 'the user readable name',
+    `code_id`           varchar(50)   DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='to avoid log changes in case a table is renamed';

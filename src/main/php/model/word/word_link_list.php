@@ -267,6 +267,7 @@ class word_link_list
                        v.name_plural_reverse,
                        v.formula_name,
                        v.description,
+                       v.words,
                        " . $db_con->get_usr_field('excluded', 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
                        " . $sql_wrd1_fields . "
                        " . $sql_wrd2_fields . "

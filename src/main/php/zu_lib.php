@@ -7,6 +7,7 @@
 
 TODO create json config files for the default and system views
 TODO add JSON im- and export port for verbs
+TODO remove the database fields from the objects, that are already part of a linked object e.g. use ref->phr->id instead of ref->phr_id
 TODO allow to load user via im- and export, but make sure that no one can get higher privileges
 TODO replace to id search with object based search e.g. use wrd_lnk->from->id instead of wrd_lnk->from_id
 TODO add im- and export of users and move the system user loading to one json

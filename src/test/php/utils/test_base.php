@@ -214,10 +214,6 @@ const TP_ABB = "ABB (Company)";
 const TP_FOLLOW = "2014 is follower of 2013";
 const TP_TAXES = "Income taxes is part of cash flow statement";
 
-// some external references used for testing
-const TR_WIKIDATA_ABB = "Q52825";
-const TRT_WIKIDATA = "wikidata";
-
 // some formula parameter used for testing
 const TF_INCREASE = "increase";
 const TF_PE = "Price Earning ratio";
@@ -408,6 +404,7 @@ function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $commen
 
     $txt .= '</p>';
     echo $txt;
+    echo "\n";
     flush();
     $total_tests++;
     $exe_start_time = $new_start_time;
@@ -722,8 +719,41 @@ function test_source($src_name): source
         $src->save();
     }
     $target = $src_name;
-    test_dsp('phrase', $target, $src->name);
+    test_dsp('source', $target, $src->name);
     return $src;
+}
+
+function load_ref(string $wrd_name, string $type_name): ref
+{
+    global $usr;
+
+    $wrd = load_word($wrd_name);
+    $phr = $wrd->phrase();
+
+    $ref = new ref;
+    $ref->usr = $usr;
+    $ref->phr = $phr;
+    $ref->ref_type = get_ref_type($type_name);
+    if ($phr->id != 0) {
+        $ref->load();
+    }
+    return $ref;
+}
+
+function test_ref(string $wrd_name, string $external_key, string $type_name): ref
+{
+    $wrd = test_word($wrd_name);
+    $phr = $wrd->phrase();
+    $ref = load_ref($wrd->name, $type_name);
+    if ($ref->id == 0) {
+        $ref->phr = $phr;
+        $ref->ref_type = get_ref_type($type_name);
+        $ref->external_key = $external_key;
+        $ref->save();
+    }
+    $target = $external_key;
+    test_dsp('ref', $target, $ref->external_key);
+    return $ref;
 }
 
 function load_view($dsp_name): view

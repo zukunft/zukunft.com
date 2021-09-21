@@ -33,9 +33,6 @@ global $ref_types;
 
 class ref_type_list extends user_type_list
 {
-    // list of the ref types that have a coded functionality
-    const DBL_WIKIDATA = "wikidata";
-    const DBL_WIKIPEDIA = "wikipedia";
 
     /**
      * overwrite the user_type_list function to include the specific fields like the url
@@ -45,7 +42,7 @@ class ref_type_list extends user_type_list
      */
     private function load_list(sql_db $db_con, string $db_type): array
     {
-        $this->lst = [];
+        $this->lst = array();
         $db_con->set_type($db_type);
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, 'base_url'));
         $sql = $db_con->select();
@@ -53,6 +50,7 @@ class ref_type_list extends user_type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_obj = new ref_type();
+                $type_obj->id = $db_entry['ref_type_id'];
                 $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
                 $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
                 $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
@@ -73,8 +71,8 @@ class ref_type_list extends user_type_list
     {
         $result = false;
         global $ref_types;
-        $ref_types = $this->load_list($db_con, $db_type);
-        $this->hash = parent::get_hash($ref_types);
+        $this->load_list($db_con, $db_type);
+        $this->hash = parent::get_hash($this->lst);
         if (count($this->hash) > 0) {
             $result = true;
         }
@@ -87,17 +85,18 @@ class ref_type_list extends user_type_list
     function load_dummy() {
         parent::load_dummy();
         $type = new ref_type();
-        $type->name = ref_type_list::DBL_WIKIPEDIA;
-        $type->code_id = ref_type_list::DBL_WIKIPEDIA;
+        $type->id = 2;
+        $type->name = ref_type::WIKIPEDIA;
+        $type->code_id = ref_type::WIKIPEDIA;
         $this->lst[2] = $type;
-        $this->hash[ref_type_list::DBL_WIKIPEDIA] = 2;
+        $this->hash[ref_type::WIKIPEDIA] = 2;
     }
 
     /**
      * return the database id of the default ref type
      */
     function default_id(): int {
-        return parent::id(ref_type_list::DBL_WIKIPEDIA);
+        return parent::id(ref_type::WIKIPEDIA);
     }
 
     /**

@@ -58,7 +58,7 @@ class phrase
             $lnk = new word_link;
             $lnk->id = $this->id * -1;
             $lnk->usr = $this->usr;
-            $lnk->load();
+            $result = $lnk->load();
             $this->obj = $lnk;
             $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('phrase->loaded triple ' . $this->dsp_id());
@@ -66,7 +66,7 @@ class phrase
             $wrd = new word_dsp;
             $wrd->id = $this->id;
             $wrd->usr = $this->usr;
-            $wrd->load();
+            $result = $wrd->load();
             $this->obj = $wrd;
             $this->name = $wrd->name;
             log_debug('phrase->loaded word ' . $this->dsp_id());
@@ -75,7 +75,7 @@ class phrase
             $trm = new term;
             $trm->name = $this->name;
             $trm->usr = $this->usr;
-            $trm->load();
+            $result = $trm->load();
             if ($trm->type == 'word') {
                 $this->obj = $trm->obj;
                 $this->id = $trm->id;

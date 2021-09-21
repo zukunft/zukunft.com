@@ -48,5 +48,11 @@ function run_verb_unit_db_tests()
     $target = 2;
     test_dsp('unit_db_verb_list->check ' . verb::IS_A, $result, $target);
 
+    $select_list = $lst->selector_list('forward');
+    $top_verb = $select_list[0]; // the most often verb should be on the top
+    $result = $top_verb[1]; // the name of the verb is always on second place
+    $target = 'is a';
+    test_dsp('unit_db_verb_list->selector_list ' . verb::IS_A, $result, $target);
+
 }
 

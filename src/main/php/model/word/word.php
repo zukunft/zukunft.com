@@ -423,7 +423,6 @@ class word extends word_link_object
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref;
                                 $ref_obj->usr = $this->usr;
-                                $ref_obj->phr_id = $this->id;
                                 $ref_obj->phr = $this->phrase();
                                 $result = $ref_obj->import_obj($ref_data, $do_save);
                                 $this->ref_lst[] = $ref_obj;

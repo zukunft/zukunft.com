@@ -35,16 +35,16 @@ class selector
 {
 
     // the parameters
-    public $usr = null; // if 0 (not NULL) for standard values, otherwise for a user specific values
-    public $name = '';   // the HTML form field name
-    public $form = '';   // the name of the HTML form
-    public $label = '';   // the label of the HTML form
-    public $bs_class = '';   // to add addition class information for the bootstrap version
-    public $attribute = '';   // to add addition attribute information for the bootstrap version e.g. display an disabled selector
-    public $sql = '';   // query to select the items
+    public ?user $usr = null; // if 0 (not NULL) for standard values, otherwise for a user specific values
+    public string $name = '';   // the HTML form field name
+    public string $form = '';   // the name of the HTML form
+    public string $label = '';   // the label of the HTML form
+    public string $bs_class = '';   // to add addition class information for the bootstrap version
+    public string $attribute = '';   // to add addition attribute information for the bootstrap version e.g. display an disabled selector
+    public string $sql = '';   // query to select the items
     public $lst = null; // list of objects from which the user can select
-    public $selected = null; // id of the selected object
-    public $dummy_text = '';   // text for the NULL result if allowed
+    public ?int $selected = null; // id of the selected object
+    public string $dummy_text = '';   // text for the NULL result if allowed
 
     function display(): string
     {
@@ -64,9 +64,12 @@ class selector
             $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
         }
 
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($this->sql);
+        // check if list needs to be reloaded
+        $db_lst = $this->lst;
+        if ($this->sql != '') {
+            $db_con->usr_id = $this->usr->id;
+            $db_lst = $db_con->get($this->sql);
+        }
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $row_option = '';

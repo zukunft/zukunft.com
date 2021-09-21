@@ -59,7 +59,7 @@ class verb_list extends user_type_list
         $db_con->set_type($db_type);
         $db_con->set_usr($this->usr->id);
         $db_con->set_usr_num_fields(array('excluded'));
-        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION), DB_TYPE_VERB);
+        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'), DB_TYPE_VERB);
         $db_con->set_fields(array('verb_id'));
         $db_con->set_where_text($sql_where);
         $sql = $db_con->select();
@@ -118,7 +118,7 @@ class verb_list extends user_type_list
     {
         $this->lst = [];
         $db_con->set_type($db_type);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION));
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'));
         $sql = $db_con->select();
         $db_lst = $db_con->get($sql);
         if ($db_lst != null) {
@@ -146,7 +146,8 @@ class verb_list extends user_type_list
     /**
      * adding the verbs used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy()
+    {
         parent::load_dummy();
         $type = new verb();
         $type->name = verb::IS_A;
@@ -225,6 +226,87 @@ class verb_list extends user_type_list
             log_debug('Type code id not not set');
         }
 
+        return $result;
+    }
+
+    /*
+      GUI interface
+      -------------
+    */
+
+    function selector_list(): array
+    {
+        $result = array();
+        if ($this->lst != null) {
+
+            // create a list with the forward and backward version of the verb
+            $combined_list = array();
+            foreach ($this->lst as $vrb) {
+                if ($vrb->id > 0) {
+                    $select_row = array();
+                    $select_name = $vrb->name;
+                    /* has been an idea, but has actually caused more confusion
+                    if ($vrb->reverse != '' and $select_name != '') {
+                        $select_name .= ' (' . $vrb->reverse . ')';
+                    }
+                    */
+                    $id = $vrb->id;
+                    $select_row[] = $id;
+                    $select_row[] = $select_name;
+                    $select_row[] = $vrb->usage;
+                    $combined_list[$id] = $select_row;
+
+                    $select_row = array();
+                    $select_name = $vrb->reverse;
+                    /* like above ...
+                    if ($vrb->name != '' and $select_name != '') {
+                        $select_name .= ' (' . $vrb->name . ')';
+                    }
+                    */
+                    if (trim($select_name) != '') {
+                        $id = $vrb->id * -1;
+                        $select_row[] = $id;
+                        $select_row[] = $select_name;
+                        $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form
+                        $combined_list[$id] = $select_row;
+                    }
+                }
+            }
+
+            // put the three most used on the top
+            $n = 3;
+            $use_sorted = array();
+            $use_sorted_id = array();
+            $most_used_id = array();
+            foreach ($combined_list as $row) {
+                $use_sorted[] = $row[2];
+                $use_sorted_id[$row[0]] = $row[2];
+            }
+            rsort($use_sorted);
+            $most_used = array_slice($use_sorted, 0, $n);;
+            foreach ($most_used as $top_usage) {
+                $id = array_search($top_usage, $use_sorted_id);
+                $result[] = $combined_list[$id];
+                unset($use_sorted_id[$id]);
+                $most_used_id[] = $id;
+            }
+
+            // add the others sorted by select name
+            $name_sorted = array();
+            $name_sorted_id = array();
+            foreach ($combined_list as $row) {
+                $name_sorted[$row[0]] = $row[1];
+                $name_sorted_id[$row[0]] = $row[1];
+            }
+            sort($name_sorted);
+            foreach ($name_sorted as $next_name) {
+                $id = array_search($next_name, $name_sorted_id);
+                if (!in_array($id, $most_used_id)) {
+                    $result[] = $combined_list[$id];
+                }
+            }
+
+        }
         return $result;
     }
 

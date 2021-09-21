@@ -134,9 +134,9 @@ COMMENT ON COLUMN change_links.new_text_to is 'the fixed text to display to the 
 CREATE TABLE IF NOT EXISTS change_tables
 (
     change_table_id   BIGSERIAL PRIMARY KEY,
-    change_table_name varchar(100)  NOT NULL,
-    description       varchar(1000) NOT NULL,
-    code_id           varchar(50) DEFAULT NULL
+    change_table_name varchar(100) NOT NULL,
+    description       varchar(1000) DEFAULT NULL,
+    code_id           varchar(50)   DEFAULT NULL
 );
 
 COMMENT ON TABLE change_tables is 'to avoid log changes in case a table is renamed';
