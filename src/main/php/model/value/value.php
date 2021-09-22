@@ -43,6 +43,9 @@
 
 class value extends user_sandbox_display
 {
+    // a list of dummy values that are used for system tests
+    const TEST_VALUE = 123456;
+    const TEST_FLOAT = 123.456;
 
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from
@@ -338,13 +341,15 @@ class value extends user_sandbox_display
                         //$db_con = new mysql;
                         $db_con->usr_id = $this->usr->id;
                         $val_ids_rows = $db_con->get($sql_val);
-                        if (count($val_ids_rows) > 0) {
-                            $val_id_row = $val_ids_rows[0];
-                            $this->id = $val_id_row['value_id'];
-                            if ($this->id > 0) {
-                                $sql_where = "s.value_id = " . $this->id;
-                                $this->load_rec($sql_where);
-                                log_debug('value->loaded best guess id (' . $this->id . ')');
+                        if ($val_ids_rows != null) {
+                            if (count($val_ids_rows) > 0) {
+                                $val_id_row = $val_ids_rows[0];
+                                $this->id = $val_id_row['value_id'];
+                                if ($this->id > 0) {
+                                    $sql_where = "s.value_id = " . $this->id;
+                                    $this->load_rec($sql_where);
+                                    log_debug('value->loaded best guess id (' . $this->id . ')');
+                                }
                             }
                         }
                     }
@@ -361,43 +366,43 @@ class value extends user_sandbox_display
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
      *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
      *    because most values for "ABB", "Sales" are in ,"million","CHF"
-    function load_best()
-    {
-        log_debug('value->load_best for ' . $this->dsp_id());
-        $this->load();
-        // if not found try without scaling
-        if ($this->id <= 0) {
-            $this->load_phrases();
-            if (!isset($this->phr_lst)) {
-                log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
-            } else {
-                // try to get a value with another scaling
-                $phr_lst_unscaled = clone $this->phr_lst;
-                $phr_lst_unscaled->ex_scaling();
-                log_debug('value->load_best try unscaled with ' . $phr_lst_unscaled->dsp_id());
-                $grp_unscale = $phr_lst_unscaled->get_grp();
-                $this->grp_id = $grp_unscale->id;
-                $this->load();
-                // if not found try with converted measure
-                if ($this->id <= 0) {
-                    // try to get a value with another measure
-                    $phr_lst_converted = clone $phr_lst_unscaled;
-                    $phr_lst_converted->ex_measure();
-                    log_debug('value->load_best try converted with ' . $phr_lst_converted->dsp_id());
-                    $grp_unscale = $phr_lst_converted->get_grp();
-                    $this->grp_id = $grp_unscale->id;
-                    $this->load();
-                    // todo:
-                    // check if there are any matching values at all
-                    // if yes, get the most often used phrase
-                    // repeat adding a phrase utils a number is found
-                }
-            }
-        }
-        log_debug('value->load_best got ' . $this->number . ' for ' . $this->dsp_id());
-    }
-
-    /*
+     * function load_best()
+     * {
+     * log_debug('value->load_best for ' . $this->dsp_id());
+     * $this->load();
+     * // if not found try without scaling
+     * if ($this->id <= 0) {
+     * $this->load_phrases();
+     * if (!isset($this->phr_lst)) {
+     * log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
+     * } else {
+     * // try to get a value with another scaling
+     * $phr_lst_unscaled = clone $this->phr_lst;
+     * $phr_lst_unscaled->ex_scaling();
+     * log_debug('value->load_best try unscaled with ' . $phr_lst_unscaled->dsp_id());
+     * $grp_unscale = $phr_lst_unscaled->get_grp();
+     * $this->grp_id = $grp_unscale->id;
+     * $this->load();
+     * // if not found try with converted measure
+     * if ($this->id <= 0) {
+     * // try to get a value with another measure
+     * $phr_lst_converted = clone $phr_lst_unscaled;
+     * $phr_lst_converted->ex_measure();
+     * log_debug('value->load_best try converted with ' . $phr_lst_converted->dsp_id());
+     * $grp_unscale = $phr_lst_converted->get_grp();
+     * $this->grp_id = $grp_unscale->id;
+     * $this->load();
+     * // todo:
+     * // check if there are any matching values at all
+     * // if yes, get the most often used phrase
+     * // repeat adding a phrase utils a number is found
+     * }
+     * }
+     * }
+     * log_debug('value->load_best got ' . $this->number . ' for ' . $this->dsp_id());
+     * }
+     *
+     * /*
      * load object functions that extends the database load functions
      */
 
@@ -584,7 +589,7 @@ class value extends user_sandbox_display
      *  load object functions that extends the frontend functions
      */
 
-    //
+//
     function set_grp_and_time_by_ids()
     {
         log_debug('value->set_grp_and_time_by_ids');
@@ -691,9 +696,9 @@ class value extends user_sandbox_display
     }
 
 
-    // to be dismissed
-    // set the word list object for this value if needed
-    // to be dismissed, but used by value_list->html at the moment
+// to be dismissed
+// set the word list object for this value if needed
+// to be dismissed, but used by value_list->html at the moment
     function load_wrd_lst()
     {
         log_debug('value->load_wrd_lst');
@@ -764,10 +769,10 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // scale a value for the target words
-    // e.g. if the target words contains "millions" "2'100'000" is converted to "2.1"
-    //      if the target words are empty convert "2.1 mio" to "2'100'000"
-    // once this is working switch on the call in word_list->value_scaled
+// scale a value for the target words
+// e.g. if the target words contains "millions" "2'100'000" is converted to "2.1"
+//      if the target words are empty convert "2.1 mio" to "2'100'000"
+// once this is working switch on the call in word_list->value_scaled
     function scale($target_wrd_lst)
     {
         log_debug('value->scale ' . $this->number);
@@ -928,7 +933,7 @@ class value extends user_sandbox_display
                     if ($src->id == 0) {
                         $src->save();
                     }
-                        $this->source_id = $src->id;
+                    $this->source_id = $src->id;
                 }
                 $this->source = $src;
             }
@@ -1060,8 +1065,7 @@ class value extends user_sandbox_display
     {
         $result = '';
 
-        if ($this->phr_lst != null)
-        {
+        if ($this->phr_lst != null) {
             $result .= $this->phr_lst->dsp_id();
         }
         $result .= $this->usr_value;
@@ -1093,7 +1097,7 @@ class value extends user_sandbox_display
      *  get functions that returns other linked objects
      */
 
-    // create and return the figure object for the value
+// create and return the figure object for the value
     function figure(): figure
     {
         log_debug('value->figure');
@@ -1109,11 +1113,11 @@ class value extends user_sandbox_display
         return $fig;
     }
 
-    // convert a user entry for a value to a useful database number
-    // e.g. remove leading spaces and tabulators
-    // if the value contains a single quote "'" the function asks once if to use it as a comma or a thousand operator
-    // once the user has given an answer it saves the answer in the database and uses it for the next values
-    // if the type of the value differs the user should be asked again
+// convert a user entry for a value to a useful database number
+// e.g. remove leading spaces and tabulators
+// if the value contains a single quote "'" the function asks once if to use it as a comma or a thousand operator
+// once the user has given an answer it saves the answer in the database and uses it for the next values
+// if the type of the value differs the user should be asked again
     function convert()
     {
         log_debug('value->convert (' . $this->usr_value . ',u' . $this->usr->id . ')');
@@ -1130,8 +1134,8 @@ class value extends user_sandbox_display
      * Select functions
      */
 
-    // get a list of all formula results that are depending on this value
-    // todo: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
+// get a list of all formula results that are depending on this value
+// todo: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
     function fv_lst_depending()
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp_id . '" for user ' . $this->usr->name . '');
@@ -1177,9 +1181,9 @@ class value extends user_sandbox_display
     3d) user b changes the value to the same value as a -> the user specific record is removed
     3e) user a excludes the value -> b gets the owner and a user specific exclusion for a is created
 
-  */
+    */
 
-    // true if no one has used this value
+// true if no one has used this value
     function not_used(): bool
     {
         log_debug('value->not_used (' . $this->id . ')');
@@ -1189,7 +1193,7 @@ class value extends user_sandbox_display
         return $this->not_changed();
     }
 
-    // true if no other user has modified the value
+// true if no other user has modified the value
     function not_changed(): bool
     {
         log_debug('value->not_changed id ' . $this->id . ' by someone else than the owner (' . $this->owner_id . ')');
@@ -1221,12 +1225,12 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // search for the median (not average) value
+// search for the median (not average) value
     function get_std()
     {
     }
 
-    // this value object is defined as the standard value
+// this value object is defined as the standard value
     function set_std()
     {
         // if a user has been using the standard value utils now, just create a message, that the standard value has been changes and offer him to use the old standard value also in the future
@@ -1234,8 +1238,8 @@ class value extends user_sandbox_display
         // save the new standard value in the database
     }
 
-    // true if the loaded value is not user specific
-    // todo: check the difference between is_std and can_change
+// true if the loaded value is not user specific
+// todo: check the difference between is_std and can_change
     function is_std(): bool
     {
         $result = false;
@@ -1247,7 +1251,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // true if the user is the owner and no one else has changed the value
+// true if the user is the owner and no one else has changed the value
     function can_change(): bool
     {
         log_debug('value->can_change id ' . $this->id . ' by user ' . $this->usr->name);
@@ -1261,7 +1265,7 @@ class value extends user_sandbox_display
         return $can_change;
     }
 
-    // true if a record for a user specific configuration already exists in the database
+// true if a record for a user specific configuration already exists in the database
     function has_usr_cfg(): bool
     {
         $has_cfg = false;
@@ -1271,7 +1275,7 @@ class value extends user_sandbox_display
         return $has_cfg;
     }
 
-    // create a database record to save a user specific value
+// create a database record to save a user specific value
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -1306,8 +1310,8 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // check if the database record for the user specific settings can be removed
-    // exposed at the moment to user_display.php for consistency check, but this should not be needed
+// check if the database record for the user specific settings can be removed
+// exposed at the moment to user_display.php for consistency check, but this should not be needed
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('value->del_usr_cfg_if_not_needed pre check for "' . $this->id . ' und user ' . $this->usr->name);
@@ -1340,7 +1344,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // set the log entry parameters for a value update
+// set the log entry parameters for a value update
     function log_upd()
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->usr->id);
@@ -1357,8 +1361,8 @@ class value extends user_sandbox_display
     }
 
     /*
-  // set the log entry parameter to delete a value
-  function log_del($db_type) {
+    // set the log entry parameter to delete a value
+    function log_del($db_type) {
     zu_debug('value->log_del "'.$this->id.'" for user '.$this->usr->name);
     $log = New user_log;
     $log->usr       = $this->usr;
@@ -1371,13 +1375,13 @@ class value extends user_sandbox_display
     $log->add();
 
     return $log;
-  }
-  */
+    }
+    */
 
-    // update the phrase links to the value based on the group and time for faster searching
-    // e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
-    //      to be able to search the value by a single phrase
-    // to do: make it user specific!
+// update the phrase links to the value based on the group and time for faster searching
+// e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
+//      to be able to search the value by a single phrase
+// to do: make it user specific!
     function upd_phr_links(): bool
     {
         log_debug('value->upd_phr_links');
@@ -1411,7 +1415,7 @@ class value extends user_sandbox_display
             $this->load_phrases();
         }
         if (!isset($this->phr_lst)) {
-            log_err('Cannot load phrases for group "'.$this->dsp_id().'".', "value->upd_phr_links");
+            log_err('Cannot load phrases for group "' . $this->dsp_id() . '".', "value->upd_phr_links");
         } else {
             $phr_ids_used = $this->phr_lst->ids();
             if ($this->time_id <> 0) {
@@ -1480,8 +1484,8 @@ class value extends user_sandbox_display
     }
 
     /*
-  // set the parameter for the log entry to link a word to value
-  function log_add_link($wrd_id) {
+    // set the parameter for the log entry to link a word to value
+    function log_add_link($wrd_id) {
     zu_debug('value->log_add_link word "'.$wrd_id.'" to value '.$this->id);
     $log = New user_log_link;
     $log->usr       = $this->usr;
@@ -1494,10 +1498,10 @@ class value extends user_sandbox_display
     $log->add_link_ref();
 
     return $log;
-  }
+    }
 
-  // set the parameter for the log entry to unlink a word to value
-  function log_del_link($wrd_id) {
+    // set the parameter for the log entry to unlink a word to value
+    function log_del_link($wrd_id) {
     zu_debug('value->log_del_link word "'.$wrd_id.'" from value '.$this->id);
     $log = New user_log_link;
     $log->usr       = $this->usr;
@@ -1510,10 +1514,10 @@ class value extends user_sandbox_display
     $log->add_link_ref();
 
     return $log;
-  }
+    }
 
-  // link an additional phrase the value
-  function add_wrd($phr_id) {
+    // link an additional phrase the value
+    function add_wrd($phr_id) {
     zu_debug("value->add_wrd add ".$phr_id." to ".$this->name().",t for user ".$this->usr->name.".");
     $result = false;
 
@@ -1535,10 +1539,10 @@ class value extends user_sandbox_display
       // add the link only for this user
     }
     return $result;
-  }
+    }
 
-  // unlink a phrase from the value
-  function del_wrd($wrd) {
+    // unlink a phrase from the value
+    function del_wrd($wrd) {
     zu_debug('value->del_wrd from id '.$this->id.' the phrase "'.$wrd->name.'" by user '.$this->usr->name);
     $result = '';
 
@@ -1557,10 +1561,10 @@ class value extends user_sandbox_display
       // add the link only for this user
     }
     return $result;
-  }
-  */
+    }
+    */
 
-    // update the time stamp to trigger an update of the depending results
+// update the time stamp to trigger an update of the depending results
     function save_field_trigger_update($db_con): bool
     {
         $result = false;
@@ -1585,7 +1589,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // set the update parameters for the number
+// set the update parameters for the number
     function save_field_number($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1604,7 +1608,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // set the update parameters for the source link
+// set the update parameters for the source link
     function save_field_source($db_con, $db_rec, $std_rec): bool
     {
         $result = true;
@@ -1623,7 +1627,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // save the value number and the source
+// save the value number and the source
     function save_fields($db_con, $db_rec, $std_rec): bool
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
@@ -1643,8 +1647,8 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // updated the view component name (which is the id field)
-    // should only be called if the user is the owner and nobody has used the display component link
+// updated the view component name (which is the id field)
+// should only be called if the user is the owner and nobody has used the display component link
     function save_id_fields($db_con, $db_rec, $std_rec): bool
     {
         log_debug('value->save_id_fields');
@@ -1727,7 +1731,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // check if the id parameters are supposed to be changed
+// check if the id parameters are supposed to be changed
     function save_id_if_updated($db_con, $db_rec, $std_rec): string
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
@@ -1780,7 +1784,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // create a new value
+// create a new value
     function add(): int
     {
         log_debug('value->add the value ' . $this->dsp_id());
@@ -1858,7 +1862,7 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // insert or update a number in the database or save a user specific number
+// insert or update a number in the database or save a user specific number
     function save(): string
     {
         log_debug('value->save "' . $this->number . '" for user ' . $this->usr->name);
@@ -1939,8 +1943,9 @@ class value extends user_sandbox_display
         return $result;
     }
 
-    // true if the value (or value list) is saved as a time series
-    private function is_time_series(): bool
+// true if the value (or value list) is saved as a time series
+    private
+    function is_time_series(): bool
     {
         return isset($this->time_stamp);
     }

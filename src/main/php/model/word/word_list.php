@@ -993,7 +993,7 @@ class word_list
     // diff as a function, because it seems the array_diff does not work for an object list
     /*
     $del_wrd_lst is the list of words that should be removed from this list object
-    e.g. if the the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
+    e.g. if the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
      and the $del_wrd_lst is "May, June, Juli, August"
      than $this->diff should be "January, February, March, April, September, October, November, December" and save to eat huîtres
     */
@@ -1005,7 +1005,7 @@ class word_list
         if (!isset($del_wrd_lst)) {
             log_err('Phrases to delete are missing.', 'word_list->diff');
         }
-        if (get_class($del_wrd_lst) <> 'word_list') {
+        if (get_class($del_wrd_lst) <> 'word_list' and get_class($del_wrd_lst) <> 'phrase_list') {
             log_err(get_class($del_wrd_lst) . ' cannot be used to delete words.', 'word_list->diff');
         }
 
@@ -1472,30 +1472,31 @@ class word_list
     function assume_time(): phrase
     {
         log_debug('word_list->assume_time for ' . $this->dsp_id());
+        $result = null;
 
         if ($this->has_time()) {
             // get the last time from the word list
-            $time_word_lst = $this->time_lst();
+            $time_phr_lst = $this->time_lst();
             // shortcut, replace with a most_useful function
-            $wrd = null;
-            foreach ($time_word_lst->lst as $time_wrd) {
-                if (is_null($wrd)) {
-                    $wrd = $time_wrd;
-                    $wrd->usr = $this->usr;
+            $phr = null;
+            foreach ($time_phr_lst->lst as $time_wrd) {
+                if (is_null($phr)) {
+                    $phr = $time_wrd;
+                    $phr->usr = $this->usr;
                 } else {
                     log_warning("The word list contains more time word than supported by the program.", "word_list->assume_time");
                 }
             }
-            log_debug('time ' . $wrd->name . ' assumed for ' . $this->name_linked());
+            log_debug('time ' . $phr->name . ' assumed for ' . $this->name_linked());
         } else {
             // get the time of the last "real" (reported) value for the word list
-            $wrd = $this->max_val_time();
-            log_debug('the assumed time "' . $wrd->name . '" is the last non estimated value of ' . $this->names_linked());
+            $phr = $this->max_val_time();
+            log_debug('the assumed time "' . $phr->name . '" is the last non estimated value of ' . $this->names_linked());
         }
 
-        if (isset($wrd)) {
-            log_debug('word_list->assume_time -> time used "' . $wrd->name . '" (' . $wrd->id . ')');
-            $result = $wrd->phrase();
+        if (isset($phr)) {
+            log_debug('word_list->assume_time -> time used "' . $phr->name . '" (' . $phr->id . ')');
+            $result = $phr;
         } else {
             log_debug('word_list->assume_time -> no time found');
         }

@@ -1023,16 +1023,16 @@ CREATE TABLE IF NOT EXISTS `user_word_links`
 
 CREATE TABLE IF NOT EXISTS `values`
 (
-    `value_id`           int(11)    NOT NULL,
-    `user_id`            int(11)             DEFAULT NULL COMMENT 'the owner / creator of the value',
-    `word_value`         double     NOT NULL,
-    `source_id`          int(11)             DEFAULT NULL,
-    `phrase_group_id`    int(11)             DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
-    `time_word_id`       int(11)             DEFAULT NULL COMMENT 'special field just to speed up queries',
-    `last_update`        timestamp  NULL     DEFAULT NULL COMMENT 'for fast recalculation',
+    `value_id`           int(11)   NOT NULL,
+    `user_id`            int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
+    `word_value`         double    NOT NULL,
+    `source_id`          int(11)            DEFAULT NULL,
+    `phrase_group_id`    int(11)            DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
+    `time_word_id`       int(11)            DEFAULT NULL COMMENT 'special field just to speed up queries',
+    `last_update`        timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
     `description`        text COMMENT 'temp field used during dev phase for easy value to trm assigns',
-    `excluded`           tinyint(4) NOT NULL COMMENT 'the default exclude setting for most users',
-    `protection_type_id` int(11)    NOT NULL DEFAULT '1'
+    `excluded`           tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `protection_type_id` int(11)   NOT NULL DEFAULT '1'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='long list';

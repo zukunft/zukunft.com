@@ -44,7 +44,7 @@ class word extends word_link_object
     const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_2021 = 'System Test Time Word e.g. 2021';
-    const TN_2022 = 'Another System Test Time Word e.g. 2022';
+    const TN_2022 = 'System Test Another Time Word e.g. 2022';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
     const TN_MIO = 'System Test Scaling Word e.g. millions';
     const TN_PCT = 'System Test Percent Word';

@@ -979,7 +979,7 @@ CREATE TABLE IF NOT EXISTS values
     time_word_id       bigint                    DEFAULT NULL,
     last_update        timestamp        NULL     DEFAULT NULL,
     description        text,
-    excluded           smallint         NOT NULL,
+    excluded           smallint                  DEFAULT NULL,
     protection_type_id bigint           NOT NULL DEFAULT '1'
 );
 

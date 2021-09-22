@@ -71,9 +71,9 @@ if ($usr->id > 0) {
         run_math_test();
         run_user_sandbox_test();
         run_word_test();
-        //run_word_ui_test ();
+        //run_word_ui_test();
         //run_word_display_test ();
-        //run_word_list_test ();
+        run_word_list_test ();
         //run_word_link_test ();
         run_ref_test ();
         /*

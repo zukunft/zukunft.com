@@ -34,17 +34,21 @@ function import_json_file($filename): string
     $msg = '';
 
     $json_str = file_get_contents($filename);
-    if ($json_str == '') {
-        $msg .= ' failed because message file is empty of not found.';
+    if ($json_str == false) {
+        log_err('Error reading JSON resource ' . $filename);
     } else {
-        $import = new file_import;
-        $import->usr = $usr;
-        $import->json_str = $json_str;
-        $import_result = $import->put();
-        if ($import_result == '') {
-            $msg .= ' done (' . $import->words_done . ' words, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->values_done . ' sources, ' . $import->sources_done . ' values, ' . $import->views_done . ' views loaded)';
+        if ($json_str == '') {
+            $msg .= ' failed because message file is empty of not found.';
         } else {
-            $msg .= ' failed because ' . $import_result . '.';
+            $import = new file_import;
+            $import->usr = $usr;
+            $import->json_str = $json_str;
+            $import_result = $import->put();
+            if ($import_result == '') {
+                $msg .= ' done (' . $import->words_done . ' words, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->values_done . ' sources, ' . $import->sources_done . ' values, ' . $import->views_done . ' views loaded)';
+            } else {
+                $msg .= ' failed because ' . $import_result . '.';
+            }
         }
     }
 
@@ -60,7 +64,7 @@ function import_base_config(): string
 {
     $result = '';
 
-    $import_path = '../src/main/resources/';
+    $import_path = '../src/main/resources/messages/';
 
     log_debug('load base config');
 

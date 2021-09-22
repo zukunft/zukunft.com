@@ -379,17 +379,19 @@ function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $commen
         }
     }
     if (is_array($result)) {
-        if (is_array($result[0])) {
-            $txt .= "\"";
-            foreach ($result as $result_item) {
-                if ($result_item <> $result[0]) {
-                    $txt .= ",";
+        if ($result != null) {
+            if (is_array($result[0])) {
+                $txt .= "\"";
+                foreach ($result as $result_item) {
+                    if ($result_item <> $result[0]) {
+                        $txt .= ",";
+                    }
+                    $txt .= implode(":", $result_item);
                 }
-                $txt .= implode(":", $result_item);
+                $txt .= "\"";
+            } else {
+                $txt .= "\"" . dsp_array($result) . "\"";
             }
-            $txt .= "\"";
-        } else {
-            $txt .= "\"" . dsp_array($result) . "\"";
         }
     } else {
         $txt .= "\"" . $result . "\"";
@@ -682,8 +684,16 @@ function load_value($array_of_word_str): value
 
 function test_value($array_of_word_str, $target): value
 {
+    global $usr;
     $phr_lst = load_phrase_list($array_of_word_str);
     $val = load_value($array_of_word_str);
+    if ($val->id == 0) {
+        $val = new value;
+        $val->ids = $phr_lst->ids;
+        $val->usr = $usr;
+        $val->number = $target;
+        $val->save();
+    }
     $result = $val->number;
     test_dsp(', value->load for a phrase list ' . $phr_lst->name(), $target, $result);
     return $val;

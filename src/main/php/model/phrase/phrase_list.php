@@ -1148,7 +1148,7 @@ class phrase_list
     }
 
     // sort the phrase object list by name
-    function osort()
+    function osort(): array
     {
         log_debug('phrase_list->wlsort ' . $this->dsp_id() . ' and user ' . $this->usr->name);
         $name_lst = array();
@@ -1185,7 +1185,7 @@ class phrase_list
         $max_phr->usr = $this->usr;
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
-                // to be replace by "is following"
+                // to be replaced by "is following"
                 if ($phr->name > $max_phr->name) {
                     log_debug('phrase_list->max_time -> select (' . $phr->name . ' instead of ' . $max_phr->name . ')');
                     $max_phr = clone $phr;
