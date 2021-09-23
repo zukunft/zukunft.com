@@ -39,6 +39,14 @@ TODO create a User Interface API
 TODO offer to use FreeOTP for two factor authentication
 TODO change config files from json to yaml to complete "reduce to the max"
 
+TODO creste a table startup page with a
+     Table with two col and two rows and four last used pages below. If now last used pages show the demo pages.
+     Typing words in the top left cell select a word with the default page
+     Typing in the top right cell adds one more column and two rows and typing offer to select a word and also adds related row names based on child words
+     Typing in the lower left cell also adds one more row and two cols and typing shows related parent words as column headers
+     Typing in the lower right cell starts the formula selection and an = is added as first char.
+     Typing = in any cell starts the formula selection
+     Typing an operator sign after a space starts the formula creation and a formula name is suggested
 
 
   This file is part of zukunft.com - calc with words

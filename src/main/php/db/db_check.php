@@ -108,6 +108,13 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->remove_prefix('verbs', 'code_id', 'vrb_');
     $db_con->change_code_id('verbs', 'vrb_contains', 'is_part_of');
 
+    // allow null for column
+    // in table word_types the column word_symbol
+    // in table values the column exclude
+    // in table change_tables the column description
+
+    // Change code_id in verbs from contains to is_part_of
+
     // TODO create table user_value_time_series
     $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {

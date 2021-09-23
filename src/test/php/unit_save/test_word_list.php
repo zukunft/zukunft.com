@@ -163,7 +163,7 @@ function run_word_list_test()
     $grp->usr = $usr;
     $grp->ids = $wrd_lst->ids;
     $result = $grp->get_id();
-    $target = 96; // also the creation should be tested, but how?
+    $target = 1; // also the creation should be tested, but how?
     test_dsp('phrase_group->get_id for "' . implode('","', $wrd_lst->names()) . '"', $target, $result);
 
     // test word list value
