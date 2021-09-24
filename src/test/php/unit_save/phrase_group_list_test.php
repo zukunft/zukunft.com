@@ -47,7 +47,7 @@ function run_phrase_group_list_test () {
   // Zurich taxes
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
-  $phr_lst->add_name(TW_ZH);
+  $phr_lst->add_name(word::TN_ZH);
   $phr_lst->add_name(TW_TAX);
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
@@ -71,7 +71,7 @@ function run_phrase_group_list_test () {
   $grp_lst->add($zh_grp);
   $grp_lst->add($abb_grp);
   $result = $grp_lst->name();
-  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TW_ZH.'';
+  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.word::TN_ZH.'';
   test_dsp('phrase_group_list->add of '.$abb_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$abb_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
@@ -82,7 +82,7 @@ function run_phrase_group_list_test () {
   $grp_lst->add($zh_grp);
   $grp_lst->add($ins_grp);
   $result = $grp_lst->name();
-  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TW_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TP_ZH_INS.'';
+  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.word::TN_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TP_ZH_INS.'';
   test_dsp('phrase_group_list->add of '.$zh_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$ins_grp->dsp_id(), $target, $result);
 
 
@@ -100,7 +100,7 @@ function run_phrase_group_list_test () {
   $grp_lst->add($abb_grp);
   $wrd_lst = New word_list;
   $wrd_lst->usr = $usr;
-  $wrd_lst->add_name(TW_ZH);
+  $wrd_lst->add_name(word::TN_ZH);
   $wrd_lst->add_name(TW_TAX);
   $wrd_lst->add_name(TW_CHF);
   $wrd_lst->add_name(TW_MIO);

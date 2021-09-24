@@ -1169,7 +1169,7 @@ CREATE TABLE IF NOT EXISTS `views`
     `view_id`      int(11)      NOT NULL,
     `user_id`      int(11)      DEFAULT NULL,
     `view_name`    varchar(100) NOT NULL COMMENT 'for easy selection',
-    `comment`      text         NOT NULL,
+    `comment`      text         DEFAULT NULL,
     `view_type_id` int(11)      DEFAULT NULL,
     `code_id`      varchar(100) DEFAULT NULL,
     `excluded`     tinyint(4)   DEFAULT NULL

@@ -29,9 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function create_base_phrases()
 {
     echo "<h2>Check if all base phrases are correct</h2><br>";
-    test_word_link(TW_ZH, verb::IS_A, TW_CANTON, TP_ZH_CANTON);
-    test_word_link(TW_ZH, verb::IS_A, TW_CITY, TP_ZH_CITY);
-    test_word_link(TW_ZH, verb::IS_A, TEST_WORD, TP_ZH_INS, TP_ZH_INS);
+    test_word_link(word::TN_ZH, verb::IS_A, TW_CANTON, TP_ZH_CANTON);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, TP_ZH_CITY);
+    test_word_link(word::TN_ZH, verb::IS_A, TEST_WORD, TP_ZH_INS, TP_ZH_INS);
     test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
@@ -61,7 +61,7 @@ function run_phrase_test()
     $wrd_company = test_word(TEST_WORD);
 
     // prepare the Insurance Zurich
-    $wrd_zh = load_word(TW_ZH);
+    $wrd_zh = load_word(word::TN_ZH);
     $lnk_company = new word_link;
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);

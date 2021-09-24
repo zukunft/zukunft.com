@@ -1130,7 +1130,7 @@ CREATE TABLE IF NOT EXISTS views
     view_id      BIGSERIAL PRIMARY KEY,
     user_id      bigint       DEFAULT NULL,
     view_name    varchar(100) NOT NULL,
-    comment      text         NOT NULL,
+    comment      text         DEFAULT NULL,
     view_type_id bigint       DEFAULT NULL,
     code_id      varchar(100) DEFAULT NULL,
     excluded     smallint     DEFAULT NULL

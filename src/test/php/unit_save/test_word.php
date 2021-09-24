@@ -35,7 +35,7 @@ function create_base_words()
     test_word(TW_DAN);
     test_word(TW_NESN);
     test_word(TW_VESTAS);
-    test_word(TW_ZH);
+    test_word(word::TN_ZH);
     test_word(TW_SALES);
     test_word(TW_SALES2);
     test_word(TW_PRICE);
@@ -214,11 +214,11 @@ function run_word_test()
     // which implies that Canton contains Zurich and City contains Zurich
     // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
     // and 'System Test Word Member e.g. Zurich' as member
-    $wrd_canton = test_word(word::TN_CATEGORY);
-    $wrd_city = test_word(word::TN_ANOTHER_CATEGORY);
-    $wrd_ZH = test_word(word::TN_MEMBER);
-    test_word_link(word::TN_MEMBER, verb::IS_A, word::TN_CATEGORY);
-    test_word_link(word::TN_MEMBER, verb::IS_A, word::TN_ANOTHER_CATEGORY);
+    $wrd_canton = test_word(word::TN_CANTON);
+    $wrd_city = test_word(word::TN_CITY_AS_CATEGORY);
+    $wrd_ZH = test_word(word::TN_ZH);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY);
 
     // word is e.g. Zurich as a Canton ...
     $target = $wrd_canton->name;
@@ -228,7 +228,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    test_dsp('word->is "' . word::TN_MEMBER . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    test_dsp('word->is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // ... and Zurich is a City
     $target = $wrd_city->name;
@@ -238,7 +238,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    test_dsp('word->and is "' . word::TN_MEMBER . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    test_dsp('word->and is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // ... word is including the start word
     $target = $wrd_ZH->name;
@@ -247,7 +247,7 @@ function run_word_test()
     } else {
         $result = '';
     }
-    test_dsp('word->is for "' . word::TN_MEMBER . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    test_dsp('word->is for "' . word::TN_ZH . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // create the test words and relations for a parent child relation without inheritance
     // e.g. ...

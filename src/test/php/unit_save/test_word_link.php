@@ -41,15 +41,15 @@ function run_word_link_test()
     test_header('Test the word link class (classes/word_link.php)');
 
     // load the main test word
-    $wrd_company = test_word(TEST_WORD);
+    $wrd_company = test_word(word::TN_PARENT);
 
     // check the triple usage for Zurich (City) and Zurich (Canton)
-    $wrd_zh = load_word(TW_ZH);
-    $wrd_city = load_word(TW_CITY);
-    $wrd_canton = load_word(TW_CANTON);
+    $wrd_zh = load_word(word::TN_ZH);
+    $wrd_city = load_word(word::TN_CITY_AS_CATEGORY);
+    $wrd_canton = load_word(word::TN_CANTON);
 
     // test the City of Zurich
-    $lnk_city = test_word_link(TW_ZH, verb::IS_A, TW_CITY, false, TP_ZH_CITY);
+    $lnk_city = test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, false, TP_ZH_CITY);
 
     // ... now test the Canton Zurich
     $lnk_canton = new word_link;
@@ -58,12 +58,12 @@ function run_word_link_test()
     $lnk_canton->to->id = $wrd_canton->id;
     $lnk_canton->usr = $usr;
     $lnk_canton->load();
-    $target = TW_ZH . ' (Canton)';
+    $target = word::TN_ZH . ' (Canton)';
     $result = $lnk_canton->name;
     test_dsp('triple->load for Canton Zurich', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... now test the Canton Zurich using the name function
-    $target = TW_ZH . ' (Canton)';
+    $target = word::TN_ZH . ' (Canton)';
     $result = $lnk_canton->name();
     test_dsp('triple->load for Canton Zurich using the function', $target, $result);
 
@@ -88,7 +88,7 @@ function run_word_link_test()
     $wrd = load_word(TEST_WORD);
     $vrb = new verb;
     $vrb->id = cl(db_cl::VERB, verb::IS_A);
-    $vrb->usr = $usr->id;
+    $vrb->usr = $usr;
     $vrb->load();
     $lnk = new word_link;
     $lnk->usr = $usr;

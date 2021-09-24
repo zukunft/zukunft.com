@@ -177,7 +177,6 @@ const TW_DAN = "Danone";
 const TW_NESN = "Nestlé";
 const TW_VESTAS = "Vestas";
 const TW_USA = "United States";
-const TW_ZH = "Zurich";
 const TW_SALES = "Sales";
 const TW_SALES2 = "Revenues";
 const TW_PRICE = "Price";
@@ -204,11 +203,10 @@ const TW_BALANCE = "balance sheet";
 
 // some test words used for testing phrases
 const TW_CANTON = "Canton";
-const TW_CITY = "City";
 
 // some test phrases used for testing
-const TP_ZH_CANTON = "Zurich (Canton)";
-const TP_ZH_CITY = "Zurich (City)";
+const TP_ZH_CANTON = "System Test Word Member e.g. Zurich (Canton)";
+const TP_ZH_CITY = "System Test Word Member e.g. Zurich (System Test Word Another Category e.g. City)";
 const TP_ZH_INS = "Zurich Insurance";
 const TP_ABB = "ABB (Company)";
 const TP_FOLLOW = "2014 is follower of 2013";

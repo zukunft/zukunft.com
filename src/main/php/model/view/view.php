@@ -546,11 +546,15 @@ class view extends user_sandbox
         }
 
         if ($do_save) {
-            if ($this->save()) {
-                $result = true;
-                // TODO save also the links
-                //$dsp_lnk = new view_component_link();
-                log_debug('view->import_obj -> ' . $this->dsp_id());
+            if ($this->name == '') {
+                log_err("Name in view missing");
+            } else {
+                if ($this->save()) {
+                    $result = true;
+                    // TODO save also the links
+                    //$dsp_lnk = new view_component_link();
+                    log_debug('view->import_obj -> ' . $this->dsp_id());
+                }
             }
         } else {
             log_debug('view->import_obj -> ' . $result);

@@ -41,7 +41,7 @@ function run_word_display_test()
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
     $wrd_ZH = new word_dsp;
-    $wrd_ZH->name = TW_ZH;
+    $wrd_ZH->name = word::TN_ZH;
     $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
     $direction = 'up';
@@ -51,7 +51,7 @@ function run_word_display_test()
 
     // ... and the other side
     $wrd_ZH = new word_dsp;
-    $wrd_ZH->name = TW_ZH;
+    $wrd_ZH->name = word::TN_ZH;
     $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
     $direction = 'down';

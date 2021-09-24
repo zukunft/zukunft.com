@@ -38,9 +38,9 @@ class word extends word_link_object
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';
-    const TN_CATEGORY = 'System Test Word Category e.g. Canton';
-    const TN_MEMBER = 'System Test Word Member e.g. Zurich';
-    const TN_ANOTHER_CATEGORY = 'System Test Word Another Category e.g. City';
+    const TN_CANTON = 'System Test Word Category e.g. Canton';
+    const TN_ZH = 'System Test Word Member e.g. Zurich';
+    const TN_CITY_AS_CATEGORY = 'System Test Word Another Category e.g. City';
     const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_2021 = 'System Test Time Word e.g. 2021';

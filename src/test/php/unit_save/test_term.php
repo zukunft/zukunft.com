@@ -47,10 +47,10 @@ function run_term_test()
 
     // ... check also for a triple
     $term = new term;
-    $term->name = 'Zurich (' . TW_CITY . ')';
+    $term->name = 'Zurich (' . word::TN_CITY_AS_CATEGORY . ')';
     $term->usr = $usr;
     $term->load();
-    $target = 'A triple with the name "Zurich (' . TW_CITY . ')" already exists. Please use another name.';
+    $target = 'A triple with the name "Zurich (' . word::TN_CITY_AS_CATEGORY . ')" already exists. Please use another name.';
     $result = $term->id_used_msg();
     test_dsp_contains(', term->load for id ' . $wrd_company->id, $target, $result);
 

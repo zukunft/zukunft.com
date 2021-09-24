@@ -37,7 +37,7 @@ function run_phrase_list_test()
     $wrd_company = test_word(word::TN_READ);
 
     // prepare test by loading Insurance Zurich
-    $wrd_zh = load_word(TW_ZH);
+    $wrd_zh = load_word(word::TN_ZH);
     $lnk_company = new word_link;
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
@@ -64,7 +64,7 @@ function run_phrase_list_test()
 
     // ... the complete word list, which means split the triples into single words
     $wrd_lst_all = $phr_lst->wrd_lst_all();
-    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . TW_ZH . '","' . TEST_WORD . '"';
+    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . word::TN_ZH . '","' . TEST_WORD . '"';
     $result = $wrd_lst_all->name();
     test_dsp('phrase->wrd_lst_all of list above', $target, $result);
 

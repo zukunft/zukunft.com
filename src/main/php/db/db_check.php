@@ -112,6 +112,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     // in table word_types the column word_symbol
     // in table values the column exclude
     // in table change_tables the column description
+    // in table views the column comment
 
     // Change code_id in verbs from contains to is_part_of
 
