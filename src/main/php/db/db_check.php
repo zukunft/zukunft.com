@@ -107,12 +107,10 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->remove_prefix('view_component_types', 'code_id', 'dsp_comp_type_');
     $db_con->remove_prefix('verbs', 'code_id', 'vrb_');
     $db_con->change_code_id('verbs', 'vrb_contains', 'is_part_of');
-
-    // allow null for column
-    // in table word_types the column word_symbol
-    // in table values the column exclude
-    // in table change_tables the column description
-    // in table views the column comment
+    $db_con->column_allow_null('word_types', 'word_symbol');
+    $db_con->column_allow_null('values', 'exclude');
+    $db_con->column_allow_null('change_tables', 'description');
+    $db_con->column_allow_null('views', 'comment');
 
     // Change code_id in verbs from contains to is_part_of
 

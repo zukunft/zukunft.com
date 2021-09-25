@@ -140,7 +140,7 @@
     {
       "name": "Start view",
       "comment": "A dynamic start mask that shows a interesting fact",
-      "type": "entry view",
+      "type": "entry",
       "code_id": "entry_view",
       "view_components": [
         {

@@ -1710,6 +1710,22 @@ class sql_db
         return $result;
     }
 
+    function column_allow_null(string $table_name, string $column_name): bool {
+        $result = false;
+
+        // adjust the parameters to the used database used
+        $table_name = $this->get_table_name($table_name);
+
+        // check if the old column name is still valid
+        if ($this->has_column($table_name, $column_name)) {
+            $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' DROP NOT NULL;';
+            $this->exe($sql);
+            $result = true;
+        }
+
+        return $result;
+    }
+
     function remove_prefix(string $table_name, string $column_name, string $prefix_name): bool
     {
         $result = false;
