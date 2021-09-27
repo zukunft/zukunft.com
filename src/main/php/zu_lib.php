@@ -433,6 +433,7 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'word_types'
 )));
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
+const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 define("BASE_CONFIG_FILES", serialize(array(
     'system_views.json',
     'units.json',
@@ -1069,6 +1070,17 @@ function dsp_array(?array $in_array): string
     if ($in_array != null) {
         if (count($in_array) > 0) {
             $result = implode(',', $in_array);
+        }
+    }
+    return $result;
+}
+
+function dsp_array_keys(?array $in_array): string
+{
+    $result = 'null';
+    if ($in_array != null) {
+        if (count($in_array) > 0) {
+            $result = implode(',', array_keys($in_array));
         }
     }
     return $result;

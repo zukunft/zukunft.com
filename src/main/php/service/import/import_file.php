@@ -64,14 +64,13 @@ function import_base_config(): string
 {
     $result = '';
 
-    $import_path = '../src/main/resources/messages/';
-
     log_debug('load base config');
 
     $file_list = unserialize(BASE_CONFIG_FILES);
     foreach ($file_list as $filename) {
-        ui_echo("load " . $filename);
-        $result .= import_json_file($import_path . $filename);
+        ui_echo('load ' . $filename);
+        echo "\n";
+        $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename);
     }
 
     log_debug('load base config ... done');

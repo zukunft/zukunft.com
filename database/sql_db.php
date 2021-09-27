@@ -61,6 +61,8 @@ class sql_db
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [DB_TYPE_WORD_LINK, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
 
+    const NULL_VALUE = 'NULL';
+
     const USER_PREFIX = "user_";                 // prefix used for tables where the user sandbox values are stored
 
     const STD_TBL = "s";                         // prefix used for the standard table where data for all users are stored
@@ -1531,8 +1533,8 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "") {
-            $result = "NULL";
+        if (trim($result) == "" OR trim($result) == self::NULL_VALUE) {
+            $result = self::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
                 if (substr($result, 0, 1) == "'" and substr($result, -1, 1) == "'") {
@@ -1564,8 +1566,8 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "") {
-            $result = "NULL";
+        if (trim($result) == "" OR trim($result) == self::NULL_VALUE) {
+            $result = self::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
                 if (substr($result, 0, 1) == "'" and substr($result, -1, 1) == "'") {

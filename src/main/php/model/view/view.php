@@ -386,10 +386,10 @@ class view extends user_sandbox
     function add_cmp(view_component $cmp, ?int $pos = null, bool $do_save = true): bool
     {
         $result = false;
-        if ($pos == null) {
+        if ($pos != null) {
             $this->cmp_lst[] = $cmp;
             if (count($this->cmp_lst) != $cmp->order_nbr) {
-                log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . 'but it is at position ' . count($this->cmp_lst));
+                log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . count($this->cmp_lst));
             } else {
                 if ($do_save) {
                     $cmp->save();
@@ -536,11 +536,14 @@ class view extends user_sandbox
             }
             if ($key == 'view_components') {
                 $json_lst = $value;
+                $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
                     $cmp = new view_component();
+                    $cmp->usr = $usr;
                     $cmp->import_obj($json_cmp, $do_save);
                     // on import first add all view components to the view object and save them all at once
-                    $this->add_cmp($cmp, null, false);
+                    $this->add_cmp($cmp, $cmp_pos, $do_save);
+                    $cmp_pos++;
                 }
             }
         }

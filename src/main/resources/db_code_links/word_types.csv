@@ -16,3 +16,4 @@ word_type_id, type_name, description, code_id, scaling_factor, word_symbol
 15, 'scaling word percent', 'all words that represent percent', 'scaling_percent', 100, '%'
 16, 'scaled measure', 'a combination of scaling and measure e.g. 100ml', 'scaled_measure', 0, ''
 17, 'math constant', 'A mathematical constant is a key number whose value is fixed by an unambiguous definition', 'constant', 0, ''
+18, 'measure divisor', 'a measure divisor like per year, per kg, ...', 'measure_divisor', NULL, ''

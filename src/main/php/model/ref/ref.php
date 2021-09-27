@@ -134,7 +134,7 @@ class ref
     {
         $result = false;
 
-        $this->reset();
+        // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
             if ($key == 'name') {
                 $this->external_key = $value;

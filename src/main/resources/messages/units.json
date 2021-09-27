@@ -666,7 +666,7 @@
     },
     {
       "name": "volumetric flow rate",
-      "type": "ha",
+      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -913,37 +913,37 @@
     },
     {
       "name": "per day",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {
       "name": "per km",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {
       "name": "per 100 km",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {
       "name": "per kWh",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {
       "name": "per t",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {
       "name": "per l",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {
       "name": "per year",
-      "type": "measure divisor",
+      "type": "measure_divisor",
       "protection": "admin_protection"
     },
     {

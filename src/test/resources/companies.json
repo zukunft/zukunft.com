@@ -508,17 +508,17 @@
       "type": "word default",
       "view_components": [
         {
-          "pos": "0",
+          "pos": "2",
           "name": "formulas",
           "code_id": "formula_list"
         },
         {
-          "pos": "0",
+          "pos": "4",
           "name": "XML Export",
           "code_id": "xml_export"
         },
         {
-          "pos": "2",
+          "pos": "1",
           "name": "Name",
           "code_id": "word_name"
         },
