@@ -421,6 +421,15 @@ function num2bool($in_txt): bool
     return $result;
 }
 
+function str2bool(string $in_txt): bool
+{
+    $result = false;
+    if ($in_txt == '') {
+        $result = true;
+    }
+    return $result;
+}
+
 // display the difference between strings excluding non display chars
 function test_show_diff($target, $result)
 {

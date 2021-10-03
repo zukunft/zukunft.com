@@ -5,6 +5,8 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
+TODO all save and import functions should return an empty string, if everything is fine and otherwise the error message that should be shown to the user
+TODO in load_standard the user id of db_con does not need to be set -> remove it
 TODO create json config files for the default and system views
 TODO add JSON im- and export port for verbs
 TODO remove the database fields from the objects, that are already part of a linked object e.g. use ref->phr->id instead of ref->phr_id
@@ -38,6 +40,13 @@ TODO make use of __DIR__ ?
 TODO create a User Interface API
 TODO offer to use FreeOTP for two factor authentication
 TODO change config files from json to yaml to complete "reduce to the max"
+TODO create a user cache with all the data that the user usually usses for fast reactions
+TODO move the user fields to words with the aord with the prefix "system user"
+TODO for the registration mask first preselect the country based on the geolocation and offer to switch language, than select the places based on country and geolocation and the street
+TODO in the user registration mask allow to add places and streets on the fly and show a link to add missing street on open street map
+TODO use the object constructor if useful
+TODO capsule all critical functions in classes for security reason, to make sure that they never call be called without check e.g. database reset
+
 
 TODO creste a table startup page with a
      Table with two col and two rows and four last used pages below. If now last used pages show the demo pages.
@@ -109,14 +118,12 @@ const DB_TYPE_CHANGE_FIELD = 'change_field';
 const DB_TYPE_CHANGE_ACTION = 'change_action';
 const DB_TYPE_CHANGE_LINK = 'change_link';
 const DB_TYPE_CONFIG = 'config';
-const DB_TYPE_BATCH_JOB = 'calc_and_cleanup_task_type';
-const DB_TYPE_BATCH_JOB_TYPE = 'calc_and_cleanup_task_type';
 const DB_TYPE_SYS_LOG = 'sys_log';
 const DB_TYPE_SYS_LOG_STATUS = 'sys_log_status';
 const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
 const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code optimising
-const DB_TYPE_CHANGE_LOG_TABLE = 'change_table';
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
+const DB_TYPE_TASK_TYPE = 'calc_and_cleanup_task_type';
 
 const DB_TYPE_SHARE = 'share_type';
 const DB_TYPE_PROTECTION = 'protection_type';
@@ -433,6 +440,8 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'word_types'
 )));
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
+const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
+const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 define("BASE_CONFIG_FILES", serialize(array(
     'system_views.json',
@@ -1414,6 +1423,16 @@ function dsp_var($var_to_format): string
 }
 
 // port php 8 function to 7.4
+function str_starts_with(string $long_string, string $prefix): bool
+{
+    $result = false;
+    if (substr($long_string, 0, strlen($prefix)) == $prefix) {
+        $result = true;
+    }
+    return $result;
+}
+
+// port php 8 function to 7.4
 function str_ends_with(string $long_string, string $postfix): bool
 {
     $result = false;
@@ -1422,3 +1441,4 @@ function str_ends_with(string $long_string, string $postfix): bool
     }
     return $result;
 }
+

@@ -159,6 +159,14 @@ class user_type_list
         return $result;
     }
 
+    /**
+     * TODO to rename to get and rename get to get_by_id
+     */
+    function get_by_code_id(string $code_id)
+    {
+        return $this->get($this->id($code_id));
+    }
+
     function code_id(int $id): string
     {
         $result = '';
@@ -170,6 +178,16 @@ class user_type_list
         }
         return $result;
     }
+
+    function is_empty()
+    {
+        $result = false;
+        if (empty($this->lst)) {
+            $result = true;
+        }
+        return $result;
+    }
+
 
     /**
      * create dummy type list for the unit tests without database connection

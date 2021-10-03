@@ -1233,7 +1233,7 @@ class user_sandbox
             if ($this->obj_type == user_sandbox::TYPE_NAMED) {
                 $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->usr->id));
             } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-                $this->id = $db_con->insert(array($this->from_name . '_id', $this->to_name . '_id', "user_id"), array($this->fob->id, $this->tob->id, $this->usr->id));
+                $this->id = $db_con->insert(array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'), array($this->fob->id, $this->tob->id, $this->usr->id, $this->order_nbr));
             } else {
                 log_err('Method add cannot (yet) handle objects of type ' . $this->obj_type . '.', 'user_sandbox->add');
             }
@@ -1487,7 +1487,7 @@ class user_sandbox
 
             // load the objects if needed
             if ($this->obj_type == user_sandbox::TYPE_LINK) {
-                $db_con->load_objects();
+                $this->load_objects();
             }
 
             // configure the global database connection object for the select, insert, update and delete queries

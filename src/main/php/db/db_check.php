@@ -54,14 +54,16 @@ function db_check($db_con): string
         }
     } else {
         $last_consistency_check = cfg_get(CFG_LAST_CONSISTENCY_CHECK, $db_con);
+        // run a database consistency check once every 24h if the database is the least busy
         if (strtotime($last_consistency_check) < strtotime("now") - 1) {
             $do_consistency_check = true;
         }
     }
 
-    // run a database consistency check once every 24h if the database is the least busy
+    // run a database consistency check now and remember the time
     if ($do_consistency_check) {
         db_fill_code_links($db_con);
+        cfg_set(CFG_LAST_CONSISTENCY_CHECK, strtotime("now"), $db_con);
     }
 
     return $result;
@@ -76,6 +78,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
+    $db_con->add_column('user_profiles', 'right_level', 'smallint;');
     $db_con->add_column('user_words', 'share_type_id', 'smallint;');
     $db_con->add_column('user_words', 'protection_type_id', 'smallint;');
     $db_con->add_column('words', 'share_type_id', 'smallint;');
@@ -111,6 +114,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->column_allow_null('values', 'exclude');
     $db_con->column_allow_null('change_tables', 'description');
     $db_con->column_allow_null('views', 'comment');
+    $db_con->column_allow_null('view_component_types', 'description');
 
     // Change code_id in verbs from contains to is_part_of
 
@@ -189,20 +193,15 @@ function db_fill_code_links(sql_db $db_con)
                         // check if the row id exists
                         $sql = "select * from " . $table_name . " where " . $id_col_name . " = " . $id . ";";
                         $db_row = $db_con->get1($sql);
-                        // create the db row if needed
+                        // check if the db row needs to be added
                         if ($db_row == null) {
-                            // check the order
+                            // add the row
                             for ($i = 0; $i < count($data); $i++) {
-                                $col_name = $col_names[$i];
-                                $db_value = $db_row[$col_name];
-                                if ($db_value != $data[$i]) {
-                                    $update_col_names[] = $col_name;
-                                    $update_col_values[] = $data[$i];
-                                }
+                                $update_col_names[] = $col_names[$i];
+                                $update_col_values[] = trim($data[$i]);
                             }
                             $db_con->set_type($db_type);
                             $db_con->insert($update_col_names, $update_col_values);
-
                         } else {
                             // check, which values needs to be updates
                             for ($i = 1; $i < count($data); $i++) {

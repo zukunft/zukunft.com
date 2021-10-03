@@ -72,6 +72,7 @@ class sql_db
 
     const FLD_CODE_ID = "code_id";               // field name for the code link
     const FLD_USER_ID = "user_id";               // field name for the user table foreign key field
+    const FLD_VALUE = "value";                   // field name e.g. for the configuration value
     const FLD_DESCRIPTION = "description";       // field name for the any description
     const FLD_TYPE_NAME = "type_name";           // field name for the user specific name of a type; types are used to assign code to a db row
     const FLD_SHARE = "share_type_id";           // field name for the share permission
@@ -553,9 +554,13 @@ class sql_db
         return $result;
     }
 
-    private function set_id_field()
+    private function set_id_field(string $given_name = '')
     {
-        $this->id_field = $this->get_id_field_name($this->type);
+        if ($given_name != '') {
+            $this->id_field = $given_name;
+        } else {
+            $this->id_field = $this->get_id_field_name($this->type);
+        }
     }
 
     function get_id_field(): string
@@ -831,8 +836,10 @@ class sql_db
 
         $sql_row = $this->fetch_first($sql, $sql_name, $sql_array);
 
-        if (count($sql_row) > 0) {
-            $result = $sql_row[0];
+        if ($sql_row != false) {
+            if (count($sql_row) > 0) {
+                $result = $sql_row[0];
+            }
         }
 
         return $result;
@@ -1339,7 +1346,7 @@ class sql_db
     // update some values in a table
     // $id is the primary id of the db table or an array with the ids of the primary keys
     // return false if the update has failed (and the error messages are logged)
-    function update($id, $fields, $values): bool
+    function update($id, $fields, $values, string $id_field = ''): bool
     {
         global $debug;
 
@@ -1350,7 +1357,7 @@ class sql_db
         // check parameter
         $par_ok = true;
         $this->set_table();
-        $this->set_id_field();
+        $this->set_id_field($id_field);
         if ($debug > 0) {
             if ($this->table == "") {
                 log_err("Table not valid for " . $fields . " at " . dsp_var($id) . ".", "zu_sql_update", (new Exception)->getTraceAsString());

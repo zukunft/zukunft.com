@@ -42,6 +42,10 @@ class file_import
     // parameters to filter the import
     public ?user $usr = null; // the user who wants to import data
     public ?string $json_str = null; // a string with the json data to import
+    public ?int $users_done = 0;
+    public ?int $users_failed = 0;
+    public ?int $verbs_done = 0;
+    public ?int $verbs_failed = 0;
     public ?int $words_done = 0;
     public ?int $words_failed = 0;
     public ?int $triples_done = 0;
@@ -68,12 +72,37 @@ class file_import
                     $result .= 'Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION . ' ';
                 }
             } elseif ($key == 'pod') {
+                // TODO set the source pod
             } elseif ($key == 'time') {
-            } elseif ($key == 'user') {
-                // TODO does it need to be checked
-                //if ($usr->name <> $json_obj) {
-                //}
+                // TODO set the time of the export
             } elseif ($key == 'selection') {
+                // TODO set the selection as context
+            } elseif ($key == 'user') {
+                // TODO set the user that has created the export
+            } elseif ($key == 'users') {
+                foreach ($json_obj as $user) {
+                    // TODO check if the constructor is always used
+                    $usr = new user;
+                    $import_result = $usr->import_obj($user, $this->usr->profile_id);
+                    if ($import_result == '') {
+                        $this->users_done++;
+                    } else {
+                        $this->users_failed++;
+                    }
+                }
+                $result .= $import_result;
+            } elseif ($key == 'verbs') {
+                foreach ($json_obj as $verb) {
+                    $vrb = new verb;
+                    $vrb->usr = $this->usr;
+                    $import_result = $vrb->import_obj($verb);
+                    if ($import_result == '') {
+                        $this->verbs_done++;
+                    } else {
+                        $this->verbs_failed++;
+                    }
+                }
+                $result .= $import_result;
             } elseif ($key == 'words') {
                 foreach ($json_obj as $word) {
                     $wrd = new word;

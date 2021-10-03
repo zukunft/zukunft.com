@@ -110,7 +110,10 @@ if ($usr->id > 0) {
                 $import->json_str = $json_str;
                 $import_result = $import->put();
                 if ($import_result == '') {
-                    $msg .= ' done (' . $import->words_done . ' words, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->sources_done . ' sources, ' . $import->values_done . ' values, ' . $import->views_done . ' views loaded)';
+                    $msg .= ' done (' . $import->words_done . ' words, ' . $import->verbs_done . ' verbs, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->sources_done . ' sources, ' . $import->values_done . ' values, ' . $import->views_done . ' views loaded)';
+                    if ($import->users_done > 0) {
+                        $msg .= ' ... and ' . $import->users_done . ' $users';
+                }
                 } else {
                     $msg .= ' failed because ' . $import_result . '.';
                 }
@@ -154,5 +157,3 @@ echo $result;
 
 // Closing connection
 prg_end($db_con);
-
-?>

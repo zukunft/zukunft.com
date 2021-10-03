@@ -26,11 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-# import a single json file
-function import_json_file($filename): string
+/**
+ * import a single json file
+ *
+ * @param string $filename
+ * @param user $usr
+ * @return string
+ */
+function import_json_file(string $filename, user $usr): string
 {
-    global $usr;
-
     $msg = '';
 
     $json_str = file_get_contents($filename);
@@ -45,7 +49,10 @@ function import_json_file($filename): string
             $import->json_str = $json_str;
             $import_result = $import->put();
             if ($import_result == '') {
-                $msg .= ' done (' . $import->words_done . ' words, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->values_done . ' sources, ' . $import->sources_done . ' values, ' . $import->views_done . ' views loaded)';
+                $msg .= ' done (' . $import->words_done . ' words, ' . $import->verbs_done . ' verbs, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->values_done . ' sources, ' . $import->sources_done . ' values, ' . $import->views_done . ' views loaded)';
+                if ($import->users_done > 0) {
+                    $msg .= ' ... and ' . $import->users_done . ' $users';
+                }
             } else {
                 $msg .= ' failed because ' . $import_result . '.';
             }
@@ -55,6 +62,54 @@ function import_json_file($filename): string
     return $msg;
 }
 
+function import_system_users(): bool
+{
+    $result = false;
+
+    // allow adding only if there is not yet any system user in the database
+    $usr = new user;
+    $usr->id = SYSTEM_USER_ID;
+    $usr->load_test_user();
+
+    if ($usr->id <= 0) {
+
+        // check if there is really no user in the database with a system profile
+        $check_usr = new user();
+        if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+            // if the syste users are missing always reset all users as a double line of defence to prevent system
+            // TODO ask for final confirmation before deleting all users !!!
+            run_table_truncate(DB_TYPE_USER);
+            run_seq_reset('users_user_id_seq');
+            $usr->set_profile(user_profile::SYSTEM);
+            $import_result = import_json_file(SYSTEM_USER_CONFIG_FILE, $usr);
+            if (str_starts_with($import_result, ' done ')) {
+                $result = true;
+            }
+        }
+    }
+    return $result;
+}
+
+function import_verbs(user $usr): bool
+{
+    global $db_con;
+    global $verbs;
+
+    $result = false;
+
+    if ($usr->is_admin()) {
+        $import_result = import_json_file(SYSTEM_VERB_CONFIG_FILE, $usr);
+        if (str_starts_with($import_result, ' done ')) {
+            $result = true;
+        }
+    }
+
+    $verbs = new verb_list();
+    $verbs->load($db_con);
+
+    return $result;
+}
+
 # import all zukunft.com base configuration json files
 # for an import it can be assumed that this base configuration is loaded
 # even if a user has overwritten some of these definitions the technical import should be possible
@@ -62,15 +117,16 @@ function import_json_file($filename): string
 # TODO add a check bottom for admin to reload the base configuration
 function import_base_config(): string
 {
-    $result = '';
+    global $usr;
 
+    $result = '';
     log_debug('load base config');
 
     $file_list = unserialize(BASE_CONFIG_FILES);
     foreach ($file_list as $filename) {
         ui_echo('load ' . $filename);
         echo "\n";
-        $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename);
+        $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);
     }
 
     log_debug('load base config ... done');

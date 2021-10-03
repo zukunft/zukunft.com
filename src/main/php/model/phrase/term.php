@@ -73,7 +73,7 @@ class term
 
     // test if the name is used already
     // returns the id of the object found
-    function load(): int
+    function load(bool $including_word_links = true): int
     {
         log_debug('term->load (' . $this->name . ')');
         $result = 0;
@@ -97,9 +97,11 @@ class term
             }
         } else {
             $lnk = new word_link;
-            $lnk->name = $this->name;
-            $lnk->usr = $this->usr;
-            $lnk->load();
+            if ($including_word_links) {
+                $lnk->name = $this->name;
+                $lnk->usr = $this->usr;
+                $lnk->load();
+            }
             if ($lnk->id > 0) {
                 $this->id = $lnk->id;
                 $this->type = 'triple';

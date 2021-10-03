@@ -357,7 +357,7 @@ class view_component extends user_sandbox
             if ($key == 'name') {
                 $this->name = $value;
             }
-            if ($key == 'position') {
+            if ($key == 'position' or $key == 'pos') {
                 $this->order_nbr = $value;
             }
             if ($key == 'type') {

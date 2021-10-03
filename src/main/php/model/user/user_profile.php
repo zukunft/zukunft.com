@@ -35,7 +35,8 @@ class user_profile
     // list of the user profiles that have a coded functionality
     const NORMAL = "normal";
     const ADMIN = "admin";
-    const DEV = "dev";
-    const SYSTEM = "system"; // reserved system users e.g. for internal testing
+    const DEV = "dev";       // reserved for developers which are supposed to code the verb functionality
+    const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
+    const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
 
 }

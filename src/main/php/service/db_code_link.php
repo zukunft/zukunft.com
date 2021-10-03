@@ -302,6 +302,7 @@ class db_cl
 /**
  * get the database id of a predefined type e.g. word type, formula type, ...
  * shortcut name for db_code_link for better code reading
+ * TODO it is more data saving to use get on the global object e.g. $user_profile->get($code_id)
  *
  * @param string $type e.g. word_type or formulas_type to select the list of unique code ids
  * @param string $code_id the code id that must be unique within the given type

@@ -18,7 +18,7 @@
     },
     {
       "name": "is a",
-      "code_id": "vrb_is",
+      "code_id": "is",
       "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
       "name_plural_reverse": "are",
       "name_plural": "are",
@@ -45,7 +45,7 @@
     },
     {
       "name": "is follower of",
-      "code_id": "vrb_follow",
+      "code_id": "follow",
       "description": "is follower of",
       "formula_name": "follower",
       "name_plural_reverse": "is followed by",
@@ -92,7 +92,7 @@
     },
     {
       "name": "can be used as a differentiator for",
-      "code_id": "vrb_can_contain",
+      "code_id": "can_contain",
       "description": "similar to contains, but in a table view the row will not be shown if there is no corresponding value",
       "formula_name": "differentiator",
       "name_plural_reverse": "can be differentiated by",
@@ -115,8 +115,8 @@
     },
     {
       "name": "can be",
-      "code_id": "",
-      "description": "vrb_can_be",
+      "code_id": "can_be",
+      "description": "",
       "name_plural_reverse": "can be",
       "name_plural": "can be",
       "name_reverse": "can be"

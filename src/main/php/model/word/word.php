@@ -349,16 +349,16 @@ class word extends word_link_object
      * @param bool $do_save can be set to false for unit testing
      * @return bool true if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         global $word_types;
         global $share_types;
         global $protection_types;
 
         log_debug('word->import_obj');
-        $result = false;
+        $result = '';
 
-        // reset the all parameters for the word object but keep the user
+        // reset all parameters for the word object but keep the user
         $usr = $this->usr;
         $this->reset();
         $this->usr = $usr;
@@ -407,13 +407,14 @@ class word extends word_link_object
         }
         // save the word in the database
         if ($do_save) {
+            // TODO should save not return the error reason that should be shown to the user if it fails?
             $result = num2bool($this->save());
         }
 
+        // add related parameters to the word object
         if ($result or !$do_save) {
             log_debug('word->import_obj -> saved ' . $this->dsp_id());
 
-            // add related  parameters to the word object
             if ($this->id <= 0 and $do_save) {
                 log_err('Word ' . $this->dsp_id() . ' cannot be saved', 'word->import_obj');
             } else {

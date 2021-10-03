@@ -62,6 +62,20 @@ class verb
     public ?string $description = ''; // for the mouse over explain
     public int $usage = 0; // how often this current used has used the verb (until now just the usage of all users)
 
+    function reset()
+    {
+        $this->id = null;
+        $this->usr = null;
+        $this->code_id = null;
+        $this->name = null;
+        $this->plural = null;
+        $this->reverse = null;
+        $this->rev_plural = null;
+        $this->frm_name = null;
+        $this->description = null;
+        $this->usage = 0;
+    }
+
     // set the class vars based on a database record
     // $db_row is an array with the database values
     function row_mapper($db_row): bool
@@ -77,7 +91,11 @@ class verb
                 $this->rev_plural = $db_row['name_plural_reverse'];
                 $this->frm_name = $db_row['formula_name'];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                $this->usage = $db_row['words'];
+                if ($db_row['words'] == null) {
+                    $this->usage = 0;
+                } else {
+                    $this->usage = $db_row['words'];
+                }
                 $result = true;
             } else {
                 $this->id = 0;
@@ -126,6 +144,51 @@ class verb
         }
         return $result;
     }
+
+    function import_obj(array $json_obj, bool $do_save = true): string
+    {
+        global $verbs;
+
+        log_debug('verb->import_obj');
+        $result = '';
+
+        // reset all parameters of this verb object but keep the user
+        $usr = $this->usr;
+        $this->reset();
+        $this->usr = $usr;
+        foreach ($json_obj as $key => $value) {
+            if ($key == 'name') {
+                $this->name = $value;
+            }
+            if ($key == 'code_id') {
+                $this->code_id = $value;
+            }
+            if ($key == 'description') {
+                $this->description = $value;
+            }
+            if ($key == 'name_plural_reverse') {
+                $this->rev_plural = $value;
+            }
+            if ($key == 'name_plural') {
+                $this->plural = $value;
+            }
+            if ($key == 'name_reverse') {
+                $this->reverse = $value;
+            }
+            if ($key == 'formula_name') {
+                $this->frm_name = $value;
+            }
+        }
+
+        // save the word in the database
+        if ($do_save) {
+            $result = $this->save();
+        }
+
+
+        return $result;
+    }
+
 
     /*
     display functions
@@ -258,7 +321,7 @@ class verb
         $trm = new term;
         $trm->name = $this->name;
         $trm->usr = $this->usr;
-        $trm->load();
+        $trm->load(false);
         return $trm;
     }
 
@@ -396,6 +459,22 @@ class verb
         return $result;
     }
 
+    private function save_field_code_id($db_con, $db_rec): bool
+    {
+        $result = true;
+        if ($db_rec->name <> $this->code_id) {
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->code_id;
+            $log->new_value = $this->code_id;
+            $log->std_value = $db_rec->code_id;
+            $log->row_id = $this->id;
+            $log->field = 'code_id';
+            $result = $this->save_field_do($db_con, $log);
+        }
+        return $result;
+    }
+
+
     // set the update parameters for the verb name
     private function save_field_name($db_con, $db_rec): bool
     {
@@ -479,7 +558,10 @@ class verb
     // save all updated verb fields excluding the name, because already done when adding a verb
     private function save_fields($db_con, $db_rec): bool
     {
-        $result = $this->save_field_plural($db_con, $db_rec);
+        $result = $this->save_field_code_id($db_con, $db_rec);
+        if ($result) {
+            $result = $this->save_field_plural($db_con, $db_rec);
+        }
         if ($result) {
             $result = $this->save_field_reverse($db_con, $db_rec);
         }
@@ -634,6 +716,10 @@ class verb
                         // todo: create a new verb and request to delete the old
                     }
                 }
+            }
+
+            if ($db_rec->code_id <> $this->code_id) {
+                $result .= $this->save_field_code_id($db_con, $db_rec);
             }
 
             // if a problem has appeared up to here, don't try to save the values

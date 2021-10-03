@@ -624,6 +624,7 @@ CREATE TABLE IF NOT EXISTS users
     user_id                  BIGSERIAL PRIMARY KEY,
     user_name                varchar(100) NOT NULL,
     code_id                  varchar(50)           DEFAULT NULL,
+    right_level              smallint              DEFAULT NULL,
     password                 varchar(200)          DEFAULT NULL,
     email                    varchar(200)          DEFAULT NULL,
     email_verified           smallint              DEFAULT NULL,
@@ -1230,7 +1231,7 @@ CREATE TABLE IF NOT EXISTS view_component_types
 (
     view_component_type_id BIGSERIAL PRIMARY KEY,
     type_name              varchar(100) NOT NULL,
-    description            text         NOT NULL,
+    description            text DEFAULT NULL,
     code_id                varchar(100) NOT NULL
 );
 

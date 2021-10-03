@@ -394,6 +394,7 @@ class view extends user_sandbox
                 if ($do_save) {
                     $cmp->save();
                     $cmp_lnk = new view_component_link();
+                    $cmp_lnk->usr = $this->usr;
                     $cmp_lnk->view_id = $this->id;
                     $cmp_lnk->view_component_id = $cmp->id;
                     $cmp_lnk->order_nbr = $cmp->order_nbr;
@@ -521,6 +522,8 @@ class view extends user_sandbox
         $usr = $this->usr;
         $this->reset();
         $this->usr = $usr;
+
+        // first save the parameters of the view itself
         foreach ($json_obj as $key => $value) {
 
             if ($key == 'name') {
@@ -533,18 +536,6 @@ class view extends user_sandbox
             }
             if ($key == 'comment') {
                 $this->comment = $value;
-            }
-            if ($key == 'view_components') {
-                $json_lst = $value;
-                $cmp_pos = 1;
-                foreach ($json_lst as $json_cmp) {
-                    $cmp = new view_component();
-                    $cmp->usr = $usr;
-                    $cmp->import_obj($json_cmp, $do_save);
-                    // on import first add all view components to the view object and save them all at once
-                    $this->add_cmp($cmp, $cmp_pos, $do_save);
-                    $cmp_pos++;
-                }
             }
         }
 
@@ -561,6 +552,22 @@ class view extends user_sandbox
             }
         } else {
             log_debug('view->import_obj -> ' . $result);
+        }
+
+        // after saving (or remembering) add the view components
+        foreach ($json_obj as $key => $value) {
+            if ($key == 'view_components') {
+                $json_lst = $value;
+                $cmp_pos = 1;
+                foreach ($json_lst as $json_cmp) {
+                    $cmp = new view_component();
+                    $cmp->usr = $usr;
+                    $cmp->import_obj($json_cmp, $do_save);
+                    // on import first add all view components to the view object and save them all at once
+                    $this->add_cmp($cmp, $cmp_pos, $do_save);
+                    $cmp_pos++;
+                }
+            }
         }
 
         return $result;

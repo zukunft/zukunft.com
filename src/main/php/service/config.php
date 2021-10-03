@@ -53,7 +53,7 @@ function cfg_get(string $code_id, sql_db $db_con): ?string
 
     // the config table is existing since 0.0.2, so it does not need to be checked, if the config table itself exists
     $db_con->set_type(DB_TYPE_CONFIG);
-    $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'value'));
+    $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE));
     $db_con->where(array(sql_db::FLD_CODE_ID), array($code_id));
     $sql = $db_con->select(false);
     $db_row = $db_con->get1($sql);
@@ -64,7 +64,7 @@ function cfg_get(string $code_id, sql_db $db_con): ?string
         }
     } else {
         $db_code_id = $db_row[sql_db::FLD_CODE_ID];
-        $db_value = $db_row['value'];
+        $db_value = $db_row[sql_db::FLD_VALUE];
         // if no value exists create it with the default value (a configuration value should never be empty)
         if ($db_code_id == '') {
             if (cfg_create($code_id, $db_con)) {
@@ -73,6 +73,39 @@ function cfg_get(string $code_id, sql_db $db_con): ?string
         }
     }
     return $db_value;
+}
+
+/**
+ * save a configuration value in the program configuration table of the database
+ * @param string $code_id the identification of the config item that is used in the code that should never be changed
+ * @param string $value the value that should be saved in the configuration table
+ * @param sql_db $db_con the open database connection that should be used
+ */
+function cfg_set(string $code_id, string $value, sql_db $db_con, string $description = ''): bool
+{
+    // init
+    log_debug('cfg_get for "' . $code_id . '"');
+    $result = false;
+
+    // check the parameters to capsule this function
+    if ($code_id == '') {
+        log_err("The code id must be set", "config->cfg_get");
+    }
+
+    $db_con->set_type(DB_TYPE_CONFIG);
+    $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
+    $db_con->where(array(sql_db::FLD_CODE_ID), array($code_id));
+    $sql = $db_con->select(false);
+    $db_row = $db_con->get1($sql);
+    if ($db_row == null) {
+        // automatically add the config entry
+        $result = cfg_add($code_id, $value, $description, $db_con);
+    } else {
+        if ($value != $db_row[sql_db::FLD_VALUE] OR $description != $db_row[sql_db::FLD_DESCRIPTION]) {
+            $result = cfg_update($code_id, $value, $description, $db_con);
+        }
+    }
+    return $result;
 }
 
 /**
@@ -89,12 +122,62 @@ function cfg_create(string $code_id, sql_db $db_con): bool
     $db_id = $db_con->insert(
         array(
             sql_db::FLD_CODE_ID,
-            'value',
+            sql_db::FLD_VALUE,
             sql_db::FLD_DESCRIPTION),
         array(
             $code_id,
             $db_value,
             $db_description));
+    if ($db_id > 0) {
+        $result = true;
+    }
+    return $result;
+}
+
+/**
+ * add a configuration value to the database
+ * @param string $code_id the identification of the config item that is used in the code that should never be changed
+ * @param string $value the value that should be saved in the configuration table
+ * @param string $description used for the tooltip of the configuration value
+ * @param sql_db $db_con the open database connection that should be used
+ * @return bool if adding to the database was successful
+ */
+function cfg_add(string $code_id, string $value, string $description, sql_db $db_con): bool {
+    $result = false;
+    $db_id = $db_con->insert(
+        array(
+            sql_db::FLD_CODE_ID,
+            sql_db::FLD_VALUE,
+            sql_db::FLD_DESCRIPTION),
+        array(
+            $code_id,
+            $value,
+            $description));
+    if ($db_id > 0) {
+        $result = true;
+    }
+    return $result;
+}
+
+/**
+ * update a configuration value to the database
+ * @param string $code_id the identification of the config item that is used in the code that should never be changed
+ * @param string $value the value that should be saved in the configuration table
+ * @param string $description used for the tooltip of the configuration value
+ * @param sql_db $db_con the open database connection that should be used
+ * @return bool if updating in the database was successful
+ */
+function cfg_update(string $code_id, string $value, string $description, sql_db $db_con): bool {
+    $result = false;
+    $db_id = $db_con->update(
+        $code_id,
+        array(
+            sql_db::FLD_VALUE,
+            sql_db::FLD_DESCRIPTION),
+        array(
+            $value,
+            $description),
+        sql_db::FLD_CODE_ID);
     if ($db_id > 0) {
         $result = true;
     }

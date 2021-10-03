@@ -16,6 +16,7 @@
 
   the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
 
+  TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
   
   
   This file is part of zukunft.com - calc with words
@@ -52,6 +53,7 @@ class user
     // database fields
     public ?int $id = null;               // the database id of the word link type (verb)
     public ?string $name = null;          // simply the username, which cannot be empty
+    public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
     public ?string $ip_addr = null;       // simply the ip address used if no username is given
     public ?string $email = null;         //
     public ?string $first_name = null;    //
@@ -68,6 +70,38 @@ class user
 
     // in memory only fields
     public ?word $wrd = null;             // the last word viewed by the user
+    public ?user_profile $profile = null; //
+
+    function __construct()
+    {
+        $this->reset();
+
+        //global $user_profiles;
+        //$this->profile = $user_profiles->get_by_code_id(user_profile::NORMAL);
+        //$this->profile = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
+
+    }
+
+    function reset()
+    {
+        $this->id = null;
+        $this->name = null;
+        $this->ip_addr = null;
+        $this->email = null;
+        $this->first_name = null;
+        $this->last_name = null;
+        $this->code_id = null;
+        $this->dec_point = null;
+        $this->thousand_sep = null;
+        $this->profile_id = null;
+        $this->source_id = null;
+
+        $this->wrd_id = null;
+        $this->vrb_id = null;
+
+        $this->wrd = null;
+
+    }
 
     function row_mapper()
     {
@@ -122,7 +156,9 @@ class user
     {
         $result = false;
         $db_usr = $this->load_db();
-        if (isset($db_usr)) {
+        if ($db_usr == false) {
+            $this->id = 0;
+        } else {
             if ($db_usr['user_id'] <= 0) {
                 $this->id = 0;
             } else {
@@ -150,6 +186,22 @@ class user
     function load_test_user(): bool
     {
         return $this->load();
+    }
+
+    function has_any_user_this_profile(string $profile_code_id): bool
+    {
+        global $db_con;
+        $profile_id = cl(db_cl::USER_PROFILE, $profile_code_id);
+
+        $result = false;
+        $sql = "SELECT user_id FROM users WHERE user_profile_id = " . $profile_id . ";";
+        $db_usr = $db_con->get1($sql);
+        if ($db_usr != false) {
+            if ($db_usr['user_id'] > 0) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     private function ip_in_range($ip_addr, $min, $max): bool
@@ -231,7 +283,46 @@ class user
                 if ($this->id <= 0) {
                     // use the ip address as the username and add the user
                     $this->name = $this->ip_addr;
-                    $upd_result = $this->save();
+
+                    // allow to fill the database only if a local user has logged in
+                    if ($this->name == 'localhost') {
+
+                        global $user_profiles;
+                        global $db_con;
+
+                        // TODO move to functions used here to check class
+                        if ($user_profiles->is_empty()) {
+                            db_fill_code_links($db_con);
+
+                            // reopen the database to collect the cached lists
+                            $db_con->close();
+                            $db_con = prg_start("test_reset_db");
+                        }
+
+                        // create the system user before the local user and admin to get the desired database id
+                        import_system_users();
+
+                        // create the admin users
+                        $check_usr = new user();
+                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
+                            $this->set_profile(user_profile::ADMIN);
+                        }
+
+                        // add the local admin user to use it for the import
+                        $upd_result = $this->save();
+
+                        //
+                        import_verbs($this);
+
+                        // reload the base configuration
+                        import_base_config();
+
+                    } else {
+                        $upd_result = $this->save();
+                    }
+
+
+                    // TODO make sure that the result is always compatible and checked if needed
                     // adding a new user automatically is normal, so the result does not need to be shown to the user
                     if (str_replace('1', '', $upd_result) <> '') {
                         $result = $upd_result;
@@ -249,12 +340,39 @@ class user
      * @param array $json_obj an array with the data of the json object
      * @param user_profile $profile the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string an empty string if the import has been successfully saved to the database or an error message that should be shown to the user
      */
-    function import_obj(array $json_obj, user_profile $profile, bool $do_save = true): bool
+    function import_obj(array $json_obj, int $profile_id, bool $do_save = true): string
     {
+        global $user_profiles;
+
         log_debug('user->import_obj');
-        $result = false;
+        $result = '';
+
+        // reset all parameters of this user object
+        $this->reset();
+        foreach ($json_obj as $key => $value) {
+            if ($key == 'name') {
+                $this->name = $value;
+            }
+            if ($key == 'description') {
+                $this->description = $value;
+            }
+            if ($key == 'profile') {
+                $this->profile_id = $user_profiles->id($value);
+            }
+        }
+
+        // save the word in the database
+        if ($do_save) {
+            // check the importing profile and make sure that gaining additional privileges is impossible
+            // the user profiles must always be in the order that the lower ID has same or less rights
+            // TODO use the right level of the profile
+            if ($profile_id >= $this->profile_id) {
+                $result = $this->save();
+            }
+        }
+
 
         return $result;
     }
@@ -372,6 +490,13 @@ class user
         return $result;
     }
 
+    function set_profile(string $profile_code_id)
+    {
+        global $user_profiles;
+        $this->profile_id = $user_profiles->id($profile_code_id);
+        //$this->profile = $user_profiles->lst[$this->profile_id];
+    }
+
     // set the main log entry parameters for updating one word field
     private function log_upd(): user_log
     {
@@ -438,8 +563,10 @@ class user
     {
     }
 
-    // create a new user or update the existing
-    // returns the id of the updated or created user
+    /**
+     * create a new user or update the existing
+     * @return string an empty string if all user data are saved inthe database otherwise the message that should be shown to the user
+     */
     function save(): string
     {
         global $db_con;
@@ -457,13 +584,20 @@ class user
             $this->id = $db_con->insert("user_name", $this->name);
             // log the changes???
             if ($this->id > 0) {
-                // add the ip address to the user
-                if ($db_con->update($this->id, "ip_address", $this->get_ip())) {
-                    $result = strval($this->id);
+                // add the profile of the user
+                if (!$db_con->update($this->id, "user_profile_id", $this->profile_id)) {
+                    $result = 'Saving of user ' . $this->id . ' failed.';
                 }
-                log_debug("user->save add ... done." . $result . ".");
+                // add the ip address to the user, but never for system users
+                if ($this->profile_id != cl(db_cl::USER_PROFILE, user_profile::SYSTEM)
+                    and $this->profile_id != cl(db_cl::USER_PROFILE, user_profile::TEST)) {
+                    if (!$db_con->update($this->id, "ip_address", $this->get_ip())) {
+                        $result = 'Saving of user ' . $this->id . ' failed.';
+                    }
+                }
+                log_debug("user->save add ... done");
             } else {
-                log_debug("user->save add ... failed." . $result . ".");
+                log_debug("user->save add ... failed");
             }
         } else {
             // update the ip address and log the changes????
