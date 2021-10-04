@@ -424,7 +424,7 @@ class formula extends user_sandbox_description
                 $phr_lst->usr = $this->usr;
                 $phr_lst->load();
             }
-            log_debug("formula->assign_phr_glst_direct -> number of words " . count($phr_lst->lst));
+            log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
         } else {
             log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
         }
@@ -472,7 +472,7 @@ class formula extends user_sandbox_description
 
                 $phr_lst->ids = $phr_ids;
                 $phr_lst->load();
-                log_debug('formula->assign_phr_glst -> number of words and triples ' . count($phr_lst->lst));
+                log_debug('formula->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
             } else {
                 log_debug('formula->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
             }
@@ -577,7 +577,7 @@ class formula extends user_sandbox_description
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
         $exp = $this->expression();
         $elm_grp_lst = $exp->element_grp_lst("");
-        log_debug('formula->to_num -> in ' . $exp->ref_text . ' ' . count($elm_grp_lst->lst) . ' element groups found');
+        log_debug('formula->to_num -> in ' . $exp->ref_text . ' ' . dsp_count($elm_grp_lst->lst) . ' element groups found');
 
         // to check if all needed value are given
         $all_elm_grp_filled = true;
@@ -594,7 +594,7 @@ class formula extends user_sandbox_description
             $elm_grp->build_symbol();
             $fig_lst = $elm_grp->figures();
             log_debug('formula->to_num -> figures ');
-            log_debug('formula->to_num -> figures ' . $fig_lst->dsp_id() . ' (' . count($fig_lst->lst) . ') for ' . $elm_grp->dsp_id());
+            log_debug('formula->to_num -> figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst) . ') for ' . $elm_grp->dsp_id());
 
             // fill the figure into the formula text and create as much formula values / results as needed
             if (count($fig_lst->lst) == 1) {
@@ -831,7 +831,7 @@ class formula extends user_sandbox_description
             // $fv_lst is a list of all results saved in the database
             $fv_lst = $this->to_num($phr_lst, $back);
             if (isset($fv_add_phr_lst)) {
-                log_debug('formula->calc -> ' . count($fv_lst->lst) . ' formula results to save');
+                log_debug('formula->calc -> ' . dsp_count($fv_lst->lst) . ' formula results to save');
             }
 
             // save the numeric results

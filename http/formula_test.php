@@ -155,7 +155,7 @@ if ($session_usr->id > 0) {
                 $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
             }
 
-            log_debug("calculate queue is build (number of values to test: " . count($calc_lst->lst) . ")");
+            log_debug("calculate queue is build (number of values to test: " . dsp_count($calc_lst->lst) . ")");
 
             // execute the queue
             foreach ($calc_lst->lst as $r) {

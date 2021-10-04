@@ -1,4 +1,4 @@
-formula_type_id, name, description, code_id
+formula_type_id, type_name, description, code_id
 1, 'calc', 'a normal calculation formula', 'default'
 2, 'next', 'time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"', 'time_next'
 3, 'prior', 'time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"', 'time_prior'

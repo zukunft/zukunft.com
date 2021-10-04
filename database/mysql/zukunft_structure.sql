@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `end_time`                      timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
     `calc_and_cleanup_task_type_id` int(11)   NOT NULL,
     `row_id`                        int(11)   NOT NULL,
-    `change_field_id`               int(11)   NOT NULL
+    `change_field_id`               int(11)   DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
@@ -916,7 +916,7 @@ CREATE TABLE IF NOT EXISTS `user_values`
     `source_id`          int(11)        DEFAULT NULL,
     `excluded`           tinyint(4)     DEFAULT NULL,
     `share_type_id`      int(11)        DEFAULT NULL,
-    `protection_type_id` int(11)   NOT NULL,
+    `protection_type_id` int(11)        DEFAULT NULL,
     `last_update`        timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
@@ -1261,7 +1261,7 @@ CREATE TABLE IF NOT EXISTS `view_component_types`
 (
     `view_component_type_id` int(11)      NOT NULL,
     `type_name`              varchar(100) NOT NULL,
-    `description`            text         DEFAULT NULL,
+    `description`            text DEFAULT NULL,
     `code_id`                varchar(100) NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 17

@@ -581,7 +581,7 @@ class phrase_list
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . count($this->lst);
+                $result .= ' ... total ' . dsp_count($this->lst);
             }
             $result .= '"';
         }
@@ -610,7 +610,7 @@ class phrase_list
     // return a list of the phrase names with html links
     function names_linked(): array
     {
-        log_debug('phrase_list->names_linked (' . count($this->lst) . ')');
+        log_debug('phrase_list->names_linked (' . dsp_count($this->lst) . ')');
         $result = array();
         foreach ($this->lst as $phr) {
             $result[] = $phr->display();
@@ -1095,7 +1095,7 @@ class phrase_list
                 }
             }
         }
-        log_debug('phrase_list->measure_lst -> (' . count($result->lst) . ')');
+        log_debug('phrase_list->measure_lst -> (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
@@ -1117,7 +1117,7 @@ class phrase_list
                 log_debug('phrase_list->scaling_lst -> not found (' . $phr->name . ')');
             }
         }
-        log_debug('phrase_list->scaling_lst -> (' . count($result->lst) . ')');
+        log_debug('phrase_list->scaling_lst -> (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
@@ -1168,7 +1168,7 @@ class phrase_list
         }
         // check
         if (count($this->lst) <> count($result)) {
-            log_err("Sorting changed the number of phrases from " . count($this->lst) . " to " . count($result) . ".", "phrase_list->wlsort");
+            log_err("Sorting changed the number of phrases from " . dsp_count($this->lst) . " to " . dsp_count($result) . ".", "phrase_list->wlsort");
         } else {
             $this->lst = $result;
             $this->ids();
@@ -1244,7 +1244,7 @@ class phrase_list
                 $this->ids();
             }
         }
-        log_debug('phrase_list->common (' . count($this->lst) . ')');
+        log_debug('phrase_list->common (' . dsp_count($this->lst) . ')');
         return $result;
     }
 
@@ -1261,14 +1261,12 @@ class phrase_list
                 }
             }
         }
-        log_debug('phrase_list->concat_unique (' . count($result->lst) . ')');
+        log_debug('phrase_list->concat_unique (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
     /*
-
     data request function
-
     */
 
     // get all values related to this phrase list
@@ -1325,6 +1323,11 @@ class phrase_list
 
         return $val;
     }
-}
 
-?>
+    // TODO speed up by creation one SQL statement
+    function save() {
+        foreach ($this->lst AS $phr) {
+            $phr->save();
+        }
+    }
+}

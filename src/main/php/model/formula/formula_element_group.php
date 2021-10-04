@@ -330,7 +330,7 @@ class formula_element_group
             }
         }
 
-        log_debug('formula_element_group->figures -> ' . count($fig_lst->lst) . ' found');
+        log_debug('formula_element_group->figures -> ' . dsp_count($fig_lst->lst) . ' found');
         return $fig_lst;
     }
 

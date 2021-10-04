@@ -302,7 +302,7 @@ class view extends user_sandbox
                 $this->cmp_lst[] = $new_entry;
             }
         }
-        log_debug('view->load_components ' . count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
+        log_debug('view->load_components ' . dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
 
         return $result;
     }
@@ -389,7 +389,7 @@ class view extends user_sandbox
         if ($pos != null) {
             $this->cmp_lst[] = $cmp;
             if (count($this->cmp_lst) != $cmp->order_nbr) {
-                log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . count($this->cmp_lst));
+                log_err('View component ' . $cmp->name . ' has been expected to be at position ' . $cmp->order_nbr . ' in ' . $this->name . ', but it is at position ' . dsp_count($this->cmp_lst));
             } else {
                 if ($do_save) {
                     $cmp->save();

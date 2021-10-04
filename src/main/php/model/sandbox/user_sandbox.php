@@ -310,7 +310,7 @@ class user_sandbox
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
         if (isset($db_row)) {
-            $result = $db_row['share_type_name'];
+            $result = $db_row['type_name'];
         }
 
         log_debug('value->share_type_name for ' . $this->dsp_id() . ' got ' . $result);
@@ -346,7 +346,7 @@ class user_sandbox
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
         if (isset($db_row)) {
-            $result = $db_row['protection_type_name'];
+            $result = $db_row['type_name'];
         }
 
         log_debug('value->protection_type_name for ' . $this->dsp_id() . ' got ' . $result);

@@ -161,7 +161,7 @@ class value extends user_sandbox_display
         if ($this->id > 0) {
             $db_con->set_type(DB_TYPE_VALUE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('value_id', 'user_id', 'word_value', 'source_id', 'last_update', 'excluded', sql_db::FLD_PROTECT));
+            $db_con->set_fields(array('value_id', 'user_id', 'word_value', 'phrase_group_id', 'time_word_id', 'source_id', 'last_update', 'excluded', sql_db::FLD_PROTECT));
             $db_con->where(array('value_id'), array($this->id));
             $sql = $db_con->select();
 
@@ -646,8 +646,10 @@ class value extends user_sandbox_display
                 } else {
                     $wrd_lst = $this->phr_lst->wrd_lst_all();
                     $this->time_phr = $wrd_lst->assume_time();
-                    $this->time_id = $this->time_phr->id;
-                    log_debug('value->set_time_by_phr_lst got ' . $this->time_phr->name . ' for user ' . $this->time_phr->usr->name);
+                    if ($this->time_phr != null) {
+                        $this->time_id = $this->time_phr->id;
+                        log_debug('value->set_time_by_phr_lst got ' . $this->time_phr->name . ' for user ' . $this->time_phr->usr->name);
+                    }
                 }
             }
         }
@@ -1331,13 +1333,15 @@ class value extends user_sandbox_display
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($sql);
         log_debug('value->del_usr_cfg_if_not_needed check for "' . $this->id . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_cfg['value_id'] > 0) {
-            if ($usr_cfg['word_value'] == Null
-                and $usr_cfg['source_id'] == Null
-                and $usr_cfg['excluded'] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('value->del_usr_cfg_if_not_needed any more for "' . $this->id . ' und user ' . $this->usr->name);
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($usr_cfg != false) {
+            if ($usr_cfg['value_id'] > 0) {
+                if ($usr_cfg['word_value'] == Null
+                    and $usr_cfg['source_id'] == Null
+                    and $usr_cfg['excluded'] == Null) {
+                    // delete the entry in the user sandbox
+                    log_debug('value->del_usr_cfg_if_not_needed any more for "' . $this->id . ' und user ' . $this->usr->name);
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
             }
         }
 
@@ -1892,7 +1896,11 @@ class value extends user_sandbox_display
             $db_chk->usr = $this->usr;
             $db_chk->load();
             if ($db_chk->id > 0) {
-                log_debug('value->save value for "' . $this->grp->name() . '"@"' . $this->time_phr->name . '" and user ' . $this->usr->name . ' is already in the database and will be updated');
+                if ($this->grp != null and $this->time_phr != null and $this->usr != null) {
+                    log_debug('value->save value for "' . $this->grp->name() . '"@"' . $this->time_phr->name . '" and user ' . $this->usr->name . ' is already in the database and will be updated');
+                } else {
+                    log_debug('value->save value is empty');
+                }
                 $this->id = $db_chk->id;
             }
         }

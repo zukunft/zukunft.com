@@ -361,7 +361,7 @@ class expression
         }
         $result->lst = $lst;
 
-        log_debug('expression->element_lst_all got -> ' . count($result->lst) . ' elements');
+        log_debug('expression->element_lst_all got -> ' . dsp_count($result->lst) . ' elements');
         return $result;
     }
 
@@ -386,7 +386,7 @@ class expression
     {
         log_debug('expression->phr_verb_lst');
         $elm_lst = $this->element_lst_all(EXP_ELM_SELECT_PHRASE, FALSE, $back);
-        log_debug('expression->phr_verb_lst -> got ' . count($elm_lst->lst) . ' formula elements');
+        log_debug('expression->phr_verb_lst -> got ' . dsp_count($elm_lst->lst) . ' formula elements');
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;
         foreach ($elm_lst->lst as $elm) {
@@ -405,7 +405,7 @@ class expression
             }
         }
         $phr_lst->load();
-        log_debug('expression->phr_verb_lst -> ' . count($phr_lst->lst));
+        log_debug('expression->phr_verb_lst -> ' . dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -429,7 +429,7 @@ class expression
             }
         }
 
-        log_debug('expression->element_special_following -> ' . count($phr_lst->lst));
+        log_debug('expression->element_special_following -> ' . dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -448,7 +448,7 @@ class expression
                     $frm_lst->ids[] = $elm->id;
                 }
             }
-            log_debug('expression->element_special_following_frm -> pre load ' . count($frm_lst->lst));
+            log_debug('expression->element_special_following_frm -> pre load ' . dsp_count($frm_lst->lst));
             /*
             if (!empty($frm_lst->lst)) {
               $frm_lst->load();
@@ -456,7 +456,7 @@ class expression
             */
         }
 
-        log_debug('expression->element_special_following_frm -> ' . count($frm_lst->lst));
+        log_debug('expression->element_special_following_frm -> ' . dsp_count($frm_lst->lst));
         return $frm_lst;
     }
 

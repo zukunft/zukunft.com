@@ -85,7 +85,7 @@ class user_list
         $db_con->usr_id = $usr->id;
         $this->load_sql($sql, $db_con);
 
-        log_debug('user_list->load_active -> (' . count($this->lst) . ')');
+        log_debug('user_list->load_active -> (' . dsp_count($this->lst) . ')');
         return $this->lst;
     }
 

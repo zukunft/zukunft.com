@@ -115,6 +115,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->column_allow_null('change_tables', 'description');
     $db_con->column_allow_null('views', 'comment');
     $db_con->column_allow_null('view_component_types', 'description');
+    $db_con->column_allow_null('user_values', 'protection_type_id');
 
     // Change code_id in verbs from contains to is_part_of
 
@@ -151,6 +152,8 @@ function db_upgrade_0_0_4($db_con): string
  */
 function db_fill_code_links(sql_db $db_con)
 {
+    log_debug('Refresh code links for ...');
+
     // get the list of CSV and loop
     $csv_file_list = unserialize(BASE_CODE_LINK_FILES);
     foreach ($csv_file_list as $csv_file_name) {
@@ -165,7 +168,7 @@ function db_fill_code_links(sql_db $db_con)
         } else {
             $db_type = substr($table_name, 0, -1);
         }
-        echo $table_name;
+        log_debug($table_name);
         if (($handle = fopen($csv_path, "r")) !== FALSE) {
             $continue = true;
             $id_col_name = '';
@@ -227,6 +230,7 @@ function db_fill_code_links(sql_db $db_con)
                 $row++;
             }
             fclose($handle);
+            log_debug('Refresh of code links done');
         }
     }
 

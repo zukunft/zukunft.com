@@ -166,7 +166,7 @@ class word_list
               zu_debug('word_list->load -> got group id ('.$this->grp_id.') for words ('.$this->name().')');
             }
             */
-            log_debug('word_list->load (' . count($this->lst) . ')');
+            log_debug('word_list->load (' . dsp_count($this->lst) . ')');
         }
     }
 
@@ -184,12 +184,12 @@ class word_list
             $sql_name = 'word_list_add_up';
             $sql_where = 'l.from_phrase_id IN (' . $this->ids_txt() . ')';
             $sql_wrd = 'l.to_phrase_id';
-        } elseif ($direction == verb::DIRECTION_DOWN)  {
+        } elseif ($direction == verb::DIRECTION_DOWN) {
             $sql_name = 'word_list_add_down';
             $sql_where = 'l.to_phrase_id IN (' . $this->ids_txt() . ')';
             $sql_wrd = 'l.from_phrase_id';
         } else {
-            log_err('Unknown direction '. $direction);
+            log_err('Unknown direction ' . $direction);
         }
         // verbs can have a negative id for the reverse selection
         if ($verb_id <> 0) {
@@ -250,7 +250,7 @@ class word_list
             $db_con->usr_id = $this->usr->id;
             $db_wrd_lst = $db_con->get($sql);
             if ($db_wrd_lst) {
-                log_debug('word_list->add_by_type -> got ' . count($db_wrd_lst));
+                log_debug('word_list->add_by_type -> got ' . dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd['excluded']) or $db_wrd['excluded'] == 0) {
                         if ($db_wrd['word_id'] > 0 and !in_array($db_wrd['word_id'], $this->ids)) {
@@ -615,7 +615,7 @@ class word_list
             } else {
                 $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
                 if (count($this->names()) > 8) {
-                    $result .= ' ... total ' . count($this->lst);
+                    $result .= ' ... total ' . dsp_count($this->lst);
                 }
                 $result .= '"';
             }
@@ -647,13 +647,13 @@ class word_list
     // return a list of the word ids as an sql compatible text
     function ids_txt(): string
     {
-        return sql_array( $this->ids());
+        return sql_array($this->ids());
     }
 
     // return a list of the word names with html links
     function names_linked(): array
     {
-        log_debug('word_list->names_linked (' . count($this->lst) . ')');
+        log_debug('word_list->names_linked (' . dsp_count($this->lst) . ')');
         $result = array();
         foreach ($this->lst as $wrd) {
             $result[] = $wrd->display();
@@ -666,7 +666,7 @@ class word_list
     // because measure words are usually shown after the number
     function names_linked_ex_measure_and_time(): array
     {
-        log_debug('word_list->names_linked_ex_measure_and_time (' . count($this->lst) . ')');
+        log_debug('word_list->names_linked_ex_measure_and_time (' . dsp_count($this->lst) . ')');
         $wrd_lst_ex = clone $this;
         $wrd_lst_ex->ex_time();
         $wrd_lst_ex->ex_measure();
@@ -681,7 +681,7 @@ class word_list
     // because measure words are usually shown after the number
     function names_linked_measure(): array
     {
-        log_debug('word_list->names_linked_measure (' . count($this->lst) . ')');
+        log_debug('word_list->names_linked_measure (' . dsp_count($this->lst) . ')');
         $wrd_lst_scale = $this->scaling_lst();
         $wrd_lst_measure = $this->measure_lst();
         $wrd_lst_measure->merge($wrd_lst_scale);
@@ -693,7 +693,7 @@ class word_list
     // like names_linked, but only the time words
     function names_linked_time(): array
     {
-        log_debug('word_list->names_linked_time (' . count($this->lst) . ')');
+        log_debug('word_list->names_linked_time (' . dsp_count($this->lst) . ')');
         $wrd_lst_time = $this->time_lst();
         $result = $wrd_lst_time->names_linked();
         log_debug('word_list->names_linked_time (' . dsp_array($result) . ')');
@@ -1155,7 +1155,7 @@ class word_list
         if (count($result->lst) < 10) {
             log_debug('word_list->time_lst -> total found ' . $result->dsp_id());
         } else {
-            log_debug('word_list->time_lst -> total found: ' . count($result->lst) . ' ');
+            log_debug('word_list->time_lst -> total found: ' . dsp_count($result->lst) . ' ');
         }
         return $result;
     }
@@ -1207,7 +1207,7 @@ class word_list
                 log_debug('word_list->measure_lst -> (' . $wrd->name . ') is not measure');
             }
         }
-        log_debug('word_list->measure_lst -> (' . count($result->lst) . ')');
+        log_debug('word_list->measure_lst -> (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
@@ -1231,7 +1231,7 @@ class word_list
                 log_debug('word_list->scaling_lst -> not found (' . $wrd->name . ')');
             }
         }
-        log_debug('word_list->scaling_lst -> (' . count($result->ids) . ')');
+        log_debug('word_list->scaling_lst -> (' . dsp_count($result->ids) . ')');
         return $result;
     }
 
@@ -1253,7 +1253,7 @@ class word_list
                 log_debug('word_list->percent_lst -> (' . $wrd->name . ') is not percent');
             }
         }
-        log_debug('word_list->percent_lst -> (' . count($result->ids) . ')');
+        log_debug('word_list->percent_lst -> (' . dsp_count($result->ids) . ')');
         return $result;
     }
 
@@ -1310,7 +1310,7 @@ class word_list
         }
         // check
         if (count($this->lst) <> count($result)) {
-            log_err("Sorting changed the number of words from " . count($this->lst) . " to " . count($result) . ".", "word_list->wlsort");
+            log_err("Sorting changed the number of words from " . dsp_count($this->lst) . " to " . dsp_count($result) . ".", "word_list->wlsort");
         } else {
             $this->lst = $result;
         }
@@ -1365,7 +1365,7 @@ class word_list
             }
         }
 
-        log_debug('word_list->view_lst done got ' . count($result));
+        log_debug('word_list->view_lst done got ' . dsp_count($result));
         return $result;
     }
 
@@ -1404,17 +1404,19 @@ class word_list
         $val_lst->phr_lst = $this->phrase_lst();
         $val_lst->usr = $this->usr;
         $val_lst->load_by_phr_lst();
-        log_debug('word_list->max_val_time ... ' . count($val_lst->lst) . ' values for ' . $this->dsp_id());
+        log_debug('word_list->max_val_time ... ' . dsp_count($val_lst->lst) . ' values for ' . $this->dsp_id());
 
         $time_ids = array();
-        foreach ($val_lst->lst as $val) {
-            $val->load_phrases();
-            if (isset($val->time_phr)) {
-                log_debug('word_list->max_val_time ... value (' . $val->number . ' @ ' . $val->time_phr->name . ')');
-                if ($val->time_phr->id > 0) {
-                    if (!in_array($val->time_phr->id, $time_ids)) {
-                        $time_ids[] = $val->time_phr->id;
-                        log_debug('word_list->max_val_time ... add word id (' . $val->time_phr->id . ')');
+        if ($val_lst->lst != null) {
+            foreach ($val_lst->lst as $val) {
+                $val->load_phrases();
+                if (isset($val->time_phr)) {
+                    log_debug('word_list->max_val_time ... value (' . $val->number . ' @ ' . $val->time_phr->name . ')');
+                    if ($val->time_phr->id > 0) {
+                        if (!in_array($val->time_phr->id, $time_ids)) {
+                            $time_ids[] = $val->time_phr->id;
+                            log_debug('word_list->max_val_time ... add word id (' . $val->time_phr->id . ')');
+                        }
                     }
                 }
             }
@@ -1458,7 +1460,9 @@ class word_list
           }
         }
         */
-        log_debug('word_list->max_val_time ... done (' . $wrd->name . ')');
+        if ($wrd != null) {
+            log_debug('word_list->max_val_time ... done (' . $wrd->name . ')');
+        }
         return $wrd;
     }
 
@@ -1469,7 +1473,7 @@ class word_list
      *
      * always returns a phrase to avoid converting in the calling function
      */
-    function assume_time(): phrase
+    function assume_time(): ?phrase
     {
         log_debug('word_list->assume_time for ' . $this->dsp_id());
         $result = null;
@@ -1491,7 +1495,9 @@ class word_list
         } else {
             // get the time of the last "real" (reported) value for the word list
             $phr = $this->max_val_time();
-            log_debug('the assumed time "' . $phr->name . '" is the last non estimated value of ' . $this->names_linked());
+            if ($phr != null) {
+                log_debug('the assumed time "' . $phr->name . '" is the last non estimated value of ' . dsp_array($this->names_linked()));
+            }
         }
 
         if (isset($phr)) {
@@ -1549,7 +1555,7 @@ class word_list
             $phr_lst->lst[] = $wrd->phrase();
         }
         $phr_lst->ids();
-        log_debug('word_list->phrase_lst -> done (' . count($phr_lst->lst) . ')');
+        log_debug('word_list->phrase_lst -> done (' . dsp_count($phr_lst->lst) . ')');
         return $phr_lst;
     }
 

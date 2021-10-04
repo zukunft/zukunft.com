@@ -379,7 +379,7 @@ class word_link_list
                     }
                 }
             }
-            log_debug('word_link_list->load ... done (' . count($this->lst) . ')');
+            log_debug('word_link_list->load ... done (' . dsp_count($this->lst) . ')');
         }
     }
 

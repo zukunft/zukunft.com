@@ -137,14 +137,43 @@ class view_component_link extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_link_fields('view_id', 'view_component_id');
-        $db_con->set_fields(array('order_nbr', 'position_type', 'excluded'));
+        $db_con->set_fields(array('order_nbr', 'position_type', 'excluded', 'user_id'));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
             $db_dsl = $db_con->get1($sql);
             $this->row_mapper($db_dsl);
-            $result = $this->load_owner();
+            // TODO check if correct
+            if ($this->usr != null) {
+                $result = $this->load_owner();
+            }
+        }
+        return $result;
+    }
+
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = 'dsp_cmp_lst_by_';
+        if ($this->id > 0) {
+            $sql_name .= 'id';
+        } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
+            $sql_name .= 'view_and_cmp_id';
+        } else {
+            log_err("At lease on phrase ID must be set to load a value list.", "value_list->load_by_phr_lst_sql");
+        }
+
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields('view_id', 'view_component_id');
+        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
+        $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
+        $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
         }
         return $result;
     }
@@ -170,12 +199,7 @@ class view_component_link extends user_sandbox
                 }
             }
 
-            $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields('view_id', 'view_component_id');
-            $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
-            $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
-            $sql = $db_con->select();
+            $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
                 $db_dsl = $db_con->get1($sql);
@@ -511,13 +535,15 @@ class view_component_link extends user_sandbox
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($sql);
         log_debug('view_component_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' with (' . $sql . ')');
-        if ($usr_cfg['view_component_link_id'] > 0) {
-            if ($usr_cfg['order_nbr'] == Null
-                and $usr_cfg['position_type'] == Null
-                and $usr_cfg['excluded'] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('view_component_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id());
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($usr_cfg != false) {
+            if ($usr_cfg['view_component_link_id'] > 0) {
+                if ($usr_cfg['order_nbr'] == Null
+                    and $usr_cfg['position_type'] == Null
+                    and $usr_cfg['excluded'] == Null) {
+                    // delete the entry in the user sandbox
+                    log_debug('view_component_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id());
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
             }
         }
         //}

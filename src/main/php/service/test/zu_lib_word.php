@@ -251,14 +251,14 @@ function zut_val_lst($wrd_id, $user_id)
     $sql = "SELECT v.value_id, v.word_value FROM `values` v, value_phrase_links l WHERE l.phrase_id = " . $wrd_id . " AND l.value_id = v.value_id;";
     $result = zu_sql_get_lst($sql);
 
-    log_debug('zut_val_lst -> ' . zu_lst_dsp($result) . '' . $word_id);
+    log_debug('zut_val_lst -> ' . zu_lst_dsp($result) . '' . $wrd_id);
     return $result;
 }
 
 // returns an array of word ids based on an array of word names "turnover", "Nestlé"
 function zut_array_ids($word_array, $user_id)
 {
-    log_debug('zut_ids ... words ' . $words);
+    log_debug('zut_ids ... words ' . $word_array);
     // loop over the words and get the ids
     $word_ids = array();
     foreach ($word_array as $word_name) {
@@ -329,7 +329,7 @@ function zut_group_create($word_ids, $user_id)
 
     // loop over the word word_ids
     // select  all value that matches
-    $query = "SELECT value_id FROM `value_phrase_links` WHERE phrase_group_id = " . $phrase_group . " AND phrase_id = " . $time_word_id . " ;";
+    $query = "SELECT value_id FROM `value_phrase_links` WHERE phrase_group_id = " . $phrase_group . ";";
 
 
     return $phrase_group;
@@ -564,7 +564,7 @@ function zut_time_type_most_used($word_lst)
 
     // get the most ofter time type e.g. years if the list contains more than 5 years
     // if nothing special is defined try to select 20 % outlokk to the future
-
+    $result = $word_lst->lst[0];
 
     return $result;
 }

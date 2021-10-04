@@ -72,8 +72,10 @@ include_once $path_unit . 'word_link.php';
 include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'value.php';
+include_once $path_unit . 'value_list.php';
 include_once $path_unit . 'formula.php';
 include_once $path_unit . 'view.php';
+include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'ref.php';
 
 // load the unit testing modules with database real only

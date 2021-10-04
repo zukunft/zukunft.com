@@ -123,23 +123,25 @@ class formula_value_list
                 //$db_con = New mysql;
                 $db_con->usr_id = $this->usr->id;
                 $val_rows = $db_con->get($sql);
-                foreach ($val_rows as $val_row) {
-                    $fv = new formula_value;
-                    $fv->usr = $this->usr;
-                    $fv->id = $val_row['formula_value_id'];
-                    $fv->frm_id = $val_row['formula_id'];
-                    $fv->src_phr_grp_id = $val_row['source_phrase_group_id'];
-                    $fv->src_time_id = $val_row['source_time_word_id'];
-                    $fv->phr_grp_id = $val_row['phrase_group_id'];
-                    $fv->time_id = $val_row['time_word_id'];
-                    $fv->value = $val_row['formula_value'];
-                    // todo get user for the case that not all value are for the same unser
-                    //$fv->usr            = $val_row['user_id'];
+                if ($val_rows != false) {
+                    foreach ($val_rows as $val_row) {
+                        $fv = new formula_value;
+                        $fv->usr = $this->usr;
+                        $fv->id = $val_row['formula_value_id'];
+                        $fv->frm_id = $val_row['formula_id'];
+                        $fv->src_phr_grp_id = $val_row['source_phrase_group_id'];
+                        $fv->src_time_id = $val_row['source_time_word_id'];
+                        $fv->phr_grp_id = $val_row['phrase_group_id'];
+                        $fv->time_id = $val_row['time_word_id'];
+                        $fv->value = $val_row['formula_value'];
+                        // todo get user for the case that not all value are for the same unser
+                        //$fv->usr            = $val_row['user_id'];
 
-                    log_debug('formula_value_list->load_frm get words');
-                    $fv->load_phrases();
+                        log_debug('formula_value_list->load_frm get words');
+                        $fv->load_phrases();
 
-                    $this->lst[] = $fv;
+                        $this->lst[] = $fv;
+                    }
                 }
             }
         }
@@ -177,7 +179,7 @@ class formula_value_list
                 }
             }
             if ($nbr > 5) {
-                $result .= ' ... total ' . count($this->lst);
+                $result .= ' ... total ' . dsp_count($this->lst);
             }
         }
         /*
@@ -205,7 +207,7 @@ class formula_value_list
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . count($this->lst);
+                $result .= ' ... total ' . dsp_count($this->lst);
             }
             $result .= '"';
         }
@@ -250,7 +252,7 @@ class formula_value_list
     // create the html code to show the formula results to the user
     function display($back): string
     {
-        log_debug("fv_lst->display (" . count($this->lst) . ")");
+        log_debug("fv_lst->display (" . dsp_count($this->lst) . ")");
         $result = ''; // reset the html code var
 
         // prepare to show where the user uses different word than a normal viewer
@@ -356,7 +358,7 @@ class formula_value_list
             $result[] = $calc_row;
         }
 
-        log_debug('fv_lst->add_frm_val -> number of values added (' . count($result) . ')');
+        log_debug('fv_lst->add_frm_val -> number of values added (' . dsp_count($result) . ')');
         return $result;
     }
 
@@ -479,7 +481,7 @@ class formula_value_list
         //}
 
         //print_r($result);
-        log_debug('fv_lst->frm_upd_lst_usr -> (' . count($result->lst) . ')');
+        log_debug('fv_lst->frm_upd_lst_usr -> (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
@@ -595,7 +597,7 @@ class formula_value_list
         }
 
         //flush();
-        log_debug('fv_lst->frm_upd_lst -> (' . count($result->lst) . ')');
+        log_debug('fv_lst->frm_upd_lst -> (' . dsp_count($result->lst) . ')');
         return $result;
     }
 

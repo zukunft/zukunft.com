@@ -100,7 +100,7 @@ class formula_link_list
                 $db_lst = $db_con->get($sql);
                 $this->rows_mapper($db_lst);
                 $result = true;
-                log_debug('formula_link_list->load -> ' . count($this->lst) . ' links loaded');
+                log_debug('formula_link_list->load -> ' . dsp_count($this->lst) . ' links loaded');
             }
         }
         return $result;
@@ -124,7 +124,7 @@ class formula_link_list
             }
         }
 
-        log_debug('formula_link_list->ids -> got ' . count($result));
+        log_debug('formula_link_list->ids -> got ' . dsp_count($result));
         return $result;
     }
 

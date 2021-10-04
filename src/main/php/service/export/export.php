@@ -120,7 +120,7 @@ class export
                 // 7. add all sources to the export object
                 log_debug('export->get sources');
                 $source_lst = $val_lst->source_lst();
-                log_debug('export->got ' . count($source_lst) . ' sources');
+                log_debug('export->got ' . dsp_count($source_lst) . ' sources');
                 $exp_sources = array();
                 foreach ($source_lst as $src) {
                     if (isset($src)) {

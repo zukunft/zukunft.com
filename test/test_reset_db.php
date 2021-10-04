@@ -56,7 +56,7 @@ if ($usr->id > 0) {
 
         // reopen the database to reload the list cache
         $db_con->close();
-        $db_con = prg_start("test_reset_db");
+        $db_con = prg_restart("test_reset_db");
 
         // reload the session user parameters
         $usr = new user;
@@ -64,7 +64,7 @@ if ($usr->id > 0) {
 
         // reopen the database to reload the verb cache
         $db_con->close();
-        $db_con = prg_start("test_reset_db");
+        $db_con = prg_restart("test_reset_db");
 
         // reload the base configuration
         import_base_config();
@@ -176,10 +176,9 @@ function run_db_seq_reset()
         'change_fields_change_field_id_seq',
         'change_tables_change_table_id_seq',
         'config_config_id_seq',
-        'calc_and_cleanup_tasks_calc_and_cleanup_task_id_seq',
         'calc_and_cleanup_task_types_calc_and_cleanup_task_type_id_seq',
-        'sys_scripts_sys_script_id_seq',
         'calc_and_cleanup_tasks_calc_and_cleanup_task_id_seq',
+        'sys_scripts_sys_script_id_seq',
         'sys_log_sys_log_id_seq',
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_functions_sys_log_function_id_seq',

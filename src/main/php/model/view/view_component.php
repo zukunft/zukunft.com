@@ -301,7 +301,7 @@ class view_component extends user_sandbox
                     $result[] = $db_row['view_id'];
                 }
             }
-            log_debug('view_component->assign_dsp_ids -> number of views ' . count($result));
+            log_debug('view_component->assign_dsp_ids -> number of views ' . dsp_count($result));
         } else {
             log_err("The user id must be set to list the view_component links.", "view_component->assign_dsp_ids");
         }

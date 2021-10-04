@@ -532,15 +532,15 @@ function zut_db_usr_check ($wrd_id, $user_id) {
 
   $sql_std = "SELECT word_name, plural, description, word_type_id, excluded FROM words      WHERE word_id = ".$wrd_id.";";
   $sql_usr = "SELECT word_name, plural, description, word_type_id, excluded FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
-  $result_std = zu_sql_get($sql);
-  $result_usr = zu_sql_get($sql);
+  $result_std = zu_sql_get($sql_std);
+  $result_usr = zu_sql_get($sql_usr);
   if (($result_std[0] == $result_usr[0] OR $result_usr[0] === NULL)
   AND ($result_std[1] == $result_usr[1] OR $result_usr[1] === NULL)
   AND ($result_std[2] == $result_usr[2] OR $result_usr[2] === NULL)
   AND ($result_std[3] == $result_usr[3] OR $result_usr[3] === NULL)
   AND ($result_std[4] == $result_usr[4] OR $result_usr[4] === NULL)) {
     $sql_del = "DELETE FROM user_words WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
-    $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zut_db_usr_check", (new Exception)->getTraceAsString());
+    $result = zu_sql_exe($sql_del, $user_id, sys_log_level::ERROR, "zut_db_usr_check", (new Exception)->getTraceAsString());
   }
 
   return $result;

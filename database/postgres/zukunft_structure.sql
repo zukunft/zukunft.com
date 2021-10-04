@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
     end_time                      timestamp,
     calc_and_cleanup_task_type_id bigint    NOT NULL,
     row_id                        bigint    NOT NULL,
-    change_field_id               bigint    NOT NULL
+    change_field_id               bigint    DEFAULT NULL
 );
 
 -- --------------------------------------------------------
@@ -863,7 +863,7 @@ CREATE TABLE IF NOT EXISTS user_values
     source_id          bigint           DEFAULT NULL,
     excluded           smallint         DEFAULT NULL,
     share_type_id      bigint           DEFAULT NULL,
-    protection_type_id bigint    NOT NULL,
+    protection_type_id bigint           DEFAULT NULL,
     last_update        timestamp NULL   DEFAULT NULL
 );
 

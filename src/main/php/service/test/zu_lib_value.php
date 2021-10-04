@@ -678,12 +678,12 @@ function zuv_words($value_id, $ex_word_id, $user_id, $return_type)
     while ($value_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
         if ($value_entry[0] <> $ex_word_id) {
             if ($return_type == 'names') {
-                if ($word_id <> $value_entry[0]) {
+                if ($ex_word_id <> $value_entry[0]) {
                     $result .= ' ' . zut_name($value_entry[0], $user_id) . ' ';
                 }
             }
             if ($return_type == 'names_linked') {
-                if ($word_id <> $value_entry[0]) {
+                if ($ex_word_id <> $value_entry[0]) {
                     $result .= ' <a href="/http/view.php?words=' . $value_entry[0] . '">' . zut_name($value_entry[0], $user_id) . '</a> ';
                 }
             }

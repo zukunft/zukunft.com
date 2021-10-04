@@ -72,7 +72,7 @@ class value_list_dsp extends value_list
 
             // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
             $val_lst = $this->phr->val_lst();
-            log_debug('value_list_dsp->dsp_table all values: ' . count($val_lst->lst));
+            log_debug('value_list_dsp->dsp_table all values: ' . dsp_count($val_lst->lst));
 
             //$val_lst->load_phrases();
             /*foreach ($val_lst->lst AS $val) {
@@ -93,7 +93,7 @@ class value_list_dsp extends value_list
 
             // filter the value list by the time words used
             $used_value_lst = $val_lst->filter_by_time($time_lst);
-            log_debug('value_list_dsp->dsp_table values in the time period: ' . count($used_value_lst->lst));
+            log_debug('value_list_dsp->dsp_table values in the time period: ' . dsp_count($used_value_lst->lst));
 
             // get the word tree for the left side of the table
             $row_wrd_lst = $phr_row->are_and_contains();
@@ -108,7 +108,7 @@ class value_list_dsp extends value_list
             $row_phr_lst_incl = $row_wrd_lst->phrase_lst();
             log_debug('value_list_dsp->dsp_table row phrase list: ' . $row_phr_lst_incl->name());
             $used_value_lst = $used_value_lst->filter_by_phrase_lst($row_phr_lst_incl);
-            log_debug('value_list_dsp->dsp_table used values for all rows: ' . count($used_value_lst->lst));
+            log_debug('value_list_dsp->dsp_table used values for all rows: ' . dsp_count($used_value_lst->lst));
 
             // get the common words
             $common_lst = $used_value_lst->common_phrases();

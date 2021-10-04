@@ -340,7 +340,7 @@ class phrase_group_list
                 if ($this->add_grp_time_id($grp_to_add->id, $val_row['time_word_id'])) {
                     $added++;
                     $changed++;
-                    log_debug('phr_grp_lst->add_grp_by_phr -> added ' . $added . ' in ' . count($this->grp_time_ids));
+                    log_debug('phr_grp_lst->add_grp_by_phr -> added ' . $added . ' in ' . dsp_count($this->grp_time_ids));
                 }
             }
         }
@@ -417,7 +417,7 @@ class phrase_group_list
             log_debug('phrase_group_list->common_phrases ' . $result->name());
             $pos++;
         }
-        log_debug('phrase_group_list->common_phrases (' . count($result->lst) . ')');
+        log_debug('phrase_group_list->common_phrases (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
@@ -435,7 +435,7 @@ class phrase_group_list
         $result = '';
         // check the object setup
         if (count($this->lst) <> count($this->time_lst)) {
-            $result .= 'The number of groups (' . count($this->lst) . ') are not equal the number of times (' . count($this->time_lst) . ') of this phrase group list';
+            $result .= 'The number of groups (' . dsp_count($this->lst) . ') are not equal the number of times (' . dsp_count($this->time_lst) . ') of this phrase group list';
         } else {
 
             $pos = 0;
@@ -453,7 +453,7 @@ class phrase_group_list
                 }
             }
             if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . count($this->lst);
+                $result .= ' ... total ' . dsp_count($this->lst);
             }
 
         }
@@ -469,7 +469,7 @@ class phrase_group_list
         if ($debug > 10 or count($names) > 3) {
             $main_names = array_slice($names, 0, 3);
             $result .= implode(" and ", $main_names);
-            $result .= " ... total " . count($names);
+            $result .= " ... total " . dsp_count($names);
         } else {
             $result .= implode(" and ", $names);
         }

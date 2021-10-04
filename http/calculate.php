@@ -56,7 +56,7 @@ if ($usr->id > 0) {
     $frm_lst = new formula_list;
     $frm_lst->usr = $usr;
     $frm_lst->load();
-    echo "Calculate " . count($frm_lst->lst) . " formulas<br>";
+    echo "Calculate " . dsp_count($frm_lst->lst) . " formulas<br>";
 
     foreach ($frm_lst as $frm_request) {
 
@@ -65,7 +65,7 @@ if ($usr->id > 0) {
         $calc_fv_lst->usr = $usr;
         $calc_fv_lst->frm = $frm_request;
         $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
-        log_debug("calculate queue is build (number of values to check: " . count($calc_lst->lst) . ")");
+        log_debug("calculate queue is build (number of values to check: " . dsp_count($calc_lst->lst) . ")");
 
         // execute the queue
         foreach ($calc_lst->lst as $r) {

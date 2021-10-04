@@ -310,7 +310,7 @@ class word extends word_link_object
         $val_lst->phr = $this->phrase();
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('word->val_lst -> got ' . count($val_lst->lst));
+        log_debug('word->val_lst -> got ' . dsp_count($val_lst->lst));
         return $val_lst;
     }
 

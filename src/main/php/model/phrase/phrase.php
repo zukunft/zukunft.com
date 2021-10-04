@@ -156,13 +156,31 @@ class phrase
     }
 
     /*
+     * classification
+     */
+
+    /**
+     * @return bool true if this phrase is a word or supposed to be a word
+     */
+    private function is_word(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == 'word' or get_class($this->obj) == 'word_dsp') {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /*
       im- and export functions
     */
 
     /**
      * import a phrase object from a JSON array object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param string $json_value an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
      * @return bool true if the import has been successfully saved to the database
      */
@@ -180,7 +198,9 @@ class phrase
                 if ($wrd->id == 0) {
                     $wrd->name = $json_value;
                     $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
-                    $wrd->save();
+                    if ($wrd->save() == '') {
+                        $result = true;
+                    }
                 }
                 if ($wrd->id == 0) {
                     log_err('Cannot add time word "' . $json_value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
@@ -199,8 +219,10 @@ class phrase
     data retrieval functions
     */
 
-    // get a list of all values related to this phrase
-    function val_lst()
+    /**
+     * get a list of all values related to this phrase
+     */
+    function val_lst(): value_list
     {
         log_debug('phrase->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
         $val_lst = new value_list;
@@ -208,17 +230,17 @@ class phrase
         $val_lst->phr = $this;
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('phrase->val_lst -> got ' . count($val_lst->lst));
+        log_debug('phrase->val_lst -> got ' . dsp_count($val_lst->lst));
         return $val_lst;
     }
 
     /*
-
     display functions
-
     */
 
-    // display the unique id fields
+    /**
+     * display the unique id fields
+     */
     function dsp_id(): string
     {
         $result = '';
@@ -241,8 +263,7 @@ class phrase
     function name(): string
     {
         //$result = $this->name;
-        $result = '"' . $this->name . '"';
-        return $result;
+        return '"' . $this->name . '"';
     }
 
     function name_linked(): string
@@ -256,14 +277,13 @@ class phrase
             $this->load();
         }
         log_debug('phrase->dsp_tbl for ' . $this->dsp_id());
-        // the function dsp_tbl should exists for words and triples
-        $result = $this->obj->dsp_tbl();
-        return $result;
+        // the function dsp_tbl should exist for words and triples
+        return $this->obj->dsp_tbl();
     }
 
     function dsp_tbl_row()
     {
-        // the function dsp_tbl_row should exists for words and triples
+        // the function dsp_tbl_row should exist for words and triples
         if (isset($this->obj)) {
             $result = $this->obj->dsp_tbl_row();
         } else {
@@ -272,26 +292,30 @@ class phrase
         return $result;
     }
 
-    // return the html code to display a word
+    /**
+     * return the html code to display a word
+     */
     function display(): string
     {
         return '<a href="/http/view.php?words=' . $this->id . '">' . $this->name . '</a>';
     }
 
-    // simply to display a single word or triple link
+    /**
+     * simply to display a single word or triple link
+     */
     function dsp_link(): string
     {
         return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
     }
 
     // similar to dsp_link
-    function dsp_link_style($style)
+    function dsp_link_style($style): string
     {
         return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '" class="' . $style . '">' . $this->name . '</a>';
     }
 
     // helper function that returns a word list object just with the word object
-    function lst()
+    function lst(): phrase_list
     {
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;
@@ -328,7 +352,7 @@ class phrase
 
     // true if the word id has a "is a" relation to the related word
     // e.g.for the given word string
-    function is_a($related_phrase)
+    function is_a($related_phrase): bool
     {
         log_debug('phrase->is_a (' . $this->dsp_id() . ',' . $related_phrase->name . ')');
 
@@ -465,15 +489,13 @@ class phrase
     }
 
     /*
-
     display functions
-
     */
 
     // create a selector that contains the words and triples
     // if one form contains more than one selector, $pos is used for identification
     // $type is a word to preselect the list to only those phrases matching this type
-    function dsp_selector($type, $form_name, $pos, $class, $back)
+    function dsp_selector($type, $form_name, $pos, $class, $back): string
     {
         log_debug('phrase->dsp_selector -> type "' . $type->name . '" with id ' . $this->id . ' selected for form ' . $form_name . '' . $pos);
         $result = '';
@@ -512,8 +534,7 @@ class phrase
     function btn_add($back)
     {
         $wrd = $this->main_word();
-        $result = $wrd->btn_add($back);
-        return $result;
+        return $wrd->btn_add($back);
     }
 
     // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
@@ -572,5 +593,22 @@ class phrase
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
     }
 
+    function save(): string
+    {
+        $result = '';
+
+        if (isset($this->obj)) {
+            $result = $this->obj->save();
+        }
+
+        /*
+        if ($this->is_word()) {
+            $wrd = $this->get_word();
+            $result = $wrd->save();
+        }
+        */
+
+        return $result;
+    }
 
 }

@@ -769,7 +769,7 @@ class formula_value
         $exp = $frm->expression();
         //$elm_lst = $exp->element_lst ($back);
         $elm_grp_lst = $exp->element_grp_lst($back);
-        log_debug("formula_value->explain -> elements loaded (" . count($elm_grp_lst->lst) . " for " . $frm->ref_text . ")");
+        log_debug("formula_value->explain -> elements loaded (" . dsp_count($elm_grp_lst->lst) . " for " . $frm->ref_text . ")");
 
         $result .= ' where</br>';
 

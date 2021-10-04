@@ -151,12 +151,14 @@ class batch_job
         if (isset($this->obj)) {
             log_debug('batch_job->exe_val_upd -> get list for user ' . $this->obj->usr->name);
             $fv_lst = $this->obj->fv_lst_depending();
-            if (isset($fv_lst)) {
+            if ($fv_lst != null) {
                 log_debug('batch_job->exe_val_upd -> got ' . $fv_lst->dsp_id());
-                foreach ($fv_lst->lst as $fv) {
-                    log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id());
-                    $fv->update();
-                    log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id() . ' done');
+                if ($fv_lst->lst != null) {
+                    foreach ($fv_lst->lst as $fv) {
+                        log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id());
+                        $fv->update();
+                        log_debug('batch_job->exe_val_upd -> update ' . get_class($fv) . ' ' . $fv->dsp_id() . ' done');
+                    }
                 }
             }
         }

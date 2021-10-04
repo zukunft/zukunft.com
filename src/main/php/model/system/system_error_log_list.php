@@ -97,7 +97,7 @@ class system_error_log_list
         $db_lst = $db_con->get($sql);
 
         if (count($db_lst) > 0) {
-            log_debug('system_error_log_list->display -> ' . count($db_lst) . ' rows');
+            log_debug('system_error_log_list->display -> ' . dsp_count($db_lst) . ' rows');
             // prepare to show the word link
             $db_row = $db_lst[0];
             if ($db_row["sys_log_time"] <> '') {

@@ -988,7 +988,7 @@ function zuc_upd_lst_fv($val_wrd_lst, $wrd_id, $frm_ids, $frm_row, $usr_id)
         $result[] = $calc_row;
     }
 
-    log_debug('zuc_upd_lst_fv -> (' . count($result) . ')');
+    log_debug('zuc_upd_lst_fv -> (' . dsp_count($result) . ')');
     return $result;
 }
 
@@ -1038,7 +1038,7 @@ function zuc_upd_lst_val($wrd_id, $frm_wrd_ids, $frm_row, $usr_id)
         $result[] = $calc_row;
     }
 
-    log_debug('zuc_upd_lst_val -> (' . count($result) . ')');
+    log_debug('zuc_upd_lst_val -> (' . dsp_count($result) . ')');
     return $result;
 }
 
@@ -1155,7 +1155,7 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
     }
 
     //print_r($result);
-    log_debug('zuc_upd_lst_usr -> (' . count($result) . ')');
+    log_debug('zuc_upd_lst_usr -> (' . dsp_count($result) . ')');
     return $result;
 }
 
@@ -1188,7 +1188,7 @@ function zuc_upd_lst($frm_ids_updated, $upd_usr_id)
     }
 
     //flush();
-    log_debug('zuc_upd_lst -> (' . count($result) . ')');
+    log_debug('zuc_upd_lst -> (' . dsp_count($result) . ')');
     return $result;
 }
 

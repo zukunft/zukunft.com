@@ -646,7 +646,8 @@ class sql_db
                 if ($sql_name == '') {
                     $result = pg_query($this->link, $sql);
                     if (!$result) {
-                        log_err('Database error ' . pg_last_error($this->link) . ' when preparing ' . $sql, 'sql_db->PostgreSQL->exe->' . $sql_name);
+                        $err_msg = 'Database error ' . pg_last_error($this->link) . ' when preparing ' . $sql;
+                        log_err($err_msg, 'sql_db->PostgreSQL->exe->' . $sql_name);
                     }
 
                 } else {
@@ -1234,7 +1235,7 @@ class sql_db
             log_debug('sql_db->insert into "' . $this->type . '" SET "' . implode('","', $fields) . '" WITH "' . implode('","', $values) . '" for user ' . $this->usr_id);
             if (count($fields) <> count($values)) {
                 if ($log_err) {
-                    log_fatal('MySQL insert call with different number of fields (' . count($fields) . ': ' . dsp_array($fields) . ') and values (' . count($values) . ': ' . dsp_array($values) . ').', "user_log->add");
+                    log_fatal('MySQL insert call with different number of fields (' . dsp_count($fields) . ': ' . dsp_array($fields) . ') and values (' . dsp_count($values) . ': ' . dsp_array($values) . ').', "user_log->add");
                 }
             } else {
                 foreach (array_keys($fields) as $i) {
@@ -1488,7 +1489,7 @@ class sql_db
           ORDER BY ' . $table . '_id;';
         $result = $this->get($sql);
 
-        log_debug('sql_db->load_types -> got ' . count($result));
+        log_debug('sql_db->load_types -> got ' . dsp_count($result));
         return $result;
     }
 

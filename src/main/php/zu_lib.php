@@ -603,9 +603,18 @@ function log_fatal($msg_text, $function_name, $msg_description = '', $function_t
     return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, sys_log_level::FATAL, $function_name, $function_trace, $usr);
 }
 
+function prg_start($code_name, $style = ""): sql_db
+{
+    // resume session (based on cookies)
+    session_start();
+
+    $db_con = prg_restart($code_name, $style);
+    return $db_con;
+}
+
 // should be call from all code that can be accessed by an url
 // return null if the db connection fails or the db is not compatible
-function prg_start($code_name, $style = ""): sql_db
+function prg_restart($code_name, $style = ""): sql_db
 {
     global $sys_time_start, $sys_script;
 
@@ -624,9 +633,6 @@ function prg_start($code_name, $style = ""): sql_db
     global $sys_log_stati;
     global $job_types;
     global $change_log_tables;
-
-    // resume session (based on cookies)
-    session_start();
 
     log_debug($code_name . ' ...');
 
@@ -1091,6 +1097,15 @@ function dsp_array_keys(?array $in_array): string
         if (count($in_array) > 0) {
             $result = implode(',', array_keys($in_array));
         }
+    }
+    return $result;
+}
+
+function dsp_count(?array $in_array): int
+{
+    $result = 0;
+    if ($in_array != null) {
+        $result = count($in_array);
     }
     return $result;
 }
