@@ -45,7 +45,7 @@ function run_view_unit_db_tests()
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW, view::WORD);
-    $target = 31;
+    $target = 1;
     test_dsp('unit_db_view->check' . view::WORD, $result, $target);
 
     test_subheader('View types tests');

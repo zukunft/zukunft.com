@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS calc_and_cleanup_tasks
     end_time                      timestamp,
     calc_and_cleanup_task_type_id bigint    NOT NULL,
     row_id                        bigint    NOT NULL,
-    change_field_id               bigint    DEFAULT NULL
+    change_field_id               bigint             DEFAULT NULL
 );
 
 -- --------------------------------------------------------
@@ -236,6 +236,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     formula_id      bigint NOT NULL,
     phrase_id       bigint NOT NULL,
     link_type_id    bigint NOT NULL,
+    order_nbr       bigint NOT NULL,
     excluded        smallint DEFAULT NULL
 );
 

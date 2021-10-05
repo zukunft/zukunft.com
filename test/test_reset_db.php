@@ -81,6 +81,7 @@ if ($usr->id > 0) {
     }
 }
 
+//prg_end($db_con);
 
 /**
  * truncate all tables (use only for system testing)
@@ -130,6 +131,10 @@ function run_db_truncate()
         DB_TYPE_USER,
         DB_TYPE_USER_PROFILE
     );
+    echo "\n";
+    ui_echo('truncate ');
+    echo "\n";
+
     foreach ($table_names as $table_name) {
         run_table_truncate($table_name);
     }
@@ -187,6 +192,8 @@ function run_db_seq_reset()
         'users_user_id_seq',
         'user_profiles_profile_id_seq'
     );
+    ui_echo('seq reset ');
+    echo "\n";
     foreach ($seq_names as $seq_name) {
         run_seq_reset($seq_name);
     }

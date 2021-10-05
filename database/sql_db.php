@@ -1268,7 +1268,7 @@ class sql_db
                         $this->link->commit();
                         $result = $this->link->lastInsertId();
                         log_debug('sql_db->insert -> done "' . $result . '"');
-                    } catch (PDOExecption $e) {
+                    } catch (PDOException $e) {
                         $this->link->rollback();
                         log_debug('sql_db->insert -> failed (' . $sql . ')');
                     }
@@ -1317,14 +1317,14 @@ class sql_db
     }
 
 
-// add a new unique text to the database and return the id (similar to get_id)
+    // add a new unique text to the database and return the id (similar to get_id)
     function add_id($name)
     {
         log_debug('sql_db->add_id ' . $name . ' to ' . $this->type);
 
         $this->set_table();
         $this->set_name_field();
-        $result = $this->insert($this->name_field, $this->sf($name));
+        $result = $this->insert($this->name_field, $name);
 
         log_debug('sql_db->add_id is "' . $result . '"');
         return $result;

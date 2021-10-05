@@ -69,7 +69,7 @@ function run_system_test()
 
     test_header('Test the user class (classes/user.php)');
 
-    $target = '<a href="/http/user.php?id=' . TEST_USER_ID . '">zukunft.com system batch job</a>';
+    $target = '<a href="/http/user.php?id=' . TEST_USER_ID . '">zukunft.com system test</a>';
     $result = $usr->display();
     test_dsp('user->load for id ' . $wrd_company->id, $target, $result);
 

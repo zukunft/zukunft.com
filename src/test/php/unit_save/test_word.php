@@ -293,7 +293,7 @@ function run_word_test()
         $log->usr = $usr1;
         $result = $log->dsp_last(true);
     }
-    $target = 'zukunft.com system batch job added ' . word::TN_ADD . '';
+    $target = 'zukunft.com system test added ' . word::TN_ADD . '';
     test_dsp('word->save logged for "' . word::TN_ADD . '"', $target, $result);
 
     // ... test if the new word has been created
@@ -330,7 +330,7 @@ function run_word_test()
     $log->row_id = $wrd_renamed->id;
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job changed ' . word::TN_ADD . ' to ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test changed ' . word::TN_ADD . ' to ' . word::TN_RENAMED . '';
     test_dsp('word->save rename logged for "' . word::TN_RENAMED . '"', $target, $result);
 
     // check if the word parameters can be added
@@ -360,16 +360,16 @@ function run_word_test()
     $log->row_id = $wrd_reloaded->id;
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job added ' . word::TN_RENAMED . 's';
+    $target = 'zukunft.com system test added ' . word::TN_RENAMED . 's';
     test_dsp('word->load plural for "' . word::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'description';
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job added ' . word::TN_RENAMED . ' description';
+    $target = 'zukunft.com system test added ' . word::TN_RENAMED . ' description';
     test_dsp('word->load description for "' . word::TN_RENAMED . '" logged', $target, $result);
     test_dsp('word->load ref_2 for "' . word::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'word_type_id';
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job added differentiator filler';
+    $target = 'zukunft.com system test added differentiator filler';
     test_dsp('word->load type_id for "' . word::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific word is created if another user changes the word

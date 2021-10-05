@@ -33,15 +33,15 @@ class view extends user_sandbox
 {
     // list of the view used by the program that are never supposed to be changed
     const START = "start";
-    const WORD = "word_dsp";
+    const WORD = "word";
     const WORD_ADD = "word_add";
     const WORD_EDIT = "word_edit";
-    const WORD_FIND = "word_find";
     const WORD_DEL = "word_del";
+    const WORD_FIND = "word_find";
+    const VALUE_DISPLAY = "value";
     const VALUE_ADD = "value_add";
     const VALUE_EDIT = "value_edit";
     const VALUE_DEL = "value_del";
-    const VALUE_DISPLAY = "value";
     const FORMULA_ADD = "formula_add";
     const FORMULA_EDIT = "formula_edit";
     const FORMULA_DEL = "formula_del";
@@ -537,6 +537,11 @@ class view extends user_sandbox
             if ($key == 'comment') {
                 $this->comment = $value;
             }
+            if ($key == 'code_id') {
+                if ($this->usr->is_admin()) {
+                    $this->code_id = $value;
+                }
+            }
         }
 
         if ($do_save) {
@@ -718,6 +723,24 @@ class view extends user_sandbox
     }
 
     /**
+     * set the update parameters for the view code_id (only allowed for admin)
+     */
+    function save_field_code_id($db_con, $db_rec, $std_rec): bool
+    {
+        $result = true;
+        if ($db_rec->code_id <> $this->code_id) {
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->code_id;
+            $log->new_value = $this->code_id;
+            $log->std_value = $std_rec->code_id;
+            $log->row_id = $this->id;
+            $log->field = 'code_id';
+            $result = $this->save_field_do($db_con, $log);
+        }
+        return $result;
+    }
+
+    /**
      * set the update parameters for the word type
      */
     function save_field_type($db_con, $db_rec, $std_rec): bool
@@ -749,6 +772,9 @@ class view extends user_sandbox
         }
         if ($result) {
             $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        }
+        if ($result) {
+            $result = $this->save_field_code_id($db_con, $db_rec, $std_rec);
         }
         log_debug('view->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;

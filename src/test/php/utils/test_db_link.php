@@ -33,7 +33,7 @@ function run_db_link_test()
 
     // test code link
     $id = change_log_table::WORD;
-    $target = 2;
+    $target = 5;
     $result = cl(db_cl::LOG_TABLE, $id);
     test_dsp(", sql_code_link " . $id, $target, $result);
 

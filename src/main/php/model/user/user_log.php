@@ -97,6 +97,12 @@ class user_log
         // add new table name if needed
         if ($table_id <= 0) {
             $table_id = $db_con->add_id($this->table);
+            // save also the code_id
+            if ($table_id > 0) {
+                $db_con->set_type(DB_TYPE_CHANGE_TABLE);
+                $db_con->set_usr($this->usr->id);
+                $db_con->update($table_id, array('code_id'), array($this->table));
+            }
         }
         if ($table_id > 0) {
             $this->table_id = $table_id;

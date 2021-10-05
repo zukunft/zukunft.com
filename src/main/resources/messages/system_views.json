@@ -20,14 +20,18 @@
       "code_id": "word_edit"
     },
     {
+      "name": "Delete Word",
+      "comment": "Exclude or delete a word",
+      "code_id": "word_del"
+    },
+    {
       "name": "Search",
       "comment": "The search page for all words and formulas",
       "code_id": "word_find"
     },
     {
-      "name": "Delete Word",
-      "comment": "Exclude or delete a word",
-      "code_id": "word_del"
+      "name": "Display Number",
+      "code_id": "value"
     },
     {
       "name": "Add New Number",
@@ -50,6 +54,11 @@
       "code_id": "formula_edit"
     },
     {
+      "name": "Delete Formula",
+      "comment": "To confirm the exclusion or deleting of a formula",
+      "code_id": "formula_del"
+    },
+    {
       "name": "Explain Formula Result",
       "comment": "Explain the formula result",
       "code_id": "formula_explain"
@@ -58,11 +67,6 @@
       "name": "Formula test",
       "comment": "To debug the formula",
       "code_id": "formula_test"
-    },
-    {
-      "name": "Delete Formula",
-      "comment": "To confirm the exclusion or deleting of a formula",
-      "code_id": "formula_del"
     },
     {
       "name": "Add New View",
@@ -90,19 +94,9 @@
       "code_id": "source_del"
     },
     {
-      "name": "User Settings",
-      "comment": "to change the user settings",
-      "code_id": "user"
-    },
-    {
-      "name": "System Error List",
-      "comment": "List the system errors and allow the user to change the status",
-      "code_id": "error_update"
-    },
-    {
-      "name": "Error Log",
-      "comment": "simple confirm page for a new error that has been logged in the database",
-      "code_id": "error_log"
+      "name": "Verb List",
+      "comment": "List all available ways how to link two words",
+      "code_id": "verbs"
     },
     {
       "name": "Add New Verb",
@@ -112,11 +106,6 @@
       "name": "Change Verb",
       "comment": "Rename a tern link type",
       "code_id": "verb_edit"
-    },
-    {
-      "name": "Verb List",
-      "comment": "List all available ways how to link two words",
-      "code_id": "verbs"
     },
     {
       "name": "Delete verb",
@@ -136,6 +125,54 @@
       "name": "Delete triple",
       "comment": "Exclude or delete a triple",
       "code_id": "triple_del"
+    },
+    {
+      "name": "User Settings",
+      "comment": "to change the user settings",
+      "code_id": "user"
+    },
+    {
+      "name": "Error Log",
+      "comment": "simple confirm page for a new error that has been logged in the database",
+      "code_id": "error_log"
+    },
+    {
+      "name": "System Error List",
+      "comment": "List the system errors and allow the user to change the status",
+      "code_id": "error_update"
+    },
+    {
+      "name": "Import",
+      "comment": "Select a file to import data",
+      "code_id": "import"
+    },
+    {
+      "name": "Add View",
+      "code_id": "view_add"
+    },
+    {
+      "name": "Change View",
+      "comment": "Rename a view",
+      "code_id": "view_edit"
+    },
+    {
+      "name": "Delete View",
+      "comment": "Exclude or delete a view",
+      "code_id": "view_del"
+    },
+    {
+      "name": "Add View Component",
+      "code_id": "view_entry_add"
+    },
+    {
+      "name": "Change View Component",
+      "comment": "Adjust a view component",
+      "code_id": "view_entry_edit"
+    },
+    {
+      "name": "Delete View Component",
+      "comment": "Exclude or delete a view component",
+      "code_id": "view_entry_del"
     },
     {
       "name": "Start view",

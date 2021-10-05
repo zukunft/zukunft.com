@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `end_time`                      timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
     `calc_and_cleanup_task_type_id` int(11)   NOT NULL,
     `row_id`                        int(11)   NOT NULL,
-    `change_field_id`               int(11)   DEFAULT NULL
+    `change_field_id`               int(11)            DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
@@ -238,6 +238,7 @@ CREATE TABLE IF NOT EXISTS `formula_links`
     `formula_id`      int(11) NOT NULL,
     `phrase_id`       int(11) NOT NULL,
     `link_type_id`    int(11) NOT NULL,
+    `order_nbr`       int(11) NOT NULL,
     `excluded`        tinyint(4) DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1

@@ -150,10 +150,11 @@ include_once $root_path . 'src/main/php/service/test/zu_lib_html.php';
 include_once $path_dev . 'test_legacy.php';
 
 // the fixed system user used for testing
-const TEST_USER_ID = "1";
-const TEST_USER_NAME = "zukunft.com system batch job";
+const TEST_USER_NAME = "zukunft.com system test";
+const TEST_USER_PARTNER_NAME = "zukunft.com system test partner";
+const TEST_USER_ID = "2";
+const TEST_USER_PARTNER_ID = "2";
 const TEST_USER_DESCRIPTION = "standard user view for all users";
-const TEST_USER_ID2 = "2";
 const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
 
 /*
@@ -294,11 +295,11 @@ function test_start()
     // instead a user specific value is created
     // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
     $usr1 = new user_dsp;
-    $usr1->id = TEST_USER_ID;
+    $usr1->name = TEST_USER_NAME;
     $usr1->load_test_user();
 
     $usr2 = new user_dsp;
-    $usr2->id = TEST_USER_ID2;
+    $usr2->name = TEST_USER_PARTNER_NAME;
     $usr2->load_test_user();
 
     // init the times to be able to detect potential timeouts

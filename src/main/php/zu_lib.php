@@ -603,21 +603,41 @@ function log_fatal($msg_text, $function_name, $msg_description = '', $function_t
     return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, sys_log_level::FATAL, $function_name, $function_trace, $usr);
 }
 
-function prg_start($code_name, $style = ""): sql_db
-{
-    // resume session (based on cookies)
-    session_start();
-
-    $db_con = prg_restart($code_name, $style);
-    return $db_con;
-}
-
-// should be call from all code that can be accessed by an url
-// return null if the db connection fails or the db is not compatible
-function prg_restart($code_name, $style = ""): sql_db
+/**
+ * should be called from all code that can be accessed by an url
+ * return null if the db connection fails or the db is not compatible
+ *
+ * @param string $code_name the place that is displayed to the user e.g. add word
+ * @param string $style the display style used to show the place
+ * @return sql_db the open database connection
+ */
+function prg_start(string $code_name, string $style = ""): sql_db
 {
     global $sys_time_start, $sys_script;
 
+    // resume session (based on cookies)
+    session_start();
+
+    log_debug($code_name . ' ...');
+
+    $sys_time_start = time();
+    $sys_script = $code_name;
+
+    log_debug($code_name . ' ... session_start');
+
+    // html header
+    echo dsp_header("", $style);
+
+    return prg_restart($code_name, $style);
+}
+
+/**
+ * open the database connection and load the base cache
+ * @param string $code_name the place that is displayed to the user e.g. add word
+ * @return sql_db the open database connection
+ */
+function prg_restart(string $code_name): sql_db
+{
     global $system_users;
     global $user_profiles;
     global $word_types;
@@ -634,22 +654,12 @@ function prg_restart($code_name, $style = ""): sql_db
     global $job_types;
     global $change_log_tables;
 
-    log_debug($code_name . ' ...');
-
-    $sys_time_start = time();
-    $sys_script = $code_name;
-
-    log_debug($code_name . ' ... session_start');
-
     // link to database
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
     log_debug($code_name . ' ... db set');
     $db_con->open();
     log_debug($code_name . ' ... database link open');
-
-    // html header
-    echo dsp_header("", $style);
 
     // check the system setup
     $result = db_check($db_con);

@@ -48,7 +48,7 @@ class user
 
     // list of the system users that have a coded functionality
     const SYSTEM = "system";
-    const SYSTEM_TEST = "system_test";
+    const SYSTEM_TEST = "test";
 
     // database fields
     public ?int $id = null;               // the database id of the word link type (verb)
@@ -103,9 +103,32 @@ class user
 
     }
 
-    function row_mapper()
+    function row_mapper($db_usr): bool
     {
-
+        $result = false;
+        if ($db_usr == false) {
+            $this->id = 0;
+        } else {
+            if ($db_usr['user_id'] <= 0) {
+                $this->id = 0;
+            } else {
+                $this->id = $db_usr['user_id'];
+                $this->code_id = $db_usr[sql_db::FLD_CODE_ID];
+                $this->name = $db_usr['user_name'];
+                $this->ip_addr = $db_usr['ip_address'];
+                $this->email = $db_usr['email'];
+                $this->first_name = $db_usr['first_name'];
+                $this->last_name = $db_usr['last_name'];
+                $this->wrd_id = $db_usr['last_word_id'];
+                $this->source_id = $db_usr['source_id'];
+                $this->profile_id = $db_usr['user_profile_id'];
+                $this->dec_point = DEFAULT_DEC_POINT;
+                $this->thousand_sep = DEFAULT_THOUSAND_SEP;
+                $result = true;
+                log_debug('user->row_mapper (' . $this->name . ')');
+            }
+        }
+        return $result;
     }
 
     //
@@ -150,35 +173,14 @@ class user
         return $db_usr;
     }
 
-    // load the missing user parameters from the database
-    // private because the loading should be done via the get method
+    /**
+     * load the missing user parameters from the database
+     * private because the loading should be done via the get method
+     */
     private function load(): bool
     {
-        $result = false;
         $db_usr = $this->load_db();
-        if ($db_usr == false) {
-            $this->id = 0;
-        } else {
-            if ($db_usr['user_id'] <= 0) {
-                $this->id = 0;
-            } else {
-                $this->id = $db_usr['user_id'];
-                $this->code_id = $db_usr[sql_db::FLD_CODE_ID];
-                $this->name = $db_usr['user_name'];
-                $this->ip_addr = $db_usr['ip_address'];
-                $this->email = $db_usr['email'];
-                $this->first_name = $db_usr['first_name'];
-                $this->last_name = $db_usr['last_name'];
-                $this->wrd_id = $db_usr['last_word_id'];
-                $this->source_id = $db_usr['source_id'];
-                $this->profile_id = $db_usr['user_profile_id'];
-                $this->dec_point = DEFAULT_DEC_POINT;
-                $this->thousand_sep = DEFAULT_THOUSAND_SEP;
-                $result = true;
-            }
-            log_debug('user->load (' . $this->name . ')');
-        }
-        return $result;
+        return $this->row_mapper($db_usr);
     }
 
     // special function to exposed the user loading for simulating test users for the automatic system test
@@ -188,20 +190,19 @@ class user
         return $this->load();
     }
 
-    function has_any_user_this_profile(string $profile_code_id): bool
+    function load_user_by_profile(string $profile_code_id): bool
     {
         global $db_con;
         $profile_id = cl(db_cl::USER_PROFILE, $profile_code_id);
 
-        $result = false;
-        $sql = "SELECT user_id FROM users WHERE user_profile_id = " . $profile_id . ";";
+        $sql = "SELECT * FROM users WHERE user_profile_id = " . $profile_id . ";";
         $db_usr = $db_con->get1($sql);
-        if ($db_usr != false) {
-            if ($db_usr['user_id'] > 0) {
-                $result = true;
-            }
-        }
-        return $result;
+        return $this->row_mapper($db_usr);
+    }
+
+    function has_any_user_this_profile(string $profile_code_id): bool
+    {
+        return $this->load_user_by_profile($profile_code_id);
     }
 
     private function ip_in_range($ip_addr, $min, $max): bool
@@ -402,7 +403,8 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
+        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
+            or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -417,7 +419,9 @@ class user
         if (!isset($this->profile_id)) {
             $this->load();
         }
-        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
+        if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
+            or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
+            or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
             $result = true;
         }
         return $result;

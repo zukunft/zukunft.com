@@ -849,7 +849,7 @@ class user_sandbox
         global $usr;
 
         $result = '';
-        if (!$usr->is_admin()) {
+        if (!$usr->is_system()) {
             if ($this->obj_type == user_sandbox::TYPE_NAMED) {
                 if ($this->obj_name == DB_TYPE_WORD) {
                     if (in_array($this->name, word::RESERVED_WORDS)) {

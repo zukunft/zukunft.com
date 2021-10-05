@@ -12,6 +12,11 @@
       "name": "zukunft.com system test",
       "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "profile": "test"
+    },
+    {
+      "name": "zukunft.com system test partner",
+      "description": "another internal zukunft.com user used for user sandbox integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+      "profile": "test"
     }
   ]
 }
