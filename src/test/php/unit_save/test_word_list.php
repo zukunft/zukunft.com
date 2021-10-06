@@ -247,7 +247,7 @@ function run_word_list_test()
     $del_wrd_lst->load();
     $wrd_lst->diff($del_wrd_lst);
     $result = $wrd_lst->names();
-    $target = array();
+    $target = array("April","December","February","January","March","November","October","September");
     test_dsp('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_DB);
 
 }
