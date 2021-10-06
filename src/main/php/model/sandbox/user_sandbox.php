@@ -853,7 +853,12 @@ class user_sandbox
             if ($this->obj_type == user_sandbox::TYPE_NAMED) {
                 if ($this->obj_name == DB_TYPE_WORD) {
                     if (in_array($this->name, word::RESERVED_WORDS)) {
-                        $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
+                        // the admin user needs to add the read test word during initial load
+                        if ($usr->is_admin() and $this->name == word::TN_READ) {
+                            $result = '';
+                        } else {
+                            $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
+                        }
                     }
                 }
             }
