@@ -244,8 +244,8 @@ class user_sandbox
       }
 
       //$db_con = New mysql;
-      $db_con->usr_id = $this->usr->id;
       $db_con->set_type($this->obj_name);
+      $db_con->set_usr($this->usr->id);
 
       if ($correct === True) {
         // set the default owner for all records with a missing owner
@@ -396,7 +396,7 @@ class user_sandbox
 
         $user_id = 0;
         $db_con->set_type($this->obj_name);
-        $db_con->usr_id = $this->usr->id;
+        $db_con->set_usr($this->usr->id);
         $sql = $this->changer_sql($db_con);
         $db_row = $db_con->get1($sql);
         if ($db_row != false) {
@@ -863,6 +863,10 @@ class user_sandbox
                             $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
                         }
                     }
+                } elseif ($this->obj_name == DB_TYPE_PHRASE) {
+                    if (in_array($this->name, phrase::RESERVED_PHRASES)) {
+                        $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
+                    }
                 }
             }
         }
@@ -927,6 +931,7 @@ class user_sandbox
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
                     $db_con->set_type($this->obj_name);
+                    $db_con->set_usr($this->usr->id);
                     if (!$db_con->update($this->id, $log->field, $new_value)) {
                         $result = 'update of ' . $log->field . ' to ' . $new_value . ' failed';
                     }
@@ -976,6 +981,7 @@ class user_sandbox
             // similar to $this->save_field_do
             if ($this->can_change()) {
                 $db_con->set_type($this->obj_name);
+                $db_con->set_usr($this->usr->id);
                 if (!$db_con->update($this->id, $log->field, $new_value)) {
                     $result .= 'excluding of ' . $this->obj_name . ' failed';
                 }
@@ -987,6 +993,7 @@ class user_sandbox
                 }
                 if ($result == '') {
                     $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->usr->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update($this->id, $log->field, Null)) {
                             $result .= 'include of ' . $this->obj_name . ' for user failed';
@@ -1039,6 +1046,7 @@ class user_sandbox
                 }
                 if ($result == '') {
                     $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                    $db_con->set_usr($this->usr->id);
                     if (!$db_con->update($this->id, $log->field, $new_value)) {
                         $result = 'setting of share type failed';
                     }
@@ -1108,6 +1116,7 @@ class user_sandbox
             if ($log->add()) {
                 if ($this->obj_type == user_sandbox::TYPE_NAMED) {
                     $db_con->set_type($this->obj_name);
+                    $db_con->set_usr($this->usr->id);
                     if (!$db_con->update($this->id,
                         array($this->obj_name . '_name'),
                         array($this->name))) {
@@ -1115,6 +1124,7 @@ class user_sandbox
                     }
                 } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
                     $db_con->set_type($this->obj_name);
+                    $db_con->set_usr($this->usr->id);
                     if (!$db_con->update($this->id,
                         array($this->from_name . '_id', $this->from_name . '_id'),
                         array($this->fob->id, $this->tob->id))) {
@@ -1248,6 +1258,7 @@ class user_sandbox
             // insert the new object and save the object key
             // TODO check that always before a db action is called the db type is set correctly
             $db_con->set_type($this->obj_name);
+            $db_con->set_usr($this->usr->id);
             if ($this->obj_type == user_sandbox::TYPE_NAMED) {
                 $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->usr->id));
             } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
@@ -1577,6 +1588,7 @@ class user_sandbox
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_type($this->obj_name);
+                            $db_con->set_usr($this->usr->id);
                         }
                     }
 
@@ -1649,12 +1661,14 @@ class user_sandbox
                 // and the corresponding formula elements
                 if ($result) {
                     $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
+                    $db_con->set_usr($this->usr->id);
                     $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
                 }
 
                 // and the corresponding word name
                 if ($result) {
                     $db_con->set_type(DB_TYPE_WORD);
+                    $db_con->set_usr($this->usr->id);
                     $result = $db_con->delete(DB_TYPE_WORD . DB_FIELD_EXT_NAME, $this->name);
                 }
             }
@@ -1662,13 +1676,15 @@ class user_sandbox
             // delete first all user configuration that have also been excluded
             if ($result) {
                 $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+                $db_con->set_usr($this->usr->id);
                 $result = $db_con->delete(
                     array($this->obj_name . DB_FIELD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
             }
             if ($result) {
-                // finally delete the object
+                // finally, delete the object
                 $db_con->set_type($this->obj_name);
+                $db_con->set_usr($this->usr->id);
                 $result = $db_con->delete($this->obj_name . '_id', $this->id);
                 log_debug($this->obj_name . '->del_exe of ' . $this->dsp_id() . ' done');
             } else {

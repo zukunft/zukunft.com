@@ -48,9 +48,6 @@ function run_word_link_test()
     $wrd_city = load_word(word::TN_CITY_AS_CATEGORY);
     $wrd_canton = load_word(word::TN_CANTON);
 
-    // test the City of Zurich
-    $lnk_city = test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, false, TP_ZH_CITY);
-
     // ... now test the Canton Zurich
     $lnk_canton = new word_link;
     $lnk_canton->from->id = $wrd_zh->id;
@@ -58,12 +55,12 @@ function run_word_link_test()
     $lnk_canton->to->id = $wrd_canton->id;
     $lnk_canton->usr = $usr1;
     $lnk_canton->load();
-    $target = word::TN_ZH . ' (Canton)';
+    $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
     $result = $lnk_canton->name;
     test_dsp('triple->load for Canton Zurich', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... now test the Canton Zurich using the name function
-    $target = word::TN_ZH . ' (Canton)';
+    $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
     $result = $lnk_canton->name();
     test_dsp('triple->load for Canton Zurich using the function', $target, $result);
 
@@ -74,14 +71,14 @@ function run_word_link_test()
     $lnk_company->to->id = $wrd_company->id;
     $lnk_company->usr = $usr1;
     $lnk_company->load();
-    $target = TP_ZH_INS;
+    $target = phrase::TN_ZH_COMPANY;
     $result = $lnk_company->name;
-    test_dsp('triple->load for ' . TP_ZH_INS . '', $target, $result);
+    test_dsp('triple->load for ' . phrase::TN_ZH_COMPANY . '', $target, $result);
 
     // ... now test the Insurance Zurich using the name function
-    $target = TP_ZH_INS;
+    $target = phrase::TN_ZH_COMPANY;
     $result = $lnk_company->name();
-    test_dsp('triple->load for ' . TP_ZH_INS . ' using the function', $target, $result);
+    test_dsp('triple->load for ' . phrase::TN_ZH_COMPANY . ' using the function', $target, $result);
 
     // link the added word to the test word
     $wrd_added = load_word(word::TN_RENAMED);
@@ -96,7 +93,7 @@ function run_word_link_test()
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
     $result = $lnk->save();
-    $target = '11';
+    $target = '';
     test_dsp('triple->save "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     echo "... and also testing the user log link class (classes/user_log_link.php)<br>";
@@ -109,7 +106,7 @@ function run_word_link_test()
     $log->new_to_id = $wrd->id;
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job linked ' . word::TN_RENAMED . ' to ' . TEST_WORD . '';
+    $target = 'zukunft.com system test linked ' . word::TN_RENAMED . ' to ' . TEST_WORD . '';
     test_dsp('triple->save logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result);
 
     // ... check if the link is shown correctly
@@ -144,7 +141,7 @@ function run_word_link_test()
     $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->del();
-    $target = '111';
+    $target = true;
     test_dsp('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" by user "' . $usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
@@ -155,7 +152,7 @@ function run_word_link_test()
     $log->old_to_id = $wrd->id;
     $log->usr = $usr2;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
+    $target = 'zukunft.com system test partner unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
     test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr2->name . '"', $target, $result);
 
 
@@ -195,7 +192,7 @@ function run_word_link_test()
     $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->del();
-    $target = '11';
+    $target = true;
     test_dsp('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
@@ -206,7 +203,7 @@ function run_word_link_test()
     $log->old_to_id = $wrd->id;
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
+    $target = 'zukunft.com system test unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
     test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr1->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users

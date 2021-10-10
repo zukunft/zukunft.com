@@ -148,7 +148,7 @@ function run_word_display_test()
     $sel->selected = $phr_ABB->id;
     $sel->dummy_text = '... please select';
     $result .= $sel->display();
-    $target = TP_ZH_INS;
+    $target = phrase::TN_ZH_COMPANY;
     test_dsp_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $wrd_ZH->name . ' selected', $target, $result);
 
 }

@@ -208,9 +208,6 @@ const TW_BALANCE = "balance sheet";
 const TW_CANTON = "Canton";
 
 // some test phrases used for testing
-const TP_ZH_CANTON = "System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)";
-const TP_ZH_CITY = "System Test Word Member e.g. Zurich (System Test Word Another Category e.g. City)";
-const TP_ZH_INS = "Zurich Insurance";
 const TP_ABB = "ABB (Company)";
 const TP_FOLLOW = "2014 is follower of 2013";
 const TP_TAXES = "Income taxes is part of cash flow statement";

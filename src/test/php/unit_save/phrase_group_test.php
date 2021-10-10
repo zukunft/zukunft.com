@@ -101,7 +101,7 @@ function run_phrase_group_test()
     // test names
     $result = implode(",", $zh_ins_grp->names());
     $target = 'million,CHF,Sales,Zurich Insurance';  // fix the issue after the libraries are excluded
-    //$target = 'million,CHF,Sales,'.TP_ZH_INS.'';
+    //$target = 'million,CHF,Sales,'.phrase::TN_ZH_COMPANY.'';
     test_dsp('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated

@@ -35,6 +35,7 @@ class formula_link extends user_sandbox
     // database fields additional to the user sandbox fields
     public ?int $formula_id = null;   // the id of the formula to which the word or triple should be linked
     public ?int $phrase_id = null;    // the id of the linked word or triple
+    public ?int $order_nbr = null;    // to set the priority of the formula links
 
     public ?int $link_type_id = null; // define a special behavior for this link (maybe not needed at the moment)
     public ?string $link_name = null; // ???

@@ -58,7 +58,7 @@ function run_phrase_list_test()
     $phr_lst->usr = $usr;
     $phr_lst->ids = $id_lst;
     $phr_lst->load();
-    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . TP_ZH_INS . '"';
+    $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . phrase::TN_ZH_COMPANY . '"';
     $result = $phr_lst->name();
     test_dsp('phrase->load via id', $target, $result);
 

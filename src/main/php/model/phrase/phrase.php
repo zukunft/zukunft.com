@@ -34,11 +34,17 @@
 
 class phrase
 {
+    // persevered word names for unit and integration tests
+    const TN_ZH_CANTON = "System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)"; // for testing the generic name creation
+    const TN_ZH_CITY = "System Test Phrase: Zurich (City)"; // to test the named phrase
+    const TN_ZH_COMPANY = "System Test Phrase: Zurich Insurance";
+    const RESERVED_PHRASES = array(self::TN_ZH_CANTON, self::TN_ZH_CITY, self::TN_ZH_COMPANY);
 
+    // database duplicate fields
     public ?int $id = null;            // if positive the database id of the word or if negative of a triple
     public ?user $usr = null;          // the person for whom the word is loaded, so to say the viewer
     public ?string $name = null;       // simply the word or triple name to reduce the number of "->" on the code
-    public string $description = '';  // simply the word or triple description to reduce the number of "->" on the code
+    public string $description = '';   // simply the word or triple description to reduce the number of "->" on the code
     public ?object $obj = null;        // if loaded the linked word or triple object
 
     // in memory only fields

@@ -29,9 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function create_base_phrases()
 {
     echo "<h2>Check if all base phrases are correct</h2><br>";
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, TP_ZH_CANTON);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, TP_ZH_CITY);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY_AS_CATEGORY, TP_ZH_INS, TP_ZH_INS);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY_AS_CATEGORY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
     test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
@@ -39,7 +39,7 @@ function create_base_phrases()
     echo "<br><br>";
 
     echo "<h2>Check if all base phrases are correct</h2><br>";
-    test_phrase(TP_ZH_INS);
+    test_phrase(phrase::TN_ZH_COMPANY);
     echo "<br><br>";
 }
 
@@ -99,11 +99,11 @@ function run_phrase_test()
     $phr->usr = $usr;
     $phr->load();
     $result = $phr->name;
-    $target = TP_ZH_INS;
+    $target = phrase::TN_ZH_COMPANY;
     test_dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?link=313" title="' . TP_ZH_INS . '">' . TP_ZH_INS . '</a> </td> ';
+    $target = ' <td> <a href="/http/view.php?link=313" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a> </td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     // to overwrite any special char
@@ -122,8 +122,8 @@ function run_phrase_test()
     $phr->usr = $usr;
     $phr->load();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
-    $target = TP_ZH_INS;
-    test_dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . TP_ZH_INS . ' selected contains ' . TP_ZH_INS . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $target = phrase::TN_ZH_COMPANY;
+    test_dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
     $wrd_ABB = new word_dsp;
@@ -136,8 +136,8 @@ function run_phrase_test()
     $wrd_company->usr = $usr;
     $wrd_company->load();
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
-    $target = TP_ZH_INS;
-    test_dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . TP_ZH_INS . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $target = phrase::TN_ZH_COMPANY;
+    test_dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test getting the parent for phrase Vestas
     $phr = load_phrase(TW_VESTAS);

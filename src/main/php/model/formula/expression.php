@@ -596,10 +596,15 @@ class expression
 
                 // find the next word
                 $start = strlen($left) + strlen($db_sym);
-                log_debug('expression->get_ref_part -> start "' . $start . '"');
-                $pos = strpos($result, ZUP_CHAR_WORD, $start);
-                log_debug('expression->get_ref_part -> pos "' . $pos . '"');
-                $end = strpos($result, ZUP_CHAR_WORD, $pos + 1);
+                $end = false;
+                if ($start < strlen($result)) {
+                    log_debug('expression->get_ref_part -> start "' . $start . '"');
+                    $pos = strpos($result, ZUP_CHAR_WORD, $start);
+                    if ($pos !== false) {
+                        log_debug('expression->get_ref_part -> pos "' . $pos . '"');
+                        $end = strpos($result, ZUP_CHAR_WORD, $pos + 1);
+                    }
+                }
             }
 
             log_debug('expression->get_ref_part -> done "' . $result . '"');

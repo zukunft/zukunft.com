@@ -141,100 +141,100 @@ class word_link extends word_link_object
         $this->check_order();
 
         // load word from
-        if (!isset($this->from) and $this->from->id <> 0 and !is_null($this->usr->id)) {
-            if ($this->from->id > 0) {
-                $wrd = new word_dsp;
-                $wrd->id = $this->from->id;
-                $wrd->usr = $this->usr;
-                $wrd->load();
-                if ($wrd->name <> '') {
-                    $this->from = $wrd->phrase();
-                    $this->from->name = $wrd->name;
-                } else {
-                    log_err('Failed to load first word of phrase ' . $this->dsp_id());
-                    $result = false;
-                }
-            } elseif ($this->from->id < 0) {
-                $lnk = new word_link;
-                $lnk->id = $this->from->id * -1;
-                $lnk->usr = $this->usr;
-                $lnk->load();
-                if ($lnk->id > 0) {
-                    $this->from = $lnk->phrase();
-                    $this->from->name = $lnk->name();
-                } else {
-                    log_err('Failed to load first phrase of phrase ' . $this->dsp_id());
-                    $result = false;
-                }
-            } else {
-                // if type is not (yet) set, create a dummy object to enable the selection
-                $phr = new phrase;
-                $phr->usr = $this->usr;
-                $this->from = $phr;
-            }
-            log_debug('word_link->load_objects -> from ' . $this->from->name);
+        if (!isset($this->from)) {
+            log_err("The word (" . $this->from->id . ") must be set before it can be loaded.", "word_link->load_objects");
         } else {
-            if (!isset($this->from)) {
-                log_err("The word (" . $this->from->id . ") must be set before it can be loaded.", "word_link->load_objects");
+            if ($this->from->id <> 0 and !is_null($this->usr->id)) {
+                if ($this->from->id > 0) {
+                    $wrd = new word_dsp;
+                    $wrd->id = $this->from->id;
+                    $wrd->usr = $this->usr;
+                    $wrd->load();
+                    if ($wrd->name <> '') {
+                        $this->from = $wrd->phrase();
+                        $this->from->name = $wrd->name;
+                    } else {
+                        log_err('Failed to load first word of phrase ' . $this->dsp_id());
+                        $result = false;
+                    }
+                } elseif ($this->from->id < 0) {
+                    $lnk = new word_link;
+                    $lnk->id = $this->from->id * -1;
+                    $lnk->usr = $this->usr;
+                    $lnk->load();
+                    if ($lnk->id > 0) {
+                        $this->from = $lnk->phrase();
+                        $this->from->name = $lnk->name();
+                    } else {
+                        log_err('Failed to load first phrase of phrase ' . $this->dsp_id());
+                        $result = false;
+                    }
+                } else {
+                    // if type is not (yet) set, create a dummy object to enable the selection
+                    $phr = new phrase;
+                    $phr->usr = $this->usr;
+                    $this->from = $phr;
+                }
+                log_debug('word_link->load_objects -> from ' . $this->from->name);
             }
         }
 
         // load verb
-        if (!isset($this->verb) and $this->verb->id <> 0 and !is_null($this->usr->id)) {
-            $vrb = new verb;
-            $vrb->id = $this->verb->id;
-            $vrb->usr = $this->usr;
-            $vrb->load();
-            $this->verb = $vrb;
-            $this->verb->name = $vrb->name;
-            log_debug('word_link->load_objects -> verb ' . $this->verb->name);
+        if (!isset($this->verb)) {
+            log_err("The verb (" . $this->verb->id . ") must be set before it can be loaded.", "word_link->load_objects");
         } else {
-            if (!isset($this->verb)) {
-                log_err("The verb (" . $this->verb->id . ") must be set before it can be loaded.", "word_link->load_objects");
+            if ($this->verb->id <> 0 and !is_null($this->usr->id)) {
+                $vrb = new verb;
+                $vrb->id = $this->verb->id;
+                $vrb->usr = $this->usr;
+                $vrb->load();
+                $this->verb = $vrb;
+                $this->verb->name = $vrb->name;
+                log_debug('word_link->load_objects -> verb ' . $this->verb->name);
             }
         }
 
         // load word to
-        if (!isset($this->to) and $this->to->id <> 0 and !is_null($this->usr->id)) {
-            if ($this->to->id > 0) {
+        if (!isset($this->to)) {
+            if ($this->to->id == 0) {
+                // set a dummy word
                 $wrd_to = new word_dsp;
-                $wrd_to->id = $this->to->id;
                 $wrd_to->usr = $this->usr;
-                $wrd_to->load();
-                if ($wrd_to->name <> '') {
-                    $this->to = $wrd_to->phrase();
-                    $this->to->name = $wrd_to->name;
-                } else {
-                    log_err('Failed to load second word of phrase ' . $this->dsp_id());
-                    $result = false;
-                }
-            } elseif ($this->to->id < 0) {
-                $lnk = new word_link;
-                $lnk->id = $this->to->id * -1;
-                $lnk->usr = $this->usr;
-                $lnk->load();
-                if ($lnk->id > 0) {
-                    $this->to = $lnk->phrase();
-                    $this->to->name = $lnk->name();
-                } else {
-                    log_err('Failed to load second phrase of phrase ' . $this->dsp_id());
-                    $result = false;
-                }
-            } else {
-                // if type is not (yet) set, create a dummy object to enable the selection
-                $phr_to = new phrase;
-                $phr_to->usr = $this->usr;
-                $this->to = $phr_to;
+                $this->to = $wrd_to->phrase();
             }
-            log_debug('word_link->load_objects -> to ' . $this->to->name);
         } else {
-            if (!isset($this->to)) {
-                if ($this->to->id == 0) {
-                    // set a dummy word
+            if ($this->to->id <> 0 and !is_null($this->usr->id)) {
+                if ($this->to->id > 0) {
                     $wrd_to = new word_dsp;
+                    $wrd_to->id = $this->to->id;
                     $wrd_to->usr = $this->usr;
-                    $this->to = $wrd_to->phrase();
+                    $wrd_to->load();
+                    if ($wrd_to->name <> '') {
+                        $this->to = $wrd_to->phrase();
+                        $this->to->name = $wrd_to->name;
+                    } else {
+                        log_err('Failed to load second word of phrase ' . $this->dsp_id());
+                        $result = false;
+                    }
+                } elseif ($this->to->id < 0) {
+                    $lnk = new word_link;
+                    $lnk->id = $this->to->id * -1;
+                    $lnk->usr = $this->usr;
+                    $lnk->load();
+                    if ($lnk->id > 0) {
+                        $this->to = $lnk->phrase();
+                        $this->to->name = $lnk->name();
+                    } else {
+                        log_err('Failed to load second phrase of phrase ' . $this->dsp_id());
+                        $result = false;
+                    }
+                } else {
+                    // if type is not (yet) set, create a dummy object to enable the selection
+                    $phr_to = new phrase;
+                    $phr_to->usr = $this->usr;
+                    $this->to = $phr_to;
                 }
+                log_debug('word_link->load_objects -> to ' . $this->to->name);
             }
         }
         return $result;
@@ -243,7 +243,8 @@ class word_link extends word_link_object
     /**
      * @return true if no link objects is missing
      */
-    private function has_objects(): bool
+    private
+    function has_objects(): bool
     {
         $result = true;
         if ($this->from == null) {
@@ -479,7 +480,8 @@ class word_link extends word_link_object
      * @param bool $do_save to switch off saving for unit testing
      * @return phrase the created phrase object
      */
-    private function import_phrase(string $name, bool $do_save = true): phrase
+    private
+    function import_phrase(string $name, bool $do_save = true): phrase
     {
         global $word_types;
 
@@ -647,7 +649,8 @@ class word_link extends word_link_object
      * display one link to the user by returning the HTML code for the link to the calling function
      * TODO include the user sandbox in the selection
      */
-    private function dsp(): string
+    private
+    function dsp(): string
     {
         log_debug("word_link->dsp " . $this->id . ".");
 
@@ -667,7 +670,8 @@ class word_link extends word_link_object
     /**
      * similar to dsp, but display the reverse expression
      */
-    private function dsp_r(): string
+    private
+    function dsp_r(): string
     {
         log_debug("word_link->dsp_r " . $this->id . ".");
 
@@ -1064,19 +1068,16 @@ class word_link extends word_link_object
     /**
      * set the update parameters for the phrase link name
      */
-    private function save_field_name($db_con, $db_rec, $std_rec): string
+    private
+    function save_field_name($db_con, $db_rec, $std_rec): string
     {
         $result = '';
 
         // the name field is a generic created field, so update it before saving
-        $db_rec->name = $db_rec->name();
+        // the generic name of $this is saved to the database for faster uniqueness check (TODO to be checked if this is really faster)
         $this->name = $this->name();
-        $std_rec->name = $std_rec->name();
 
         if ($db_rec->name <> $this->name) {
-            if ($this->name == '') {
-                $this->name = null;
-            }
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->name;
             $log->new_value = $this->name;
@@ -1239,7 +1240,7 @@ class word_link extends word_link_object
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
-                    $result .='Updating the reference in the log failed';
+                    $result .= 'Updating the reference in the log failed';
                     // TODO do rollback or retry?
                 } else {
 

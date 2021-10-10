@@ -57,7 +57,7 @@ function run_phrase_group_list_test () {
   // Zurich Insurance taxes
   $phr_lst = New phrase_list;
   $phr_lst->usr = $usr;
-  $phr_lst->add_name(TP_ZH_INS);
+  $phr_lst->add_name(phrase::TN_ZH_COMPANY);
   $phr_lst->add_name(TW_TAX);
   $phr_lst->add_name(TW_CHF);
   $phr_lst->add_name(TW_MIO);
@@ -82,7 +82,7 @@ function run_phrase_group_list_test () {
   $grp_lst->add($zh_grp);
   $grp_lst->add($ins_grp);
   $result = $grp_lst->name();
-  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.word::TN_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.TP_ZH_INS.'';
+  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.word::TN_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.phrase::TN_ZH_COMPANY.'';
   test_dsp('phrase_group_list->add of '.$zh_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$ins_grp->dsp_id(), $target, $result);
 
 

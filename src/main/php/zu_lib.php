@@ -772,8 +772,13 @@ function prg_end($db_con)
         }
         $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
         //$db_con->insert();
-        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . sf($_SERVER['REQUEST_URI']) . ");";
-        $db_con->exe($sql, sys_log_level::FATAL, "zu_end", (new Exception)->getTraceAsString());
+        if (in_array('REQUEST_URI', $_SERVER)) {
+            $calling_uri = $_SERVER['REQUEST_URI'];
+        } else {
+            $calling_uri = 'localhost';
+        }
+        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . sf($calling_uri) . ");";
+        $db_con->exe($sql);
     }
 
     // Free result test
