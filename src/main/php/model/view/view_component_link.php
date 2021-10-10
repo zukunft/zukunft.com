@@ -552,9 +552,9 @@ class view_component_link extends user_sandbox
 
     // set the update parameters for the view component order_nbr
     private
-    function save_field_order_nbr($db_con, $db_rec, $std_rec): bool
+    function save_field_order_nbr($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->order_nbr <> $this->order_nbr) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->order_nbr;
@@ -562,15 +562,15 @@ class view_component_link extends user_sandbox
             $log->std_value = $std_rec->order_nbr;
             $log->row_id = $this->id;
             $log->field = 'order_nbr';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->pos_type_id <> $this->pos_type_id) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->pos_type_name();
@@ -581,21 +581,17 @@ class view_component_link extends user_sandbox
             $log->std_id = $std_rec->pos_type_id;
             $log->row_id = $this->id;
             $log->field = 'position_type';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('view_component_link->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

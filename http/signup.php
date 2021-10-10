@@ -87,7 +87,7 @@ if (isset($_POST['submit'])) {
         $db_con->set_usr(SYSTEM_USER_ID);
         $log_id = $db_con->insert(array('user_name', 'email', 'password'), array($usr_name, $usr_email, $pw_hash));
         if ($log_id <= 0) {
-            log_err('Insert of user ' . $usr_name . ' with email ' . $usr_email . ' failed.');
+            log_err('Insert of user ' . $usr_name . ' with email ' . $usr_email . ' failed.', 'signup');
         }
         /*
         $sql = sprintf("INSERT INTO users (`user_name`,`email`,`password`)

@@ -5,6 +5,9 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
+TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
+TODO if a formula is supposed to be created with the same name of a phrase suggest to add (formula) at the end
+TODO create a test case where one user has created a word and another user has created a formula with the same name
 TODO all save and import functions should return an empty string, if everything is fine and otherwise the error message that should be shown to the user
 TODO in load_standard the user id of db_con does not need to be set -> remove it
 TODO create json config files for the default and system views
@@ -46,6 +49,7 @@ TODO for the registration mask first preselect the country based on the geolocat
 TODO in the user registration mask allow to add places and streets on the fly and show a link to add missing street on open street map
 TODO use the object constructor if useful
 TODO capsule all critical functions in classes for security reason, to make sure that they never call be called without check e.g. database reset
+TODO to speed up create one database statement for each user action if possible
 
 
 TODO creste a table startup page with a

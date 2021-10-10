@@ -438,9 +438,9 @@ class verb
     }
 
     // actually update a formula field in the main database record or the user sandbox
-    private function save_field_do($db_con, $log): bool
+    private function save_field_do($db_con, $log): string
     {
-        $result = true;
+        $result = '';
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
             $std_value = $log->std_id;
@@ -451,7 +451,10 @@ class verb
         if ($log->add()) {
             if ($this->can_change()) {
                 $db_con->set_type(DB_TYPE_VERB);
-                $result .= $db_con->update($this->id, $log->field, $new_value);
+                if (!$db_con->update($this->id, $log->field, $new_value)) {
+                    $result .= 'updating ' . $log->field . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
+                }
+
             } else {
                 // todo: create a new verb and request to delete the old
             }
@@ -459,9 +462,9 @@ class verb
         return $result;
     }
 
-    private function save_field_code_id($db_con, $db_rec): bool
+    private function save_field_code_id($db_con, $db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->name <> $this->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
@@ -469,16 +472,16 @@ class verb
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id;
             $log->field = 'code_id';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
 
     // set the update parameters for the verb name
-    private function save_field_name($db_con, $db_rec): bool
+    private function save_field_name($db_con, $db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->name <> $this->name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->name;
@@ -486,15 +489,15 @@ class verb
             $log->std_value = $db_rec->name;
             $log->row_id = $this->id;
             $log->field = 'verb_name';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the verb plural
-    private function save_field_plural($db_con, $db_rec): bool
+    private function save_field_plural($db_con, $db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->plural <> $this->plural) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->plural;
@@ -502,15 +505,15 @@ class verb
             $log->std_value = $db_rec->plural;
             $log->row_id = $this->id;
             $log->field = 'name_plural';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the verb reverse
-    private function save_field_reverse($db_con, $db_rec): bool
+    private function save_field_reverse($db_con, $db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->reverse <> $this->reverse) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->reverse;
@@ -518,15 +521,15 @@ class verb
             $log->std_value = $db_rec->reverse;
             $log->row_id = $this->id;
             $log->field = 'name_reverse';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the verb rev_plural
-    private function save_field_rev_plural($db_con, $db_rec): bool
+    private function save_field_rev_plural($db_con, $db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->rev_plural <> $this->rev_plural) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->rev_plural;
@@ -534,15 +537,15 @@ class verb
             $log->std_value = $db_rec->rev_plural;
             $log->row_id = $this->id;
             $log->field = 'name_plural_reverse';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // set the update parameters for the verb description
-    private function save_field_description($db_con, $db_rec): bool
+    private function save_field_description($db_con, $db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->description <> $this->description) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->description;
@@ -550,27 +553,19 @@ class verb
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id;
             $log->field = sql_db::FLD_DESCRIPTION;
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // save all updated verb fields excluding the name, because already done when adding a verb
-    private function save_fields($db_con, $db_rec): bool
+    private function save_fields($db_con, $db_rec): string
     {
         $result = $this->save_field_code_id($db_con, $db_rec);
-        if ($result) {
-            $result = $this->save_field_plural($db_con, $db_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_reverse($db_con, $db_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_rev_plural($db_con, $db_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_description($db_con, $db_rec);
-        }
+        $result .= $this->save_field_plural($db_con, $db_rec);
+        $result .= $this->save_field_reverse($db_con, $db_rec);
+        $result .= $this->save_field_rev_plural($db_con, $db_rec);
+        $result .= $this->save_field_description($db_con, $db_rec);
         log_debug('verb->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
@@ -630,10 +625,10 @@ class verb
     }
 
     // create a new verb
-    private function add($db_con): int
+    private function add($db_con): string
     {
         log_debug('verb->add the verb ' . $this->dsp_id());
-        $result = 0;
+        $result = '';
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -644,7 +639,7 @@ class verb
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
-                    log_err('Updating the reference in the log failed');
+                    $result .= 'Updating the reference in the log failed';
                     // TODO do rollback or retry?
                 } else {
 
@@ -653,13 +648,11 @@ class verb
                     $db_rec->name = $this->name;
                     $db_rec->usr = $this->usr;
                     // save the verb fields
-                    if ($this->save_fields($db_con, $db_rec)) {
-                        $result = $this->id;
-                    }
+                    $result .= $this->save_fields($db_con, $db_rec);
                 }
 
             } else {
-                log_err("Adding verb " . $this->name . " failed.", "verb->save");
+                $result .= "Adding verb " . $this->name . " failed.";
             }
         }
 
@@ -725,11 +718,12 @@ class verb
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             if ($result == '') {
-                if (!$this->save_fields($db_con, $db_rec)) {
-                    $result = 'Saving of fields for a verb failed';
-                    log_err($result);
-                }
+                $result = $this->save_fields($db_con, $db_rec);
             }
+        }
+
+        if ($result != '') {
+            log_err($result);
         }
 
         return $result;

@@ -489,9 +489,9 @@ class source extends user_sandbox
     }
 
     // set the update parameters for the source url
-    private function save_field_url($db_con, $db_rec, $std_rec): bool
+    private function save_field_url($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->url <> $this->url) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->url;
@@ -505,9 +505,9 @@ class source extends user_sandbox
     }
 
     // set the update parameters for the source comment
-    private function save_field_comment($db_con, $db_rec, $std_rec): bool
+    private function save_field_comment($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->comment <> $this->comment) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->comment;
@@ -521,9 +521,9 @@ class source extends user_sandbox
     }
 
     // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->type_id <> $this->type_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->type_name();
@@ -540,18 +540,12 @@ class source extends user_sandbox
     }
 
     // save all updated source fields excluding the name, because already done when adding a source
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_url($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_comment($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('source->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

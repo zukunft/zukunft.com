@@ -1091,9 +1091,9 @@ class word_link extends word_link_object
     /**
      * set the update parameters for the phrase link description
      */
-    function save_field_description($db_con, $db_rec, $std_rec): bool
+    function save_field_description($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->description <> $this->description) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->description;
@@ -1101,7 +1101,7 @@ class word_link extends word_link_object
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id;
             $log->field = sql_db::FLD_DESCRIPTION;
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
@@ -1109,15 +1109,11 @@ class word_link extends word_link_object
     /**
      * save all updated word_link fields excluding id fields (from, verb and to), because already done when adding a word_link
      */
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_name($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_description($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         //$result .= $this->save_field_type     ($db_con, $db_rec, $std_rec);
         log_debug('word_link->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
@@ -1127,9 +1123,9 @@ class word_link extends word_link_object
      * save updated the word_link id fields (from, verb and to)
      * should only be called if the user is the owner and nobody has used the triple
      */
-    function save_id_fields($db_con, $db_rec, $std_rec): bool
+    function save_id_fields($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->from->id <> $this->from->id
             or $db_rec->verb->id <> $this->verb->id
             or $db_rec->to->id <> $this->to->id) {
@@ -1148,9 +1144,11 @@ class word_link extends word_link_object
             //$log->field    = 'from_phrase_id';
             if ($log->add()) {
                 $db_con->set_type(DB_TYPE_WORD_LINK);
-                $result = $db_con->update($this->id,
+                if (!$db_con->update($this->id,
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
-                    array($this->from->id, $this->verb->id, $this->to->id));
+                    array($this->from->id, $this->verb->id, $this->to->id))) {
+                    $result = 'Update of work link name failed';
+                }
             }
         }
         log_debug('word_link->save_id_fields for ' . $this->dsp_id() . ' has been done');
@@ -1177,8 +1175,7 @@ class word_link extends word_link_object
                 // ... if yes request to delete or exclude the record with the id parameters before the change
                 $to_del = clone $db_rec;
                 if (!$to_del->del()) {
-                    $result = 'Failed to delete the unused work link';
-                    log_err($result);
+                    $result .= 'Failed to delete the unused work link';
                 }
                 if ($result = '') {
                     // ... and use it for the update
@@ -1196,17 +1193,13 @@ class word_link extends word_link_object
                     // in this case change is allowed and done
                     log_debug('word_link->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     $this->load_objects();
-                    if (!$this->save_id_fields($db_con, $db_rec, $std_rec)) {
-                        $result = 'Failed to update the recreated work link';
-                        log_err($result);
-                    }
+                    $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
                     if (!$to_del->del()) {
-                        $result = 'Failed to delete the unused work link';
-                        log_err($result);
+                        $result .= 'Failed to delete the unused work link';
                     }
                     // ... and create a deletion request for all users ???
 
@@ -1225,13 +1218,14 @@ class word_link extends word_link_object
 
     /**
      * add a new triple to the database
+     * @return string an empty string if everything is fine otherwise the message that should be shown to the user
      */
-    function add(): int
+    function add(): string
     {
         log_debug('word_link->add new word_link for "' . $this->from->name . '" ' . $this->verb->name . ' "' . $this->to->name . '"');
 
         global $db_con;
-        $result = 0;
+        $result = '';
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -1245,7 +1239,7 @@ class word_link extends word_link_object
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
-                    log_err('Updating the reference in the log failed');
+                    $result .='Updating the reference in the log failed';
                     // TODO do rollback or retry?
                 } else {
 
@@ -1257,13 +1251,11 @@ class word_link extends word_link_object
                     $db_rec->usr = $this->usr;
                     $std_rec = clone $db_rec;
                     // save the word_link fields
-                    if ($this->save_fields($db_con, $db_rec, $std_rec)) {
-                        $result = $this->id;
-                    }
+                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                 }
 
             } else {
-                log_err("Adding word_link " . $this->name . " failed", "word_link->add");
+                $result .= "Adding word_link " . $this->name . " failed";
             }
         }
 
@@ -1319,7 +1311,7 @@ class word_link extends word_link_object
         if ($result == '') {
             // check if a new value is supposed to be added
             if ($this->id <= 0) {
-                $result = strval($this->add());
+                $result .= $this->add();
             } else {
                 log_debug('word_link->save update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed;
@@ -1328,16 +1320,14 @@ class word_link extends word_link_object
                 $db_rec->id = $this->id;
                 $db_rec->usr = $this->usr;
                 if (!$db_rec->load()) {
-                    $result = 'Reloading of word_link failed';
-                    log_err($result);
+                    $result .= 'Reloading of word_link failed';
                 }
                 log_debug('word_link->save -> database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
                 $std_rec = new word_link;
                 $std_rec->id = $this->id;
                 $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
                 if (!$std_rec->load_standard()) {
-                    $result = 'Reloading of the default values for word_link failed';
-                    log_err($result);
+                    $result .= 'Reloading of the default values for word_link failed';
                 }
                 log_debug('word_link->save -> standard triple settings for "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
 
@@ -1348,18 +1338,19 @@ class word_link extends word_link_object
 
                 // check if the id parameters are supposed to be changed
                 if ($result == '') {
-                    $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($result == '') {
-                    if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                        $result = 'Saving of fields for word_link failed';
-                        log_err($result);
-                    }
+                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                 }
             }
+        }
+
+        if ($result != '') {
+            log_err($result);
         }
 
         return $result;

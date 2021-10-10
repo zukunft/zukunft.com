@@ -707,9 +707,9 @@ class view extends user_sandbox
     /**
      * set the update parameters for the view comment
      */
-    function save_field_comment($db_con, $db_rec, $std_rec): bool
+    function save_field_comment($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->comment <> $this->comment) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->comment;
@@ -725,9 +725,9 @@ class view extends user_sandbox
     /**
      * set the update parameters for the view code_id (only allowed for admin)
      */
-    function save_field_code_id($db_con, $db_rec, $std_rec): bool
+    function save_field_code_id($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->code_id <> $this->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
@@ -743,9 +743,9 @@ class view extends user_sandbox
     /**
      * set the update parameters for the word type
      */
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->type_id <> $this->type_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->type_name();
@@ -764,18 +764,12 @@ class view extends user_sandbox
     /**
      * save all updated view fields excluding the name, because already done when adding a view
      */
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_code_id($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_code_id($db_con, $db_rec, $std_rec);
         log_debug('view->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

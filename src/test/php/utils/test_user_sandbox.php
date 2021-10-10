@@ -58,13 +58,13 @@ function  run_user_sandbox_test()
     $src = new source;
     $src->name = TS_IPCC_AR6_SYNTHESIS;
     $src->usr = $usr1;
-    $result = num2bool($src->save());
-    $target = true;
+    $result = $src->save();
+    $target = '';
     test_dsp('user_sandbox->save create a new source', $target, $result);
 
     // remember the id
     $src_id = 0;
-    if ($result) {
+    if ($result == '') {
         $src_id = $src->id;
     }
 
@@ -83,13 +83,13 @@ function  run_user_sandbox_test()
     $src->name = TS_IPCC_AR6_SYNTHESIS;
     $src->usr = $usr1;
     $src->url = TS_IPCC_AR6_SYNTHESIS_URL;
-    $result = num2bool($src->save());
-    $target = true;
+    $result = $src->save();
+    $target = '';
     test_dsp('user_sandbox->save update the source url by name', $target, $result);
 
     // remember the id
     $src_id = 0;
-    if ($result) {
+    if ($result == '') {
         $src_id = $src->id;
     }
 

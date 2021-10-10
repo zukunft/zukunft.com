@@ -216,20 +216,22 @@ class user_log
         $db_con->set_type(DB_TYPE_CHANGE);
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        if (!$ex_time) {
-            $result .= $db_row['change_time'] . ' ';
-        }
-        if ($db_row['user_name'] <> '') {
-            $result .= $db_row['user_name'] . ' ';
-        }
-        if ($db_row['old_value'] <> '') {
-            if ($db_row['new_value'] <> '') {
-                $result .= 'changed ' . $db_row['old_value'] . ' to ' . $db_row['new_value'];
-            } else {
-                $result .= 'deleted ' . $db_row['old_value'];
+        if ($db_row != false) {
+            if (!$ex_time) {
+                $result .= $db_row['change_time'] . ' ';
             }
-        } else {
-            $result .= 'added ' . $db_row['new_value'];
+            if ($db_row['user_name'] <> '') {
+                $result .= $db_row['user_name'] . ' ';
+            }
+            if ($db_row['old_value'] <> '') {
+                if ($db_row['new_value'] <> '') {
+                    $result .= 'changed ' . $db_row['old_value'] . ' to ' . $db_row['new_value'];
+                } else {
+                    $result .= 'deleted ' . $db_row['old_value'];
+                }
+            } else {
+                $result .= 'added ' . $db_row['new_value'];
+            }
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);

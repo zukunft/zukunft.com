@@ -412,17 +412,18 @@ class phrase_list
     */
 
     /**
-     * import a phrase list from a the inner part of a JSON array object
-     *
+     * import a phrase list from an inner part of a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string an empty string if the import has been successfully saved al phrases to the database
+     *                and otherwise the error message that should be shown to the user
      */
-    function import_lst(array $json_obj, bool $do_save = true): bool
+    function import_lst(array $json_obj, bool $do_save = true): string
     {
         global $word_types;
 
+        $result = '';
         $result = false;
         foreach ($json_obj as $value) {
             if ($value != '') {
@@ -439,7 +440,7 @@ class phrase_list
                         if ($wrd->id == 0) {
                             $wrd->name = $value;
                             $wrd->type_id = $word_types->default_id();
-                            $wrd->save();
+                            $result .= $wrd->save();
                         }
                         if ($wrd->id == 0) {
                             log_err('Cannot add word "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
@@ -453,8 +454,9 @@ class phrase_list
         }
 
         // save the word in the database
+        // TODO check why this is needed
         if ($do_save) {
-            $result = num2bool($this->save());
+            $result .= $this->save();
         }
 
         return $result;

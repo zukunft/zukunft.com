@@ -38,7 +38,6 @@ const DBL_FLD_FORMULA_TYPE = "frm_type";
 const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
 
 
-
 class formula extends user_sandbox_description
 {
 
@@ -1502,11 +1501,15 @@ class formula extends user_sandbox_description
     /**
      * update the time stamp to trigger an update of the depending results
      */
-    function save_field_trigger_update($db_con): bool
+    function save_field_trigger_update($db_con): string
     {
+        $result = '';
         $this->last_update = new DateTime();
         $db_con->set_type(DB_TYPE_FORMULA);
-        $result = $db_con->update($this->id, 'last_update', 'Now()');
+        if (!$db_con->update($this->id, 'last_update', 'Now()')) {
+            $result = 'saving the update triiger for formula ' . $this->dsp_id() . ' failed';
+        }
+
         log_debug('formula->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '" with ' . $result);
 
         // save the pending update to the database for the batch calculation
@@ -1516,9 +1519,9 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters for the formula text as written by the user if needed
      */
-    function save_field_usr_text($db_con, $db_rec, $std_rec): bool
+    function save_field_usr_text($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->usr_text <> $this->usr_text) {
             $this->needs_fv_upd = true;
             $log = $this->log_upd();
@@ -1535,9 +1538,9 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters for the formula in the database reference format
      */
-    function save_field_ref_text($db_con, $db_rec, $std_rec): bool
+    function save_field_ref_text($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->ref_text <> $this->ref_text) {
             $this->needs_fv_upd = true;
             $log = $this->log_upd();
@@ -1548,7 +1551,7 @@ class formula extends user_sandbox_description
             $log->field = 'formula_text';
             $result = $this->save_field_do($db_con, $log);
             // updating the reference expression is probably relevant for calculation, so force to update the timestamp
-            if ($result) {
+            if ($result == '') {
                 $result = $this->save_field_trigger_update($db_con);
             }
         }
@@ -1559,9 +1562,9 @@ class formula extends user_sandbox_description
      * set the update parameters for the formula type
      * todo: save the reference also in the log
      */
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->type_id <> $this->type_id) {
             $this->needs_fv_upd = true;
             $log = $this->log_upd();
@@ -1573,7 +1576,7 @@ class formula extends user_sandbox_description
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
             $log->field = 'formula_type_id';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
@@ -1581,9 +1584,9 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters that define if all formula values are needed to calculate a result
      */
-    function save_field_need_all($db_con, $db_rec, $std_rec): bool
+    function save_field_need_all($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->need_all_val <> $this->need_all_val) {
             $this->needs_fv_upd = true;
             $log = $this->log_upd();
@@ -1606,7 +1609,7 @@ class formula extends user_sandbox_description
             $log->field = 'all_values_needed';
             $result = $this->save_field_do($db_con, $log);
             // if it is switch on that all fields are needed for the calculation, probably some formula results can be removed
-            if ($result) {
+            if ($result == '') {
                 $result = $this->save_field_trigger_update($db_con);
             }
         }
@@ -1616,24 +1619,14 @@ class formula extends user_sandbox_description
     /**
      * save all updated formula fields
      */
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_usr_text($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_ref_text($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_description($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_need_all($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_ref_text($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_need_all($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('formula->save_fields "' . $result . '" fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }
@@ -1676,9 +1669,9 @@ class formula extends user_sandbox_description
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields($db_con, $db_rec, $std_rec): bool
+    function save_id_fields($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->name <> $this->name) {
             log_debug('formula->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
@@ -1687,8 +1680,11 @@ class formula extends user_sandbox_description
             $wrd->usr = $this->usr;
             $wrd->load();
             $wrd->name = $this->name;
-            $result .= $wrd->save();
-            log_debug('formula->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
+            if ($wrd->save()) {
+                log_debug('formula->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
+            } else {
+                $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name;
+            }
 
             // change the formula name
             $log = $this->log_upd();
@@ -1699,9 +1695,11 @@ class formula extends user_sandbox_description
             $log->field = 'formula_name';
             if ($log->add()) {
                 $db_con->set_type(DB_TYPE_FORMULA);
-                $result = $db_con->update($this->id,
+                if (!$db_con->update($this->id,
                     array("formula_name"),
-                    array($this->name));
+                    array($this->name))) {
+                    $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name;
+                }
             }
         }
         log_debug('formula->save_id_fields for ' . $this->dsp_id() . ' has been done');
@@ -1765,7 +1763,7 @@ class formula extends user_sandbox_description
                         $this->id = 0;
                         $this->owner_id = $this->usr->id;
                         // TODO check the result values and if the id is needed
-                        $result = strval($this->add());
+                        $result .= $this->add();
                         log_debug('formula->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                     }
                 }
@@ -1780,13 +1778,14 @@ class formula extends user_sandbox_description
      * create a new formula
      * the user sandbox function is overwritten because the formula text should never be null
      * and the corresponding formula word is created
+     * @return string an empty string if everyting is fine and otherwise the error message that should be shown to the user
      */
-    function add(): int
+    function add(): string
     {
         log_debug('formula->add ' . $this->dsp_id());
 
         global $db_con;
-        $result = 0;
+        $result = '';
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -1801,11 +1800,12 @@ class formula extends user_sandbox_description
                 log_debug('formula->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id)) {
-                    log_err('Updating the reference in the log failed');
+                    $result .= 'Updating the reference in the log failed';
                     // TODO do rollback or retry?
                 } else {
                     // create the related formula word
-                    if ($this->create_wrd()) {
+                    // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
+                    //if ($this->create_wrd()) {
 
                         // create an empty db_frm element to force saving of all set fields
                         $db_rec = new formula;
@@ -1813,13 +1813,11 @@ class formula extends user_sandbox_description
                         $db_rec->usr = $this->usr;
                         $std_rec = clone $db_rec;
                         // save the formula fields
-                        if ($this->save_fields($db_con, $db_rec, $std_rec)) {
-                            $result = $this->id;
-                        }
-                    }
+                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    //}
                 }
             } else {
-                log_err("Adding formula " . $this->name . " failed.", "formula->add");
+                $result .= "Adding formula " . $this->name . " failed.";
             }
         }
 
@@ -1860,7 +1858,7 @@ class formula extends user_sandbox_description
         if ($this->id <= 0) {
             // convert the formula text to db format (any error messages should have been returned from the calling user script)
             if ($this->set_ref_text() <> '') {
-                $result = strval($this->add());
+                $result .= $this->add();
             }
         } else {
             log_debug('formula->save -> update ' . $this->id);
@@ -1893,10 +1891,7 @@ class formula extends user_sandbox_description
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($result == '') {
-                    if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                        $result = 'Saving of fields for ' . $this->obj_name . ' failed';
-                        log_err($result);
-                    }
+                    $result = $this->save_fields($db_con, $db_rec, $std_rec);
                 }
             }
 
@@ -1905,9 +1900,12 @@ class formula extends user_sandbox_description
             if ($result == '') {
                 if (!$this->element_refresh($this->ref_text)) {
                     $result = 'Refresh of the formula elements failed';
-                    log_err($result);
                 }
             }
+        }
+
+        if ($result != '') {
+            log_err($result);
         }
 
         return $result;

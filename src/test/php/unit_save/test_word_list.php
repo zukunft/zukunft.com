@@ -65,8 +65,7 @@ function run_word_list_test()
     $wrd_lst->load();
     $wrd_lst->add_by_type(Null, cl(db_cl::VERB, verb::IS_A), verb::DIRECTION_UP);
     $result = dsp_array($wrd_lst->names());
-    $target = word::TN_ZH . "," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON; // order adjusted based on the number of usage
-    $target = word::TN_ZH . ",Canton,Company," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON; // order adjusted based on the number of usage
+    $target = word::TN_ZH . "," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON . "," . word::TN_COMPANY_AS_CATEGORY; // order adjusted based on the number of usage
     test_dsp('word_list->add_by_type for "' . word::TN_ZH . '" up', $target, $result);
 
     // test add parent
@@ -76,7 +75,7 @@ function run_word_list_test()
     $wrd_lst->load();
     $wrd_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
     $result = dsp_array($wrd_lst->names());
-    $target = word::TN_ZH . ",Canton,Company," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON; // order adjusted based on the number of usage
+    $target = word::TN_ZH . "," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON . "," . word::TN_COMPANY_AS_CATEGORY; // order adjusted based on the number of usage
     test_dsp('word_list->foaf_parent for "' . word::TN_ZH . '" up', $target, $result);
 
     // test add parent step
@@ -86,7 +85,7 @@ function run_word_list_test()
     $wrd_lst->load();
     $wrd_lst->parents(cl(db_cl::VERB, verb::IS_A), 1);
     $result = dsp_array($wrd_lst->names());
-    $target = word::TN_ZH . ",Canton,Company," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON; // order adjusted based on the number of usage
+    $target = word::TN_ZH . "," . word::TN_CITY_AS_CATEGORY . "," . word::TN_CANTON . "," . word::TN_COMPANY_AS_CATEGORY; // order adjusted based on the number of usage
     test_dsp('word_list->parents for "' . word::TN_ZH . '" up', $target, $result);
 
     // test add child and contains
@@ -119,7 +118,7 @@ function run_word_list_test()
     $lst_is = $wrd_lst->is();
     $result = dsp_array($lst_is->names());
     $target = dsp_array(array(word::TN_CITY_AS_CATEGORY, word::TN_CANTON)); // order adjusted based on the number of usage
-    $target = dsp_array(array('Canton','Company',word::TN_CITY_AS_CATEGORY, word::TN_CANTON)); // order adjusted based on the number of usage
+    $target = dsp_array(array(word::TN_CITY_AS_CATEGORY, word::TN_CANTON, word::TN_COMPANY_AS_CATEGORY)); // order adjusted based on the number of usage
     test_dsp('word_list->is for ' . $wrd_lst->name() . ' up', $target, $result);
 
     // test are
@@ -214,8 +213,7 @@ function run_word_list_test()
     $wrd_ZH = load_word(word::TN_ZH);
     $wrd_lst = $wrd_ZH->parents();
     $wrd_lst->osort();
-    $target = '"' . word::TN_CITY_AS_CATEGORY . '","' . word::TN_CANTON . '"';
-    $target = '"Canton","Company","' . word::TN_CITY_AS_CATEGORY . '","' . word::TN_CANTON . '"';
+    $target = '"' . word::TN_CITY_AS_CATEGORY . '","' . word::TN_CANTON . '","' . word::TN_COMPANY_AS_CATEGORY . '"';
     $result = $wrd_lst->name();
     test_dsp('word_list->sort for "' . word::TN_ZH . '"', $target, $result);
 

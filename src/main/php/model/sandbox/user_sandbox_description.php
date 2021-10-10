@@ -44,9 +44,9 @@ class user_sandbox_description extends user_sandbox
     /**
      * set the update parameters for the word description
      */
-    function save_field_description($db_con, $db_rec, $std_rec): bool
+    function save_field_description($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         // if the description is not set, don't overwrite any db entry
         if ($this->description <> Null) {
             if ($this->description <> $db_rec->description) {

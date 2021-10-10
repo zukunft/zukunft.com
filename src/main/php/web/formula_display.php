@@ -226,12 +226,6 @@ class formula_dsp extends formula
         $fv_lst->load(SQL_ROW_LIMIT);
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {
-            // just the be on the save side load the related word and create it if needed
-            $this->load_wrd();
-            if (!isset($this->name_wrd)) {
-                $this->create_wrd();
-            }
-
             $result .= dsp_text_h3("Results for " . $this->name_wrd->dsp_link(), "change_hist");
             $result .= $sample_val;
         }

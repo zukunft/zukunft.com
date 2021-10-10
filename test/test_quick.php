@@ -44,13 +44,13 @@ $result = $start_usr->get();
 if ($start_usr->id > 0) {
     if ($start_usr->is_admin()) {
 
+        // prepare testing
+        test_start();
+
         // switch to the test user
         $usr = new user;
         $usr->load_user_by_profile(user::SYSTEM_TEST);
         if ($usr->id > 0) {
-
-            // prepare testing
-            test_start();
 
             // -----------------------------------------------
             // start testing the selected system functionality

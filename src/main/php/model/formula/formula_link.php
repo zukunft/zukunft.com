@@ -462,9 +462,9 @@ class formula_link extends user_sandbox
     }
 
     // set the update parameters for the formula type
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->link_type_id <> $this->link_type_id) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->link_type_name();
@@ -475,13 +475,13 @@ class formula_link extends user_sandbox
             $log->std_id = $std_rec->link_type_id;
             $log->row_id = $this->id;
             $log->field = 'link_type_id';
-            $result = $this->save_field_do($db_con, $log);
+            $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
     }
 
     // save all updated formula_link fields excluding the name, because already done when adding a formula_link
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         // link type not used at the moment
         //$result .= $this->save_field_type     ($db_con, $db_rec, $std_rec);
@@ -529,7 +529,7 @@ class formula_link extends user_sandbox
 
         if ($this->id <= 0) {
             log_debug('formula_link->save new link from "' . $this->fob->name . '" to "' . $this->tob->name . '"');
-            $result = strval($this->add());
+            $result .= $this->add();
         } else {
             log_debug('formula_link->save update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,
@@ -569,11 +569,12 @@ class formula_link extends user_sandbox
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             if ($result == '') {
-                if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                    $result = 'Saving of fields for ' . $this->obj_name . ' failed';
-                    log_err($result);
-                }
+                $result = $this->save_fields($db_con, $db_rec, $std_rec);
             }
+        }
+
+        if ($result != '') {
+            log_err($result);
         }
 
         return $result;

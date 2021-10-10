@@ -289,8 +289,8 @@ class view_component extends user_sandbox
             // this sql is similar to the load statement in view_links.php, maybe combine
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
             //$db_con->set_join_fields(array('position_type'), 'position_type');
-            $db_con->set_fields(array('view_id','view_component_id'));
-            $db_con->set_usr_num_fields(array('order_nbr','position_type','excluded'));
+            $db_con->set_fields(array('view_id', 'view_component_id'));
+            $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
             $db_con->set_where($this->id);
             $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
@@ -628,9 +628,9 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the view component comment
-    function save_field_comment($db_con, $db_rec, $std_rec): bool
+    function save_field_comment($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->comment <> $this->comment) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->comment;
@@ -644,9 +644,9 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec): bool
+    function save_field_type($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->type_id <> $this->type_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->type_name();
@@ -663,9 +663,9 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the word row
-    function save_field_wrd_row($db_con, $db_rec, $std_rec): bool
+    function save_field_wrd_row($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->word_id_row <> $this->word_id_row) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_wrd_row();
@@ -682,9 +682,9 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the word col
-    function save_field_wrd_col($db_con, $db_rec, $std_rec): bool
+    function save_field_wrd_col($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->word_id_col <> $this->word_id_col) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_wrd_col();
@@ -701,9 +701,9 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the word col2
-    function save_field_wrd_col2($db_con, $db_rec, $std_rec): bool
+    function save_field_wrd_col2($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_wrd_col2();
@@ -720,9 +720,9 @@ class view_component extends user_sandbox
     }
 
     // set the update parameters for the formula
-    function save_field_formula($db_con, $db_rec, $std_rec): bool
+    function save_field_formula($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->formula_id <> $this->formula_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_formula();
@@ -739,27 +739,15 @@ class view_component extends user_sandbox
     }
 
     // save all updated view_component fields excluding the name, because already done when adding a view_component
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_wrd_col($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_wrd_col2($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_formula($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_wrd_col($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_wrd_col2($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_formula($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('view_component->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

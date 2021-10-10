@@ -589,8 +589,8 @@ class value extends user_sandbox_display
      *  load object functions that extends the frontend functions
      */
 
-//
-    function set_grp_and_time_by_ids()
+    //
+    function set_grp_and_time_by_ids(): string
     {
         log_debug('value->set_grp_and_time_by_ids');
         // 1. load the phrases parameters based on the ids
@@ -610,13 +610,13 @@ class value extends user_sandbox_display
     /**
      * rebuild the phrase list based on the phrase ids
      */
-    function set_phr_lst_by_ids(): bool
+    function set_phr_lst_by_ids(): string
     {
-        $result = false;
+        $result = '';
 
         // check the parameters
         if (empty($this->usr)) {
-            log_err('User must be set to load ' . $this->dsp_id(), 'phrase_list->load');
+            $result = 'User must be set to load ' . $this->dsp_id() . ' to load the phrase list';
         } else {
             if (empty($this->phr_lst)) {
                 if (!empty($this->ids)) {
@@ -624,7 +624,9 @@ class value extends user_sandbox_display
                     $phr_lst = new phrase_list;
                     $phr_lst->ids = $this->ids;
                     $phr_lst->usr = $this->usr;
-                    $result = $phr_lst->load();
+                    if (!$phr_lst->load()) {
+                        $result = 'Cannot load phrases by id';
+                    }
                     $this->phr_lst = $phr_lst;
                 }
             }
@@ -635,7 +637,7 @@ class value extends user_sandbox_display
     /**
      * get the time based on the phrase id list
      */
-    function set_time_by_phr_lst()
+    function set_time_by_phr_lst(): string
     {
         $result = '';
         if (isset($this->phr_lst)) {
@@ -1569,13 +1571,15 @@ class value extends user_sandbox_display
     */
 
 // update the time stamp to trigger an update of the depending results
-    function save_field_trigger_update($db_con): bool
+    function save_field_trigger_update($db_con): string
     {
-        $result = false;
+        $result = '';
 
         $this->last_update = new DateTime();
         $db_con->set_type(DB_TYPE_VALUE);
-        $result .= $db_con->update($this->id, 'last_update', 'Now()');
+        if (!$db_con->update($this->id, 'last_update', 'Now()')) {
+            $result = 'setting of value update trigger failed';
+        }
         log_debug('value->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '"');
 
         // trigger the batch job
@@ -1587,16 +1591,17 @@ class value extends user_sandbox_display
             //$job->usr  = $this->usr;
             $job->obj = $this;
             $job->add();
-            $result = true;
+        } else {
+            $result = 'initiating of value update job failed';
         }
         log_debug('value->save_field_trigger_update -> done');
         return $result;
     }
 
 // set the update parameters for the number
-    function save_field_number($db_con, $db_rec, $std_rec): bool
+    function save_field_number($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->number <> $this->number) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->number;
@@ -1607,15 +1612,15 @@ class value extends user_sandbox_display
             $result .= $this->save_field_do($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
             log_debug('value->save_field_number -> trigger update');
-            $result = $this->save_field_trigger_update($db_con);
+            $result .= $this->save_field_trigger_update($db_con);
         }
         return $result;
     }
 
 // set the update parameters for the source link
-    function save_field_source($db_con, $db_rec, $std_rec): bool
+    function save_field_source($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->source_id <> $this->source_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->source_name();
@@ -1632,31 +1637,23 @@ class value extends user_sandbox_display
     }
 
 // save the value number and the source
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_source($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_share($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_protection($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_share($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_protection($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('value->save_fields all fields for "' . $this->id . '" has been saved');
         return $result;
     }
 
 // updated the view component name (which is the id field)
 // should only be called if the user is the owner and nobody has used the display component link
-    function save_id_fields($db_con, $db_rec, $std_rec): bool
+    function save_id_fields($db_con, $db_rec, $std_rec): string
     {
         log_debug('value->save_id_fields');
-        $result = true;
+        $result = '';
 
         // to load any missing objects
         $db_rec->load_phrases();
@@ -1690,7 +1687,7 @@ class value extends user_sandbox_display
         }
         log_debug('value->save_id_fields group updated for ' . $this->dsp_id());
 
-        if ($result) {
+        if ($result == '') {
             if ($db_rec->time_id <> $this->time_id) {
                 log_debug('value->save_id_fields to ' . $this->dsp_id() . ' from "' . $db_rec->dsp_id() . '" (standard ' . $std_rec->dsp_id() . ')');
                 $log = $this->log_upd();
@@ -1704,14 +1701,18 @@ class value extends user_sandbox_display
                 $log->field = 'time_word_id';
                 if ($log->add()) {
                     $db_con->set_type(DB_TYPE_VALUE);
-                    $result .= $db_con->update($this->id, array("time_word_id"),
-                        array($this->time_id));
+                    if (!$db_con->update(
+                        $this->id,
+                        array("time_word_id"),
+                        array($this->time_id))) {
+                        $result .= 'updating time word of value failed';
+                    }
                 }
             }
             log_debug('value->save_id_fields time updated for ' . $this->dsp_id());
 
             // update the phrase links for fast searching
-            $result = $this->upd_phr_links();
+            $result .= $this->upd_phr_links();
         }
 
         // not yet active
@@ -1763,7 +1764,8 @@ class value extends user_sandbox_display
                     // in this case change is allowed and done
                     log_debug('value->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     //$this->load_objects();
-                    if (!$this->save_field_excluded($db_con, $db_rec, $std_rec)) {
+                    $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                    if ($result != '') {
                         log_err('Excluding value has failed');
                     }
                 } else {
@@ -1788,13 +1790,15 @@ class value extends user_sandbox_display
         return $result;
     }
 
-// create a new value
-    function add(): int
+    /**
+     * add a new value
+     */
+    function add(): string
     {
         log_debug('value->add the value ' . $this->dsp_id());
 
         global $db_con;
-        $result = 0;
+        $result = '';
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -1807,13 +1811,14 @@ class value extends user_sandbox_display
                     array($this->grp_id, $this->usr->id, "Now()"));
                 if ($this->id > 0) {
                     // update the reference in the log
-                    if ($log->add_ref($this->id)) {
-                        $result = $this->id;
+                    if (!$log->add_ref($this->id)) {
+                        $result = 'adding the value time series reference in the system log failed';
                     }
 
                     // update the phrase links for fast searching
                     if (!$this->upd_phr_links()) {
-                        $result = 0;
+                        $result = 'adding the phrase links of the value time series failed';
+                        $this->id = 0;
                     }
 
                     // create an empty db_rec element to force saving of all set fields
@@ -1837,13 +1842,14 @@ class value extends user_sandbox_display
                     array($this->grp_id, $this->time_id, $this->usr->id, $this->number, "Now()"));
                 if ($this->id > 0) {
                     // update the reference in the log
-                    if ($log->add_ref($this->id)) {
-                        $result = $this->id;
+                    if (!$log->add_ref($this->id)) {
+                        $result = 'adding the value reference in the system log failed';
                     }
 
                     // update the phrase links for fast searching
                     if (!$this->upd_phr_links()) {
-                        $result = 0;
+                        $result = 'adding the phrase links of the value failed';
+                        $this->id = 0;
                     }
 
                     if ($this->id > 0) {
@@ -1858,7 +1864,7 @@ class value extends user_sandbox_display
                     }
 
                 } else {
-                    log_err("Adding value " . $this->id . " failed.", "value->save");
+                    $result = "Adding value " . $this->id . " failed.";
                 }
             }
         }
@@ -1941,13 +1947,15 @@ class value extends user_sandbox_display
             // the problem is shown to the user by the calling interactive script
             if ($result == '') {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                    $result = 'Saving of fields for a value failed';
-                    log_err($result);
-                }
+                $result = $this->save_fields($db_con, $db_rec, $std_rec);
             }
 
         }
+
+        if ($result != '') {
+            log_err($result);
+        }
+
         return $result;
     }
 

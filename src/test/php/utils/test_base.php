@@ -208,7 +208,7 @@ const TW_BALANCE = "balance sheet";
 const TW_CANTON = "Canton";
 
 // some test phrases used for testing
-const TP_ZH_CANTON = "System Test Word Member e.g. Zurich (Canton)";
+const TP_ZH_CANTON = "System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)";
 const TP_ZH_CITY = "System Test Word Member e.g. Zurich (System Test Word Another Category e.g. City)";
 const TP_ZH_INS = "Zurich Insurance";
 const TP_ABB = "ABB (Company)";
@@ -280,8 +280,8 @@ const TEST_SOURCE_WIKIDATA = "wikidata"; // the source for all data imported fro
 function test_start()
 {
 
-    global $usr1;
-    global $usr2;
+    global $usr1; // the main user for testing
+    global $usr2; // a second testing user e.g. to test the user sandbox
     global $start_time; // time when all tests have started
     global $exe_start_time; // time when the single test has started (end the end time of all tests)
 

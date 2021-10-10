@@ -226,13 +226,15 @@ class value_time_series extends user_sandbox_display
             // the problem is shown to the user by the calling interactive script
             if ($result == '') {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                if (!$this->save_fields($db_con, $db_rec, $std_rec)) {
-                    $result = 'Saving of fields for a time series failed';
-                    log_err($result);
-                }
+                $result = $this->save_fields($db_con, $db_rec, $std_rec);
             }
 
         }
+
+        if ($result != '') {
+            log_err($result);
+        }
+
         return $result;
     }
 

@@ -269,17 +269,17 @@ function run_word_test()
     $wrd_new = new word;
     $wrd_new->name = word::TN_READ;
     $wrd_new->usr = $usr1;
-    $result = num2bool($wrd_new->save());
+    $result = $wrd_new->save();
     //$target = 'A word with the name "'.word::TEST_NAME_READ.'" already exists. Please use another name.';
-    $target = true;
+    $target = '';
     test_dsp('word->save for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     // test the creation of a new word
     $wrd_add = new word;
     $wrd_add->name = word::TN_ADD;
     $wrd_add->usr = $usr1;
-    $result = num2bool($wrd_add->save());
-    $target = true;
+    $result = $wrd_add->save();
+    $target = '';
     test_dsp('word->save for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     echo "... and also testing the user log class (classes/user_log.php)<br>";
@@ -307,8 +307,8 @@ function run_word_test()
 
     // check if the word can be renamed
     $wrd_added->name = word::TN_RENAMED;
-    $result = num2bool($wrd_added->save());
-    $target = true;
+    $result = $wrd_added->save();
+    $target = '';
     test_dsp('word->save rename "' . word::TN_ADD . '" to "' . word::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the word renaming was successful
@@ -337,8 +337,8 @@ function run_word_test()
     $wrd_renamed->plural = word::TN_RENAMED . 's';
     $wrd_renamed->description = word::TN_RENAMED . ' description';
     $wrd_renamed->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
-    $result = num2bool($wrd_renamed->save());
-    $target = true;
+    $result = $wrd_renamed->save();
+    $target = '';
     test_dsp('word->save all word fields beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the word parameters have been added
@@ -380,8 +380,8 @@ function run_word_test()
     $wrd_usr2->plural = word::TN_RENAMED . 's2';
     $wrd_usr2->description = word::TN_RENAMED . ' description2';
     $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
-    $result = num2bool($wrd_usr2->save());
-    $target = true;
+    $result = $wrd_usr2->save();
+    $target = '';
     test_dsp('word->save all word fields for user 2 beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific word changes have been saved
@@ -419,8 +419,8 @@ function run_word_test()
     $wrd_usr2->plural = word::TN_RENAMED . 's';
     $wrd_usr2->description = word::TN_RENAMED . ' description';
     $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
-    $result = num2bool($wrd_usr2->save());
-    $target = true;
+    $result = $wrd_usr2->save();
+    $target = '';
     test_dsp('word->save undo the user word fields beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific word changes have been saved

@@ -41,6 +41,7 @@ class word extends word_link_object
     const TN_CANTON = 'System Test Word Category e.g. Canton';
     const TN_ZH = 'System Test Word Member e.g. Zurich';
     const TN_CITY_AS_CATEGORY = 'System Test Word Another Category e.g. City';
+    const TN_COMPANY_AS_CATEGORY = 'System Test Word Group e.g. Company';
     const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_2021 = 'System Test Time Word e.g. 2021';
@@ -408,7 +409,7 @@ class word extends word_link_object
         // save the word in the database
         if ($do_save) {
             // TODO should save not return the error reason that should be shown to the user if it fails?
-            $result = num2bool($this->save());
+            $result = $this->save();
         }
 
         // add related parameters to the word object
@@ -746,7 +747,7 @@ class word extends word_link_object
             $wrd_lnk->to = $this->phrase();
             $wrd_lnk->usr = $this->usr;
             if ($wrd_lnk->save() == '') {
-               $result = true;
+                $result = true;
             }
         }
         return $result;
@@ -998,7 +999,7 @@ class word extends word_link_object
      * if the value has been changed by someone else than the owner the user id is returned
      * but only return the user id if the user has not also excluded it
      */
-    function changer()
+    function changer(): int
     {
         log_debug('word->changer (' . $this->id . ')');
 
@@ -1126,11 +1127,11 @@ class word extends word_link_object
      * remember the word view, which means to save the view id for this word
      * each user can define set the view individually, so this is user specific
      */
-    function save_view($view_id): bool
+    function save_view($view_id): string
     {
 
         global $db_con;
-        $result = true;
+        $result = '';
 
         if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id) {
             log_debug('word->save_view ' . $view_id . ' for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
@@ -1139,16 +1140,20 @@ class word extends word_link_object
                 $db_con->usr_id = $this->usr->id;
                 if ($this->can_change()) {
                     $db_con->set_type(DB_TYPE_WORD);
-                    $result = $db_con->update($this->id, "view_id", $view_id);
+                    if (!$db_con->update($this->id, "view_id", $view_id)) {
+                        $result = 'setting of view failed';
+                    }
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
-                            $result = false;
+                            $result = 'adding of user configuration failed';
                         }
                     }
-                    if ($result) {
+                    if ($result == '') {
                         $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD);
-                        $result = $db_con->update($this->id, "view_id", $view_id);
+                        if (!$db_con->update($this->id, "view_id", $view_id)) {
+                            $result = 'setting of view for user failed';
+                        }
                     }
                 }
             }
@@ -1159,9 +1164,9 @@ class word extends word_link_object
     /**
      * set the update parameters for the word plural
      */
-    private function save_field_plural($db_con, $db_rec, $std_rec): bool
+    private function save_field_plural($db_con, $db_rec, $std_rec): string
     {
-        $result = true;
+        $result = '';
         // if the plural is not set, don't overwrite any db entry
         if ($this->plural <> Null) {
             if ($this->plural <> $db_rec->plural) {
@@ -1180,9 +1185,9 @@ class word extends word_link_object
     /**
      * set the update parameters for the word view_id
      */
-    private function save_field_view($db_rec): bool
+    private function save_field_view($db_rec): string
     {
-        $result = true;
+        $result = '';
         if ($db_rec->view_id <> $this->view_id) {
             $result = $this->save_view($this->view_id);
         }
@@ -1192,22 +1197,14 @@ class word extends word_link_object
     /**
      * save all updated word fields
      */
-    function save_fields($db_con, $db_rec, $std_rec): bool
+    function save_fields($db_con, $db_rec, $std_rec): string
     {
         log_debug('word->save_fields');
         $result = $this->save_field_plural($db_con, $db_rec, $std_rec);
-        if ($result) {
-            $result = $this->save_field_description($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_type($db_con, $db_rec, $std_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_view($db_rec);
-        }
-        if ($result) {
-            $result = $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        }
+        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_view($db_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('word->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

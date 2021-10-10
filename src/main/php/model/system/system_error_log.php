@@ -156,9 +156,14 @@ class system_error_log
             log_debug("system_error_log->save -> database entry loaded");
 
             if (!$this->save_field_status($db_con, $db_rec)) {
-                $result = 'saving the error log failed';
+                $result .= 'saving the error log failed';
             }
         }
+
+        if ($result != '') {
+            log_err($result);
+        }
+
         return $result;
     }
 }

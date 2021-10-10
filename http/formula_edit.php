@@ -82,7 +82,7 @@ if ($usr->id > 0) {
     //if (isset($_GET['need_all_val']))  { if ($_GET['need_all_val'] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
 
     if ($frm->id <= 0) {
-        $result .= log_err("No formula found to change because the id is missing.", "formula_edit.php");
+        $result .= log_err("No formula found to change because the id is missing.", "/http/formula_edit.php");
     } else {
 
         // do the direct changes initiated by other buttons than the save button

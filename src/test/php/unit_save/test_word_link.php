@@ -35,13 +35,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 function run_word_link_test()
 {
 
-    global $usr;
+    global $usr1;
     global $usr2;
 
     test_header('Test the word link class (classes/word_link.php)');
 
-    // load the main test word
-    $wrd_company = test_word(word::TN_PARENT);
+    // create the group test word
+    $wrd_company = test_word(word::TN_COMPANY_AS_CATEGORY);
 
     // check the triple usage for Zurich (City) and Zurich (Canton)
     $wrd_zh = load_word(word::TN_ZH);
@@ -56,7 +56,7 @@ function run_word_link_test()
     $lnk_canton->from->id = $wrd_zh->id;
     $lnk_canton->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_canton->to->id = $wrd_canton->id;
-    $lnk_canton->usr = $usr;
+    $lnk_canton->usr = $usr1;
     $lnk_canton->load();
     $target = word::TN_ZH . ' (Canton)';
     $result = $lnk_canton->name;
@@ -72,7 +72,7 @@ function run_word_link_test()
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_company->to->id = $wrd_company->id;
-    $lnk_company->usr = $usr;
+    $lnk_company->usr = $usr1;
     $lnk_company->load();
     $target = TP_ZH_INS;
     $result = $lnk_company->name;
@@ -88,10 +88,10 @@ function run_word_link_test()
     $wrd = load_word(TEST_WORD);
     $vrb = new verb;
     $vrb->id = cl(db_cl::VERB, verb::IS_A);
-    $vrb->usr = $usr;
+    $vrb->usr = $usr1;
     $vrb->load();
     $lnk = new word_link;
-    $lnk->usr = $usr;
+    $lnk->usr = $usr1;
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -107,7 +107,7 @@ function run_word_link_test()
     $log->new_from_id = $wrd_added->id;
     $log->new_link_id = $vrb->id;
     $log->new_to_id = $wrd->id;
-    $log->usr = $usr;
+    $log->usr = $usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job linked ' . word::TN_RENAMED . ' to ' . TEST_WORD . '';
     test_dsp('triple->save logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result);
@@ -115,7 +115,7 @@ function run_word_link_test()
     // ... check if the link is shown correctly
 
     $lnk = new word_link;
-    $lnk->usr = $usr;
+    $lnk->usr = $usr1;
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -176,20 +176,20 @@ function run_word_link_test()
 
     // ... check if the link is still used for the first user
     $lnk = new word_link;
-    $lnk->usr = $usr;
+    $lnk->usr = $usr1;
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
-    test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" is still used for user "' . $usr->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" is still used for user "' . $usr1->name . '"', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // ... check if the values for the first user are still the same
 
     // if the first user also removes the link, both records should be deleted
     $lnk = new word_link;
-    $lnk->usr = $usr;
+    $lnk->usr = $usr1;
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -204,21 +204,21 @@ function run_word_link_test()
     $log->old_from_id = $wrd_added->id;
     $log->old_link_id = $vrb->id;
     $log->old_to_id = $wrd->id;
-    $log->usr = $usr;
+    $log->usr = $usr1;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system batch job unlinked ' . word::TN_RENAMED . ' from ' . TEST_WORD . '';
-    test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr->name . '"', $target, $result);
+    test_dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $usr1->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users
     $lnk = new word_link;
-    $lnk->usr = $usr;
+    $lnk->usr = $usr1;
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->name;
     $target = '';
-    test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" for user "' . $usr->name . '" not used any more', $target, $result);
+    test_dsp('triple->load of "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" for user "' . $usr1->name . '" not used any more', $target, $result);
 
 
     // ... and the values have been updated
