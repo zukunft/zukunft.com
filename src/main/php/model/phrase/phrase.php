@@ -152,7 +152,7 @@ class phrase
         return $wrd_lst;
     }
 
-    function type_id()
+    function type_id(): int
     {
         $wrd = $this->main_word();
         $result = $wrd->type_id;
@@ -277,14 +277,16 @@ class phrase
         return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
     }
 
-    function dsp_tbl()
+    function dsp_tbl(int $intent = 0): string
     {
-        if (!isset($this->obj)) {
+        $result = '';
+        if ($this->obj != null) {
             $this->load();
+            // the function dsp_tbl should exist for words and triples
+            $result = $this->obj->dsp_tbl($intent);
         }
         log_debug('phrase->dsp_tbl for ' . $this->dsp_id());
-        // the function dsp_tbl should exist for words and triples
-        return $this->obj->dsp_tbl();
+        return $result;
     }
 
     function dsp_tbl_row()
@@ -503,7 +505,9 @@ class phrase
     // $type is a word to preselect the list to only those phrases matching this type
     function dsp_selector($type, $form_name, $pos, $class, $back): string
     {
-        log_debug('phrase->dsp_selector -> type "' . $type->name . '" with id ' . $this->id . ' selected for form ' . $form_name . '' . $pos);
+        if ($type != null) {
+            log_debug('phrase->dsp_selector -> type "' . $type->dsp_id() . ' selected for form ' . $form_name . '' . $pos);
+        }
         $result = '';
 
         if ($pos > 0) {
@@ -550,8 +554,8 @@ class phrase
         $is_wrd_lst = $this->is();
         if (count($is_wrd_lst->lst) >= 1) {
             $result = $is_wrd_lst->lst[0];
+            log_debug('phrase->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
         }
-        log_debug('phrase->is_mainly -> (' . $this->dsp_id() . ' is a ' . $result->name . ')');
         return $result;
     }
 

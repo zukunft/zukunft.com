@@ -33,9 +33,10 @@ function create_base_phrases()
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY_AS_CATEGORY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
     test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
+    test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
     test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
-    test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF,TP_TAXES);
+    test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
     echo "<br><br>";
 
     echo "<h2>Check if all base phrases are correct</h2><br>";
@@ -58,7 +59,7 @@ function run_phrase_test()
     test_header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
     // load the main test word
-    $wrd_company = test_word(TEST_WORD);
+    $wrd_company = test_word(word::TN_COMPANY_AS_CATEGORY);
 
     // prepare the Insurance Zurich
     $wrd_zh = load_word(word::TN_ZH);
@@ -79,17 +80,28 @@ function run_phrase_test()
     $phr->usr = $usr;
     $phr->load();
     $result = $phr->name;
-    $target = TEST_WORD;
+    $target = word::TN_COMPANY_AS_CATEGORY;
     test_dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?words=1" title="">' . TEST_WORD . '</a> </td> ';
+    $target = ' <td> <a href="/http/view.php?words='. $wrd_company->id . '" title="">' . word::TN_COMPANY_AS_CATEGORY . '</a> </td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
+    $result = trim($result);
+    $target = trim($target);
+    // TODO replace with replace all
+    $result = str_replace("  ", " ", $result);
+    $target = str_replace("  ",  "", $target);
+    $result = str_replace("  ", " ", $result);
+    $target = str_replace("  ",  "", $target);
     // to overwrite any special char
     $diff = str_diff($result, $target);
-    if ($diff['view'][0] == 0) {
-        $target = $result;
+    if (in_array('view', $diff)) {
+        if (in_array(0, $diff['view'])) {
+            if ($diff['view'][0] == 0) {
+                $target = $result;
+            }
+        }
     }
     test_dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
 
@@ -103,13 +115,24 @@ function run_phrase_test()
     test_dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?link=313" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a> </td> ';
+    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a> </td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
+    // TODO replace with replace all
+    $result = str_replace("  ", " ", $result);
+    $target = str_replace("  ",  "", $target);
+    $result = str_replace("  ", " ", $result);
+    $target = str_replace("  ",  "", $target);
+    $result = trim($result);
+    $target = trim($target);
     // to overwrite any special char
     $diff = str_diff($result, $target);
-    if ($diff['view'][0] == 0) {
-        $target = $result;
+    if (in_array('view', $diff)) {
+        if (in_array(0, $diff['view'])) {
+            if ($diff['view'][0] == 0) {
+                $target = $result;
+            }
+        }
     }
     test_dsp('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
 
@@ -136,13 +159,15 @@ function run_phrase_test()
     $wrd_company->usr = $usr;
     $wrd_company->load();
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
-    $target = phrase::TN_ZH_COMPANY;
+    $target = TW_ABB;
     test_dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test getting the parent for phrase Vestas
     $phr = load_phrase(TW_VESTAS);
     $is_phr = $phr->is_mainly();
-    $result = $is_phr->name;
+    if ($is_phr != null) {
+        $result = $is_phr->name;
+    }
     $target = TEST_WORD;
     test_dsp('phrase->is_mainly for ' . $phr->name, $target, $result);
 

@@ -102,7 +102,7 @@ class word_dsp extends word
 
     // simply to display a single word in a table
     // rename and join to dsp_tbl_cell to have a more specific name
-    function dsp_tbl($intent): string
+    function dsp_tbl(int $intent): string
     {
         log_debug('word_dsp->dsp_tbl');
         $result = '    <td>' . "\n";
