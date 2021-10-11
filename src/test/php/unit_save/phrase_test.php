@@ -84,16 +84,11 @@ function run_phrase_test()
     test_dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?words='. $wrd_company->id . '" title="">' . word::TN_COMPANY_AS_CATEGORY . '</a> </td> ';
+    $target = ' <td> <a href="/http/view.php?words='. $wrd_company->id . '" title="">' . word::TN_COMPANY_AS_CATEGORY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
-    $result = trim($result);
-    $target = trim($target);
-    // TODO replace with replace all
-    $result = str_replace("  ", " ", $result);
-    $target = str_replace("  ",  "", $target);
-    $result = str_replace("  ", " ", $result);
-    $target = str_replace("  ",  "", $target);
+    $result = trim_all($result);
+    $target = trim_all($target);
     // to overwrite any special char
     $diff = str_diff($result, $target);
     if (in_array('view', $diff)) {
@@ -115,16 +110,11 @@ function run_phrase_test()
     test_dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a> </td> ';
+    $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
-    // TODO replace with replace all
-    $result = str_replace("  ", " ", $result);
-    $target = str_replace("  ",  "", $target);
-    $result = str_replace("  ", " ", $result);
-    $target = str_replace("  ",  "", $target);
-    $result = trim($result);
-    $target = trim($target);
+    $result = trim_all($result);
+    $target = trim_all($target);
     // to overwrite any special char
     $diff = str_diff($result, $target);
     if (in_array('view', $diff)) {

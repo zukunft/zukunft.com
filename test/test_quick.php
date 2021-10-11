@@ -82,8 +82,8 @@ if ($start_usr->id > 0) {
             run_word_link_test ();
             run_ref_test();
             run_phrase_test ();
+            //run_phrase_group_test ();
             /*
-            run_phrase_group_test ();
             run_phrase_group_list_test ();
             run_graph_test ();
             run_verb_test ();
@@ -122,7 +122,6 @@ if ($start_usr->id > 0) {
             //run_phrase_group_test ();
             //run_export_test ();
             //run_permission_test ();
-            run_ref_test();
 
             */
 

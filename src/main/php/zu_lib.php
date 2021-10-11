@@ -1476,3 +1476,22 @@ function str_ends_with(string $long_string, string $postfix): bool
     return $result;
 }
 
+// port php 8 function to 7.4
+function str_contains(string $haystack, string $needle): bool
+{
+    $result = true;
+    $pos = strpos($haystack, $needle);
+    if ($pos == false) {
+        $result = false;
+    }
+    return $result;
+}
+
+function trim_all(string $to_trim): string
+{
+    $result = trim($to_trim);
+    while (str_contains($result, '  ')) {
+        $result = str_replace("  ", "", $result);
+    }
+    return $result;
+}
