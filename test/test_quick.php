@@ -70,6 +70,7 @@ if ($start_usr->id > 0) {
             create_base_formulas();
             create_base_formula_links();
             create_base_views();
+            create_base_values();
 
             run_db_link_test();
             run_string_unit_tests(); // test functions not yet split into single unit tests
@@ -82,7 +83,7 @@ if ($start_usr->id > 0) {
             run_word_link_test ();
             run_ref_test();
             run_phrase_test ();
-            //run_phrase_group_test ();
+            run_phrase_group_test ();
             /*
             run_phrase_group_list_test ();
             run_graph_test ();

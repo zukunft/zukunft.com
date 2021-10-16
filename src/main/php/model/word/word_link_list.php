@@ -85,6 +85,7 @@ class word_link_list
                 " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'plural' . $pos) . ",
                 " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sql_db::FLD_DESCRIPTION . $pos) . ",
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
+                " . $db_con->get_usr_field('view_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'view_id' . $pos) . ",
                 " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
                   t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
     }
@@ -339,13 +340,13 @@ class word_link_list
                                     $new_word->usr = $this->usr;
                                     $new_word->row_mapper($db_lnk);
                                     $new_word->link_type_id = $db_lnk['verb_id'];
-                                    $new_link->from = $new_word;
+                                    $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
                                 } elseif ($db_lnk['word_id'] < 0) {
                                     $new_word = new word_link;
                                     $new_word->usr = $this->usr;
                                     $new_word->id = $db_lnk['word_id'] * -1; // TODO check if not word_id is correct
-                                    $new_link->from = $new_word;
+                                    $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
                                 } else {
                                     log_warning('word_link_list->load word missing');
@@ -364,13 +365,13 @@ class word_link_list
                                 $new_word->link_type_id = $db_lnk['verb_id'];
                                 //$added_wrd2_lst->add($new_word);
                                 log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk['verb_id'] . ')');
-                                $new_link->to = $new_word;
+                                $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name;
                             } elseif ($db_lnk['word_id2'] < 0) {
                                 $new_word = new word_link;
                                 $new_word->usr = $this->usr;
                                 $new_word->id = $db_lnk['word_id2'] * -1;
-                                $new_link->to = $new_word;
+                                $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name;
                             }
                             $this->lst[] = $new_link;

@@ -7,7 +7,7 @@
   
   a kind of phrase list, but separated into two different lists
   
-  word groups are not part of the user sandbox, because this is a kind of hidden layer
+  phrase groups are not part of the user sandbox, because this is a kind of hidden layer
   The main intention for word groups is to save space and execution time
   
   This file is part of zukunft.com - calc with words
@@ -423,7 +423,7 @@ class phrase_group
             // build the database object because the is anyway needed
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_con->set_type(DB_TYPE_VIEW);
+            $db_con->set_type(DB_TYPE_PHRASE_GROUP);
 
             // set the where clause depending on the values given
             $sql_where = '';
@@ -612,6 +612,65 @@ class phrase_group
         log_debug('phrase_group->get_id ' . $this->dsp_id());
         $this->get();
         return $this->id;
+    }
+
+    /**
+     * create the sql statement
+     */
+    function get_by_wrd_lst_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = 'phrase_group_by_';
+        if ($this->id != 0) {
+            $sql_name .= 'id';
+        } elseif ($this->wrd_lst != null) {
+            if (count($this->wrd_lst->lst) > 0) {
+                $sql_name .= count($this->wrd_lst->lst) . 'word_id';
+            }
+        } else {
+            log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->usr->id . ") must be set to load a phrase list.", "phrase_list->load");
+        }
+
+        $sql_from = '';
+        $sql_from_prefix = '';
+        $sql_where = '';
+        if ($this->id != 0) {
+            $sql_from .= 'phrase_groups ';
+            $sql_where .= 'phrase_group_id = ' . $this->id;
+        } elseif ($this->wrd_lst != null) {
+            $pos = 1;
+            $prev_pos = 1;
+            $sql_from_prefix = 'l1.';
+            foreach ($this->wrd_lst->lst as $wrd) {
+                if ($wrd != null) {
+                    if ($wrd->id <> 0) {
+                        if ($sql_from == '') {
+                            $sql_from .= 'phrase_group_word_links l' . $pos;
+                        } else {
+                            $sql_from .= ', phrase_group_word_links l' . $pos;
+                        }
+                        if ($sql_where == '') {
+                            $sql_where .= 'l' . $pos . '.word_id = ' . $wrd->id;
+                        } else {
+                            $sql_where .= ' AND l' . $pos . '.word_id = l' . $prev_pos . '.word_id AND l' . $pos . '.word_id = ' . $wrd->id;
+                        }
+                    }
+                }
+                $prev_pos = $pos;
+                $pos++;
+            }
+        }
+        $sql = "SELECT " . $sql_from_prefix . "phrase_group_id 
+                  FROM " . $sql_from . "
+                 WHERE " . $sql_where . "
+              GROUP BY " . $sql_from_prefix . "phrase_group_id;";
+        log_debug('phrase_group->get_by_wrd_lst sql ' . $sql);
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
     }
 
     // get the best matching group for a word list

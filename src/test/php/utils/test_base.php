@@ -71,6 +71,7 @@ include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link.php';
 include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase_list.php';
+include_once $path_unit . 'phrase_group.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'value_list.php';
 include_once $path_unit . 'formula.php';
@@ -126,6 +127,7 @@ include_once $path_unit_save . 'test_batch.php';
 include_once $path_unit_save . 'test_view.php';
 include_once $path_unit_save . 'test_view_component.php';
 include_once $path_unit_save . 'test_view_component_link.php';
+include_once $path_unit_save . 'test_value.php';
 include_once $path_unit_save . 'test_cleanup.php';
 
 // load the integration test functions
@@ -327,17 +329,39 @@ function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $commen
     global $total_tests;
     global $exe_start_time;
 
+    // init the test result vars
     $test_result = false;
     $txt = '';
-    $result = test_uncolor($result);
-    if (is_numeric($result) && is_numeric($target)) {
-        $result = round($result, 7);
-        $target = round($target, 7);
-    }
-    // check if executed in a reasonable time and if the result is fine
     $new_start_time = microtime(true);
     $since_start = $new_start_time - $exe_start_time;
-    if ($result == $target) {
+
+    // do the compare depending on the type
+    if (is_array($target) and is_array($result)) {
+        sort($target);
+        sort($result);
+        // in an array each value needs to be the same
+        $test_result = true;
+        foreach ($result as $key => $value) {
+            if ($result[$key] != $target[$key]) {
+                $test_result = false;
+            }
+        }
+    } elseif (is_numeric($result) && is_numeric($target)) {
+        $result = round($result, 7);
+        $target = round($target, 7);
+        if ($result == $target) {
+            $test_result = true;
+        }
+    } else {
+        $result = test_uncolor($result);
+        if ($result == $target) {
+            $test_result = true;
+        }
+    }
+
+    // display the result
+    if ($test_result) {
+        // check if executed in a reasonable time and if the result is fine
         if ($since_start > $exe_max_time) {
             $txt .= '<p style="color:orange">TIMEOUT' . $msg;
             $timeout_counter++;
@@ -350,6 +374,8 @@ function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $commen
         $error_counter++;
         // todo: create a ticket
     }
+
+    // explain the check
     if (is_array($target)) {
         if ($test_type == 'contains') {
             $txt .= " should contain \"" . dsp_array($target) . "\"";
@@ -402,12 +428,15 @@ function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $commen
     $txt .= ', took ';
     $txt .= round($since_start, 4) . ' seconds';
 
+    // --- and finally display the test result
     $txt .= '</p>';
     echo $txt;
     echo "\n";
     flush();
+
     $total_tests++;
     $exe_start_time = $new_start_time;
+
     return $test_result;
 }
 

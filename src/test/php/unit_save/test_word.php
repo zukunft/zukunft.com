@@ -31,6 +31,22 @@ function create_base_words()
 
     test_header('Check if all base words are correct');
 
+    foreach (word::TEST_WORDS_STANDARD as $word_name) {
+        test_word($word_name);
+    }
+    foreach (word::TEST_WORDS_MEASURE as $word_name) {
+        test_word($word_name, word_type_list::DBL_MEASURE);
+    }
+    foreach (word::TEST_WORDS_SCALING as $word_name) {
+        test_word($word_name, word_type_list::DBL_SCALING);
+    }
+    foreach (word::TEST_WORDS_PERCENT as $word_name) {
+        test_word($word_name, word_type_list::DBL_PERCENT);
+    }
+    foreach (word::TEST_WORDS_TIME as $word_name) {
+        test_word($word_name, word_type_list::DBL_TIME);
+    }
+
     test_word(TW_ABB);
     test_word(TW_DAN);
     test_word(TW_NESN);
@@ -139,6 +155,9 @@ function run_word_test()
     test_dsp('word->next for ' . word::TN_2021 . '', $target, $result);
 
     // prior word
+    $wrd_time_prio = test_word(word::TN_2020, word_type_list::DBL_TIME);
+    $wrd_time_prio2 = test_word(word::TN_2019, word_type_list::DBL_TIME);
+
     $target = $wrd_time->name;
     $wrd_prior = $wrd_time_next->prior();
     $result = $wrd_prior->name;

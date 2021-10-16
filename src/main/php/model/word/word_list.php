@@ -1135,12 +1135,14 @@ class word_list
         return $result;
     }
 
-    // filter the time words out of the list of words
-    function time_lst(): phrase_list
+    /**
+     * filter the time words out of the list of words
+     */
+    function time_lst(): word_list
     {
         log_debug('word_list->time_lst for words "' . $this->dsp_id() . '"');
 
-        $result = new phrase_list;
+        $result = new word_list;
         $result->usr = $this->usr;
         $time_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
         // loop over the word ids and add only the time ids to the result array
@@ -1393,7 +1395,9 @@ class word_list
         return $max_wrd;
     }
 
-    // get the time of the last value related to a word and assigned to a word list
+    /**
+     * get the time of the last value related to a word and assigned to a word list
+     */
     function max_val_time()
     {
         log_debug('word_list->max_val_time ' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
@@ -1467,7 +1471,7 @@ class word_list
     }
 
     /**
-     * get the most useful time for the given words
+     * get the most useful time for the given list
      * so either the last time from the word list
      * or the time of the last "real" (reported) value for the word list
      *
@@ -1494,15 +1498,22 @@ class word_list
             log_debug('time ' . $phr->name . ' assumed for ' . $this->name_linked());
         } else {
             // get the time of the last "real" (reported) value for the word list
-            $phr = $this->max_val_time();
-            if ($phr != null) {
-                log_debug('the assumed time "' . $phr->name . '" is the last non estimated value of ' . dsp_array($this->names_linked()));
+            $wrd_max_time = $this->max_val_time();
+            if ($wrd_max_time != null) {
+                $phr = $wrd_max_time->phrase();
+                if ($phr != null) {
+                    log_debug('the assumed time "' . $phr->name . '" is the last non estimated value of ' . dsp_array($this->names_linked()));
+                }
             }
         }
 
         if (isset($phr)) {
             log_debug('word_list->assume_time -> time used "' . $phr->name . '" (' . $phr->id . ')');
-            $result = $phr;
+            if (get_class($phr) == 'word' or get_class($phr) == 'word_dsp') {
+                $result = $phr->phrase();
+            } else {
+                $result = $phr;
+            }
         } else {
             log_debug('word_list->assume_time -> no time found');
         }
@@ -1552,7 +1563,13 @@ class word_list
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;
         foreach ($this->lst as $wrd) {
-            $phr_lst->lst[] = $wrd->phrase();
+            if (get_class($wrd) == 'word' or get_class($wrd) == 'word_dsp') {
+                $phr_lst->lst[] = $wrd->phrase();
+            } elseif (get_class($wrd) == 'phrase') {
+                $phr_lst->lst[] = $wrd;
+            } else {
+                log_err('unexpected objecttype ' . get_class($wrd));
+            }
         }
         $phr_lst->ids();
         log_debug('word_list->phrase_lst -> done (' . dsp_count($phr_lst->lst) . ')');

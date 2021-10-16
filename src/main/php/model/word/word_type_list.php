@@ -38,6 +38,7 @@ class word_type_list extends user_type_list
     const DBL_MATH_CONST = "constant";
     const DBL_TIME = "time";
     const DBL_TIME_JUMP = "time_jump";
+    const DBL_LATEST = "latest";
     const DBL_PERCENT = "percent";
     const DBL_MEASURE = "measure";
     const DBL_SCALING = "scaling";

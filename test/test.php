@@ -162,6 +162,7 @@ if ($usr->id > 0) {
         create_base_formulas();
         create_base_formula_links();
         create_base_views();
+        create_base_values();
 
         run_db_link_test();
         //run_lib_test ();

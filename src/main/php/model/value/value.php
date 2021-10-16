@@ -46,6 +46,8 @@ class value extends user_sandbox_display
     // a list of dummy values that are used for system tests
     const TEST_VALUE = 123456;
     const TEST_FLOAT = 123.456;
+    const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
+    const TV_CANTON_ZH_INHABITANTS_2019 = 415367;
 
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from
@@ -212,7 +214,9 @@ class value extends user_sandbox_display
             $phr_lst = clone $this->phr_lst;
             if ($this->time_id <= 0) {
                 $time_phr = $this->phr_lst->time_useful();
-                $this->time_id = $time_phr->id;
+                if ($time_phr != null) {
+                    $this->time_id = $time_phr->id;
+                }
             }
             $phr_lst->ex_time();
 

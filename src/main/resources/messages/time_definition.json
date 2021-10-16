@@ -137,6 +137,11 @@
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "latest",
+      "type": "latest",
+      "protection": "admin_protection"
     }
   ]
 }

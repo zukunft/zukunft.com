@@ -46,10 +46,18 @@ class word extends word_link_object
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'System Test Another Time Word e.g. 2022';
+    const TN_2020 = 'System Test Another Time Word e.g. 2020';
+    const TN_2019 = 'System Test Another Time Word e.g. 2019';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
     const TN_MIO = 'System Test Scaling Word e.g. millions';
     const TN_PCT = 'System Test Percent Word';
-    const RESERVED_WORDS = array(self::TN_READ, self::TN_ADD, self::TN_RENAMED, self::TN_PARENT, self::TN_2021, self::TN_2022, self::TN_CHF, self::TN_MIO, self::TN_PCT);
+    const TN_INHAPITANT = 'System Test Word Unit e.g. inhabitant';
+    const RESERVED_WORDS = array(self::TN_READ, self::TN_ADD, self::TN_RENAMED, self::TN_PARENT, self::TN_2021, self::TN_2022, self::TN_CHF, self::TN_MIO, self::TN_PCT, self::TN_INHAPITANT);
+    const TEST_WORDS_STANDARD = array(self::TN_PARENT, self::TN_INHAPITANT);
+    const TEST_WORDS_MEASURE = array(self::TN_CHF);
+    const TEST_WORDS_SCALING = array(self::TN_MIO);
+    const TEST_WORDS_PERCENT = array(self::TN_PCT);
+    const TEST_WORDS_TIME = array(self::TN_2020, self::TN_2021, self::TN_2022);
 
     // database fields additional to the user sandbox fields
     public ?string $plural = null;      // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
