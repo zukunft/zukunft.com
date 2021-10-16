@@ -1685,6 +1685,15 @@ class sql_db
 
         // check if the old column name is still valid
         if (!$this->has_column($table_name, $column_name)) {
+
+            // adjust the type name for the use database
+            if ($this->db_type == DB_TYPE_MYSQL) {
+                if ($type_name == 'bigint') {
+                    $type_name = 'int(11)';
+                }
+            }
+
+            // actually add the column
             $sql = 'ALTER TABLE ' . $table_name . ' ADD COLUMN ' . $column_name . ' ' . $type_name . ';';
             $this->exe($sql);
         } else {

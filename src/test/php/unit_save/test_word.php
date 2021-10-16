@@ -154,10 +154,6 @@ function run_word_test()
     $result = $wrd_next->name;
     test_dsp('word->next for ' . word::TN_2021 . '', $target, $result);
 
-    // prior word
-    $wrd_time_prio = test_word(word::TN_2020, word_type_list::DBL_TIME);
-    $wrd_time_prio2 = test_word(word::TN_2019, word_type_list::DBL_TIME);
-
     $target = $wrd_time->name;
     $wrd_prior = $wrd_time_next->prior();
     $result = $wrd_prior->name;

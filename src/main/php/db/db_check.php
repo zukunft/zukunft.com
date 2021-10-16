@@ -87,6 +87,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->add_column('user_word_links', 'protection_type_id', 'smallint;');
     $db_con->add_column('word_links', 'share_type_id', 'smallint;');
     $db_con->add_column('word_links', 'protection_type_id', 'smallint;');
+    $db_con->add_column('word_links', 'word_type_id', 'bigint;');
     $db_con->add_column('formula_links', 'order_nbr', 'smallint;');
     $db_con->change_column_name('user_values', 'user_value', 'word_value');
     $db_con->change_column_name('user_value', 'user_value', 'word_value;');

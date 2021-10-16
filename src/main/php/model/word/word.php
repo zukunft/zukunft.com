@@ -51,13 +51,15 @@ class word extends word_link_object
     const TN_CHF = 'System Test Measure Word e.g. CHF';
     const TN_MIO = 'System Test Scaling Word e.g. millions';
     const TN_PCT = 'System Test Percent Word';
-    const TN_INHAPITANT = 'System Test Word Unit e.g. inhabitant';
-    const RESERVED_WORDS = array(self::TN_READ, self::TN_ADD, self::TN_RENAMED, self::TN_PARENT, self::TN_2021, self::TN_2022, self::TN_CHF, self::TN_MIO, self::TN_PCT, self::TN_INHAPITANT);
-    const TEST_WORDS_STANDARD = array(self::TN_PARENT, self::TN_INHAPITANT);
+    const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
+
+    // word groups for creating the test words and remove them after the test
+    const RESERVED_WORDS = array(self::TN_READ, self::TN_ADD, self::TN_RENAMED, self::TN_PARENT, self::TN_2021, self::TN_2022, self::TN_CHF, self::TN_MIO, self::TN_PCT, self::TN_INHABITANT);
+    const TEST_WORDS_STANDARD = array(self::TN_PARENT, self::TN_INHABITANT);
     const TEST_WORDS_MEASURE = array(self::TN_CHF);
     const TEST_WORDS_SCALING = array(self::TN_MIO);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);
-    const TEST_WORDS_TIME = array(self::TN_2020, self::TN_2021, self::TN_2022);
+    const TEST_WORDS_TIME = array(self::TN_2019, self::TN_2020, self::TN_2021, self::TN_2022);
 
     // database fields additional to the user sandbox fields
     public ?string $plural = null;      // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
@@ -356,7 +358,8 @@ class word extends word_link_object
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string an empty string if the import has been successfully saved to the database
+     *                or the message that should be shown to the user
      */
     function import_obj(array $json_obj, bool $do_save = true): string
     {
@@ -563,6 +566,16 @@ class word extends word_link_object
     }
 
     /**
+     * get the database id of the word type
+     * also to fix a problem if a phrase list contains a word
+     * @return int the id of the word type
+     */
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
+    /**
      * get the name of the word type
      * @return string the name of the word type
      */
@@ -636,14 +649,6 @@ class word extends word_link_object
     function is_percent(): bool
     {
         return $this->is_type(word_type_list::DBL_PERCENT);
-    }
-
-    /**
-     * just to fix a problem if a phrase list contains a word
-     */
-    function type_id(): int
-    {
-        return $this->type_id;
     }
 
     /**

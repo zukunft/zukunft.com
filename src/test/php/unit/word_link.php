@@ -52,6 +52,7 @@ function run_word_link_unit_tests()
                             s.from_phrase_id,  
                             s.to_phrase_id,  
                             s.verb_id,  
+                            s.word_type_id,  
                             CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name     ELSE u.word_link_name     END AS word_link_name,  
                             CASE WHEN (u.description <> ''    IS NOT TRUE) THEN s.description        ELSE u.description        END AS description,  
                             CASE WHEN (u.excluded             IS     NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,

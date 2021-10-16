@@ -50,9 +50,12 @@ TODO in the user registration mask allow to add places and streets on the fly an
 TODO use the object constructor if useful
 TODO capsule all critical functions in classes for security reason, to make sure that they never call be called without check e.g. database reset
 TODO to speed up create one database statement for each user action if possible
+TODO split the user sandbox object into a user sandbox base object and extend it either for a named or a link object
+TODO remove e.g. the word->type_id field and use word->type->id instead to reduce the number of fields
+TODO try to use interface function and make var private to have a well defined interface
 
 
-TODO creste a table startup page with a
+TODO create a table startup page with a
      Table with two col and two rows and four last used pages below. If now last used pages show the demo pages.
      Typing words in the top left cell select a word with the default page
      Typing in the top right cell adds one more column and two rows and typing offer to select a word and also adds related row names based on child words

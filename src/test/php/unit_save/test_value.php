@@ -35,7 +35,7 @@ function create_base_values()
         word::TN_CANTON,
         word::TN_ZH,
         word::TN_MIO,
-        word::TN_INHAPITANT
+        word::TN_INHABITANT
         ),
         value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
@@ -44,7 +44,7 @@ function create_base_values()
         word::TN_CANTON,
         word::TN_ZH,
         word::TN_MIO,
-        word::TN_INHAPITANT,
+        word::TN_INHABITANT,
         word::TN_2020
     ),
         value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
@@ -52,14 +52,14 @@ function create_base_values()
     // add the number of inhabitants in the city of zurich without time definition using the phrase zurich (city) instead of two single words
     test_value(array(
         phrase::TN_ZH_CITY,
-        word::TN_INHAPITANT
+        word::TN_INHABITANT
     ),
         value::TV_CANTON_ZH_INHABITANTS_2019);
 
     // ... same with the concrete year
     test_value(array(
         phrase::TN_ZH_CITY,
-        word::TN_INHAPITANT,
+        word::TN_INHABITANT,
         word::TN_2019
     ),
         value::TV_CANTON_ZH_INHABITANTS_2019);

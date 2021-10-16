@@ -473,9 +473,9 @@ function run_user_sandbox_unit_tests()
               WHERE s.phrase_group_id = 1;";
     test_dsp('PostgreSQL user sandbox value select by where text', zu_trim($expected_sql), zu_trim($created_sql));
 
-    // ... same for the a link table
+    // ... same for a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
-    $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', 'verb_id'));
+    $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', 'verb_id', 'word_type_id'));
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION, 'excluded'));
     $db_con->set_where_text('s.word_link_id = 1');
     $created_sql = $db_con->select();
@@ -485,6 +485,7 @@ function run_user_sandbox_unit_tests()
                      s.from_phrase_id,
                      s.to_phrase_id,
                      s.verb_id,
+                     s.word_type_id,
                      CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name,
                      CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
                      CASE WHEN (u.excluded       <> '' IS NOT TRUE) THEN s.excluded       ELSE u.excluded       END AS excluded
@@ -685,6 +686,7 @@ function run_user_sandbox_unit_tests()
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
+    $db_con->set_fields(array('word_type_id'));
     $db_con->set_usr_num_fields(array('excluded'));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
@@ -695,6 +697,7 @@ function run_user_sandbox_unit_tests()
                         s.from_phrase_id,
                         s.to_phrase_id,
                         s.verb_id, 
+                        s.word_type_id, 
                         CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name, 
                         CASE WHEN (u.description <> ''    IS NOT TRUE) THEN s.description    ELSE u.description    END AS description, 
                         CASE WHEN (u.excluded             IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded 
@@ -900,9 +903,9 @@ function run_user_sandbox_unit_tests()
               WHERE s.phrase_group_id = 1;";
     test_dsp('MySQL user sandbox value select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
-    // ... same for the a link table
+    // ... same for a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
-    $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', 'verb_id'));
+    $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', 'verb_id', 'word_type_id'));
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION, 'excluded'));
     $db_con->set_where_text('s.word_link_id = 1');
     $created_sql = $db_con->select();
@@ -913,6 +916,7 @@ function run_user_sandbox_unit_tests()
                      s.from_phrase_id,
                      s.to_phrase_id,
                      s.verb_id,
+                     s.word_type_id,
                      IF(u.word_link_name IS NULL, s.word_link_name, u.word_link_name) AS word_link_name,
                      IF(u.description    IS NULL, s.description,    u.description)    AS description,
                      IF(u.excluded       IS NULL, s.excluded,       u.excluded)       AS excluded
@@ -1046,7 +1050,7 @@ function run_user_sandbox_unit_tests()
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
-    $db_con->set_fields(array(sql_db::FLD_DESCRIPTION,'excluded'));
+    $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'word_type_id', 'excluded'));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -1056,6 +1060,7 @@ function run_user_sandbox_unit_tests()
                         to_phrase_id,
                         verb_id,
                         description,
+                        word_type_id,
                         excluded
                    FROM word_links 
                   WHERE word_link_id = 1;";
@@ -1065,6 +1070,7 @@ function run_user_sandbox_unit_tests()
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
+    $db_con->set_fields(array('word_type_id'));
     $db_con->set_usr_num_fields(array('excluded'));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
@@ -1076,6 +1082,7 @@ function run_user_sandbox_unit_tests()
                         s.from_phrase_id,
                         s.to_phrase_id, 
                         s.verb_id, 
+                        s.word_type_id, 
                         IF(u.word_link_name IS NULL, s.word_link_name, u.word_link_name) AS word_link_name, 
                         IF(u.description    IS NULL, s.description,    u.description)    AS description,
                         IF(u.excluded       IS NULL, s.excluded,       u.excluded)       AS excluded 

@@ -86,6 +86,7 @@ class word_link extends word_link_object
                 $this->verb->id = $db_row['verb_id'];
                 $this->name = $db_row['word_link_name'];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+                $this->type_id = $db_row['word_type_id'];
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_word_link_id'];
@@ -298,7 +299,7 @@ class word_link extends word_link_object
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'excluded', 'user_id'));
+            $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'word_type_id', 'excluded', 'user_id'));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
 
@@ -378,6 +379,7 @@ class word_link extends word_link_object
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
             $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
+            $db_con->set_fields(array('word_type_id'));
             $db_con->set_usr_num_fields(array('excluded', sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
@@ -643,6 +645,15 @@ class word_link extends word_link_object
     function description(): string
     {
         return $this->name();
+    }
+
+    /**
+     * get the database id of the word link type
+     * @return int the id of the word type
+     */
+    function type_id(): ?int
+    {
+        return $this->type_id;
     }
 
     /**

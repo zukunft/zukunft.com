@@ -1147,7 +1147,7 @@ class word_list
         $time_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
-            if ($wrd->type_id == $time_type) {
+            if ($wrd->type_id() == $time_type) {
                 $result->add($wrd);
                 log_debug('word_list->time_lst -> found (' . $wrd->name . ')');
             } else {

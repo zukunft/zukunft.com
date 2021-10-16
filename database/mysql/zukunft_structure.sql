@@ -1388,6 +1388,7 @@ CREATE TABLE IF NOT EXISTS `word_links`
     `word_link_condition_id`      int(11)      DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
     `word_link_condition_type_id` int(11)      DEFAULT NULL COMMENT 'maybe not needed',
     `description`                 text,
+    `word_type_id`                int(11)      DEFAULT NULL,
     `word_link_name`              varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlying)',
     `excluded`                    tinyint(4)   DEFAULT NULL,
     `share_type_id`               smallint     DEFAULT NULL,

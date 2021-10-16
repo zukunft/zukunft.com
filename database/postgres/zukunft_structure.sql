@@ -1363,6 +1363,7 @@ CREATE TABLE IF NOT EXISTS word_links
     word_link_condition_id      bigint            DEFAULT NULL,
     word_link_condition_type_id bigint            DEFAULT NULL,
     description                 text,
+    word_type_id                bigint            DEFAULT NULL,
     word_link_name              varchar(200)      DEFAULT NULL,
     excluded                    smallint          DEFAULT NULL,
     share_type_id               smallint          DEFAULT NULL,

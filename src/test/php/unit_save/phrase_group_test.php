@@ -38,7 +38,7 @@ function run_phrase_group_test()
     $wrd_lst->usr = $usr;
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_CANTON);
-    $wrd_lst->add_name(word::TN_INHAPITANT);
+    $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
     $wrd_lst->load();
     $phr_grp = new phrase_group;
@@ -77,7 +77,7 @@ function run_phrase_group_test()
         $phr_grp_reload->load_lst();
         $wrd_lst_reloaded = $phr_grp_reload->wrd_lst;
         $result = implode(",", $wrd_lst_reloaded->names());
-        $target = word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHAPITANT;
+        $target = word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
         test_dsp('phrase_group->load for id ' . $phr_grp->id, $target, $result);
     }
 
@@ -85,7 +85,7 @@ function run_phrase_group_test()
     $phr_lst = new phrase_list();
     $phr_lst->usr = $usr;
     $phr_lst->add_name(phrase::TN_ZH_CITY);
-    $phr_lst->add_name(word::TN_INHAPITANT);
+    $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->load();
     $zh_city_grp = new phrase_group;
     $zh_city_grp->usr = $usr;
@@ -98,7 +98,7 @@ function run_phrase_group_test()
 
     // test names
     $result = implode(",", $zh_city_grp->names());
-    $target = word::TN_INHAPITANT . ',' . phrase::TN_ZH_CITY;
+    $target = word::TN_INHABITANT . ',' . phrase::TN_ZH_CITY;
     test_dsp('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated
@@ -106,7 +106,7 @@ function run_phrase_group_test()
     $phr_lst->usr = $usr;
     $phr_lst->add_name(word::TN_ZH);
     $phr_lst->add_name(word::TN_CANTON);
-    $phr_lst->add_name(word::TN_INHAPITANT);
+    $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->load();
     $grp = $phr_lst->get_grp();
     $grp_check = new phrase_group;
@@ -122,7 +122,7 @@ function run_phrase_group_test()
     $phr_lst->usr = $usr;
     $phr_lst->add_name(word::TN_ZH);
     $phr_lst->add_name(word::TN_CANTON);
-    $phr_lst->add_name(word::TN_INHAPITANT);
+    $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_MIO);
     $phr_lst->add_name(word::TN_2020);
     $phr_lst->load();

@@ -152,10 +152,21 @@ class phrase
         return $wrd_lst;
     }
 
-    function type_id(): int
+    /**
+     * return either the word type id or the word link type id
+     * e.g. 2020 can be a year but also any other identification number e.g. a valor number,
+     * so if there is both in the database the type must be saved on the word link instead of the word
+     */
+    function type_id(): ?int
     {
-        $wrd = $this->main_word();
-        $result = $wrd->type_id;
+        $result = null;
+        if ($this->obj != null) {
+            $result = $this->obj->type_id();
+        }
+        if ($result == null or $result == 0) {
+            $wrd = $this->main_word();
+            $result = $wrd->type_id;
+        }
 
         log_debug('phrase->type_id for ' . $this->dsp_id() . ' is ' . $result);
         return $result;
