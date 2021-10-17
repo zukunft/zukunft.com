@@ -53,6 +53,7 @@ TODO to speed up create one database statement for each user action if possible
 TODO split the user sandbox object into a user sandbox base object and extend it either for a named or a link object
 TODO remove e.g. the word->type_id field and use word->type->id instead to reduce the number of fields
 TODO try to use interface function and make var private to have a well defined interface
+TODO remove all duplicates in objects like the list of ids and replace it by a creation function; if cache is needed do this in the calling function because this knows when to refresh
 
 
 TODO create a table startup page with a

@@ -185,20 +185,22 @@ class value_list
                 //$db_con = New mysql;
                 $db_con->usr_id = $this->usr->id;
                 $db_val_lst = $db_con->get($sql);
-                foreach ($db_val_lst as $db_val) {
-                    if (is_null($db_val['excluded']) or $db_val['excluded'] == 0) {
-                        $val = new value;
-                        $val->id = $db_val['value_id'];
-                        $val->usr_cfg_id = $db_val['user_value_id'];
-                        $val->owner_id = $db_val['user_id'];
-                        $val->usr = $this->usr;
-                        $val->owner = $db_val['user_id'];
-                        $val->number = $db_val['word_value'];
-                        $val->source_id = $db_val['source_id'];
-                        $val->last_update = new DateTime($db_val['last_update']);
-                        $val->grp_id = $db_val['phrase_group_id'];
-                        $val->time_phr = $db_val['time_word_id'];
-                        $this->lst[] = $val;
+                if ($db_val_lst != false) {
+                    foreach ($db_val_lst as $db_val) {
+                        if (is_null($db_val['excluded']) or $db_val['excluded'] == 0) {
+                            $val = new value;
+                            $val->id = $db_val['value_id'];
+                            $val->usr_cfg_id = $db_val['user_value_id'];
+                            $val->owner_id = $db_val['user_id'];
+                            $val->usr = $this->usr;
+                            $val->owner = $db_val['user_id'];
+                            $val->number = $db_val['word_value'];
+                            $val->source_id = $db_val['source_id'];
+                            $val->last_update = new DateTime($db_val['last_update']);
+                            $val->grp_id = $db_val['phrase_group_id'];
+                            $val->time_phr = $db_val['time_word_id'];
+                            $this->lst[] = $val;
+                        }
                     }
                 }
                 log_debug('value_list->load_all (' . dsp_count($this->lst) . ')');

@@ -332,8 +332,10 @@ class word_link_list
                             // if the source word is set, the query result probably does not contain the values of the source word
                             if (isset($this->wrd)) {
                                 log_debug('word_link_list->load ... use "' . $this->wrd->name . '" as from');
-                                $new_link->from = $this->wrd;
-                                $new_link->from_name = $this->wrd->name;
+                                if ($this->wrd != null) {
+                                    $new_link->from = $this->wrd->phrase();
+                                    $new_link->from_name = $this->wrd->name;
+                                }
                             } else {
                                 if ($db_lnk['word_id'] > 0) {
                                     $new_word = new word_dsp;
@@ -405,7 +407,7 @@ class word_link_list
     {
         $result = '';
 
-        $id = dsp_array( $this->ids);
+        $id = dsp_array($this->ids);
         $name = $this->name();
         if ($name <> '') {
             $result .= '"' . $name . '" (' . $id . ')';
@@ -419,7 +421,7 @@ class word_link_list
     // description of the triple list for the user
     function name(): string
     {
-        return dsp_array( $this->names());
+        return dsp_array($this->names());
     }
 
     // return a list of the triple names
@@ -460,28 +462,28 @@ class word_link_list
                 $lnk = $this->lst[$lnk_id];
                 // get the next link to detect if there is more than one word linked with the same link type
                 // TODO check with a unit test if last element is used
-                if (count($this->lst) - 1  > $lnk_id) {
+                if (count($this->lst) - 1 > $lnk_id) {
                     $next_lnk = $this->lst[$lnk_id + 1];
                 } else {
                     $next_lnk = $lnk;
                 }
 
                 // display type header
-                if ($lnk->verb_id <> $prev_verb_id) {
-                    if ($lnk->verb == null) {
-                        log_warning('graph->display type is missing');
-                    } else {
+                if ($lnk->verb == null) {
+                    log_warning('graph->display type is missing');
+                } else {
+                    if ($lnk->verb->id <> $prev_verb_id) {
                         log_debug('graph->display type "' . $lnk->verb->name . '"');
 
                         // select the same side of the verb
                         if ($this->direction == verb::DIRECTION_DOWN) {
-                            $directional_link_type_id = $lnk->verb_id;
+                            $directional_link_type_id = $lnk->verb->id;
                         } else {
-                            $directional_link_type_id = $lnk->verb_id * -1;
+                            $directional_link_type_id = $lnk->verb->id * -1;
                         }
 
                         // display the link type
-                        if ($lnk->verb_id == $next_lnk->verb_id) {
+                        if ($lnk->verb->id == $next_lnk->verb->id) {
                             $result .= $this->wrd->plural;
                             if ($this->direction == verb::DIRECTION_DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
@@ -498,58 +500,64 @@ class word_link_list
                         }
                     }
                     $result .= dsp_tbl_start_half();
-                    $prev_verb_id = $lnk->verb_id;
-                }
+                    $prev_verb_id = $lnk->verb->id;
 
-                // display the word
-                if ($lnk->from == null) {
-                    log_warning('graph->display from is missing');
-                } else {
-                    log_debug('word->dsp_graph display word ' . $lnk->from->name);
-                    $result .= '  <tr>' . "\n";
-                    $result .= $lnk->to->dsp_tbl_cell(0);
-                    $result .= $lnk->dsp_btn_edit($lnk->from);
-                    $result .= $lnk->from->dsp_unlink($lnk->id);
-                    $result .= '  </tr>' . "\n";
-                }
-
-                // use the last word as a sample for the new word type
-                $last_linked_word_id = 0;
-                if ($lnk->verb_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
-                    $last_linked_word_id = $lnk->to->id;
-                }
-
-                // in case of the verb "following" continue the series after the last element
-                $start_id = 0;
-                if ($lnk->verb_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
-                    $start_id = $last_linked_word_id;
-                    // and link with the same direction (looks like not needed!)
-                    /* if ($directional_link_type_id > 0) {
-                      $directional_link_type_id = $directional_link_type_id * -1;
-                    } */
-                } else {
+                    // display the word
                     if ($lnk->from == null) {
                         log_warning('graph->display from is missing');
                     } else {
-                        $start_id = $lnk->from->id; // to select a similar word for the verb following
+                        log_debug('word->dsp_graph display word ' . $lnk->from->name);
+                        $result .= '  <tr>' . "\n";
+                        if ($lnk->to != null) {
+                            $dsp_obj = $lnk->to->get_dsp_obj();
+                            $result .= $dsp_obj->dsp_tbl_cell(0);
+                        }
+                        $result .= $lnk->dsp_btn_edit($lnk->from);
+                        if ($lnk->from != null) {
+                            $dsp_obj = $lnk->from->get_dsp_obj();
+                            $result .= $dsp_obj->dsp_unlink($lnk->id);
+                        }
+                        $result .= '  </tr>' . "\n";
                     }
-                }
 
-                if ($lnk->verb_id <> $next_lnk->verb_id) {
-                    if ($lnk->from == null) {
-                        log_warning('graph->display from is missing');
+                    // use the last word as a sample for the new word type
+                    $last_linked_word_id = 0;
+                    if ($lnk->verb->id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
+                        $last_linked_word_id = $lnk->to->id;
+                    }
+
+                    // in case of the verb "following" continue the series after the last element
+                    $start_id = 0;
+                    if ($lnk->verb->id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
+                        $start_id = $last_linked_word_id;
+                        // and link with the same direction (looks like not needed!)
+                        /* if ($directional_link_type_id > 0) {
+                          $directional_link_type_id = $directional_link_type_id * -1;
+                        } */
                     } else {
-                        $start_id = $lnk->from->id;
+                        if ($lnk->from == null) {
+                            log_warning('graph->display from is missing');
+                        } else {
+                            $start_id = $lnk->from->id; // to select a similar word for the verb following
+                        }
                     }
-                    // give the user the possibility to add a similar word
-                    $result .= '  <tr>';
-                    $result .= '    <td>';
-                    $result .= '      ' . btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->to->type_id . '&back=' . $start_id);
-                    $result .= '    </td>';
-                    $result .= '  </tr>';
 
-                    $result .= dsp_tbl_end();
-                    $result .= '<br>';
+                    if ($lnk->verb->id <> $next_lnk->verb->id) {
+                        if ($lnk->from == null) {
+                            log_warning('graph->display from is missing');
+                        } else {
+                            $start_id = $lnk->from->id;
+                        }
+                        // give the user the possibility to add a similar word
+                        $result .= '  <tr>';
+                        $result .= '    <td>';
+                        $result .= '      ' . btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->to->type_id . '&back=' . $start_id);
+                        $result .= '    </td>';
+                        $result .= '  </tr>';
+
+                        $result .= dsp_tbl_end();
+                        $result .= '<br>';
+                    }
                 }
             }
         }

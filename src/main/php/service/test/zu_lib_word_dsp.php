@@ -210,7 +210,7 @@ function zut_html_list_related($id, $direction, $user_id): string
     $result = '';
 
 
-// get the link types related to the word
+    // get the link types related to the word
     if ($direction == verb::DIRECTION_DOWN) {
         $type_query = "SELECT verb_id FROM word_links WHERE to_phrase_id = " . $id . " GROUP BY verb_id;";
     } else {
@@ -220,93 +220,103 @@ function zut_html_list_related($id, $direction, $user_id): string
     //$sql_type_result = zu_sql_get_all($type_query);
 
     // loop over the link types
-    foreach ($db_lst as $link_type_id) {
-        //while ($type_entry = mysqli_fetch_array($sql_type_result, MySQLi_NUM)) {
+    if ($db_lst != null) {
+        foreach ($db_lst as $link_type_id) {
+            $verb_id = $link_type_id['verb_id'];
 
-        // select the words
-        //$link_type_id = $type_entry[0];
-        $sql = zu_sql_words_linked($id, $link_type_id, $direction, $user_id);
-        $sql_result = zu_sql_get_all($sql);
+            //while ($type_entry = mysqli_fetch_array($sql_type_result, MySQLi_NUM)) {
 
-        // select the same side of the verb
-        if ($direction == verb::DIRECTION_DOWN) {
-            $directional_link_type_id = $link_type_id;
-        } else {
-            $directional_link_type_id = $link_type_id * -1;
-        }
 
-        // in case of the verb "following" continue the series
-        if ($link_type_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
-            $start_id = $link_type_id * -1;
-        } else {
-            $start_id = $id;
-        }
+            // select the words
+            //$link_type_id = $type_entry[0];
+            $sql = zu_sql_words_linked($id, $verb_id, $direction, $user_id);
+            $sql_result = $db_con->get($sql);
 
-        log_debug('zut_html_list_related link');
+            //$sql_result = zu_sql_get_all($sql);
 
-        // display the link type
-        $num_rows = mysqli_num_rows($sql_result);
-        if ($num_rows > 1) {
-            $result .= zut_plural($id, $user_id);
-            log_debug('zut_html_list_related plu');
+            // select the same side of the verb
             if ($direction == verb::DIRECTION_DOWN) {
-                $result .= " " . zul_plural_reverse($link_type_id);
+                $directional_link_type_id = $verb_id;
             } else {
-                $result .= " " . zul_plural($link_type_id);
+                $directional_link_type_id = $verb_id * -1;
             }
-        } else {
-            log_debug('zut_html_list_related rev');
-            $result .= zut_name($id, $user_id);
-            log_debug('zut_html_list_related revn');
-            if ($direction == verb::DIRECTION_DOWN) {
-                $result .= " " . zul_reverse($link_type_id);
+
+            // in case of the verb "following" continue the series
+            if ($verb_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
+                $start_id = $verb_id * -1;
             } else {
-                $result .= " " . zul_name($link_type_id);
+                $start_id = $id;
             }
-        }
 
-        log_debug('zut_html_list_related link done');
+            log_debug('zut_html_list_related link');
 
-        // display the words
-        $result .= '<table class="table col-sm-5 table-borderless">';
-        while ($word_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-            $result .= '  <tbody><tr>' . "\n";
-            $result .= zut_html_tbl($word_entry[0], $word_entry[1]);
-            log_debug('zut_html_list_related btn link');
-            $result .= zutl_btn_edit($word_entry[3], $id);
-            log_debug('zut_html_list_related btn link done');
-            $result .= zut_unlink_html($word_entry[3], $id);
-            log_debug('zut_html_list_related btn unlink done');
-            $result .= '  </tr>' . "\n";
-            $result .= '  </tbody>' . "\n";
-            //$result .= zut_html($word_entry[0], $word_entry[1]);
-            // use the last word as a sample for the new word type
-            $word_type_id = $word_entry[2];
-            if ($link_type_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
-                $last_linked_word_id = $word_entry[0];
+            // display the link type
+            // $num_rows = mysqli_num_rows($sql_result);
+            if ($sql_result != false) {
+                if (count($sql_result) > 1) {
+                    $result .= zut_plural($id, $user_id);
+                    log_debug('zut_html_list_related plu');
+                    if ($direction == verb::DIRECTION_DOWN) {
+                        $result .= " " . zul_plural_reverse($verb_id);
+                    } else {
+                        $result .= " " . zul_plural($verb_id);
+                    }
+                } else {
+                    log_debug('zut_html_list_related rev');
+                    $result .= zut_name($id, $user_id);
+                    log_debug('zut_html_list_related revn');
+                    if ($direction == verb::DIRECTION_DOWN) {
+                        $result .= " " . zul_reverse($verb_id);
+                    } else {
+                        $result .= " " . zul_name($verb_id);
+                    }
+                }
+
+                log_debug('zut_html_list_related link done');
+
+                // display the words
+                $result .= '<table class="table col-sm-5 table-borderless">';
+                foreach ($sql_result as $word_entry) {
+                    //while ($word_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
+                    $result .= '  <tbody><tr>' . "\n";
+                    $result .= zut_html_tbl($word_entry[0], $word_entry[1]);
+                    log_debug('zut_html_list_related btn link');
+                    $result .= zutl_btn_edit($word_entry[3], $id);
+                    log_debug('zut_html_list_related btn link done');
+                    $result .= zut_unlink_html($word_entry[3], $id);
+                    log_debug('zut_html_list_related btn unlink done');
+                    $result .= '  </tr>' . "\n";
+                    $result .= '  </tbody>' . "\n";
+                    //$result .= zut_html($word_entry[0], $word_entry[1]);
+                    // use the last word as a sample for the new word type
+                    $word_type_id = $word_entry[2];
+                    if ($verb_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
+                        $last_linked_word_id = $word_entry[0];
+                    }
+                }
+                log_debug('zut_html_list_related btn done');
             }
+
+            // in case of the verb "following" continue the series after the last element
+            if ($verb_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
+                $start_id = $last_linked_word_id;
+                /*      if ($directional_link_type_id > 0) {
+                        $directional_link_type_id = $directional_link_type_id * -1;
+                      } */
+            } else {
+                $start_id = $id;
+            }
+
+            // give the user the possibility to add a simular word
+            $result .= '  <tr>';
+            $result .= '    <td>';
+            $result .= '      ' . btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $word_type_id . '&back=' . $start_id);
+            $result .= '    </td>';
+            $result .= '  </tr>';
+
+            $result .= '</table><br> ';
+
         }
-        log_debug('zut_html_list_related btn done');
-
-        // in case of the verb "following" continue the series after the last element
-        if ($link_type_id == cl(db_cl::VERB, verb::DBL_FOLLOW)) {
-            $start_id = $last_linked_word_id;
-            /*      if ($directional_link_type_id > 0) {
-                    $directional_link_type_id = $directional_link_type_id * -1;
-                  } */
-        } else {
-            $start_id = $id;
-        }
-
-        // give the user the possibility to add a simular word
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        $result .= '      ' . btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $word_type_id . '&back=' . $start_id);
-        $result .= '    </td>';
-        $result .= '  </tr>';
-
-        $result .= '</table><br> ';
-
     }
 
     return $result;
@@ -401,42 +411,42 @@ function zut_dsp_list_wrd_val($wrd_id, $col_wrd_id, $user_id)
                           echo $wrd_grp_id."<br>";
                           $in_value = zuv_wrd_group_result($wrd_grp_id, 0, $user_id, 20);
                         } */
-                        /*
-                $value = $in_value['num'];
-                if ($value <> 0) {
-                    //$back_link = $row_wrd_id;
-                    $back_link = $wrd_id;
-                    if ($in_value['usr'] > 0) {
-                        $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&word=' . $row_wrd_id . '&group=' . $wrd_grp_id . '&back=' . $back_link . '" class="user_specific">' . round($value, 2) . '</a></p>' . "\n";
-                    } else {
-                        $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&word=' . $row_wrd_id . '&group=' . $wrd_grp_id . '&back=' . $back_link . '">' . round($value, 2) . '</a></p>' . "\n";
-                    }
-                }
-            }
-            $result .= '    </td>' . "\n";
-        }
-        $result .= '  </tr>' . "\n";
-        $row_nbr++;
-    }
-    $result .= '</table>';
+/*
+$value = $in_value['num'];
+if ($value <> 0) {
+//$back_link = $row_wrd_id;
+$back_link = $wrd_id;
+if ($in_value['usr'] > 0) {
+$result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&word=' . $row_wrd_id . '&group=' . $wrd_grp_id . '&back=' . $back_link . '" class="user_specific">' . round($value, 2) . '</a></p>' . "\n";
+} else {
+$result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&word=' . $row_wrd_id . '&group=' . $wrd_grp_id . '&back=' . $back_link . '">' . round($value, 2) . '</a></p>' . "\n";
+}
+}
+}
+$result .= '    </td>' . "\n";
+}
+$result .= '  </tr>' . "\n";
+$row_nbr++;
+}
+$result .= '</table>';
 
-    /*
-      while ($word_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-        $result .= zutl_btn_edit ($word_entry[3], $word_id);
-        $result .= zut_unlink_html ($word_entry[3], $word_id);
-        // use the last word as a sample for the new word type
-        $word_type_id = $word_entry[2];
-      }
+/*
+while ($word_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
+$result .= zutl_btn_edit ($word_entry[3], $word_id);
+$result .= zut_unlink_html ($word_entry[3], $word_id);
+// use the last word as a sample for the new word type
+$word_type_id = $word_entry[2];
+}
 
-      // give the user the possibility to add a simular word
-      $result .= '  <tr>';
-      $result .= '    <td>';
-      $result .= '      <a href="/http/word_add.php?link='.$link_type_id.'&word='.$word_id.'&type='.$word_type_id.'&back='.$word_id.'"><img src="/images/button_add_small.jpg" alt="add new"></a>';
-      $result .= '    </td>';
-      $result .= '  </tr>';
+// give the user the possibility to add a simular word
+$result .= '  <tr>';
+$result .= '    <td>';
+$result .= '      <a href="/http/word_add.php?link='.$link_type_id.'&word='.$word_id.'&type='.$word_type_id.'&back='.$word_id.'"><img src="/images/button_add_small.jpg" alt="add new"></a>';
+$result .= '    </td>';
+$result .= '  </tr>';
 
-      $result .= '</table><br> ';
-    */ /*
+$result .= '</table><br> ';
+*/ /*
     return $result;
 }
  */
@@ -781,13 +791,17 @@ function zutl_btn_edit($link_id, $word_id)
 // return the word name for more than one
 function zut_plural($wrd_id, $user_id)
 {
+    global $db_con;
+
     log_debug('zut_plural (' . $wrd_id . ',u' . $user_id . ')');
     $result = null;
     if ($wrd_id > 0) {
-        $wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
+        $wrd_del = $db_con->get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
+        //$wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         // only return a word if the user has not yet excluded the word
         if ($wrd_id <> $wrd_del) {
-            $result = zu_sql_get1("SELECT plural FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
+            $result = $db_con->get1("SELECT plural FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
+            //$result = zu_sql_get1("SELECT plural FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
             if ($result == NULL) {
                 $result = zu_sql_get_field('word', $wrd_id, 'plural');
             }

@@ -368,6 +368,7 @@ function sql_set_no_log($table, $id_field, $id_value, $value_field, $new_value, 
 // returns all results of an SQL query 
 function zu_sql_get_all($sql)
 {
+    global $db_con;
     global $debug;
     global $usr;
 
@@ -377,7 +378,8 @@ function zu_sql_get_all($sql)
         log_debug('zu_sql_get_all (' . substr($sql, 0, 100) . ' ... )');
     }
 
-    $result = zu_sql_exe($sql, $usr->id, sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
+    $result = $db_con->exe($sql);
+    //$result = zu_sql_exe($sql, $usr->id, sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
 
     log_debug("zu_sql_get_all ... done");
 
@@ -503,12 +505,17 @@ function zu_sql_get_ids($sql)
 // returns first value of a simple SQL query 
 function zu_sql_get_value($table_name, $field_name, $id_name, $id)
 {
+    global $db_con;
+
     log_debug("zu_sql_get_value(" . $table_name . "," . $field_name . "," . $id_name . "," . $id . ")");
 
     $result = '';
     $query = "SELECT " . $field_name . " FROM " . zu_sql_table_name($table_name) . " WHERE " . $id_name . " = '" . $id . "';";
-    $sql_array = zu_sql_get($query);
-    $result = $sql_array[0];
+    $sql_array = $db_con->get($query);
+    //$sql_array = zu_sql_get($query);
+    if ($sql_array != false) {
+        $result = $sql_array[0];
+    }
 
     log_debug("zu_sql_get_value -> (" . $result . ")");
 
@@ -1384,9 +1391,9 @@ function zu_sql_words($user_id)
 }
 
 // returns the words linked to a given word
-function zu_sql_words_linked($word_id, $verb_id, $direction, $user_id)
+function zu_sql_words_linked($word_id, $verb_id, $direction, $user_id): string
 {
-    log_debug('zu_sql_words_linked(t' . $word_id . ',v' . $verb_id . ',' . $direction . ',u' . $user_id . ')');
+    $sql = "";
 
     if ($word_id > 0) {
         if ($verb_id > 0) {
@@ -1406,8 +1413,6 @@ function zu_sql_words_linked($word_id, $verb_id, $direction, $user_id)
             . " WHERE " . $sql_dir
             . $sql_link
             . " ORDER BY t.word_name;";
-    } else {
-        $sql = "";
     }
 
     return $sql;

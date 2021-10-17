@@ -59,7 +59,7 @@ class phrase
     {
         log_debug('phrase->load ' . $this->dsp_id());
         $result = false;
-        if ($this->id < 0) {
+        if ($this->is_triple()) {
             $lnk = new word_link;
             $lnk->id = $this->id * -1;
             $lnk->usr = $this->usr;
@@ -67,7 +67,7 @@ class phrase
             $this->obj = $lnk;
             $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('phrase->loaded triple ' . $this->dsp_id());
-        } elseif ($this->id > 0) {
+        } elseif ($this->is_word()) {
             $wrd = new word_dsp;
             $wrd->id = $this->id;
             $wrd->usr = $this->usr;
@@ -179,15 +179,91 @@ class phrase
     /**
      * @return bool true if this phrase is a word or supposed to be a word
      */
-    private function is_word(): bool
+    protected function is_word(): bool
     {
         $result = false;
         if (isset($this->obj)) {
             if (get_class($this->obj) == 'word' or get_class($this->obj) == 'word_dsp') {
                 $result = true;
             }
+        } else {
+            if ($this->id > 0) {
+                $result = true;
+            }
         }
         return $result;
+    }
+
+    /**
+     * @return bool true if this phrase is a triple or supposed to be a triple
+     */
+    private function is_triple(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == 'word_link') {
+                $result = true;
+            }
+        } else {
+            if ($this->id < 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /*
+     * conversion
+     */
+
+    protected function get_word_dsp(): word_dsp
+    {
+        $wrd = new word_dsp();
+        $wrd->id = $this->id;
+        //$wrd->usr_cfg_id = $this->usr_cfg_id;
+        $wrd->usr = $this->usr;
+        //$wrd->owner_id = $this->owner_id;
+        //$wrd->excluded = $this->excluded;
+        $wrd->name = $this->name;
+        $wrd->description = $this->description;
+        //$wrd->plural = $this->plural;
+        //$wrd->type_id = $this->type_id;
+        //$wrd->view_id = $this->view_id;
+        //$wrd->values = $this->values;
+        return $wrd;
+    }
+
+    protected function get_triple_dsp(): word_link
+    {
+        $lnk = new word_link();
+        $lnk->id = $this->id;
+        //$wrd->usr_cfg_id = $this->usr_cfg_id;
+        $lnk->usr = $this->usr;
+        //$wrd->owner_id = $this->owner_id;
+        //$wrd->excluded = $this->excluded;
+        $lnk->name = $this->name;
+        $lnk->description = $this->description;
+        //$wrd->plural = $this->plural;
+        //$wrd->type_id = $this->type_id;
+        //$wrd->view_id = $this->view_id;
+        //$wrd->values = $this->values;
+        return $lnk;
+    }
+
+    /**
+     * get the related display object
+     * so either the word display object
+     * or the triple display object
+     */
+    function get_dsp_obj(): ?object
+    {
+        $obj = '';
+        if ($this->is_word()) {
+            $obj = $this->get_word_dsp();
+        } elseif ($this->is_triple()) {
+            $obj = $this->get_triple_dsp();
+        }
+        return $obj;
     }
 
     /*

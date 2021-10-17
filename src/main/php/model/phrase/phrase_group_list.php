@@ -4,7 +4,7 @@
 
   phrase_group_list.php - a list of word and triple groups
   ---------------------
-  
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
