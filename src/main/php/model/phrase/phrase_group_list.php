@@ -44,7 +44,9 @@ class phrase_group_list
     add functions
     */
 
-    // combine the group id and the time id to a unique index
+    /**
+     * combine the group id and the time id to a unique index
+     */
     private function grp_time_id($grp, $time)
     {
         $id = '';
@@ -68,7 +70,7 @@ class phrase_group_list
     }
 
     // add a phrase group and a time word based on the id
-    private function add_grp_time_id($grp_id, $time_id)
+    private function add_grp_time_id($grp_id, $time_id): bool
     {
         log_debug('phrase_group_list->add_grp_time_id ' . $grp_id . '@' . $time_id);
         $result = false;
@@ -92,7 +94,7 @@ class phrase_group_list
     }
 
     // add a phrase group if the group/time combination is not yet part of the list
-    private function add_with_time($grp, $time)
+    private function add_with_time($grp, $time): bool
     {
         $result = false;
 
@@ -134,15 +136,23 @@ class phrase_group_list
     function add($grp)
     {
         log_debug('phrase_group_list->add ' . $grp->id);
+        $do_add = false;
         if ($grp->id > 0) {
-            if (!in_array($grp->id, $this->grp_ids)) {
-                $this->lst[] = $grp;
-                $this->grp_ids[] = $grp->id;
-                $this->time_lst[] = null;
-                log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
+            if ($this->grp_ids == null) {
+                $do_add = true;
             } else {
-                log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
+                if (!in_array($grp->id, $this->grp_ids)) {
+                    $do_add = true;
+                }
             }
+        }
+        if ($do_add) {
+            $this->lst[] = $grp;
+            $this->grp_ids[] = $grp->id;
+            $this->time_lst[] = null;
+            log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
+        } else {
+            log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
         }
     }
 
@@ -184,7 +194,7 @@ class phrase_group_list
     - if a normal phrase is assigned but not used no value should be selected
     - if a   time word   is assigned but not used no value should be selected
 
-    todo: check if a value is used in the formula
+    TODO: check if a value is used in the formula
           exclude the time word and if needed loop over the time words
           if the value has been update, create a calculation request
     */
@@ -283,8 +293,8 @@ class phrase_group_list
         return $result;
     }
 
-    // combined code add add values assigned by a word or a predefined formula like "this", "prior" or "next"
-    private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_fv)
+    // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"
+    private function add_grp_by_phr($type, $frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
     {
         // check the parameters
         if ($type == '') {
@@ -349,31 +359,29 @@ class phrase_group_list
         return $added;
     }
 
-    function get_by_val_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_fv)
+    function get_by_val_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
     {
         return $this->add_grp_by_phr('value', $frm_linked, $frm_used, $phr_frm, $phr_lst_fv);
     }
 
-    function get_by_val_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv)
+    function get_by_val_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv): int
     {
         return $this->add_grp_by_phr('value', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv);
     }
 
-    function get_by_fv_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_fv)
+    function get_by_fv_with_one_phr_each($frm_linked, $frm_used, $phr_frm, $phr_lst_fv): int
     {
         return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used, $phr_frm, $phr_lst_fv);
     }
 
     //
-    function get_by_fv_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv)
+    function get_by_fv_special($frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv): int
     {
         return $this->add_grp_by_phr('formula result', $frm_linked, $frm_used_fixed, $phr_frm, $phr_lst_fv);
     }
 
     /*
-
     change functions
-
     */
 
     // remove all words of del word list from each word list
@@ -390,77 +398,80 @@ class phrase_group_list
     */
 
     /*
-
     get functions
-
     */
 
     // return all phrases that are part of each phrase group of the list
-    function common_phrases()
+    function common_phrases(): ?phrase_list
     {
         log_debug('phrase_group_list->common_phrases');
         $result = new phrase_list;
         $result->usr = $this->usr;
         $pos = 0;
-        foreach ($this->lst as $grp) {
-            $grp->load_lst();
-            if ($pos == 0) {
-                if (isset($grp->phr_lst)) {
-                    $result = clone $grp->phr_lst;
+        if ($this->lst != null) {
+            foreach ($this->lst as $grp) {
+                $grp->load_lst();
+                $grp->sync_lists();
+                if ($pos == 0) {
+                    if (isset($grp->phr_lst)) {
+                        $result = clone $grp->phr_lst;
+                    }
+                } else {
+                    if (isset($grp->phr_lst)) {
+                        //$result = $result->concat_unique($grp->phr_lst);
+                        $result->common($grp->phr_lst);
+                    }
                 }
-            } else {
-                if (isset($grp->phr_lst)) {
-                    //$result = $result->concat_unique($grp->phr_lst);
-                    $result->common($grp->phr_lst);
-                }
+                log_debug('phrase_group_list->common_phrases ' . $result->name());
+                $pos++;
             }
-            log_debug('phrase_group_list->common_phrases ' . $result->name());
-            $pos++;
         }
         log_debug('phrase_group_list->common_phrases (' . dsp_count($result->lst) . ')');
         return $result;
     }
 
     /*
-
       display functions
       -----------------
-
     */
 
     // display the unique id fields
-    function dsp_id()
+    function dsp_id(): string
     {
         global $debug;
         $result = '';
         // check the object setup
-        if (count($this->lst) <> count($this->time_lst)) {
-            $result .= 'The number of groups (' . dsp_count($this->lst) . ') are not equal the number of times (' . dsp_count($this->time_lst) . ') of this phrase group list';
-        } else {
+        if ($this->lst != null) {
+            if (count($this->lst) <> count($this->time_lst)) {
+                $result .= 'The number of groups (' . dsp_count($this->lst) . ') are not equal the number of times (' . dsp_count($this->time_lst) . ') of this phrase group list';
+            } else {
 
-            $pos = 0;
-            foreach ($this->lst as $phr_lst) {
-                if ($debug > $pos) {
-                    if ($result <> '') {
-                        $result .= ' / ';
+                $pos = 0;
+                foreach ($this->lst as $phr_lst) {
+                    if ($debug > $pos) {
+                        if ($result <> '') {
+                            $result .= ' / ';
+                        }
+                        $result .= $phr_lst->name();
+                        $phr_time = $this->time_lst[$pos];
+                        if (!is_null($phr_time)) {
+                            $result .= '@' . $phr_time->name();
+                        }
+                        $pos++;
                     }
-                    $result .= $phr_lst->name();
-                    $phr_time = $this->time_lst[$pos];
-                    if (is_null($phr_time)) {
-                        $result .= '@' . $phr_time->name();
-                    }
-                    $pos++;
                 }
-            }
-            if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . dsp_count($this->lst);
-            }
+                if (count($this->lst) > $pos) {
+                    $result .= ' ... total ' . dsp_count($this->lst);
+                }
 
+            }
         }
         return $result;
     }
 
-    // create a useful (but not unique!) name of the phrase group list mainly used for debugging
+    /**
+     * create a useful (but not unique!) name of the phrase group list mainly used for debugging
+     */
     function name(): string
     {
         global $debug;
@@ -476,18 +487,22 @@ class phrase_group_list
         return $result;
     }
 
-    // return a list of the word names
-    function names(): string
+    /**
+     * return a list of the word names
+     */
+    function names(): array
     {
         $result = array();
-        foreach ($this->lst as $phr_lst) {
-            $result[] = $phr_lst->name();
+        if ($this->lst != null) {
+            foreach ($this->lst as $phr_lst) {
+                $result[] = $phr_lst->name();
+            }
         }
         log_debug('phrase_group_list->names ' . implode(" / ", $result));
         return $result;
     }
 
-    // correct all word groups e.g. that still have a time word
+    // correct all word groups e.g. that still has a time word
     function check()
     {
     }

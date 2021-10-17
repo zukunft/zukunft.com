@@ -1198,15 +1198,17 @@ class phrase_list
     }
 
     // get the best matching phrase group (but don't create a new group)
-    function get_grp()
+    function get_grp(): ?phrase_group
     {
         log_debug('phrase_list->get_grp ' . $this->dsp_id());
         $grp = null;
 
         // check the needed data consistency
-        if (count($this->ids) <> count($this->lst)) {
+        if (isset($this->lst)) {
             if (count($this->lst) > 0) {
-                $this->ids = $this->ids();
+                if (count($this->ids) <> count($this->lst)) {
+                    $this->ids = $this->ids();
+                }
             }
         }
 
@@ -1327,8 +1329,9 @@ class phrase_list
     }
 
     // TODO speed up by creation one SQL statement
-    function save() {
-        foreach ($this->lst AS $phr) {
+    function save()
+    {
+        foreach ($this->lst as $phr) {
             $phr->save();
         }
     }

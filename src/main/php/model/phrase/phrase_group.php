@@ -752,7 +752,7 @@ class phrase_group
         if ($result == '') {
             if (isset($this->phr_lst)) {
                 $result .= ' for phrases ' . $this->phr_lst->dsp_id();
-            } elseif (count($this->ids) > 0) {
+            } elseif ($this->ids != null) {
                 $result .= ' for phrase ids ' . implode(",", $this->ids);
             }
         }
@@ -1122,5 +1122,33 @@ class phrase_group
 
     }
 
+    /**
+     * create the phrase list based in the word and triple list if needed
+     * to be removed by using only the phrase list
+     */
+    function sync_lists()
+    {
+        if ($this->phr_lst == null) {
+            $this->phr_lst = new phrase_list();
+            if ($this->wrd_lst != null) {
+                if ($this->wrd_lst->lst != null) {
+                    foreach ($this->wrd_lst->lst as $wrd) {
+                        if ($wrd != null) {
+                            $this->phr_lst->lst[] = $wrd->phrase();
+                        }
+                    }
+                }
+            }
+            if ($this->lnk_lst != null) {
+                if ($this->lnk_lst->lst != null) {
+                    foreach ($this->lnk_lst->lst as $lnk) {
+                        if ($lnk != null) {
+                            $this->phr_lst->lst[] = $lnk->phrase();
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

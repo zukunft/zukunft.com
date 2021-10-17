@@ -54,7 +54,7 @@ function create_base_values()
         phrase::TN_ZH_CITY,
         word::TN_INHABITANT
     ),
-        value::TV_CANTON_ZH_INHABITANTS_2019);
+        value::TV_CITY_ZH_INHABITANTS_2019);
 
     // ... same with the concrete year
     test_value(array(
@@ -62,7 +62,24 @@ function create_base_values()
         word::TN_INHABITANT,
         word::TN_2019
     ),
-        value::TV_CANTON_ZH_INHABITANTS_2019);
+        value::TV_CITY_ZH_INHABITANTS_2019);
+
+    // add the number of inhabitants in switzerland without time definition
+    test_value(array(
+        word::TN_CH,
+        word::TN_MIO,
+        word::TN_INHABITANT
+    ),
+        value::TV_CH_INHABITANTS_2019_IN_MIO);
+
+    // ... same with the concrete year
+    test_value(array(
+        word::TN_CH,
+        word::TN_MIO,
+        word::TN_INHABITANT,
+        word::TN_2019
+    ),
+        value::TV_CH_INHABITANTS_2019_IN_MIO);
 
     echo "<br><br>";
 }

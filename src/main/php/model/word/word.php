@@ -38,24 +38,55 @@ class word extends word_link_object
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';
-    const TN_CANTON = 'System Test Word Category e.g. Canton';
+    const TN_CH = 'System Test Word Parent e.g. Switzerland';
     const TN_ZH = 'System Test Word Member e.g. Zurich';
+    const TN_CANTON = 'System Test Word Category e.g. Canton';
     const TN_CITY_AS_CATEGORY = 'System Test Word Another Category e.g. City';
     const TN_COMPANY_AS_CATEGORY = 'System Test Word Group e.g. Company';
     const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
+    const TN_2019 = 'System Test Another Time Word e.g. 2019';
+    const TN_2020 = 'System Test Another Time Word e.g. 2020';
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'System Test Another Time Word e.g. 2022';
-    const TN_2020 = 'System Test Another Time Word e.g. 2020';
-    const TN_2019 = 'System Test Another Time Word e.g. 2019';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
     const TN_MIO = 'System Test Scaling Word e.g. millions';
     const TN_PCT = 'System Test Percent Word';
     const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
 
     // word groups for creating the test words and remove them after the test
-    const RESERVED_WORDS = array(self::TN_READ, self::TN_ADD, self::TN_RENAMED, self::TN_PARENT, self::TN_2021, self::TN_2022, self::TN_CHF, self::TN_MIO, self::TN_PCT, self::TN_INHABITANT);
-    const TEST_WORDS_STANDARD = array(self::TN_PARENT, self::TN_INHABITANT);
+    const RESERVED_WORDS = array(
+        self::TN_READ,
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_PARENT,
+        self::TN_CH,
+        self::TN_ZH,
+        self::TN_CANTON,
+        self::TN_CITY_AS_CATEGORY,
+        self::TN_COMPANY_AS_CATEGORY,
+        self::TN_PARENT_NON_INHERITANCE,
+        self::TN_CHILD_NON_INHERITANCE,
+        self::TN_2019,
+        self::TN_2020,
+        self::TN_2021,
+        self::TN_2022,
+        self::TN_CHF,
+        self::TN_MIO,
+        self::TN_PCT,
+        self::TN_INHABITANT
+    );
+    const TEST_WORDS_STANDARD = array(
+        self::TN_PARENT,
+        self::TN_CH,
+        self::TN_ZH,
+        self::TN_CANTON,
+        self::TN_CITY_AS_CATEGORY,
+        self::TN_COMPANY_AS_CATEGORY,
+        self::TN_PARENT_NON_INHERITANCE,
+        self::TN_CHILD_NON_INHERITANCE,
+        self::TN_INHABITANT
+    );
     const TEST_WORDS_MEASURE = array(self::TN_CHF);
     const TEST_WORDS_SCALING = array(self::TN_MIO);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);

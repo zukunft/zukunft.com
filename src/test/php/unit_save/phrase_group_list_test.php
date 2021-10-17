@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,90 +26,83 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_group_list_test () {
+function run_phrase_group_list_test()
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the phrase group list class (src/main/php/model/phrase/phrase_group_list.php)');
+    test_header('Test the phrase group list class (src/main/php/model/phrase/phrase_group_list.php)');
 
-  // define some phrase groups for testing
+    // define some phrase groups for testing
 
-  // ABB Sales
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(TW_ABB);
-  $phr_lst->add_name(TW_SALES);
-  $phr_lst->add_name(TW_CHF);
-  $phr_lst->add_name(TW_MIO);
-  $phr_lst->load();
-  $abb_grp = $phr_lst->get_grp();
+    // Switzerland inhabitants
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_MIO);
+    $phr_lst->load();
+    $country_grp = $phr_lst->get_grp();
 
-  // Zurich taxes
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(word::TN_ZH);
-  $phr_lst->add_name(TW_TAX);
-  $phr_lst->add_name(TW_CHF);
-  $phr_lst->add_name(TW_MIO);
-  $phr_lst->load();
-  $zh_grp = $phr_lst->get_grp();
+    // Canton of Zurich inhabitants
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_ZH);
+    $phr_lst->add_name(word::TN_CANTON);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_MIO);
+    $phr_lst->load();
+    $canton_grp = $phr_lst->get_grp();
 
-  // Zurich Insurance taxes
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(phrase::TN_ZH_COMPANY);
-  $phr_lst->add_name(TW_TAX);
-  $phr_lst->add_name(TW_CHF);
-  $phr_lst->add_name(TW_MIO);
-  $phr_lst->load();
-  $ins_grp = $phr_lst->get_grp();
+    // City of Zurich inhabitants
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_ZH);
+    $phr_lst->add_name(word::TN_CITY_AS_CATEGORY);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_MIO);
+    $phr_lst->load();
+    $city_grp = $phr_lst->get_grp();
 
-  // test add a phrase group to a phrase group list
-  $grp_lst = New phrase_group_list;
-  $grp_lst->usr = $usr;
-  $grp_lst->add($abb_grp);
-  $grp_lst->add($zh_grp);
-  $grp_lst->add($abb_grp);
-  $result = $grp_lst->name();
-  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.word::TN_ZH.'';
-  test_dsp('phrase_group_list->add of '.$abb_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$abb_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
-
-
-  // test add a phrase group to a phrase group list
-  $grp_lst = New phrase_group_list;
-  $grp_lst->usr = $usr;
-  $grp_lst->add($abb_grp);
-  $grp_lst->add($zh_grp);
-  $grp_lst->add($ins_grp);
-  $result = $grp_lst->name();
-  $target = ''.TW_MIO.','.TW_CHF.','.TW_SALES.','.TW_ABB.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.word::TN_ZH.' and '.TW_MIO.','.TW_CHF.','.TW_TAX.','.phrase::TN_ZH_COMPANY.'';
-  test_dsp('phrase_group_list->add of '.$zh_grp->dsp_id().', '.$zh_grp->dsp_id().', '.$ins_grp->dsp_id(), $target, $result);
+    // test add a phrase group to a phrase group list
+    $grp_lst = new phrase_group_list;
+    $grp_lst->usr = $usr;
+    $grp_lst->add($country_grp);
+    $grp_lst->add($canton_grp);
+    $grp_lst->add($city_grp);
+    $result = $grp_lst->name();
+    $target = '' . word::TN_MIO . ',' . word::TN_CH . ',' . word::TN_INHABITANT .
+        ' and ' . word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT .
+        ' and ' . word::TN_MIO . ',' . word::TN_CITY_AS_CATEGORY . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
+    test_dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
-  // test getting the common phrases of several group
-  $grp_lst = New phrase_group_list;
-  $grp_lst->usr = $usr;
-  $wrd_lst = New word_list;
-  $wrd_lst->usr = $usr;
-  $wrd_lst->add_name(TW_ABB);
-  $wrd_lst->add_name(TW_SALES);
-  $wrd_lst->add_name(TW_CHF);
-  $wrd_lst->add_name(TW_MIO);
-  $wrd_lst->load();
-  $abb_grp = $wrd_lst->get_grp();
-  $grp_lst->add($abb_grp);
-  $wrd_lst = New word_list;
-  $wrd_lst->usr = $usr;
-  $wrd_lst->add_name(word::TN_ZH);
-  $wrd_lst->add_name(TW_TAX);
-  $wrd_lst->add_name(TW_CHF);
-  $wrd_lst->add_name(TW_MIO);
-  $wrd_lst->load();
-  $zh_grp = $wrd_lst->get_grp();
-  $grp_lst->add($zh_grp);
-  $phr_lst = $grp_lst->common_phrases();
-  $result = $phr_lst->name();
-  $target = '"'.TW_MIO.'","'.TW_CHF.'"';
-  test_dsp('phrase_group_list->common_phrases of '.$grp_lst->dsp_id(), $target, $result);
+    // test getting the common phrases of several group
+    $grp_lst = new phrase_group_list;
+    $grp_lst->usr = $usr;
+
+    $wrd_lst = new word_list;
+    $wrd_lst->usr = $usr;
+    $wrd_lst->add_name(word::TN_CH);
+    $wrd_lst->add_name(word::TN_INHABITANT);
+    $wrd_lst->add_name(word::TN_MIO);
+    $wrd_lst->load();
+    $country_grp = $wrd_lst->get_grp();
+    $grp_lst->add($country_grp);
+
+    $wrd_lst = new word_list;
+    $wrd_lst->usr = $usr;
+    $wrd_lst->add_name(word::TN_ZH);
+    $wrd_lst->add_name(word::TN_CANTON);
+    $wrd_lst->add_name(word::TN_INHABITANT);
+    $wrd_lst->add_name(word::TN_MIO);
+    $wrd_lst->load();
+    $canton_grp = $wrd_lst->get_grp();
+    $grp_lst->add($canton_grp);
+
+    $phr_lst = $grp_lst->common_phrases();
+    $result = $phr_lst->name();
+    $target = '"' . word::TN_MIO . '","' . word::TN_INHABITANT . '"';
+    test_dsp('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
 
 }

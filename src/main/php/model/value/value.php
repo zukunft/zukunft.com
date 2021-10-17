@@ -47,7 +47,8 @@ class value extends user_sandbox_display
     const TEST_VALUE = 123456;
     const TEST_FLOAT = 123.456;
     const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
-    const TV_CANTON_ZH_INHABITANTS_2019 = 415367;
+    const TV_CITY_ZH_INHABITANTS_2019 = 415367;
+    const TV_CH_INHABITANTS_2019_IN_MIO = 8.606033;
 
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from

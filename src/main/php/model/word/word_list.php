@@ -1524,35 +1524,49 @@ class word_list
     convert functions
     */
 
-    // get the best matching word group ()
-    function get_grp(): phrase_group
+    /**
+     * get the best matching phrase group
+     */
+    function get_grp(): ?phrase_group
     {
         log_debug('word_list->get_grp');
-
-        $result = '';
+        $grp = null;
 
         $grp = new phrase_group;
+        // check the needed data consistency
         if (isset($this->lst)) {
             if (count($this->lst) > 0) {
-                $grp->wrd_lst = $this;
-                $grp->usr = $this->usr;
-                $result = $grp->load();
-                /*
-                TODO check if a new group is not created
-                $result = $grp->get_id();
-                if ($result->id > 0) {
-                  zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
-                } else {
-                  zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids).') and user '.$grp->usr->name);
-                  $result = $grp->get_id();
-                  if ($result->id > 0) {
-                    zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
-                  }
+                if (count($this->ids) <> count($this->lst)) {
+                    $this->ids = $this->ids();
                 }
-                */
             }
         }
-        log_debug('word_list->phrase_lst -> done (' . $grp->id . ') with ' . $result);
+
+        // get or create the group
+        if (count($this->ids) <= 0) {
+            log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
+        } else {
+            $grp = new phrase_group;
+            $grp->wrd_lst = clone $this;
+            $grp->ids = $this->ids;
+            $grp->usr = $this->usr;
+            $grp->get();
+        }
+
+        /*
+        TODO check if a new group is not created
+        $result = $grp->get_id();
+        if ($result->id > 0) {
+          zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
+        } else {
+          zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids).') and user '.$grp->usr->name);
+          $result = $grp->get_id();
+          if ($result->id > 0) {
+            zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
+          }
+        }
+        */
+        log_debug('word_list->phrase_lst -> done (' . $grp->id . ')');
         return $grp;
     }
 

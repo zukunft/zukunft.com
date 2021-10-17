@@ -84,8 +84,8 @@ if ($start_usr->id > 0) {
             run_ref_test();
             run_phrase_test ();
             run_phrase_group_test ();
-            /*
             run_phrase_group_list_test ();
+            /*
             run_graph_test ();
             run_verb_test ();
             run_term_test ();
