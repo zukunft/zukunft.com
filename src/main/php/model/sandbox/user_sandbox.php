@@ -847,7 +847,7 @@ class user_sandbox
      *
      * @return string
      */
-    private function check_preserved(): string
+    protected function check_preserved(): string
     {
         global $usr;
 
@@ -865,6 +865,10 @@ class user_sandbox
                     }
                 } elseif ($this->obj_name == DB_TYPE_PHRASE) {
                     if (in_array($this->name, phrase::RESERVED_PHRASES)) {
+                        $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
+                    }
+                } elseif ($this->obj_name == DB_TYPE_FORMULA) {
+                    if (in_array($this->name, formula::RESERVED_FORMULAS)) {
                         $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
                     }
                 }

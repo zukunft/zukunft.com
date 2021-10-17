@@ -32,6 +32,7 @@ function create_base_phrases()
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY_AS_CATEGORY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
+
     test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
     test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);

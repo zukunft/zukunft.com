@@ -86,9 +86,9 @@ if ($start_usr->id > 0) {
             run_phrase_group_test ();
             run_phrase_group_list_test ();
             run_graph_test ();
-            /*
             run_verb_test ();
             run_term_test ();
+            /*
             run_value_test ();
             run_value_ui_test ();
             run_source_test ();

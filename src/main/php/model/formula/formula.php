@@ -40,6 +40,14 @@ const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
 
 class formula extends user_sandbox_description
 {
+    // persevered formula names for unit and integration tests
+    const TN_INCREASE = 'System Test Formula Increase';
+    const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
+
+    // word groups for creating the test words and remove them after the test
+    const RESERVED_FORMULAS = array(
+        self::TN_INCREASE
+    );
 
     // list of the formula types that have a coded functionality
     const CALC = "default";    // a normal calculation formula
@@ -1807,13 +1815,13 @@ class formula extends user_sandbox_description
                     // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
                     //if ($this->create_wrd()) {
 
-                        // create an empty db_frm element to force saving of all set fields
-                        $db_rec = new formula;
-                        $db_rec->name = $this->name;
-                        $db_rec->usr = $this->usr;
-                        $std_rec = clone $db_rec;
-                        // save the formula fields
-                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    // create an empty db_frm element to force saving of all set fields
+                    $db_rec = new formula;
+                    $db_rec->name = $this->name;
+                    $db_rec->usr = $this->usr;
+                    $std_rec = clone $db_rec;
+                    // save the formula fields
+                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                     //}
                 }
             } else {
@@ -1833,73 +1841,78 @@ class formula extends user_sandbox_description
         log_debug('formula->save >' . $this->usr_text . '< (id ' . $this->id . ') as ' . $this->dsp_id() . ' for user ' . $this->usr->name);
 
         global $db_con;
-        $result = '';
 
-        // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_FORMULA);
+        // check the preserved names
+        $result = $this->check_preserved();
 
-        // check if a new formula is supposed to be added
-        if ($this->id <= 0) {
-            // check if a verb, formula or word with the same name is already in the database
-            log_debug('formula->save -> add ' . $this->dsp_id());
-            $trm = $this->term();
-            if ($trm->id > 0) {
-                if ($trm->type <> 'formula') {
-                    $result .= $trm->id_used_msg();
-                } else {
-                    $this->id = $trm->id;
-                    log_debug('formula->save adding formula name ' . $this->dsp_id() . ' is OK');
+        if ($result == '') {
+
+            // build the database object because the is anyway needed
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_type(DB_TYPE_FORMULA);
+
+            // check if a new formula is supposed to be added
+            if ($this->id <= 0) {
+                // check if a verb, formula or word with the same name is already in the database
+                log_debug('formula->save -> add ' . $this->dsp_id());
+                $trm = $this->term();
+                if ($trm->id > 0) {
+                    if ($trm->type <> 'formula') {
+                        $result .= $trm->id_used_msg();
+                    } else {
+                        $this->id = $trm->id;
+                        log_debug('formula->save adding formula name ' . $this->dsp_id() . ' is OK');
+                    }
                 }
             }
-        }
 
-        // create a new formula or update an existing
-        if ($this->id <= 0) {
-            // convert the formula text to db format (any error messages should have been returned from the calling user script)
-            if ($this->set_ref_text() <> '') {
-                $result .= $this->add();
-            }
-        } else {
-            log_debug('formula->save -> update ' . $this->id);
-            // read the database values to be able to check if something has been changed; done first,
-            // because it needs to be done for user and general formulas
-            $db_rec = new formula;
-            $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
-            $db_rec->load();
-            log_debug('formula->save -> database formula "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
-            $std_rec = new formula;
-            $std_rec->id = $this->id;
-            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
-            $std_rec->load_standard();
-            log_debug('formula->save -> standard formula "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
+            // create a new formula or update an existing
+            if ($this->id <= 0) {
+                // convert the formula text to db format (any error messages should have been returned from the calling user script)
+                if ($this->set_ref_text() <> '') {
+                    $result .= $this->add();
+                }
+            } else {
+                log_debug('formula->save -> update ' . $this->id);
+                // read the database values to be able to check if something has been changed; done first,
+                // because it needs to be done for user and general formulas
+                $db_rec = new formula;
+                $db_rec->id = $this->id;
+                $db_rec->usr = $this->usr;
+                $db_rec->load();
+                log_debug('formula->save -> database formula "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
+                $std_rec = new formula;
+                $std_rec->id = $this->id;
+                $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
+                $std_rec->load_standard();
+                log_debug('formula->save -> standard formula "' . $std_rec->name . '" (' . $std_rec->id . ') loaded');
 
-            // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
-            }
+                // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
+                if ($this->owner_id <= 0) {
+                    $this->owner_id = $std_rec->owner_id;
+                }
 
-            // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-            if ($this->set_ref_text() <> '') {
+                // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
+                if ($this->set_ref_text() <> '') {
 
-                // check if the id parameters are supposed to be changed
+                    // check if the id parameters are supposed to be changed
+                    if ($result == '') {
+                        $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                    }
+
+                    // if a problem has appeared up to here, don't try to save the values
+                    // the problem is shown to the user by the calling interactive script
+                    if ($result == '') {
+                        $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                    }
+                }
+
+                // update the reference table for fast calculation
+                // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
                 if ($result == '') {
-                    $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
-                }
-
-                // if a problem has appeared up to here, don't try to save the values
-                // the problem is shown to the user by the calling interactive script
-                if ($result == '') {
-                    $result = $this->save_fields($db_con, $db_rec, $std_rec);
-                }
-            }
-
-            // update the reference table for fast calculation
-            // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
-            if ($result == '') {
-                if (!$this->element_refresh($this->ref_text)) {
-                    $result = 'Refresh of the formula elements failed';
+                    if (!$this->element_refresh($this->ref_text)) {
+                        $result = 'Refresh of the formula elements failed';
+                    }
                 }
             }
         }

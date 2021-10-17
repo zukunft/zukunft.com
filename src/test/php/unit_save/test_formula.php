@@ -28,11 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function create_base_formulas()
 {
-    echo "<h2>Check if all base formulas are correct</h2><br>";
+    test_header('Check if all base formulas are correct');
+
+    test_formula(formula::TN_INCREASE, formula::TF_INCREASE);
     test_formula(TF_SCALE_BIL, TF_SCALE_BIL_TEXT);
     test_formula(TF_SCALE_MIO, TF_SCALE_MIO_TEXT);
     test_formula(TF_SCALE_K, TF_SCALE_K_TEXT);
-    echo "<br><br>";
 }
 
 function run_formula_test()
