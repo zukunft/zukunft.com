@@ -869,7 +869,16 @@ class user_sandbox
                     }
                 } elseif ($this->obj_name == DB_TYPE_FORMULA) {
                     if (in_array($this->name, formula::RESERVED_FORMULAS)) {
-                        $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
+                        $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
+                    }
+                } elseif ($this->obj_name == DB_TYPE_SOURCE) {
+                    if (in_array($this->name, source::RESERVED_SOURCES)) {
+                        // the admin user needs to add the read test source during initial load
+                        if ($usr->is_admin() and $this->name == source::TN_READ) {
+                            $result = '';
+                        } else {
+                            $result = '"' . $this->name . '" is a reserved source name for system testing. Please use another name';
+                        }
                     }
                 }
             }

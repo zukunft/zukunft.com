@@ -50,8 +50,14 @@ class word extends word_link_object
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'System Test Another Time Word e.g. 2022';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
+    const TN_ONE = 'System Test Scaling Word e.g. one';
+    const TN_IN_K = 'System Test Scaling Word e.g. thousands';
     const TN_MIO = 'System Test Scaling Word e.g. millions';
+    const TN_BIL = 'System Test Scaling Word e.g. billions';
     const TN_PCT = 'System Test Percent Word';
+    const TN_INCREASE = 'System Test Word Increase';
+    const TN_THIS = 'System Test Word This';
+    const TN_PRIOR = 'System Test Word Prior';
     const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
 
     // word groups for creating the test words and remove them after the test
@@ -72,8 +78,14 @@ class word extends word_link_object
         self::TN_2021,
         self::TN_2022,
         self::TN_CHF,
+        self::TN_ONE,
+        self::TN_IN_K,
         self::TN_MIO,
+        self::TN_BIL,
         self::TN_PCT,
+        self::TN_INCREASE,
+        self::TN_THIS,
+        self::TN_PRIOR,
         self::TN_INHABITANT
     );
     const TEST_WORDS_STANDARD = array(
@@ -85,10 +97,12 @@ class word extends word_link_object
         self::TN_COMPANY_AS_CATEGORY,
         self::TN_PARENT_NON_INHERITANCE,
         self::TN_CHILD_NON_INHERITANCE,
-        self::TN_INHABITANT
+        self::TN_INHABITANT,
+        self::TN_INCREASE
     );
     const TEST_WORDS_MEASURE = array(self::TN_CHF);
-    const TEST_WORDS_SCALING = array(self::TN_MIO);
+    const TEST_WORDS_SCALING_HIDDEN = array(self::TN_ONE);
+    const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_BIL);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);
     const TEST_WORDS_TIME = array(self::TN_2019, self::TN_2020, self::TN_2021, self::TN_2022);
 
@@ -369,11 +383,11 @@ class word extends word_link_object
 
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_link_fields('formula_id', 'phrase_id');
-        $db_con->set_where_link(null, null, 1);
+        $db_con->set_where_link(null, null, $this->id);
         $sql = $db_con->select();
         $db_row = $db_con->get1($sql);
         $frm = new formula;
-        if (isset($db_row)) {
+        if ($db_row !== false) {
             if ($db_row['formula_id'] > 0) {
                 $frm->id = $db_row['formula_id'];
                 $frm->usr = $this->usr;

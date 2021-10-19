@@ -44,8 +44,8 @@ class expression
     public ?string $num_text = null;   // the formula expression with all numbers loaded (ready for R)
     public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
     public ?user $usr = null;          // to get the user settings for the conversion
-    public ?array $fv_phr_lst = null;  // list object of the words that should be added to the formula result
-    public ?array $phr_lst = null;     // list of the word ids that are used for the formula result
+    public ?phrase_list $fv_phr_lst = null;  // list object of the words that should be added to the formula result
+    public ?phrase_list $phr_lst = null;     // list of the word ids that are used for the formula result
 
     // returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
     // uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text

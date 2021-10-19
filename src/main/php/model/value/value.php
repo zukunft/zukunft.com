@@ -46,9 +46,12 @@ class value extends user_sandbox_display
     // a list of dummy values that are used for system tests
     const TEST_VALUE = 123456;
     const TEST_FLOAT = 123.456;
+    const TEST_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
+    const TEST_INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
     const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
     const TV_CITY_ZH_INHABITANTS_2019 = 415367;
-    const TV_CH_INHABITANTS_2019_IN_MIO = 8.606033;
+    const TV_CH_INHABITANTS_2019_IN_MIO = 8.438822;
+    const TV_CH_INHABITANTS_2020_IN_MIO = 8.505251;
 
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from
@@ -68,9 +71,7 @@ class value extends user_sandbox_display
     public ?phrase_list $phr_lst = null;  // the phrase object list for this value
     //public $phr_ids       = null;       // the phrase id list for this value loaded directly from the group
     public ?word_list $wrd_lst = null;    // the word object list for this value
-    public ?array $wrd_ids = null;        // the word id list for this value loaded directly from the group
     public ?word_link_list $lnk_lst = null;        // the triple object list  for this value
-    public ?array $lnk_ids = null;        // the triple id list  for this value loaded directly from the group
     // public $phr_all_lst  = null;       // $phr_lst including the time wrd
     // public $phr_all_ids  = null;       // $phr_ids including the time id
     public ?DateTime $update_time = null; // time of the last update, which could also be taken from the change log
@@ -106,9 +107,7 @@ class value extends user_sandbox_display
         $this->ids = null;
         $this->phr_lst = null;
         $this->wrd_lst = null;
-        $this->wrd_ids = null;
         $this->lnk_lst = null;
-        $this->lnk_ids = null;
         $this->grp = null;
         $this->time_phr = null;
         $this->update_time = null;
@@ -324,11 +323,7 @@ class value extends user_sandbox_display
                 }
             } else {
                 // if no value for a word group is found it is not an error, this is why here the error message is not at the same point as in other load methods
-                if (!empty($this->ids)) {
-                    log_err('Either the database ID (' . $this->id . '), the word group (' . $this->grp_id . ') or the word list (' . implode(",", $this->ids) . ') and the user (' . $this->usr->id . ') must be set to load a value.', 'value->load');
-                } else {
-                    log_err('Either the database ID (' . $this->id . '), the word group (' . $this->grp_id . ')  and the user (' . $this->usr->id . ') must be set to load a value.', 'value->load');
-                }
+                log_err('Either the database ID (' . $this->id . '), the word group (' . $this->grp_id . ') or the word list (' . implode(",", $this->ids) . ') and the user (' . $this->usr->id . ') must be set to load a value.', 'value->load');
             }
 
             // check if a valid identification is given and load the result
@@ -842,8 +837,8 @@ class value extends user_sandbox_display
                                                 log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
                                                 log_debug('value->scale -> replace done (' . $r_part . ')');
-                                                // todo separet time from value words
-                                                $result = zuc_math_parse($r_part, $wrd_lst, Null);
+                                                // todo separate time from value words
+                                                $result = zuc_math_parse($r_part, $wrd_lst->names(), Null);
                                             } else {
                                                 log_err('Formula "' . $formula_text . '" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
                                             }
@@ -1134,7 +1129,7 @@ class value extends user_sandbox_display
         $result = str_replace(" ", "", $result);
         $result = str_replace("'", "", $result);
         //$result = str_replace(".", "", $result);
-        $this->number = $result;
+        $this->number = floatval($result);
         return $result;
     }
 
@@ -1836,10 +1831,9 @@ class value extends user_sandbox_display
                     //$result .= $this->save_fields($db_con, $db_val, $std_val);
                     // save the value
                     $db_con_ts = clone $db_con;
-                    // TODO type is missing!!!
-                    //$db_con_ts->type = 'value_t';
+                    $db_con_ts->set_type(DB_TYPE_VALUE_TIME_SERIES_DATA);
                     $db_con_ts->insert(array("value_time_series_id", "val_time", "number"),
-                        array($this->id, $this->time_stamp, $this->number));
+                        array($this->id, $this->time_stamp->format(DateTimeInterface::ATOM), $this->number));
                 }
             } else {
                 $db_con->set_type(DB_TYPE_VALUE);

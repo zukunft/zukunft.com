@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_values()
+function create_test_values()
 {
     test_header('Check if all base values are exist and create them if needed');
 
@@ -34,8 +34,8 @@ function create_base_values()
     test_value(array(
         word::TN_CANTON,
         word::TN_ZH,
-        word::TN_MIO,
-        word::TN_INHABITANT
+        word::TN_INHABITANT,
+        word::TN_MIO
         ),
         value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
@@ -43,8 +43,8 @@ function create_base_values()
     test_value(array(
         word::TN_CANTON,
         word::TN_ZH,
-        word::TN_MIO,
         word::TN_INHABITANT,
+        word::TN_MIO,
         word::TN_2020
     ),
         value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
@@ -67,19 +67,48 @@ function create_base_values()
     // add the number of inhabitants in switzerland without time definition
     test_value(array(
         word::TN_CH,
-        word::TN_MIO,
-        word::TN_INHABITANT
+        word::TN_INHABITANT,
+        word::TN_MIO
     ),
-        value::TV_CH_INHABITANTS_2019_IN_MIO);
+        value::TV_CH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the concrete year
     test_value(array(
         word::TN_CH,
-        word::TN_MIO,
         word::TN_INHABITANT,
+        word::TN_MIO,
+        word::TN_2020
+    ),
+        value::TV_CH_INHABITANTS_2020_IN_MIO);
+
+    // ... same with the previous year
+    test_value(array(
+        word::TN_CH,
+        word::TN_INHABITANT,
+        word::TN_MIO,
         word::TN_2019
     ),
         value::TV_CH_INHABITANTS_2019_IN_MIO);
 
-    echo "<br><br>";
+    // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
+    test_value(array(
+        word::TN_CANTON,
+        word::TN_ZH,
+        word::TN_CH,
+        word::TN_INHABITANT,
+        word::TN_PCT,
+        word::TN_2020
+    ),
+        value::TEST_PCT);
+
+    // add the increase of inhabitants in Switzerland from 2019 to 2020 for calculation validation
+    test_value(array(
+        word::TN_CH,
+        word::TN_INHABITANT,
+        word::TN_INCREASE,
+        word::TN_PCT,
+        word::TN_2020
+    ),
+        value::TEST_INCREASE);
+
 }

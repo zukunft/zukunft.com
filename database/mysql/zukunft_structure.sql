@@ -877,13 +877,13 @@ CREATE TABLE IF NOT EXISTS `user_requests`
 
 CREATE TABLE IF NOT EXISTS `user_sources`
 (
-    `source_id`      int(11)      NOT NULL,
-    `user_id`        int(11)    DEFAULT NULL,
-    `source_name`    varchar(200) NOT NULL,
-    `url`            text         NOT NULL,
+    `source_id`      int(11) NOT NULL,
+    `user_id`        int(11) NOT NULL,
+    `source_name`    varchar(200) DEFAULT NULL,
+    `url`            text         DEFAULT NULL,
     `comment`        text,
-    `source_type_id` int(11)    DEFAULT NULL,
-    `excluded`       tinyint(4) DEFAULT NULL
+    `source_type_id` int(11)      DEFAULT NULL,
+    `excluded`       tinyint(4)   DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 

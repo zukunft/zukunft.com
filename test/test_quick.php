@@ -63,20 +63,20 @@ if ($start_usr->id > 0) {
             //run_user_test ();   // testing of the user display functions
 
             // creating the test data
-            create_base_words();
-            create_base_phrases();
-            create_base_sources();
+            create_test_words();
+            create_test_phrases();
+            create_test_sources();
             create_base_times();
-            create_base_formulas();
-            create_base_formula_links();
-            create_base_views();
-            create_base_values();
+            create_test_formulas();
+            create_test_formula_links();
+            create_test_views();
+            create_test_values();
 
             run_db_link_test();
             run_string_unit_tests(); // test functions not yet split into single unit tests
             run_math_test();
             run_user_sandbox_test();
-            run_word_test();
+            run_word_tests();
             //run_word_ui_test();
             //run_word_display_test ();
             run_word_list_test();
@@ -88,10 +88,10 @@ if ($start_usr->id > 0) {
             run_graph_test ();
             run_verb_test ();
             run_term_test ();
-            /*
             run_value_test ();
-            run_value_ui_test ();
+            //run_value_ui_test ();
             run_source_test ();
+            /*
             run_expression_test ();
             run_formula_test ();
             run_formula_list_test ();

@@ -1,0 +1,74 @@
+{
+  "version": "0.0.3",
+  "time": "2021-10-11 12:27:00",
+  "user": "timon",
+  "selection": [
+    "scaling"
+  ],
+  "words": [
+    {
+      "name": "one",
+      "comment": "Used to force the scaling to one unit",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "thousand",
+      "comment": "to specify numbers in thousand",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "million",
+      "comment": "to specify numbers in millions",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "billion",
+      "comment": "to specify numbers in billions",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "percent",
+      "comment": "to specify numbers in percent",
+      "type": "percent",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "this",
+      "comment": "to select value for the selected time word",
+      "type": "this",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "comment": "to select value for the time word prior the selected e.g. if year 2020 is selected the prior is the year 2019",
+      "type": "previous",
+      "protection": "admin_protection"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale thousand to one",
+      "expression": "\"one\" = \"thousand\" * 1000",
+      "assigned_word": "thousand"
+    },
+    {
+      "name": "scale millions to one",
+      "expression": "\"one\" = \"million\" * 1000000",
+      "assigned_word": "million"
+    },
+    {
+      "name": "scale billion to one",
+      "expression": "\"one\" = \"billion\" * 1000000000",
+      "assigned_word": "billion"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "increase"
+    }
+  ]
+}

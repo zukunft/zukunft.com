@@ -26,9 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_phrases()
+function create_test_phrases()
 {
-    echo "<h2>Check if all base phrases are correct</h2><br>";
+    test_header('Check if all base phrases are correct');
+
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY_AS_CATEGORY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
@@ -38,18 +39,16 @@ function create_base_phrases()
     test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
     test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
-    echo "<br><br>";
 
-    echo "<h2>Check if all base phrases are correct</h2><br>";
+    test_header('Check if all base phrases are correct');
     test_phrase(phrase::TN_ZH_COMPANY);
-    echo "<br><br>";
 }
 
 function create_base_times()
 {
-    echo "<h2>Check if all base word links are correct</h2><br>";
+    test_header('Check if base time words are correct');
+
     zu_test_time_setup();
-    echo "<br><br>";
 }
 
 function run_phrase_test()

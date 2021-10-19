@@ -26,14 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_formulas()
+function create_test_formulas()
 {
     test_header('Check if all base formulas are correct');
 
     test_formula(formula::TN_INCREASE, formula::TF_INCREASE);
-    test_formula(TF_SCALE_BIL, TF_SCALE_BIL_TEXT);
-    test_formula(TF_SCALE_MIO, TF_SCALE_MIO_TEXT);
-    test_formula(TF_SCALE_K, TF_SCALE_K_TEXT);
+    test_formula(formula::TN_SCALE_K, formula::TF_SCALE_K);
+    test_formula(formula::TN_SCALE_MIO, formula::TF_SCALE_MIO);
+    test_formula(formula::TN_SCALE_BIL, formula::TF_SCALE_BIL);
 }
 
 function run_formula_test()

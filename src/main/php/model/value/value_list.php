@@ -93,8 +93,6 @@ class value_list
                     $val->last_update = new DateTime($db_val['last_update']);
                     $val->grp_id = $db_val['phrase_group_id'];
                     $val->time_id = $db_val['time_word_id'];
-                    $val->wrd_ids = explode(",", $db_val['word_ids']);
-                    $val->lnk_ids = explode(",", $db_val['triple_ids']);
                     $this->lst[] = $val;
                 }
             }

@@ -504,6 +504,9 @@ class sql_db
         if ($result == 'value_time_seriess') {
             $result = 'value_time_series';
         }
+        if ($result == 'value_ts_datas') {
+            $result = 'value_ts_data';
+        }
         if ($result == 'view_entrys') {
             $result = 'view_entries';
         }
@@ -587,6 +590,9 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_component_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'formula_element_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
@@ -1258,7 +1264,10 @@ class sql_db
                 }
             } else {
                 if ($this->db_type == DB_TYPE_POSTGRES) {
-                    $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    // return the database row id if the value is not a time series number
+                    if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
+                        $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    }
 
                     /*
                     try {
@@ -1284,7 +1293,11 @@ class sql_db
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            $result = pg_fetch_array($sql_result)[0];
+                            if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
+                                $result = pg_fetch_array($sql_result)[0];
+                            } else {
+                                $result = 1;
+                            }
                         }
                     } else {
                         $sql_error = pg_last_error($this->link);
@@ -1732,14 +1745,34 @@ class sql_db
     function column_allow_null(string $table_name, string $column_name): bool {
         $result = false;
 
-        // adjust the parameters to the used database used
+        // adjust the parameters to the used database name
         $table_name = $this->get_table_name($table_name);
 
-        // check if the old column name is still valid
+        // check if the column name is still valid
         if ($this->has_column($table_name, $column_name)) {
             $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' DROP NOT NULL;';
             $this->exe($sql);
             $result = true;
+        } else {
+            log_warning('Cannot allow null in ' . $table_name . ' because ' . $column_name . ' is missing');
+        }
+
+        return $result;
+    }
+
+    function column_force_not_null(string $table_name, string $column_name): bool {
+        $result = false;
+
+        // adjust the parameters to the used database name
+        $table_name = $this->get_table_name($table_name);
+
+        // check if the column name is still valid
+        if ($this->has_column($table_name, $column_name)) {
+            $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' SET NOT NULL;';
+            $this->exe($sql);
+            $result = true;
+        } else {
+            log_warning('Cannot force not null in ' . $table_name . ' because ' . $column_name . ' is missing');
         }
 
         return $result;

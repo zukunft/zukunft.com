@@ -2,35 +2,53 @@
 
 /*
 
-  source.php - the source object to define the source for the values
-  ----------
-  
-  This file is part of zukunft.com - calc with words
+    source.php - the source object to define the source for the values
+    ----------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 class source extends user_sandbox
 {
+
+    // persevered source names for unit and integration tests
+    const TN_READ = 'wikidata';
+    const TN_ADD = 'System Test Source';
+    const TN_RENAMED = 'System Test Source Renamed';
+
+    // parameters used for unit and integration tests
+    const TEST_URL = 'https://www.zukunft.com/';
+    const TEST_URL_CHANGED = 'https://api.zukunft.com/';
+    const TEST_DESCRIPTION = 'System Test Source Description';
+    const TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
+
+    // source group for creating the test sources and remove them after the test
+    const RESERVED_SOURCES = array(
+        self::TN_READ, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
+        self::TN_ADD,
+        self::TN_RENAMED
+    );
 
     // database fields additional to the user sandbox fields
     public ?string $url = null;      // the internet link to the source
@@ -437,7 +455,7 @@ class source extends user_sandbox
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
-                $log_id = $db_con->insert('source_id, user_id', $this->id . "," . $this->usr->id);
+                $log_id = $db_con->insert(array('source_id', 'user_id'), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
                     $result = false;
@@ -463,6 +481,7 @@ class source extends user_sandbox
         // check again if there ist not yet a record
         $sql = "SELECT source_id,
                      source_name,
+                     url,
                      comment,
                      source_type_id
                 FROM user_sources
@@ -472,7 +491,9 @@ class source extends user_sandbox
         $usr_wrd_cfg = $db_con->get1($sql);
         log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_wrd_cfg['source_id'] > 0) {
-            if ($usr_wrd_cfg['comment'] == ''
+            // TODO check that this convers all fields for all types
+            if ($usr_wrd_cfg['url'] == ''
+                and $usr_wrd_cfg['comment'] == ''
                 and $usr_wrd_cfg['source_type_id'] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);

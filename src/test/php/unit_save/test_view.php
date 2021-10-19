@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_views()
+function create_test_views()
 {
     echo "<h2>Check if all base views are exist</h2><br>";
     test_view(TD_COMPLETE);

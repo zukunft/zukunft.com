@@ -43,6 +43,13 @@ class formula extends user_sandbox_description
     // persevered formula names for unit and integration tests
     const TN_INCREASE = 'System Test Formula Increase';
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
+    // TODO add the scaling formulas to the base setup
+    const TN_SCALE_BIL = 'System Test Formula scale billions to one';
+    const TF_SCALE_BIL = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. billions" * 1000000000';
+    const TN_SCALE_MIO = 'System Test Formula scale millions to one';
+    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. millions" * 1000000';
+    const TN_SCALE_K = 'System Test Formula scale thousand to one';
+    const TF_SCALE_K = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. thousands" * 1000';
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_FORMULAS = array(
@@ -286,7 +293,7 @@ class formula extends user_sandbox_description
     /**
      * get the formula type name from the database
      */
-    function formula_type_name()
+    function formula_type_name(): string
     {
         $result = '';
 
@@ -922,9 +929,9 @@ class formula extends user_sandbox_description
      *
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string an empty string if the import has been successfully saved to the database or the message that should be shown to the user
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         global $formula_types;
         global $share_types;
@@ -965,6 +972,35 @@ class formula extends user_sandbox_description
         // set the default type if no type is specified
         if ($this->type_id == 0) {
             $this->type_id = $formula_types->default_id();
+        }
+
+        // save the formula in the database
+        if ($do_save) {
+            $result .= $this->save();
+        }
+
+        // assign the formula to the words and triple
+        if ($result == '' or !$do_save) {
+            log_debug('word->import_obj -> saved ' . $this->dsp_id());
+            foreach ($json_obj as $key => $value) {
+                if ($result or !$do_save) {
+                    if ($key == 'assigned_word') {
+                        foreach ($value as $lnk_phr_name) {
+                            $phr = new phrase();
+                            $phr->name = $lnk_phr_name;
+                            $phr->usr = $usr;
+                            $phr->load();
+                            if ($this->id > 0 and $phr->id <> 0) {
+                                $frm_lnk = new formula_link;
+                                $frm_lnk->usr = $usr;
+                                $frm_lnk->fob = $this;
+                                $frm_lnk->tob = $phr;
+                                $frm_lnk->save();
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return $result;
@@ -1143,33 +1179,41 @@ class formula extends user_sandbox_description
         $db_lst = $db_con->get($sql);
 
         $elm_db_ids = array();
-        foreach ($db_lst as $db_row) {
-            $elm_db_ids[] = $db_row['ref_id'];
+        if ($db_lst != null) {
+            foreach ($db_lst as $db_row) {
+                $elm_db_ids[] = $db_row['ref_id'];
+            }
         }
         log_debug('formula->element_refresh_type -> got (' . dsp_array($elm_db_ids) . ') of type ' . $element_type . ' from database');
 
         // add missing links
         $elm_add_ids = array_diff($elm_ids, $elm_db_ids);
+        $elm_order_nbr = 1;
         log_debug('formula->element_refresh_type -> add ' . $element_type . ' (' . dsp_array($elm_add_ids) . ')');
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
             $field_names[] = 'formula_id';
             $field_values[] = $this->id;
+            $field_names[] = 'user_id';
             if ($frm_usr_id > 0) {
-                $field_names[] = 'user_id';
                 $field_values[] = $frm_usr_id;
+            } else {
+                $field_values[] = $this->usr->id;
             }
             $field_names[] = 'formula_element_type_id';
             $field_values[] = $elm_type_id;
             $field_names[] = 'ref_id';
             $field_values[] = $elm_add_id;
-            $db_con->set_type(DB_TYPE_FORMULA);
+            $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
+            $field_names[] = 'order_nbr';
+            $field_values[] = $elm_order_nbr;
             $add_result = $db_con->insert($field_names, $field_values);
             // in this case the row id is not needed, but for testing the number of action should be indicated by adding a '1' to the result string
             //if ($add_result > 0) {
             //    $result .= '1';
             //}
+            $elm_order_nbr++;
         }
 
         // delete links not needed any more
@@ -1221,14 +1265,16 @@ class formula extends user_sandbox_description
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get($sql);
-        foreach ($db_lst as $db_row) {
-            // update word links of the user formula
-            if ($result) {
-                $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, $db_row['user_id'], $this->usr->id);
-            }
-            // update formula links of the standard formula
-            if ($result) {
-                $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, $db_row['user_id'], $this->usr->id);
+        if ($db_lst != null) {
+            foreach ($db_lst as $db_row) {
+                // update word links of the user formula
+                if ($result) {
+                    $result = $this->element_refresh_type($frm_text, formula_element_type::WORD, $db_row['user_id'], $this->usr->id);
+                }
+                // update formula links of the standard formula
+                if ($result) {
+                    $result = $this->element_refresh_type($frm_text, formula_element_type::FORMULA, $db_row['user_id'], $this->usr->id);
+                }
             }
         }
 
@@ -1283,6 +1329,8 @@ class formula extends user_sandbox_description
 
     /**
      * update the database reference text based on the user text
+     *
+     * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
     function set_ref_text(): string
     {
@@ -1869,7 +1917,8 @@ class formula extends user_sandbox_description
             // create a new formula or update an existing
             if ($this->id <= 0) {
                 // convert the formula text to db format (any error messages should have been returned from the calling user script)
-                if ($this->set_ref_text() <> '') {
+                $result .= $this->set_ref_text();
+                if ($result == '') {
                     $result .= $this->add();
                 }
             } else {
@@ -1893,17 +1942,16 @@ class formula extends user_sandbox_description
                 }
 
                 // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                if ($this->set_ref_text() <> '') {
+                $result .= $this->set_ref_text();
+                if ($result == '') {
 
                     // check if the id parameters are supposed to be changed
-                    if ($result == '') {
-                        $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
-                    }
+                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($result == '') {
-                        $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                     }
                 }
 
@@ -1911,7 +1959,7 @@ class formula extends user_sandbox_description
                 // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
                 if ($result == '') {
                     if (!$this->element_refresh($this->ref_text)) {
-                        $result = 'Refresh of the formula elements failed';
+                        $result .= 'Refresh of the formula elements failed';
                     }
                 }
             }

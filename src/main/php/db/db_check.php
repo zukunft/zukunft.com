@@ -97,6 +97,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->change_column_name('user_blocked_ips', 'isactive', 'is_active;');
     $db_con->change_column_name('users', 'isactive', 'is_active;');
     $db_con->change_column_name('users', 'email_alternativ', 'email_alternative;');
+    $db_con->change_column_name('formula_element_types', 'formula_element_type_name', 'type_name;');
     $db_con->change_column_name('view_component_types', 'view_component_type_name', 'type_name;');
     $db_con->change_column_name('formula_types', 'name', 'type_name;');
     $db_con->change_column_name('ref_types', 'ref_type_name', 'type_name;');
@@ -117,7 +118,12 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->column_allow_null('change_tables', 'description');
     $db_con->column_allow_null('views', 'comment');
     $db_con->column_allow_null('view_component_types', 'description');
+    $db_con->column_allow_null('values', 'protection_type_id');
     $db_con->column_allow_null('user_values', 'protection_type_id');
+    $db_con->column_allow_null('value_time_series', 'protection_type_id');
+    $db_con->column_allow_null('user_sources', 'source_name');
+    $db_con->column_allow_null('user_sources', 'url');
+    $db_con->column_force_not_null('user_sources', 'user_id');
 
     // Change code_id in verbs from contains to is_part_of
 

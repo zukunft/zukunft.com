@@ -38,6 +38,7 @@ class db_cl
     const WORD_TYPE = "word_type";
     const VERB = "verb";
     const FORMULA_TYPE = "formula_type";
+    const FORMULA_ELEMENT_TYPE = "formula_element_type";
     const VIEW = "view";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "view_component_type";
@@ -90,6 +91,12 @@ class db_cl
     {
         global $formula_types;
         return $formula_types->id($code_id);
+    }
+
+    function formula_element_type_id(string $code_id): int
+    {
+        global $formula_element_types;
+        return $formula_element_types->id($code_id);
     }
 
     function view_id(string $code_id): int
@@ -170,6 +177,12 @@ class db_cl
         return $formula_types->get($id);
     }
 
+    function formula_element_type(int $id)
+    {
+        global $formula_element_types;
+        return $formula_element_types->get($id);
+    }
+
     function view_type(int $id)
     {
         global $view_types;
@@ -246,6 +259,12 @@ class db_cl
     {
         global $formula_types;
         return $formula_types->name($id);
+    }
+
+    function formula_element_type_name(int $id): string
+    {
+        global $formula_element_types;
+        return $formula_element_types->name($id);
     }
 
     function view_name(int $id): string
@@ -331,6 +350,9 @@ function cl(string $type, string $code_id): int
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type_id($code_id);
             break;
+        case db_cl::FORMULA_ELEMENT_TYPE:
+            $result = $db_code_link->formula_element_type_id($code_id);
+            break;
         case db_cl::VIEW:
             $result = $db_code_link->view_id($code_id);
             break;
@@ -365,9 +387,9 @@ function cl(string $type, string $code_id): int
  *
  * @param string $type
  * @param int $id
- * @return int
+ * @return string the user specific name of the type
  */
-function cl_name(string $type, int $id): int
+function cl_name(string $type, int $id): string
 {
     $result = '';
     $db_code_link = new db_cl();
@@ -389,6 +411,9 @@ function cl_name(string $type, int $id): int
             break;
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type_name($id);
+            break;
+        case db_cl::FORMULA_ELEMENT_TYPE:
+            $result = $db_code_link->formula_element_type_name($id);
             break;
         case db_cl::VIEW:
             $result = $db_code_link->view_name($id);
@@ -449,6 +474,9 @@ function get_type(string $type, string $code_id): user_type
         */
         case db_cl::FORMULA_TYPE:
             $result = $db_code_link->formula_type($db_code_link->formula_type_id($code_id));
+            break;
+        case db_cl::FORMULA_ELEMENT_TYPE:
+            $result = $db_code_link->formula_element_type($db_code_link->formula_element_type_id($code_id));
             break;
         case db_cl::VIEW_TYPE:
             $result = $db_code_link->view_type($db_code_link->view_type_id($code_id));

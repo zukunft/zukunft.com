@@ -156,19 +156,19 @@ if ($usr->id > 0) {
         run_user_test();
 
         import_base_config();
-        create_base_words();
-        create_base_phrases();
+        create_test_words();
+        create_test_phrases();
         create_base_times();
-        create_base_formulas();
-        create_base_formula_links();
-        create_base_views();
-        create_base_values();
+        create_test_formulas();
+        create_test_formula_links();
+        create_test_views();
+        create_test_values();
 
         run_db_link_test();
         //run_lib_test ();
         run_string_unit_tests(); // test functions not yet split into single unit tests
         run_math_test();
-        run_word_test();
+        run_word_tests();
         run_word_ui_test();
         run_word_display_test();
         run_word_list_test();

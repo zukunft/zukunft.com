@@ -828,12 +828,12 @@ CREATE TABLE IF NOT EXISTS user_requests
 CREATE TABLE IF NOT EXISTS user_sources
 (
     source_id      BIGSERIAL PRIMARY KEY,
-    user_id        bigint   DEFAULT NULL,
-    source_name    varchar(200) NOT NULL,
-    url            text         NOT NULL,
+    user_id        bigint NOT NULL,
+    source_name    varchar(200) DEFAULT NULL,
+    url            text         DEFAULT NULL,
     comment        text,
-    source_type_id bigint   DEFAULT NULL,
-    excluded       smallint DEFAULT NULL
+    source_type_id bigint       DEFAULT NULL,
+    excluded       smallint     DEFAULT NULL
 );
 
 -- --------------------------------------------------------

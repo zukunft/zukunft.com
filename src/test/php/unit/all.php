@@ -101,6 +101,18 @@ function unit_test_init_formula_types()
 }
 
 /**
+ * create formula element type array for the unit tests without database connection
+ */
+function unit_test_init_formula_element_types()
+{
+    global $formula_element_types;
+
+    $formula_element_types = new formula_element_type_list();
+    $formula_element_types->load_dummy();
+
+}
+
+/**
  * create an array of the system views for the unit tests without database connection
  */
 function unit_test_init_views()
@@ -222,6 +234,7 @@ function run_unit_tests()
     unit_test_init_word_types();
     unit_test_init_verbs();
     unit_test_init_formula_types();
+    unit_test_init_formula_element_types();
     unit_test_init_views();
     unit_test_init_view_types();
     unit_test_init_view_component_types();

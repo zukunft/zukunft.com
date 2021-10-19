@@ -181,7 +181,6 @@ const TW_ABB = "ABB";
 const TW_DAN = "Danone";
 const TW_NESN = "Nestlé";
 const TW_VESTAS = "Vestas";
-const TW_USA = "United States";
 const TW_SALES = "Sales";
 const TW_SALES2 = "Revenues";
 const TW_PRICE = "Price";
@@ -241,7 +240,6 @@ const TV_NESN_SALES_2016_FORMATTED = '89\'469';
 // some source used to test the program
 const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
 const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
-const TS_NESN_2016_ID = 1;
 const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
 
 
@@ -268,9 +266,6 @@ const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in se
 // views used for testing
 const TD_COMPLETE = "complete";                      // the default and base view for all words
 const TD_COMPANY_LIST = "Company list with main ratios"; // the default view for the company list
-
-// sources used for testing
-const TEST_SOURCE_WIKIDATA = "wikidata"; // the source for all data imported from wikidata that does not yet have a source defined in wikidata
 
 // ---------------
 // prepare testing

@@ -1153,7 +1153,7 @@
     },
     {
       "name": "scale km to 100 km",
-      "expression": "\"100 km\" = \"km\" * 100",
+      "expression": "\"per 100 km\" = \"km\" * 100",
       "assigned_word": "kilometre"
     }
   ],

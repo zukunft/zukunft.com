@@ -102,6 +102,7 @@ const DB_TYPE_PHRASE = 'phrase';
 const DB_TYPE_PHRASE_GROUP = 'phrase_group';
 const DB_TYPE_VALUE = 'value';
 const DB_TYPE_VALUE_TIME_SERIES = 'value_time_series';
+const DB_TYPE_VALUE_TIME_SERIES_DATA = 'value_ts_data';
 const DB_TYPE_VALUE_PHRASE_LINK = 'value_phrase_link';
 const DB_TYPE_SOURCE = 'source';
 const DB_TYPE_SOURCE_TYPE = 'source_type';
@@ -249,6 +250,7 @@ include_once $path_php . 'model/formula/formula_link_list.php';
 include_once $path_php . 'model/formula/formula_value.php';
 include_once $path_php . 'model/formula/formula_value_list.php';
 include_once $path_php . 'model/formula/formula_element.php';
+include_once $path_php . 'model/formula/formula_element_type_list.php';
 include_once $path_php . 'model/formula/formula_element_list.php';
 include_once $path_php . 'model/formula/formula_element_group.php';
 include_once $path_php . 'model/formula/formula_element_group_list.php';
@@ -427,6 +429,7 @@ const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 define("BASE_CODE_LINK_FILES", serialize(array(
     'calc_and_cleanup_task_types',
     'change_actions',
+    'formula_element_types',
     'formula_link_types',
     'formula_types',
     'language_forms',
@@ -453,6 +456,7 @@ const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 define("BASE_CONFIG_FILES", serialize(array(
     'system_views.json',
+    'scaling.json',
     'units.json',
     'time_definition.json',
     'country.json',
@@ -522,6 +526,11 @@ function log_msg($msg_text, $msg_description, $msg_log_level, $function_name, $f
     // fill up fields with default values
     if ($msg_description == '') {
         $msg_description = $msg_text;
+    }
+    if ($function_name == '') {
+        $function_name = (new Exception)->getTraceAsString();
+        $function_name = zu_str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = zu_str_left_of($function_name, ': log_');
     }
     if ($function_trace == '') {
         $function_trace = (new Exception)->getTraceAsString();
@@ -650,6 +659,7 @@ function prg_restart(string $code_name): sql_db
     global $user_profiles;
     global $word_types;
     global $formula_types;
+    global $formula_element_types;
     global $view_types;
     global $view_component_types;
     global $view_component_link_types;
@@ -691,6 +701,8 @@ function prg_restart(string $code_name): sql_db
     $word_types->load($db_con);
     $formula_types = new formula_type_list();
     $formula_types->load($db_con);
+    $formula_element_types = new formula_element_type_list();
+    $formula_element_types->load($db_con);
     $view_types = new view_type_list();
     $view_types->load($db_con);
     $view_component_types = new view_component_type_list();

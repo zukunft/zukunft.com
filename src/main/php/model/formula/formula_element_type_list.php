@@ -2,8 +2,8 @@
 
 /*
 
-  view_component_type_list.php - to link coded functionality to a view component
-  ----------------------------
+  formula_element_type_list.php - to link coded functionality to a formula element type
+  -----------------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -29,34 +29,19 @@
   
 */
 
-global $view_component_types;
+global $formula_element_types;
 
-class view_component_type_list extends user_type_list
+class formula_element_type_list extends user_type_list
 {
-    // list of the view component types that have a coded functionality
-    const DBL_TEXT = "text";
-    const DBL_WORD = "fixed";
-    const DBL_WORD_SELECT = "word_select";
-    const DBL_WORDS_UP = "word_list_up";
-    const DBL_WORDS_DOWN = "word_list_down";
-    const DBL_WORD_NAME = "word_name";
-    const DBL_WORD_VALUE = "word_value_list";
-    const DBL_VALUES_ALL = "values_all";
-    const DBL_VALUES_RELATED = "values_related";
-    const DBL_FORMULAS = "formula_list";
-    const DBL_FORMULA_RESULTS = "formula_results";
-    const DBL_JSON_EXPORT = "json_export";
-    const DBL_XML_EXPORT = "xml_export";
-    const DBL_CSV_EXPORT = "csv_export";
-    const DBL_VIEW_SELECT = "view_select";
-    const DBL_LINK = "link";
+    // list of the formula element types that have a coded functionality
+    const WORD_SELECTOR = "word_selector";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = DB_TYPE_VIEW_COMPONENT_TYPE): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_FORMULA_ELEMENT_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }
@@ -67,10 +52,10 @@ class view_component_type_list extends user_type_list
     function load_dummy() {
         parent::load_dummy();
         $type = new user_type();
-        $type->name = view_component_type_list::DBL_TEXT;
-        $type->code_id = view_component_type_list::DBL_TEXT;
+        $type->name = formula_element_type_list::WORD_SELECTOR;
+        $type->code_id = formula_element_type_list::WORD_SELECTOR;
         $this->lst[2] = $type;
-        $this->hash[view_component_type_list::DBL_TEXT] = 2;
+        $this->hash[formula_element_type_list::WORD_SELECTOR] = 2;
     }
 
     /**
@@ -78,7 +63,7 @@ class view_component_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(view_component_type_list::DBL_TEXT);
+        return parent::id(formula_element_type_list::WORD_SELECTOR);
     }
 
 }

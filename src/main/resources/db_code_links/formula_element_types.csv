@@ -1,0 +1,2 @@
+formula_element_type_id, type_name, description, code_id
+1, 'word selector', 'a list of words that select values using "and"', 'word_selector'

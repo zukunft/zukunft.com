@@ -50,7 +50,7 @@ function run_test_cleanup()
                 // check again, because some id may be added twice
                 if ($val->id > 0) {
                     $result = $val->del();
-                    $target = '11';
+                    $target = true;
                     test_dsp('value->del test value for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
                 }
             }

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_base_words()
+function create_test_words()
 {
 
     test_header('Check if all base words are correct');
@@ -39,6 +39,9 @@ function create_base_words()
     }
     foreach (word::TEST_WORDS_SCALING as $word_name) {
         test_word($word_name, word_type_list::DBL_SCALING);
+    }
+    foreach (word::TEST_WORDS_SCALING_HIDDEN as $word_name) {
+        test_word($word_name, word_type_list::DBL_SCALING_HIDDEN);
     }
     foreach (word::TEST_WORDS_PERCENT as $word_name) {
         test_word($word_name, word_type_list::DBL_PERCENT);
@@ -78,7 +81,7 @@ function create_base_words()
     echo "<br><br>";
 }
 
-function run_word_test()
+function run_word_tests()
 {
 
     global $usr1;
@@ -295,7 +298,7 @@ function run_word_test()
     $wrd_add->usr = $usr1;
     $result = $wrd_add->save();
     $target = '';
-    test_dsp('word->save for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT_DB);
+    test_dsp('word->save for "' . word::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     echo "... and also testing the user log class (classes/user_log.php)<br>";
 
