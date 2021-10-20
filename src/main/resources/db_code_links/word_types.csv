@@ -9,7 +9,7 @@ word_type_id, type_name, description, code_id, scaling_factor, word_symbol
 8, 'hidden scaling', '"one" is needed as a scaling word for correct calculations, but it is not useful to display it', 'scaling_hidden', NULL, ''
 9, 'view / layer', 'word to separate the number layers and to change the view.\r\nE.g. -as reported- are exactly the numbers as they come from the external source\r\n-detailed- are the most granular splitting of the -as reported- numbers\r\n-projection- show the changes and includes the estimates to make a forecast\r\n', 'view', NULL, ''
 10, 'formula link', 'A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten', 'formula_link', NULL, ''
-11, 'differentiator filler', 'these terms are used to fill up a differentiator list, so most likely the erm linked will be named "other"', 'type_other', NULL, ''
+11, 'differentiator filler', 'these terms are used to fill up a differentiator list, so most likely the term linked will be named "other"', 'type_other', NULL, ''
 12, 'this', 'not sure, why this is needed', 'this', NULL, ''
 13, 'next', 'not sure, why this is needed', 'next', NULL, ''
 14, 'prior', 'not sure, why this is needed', 'previous', NULL, ''

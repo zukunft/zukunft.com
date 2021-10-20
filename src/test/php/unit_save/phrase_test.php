@@ -31,8 +31,8 @@ function create_test_phrases()
     test_header('Check if all base phrases are correct');
 
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY_AS_CATEGORY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
 
     test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
@@ -59,7 +59,7 @@ function run_phrase_test()
     test_header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
     // load the main test word
-    $wrd_company = test_word(word::TN_COMPANY_AS_CATEGORY);
+    $wrd_company = test_word(word::TN_COMPANY);
 
     // prepare the Insurance Zurich
     $wrd_zh = load_word(word::TN_ZH);
@@ -80,11 +80,11 @@ function run_phrase_test()
     $phr->usr = $usr;
     $phr->load();
     $result = $phr->name;
-    $target = word::TN_COMPANY_AS_CATEGORY;
+    $target = word::TN_COMPANY;
     test_dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?words='. $wrd_company->id . '" title="">' . word::TN_COMPANY_AS_CATEGORY . '</a></td> ';
+    $target = ' <td> <a href="/http/view.php?words='. $wrd_company->id . '" title="">' . word::TN_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = trim_all($result);

@@ -30,6 +30,8 @@ function create_test_formulas()
 {
     test_header('Check if all base formulas are correct');
 
+    test_formula(formula::TN_RATIO, formula::TF_RATIO);
+    test_formula(formula::TN_SECTOR, formula::TF_SECTOR);
     test_formula(formula::TN_INCREASE, formula::TF_INCREASE);
     test_formula(formula::TN_SCALE_K, formula::TF_SCALE_K);
     test_formula(formula::TN_SCALE_MIO, formula::TF_SCALE_MIO);

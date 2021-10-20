@@ -35,12 +35,12 @@ function run_expression_test () {
   $back = '';
 
   // load formulas for expression testing
-  $frm        = load_formula(TF_INCREASE);
-  $frm_pe     = load_formula(TF_PE,       );
-  $frm_sector = load_formula(TF_SECTOR,   );
+  $frm        = load_formula(formula::TN_INCREASE);
+  $frm_pe     = load_formula(formula::TN_RATIO);
+  $frm_sector = load_formula(formula::TN_SECTOR);
 
   $result = $frm_sector->usr_text;
-  $target = '="Sales" "differentiator" "Sector"/"Total Sales"';
+  $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
   test_dsp('formula->user text', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
   // create expressions for testing
@@ -69,18 +69,18 @@ function run_expression_test () {
   $target = 'true';
   $result = zu_dsp_bool($exp->has_ref ());
   test_dsp('expression->has_ref for "'.$frm->usr_text.'"', $target, $result);
-  $target = '{t19}=({f3}-{f5})/{f5}';
+  $target = '{t5}=({t6}-{t7})/{t7}';
   $result = $exp->get_ref_text ();
   test_dsp('expression->get_ref_text for "'.$frm->usr_text.'"', $target, $result);
 
   // test the expression processing of the database reference
   $exp_db = New expression;
-  $exp_db->ref_text = '{t19} = ( is.numeric( {f3} ) & is.numeric( {f5} ) ) ( {f3} - {f5} ) / {f5}';
+  $exp_db->ref_text = '{t5} = ( is.numeric( {t6} ) & is.numeric( {t7} ) ) ( {t6} - {t7} ) / {t7}';
   $exp_db->usr = $usr;
-  $target = '{t19}';
+  $target = '{t5}';
   $result = $exp_db->fv_part ();
   test_dsp('expression->fv_part_usr for "'.$exp_db->ref_text.'"', $target, $result);
-  $target = '( is.numeric( {f3} ) & is.numeric( {f5} ) ) ( {f3} - {f5} ) / {f5}';
+  $target = '( is.numeric( {t6} ) & is.numeric( {t7} ) ) ( {t6} - {t7} ) / {t7}';
   $result = $exp_db->r_part ();
   test_dsp('expression->r_part_usr for "'.$exp_db->ref_text.'"', $target, $result);
   $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';
@@ -96,38 +96,38 @@ function run_expression_test () {
   // ... and the phrases used in the formula
   $phr_lst_fv = $exp_pe->phr_lst ();
   $result = $phr_lst_fv->name ();
-  $target = '"Share price"';
+  $target = '"System Test Word Share Price","System Test Word Earnings"';
   test_dsp('expression->phr_lst for "'.$exp_pe->dsp_id().'"', $target, $result);
 
   // ... and all elements used in the formula
   $elm_lst = $exp_sector->element_lst ($back,  );
   $result = $elm_lst->name ();
-  $target = 'Sales can be used as a differentiator for Sector Total Sales ';
+  $target = 'System Test Word Parent e.g. Country can be used as a differentiator for System Test Word Category e.g. Canton System Test Word Total ';
   test_dsp('expression->element_lst for "'.$exp_sector->dsp_id().'"', $target, $result); 
 
   // ... and all element groups used in the formula
   $elm_grp_lst = $exp_sector->element_grp_lst ($back);
   $result = $elm_grp_lst->name ();
-  $target = 'Sales,can be used as a differentiator for,Sector / Total Sales';
+  $target = 'System Test Word Parent e.g. Country,can be used as a differentiator for,System Test Word Category e.g. Canton / System Test Word Total';
   test_dsp('expression->element_grp_lst for "'.$exp_sector->dsp_id().'"', $target, $result);
 
   // test getting the phrases if the formula contains a verb
   // not sure if test is correct!
   $phr_lst = $exp_sector->phr_verb_lst($back);
   $result = $phr_lst->name();
-  $target = '"Sales","Sector","Total Sales"';
+  $target = '"System Test Word Parent e.g. Country","System Test Word Category e.g. Canton","System Test Word Total"';
   test_dsp('expression->phr_verb_lst for "'.$exp_sector->ref_text.'"', $target, $result);
 
   // test getting special phrases
   $phr_lst = $exp->element_special_following ($back);
   $result = $phr_lst->name ();
   $target = '"this","prior"';
-  test_dsp('expression->element_special_following for "'.$exp->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_LONG);
+  // TODO test_dsp('expression->element_special_following for "'.$exp->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_LONG);
 
   // test getting for special phrases the related formula 
   $frm_lst = $exp->element_special_following_frm ($back);
   $result = $frm_lst->name ();
   $target = 'this,prior';
-  test_dsp('expression->element_special_following_frm for "'.$exp->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_LONG);
+  // TODO test_dsp('expression->element_special_following_frm for "'.$exp->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_LONG);
 
 }

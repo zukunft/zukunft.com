@@ -5,6 +5,27 @@
   "selection": [
     "company base setup"
   ],
+  "words": [
+    {
+      "name": "Equity"
+    },
+    {
+      "name": "Share"
+    },
+    {
+      "name": "Share Price"
+    },
+    {
+      "name": "Earnings"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "PE Ratio",
+      "expression": "= \"Share Price\" / \"Earnings\"",
+      "assigned_word": "Share"
+    }
+  ],
   "views": [
     {
       "name": "Company sheet",

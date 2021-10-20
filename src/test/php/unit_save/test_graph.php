@@ -44,7 +44,7 @@ function run_graph_test()
     // step 1: define the phrase list e.g. in this case only the test word for city
     $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
-    $phr_lst->add_name(word::TN_CITY_AS_CATEGORY);
+    $phr_lst->add_name(word::TN_CITY);
     $phr_lst->load();
 
     // step 2: get all values related to the phrases
@@ -143,7 +143,7 @@ function run_graph_test()
             }
         }
     } */
-    $target = word::TN_COMPANY_AS_CATEGORY;
+    $target = word::TN_COMPANY;
     test_dsp_contains('graph->load for ZH up is', $target, $result);
 
 }

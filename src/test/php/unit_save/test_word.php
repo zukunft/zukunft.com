@@ -233,10 +233,10 @@ function run_word_tests()
     // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
     // and 'System Test Word Member e.g. Zurich' as member
     $wrd_canton = test_word(word::TN_CANTON);
-    $wrd_city = test_word(word::TN_CITY_AS_CATEGORY);
+    $wrd_city = test_word(word::TN_CITY);
     $wrd_ZH = test_word(word::TN_ZH);
     test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY_AS_CATEGORY);
+    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY);
 
     // word is e.g. Zurich as a Canton ...
     $target = $wrd_canton->name;

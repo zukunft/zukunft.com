@@ -58,7 +58,7 @@ function run_phrase_group_list_test()
     $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
     $phr_lst->add_name(word::TN_ZH);
-    $phr_lst->add_name(word::TN_CITY_AS_CATEGORY);
+    $phr_lst->add_name(word::TN_CITY);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_MIO);
     $phr_lst->load();
@@ -73,7 +73,7 @@ function run_phrase_group_list_test()
     $result = $grp_lst->name();
     $target = '' . word::TN_MIO . ',' . word::TN_CH . ',' . word::TN_INHABITANT .
         ' and ' . word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT .
-        ' and ' . word::TN_MIO . ',' . word::TN_CITY_AS_CATEGORY . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
+        ' and ' . word::TN_MIO . ',' . word::TN_CITY . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
     test_dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 

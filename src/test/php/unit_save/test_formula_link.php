@@ -30,6 +30,8 @@ function create_test_formula_links()
 {
     test_header('Check if all base formulas link correctly');
 
+    test_formula_link(formula::TN_RATIO, word::TN_SHARE);
+    test_formula_link(formula::TN_SECTOR, word::TN_SHARE);
     test_formula_link(formula::TN_INCREASE, word::TN_INCREASE);
     test_formula_link(formula::TN_SCALE_K, word::TN_IN_K);
     test_formula_link(formula::TN_SCALE_MIO, word::TN_MIO);

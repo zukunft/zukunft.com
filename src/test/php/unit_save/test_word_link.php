@@ -41,11 +41,11 @@ function run_word_link_test()
     test_header('Test the word link class (classes/word_link.php)');
 
     // create the group test word
-    $wrd_company = test_word(word::TN_COMPANY_AS_CATEGORY);
+    $wrd_company = test_word(word::TN_COMPANY);
 
     // check the triple usage for Zurich (City) and Zurich (Canton)
     $wrd_zh = load_word(word::TN_ZH);
-    $wrd_city = load_word(word::TN_CITY_AS_CATEGORY);
+    $wrd_city = load_word(word::TN_CITY);
     $wrd_canton = load_word(word::TN_CANTON);
 
     // ... now test the Canton Zurich

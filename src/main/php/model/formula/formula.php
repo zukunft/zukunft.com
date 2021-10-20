@@ -41,19 +41,28 @@ const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
 class formula extends user_sandbox_description
 {
     // persevered formula names for unit and integration tests
-    const TN_INCREASE = 'System Test Formula Increase';
+    const TN_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
+    const TF_RATIO = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
+    const TN_SECTOR = 'System Test Formula Sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
+    const TF_SECTOR = '= "System Test Word Parent e.g. Country" "differentiator" "System Test Word Category e.g. Canton" / "System Test Word Total"';
+    // TODO use system test words to test the recreation of the increase formula
+    const TN_INCREASE = 'System Test Formula Increase'; // to test the selection using the words and word types "this" and "prior"
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
-    // TODO add the scaling formulas to the base setup
-    const TN_SCALE_BIL = 'System Test Formula scale billions to one';
-    const TF_SCALE_BIL = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. billions" * 1000000000';
-    const TN_SCALE_MIO = 'System Test Formula scale millions to one';
-    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. millions" * 1000000';
     const TN_SCALE_K = 'System Test Formula scale thousand to one';
     const TF_SCALE_K = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. thousands" * 1000';
+    const TN_SCALE_MIO = 'System Test Formula scale millions to one';
+    const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. millions" * 1000000';
+    const TN_SCALE_BIL = 'System Test Formula scale billions to one';
+    const TF_SCALE_BIL = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. billions" * 1000000000';
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_FORMULAS = array(
-        self::TN_INCREASE
+        self::TN_RATIO,
+        self::TN_SECTOR,
+        self::TN_INCREASE,
+        self::TN_SCALE_K,
+        self::TN_SCALE_MIO,
+        self::TF_SCALE_BIL
     );
 
     // list of the formula types that have a coded functionality

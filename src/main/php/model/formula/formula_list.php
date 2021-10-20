@@ -178,8 +178,10 @@ class formula_list
     function names(): array
     {
         $result = array();
-        foreach ($this->lst as $frm) {
-            $result[] = $frm->name;
+        if ($this->lst != null) {
+            foreach ($this->lst as $frm) {
+                $result[] = $frm->name;
+            }
         }
         return $result;
     }

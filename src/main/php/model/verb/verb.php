@@ -558,6 +558,22 @@ class verb
         return $result;
     }
 
+    // set the update parameters for the verb description
+    private function save_field_formula_name($db_con, $db_rec): string
+    {
+        $result = '';
+        if ($db_rec->description <> $this->frm_name) {
+            $log = $this->log_upd();
+            $log->old_value = $db_rec->frm_name;
+            $log->new_value = $this->frm_name;
+            $log->std_value = $db_rec->frm_name;
+            $log->row_id = $this->id;
+            $log->field = 'formula_name';
+            $result .= $this->save_field_do($db_con, $log);
+        }
+        return $result;
+    }
+
     // save all updated verb fields excluding the name, because already done when adding a verb
     private function save_fields($db_con, $db_rec): string
     {
@@ -566,6 +582,7 @@ class verb
         $result .= $this->save_field_reverse($db_con, $db_rec);
         $result .= $this->save_field_rev_plural($db_con, $db_rec);
         $result .= $this->save_field_description($db_con, $db_rec);
+        $result .= $this->save_field_formula_name($db_con, $db_rec);
         log_debug('verb->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

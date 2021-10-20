@@ -40,9 +40,10 @@ class word extends word_link_object
     const TN_PARENT = 'System Test Word Parent';
     const TN_CH = 'System Test Word Parent e.g. Switzerland';
     const TN_ZH = 'System Test Word Member e.g. Zurich';
+    const TN_COUNTRY = 'System Test Word Parent e.g. Country';
     const TN_CANTON = 'System Test Word Category e.g. Canton';
-    const TN_CITY_AS_CATEGORY = 'System Test Word Another Category e.g. City';
-    const TN_COMPANY_AS_CATEGORY = 'System Test Word Group e.g. Company';
+    const TN_CITY = 'System Test Word Another Category e.g. City';
+    const TN_COMPANY = 'System Test Word Group e.g. Company';
     const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_2019 = 'System Test Another Time Word e.g. 2019';
@@ -50,11 +51,16 @@ class word extends word_link_object
     const TN_2021 = 'System Test Time Word e.g. 2021';
     const TN_2022 = 'System Test Another Time Word e.g. 2022';
     const TN_CHF = 'System Test Measure Word e.g. CHF';
+    const TN_SHARE = 'System Test Word Share';
+    const TN_PRICE = 'System Test Word Share Price';
+    const TN_EARNING = 'System Test Word Earnings';
+    const TN_PE = 'System Test Word PE Ratio';
     const TN_ONE = 'System Test Scaling Word e.g. one';
     const TN_IN_K = 'System Test Scaling Word e.g. thousands';
     const TN_MIO = 'System Test Scaling Word e.g. millions';
     const TN_BIL = 'System Test Scaling Word e.g. billions';
     const TN_PCT = 'System Test Percent Word';
+    const TN_TOTAL = 'System Test Word Total';
     const TN_INCREASE = 'System Test Word Increase';
     const TN_THIS = 'System Test Word This';
     const TN_PRIOR = 'System Test Word Prior';
@@ -68,9 +74,10 @@ class word extends word_link_object
         self::TN_PARENT,
         self::TN_CH,
         self::TN_ZH,
+        self::TN_COUNTRY,
         self::TN_CANTON,
-        self::TN_CITY_AS_CATEGORY,
-        self::TN_COMPANY_AS_CATEGORY,
+        self::TN_CITY,
+        self::TN_COMPANY,
         self::TN_PARENT_NON_INHERITANCE,
         self::TN_CHILD_NON_INHERITANCE,
         self::TN_2019,
@@ -78,11 +85,16 @@ class word extends word_link_object
         self::TN_2021,
         self::TN_2022,
         self::TN_CHF,
+        self::TN_SHARE,
+        self::TN_PRICE,
+        self::TN_EARNING,
+        self::TN_PE,
         self::TN_ONE,
         self::TN_IN_K,
         self::TN_MIO,
         self::TN_BIL,
         self::TN_PCT,
+        self::TN_TOTAL,
         self::TN_INCREASE,
         self::TN_THIS,
         self::TN_PRIOR,
@@ -92,13 +104,19 @@ class word extends word_link_object
         self::TN_PARENT,
         self::TN_CH,
         self::TN_ZH,
+        self::TN_COUNTRY,
         self::TN_CANTON,
-        self::TN_CITY_AS_CATEGORY,
-        self::TN_COMPANY_AS_CATEGORY,
+        self::TN_CITY,
+        self::TN_COMPANY,
         self::TN_PARENT_NON_INHERITANCE,
         self::TN_CHILD_NON_INHERITANCE,
         self::TN_INHABITANT,
-        self::TN_INCREASE
+        self::TN_INCREASE,
+        self::TN_SHARE,
+        self::TN_PRICE,
+        self::TN_EARNING,
+        self::TN_PE,
+        self::TN_TOTAL
     );
     const TEST_WORDS_MEASURE = array(self::TN_CHF);
     const TEST_WORDS_SCALING_HIDDEN = array(self::TN_ONE);

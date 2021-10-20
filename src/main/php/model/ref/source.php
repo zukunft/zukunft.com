@@ -483,7 +483,7 @@ class source extends user_sandbox
                      source_name,
                      url,
                      comment,
-                     source_type_id
+                     source_type_id, excluded
                 FROM user_sources
                WHERE source_id = " . $this->id . " 
                  AND user_id = " . $this->usr->id . ";";
@@ -492,9 +492,12 @@ class source extends user_sandbox
         log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_wrd_cfg['source_id'] > 0) {
             // TODO check that this convers all fields for all types
-            if ($usr_wrd_cfg['url'] == ''
+            // TODO define for each user sandbox object a list with all user fields and loop here over this array
+            if ($usr_wrd_cfg['source_name'] == ''
+                and $usr_wrd_cfg['url'] == ''
                 and $usr_wrd_cfg['comment'] == ''
-                and $usr_wrd_cfg['source_type_id'] == Null) {
+                and $usr_wrd_cfg['source_type_id'] == Null
+                and $usr_wrd_cfg['excluded'] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
