@@ -37,6 +37,7 @@ class phrase_list
     public array $lst = array();   // array of the loaded phrase objects
     //                                (key is at the moment the database id, but it looks like this has no advantages,
     //                                so a normal 0 to n order could have more advantages)
+    // TODO remove the separate id list and replace it with functions
     public ?array $ids = array();  // array of ids corresponding to the lst->id to load a list of phrases from the database
     public ?user $usr = null;      // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
@@ -118,20 +119,24 @@ class phrase_list
                     $phr->load();
                     log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                 }
-                if (!isset($phr->obj)) {
+                if ($phr->obj == null) {
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
-                    // TODO check if old can ge removed: if ($phr->id > 0) {
-                    if (get_class($phr->obj) == 'word' or get_class($phr->obj) == 'word_dsp') {
-                        $wrd_lst->add($phr->obj);
-                    } elseif (get_class($phr->obj) == DB_TYPE_WORD_LINK) {
-                        // use the recursive triple function to include the foaf words
-                        $sub_wrd_lst = $phr->obj->wrd_lst();
-                        foreach ($sub_wrd_lst->lst as $wrd) {
-                            $wrd_lst->add($wrd);
-                        }
+                    if ($phr->obj->id <= 0) {
+                        log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                     } else {
-                        log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
+                        // TODO check if old can ge removed: if ($phr->id > 0) {
+                        if (get_class($phr->obj) == 'word' or get_class($phr->obj) == 'word_dsp') {
+                            $wrd_lst->add($phr->obj);
+                        } elseif (get_class($phr->obj) == DB_TYPE_WORD_LINK) {
+                            // use the recursive triple function to include the foaf words
+                            $sub_wrd_lst = $phr->obj->wrd_lst();
+                            foreach ($sub_wrd_lst->lst as $wrd) {
+                                $wrd_lst->add($wrd);
+                            }
+                        } else {
+                            log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
+                        }
                     }
                 }
             }
@@ -815,13 +820,15 @@ class phrase_list
         return $result;
     }
 
-    // diff as a function, because the array_diff does not work for an object list
-    // e.g. for "2014", "2015", "2016", "2017" and the delete list of "2016", "2017","2018" the result is "2014", "2015"
+    /**
+     * diff as a function, because the array_diff does not seem to work for an object list
+     * e.g. for "2014", "2015", "2016", "2017" and delete list of "2016", "2017","2018" the result is "2014", "2015"
+     */
     function diff($del_lst)
     {
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
 
-        // check an adjust the parameters
+        // check and adjust the parameters
         if (get_class($del_lst) == 'word_list') {
             $del_phr_lst = $del_lst->phrase_lst();
         } else {

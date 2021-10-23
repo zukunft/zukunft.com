@@ -340,8 +340,10 @@ class formula_link extends user_sandbox
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        if ($db_row['user_id'] > 0) {
-            $result = false;
+        if ($db_row != null) {
+            if ($db_row['user_id'] > 0) {
+                $result = false;
+            }
         }
         log_debug('formula_link->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;

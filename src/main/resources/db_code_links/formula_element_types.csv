@@ -1,2 +1,5 @@
 formula_element_type_id, type_name, description, code_id
-1, 'word selector', 'a list of words that select values using "and"', 'word_selector'
+1, 'word', 'a reference to a word used to select values using "and"', 'word'
+2, 'verb', 'a reference to a predicate', 'verb'
+3, 'formula', 'to select the results of another formula using the given context', 'formula'
+4, 'triple', 'a reference to two predicate linked words used to select values using "and"', 'triple'

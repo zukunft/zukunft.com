@@ -69,18 +69,18 @@ function run_expression_test () {
   $target = 'true';
   $result = zu_dsp_bool($exp->has_ref ());
   test_dsp('expression->has_ref for "'.$frm->usr_text.'"', $target, $result);
-  $target = '{t5}=({t6}-{t7})/{t7}';
+  $target = '{t5}=({f18}-{f20})/{f20}';
   $result = $exp->get_ref_text ();
   test_dsp('expression->get_ref_text for "'.$frm->usr_text.'"', $target, $result);
 
   // test the expression processing of the database reference
   $exp_db = New expression;
-  $exp_db->ref_text = '{t5} = ( is.numeric( {t6} ) & is.numeric( {t7} ) ) ( {t6} - {t7} ) / {t7}';
+  $exp_db->ref_text = '{t5} = ( is.numeric( {f18} ) & is.numeric( {f20} ) ) ( {f18} - {f20} ) / {f20}';
   $exp_db->usr = $usr;
   $target = '{t5}';
   $result = $exp_db->fv_part ();
   test_dsp('expression->fv_part_usr for "'.$exp_db->ref_text.'"', $target, $result);
-  $target = '( is.numeric( {t6} ) & is.numeric( {t7} ) ) ( {t6} - {t7} ) / {t7}';
+  $target = '( is.numeric( {f18} ) & is.numeric( {f20} ) ) ( {f18} - {f20} ) / {f20}';
   $result = $exp_db->r_part ();
   test_dsp('expression->r_part_usr for "'.$exp_db->ref_text.'"', $target, $result);
   $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';

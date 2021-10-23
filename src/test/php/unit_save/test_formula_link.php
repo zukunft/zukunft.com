@@ -47,7 +47,7 @@ function run_formula_link_test()
     test_header('Test the formula link class (classes/formula_link.php)');
 
     // link the test formula to another word
-    $frm = load_formula(TF_ADD_RENAMED);
+    $frm = load_formula(formula::TN_RENAMED);
     $phr = new phrase;
     $phr->name = word::TN_RENAMED;
     $phr->usr = $usr2;
@@ -89,7 +89,7 @@ function run_formula_link_test()
     test_dsp('formula_link->load by phrase id and link id "' . $phr->name() . '', $target, $result);
 
     // ... check if the link is shown correctly
-    $frm = load_formula(TF_ADD_RENAMED);
+    $frm = load_formula(formula::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     echo $phr_lst->dsp_id() . '<br>';
     $result = $phr_lst->does_contain($phr);
@@ -99,7 +99,7 @@ function run_formula_link_test()
     // ... check if the link is shown correctly also for the second user
     $frm = new formula;
     $frm->usr = $usr2;
-    $frm->name = TF_ADD_RENAMED;
+    $frm->name = formula::TN_RENAMED;
     $frm->load();
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
@@ -111,7 +111,7 @@ function run_formula_link_test()
     // if second user removes the new link
     $frm = new formula;
     $frm->usr = $usr2;
-    $frm->name = TF_ADD_RENAMED;
+    $frm->name = formula::TN_RENAMED;
     $frm->load();
     $phr = new phrase;
     $phr->name = word::TN_RENAMED;
@@ -135,7 +135,7 @@ function run_formula_link_test()
     // ... check if the link is really not used any more for the second user
     $frm = new formula;
     $frm->usr = $usr2;
-    $frm->name = TF_ADD_RENAMED;
+    $frm->name = formula::TN_RENAMED;
     $frm->load();
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
@@ -146,7 +146,7 @@ function run_formula_link_test()
     // ... check if the value update for the second user has been triggered
 
     // ... check if the link is still used for the first user
-    $frm = load_formula(TF_ADD_RENAMED);
+    $frm = load_formula(formula::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = true;
@@ -170,7 +170,7 @@ function run_formula_link_test()
     test_dsp('formula_link->unlink_phr logged of "' . $phr->name . '" from "' . $frm->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users
-    $frm = load_formula(TF_ADD_RENAMED);
+    $frm = load_formula(formula::TN_RENAMED);
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
     $target = false;
@@ -181,7 +181,7 @@ function run_formula_link_test()
 
     // insert the link again for the first user
     /*
-    $frm = load_formula(TF_ADD_RENAMED);
+    $frm = load_formula(formula::TN_RENAMED);
     $phr = New phrase;
     $phr->name = word::TEST_NAME_CHANGED;
     $phr->usr = $usr2;

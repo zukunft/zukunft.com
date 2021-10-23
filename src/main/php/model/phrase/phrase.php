@@ -472,17 +472,15 @@ class phrase
 
         // if no phrase type is define, list all words and triples
         // todo: but if word has several types don't offer to the user to select the simple word
-        // TODO ERROR: FEHLER:  Spalte »u.excluded« muss in der GROUP-BY-Klausel erscheinen oder in einer Aggregatfunktion verwendet werden
-        // LINE 22:                                   CASE WHEN (u.excluded IS N...
         //                                                      ^
         $sql_words = 'SELECT DISTINCT w.word_id AS id, 
-                             ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
+                             ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM words w   
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
                                          AND u.user_id = ' . $this->usr->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
+                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -493,7 +491,7 @@ class phrase
 
                 // select all phrase ids of the given type e.g. ABB, DANONE, Zurich
                 $sql_where_exclude = 'excluded = 0';
-                $sql_field_names = 'id, phrase_name, excluded';
+                $sql_field_names = 'id, name, excluded';
                 $sql_wrd_all = 'SELECT from_phrase_id AS id FROM (
                                         SELECT DISTINCT
                                                l.from_phrase_id,    
@@ -522,7 +520,7 @@ class phrase
                 $sql_words = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
                       SELECT DISTINCT
                              w.word_id AS id, 
-                             ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
+                             ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
@@ -535,7 +533,7 @@ class phrase
                 $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
                         SELECT DISTINCT
                                l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
+                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -575,10 +573,10 @@ class phrase
             }
         }
         $sql_avoid_code_check_prefix = "SELECT";
-        $sql = $sql_avoid_code_check_prefix . ' DISTINCT id, phrase_name
+        $sql = $sql_avoid_code_check_prefix . ' DISTINCT id, name
               FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
              WHERE excluded = 0
-          ORDER BY p.phrase_name;';
+          ORDER BY p.name;';
         log_debug('phrase->sql_list -> ' . $sql);
         return $sql;
     }

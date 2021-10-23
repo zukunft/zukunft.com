@@ -111,4 +111,17 @@ function create_test_values()
     ),
         value::TEST_INCREASE);
 
+    // add some simple number for formula testing
+    test_value(array(
+        word::TN_SHARE,
+        word::TN_CHF
+    ),
+        value::TV_SHARE_PRICE);
+
+    test_value(array(
+        word::TN_EARNING,
+        word::TN_CHF
+    ),
+        value::TV_EARNINGS_PER_SHARE);
+
 }

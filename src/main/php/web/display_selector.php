@@ -77,7 +77,7 @@ class selector
                     log_debug('selector->display ... selected ' . $db_entry['id']);
                     $row_option = ' selected';
                 }
-                $result .= '<option value="' . $db_entry['id'] . '" ' . $row_option . ' >' . $db_entry['phrase_name'] . '</option>';
+                $result .= '<option value="' . $db_entry['id'] . '" ' . $row_option . ' >' . $db_entry['name'] . '</option>';
             }
         }
 

@@ -97,27 +97,30 @@ class formula_value
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $val_rows = $db_con->get($sql);
-        if (count($val_rows) > 0) {
-            $val_row = $val_rows[0];
-            if ($val_row['formula_value_id'] <= 0) {
-                $this->id = 0;
-            } else {
-                $this->id = $val_row['formula_value_id'];
-                $this->frm_id = $val_row['formula_id'];
-                $this->owner_id = $val_row['user_id'];
-                $this->src_phr_grp_id = $val_row['source_phrase_group_id'];
-                $this->src_time_id = $val_row['source_time_word_id'];
-                $this->phr_grp_id = $val_row['phrase_group_id'];
-                $this->time_id = $val_row['time_word_id'];
-                $this->last_update = $val_row['last_update'];
-                $this->last_val_update = $val_row['last_update'];
-                $this->value = $val_row['formula_value'];
+        if ($val_rows != null) {
+            if (count($val_rows) > 0) {
+                $val_row = $val_rows[0];
+                if ($val_row['formula_value_id'] <= 0) {
+                    $this->id = 0;
+                } else {
+                    $this->id = $val_row['formula_value_id'];
+                    $this->frm_id = $val_row['formula_id'];
+                    $this->owner_id = $val_row['user_id'];
+                    $this->src_phr_grp_id = $val_row['source_phrase_group_id'];
+                    $this->src_time_id = $val_row['source_time_word_id'];
+                    $this->phr_grp_id = $val_row['phrase_group_id'];
+                    $this->time_id = $val_row['time_word_id'];
+                    $this->last_update = new DateTime($val_row['last_update']);
+                    $this->last_val_update = new DateTime($val_row['last_update']);
+                    $this->value = $val_row['formula_value'];
+                }
             }
         }
     }
 
     // load the missing formula parameters from the database
-    // to do: load user specific values
+    // TODO load user specific values
+    // TODO create load_sql and name the query
     function load()
     {
 
@@ -149,9 +152,18 @@ class formula_value
                     $this->src_time_id = $this->src_time_phr->id;
                 }
 
+                // create the source phrase list if just the word is given
+                if ($this->phr_lst == null and $this->wrd != null) {
+                    $new_phr_lst = new phrase_list();
+                    $new_phr_lst->usr = $this->usr;
+                    $new_phr_lst->add($this->wrd->phrase());
+                    $this->phr_lst = $new_phr_lst;
+                }
+
                 // set the source group id if the source list is set, but not the group id
                 $phr_grp = null;
                 if ($this->src_phr_grp_id <= 0 and !empty($this->src_phr_lst->lst)) {
+
                     $work_phr_lst = clone $this->src_phr_lst;
                     $work_phr_lst->ex_time();
                     $this->src_phr_lst = $work_phr_lst;
@@ -938,7 +950,11 @@ class formula_value
                 // add the formula name word
                 // e.g. if the formula "country weight" is calculated the word "country weight" should be added to the result values
                 log_debug('formula_value->save_if_updated -> add the formula name ' . $this->frm->dsp_id() . ' to the result phrases ' . $this->phr_lst->dsp_id());
-                $this->phr_lst->add($this->frm->name_wrd->phrase());
+                if ($this->frm != null) {
+                    if ($this->frm->name_wrd != null) {
+                        $this->phr_lst->add($this->frm->name_wrd->phrase());
+                    }
+                }
 
                 // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
                 // simplified version, that needs to be review to handle more complex formulas

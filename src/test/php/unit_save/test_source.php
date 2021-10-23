@@ -143,13 +143,13 @@ function run_source_test()
     $log->row_id = $src_reloaded->id;
     $log->usr = $usr1;
     $result = $log->dsp_last(true);
-    //$target = 'zukunft.com system test added ' . source::TEST_URL;
-    $target = 'zukunft.com system test partner changed ' . source::TEST_URL_CHANGED . ' to ' . source::TEST_URL;
+    $target = 'zukunft.com system test added ' . source::TEST_URL;
+    //$target = 'zukunft.com system test partner changed ' . source::TEST_URL_CHANGED . ' to ' . source::TEST_URL;
     test_dsp('source->load url for "' . source::TN_RENAMED . '" logged', $target, $result);
     $log->field = 'comment';
     $result = $log->dsp_last(true);
-    //$target = 'zukunft.com system test added ' . source::TEST_DESCRIPTION;
-    $target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';
+    $target = 'zukunft.com system test added ' . source::TEST_DESCRIPTION;
+    //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';
     test_dsp('source->load description for "' . source::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific source is created if another user changes the source

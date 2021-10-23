@@ -258,23 +258,25 @@ class formula_value_list
         // prepare to show where the user uses different word than a normal viewer
         //$row_nbr = 0;
         $result .= dsp_tbl_start_half();
-        foreach ($this->lst as $fv) {
-            //$row_nbr++;
-            $result .= '<tr>';
-            /*if ($row_nbr == 1) {
-              $result .= '<th>words</th>';
-              $result .= '<th>value</th>';
-            } */
-            $fv->load_phrases(); // load any missing objects if needed
-            $phr_lst = clone $fv->phr_lst;
-            if (isset($fv->time_phr)) {
-                log_debug("fv_lst->display -> add time " . $fv->time_phr->name . ".");
-                $phr_lst->add($fv->time_phr);
+        if ($this->lst != null) {
+            foreach ($this->lst as $fv) {
+                //$row_nbr++;
+                $result .= '<tr>';
+                /*if ($row_nbr == 1) {
+                  $result .= '<th>words</th>';
+                  $result .= '<th>value</th>';
+                } */
+                $fv->load_phrases(); // load any missing objects if needed
+                $phr_lst = clone $fv->phr_lst;
+                if (isset($fv->time_phr)) {
+                    log_debug("fv_lst->display -> add time " . $fv->time_phr->name . ".");
+                    $phr_lst->add($fv->time_phr);
+                }
+                $result .= '</tr><tr>';
+                $result .= '<td>' . $phr_lst->name_linked() . '</td>';
+                $result .= '<td>' . $fv->display_linked($back) . '</td>';
+                $result .= '</tr>';
             }
-            $result .= '</tr><tr>';
-            $result .= '<td>' . $phr_lst->name_linked() . '</td>';
-            $result .= '<td>' . $fv->display_linked($back) . '</td>';
-            $result .= '</tr>';
         }
         $result .= dsp_tbl_end();
 
@@ -283,10 +285,8 @@ class formula_value_list
     }
 
     /*
-
       create functions - build new formula values
       ----------------
-
     */
 
     // add all formula results to the list for ONE formula based on

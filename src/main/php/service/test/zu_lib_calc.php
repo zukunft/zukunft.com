@@ -86,7 +86,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 
-// interface const (to be remove, because specific funtions for each part has been created)
+// interface const (to be removed, because specific functions for each part has been created)
 define('ZUP_RESULT_TYPE_DB', 'db');    // returns a formula in the database format
 define('ZUP_RESULT_TYPE_USER', 'user');  // returns a formula in the user format
 define('ZUP_RESULT_TYPE_VALUE', 'value'); // returns a result of the formula
@@ -161,7 +161,7 @@ zu_calc("countryweight("Nestlé")")
 -> "differentiator total" = '=sum("differentiator")' // convert predefined formula "differentiator total" 
 -> call 'get words("Nestlé" "Country" "differentiator")', which returns a list of words ergo the result will be a list
 -> call 'get values("Nestlé" "Country" "differentiator")', which returns a list of values
--> call function sum to get the sum of the diffentiators
+-> call function sum to get the sum of the differentiators
 -> calc the percent result for each value
       
       
@@ -179,18 +179,19 @@ Do automatic caching of the results if needed
 
 
 /*
-  convertion support functions that look at the complete formula
+  conversion support functions that look at the complete formula
   ------------------                            --------
 */
-
 // returns the position of the word id in the database reference format
-function zuc_pos_word($formula)
+function zuc_pos_word($formula): int
 {
     log_debug("zuc_pos_word (" . $formula . ")");
     $result = -1;
 
-    $pos = zuc_pos_separator($formula, ZUP_CHAR_WORD_START, 0,);
-    $end = zuc_pos_separator($formula, ZUP_CHAR_WORD_END, $pos);
+    $calc = new math();
+
+    $pos = $calc->pos_separator($formula, ZUP_CHAR_WORD_START, 0,);
+    $end = $calc->pos_separator($formula, ZUP_CHAR_WORD_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -200,13 +201,15 @@ function zuc_pos_word($formula)
 }
 
 // returns the position of the verb id in the database reference format
-function zuc_pos_link($formula)
+function zuc_pos_link($formula): int
 {
     log_debug("zuc_pos_link (" . $formula . ")");
     $result = -1;
 
-    $pos = zuc_pos_separator($formula, ZUP_CHAR_LINK_START, 0,);
-    $end = zuc_pos_separator($formula, ZUP_CHAR_LINK_END, $pos);
+    $calc = new math();
+
+    $pos = $calc->pos_separator($formula, ZUP_CHAR_LINK_START, 0,);
+    $end = $calc->pos_separator($formula, ZUP_CHAR_LINK_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -221,8 +224,10 @@ function zuc_pos_formula($formula)
     log_debug("zuc_pos_formula (" . $formula . ")");
     $result = -1;
 
-    $pos = zuc_pos_separator($formula, ZUP_CHAR_FORMULA_START, 0,);
-    $end = zuc_pos_separator($formula, ZUP_CHAR_FORMULA_END, $pos);
+    $calc = new math();
+
+    $pos = $calc->pos_separator($formula, ZUP_CHAR_FORMULA_START, 0,);
+    $end = $calc->pos_separator($formula, ZUP_CHAR_FORMULA_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -232,7 +237,7 @@ function zuc_pos_formula($formula)
 }
 
 // returns true if the formula contains a word link
-function zuc_has_words($formula)
+function zuc_has_words($formula): bool
 {
     log_debug("zuc_has_words (" . $formula . ")");
     $result = false;

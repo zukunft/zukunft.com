@@ -49,9 +49,6 @@ class word_type_list extends user_type_list
     const DBL_CALC = "calc";
     const DBL_LAYER = "view";
     const DBL_OTHER = "type_other";
-    const DBL_NEXT = "next";
-    const DBL_THIS = "this";
-    const DBL_PREV = "previous";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled

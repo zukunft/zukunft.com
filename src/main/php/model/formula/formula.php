@@ -41,6 +41,10 @@ const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
 class formula extends user_sandbox_description
 {
     // persevered formula names for unit and integration tests
+    const TN_ADD = 'System Test Formula';
+    const TN_RENAMED = 'System Test Formula Renamed';
+    const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
+    const TF_THIS = '= "System Test Formula This"';
     const TN_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
     const TF_RATIO = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
     const TN_SECTOR = 'System Test Formula Sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
@@ -57,12 +61,15 @@ class formula extends user_sandbox_description
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_FORMULAS = array(
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_THIS,
         self::TN_RATIO,
         self::TN_SECTOR,
         self::TN_INCREASE,
         self::TN_SCALE_K,
         self::TN_SCALE_MIO,
-        self::TF_SCALE_BIL
+        self::TN_SCALE_BIL
     );
 
     // list of the formula types that have a coded functionality
@@ -117,6 +124,32 @@ class formula extends user_sandbox_description
 
         $this->needs_fv_upd = false;
         $this->ref_text_r = '';
+    }
+
+    /**
+     * @return formula_dsp the formula object with the display interface functions
+     */
+    function dsp_obj(): formula_dsp
+    {
+        $dsp_obj = new formula_dsp();
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->ref_text = $this->ref_text;
+        $dsp_obj->usr_text = $this->usr_text;
+        $dsp_obj->description = $this->description;
+        $dsp_obj->type_id = $this->type_id;
+        $dsp_obj->need_all_val = $this->need_all_val;
+        $dsp_obj->last_update = $this->last_update;
+
+        $dsp_obj->type_cl = $this->type_cl;
+        $dsp_obj->type_name = $this->type_name;
+        $dsp_obj->name_wrd = $this->name_wrd;
+
+        $dsp_obj->needs_fv_upd = $this->needs_fv_upd;
+        $dsp_obj->ref_text_r = $this->ref_text_r;
+
+        return $dsp_obj;
     }
 
     /**
@@ -286,12 +319,7 @@ class formula extends user_sandbox_description
                     // TODO check the exclusion handling
                     log_debug('formula->load ' . $this->dsp_id() . ' not excluded');
 
-                    // load the formula name word object
-                    if (is_null($this->name_wrd)) {
-                        $result = $this->load_wrd();
-                    } else {
-                        $result = true;
-                    }
+                    $result = true;
                 }
             }
         }
@@ -500,7 +528,7 @@ class formula extends user_sandbox_description
                 log_debug('formula->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
             }
         } else {
-            log_err('The user id must be set to list the formula links.', 'formula->assign_phr_glst');
+            log_err('The id and user id must be set to list the formula links.', 'formula->assign_phr_glst');
         }
 
         return $phr_lst;
@@ -551,7 +579,7 @@ class formula extends user_sandbox_description
      */
     function to_num($phr_lst, $back): formula_value_list
     {
-        log_debug('get numbers for ' . $this->name_linked($back) . ' and ' . $phr_lst->name_linked());
+        log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->name_linked());
 
         // check
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
@@ -565,7 +593,11 @@ class formula extends user_sandbox_description
         $wrd_lst = $phr_lst->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time();
         if (isset($time_wrd)) {
-            $time_phr = $time_wrd->phrase();
+            if (get_class($time_wrd) == 'phrase') {
+                $time_phr = $time_wrd;
+            } else {
+                $time_phr = $time_wrd->phrase();
+            }
         }
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_time();
@@ -620,111 +652,117 @@ class formula extends user_sandbox_description
             log_debug('formula->to_num -> figures ' . $fig_lst->dsp_id() . ' (' . dsp_count($fig_lst->lst) . ') for ' . $elm_grp->dsp_id());
 
             // fill the figure into the formula text and create as much formula values / results as needed
-            if (count($fig_lst->lst) == 1) {
-                // if no figure if found use the master result as placeholder
-                if (count($fv_lst->lst) == 0) {
-                    $fv_lst->lst[] = $fv_init;
-                }
-                // fill each formula values created by any previous number filling
-                foreach ($fv_lst->lst as $fv) {
-                    // fill each formula values created by any previous number filling
-                    if ($fv->val_missing == False) {
-                        if ($fig_lst->fig_missing and $this->need_all_val) {
-                            log_debug('formula->to_num -> figure missing');
-                            $fv->val_missing == True;
-                        } else {
-                            $fig = $fig_lst->lst[0];
-                            $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
-                            if ($fv->last_val_update < $fig->last_update) {
-                                $fv->last_val_update = $fig->last_update;
-                            }
-                            log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+            if ($fig_lst->lst != null) {
+                if (count($fig_lst->lst) == 1) {
+                    // if no figure if found use the master result as placeholder
+                    if ($fv_lst->lst != null) {
+                        if (count($fv_lst->lst) == 0) {
+                            $fv_lst->lst[] = $fv_init;
                         }
+                    } else {
+                        $fv_lst->lst[] = $fv_init;
                     }
-                }
-            } elseif (count($fig_lst->lst) > 1) {
-                // create the formula result object only if at least one figure if found
-                if (count($fv_lst->lst) == 0) {
-                    $fv_lst->lst[] = $fv_init;
-                }
-                // if there is more than one number to fill replicate each previous result, so in fact it multiplies the number of results
-                foreach ($fv_lst->lst as $fv) {
-                    $fv_master = clone $fv;
-                    $fig_nbr = 1;
-                    foreach ($fig_lst->lst as $fig) {
+                    // fill each formula values created by any previous number filling
+                    foreach ($fv_lst->lst as $fv) {
+                        // fill each formula values created by any previous number filling
                         if ($fv->val_missing == False) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
                                 log_debug('formula->to_num -> figure missing');
                                 $fv->val_missing == True;
                             } else {
-                                // for the first previous result, just fill in the first number
-                                if ($fig_nbr == 1) {
-
-                                    // if the result has been the standard result utils now
-                                    if ($fv->is_std) {
-                                        // ... and the value is user specific
-                                        if (!$fig->is_std) {
-                                            // split the result into a standard
-                                            // get the standard value
-                                            // $fig_std = ...;
-                                            $fv_std = clone $fv;
-                                            $fv_std->usr = null;
-                                            $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
-                                            if ($fv_std->last_val_update < $fig->last_update) {
-                                                $fv_std->last_val_update = $fig->last_update;
-                                            }
-                                            log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
-                                            $fv_lst->lst[] = $fv_std;
-                                            // ... and split into a user specific part
-                                            $fv->is_std = false;
-                                        }
-                                    }
-
-                                    $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
-                                    if ($fv->last_val_update < $fig->last_update) {
-                                        $fv->last_val_update = $fig->last_update;
-                                    }
-                                    log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
-                                } else {
-                                    // if the result has been the standard result utils now
-                                    if ($fv_master->is_std) {
-                                        // ... and the value is user specific
-                                        if (!$fig->is_std) {
-                                            // split the result into a standard
-                                            // get the standard value
-                                            // $fig_std = ...;
-                                            $fv_std = clone $fv_master;
-                                            $fv_std->usr = null;
-                                            $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
-                                            if ($fv_std->last_val_update < $fig->last_update) {
-                                                $fv_std->last_val_update = $fig->last_update;
-                                            }
-                                            log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
-                                            $fv_lst->lst[] = $fv_std;
-                                            // ... and split into a user specific part
-                                            $fv_master->is_std = false;
-                                        }
-                                    }
-
-                                    // for all following result reuse the first result and fill with the next number
-                                    $fv_new = clone $fv_master;
-                                    $fv_new->num_text = str_replace($fig->symbol, $fig->number, $fv_new->num_text);
-                                    if ($fv->last_val_update < $fig->last_update) {
-                                        $fv->last_val_update = $fig->last_update;
-                                    }
-                                    log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
-                                    $fv_lst->lst[] = $fv_new;
+                                $fig = $fig_lst->lst[0];
+                                $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
+                                if ($fv->last_val_update < $fig->last_update) {
+                                    $fv->last_val_update = $fig->last_update;
                                 }
-                                log_debug('formula->to_num -> figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
-                                $fig_nbr++;
+                                log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
                             }
                         }
                     }
+                } elseif (count($fig_lst->lst) > 1) {
+                    // create the formula result object only if at least one figure if found
+                    if (count($fv_lst->lst) == 0) {
+                        $fv_lst->lst[] = $fv_init;
+                    }
+                    // if there is more than one number to fill replicate each previous result, so in fact it multiplies the number of results
+                    foreach ($fv_lst->lst as $fv) {
+                        $fv_master = clone $fv;
+                        $fig_nbr = 1;
+                        foreach ($fig_lst->lst as $fig) {
+                            if ($fv->val_missing == False) {
+                                if ($fig_lst->fig_missing and $this->need_all_val) {
+                                    log_debug('formula->to_num -> figure missing');
+                                    $fv->val_missing == True;
+                                } else {
+                                    // for the first previous result, just fill in the first number
+                                    if ($fig_nbr == 1) {
+
+                                        // if the result has been the standard result utils now
+                                        if ($fv->is_std) {
+                                            // ... and the value is user specific
+                                            if (!$fig->is_std) {
+                                                // split the result into a standard
+                                                // get the standard value
+                                                // $fig_std = ...;
+                                                $fv_std = clone $fv;
+                                                $fv_std->usr = null;
+                                                $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
+                                                if ($fv_std->last_val_update < $fig->last_update) {
+                                                    $fv_std->last_val_update = $fig->last_update;
+                                                }
+                                                log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                                $fv_lst->lst[] = $fv_std;
+                                                // ... and split into a user specific part
+                                                $fv->is_std = false;
+                                            }
+                                        }
+
+                                        $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
+                                        if ($fv->last_val_update < $fig->last_update) {
+                                            $fv->last_val_update = $fig->last_update;
+                                        }
+                                        log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                    } else {
+                                        // if the result has been the standard result utils now
+                                        if ($fv_master->is_std) {
+                                            // ... and the value is user specific
+                                            if (!$fig->is_std) {
+                                                // split the result into a standard
+                                                // get the standard value
+                                                // $fig_std = ...;
+                                                $fv_std = clone $fv_master;
+                                                $fv_std->usr = null;
+                                                $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
+                                                if ($fv_std->last_val_update < $fig->last_update) {
+                                                    $fv_std->last_val_update = $fig->last_update;
+                                                }
+                                                log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                                $fv_lst->lst[] = $fv_std;
+                                                // ... and split into a user specific part
+                                                $fv_master->is_std = false;
+                                            }
+                                        }
+
+                                        // for all following result reuse the first result and fill with the next number
+                                        $fv_new = clone $fv_master;
+                                        $fv_new->num_text = str_replace($fig->symbol, $fig->number, $fv_new->num_text);
+                                        if ($fv->last_val_update < $fig->last_update) {
+                                            $fv->last_val_update = $fig->last_update;
+                                        }
+                                        log_debug('formula->to_num -> one figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                        $fv_lst->lst[] = $fv_new;
+                                    }
+                                    log_debug('formula->to_num -> figure "' . $fig->number . '" for "' . $fig->symbol . '" in "' . $fv->num_text . '"');
+                                    $fig_nbr++;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // if not figure found remember to switch off the result if needed
+                    log_debug('formula->to_num -> no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst_ex->dsp_id());
+                    $all_elm_grp_filled = false;
                 }
-            } else {
-                // if not figure found remember to switch off the result if needed
-                log_debug('formula->to_num -> no figures found for ' . $elm_grp->dsp_id() . ' and ' . $phr_lst_ex->dsp_id());
-                $all_elm_grp_filled = false;
             }
         }
 
@@ -743,39 +781,42 @@ class formula extends user_sandbox_description
         }
 
         // calculate the final numeric results
-        foreach ($fv_lst->lst as $fv) {
-            // at least the formula update should be used
-            if ($fv->last_val_update < $this->last_update) {
-                $fv->last_val_update = $this->last_update;
-            }
-            // calculate only if any parameter has been updated since last calculation
-            if ($fv->num_text == '') {
-                log_err('num text is empty nothing needs to be done, but actually this should never happen');
-            } else {
-                if ($fv->last_val_update > $fv->last_update) {
-                    // check if all needed value exist
-                    $can_calc = false;
-                    if ($this->need_all_val) {
-                        log_debug('calculate ' . $this->name_linked($back) . ' only if all numbers are given');
-                        if ($fv->val_missing) {
-                            log_debug('got some numbers for ' . $this->name_linked($back) . ' and ' . dsp_array($fv->wrd_ids));
-                        } else {
-                            if ($fv->is_std) {
-                                log_debug('got all numbers for ' . $this->name_linked($back) . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text);
+        if ($fv_lst->lst != null) {
+            foreach ($fv_lst->lst as $fv) {
+                // at least the formula update should be used
+                if ($fv->last_val_update < $this->last_update) {
+                    $fv->last_val_update = $this->last_update;
+                }
+                // calculate only if any parameter has been updated since last calculation
+                if ($fv->num_text == '') {
+                    log_err('num text is empty nothing needs to be done, but actually this should never happen');
+                } else {
+                    if ($fv->last_val_update > $fv->last_update) {
+                        // check if all needed value exist
+                        $can_calc = false;
+                        if ($this->need_all_val) {
+                            log_debug('calculate ' . $this->dsp_id() . ' only if all numbers are given');
+                            if ($fv->val_missing) {
+                                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . dsp_array($fv->wrd_ids));
                             } else {
-                                log_debug('got all numbers for ' . $this->name_linked($back) . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text . ' (user specific)');
+                                if ($fv->is_std) {
+                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text);
+                                } else {
+                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text . ' (user specific)');
+                                }
+                                $can_calc = true;
                             }
+                        } else {
+                            log_debug('always calculate ' . $this->dsp_id());
                             $can_calc = true;
                         }
-                    } else {
-                        log_debug('always calculate ' . $this->dsp_id());
-                        $can_calc = true;
-                    }
-                    if ($can_calc == true and isset($time_wrd)) {
-                        log_debug('calculate ' . $fv->num_text . ' for ' . $phr_lst_ex->dsp_id());
-                        $fv->value = zuc_math_parse($fv->num_text, $phr_lst_ex->ids, $time_wrd->id);
-                        $fv->is_updated = true;
-                        log_debug('the calculated ' . $this->name_linked($back) . ' is ' . $fv->value . ' for ' . $fv->phr_lst->name_linked());
+                        if ($can_calc == true and $time_wrd != null) {
+                            log_debug('calculate ' . $fv->num_text . ' for ' . $phr_lst_ex->dsp_id());
+                            $calc = new math;
+                            $fv->value = $calc->parse($fv->num_text);
+                            $fv->is_updated = true;
+                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $fv->value . ' for ' . $fv->phr_lst->name_linked());
+                        }
                     }
                 }
             }
@@ -811,7 +852,7 @@ class formula extends user_sandbox_description
      *      if one of the result words is a scaling word, remove all value scaling words
      *      always create a default result (for the user 0)
      */
-    function calc($phr_lst, $back): array
+    function calc($phr_lst, $back): ?array
     {
         $result = null;
 
@@ -858,52 +899,54 @@ class formula extends user_sandbox_description
             }
 
             // save the numeric results
-            foreach ($fv_lst->lst as $fv) {
-                if ($fv->val_missing) {
-                    // check if fv needs to be remove from the database
-                    log_debug('some values missing for ' . $fv->dsp_id());
-                } else {
-                    if ($fv->is_updated) {
-                        log_debug('formula result ' . $fv->dsp_id() . ' is updated');
-                        // add the formula result word
-                        // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
-                        if (isset($fv_add_phr_lst)) {
-                            log_debug('formula->calc -> add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
-                            foreach ($fv_add_phr_lst->lst as $frm_result_wrd) {
-                                $fv->phr_lst->add($frm_result_wrd);
+            if ($fv_lst->lst != null) {
+                foreach ($fv_lst->lst as $fv) {
+                    if ($fv->val_missing) {
+                        // check if fv needs to be removed from the database
+                        log_debug('some values missing for ' . $fv->dsp_id());
+                    } else {
+                        if ($fv->is_updated) {
+                            log_debug('formula result ' . $fv->dsp_id() . ' is updated');
+                            // add the formula result word
+                            // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
+                            if (isset($fv_add_phr_lst)) {
+                                log_debug('formula->calc -> add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
+                                foreach ($fv_add_phr_lst->lst as $frm_result_wrd) {
+                                    $fv->phr_lst->add($frm_result_wrd);
+                                }
+                                log_debug('formula->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
                             }
-                            log_debug('formula->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
+
+                            // make common assumptions on the word list
+
+                            // apply general rules to the result words
+                            if (isset($fv_add_phr_lst)) {
+                                log_debug('formula->calc -> result words "' . $fv_add_phr_lst->dsp_id() . '" defined for ' . $fv->phr_lst->dsp_id());
+                                $fv_add_wrd_lst = $fv_add_phr_lst->wrd_lst_all();
+
+                                // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
+                                if ($fv_add_wrd_lst->has_percent()) {
+                                    log_debug('formula->calc -> has percent');
+                                    $fv->phr_lst->ex_measure();
+                                    log_debug('formula->calc -> measure words removed from ' . $fv->phr_lst->dsp_id());
+                                }
+
+                                // if in the formula is defined, that the result is in percent
+                                // and the values used are in millions, the result is only in percent, but not in millions
+                                if ($fv_add_wrd_lst->has_percent()) {
+                                    $fv->phr_lst->ex_scaling();
+                                    log_debug('formula->calc -> scaling words removed from ' . $fv->phr_lst->dsp_id());
+                                    // maybe add the scaling word to the result words to remember based on which words the result has been created,
+                                    // but probably this is not needed, because the source words are also saved
+                                    //$scale_wrd_lst = $fv_add_wrd_lst->scaling_lst ();
+                                    //$fv->phr_lst->merge($scale_wrd_lst->lst);
+                                    //zu_debug('formula->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$fv->phr_lst->names()).'"');
+                                }
+                            }
+
+                            $fv = $fv->save_if_updated();
+
                         }
-
-                        // make common assumptions on the word list
-
-                        // apply general rules to the result words
-                        if (isset($fv_add_phr_lst)) {
-                            log_debug('formula->calc -> result words "' . $fv_add_phr_lst->dsp_id() . '" defined for ' . $fv->phr_lst->dsp_id());
-                            $fv_add_wrd_lst = $fv_add_phr_lst->wrd_lst_all();
-
-                            // if the result words contains "percent" remove any measure word from the list, because a relative value is expected without measure
-                            if ($fv_add_wrd_lst->has_percent()) {
-                                log_debug('formula->calc -> has percent');
-                                $fv->phr_lst->ex_measure();
-                                log_debug('formula->calc -> measure words removed from ' . $fv->phr_lst->dsp_id());
-                            }
-
-                            // if in the formula is defined, that the result is in percent
-                            // and the values used are in millions, the result is only in percent, but not in millions
-                            if ($fv_add_wrd_lst->has_percent()) {
-                                $fv->phr_lst->ex_scaling();
-                                log_debug('formula->calc -> scaling words removed from ' . $fv->phr_lst->dsp_id());
-                                // maybe add the scaling word to the result words to remember based on which words the result has been created,
-                                // but probably this is not needed, because the source words are also saved
-                                //$scale_wrd_lst = $fv_add_wrd_lst->scaling_lst ();
-                                //$fv->phr_lst->merge($scale_wrd_lst->lst);
-                                //zu_debug('formula->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$fv->phr_lst->names()).'"');
-                            }
-                        }
-
-                        $fv = $fv->save_if_updated();
-
                     }
                 }
             }
@@ -1241,7 +1284,7 @@ class formula extends user_sandbox_description
             $field_values[] = $elm_type_id;
             $field_names[] = 'ref_id';
             $field_values[] = $elm_del_id;
-            $db_con->set_type(DB_TYPE_FORMULA);
+            $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
             if (!$db_con->delete($field_names, $field_values)) {
                 $result = false;
             }
@@ -1400,8 +1443,10 @@ class formula extends user_sandbox_description
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        if ($db_row['user_id'] > 0) {
-            $result = false;
+        if ($db_row !== false) {
+            if ($db_row['user_id'] > 0) {
+                $result = false;
+            }
         }
         log_debug('formula->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
@@ -1739,17 +1784,6 @@ class formula extends user_sandbox_description
         $result = '';
         if ($db_rec->name <> $this->name) {
             log_debug('formula->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-            // in case a word link exist, change also the name of the word
-            $wrd = new word_dsp;
-            $wrd->name = $db_rec->name;
-            $wrd->usr = $this->usr;
-            $wrd->load();
-            $wrd->name = $this->name;
-            if ($wrd->save()) {
-                log_debug('formula->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
-            } else {
-                $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name;
-            }
 
             // change the formula name
             $log = $this->log_upd();
@@ -1763,7 +1797,7 @@ class formula extends user_sandbox_description
                 if (!$db_con->update($this->id,
                     array("formula_name"),
                     array($this->name))) {
-                    $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name;
+                    $result .= 'formula ' . $db_rec->name . ' cannot be renamed to ' . $this->name;
                 }
             }
         }
@@ -1799,10 +1833,10 @@ class formula extends user_sandbox_description
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
                         $result .= $to_del->del();
-                        // .. and use it for the update
+                        // ... and use it for the update
                         $this->id = $db_chk->id;
                         $this->owner_id = $db_chk->owner_id;
-                        // force the include again
+                        // force including again
                         $this->excluded = null;
                         $db_rec->excluded = '1';
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);

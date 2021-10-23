@@ -279,7 +279,7 @@ include_once $path_php . 'service/zu_lib_sql_code_link.php';
 include_once $path_php . 'service/config.php';
 
 // used at the moment, but to be replaced with R-Project call
-include_once $path_php . 'service/zu_lib_calc_math.php';
+include_once $path_php . 'service/math/calc_internal.php';
 
 // settings
 include_once $path_php . 'application.php';
@@ -323,7 +323,7 @@ The beta test is expected to start with version 0.7
 // global code settings
 // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
 const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
-const UI_MIN_RESPONSE_TIME = 2; // minimal time after that the user user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
+const UI_MIN_RESPONSE_TIME = 2; // minimal time after that the user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
 
 /*
 if UI_CAN_CHANGE_... setting is true renaming an object may switch to an object with the new name
@@ -429,6 +429,7 @@ const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 define("BASE_CODE_LINK_FILES", serialize(array(
     'calc_and_cleanup_task_types',
     'change_actions',
+    'change_tables',
     'formula_element_types',
     'formula_link_types',
     'formula_types',

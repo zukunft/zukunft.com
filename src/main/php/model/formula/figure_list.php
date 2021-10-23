@@ -34,7 +34,7 @@ class figure_list
 
     public ?array $lst = null;         // the list of figures
     public ?int $usr_id = null;        // the id of the user for whom the list has been created
-    public ?word $time_phr = null;     // the time word object, if the figure value time is adjusted by a special formula
+    public ?phrase $time_phr = null;     // the time word object, if the figure value time is adjusted by a special formula
     public ?bool $fig_missing = false; // true if at least one of the formula values is not set which means is NULL (but zero is a value)
 
     /*
@@ -71,7 +71,7 @@ class figure_list
         return $result;
     }
 
-    // return a list of the figure list ids as an sql compatible text
+    // return a list of the figure list ids as sql compatible text
     function ids_txt(): string
     {
         return dsp_array($this->ids());
@@ -99,8 +99,10 @@ class figure_list
     {
         $result = '';
 
-        foreach ($this->lst as $fig) {
-            $result .= $fig->display($back) . ' ';
+        if ($this->lst != null) {
+            foreach ($this->lst as $fig) {
+                $result .= $fig->display($back) . ' ';
+            }
         }
 
         return $result;

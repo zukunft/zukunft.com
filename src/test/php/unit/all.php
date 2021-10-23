@@ -251,7 +251,7 @@ function run_unit_tests()
     run_word_link_unit_tests();
     run_word_list_unit_tests();
     run_word_link_list_unit_tests();
-    run_phrase_list_unit_tests();
+    (new phrase_list_unit_tests)->run();
     run_phrase_group_unit_tests();
     run_view_unit_tests();
     run_view_component_link_unit_tests();
@@ -260,4 +260,5 @@ function run_unit_tests()
     run_formula_unit_tests();
     run_user_sandbox_unit_tests();
     run_ref_unit_tests();
+    run_user_log_unit_tests();
 }

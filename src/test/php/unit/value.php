@@ -42,7 +42,7 @@ function run_value_unit_tests()
 
     // sql to load by word list by ids
     $val = new value;
-    $val->phr_lst = test_unit_create_phrase_list();
+    $val->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
     $val->time_id = 4;
     $val->usr = $usr;
     $created_sql = $val->load_sql();

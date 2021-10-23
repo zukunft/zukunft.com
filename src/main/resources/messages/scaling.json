@@ -35,18 +35,6 @@
       "comment": "to specify numbers in percent",
       "type": "percent",
       "protection": "admin_protection"
-    },
-    {
-      "name": "this",
-      "comment": "to select value for the selected time word",
-      "type": "this",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "prior",
-      "comment": "to select value for the time word prior the selected e.g. if year 2020 is selected the prior is the year 2019",
-      "type": "previous",
-      "protection": "admin_protection"
     }
   ],
   "formulas": [
@@ -64,11 +52,6 @@
       "name": "scale billion to one",
       "expression": "\"one\" = \"billion\" * 1000000000",
       "assigned_word": "billion"
-    },
-    {
-      "name": "increase",
-      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "assigned_word": "increase"
     }
   ]
 }

@@ -91,37 +91,33 @@ class expression
 
     // find the position of the formula indicator "="
     // use the part left of it to add the words to the result
-    function fv_part()
+    function fv_part(): string
     {
         $result = zu_str_left_of($this->ref_text, ZUP_CHAR_CALC);
-        $result = trim($result);
-        return $result;
+        return trim($result);
     }
 
-    function fv_part_usr()
+    function fv_part_usr(): string
     {
         $result = zu_str_left_of($this->usr_text, ZUP_CHAR_CALC);
-        $result = trim($result);
-        return $result;
+        return trim($result);
     }
 
-    function r_part()
+    function r_part(): string
     {
         $result = zu_str_right_of($this->ref_text, ZUP_CHAR_CALC);
-        $result = trim($result);
-        return $result;
+        return trim($result);
     }
 
-    function r_part_usr()
+    function r_part_usr(): string
     {
         $result = zu_str_right_of($this->usr_text, ZUP_CHAR_CALC);
-        $result = trim($result);
-        return $result;
+        return trim($result);
     }
 
     // get the phrases that should be added to the result of a formula
     // e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
-    function fv_phr_lst()
+    function fv_phr_lst(): ?phrase_list
     {
         log_debug('expression->fv_phr_lst >' . $this->ref_text . '< and user ' . $this->usr->name . '"');
         $phr_lst = null;
@@ -153,7 +149,7 @@ class expression
     }
 
     // extracts an array with the words from a given formula text and load the words
-    function phr_lst()
+    function phr_lst(): phrase_list
     {
         log_debug('expression->phr_lst "' . $this->ref_text . ',u' . $this->usr->name . '"');
         $phr_lst = null;
@@ -368,16 +364,14 @@ class expression
     // get a list of all formula elements (don't use for number retrieval, use element_grp_lst instead, because )
     function element_lst($back)
     {
-        $result = $this->element_lst_all(EXP_ELM_SELECT_ALL, FALSE, $back);
-        return $result;
+        return $this->element_lst_all(EXP_ELM_SELECT_ALL, FALSE, $back);
     }
 
     // a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
     // e.g. with "Sector" "differentiator" all
     function element_grp_lst($back)
     {
-        $result = $this->element_lst_all(EXP_ELM_SELECT_ALL, TRUE, $back);
-        return $result;
+        return $this->element_lst_all(EXP_ELM_SELECT_ALL, TRUE, $back);
     }
 
     // similar to phr_lst, but (todo!) should also include the words implied by the verbs
@@ -433,12 +427,14 @@ class expression
         return $phr_lst;
     }
 
-    // similar to element_special_following, but returns the formula and not the word
-    function element_special_following_frm($back)
+    /**
+     * similar to element_special_following, but returns the formula and not the word
+     */
+    function element_special_following_frm($back): formula_list
     {
+        $frm_lst = new formula_list;
         $elm_lst = $this->element_lst_all(EXP_ELM_SELECT_ALL, FALSE, $back);
         if (!empty($elm_lst->lst)) {
-            $frm_lst = new formula_list;
             $frm_lst->usr = $this->usr;
             foreach ($elm_lst->lst as $elm) {
                 if ($elm->frm_type == formula::THIS

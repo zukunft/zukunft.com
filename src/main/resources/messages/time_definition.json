@@ -7,6 +7,11 @@
   ],
   "words": [
     {
+      "name": "Now",
+      "type": "time",
+      "protection": "admin_protection"
+    },
+    {
       "name": "January",
       "type": "time",
       "protection": "admin_protection",
@@ -142,6 +147,37 @@
       "name": "latest",
       "type": "latest",
       "protection": "admin_protection"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "increase",
+      "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
+      "assigned_word": "increase"
     }
   ]
 }

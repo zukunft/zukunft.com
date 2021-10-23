@@ -78,7 +78,7 @@ class formula_element
                 $frm->usr = $this->usr;
                 $frm->load();
                 $this->name = $frm->name;
-                $this->dsp_name = $frm->name_linked($this->back);
+                $this->dsp_name = $frm->dsp_obj()->name_linked($this->back);
                 $this->symbol = ZUP_CHAR_FORMULA_START . $frm->id . ZUP_CHAR_FORMULA_END;
                 $this->obj = $frm;
                 // in case of a formula load also the corresponding word
@@ -136,7 +136,7 @@ class formula_element
                 $result = $this->name;
             } elseif ($this->type == 'formula') {
                 if (isset($this->obj)) {
-                    $result = $this->obj->name();
+                    $result = $this->obj->name;
                 } else {
                     $result = $this->name;
                 }
@@ -164,7 +164,7 @@ class formula_element
             }
             if ($this->type == 'formula') {
                 if (isset($this->obj)) {
-                    $result = $this->obj->name_linked($back);
+                    $result = $this->obj->dsp_obj()->name_linked($back);
                 } else {
                     $result = $this->name;
                 }

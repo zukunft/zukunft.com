@@ -122,6 +122,7 @@ class word extends word_link_object
     const TEST_WORDS_SCALING_HIDDEN = array(self::TN_ONE);
     const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_BIL);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);
+    // the time words must be in correct order because the following is set during creation
     const TEST_WORDS_TIME = array(self::TN_2019, self::TN_2020, self::TN_2021, self::TN_2022);
 
     // database fields additional to the user sandbox fields
@@ -171,6 +172,35 @@ class word extends word_link_object
 
         $this->view = null;
         $this->ref_lst = null;
+    }
+
+    /**
+     * @return word_dsp the word object with the display interface functions
+     */
+    function dsp_obj(): word_dsp
+    {
+        $dsp_obj = new word_dsp();
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->plural = $this->plural;
+        $dsp_obj->type_id = $this->type_id;
+        $dsp_obj->view_id = $this->view_id;
+        $dsp_obj->values = $this->values;
+
+        $dsp_obj->is_wrd = $this->is_wrd;
+        $dsp_obj->is_wrd_id = $this->plural;
+        $dsp_obj->dsp_pos = $this->dsp_pos;
+        $dsp_obj->dsp_lnk_id = $this->dsp_lnk_id;
+        $dsp_obj->link_type_id = $this->link_type_id;
+
+        $dsp_obj->share_id = $this->share_id;
+        $dsp_obj->protection_id = $this->protection_id;
+
+        $dsp_obj->view = $this->view;
+        $dsp_obj->ref_lst = $this->ref_lst;
+
+        return $dsp_obj;
     }
 
     function row_mapper($db_row, $map_usr_fields = false)
@@ -901,7 +931,10 @@ class word extends word_link_object
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_WORD_LINK);
-        $result->id = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id);
+        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id);
+        if (is_numeric($key_result)) {
+            $result->id = intval($key_result);
+        }
         $result->usr = $this->usr;
         if ($result->id > 0) {
             $result->load();
@@ -923,7 +956,10 @@ class word extends word_link_object
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_WORD_LINK);
-        $result->id = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id);
+        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id);
+        if (is_numeric($key_result)) {
+            $result->id = intval($key_result);
+        }
         $result->usr = $this->usr;
         if ($result->id > 0) {
             $result->load();

@@ -42,6 +42,7 @@ class change_log_table extends user_type_list
     const WORD_USR = "user_words";
     const WORD_LINK = "word_links";
     const WORD_LINK_USR = "user_word_links";
+    const VERB = "verbs";
     const FORMULA = "formulas";
     const FORMULA_USR = "user_formulas";
     const FORMULA_LINK = "formula_links";
@@ -73,6 +74,11 @@ class change_log_table extends user_type_list
         $type->code_id = change_log_table::VALUE;
         $this->lst[2] = $type;
         $this->hash[change_log_table::VALUE] = 2;
+        $type = new user_type();
+        $type->name = change_log_table::USR;
+        $type->code_id = change_log_table::USR;
+        $this->lst[3] = $type;
+        $this->hash[change_log_table::USR] = 3;
     }
 
     /**

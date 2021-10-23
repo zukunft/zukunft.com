@@ -259,13 +259,13 @@ function run_value_test()
     test_dsp(', value->display_linked', $target, $result);
 
     // convert the user input for the database
-    $mio_val->usr_value = "123'456";
+    $mio_val->usr_value = value::TEST_USER_HIGH_QUOTE;
     $result = $mio_val->convert();
     $target = value::TEST_VALUE;
     test_dsp(', value->convert user input', $target, $result);
 
     // convert the user input with space for the database
-    $mio_val->usr_value = "123 456";
+    $mio_val->usr_value = value::TEST_USER_SPACE;
     $result = $mio_val->convert();
     $target = value::TEST_VALUE;
     test_dsp(', value->convert user input', $target, $result);
@@ -273,11 +273,11 @@ function run_value_test()
     // test adding a value in the database
     // as it is call from value_add.php with all phrases in an id list including the time phrase,
     // so the time phrase must be excluded
-    $wrd_lst = load_word_list(array(word::TN_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2014));
+    $wrd_lst = load_word_list(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $phr_lst = $wrd_lst->phrase_lst();
     $add_val = new value;
     $add_val->ids = $phr_lst->ids;
-    $add_val->number = 123456789;
+    $add_val->number = value::TEST_BIG;
     $add_val->usr = $usr;
     $result = $add_val->save();
     $target = '';
@@ -310,18 +310,19 @@ function run_value_test()
     $test_val_lst[] = $added_val->id;
 
     // test if a value with the same phrases, but different time can be added
-    $wrd_lst2 = load_word_list(array(word::TN_RENAMED, TW_SALES, TW_CHF, TW_MIO, TW_2015));
+    $wrd_lst2 = load_word_list(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO, word::TN_2019));
     $phr_lst2 = $wrd_lst2->phrase_lst();
     $add_val2 = new value;
     $add_val2->ids = $phr_lst2->ids;
-    $add_val2->number = 234567890;
+    $add_val2->number = value::TEST_BIGGER;
     $add_val2->usr = $usr;
     $result = $add_val2->save();
     $target = '';
     test_dsp(', value->save ' . $add_val2->number . ' for ' . $wrd_lst2->name() . ' by user "' . $usr->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // test if a value with time stamp can be saved
-    $phr_lst_ts = test_phrase_list(array(TW_ABB, TW_PRICE, TW_CHF));
+    /*
+    $phr_lst_ts = test_phrase_list(array(word::TN_RENAMED, word::TN_INHABITANT, word::TN_MIO));
     $add_val_ts = new value;
     $add_val_ts->ids = $phr_lst_ts->ids;
     $add_val_ts->number = TV_ABB_PRICE_20200515;
@@ -330,6 +331,7 @@ function run_value_test()
     $result = $add_val_ts->save();
     $target = '';
     test_dsp(', value->save ' . $add_val_ts->number . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $usr->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    */
 
     // ... check if the value adding has been logged
     if ($add_val->id > 0) {

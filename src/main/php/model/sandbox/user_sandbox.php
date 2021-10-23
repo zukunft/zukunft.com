@@ -35,6 +35,7 @@
 // TODO align the function return types with the source (ref) object
 // TODO use the user sandbox also for the word object
 // TODO check if handling of negative ids is correct
+// TODO split into a link and a named user sandbox object to always use the smallest possible object
 
 class user_sandbox
 {
@@ -101,6 +102,29 @@ class user_sandbox
 
         $this->fob = null;
         $this->tob = null;
+    }
+
+    /**
+     * fill a similar object that is extended with display interface functions
+     *
+     * @return object the object fill with all user sandbox value
+     */
+    function fill_dsp_obj(object $dsp_obj): object
+    {
+        $dsp_obj->id = $this->id;
+        $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
+        $dsp_obj->usr = $this->usr;
+        $dsp_obj->owner_id = $this->owner_id;
+        $dsp_obj->excluded = $this->excluded;
+
+        $dsp_obj->name = $this->name;
+
+        $dsp_obj->number = $this->number;
+
+        $dsp_obj->fob = $this->fob;
+        $dsp_obj->tob = $this->tob;
+
+        return $dsp_obj;
     }
 
     /*
@@ -1678,12 +1702,13 @@ class user_sandbox
                     $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
                 }
 
-                // and the corresponding word name
+                // and the corresponding formula values
                 if ($result) {
-                    $db_con->set_type(DB_TYPE_WORD);
+                    $db_con->set_type(DB_TYPE_FORMULA_VALUE);
                     $db_con->set_usr($this->usr->id);
-                    $result = $db_con->delete(DB_TYPE_WORD . DB_FIELD_EXT_NAME, $this->name);
+                    $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
                 }
+
             }
 
             // delete first all user configuration that have also been excluded

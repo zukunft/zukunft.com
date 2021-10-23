@@ -43,7 +43,7 @@ function run_value_list_unit_tests()
 
     // sql to load a list of value by the phrase ids
     $val_lst = new value_list;
-    $val_lst->phr_lst = test_unit_create_phrase_list();
+    $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
     $val_lst->phr_lst->ids = $val_lst->phr_lst->ids();
     $val_lst->usr = $usr;
     $created_sql = $val_lst->load_by_phr_lst_sql($db_con);

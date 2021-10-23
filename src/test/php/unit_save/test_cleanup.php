@@ -170,23 +170,17 @@ function run_test_cleanup()
     if ($ref->id > 0) {
         $result = $ref->del();
         $target = true;
-        test_dsp('ref->del of "' . TF_ADD . '"', $target, $result);
+        test_dsp('ref->del of "' . word::TN_ADD . '"', $target, $result);
     }
 
-    // request to delete the added test formula
-    $frm = load_formula(TF_ADD);
-    if ($frm->id > 0) {
-        $result = $frm->del();
-        $target = '';
-        test_dsp('formula->del of "' . TF_ADD . '"', $target, $result);
-    }
-
-    // request to delete the renamed test formula
-    $frm = load_formula(TF_ADD_RENAMED);
-    if ($frm->id > 0) {
-        $result = $frm->del();
-        $target = '1111';
-        test_dsp('formula->del of "' . TF_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
+    // request to delete the added test formulas
+    foreach (formula::RESERVED_FORMULAS AS $frm_name) {
+        $frm = load_formula($frm_name);
+        if ($frm->id > 0) {
+            $result = $frm->del();
+            $target = true;
+            test_dsp('formula->del of "' . formula::TN_ADD . '"', $target, $result);
+        }
     }
 
     // request to delete the added test word
@@ -206,6 +200,14 @@ function run_test_cleanup()
         test_dsp('word->del of "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
+    // request to delete the renamed test source
+    $src = load_source(source::TN_RENAMED);
+    if ($src->id > 0) {
+        $result = $src->del();
+        $target = true;
+        test_dsp('source->del of "' . source::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
+    }
+
     echo $db_con->seq_reset(DB_TYPE_VALUE) . '<br>';
     echo $db_con->seq_reset(DB_TYPE_WORD) . '<br>';
     echo $db_con->seq_reset(DB_TYPE_FORMULA) . '<br>';
@@ -213,5 +215,6 @@ function run_test_cleanup()
     echo $db_con->seq_reset(DB_TYPE_VIEW) . '<br>';
     echo $db_con->seq_reset(DB_TYPE_VIEW_COMPONENT) . '<br>';
     echo $db_con->seq_reset(DB_TYPE_VIEW_COMPONENT_LINK) . '<br>';
+    echo $db_con->seq_reset(DB_TYPE_SOURCE) . '<br>';
 
 }

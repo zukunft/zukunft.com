@@ -46,39 +46,15 @@ function create_test_words()
     foreach (word::TEST_WORDS_PERCENT as $word_name) {
         test_word($word_name, word_type_list::DBL_PERCENT);
     }
+    $prev_word_name = null;
     foreach (word::TEST_WORDS_TIME as $word_name) {
         test_word($word_name, word_type_list::DBL_TIME);
+        if ($prev_word_name != null) {
+            test_word_link($word_name, verb::DBL_FOLLOW, $prev_word_name);
+        }
+        $prev_word_name = $word_name;
     }
 
-    test_word(TW_ABB);
-    test_word(TW_DAN);
-    test_word(TW_NESN);
-    test_word(TW_VESTAS);
-    test_word(word::TN_ZH);
-    test_word(TW_SALES);
-    test_word(TW_SALES2);
-    test_word(TW_PRICE);
-    test_word(TW_SHARE);
-    test_word(TW_CHF, word_type_list::DBL_MEASURE);
-    test_word(TW_EUR, word_type_list::DBL_MEASURE);
-    test_word(TW_YEAR);
-    test_word(TW_2012, word_type_list::DBL_TIME);
-    test_word(TW_2013, word_type_list::DBL_TIME);
-    test_word(TW_2014, word_type_list::DBL_TIME);
-    test_word(TW_2015, word_type_list::DBL_TIME);
-    test_word(TW_2016, word_type_list::DBL_TIME);
-    test_word(TW_2017, word_type_list::DBL_TIME);
-    test_word(TW_2020, word_type_list::DBL_TIME);
-    test_word(TW_BIL, word_type_list::DBL_SCALING);
-    test_word(TW_MIO, word_type_list::DBL_SCALING);
-    test_word(TW_K, word_type_list::DBL_SCALING);
-    test_word(TW_M, word_type_list::DBL_SCALING);
-    test_word(TW_PCT, word_type_list::DBL_PERCENT);
-    test_word(TW_CF);
-    test_word(TW_TAX);
-    test_word(TW_SECT_AUTO);
-    test_word(TW_BALANCE);
-    echo "<br><br>";
 }
 
 function run_word_tests()

@@ -43,8 +43,8 @@ class formula_element_group
 {
 
     public ?array $lst = null;     // array of formula elements such as a word, verb or formula
-    public ?array $phr_lst = null; // word list object with the context to retrieve the element number
-    public ?word $time_phr = null; // the time word for the element number selection
+    public ?phrase_list $phr_lst = null; // phrase list object with the context to retrieve the element number
+    public ?phrase $time_phr = null; // the time word for the element number selection
     public ?user $usr = null;      // the formula values can differ for each user; this is the user who wants to see the result
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
@@ -148,9 +148,12 @@ class formula_element_group
 
     // set the time phrase based on a predefined formula such as "prior" or "next"
     // e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
-    private function set_formula_time_phrase($frm_elm, $val_phr_lst)
+    private function set_formula_time_phrase($frm_elm, $val_phr_lst): phrase
     {
         log_debug('formula_element_group->set_formula_time_phrase for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
+
+        $val_time_phr = new phrase();
+
         // guess the time word if needed
         if (isset($this->time_phr)) {
             if ($this->time_phr->id == 0) {
@@ -222,6 +225,8 @@ class formula_element_group
         // e.g. for the formula "= sales - cost" and the phrases "ABB" the ABB sales is requested
         foreach ($this->lst as $frm_elm) {
 
+            $lead_wrd_id = 0;
+
             // init the word list for the figure selection because
             // the word list for the figure selection ($val_phr_lst) may differ from the requesting word list ($this->phr_lst) because
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
@@ -271,8 +276,8 @@ class formula_element_group
             $val_phr_lst->ex_time();
 
             // get the word group
-            if (isset($val_phr_lst)) {
-                usort($val_phr_lst, array("phrase", "cmp"));
+            if ($val_phr_lst->lst != null) {
+                usort($val_phr_lst->lst, array("phrase", "cmp"));
             }
             //asort($val_phr_lst);
             $val_phr_grp = $val_phr_lst->get_grp();
@@ -290,7 +295,8 @@ class formula_element_group
             $wrd_val->grp_id = $val_phr_grp->id;
             $wrd_val->time_id = $val_time_phr->id;
             $wrd_val->usr = $this->usr;
-            $wrd_val->load_best();
+            // TODO create $wrd_val->load_best();
+            $wrd_val->load();
 
             if ($wrd_val->id > 0) {
                 // save the value to the result

@@ -46,12 +46,18 @@ class value extends user_sandbox_display
     // a list of dummy values that are used for system tests
     const TEST_VALUE = 123456;
     const TEST_FLOAT = 123.456;
+    const TEST_BIG = 123456789;
+    const TEST_BIGGER = 234567890;
+    const TEST_USER_HIGH_QUOTE = "123'456";
+    const TEST_USER_SPACE = "123 456";
     const TEST_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
     const TEST_INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
     const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
     const TV_CITY_ZH_INHABITANTS_2019 = 415367;
     const TV_CH_INHABITANTS_2019_IN_MIO = 8.438822;
     const TV_CH_INHABITANTS_2020_IN_MIO = 8.505251;
+    const TV_SHARE_PRICE = 17.08;
+    const TV_EARNINGS_PER_SHARE = 1.22;
 
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from
@@ -116,6 +122,38 @@ class value extends user_sandbox_display
         $this->protection_id = null;
 
         $this->usr_value = '';
+    }
+
+    /**
+     * @return value_dsp the value object with the display interface functions
+     */
+    function dsp_obj(): value_dsp
+    {
+        $dsp_obj = new value_dsp();
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->number = $this->number;
+        $dsp_obj->source_id = $this->source_id;
+        $dsp_obj->grp_id = $this->grp_id;
+        $dsp_obj->time_id = $this->time_id;
+        $dsp_obj->time_stamp = $this->time_stamp;
+        $dsp_obj->last_update = $this->last_update;
+
+        $dsp_obj->ids = $this->ids;
+        $dsp_obj->phr_lst = $this->phr_lst;
+        $dsp_obj->wrd_lst = $this->wrd_lst;
+        $dsp_obj->lnk_lst = $this->lnk_lst;
+        $dsp_obj->grp = $this->grp;
+        $dsp_obj->time_phr = $this->time_phr;
+        $dsp_obj->update_time = $this->update_time;
+        $dsp_obj->source = $this->source;
+        $dsp_obj->share_id = $this->share_id;
+        $dsp_obj->protection_id = $this->protection_id;
+
+        $dsp_obj->usr_value = $this->usr_value;
+
+        return $dsp_obj;
     }
 
     private function row_mapper($db_row, $map_usr_fields = false)
@@ -838,7 +876,8 @@ class value extends user_sandbox_display
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
                                                 log_debug('value->scale -> replace done (' . $r_part . ')');
                                                 // todo separate time from value words
-                                                $result = zuc_math_parse($r_part, $wrd_lst->names(), Null);
+                                                $calc = new math();
+                                                $result = $calc->parse($r_part);
                                             } else {
                                                 log_err('Formula "' . $formula_text . '" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
                                             }

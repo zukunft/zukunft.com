@@ -78,6 +78,7 @@ include_once $path_unit . 'formula.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'ref.php';
+include_once $path_unit . 'user_log.php';
 
 // load the unit testing modules with database real only
 include_once $path_unit_db . 'all.php';
@@ -160,42 +161,31 @@ const TEST_USER_DESCRIPTION = "standard user view for all users";
 const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
 
 /*
-
 Setting that should be moved to the system config table
-
 */
 
 // switch for the email testing
-const TEST_EMAIL = FALSE; // if set to true an email will be send in case of errors and once a day an "everything fine" email is send
+const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
 // TODO move the test names to the single objects and check for reserved names to avoid conflicts
 // the basic test record for doing the pre check
 // the word "Company" is assumed to have the ID 1
 const TEST_WORD = "Company";
-const TEST_WORD_PLURAL = "Companies";
-const TEST_TRIPLE_ID = "1";
-const TEST_TRIPLE = "Company";
 
 // some test words used for testing
 const TW_ABB = "ABB";
-const TW_DAN = "Danone";
 const TW_NESN = "Nestlé";
 const TW_VESTAS = "Vestas";
 const TW_SALES = "Sales";
-const TW_SALES2 = "Revenues";
 const TW_PRICE = "Price";
-const TW_SHARE = "Share";
 const TW_CHF = "CHF";
-const TW_EUR = "EUR";
 const TW_YEAR = "Year";
-const TW_2012 = "2012";
 const TW_2013 = "2013";
 const TW_2014 = "2014";
 const TW_2015 = "2015";
 const TW_2016 = "2016";
 const TW_2017 = "2017";
 const TW_2020 = "2020";
-const TW_BIL = "billion";
 const TW_MIO = "million";
 const TW_K = "thousand";
 const TW_M = "mio";
@@ -205,9 +195,6 @@ const TW_TAX = "Income taxes";
 const TW_SECT_AUTO = "Discrete Automation and Motion";
 const TW_BALANCE = "balance sheet";
 
-// some test words used for testing phrases
-const TW_CANTON = "Canton";
-
 // some test phrases used for testing
 const TP_ABB = "ABB (Company)";
 const TP_FOLLOW = "2014 is follower of 2013";
@@ -215,14 +202,7 @@ const TP_TAXES = "Income taxes is part of cash flow statement";
 
 // some formula parameter used for testing
 const TF_INCREASE = "increase";
-const TF_PE = "Price Earning ratio";
 const TF_SECTOR = "sectorweight";
-const TF_SCALE_BIL = "scale billions to one";
-const TF_SCALE_BIL_TEXT = '"one" = "billion" * 1000000000';
-const TF_SCALE_MIO = "scale mio to one";
-const TF_SCALE_MIO_TEXT = '"one" = "million" * 1000000';
-const TF_SCALE_K = "scale thousand to one";
-const TF_SCALE_K_TEXT = '"one" = "thousand" * 1000';
 
 // some numbers used to test the program
 const TV_TEST_SALES_2016 = 1234;
@@ -245,8 +225,6 @@ const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
 
 // settings for add, change and deletion tests
 // these names should not exist in the database
-const TF_ADD = "Test Formula";
-const TF_ADD_RENAMED = "Formula Test";
 const TM_ADD = "Test Mask";
 const TM_ADD_RENAMED = "Mask Test";
 const TC_ADD = "Test Mask Component";
@@ -337,7 +315,7 @@ function test_dsp($msg, $target, $result, $exe_max_time = TIMEOUT_LIMIT, $commen
         // in an array each value needs to be the same
         $test_result = true;
         foreach ($result as $key => $value) {
-            if ($result[$key] != $target[$key]) {
+            if ($value != $target[$key]) {
                 $test_result = false;
             }
         }
@@ -618,7 +596,7 @@ function test_word($wrd_name, $wrd_type_code_id = null): word
 function load_formula($frm_name): formula
 {
     global $usr;
-    $frm = new formula;
+    $frm = new formula_dsp;
     $frm->usr = $usr;
     $frm->name = $frm_name;
     $frm->load();

@@ -87,7 +87,9 @@ class figure
         $result = '';
 
         if ($this->type == 'value') {
-            $result .= $this->obj->display($back);
+            if ($this->obj != null) {
+                $result .= $this->obj->dsp_obj()->display($back);
+            }
         } elseif ($this->type == 'result') {
             $result .= $this->obj->display($back);
         }

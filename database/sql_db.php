@@ -937,7 +937,7 @@ class sql_db
             $sql = "SELECT id, name 
               FROM ( SELECT t." . $this->id_field . " AS id, 
                             CASE WHEN (u." . $this->name_field . " <> '' IS NOT TRUE) THEN t." . $this->name_field . " ELSE u." . $this->name_field . " END AS name,
-                            CASE WHEN (u.excluded                  <> '' IS NOT TRUE) THEN     COALESCE(t.excluded, 0) ELSE COALESCE(u.excluded, 0)     END AS excluded
+                            CASE WHEN (u.excluded                        IS     NULL) THEN     COALESCE(t.excluded, 0) ELSE COALESCE(u.excluded, 0)     END AS excluded
                       FROM " . $this->name_sql_esc($this->table) . " t       
                   LEFT JOIN user_" . str_replace("`", "", $this->table) . " u ON u." . $this->id_field . " = t." . $this->id_field . " 
                                               AND u.user_id = " . $this->usr_id . " 
@@ -959,8 +959,8 @@ class sql_db
         return $sql;
     }
 
-// create a standard query for a list of database id and name
-    function sql_std_lst()
+    // create a standard query for a list of database id and name
+    function sql_std_lst(): string
     {
         log_debug("sql_db->sql_std_lst (" . $this->type . ")");
 
