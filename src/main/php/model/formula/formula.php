@@ -457,7 +457,7 @@ class formula extends user_sandbox_description
     /**
      * lists of all words directly assigned to a formula and where the formula should be used
      */
-    function assign_phr_glst_direct($sbx): phrase_list
+    function assign_phr_glst_direct($sbx): ?phrase_list
     {
         $phr_lst = null;
 
@@ -474,8 +474,8 @@ class formula extends user_sandbox_description
                 $phr_lst->ids = $phr_ids;
                 $phr_lst->usr = $this->usr;
                 $phr_lst->load();
+                log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
             }
-            log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
         } else {
             log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
         }
@@ -510,22 +510,26 @@ class formula extends user_sandbox_description
 
         if ($this->id > 0 and isset($this->usr)) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
-            if (count($direct_phr_lst->lst) > 0) {
-                log_debug('formula->assign_phr_glst -> ' . $this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
+            if ($direct_phr_lst != null) {
+                if ($direct_phr_lst->lst != null) {
+                    if (count($direct_phr_lst->lst) > 0) {
+                        log_debug('formula->assign_phr_glst -> ' . $this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
 
-                //$indirect_phr_lst = $direct_phr_lst->is();
-                $indirect_phr_lst = $direct_phr_lst->are();
-                log_debug('formula->assign_phr_glst -> indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
+                        //$indirect_phr_lst = $direct_phr_lst->is();
+                        $indirect_phr_lst = $direct_phr_lst->are();
+                        log_debug('formula->assign_phr_glst -> indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
 
-                // merge direct and indirect assigns (maybe later using phrase_list->merge)
-                $phr_ids = array_merge($direct_phr_lst->ids, $indirect_phr_lst->ids);
-                $phr_ids = array_unique($phr_ids);
+                        // merge direct and indirect assigns (maybe later using phrase_list->merge)
+                        $phr_ids = array_merge($direct_phr_lst->ids, $indirect_phr_lst->ids);
+                        $phr_ids = array_unique($phr_ids);
 
-                $phr_lst->ids = $phr_ids;
-                $phr_lst->load();
-                log_debug('formula->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
-            } else {
-                log_debug('formula->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
+                        $phr_lst->ids = $phr_ids;
+                        $phr_lst->load();
+                        log_debug('formula->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
+                    } else {
+                        log_debug('formula->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
+                    }
+                }
             }
         } else {
             log_err('The id and user id must be set to list the formula links.', 'formula->assign_phr_glst');
@@ -552,7 +556,8 @@ class formula extends user_sandbox_description
     }
 
 
-    public static function cmp($a, $b)
+    public
+    static function cmp($a, $b)
     {
         return strcmp($a->name, $b->name);
     }
@@ -825,9 +830,9 @@ class formula extends user_sandbox_description
         return $fv_lst;
     }
 
-    // create the calculation request for one formula and one usr
+// create the calculation request for one formula and one usr
     /*
-  function calc_requests($phr_lst) {
+    function calc_requests($phr_lst) {
     $result = array();
 
     $calc_request = New batch_job;
@@ -838,8 +843,8 @@ class formula extends user_sandbox_description
     zu_debug('request "'.$frm->name.'" for "'.$phr_lst->name().'"');
 
     return $result;
-  }
-  */
+    }
+    */
 
 
     /**
@@ -1342,7 +1347,7 @@ class formula extends user_sandbox_description
     /**
      * link this formula to a word or triple
      */
-    function link_phr($phr): bool
+    function link_phr($phr): string
     {
         $result = '';
         if (isset($phr) and isset($this->usr)) {
@@ -2016,7 +2021,7 @@ class formula extends user_sandbox_description
 
     }
 
-    // TODO user specific???
+// TODO user specific???
     function del_links(): bool
     {
         $result = false;

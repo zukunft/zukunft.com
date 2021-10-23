@@ -53,7 +53,7 @@ function run_formula_link_test()
     $phr->usr = $usr2;
     $phr->load();
     $result = $frm->link_phr($phr);
-    $target = '1';
+    $target = '';
     test_dsp('formula_link->link_phr "' . $phr->name . '" to "' . $frm->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check the correct logging
@@ -63,7 +63,7 @@ function run_formula_link_test()
     $log->new_to_id = $phr->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job linked Formula Test to ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word::TN_RENAMED . '';
     test_dsp('formula_link->link_phr logged for "' . $phr->name . '" to "' . $frm->name . '"', $target, $result);
 
     // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -80,7 +80,7 @@ function run_formula_link_test()
     $frm_lnk2->load_objects();
 
     // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
-    $result = $frm_lnk2->fob->name();
+    $result = $frm_lnk2->fob->dsp_obj()->name();
     $target = $frm->name();
     test_dsp('formula_link->load by formula id and link id "' . $frm->name() . '', $target, $result);
 
@@ -118,7 +118,7 @@ function run_formula_link_test()
     $phr->usr = $usr2;
     $phr->load();
     $result = $frm->unlink_phr($phr);
-    $target = '';
+    $target = true;
     test_dsp('formula_link->unlink_phr "' . $phr->name . '" from "' . $frm->name . '" by user "' . $usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
@@ -128,7 +128,7 @@ function run_formula_link_test()
     $log->old_to_id = $phr->id;
     $log->usr = $usr2;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test unlinked Formula Test from ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word::TN_RENAMED . '';
     test_dsp('formula_link->unlink_phr logged for "' . $phr->name . '" to "' . $frm->name . '" and user "' . $usr2->name . '"', $target, $result);
 
 
@@ -156,7 +156,7 @@ function run_formula_link_test()
 
     // if the first user also removes the link, both records should be deleted
     $result = $frm->unlink_phr($phr);
-    $target = '11';
+    $target = true;
     test_dsp('formula_link->unlink_phr "' . $phr->name . '" from "' . $frm->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
@@ -166,7 +166,7 @@ function run_formula_link_test()
     $log->old_to_id = $phr->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job unlinked Formula Test from ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word::TN_RENAMED . '';
     test_dsp('formula_link->unlink_phr logged of "' . $phr->name . '" from "' . $frm->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users

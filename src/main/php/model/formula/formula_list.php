@@ -150,8 +150,8 @@ class formula_list
                                       AND u.user_id = " . $this->usr->id . " 
              LEFT JOIN formula_types t ON f.formula_type_id = t.formula_type_id
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
-                 WHERE " . $sql_where . "
-              GROUP BY f.formula_id;";
+                 WHERE " . $sql_where . ";";
+                // GROUP BY f.formula_id;";
                 $db_con->usr_id = $this->usr->id;
                 $db_lst = $db_con->get($sql);
                 $this->rows_mapper($db_lst);
@@ -194,26 +194,31 @@ class formula_list
 
         if (isset($this->wrd)) {
             // list all related formula results
-            usort($this->lst, array("formula", "cmp"));
-            foreach ($this->lst as $frm) {
-                // formatting should be moved
-                //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-                //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
-                $formula_value = $frm->dsp_result($this->wrd, $this->back);
-                // if the formula value is empty use the id to be able to select the formula
-                if ($formula_value == '') {
-                    $result .= $frm->id;
-                } else {
-                    $result .= ' value ' . $formula_value;
-                }
-                $result .= ' ' . $frm->name_linked($this->back);
-                if ($type == 'short') {
-                    $result .= ' ' . $frm->btn_del($this->back);
-                    $result .= ', ';
-                } else {
-                    $result .= ' (' . $frm->dsp_text($this->back) . ')';
-                    $result .= ' ' . $frm->btn_del($this->back);
-                    $result .= ' <br> ';
+            if ($this->lst != null) {
+                usort($this->lst, array("formula", "cmp"));
+                if ($this->lst != null) {
+                    foreach ($this->lst as $frm) {
+                        // formatting should be moved
+                        //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
+                        //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
+                        $frm_dsp = $frm->dsp_obj();
+                        $formula_value = $frm_dsp->dsp_result($this->wrd, $this->back);
+                        // if the formula value is empty use the id to be able to select the formula
+                        if ($formula_value == '') {
+                            $result .= $frm_dsp->id;
+                        } else {
+                            $result .= ' value ' . $formula_value;
+                        }
+                        $result .= ' ' . $frm_dsp->name_linked($this->back);
+                        if ($type == 'short') {
+                            $result .= ' ' . $frm_dsp->btn_del($this->back);
+                            $result .= ', ';
+                        } else {
+                            $result .= ' (' . $frm_dsp->dsp_text($this->back) . ')';
+                            $result .= ' ' . $frm_dsp->btn_del($this->back);
+                            $result .= ' <br> ';
+                        }
+                    }
                 }
             }
         }

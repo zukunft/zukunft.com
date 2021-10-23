@@ -93,10 +93,10 @@ if ($start_usr->id > 0) {
             run_source_test ();
             run_expression_test ();
             run_formula_test ();
-            /*
             run_formula_list_test ();
-            run_formula_ui_test ();
+            //run_formula_ui_test ();
             run_formula_link_test ();
+            /*
             run_formula_link_list_test ();
             run_formula_trigger_test ();
             run_formula_value_test ();

@@ -126,7 +126,7 @@ class formula_link extends user_sandbox
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields('formula_id', 'phrase_id');
-        $db_con->set_fields(array('link_type_id', 'excluded'));
+        $db_con->set_usr_num_fields(array('link_type_id', 'excluded'));
         $db_con->set_where_link($this->id, $this->formula_id, $this->phrase_id);
         $sql = $db_con->select();
 
@@ -273,13 +273,24 @@ class formula_link extends user_sandbox
     {
         $result = '';
 
-        if ($this->fob->name <> '' and $this->tob->name <> '') {
-            $result .= $this->fob->name . ' '; // e.g. Company details
-            $result .= $this->tob->name;     // e.g. cash flow statement
+        if ($this->fob != null) {
+            if ($this->fob->name <> '') {
+                $result .= $this->fob->name . ' '; // e.g. Company details
+                $result .= ' (' . $this->fob->id . ')';
+            }
         }
-        $result .= ' (' . $this->fob->id . ',' . $this->tob->id;
+        if ($this->tob != null) {
+            if ($this->tob->name <> '') {
+                if ($result  != '') {
+                    $result .= ' ';
+                }
+                $result .= $this->tob->name;     // e.g. cash flow statement
+                $result .= ' (' . $this->tob->id . ')';
+            }
+        }
+
         if ($this->id > 0) {
-            $result .= ' -> ' . $this->id . ')';
+            $result .= ' -> ' . $this->id;
         }
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';

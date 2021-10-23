@@ -476,10 +476,10 @@ function run_formula_list_test()
     test_header('est the formula list class (classes/formula_list.php)');
 
     // load the main test word
-    $wrd_company = test_word(TEST_WORD);
+    $wrd_share = test_word(word::TN_SHARE);
 
     $wrd = new word;
-    $wrd->id = $wrd_company->id;
+    $wrd->id = $wrd_share->id;
     $wrd->usr = $usr;
     $wrd->load();
     $frm_lst = new formula_list;

@@ -342,13 +342,15 @@ class formula_value
                             //$db_con = new mysql;
                             $db_con->usr_id = $this->usr->id;
                             $val_ids_rows = $db_con->get($sql_val);
-                            if (count($val_ids_rows) > 0) {
-                                $val_id_row = $val_ids_rows[0];
-                                $this->id = $val_id_row['formula_value_id'];
-                                if ($this->id > 0) {
-                                    $sql_where = "formula_value_id = " . $this->id;
-                                    $this->load_rec($sql_where);
-                                    log_debug('formula_value->load best guess id (' . $this->id . ')');
+                            if ($val_ids_rows != null) {
+                                if (count($val_ids_rows) > 0) {
+                                    $val_id_row = $val_ids_rows[0];
+                                    $this->id = $val_id_row['formula_value_id'];
+                                    if ($this->id > 0) {
+                                        $sql_where = "formula_value_id = " . $this->id;
+                                        $this->load_rec($sql_where);
+                                        log_debug('formula_value->load best guess id (' . $this->id . ')');
+                                    }
                                 }
                             }
                         }

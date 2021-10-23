@@ -112,14 +112,16 @@ class formula_link_list
         log_debug('formula_link_list->ids');
         $result = array();
 
-        foreach ($this->lst as $frm_lnk) {
-            if ($frm_lnk->phrase_id <> 0) {
-                if ($sbx) {
-                    if ($frm_lnk->excluded <= 0) {
+        if ($this->lst != null) {
+            foreach ($this->lst as $frm_lnk) {
+                if ($frm_lnk->phrase_id <> 0) {
+                    if ($sbx) {
+                        if ($frm_lnk->excluded <= 0) {
+                            $result[] = $frm_lnk->phrase_id;
+                        }
+                    } else {
                         $result[] = $frm_lnk->phrase_id;
                     }
-                } else {
-                    $result[] = $frm_lnk->phrase_id;
                 }
             }
         }
