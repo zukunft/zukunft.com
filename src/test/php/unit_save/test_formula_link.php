@@ -36,6 +36,7 @@ function create_test_formula_links()
     test_formula_link(formula::TN_SCALE_K, word::TN_IN_K);
     test_formula_link(formula::TN_SCALE_MIO, word::TN_MIO);
     test_formula_link(formula::TN_SCALE_BIL, word::TN_BIL);
+
 }
 
 function run_formula_link_test()
@@ -45,6 +46,9 @@ function run_formula_link_test()
     global $usr2;
 
     test_header('Test the formula link class (classes/formula_link.php)');
+
+    // make sure that the word for testing exists even if the word test didn't run before
+    test_word(word::TN_RENAMED);
 
     // link the test formula to another word
     $frm = load_formula(formula::TN_RENAMED);

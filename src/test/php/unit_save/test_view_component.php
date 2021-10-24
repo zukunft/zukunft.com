@@ -88,7 +88,7 @@ function run_view_component_test () {
   $log->row_id = $cmp->id;
   $log->usr = $usr;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system batch job added Test Mask Component';
+  $target = 'zukunft.com system test added Test Mask Component';
   test_dsp('view_component->save adding logged for "'.TC_ADD.'"', $target, $result);
 
   // check if adding the same view_component again creates a correct error message
@@ -99,7 +99,7 @@ function run_view_component_test () {
   // in case of other settings
   $target = 'A view component with the name "'.TC_ADD.'" already exists. Please use another name.';
   // for the standard settings
-  $target = '1';
+  $target = '';
   test_dsp('view_component->save adding "'.$cmp->name.'" again', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if the view_component can be renamed
@@ -109,7 +109,7 @@ function run_view_component_test () {
   $cmp->load();
   $cmp->name = TC_ADD_RENAMED;
   $result = $cmp->save();
-  $target = '1';
+  $target = '';
   test_dsp('view_component->save rename "'.TC_ADD.'" to "'.TC_ADD_RENAMED.'".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if the view_component renaming was successful
@@ -122,7 +122,7 @@ function run_view_component_test () {
       $result = $cmp_renamed->name;
     }
   }
-  $target = TC_ADD_RENAMED;
+  $target = true;
   test_dsp('view_component->load renamed view_component "'.TC_ADD_RENAMED.'"', $target, $result);
 
   // check if the view_component renaming has been logged
@@ -132,7 +132,7 @@ function run_view_component_test () {
   $log->row_id = $cmp_renamed->id;
   $log->usr = $usr;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system batch job changed Test Mask Component to Mask Component Test';
+  $target = 'zukunft.com system test changed Test Mask Component to Mask Component Test';
   test_dsp('view_component->save rename logged for "'.TC_ADD_RENAMED.'"', $target, $result);
 
   // check if the view_component parameters can be added
@@ -143,7 +143,7 @@ function run_view_component_test () {
   $cmp_renamed->comment = 'Just added for testing the user sandbox';
   $cmp_renamed->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORD_NAME);
   $result = $cmp_renamed->save();
-  $target = '11';
+  $target = '';
   test_dsp('view_component->save all view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_LONG);
 
   // check if the view_component parameters have been added
@@ -169,7 +169,7 @@ function run_view_component_test () {
   test_dsp('view_component->load comment for "'.TC_ADD_RENAMED.'" logged', $target, $result);
   $log->field = 'view_component_type_id';
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system batch job added word name';
+  $target = 'zukunft.com system test added word name';
   test_dsp('view_component->load view_component_type_id for "'.TC_ADD_RENAMED.'" logged', $target, $result);
 
   // check if a user specific view_component is created if another user changes the view_component
@@ -180,7 +180,7 @@ function run_view_component_test () {
   $cmp_usr2->comment = 'Just changed for testing the user sandbox';
   $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_FORMULAS);
   $result = $cmp_usr2->save();
-  $target = '11';
+  $target = '';
   test_dsp('view_component->save all view_component fields for user 2 beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if a user specific view_component changes have been saved
@@ -215,7 +215,7 @@ function run_view_component_test () {
   $cmp_usr2->comment = 'Just added for testing the user sandbox';
   $cmp_usr2->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_WORD_NAME);
   $result = $cmp_usr2->save();
-  $target = '11';
+  $target = '';
   test_dsp('view_component->save undo the user view_component fields beside the name for "'.TC_ADD_RENAMED.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
   // check if a user specific view_component changes have been saved

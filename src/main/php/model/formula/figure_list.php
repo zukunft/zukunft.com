@@ -41,11 +41,13 @@ class figure_list
     display functions
     */
 
-    // display the unique id fields
+    /**
+     * display the unique id fields
+     */
     function dsp_id(): string
     {
         $id = $this->ids_txt();
-        $name = $this->display('');
+        $name = $this->display();
         if ($name <> '""') {
             $result = '' . $name . ' (' . $id . ')';
         } else {
@@ -71,13 +73,17 @@ class figure_list
         return $result;
     }
 
-    // return a list of the figure list ids as sql compatible text
+    /**
+     * return a list of the figure list ids as sql compatible text
+     */
     function ids_txt(): string
     {
         return dsp_array($this->ids());
     }
 
-    // this function is called from dsp_id, so no other call is allowed
+    /**
+     * this function is called from dsp_id, so no other call is allowed
+     */
     function ids(): array
     {
         $result = array();
@@ -92,9 +98,11 @@ class figure_list
         return $result;
     }
 
-    // return the html code to display a value
-    // this is the opposite of the convert function
-    // this function is called from dsp_id, so no other call is allowed
+    /**
+     * return the html code to display a value
+     * this is the opposite of the convert function
+     * this function is called from dsp_id, so no other call is allowed
+     */
     function display($back = ''): string
     {
         $result = '';

@@ -129,7 +129,7 @@ class formula extends user_sandbox_description
     /**
      * @return formula_dsp the formula object with the display interface functions
      */
-    function dsp_obj(): formula_dsp
+    function dsp_obj(): object
     {
         $dsp_obj = new formula_dsp();
 
@@ -1398,6 +1398,19 @@ class formula extends user_sandbox_description
         $this->ref_text = $exp->get_ref_text();
         $result .= $exp->err_text;
         return $result;
+    }
+
+    /**
+     * @return bool true if the formula or formula assignment has not been overwritten by the user
+     */
+    function is_std(): bool
+    {
+        if ($this->has_usr_cfg()) {
+            return false;
+        } else {
+            // TODO check the formula assigment
+            return true;
+        }
     }
 
     function is_used(): bool

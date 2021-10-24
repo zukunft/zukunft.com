@@ -139,7 +139,7 @@ function run_test_cleanup()
     // request to delete the second added test view component
     if ($cmp2->id > 0) {
         $result = $cmp2->del();
-        $target = '11';
+        $target = true;
         //$target = '';
         test_dsp('cleanup: del of second component "' . TC_ADD2 . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }

@@ -64,7 +64,7 @@ function run_view_test()
     $wrd->load();
     $result = $dsp->display($wrd, $back);
     // check if the view contains the word name
-    $target = TW_ABB;
+    $target = 'complete';
     test_dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name . '" contains', $target, $result, TIMEOUT_LIMIT_LONG);
     // check if the view contains at least one value
     $target = '45\'548';
@@ -103,7 +103,7 @@ function run_view_test()
     $log->row_id = $dsp->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job added Test Mask';
+    $target = 'zukunft.com system test added Test Mask';
     test_dsp('view->save adding logged for "' . TM_ADD . '"', $target, $result);
 
     // check if adding the same view again creates a correct error message
@@ -112,7 +112,7 @@ function run_view_test()
     $dsp->usr = $usr;
     $result = $dsp->save();
     $target = 'A view with the name "' . TM_ADD . '" already exists. Please use another name.'; // is this error message really needed???
-    $target = '1';
+    $target = '';
     test_dsp('view->save adding "' . $dsp->name . '" again', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the view can be renamed
@@ -122,7 +122,7 @@ function run_view_test()
     $dsp->load();
     $dsp->name = TM_ADD_RENAMED;
     $result = $dsp->save();
-    $target = '1';
+    $target = '';
     test_dsp('view->save rename "' . TM_ADD . '" to "' . TM_ADD_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the view renaming was successful
@@ -135,7 +135,7 @@ function run_view_test()
             $result = $dsp_renamed->name;
         }
     }
-    $target = TM_ADD_RENAMED;
+    $target = true;
     test_dsp('view->load renamed view "' . TM_ADD_RENAMED . '"', $target, $result);
 
     // check if the view renaming has been logged
@@ -145,14 +145,14 @@ function run_view_test()
     $log->row_id = $dsp_renamed->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job changed Test Mask to Mask Test';
+    $target = 'zukunft.com system test changed Test Mask to Mask Test';
     test_dsp('view->save rename logged for "' . TM_ADD_RENAMED . '"', $target, $result);
 
     // check if the view parameters can be added
     $dsp_renamed->comment = 'Just added for testing the user sandbox';
     $dsp_renamed->type_id = cl(db_cl::VIEW_TYPE, view_type_list::DBL_WORD_DEFAULT);
     $result = $dsp_renamed->save();
-    $target = '11';
+    $target = '';
     test_dsp('view->save all view fields beside the name for "' . TM_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if the view parameters have been added
@@ -174,11 +174,11 @@ function run_view_test()
     $log->row_id = $dsp_reloaded->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job added Just added for testing the user sandbox';
+    $target = 'zukunft.com system test partner added Just added for testing the user sandbox';
     test_dsp('view->load comment for "' . TM_ADD_RENAMED . '" logged', $target, $result);
     $log->field = 'view_type_id';
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system batch job added word default';
+    $target = 'zukunft.com system test added word default';
     test_dsp('view->load view_type_id for "' . TM_ADD_RENAMED . '" logged', $target, $result);
 
     // check if a user specific view is created if another user changes the view
@@ -189,7 +189,7 @@ function run_view_test()
     $dsp_usr2->comment = 'Just changed for testing the user sandbox';
     $dsp_usr2->type_id = cl(db_cl::VIEW_TYPE, view_type_list::DBL_ENTRY);
     $result = $dsp_usr2->save();
-    $target = '11';
+    $target = '';
     test_dsp('view->save all view fields for user 2 beside the name for "' . TM_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific view changes have been saved
@@ -224,7 +224,7 @@ function run_view_test()
     $dsp_usr2->comment = 'Just added for testing the user sandbox';
     $dsp_usr2->type_id = cl(db_cl::VIEW_TYPE, view_type_list::DBL_WORD_DEFAULT);
     $result = $dsp_usr2->save();
-    $target = '11';
+    $target = '';
     test_dsp('view->save undo the user view fields beside the name for "' . TM_ADD_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific view changes have been saved

@@ -105,9 +105,9 @@ if ($start_usr->id > 0) {
             run_formula_trigger_test ();
             // run_formula_value_test ();
             // run_formula_value_list_test ();
-            run_formula_element_test ();
-            run_formula_element_list_test ();
-            run_formula_element_group_test ();
+            //run_formula_element_test ();
+            //run_formula_element_list_test ();
+            //run_formula_element_group_test ();
             run_batch_job_test ();
             run_batch_job_list_test ();
             run_view_test ();

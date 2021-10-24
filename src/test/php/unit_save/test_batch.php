@@ -33,6 +33,16 @@ function run_batch_job_test()
 
     test_header('Test the batch job class (classes/batch_job.php)');
 
+    // make sure that the test value is set independent of any previous database tests
+    test_value(array(
+        word::TN_CH,
+        word::TN_INHABITANT,
+        word::TN_MIO,
+        word::TN_2020
+    ),
+        value::TV_CH_INHABITANTS_2020_IN_MIO);
+
+
     // prepare test adding a batch job via a list
     $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
@@ -46,7 +56,7 @@ function run_batch_job_test()
     $val->usr = $usr;
     $val->load();
     $result = $val->number;
-    $target = TV_ABB_SALES_2014;
+    $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
     test_dsp('batch_job->value to link', $target, $result);
 
     // test adding a batch job

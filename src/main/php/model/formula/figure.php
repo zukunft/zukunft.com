@@ -2,7 +2,7 @@
 
 /*
 
-  figure.php - either a value of a formula result object
+  figure.php - either a value of a formula result object or a value if a user has overwritten a formula result
   ----------
   
   This file is part of zukunft.com - calc with words
@@ -31,10 +31,10 @@
 
 class figure
 {
+    const CALCULATED = 'formula result';
 
     public ?int $id = null;               // the database id of the value or formula result
     public ?user $usr = null;             // the person who wants to see the figure (value or formula result)
-    public ?bool $is_std = True;          // true as long as no user specific value, formula or assignment is used for this result
     public string $type = '';             // either "value" or "result"
     public ?float $number = null;         // the numeric value
     public ?string $symbol = null;        // the reference text that has lead to the value
@@ -42,11 +42,35 @@ class figure
     public ?word $time_wrd = null;        // the time word object, if the figure value time is adjusted by a special formula
     public ?object $obj = null;           // the value or formula result object
 
+    /**
+     * @return bool true if the user has done no overwrites either of the value direct
+     * or the formula or the formula assignment
+     */
+    function is_std(): bool
+    {
+        if ($this->type == figure::CALCULATED) {
+            if ($this->obj == null) {
+                return false;
+            } else {
+                if (get_class($this->obj) == 'formula' or get_class($this->obj) == 'formula_dsp') {
+                    return $this->obj->is_std();
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
+
     /*
      display functions
      */
 
-    // display the unique id fields
+    /**
+     * display the unique id fields of a figure mainly for debugging
+     */
     function dsp_id(): string
     {
 
@@ -64,6 +88,9 @@ class figure
         return $result;
     }
 
+    /**
+     * @return string the created name of a figure
+     */
     function name(): string
     {
 
@@ -79,8 +106,10 @@ class figure
         return $result;
     }
 
-    // return the html code to display a value
-    // this is the opposite of the convert function
+    /**
+     * return the html code to display a value
+     * this is the opposite of the convert function
+     */
     function display($back): string
     {
         log_debug('figure->display');
@@ -97,7 +126,9 @@ class figure
         return $result;
     }
 
-    // html code to show the value with the possibility to click for the result explanation
+    /**
+     * html code to show the value with the possibility to click for the result explanation
+     */
     function display_linked($back): string
     {
         log_debug('figure->display_linked');

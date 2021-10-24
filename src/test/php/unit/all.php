@@ -276,6 +276,7 @@ function run_unit_tests()
     run_value_unit_tests();
     run_value_list_unit_tests();
     run_formula_unit_tests();
+    run_figure_unit_tests();
     run_user_sandbox_unit_tests();
     run_ref_unit_tests();
     run_user_log_unit_tests();

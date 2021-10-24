@@ -5,6 +5,7 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
+TODO fix tests, fix syntax suggestions, create unit tests, cleanup object by removing duplicates
 TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
 TODO if a formula is supposed to be created with the same name of a phrase suggest to add (formula) at the end
 TODO create a test case where one user has created a word and another user has created a formula with the same name
