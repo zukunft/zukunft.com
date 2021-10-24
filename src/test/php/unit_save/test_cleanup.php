@@ -124,7 +124,7 @@ function run_test_cleanup()
     // request to delete the test view component
     if ($cmp->id > 0) {
         $result = $cmp->del();
-        $target = '111';
+        $target = true;
         //$target = '';
         test_dsp('cleanup: del of first component "' . TC_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
@@ -132,7 +132,7 @@ function run_test_cleanup()
     // request to delete the test view component for user 2
     if ($cmp_usr2->id > 0) {
         $result = $cmp_usr2->del();
-        $target = '';
+        $target = true;
         test_dsp('cleanup: del of first component "' . TC_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -154,15 +154,25 @@ function run_test_cleanup()
     // request to delete the added test view
     if ($dsp->id > 0) {
         $result = $dsp->del();
-        $target = '111';
+        $target = true;
         test_dsp('cleanup: del of view "' . TM_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the added test view for user 2
     if ($dsp_usr2->id > 0) {
         $result = $dsp_usr2->del();
-        $target = '';
+        $target = true;
         test_dsp('cleanup: del of view "' . TM_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+    }
+
+    // request to delete the added test views
+    foreach (view::RESERVED_VIEWS AS $dsp_name) {
+        $dsp = load_view($dsp_name);
+        if ($dsp->id > 0) {
+            $result = $dsp->del();
+            $target = true;
+            test_dsp('view->del of "' . $dsp_name . '"', $target, $result);
+        }
     }
 
     // request to delete the added test reference
@@ -175,11 +185,11 @@ function run_test_cleanup()
 
     // request to delete the added test formulas
     foreach (formula::RESERVED_FORMULAS AS $frm_name) {
-        $frm = load_formula($frm_name);
-        if ($frm->id > 0) {
-            $result = $frm->del();
+        $dsp = load_formula($frm_name);
+        if ($dsp->id > 0) {
+            $result = $dsp->del();
             $target = true;
-            test_dsp('formula->del of "' . formula::TN_ADD . '"', $target, $result);
+            test_dsp('formula->del of "' . $frm_name . '"', $target, $result);
         }
     }
 

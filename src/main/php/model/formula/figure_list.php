@@ -95,7 +95,7 @@ class figure_list
     // return the html code to display a value
     // this is the opposite of the convert function
     // this function is called from dsp_id, so no other call is allowed
-    function display($back): string
+    function display($back = ''): string
     {
         $result = '';
 

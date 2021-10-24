@@ -1077,7 +1077,11 @@ class phrase_list
         $wrd_lst = $this->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time();
         if (isset($time_wrd)) {
-            $time_phr = $time_wrd->phrase();
+            if (get_class($time_wrd) == 'phrase') {
+                $time_phr = $time_wrd;
+            } else {
+                $time_phr = $time_wrd->phrase();
+            }
         }
         return $time_phr;
     }
@@ -1333,6 +1337,25 @@ class phrase_list
         $val->number = $val->scale($wrd_lst);
 
         return $val;
+    }
+
+    // this should create a value matrix
+    function val_matrix($col_lst): array
+    {
+        if ($col_lst != null) {
+            log_debug('word_list->val_matrix for ' . $this->dsp_id() . ' with ' . $col_lst->dsp_id());
+        } else {
+            log_debug('word_list->val_matrix for ' . $this->dsp_id());
+        }
+        return array();
+    }
+
+    function dsp_val_matrix($val_matrix): string
+    {
+        if ($val_matrix != null) {
+            log_debug('word_list->dsp_val_matrix for ' . $val_matrix->dsp_id());
+        }
+        return '';
     }
 
     // TODO speed up by creation one SQL statement

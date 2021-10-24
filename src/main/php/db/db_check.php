@@ -124,6 +124,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $db_con->column_allow_null('user_sources', 'source_name');
     $db_con->column_allow_null('user_sources', 'url');
     $db_con->column_force_not_null('user_sources', 'user_id');
+    // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links
 
     // Change code_id in verbs from contains to is_part_of
 

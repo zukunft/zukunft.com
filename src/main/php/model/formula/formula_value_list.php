@@ -163,7 +163,7 @@ class formula_value_list
         if ($debug > 10) {
             if (isset($this->lst)) {
                 foreach ($this->lst as $fv) {
-                    $result .= $fv->name();
+                    $result .= $fv->dsp_id();
                     $result .= ' (' . $fv->id . ') - ';
                 }
             }
@@ -172,7 +172,7 @@ class formula_value_list
             if (isset($this->lst)) {
                 foreach ($this->lst as $fv) {
                     if ($nbr <= 5) {
-                        $result .= $fv->name();
+                        $result .= $fv->dsp_id();
                         $result .= ' (' . $fv->id . ') - ';
                     }
                     $nbr++;

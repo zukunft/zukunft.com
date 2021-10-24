@@ -827,7 +827,7 @@ CREATE TABLE IF NOT EXISTS user_requests
 
 CREATE TABLE IF NOT EXISTS user_sources
 (
-    source_id      BIGSERIAL PRIMARY KEY,
+    source_id      bigint NOT NULL,
     user_id        bigint NOT NULL,
     source_name    varchar(200) DEFAULT NULL,
     url            text         DEFAULT NULL,
@@ -858,7 +858,7 @@ CREATE TABLE IF NOT EXISTS user_types
 
 CREATE TABLE IF NOT EXISTS user_values
 (
-    value_id           BIGSERIAL PRIMARY KEY,
+    value_id           bigint    NOT NULL,
     user_id            bigint    NOT NULL,
     word_value         double precision DEFAULT NULL,
     source_id          bigint           DEFAULT NULL,
@@ -879,7 +879,7 @@ COMMENT ON COLUMN user_values.last_update is 'for fast calculation of the update
 
 CREATE TABLE IF NOT EXISTS user_views
 (
-    view_id      BIGSERIAL PRIMARY KEY,
+    view_id      bigint NOT NULL,
     user_id      bigint NOT NULL,
     view_name    varchar(200) DEFAULT NULL,
     comment      text,
@@ -897,7 +897,7 @@ COMMENT ON TABLE user_views is 'user specific mask settings';
 
 CREATE TABLE IF NOT EXISTS user_view_components
 (
-    view_component_id      BIGSERIAL PRIMARY KEY,
+    view_component_id      bigint NOT NULL,
     user_id                bigint NOT NULL,
     view_component_name    varchar(200) DEFAULT NULL,
     comment                text,
@@ -918,7 +918,7 @@ CREATE TABLE IF NOT EXISTS user_view_components
 
 CREATE TABLE IF NOT EXISTS user_view_component_links
 (
-    view_component_link_id BIGSERIAL PRIMARY KEY,
+    view_component_link_id bigint NOT NULL,
     user_id                bigint NOT NULL,
     order_nbr              bigint   DEFAULT NULL,
     position_type          bigint   DEFAULT NULL,
@@ -1597,7 +1597,8 @@ CREATE INDEX user_phrase_group_word_user_idx ON user_phrase_group_word_links (us
 --
 -- Indexes for table user_sources
 --
-CREATE UNIQUE INDEX user_source_unique_idx ON user_sources (source_id, user_id);
+ALTER TABLE user_sources
+    ADD CONSTRAINT user_source_pkey PRIMARY KEY (source_id, user_id);
 CREATE INDEX user_source_user_idx ON user_sources (user_id);
 CREATE INDEX user_source_idx ON user_sources (source_id);
 CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
@@ -1605,6 +1606,8 @@ CREATE INDEX user_source_type_idx ON user_sources (source_type_id);
 --
 -- Indexes for table user_values
 --
+ALTER TABLE user_values
+    ADD CONSTRAINT user_value_pkey PRIMARY KEY (value_id, user_id);
 CREATE INDEX user_value_user_idx ON user_values (user_id);
 CREATE INDEX user_value_source_idx ON user_values (source_id);
 CREATE INDEX user_value_value_idx ON user_values (value_id);
@@ -1614,6 +1617,8 @@ CREATE INDEX user_value_protection_idx ON user_values (protection_type_id);
 --
 -- Indexes for table user_views
 --
+ALTER TABLE user_views
+    ADD CONSTRAINT user_view_pkey PRIMARY KEY (view_id, user_id);
 CREATE INDEX user_view_user_idx ON user_views (user_id);
 CREATE INDEX user_view_type_idx ON user_views (view_type_id);
 CREATE INDEX user_view_idx ON user_views (view_id);
@@ -1621,6 +1626,8 @@ CREATE INDEX user_view_idx ON user_views (view_id);
 --
 -- Indexes for table user_view_components
 --
+ALTER TABLE user_view_components
+    ADD CONSTRAINT user_view_component_pkey PRIMARY KEY (view_component_id, user_id);
 CREATE INDEX user_view_component_user_idx ON user_view_components (user_id);
 CREATE INDEX user_view_component_idx ON user_view_components (view_component_id);
 CREATE INDEX user_view_component_type_idx ON user_view_components (view_component_type_id);
@@ -1628,6 +1635,8 @@ CREATE INDEX user_view_component_type_idx ON user_view_components (view_componen
 --
 -- Indexes for table user_view_component_links
 --
+ALTER TABLE user_view_component_links
+    ADD CONSTRAINT user_view_component_link_pkey PRIMARY KEY (view_component_link_id, user_id);
 CREATE INDEX user_view_component_link_user_idx ON user_view_component_links (user_id);
 CREATE INDEX user_view_component_link_position_idx ON user_view_component_links (position_type);
 CREATE INDEX user_view_component_link_view_idx ON user_view_component_links (view_component_link_id);

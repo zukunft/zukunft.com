@@ -35,16 +35,15 @@ function run_formula_trigger_test () {
   // prepare the calculation trigger test
   $phr_lst1 = New phrase_list;
   $phr_lst1->usr = $usr;
-  $phr_lst1->add_name(word::TN_RENAMED);
-  $phr_lst1->add_name(TW_SALES);
-  $phr_lst1->add_name(TW_CHF);
-  $phr_lst1->add_name(TW_MIO);
+  $phr_lst1->add_name(word::TN_CH);
+  $phr_lst1->add_name(word::TN_INHABITANT);
+  $phr_lst1->add_name(word::TN_MIO);
   $phr_lst2 = clone $phr_lst1;
-  $phr_lst1->add_name(TW_2016);
+  $phr_lst1->add_name(word::TN_2019);
   $phr_lst1->load();
-  $phr_lst2->add_name(TW_2017);
+  $phr_lst2->add_name(word::TN_2020);
   $phr_lst2->load();
-  $frm = load_formula(TF_INCREASE);
+  $frm = load_formula(formula::TN_INCREASE);
 
   // add a number to the test word
   $val_add1 = New value;
@@ -59,7 +58,7 @@ function run_formula_trigger_test () {
   $val_add2->usr = $usr;
   $result = $val_add2->save();
 
-  // check if the first number have been save correctly
+  // check if the first number have been saved correctly
   $added_val = New value;
   $added_val->ids = $phr_lst1->ids;
   $added_val->usr = $usr;
@@ -67,7 +66,7 @@ function run_formula_trigger_test () {
   $result = $added_val->number;
   $target = TV_TEST_SALES_2016;
   test_dsp('value->check added test value for "'.$phr_lst1->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
-  // check if the second number have been save correctly
+  // check if the second number have been saved correctly
   $added_val2 = New value;
   $added_val2->ids = $phr_lst2->ids;
   $added_val2->usr = $usr;

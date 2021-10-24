@@ -52,12 +52,15 @@ if ($start_usr->id > 0) {
         $usr->load_user_by_profile(user::SYSTEM_TEST);
         if ($usr->id > 0) {
 
-            // -----------------------------------------------
-            // start testing the selected system functionality
-            // -----------------------------------------------
+            // create the testing users
+            test_users();
 
             // cleanup also before testing to remove any leftovers
             run_test_cleanup();
+
+            // -----------------------------------------------
+            // start testing the selected system functionality
+            // -----------------------------------------------
 
             run_system_test(); // testing of the basic system functions like ip blocking
             //run_user_test ();   // testing of the user display functions
@@ -72,6 +75,7 @@ if ($start_usr->id > 0) {
             create_test_views();
             create_test_values();
 
+            /*
             run_db_link_test();
             run_string_unit_tests(); // test functions not yet split into single unit tests
             run_math_test();
@@ -92,15 +96,15 @@ if ($start_usr->id > 0) {
             //run_value_ui_test ();
             run_source_test ();
             run_expression_test ();
+            */
             run_formula_test ();
             run_formula_list_test ();
             //run_formula_ui_test ();
             run_formula_link_test ();
-            /*
             run_formula_link_list_test ();
             run_formula_trigger_test ();
-            run_formula_value_test ();
-            run_formula_value_list_test ();
+            // run_formula_value_test ();
+            // run_formula_value_list_test ();
             run_formula_element_test ();
             run_formula_element_list_test ();
             run_formula_element_group_test ();
@@ -115,7 +119,7 @@ if ($start_usr->id > 0) {
             run_legacy_test ();
 
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST_QUICK));
-            run_value_test();
+            //run_value_test();
             //run_view_test ();
             //run_view_component_test ();
             //run_view_component_link_test ();
@@ -124,12 +128,11 @@ if ($start_usr->id > 0) {
             //run_export_test ();
             //run_permission_test ();
 
-            */
 
             // testing cleanup to remove any remaining test records
             run_test_cleanup();
 
-            // start the integration tests by loading the the base and sample data
+            // start the integration tests by loading the base and sample data
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST));
 
             // display the test results

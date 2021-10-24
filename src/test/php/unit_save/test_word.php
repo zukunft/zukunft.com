@@ -48,6 +48,7 @@ function create_test_words()
     }
     $prev_word_name = null;
     foreach (word::TEST_WORDS_TIME as $word_name) {
+        test_word_link($word_name, verb::IS_A, word::TN_YEAR);
         test_word($word_name, word_type_list::DBL_TIME);
         if ($prev_word_name != null) {
             test_word_link($word_name, verb::DBL_FOLLOW, $prev_word_name);

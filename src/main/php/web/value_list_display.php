@@ -89,7 +89,9 @@ class value_list_dsp extends value_list
 
             // adjust the time words to display
             $time_lst = $all_time_lst->time_useful();
-            log_debug('value_list_dsp->dsp_table times sorted: ' . $time_lst->name());
+            if ($time_lst != null) {
+                log_debug('value_list_dsp->dsp_table times sorted: ' . $time_lst->name());
+            }
 
             // filter the value list by the time words used
             $used_value_lst = $val_lst->filter_by_time($time_lst);
@@ -105,7 +107,7 @@ class value_list_dsp extends value_list
             log_debug('value_list_dsp->dsp_table row words after differentiators added: ' . $row_wrd_lst->name());
 
             // filter the value list by the row words used
-            $row_phr_lst_incl = $row_wrd_lst->phrase_lst();
+            $row_phr_lst_incl = clone $row_wrd_lst;
             log_debug('value_list_dsp->dsp_table row phrase list: ' . $row_phr_lst_incl->name());
             $used_value_lst = $used_value_lst->filter_by_phrase_lst($row_phr_lst_incl);
             log_debug('value_list_dsp->dsp_table used values for all rows: ' . dsp_count($used_value_lst->lst));
@@ -120,7 +122,9 @@ class value_list_dsp extends value_list
                 $xtra_phrases->not_in($word_incl_differentiator_lst);
             }
             $xtra_phrases->not_in($common_lst);
-            $xtra_phrases->not_in($time_lst->phrase_lst());
+            if ($time_lst != null) {
+                $xtra_phrases->not_in($time_lst->phrase_lst());
+            }
             log_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: ' . $xtra_phrases->name());
 
             // display the common words

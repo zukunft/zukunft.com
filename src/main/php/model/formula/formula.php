@@ -857,7 +857,7 @@ class formula extends user_sandbox_description
      *      if one of the result words is a scaling word, remove all value scaling words
      *      always create a default result (for the user 0)
      */
-    function calc($phr_lst, $back): ?array
+    function calc($phr_lst, string $back): ?array
     {
         $result = null;
 

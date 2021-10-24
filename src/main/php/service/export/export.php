@@ -95,10 +95,12 @@ class export
                 log_debug('export->get triples');
                 $lnk_lst = $this->phr_lst->wrd_lnk_lst();
                 $exp_triples = array();
-                foreach ($lnk_lst->lst as $lnk) {
-                    $exp_lnk = $lnk->export_obj();
-                    if (isset($exp_lnk)) {
-                        $exp_triples[] = $exp_lnk;
+                if ($lnk_lst->lst != null) {
+                    foreach ($lnk_lst->lst as $lnk) {
+                        $exp_lnk = $lnk->export_obj();
+                        if (isset($exp_lnk)) {
+                            $exp_triples[] = $exp_lnk;
+                        }
                     }
                 }
                 if (count($exp_triples) > 0) {
@@ -109,10 +111,12 @@ class export
                 log_debug('export->get formulas');
                 $frm_lst = $this->phr_lst->frm_lst();
                 $exp_formulas = array();
-                foreach ($frm_lst->lst as $frm) {
-                    $exp_frm = $frm->export_obj();
-                    if (isset($exp_frm)) {
-                        $exp_formulas[] = $exp_frm;
+                if ($frm_lst->lst != null) {
+                    foreach ($frm_lst->lst as $frm) {
+                        $exp_frm = $frm->export_obj();
+                        if (isset($exp_frm)) {
+                            $exp_formulas[] = $exp_frm;
+                        }
                     }
                 }
                 $export_obj->formulas = $exp_formulas;
@@ -122,11 +126,13 @@ class export
                 $source_lst = $val_lst->source_lst();
                 log_debug('export->got ' . dsp_count($source_lst) . ' sources');
                 $exp_sources = array();
-                foreach ($source_lst as $src) {
-                    if (isset($src)) {
-                        $exp_src = $src->export_obj();
-                        if (isset($exp_src)) {
-                            $exp_sources[] = $exp_src;
+                if ($source_lst != null) {
+                    foreach ($source_lst as $src) {
+                        if (isset($src)) {
+                            $exp_src = $src->export_obj();
+                            if (isset($exp_src)) {
+                                $exp_sources[] = $exp_src;
+                            }
                         }
                     }
                 }
@@ -137,11 +143,13 @@ class export
                 // 8. add all values to the export object
                 log_debug('export->get values');
                 $exp_values = array();
-                foreach ($val_lst->lst as $val) {
-                    if (isset($val)) {
-                        $exp_val = $val->export_obj();
-                        if (isset($exp_val)) {
-                            $exp_values[] = $exp_val;
+                if ($val_lst->lst != null) {
+                    foreach ($val_lst->lst as $val) {
+                        if (isset($val)) {
+                            $exp_val = $val->export_obj();
+                            if (isset($exp_val)) {
+                                $exp_values[] = $exp_val;
+                            }
                         }
                     }
                 }

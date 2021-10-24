@@ -253,9 +253,8 @@ class word_dsp extends word
     function dsp_val_list($col_wrd, $back): string
     {
         log_debug('word_dsp->dsp_val_list for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '" columns for user ' . $this->usr->name);
-        $result = '';
 
-        $result .= $this->dsp_header();
+        $result = $this->dsp_header();
 
         //$result .= $this->name."<br>";
         //$result .= $col_wrd->name."<br>";
@@ -264,12 +263,12 @@ class word_dsp extends word
         $col_lst = $col_wrd->children();
         log_debug('word_dsp->dsp_val_list -> columns ' . $col_lst->dsp_id());
 
-        $row_lst->wlsort();
-        $col_lst->wlsort();
+        $row_lst->osort();
+        $col_lst->osort();
 
         // to do: use this for fast loading
-        $val_matrix = $row_lst->val_matrix($col_lst, $this->usr->id);
-        $result .= $row_lst->dsp_val_matrix($val_matrix, $this->usr->id);
+        $val_matrix = $row_lst->val_matrix($col_lst);
+        $result .= $row_lst->dsp_val_matrix($val_matrix);
 
         log_debug('word_dsp->dsp_val_list -> table');
 
@@ -630,5 +629,8 @@ class word_dsp extends word
         return $result;
     }
 
+    function view(): ?view {
+        return $this->load_view();
+    }
 
 }

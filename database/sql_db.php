@@ -435,12 +435,15 @@ class sql_db
     // just to have all sql in one library
     function close()
     {
-        if ($this->db_type == DB_TYPE_POSTGRES) {
-            pg_close($this->link);
-        } else {
-            mysqli_close($this->link);
+        if ($this->link != null) {
+            if ($this->db_type == DB_TYPE_POSTGRES) {
+                pg_close($this->link);
+            } else {
+                mysqli_close($this->link);
+            }
+
+            $this->link = null;
         }
-        $this->link = null;
 
         log_debug("db->close -> done");
     }

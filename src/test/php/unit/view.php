@@ -110,7 +110,7 @@ function run_view_unit_tests()
     $dsp = new view;
     $dsp->id = 0;
     $dsp->code_id = null;
-    $dsp->name = view::TEST_NAME;
+    $dsp->name = view::TEST_NAME_ADD;
     $dsp->usr = $usr;
     $db_con->db_type = DB_TYPE_POSTGRES;
     $created_sql = $dsp->load_sql($db_con);
@@ -125,8 +125,8 @@ function run_view_unit_tests()
                             CASE WHEN (u.excluded        IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
-                      WHERE (u.view_name = '" . view::TEST_NAME . "'
-                         OR (s.view_name = '" . view::TEST_NAME . "' AND u.view_name IS NULL));";
+                      WHERE (u.view_name = '" . view::TEST_NAME_ADD . "'
+                         OR (s.view_name = '" . view::TEST_NAME_ADD . "' AND u.view_name IS NULL));";
     test_dsp('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
@@ -238,7 +238,7 @@ function run_view_unit_tests()
     $dsp = new view_dsp;
     $dsp->id = 1;
     $dsp->code_id = null;
-    $dsp->name = view::TEST_NAME;
+    $dsp->name = view::TEST_NAME_ADD;
     $dsp->usr = $usr;
     $wrd = new word();
     $wrd->name = word::TEST_NAME;

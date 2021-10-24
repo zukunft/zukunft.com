@@ -59,14 +59,16 @@ class batch_job_list
             $found = false;
             // build the
             $chk_phr_lst_ids = array();
-            foreach ($this->lst as $chk_job) {
-                $chk_phr_lst_ids = $chk_job->phr_lst->id();
-            }
-            foreach ($this->lst as $chk_job) {
-                if ($chk_job->frm == $job->frm) {
-                    if ($chk_job->usr == $job->usr) {
-                        if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
-                            $found = true;
+            if ($this->lst != null) {
+                foreach ($this->lst as $chk_job) {
+                    $chk_phr_lst_ids = $chk_job->phr_lst->id();
+                }
+                foreach ($this->lst as $chk_job) {
+                    if ($chk_job->frm == $job->frm) {
+                        if ($chk_job->usr == $job->usr) {
+                            if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
+                                $found = true;
+                            }
                         }
                     }
                 }

@@ -69,8 +69,19 @@ class view extends user_sandbox
     const COMPONENT_EDIT = "view_entry_edit";
     const COMPONENT_DEL = "view_entry_del";
 
-    // persevered view name for unit and integration tests
-    const TEST_NAME = 'System Test View';
+    // persevered view names for unit and integration tests
+    const TEST_NAME_ADD = 'System Test View';
+    const TEST_NAME_RENAMED = 'System Test View Renamed';
+    const TEST_NAME_COMPLETE = 'System Test View Complete';
+    const TEST_NAME_TABLE = 'System Test View Table';
+
+    // view array for creating the test views and remove them after the test
+    const RESERVED_VIEWS = array(
+        self::TEST_NAME_ADD,
+        self::TEST_NAME_RENAMED,
+        self::TEST_NAME_COMPLETE,
+        self::TEST_NAME_TABLE
+    );
 
     // database fields additional to the user sandbox fields for the view component
     public ?string $comment = null; // the view description that is shown as a mouseover explain to the user

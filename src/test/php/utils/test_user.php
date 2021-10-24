@@ -40,14 +40,18 @@ function run_user_test()
     // test the user display after the word changes to have a sample case
     test_header('Test the user display class (classes/user_display.php)');
 
-    $result = $usr->dsp_edit($back);
+    $result = $usr->dsp_obj()->dsp_edit($back);
     $target = TEST_USER_NAME;
     test_dsp_contains(', user_display->dsp_edit', $target, $result);
 
-    // display system user names
+    // display system usernames
     echo "based on<br>";
-    echo 'php user: ' . $_SERVER['PHP_AUTH_USER'] . '<br>';
-    echo 'remote user: ' . $_SERVER['REMOTE_USER'] . '<br>';
+    if (isset($_SERVER)) {
+        if (in_array('PHP_AUTH_USER', $_SERVER)) {
+            echo 'php user: ' . $_SERVER['PHP_AUTH_USER'] . '<br>';
+            echo 'remote user: ' . $_SERVER['REMOTE_USER'] . '<br>';
+        }
+    }
     echo 'user id: ' . $usr->id . '<br>';
 
     test_header('Test the user permission scripts (e.g. /user/user.php)');

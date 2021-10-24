@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,70 +26,70 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_batch_job_test () {
+function run_batch_job_test()
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the batch job class (classes/batch_job.php)');
+    test_header('Test the batch job class (classes/batch_job.php)');
 
-  // prepare test adding a batch job via a list
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(TW_ABB);
-  $phr_lst->add_name(TW_SALES);
-  $phr_lst->add_name(TW_CHF);
-  $phr_lst->add_name(TW_MIO);
-  $phr_lst->add_name(TW_2014);
-  $phr_lst->load();
-  $val = New value;
-  $val->ids = $phr_lst->ids;
-  $val->usr = $usr;
-  $val->load();
-  $result = $val->number;
-  $target = TV_ABB_SALES_2014;
-  test_dsp('batch_job->value to link', $target, $result);
+    // prepare test adding a batch job via a list
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_MIO);
+    $phr_lst->add_name(word::TN_2020);
+    $phr_lst->load();
+    $val = new value;
+    $val->ids = $phr_lst->ids;
+    $val->usr = $usr;
+    $val->load();
+    $result = $val->number;
+    $target = TV_ABB_SALES_2014;
+    test_dsp('batch_job->value to link', $target, $result);
 
-  // test adding a batch job
-  $job = new batch_job;
-  $job->obj = $val;
-  $job->type = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
-  $result = $job->add();
-  if ($result > 0) {
-    $target = $result;
-  }  
-  test_dsp('batch_job->add has number "'.$result.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
-  
+    // test adding a batch job
+    $job = new batch_job;
+    $job->obj = $val;
+    $job->type = cl(db_cl::JOB_TYPE, job_type_list::VALUE_UPDATE);
+    $result = $job->add();
+    if ($result > 0) {
+        $target = $result;
+    }
+    test_dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+
 }
 
-function run_batch_job_list_test () {
+function run_batch_job_list_test()
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the batch job list class (classes/batch_job_list.php)');
+    test_header('Test the batch job list class (classes/batch_job_list.php)');
 
-  // prepare test adding a batch job via a list
-  $frm = load_formula(TF_INCREASE);
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(TW_ABB);
-  $phr_lst->add_name(TW_SALES);
-  $phr_lst->add_name(TW_CHF);
-  $phr_lst->add_name(TW_MIO);
-  $phr_lst->add_name(TW_2014);
-  $phr_lst->load();
+    // prepare test adding a batch job via a list
+    $frm = load_formula(formula::TN_INCREASE);
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_MIO);
+    $phr_lst->add_name(word::TN_2020);
+    $phr_lst->load();
 
-  // test adding a batch job via a list
-  $job_lst = new batch_job_list;
-  $calc_request = New batch_job;
-  $calc_request->frm     = $frm;
-  $calc_request->usr     = $usr;
-  $calc_request->phr_lst = $phr_lst;
-  $result = $job_lst->add($calc_request);
-  // todo review
-  $target = 0;
-  if ($result > 0) {
-    $target = $result;
-  }  
-  test_dsp('batch_job->add has number "'.$result.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    // test adding a batch job via a list
+    $job_lst = new batch_job_list;
+    $calc_request = new batch_job;
+    $calc_request->frm = $frm;
+    $calc_request->usr = $usr;
+    $calc_request->phr_lst = $phr_lst;
+    $result = $job_lst->add($calc_request);
+    // todo review
+    $target = 0;
+    if ($result > 0) {
+        $target = $result;
+    }
+    test_dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
 }

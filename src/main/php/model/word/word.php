@@ -46,6 +46,7 @@ class word extends word_link_object
     const TN_COMPANY = 'System Test Word Group e.g. Company';
     const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
     const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
+    const TN_YEAR = 'System Test Time Word Category e.g. Year';
     const TN_2019 = 'System Test Another Time Word e.g. 2019';
     const TN_2020 = 'System Test Another Time Word e.g. 2020';
     const TN_2021 = 'System Test Time Word e.g. 2021';
@@ -65,6 +66,13 @@ class word extends word_link_object
     const TN_THIS = 'System Test Word This';
     const TN_PRIOR = 'System Test Word Prior';
     const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
+    const TN_CONST = 'System Test Word Math Const e.g. Pi';
+    const TN_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
+    const TN_LATEST = 'System Test Word Latest';
+    const TN_SCALING_PCT = 'System Test Word Scaling Percent';
+    const TN_SCALING_MEASURE = 'System Test Word Scaling Measure';
+    const TN_CALC = 'System Test Word Calc';
+    const TN_LAYER = 'System Test Word Layer';
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_WORDS = array(
@@ -80,6 +88,7 @@ class word extends word_link_object
         self::TN_COMPANY,
         self::TN_PARENT_NON_INHERITANCE,
         self::TN_CHILD_NON_INHERITANCE,
+        self::TN_YEAR,
         self::TN_2019,
         self::TN_2020,
         self::TN_2021,
@@ -112,6 +121,7 @@ class word extends word_link_object
         self::TN_CHILD_NON_INHERITANCE,
         self::TN_INHABITANT,
         self::TN_INCREASE,
+        self::TN_YEAR,
         self::TN_SHARE,
         self::TN_PRICE,
         self::TN_EARNING,
@@ -351,24 +361,27 @@ class word extends word_link_object
     /**
      * get the view object for this word
      */
-    function load_view(): view
+    function load_view(): ?view
     {
-        log_debug('word->view for ' . $this->dsp_id());
         $result = null;
 
         $this->load();
-        if ($this->view_id > 0) {
-            log_debug('word->view got id ' . $this->view_id);
-            $result = new view;
-            $result->usr = $this->usr;
-            $result->id = $this->view_id;
-            if ($result->load()) {
-                $this->view = $result;
-                log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
+
+        if ($this->view != null) {
+            $result = $this->view;
+        } else {
+            if ($this->view_id > 0) {
+                log_debug('word->view got id ' . $this->view_id);
+                $result = new view;
+                $result->usr = $this->usr;
+                $result->id = $this->view_id;
+                if ($result->load()) {
+                    $this->view = $result;
+                    log_debug('word->view for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
+                }
             }
         }
 
-        log_debug('word->view done');
         return $result;
     }
 
@@ -714,6 +727,14 @@ class word extends word_link_object
     }
 
     /**
+     * return true if the word is just to define the default period
+     */
+    function is_time_jump(): bool
+    {
+        return $this->is_type(word_type_list::DBL_TIME_JUMP);
+    }
+
+    /**
      * return true if the word has the type "measure" (e.g. "meter" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
@@ -823,7 +844,7 @@ class word extends word_link_object
     /**
      * returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
      */
-    function is_mainly(): phrase_list
+    function is_mainly(): phrase
     {
         $result = null;
         $is_phr_lst = $this->is();

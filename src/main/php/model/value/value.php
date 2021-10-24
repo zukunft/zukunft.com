@@ -404,43 +404,44 @@ class value extends user_sandbox_display
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
      *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
      *    because most values for "ABB", "Sales" are in ,"million","CHF"
-     * function load_best()
-     * {
-     * log_debug('value->load_best for ' . $this->dsp_id());
-     * $this->load();
-     * // if not found try without scaling
-     * if ($this->id <= 0) {
-     * $this->load_phrases();
-     * if (!isset($this->phr_lst)) {
-     * log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
-     * } else {
-     * // try to get a value with another scaling
-     * $phr_lst_unscaled = clone $this->phr_lst;
-     * $phr_lst_unscaled->ex_scaling();
-     * log_debug('value->load_best try unscaled with ' . $phr_lst_unscaled->dsp_id());
-     * $grp_unscale = $phr_lst_unscaled->get_grp();
-     * $this->grp_id = $grp_unscale->id;
-     * $this->load();
-     * // if not found try with converted measure
-     * if ($this->id <= 0) {
-     * // try to get a value with another measure
-     * $phr_lst_converted = clone $phr_lst_unscaled;
-     * $phr_lst_converted->ex_measure();
-     * log_debug('value->load_best try converted with ' . $phr_lst_converted->dsp_id());
-     * $grp_unscale = $phr_lst_converted->get_grp();
-     * $this->grp_id = $grp_unscale->id;
-     * $this->load();
-     * // todo:
-     * // check if there are any matching values at all
-     * // if yes, get the most often used phrase
-     * // repeat adding a phrase utils a number is found
-     * }
-     * }
-     * }
-     * log_debug('value->load_best got ' . $this->number . ' for ' . $this->dsp_id());
-     * }
-     *
-     * /*
+     */
+    function load_best()
+    {
+        log_debug('value->load_best for ' . $this->dsp_id());
+        $this->load();
+        // if not found try without scaling
+        if ($this->id <= 0) {
+            $this->load_phrases();
+            if (!isset($this->phr_lst)) {
+                log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
+            } else {
+                // try to get a value with another scaling
+                $phr_lst_unscaled = clone $this->phr_lst;
+                $phr_lst_unscaled->ex_scaling();
+                log_debug('value->load_best try unscaled with ' . $phr_lst_unscaled->dsp_id());
+                $grp_unscale = $phr_lst_unscaled->get_grp();
+                $this->grp_id = $grp_unscale->id;
+                $this->load();
+                // if not found try with converted measure
+                if ($this->id <= 0) {
+                    // try to get a value with another measure
+                    $phr_lst_converted = clone $phr_lst_unscaled;
+                    $phr_lst_converted->ex_measure();
+                    log_debug('value->load_best try converted with ' . $phr_lst_converted->dsp_id());
+                    $grp_unscale = $phr_lst_converted->get_grp();
+                    $this->grp_id = $grp_unscale->id;
+                    $this->load();
+                    // todo:
+                    // check if there are any matching values at all
+                    // if yes, get the most often used phrase
+                    // repeat adding a phrase utils a number is found
+                }
+            }
+        }
+        log_debug('value->load_best got ' . $this->number . ' for ' . $this->dsp_id());
+    }
+
+    /*
      * load object functions that extends the database load functions
      */
 
@@ -935,7 +936,11 @@ class value extends user_sandbox_display
 
             if ($key == 'timestamp') {
                 if (strtotime($value)) {
-                    $this->time_stamp = strtotime($value);
+                    try {
+                        $this->time_stamp = new DateTime($value);
+                    } catch (Exception $e) {
+                        log_warning('"' . $value . '" cannot be converted to a value timestamp');
+                    }
                 } else {
                     log_err('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
                 }

@@ -114,7 +114,7 @@ function run_formula_test()
     } else {
         $result = $phr_lst->name();
     }
-    $target = '"System Test Word Increase"';
+    $target = '"System Test Time Word Category e.g. Year"';
     test_dsp('formula->assign_phr_lst_direct for "' . $frm->name . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_ulst_direct();
@@ -123,7 +123,7 @@ function run_formula_test()
     } else {
         $result = $phr_lst->name();
     }
-    $target = '"System Test Word Increase"';
+    $target = '"System Test Time Word Category e.g. Year"';
     test_dsp('formula->assign_phr_ulst_direct for "' . $frm->name . '"', $target, $result);
 
     // loading another formula (Price Earning ratio ) to have more test cases
@@ -201,8 +201,9 @@ function run_formula_test()
     $target = '"percent" = ( <a href="/http/formula_edit.php?id=18&back=0">this</a> - <a href="/http/formula_edit.php?id=20&back=0">prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0">prior</a>';
     test_dsp('formula->dsp_text for ' . $frm->dsp_id() . '', $target, $result);
 
+    $frm_increase = load_formula(formula::TN_INCREASE);
     $result = $frm_dsp->name_linked($back);
-    $target = '<a href="/http/formula_edit.php?id=25&back=0">System Test Formula Increase</a>';
+    $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id . '&back=0">' . formula::TN_INCREASE . '</a>';
     test_dsp('formula->display for ' . $frm->dsp_id() . '', $target, $result);
 
     $wrd = new word_dsp;

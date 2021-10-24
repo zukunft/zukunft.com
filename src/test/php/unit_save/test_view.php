@@ -28,10 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 function create_test_views()
 {
-    echo "<h2>Check if all base views are exist</h2><br>";
-    test_view(TD_COMPLETE);
-    test_view(TD_COMPANY_LIST);
-    echo "<br><br>";
+    test_header('Check if all base views are exist');
+
+    foreach (view::RESERVED_VIEWS as $view_name) {
+        test_view($view_name);
+    }
+
 }
 
 function run_view_test()

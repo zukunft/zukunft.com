@@ -32,7 +32,7 @@ function create_test_formula_links()
 
     test_formula_link(formula::TN_RATIO, word::TN_SHARE);
     test_formula_link(formula::TN_SECTOR, word::TN_SHARE);
-    test_formula_link(formula::TN_INCREASE, word::TN_INCREASE);
+    test_formula_link(formula::TN_INCREASE, word::TN_YEAR);
     test_formula_link(formula::TN_SCALE_K, word::TN_IN_K);
     test_formula_link(formula::TN_SCALE_MIO, word::TN_MIO);
     test_formula_link(formula::TN_SCALE_BIL, word::TN_BIL);
@@ -81,8 +81,8 @@ function run_formula_link_test()
 
     // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
     $result = $frm_lnk2->fob->dsp_obj()->name();
-    $target = $frm->name();
-    test_dsp('formula_link->load by formula id and link id "' . $frm->name() . '', $target, $result);
+    $target = $frm->dsp_obj()->name();
+    test_dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj()->name() . '', $target, $result);
 
     $result = $frm_lnk2->tob->name();
     $target = $phr->name();
@@ -212,7 +212,7 @@ function run_formula_link_list_test()
 
     test_header('Test the formula link list class (classes/formula_link_list.php)');
 
-    $frm = load_formula(TF_INCREASE);
+    $frm = load_formula(formula::TN_INCREASE);
     $frm_lnk_lst = new formula_link_list;
     $frm_lnk_lst->frm = $frm;
     $frm_lnk_lst->usr = $usr;
@@ -223,7 +223,7 @@ function run_formula_link_list_test()
     $phr_lst->usr = $usr;
     $phr_lst->load();
     $result = $phr_lst->dsp_id();
-    $target = TW_YEAR;
+    $target = word::TN_YEAR;
     test_dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
 }

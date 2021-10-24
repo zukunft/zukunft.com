@@ -96,7 +96,7 @@ class batch_job
 
         global $db_con;
 
-        $result = '';
+        $result = 0;
         log_debug('batch_job->add');
         // create first the database entry to make sure the update is done
         if ($this->type <= 0) {

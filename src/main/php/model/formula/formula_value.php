@@ -905,7 +905,7 @@ class formula_value
 
             $frm = $this->frm;
             $phr_lst = $this->src_phr_lst;
-            $frm->calc($phr_lst);
+            $frm->calc($phr_lst, '');
 
             //$this->save_if_updated ();
             log_debug('formula_value->update ' . $this->dsp_id() . ' to ' . $this->value . ' done');

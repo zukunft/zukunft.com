@@ -317,13 +317,15 @@ class value_list
     */
 
     // get a list with all time phrase used in the complete value list
-    function time_lst()
+    function time_lst(): phrase_list
     {
         $all_ids = array();
-        foreach ($this->lst as $val) {
-            $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
+        if ($this->lst != null) {
+            foreach ($this->lst as $val) {
+                $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
+            }
         }
-        $phr_lst = new word_list;
+        $phr_lst = new phrase_list();
         $phr_lst->usr = $this->usr;
         if (count($all_ids) > 0) {
             $phr_lst->ids = $all_ids;
@@ -340,12 +342,14 @@ class value_list
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;
 
-        foreach ($this->lst as $val) {
-            if (!isset($val->phr_lst)) {
-                $val->load();
-                $val->load_phrases();
+        if ($this->lst != null) {
+            foreach ($this->lst as $val) {
+                if (!isset($val->phr_lst)) {
+                    $val->load();
+                    $val->load_phrases();
+                }
+                $phr_lst->merge($val->phr_lst);
             }
-            $phr_lst->merge($val->phr_lst);
         }
 
         log_debug('value_list->phr_lst (' . dsp_count($phr_lst->lst) . ')');
@@ -383,25 +387,27 @@ class value_list
         $result = array();
         $src_ids = array();
 
-        foreach ($this->lst as $val) {
-            if ($val->source_id > 0) {
-                log_debug('value_list->source_lst test id ' . $val->source_id);
-                if (!in_array($val->source_id, $src_ids)) {
-                    log_debug('value_list->source_lst add id ' . $val->source_id);
-                    if (!isset($val->source)) {
-                        log_debug('value_list->source_lst load id ' . $val->source_id);
-                        $val->load_source();
-                        log_debug('value_list->source_lst loaded ' . $val->source->name);
-                    } else {
-                        if ($val->source_id <> $val->source->id) {
+        if ($this->lst != null) {
+            foreach ($this->lst as $val) {
+                if ($val->source_id > 0) {
+                    log_debug('value_list->source_lst test id ' . $val->source_id);
+                    if (!in_array($val->source_id, $src_ids)) {
+                        log_debug('value_list->source_lst add id ' . $val->source_id);
+                        if (!isset($val->source)) {
                             log_debug('value_list->source_lst load id ' . $val->source_id);
                             $val->load_source();
                             log_debug('value_list->source_lst loaded ' . $val->source->name);
+                        } else {
+                            if ($val->source_id <> $val->source->id) {
+                                log_debug('value_list->source_lst load id ' . $val->source_id);
+                                $val->load_source();
+                                log_debug('value_list->source_lst loaded ' . $val->source->name);
+                            }
                         }
+                        $result[] = $val->source;
+                        $src_ids[] = $val->source_id;
+                        log_debug('value_list->source_lst added ' . $val->source->name);
                     }
-                    $result[] = $val->source;
-                    $src_ids[] = $val->source_id;
-                    log_debug('value_list->source_lst added ' . $val->source->name);
                 }
             }
         }

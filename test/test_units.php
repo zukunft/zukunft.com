@@ -40,22 +40,7 @@ include_once '../src/test/php/utils/test_base.php';
 // prepare testing
 // ---------------
 
-$start_time = microtime(true);
-$exe_start_time = $start_time;
-
-// create a list with all prepared sql queries to check if the name is unique
-$sql_names = array();
-
-$error_counter = 0;
-$timeout_counter = 0;
-$total_tests = 0;
-
-// just to test the database abstraction layer, but without real connection to any database
-
-$db_con= New sql_db;
-$db_con->db_type = SQL_DB_TYPE;
-$usr = new user;
-$usr->id = SYSTEM_USER_ID;
+test_start();
 
 // ------------------
 // start unit testing

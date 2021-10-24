@@ -103,6 +103,35 @@ class user
 
     }
 
+    /**
+     * @return user_dsp the user object with the display interface functions
+     */
+    function dsp_obj(): user_dsp
+    {
+        $dsp_obj = new user_dsp();
+
+        $dsp_obj->id = $this->id;
+        $dsp_obj->name = $this->name;
+        $dsp_obj->ip_addr = $this->ip_addr;
+        $dsp_obj->email = $this->email;
+
+        $dsp_obj->first_name = $this->first_name;
+        $dsp_obj->last_name = $this->last_name;
+        $dsp_obj->code_id = $this->code_id;
+        $dsp_obj->dec_point = $this->dec_point;
+        $dsp_obj->thousand_sep = $this->thousand_sep;
+
+        $dsp_obj->profile_id = $this->profile_id;
+        $dsp_obj->source_id = $this->source_id;
+
+        $dsp_obj->wrd_id = $this->wrd_id;
+        $dsp_obj->vrb_id = $this->vrb_id;
+
+        $dsp_obj->wrd = $this->wrd;
+
+        return $dsp_obj;
+    }
+
     function row_mapper($db_usr): bool
     {
         $result = false;

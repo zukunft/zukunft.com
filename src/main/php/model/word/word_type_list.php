@@ -34,6 +34,7 @@ global $word_types;
 class word_type_list extends user_type_list
 {
     // list of the word types that have a coded functionality
+    // TODO add the missing functionality and unit tests
     const DBL_NORMAL = "default";
     const DBL_MATH_CONST = "constant";
     const DBL_TIME = "time";

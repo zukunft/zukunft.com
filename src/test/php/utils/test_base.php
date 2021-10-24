@@ -201,7 +201,6 @@ const TP_FOLLOW = "2014 is follower of 2013";
 const TP_TAXES = "Income taxes is part of cash flow statement";
 
 // some formula parameter used for testing
-const TF_INCREASE = "increase";
 const TF_SECTOR = "sectorweight";
 
 // some numbers used to test the program
@@ -241,10 +240,6 @@ const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modificatio
 const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
 const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
 
-// views used for testing
-const TD_COMPLETE = "complete";                      // the default and base view for all words
-const TD_COMPANY_LIST = "Company list with main ratios"; // the default view for the company list
-
 // ---------------
 // prepare testing
 // ---------------
@@ -252,8 +247,6 @@ const TD_COMPANY_LIST = "Company list with main ratios"; // the default view for
 function test_start()
 {
 
-    global $usr1; // the main user for testing
-    global $usr2; // a second testing user e.g. to test the user sandbox
     global $start_time; // time when all tests have started
     global $exe_start_time; // time when the single test has started (end the end time of all tests)
 
@@ -261,6 +254,23 @@ function test_start()
     global $error_counter;
     global $timeout_counter;
     global $total_tests;
+
+    // init the times to be able to detect potential timeouts
+    $start_time = microtime(true);
+    $exe_start_time = $start_time;
+
+    // reset the error counters
+    $error_counter = 0;
+    $timeout_counter = 0;
+    $total_tests = 0;
+
+}
+
+function test_users()
+{
+
+    global $usr1; // the main user for testing
+    global $usr2; // a second testing user e.g. to test the user sandbox
 
     // create the system test user to simulate the user sandbox
     // e.g. a value owned by the first user cannot be adjusted by the second user instead a user specific value is created
@@ -273,15 +283,6 @@ function test_start()
     $usr2 = new user_dsp;
     $usr2->name = TEST_USER_PARTNER_NAME;
     $usr2->load_test_user();
-
-    // init the times to be able to detect potential timeouts
-    $start_time = microtime(true);
-    $exe_start_time = $start_time;
-
-    // reset the error counters
-    $error_counter = 0;
-    $timeout_counter = 0;
-    $total_tests = 0;
 
 }
 

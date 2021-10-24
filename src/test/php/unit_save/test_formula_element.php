@@ -33,7 +33,7 @@ function run_formula_element_test () {
   test_header('Test the formula element class (classes/formula_element.php)');
 
   // load increase formula for testing
-  $frm = load_formula(TF_SECTOR);
+  $frm = load_formula(formula::TN_SECTOR);
   $exp = $frm->expression();
   $elm_lst = $exp->element_lst ($back);
 
@@ -46,37 +46,37 @@ function run_formula_element_test () {
         
         $result = $elm->dsp_id();
         if ($pos == 0) {
-          $target = 'word "Sales" (6) for user zukunft.com system batch job';
+          $target = 'word "System Test Word Parent e.g. Country" (163) for user 2 (zukunft.com system test)';
         } elseif ($pos == 1) {
-          $target = 'verb "can be used as a differentiator for" (12) for user zukunft.com system batch job';
+          $target = 'verb "can be used as a differentiator for" (13) for user 2 (zukunft.com system test)';
         } elseif ($pos == 2) {
-          $target = 'word "Sector" (54) for user zukunft.com system batch job';
+          $target = 'word "System Test Word Category e.g. Canton" (164) for user 2 (zukunft.com system test)';
         } elseif ($pos == 3) {
-          $target = 'formula "Total Sales" (19) for user zukunft.com system batch job';
+          $target = 'word "System Test Word Total" (176) for user 2 (zukunft.com system test)';
         } 
         test_dsp('formula_element->dsp_id', $target, $result);
         
         $result = $elm->name();
         if ($pos == 0) {
-          $target = 'Sales';
+          $target = 'System Test Word Parent e.g. Country';
         } elseif ($pos == 1) {
           $target = 'can be used as a differentiator for';
         } elseif ($pos == 2) {
-          $target = 'Sector';
+          $target = 'System Test Word Category e.g. Canton';
         } elseif ($pos == 3) {
-          $target = 'Total Sales';
+          $target = 'System Test Word Total';
         } 
         test_dsp('formula_element->dsp_id', $target, $result);
         
         $result = $elm->name_linked($back);
         if ($pos == 0) {
-          $target = '<a href="/http/view.php?words=6&back=1">Sales</a>';
+          $target = '<a href="/http/view.php?words=163">System Test Word Parent e.g. Country</a>';
         } elseif ($pos == 1) {
           $target = 'can be used as a differentiator for';
         } elseif ($pos == 2) {
-          $target = '<a href="/http/view.php?words=54&back=1">Sector</a>';
+          $target = '<a href="/http/view.php?words=164">System Test Word Category e.g. Canton</a>';
         } elseif ($pos == 3) {
-          $target = '<a href="/http/formula_edit.php?id=19&back=1">Total Sales</a>';
+          $target = '<a href="/http/view.php?words=176">System Test Word Total</a>';
         } 
         test_dsp('formula_element->dsp_id', $target, $result);
         
@@ -102,13 +102,13 @@ function run_formula_element_list_test () {
   test_header('Test the formula element list class (classes/formula_element_list.php)');
 
   // load increase formula for testing
-  $frm = load_formula(TF_SECTOR);
+  $frm = load_formula(formula::TN_SECTOR);
   $exp = $frm->expression();
   $elm_lst = $exp->element_lst ($back);
 
   if (isset($elm_lst)) {
     $result = $elm_lst->dsp_id();
-    $target = 'Sales can be used as a differentiator for Sector Total Sales';
+    $target = 'System Test Word Parent e.g. Country can be used as a differentiator for System Test Word Category e.g. Canton System Test Word Total';
     test_dsp_contains(', formula_element_list->dsp_id', $target, $result);
   } else {
     $result = 'formula element list not set';

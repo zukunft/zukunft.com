@@ -179,47 +179,6 @@ function run_legacy_test () {
 
 
 
-  test_header('Test link functions');
-
-  // test zul_name 
-  $id = "2";
-  $target = "is a";
-  $result = zul_name($id);
-  test_dsp(", zul_name of id ".$id, $target, $result);
-
-  // test zul_plural 
-  $id = "2";
-  $target = "are";
-  $result = zul_plural($id);
-  test_dsp(", zul_plural of id ".$id, $target, $result);
-
-  // test zul_reverse 
-  $id = "2";
-  $target = "are";
-  $result = zul_reverse($id);
-  test_dsp(", zul_reverse of id ".$id, $target, $result);
-
-  // test zul_reverse 
-  $id = "1";
-  $target = "is used for";
-  $result = zul_reverse($id);
-  test_dsp(", zul_reverse of id ".$id, $target, $result);
-
-  // test zul_plural_reverse 
-  $id = "2";
-  $target = "are";
-  $result = zul_plural_reverse($id);
-  test_dsp(", zul_plural_reverse of id ".$id, $target, $result);
-
-  // test zul_type
-  /*$name = "is a";
-  $target = "2";
-  $result = zul_type($name);
-  test_dsp(", zul_type of id ".$name, $target, $result); */
-
-  // add functions
-  // word_list / word chain
-  // word matrix
 
   test_header('Old test functions');
 
@@ -247,26 +206,5 @@ function run_legacy_test () {
     }
 
 
-  // reserved word types: at least one word of the each reserved type must exist for proper usage, but there may exist several alias
-  /*$word_other        = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word other",        $word_other);
-  $word_next         = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word ABB",          $word_abb);
-  $word_this         = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word ABB",          $word_abb);
-  $word_previous     = zu_sql_get_id ("word",    "other"       ); test_show_db_id("Word ABB",          $word_abb);
-  */
-  // testing words
-  $word_abb          = zu_sql_get_id ("word",    TW_ABB         ); test_show_db_id("Word ABB",          $word_abb);
-  $word_nesn         = zu_sql_get_id ("word",    TW_NESN        ); test_show_db_id("Word Nestlé",       $word_nesn);
-  $word_country      = zu_sql_get_id ("word",    "Country"      ); test_show_db_id("Word Country",      $word_country);
-  $word_ch           = zu_sql_get_id ("word",    "Switzerland"  ); test_show_db_id("Word Switzerland",  $word_ch);
-  $word_revenues     = zu_sql_get_id ("word",    TW_SALES       ); test_show_db_id("Word Sales",        $word_revenues);
-  $word_2013         = zu_sql_get_id ("word",    TW_2013        ); test_show_db_id("Word 2013",         $word_2013);
-  $word_2014         = zu_sql_get_id ("word",    TW_2014        ); test_show_db_id("Word 2014",         $word_2014);
-  $word_2016         = zu_sql_get_id ("word",    TW_2016        ); test_show_db_id("Word 2016",         $word_2016);
-  $word_mio          = zu_sql_get_id ("word",    TW_M           ); test_show_db_id("Word mio",          $word_mio);
-  $word_percent      = zu_sql_get_id ("word",    TW_PCT         ); test_show_db_id("Word percent",      $word_percent);
-  $word_CHF          = zu_sql_get_id ("word",    TW_CHF         ); test_show_db_id("Word CHF",          $word_CHF);
-  //$formula_value     = zu_sql_get_id ("formula", "value",       $debug); test_show_db_id("Formula Value",     $formula_value);
-  $word_type_time    = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);                         test_show_db_id("Word Type Time",    $word_type_time);
-  $word_type_percent = cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT);                      test_show_db_id("Word Type Percent", $word_type_percent);
- 
+
 }

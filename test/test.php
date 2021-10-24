@@ -138,83 +138,107 @@ $db_con = prg_start("unit and integration testing");
 include_once '../src/test/php/utils/test_base.php';
 
 // load the session user parameters
-$usr = new user;
-$result = $usr->get();
+$start_usr = new user;
+$result = $start_usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id > 0) {
-    if ($usr->is_admin()) {
+if ($start_usr->id > 0) {
+    if ($start_usr->is_admin()) {
 
         // prepare testing
         test_start();
 
-        // --------------------------------------
-        // start testing the system functionality
-        // --------------------------------------
+        // run the unit tests without database connection
+        run_unit_tests();
 
-        run_system_test();
-        run_user_test();
+        // reload the setting lists after using dummy list for the unit tests
+        $db_con->close();
+        $db_con = prg_restart("reload cache after unit testing");
 
-        import_base_config();
-        create_test_words();
-        create_test_phrases();
-        create_base_times();
-        create_test_formulas();
-        create_test_formula_links();
-        create_test_views();
-        create_test_values();
 
-        run_db_link_test();
-        //run_lib_test ();
-        run_string_unit_tests(); // test functions not yet split into single unit tests
-        run_math_test();
-        run_word_tests();
-        run_word_ui_test();
-        run_word_display_test();
-        run_word_list_test();
-        run_word_link_test();
-        run_ref_test();
-        run_phrase_test();
-        run_phrase_group_test();
-        run_phrase_group_list_test();
-        run_graph_test();
-        run_verb_test();
-        run_term_test();
-        run_value_test();
-        run_value_ui_test();
-        run_source_test();
-        run_expression_test();
-        run_formula_test();
-        run_formula_list_test();
-        run_formula_ui_test();
-        run_formula_link_test();
-        run_formula_link_list_test();
-        run_formula_trigger_test();
-        run_formula_value_test();
-        run_formula_value_list_test();
-        run_formula_element_test();
-        run_formula_element_list_test();
-        run_formula_element_group_test();
-        run_batch_job_test();
-        run_batch_job_list_test();
-        run_view_test();
-        run_view_component_test();
-        run_view_component_link_test();
-        //run_display_test ();
-        run_export_test();
-        //run_permission_test ();
-        run_legacy_test();
+        // switch to the test user
+        $usr = new user;
+        $usr->load_user_by_profile(user::SYSTEM_TEST);
+        if ($usr->id > 0) {
 
-        // testing cleanup to remove any remaining test records
-        run_test_cleanup();
+            // create the testing users
+            test_users();
 
-        // start the integration tests by loading the base and sample data
-        run_import_test(unserialize(TEST_IMPORT_FILE_LIST));
+            // cleanup also before testing to remove any leftovers
+            run_test_cleanup();
 
-        // display the test results
-        zu_test_dsp_result();
+            // --------------------------------------
+            // start testing the system functionality
+            // --------------------------------------
+
+            load_usr_data();
+            run_unit_db_tests();
+
+            run_system_test();
+            run_user_test();
+
+            import_base_config();
+            create_test_words();
+            create_test_phrases();
+            create_base_times();
+            create_test_formulas();
+            create_test_formula_links();
+            create_test_views();
+            create_test_values();
+
+            run_db_link_test();
+            run_string_unit_tests(); // test functions not yet split into single unit tests
+            run_math_test();
+            run_word_tests();
+            run_word_ui_test();
+            run_word_display_test();
+            run_word_list_test();
+            run_word_link_test();
+            run_ref_test();
+            run_phrase_test();
+            run_phrase_group_test();
+            run_phrase_group_list_test();
+            run_graph_test();
+            run_verb_test();
+            run_term_test();
+            run_value_test();
+            //run_value_ui_test();
+            run_source_test();
+            run_expression_test();
+            run_formula_test();
+            run_formula_list_test();
+            run_formula_ui_test();
+            run_formula_link_test();
+            run_formula_link_list_test();
+            run_formula_trigger_test();
+            run_formula_value_test();
+            run_formula_value_list_test();
+            run_formula_element_test();
+            run_formula_element_list_test();
+            run_formula_element_group_test();
+            run_batch_job_test();
+            run_batch_job_list_test();
+            run_view_test();
+            run_view_component_test();
+            run_view_component_link_test();
+            run_display_test ();
+            run_export_test();
+            //run_permission_test ();
+            run_legacy_test();
+
+            // testing cleanup to remove any remaining test records
+            run_test_cleanup();
+
+            // start the integration tests by loading the base and sample data
+            run_import_test(unserialize(TEST_IMPORT_FILE_LIST));
+
+            // display the test results
+            zu_test_dsp_result();
+        }
     }
 }
 
 // Closing connection
 prg_end($db_con);
+
+test_dsp_result();

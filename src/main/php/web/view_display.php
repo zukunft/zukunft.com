@@ -154,38 +154,49 @@ class view_dsp extends view
     }
 
     /**
-     * either the user name or the link to create an account
+     * either the username or the link to create an account
      */
     private function dsp_user($back): string
     {
         $result = '';
-        if ($_SESSION['logged']) {
-            log_debug('view_dsp->dsp_user for user ' . $_SESSION['user_name']);
-            log_debug('view_dsp->dsp_user for user ' . $_SESSION['usr_id']);
-            log_debug('view_dsp->dsp_user for user ' . $back);
-            $result .= '<a href="/http/user.php?id=' . $_SESSION['usr_id'] . '&back=' . $back . '">' . $_SESSION['user_name'] . '</a>';
-            log_debug('view_dsp->dsp_user user done');
-        } else {
-            $url = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-            $back_path = parse_url($url, PHP_URL_PATH);
-            $parsed = parse_url($url);
-            $query = $parsed['query'];
-            parse_str($query, $params);
-            unset($params['back']);
-            $back = $back_path . '?' . http_build_query($params);
-            //$back = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
-            $result .= '<a href="/http/login.php?back=' . $back . '">log in</a> or <a href="/http/signup.php">Create account</a>';
+        if (isset($_SESSION)) {
+            if (in_array('logged', $_SESSION)) {
+                if ($_SESSION['logged']) {
+                    log_debug('view_dsp->dsp_user for user ' . $_SESSION['user_name']);
+                    log_debug('view_dsp->dsp_user for user ' . $_SESSION['usr_id']);
+                    log_debug('view_dsp->dsp_user for user ' . $back);
+                    $result .= '<a href="/http/user.php?id=' . $_SESSION['usr_id'] . '&back=' . $back . '">' . $_SESSION['user_name'] . '</a>';
+                    log_debug('view_dsp->dsp_user user done');
+                }
+            }
         }
+        if ($result == '') {
+            if (in_array('HTTP_HOST', $_SERVER)) {
+                $url = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+                $back_path = parse_url($url, PHP_URL_PATH);
+                $parsed = parse_url($url);
+                $query = $parsed['query'];
+                parse_str($query, $params);
+                unset($params['back']);
+                $back = $back_path . '?' . http_build_query($params);
+                //$back = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
+                $result .= '<a href="/http/login.php?back=' . $back . '">log in</a> or <a href="/http/signup.php">Create account</a>';
+            } else {
+                $result = 'local test user';
+            }
+        }
+
         log_debug('view_dsp->dsp_user done');
         return $result;
     }
 
     private function dsp_logout(): string
     {
-        if ($_SESSION['logged']) {
-            $result = ' <a href="/http/logout.php">log out</a>';
-        } else {
-            $result = '';
+        $result = '';
+        if (in_array('logged', $_SESSION)) {
+            if ($_SESSION['logged']) {
+                $result = ' <a href="/http/logout.php">log out</a>';
+            }
         }
         return $result;
     }

@@ -42,16 +42,7 @@ class formula_element_group_list
     // return best possible identification for this element group list mainly used for debugging
     function dsp_id(): string
     {
-        $id  = '';
-        if ($this->ids() != null) {
-            $id = dsp_array($this->ids());
-        }
-        $name = $this->name();
-        if ($name <> '""') {
-            $result = '' . $name . ' (' . $id . ')';
-        } else {
-            $result = '' . $id . '';
-        }
+        $result = dsp_array($this->ids());
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
         }
@@ -78,8 +69,8 @@ class formula_element_group_list
         if (isset($this->lst)) {
             foreach ($this->lst as $elm_grp) {
                 // use only valid ids
-                if ($elm_grp->id <> 0) {
-                    $result[] = $elm_grp->id;
+                if ($elm_grp->lst != null) {
+                    $result[] = $elm_grp->dsp_id();
                 }
             }
         }

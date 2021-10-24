@@ -65,7 +65,7 @@ function zul_plural ($id) {
 }
 
 // name including the user id as a parameter to return the verb in the lanuage of the user
-function zul_name ($id, $user_id) {
+function zul_name ($id) {
   return zu_sql_get_field ('verb', $id, 'verb_name');
 }
 

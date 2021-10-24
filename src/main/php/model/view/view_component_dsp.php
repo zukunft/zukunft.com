@@ -123,7 +123,7 @@ class view_component_dsp extends view_component
     }
 
     // display all formulas related to the given word
-    function formulas($wrd, $back): string
+    function formulas($wrd, string $back = ''): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_FORMULAS)) {
@@ -150,7 +150,7 @@ class view_component_dsp extends view_component
     }
 
     // show a list of formula results related to a word
-    function formula_values($wrd, $back)
+    function formula_values($wrd, string $back = '')
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_FORMULA_RESULTS)) {

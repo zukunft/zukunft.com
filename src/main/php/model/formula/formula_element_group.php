@@ -353,9 +353,11 @@ class formula_element_group
         // show the time if adjusted by a special formula element
         if (isset($fig_lst)) {
             // build the html code to display the value with the link
-            foreach ($fig_lst->lst as $fig) {
-                log_debug('formula_element_group->dsp_values -> display figure');
-                $result .= $fig->display_linked($back);
+            if ($fig_lst->lst != null) {
+                foreach ($fig_lst->lst as $fig) {
+                    log_debug('formula_element_group->dsp_values -> display figure');
+                    $result .= $fig->display_linked($back);
+                }
             }
 
             // todo: show the time phrase only if it differs from the main time phrase

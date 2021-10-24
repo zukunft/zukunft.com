@@ -227,6 +227,24 @@ function run_unit_tests()
 {
     test_header('Start the zukunft.com unit tests');
 
+    // remember the global var for restore after the unit tests
+    global $db_con;
+    global $sql_names;
+    global $usr;
+    $global_db_con = $db_con;
+    $global_sql_names = $sql_names;
+    $global_usr = $usr;
+
+    // just to test the database abstraction layer, but without real connection to any database
+    $db_con= New sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
+    // create a list with all prepared sql queries to check if the name is unique
+    $sql_names = array();
+    // create a dummy user for unit testing
+    $usr = new user;
+    $usr->id = SYSTEM_USER_ID;
+
+
     // prepare the unit tests
     unit_test_init_sys_log_status();
     unit_test_init_sys_users();
@@ -261,4 +279,11 @@ function run_unit_tests()
     run_user_sandbox_unit_tests();
     run_ref_unit_tests();
     run_user_log_unit_tests();
+
+    // restore the global vars
+    $db_con = $global_db_con;
+    $sql_names = $global_sql_names;
+    $usr = $global_usr;
+
+
 }
