@@ -58,7 +58,7 @@ if ($usr->id > 0) {
     $back = $_GET['back'];
 
     // create the view component object to apply the user changes to it
-    $cmp = new view_component_dsp;
+    $cmp = new view_cmp_dsp;
     $cmp->id = $_GET['id'];
     $cmp->usr = $usr;
     $result .= $cmp->load();

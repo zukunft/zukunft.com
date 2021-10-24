@@ -64,15 +64,15 @@ function run_view_unit_db_tests()
     test_subheader('View component types tests');
 
     // load the view component types
-    $cmp_lst = new view_component_type_list();
+    $cmp_lst = new view_cmp_type_list();
     $result = $cmp_lst->load($db_con);
     $target = true;
     test_dsp('unit_db_view_component->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_TEXT);
+    $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
     $target = 3;
-    test_dsp('unit_db_view_component->check component type' . view_component_type_list::DBL_TEXT, $result, $target);
+    test_dsp('unit_db_view_component->check component type' . view_cmp_type::TEXT, $result, $target);
 
 }
 

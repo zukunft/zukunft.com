@@ -73,6 +73,8 @@ if ($start_usr->id > 0) {
             create_test_formulas();
             create_test_formula_links();
             create_test_views();
+            create_test_view_components();
+            create_test_view_component_links();
             create_test_values();
 
             /*

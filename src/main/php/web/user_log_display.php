@@ -90,7 +90,7 @@ class user_log_display
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_USR) . ") AND ";
             $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
             $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'view_component') {
+        } elseif ($this->type == 'view_cmp') {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . ") AND ";
             $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
@@ -325,7 +325,7 @@ class user_log_display
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'view_component') {
+        } elseif ($this->type == 'view_cmp') {
             $sql_where = " ( c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
                     OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . " 
                     OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_LINK) . " 

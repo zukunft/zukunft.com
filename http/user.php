@@ -116,7 +116,7 @@ if ($usr->id > 0) {
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
-        $cmp = new view_component;
+        $cmp = new view_cmp;
         $cmp->id = $undo_cmp;
         $cmp->usr = $usr;
         $cmp->del_usr_cfg();
@@ -124,7 +124,7 @@ if ($usr->id > 0) {
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
-        $cmp_lnk = new view_component_link;
+        $cmp_lnk = new view_cmp_link;
         $cmp_lnk->id = $undo_cmp_lnk;
         $cmp_lnk->usr = $usr;
         $cmp_lnk->del_usr_cfg();

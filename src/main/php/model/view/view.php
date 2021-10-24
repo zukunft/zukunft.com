@@ -69,18 +69,24 @@ class view extends user_sandbox
     const COMPONENT_EDIT = "view_entry_edit";
     const COMPONENT_DEL = "view_entry_del";
 
-    // persevered view names for unit and integration tests
-    const TEST_NAME_ADD = 'System Test View';
-    const TEST_NAME_RENAMED = 'System Test View Renamed';
-    const TEST_NAME_COMPLETE = 'System Test View Complete';
-    const TEST_NAME_TABLE = 'System Test View Table';
+    // persevered view names for unit and integration tests (TN means TEST NAME)
+    const TN_ADD = 'System Test View';
+    const TN_RENAMED = 'System Test View Renamed';
+    const TN_COMPLETE = 'System Test View Complete';
+    const TN_TABLE = 'System Test View Table';
 
-    // view array for creating the test views and remove them after the test
+    // array of view names that used for testing and remove them after the test
     const RESERVED_VIEWS = array(
-        self::TEST_NAME_ADD,
-        self::TEST_NAME_RENAMED,
-        self::TEST_NAME_COMPLETE,
-        self::TEST_NAME_TABLE
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_COMPLETE,
+        self::TN_TABLE
+    );
+
+    // array of test view names create before the test
+    const TEST_VIEWS = array(
+        self::TN_COMPLETE,
+        self::TN_TABLE
     );
 
     // database fields additional to the user sandbox fields for the view component
@@ -290,27 +296,29 @@ class view extends user_sandbox
         $sql = $this->load_components_sql($db_con);
         $db_lst = $db_con->get($sql);
         $this->cmp_lst = array();
-        foreach ($db_lst as $db_entry) {
-            // this is only for the view of the active user, so a direct exclude can be done
-            if ((is_null($db_entry['excluded']) or $db_entry['excluded'] == 0)
-                and (is_null($db_entry['link_excluded']) or $db_entry['link_excluded'] == 0)) {
-                $new_entry = new view_component_dsp;
-                $new_entry->id = $db_entry['view_component_id'];
-                $new_entry->usr = $this->usr;
-                $new_entry->owner_id = $db_entry['user_id'];
-                $new_entry->order_nbr = $db_entry['order_nbr'];
-                $new_entry->name = $db_entry['view_component_name'];
-                $new_entry->word_id_row = $db_entry['word_id_row'];
-                $new_entry->link_type_id = $db_entry['link_type_id'];
-                $new_entry->type_id = $db_entry['view_component_type_id'];
-                $new_entry->formula_id = $db_entry['formula_id'];
-                $new_entry->word_id_col = $db_entry['word_id_col'];
-                $new_entry->word_id_col2 = $db_entry['word_id_col2'];
-                $new_entry->code_id = $db_entry[sql_db::FLD_CODE_ID];
-                if (!$new_entry->load_phrases()) {
-                    $result = false;
+        if ($db_lst != null) {
+            foreach ($db_lst as $db_entry) {
+                // this is only for the view of the active user, so a direct exclude can be done
+                if ((is_null($db_entry['excluded']) or $db_entry['excluded'] == 0)
+                    and (is_null($db_entry['link_excluded']) or $db_entry['link_excluded'] == 0)) {
+                    $new_entry = new view_cmp_dsp;
+                    $new_entry->id = $db_entry['view_component_id'];
+                    $new_entry->usr = $this->usr;
+                    $new_entry->owner_id = $db_entry['user_id'];
+                    $new_entry->order_nbr = $db_entry['order_nbr'];
+                    $new_entry->name = $db_entry['view_component_name'];
+                    $new_entry->word_id_row = $db_entry['word_id_row'];
+                    $new_entry->link_type_id = $db_entry['link_type_id'];
+                    $new_entry->type_id = $db_entry['view_component_type_id'];
+                    $new_entry->formula_id = $db_entry['formula_id'];
+                    $new_entry->word_id_col = $db_entry['word_id_col'];
+                    $new_entry->word_id_col2 = $db_entry['word_id_col2'];
+                    $new_entry->code_id = $db_entry[sql_db::FLD_CODE_ID];
+                    if (!$new_entry->load_phrases()) {
+                        $result = false;
+                    }
+                    $this->cmp_lst[] = $new_entry;
                 }
-                $this->cmp_lst[] = $new_entry;
             }
         }
         log_debug('view->load_components ' . dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
@@ -390,11 +398,11 @@ class view extends user_sandbox
 
     /**
      * add a new component to this view
-     * @param view_component $cmp the view component that should be added
+     * @param view_cmp $cmp the view component that should be added
      * @param int|null $pos is set the position, where the
      * @return bool true if the new component link has been saved to the database
      */
-    function add_cmp(view_component $cmp, ?int $pos = null, bool $do_save = true): bool
+    function add_cmp(view_cmp $cmp, ?int $pos = null, bool $do_save = true): bool
     {
         $result = false;
         if ($pos != null) {
@@ -404,7 +412,7 @@ class view extends user_sandbox
             } else {
                 if ($do_save) {
                     $cmp->save();
-                    $cmp_lnk = new view_component_link();
+                    $cmp_lnk = new view_cmp_link();
                     $cmp_lnk->usr = $this->usr;
                     $cmp_lnk->view_id = $this->id;
                     $cmp_lnk->view_component_id = $cmp->id;
@@ -432,11 +440,11 @@ class view extends user_sandbox
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new view_component_dsp;
+            $cmp = new view_cmp_dsp;
             $cmp->id = $view_component_id;
             $cmp->usr = $this->usr;
             $cmp->load();
-            $cmp_lnk = new view_component_link;
+            $cmp_lnk = new view_cmp_link;
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->usr = $this->usr;
@@ -456,11 +464,11 @@ class view extends user_sandbox
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new view_component_dsp;
+            $cmp = new view_cmp_dsp;
             $cmp->id = $view_component_id;
             $cmp->usr = $this->usr;
             $cmp->load();
-            $cmp_lnk = new view_component_link;
+            $cmp_lnk = new view_cmp_link;
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
             $cmp_lnk->usr = $this->usr;
@@ -576,7 +584,7 @@ class view extends user_sandbox
                 $json_lst = $value;
                 $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
-                    $cmp = new view_component();
+                    $cmp = new view_cmp();
                     $cmp->usr = $usr;
                     $cmp->import_obj($json_cmp, $do_save);
                     // on import first add all view components to the view object and save them all at once

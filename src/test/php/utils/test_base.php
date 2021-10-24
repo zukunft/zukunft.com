@@ -157,7 +157,6 @@ include_once $path_dev . 'test_legacy.php';
 const TEST_USER_NAME = "zukunft.com system test";
 const TEST_USER_PARTNER_NAME = "zukunft.com system test partner";
 const TEST_USER_ID = "2";
-const TEST_USER_PARTNER_ID = "2";
 const TEST_USER_DESCRIPTION = "standard user view for all users";
 const TEST_USER_IP = "66.249.64.95"; // used to check the blocking of an IP address
 
@@ -222,14 +221,6 @@ const TS_IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
 const TS_IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
 const TS_NESN_2016_NAME = 'Nestlé Financial Statement 2016';
 
-
-// settings for add, change and deletion tests
-// these names should not exist in the database
-const TM_ADD = "Test Mask";
-const TM_ADD_RENAMED = "Mask Test";
-const TC_ADD = "Test Mask Component";
-const TC_ADD_RENAMED = "Mask Component Test";
-const TC_ADD2 = "Test Mask Component two";
 
 // max time expected for each function execution
 const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
@@ -797,22 +788,12 @@ function load_view_usr($dsp_name, $usr): view
     return $dsp;
 }
 
-function get_view($dsp_name): view
+function test_view($dsp_name): view
 {
     global $usr;
     $dsp = load_view($dsp_name);
-    if ($dsp->id == 0 or $dsp->id == Null) {
-        $dsp->usr = $usr;
-        $dsp->name = $dsp_name;
-        $dsp->save();
-    }
-    return $dsp;
-}
-
-function test_view($dsp_name): view
-{
-    $dsp = load_view($dsp_name);
     if ($dsp->id == 0) {
+        $dsp->usr = $usr;
         $dsp->name = $dsp_name;
         $dsp->save();
     }
@@ -821,10 +802,10 @@ function test_view($dsp_name): view
     return $dsp;
 }
 
-function load_view_component($cmp_name): view_component
+function load_view_component($cmp_name): view_cmp
 {
     global $usr;
-    $cmp = new view_component;
+    $cmp = new view_cmp;
     $cmp->usr = $usr;
     $cmp->name = $cmp_name;
     $cmp->load();
@@ -832,34 +813,55 @@ function load_view_component($cmp_name): view_component
 }
 
 // same as load_view_component but for a specific usr
-function load_view_component_usr($cmp_name, $usr): view_component
+function load_view_component_usr($cmp_name, $usr): view_cmp
 {
-    $cmp = new view_component;
+    $cmp = new view_cmp;
     $cmp->usr = $usr;
     $cmp->name = $cmp_name;
     $cmp->load();
     return $cmp;
 }
 
-function get_view_component($cmp_name): view_component
+function test_view_component($cmp_name, string $type_code_id = ''): view_cmp
 {
     global $usr;
     $cmp = load_view_component($cmp_name);
     if ($cmp->id == 0 or $cmp->id == Null) {
         $cmp->usr = $usr;
         $cmp->name = $cmp_name;
+        if ($type_code_id != '') {
+            $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
+        }
         $cmp->save();
     }
-    return $cmp;
-}
-
-function test_view_component($cmp_name): view_component
-{
-    $cmp = load_view_component($cmp_name);
     $target = $cmp_name;
     test_dsp('view component', $target, $cmp->name);
     return $cmp;
 }
+
+function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): view_cmp_link
+{
+    global $usr;
+    $dsp = load_view          ($dsp_name);
+    $cmp = load_view_component($cmp_name);
+    $lnk = new view_cmp_link();
+    $lnk->fob = $dsp;
+    $lnk->tob = $cmp;
+    $lnk->order_nbr = $pos;
+    $lnk->usr = $usr;
+    $result = $lnk->save();
+    $target = '';
+    test_dsp('view component link', $target, $result);
+    return $lnk;
+}
+
+function test_view_cmp_unlink(string $dsp_name, string $cmp_name): string
+{
+    $dsp = load_view          ($dsp_name);
+    $cmp = load_view_component($cmp_name);
+    return $cmp->unlink($dsp);
+}
+
 
 // check if a word link exists and if not and requested create it
 // $phrase_name should be set if the standard name for the link should not be used

@@ -93,7 +93,7 @@ if ($usr->id > 0) {
 
         // unlink an entry
         if (isset($_GET['del'])) {
-            $cmp = new view_component;
+            $cmp = new view_cmp;
             $cmp->id = $_GET['del'];
             $cmp->usr = $usr;
             $cmp->load();
@@ -103,7 +103,7 @@ if ($usr->id > 0) {
         // check if a existing view element should be added
         if (isset($_GET['add_view_component'])) {
             if ($_GET['add_view_component'] > 0) {
-                $cmp = new view_component;
+                $cmp = new view_cmp;
                 $cmp->id = $_GET['add_view_component'];
                 $cmp->usr = $usr;
                 $cmp->load();
@@ -115,7 +115,7 @@ if ($usr->id > 0) {
         // check if a new view element should be added
         if (isset($_GET['entry_name']) and isset($_GET['new_entry_type'])) {
             if ($_GET['entry_name'] <> '' and $_GET['new_entry_type'] > 0) {
-                $cmp = new view_component;
+                $cmp = new view_cmp;
                 $cmp->name = $_GET['entry_name'];
                 $cmp->usr = $usr;
                 $cmp->save();

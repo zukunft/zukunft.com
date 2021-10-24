@@ -48,8 +48,8 @@ function run_display_test () {
   test_header('Test the view component display class (classes/view_component_dsp.php)');
 
   // test if a simple text component can be created
-  $cmp = new view_component_dsp;
-  $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_component_type_list::DBL_TEXT);
+  $cmp = new view_cmp_dsp;
+  $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
   $cmp->name = TS_NESN_2016_NAME;
   $result = $cmp->text();
   $target = ' '.TS_NESN_2016_NAME;

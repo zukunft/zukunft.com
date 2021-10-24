@@ -355,7 +355,7 @@ class word_dsp extends word
     // shows all words the link to the given word
     // returns the html code to edit a linked word
     // ??? identical to word_list ???
-    function dsp_graph($direction, $back): string
+    function dsp_graph($direction, string $back = ''): string
     {
         log_debug('word_dsp->dsp_graph of ' . $this->dsp_id() . ' ' . $direction . ' for user ' . $this->usr->name);
         $result = '';

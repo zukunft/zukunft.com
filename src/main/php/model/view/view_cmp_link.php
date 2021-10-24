@@ -35,7 +35,7 @@
   
 */
 
-class view_component_link extends user_sandbox
+class view_cmp_link extends user_sandbox
 {
 
     const POS_BELOW = 1;  // the view component is placed below the previous component
@@ -371,7 +371,7 @@ class view_component_link extends user_sandbox
                 $order_nbr = 0;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_component_link;
+                    $cmp_lnk = new view_cmp_link;
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
                     $cmp_lnk->usr = $this->usr;
@@ -393,7 +393,7 @@ class view_component_link extends user_sandbox
                     // check if correction was successful
                     $order_nbr = 0;
                     foreach ($this->fob->cmp_lst as $entry) {
-                        $cmp_lnk = new view_component_link;
+                        $cmp_lnk = new view_cmp_link;
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
                         $cmp_lnk->usr = $this->usr;
@@ -412,7 +412,7 @@ class view_component_link extends user_sandbox
                 $prev_entry_down = false;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_component_link;
+                    $cmp_lnk = new view_cmp_link;
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
                     $cmp_lnk->usr = $this->usr;

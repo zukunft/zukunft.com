@@ -2,9 +2,11 @@
 
 /*
 
-  view_component_exp.php - the simple export object for a view component including the position that is save in the component link
-  ----------------------
-  
+  view_component_link_types.php - to define the behaviour if a component is linked to a view
+  -----------------------------
+
+    // TODO check if really needed
+
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -29,27 +31,18 @@
   
 */
 
-class view_component_exp extends user_sandbox_exp_named
+global $view_component_link_types;
+
+class view_cmp_link_type_list extends user_type_list
 {
-
-    // field names used for JSON creation
-    public ?int $position = 0;
-    public ?string $type = '';
-    public ?string $row = '';
-    public ?string $column = '';
-    public ?string $column2 = '';
-    public ?string $comment = '';
-
-    function reset()
+    /**
+     * overwrite the general user type list load function to keep the link to the table type capsuled
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @return bool true if load was successful
+     */
+    function load(sql_db $db_con, string $db_type = DB_TYPE_VIEW_COMPONENT_LINK_TYPE): bool
     {
-        parent::reset();
-
-        $this->position = 0;
-        $this->type = '';
-        $this->row = '';
-        $this->column = '';
-        $this->column2 = '';
-        $this->comment = '';
+        return parent::load($db_con, $db_type);
     }
 
 }

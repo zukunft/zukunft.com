@@ -62,7 +62,7 @@ if ($usr->id > 0) {
     if ($cmp_del_id > 0) {
 
         // create the view object to have an object to update the parameters
-        $cmp_del = new view_component;
+        $cmp_del = new view_cmp;
         $cmp_del->id = $cmp_del_id;
         $cmp_del->usr = $usr;
         $cmp_del->load();

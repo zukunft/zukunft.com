@@ -145,7 +145,14 @@ class value_list
                     $val->source_id = $db_val['source_id'];
                     $val->last_update = new DateTime($db_val['last_update']);
                     $val->grp_id = $db_val['phrase_group_id'];
-                    $val->time_phr = $db_val['time_word_id'];
+                    if ($db_val['time_word_id'] <> 0) {
+                        $time_phr = new phrase();
+                        $time_phr->id = $db_val['time_word_id'];
+                        $time_phr->usr = $this->usr;
+                        if ($time_phr->load()) {
+                            $val->time_phr = $time_phr;
+                        }
+                    }
                     $this->lst[] = $val;
                 }
             }
@@ -758,12 +765,14 @@ class value_list
             $val->load_phrases();
             log_debug('value_list->html loaded');
             $val_phr_lst = $val->phr_lst;
-            if (count($val_phr_lst) > 0) {
-                log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
-                if (empty($common_phr_ids)) {
-                    $common_phr_ids = $val_phr_lst->ids;
-                } else {
-                    $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids);
+            if ($val_phr_lst->lst != null) {
+                if (count($val_phr_lst->lst) > 0) {
+                    log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
+                    if (empty($common_phr_ids)) {
+                        $common_phr_ids = $val_phr_lst->ids;
+                    } else {
+                        $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids);
+                    }
                 }
             }
         }
@@ -814,12 +823,10 @@ class value_list
                     }
                     log_debug('value_list->html -> removed ' . $this->phr->id);
                     $dsp_phr_lst->diff_by_ids($common_phr_ids);
-                    log_debug('value_list->html -> removed ' . dsp_array($this->phr->id));
                     // remove the words of the privious row, because it should not be shown on each line
                     if (isset($last_phr_lst->ids)) {
                         $dsp_phr_lst->diff_by_ids($last_phr_lst->ids);
                     }
-                    log_debug('value_list->html -> removed ' . dsp_array($this->phr->id));
 
                     //if (isset($val->time_phr)) {
                     log_debug('value_list->html -> add time ' . $val->id);
@@ -836,7 +843,7 @@ class value_list
                     $result .= '  <tr>';
                     $result .= '    <td>';
                     log_debug('value_list->html -> linked words ' . $val->id);
-                    $result .= '      ' . $dsp_phr_lst->name_linked() . ' <a href="/http/value_edit.php?id=' . $val->id . '&back=' . $this->phr->id . '">' . $val->val_formatted() . '</a>';
+                    $result .= '      ' . $dsp_phr_lst->name_linked() . ' <a href="/http/value_edit.php?id=' . $val->id . '&back=' . $this->phr->id . '">' . $val->dsp_obj()->val_formatted() . '</a>';
                     log_debug('value_list->html -> linked words ' . $val->id . ' done');
                     // to review
                     // list the related formula values

@@ -29,7 +29,7 @@
   
 */
 
-class view_component extends user_sandbox
+class view_cmp extends user_sandbox
 {
 
     // database fields additional to the user sandbox fields for the view component
@@ -55,6 +55,34 @@ class view_component extends user_sandbox
     public ?string $link_type_name = null;  //
     public ?string $code_id = null;         // the entry type code id
     public ?string $back = null;            // the calling stack
+
+    // persevered view component names for unit and integration tests
+    const TN_ADD = 'System Test View Component';
+    const TN_RENAMED = 'System Test View Component Renamed';
+    const TN_ADD2 = 'System Test View Component Two';
+    const TN_TITLE = 'System Test View Component Title';
+    const TN_VALUES = 'System Test View Component Values';
+    const TN_RESULTS = 'System Test View Component Results';
+    const TN_TABLE = 'System Test View Component Table';
+
+    // array of view names that used for testing and remove them after the test
+    const RESERVED_VIEW_COMPONENTS = array(
+        self::TN_ADD,
+        self::TN_RENAMED,
+        self::TN_ADD2,
+        self::TN_TITLE,
+        self::TN_VALUES,
+        self::TN_RESULTS,
+        self::TN_TABLE
+    );
+
+    // array of test view names create before the test
+    const TEST_VIEW_COMPONENTS = array(
+        self::TN_TITLE,
+        self::TN_VALUES,
+        self::TN_RESULTS,
+        self::TN_TABLE
+    );
 
     function __construct()
     {
@@ -295,10 +323,12 @@ class view_component extends user_sandbox
             $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get($sql);
-            foreach ($db_lst as $db_row) {
-                log_debug('view_component->assign_dsp_ids -> check exclusion ');
-                if (is_null($db_row['excluded']) or $db_row['excluded'] == 0) {
-                    $result[] = $db_row['view_id'];
+            if ($db_lst != null) {
+                foreach ($db_lst as $db_row) {
+                    log_debug('view_component->assign_dsp_ids -> check exclusion ');
+                    if (is_null($db_row['excluded']) or $db_row['excluded'] == 0) {
+                        $result[] = $db_row['view_id'];
+                    }
                 }
             }
             log_debug('view_component->assign_dsp_ids -> number of views ' . dsp_count($result));
@@ -309,14 +339,14 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // return the html code to display a view name with the link
+// return the html code to display a view name with the link
     function name_linked($back): string
     {
 
         return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
-    //
+//
     function type_name()
     {
         log_debug('view_component->type_name do');
@@ -382,11 +412,11 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // create an object for the export
-    function export_obj(): view_component_exp
+// create an object for the export
+    function export_obj(): view_cmp_exp
     {
         log_debug('view_component->export_obj ' . $this->dsp_id());
-        $result = new view_component_exp();
+        $result = new view_cmp_exp();
 
         // add the component parameters
         $this->load_phrases();
@@ -423,7 +453,7 @@ class view_component extends user_sandbox
         return '"' . $this->name . '"';
     }
 
-    // not used at the moment
+// not used at the moment
     /*  private function link_type_name() {
         if ($this->type_id > 0) {
           $sql = "SELECT type_name
@@ -479,7 +509,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the log entry parameters for a value update
+// set the log entry parameters for a value update
     function log_link($dsp)
     {
         log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->usr->id);
@@ -496,7 +526,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
+// set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp)
     {
         log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->usr->id);
@@ -513,12 +543,12 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // link a view component to a view
+// link a view component to a view
     function link($dsp, $order_nbr): string
     {
         log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
-        $dsp_lnk = new view_component_link;
+        $dsp_lnk = new view_cmp_link;
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
         $dsp_lnk->usr = $this->usr;
@@ -527,16 +557,16 @@ class view_component extends user_sandbox
         return $dsp_lnk->save();
     }
 
-    // remove a view component from a view
-    // to do: check if the view component is not linked anywhere else
-    // and if yes, delete the view component after confirmation
+// remove a view component from a view
+// to do: check if the view component is not linked anywhere else
+// and if yes, delete the view component after confirmation
     function unlink($dsp): string
     {
         $result = '';
 
         if (isset($dsp) and isset($this->usr)) {
             log_debug('view_component->unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
-            $dsp_lnk = new view_component_link;
+            $dsp_lnk = new view_cmp_link;
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
             $dsp_lnk->usr = $this->usr;
@@ -548,7 +578,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // create a database record to save user specific settings for this view_component
+// create a database record to save user specific settings for this view_component
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -581,7 +611,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // check if the database record for the user specific settings can be removed
+// check if the database record for the user specific settings can be removed
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('view_component->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -627,7 +657,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the view component comment
+// set the update parameters for the view component comment
     function save_field_comment($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -643,7 +673,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word type
+// set the update parameters for the word type
     function save_field_type($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -662,7 +692,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word row
+// set the update parameters for the word row
     function save_field_wrd_row($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -681,7 +711,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word col
+// set the update parameters for the word col
     function save_field_wrd_col($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -700,7 +730,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word col2
+// set the update parameters for the word col2
     function save_field_wrd_col2($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -719,7 +749,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the formula
+// set the update parameters for the formula
     function save_field_formula($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -738,7 +768,7 @@ class view_component extends user_sandbox
         return $result;
     }
 
-    // save all updated view_component fields excluding the name, because already done when adding a view_component
+// save all updated view_component fields excluding the name, because already done when adding a view_component
     function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);

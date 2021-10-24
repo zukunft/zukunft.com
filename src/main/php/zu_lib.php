@@ -266,12 +266,13 @@ include_once $path_php . 'model/view/view_exp.php';
 include_once $path_php . 'model/view/view_list.php';
 include_once $path_php . 'model/view/view_type_list.php';
 include_once $path_php . 'web/view_display.php';
-include_once $path_php . 'model/view/view_component.php';
-include_once $path_php . 'model/view/view_component_exp.php';
-include_once $path_php . 'model/view/view_component_dsp.php';
-include_once $path_php . 'model/view/view_component_type_list.php';
-include_once $path_php . 'model/view/view_component_link.php';
-include_once $path_php . 'model/view/view_component_link_types.php';
+include_once $path_php . 'model/view/view_cmp.php';
+include_once $path_php . 'model/view/view_cmp_exp.php';
+include_once $path_php . 'model/view/view_cmp_dsp.php';
+include_once $path_php . 'model/view/view_cmp_type.php';
+include_once $path_php . 'model/view/view_cmp_type_list.php';
+include_once $path_php . 'model/view/view_cmp_link.php';
+include_once $path_php . 'model/view/view_cmp_link_types.php';
 
 // include all other libraries that are usually needed
 include_once $root_path . 'db_link/zu_lib_sql_link.php';
@@ -707,7 +708,7 @@ function prg_restart(string $code_name): sql_db
     $formula_element_types->load($db_con);
     $view_types = new view_type_list();
     $view_types->load($db_con);
-    $view_component_types = new view_component_type_list();
+    $view_component_types = new view_cmp_type_list();
     $view_component_types->load($db_con);
     // not yet needed?
     //$view_component_link_types = new view_component_link_type_list();

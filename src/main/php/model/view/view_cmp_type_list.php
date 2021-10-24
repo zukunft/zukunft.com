@@ -31,25 +31,8 @@
 
 global $view_component_types;
 
-class view_component_type_list extends user_type_list
+class view_cmp_type_list extends user_type_list
 {
-    // list of the view component types that have a coded functionality
-    const DBL_TEXT = "text";
-    const DBL_WORD = "fixed";
-    const DBL_WORD_SELECT = "word_select";
-    const DBL_WORDS_UP = "word_list_up";
-    const DBL_WORDS_DOWN = "word_list_down";
-    const DBL_WORD_NAME = "word_name";
-    const DBL_WORD_VALUE = "word_value_list";
-    const DBL_VALUES_ALL = "values_all";
-    const DBL_VALUES_RELATED = "values_related";
-    const DBL_FORMULAS = "formula_list";
-    const DBL_FORMULA_RESULTS = "formula_results";
-    const DBL_JSON_EXPORT = "json_export";
-    const DBL_XML_EXPORT = "xml_export";
-    const DBL_CSV_EXPORT = "csv_export";
-    const DBL_VIEW_SELECT = "view_select";
-    const DBL_LINK = "link";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -67,10 +50,10 @@ class view_component_type_list extends user_type_list
     function load_dummy() {
         parent::load_dummy();
         $type = new user_type();
-        $type->name = view_component_type_list::DBL_TEXT;
-        $type->code_id = view_component_type_list::DBL_TEXT;
+        $type->name = view_cmp_type::TEXT;
+        $type->code_id = view_cmp_type::TEXT;
         $this->lst[2] = $type;
-        $this->hash[view_component_type_list::DBL_TEXT] = 2;
+        $this->hash[view_cmp_type::TEXT] = 2;
     }
 
     /**
@@ -78,7 +61,7 @@ class view_component_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(view_component_type_list::DBL_TEXT);
+        return parent::id(view_cmp_type::TEXT);
     }
 
 }

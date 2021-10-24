@@ -892,7 +892,6 @@ class phrase_list
                 log_debug('phrase_list->diff_by_ids ' . $del_phr_id);
                 if ($del_phr_id > 0 and in_array($del_phr_id, $this->ids)) {
                     $del_pos = array_search($del_phr_id, $this->ids);
-                    log_debug('phrase_list->diff_by_ids -> exclude (' . $this->lst[$del_pos]->name . ')');
                     unset ($this->lst[$del_pos]);
                 }
             }

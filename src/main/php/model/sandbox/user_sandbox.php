@@ -899,6 +899,10 @@ class user_sandbox
                     if (in_array($this->name, view::RESERVED_VIEWS)) {
                         $result = '"' . $this->name . '" is a reserved view name for system testing. Please use another name';
                     }
+                } elseif ($this->obj_name == DB_TYPE_VIEW_COMPONENT) {
+                    if (in_array($this->name, view_cmp::RESERVED_VIEW_COMPONENTS)) {
+                        $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
+                    }
                 } elseif ($this->obj_name == DB_TYPE_SOURCE) {
                     if (in_array($this->name, source::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load

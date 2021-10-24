@@ -627,15 +627,17 @@ class formula_value_list
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get($sql);
-        foreach ($db_lst as $db_fv) {
-            $frm_id = $db_fv['formula_id'];
-            $formula_text = $db_fv['formula_text'];
-            $formula_value = zuc_math_parse($formula_text, $phr_lst->ids, $time_phr);
-            // if the formula value is empty use the id to be able to select the formula
-            if ($formula_value == '') {
-                $formula_value = $db_fv['formula_id'];
+        if ($db_lst != null) {
+            foreach ($db_lst as $db_fv) {
+                $frm_id = $db_fv['formula_id'];
+                $formula_text = $db_fv['formula_text'];
+                $formula_value = zuc_math_parse($formula_text, $phr_lst->ids, $time_phr);
+                // if the formula value is empty use the id to be able to select the formula
+                if ($formula_value == '') {
+                    $formula_value = $db_fv['formula_id'];
+                }
+                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv['formula_id'] . '&back=' . $back . '">' . $formula_value . '</a> ';
             }
-            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv['formula_id'] . '&back=' . $back . '">' . $formula_value . '</a> ';
         }
 
         if ($formula_links <> '') {

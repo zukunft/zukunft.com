@@ -143,7 +143,7 @@ function unit_test_init_view_component_types()
 {
     global $view_component_types;
 
-    $view_component_types = new view_component_type_list();
+    $view_component_types = new view_cmp_type_list();
     $view_component_types->load_dummy();
 
 }
@@ -155,7 +155,7 @@ function unit_test_init_view_component_link_types()
 {
     global $view_component_link_types;
 
-    $view_component_link_types = new view_component_link_type_list();
+    $view_component_link_types = new view_cmp_link_type_list();
     $view_component_link_types->load_dummy();
 
 }
