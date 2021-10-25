@@ -530,7 +530,7 @@ function log_msg($msg_text, $msg_description, $msg_log_level, $function_name, $f
     if ($msg_description == '') {
         $msg_description = $msg_text;
     }
-    if ($function_name == '') {
+    if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
         $function_name = zu_str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
         $function_name = zu_str_left_of($function_name, ': log_');

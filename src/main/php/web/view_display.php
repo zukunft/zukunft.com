@@ -561,7 +561,7 @@ class view_dsp extends view
 
         // use the default settings if needed
         if ($this->type_id <= 0) {
-            $this->type_id = cl(db_cl::VIEW_TYPE, view_type_list::DBL_DEFAULT);
+            $this->type_id = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
         }
 
         // the header to add or change a view

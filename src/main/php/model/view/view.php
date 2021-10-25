@@ -124,19 +124,20 @@ class view extends user_sandbox
         $this->back = null;
     }
 
+    // TODO check if there is any case where the user fields should not be set
     function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['view_id'] > 0) {
                 $this->id = $db_row['view_id'];
                 $this->name = $db_row['view_name'];
+                $this->owner_id = $db_row['user_id'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_type_id'];
                 $this->code_id = $db_row['code_id'];
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_id'];
-                    $this->owner_id = $db_row['user_id'];
                 }
             } else {
                 $this->id = 0;
@@ -147,7 +148,7 @@ class view extends user_sandbox
     }
 
     /**
-     * load the view parameters for all users
+     * load the view parameters for all users including the user id to know the owner of the standard
      */
     function load_standard(): bool
     {
@@ -157,7 +158,8 @@ class view extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('comment', 'view_type_id', 'code_id', 'excluded'));
+        // TODO the user_id should be loaded for all standard records to know the owner of the standrad
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_type_id', 'code_id', 'excluded'));
         $db_con->set_where($this->id, $this->name, $this->code_id);
         $sql = $db_con->select();
 
@@ -747,14 +749,17 @@ class view extends user_sandbox
     function save_field_code_id($db_con, $db_rec, $std_rec): string
     {
         $result = '';
-        if ($db_rec->code_id <> $this->code_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->code_id;
-            $log->new_value = $this->code_id;
-            $log->std_value = $std_rec->code_id;
-            $log->row_id = $this->id;
-            $log->field = 'code_id';
-            $result = $this->save_field_do($db_con, $log);
+        // special case: do not remove a code id
+        if ($this->code_id != '') {
+            if ($db_rec->code_id <> $this->code_id) {
+                $log = $this->log_upd();
+                $log->old_value = $db_rec->code_id;
+                $log->new_value = $this->code_id;
+                $log->std_value = $std_rec->code_id;
+                $log->row_id = $this->id;
+                $log->field = 'code_id';
+                $result = $this->save_field_do($db_con, $log);
+            }
         }
         return $result;
     }

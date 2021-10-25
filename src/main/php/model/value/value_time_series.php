@@ -63,11 +63,11 @@ class value_time_series extends user_sandbox_display
                 $this->id = $db_row['value_time_series_id'];
                 $this->source_id = $db_row['source_id'];
                 $this->grp_id = $db_row['phrase_group_id'];
+                $this->owner_id = $db_row['user_id'];
                 $this->last_update = new DateTime($db_row['last_update']);
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_value_time_series_id'];
-                    $this->owner_id = $db_row['user_id'];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {

@@ -56,7 +56,7 @@ class view_list extends user_type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new view();
-                $vrb->row_mapper($db_row);
+                $vrb->row_mapper($db_row, true);
                 $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
             }
         }

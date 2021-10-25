@@ -165,12 +165,12 @@ class value extends user_sandbox_display
                 // check if phrase_group_id and time_word_id are user specific or time series specific
                 $this->grp_id = $db_row['phrase_group_id'];
                 $this->time_id = $db_row['time_word_id'];
+                $this->owner_id = $db_row['user_id'];
                 $this->source_id = $db_row['source_id'];
                 $this->last_update = new DateTime($db_row['last_update']);
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_value_id'];
-                    $this->owner_id = $db_row['user_id'];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -201,7 +201,7 @@ class value extends user_sandbox_display
         if ($this->id > 0) {
             $db_con->set_type(DB_TYPE_VALUE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('value_id', 'user_id', 'word_value', 'phrase_group_id', 'time_word_id', 'source_id', 'last_update', 'excluded', sql_db::FLD_PROTECT));
+            $db_con->set_fields(array('value_id', sql_db::FLD_USER_ID, 'word_value', 'phrase_group_id', 'time_word_id', 'source_id', 'last_update', 'excluded', sql_db::FLD_PROTECT));
             $db_con->where(array('value_id'), array($this->id));
             $sql = $db_con->select();
 

@@ -842,7 +842,7 @@ function test_view_component($cmp_name, string $type_code_id = ''): view_cmp
 function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): view_cmp_link
 {
     global $usr;
-    $dsp = load_view          ($dsp_name);
+    $dsp = load_view($dsp_name);
     $cmp = load_view_component($cmp_name);
     $lnk = new view_cmp_link();
     $lnk->fob = $dsp;
@@ -857,9 +857,17 @@ function test_view_cmp_lnk(string $dsp_name, string $cmp_name, int $pos): view_c
 
 function test_view_cmp_unlink(string $dsp_name, string $cmp_name): string
 {
-    $dsp = load_view          ($dsp_name);
+    $dsp = load_view($dsp_name);
     $cmp = load_view_component($cmp_name);
-    return $cmp->unlink($dsp);
+    if ($dsp != null and $cmp != null) {
+        if ($dsp->id > 0 and $cmp->id > 0) {
+            return $cmp->unlink($dsp);
+        } else {
+            return '';
+        }
+    } else {
+        return '';
+    }
 }
 
 

@@ -136,6 +136,7 @@ class view_cmp_link extends user_sandbox
         }
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields('view_id', 'view_component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', 'excluded', 'user_id'));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);

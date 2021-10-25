@@ -219,6 +219,7 @@ class word extends word_link_object
             if ($db_row['word_id'] > 0) {
                 $this->id = $db_row['word_id'];
                 $this->name = $db_row['word_name'];
+                $this->owner_id = $db_row['user_id'];
                 $this->plural = $db_row['plural'];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->type_id = $db_row['word_type_id'];
@@ -226,8 +227,6 @@ class word extends word_link_object
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_word_id'];
-                    // TODO probably the owner of the standard word also needs to be loaded
-                    $this->owner_id = $db_row['user_id'];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -251,7 +250,7 @@ class word extends word_link_object
         $result = '';
 
         $db_con->set_type(DB_TYPE_WORD);
-        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id', 'excluded'));
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id', 'excluded'));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 

@@ -57,9 +57,9 @@ function run_view_unit_db_tests()
     test_dsp('unit_db_view->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::VIEW_TYPE, view_type_list::DBL_DEFAULT);
+    $result = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
     $target = 1;
-    test_dsp('unit_db_view->check type' . view_type_list::DBL_DEFAULT, $result, $target);
+    test_dsp('unit_db_view->check type' . view_type::DEFAULT, $result, $target);
 
     test_subheader('View component types tests');
 

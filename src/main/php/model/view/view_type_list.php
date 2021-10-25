@@ -33,13 +33,6 @@ global $view_types;
 
 class view_type_list extends user_type_list
 {
-    // list of the view types that have a coded functionality
-    const DBL_DEFAULT = "default";
-    const DBL_ENTRY = "entry";
-    const DBL_MASK_DEFAULT = "mask_default";
-    const DBL_PRESENT = "presentation";
-    const DBL_WORD_DEFAULT = "word_default";
-
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
@@ -56,10 +49,10 @@ class view_type_list extends user_type_list
     function load_dummy() {
         parent::load_dummy();
         $type = new user_type();
-        $type->name = view_type_list::DBL_DEFAULT;
-        $type->code_id = view_type_list::DBL_DEFAULT;
+        $type->name = view_type::DEFAULT;
+        $type->code_id = view_type::DEFAULT;
         $this->lst[2] = $type;
-        $this->hash[view_type_list::DBL_DEFAULT] = 2;
+        $this->hash[view_type::DEFAULT] = 2;
     }
 
     /**
@@ -67,8 +60,19 @@ class view_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(view_type_list::DBL_DEFAULT);
+        return parent::id(view_type::DEFAULT);
     }
 
 }
 
+/**
+ * ENUM for the view types
+ */
+class view_type {
+    // list of the view types that have a coded functionality
+    const DEFAULT = "default";
+    const ENTRY = "entry";
+    const MASK_DEFAULT = "mask_default";
+    const PRESENT = "presentation";
+    const WORD_DEFAULT = "word_default";
+}

@@ -93,13 +93,13 @@ class source extends user_sandbox
             if ($db_row['source_id'] > 0) {
                 $this->id = $db_row['source_id'];
                 $this->name = $db_row['source_name'];
+                $this->owner_id = $db_row['user_id'];
                 $this->url = $db_row['url'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['source_type_id'];
                 $this->code_id = $db_row[sql_db::FLD_CODE_ID];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_source_id'];
-                    $this->owner_id = $db_row['user_id'];
                 }
             } else {
                 $this->id = 0;
@@ -117,7 +117,7 @@ class source extends user_sandbox
         $result = false;
 
         $db_con->set_type(DB_TYPE_SOURCE);
-        $db_con->set_fields(array('url', 'comment', 'source_type_id', sql_db::FLD_CODE_ID));
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'url', 'comment', 'source_type_id', sql_db::FLD_CODE_ID));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 

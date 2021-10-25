@@ -64,7 +64,7 @@ function run_view_component_link_test () {
   $log->new_to_id = $cmp->id;
   $log->usr = $usr;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system test linked Mask Test to Mask Component Test';
+  $target = 'zukunft.com system test linked System Test View Renamed to System Test View Component';
   test_dsp('view component_link->link_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'"', $target, $result);
 
   // ... check if the link is shown correctly
@@ -100,7 +100,7 @@ function run_view_component_link_test () {
   $log->old_to_id = $cmp->id;
   $log->usr = $usr2;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system test partner unlinked Mask Test from Mask Component Test';
+  $target = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
   test_dsp('view component_link->unlink_dsp logged for "'.$dsp->name.'" to "'.$cmp->name.'" and user "'.$usr2->name.'"', $target, $result);
 
 
@@ -135,7 +135,7 @@ function run_view_component_link_test () {
   $log->old_to_id = $cmp->id;
   $log->usr = $usr;
   $result = $log->dsp_last(true);
-  $target = 'zukunft.com system test unlinked Mask Test from Mask Component Test';
+  $target = 'zukunft.com system test unlinked System Test View Renamed from System Test View Component';
   test_dsp('view component_link->unlink_dsp logged of "'.$dsp->name.'" from "'.$cmp->name.'"', $target, $result);
 
   // check if the view component is not used any more for both users

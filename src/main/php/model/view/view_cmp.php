@@ -126,6 +126,7 @@ class view_cmp extends user_sandbox
             if ($db_row['view_component_id'] > 0) {
                 $this->id = $db_row['view_component_id'];
                 $this->name = $db_row['view_component_name'];
+                $this->owner_id = $db_row['user_id'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_component_type_id'];
                 $this->word_id_row = $db_row['word_id_row'];
@@ -136,7 +137,6 @@ class view_cmp extends user_sandbox
                 $this->excluded = $db_row['excluded'];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_component_id'];
-                    $this->owner_id = $db_row['user_id'];
                     //$this->share_id = $db_row[sql_db::FLD_SHARE];
                     //$this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -159,7 +159,7 @@ class view_cmp extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -578,7 +578,7 @@ class view_cmp extends user_sandbox
         return $result;
     }
 
-// create a database record to save user specific settings for this view_component
+    // create a database record to save user specific settings for this view_component
     function add_usr_cfg(): bool
     {
         global $db_con;
@@ -604,6 +604,8 @@ class view_cmp extends user_sandbox
                     log_err('Insert of user_view_component failed.');
                     $result = false;
                 } else {
+                    // TODO check if correct in all cases
+                    $this->usr_cfg_id = $this->id;
                     $result = true;
                 }
             }
@@ -640,7 +642,8 @@ class view_cmp extends user_sandbox
         $usr_cfg = $db_con->get1($sql);
         log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg['view_component_id'] > 0) {
-            if ($usr_cfg['comment'] == ''
+            if ($usr_cfg['view_component_name'] == ''
+                and $usr_cfg['comment'] == ''
                 and $usr_cfg['view_component_type_id'] == Null
                 and $usr_cfg['word_id_row'] == Null
                 and $usr_cfg['link_type_id'] == Null

@@ -227,7 +227,6 @@ class formula extends user_sandbox_description
                 }
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_formula_id'];
-                    $this->owner_id = $db_row['user_id'];
                 }
             } else {
                 $this->id = 0;

@@ -642,12 +642,6 @@ class user_sandbox
         log_debug($this->obj_name . '->can_change owner is ' . $this->owner_id . ' and the change is requested by ' . $this->usr->id);
         if ($this->owner_id == $this->usr->id or $this->owner_id <= 0) {
             $result = true;
-        } else {
-            $changer_id = $this->changer();
-            // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-            if ($changer_id == $this->usr->id) {
-                $result = true;
-            }
         }
 
         log_debug($this->obj_name . '->can_change -> (' . zu_dsp_bool($result) . ')');

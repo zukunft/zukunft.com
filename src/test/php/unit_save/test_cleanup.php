@@ -138,19 +138,19 @@ function run_test_cleanup()
         }
     }
 
+    // request to delete the test view component for user 2
+    if ($cmp_usr2->id > 0) {
+        $result = $cmp_usr2->del();
+        $target = true;
+        test_dsp('cleanup: del of first component "' . view_cmp::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+    }
+
     // request to delete the test view component
     if ($cmp->id > 0) {
         $result = $cmp->del();
         $target = true;
         //$target = '';
         test_dsp('cleanup: del of first component "' . view_cmp::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
-    }
-
-    // request to delete the test view component for user 2
-    if ($cmp_usr2->id > 0) {
-        $result = $cmp_usr2->del();
-        $target = true;
-        test_dsp('cleanup: del of first component "' . view_cmp::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the second added test view component
@@ -168,18 +168,18 @@ function run_test_cleanup()
         test_dsp('cleanup: del of second component "' . view_cmp::TN_ADD2 . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
+    // request to delete the added test view for user 2 first
+    if ($dsp_usr2->id > 0) {
+        $result = $dsp_usr2->del();
+        $target = true;
+        test_dsp('cleanup: del of view "' . view::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
+    }
+
     // request to delete the added test view
     if ($dsp->id > 0) {
         $result = $dsp->del();
         $target = true;
         test_dsp('cleanup: del of view "' . view::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
-    }
-
-    // request to delete the added test view for user 2
-    if ($dsp_usr2->id > 0) {
-        $result = $dsp_usr2->del();
-        $target = true;
-        test_dsp('cleanup: del of view "' . view::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
     // request to delete the added test views

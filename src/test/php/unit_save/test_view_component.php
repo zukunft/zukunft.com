@@ -144,8 +144,7 @@ function run_view_component_test()
     $log->row_id = $cmp_renamed->id;
     $log->usr = $usr;
     $result = $log->dsp_last(true);
-    // TODO check if not: $target = 'zukunft.com system test changed Test Mask Component to Mask Component Test';
-    $target = 'zukunft.com system test partner deleted System Test View Component Renamed';
+    $target = 'zukunft.com system test changed System Test View Component to System Test View Component Renamed';
     test_dsp('view_component->save rename logged for "' . view_cmp::TN_RENAMED . '"', $target, $result);
 
     // check if the view_component parameters can be added

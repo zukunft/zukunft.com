@@ -299,7 +299,7 @@ class word_link extends word_link_object
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'word_type_id', 'excluded', 'user_id'));
+            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, 'word_type_id', 'excluded', 'user_id'));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
 
