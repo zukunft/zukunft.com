@@ -192,7 +192,7 @@ class view_cmp extends user_sandbox
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
             $db_con->set_usr($this->usr->id);
             $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_type');
-            $db_con->set_fields(array('comment'));
+            $db_con->set_usr_fields(array('comment'));
             $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
             $db_con->set_where($this->id, $this->name);
             $sql = $db_con->select();
@@ -316,10 +316,11 @@ class view_cmp extends user_sandbox
             log_debug('view_component->assign_dsp_ids for view_component "' . $this->id . '" and user "' . $this->usr->name . '"');
             // this sql is similar to the load statement in view_links.php, maybe combine
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+            $db_con->set_usr($this->usr->id);
             //$db_con->set_join_fields(array('position_type'), 'position_type');
             $db_con->set_fields(array('view_id', 'view_component_id'));
             $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
-            $db_con->set_where($this->id);
+            $db_con->set_where_text('view_component_id = ' . $this->id);
             $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get($sql);

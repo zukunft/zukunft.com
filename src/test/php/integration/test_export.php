@@ -40,7 +40,7 @@ function run_export_test () {
   $xml_export->usr     = $usr;
   $xml_export->phr_lst = $phr_lst;
   $result = $xml_export->export();
-  $target = 'Company has a balance sheet';
+  $target = 'Mathematical constant';
   test_dsp_contains(', xml->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, TIMEOUT_LIMIT_PAGE);
 
   test_header('Test the json export class (classes/json.php)');
@@ -49,7 +49,7 @@ function run_export_test () {
   $json_export->usr     = $usr;
   $json_export->phr_lst = $phr_lst;
   $result = $json_export->export();
-  $target = 'Company has a balance sheet';
+  $target = 'Mathematical constant';
   test_dsp_contains(', json->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, TIMEOUT_LIMIT_PAGE);
   
 }

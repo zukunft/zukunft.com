@@ -236,7 +236,7 @@ function run_view_component_test()
     $cmp_usr2_reloaded->usr = $usr2;
     $cmp_usr2_reloaded->load();
     $result = $cmp_usr2_reloaded->comment;
-    $target = 'Just changed for testing the user sandbox';
+    $target = 'Just added for testing the user sandbox';
     test_dsp('view_component->load comment for "' . view_cmp::TN_RENAMED . '"', $target, $result);
     //$result = $dsp_usr2_reloaded->type_id;
     //$target = cl(SQL_VIEW_TYPE_WORD_NAME);

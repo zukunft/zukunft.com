@@ -342,6 +342,7 @@ class view_cmp_link extends user_sandbox
     }
 
     // move one view component
+    // TODO load to list once, resort and write all positions with one SQL statement
     private function move($direction): bool
     {
         $result = false;
@@ -369,7 +370,8 @@ class view_cmp_link extends user_sandbox
                 // correct any wrong order numbers e.g. a missing number
                 $order_number_corrected = false;
                 log_debug('view_component_link->move check order numbers for ' . $this->fob->dsp_id());
-                $order_nbr = 0;
+                // TODO define the common sorting start number, which is 1 and not 0
+                $order_nbr = 1;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                     $cmp_lnk = new view_cmp_link;
@@ -408,7 +410,7 @@ class view_cmp_link extends user_sandbox
 
                 // actually move the selected component
                 // TODO what happens if the another user has deleted some components?
-                $order_nbr = 0;
+                $order_nbr = 1;
                 $prev_entry = null;
                 $prev_entry_down = false;
                 foreach ($this->fob->cmp_lst as $entry) {
@@ -456,7 +458,7 @@ class view_cmp_link extends user_sandbox
                 }
             }
 
-            // force to reload view components
+            // force reloading view components
             log_debug('view_component_link->move reload');
             $this->fob->load_components();
         }
