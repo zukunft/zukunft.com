@@ -155,7 +155,6 @@ if ($start_usr->id > 0) {
         $db_con->close();
         $db_con = prg_restart("reload cache after unit testing");
 
-
         // switch to the test user
         $usr = new user;
         $usr->load_user_by_profile(user::SYSTEM_TEST);
@@ -177,13 +176,15 @@ if ($start_usr->id > 0) {
             run_system_test();
             run_user_test();
 
-            import_base_config();
             create_test_words();
             create_test_phrases();
+            create_test_sources();
             create_base_times();
             create_test_formulas();
             create_test_formula_links();
             create_test_views();
+            create_test_view_components();
+            create_test_view_component_links();
             create_test_values();
 
             run_db_link_test();
@@ -207,7 +208,7 @@ if ($start_usr->id > 0) {
             run_expression_test();
             run_formula_test();
             run_formula_list_test();
-            run_formula_ui_test();
+            //run_formula_ui_test();
             run_formula_link_test();
             run_formula_link_list_test();
             run_formula_trigger_test();
@@ -225,6 +226,8 @@ if ($start_usr->id > 0) {
             run_export_test();
             //run_permission_test ();
             run_legacy_test();
+
+            import_base_config();
 
             // testing cleanup to remove any remaining test records
             run_test_cleanup();

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -32,132 +32,132 @@
 
 */
 
-function run_formula_value_test () {
+function run_formula_value_test()
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the formula value class (classes/formula_value.php)');
+    test_header('Test the formula value class (classes/formula_value.php)');
 
-  // test load result without time
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(word::TN_CH);
-  $phr_lst->add_name(formula::TN_INCREASE);
-  // TODO check why are these two words needed??
-  $phr_lst->add_name(word::TN_MIO);
-  //$phr_lst->add_name(TW_CHF);
-  $phr_lst->add_name(word::TN_PCT);
-  $ch_up_grp = $phr_lst->get_grp();
-  if ($ch_up_grp->id > 0) {
-    $abb_up = New formula_value;
-    $abb_up->phr_grp_id = $ch_up_grp->id;
-    $abb_up->usr = $usr;
-    $abb_up->load();
-    $result = $abb_up->value;
-  } else {
-    $result = 'no '.word::TN_INHABITANT.' '.formula::TN_INCREASE.' value found for '.word::TN_CH;
-  }
-  // todo review
-  //$result = $abb_up->phr_grp_id;
-  $target = '-0.046588314872749';
-  $target = '';
-  test_dsp('value->val_formatted ex time for '.$phr_lst->dsp_id().' (group id '.$ch_up_grp->id.')', $target, $result, TIMEOUT_LIMIT_LONG);
+    // test load result without time
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(formula::TN_INCREASE);
+    // TODO check why are these two words needed??
+    $phr_lst->add_name(word::TN_MIO);
+    //$phr_lst->add_name(TW_CHF);
+    $phr_lst->add_name(word::TN_PCT);
+    $ch_up_grp = $phr_lst->get_grp();
+    if ($ch_up_grp->id > 0) {
+        $ch_increase = new formula_value;
+        $ch_increase->phr_grp_id = $ch_up_grp->id;
+        $ch_increase->usr = $usr;
+        $ch_increase->load();
+        $result = $ch_increase->value;
+    } else {
+        $result = 'no ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
+    }
+    // todo review
+    $target = '-0.046588314872749';
+    test_dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
-  // test load result with time
-  $phr_lst->add_name(word::TN_2020);
-  $phr_lst->load();
-  $time_phr = $phr_lst->time_useful();
-  $ch_up_grp = $phr_lst->get_grp();
-  if ($ch_up_grp->id > 0) {
-    $abb_up = New formula_value;
-    $abb_up->phr_grp_id = $ch_up_grp->id;
-    $abb_up->time_id = $time_phr->id;
-    //$abb_up->wrd_lst = $phr_lst;
-    $abb_up->usr = $usr;
-    $abb_up->usr->id = $usr->id; // temp solution utils the value is saved automatically for all users
-    $abb_up->load();
-    $result = $abb_up->value;
-  } else {
-    $result = 'no '.word::TN_2020.' '.word::TN_INHABITANT.' '.formula::TN_INCREASE.' value found for '.word::TN_CH;
-  }
-  //$result = $abb_up->phr_grp_id;
-  $target = '0.0099235970843945';
-  if (isset($time_phr)  and isset($ch_up_grp)) {
-    test_dsp('value->val_formatted incl time ('.$time_phr->dsp_id().') for '.$phr_lst->dsp_id().' (group id '.$ch_up_grp->id.')', $target, $result);
-  } else {
-    test_dsp('value->val_formatted incl time for ', $target, $result);
-  }
+    // test load result with time
+    $phr_lst->add_name(word::TN_2020);
+    $phr_lst->load();
+    $time_phr = $phr_lst->time_useful();
+    $ch_up_grp = $phr_lst->get_grp();
+    if ($ch_up_grp->id > 0) {
+        $ch_increase = new formula_value;
+        $ch_increase->phr_grp_id = $ch_up_grp->id;
+        $ch_increase->time_id = $time_phr->id;
+        //$ch_increase->wrd_lst = $phr_lst;
+        $ch_increase->usr = $usr;
+        $ch_increase->usr->id = $usr->id; // temp solution utils the value is saved automatically for all users
+        $ch_increase->load();
+        $result = $ch_increase->value;
+    } else {
+        $result = 'no ' . word::TN_2020 . ' ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
+    }
+    //$result = $ch_increase->phr_grp_id;
+    $target = '0.0099235970843945';
+    if (isset($time_phr) and isset($ch_up_grp)) {
+        test_dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result);
+    } else {
+        test_dsp('value->val_formatted incl time for ', $target, $result);
+    }
 
-  // test the scaling
-  // test the scaling of a value
-  $wrd_lst = New word_list;
-  $wrd_lst->usr = $usr;
-  $wrd_lst->add_name(word::TN_CH);
-  $wrd_lst->add_name(word::TN_INHABITANT);
-  $wrd_lst->add_name(word::TN_MIO);
-  $wrd_lst->add_name(word::TN_2020);
-  $wrd_lst->load();
-  $dest_wrd_lst = New word_list;
-  $dest_wrd_lst->usr = $usr;
-  $dest_wrd_lst->add_name(word::TN_INHABITANT);
-  $dest_wrd_lst->add_name(word::TN_IN_K);
-  $dest_wrd_lst->load();
-  $mio_val = New value;
-  $mio_val->ids = $wrd_lst->ids;
-  $mio_val->usr = $usr;
-  $mio_val->load();
-  log_debug('value->scale value loaded');
-  //$result = $mio_val->check();
-  $result = $mio_val->scale($dest_wrd_lst);
-  $target = '46000000000';
-  test_dsp('value->val_scaling for a tern list '.$wrd_lst->dsp_id().'', $target, $result, TIMEOUT_LIMIT_PAGE);
+    // test the scaling
+    // test the scaling of a value
+    $wrd_lst = new word_list;
+    $wrd_lst->usr = $usr;
+    $wrd_lst->add_name(word::TN_CH);
+    $wrd_lst->add_name(word::TN_INHABITANT);
+    $wrd_lst->add_name(word::TN_MIO);
+    $wrd_lst->add_name(word::TN_2020);
+    $wrd_lst->load();
+    $dest_wrd_lst = new word_list;
+    $dest_wrd_lst->usr = $usr;
+    $dest_wrd_lst->add_name(word::TN_INHABITANT);
+    $dest_wrd_lst->add_name(word::TN_IN_K);
+    $dest_wrd_lst->load();
+    $mio_val = new value;
+    $mio_val->ids = $wrd_lst->ids;
+    $mio_val->usr = $usr;
+    $mio_val->load();
+    log_debug('value->scale value loaded');
+    //$result = $mio_val->check();
+    $result = $mio_val->scale($dest_wrd_lst);
+    $target = '46000000000';
+    test_dsp('value->val_scaling for a tern list ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
-  // test getting the "best guess" value
-  // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
-  //      based
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(word::TN_CH);
-  $phr_lst->add_name(word::TN_INHABITANT);
-  $phr_lst->add_name(word::TN_2020);
-  $phr_lst->load();
-  $val_best_guess = New value;
-  $val_best_guess->ids = $phr_lst->ids;
-  $val_best_guess->usr = $usr;
-  $val_best_guess->load();
-  $result = $val_best_guess->number;
-  $target = 0.18264281677284;
-  test_dsp('value->load the best guess for '.$phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    // test getting the "best guess" value
+    // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
+    //      based
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_2020);
+    $phr_lst->load();
+    $val_best_guess = new value;
+    $val_best_guess->ids = $phr_lst->ids;
+    $val_best_guess->usr = $usr;
+    $val_best_guess->load();
+    $result = $val_best_guess->number;
+    $target = 0.18264281677284;
+    test_dsp('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
-  /* 
+    /*
 
-  Additional test cases for formula result
+    Additional test cases for formula result
 
-  if a user changes a value the result for him should be updated and the result should be user specific
-  but the result for other user should not be changed
-  if the user undo the value change, the result should be updated
+    if a user changes a value the result for him should be updated and the result should be user specific
+    but the result for other user should not be changed
+    if the user undo the value change, the result should be updated
 
-  if the user changes a word link, formula link or formula the result should also be updated
+    if the user changes a word link, formula link or formula the result should also be updated
 
-  */
+    */
 
 }
 
-function run_formula_value_list_test () {
+function run_formula_value_list_test()
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the formula value list class (classes/formula_value_list.php)');
+    test_header('Test the formula value list class (classes/formula_value_list.php)');
 
-  // todo add PE frm test
-  //$frm = load_formula(TF_PE);
-  $frm = load_formula(formula::TN_INCREASE);
-  $fv_lst = New formula_value_list;
-  $fv_lst->frm_id = $frm->id;
-  $fv_lst->usr = $usr;
-  $fv_lst->load();
-  $result = $fv_lst->dsp_id();
-  $target = '"Sales","percent","increase","'.word::TN_RENAMED.'","2017"';
-  test_dsp_contains(', formula_value_list->load of the formula results for '.$frm->dsp_id().' is '.$result.' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    // todo add PE frm test
+    //$frm = load_formula(TF_PE);
+    $frm = load_formula(formula::TN_INCREASE);
+    $fv_lst = new formula_value_list;
+    $fv_lst->frm_id = $frm->id;
+    $fv_lst->usr = $usr;
+    $fv_lst->load();
+    $result = $fv_lst->dsp_id();
+    $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
+    test_dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

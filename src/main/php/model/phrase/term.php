@@ -52,84 +52,114 @@ class term
     public ?string $name = null; // the name used (must be unique for words, verbs and formulas)
     public ?object $obj = null;  // the word, verb or formula object
 
-    // simply load a formula (separate function, because used twice)
-    private function load_frm(): bool
-    {
-        log_debug('term->load_frm for "' . $this->name . '"');
-        $result = false;
-        $frm = new formula;
-        $frm->name = $this->name;
-        $frm->usr = $this->usr;
-        $frm->load();
-        if ($frm->id > 0) {
-            $this->id = $frm->id;
-            $this->type = 'formula';
-            $this->obj = $frm;
-            $result = true;
-        }
-        log_debug('term->load_frm loaded id "' . $this->id . '"');
-        return $result;
-    }
-
-    // test if the name is used already
-    // returns the id of the object found
+    /**
+     * test if the name is used already and load the object
+     * @param bool $including_word_links
+     * @return int the id of the object found and zero if nothing is found
+     */
     function load(bool $including_word_links = true): int
     {
         log_debug('term->load (' . $this->name . ')');
         $result = 0;
 
-        // test the word
-        $wrd = new word_dsp;
-        $wrd->name = $this->name;
-        $wrd->usr = $this->usr;
-        $wrd->load();
-        if ($wrd->id > 0) {
-            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK));
-            if ($wrd->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
-                if ($this->load_frm()) {
-                    $result = $this->obj->id;
-                }
-            } else {
-                $this->id = $wrd->id;
-                $this->type = 'word';
-                $this->obj = $wrd;
-                $result = $wrd->id;
-            }
-        } else {
-            $lnk = new word_link;
-            if ($including_word_links) {
-                $lnk->name = $this->name;
-                $lnk->usr = $this->usr;
-                $lnk->load();
-            }
-            if ($lnk->id > 0) {
-                $this->id = $lnk->id;
-                $this->type = 'triple';
-                $this->obj = $lnk;
-                $result = $lnk->id;
-            } else {
-                $vrb = new verb;
-                $vrb->name = $this->name;
-                $vrb->usr = $this->usr;
-                $vrb->load();
-                if ($vrb->id > 0) {
-                    $this->id = $vrb->id;
-                    $this->type = 'verb';
-                    $this->obj = $vrb;
-                    $result = $vrb->id;
-                } else {
-                    if ($this->load_frm()) {
-                        $result = $this->obj->id;
-                    }
-                }
-            }
+        if ($this->load_word()) {
+            $result = $this->obj->id;
+        } elseif ($this->load_triple($including_word_links)) {
+            $result = $this->obj->id;
+        } elseif ($this->load_formula()) {
+            $result = $this->obj->id;
+        } elseif ($this->load_verb()) {
+            $result = $this->obj->id;
         }
         log_debug('term->load loaded id "' . $this->id . '" for ' . $this->name);
 
         return $result;
     }
 
-    // create a message text that the name is already used
+    /**
+     * simply load a word
+     * (separate functions for loading  for a better overview)
+     */
+    private function load_word(): bool
+    {
+        $result = false;
+        $wrd = new word_dsp;
+        $wrd->name = $this->name;
+        $wrd->usr = $this->usr;
+        if ($wrd->load()) {
+            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK));
+            if ($wrd->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+                $result = $this->load_formula();
+            } else {
+                $this->id = $wrd->id;
+                $this->type = word::class;
+                $this->obj = $wrd;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a triple
+     */
+    private function load_triple(bool $including_word_links): bool
+    {
+        $result = false;
+        if ($including_word_links) {
+            $lnk = new word_link;
+            $lnk->name = $this->name;
+            $lnk->usr = $this->usr;
+            if ($lnk->load()) {
+                $this->id = $lnk->id;
+                //$this->type = word_link::class;
+                $this->type = 'triple';
+                $this->obj = $lnk;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a formula
+     */
+    private function load_formula(): bool
+    {
+        $result = false;
+        $frm = new formula;
+        $frm->name = $this->name;
+        $frm->usr = $this->usr;
+        if ($frm->load()) {
+            $this->id = $frm->id;
+            $this->type = formula::class;
+            $this->obj = $frm;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a verb
+     */
+    private function load_verb(): bool
+    {
+        $result = false;
+        $vrb = new verb;
+        $vrb->name = $this->name;
+        $vrb->usr = $this->usr;
+        if ($vrb->load()) {
+            $this->id = $vrb->id;
+            $this->type = verb::class;
+            $this->obj = $vrb;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * create a message text that the name is already used
+     */
     function id_used_msg(): string
     {
         $result = "";

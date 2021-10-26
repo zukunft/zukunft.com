@@ -93,7 +93,7 @@ class view_cmp_dsp extends view_cmp
             log_debug('view_component_dsp->num_list in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
 
             // check the parameters
-            if (get_class($wrd) <> 'word_dsp') {
+            if (get_class($wrd) <> word_dsp::class) {
                 $result .= log_warning('The word parameter has type ' . get_class($wrd) . ', but should be word_dsp.', "view_component_dsp->num_list");
                 $wrd_dsp = new word_dsp;
                 $wrd_dsp->id = $wrd->id;
@@ -249,7 +249,7 @@ class view_cmp_dsp extends view_cmp
             }
             $result .= '<br><br>values<br>';
             $val_lst = new value_list;
-            if (get_class($phr) == 'word' or get_class($phr) == 'word_dsp') {
+            if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
                 $val_lst->phr = $phr->phrase();
             } else {
                 $val_lst->phr = $phr;

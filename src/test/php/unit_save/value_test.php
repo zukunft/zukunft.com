@@ -464,9 +464,7 @@ function run_value_test()
         $log->usr = $usr2;
         $result = $log->dsp_last(true);
     }
-    // TODO check if this is correct
-    // $target = 'zukunft.com system test partner changed 23456 to 987654321';
-    $target = 'zukunft.com system test partner changed 987654321 to 23456';
+    $target = 'zukunft.com system test partner changed 23456 to 987654321';
     test_dsp(', value->save logged for user "' . $usr2->name . '"', $target, $result);
 
     // ... check if the value has really been changed back

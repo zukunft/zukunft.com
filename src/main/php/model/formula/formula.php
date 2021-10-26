@@ -318,7 +318,12 @@ class formula extends user_sandbox_description
                     // TODO check the exclusion handling
                     log_debug('formula->load ' . $this->dsp_id() . ' not excluded');
 
-                    $result = true;
+                    // load the formula name word object
+                    if (is_null($this->name_wrd)) {
+                        $result = $this->load_wrd();
+                    } else {
+                        $result = true;
+                    }
                 }
             }
         }
@@ -597,7 +602,7 @@ class formula extends user_sandbox_description
         $wrd_lst = $phr_lst->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time();
         if (isset($time_wrd)) {
-            if (get_class($time_wrd) == 'phrase') {
+            if (get_class($time_wrd) == phrase::class) {
                 $time_phr = $time_wrd;
             } else {
                 $time_phr = $time_wrd->phrase();
@@ -1801,6 +1806,17 @@ class formula extends user_sandbox_description
         $result = '';
         if ($db_rec->name <> $this->name) {
             log_debug('formula->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+            // in case a word link exist, change also the name of the word
+            $wrd = new word_dsp;
+            $wrd->name = $db_rec->name;
+            $wrd->usr = $this->usr;
+            $wrd->load();
+            $wrd->name = $this->name;
+            if ($wrd->save()) {
+                log_debug('formula->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
+            } else {
+                $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name;
+            }
 
             // change the formula name
             $log = $this->log_upd();
@@ -1921,16 +1937,16 @@ class formula extends user_sandbox_description
                 } else {
                     // create the related formula word
                     // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
-                    //if ($this->create_wrd()) {
+                    if ($this->create_wrd()) {
 
-                    // create an empty db_frm element to force saving of all set fields
-                    $db_rec = new formula;
-                    $db_rec->name = $this->name;
-                    $db_rec->usr = $this->usr;
-                    $std_rec = clone $db_rec;
-                    // save the formula fields
-                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
-                    //}
+                        // create an empty db_frm element to force saving of all set fields
+                        $db_rec = new formula;
+                        $db_rec->name = $this->name;
+                        $db_rec->usr = $this->usr;
+                        $std_rec = clone $db_rec;
+                        // save the formula fields
+                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    }
                 }
             } else {
                 $result .= "Adding formula " . $this->name . " failed.";

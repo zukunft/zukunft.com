@@ -542,7 +542,7 @@ class word_list
     {
         $exp_words = array();
         foreach ($this->lst as $wrd) {
-            if (get_class($wrd) == 'word' or get_class($wrd) == 'word_dsp') {
+            if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
                 if ($wrd->has_cfg()) {
                     $exp_wrd = $wrd->export_obj();
                     if (isset($exp_wrd)) {
@@ -964,12 +964,12 @@ class word_list
         if (!isset($filter_lst)) {
             log_err('Phrases to delete are missing.', 'word_list->filter');
         }
-        if (get_class($filter_lst) == 'phrase_list') {
+        if (get_class($filter_lst) == phrase_list::class) {
             $filter_wrd_lst = $filter_lst->wrd_lst_all();
         } else {
             $filter_wrd_lst = $filter_lst;
         }
-        if (get_class($filter_wrd_lst) <> 'word_list') {
+        if (get_class($filter_wrd_lst) <> word_list::class) {
             log_err(get_class($filter_wrd_lst) . ' cannot be used to delete words.', 'word_list->filter');
         }
 
@@ -1488,7 +1488,7 @@ class word_list
 
         if (isset($phr)) {
             log_debug('word_list->assume_time -> time used "' . $phr->name . '" (' . $phr->id . ')');
-            if (get_class($phr) == 'word' or get_class($phr) == 'word_dsp') {
+            if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
                 $result = $phr->phrase();
             } else {
                 $result = $phr;
@@ -1556,9 +1556,9 @@ class word_list
         $phr_lst = new phrase_list;
         $phr_lst->usr = $this->usr;
         foreach ($this->lst as $wrd) {
-            if (get_class($wrd) == 'word' or get_class($wrd) == 'word_dsp') {
+            if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
                 $phr_lst->lst[] = $wrd->phrase();
-            } elseif (get_class($wrd) == 'phrase') {
+            } elseif (get_class($wrd) == phrase::class) {
                 $phr_lst->lst[] = $wrd;
             } else {
                 log_err('unexpected objecttype ' . get_class($wrd));

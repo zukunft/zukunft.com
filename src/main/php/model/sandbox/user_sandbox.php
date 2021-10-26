@@ -1711,6 +1711,15 @@ class user_sandbox
                     $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
                 }
 
+                // and the corresponding word if possible
+                if ($result) {
+                    $wrd = new word();
+                    $wrd->name = $this->name;
+                    $wrd->usr = $this->usr;
+                    $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+                    $result = $wrd->del();
+                }
+
             }
 
             // delete first all user configuration that have also been excluded

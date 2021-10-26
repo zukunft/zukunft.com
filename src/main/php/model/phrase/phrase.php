@@ -2,34 +2,51 @@
 
 /*
 
-  phrase.php - either a word or a triple
-  ----------
-  
-  this is not saved in a separate table
-  e.g. to build a selector the entries are caught either from the words or word_links table
-  
-  This file is part of zukunft.com - calc with words
+    phrase.php - either a word or a triple
+    ----------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    this is not saved in a separate table
+    e.g. to build a selector the entries are caught either from the words or word_links table
+
+    If the user wants to overwrite a formula result, there are two possibilities for the technical realisation
+
+    1. for each formula automatically a word with the special type "formula link" is created
+        advantages:
+            user value handling is in one table (values)
+            formulas can be part of a triple
+        disadvantages:
+            the formula name is saved twice
+
+    2. The formula value can directly be overwritten by the user
+        advantages:
+            the formula name is only saved once
+        disadvantages:
+            the probably huge formula value table needs an extra field to indicate user overwrites which makes the use of key/value databases more complicated
+
+    There is a word increase and a formula that calculates the increase, so the solution 1. with formula link words is implemented
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 class phrase
@@ -59,6 +76,8 @@ class phrase
     {
         log_debug('phrase->load ' . $this->dsp_id());
         $result = false;
+
+        // direct load if the type is known
         if ($this->is_triple()) {
             $lnk = new word_link;
             $lnk->id = $this->id * -1;
@@ -76,12 +95,12 @@ class phrase
             $this->name = $wrd->name;
             log_debug('phrase->loaded word ' . $this->dsp_id());
         } elseif ($this->name <> '') {
-            // add to load word link
+            // load via term if the type is not yet known
             $trm = new term;
             $trm->name = $this->name;
             $trm->usr = $this->usr;
             $result = $trm->load();
-            if ($trm->type == 'word') {
+            if ($trm->type == word::class) {
                 $this->obj = $trm->obj;
                 $this->id = $trm->id;
                 log_debug('phrase->loaded word ' . $this->dsp_id() . ' by name');
@@ -89,12 +108,8 @@ class phrase
                 $this->obj = $trm->obj;
                 $this->id = $trm->id * -1;
                 log_debug('phrase->loaded triple ' . $this->dsp_id() . ' by name');
-            } elseif ($trm->type == 'formula') {
-                if (isset($trm->obj->name_wrd)) {
-                    $this->obj = $trm->obj->name_wrd;
-                    $this->id = $trm->obj->name_wrd->id;
-                    log_debug('phrase->loaded formula ' . $this->dsp_id() . ' by name');
-                }
+            } elseif ($trm->type == formula::class) {
+                log_err('phrase->loaded should have loaded the word "' . $this->dsp_id() . '" related to the formula');
             } else {
                 if ($this->type_name == '') {
                     // TODO check that this ($phrase->load) is never used for an error detection
@@ -183,7 +198,7 @@ class phrase
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == 'word' or get_class($this->obj) == 'word_dsp') {
+            if (get_class($this->obj) == word::class or get_class($this->obj) == word_dsp::class) {
                 $result = true;
             }
         } else {
@@ -201,7 +216,25 @@ class phrase
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == 'word_link') {
+            if (get_class($this->obj) == word_link::class) {
+                $result = true;
+            }
+        } else {
+            if ($this->id < 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this phrase is a formula or supposed to be a formula
+     */
+    private function is_formula(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp::class) {
                 $result = true;
             }
         } else {

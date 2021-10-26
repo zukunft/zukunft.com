@@ -48,10 +48,10 @@ class value_list_dsp extends value_list
         if (!isset($phr_row)) {
             $result = log_warning('The row type is not set.', "value_list_dsp->dsp_table");
         }
-        if (get_class($phr_row) <> 'word_dsp') {
+        if (get_class($phr_row) <> word_dsp::class) {
             $result = log_err('The row is of type ' . get_class($phr_row) . ' but should be a phrase.', "value_list_dsp->dsp_table");
         }
-        // if (get_class($phr_row) <> 'phrase') { $result = zu_err('The row is of type '.get_class($phr_row).' but should be a phrase.', "value_list_dsp->dsp_table"); }
+        // if (get_class($phr_row) <> phrase::class) { $result = zu_err('The row is of type '.get_class($phr_row).' but should be a phrase.', "value_list_dsp->dsp_table"); }
         if ($phr_row->id == 0) {
             $result = log_warning('The row type is not selected.', "value_list_dsp->dsp_table");
         }

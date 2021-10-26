@@ -126,7 +126,7 @@ class phrase_list
                         log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                     } else {
                         // TODO check if old can ge removed: if ($phr->id > 0) {
-                        if (get_class($phr->obj) == 'word' or get_class($phr->obj) == 'word_dsp') {
+                        if (get_class($phr->obj) == word::class or get_class($phr->obj) == word_dsp::class) {
                             $wrd_lst->add($phr->obj);
                         } elseif (get_class($phr->obj) == DB_TYPE_WORD_LINK) {
                             // use the recursive triple function to include the foaf words
@@ -694,11 +694,11 @@ class phrase_list
         // check parameters
         if (isset($phr_to_add)) {
             // autocorrect word to phrase
-            if (get_class($phr_to_add) == 'word' or get_class($phr_to_add) == 'word_dsp') {
+            if (get_class($phr_to_add) == word::class or get_class($phr_to_add) == word_dsp::class) {
                 log_debug('phrase_list->add change ' . $phr_to_add->dsp_id() . ' to phrase');
                 $phr_to_add = $phr_to_add->phrase();
             }
-            if (get_class($phr_to_add) <> 'phrase') {
+            if (get_class($phr_to_add) <> phrase::class) {
                 log_err("Object to add must be of type phrase, but it is " . get_class($phr_to_add) . ".", "phrase_list->add");
             } else {
                 if ($phr_to_add->id <> 0 and isset($this->ids)) {
@@ -791,7 +791,7 @@ class phrase_list
         $result = clone $this;
 
         // check an adjust the parameters
-        if (get_class($filter_lst) == 'word_list') {
+        if (get_class($filter_lst) == word_list::class) {
             $filter_phr_lst = $filter_lst->phrase_lst();
         } else {
             $filter_phr_lst = $filter_lst;
@@ -799,7 +799,7 @@ class phrase_list
         if (!isset($filter_phr_lst)) {
             log_err('Phrases to delete are missing.', 'phrase_list->diff');
         }
-        if (get_class($filter_phr_lst) <> 'phrase_list') {
+        if (get_class($filter_phr_lst) <> phrase_list::class) {
             log_err(get_class($filter_phr_lst) . ' cannot be used to delete phrases.', 'phrase_list->diff');
         }
 
@@ -829,7 +829,7 @@ class phrase_list
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
 
         // check and adjust the parameters
-        if (get_class($del_lst) == 'word_list') {
+        if (get_class($del_lst) == word_list::class) {
             $del_phr_lst = $del_lst->phrase_lst();
         } else {
             $del_phr_lst = $del_lst;
@@ -837,7 +837,7 @@ class phrase_list
         if (!isset($del_phr_lst)) {
             log_err('Phrases to delete are missing.', 'phrase_list->diff');
         }
-        if (get_class($del_phr_lst) <> 'phrase_list') {
+        if (get_class($del_phr_lst) <> phrase_list::class) {
             log_err(get_class($del_phr_lst) . ' cannot be used to delete phrases.', 'phrase_list->diff');
         }
 
@@ -1076,7 +1076,7 @@ class phrase_list
         $wrd_lst = $this->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time();
         if (isset($time_wrd)) {
-            if (get_class($time_wrd) == 'phrase') {
+            if (get_class($time_wrd) == phrase::class) {
                 $time_phr = $time_wrd;
             } else {
                 $time_phr = $time_wrd->phrase();
@@ -1095,7 +1095,7 @@ class phrase_list
         $measure_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
-            if (get_class($phr) <> 'phrase' and get_class($phr) <> 'word' and get_class($phr) <> 'word_dsp') {
+            if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
                 log_warning('The phrase list contains ' . $this->dsp_id() . ' of type ' . get_class($phr) . ', which is not supposed to be in the list.', 'phrase_list->measure_lst');
                 log_debug('phrase_list->measure_lst contains object ' . get_class($phr) . ', which is not a phrase');
             } else {

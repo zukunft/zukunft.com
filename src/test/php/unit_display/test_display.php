@@ -75,15 +75,15 @@ function run_display_test () {
   $result = btn_del('Del test', '/http/view.php');
   test_dsp_contains(", btn_del", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Undo test"><img src="../../../../images/button_undo.svg" alt="Undo test"></a>';
+  $target = '<a href="/http/view.php" title="Undo test"><img src="../images/button_undo.svg" alt="Undo test"></a>';
   $result = btn_undo('Undo test', '/http/view.php');
   test_dsp(", btn_undo", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Find test"><img src="../../../../images/button_find.svg" alt="Find test"></a>';
+  $target = '<a href="/http/view.php" title="Find test"><img src=".../images/button_find.svg" alt="Find test"></a>';
   $result = btn_find('Find test', '/http/view.php');
   test_dsp(", btn_find", $target, $result);
 
-  $target = '<a href="/http/view.php" title="Show all test"><img src="../../../../images/button_filter_off.svg" alt="Show all test"></a>';
+  $target = '<a href="/http/view.php" title="Show all test"><img src="../images/button_filter_off.svg" alt="Show all test"></a>';
   $result = btn_unfilter('Show all test', '/http/view.php');
   test_dsp(", btn_unfilter", $target, $result);
 
@@ -91,7 +91,7 @@ function run_display_test () {
   $result = btn_yesno('YesNo test', '/http/view.php');
   test_dsp(", btn_yesno", $target, $result);
 
-  $target = '<a href="/http/view.php?words=1" title="back"><img src="../../../../images/button_back.svg" alt="back"></a>';
+  $target = '<a href="/http/view.php?words=1" title="back"><img src="../images/button_back.svg" alt="back"></a>';
   $result = btn_back('');
   test_dsp(", btn_back", $target, $result);
 

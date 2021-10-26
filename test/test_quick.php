@@ -84,7 +84,7 @@ if ($start_usr->id > 0) {
             run_user_sandbox_test();
             run_word_tests();
             //run_word_ui_test();
-            //run_word_display_test ();
+            run_word_display_test ();
             run_word_list_test();
             run_word_link_test ();
             run_ref_test();
@@ -97,44 +97,37 @@ if ($start_usr->id > 0) {
             run_value_test ();
             //run_value_ui_test ();
             run_source_test ();
-            run_expression_test ();
             */
+            run_expression_test ();
             run_formula_test ();
             run_formula_list_test ();
             //run_formula_ui_test ();
             run_formula_link_test ();
             run_formula_link_list_test ();
             run_formula_trigger_test ();
-            // run_formula_value_test ();
-            // run_formula_value_list_test ();
-            //run_formula_element_test ();
-            //run_formula_element_list_test ();
-            //run_formula_element_group_test ();
+            run_formula_value_test ();
+            run_formula_value_list_test ();
+            run_formula_element_test ();
+            run_formula_element_list_test ();
+            run_formula_element_group_test ();
+            /*
             run_batch_job_test ();
             run_batch_job_list_test ();
             run_view_test ();
             run_view_component_test ();
             run_view_component_link_test ();
-            //run_display_test ();
+            run_display_test ();
             run_export_test ();
             //run_permission_test ();
-            run_legacy_test ();
-
-            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST_QUICK));
-            //run_value_test();
-            //run_view_test ();
-            //run_view_component_test ();
-            //run_view_component_link_test ();
-            //run_display_test ();
-            //run_phrase_group_test ();
-            //run_export_test ();
-            //run_permission_test ();
+            run_legacy_test();
+            */
 
 
             // testing cleanup to remove any remaining test records
             run_test_cleanup();
 
             // start the integration tests by loading the base and sample data
+            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST_QUICK));
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST));
 
             // display the test results

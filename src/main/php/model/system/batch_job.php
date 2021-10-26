@@ -212,14 +212,14 @@ class batch_job
             $result .= ' for id ' . $this->row_id;
         }
         if (isset($this->frm)) {
-            if (get_class($this->frm) == 'formula') {
+            if (get_class($this->frm) == formula::class) {
                 $result .= ' ' . $this->frm->dsp_id();
             } else {
                 $result .= ' ' . get_class($this->frm) . ' ' . $this->frm->dsp_id();
             }
         }
         if (isset($this->phr_lst)) {
-            if (get_class($this->phr_lst) == 'phrase_list') {
+            if (get_class($this->phr_lst) == phrase_list::class) {
                 $result .= ' ' . $this->phr_lst->dsp_id();
             } else {
                 $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->dsp_id();
@@ -239,14 +239,14 @@ class batch_job
         $result = $this->type;
 
         if (isset($this->frm)) {
-            if (get_class($this->frm) == 'formula') {
+            if (get_class($this->frm) == formula::class) {
                 $result .= $this->frm->name();
             } else {
                 $result .= get_class($this->frm) . ' ' . $this->frm->name();
             }
         }
         if (isset($this->phr_lst)) {
-            if (get_class($this->phr_lst) == 'phrase_list') {
+            if (get_class($this->phr_lst) == phrase_list::class) {
                 $result .= ' ' . $this->phr_lst->name();
             } else {
                 $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->name();

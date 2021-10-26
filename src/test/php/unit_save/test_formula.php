@@ -78,10 +78,8 @@ function run_formula_test()
             $phr_lst->add_name(word::TN_2019);
             $phr_lst->load();
             $time_phr = $phr_lst->time_useful();
-            //echo $time_phr->name().'<br>';
             $val = $elm_frm->special_result($phr_lst, $time_phr);
             $result = $val->number;
-            //echo $result.'<br>';
             $target = word::TN_2019;
             // todo: get the best matching number
             //test_dsp('formula->special_result for "'.$elm_frm->name.'"', $target, $result);

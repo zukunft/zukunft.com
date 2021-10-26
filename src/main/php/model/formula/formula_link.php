@@ -282,7 +282,7 @@ class formula_link extends user_sandbox
         }
         if ($this->tob != null) {
             if ($this->tob->name <> '') {
-                if ($result  != '') {
+                if ($result != '') {
                     $result .= ' ';
                 }
                 $result .= $this->tob->name;     // e.g. cash flow statement
@@ -569,10 +569,12 @@ class formula_link extends user_sandbox
 
             // it should not be possible to change the formula or the word, but nevertheless check
             // instead of changing the formula or the word, a new link should be created and the old deleted
-            if ($db_rec->fob->id <> $this->fob->id
-                or $db_rec->tob->id <> $this->tob->id) {
-                log_debug("formula_link->save -> update link settings for id " . $this->id . ": change formula " . $db_rec->formula_id . " to " . $this->fob->id . " and " . $db_rec->phrase_id . " to " . $this->tob->id);
-                $result .= log_info('The formula link "' . $db_rec->fob->name . '" with "' . $db_rec->tob->name . '" (id ' . $db_rec->fob->id . ',' . $db_rec->tob->id . ') " cannot be changed to "' . $this->fob->name . '" with "' . $this->tob->name . '" (id ' . $this->fob->id . ',' . $this->tob->id . '). Instead the program should have created a new link.', "formula_link->save");
+            if ($db_rec->fob != null) {
+                if ($db_rec->fob->id <> $this->fob->id
+                    or $db_rec->tob->id <> $this->tob->id) {
+                    log_debug("formula_link->save -> update link settings for id " . $this->id . ": change formula " . $db_rec->formula_id . " to " . $this->fob->id . " and " . $db_rec->phrase_id . " to " . $this->tob->id);
+                    $result .= log_info('The formula link "' . $db_rec->fob->name . '" with "' . $db_rec->tob->name . '" (id ' . $db_rec->fob->id . ',' . $db_rec->tob->id . ') " cannot be changed to "' . $this->fob->name . '" with "' . $this->tob->name . '" (id ' . $this->fob->id . ',' . $this->tob->id . '). Instead the program should have created a new link.', "formula_link->save");
+                }
             }
 
             // check if the id parameters are supposed to be changed

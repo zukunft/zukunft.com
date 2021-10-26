@@ -84,11 +84,16 @@ function run_formula_link_test()
     $frm_lnk2->load_objects();
 
     // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
-    $result = $frm_lnk2->fob->dsp_obj()->name();
+    if ($frm_lnk2->fob != null) {
+        $result = $frm_lnk2->fob->dsp_obj()->name();
+    }
     $target = $frm->dsp_obj()->name();
     test_dsp('formula_link->load by formula id and link id "' . $frm->dsp_obj()->name() . '', $target, $result);
 
-    $result = $frm_lnk2->tob->name();
+    $result = '';
+    if ($frm_lnk2->tob != null) {
+        $result = $frm_lnk2->tob->name();
+    }
     $target = $phr->name();
     test_dsp('formula_link->load by phrase id and link id "' . $phr->name() . '', $target, $result);
 
