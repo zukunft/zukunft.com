@@ -1204,6 +1204,21 @@ class user_sandbox
         return $result;
     }
 
+    /**
+     * check if target key value already exists
+     * overwritten in the word class for formula link words
+     *
+     * @return user_sandbox object with id zero if no object with the same id is found
+     */
+    function get_obj_with_same_id_fields(): user_sandbox
+    {
+        log_debug($this->obj_name . '->save_id_if_updated check if target already exists ' . $this->dsp_id());
+        $db_chk = clone $this;
+        $db_chk->id = 0; // to force the load by the id fields
+        $db_chk->load_standard(); // TODO should not ADDITIONAL the user specific load be called
+        return $db_chk;
+    }
+
     // check if the id parameters are supposed to be changed
     // return an empty string if everything is fine or a messages for the user what should be changed
     function save_id_if_updated($db_con, $db_rec, $std_rec): string
@@ -1212,12 +1227,8 @@ class user_sandbox
         $result = '';
 
         if ($this->is_id_updated($db_rec)) {
-            // check if target key value already exists
-            log_debug($this->obj_name . '->save_id_if_updated check if target already exists ' . $this->dsp_id() . ' (has been "' . $db_rec->dsp_id() . '")');
-            $db_chk = clone $this;
-            $db_chk->id = 0; // to force the load by the id fields
-            $db_chk->load_standard();
-            if ($db_chk->id > 0) {
+            $db_chk = $this->get_obj_with_same_id_fields();
+            if ($db_chk->id <> 0) {
                 log_debug($this->obj_name . '->save_id_if_updated target already exists');
                 if ($this->rename_can_switch) {
                     // ... if yes request to delete or exclude the record with the id parameters before the change

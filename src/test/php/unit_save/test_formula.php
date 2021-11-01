@@ -34,6 +34,7 @@ function create_test_formulas()
     test_formula(formula::TN_SECTOR, formula::TF_SECTOR);
     test_formula(formula::TN_INCREASE, formula::TF_INCREASE);
     test_formula(formula::TN_SCALE_K, formula::TF_SCALE_K);
+    test_formula(formula::TN_SCALE_TO_K, formula::TF_SCALE_TO_K);
     test_formula(formula::TN_SCALE_MIO, formula::TF_SCALE_MIO);
     test_formula(formula::TN_SCALE_BIL, formula::TF_SCALE_BIL);
 }
@@ -182,6 +183,39 @@ function run_formula_test()
     }
     $target = '0.0078718332961637';
     test_dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+
+    // test the scaling mainly to check the scaling handling of the results later
+    // TODO remove any scaling words from the phrase list if the result word is of type scaling
+    // TODO automatically check the fastest way to scale and avoid double scaling calculations
+    $frm_scale_mio_to_one = load_formula(formula::TN_SCALE_MIO);
+    $fv_lst = $frm_scale_mio_to_one->calc($phr_lst, $back);
+    if (isset($fv_lst)) {
+        $result = $fv_lst[0]->value;
+    } else {
+        $result = '';
+    }
+    $target = '8505251.0';
+    test_dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+
+    // test the scaling back to thousand
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_2020);
+    // why is this word needed??
+    $phr_lst->add_name(word::TN_ONE);
+    $phr_lst->load();
+    $frm_scale_one_to_k = load_formula(formula::TN_SCALE_TO_K);
+    $fv_lst = $frm_scale_one_to_k->calc($phr_lst, $back);
+    if (isset($fv_lst)) {
+        $result = $fv_lst[0]->value;
+    } else {
+        $result = '';
+    }
+    $target = 8505.251;
+    test_dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+
 
     // test the display functions
     $frm = load_formula(formula::TN_INCREASE);

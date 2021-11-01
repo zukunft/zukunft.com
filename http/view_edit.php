@@ -118,13 +118,15 @@ if ($usr->id > 0) {
                 $cmp = new view_cmp;
                 $cmp->name = $_GET['entry_name'];
                 $cmp->usr = $usr;
-                $cmp->save();
-                $cmp->load();
-                if ($cmp->id > 0) {
-                    $cmp->type_id = $_GET['new_entry_type'];
-                    $cmp->save();
-                    $order_nbr = $cmp->next_nbr($dsp_edit->id);
-                    $cmp->link($dsp_edit, $order_nbr);
+                $add_result = $cmp->save();
+                if ($add_result == '') {
+                    $cmp->load();
+                    if ($cmp->id > 0) {
+                        $cmp->type_id = $_GET['new_entry_type'];
+                        $cmp->save();
+                        $order_nbr = $cmp->next_nbr($dsp_edit->id);
+                        $cmp->link($dsp_edit, $order_nbr);
+                    }
                 }
             }
         }

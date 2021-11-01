@@ -1341,4 +1341,17 @@ class word extends word_link_object
         return $result;
     }
 
+    function get_obj_with_same_id_fields(): user_sandbox
+    {
+        $db_chk = parent::get_obj_with_same_id_fields();
+        if ($db_chk->id > 0) {
+            if ($this->obj_name == word::class or $this->obj_name == word_dsp::class) {
+                // TODO check if this is always correct
+                $db_chk->id = 0;
+            }
+        }
+
+        return $db_chk;
+    }
+
 }

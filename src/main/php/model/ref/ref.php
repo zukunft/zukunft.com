@@ -153,7 +153,7 @@ class ref
         // to be able to log the object names
         if ($this->load_objects()) {
             if ($do_save) {
-                if ($this->save() > 0) {
+                if ($this->save() == '') {
                     log_debug('ref->import_obj -> ' . $this->dsp_id());
                     $result = true;
                 }
@@ -303,12 +303,12 @@ class ref
 
     // update a ref in the database or update the existing
     // returns the database id of the created reference or 0 if not successful
-    private function add(): int
+    private function add(): string
     {
         log_debug('ref->add ' . $this->dsp_id());
 
         global $db_con;
-        $result = 0;
+        $result = '';
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -322,11 +322,13 @@ class ref
                 array($this->phr->id, $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
-                if ($log->add_ref($this->id)) {
-                    $result = $this->id;
+                if (!$log->add_ref($this->id)) {
+                    $result .= 'Adding reference ' . $this->dsp_id() . ' in the log failed.';
+                    log_err($result, 'ref->add');
                 }
             } else {
-                log_err('Adding reference ' . $this->dsp_id() . ' failed.', 'ref->add');
+                $result .= 'Adding reference ' . $this->dsp_id() . ' failed.';
+                log_err($result, 'ref->add');
             }
         }
 
@@ -355,12 +357,12 @@ class ref
 
     // update a ref in the database or update the existing
     // returns the id of the updated or created reference
-    function save(): int
+    function save(): string
     {
         log_debug('ref->save ' . $this->dsp_id());
 
         global $db_con;
-        $result = 0;
+        $result = '';
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->usr->id);
@@ -381,7 +383,7 @@ class ref
         // create a new object or update an existing
         if ($this->id <= 0) {
             log_debug('ref->save add');
-            $result = $this->add();
+            $result .= $this->add();
         } else {
             log_debug('ref->save update');
 
@@ -400,8 +402,7 @@ class ref
                 if ($log->id > 0) {
                     $db_con->set_type(DB_TYPE_REF);
                     if ($db_con->update($this->id, 'external_key', $this->external_key)) {
-                        $result = $this->id;
-                        log_debug('ref->save update ... done.' . $result . '');
+                        log_debug('ref->save update ... done.');
                     }
                 }
             }

@@ -46,8 +46,8 @@ function run_formula_value_test()
     $phr_lst->add_name(formula::TN_INCREASE);
     // TODO check why are these two words needed??
     $phr_lst->add_name(word::TN_MIO);
-    //$phr_lst->add_name(TW_CHF);
-    $phr_lst->add_name(word::TN_PCT);
+    // TODO $phr_lst->add_name(word::TN_PCT);
+    $phr_lst->add_name(word::TN_INHABITANT);
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id > 0) {
         $ch_increase = new formula_value;
@@ -59,7 +59,7 @@ function run_formula_value_test()
         $result = 'no ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
     }
     // todo review
-    $target = '-0.046588314872749';
+    $target = '0.0078718332961637';
     test_dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test load result with time
@@ -80,7 +80,7 @@ function run_formula_value_test()
         $result = 'no ' . word::TN_2020 . ' ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
     }
     //$result = $ch_increase->phr_grp_id;
-    $target = '0.0099235970843945';
+    $target = '0.0078718332961637';
     if (isset($time_phr) and isset($ch_up_grp)) {
         test_dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result);
     } else {
@@ -89,27 +89,35 @@ function run_formula_value_test()
 
     // test the scaling
     // test the scaling of a value
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
-    $wrd_lst->add_name(word::TN_CH);
-    $wrd_lst->add_name(word::TN_INHABITANT);
-    $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->add_name(word::TN_2020);
-    $wrd_lst->load();
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_CH);
+    $phr_lst->add_name(word::TN_INHABITANT);
+    $phr_lst->add_name(word::TN_IN_K);
+    $phr_lst->add_name(word::TN_2020);
+    $phr_lst->load();
+    $ch_k_grp = $phr_lst->get_grp();
+    /*
     $dest_wrd_lst = new word_list;
     $dest_wrd_lst->usr = $usr;
     $dest_wrd_lst->add_name(word::TN_INHABITANT);
-    $dest_wrd_lst->add_name(word::TN_IN_K);
     $dest_wrd_lst->load();
     $mio_val = new value;
     $mio_val->ids = $wrd_lst->ids;
     $mio_val->usr = $usr;
     $mio_val->load();
     log_debug('value->scale value loaded');
-    //$result = $mio_val->check();
     $result = $mio_val->scale($dest_wrd_lst);
-    $target = '46000000000';
-    test_dsp('value->val_scaling for a tern list ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $result = $mio_val->scale($dest_wrd_lst);
+    */
+    $k_val = new formula_value;
+    $k_val->phr_grp_id = $ch_k_grp->id;
+    $k_val->usr = $usr;
+    //$result = $mio_val->check();
+    $k_val->load();
+    $result = $k_val->value;
+    $target = 8505.251;
+    test_dsp('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test getting the "best guess" value
     // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -158,6 +166,7 @@ function run_formula_value_list_test()
     $fv_lst->load();
     $result = $fv_lst->dsp_id();
     $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
+    $target = word::TN_INHABITANT;
     test_dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

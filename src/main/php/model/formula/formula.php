@@ -54,6 +54,8 @@ class formula extends user_sandbox_description
     const TF_INCREASE = '"percent" = ( "this" - "prior" ) / "prior"';
     const TN_SCALE_K = 'System Test Formula scale thousand to one';
     const TF_SCALE_K = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. thousands" * 1000';
+    const TN_SCALE_TO_K = 'System Test Formula scale one to thousand';
+    const TF_SCALE_TO_K = '"System Test Scaling Word e.g. thousands" = "System Test Scaling Word e.g. one" / 1000';
     const TN_SCALE_MIO = 'System Test Formula scale millions to one';
     const TF_SCALE_MIO = '"System Test Scaling Word e.g. one" = "System Test Scaling Word e.g. millions" * 1000000';
     const TN_SCALE_BIL = 'System Test Formula scale billions to one';
@@ -68,6 +70,7 @@ class formula extends user_sandbox_description
         self::TN_SECTOR,
         self::TN_INCREASE,
         self::TN_SCALE_K,
+        self::TN_SCALE_TO_K,
         self::TN_SCALE_MIO,
         self::TN_SCALE_BIL
     );
@@ -892,9 +895,11 @@ class formula extends user_sandbox_description
             $exp->usr = $this->usr;
 
             // the phrase left of the equation sign should be added to the result
+            $has_result_phrases = false;
             $fv_add_phr_lst = $exp->fv_phr_lst();
             if (isset($fv_add_phr_lst)) {
                 log_debug('formula->calc -> use words ' . $fv_add_phr_lst->dsp_id() . ' for the result');
+                $has_result_phrases = true;
             }
             // use only the part right of the equation sign for the result calculation
             $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part();
@@ -916,15 +921,6 @@ class formula extends user_sandbox_description
                     } else {
                         if ($fv->is_updated) {
                             log_debug('formula result ' . $fv->dsp_id() . ' is updated');
-                            // add the formula result word
-                            // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
-                            if (isset($fv_add_phr_lst)) {
-                                log_debug('formula->calc -> add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
-                                foreach ($fv_add_phr_lst->lst as $frm_result_wrd) {
-                                    $fv->phr_lst->add($frm_result_wrd);
-                                }
-                                log_debug('formula->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
-                            }
 
                             // make common assumptions on the word list
 
@@ -942,6 +938,7 @@ class formula extends user_sandbox_description
 
                                 // if in the formula is defined, that the result is in percent
                                 // and the values used are in millions, the result is only in percent, but not in millions
+                                // TODO check that all value have the same scaling and adjust the scaling if needed
                                 if ($fv_add_wrd_lst->has_percent()) {
                                     $fv->phr_lst->ex_scaling();
                                     log_debug('formula->calc -> scaling words removed from ' . $fv->phr_lst->dsp_id());
@@ -951,9 +948,26 @@ class formula extends user_sandbox_description
                                     //$fv->phr_lst->merge($scale_wrd_lst->lst);
                                     //zu_debug('formula->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$fv->phr_lst->names()).'"');
                                 }
+
+                                // if the formula is a scaling formula, remove the obsolete scaling word from the source words
+                                if ($fv_add_wrd_lst->has_scaling()) {
+                                    $fv->phr_lst->ex_scaling();
+                                    log_debug('formula->calc -> scaling words removed from ' . $fv->phr_lst->dsp_id());
+                                }
+
                             }
 
-                            $fv = $fv->save_if_updated();
+                            // add the formula result word
+                            // e.g. in the increase formula "percent" should be on the left side of the equation because the result is supposed to be in percent
+                            if (isset($fv_add_phr_lst)) {
+                                log_debug('formula->calc -> add words ' . $fv_add_phr_lst->dsp_id() . ' to the result');
+                                foreach ($fv_add_phr_lst->lst as $frm_result_wrd) {
+                                    $fv->phr_lst->add($frm_result_wrd);
+                                }
+                                log_debug('formula->calc -> added words ' . $fv_add_phr_lst->dsp_id() . ' to the result ' . $fv->phr_lst->dsp_id());
+                            }
+
+                            $fv = $fv->save_if_updated($has_result_phrases);
 
                         }
                     }
@@ -1503,7 +1517,7 @@ class formula extends user_sandbox_description
 
     /**
      * create a database record to save user specific settings for this formula
-     * TODO combine the reread and the adding in a commit transaction
+     * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      */
     function add_usr_cfg(): bool
     {
@@ -1812,10 +1826,11 @@ class formula extends user_sandbox_description
             $wrd->usr = $this->usr;
             $wrd->load();
             $wrd->name = $this->name;
-            if ($wrd->save()) {
+            $add_result = $wrd->save();
+            if ($add_result == '') {
                 log_debug('formula->save_id_fields word "' . $db_rec->name . '" renamed to ' . $wrd->dsp_id());
             } else {
-                $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name;
+                $result .= 'formula ' . $db_rec->name . ' cannot ba renamed to ' . $this->name . ', because' . $add_result;
             }
 
             // change the formula name
@@ -1838,8 +1853,26 @@ class formula extends user_sandbox_description
         return $result;
     }
 
+    private function is_term_the_same(term $trm): bool
+    {
+        $result = false;
+        if ($trm->type == formula::class) {
+            $result = $trm;
+        } elseif ($trm->type == word::class or $trm->type == word_dsp::class) {
+            if ($trm->obj == null) {
+                log_warning('The object of the term has been expected to be loaded');
+            } else {
+                if ($trm->obj->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+                    $result = $trm;
+                }
+            }
+        }
+        return $result;
+    }
+
     /**
      * check if the id parameters are supposed to be changed
+     * and check if the name is already used
      */
     function save_id_if_updated($db_con, $db_rec, $std_rec): string
     {
@@ -1850,7 +1883,7 @@ class formula extends user_sandbox_description
         if ($db_rec->name <> $this->name) {
             // check if a verb or word with the same name is already in the database
             $trm = $this->term();
-            if ($trm->id > 0 and $trm->type <> 'formula') {
+            if ($trm->id > 0 and !$this->is_term_the_same($trm)) {
                 $result .= $trm->id_used_msg();
                 log_debug('formula->save_id_if_updated name "' . $trm->name . '" used already as "' . $trm->type . '"');
             } else {

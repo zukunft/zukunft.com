@@ -229,7 +229,8 @@ class source extends user_sandbox
             */
         }
 
-        if ($this->save()) {
+        $add_result = $this->save();
+        if ($add_result == '') {
             $result = true;
             log_debug('source->import_obj -> ' . $this->dsp_id());
         } else {

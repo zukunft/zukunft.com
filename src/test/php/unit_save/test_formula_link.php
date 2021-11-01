@@ -34,6 +34,7 @@ function create_test_formula_links()
     test_formula_link(formula::TN_SECTOR, word::TN_SHARE);
     test_formula_link(formula::TN_INCREASE, word::TN_YEAR);
     test_formula_link(formula::TN_SCALE_K, word::TN_IN_K);
+    test_formula_link(formula::TN_SCALE_TO_K, word::TN_ONE);
     test_formula_link(formula::TN_SCALE_MIO, word::TN_MIO);
     test_formula_link(formula::TN_SCALE_BIL, word::TN_BIL);
 

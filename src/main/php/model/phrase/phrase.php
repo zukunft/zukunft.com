@@ -109,7 +109,15 @@ class phrase
                 $this->id = $trm->id * -1;
                 log_debug('phrase->loaded triple ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type == formula::class) {
-                log_err('phrase->loaded should have loaded the word "' . $this->dsp_id() . '" related to the formula');
+                // for the phrase load the realted word instead of the formula
+                // TODO integrate this into the term loading by load both object a once
+                $wrd = new word_dsp;
+                $wrd->name = $this->name;
+                $wrd->usr = $this->usr;
+                $result = $wrd->load();
+                $this->obj = $wrd;
+                $this->id = $wrd->id;
+                log_debug('phrase->loaded formula word ' . $this->dsp_id());
             } else {
                 if ($this->type_name == '') {
                     // TODO check that this ($phrase->load) is never used for an error detection

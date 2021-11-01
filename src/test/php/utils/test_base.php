@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // TODO move the names and values for testing to the single objects and check that they cannot be used by an user
+// TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 
 global $debug;
 global $root_path;

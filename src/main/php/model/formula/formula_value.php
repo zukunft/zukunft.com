@@ -78,9 +78,10 @@ class formula_value
 
     // load the record from the database
     // in a separate function, because this can be called twice from the load function
-    private function load_rec($sql_where)
+    private function load_rec($sql_where): bool
     {
         global $db_con;
+        $result = false;
 
         $sql = "SELECT formula_value_id,
                     user_id,
@@ -113,18 +114,21 @@ class formula_value
                     $this->last_update = new DateTime($val_row['last_update']);
                     $this->last_val_update = new DateTime($val_row['last_update']);
                     $this->value = $val_row['formula_value'];
+                    $result = true;
                 }
             }
         }
+        return $result;
     }
 
     // load the missing formula parameters from the database
     // TODO load user specific values
     // TODO create load_sql and name the query
-    function load()
+    function load(): bool
     {
 
         global $db_con;
+        $result = false;
 
         // check the all minimal input parameters
         if (!isset($this->usr)) {
@@ -296,7 +300,7 @@ class formula_value
             if ($sql_where == '') {
                 log_err("Either the database ID (" . $this->id . ") or the source or result words or word group and the user (" . $this->usr->id . ") must be set to load a result.", "formula_value->load");
             } else {
-                $this->load_rec($sql_where);
+                $result = $this->load_rec($sql_where);
 
                 // if no general value can be found, test if a more specific value can be found in the database
                 // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -362,6 +366,7 @@ class formula_value
             }
             log_debug('formula_value->load got id ' . $this->id . ': ' . $this->value);
         }
+        return $result;
     }
 
     /*
@@ -912,8 +917,24 @@ class formula_value
         }
     }
 
-    // check if a single formula result needs to be saved to the database
-    function save_if_updated(): bool
+    private function save_without_time(): string
+    {
+        $fv_no_time = clone $this;
+        $fv_no_time->src_time_phr = null;
+        $fv_no_time->time_phr = null;
+        return $fv_no_time->save();
+    }
+
+    // TODO add check
+    private function has_no_time_value(): bool
+    {
+        $fv_check = clone $this;
+        $fv_check->time_phr = null;
+        return !$fv_check->load();
+    }
+
+// check if a single formula result needs to be saved to the database
+    function save_if_updated(bool $has_result_phrases = false): bool
     {
         global $debug;
         $result = true;
@@ -949,12 +970,14 @@ class formula_value
                     log_warning('The source phrases for ' . $this->dsp_id() . ' are missing.', 'formula_value->save_if_updated');
                 }
 
-                // add the formula name word
+                // add the formula name word, but not is the result words are defined in the formula
                 // e.g. if the formula "country weight" is calculated the word "country weight" should be added to the result values
-                log_debug('formula_value->save_if_updated -> add the formula name ' . $this->frm->dsp_id() . ' to the result phrases ' . $this->phr_lst->dsp_id());
-                if ($this->frm != null) {
-                    if ($this->frm->name_wrd != null) {
-                        $this->phr_lst->add($this->frm->name_wrd->phrase());
+                if (!$has_result_phrases) {
+                    log_debug('formula_value->save_if_updated -> add the formula name ' . $this->frm->dsp_id() . ' to the result phrases ' . $this->phr_lst->dsp_id());
+                    if ($this->frm != null) {
+                        if ($this->frm->name_wrd != null) {
+                            $this->phr_lst->add($this->frm->name_wrd->phrase());
+                        }
                     }
                 }
 
@@ -991,18 +1014,15 @@ class formula_value
                         log_debug('check if result time ' . $this->time_phr->dsp_id() . ' is the default time ' . $fv_default_time->dsp_id());
                         if ($this->time_phr->id == $fv_default_time->id) {
                             // if there is not yet a general value for all user, save it now
-
-                            $fv_no_time = clone $this;
-                            $fv_no_time->src_time_phr = null;
-                            $fv_no_time->time_phr = null;
-                            $fv_id_no_time = $fv_no_time->save();
-                            if ($debug > 6) {
-                                log_debug('result = ' . $fv_no_time->value . ' saved without time for ' . $fv_no_time->phr_lst->dsp_id() . ' as id "' . $fv_id_no_time . '" based on ' . $fv_no_time->src_phr_lst->dsp_id() . ' for user ' . $fv_no_time->usr->id . ', because default time is ' . $fv_default_time->name . ' for ' . $fv_no_time->phr_lst->dsp_id() . ' for ' . $fv_no_time->phr_lst->dsp_id());
-                            } else {
-                                log_debug('result = ' . $this->value . ' saved without time for ' . $this->phr_lst->name_linked());
-                            }
+                            $result .= $this->save_without_time();
                         }
                     }
+
+                    // save the value without time if no value without time is yet saved for the phrase group
+                    if ($this->has_no_time_value()) {
+                        $result .= $this->save_without_time();
+                    }
+
                     // save the result
                     $fv_id = $this->save();
 
@@ -1022,9 +1042,9 @@ class formula_value
         return $result;
     }
 
-    // save the formula result to the database
-    // for the word selection the id list is the lead, not the object list and not the group
-    // return the id of the saved record
+// save the formula result to the database
+// for the word selection the id list is the lead, not the object list and not the group
+// return the id of the saved record
     function save(): int
     {
 
