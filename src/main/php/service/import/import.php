@@ -66,117 +66,121 @@ class file_import
         $result = '';
 
         $json_array = json_decode($this->json_str, true);
-        foreach ($json_array as $key => $json_obj) {
-            if ($key == 'version') {
-                if (prg_version_is_newer($json_obj)) {
-                    $result .= 'Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION . ' ';
-                }
-            } elseif ($key == 'pod') {
-                // TODO set the source pod
-            } elseif ($key == 'time') {
-                // TODO set the time of the export
-            } elseif ($key == 'selection') {
-                // TODO set the selection as context
-            } elseif ($key == 'user') {
-                // TODO set the user that has created the export
-            } elseif ($key == 'users') {
-                foreach ($json_obj as $user) {
-                    // TODO check if the constructor is always used
-                    $usr = new user;
-                    $import_result = $usr->import_obj($user, $this->usr->profile_id);
-                    if ($import_result == '') {
-                        $this->users_done++;
-                    } else {
-                        $this->users_failed++;
+        if ($json_array != null) {
+            foreach ($json_array as $key => $json_obj) {
+                if ($key == 'version') {
+                    if (prg_version_is_newer($json_obj)) {
+                        $result .= 'Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION . ' ';
                     }
-                }
-                $result .= $import_result;
-            } elseif ($key == 'verbs') {
-                foreach ($json_obj as $verb) {
-                    $vrb = new verb;
-                    $vrb->usr = $this->usr;
-                    $import_result = $vrb->import_obj($verb);
-                    if ($import_result == '') {
-                        $this->verbs_done++;
-                    } else {
-                        $this->verbs_failed++;
-                    }
-                }
-                $result .= $import_result;
-            } elseif ($key == 'words') {
-                foreach ($json_obj as $word) {
-                    $wrd = new word;
-                    $wrd->usr = $this->usr;
-                    $import_result = $wrd->import_obj($word);
-                    if ($import_result == '') {
-                        $this->words_done++;
-                    } else {
-                        $this->words_failed++;
+                } elseif ($key == 'pod') {
+                    // TODO set the source pod
+                } elseif ($key == 'time') {
+                    // TODO set the time of the export
+                } elseif ($key == 'selection') {
+                    // TODO set the selection as context
+                } elseif ($key == 'user') {
+                    // TODO set the user that has created the export
+                } elseif ($key == 'users') {
+                    $import_result = '';
+                    foreach ($json_obj as $user) {
+                        // TODO check if the constructor is always used
+                        $usr = new user;
+                        $import_result .= $usr->import_obj($user, $this->usr->profile_id);
+                        if ($import_result == '') {
+                            $this->users_done++;
+                        } else {
+                            $this->users_failed++;
+                        }
                     }
                     $result .= $import_result;
-                }
-            } elseif ($key == 'triples') {
-                foreach ($json_obj as $triple) {
-                    $wrd_lnk = new word_link;
-                    $wrd_lnk->usr = $this->usr;
-                    $import_result = $wrd_lnk->import_obj($triple);
-                    if ($import_result == '') {
-                        $this->triples_done++;
-                    } else {
-                        $this->triples_failed++;
+                } elseif ($key == 'verbs') {
+                    $import_result = '';
+                    foreach ($json_obj as $verb) {
+                        $vrb = new verb;
+                        $vrb->usr = $this->usr;
+                        $import_result .= $vrb->import_obj($verb);
+                        if ($import_result == '') {
+                            $this->verbs_done++;
+                        } else {
+                            $this->verbs_failed++;
+                        }
                     }
                     $result .= $import_result;
-                }
-            } elseif ($key == 'formulas') {
-                foreach ($json_obj as $formula) {
-                    $frm = new formula;
-                    $frm->usr = $this->usr;
-                    $import_result = $frm->import_obj($formula);
-                    if ($import_result == '') {
-                        $this->formulas_done++;
-                    } else {
-                        $this->formulas_failed++;
+                } elseif ($key == 'words') {
+                    foreach ($json_obj as $word) {
+                        $wrd = new word;
+                        $wrd->usr = $this->usr;
+                        $import_result = $wrd->import_obj($word);
+                        if ($import_result == '') {
+                            $this->words_done++;
+                        } else {
+                            $this->words_failed++;
+                        }
+                        $result .= $import_result;
                     }
-                    $result .= $import_result;
-                }
-            } elseif ($key == 'sources') {
-                foreach ($json_obj as $value) {
-                    $src = new source;
-                    $src->usr = $this->usr;
-                    $import_result = $src->import_obj($value);
-                    if ($import_result == '') {
-                        $this->sources_done++;
-                    } else {
-                        $this->sources_failed++;
+                } elseif ($key == 'triples') {
+                    foreach ($json_obj as $triple) {
+                        $wrd_lnk = new word_link;
+                        $wrd_lnk->usr = $this->usr;
+                        $import_result = $wrd_lnk->import_obj($triple);
+                        if ($import_result == '') {
+                            $this->triples_done++;
+                        } else {
+                            $this->triples_failed++;
+                        }
+                        $result .= $import_result;
                     }
-                    $result .= $import_result;
-                }
-            } elseif ($key == 'values') {
-                foreach ($json_obj as $value) {
-                    $val = new value;
-                    $val->usr = $this->usr;
-                    $import_result = $val->import_obj($value);
-                    if ($import_result == '') {
-                        $this->values_done++;
-                    } else {
-                        $this->values_failed++;
+                } elseif ($key == 'formulas') {
+                    foreach ($json_obj as $formula) {
+                        $frm = new formula;
+                        $frm->usr = $this->usr;
+                        $import_result = $frm->import_obj($formula);
+                        if ($import_result == '') {
+                            $this->formulas_done++;
+                        } else {
+                            $this->formulas_failed++;
+                        }
+                        $result .= $import_result;
                     }
-                    $result .= $import_result;
-                }
-            } elseif ($key == 'views') {
-                foreach ($json_obj as $view) {
-                    $view_obj = new view;
-                    $view_obj->usr = $this->usr;
-                    $import_result = $view_obj->import_obj($view);
-                    if ($import_result == '') {
-                        $this->views_done++;
-                    } else {
-                        $this->views_failed++;
+                } elseif ($key == 'sources') {
+                    foreach ($json_obj as $value) {
+                        $src = new source;
+                        $src->usr = $this->usr;
+                        $import_result = $src->import_obj($value);
+                        if ($import_result == '') {
+                            $this->sources_done++;
+                        } else {
+                            $this->sources_failed++;
+                        }
+                        $result .= $import_result;
                     }
-                    $result .= $import_result;
+                } elseif ($key == 'values') {
+                    foreach ($json_obj as $value) {
+                        $val = new value;
+                        $val->usr = $this->usr;
+                        $import_result = $val->import_obj($value);
+                        if ($import_result == '') {
+                            $this->values_done++;
+                        } else {
+                            $this->values_failed++;
+                        }
+                        $result .= $import_result;
+                    }
+                } elseif ($key == 'views') {
+                    foreach ($json_obj as $view) {
+                        $view_obj = new view;
+                        $view_obj->usr = $this->usr;
+                        $import_result = $view_obj->import_obj($view);
+                        if ($import_result == '') {
+                            $this->views_done++;
+                        } else {
+                            $this->views_failed++;
+                        }
+                        $result .= $import_result;
+                    }
+                } else {
+                    $result .= 'Unknown element ' . $key . ' ';
                 }
-            } else {
-                $result .= 'Unknown element ' . $key . ' ';
             }
         }
 

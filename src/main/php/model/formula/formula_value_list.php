@@ -250,7 +250,7 @@ class formula_value_list
     }
 
     // create the html code to show the formula results to the user
-    function display($back): string
+    function display(string $back = ''): string
     {
         log_debug("fv_lst->display (" . dsp_count($this->lst) . ")");
         $result = ''; // reset the html code var

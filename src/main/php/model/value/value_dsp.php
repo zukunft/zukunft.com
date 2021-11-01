@@ -50,7 +50,7 @@ class value_dsp extends value
 
     // return the html code to display a value
     // this is the opposite of the convert function
-    function display($back): string
+    function display(string $back = ''): string
     {
         $result = '';
         if (!is_null($this->number)) {

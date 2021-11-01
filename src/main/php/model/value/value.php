@@ -909,13 +909,13 @@ class value extends user_sandbox_display
      * @param bool $do_save can be set to false for unit testing
      * @return bool true if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         global $share_types;
         global $protection_types;
 
         log_debug('value->import_obj');
-        $result = false;
+        $result = '';
 
         $get_ownership = false;
         foreach ($json_obj as $key => $value) {
@@ -923,7 +923,7 @@ class value extends user_sandbox_display
             if ($key == 'words') {
                 $phr_lst = new phrase_list;
                 $phr_lst->usr = $this->usr;
-                $result = $phr_lst->import_lst($value, $do_save);
+                $result .= $phr_lst->import_lst($value, $do_save);
                 if ($do_save) {
                     $phr_grp = $phr_lst->get_grp();
                     log_debug('value->import_obj got word group ' . $phr_grp->dsp_id());
@@ -950,7 +950,7 @@ class value extends user_sandbox_display
                 $phr = new phrase;
                 $phr->usr = $this->usr;
                 if (!$phr->import_obj($value, $do_save)) {
-                    $result = false;
+                    $result = 'Failed to import time ' . $value;
                 } else {
                     $this->time_id = $phr->id;
                 }

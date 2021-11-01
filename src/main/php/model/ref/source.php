@@ -206,10 +206,10 @@ class source extends user_sandbox
     }
 
     // import a source from an object
-    function import_obj($json_obj): bool
+    function import_obj($json_obj): string
     {
         log_debug('source->import_obj');
-        $result = false;
+        $result = '';
 
         foreach ($json_obj as $key => $value) {
 
@@ -229,9 +229,8 @@ class source extends user_sandbox
             */
         }
 
-        $add_result = $this->save();
-        if ($add_result == '') {
-            $result = true;
+        $result = $this->save();
+        if ($result == '') {
             log_debug('source->import_obj -> ' . $this->dsp_id());
         } else {
             log_debug('source->import_obj -> save failed');
@@ -347,7 +346,7 @@ class source extends user_sandbox
     }
 
     // display a html view to change the source name and url
-    function dsp_edit($back): string
+    function dsp_edit(string $back = ''): string
     {
         log_debug('source->dsp_edit ' . $this->dsp_id() . ' by user ' . $this->usr->name);
         $result = '';

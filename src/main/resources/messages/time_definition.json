@@ -12,6 +12,18 @@
       "protection": "admin_protection"
     },
     {
+      "name": "Year",
+      "plural": "Years",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Year",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "January",
       "type": "time",
       "protection": "admin_protection",

@@ -62,7 +62,7 @@ class button {
 
   // display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
   // $back can be either the id of the last used word or the url path
-  function go_back ($back) {
+  function go_back (string $back = ''): string{
     if ($back == '') {
       $back = 1; // temp solution
     }

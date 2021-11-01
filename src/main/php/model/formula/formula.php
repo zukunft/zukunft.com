@@ -1013,7 +1013,7 @@ class formula extends user_sandbox_description
         global $protection_types;
 
         log_debug('formula->import_obj');
-        $result = false;
+        $result = '';
 
         // reset the all parameters for the formula object but keep the user
         $usr = $this->usr;

@@ -2,27 +2,38 @@
 
 /*
 
-  test_formula_element_group.php - TESTing of the FORMULA ELEMENT GROUP functions
-  ------------------------------
-  
+    test_formula_element_group.php - TESTing of the FORMULA ELEMENT GROUP functions
+    ------------------------------
 
-zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    Simple example:
+    the formula element group "Swiss inhabitants" should return:
+    - the number of Swiss inhabitants in the year 2019 and 2020, which are given values
+    - and the increase of Swiss inhabitants from 2019 to 2020, which is a formula result
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This file is part of zukunft.com - calc with words
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 
 */
 
@@ -31,33 +42,15 @@ function run_formula_element_group_test()
 
     global $usr;
 
-    $back = 0;
-
     test_header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
     // load increase formula for testing
     $frm = load_formula(formula::TN_INCREASE);
 
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
-    $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->add_name(word::TN_2019);
-    $phr_lst->load();
-
-    $phr_lst_next = new phrase_list;
-    $phr_lst_next->usr = $usr;
-    $phr_lst_next->add_name(word::TN_CH);
-    $phr_lst_next->add_name(word::TN_INHABITANT);
-    $phr_lst_next->add_name(word::TN_MIO);
-    $phr_lst_next->add_name(word::TN_2020);
-    $phr_lst_next->load();
-
-    // build the expression which is in this case "percent" = ( "this" - "prior" ) / "prior"
+    // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
     $exp = $frm->expression();
     // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
-    $elm_grp_lst = $exp->element_grp_lst($back);
+    $elm_grp_lst = $exp->element_grp_lst();
 
     $result = $elm_grp_lst->dsp_id();
     $target = '"this" (18),"prior" (20) for user 2 (zukunft.com system test)';
@@ -68,12 +61,23 @@ function run_formula_element_group_test()
 
     // define the element group object to retrieve the value
     if (count($elm_grp_lst->lst) > 0) {
+
+        // prepare the phrase list for the formula element selection
+        // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
+        $phr_lst = new phrase_list;
+        $phr_lst->usr = $usr;
+        $phr_lst->add_name(word::TN_CH);
+        $phr_lst->add_name(word::TN_INHABITANT);
+        $phr_lst->add_name(word::TN_MIO);
+        $phr_lst->load();
+
+        // get "this" from the formula element group list
         $elm_grp = $elm_grp_lst->lst[0];
         $elm_grp->phr_lst = clone $phr_lst;
 
         // test debug id first
         $result = $elm_grp->dsp_id();
-        $target = '"this" (18) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant","System Test Scaling Word e.g. millions","System Test Another Time Word e.g. 2019"';
+        $target = '"this" (18) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant","System Test Scaling Word e.g. millions"';
         test_dsp('formula_element_group->dsp_id', $target, $result);
 
         // test symbol for text replacement in the formula expression text
@@ -82,20 +86,14 @@ function run_formula_element_group_test()
         test_dsp('formula_element_group->build_symbol', $target, $result);
 
         // test the display name that can be used for user debugging
-        $result = trim($elm_grp->dsp_names($back));
-        $target = trim('<a href="/http/formula_edit.php?id=18&back=0">this</a>');
+        $result = trim($elm_grp->dsp_names());
+        $target = trim('<a href="/http/formula_edit.php?id=18&back=">this</a>');
         test_dsp('formula_element_group->dsp_names', $target, $result);
 
         // test if the values for an element group are displayed correctly
         $time_phr = $phr_lst->assume_time();
-        $result = $elm_grp->dsp_values($back, $time_phr);
-        $target = '';
-        test_dsp('formula_element_group->dsp_values', $target, $result);
-
-        $time_phr = $phr_lst_next->assume_time();
-        $result = $elm_grp->dsp_values($back, $time_phr);
-        // TODO activate $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a> (2015)';
-        $target = '(System Test Another Time Word e.g. 2019)';
+        $result = $elm_grp->dsp_values($time_phr);
+        $target = '<a href="/http/value_edit.php?id=5&back="  >8.51</a>';
         test_dsp('formula_element_group->dsp_values', $target, $result);
 
         // remember the figure list for the figure and figure list class test
@@ -114,17 +112,18 @@ function run_formula_element_group_test()
             $fig = $fig_lst->lst[0];
 
             if (isset($fig)) {
-                $result = $fig->display($back);
-                $target = "35'481";
+                $result = $fig->display();
+                $target = "8.51";
                 test_dsp('figure->display', $target, $result);
 
-                $result = $fig->display_linked($back);
-                $target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
+                $result = $fig->display_linked();
+                //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
+                $target = '<a href="/http/value_edit.php?id=5&back="  >8.51</a>';
                 test_dsp('figure->display_linked', $target, $result);
             }
         } else {
             $result = 'figure list is empty';
-            $target = 'this (3) and "ABB","Sales","CHF","million","2015"@';
+            $target = 'this (3) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
             test_dsp('formula_element_group->figures', $target, $result);
         }
 
@@ -132,9 +131,10 @@ function run_formula_element_group_test()
         test_header('Test the figure list class (classes/figure_lst.php)');
 
         $result = htmlspecialchars($fig_lst->dsp_id());
-        $target = htmlspecialchars("<font class=\"user_specific\">35'481</font> (438)");
+        //$target = htmlspecialchars("<font class=\"user_specific\">35'481</font> (438)");
         $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
-        $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
+        //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
+        $target = '8.51  (5)';
         // to overwrite any special char
         $diff = str_diff($result, $target);
         if ($diff != null) {
@@ -156,7 +156,7 @@ function run_formula_element_group_test()
         test_dsp('figure_list->dsp_id', $target, $result);
 
         $result = $fig_lst->display();
-        $target = "35'481 ";
+        $target = "8.51 ";
         test_dsp('figure_list->display', $target, $result);
 
     } else {

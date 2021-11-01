@@ -399,7 +399,7 @@ class user
             // the user profiles must always be in the order that the lower ID has same or less rights
             // TODO use the right level of the profile
             if ($profile_id >= $this->profile_id) {
-                $result = $this->save();
+                $result .= $this->save();
             }
         }
 

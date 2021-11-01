@@ -341,7 +341,7 @@ class view_cmp extends user_sandbox
     }
 
 // return the html code to display a view name with the link
-    function name_linked($back): string
+    function name_linked(string $back = ''): string
     {
 
         return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';

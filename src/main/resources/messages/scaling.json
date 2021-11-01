@@ -9,7 +9,7 @@
     {
       "name": "one",
       "comment": "Used to force the scaling to one unit",
-      "type": "scaling",
+      "type": "scaling_hidden",
       "protection": "admin_protection"
     },
     {
@@ -35,6 +35,18 @@
       "comment": "to specify numbers in percent",
       "type": "percent",
       "protection": "admin_protection"
+    },
+    {
+      "name": "tsd.",
+      "type": "scaling"
+    }
+  ],
+  "triples": [
+    {
+      "name": "tsd. is alias of thousand",
+      "from": "tsd.",
+      "verb": "is alias of",
+      "to": "thousand"
     }
   ],
   "formulas": [

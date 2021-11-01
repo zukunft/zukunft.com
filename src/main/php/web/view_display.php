@@ -148,7 +148,7 @@ class view_dsp extends view
     /**
      * show the name of the used view and allow to change it
      */
-    private function dsp_view_name($back): string
+    private function dsp_view_name(string $back = ''): string
     {
         return 'view <a href="/http/view_select.php?id=' . $this->id . '&word=' . $back . '&back=' . $back . '">' . $this->name . '</a> ';
     }
@@ -156,7 +156,7 @@ class view_dsp extends view
     /**
      * either the username or the link to create an account
      */
-    private function dsp_user($back): string
+    private function dsp_user(string $back = ''): string
     {
         $result = '';
         if (isset($_SESSION)) {
@@ -229,7 +229,7 @@ class view_dsp extends view
     /**
      * show the standard top right corner, where the user can login or change the settings
      */
-    private function dsp_navbar_html($back): string
+    private function dsp_navbar_html(string $back = ''): string
     {
 
         $result = $this->html_navbar_start();
@@ -257,7 +257,7 @@ class view_dsp extends view
     /**
      * same as dsp_navbar, but without the view change used for the view editors
      */
-    public function dsp_navbar_html_no_view($back): string
+    public function dsp_navbar_html_no_view(string $back = ''): string
     {
 
         $result = $this->html_navbar_start();
@@ -340,7 +340,7 @@ class view_dsp extends view
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
      */
-    public function dsp_navbar($back): string
+    public function dsp_navbar(string $back = ''): string
     {
         log_debug('view_dsp->dsp_navbar ' . $back);
         $result = '';
@@ -368,7 +368,7 @@ class view_dsp extends view
     /**
      * same as dsp_navbar, but without the view change used for the view editors
      */
-    public function dsp_navbar_no_view($back): string
+    public function dsp_navbar_no_view(string $back = ''): string
     {
         $result = '';
 

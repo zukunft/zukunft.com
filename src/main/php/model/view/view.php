@@ -534,10 +534,10 @@ class view extends user_sandbox
      * @param bool $do_save can be set to false for unit testing
      * @return bool true if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         log_debug('view->import_obj');
-        $result = false;
+        $result = '';
 
         // reset the all parameters for the word object but keep the user
         $usr = $this->usr;
@@ -569,8 +569,9 @@ class view extends user_sandbox
             if ($this->name == '') {
                 log_err("Name in view missing");
             } else {
-                if ($this->save()) {
-                    $result = true;
+                $result .= $this->save();
+
+                if ($result == '') {
                     // TODO save also the links
                     //$dsp_lnk = new view_component_link();
                     log_debug('view->import_obj -> ' . $this->dsp_id());

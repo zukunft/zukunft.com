@@ -14,7 +14,17 @@
     },
     {
       "name": "ABB",
-      "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich"
+      "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
+      "refs": [
+        {
+          "name": "ABB",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "Danone"
@@ -41,41 +51,90 @@
       "type": "measure"
     },
     {
-      "name": "one",
-      "type": "scaling_hidden",
-      "view": "complete"
-    },
-    {
-      "name": "thousand",
-      "plural": "thousands",
-      "type": "scaling"
-    },
-    {
-      "name": "million",
-      "plural": "millions",
-      "type": "scaling"
-    },
-    {
-      "name": "billion",
-      "plural": "billions",
-      "type": "scaling"
-    },
-    {
       "name": "scaling",
       "type": "scaling"
-    },
-    {
-      "name": "Sales"
     },
     {
       "name": "Revenues"
     },
     {
-      "name": "Operating profit (reported)",
-      "plural": "Operating profit (reported)"
+      "name": "Other revenues"
+    },
+    {
+      "name": "Selling expenses"
+    },
+    {
+      "name": "General administrative expenses"
+    },
+    {
+      "name": "Other operating expense"
+    },
+    {
+      "name": "Other trading expense"
+    },
+    {
+      "name": "Sales"
+    },
+    {
+      "name": "Other trading income"
+    },
+    {
+      "name": "Other trading expenses"
+    },
+    {
+      "name": "Other operating net"
+    },
+    {
+      "name": "Cost of Sales (reported)"
     },
     {
       "name": "Cost of goods sold"
+    },
+    {
+      "name": "Distribution costs"
+    },
+    {
+      "name": "Research costs"
+    },
+    {
+      "name": "Profit/loss on equity method investments, net"
+    },
+    {
+      "name": "Other financial income/expense, net"
+    },
+    {
+      "name": "Financial income"
+    },
+    {
+      "name": "Financial expense"
+    },
+    {
+      "name": "Interest income"
+    },
+    {
+      "name": "Interest expense"
+    },
+    {
+      "name": "Income taxes"
+    },
+    {
+      "name": "Share price"
+    },
+    {
+      "name": "Number of shares"
+    },
+    {
+      "name": "Target Price Earning Ratio"
+    },
+    {
+      "name": "Income from associates and joint ventures"
+    },
+    {
+      "name": "Profit attributable to non-controlling interests"
+    },
+    {
+      "name": "Operating profit (reported)",
+      "plural": "Operating profit (reported)"
     },
     {
       "name": "Financial income",
@@ -84,10 +143,6 @@
     {
       "name": "max",
       "description": "used to define the number of forecast periods"
-    },
-    {
-      "name": "Year",
-      "plural": "Years"
     },
     {
       "name": "2021",
@@ -370,53 +425,22 @@
       "from": "Nestle",
       "verb": "is alias of",
       "to": "Nestlé"
-    },
-    {
-      "name": "tsd. is alias of thousand",
-      "from": "tsd.",
-      "verb": "is alias of",
-      "to": "thousand"
     }
   ],
   "formulas": [
-    {
-      "name": "scale bio to one",
-      "expression": "\"one\" = \"billion\" * 1000000",
-      "assigned_word": "\"billion\""
-    },
-    {
-      "name": "scale mio to one",
-      "expression": "\"one\" = \"million\" * 1000000",
-      "assigned_word": "\"million\""
-    },
-    {
-      "name": "scale thousand to one",
-      "expression": "\"one\" = \"thousand\" * 1000000",
-      "assigned_word": "\"thousand\""
-    },
     {
       "name": "yearly increase",
       "expression": "\"percent\" = ( \"is a\" \"Year\" - \"prior\" \"Year\" ) / \"prior\" \"Year\"",
       "assigned_word": "\"Sales\""
     },
     {
-      "name": "Net profit",
-      "expression": "=\"Profit before income taxes\" + \"Income taxes\" + \"Income from associates and joint ventures\"",
+      "name": "Operating income",
+      "expression": "=\"Revenues\"",
       "assigned_word": "\"Company\""
     },
     {
       "name": "Operating expenses",
       "expression": "=\"Selling expenses\" + \"General administrative expenses\" + \"Other operating expense\"",
-      "assigned_word": "\"Company\""
-    },
-    {
-      "name": "Interest income/expense, net",
-      "expression": "=\"Interest income\" + \"Interest expense\"",
-      "assigned_word": "\"Company\""
-    },
-    {
-      "name": "Price Earning ratio",
-      "expression": "= \"Share price\" / \"Earnings per share\"",
       "assigned_word": "\"Company\""
     },
     {
@@ -430,6 +454,46 @@
       "assigned_word": "\"Company\""
     },
     {
+      "name": "Operating Profit",
+      "expression": "= \"Sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of Sales\" + \"Distribution costs\" + \"Research costs\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Financial income/expense, net",
+      "expression": "\"Profit/loss on equity method investments, net\" + \"Other financial income/expense, net\" + \"Financial income\" + \"Financial expense\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Interest income/expense, net",
+      "expression": "\"Interest income\" + \"Interest expense\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Profit before income taxes",
+      "expression": "=\"Operating Profit\" + \"Operating expenses\"  + \"Operating income\" + \"Financial income/expense, net\" + \"Interest income/expense, net\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Net profit",
+      "expression": "=\"Profit before income taxes\" + \"Income taxes\" + \"Income from associates and joint ventures\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Profit attributable to shareholders",
+      "expression": "=\"Net profit\" - \"Profit attributable to non-controlling interests\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Earnings per share",
+      "expression": "= \"Profit attributable to shareholders\" / \"Number of shares\"",
+      "assigned_word": "\"Company\""
+    },
+    {
+      "name": "Price Earning ratio",
+      "expression": "= \"Share price\" / \"Earnings per share\"",
+      "assigned_word": "\"Company\""
+    },
+    {
       "name": "Target Price",
       "expression": "= \"Earnings per share\" * \"Target Price Earning Ratio\"",
       "assigned_word": "\"Company\""
@@ -437,7 +501,7 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "description": "calculate the increase in precent e.g. yearly",
+      "description": "calculate the increase in percent e.g. yearly",
       "assigned_word": "\"Year\""
     }
   ],
@@ -481,7 +545,7 @@
     {
       "name": "Company sheet",
       "comment": "The income statement, balance sheet or cash flow sheet of a big company",
-      "type": "detail view",
+      "type": "detail_view",
       "view_components": [
         {
           "pos": "1",
@@ -505,34 +569,34 @@
     {
       "name": "complete",
       "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-      "type": "word default",
+      "type": "word_default",
       "view_components": [
-        {
-          "pos": "2",
-          "name": "formulas",
-          "code_id": "formula_list"
-        },
-        {
-          "pos": "4",
-          "name": "XML Export",
-          "code_id": "xml_export"
-        },
         {
           "pos": "1",
           "name": "Name",
           "code_id": "word_name"
         },
         {
+          "pos": "2",
+          "name": "formulas",
+          "code_id": "formula_list"
+        },
+        {
           "pos": "3",
           "name": "JSON Export",
           "code_id": "json_export"
-        }
+        },
+        {
+          "pos": "4",
+          "name": "XML Export",
+          "code_id": "xml_export"
+        },
       ]
     },
     {
       "name": "Company list with main ratios",
       "comment": "List the most interesting companies with the main ratios",
-      "type": "detail view",
+      "type": "detail_view",
       "view_components": [
         {
           "pos": "1",

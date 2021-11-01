@@ -245,7 +245,7 @@ class view_cmp_link extends user_sandbox
     }
 
     // return the html code to display the link name
-    function name_linked($back): string
+    function name_linked(string $back = ''): string
     {
         $result = '';
 

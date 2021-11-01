@@ -203,6 +203,7 @@ class word_dsp extends word
     }
 
     // display the history of a word
+    // display the history of a word
     // maybe move this to a new object user_log_display
     // because this is very similar to a value linked function
     private function dsp_hist($page, $size, $call, $back): string
@@ -225,7 +226,7 @@ class word_dsp extends word
     }
 
     // show the changes of the view
-    function dsp_log_view($back): string
+    function dsp_log_view(string $back = ''): string
     {
         log_debug('word_dsp->dsp_log_view (' . $this->id . ')');
         $result = '';
@@ -556,7 +557,7 @@ class word_dsp extends word
     }
 
     // HTML code to edit all word fields
-    function dsp_edit($back): string
+    function dsp_edit(string $back = ''): string
     {
         log_debug('word_dsp->dsp_edit ' . $this->dsp_id());
         $result = '';

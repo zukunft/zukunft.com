@@ -243,7 +243,7 @@ function run_formula_test()
     $wrd->name = word::TN_CH;
     $wrd->load();
     $result = trim($frm_dsp->dsp_result($wrd, $back));
-    $target = '0.79 %';
+    //$target = '0.79 %';
     $target = '0.01';
     test_dsp('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name() . '', $target, $result);
 

@@ -193,7 +193,7 @@ class expression
      * the filter is done within this function, because e.g. a verb can increase the number of words to return
      * if group it is true, element groups instead of single elements are returned
      */
-    private function element_lst_all($type, $group_it, $back)
+    private function element_lst_all($type, $group_it, string $back = '')
     {
         log_debug('expression->element_lst_all get ' . $type . ' out of "' . $this->ref_text . '" for user ' . $this->usr->name);
 
@@ -380,7 +380,7 @@ class expression
      * a formula element group is a group of words, verbs, phrases or formula that retrieve a value or a list of values
      * e.g. with "Sector" "differentiator" all
      */
-    function element_grp_lst($back)
+    function element_grp_lst(string $back = '')
     {
         return $this->element_lst_all(expression::SELECT_ALL, TRUE, $back);
     }
@@ -390,7 +390,7 @@ class expression
      * e.g. for "Sales" "differentiator" "Country" all "Country" words should be included
      * TODO should also include the words implied by the verbs
      */
-    function phr_verb_lst($back): phrase_list
+    function phr_verb_lst(string $back = ''): phrase_list
     {
         log_debug('expression->phr_verb_lst');
         $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE, $back);
@@ -420,7 +420,7 @@ class expression
     /**
      * list of elements (in this case only formulas) that are of the predefined type "following", e.g. "this", "next" and "prior"
      */
-    function element_special_following($back): phrase_list
+    function element_special_following(string $back = ''): phrase_list
     {
         $phr_lst = new phrase_list;
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);
@@ -446,7 +446,7 @@ class expression
     /**
      * similar to element_special_following, but returns the formula and not the word
      */
-    function element_special_following_frm($back): formula_list
+    function element_special_following_frm(string $back = ''): formula_list
     {
         $frm_lst = new formula_list;
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);

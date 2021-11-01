@@ -669,7 +669,7 @@ class formula_value
     }
 
     // this function is called from dsp_id, so no other call is allowed
-    function name($back): string
+    function name(string $back = ''): string
     {
         $result = '';
 
@@ -683,7 +683,7 @@ class formula_value
         return $result;
     }
 
-    function name_linked($back): string
+    function name_linked(string $back = ''): string
     {
         log_debug('formula_value->name_linked ');
         $result = '';
@@ -700,7 +700,7 @@ class formula_value
     }
 
     // html code to show the value with the indication if the value is influence by the user input
-    function display($back): string
+    function display(string $back = ''): string
     {
         $result = '';
         if (!is_null($this->value)) {
@@ -715,7 +715,7 @@ class formula_value
     }
 
     // html code to show the value with the possibility to click for the result explanation
-    function display_linked($back): string
+    function display_linked(string $back = ''): string
     {
         $result = '';
         if (!is_null($this->value)) {
@@ -832,8 +832,8 @@ class formula_value
                 $elm_grp->usr = $this->usr;
                 log_debug('formula_value->explain -> words set ' . $elm_grp->phr_lst->name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
-                // finally display the value used in the formula
-                $result .= ' = ' . $elm_grp->dsp_values($back, $this->time_phr);
+                // finally, display the value used in the formula
+                $result .= ' = ' . $elm_grp->dsp_values($this->time_phr, $back);
                 $result .= '</br>';
                 log_debug('formula_value->explain -> next element');
                 $elm_nbr++;

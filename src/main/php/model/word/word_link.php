@@ -515,7 +515,7 @@ class word_link extends word_link_object
     /**
      * import a view from an object
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         log_debug('word_link->import_obj');
         $result = '';
@@ -718,7 +718,7 @@ class word_link extends word_link_object
     /**
      * display a form to create a triple
      */
-    function dsp_add($back): string
+    function dsp_add(string $back = ''): string
     {
         log_debug("word_link->dsp_add.");
         $result = ''; // reset the html code var
@@ -752,7 +752,7 @@ class word_link extends word_link_object
     /**
      * display a form to adjust the link between too words or triples
      */
-    function dsp_edit($back): string
+    function dsp_edit(string $back = ''): string
     {
         log_debug("word_link->dsp_edit id " . $this->id . " for user" . $this->usr->id . ".");
         $result = ''; // reset the html code var
@@ -791,7 +791,7 @@ class word_link extends word_link_object
     /**
      * display a form to adjust the link between too words or triples
      */
-    function dsp_del($back): string
+    function dsp_del(string $back = ''): string
     {
         log_debug("word_link->dsp_del " . $this->id . ".");
         $result = ''; // reset the html code var

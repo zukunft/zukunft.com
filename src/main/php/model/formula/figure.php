@@ -110,7 +110,7 @@ class figure
      * return the html code to display a value
      * this is the opposite of the convert function
      */
-    function display($back): string
+    function display(string $back = ''): string
     {
         log_debug('figure->display');
         $result = '';
@@ -129,7 +129,7 @@ class figure
     /**
      * html code to show the value with the possibility to click for the result explanation
      */
-    function display_linked($back): string
+    function display_linked(string $back = ''): string
     {
         log_debug('figure->display_linked');
         $result = '';
@@ -137,7 +137,8 @@ class figure
         log_debug('figure->display_linked -> type ' . $this->type);
         if ($this->type == 'value') {
             log_debug('figure->display_linked -> value ' . $this->number);
-            $result .= $this->obj->display_linked($back);
+            $val_dsp = $this->obj->dsp_obj();
+            $result .= $val_dsp->display_linked($back);
         } elseif ($this->type == 'result') {
             log_debug('figure->display_linked -> result ' . $this->number);
             $result .= $this->obj->display_linked($back);

@@ -623,7 +623,7 @@ class word extends word_link_object
     }
 
     // return the html code to display a word
-    function display($back = ''): string
+    function display(string $back = ''): string
     {
         if ($back != '') {
             $result = '<a href="/http/view.php?words=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
@@ -635,7 +635,7 @@ class word extends word_link_object
 
     /*
     // offer the user to export the word and the relations as a xml file
-    function config_json_export($back): string
+    function config_json_export(string $back = ''): string
     {
         return 'Export as <a href="/http/get_json.php?words=' . $this->name . '&back=' . $back . '">JSON</a>';
     }
@@ -660,7 +660,7 @@ class word extends word_link_object
      * to add a word linked to this word
      * e.g. if this word is "Company" to add another company
      */
-    function btn_add($back): string
+    function btn_add(string $back = ''): string
     {
         global $word_types;
         $vrb_is = cl(db_cl::VERB, verb::IS_A);

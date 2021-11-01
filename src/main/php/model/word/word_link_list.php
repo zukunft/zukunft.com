@@ -441,7 +441,7 @@ class word_link_list
 
     // shows all words the link to the given word
     // returns the html code to select a word that can be edit
-    function display($back): string
+    function display(string $back = ''): string
     {
         $result = '';
 

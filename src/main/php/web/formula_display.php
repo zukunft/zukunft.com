@@ -39,13 +39,17 @@ class formula_dsp extends formula
     }
 
     // create the HTML code to display the formula name with the HTML link
-    function name_linked($back = 0): string
+    function name_linked(string $back = ''): string
     {
-        return '<a href="/http/formula_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
+        if ($back) {
+            return '<a href="/http/formula_edit.php?id=' . $this->id . '">' . $this->name . '</a>';
+        } else {
+            return '<a href="/http/formula_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
+        }
     }
 
     // create the HTML code to display the formula text in the human-readable format including links to the formula elements
-    function dsp_text($back)
+    function dsp_text(string $back = ''): string
     {
         log_debug('formula->dsp_text');
         $result = $this->usr_text;
@@ -76,13 +80,13 @@ class formula_dsp extends formula
     }
 
     // create the HTML code for a button to change the formula
-    function btn_edit($back): string
+    function btn_edit(string $back = ''): string
     {
         return btn_edit('Change formula ' . $this->name, '/http/formula_edit.php?id=' . $this->id . '&back=' . $back);
     }
 
     // create the HTML code for a button to change the formula
-    function btn_del($back): string
+    function btn_del(string $back = ''): string
     {
         return btn_del('Delete formula ' . $this->name, '/http/formula_del.php?id=' . $this->id . '&back=' . $back);
     }
@@ -205,7 +209,7 @@ class formula_dsp extends formula
 
     // test and refresh the formula and show some sample values by returning the HTML code
 
-    function dsp_test_and_samples($back): string
+    function dsp_test_and_samples(string $back = ''): string
     {
         log_debug("formula->dsp_test_and_samples " . $this->ref_text . ".");
         $result = '<br>';

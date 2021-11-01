@@ -219,7 +219,7 @@ class verb
     }
 
     // create the HTML code to display the formula name with the HTML link
-    function display($back): string
+    function display(string $back = ''): string
     {
         return '<a href="/http/verb_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
@@ -257,7 +257,7 @@ class verb
     }
 
     // show the html form to add or edit a new verb
-    function dsp_edit($back): string
+    function dsp_edit(string $back = ''): string
     {
         log_debug('verb->dsp_edit ' . $this->dsp_id());
         $result = '';

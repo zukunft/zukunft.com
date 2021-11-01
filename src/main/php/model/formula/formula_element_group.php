@@ -2,7 +2,7 @@
 
 /*
 
-  formula_element_group.php - a group for formula elements that in combination return a value or a list of values
+  formula_element_group.php - a group of formula elements that, in combination, return a value or a list of values
   -------------------------
   
   e.g. for for "ABB", "differentiator" and "Sector" a list of all sector values is returned
@@ -53,7 +53,9 @@ class formula_element_group
     display functions
     */
 
-    // display the unique id fields
+    /**
+     * display the unique id fields
+     */
     function dsp_id(): string
     {
         $id = dsp_array($this->ids());
@@ -133,8 +135,8 @@ class formula_element_group
         return $this->symbol;
     }
 
-    // list of the formula element names independent from the element type
-    function dsp_names($back): string
+    // list of the formula element names independent of the element type
+    function dsp_names(string $back = ''): string
     {
         $result = '';
 
@@ -148,7 +150,7 @@ class formula_element_group
 
     // set the time phrase based on a predefined formula such as "prior" or "next"
     // e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
-    private function set_formula_time_phrase($frm_elm, $val_phr_lst): phrase
+    private function set_formula_time_phrase($frm_elm, $val_phr_lst): ?phrase
     {
         log_debug('formula_element_group->set_formula_time_phrase for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
 
@@ -175,7 +177,7 @@ class formula_element_group
         if (isset($this->time_phr)) {
             if ($this->time_phr->id == 0) {
                 // switched off because it is not working for "this"
-                //zu_err('No time found for "'.$frm_elm->obj->name.'".', 'formula_element_group->figures');
+                log_err('No time found for "'.$frm_elm->obj->name.'".', 'formula_element_group->figures');
             } else {
                 log_debug('formula_element_group->set_formula_time_phrase -> get predefined time result');
                 if (isset($frm_elm->obj)) {
@@ -205,16 +207,22 @@ class formula_element_group
         return $val_time_phr;
     }
 
-    /*
-    get a list of figures related to the formula element group and a context defined by a list of words
-      e.g. for the formula elements <"journey time max premium" "percent"> and the context <"Zurich" "land lot" "minutes">
-           the formula value for <"journey time max premium" "percent" "Zurich" "land lot"> should be returned
-           and if no value is found, the next best match should be returned
-      e.g. for the formula element <"Share price"> and the context <"Nestlé">
-           the formula value for <"Share price" "Nestlé" "2016" "CHF"> should be returned
-           if the last share price is from 2016 and CHF is the most important (used) currency
-    */
-    function figures()
+
+
+    /**
+     *  get a list of figures related to the formula element group and a context defined by a list of words
+     *    e.g. 1 for the formula elements <"this"> and the context <"Switzerland" "inhabitants">
+     *      the latest number of Swiss inhabitants should be returned
+     *    e.g. 2 for the formula elements <"journey time max premium" "percent"> and the context <"Zurich" "land lot" "minutes">
+     *      the formula value for <"journey time max premium" "percent" "Zurich" "land lot"> should be returned
+     *      and if no value is found, the next best match should be returned
+     *    e.g. 3 for the formula element <"Share price"> and the context <"Nestlé">
+     *      the formula value for <"Share price" "Nestlé" "2016" "CHF"> should be returned
+     *      if the last share price is from 2016 and CHF is the most important (used) currency
+     *
+     * @return figure_list
+     */
+    function figures(): figure_list
     {
         log_debug('formula_element_group->figures ' . $this->dsp_id());
 
@@ -222,6 +230,7 @@ class formula_element_group
         $fig_lst = new figure_list;
 
         // add the words of the formula element group to the value selection
+        // e.g. 1: for the formula "this" and the phrases "Switzerland" and "inhabitants" the Swiss inhabitants are requested
         // e.g. for the formula "= sales - cost" and the phrases "ABB" the ABB sales is requested
         foreach ($this->lst as $frm_elm) {
 
@@ -229,6 +238,7 @@ class formula_element_group
 
             // init the word list for the figure selection because
             // the word list for the figure selection ($val_phr_lst) may differ from the requesting word list ($this->phr_lst) because
+            // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
             $val_phr_lst = clone $this->phr_lst;
             $val_time_phr = $this->time_phr;
@@ -237,6 +247,7 @@ class formula_element_group
             }
 
             // build the symbol for the number replacement before adding the formula elements
+            // e.g. 1: {f18}
             if ($this->symbol == '') {
                 $this->build_symbol();
             }
@@ -252,6 +263,7 @@ class formula_element_group
             }
 
             // get the formula related word to be able to add it later to the value selection (differs for the element type)
+            // e.g. 1: setting the $val_time_phr to 2020
             if ($frm_elm->type == 'formula') {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
                 if ($frm_elm->obj->is_special()) {
@@ -293,7 +305,9 @@ class formula_element_group
             }
             $wrd_val = new value;
             $wrd_val->grp_id = $val_phr_grp->id;
-            $wrd_val->time_id = $val_time_phr->id;
+            if ($val_time_phr != null) {
+                $wrd_val->time_id = $val_time_phr->id;
+            }
             $wrd_val->usr = $this->usr;
             // TODO create $wrd_val->load_best();
             $wrd_val->load();
@@ -340,8 +354,10 @@ class formula_element_group
         return $fig_lst;
     }
 
-    // the HTML code to display a figure list
-    function dsp_values($back, $time_default)
+    /**
+     * the HTML code to display a figure list
+     */
+    function dsp_values($time_default, string $back = ''): string
     {
         log_debug('formula_element_group->dsp_values');
 

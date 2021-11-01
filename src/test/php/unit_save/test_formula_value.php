@@ -134,6 +134,7 @@ function run_formula_value_test()
     $val_best_guess->load();
     $result = $val_best_guess->number;
     $target = 0.18264281677284;
+    //$target = 0.007871833296164;
     test_dsp('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     /*

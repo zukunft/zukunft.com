@@ -66,12 +66,12 @@ function run_view_test()
     $target = word::TN_CH;
     test_dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name . '" contains', $target, $result, TIMEOUT_LIMIT_LONG);
     // check if the view contains at least one value
-    $target = '<a href="/http/value_edit.php?id=5&back=183">8.51</a>';
+    $target = '<a href="/http/value_edit.php?id=5&back=185">8.51</a>';
     test_dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name . '" contains', $target, $result);
     // check if the view contains at least the main formulas
     $target = 'System Test Word Increase';
     test_dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name . '" contains', $target, $result);
-    $target = '<a href="/http/value_edit.php?id=9&back=183">0.79%</a>';
+    $target = '<a href="/http/value_edit.php?id=9&back=185">0.79%</a>';
     test_dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name . '" contains', $target, $result);
 
     // test adding of one view

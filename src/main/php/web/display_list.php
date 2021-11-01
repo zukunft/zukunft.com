@@ -51,7 +51,7 @@ class dsp_list {
   }
 
   // display a list that can be sorted using the fixed field "order_nbr"
-  function display ($back) {
+  function display (string $back = ''): string{
     $result  = '';
     
     // set the default values

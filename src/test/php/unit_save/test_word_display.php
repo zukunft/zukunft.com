@@ -69,12 +69,12 @@ function run_word_display_test()
     $target = ' is followed by<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=207" title="">System Test Time Word e.g. 2021</a>
+      <a href="/http/view.php?words=209" title="">System Test Time Word e.g. 2021</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=21&back=206" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=22&back=208" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=21&back=206" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=22&back=208" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);
@@ -92,22 +92,22 @@ function run_word_display_test()
     $target = ' are<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=193" title="">System Test Time Word Category e.g. Year</a>
+      <a href="/http/view.php?words=195" title="">System Test Time Word Category e.g. Year</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=18&back=206" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=19&back=208" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=18&back=206" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=19&back=208" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
  is follower of<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=205" title="">System Test Another Time Word e.g. 2019</a>
+      <a href="/http/view.php?words=207" title="">System Test Another Time Word e.g. 2019</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=19&back=206" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=20&back=208" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=19&back=206" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=20&back=208" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);

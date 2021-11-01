@@ -1070,7 +1070,7 @@ class phrase_list
     }
 
     // to review !!!!
-    function assume_time(): phrase
+    function assume_time(): ?phrase
     {
         $time_phr = null;
         $wrd_lst = $this->wrd_lst_all();
