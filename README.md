@@ -11,9 +11,8 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
 4) create a user "zukunft_db_root" in PostgreSQL or MySQL and remember the password
 5) execute the script "zukunft_structure.sql" in MySQL to create the database zukunft_structure
-6) execute the script "zukunft_init_data.sql" in MySQL to fill the database with the code linked database rows
-7) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
-8) test if the installation is running fine by calling http://yourserver.com/test/test.php
+6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
+7) test if the installation is running fine by calling http://yourserver.com/test/test.php
 
 Planned changes
 ---------------

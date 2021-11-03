@@ -133,7 +133,7 @@ class user_log_display
             $result .= dsp_tbl_start_hist();
             foreach ($db_lst as $db_row) {
                 // display the row only if the field is not an "admin only" field
-                if ($db_row["code_id"] <> DBL_FLD_FORMULA_REF_TEXT) {
+                if ($db_row["code_id"] <> formula::DB_FLD_REF_TEXT) {
                     $row_nbr++;
                     $result .= '<tr>';
                     if ($row_nbr == 1) {
@@ -185,7 +185,7 @@ class user_log_display
                     $txt_old = $db_row["old"];
                     $txt_new = $db_row["new"];
                     // encode of text
-                    if ($db_row["code_id"] == DBL_FLD_FORMULA_ALL_NEEDED) {
+                    if ($db_row["code_id"] == formula::DB_FLD_ALL_NEEDED) {
                         if ($txt_old == "1") {
                             $txt_old = "all values needed for calculation";
                         } else {

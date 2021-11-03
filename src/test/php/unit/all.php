@@ -265,6 +265,7 @@ function run_unit_tests()
 
     // do the unit tests
     run_string_unit_tests(); // test functions not yet split into single unit tests
+    run_system_unit_tests();
     run_word_unit_tests();
     run_word_link_unit_tests();
     run_word_list_unit_tests();

@@ -2,31 +2,31 @@
 
 /*
 
-  formula_list.php - a simple list of formulas
-  ----------------
-  
-  This file is part of zukunft.com - calc with words
+    formula_list.php - a simple list of formulas
+    ----------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 class formula_list
@@ -43,10 +43,9 @@ class formula_list
     // in memory only fields
     public ?string $back = null;         // the calling stack
 
-    // fill the formula list based on a database records
-    // $db_rows is an array of an array with the database values
     /**
-     * @throws Exception
+     * fill the formula list based on a database records
+     * $db_rows is an array of an array with the database values
      */
     private function rows_mapper($db_rows)
     {
@@ -56,28 +55,7 @@ class formula_list
                     if ($db_row['formula_id'] > 0) {
                         $frm = new formula;
                         $frm->usr = $this->usr;
-                        $frm->id = $db_row['formula_id'];
-                        $frm->name = $db_row['formula_name'];
-                        $frm->ref_text = $db_row['formula_text'];
-                        $frm->usr_text = $db_row['resolved_text'];
-                        $frm->description = $db_row[sql_db::FLD_DESCRIPTION];
-                        $frm->type_id = $db_row['formula_type_id'];
-                        $frm->type_cl = $db_row[sql_db::FLD_CODE_ID];
-                        $frm->last_update = new DateTime($db_row['last_update']);
-                        if ($db_row['all_values_needed'] == 1) {
-                            $frm->need_all_val = true;
-                        } else {
-                            $frm->need_all_val = false;
-                        }
-                        /*
-                        if ($frm->type_id > 0) {
-                          $sql_type = "SELECT code_id
-                                        FROM formula_types
-                                        WHERE formula_type_id = ".$frm->type_id.";";
-                          $db_type = $db_con->get1($sql_type, $frm->usr_id);
-                          $frm->type_cl  = $db_type[sql_db::FLD_CODE_ID];
-                        }
-                        */
+                        $frm->row_mapper($db_row);
                         if ($frm->name <> '') {
                             $name_wrd = new word_dsp;
                             $name_wrd->name = $frm->name;
@@ -137,6 +115,7 @@ class formula_list
                 // the formula name is excluded from the user sandbox to avoid confusion
                 $sql = "SELECT f.formula_id,
                        f.formula_name,
+                       f.user_id,
                     " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
                     " . $db_con->get_usr_field('resolved_text', 'f', 'u') . ",
                     " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 'f', 'u') . ",

@@ -66,6 +66,7 @@ include_once $path_test . 'test_user_sandbox.php';
 // load the unit testing modules
 include_once $path_unit . 'all.php';
 include_once $path_unit . 'test_lib.php';
+include_once $path_unit . 'system.php';
 include_once $path_unit . 'user_sandbox.php';
 include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';

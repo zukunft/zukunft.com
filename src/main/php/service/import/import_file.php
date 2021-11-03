@@ -49,9 +49,19 @@ function import_json_file(string $filename, user $usr): string
             $import->json_str = $json_str;
             $import_result = $import->put();
             if ($import_result == '') {
-                $msg .= ' done (' . $import->words_done . ' words, ' . $import->verbs_done . ' verbs, ' . $import->triples_done . ' triples, ' . $import->formulas_done . ' formulas, ' . $import->values_done . ' sources, ' . $import->sources_done . ' values, ' . $import->views_done . ' views loaded)';
+                $msg .= ' done ('
+                    . $import->words_done . ' words, '
+                    . $import->verbs_done . ' verbs, '
+                    . $import->triples_done . ' triples, '
+                    . $import->formulas_done . ' formulas, '
+                    . $import->values_done . ' sources, '
+                    . $import->sources_done . ' values, '
+                    . $import->views_done . ' views loaded)';
                 if ($import->users_done > 0) {
                     $msg .= ' ... and ' . $import->users_done . ' $users';
+                }
+                if ($import->system_done > 0) {
+                    $msg .= ' ... and ' . $import->system_done . ' $system objects';
                 }
             } else {
                 $msg .= ' failed because ' . $import_result . '.';
@@ -76,7 +86,7 @@ function import_system_users(): bool
         // check if there is really no user in the database with a system profile
         $check_usr = new user();
         if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
-            // if the syste users are missing always reset all users as a double line of defence to prevent system
+            // if the system users are missing always reset all users as a double line of defence to prevent system
             // TODO ask for final confirmation before deleting all users !!!
             run_table_truncate(DB_TYPE_USER);
             run_seq_reset('users_user_id_seq');

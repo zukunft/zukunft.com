@@ -46,8 +46,6 @@
   zut_time_useful         - create a useful list of time word
   zut_get_max_time        - get the time of the last value related to a word and assisiated to a word list
   zut_time_type_most_used - 
-  zut_time_type_filter    - get the only the time words of one type e.g. ony years 
-  zut_has_formula         -
   zut_get_formula         -
   zut_names_to_lst        -
   zut_default_id          - if the user has given no hind at all guess an word the the user might be interested to start
@@ -569,22 +567,6 @@ function zut_time_type_most_used($word_lst)
     return $result;
 }
 
-// get the only the time words of one type e.g. ony years
-function zut_time_type_filter($word_lst, $time_type)
-{
-    log_debug('zut_time_type_filter(' . $word_lst . ')');
-
-    $result = array();
-    // loop over the word ids and add only the time ids to the result array
-    foreach ($word_ids as $word_id) {
-        if (zut_is_time($word_id)) {
-            $result[] = $word_id;
-        }
-    }
-
-    return $result;
-}
-
 // true if a word lst contains a scaling word
 function zut_has_scaling($word_ids)
 {
@@ -640,21 +622,6 @@ function zut_scale_id($wrd_ids, $user_id)
         }
     }
     log_debug('zut_scale_id ... done (' . $result . ')');
-    return $result;
-}
-
-// true if a word lst contains a formula name
-function zut_has_formula($word_names)
-{
-    log_debug('zut_has_formula(' . $word_lst . ')');
-
-    $formula_name = zut_get_formula($word_names);
-    if ($formula_name <> '') {
-        $result = true;
-    } else {
-        $result = false;
-    }
-    log_debug('zut_has_formula ... done');
     return $result;
 }
 

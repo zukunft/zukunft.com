@@ -129,8 +129,14 @@ class ref
         return $result;
     }
 
-    // import a link to external database from an imported object
-    function import_obj($json_obj, bool $do_save = true): bool
+    /**
+     * import a link to external database from an imported json object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool an empty string if the import has been successfully saved to the database or the message that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
     {
         $result = false;
 

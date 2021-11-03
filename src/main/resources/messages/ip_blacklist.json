@@ -1,0 +1,16 @@
+{
+  "version": "0.0.3",
+  "time": "2021-11-03 07:41:32",
+  "user": "timon",
+  "selection": [
+    "System database settings"
+  ],
+  "ip-blacklist": [
+    {
+      "ip_from": "66.249.64.95",
+      "ip_to": "66.249.64.95",
+      "reason": "too much damage from this IP",
+      "is_active": true
+    }
+  ]
+}

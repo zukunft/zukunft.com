@@ -56,7 +56,7 @@ class sql_db
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
     // tables that does not have a name e.g. DB_TYPE_WORD_LINK is a link, but is nevertheless named
-    const DB_TYPES_NOT_NAMED = [DB_TYPE_VALUE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
+    const DB_TYPES_NOT_NAMED = [DB_TYPE_VALUE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF, DB_TYPE_IP];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [DB_TYPE_WORD_LINK, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
@@ -480,21 +480,9 @@ class sql_db
         $this->order = '';
     }
 
-    function sql_of_code_linked_db_rows()
-    {
-        if ($this->db_type == DB_TYPE_POSTGRES) {
-            $result = file_get_contents('../database/postgres/zukunft_init_data.sql', true);
-        } else {
-            $result = file_get_contents('../database/mysql/zukunft_init_data.sql', true);
-        }
-        return $result;
-    }
-
     /*
-
       for all tables some standard fields such as "word_name" are used
       the function below set the standard fields based on the "table/type"
-
     */
 
 
@@ -556,6 +544,9 @@ class sql_db
         }
         if ($result == 'sys_log_statuss_id') {
             $result = 'sys_log_status_id';
+        }
+        if ($result == 'blocked_ip_id') {
+            $result = 'user_blocked_id';
         }
         return $result;
     }

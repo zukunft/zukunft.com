@@ -5,7 +5,10 @@
   zu_lib.php - the main ZUkunft.com LIBrary
   __________
 
-TODO fix tests, fix syntax suggestions, create unit tests, cleanup object by removing duplicates
+TODO fix syntax suggestions
+TODO move IP blacklist to import
+TODO create unit tests
+TODO cleanup object by removing duplicates
 TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
 TODO add JSON tests that check if a just imported JSON file can be exactly recreated with export
 TODO if a formula is supposed to be created with the same name of a phrase suggest to add (formula) at the end
@@ -56,6 +59,9 @@ TODO split the user sandbox object into a user sandbox base object and extend it
 TODO remove e.g. the word->type_id field and use word->type->id instead to reduce the number of fields
 TODO try to use interface function and make var private to have a well defined interface
 TODO remove all duplicates in objects like the list of ids and replace it by a creation function; if cache is needed do this in the calling function because this knows when to refresh
+TODO allow admin users to change IP blacklist
+TODO include IP blacklist by default for admin users
+TODO add log_info on all database actions to detect the costly code parts
 
 
 TODO create a table startup page with a
@@ -129,6 +135,7 @@ const DB_TYPE_CHANGE_FIELD = 'change_field';
 const DB_TYPE_CHANGE_ACTION = 'change_action';
 const DB_TYPE_CHANGE_LINK = 'change_link';
 const DB_TYPE_CONFIG = 'config';
+const DB_TYPE_IP = 'user_blocked_ip';
 const DB_TYPE_SYS_LOG = 'sys_log';
 const DB_TYPE_SYS_LOG_STATUS = 'sys_log_status';
 const DB_TYPE_SYS_LOG_FUNCTION = 'sys_log_function';
@@ -184,6 +191,7 @@ include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/user/user_type_list.php';
 include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
+include_once $path_php . 'model/system/ip_range.php';
 include_once $path_php . 'model/change/log_table.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
@@ -463,6 +471,7 @@ define("BASE_CONFIG_FILES", serialize(array(
     'scaling.json',
     'units.json',
     'time_definition.json',
+    'ip_blacklist.json',
     'country.json',
     'company.json'
 )));

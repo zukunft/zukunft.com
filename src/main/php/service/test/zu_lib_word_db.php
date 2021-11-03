@@ -712,7 +712,7 @@ function zut_value ($word_ids, $time_word_id, $user_id) {
   $result = $sql_array[0];
   
   if ($result == '') {
-    $word_lst = explode(",",$value_words);
+    $word_lst = explode(",",$word_ids);
     $word_lst[] = $time_word_id;
     $result = zuv_word_lst($word_lst);
     $value_id = zuv_word_lst_id($word_lst);

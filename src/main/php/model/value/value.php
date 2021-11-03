@@ -127,7 +127,7 @@ class value extends user_sandbox_display
     /**
      * @return value_dsp the value object with the display interface functions
      */
-    function dsp_obj(): value_dsp
+    function dsp_obj(): object
     {
         $dsp_obj = new value_dsp();
 

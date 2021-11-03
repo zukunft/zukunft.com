@@ -33,6 +33,9 @@
 
 class word extends word_link_object
 {
+    // persevered word names for system settings
+    const DB_SETTINGS = 'System database settings';
+
     // persevered word names for unit and integration tests
     const TN_READ = 'Mathematical constant';
     const TN_ADD = 'System Test Word';
@@ -76,6 +79,7 @@ class word extends word_link_object
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_WORDS = array(
+        self::DB_SETTINGS,
         self::TN_READ,
         self::TN_ADD,
         self::TN_RENAMED,
@@ -187,7 +191,7 @@ class word extends word_link_object
     /**
      * @return word_dsp the word object with the display interface functions
      */
-    function dsp_obj(): word_dsp
+    function dsp_obj(): object
     {
         $dsp_obj = new word_dsp();
 

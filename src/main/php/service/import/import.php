@@ -58,6 +58,8 @@ class file_import
     public ?int $values_failed = 0;
     public ?int $views_done = 0;
     public ?int $views_failed = 0;
+    public ?int $system_done = 0;
+    public ?int $system_failed = 0;
 
     // import zukunft.com data as object for creating e.g. a json message
     function put(): string
@@ -175,6 +177,18 @@ class file_import
                             $this->views_done++;
                         } else {
                             $this->views_failed++;
+                        }
+                        $result .= $import_result;
+                    }
+                } elseif ($key == 'ip-blacklist') {
+                    foreach ($json_obj as $ip_range) {
+                        $ip_obj = new ip_range;
+                        $ip_obj->usr = $this->usr;
+                        $import_result = $ip_obj->import_obj($ip_range);
+                        if ($import_result == '') {
+                            $this->system_done++;
+                        } else {
+                            $this->system_failed++;
                         }
                         $result .= $import_result;
                     }

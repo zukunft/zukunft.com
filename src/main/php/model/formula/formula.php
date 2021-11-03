@@ -29,15 +29,6 @@
   
 */
 
-// TODO review
-// table fields where the change should be encoded before shown to the user
-// e.g. the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
-const DBL_FLD_FORMULA_ALL_NEEDED = "all_values_needed";
-const DBL_FLD_FORMULA_TYPE = "frm_type";
-// e.g. the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
-const DBL_FLD_FORMULA_REF_TEXT = "ref_text";
-
-
 class formula extends user_sandbox_description
 {
     // persevered formula names for unit and integration tests
@@ -77,10 +68,16 @@ class formula extends user_sandbox_description
 
     // list of the formula types that have a coded functionality
     const CALC = "default";    // a normal calculation formula
-    const NEXT = "time_next";  //time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
+    const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
     const THIS = "time_this";  // selects the assumed time term
     const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
     const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
+
+    // database fields only used for formulas
+    // table fields where the change should be encoded before shown to the user
+    const DB_FLD_ALL_NEEDED = "all_values_needed"; // the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
+    const DB_FLD_REF_TEXT = "ref_text";            // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
+
 
     // database fields additional to the user sandbox fields
     public ?string $ref_text = '';         // the formula expression with the names replaced by database references
@@ -208,7 +205,7 @@ class formula extends user_sandbox_description
         return $result;
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['formula_id'] > 0) {
@@ -220,7 +217,12 @@ class formula extends user_sandbox_description
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->type_id = $db_row['formula_type_id'];
                 $this->type_cl = $db_row[sql_db::FLD_CODE_ID];
-                $this->last_update = new DateTime($db_row['last_update']);
+                try {
+                    $this->last_update = new DateTime($db_row['last_update']);
+                } catch (Exception $e) {
+                    $this->last_update = new DateTime();
+                    log_err('Reset last update of formula ' . $this->dsp_id() . ', because the database ' . $db_row['last_update'] . 'value has not been valid');
+                }
                 $this->excluded = $db_row['excluded'];
                 // TODO create a boolean converter for shorter code here
                 if ($db_row['all_values_needed'] == 1) {
@@ -564,7 +566,7 @@ class formula extends user_sandbox_description
 
 
     public
-    static function cmp($a, $b)
+    static function cmp($a, $b): string
     {
         return strcmp($a->name, $b->name);
     }
@@ -643,7 +645,7 @@ class formula extends user_sandbox_description
         //      "Sales differentiator Sector" and "Total Sales" where
         //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
         $exp = $this->expression();
-        $elm_grp_lst = $exp->element_grp_lst("");
+        $elm_grp_lst = $exp->element_grp_lst();
         log_debug('formula->to_num -> in ' . $exp->ref_text . ' ' . dsp_count($elm_grp_lst->lst) . ' element groups found');
 
         // to check if all needed value are given
@@ -680,7 +682,7 @@ class formula extends user_sandbox_description
                         if ($fv->val_missing == False) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
                                 log_debug('formula->to_num -> figure missing');
-                                $fv->val_missing == True;
+                                $fv->val_missing = True;
                             } else {
                                 $fig = $fig_lst->lst[0];
                                 $fv->num_text = str_replace($fig->symbol, $fig->number, $fv->num_text);
@@ -704,7 +706,7 @@ class formula extends user_sandbox_description
                             if ($fv->val_missing == False) {
                                 if ($fig_lst->fig_missing and $this->need_all_val) {
                                     log_debug('formula->to_num -> figure missing');
-                                    $fv->val_missing == True;
+                                    $fv->val_missing = True;
                                 } else {
                                     // for the first previous result, just fill in the first number
                                     if ($fig_nbr == 1) {
@@ -1780,7 +1782,7 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters for the formula text as written by the user if needed
      */
-    function save_field_name($db_con, $db_rec, $std_rec)
+    function save_field_name($db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->name <> $this->name) {
