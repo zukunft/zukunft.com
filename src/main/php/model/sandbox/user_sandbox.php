@@ -39,6 +39,9 @@
 
 class user_sandbox
 {
+    // user sandbox database and JSON object field names
+    const FLD_EXCLUDED = 'excluded';
+    const FLD_USER = 'user_id';
 
     const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
     const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
@@ -86,8 +89,10 @@ class user_sandbox
         $this->obj_type = user_sandbox::TYPE_NAMED;
     }
 
-    // reset the search values of this object
-    // needed to search for the standard object, because the search is work, value, formula or ... specific
+    /**
+     * reset the search values of this object
+     * needed to search for the standard object, because the search is work, value, formula or ... specific
+     */
     function reset()
     {
         $this->id = null;
@@ -102,6 +107,10 @@ class user_sandbox
 
         $this->fob = null;
         $this->tob = null;
+    }
+
+    function fld_id(): string {
+        return $this->obj_name . sql_db::FLD_EXT_ID;
     }
 
     /**
@@ -660,7 +669,9 @@ class user_sandbox
         return $result;
     }
 
-    // simply remove a user adjustment without check
+    /**
+     * simply remove a user adjustment without check
+     */
     function del_usr_cfg_exe($db_con): bool
     {
         log_debug($this->obj_name . '->del_usr_cfg_exe ' . $this->dsp_id());
@@ -674,6 +685,17 @@ class user_sandbox
         }
 
         return $result;
+    }
+
+    /**
+     * check if any of the object fields including the name and the excluding flag is changed by the user
+     * changed means the user value differs from the standard value
+     *
+     * @return bool true if the user sandbox database row for this user is used
+     */
+    function is_usr_cfg_used(): bool {
+        $result = false;
+        return true;
     }
 
     // remove user adjustment and log it (used by user.php to undo the user changes)

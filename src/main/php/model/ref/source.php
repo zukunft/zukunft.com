@@ -229,7 +229,7 @@ class source extends user_sandbox
             */
         }
 
-        $result = $this->save();
+        $result .= $this->save();
         if ($result == '') {
             log_debug('source->import_obj -> ' . $this->dsp_id());
         } else {
@@ -491,7 +491,7 @@ class source extends user_sandbox
         $usr_wrd_cfg = $db_con->get1($sql);
         log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_wrd_cfg['source_id'] > 0) {
-            // TODO check that this convers all fields for all types
+            // TODO check that this converts all fields for all types
             // TODO define for each user sandbox object a list with all user fields and loop here over this array
             if ($usr_wrd_cfg['source_name'] == ''
                 and $usr_wrd_cfg['url'] == ''
@@ -544,7 +544,9 @@ class source extends user_sandbox
         return $result;
     }
 
-    // set the update parameters for the word type
+    /**
+     * set the update parameters for the word type
+     */
     function save_field_type($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -563,7 +565,9 @@ class source extends user_sandbox
         return $result;
     }
 
-    // save all updated source fields excluding the name, because already done when adding a source
+    /**
+     * save all updated source fields excluding the name, because already done when adding a source
+     */
     function save_fields($db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_url($db_con, $db_rec, $std_rec);
