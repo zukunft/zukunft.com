@@ -30,12 +30,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // start testing the system functionality 
 // --------------------------------------
 
-function run_word_display_test()
+function run_word_display_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the word display class (classes/word_display.php)');
+    $t->header('Test the word display class (classes/word_display.php)');
 
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
@@ -47,7 +47,7 @@ function run_word_display_test()
     $direction = 'up';
     $target = TEST_WORD;
     $result = $wrd_ZH->dsp_graph($direction, 0);
-    test_dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
+    $t->dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the other side
     $wrd_ZH = new word_dsp;
@@ -57,7 +57,7 @@ function run_word_display_test()
     $direction = 'down';
     $target = '';
     $result = $wrd_ZH->dsp_graph($direction, 0);
-    test_dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
+    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the graph display for 2019
     $wrd_2020 = new word_dsp;
@@ -84,7 +84,7 @@ function run_word_display_test()
             $target = $result;
         }
     }
-    test_dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
+    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 
     // ... and the other side
     $direction = 'up';
@@ -117,7 +117,7 @@ function run_word_display_test()
             $target = $result;
         }
     }
-    test_dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
+    $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 
     // the value table for ABB
     $wrd_ZH = new word_dsp;
@@ -135,8 +135,8 @@ function run_word_display_test()
     $target = word::TN_2020;
     $target = word::TN_ZH;
     $result = $wrd_ZH->dsp_val_list($wrd_year, 0);
-    //test_dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
-    test_dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
+    //$t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // the value table for Company
     /*
@@ -152,15 +152,15 @@ function run_word_display_test()
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);
-    test_dsp('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
+    $t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
     */
 
 
-    test_header('Test the display selector class (classes/display_selector.php)');
+    $t->header('Test the display selector class (classes/display_selector.php)');
 
     // for testing the selector display a company selector and select ABB
-    $phr_corp = load_phrase(word::TN_COMPANY);
-    $phr_ZH_INS = load_phrase(phrase::TN_ZH_COMPANY);
+    $phr_corp = $t->load_phrase(word::TN_COMPANY);
+    $phr_ZH_INS = $t->load_phrase(phrase::TN_ZH_COMPANY);
     $sel = new selector;
     $sel->usr = $usr;
     $sel->form = 'test_form';
@@ -170,6 +170,6 @@ function run_word_display_test()
     $sel->dummy_text = '... please select';
     $result .= $sel->display();
     $target = phrase::TN_ZH_COMPANY;
-    test_dsp_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $phr_ZH_INS->name() . ' selected', $target, $result);
+    $t->dsp_contains(', display_selector->display of all ' . $phr_corp->name . ' with ' . $phr_ZH_INS->name() . ' selected', $target, $result);
 
 }

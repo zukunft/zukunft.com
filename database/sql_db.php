@@ -38,14 +38,15 @@
 // TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
 // TODO mainly for data from the internet use prepared statements to prevent SQL injections
 
-const DB_TYPE_POSTGRES = "PostgreSQL";
-const DB_TYPE_MYSQL = "MySQL";
-
 
 class sql_db
 {
 
+    const POSTGRES = "PostgreSQL";
+    const MYSQL = "MySQL";
+
     const FLD_EXT_ID = '_id';
+    const FLD_EXT_NAME = '_name';
 
     // based on https://www.postgresql.org/docs/current/sql-keywords-appendix.html from 2021-06-13
     const POSTGRES_RESERVED_NAMES = ['AND ', 'ANY ', 'ARRAY ', 'AS ', 'ASC ', 'ASYMMETRIC ', 'BOTH ', 'CASE ', 'CAST ', 'CHECK ', 'COLLATE ', 'COLUMN ', 'CONSTRAINT ', 'CREATE ', 'CURRENT_CATALOG ', 'CURRENT_DATE ', 'CURRENT_ROLE ', 'CURRENT_TIME ', 'CURRENT_TIMESTAMP ', 'CURRENT_USER ', 'DEFAULT ', 'DEFERRABLE ', 'DESC ', 'DISTINCT ', 'DO ', 'ELSE ', 'END ', 'EXCEPT ', 'FALSE ', 'FETCH ', 'FOR ', 'FOREIGN ', 'FROM ', 'GRANT ', 'GROUP ', 'HAVING ', 'IN ', 'INITIALLY ', 'INTERSECT ', 'INTO ', 'LATERAL ', 'LEADING ', 'LIMIT ', 'LOCALTIME ', 'LOCALTIMESTAMP ', 'NOT ', 'NULL ', 'OFFSET ', 'ON ', 'ONLY ', 'OR ', 'ORDER ', 'PLACING ', 'PRIMARY ', 'REFERENCES ', 'RETURNING ', 'SELECT ', 'SESSION_USER ', 'SOME ', 'SYMMETRIC ', 'TABLE ', 'THEN ', 'TO ', 'TRAILING ', 'TRUE ', 'UNION ', 'UNIQUE ', 'USER ', 'USING ', 'VARIADIC ', 'WHEN ', 'WHERE ', 'WINDOW ', 'WITH ',];
@@ -273,7 +274,7 @@ class sql_db
         if ($as == '') {
             $as = $field;
         }
-        if ($this->db_type == DB_TYPE_POSTGRES) {
+        if ($this->db_type == sql_db::POSTGRES) {
             if ($field_format == sql_db::FLD_FORMAT_TEXT) {
                 $result = " CASE WHEN (" . $usr_tbl . "." . $field . " <> '' IS NOT TRUE) THEN " . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_VAL) {
@@ -283,7 +284,7 @@ class sql_db
             } else {
                 log_err('Unexpected field format ' . $field_format);
             }
-        } elseif ($this->db_type == DB_TYPE_MYSQL) {
+        } elseif ($this->db_type == sql_db::MYSQL) {
             if ($field_format == sql_db::FLD_FORMAT_TEXT or $field_format == sql_db::FLD_FORMAT_VAL) {
                 $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, ' . $stb_tbl . '.' . $field . ', ' . $usr_tbl . '.' . $field . ')    AS ' . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
@@ -423,7 +424,7 @@ class sql_db
     {
         log_debug("db->open");
 
-        if ($this->db_type == DB_TYPE_POSTGRES) {
+        if ($this->db_type == sql_db::POSTGRES) {
             $this->link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
         } else {
             $this->mysql = new mysqli();
@@ -438,7 +439,7 @@ class sql_db
     function close()
     {
         if ($this->link != null) {
-            if ($this->db_type == DB_TYPE_POSTGRES) {
+            if ($this->db_type == sql_db::POSTGRES) {
                 pg_close($this->link);
             } else {
                 mysqli_close($this->link);
@@ -643,7 +644,7 @@ class sql_db
             log_fatal('database connection lost', 'sql_db->exe->' . $sql_name);
             // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
         } else {
-            if ($this->db_type == DB_TYPE_POSTGRES) {
+            if ($this->db_type == sql_db::POSTGRES) {
                 $sql = str_replace("\n", "", $sql);
                 if ($sql_name == '') {
                     $result = pg_query($this->link, $sql);
@@ -666,7 +667,7 @@ class sql_db
                         log_err('Database error ' . pg_last_error($this->link) . ' when executing ' . $sql, 'sql_db->PostgreSQL->exe->' . $sql_name);
                     }
                 }
-            } elseif ($this->db_type == DB_TYPE_MYSQL) {
+            } elseif ($this->db_type == sql_db::MYSQL) {
                 // TODO review to used at least $sql_array
                 if ($sql_name == '') {
                     $result = mysqli_query($this->mysql, $sql);
@@ -695,9 +696,7 @@ class sql_db
     }
 
     /*
-
       technical function to finally get data from the MySQL database
-
     */
 
     // fetch the first value from an SQL database (either PostgreSQL or MySQL at the moment)
@@ -710,7 +709,7 @@ class sql_db
                 log_warning('Database connection lost', 'sql_db->fetch');
                 // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
             } else {
-                if ($this->db_type == DB_TYPE_POSTGRES) {
+                if ($this->db_type == sql_db::POSTGRES) {
                     $sql_result = $this->exe($sql, $sql_name, $sql_array);
                     if ($fetch_all) {
                         if ($sql_result) {
@@ -721,7 +720,7 @@ class sql_db
                     } else {
                         $result = pg_fetch_array($sql_result);
                     }
-                } elseif ($this->db_type == DB_TYPE_MYSQL) {
+                } elseif ($this->db_type == sql_db::MYSQL) {
                     $sql_result = $this->exe($sql, $sql_name, $sql_array);
                     if ($fetch_all) {
                         while ($sql_row = mysqli_fetch_array($sql_result, MYSQLI_BOTH)) {
@@ -826,7 +825,7 @@ class sql_db
         return $result;
     }
 
-// similar to sql_db->get_value, but for two key fields
+    // similar to sql_db->get_value, but for two key fields
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
@@ -848,9 +847,9 @@ class sql_db
         return $result;
     }
 
-// returns the id field of a standard table
-// standard table means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
-// $name is the unique text that identifies one row e.g. for the $name "Company" the word id "1" is returned
+    // returns the id field of a standard table
+    // standard table means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
+    // $name is the unique text that identifies one row e.g. for the $name "Company" the word id "1" is returned
     function get_id($name)
     {
         $result = '';
@@ -908,7 +907,7 @@ class sql_db
         return $result;
     }
 
-// create a standard query for a list of database id and name while taking the user sandbox into account
+    // create a standard query for a list of database id and name while taking the user sandbox into account
     function sql_std_lst_usr()
     {
         log_debug("sql_db->sql_std_lst_usr (" . $this->type . ")");
@@ -929,7 +928,7 @@ class sql_db
         if ($this->type == 'view') {
             $sql_where = ' WHERE t.code_id IS NULL ';
         }
-        if ($this->db_type == DB_TYPE_POSTGRES) {
+        if ($this->db_type == sql_db::POSTGRES) {
             $sql = "SELECT id, name 
               FROM ( SELECT t." . $this->id_field . " AS id, 
                             CASE WHEN (u." . $this->name_field . " <> '' IS NOT TRUE) THEN t." . $this->name_field . " ELSE u." . $this->name_field . " END AS name,
@@ -1009,7 +1008,7 @@ class sql_db
                 $result .= sql_db::STD_TBL . '.';
             }
             $result .= sql_db::FLD_CODE_ID . " = " . $this->sf($code_id);
-            if ($this->db_type == DB_TYPE_POSTGRES) {
+            if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
@@ -1259,7 +1258,7 @@ class sql_db
                     log_err('Database connection lost', 'insert');
                 }
             } else {
-                if ($this->db_type == DB_TYPE_POSTGRES) {
+                if ($this->db_type == sql_db::POSTGRES) {
                     // return the database row id if the value is not a time series number
                     if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
@@ -1339,7 +1338,7 @@ class sql_db
         return $result;
     }
 
-// similar to zu_sql_add_id, but using a second ID field
+    // similar to zu_sql_add_id, but using a second ID field
     function add_id_2key($name, $field2_name, $field2_value)
     {
         log_debug('sql_db->add_id_2key ' . $name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type);
@@ -1471,9 +1470,7 @@ class sql_db
     }
 
     /*
-
       list functions to finally get data from the MySQL database
-
     */
 
     // load all types of a type/table at once
@@ -1510,13 +1507,13 @@ class sql_db
     private function name_sql_esc($field)
     {
         switch ($this->db_type) {
-            case DB_TYPE_POSTGRES:
+            case sql_db::POSTGRES:
                 if (in_array(strtoupper($field), sql_db::POSTGRES_RESERVED_NAMES)
                     or in_array(strtoupper($field), sql_db::POSTGRES_RESERVED_NAMES_EXTRA)) {
                     $field = '"' . $field . '"';
                 }
                 break;
-            case DB_TYPE_MYSQL:
+            case sql_db::MYSQL:
                 if (in_array(strtoupper($field), sql_db::MYSQL_RESERVED_NAMES)
                     or in_array(strtoupper($field), sql_db::MYSQL_RESERVED_NAMES_EXTRA)) {
                     $field = '`' . $field . '`';
@@ -1536,7 +1533,7 @@ class sql_db
     // TODO define where to prevent code injections: here?
     function sf($field_value, $forced_format = '')
     {
-        if ($this->db_type == DB_TYPE_POSTGRES) {
+        if ($this->db_type == sql_db::POSTGRES) {
             $result = $this->postgres_format($field_value, $forced_format);
         } else {
             $result = $this->mysqli_format($field_value, $forced_format);
@@ -1544,7 +1541,9 @@ class sql_db
         return $result;
     }
 
-// formats one value for the PostgreSQL statement
+    /**
+     * formats one value for the PostgreSQL statement
+     */
     function postgres_format($field_value, $forced_format)
     {
         $result = $field_value;
@@ -1644,11 +1643,11 @@ class sql_db
         } else {
             if ($max_row['max_id'] > 0) {
                 $next_id = $max_row['max_id'] + 1;
-                if ($this->db_type == DB_TYPE_POSTGRES) {
+                if ($this->db_type == sql_db::POSTGRES) {
                     $seq_name = $this->table . '_' . $this->id_field . '_seq';
                     $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $next_id . ';';
                     $this->exe($sql);
-                } elseif ($this->db_type == DB_TYPE_MYSQL) {
+                } elseif ($this->db_type == sql_db::MYSQL) {
                     $sql = 'ALTER TABLE ' . $this->name_sql_esc($this->table) . ' auto_increment = ' . $next_id . ';';
                     $this->exe($sql);
                     $msg = 'Next database id for ' . $this->table . ': ' . $next_id;
@@ -1696,7 +1695,7 @@ class sql_db
         if (!$this->has_column($table_name, $column_name)) {
 
             // adjust the type name for the use database
-            if ($this->db_type == DB_TYPE_MYSQL) {
+            if ($this->db_type == sql_db::MYSQL) {
                 if ($type_name == 'bigint') {
                     $type_name = 'int(11)';
                 }
@@ -1856,9 +1855,9 @@ function sf($field_value, $force_type = '')
     global $db_con;
 
     $result = $field_value;
-    if ($db_con->db_type == DB_TYPE_POSTGRES) {
+    if ($db_con->db_type == sql_db::POSTGRES) {
         $result = $db_con->postgres_format($result, $force_type);
-    } elseif ($db_con->db_type == DB_TYPE_MYSQL) {
+    } elseif ($db_con->db_type == sql_db::MYSQL) {
         $result = $db_con->mysqli_format($result, $force_type);
     } else {
         log_err('Unknown database type ' . $db_con->db_type);

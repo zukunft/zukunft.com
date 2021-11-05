@@ -29,67 +29,67 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 global $db_con;
 
 
-function run_string_unit_tests()
+function run_string_unit_tests(testing $t)
 {
 
-    test_header('Test the zukunft.com base functions (zu_lib.php)');
+    $t->header('Test the zukunft.com base functions (zu_lib.php)');
 
-    test_subheader('strings');
+    $t->subheader('strings');
 
     // test zu_trim
     $text = "  This  text  has  many  spaces  ";
     $target = "This text has many spaces";
     $result = zu_trim($text);
-    test_dsp(", zu_trim", $target, $result);
+    $t->dsp(", zu_trim", $target, $result);
 
     // test zu_str_left
     $text = "This are the left 4";
     $pos = 4;
     $target = "This";
     $result = zu_str_left($text, $pos);
-    test_dsp(", zu_str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_left: What are the left \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
 
     // test zu_str_right
     $text = "This are the right 7";
     $pos = 7;
     $target = "right 7";
     $result = zu_str_right($text, $pos);
-    test_dsp(", zu_str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $target, $result);
 
     // test zu_str_left_of
     $text = "This is left of that ";
     $maker = " of that";
     $target = "This is left";
     $result = zu_str_left_of($text, $maker);
-    test_dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
     // test zu_str_left_of
     $text = "This is left of that, but not of that";
     $maker = " of that";
     $target = "This is left";
     $result = zu_str_left_of($text, $maker);
-    test_dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_left_of: What is left of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
     // test zu_str_right_of
     $text = "That is right of this";
     $maker = "That is right ";
     $target = "of this";
     $result = zu_str_right_of($text, $maker);
-    test_dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
     // test zu_str_right_of
     $text = "00000";
     $maker = "0";
     $target = "0000";
     $result = zu_str_right_of($text, $maker);
-    test_dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
     // test zu_str_right_of
     $text = "The formula id of {f23}.";
     $maker = "{f";
     $target = "23}.";
     $result = zu_str_right_of($text, $maker);
-    test_dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
+    $t->dsp(", zu_str_right_of: What is right of \"" . $maker . "\" in \"" . $text . "\"", $target, $result);
 
     // test zu_str_between
     $text = "The formula id of {f23}.";
@@ -97,7 +97,7 @@ function run_string_unit_tests()
     $maker_end = "}";
     $target = "23";
     $result = zu_str_between($text, $maker_start, $maker_end);
-    test_dsp(", zu_str_between: " . $text . "", $target, $result);
+    $t->dsp(", zu_str_between: " . $text . "", $target, $result);
 
     // test zu_str_between
     $text = "The formula id of {f4} / {f5}.";
@@ -105,32 +105,32 @@ function run_string_unit_tests()
     $maker_end = "}";
     $target = "4";
     $result = zu_str_between($text, $maker_start, $maker_end);
-    test_dsp(", zu_str_between: " . $text . "", $target, $result);
+    $t->dsp(", zu_str_between: " . $text . "", $target, $result);
 
-    test_subheader('arrays and lists');
+    $t->subheader('arrays and lists');
 
     // test dsp_array
     $test_array = [1,2,3];
     $target = '1,2,3';
     $result = dsp_array($test_array);
-    test_dsp(", dsp_array: ", $target, $result);
+    $t->dsp(", dsp_array: ", $target, $result);
 
     $test_array = ["A","B","C"];
     $target = 'A,B,C';
     $result = dsp_array($test_array);
-    test_dsp(", dsp_array: ", $target, $result);
+    $t->dsp(", dsp_array: ", $target, $result);
 
     $test_array = [];
     $target = 'null';
     $result = dsp_array($test_array);
-    test_dsp(", dsp_array: ", $target, $result);
+    $t->dsp(", dsp_array: ", $target, $result);
 
     $test_array = null;
     $target = 'null';
     $result = dsp_array($test_array);
-    test_dsp(", dsp_array: ", $target, $result);
+    $t->dsp(", dsp_array: ", $target, $result);
 
-    test_subheader('json');
+    $t->subheader('json');
 
     // test json_clean
     $json_text = '{
@@ -166,11 +166,11 @@ function run_string_unit_tests()
     $json_clean = json_clean($json_array);
     $result = $json_clean == json_decode($json_target, true);
     $target = true;
-    test_dsp(", json_clean", $target, $result);
+    $t->dsp(", json_clean", $target, $result);
 
     // ... plausibility check
     $result = $json_clean == json_decode($json_check, true);
     $target = false;
-    test_dsp(", json_clean - false test", $target, $result);
+    $t->dsp(", json_clean - false test", $target, $result);
 
 }

@@ -26,16 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_word_unit_tests()
+function run_word_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the word class (src/main/php/model/word/word.php)');
+    $t->header('Unit tests of the word class (src/main/php/model/word/word.php)');
 
-
-    test_subheader('SQL statement tests');
+    $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
 
@@ -43,7 +42,7 @@ function run_word_unit_tests()
     $wrd = new word;
     $wrd->id = 2;
     $wrd->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $wrd->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.word_id, 
@@ -61,7 +60,7 @@ function run_word_unit_tests()
                        FROM words s LEFT JOIN user_words u ON s.word_id = u.word_id 
                                                           AND u.user_id = 1 
                       WHERE s.word_id = 2;";
-    test_dsp('word->load_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word->load_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -71,14 +70,14 @@ function run_word_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('word->load_sql by word id check sql name', $result, $target);
+    $t->dsp('word->load_sql by word id check sql name', $result, $target);
 
     // sql to load the word by name
     $wrd = new word;
     $wrd->id = 0;
     $wrd->usr = $usr;
     $wrd->name = word::TN_READ;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $wrd->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.word_id, 
@@ -97,7 +96,7 @@ function run_word_unit_tests()
                                                           AND u.user_id = 1 
                       WHERE (u.word_name = '" . word::TN_READ . "'
                          OR (s.word_name = '" . word::TN_READ . "' AND u.word_name IS NULL));";
-    test_dsp('word->load_sql by word name', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word->load_sql by word name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -107,10 +106,10 @@ function run_word_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('word->load_sql by word name check sql name', $result, $target);
+    $t->dsp('word->load_sql by word name check sql name', $result, $target);
 
 
-    test_subheader('Im- and Export tests');
+    $t->subheader('Im- and Export tests');
 
     $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/word/second.json'), true);
     $wrd = new word_dsp;
@@ -118,7 +117,7 @@ function run_word_unit_tests()
     $json_ex = json_decode(json_encode($wrd->export_obj(false)), true);
     $result = json_is_similar($json_in, $json_ex);
     $target = true;
-    test_dsp('word->import check name', $target, $result);
+    $t->dsp('word->import check name', $target, $result);
 
 }
 

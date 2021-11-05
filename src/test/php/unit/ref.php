@@ -26,13 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_ref_unit_tests()
+function run_ref_unit_tests(testing $t)
 {
 
-    test_header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
+    $t->header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
 
 
-    test_subheader('Im- and Export tests');
+    $t->subheader('Im- and Export tests');
 
     $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/ref/wikipedia.json'), true);
     $ref = new ref;
@@ -40,7 +40,7 @@ function run_ref_unit_tests()
     $json_ex = json_decode(json_encode($ref->export_obj(false)), true);
     $result = json_is_similar($json_in, $json_ex);
     $target = true;
-    test_dsp('word->import check name', $target, $result);
+    $t->dsp('word->import check name', $target, $result);
 
 }
 

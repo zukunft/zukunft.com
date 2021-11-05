@@ -101,12 +101,12 @@ class view_cmp_link extends user_sandbox
         if ($db_row != null) {
             if ($db_row['view_component_link_id'] > 0) {
                 $this->id = $db_row['view_component_link_id'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->view_id = $db_row['view_id'];
                 $this->view_component_id = $db_row['view_component_id'];
                 $this->order_nbr = $db_row['order_nbr'];
                 $this->pos_type_id = $db_row['position_type'];
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_component_link_id'];
                 }

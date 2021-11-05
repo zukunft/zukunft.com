@@ -34,12 +34,12 @@ class phrase_list_unit_tests
      * TODO create a common test result object to return
      * TODO capsule all unit tests in a class like this example
      */
-    function run()
+    function run(testing $t)
     {
 
-        test_header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
+        $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
-        test_subheader('Selection tests');
+        $t->subheader('Selection tests');
 
         // check that a time phrase is correctly removed from a phrase list
         $phr_lst = $this->get_phrase_list();
@@ -47,10 +47,10 @@ class phrase_list_unit_tests
         $phr_lst_ex_time->ex_time();
         $result = true;
         $target = true;
-        test_dsp('phrase_list->ex_time', $target, $result);
+        $t->dsp('phrase_list->ex_time', $target, $result);
         $result = $phr_lst_ex_time->dsp_id();
         $target = $this->get_phrase_list_ex_time()->dsp_id();
-        test_dsp('phrase_list->ex_time names', $target, $result);
+        $t->dsp('phrase_list->ex_time names', $target, $result);
 
     }
 

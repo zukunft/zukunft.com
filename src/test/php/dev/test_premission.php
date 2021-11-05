@@ -26,16 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_permission_test () {
+function run_permission_test (testing $t) {
 
-  global $usr;
-  global $usr2;
 
-  global $error_counter;
-  global $timeout_counter;
-  global $total_tests;
-
-  test_header('Test the user permission level increase');
+    $t->header('Test the user permission level increase');
 
   // if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
   // if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email

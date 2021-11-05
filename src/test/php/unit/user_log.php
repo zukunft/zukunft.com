@@ -26,16 +26,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_user_log_unit_tests()
+function run_user_log_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the user log display class (src/main/php/web/user_log_display.php)');
+    $t->header('Unit tests of the user log display class (src/main/php/web/user_log_display.php)');
 
 
-    test_subheader('SQL statement tests');
+    $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
 
@@ -44,7 +44,7 @@ function run_user_log_unit_tests()
     $log_dsp->type = 'user';
     $log_dsp->usr = $usr;
     $log_dsp->size = SQL_ROW_LIMIT;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
     $expected_sql = "SELECT 
                         c.change_link_id, 
@@ -66,7 +66,7 @@ function run_user_log_unit_tests()
                     AND c.user_id = 1  
                ORDER BY c.change_time DESC
                   LIMIT 20;";
-    test_dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -76,7 +76,7 @@ function run_user_log_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type . ' id check sql name', $result, $target);
+    $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type . ' id check sql name', $result, $target);
 
 
 }

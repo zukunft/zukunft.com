@@ -33,6 +33,23 @@
 
 class word extends word_link_object
 {
+    // object specific database and JSON object field names
+    // means: database fields only used for words
+    const FLD_NAME = 'word_name';
+    const FLD_PLURAL = 'plural';
+    const FLD_TYPE = 'word_type_id';
+    const FLD_VIEW = 'view_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        self::FLD_NAME,
+        self::FLD_PLURAL,
+        sql_db::FLD_DESCRIPTION,
+        self::FLD_TYPE,
+        self::FLD_VIEW,
+        self::FLD_EXCLUDED
+    );
+
     // persevered word names for system settings
     const DB_SETTINGS = 'System database settings';
 
@@ -220,17 +237,19 @@ class word extends word_link_object
     function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
-            if ($db_row['word_id'] > 0) {
-                $this->id = $db_row['word_id'];
-                $this->name = $db_row['word_name'];
-                $this->owner_id = $db_row['user_id'];
-                $this->plural = $db_row['plural'];
+            // TODO excluded words should not be loaded, but it should be possible to restore them
+            //if ($db_row[self::FLD_EXCLUDED] != 1) {
+            if ($db_row[$this->fld_id()] > 0) {
+                $this->id = $db_row[$this->fld_id()];
+                $this->name = $db_row[self::FLD_NAME];
+                $this->owner_id = $db_row[self::FLD_USER];
+                $this->plural = $db_row[self::FLD_PLURAL];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                $this->type_id = $db_row['word_type_id'];
-                $this->view_id = $db_row['view_id'];
-                $this->excluded = $db_row['excluded'];
+                $this->type_id = $db_row[self::FLD_TYPE];
+                $this->view_id = $db_row[self::FLD_VIEW];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_word_id'];
+                    $this->usr_cfg_id = $db_row[$this->fld_usr_id()];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -240,6 +259,9 @@ class word extends word_link_object
             } else {
                 $this->id = 0;
             }
+            //} else {
+            //    $this->id = 0;
+            //}
         } else {
             $this->id = 0;
         }
@@ -254,7 +276,7 @@ class word extends word_link_object
         $result = '';
 
         $db_con->set_type(DB_TYPE_WORD);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id', 'excluded'));
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, self::FLD_PLURAL, sql_db::FLD_DESCRIPTION, self::FLD_TYPE, self::FLD_VIEW, self::FLD_EXCLUDED));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -287,8 +309,8 @@ class word extends word_link_object
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('values'));
-        $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array('word_type_id', 'view_id', 'excluded', sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
+        $db_con->set_usr_fields(array(self::FLD_PLURAL, sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_VIEW, self::FLD_EXCLUDED, sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -324,7 +346,7 @@ class word extends word_link_object
                 $db_wrd = $db_con->get1($sql);
                 $this->row_mapper($db_wrd, true);
                 if ($this->id <> 0) {
-                    if (is_null($db_wrd['excluded']) or $db_wrd['excluded'] == 0) {
+                    if (is_null($db_wrd[self::FLD_EXCLUDED]) or $db_wrd[self::FLD_EXCLUDED] == 0) {
                         // additional user sandbox fields
                         $this->type_name();
                     }
@@ -412,7 +434,7 @@ class word extends word_link_object
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
         if (isset($db_row)) {
-            $view_id = $db_row['view_id'];
+            $view_id = $db_row[self::FLD_VIEW];
         }
 
         log_debug('word->view_id for ' . $this->dsp_id() . ' got ' . $view_id);
@@ -490,7 +512,7 @@ class word extends word_link_object
             if ($key == 'type') {
                 $this->type_id = $word_types->id($value);
             }
-            if ($key == 'plural') {
+            if ($key == self::FLD_PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
                 }
@@ -623,7 +645,11 @@ class word extends word_link_object
      */
     function name(): string
     {
-        return $this->name;
+        if ($this->excluded) {
+            return '';
+        } else {
+            return $this->name;
+        }
     }
 
     // return the html code to display a word
@@ -1122,7 +1148,7 @@ class word extends word_link_object
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        $change_user_id = $db_row['user_id'];
+        $change_user_id = $db_row[self::FLD_USER];
         if ($change_user_id > 0) {
             $result = false;
         }
@@ -1150,7 +1176,7 @@ class word extends word_link_object
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
         if ($db_row != null) {
-            $user_id = $db_row['user_id'];
+            $user_id = $db_row[self::FLD_USER];
         }
         return $user_id;
     }
@@ -1186,6 +1212,17 @@ class word extends word_link_object
         return $has_cfg;
     }
 
+    private function no_usr_fld_used($db_row): bool
+    {
+        $result = true;
+        foreach (self::FLD_NAMES as $field_name) {
+            if ($db_row[$field_name] != '') {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
     /**
      * check if the database record for the user specific settings can be removed
      */
@@ -1202,17 +1239,14 @@ class word extends word_link_object
         // TODO add user id to where
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id'));
+        $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_where($this->id);
         $sql = $db_con->select();
         $usr_wrd_cfg = $db_con->get1($sql);
         if ($usr_wrd_cfg != null) {
             log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-            if ($usr_wrd_cfg['word_id'] > 0) {
-                if ($usr_wrd_cfg['plural'] == ''
-                    and $usr_wrd_cfg[sql_db::FLD_DESCRIPTION] == ''
-                    and $usr_wrd_cfg['word_type_id'] == Null
-                    and $usr_wrd_cfg['view_id'] == Null) {
+            if ($usr_wrd_cfg[$this->fld_id()] > 0) {
+                if ($this->no_usr_fld_used($usr_wrd_cfg)) {
                     // delete the entry in the user sandbox
                     log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                     $result = $this->del_usr_cfg_exe($db_con);
@@ -1239,7 +1273,7 @@ class word extends word_link_object
         $log->usr = $this->usr;
         $log->action = 'update';
         $log->table = 'words';
-        $log->field = 'view_id';
+        $log->field = self::FLD_VIEW;
         if ($this->view_id > 0) {
             $dsp_old = new view_dsp;
             $dsp_old->id = $this->view_id;
@@ -1311,7 +1345,7 @@ class word extends word_link_object
                 $log->new_value = $this->plural;
                 $log->std_value = $std_rec->plural;
                 $log->row_id = $this->id;
-                $log->field = 'plural';
+                $log->field = self::FLD_PLURAL;
                 $result = $this->save_field_do($db_con, $log);
             }
         }

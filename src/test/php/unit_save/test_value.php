@@ -26,12 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_test_values()
+function create_test_values(testing $t)
 {
-    test_header('Check if all base values are exist and create them if needed');
+    $t->header('Check if all base values are exist and create them if needed');
 
     // add the number of inhabitants in the canton of zurich without time definition
-    test_value(array(
+    $t->test_value(array(
         word::TN_CANTON,
         word::TN_ZH,
         word::TN_INHABITANT,
@@ -40,7 +40,7 @@ function create_test_values()
         value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the concrete year
-    test_value(array(
+    $t->test_value(array(
         word::TN_CANTON,
         word::TN_ZH,
         word::TN_INHABITANT,
@@ -50,14 +50,14 @@ function create_test_values()
         value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
     // add the number of inhabitants in the city of zurich without time definition using the phrase zurich (city) instead of two single words
-    test_value(array(
+    $t->test_value(array(
         phrase::TN_ZH_CITY,
         word::TN_INHABITANT
     ),
         value::TV_CITY_ZH_INHABITANTS_2019);
 
     // ... same with the concrete year
-    test_value(array(
+    $t->test_value(array(
         phrase::TN_ZH_CITY,
         word::TN_INHABITANT,
         word::TN_2019
@@ -65,7 +65,7 @@ function create_test_values()
         value::TV_CITY_ZH_INHABITANTS_2019);
 
     // add the number of inhabitants in switzerland without time definition
-    test_value(array(
+    $t->test_value(array(
         word::TN_CH,
         word::TN_INHABITANT,
         word::TN_MIO
@@ -73,7 +73,7 @@ function create_test_values()
         value::TV_CH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the concrete year
-    test_value(array(
+    $t->test_value(array(
         word::TN_CH,
         word::TN_INHABITANT,
         word::TN_MIO,
@@ -82,7 +82,7 @@ function create_test_values()
         value::TV_CH_INHABITANTS_2020_IN_MIO);
 
     // ... same with the previous year
-    test_value(array(
+    $t->test_value(array(
         word::TN_CH,
         word::TN_INHABITANT,
         word::TN_MIO,
@@ -91,7 +91,7 @@ function create_test_values()
         value::TV_CH_INHABITANTS_2019_IN_MIO);
 
     // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
-    test_value(array(
+    $t->test_value(array(
         word::TN_CANTON,
         word::TN_ZH,
         word::TN_CH,
@@ -102,7 +102,7 @@ function create_test_values()
         value::TEST_PCT);
 
     // add the increase of inhabitants in Switzerland from 2019 to 2020 for calculation validation
-    test_value(array(
+    $t->test_value(array(
         word::TN_CH,
         word::TN_INHABITANT,
         word::TN_INCREASE,
@@ -112,13 +112,13 @@ function create_test_values()
         value::TEST_INCREASE);
 
     // add some simple number for formula testing
-    test_value(array(
+    $t->test_value(array(
         word::TN_SHARE,
         word::TN_CHF
     ),
         value::TV_SHARE_PRICE);
 
-    test_value(array(
+    $t->test_value(array(
         word::TN_EARNING,
         word::TN_CHF
     ),

@@ -26,16 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_unit_tests()
+function run_formula_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
+    $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
 
-
-    test_subheader('SQL statement tests');
+    $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
 
@@ -43,7 +42,7 @@ function run_formula_unit_tests()
     $frm = new formula;
     $frm->id = 2;
     $frm->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $frm->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.formula_id,  
@@ -63,7 +62,7 @@ function run_formula_unit_tests()
                                        LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                                        LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id 
                       WHERE s.formula_id = 2;";
-    test_dsp('formula->load_sql by formula id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula->load_sql by formula id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -73,10 +72,10 @@ function run_formula_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('formula->load_sql by formula id check sql name', $result, $target);
+    $t->dsp('formula->load_sql by formula id check sql name', $result, $target);
 
 
-    test_subheader('Im- and Export tests');
+    $t->subheader('Im- and Export tests');
 
     $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
     $frm = new formula;
@@ -84,7 +83,7 @@ function run_formula_unit_tests()
     $json_ex = json_decode(json_encode($frm->export_obj(false)), true);
     $result = json_is_similar($json_in, $json_ex);
     $target = true;
-    test_dsp('formula->import check name', $target, $result);
+    $t->dsp('formula->import check name', $target, $result);
 
 }
 

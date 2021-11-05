@@ -80,17 +80,17 @@ class word_link extends word_link_object
         if ($db_row != null) {
             if ($db_row['word_link_id'] > 0) {
                 $this->id = $db_row['word_link_id'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->from->id = $db_row['from_phrase_id'];
                 $this->to->id = $db_row['to_phrase_id'];
                 $this->verb->id = $db_row['verb_id'];
                 $this->name = $db_row['word_link_name'];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->type_id = $db_row['word_type_id'];
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_word_link_id'];
-                    $this->owner_id = $db_row['user_id'];
+                    $this->owner_id = $db_row[self::FLD_USER];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -892,7 +892,7 @@ class word_link extends word_link_object
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        if ($db_row['user_id'] > 0) {
+        if ($db_row[self::FLD_USER] > 0) {
             $result = false;
         }
         log_debug('word_link->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));

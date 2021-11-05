@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_word_unit_db_tests()
+function run_word_unit_db_tests(testing $t)
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the word class (src/main/php/model/word/word.php)');
+    $t->header('Unit database tests of the word class (src/main/php/model/word/word.php)');
 
-    test_subheader('Word types tests');
+    $t->subheader('Word types tests');
 
     // load the word types
     $lst = new word_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_word->load_types', $target, $result);
+    $t->dsp('unit_db_word->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::WORD_TYPE, word_type_list::DBL_NORMAL);
     $target = 1;
-    test_dsp('unit_db_word->check ' . word_type_list::DBL_NORMAL, $result, $target);
+    $t->dsp('unit_db_word->check ' . word_type_list::DBL_NORMAL, $result, $target);
 
 }
 

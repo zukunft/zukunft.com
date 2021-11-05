@@ -450,9 +450,9 @@ class word_dsp extends word
         $result = '';
 
         $sql_name = "";
-        if ($db_con->get_type() == DB_TYPE_POSTGRES) {
+        if ($db_con->get_type() == sql_db::POSTGRES) {
             $sql_name = "CASE WHEN (name_reverse  <> '' IS NOT TRUE AND name_reverse <> verb_name) THEN CONCAT(verb_name, ' (', name_reverse, ')') ELSE verb_name END AS name";
-        } elseif ($db_con->get_type() == DB_TYPE_MYSQL) {
+        } elseif ($db_con->get_type() == sql_db::MYSQL) {
             $sql_name = "IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name";
         } else {
             log_err('Unknown db type ' . $db_con->get_type());

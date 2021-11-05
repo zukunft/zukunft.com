@@ -26,26 +26,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_sql_db_unit_db_tests()
+function run_sql_db_unit_db_tests(testing $t)
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the SQL abstraction layer class (database/sql_db.php)');
+    $t->header('Unit database tests of the SQL abstraction layer class (database/sql_db.php)');
 
-    test_subheader('Database upgrade functions');
+    $t->subheader('Database upgrade functions');
 
     $result = $db_con->has_column('user_values','user_value');
     $target = false;
-    test_dsp('sql_db->change_column_name', $target, $result);
+    $t->dsp('sql_db->change_column_name', $target, $result);
 
     $result = $db_con->has_column('user_values','word_value');
     $target = true;
-    test_dsp('sql_db->change_column_name', $target, $result);
+    $t->dsp('sql_db->change_column_name', $target, $result);
 
     $result = $db_con->change_column_name('user_values','user_value','word_value');
     $target = true;
-    test_dsp('sql_db->change_column_name', $target, $result);
+    $t->dsp('sql_db->change_column_name', $target, $result);
 
 }
 

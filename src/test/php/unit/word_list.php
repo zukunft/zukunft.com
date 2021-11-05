@@ -26,13 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_word_list_unit_tests()
+function run_word_list_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
+    $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
     /*
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -60,7 +60,7 @@ function run_word_list_unit_tests()
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    test_dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -70,10 +70,10 @@ function run_word_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('word_list->load_sql_name by IDs', $result, $target);
+    $t->dsp('word_list->load_sql_name by IDs', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->db_type = sql_db::MYSQL;
     $db_con->set_type(DB_TYPE_WORD);
     $db_con->set_usr($usr->id);
     $db_con->set_usr_fields(array('plural',sql_db::FLD_DESCRIPTION));
@@ -97,10 +97,10 @@ function run_word_list_unit_tests()
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    test_dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
 
     // sql to load by word list by phrase group
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $wrd_lst = new word_list;
     $wrd_lst->grp_id = 1;
     $wrd_lst->usr = $usr;
@@ -122,7 +122,7 @@ function run_word_list_unit_tests()
                                          FROM phrase_group_word_links
                                         WHERE phrase_group_id = 1)
                ORDER BY s.values DESC, word_name;";
-    test_dsp('word_list->load_sql by phrase group', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->load_sql by phrase group', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -132,7 +132,7 @@ function run_word_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('word_list->load_sql_name by phrase group', $result, $target);
+    $t->dsp('word_list->load_sql_name by phrase group', $result, $target);
 
     // TODO add the missing word list loading SQL
 
@@ -158,7 +158,7 @@ function run_word_list_unit_tests()
                  AND l.from_phrase_id IN (7)
                  AND l.verb_id = 2 
             ORDER BY s.values DESC, s.word_name;";
-    test_dsp('word_list->add_by_type_sql by verb and up', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->add_by_type_sql by verb and up', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -168,7 +168,7 @@ function run_word_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('word_list->add_by_type_sql by verb and up', $result, $target);
+    $t->dsp('word_list->add_by_type_sql by verb and up', $result, $target);
 
 
 

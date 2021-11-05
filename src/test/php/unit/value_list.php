@@ -26,20 +26,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_value_list_unit_tests()
+function run_value_list_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
+    $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 
     /*
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
      */
 
     $db_con = new sql_db();
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
 
     // sql to load a list of value by the phrase ids
     $val_lst = new value_list;
@@ -64,7 +64,7 @@ function run_value_list_unit_tests()
                                                WHERE l1.phrase_id = 1 AND l1.value_id = v.value_id  
                                                  AND l2.phrase_id = 2 AND l2.value_id = v.value_id  )
               ORDER BY v.phrase_group_id, v.time_word_id;";
-    test_dsp('value_list->load_by_phr_lst_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value_list->load_by_phr_lst_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -74,10 +74,10 @@ function run_value_list_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('value_list->load_by_phr_lst_sql by group and time', $result, $target);
+    $t->dsp('value_list->load_by_phr_lst_sql by group and time', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->db_type = sql_db::MYSQL;
     $val_lst->usr = $usr;
     $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
     $sql_avoid_code_check_prefix = "SELECT";
@@ -98,7 +98,7 @@ function run_value_list_unit_tests()
                                                WHERE l1.phrase_id = 1 AND l1.value_id = v.value_id 
                                                  AND l2.phrase_id = 2 AND l2.value_id = v.value_id  )
               ORDER BY v.phrase_group_id, v.time_word_id;";
-    test_dsp('value_list->load_by_phr_lst_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value_list->load_by_phr_lst_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
 }
 

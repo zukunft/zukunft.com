@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // start testing the user permission functionality
 // -----------------------------------------------
 
-function run_user_test()
+function run_user_test(testing $t)
 {
 
     global $usr;
@@ -38,11 +38,11 @@ function run_user_test()
     $back = 0;
 
     // test the user display after the word changes to have a sample case
-    test_header('Test the user display class (classes/user_display.php)');
+    $t->header('Test the user display class (classes/user_display.php)');
 
     $result = $usr->dsp_obj()->dsp_edit($back);
-    $target = TEST_USER_NAME;
-    test_dsp_contains(', user_display->dsp_edit', $target, $result);
+    $target = testing::USER_NAME;
+    $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 
     // display system usernames
     echo "based on<br>";
@@ -54,12 +54,12 @@ function run_user_test()
     }
     echo 'user id: ' . $usr->id . '<br>';
 
-    test_header('Test the user permission scripts (e.g. /user/user.php)');
+    $t->header('Test the user permission scripts (e.g. /user/user.php)');
 
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);
     $target = '';
-    test_dsp(', usr->ip_check', $target, $result);
+    $t->dsp(', usr->ip_check', $target, $result);
 
     // TODO add a test signup process to
 

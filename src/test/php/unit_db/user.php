@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_user_unit_db_tests()
+function run_user_unit_db_tests(testing $t)
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the user profile handling');
+    $t->header('Unit database tests of the user profile handling');
 
-    test_subheader('User profile tests');
+    $t->subheader('User profile tests');
 
     // load the user_profile types
     $lst = new user_profile_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_user_profile->load_types', $target, $result);
+    $t->dsp('unit_db_user_profile->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
     $target = 1;
-    test_dsp('unit_db_user_profile->check ' . user_profile::NORMAL, $result, $target);
+    $t->dsp('unit_db_user_profile->check ' . user_profile::NORMAL, $result, $target);
 
 }
 

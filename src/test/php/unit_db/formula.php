@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_unit_db_tests()
+function run_formula_unit_db_tests(testing $t)
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
+    $t->header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
 
-    test_subheader('formula types tests');
+    $t->subheader('formula types tests');
 
     // load the formula types
     $lst = new formula_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_formula->load_types', $target, $result);
+    $t->dsp('unit_db_formula->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::FORMULA_TYPE, formula::CALC);
     $target = 1;
-    test_dsp('unit_db_formula->check ' . formula::CALC, $result, $target);
+    $t->dsp('unit_db_formula->check ' . formula::CALC, $result, $target);
 
 }
 

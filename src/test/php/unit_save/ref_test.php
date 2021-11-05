@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_ref_test()
+function run_ref_test(testing $t)
 {
 
     global $usr;
@@ -34,8 +34,8 @@ function run_ref_test()
     dsp_test_header('Test the ref class (src/main/php/model/ref/ref.php)');
 
     // create the test ref
-    $wrd = test_word(word::TN_ADD);
-    test_ref(word::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
+    $wrd = $t->test_word(word::TN_ADD);
+    $t->test_ref(word::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
     // load by phrase and type
     $ref_type = get_ref_type(ref_type::WIKIDATA);
@@ -46,7 +46,7 @@ function run_ref_test()
     $ref->load();
     $result = $ref->external_key;
     $target = ref::TEST_REF_NAME;
-    test_dsp('ref->load "' . word::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+    $t->dsp('ref->load "' . word::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
     if ($ref->id > 0) {
         // load by id and test the loading of the objects
@@ -56,10 +56,10 @@ function run_ref_test()
         $ref2->load();
         $result = $ref2->phr->name;
         $target = word::TN_ADD;
-        test_dsp('ref->load_object word', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+        $t->dsp('ref->load_object word', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
         $result = $ref2->ref_type->name;
         $target = ref_type::WIKIDATA;
-        test_dsp('ref->load_object type', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+        $t->dsp('ref->load_object type', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
     }
 
 }

@@ -91,7 +91,7 @@ if ($usr->id > 0) {
 
                 // if update was fine ...
                 if (str_replace('1', '', $upd_result) == '') {
-                    // ... display the calling page is switched of to keep the user on the edit view and see the implications of the change
+                    // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
                     // switched off because maybe staying on the edit page is the expected behaviour
                     //$result .= dsp_go_back($back, $usr);
                 } else {

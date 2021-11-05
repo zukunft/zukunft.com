@@ -26,20 +26,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_view_component_link_unit_tests()
+function run_view_component_link_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the view component link class (src/main/php/model/view/view_component_link.php)');
+    $t->header('Unit tests of the view component link class (src/main/php/model/view/view_component_link.php)');
 
     /*
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
      */
 
     $db_con = new sql_db();
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
 
     // sql to load a list of value by the phrase ids
     $lnk = new view_cmp_link();
@@ -61,7 +61,7 @@ function run_view_component_link_unit_tests()
                                                     AND u.user_id = 1 
                    WHERE s.view_id = 1 
                      AND s.view_component_id = 2;";
-    test_dsp('view_component_link->load_sql by view and component', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view_component_link->load_sql by view and component', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -71,10 +71,10 @@ function run_view_component_link_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('view_component_link->load_sql by view and component', $result, $target);
+    $t->dsp('view_component_link->load_sql by view and component', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->db_type = sql_db::MYSQL;
     $lnk->usr = $usr;
     $created_sql = $lnk->load_sql($db_con);
     $sql_avoid_code_check_prefix = "SELECT";
@@ -92,7 +92,7 @@ function run_view_component_link_unit_tests()
                                                     AND u.user_id = 1 
                    WHERE s.view_id = 1 
                      AND s.view_component_id = 2;";
-    test_dsp('view_component_link->load_sql by view and component for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view_component_link->load_sql by view and component for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
 }
 

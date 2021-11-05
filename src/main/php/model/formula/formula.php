@@ -227,8 +227,8 @@ class formula extends user_sandbox_description
     function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
-            if ($db_row['formula_id'] > 0) {
-                $this->id = $db_row['formula_id'];
+            if ($db_row[$this->fld_id()] > 0) {
+                $this->id = $db_row[$this->fld_id()];
                 $this->name = $db_row[self::FLD_NAME];
                 $this->owner_id = $db_row[self::FLD_USER];
                 $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
@@ -250,7 +250,7 @@ class formula extends user_sandbox_description
                     $this->need_all_val = false;
                 }
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_formula_id'];
+                    $this->usr_cfg_id = $db_row[$this->fld_usr_id()];
                 }
             } else {
                 $this->id = 0;
@@ -602,7 +602,7 @@ class formula extends user_sandbox_description
 
         $db_con->set_type(DB_TYPE_FORMULA_VALUE);
         $db_con->set_usr($this->usr->id);
-        return $db_con->delete('formula_id', $this->id);
+        return $db_con->delete($this->fld_id(), $this->id);
     }
 
 
@@ -1289,7 +1289,7 @@ class formula extends user_sandbox_description
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
-            $field_names[] = 'formula_id';
+            $field_names[] = $this->fld_id();
             $field_values[] = $this->id;
             $field_names[] = self::FLD_USER;
             if ($frm_usr_id > 0) {
@@ -1318,7 +1318,7 @@ class formula extends user_sandbox_description
         foreach ($elm_del_ids as $elm_del_id) {
             $field_names = array();
             $field_values = array();
-            $field_names[] = 'formula_id';
+            $field_names[] = $this->fld_id();
             $field_values[] = $this->id;
             if ($frm_usr_id > 0) {
                 $field_names[] = self::FLD_USER;
@@ -1555,12 +1555,12 @@ class formula extends user_sandbox_description
             $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['formula_id'];
+                $this->usr_cfg_id = $db_row[$this->fld_id()];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA);
-                $log_id = $db_con->insert(array('formula_id', self::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array($this->fld_id(), self::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -1598,8 +1598,8 @@ class formula extends user_sandbox_description
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($sql);
         log_debug('formula->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_cfg['formula_id'] > 0) {
-            if ($usr_cfg['formula_name'] == ''
+        if ($usr_cfg[$this->fld_id()] > 0) {
+            if ($usr_cfg[self::FLD_NAME] == ''
                 and $usr_cfg[self::FLD_FORMULA_TEXT] == ''
                 and $usr_cfg[self::FLD_FORMULA_USER_TEXT] == ''
                 and $usr_cfg[sql_db::FLD_DESCRIPTION] == ''
@@ -1630,7 +1630,7 @@ class formula extends user_sandbox_description
         if ($result) {
             $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA);
             $result = $db_con->delete(
-                array('formula_id', self::FLD_USER),
+                array($this->fld_id(), self::FLD_USER),
                 array($this->id, $this->usr->id));
             if (!$result) {
                 $result .= 'Deletion of user formula ' . $this->id . ' failed for ' . $this->usr->name . '.';
@@ -1666,7 +1666,7 @@ class formula extends user_sandbox_description
     }
 
     /**
-     * update the time stamp to trigger an update of the depending results
+     * update the time stamp to trigger an update of the depending on results
      */
     function save_field_trigger_update($db_con): string
     {
@@ -1674,7 +1674,7 @@ class formula extends user_sandbox_description
         $this->last_update = new DateTime();
         $db_con->set_type(DB_TYPE_FORMULA);
         if (!$db_con->update($this->id, self::FLD_LAST_UPDATE, 'Now()')) {
-            $result = 'saving the update triiger for formula ' . $this->dsp_id() . ' failed';
+            $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
         }
 
         log_debug('formula->save_field_trigger_update timestamp of ' . $this->id . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '" with ' . $result);
@@ -1813,7 +1813,7 @@ class formula extends user_sandbox_description
                 $log->new_value = $this->name;
                 $log->std_value = $std_rec->name;
                 $log->row_id = $this->id;
-                $log->field = 'formula_name';
+                $log->field = self::FLD_NAME;
                 $result .= $this->save_field_do($db_con, $log);
                 // in case a word link exist, change also the name of the word
                 $wrd = new word_dsp;
@@ -1860,11 +1860,11 @@ class formula extends user_sandbox_description
             $log->new_value = $this->name;
             $log->std_value = $std_rec->name;
             $log->row_id = $this->id;
-            $log->field = 'formula_name';
+            $log->field = self::FLD_NAME;
             if ($log->add()) {
                 $db_con->set_type(DB_TYPE_FORMULA);
                 if (!$db_con->update($this->id,
-                    array("formula_name"),
+                    array(self::FLD_NAME),
                     array($this->name))) {
                     $result .= 'formula ' . $db_rec->name . ' cannot be renamed to ' . $this->name;
                 }
@@ -1980,7 +1980,7 @@ class formula extends user_sandbox_description
             $db_con->set_type(DB_TYPE_FORMULA);
             // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
             $this->id = $db_con->insert(
-                array("formula_name", "user_id", "last_update", "formula_text", "resolved_text"),
+                array(self::FLD_NAME, self::FLD_USER, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
                 array($this->name, $this->usr->id, "Now()", $this->ref_text, $this->usr_text));
             if ($this->id > 0) {
                 log_debug('formula->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);

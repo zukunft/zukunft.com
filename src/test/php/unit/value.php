@@ -26,13 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_value_unit_tests()
+function run_value_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the value class (src/main/php/model/value/value.php)');
+    $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
 
     /*
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -53,7 +53,7 @@ function run_value_unit_tests()
                                                   FROM phrase_group_word_links l1 
                                                  WHERE l1.word_id = 1)  
                         AND time_word_id = 4 ;";
-    test_dsp('value->load_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value->load_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -63,10 +63,10 @@ function run_value_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('value->load_sql by group and time', $result, $target);
+    $t->dsp('value->load_sql by group and time', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->db_type = sql_db::MYSQL;
     $val->time_id = 4;
     $val->usr = $usr;
     $created_sql = $val->load_sql();
@@ -77,13 +77,13 @@ function run_value_unit_tests()
                                                       FROM phrase_group_word_links l1 
                                                      WHERE l1.word_id = 1) 
                             AND time_word_id = 4 ;";
-    test_dsp('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
      * im- and export tests
      */
 
-    test_subheader('Im- and Export tests');
+    $t->subheader('Im- and Export tests');
 
     $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/value/speed_of_light.json'), true);
     $val = new value;
@@ -92,7 +92,7 @@ function run_value_unit_tests()
     $json_ex = json_decode(json_encode($val->export_obj(false)), true);
     $result = json_is_similar($json_in, $json_ex);
     $target = true;
-    test_dsp('view->import check name', $target, $result);
+    $t->dsp('view->import check name', $target, $result);
 
 }
 

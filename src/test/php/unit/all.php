@@ -223,9 +223,9 @@ function unit_test_init_log_tables()
 /**
  * run all unit test in a useful order
  */
-function run_unit_tests()
+function run_unit_tests(testing $t)
 {
-    test_header('Start the zukunft.com unit tests');
+    $t->header('Start the zukunft.com unit tests');
 
     // remember the global var for restore after the unit tests
     global $db_con;
@@ -236,7 +236,7 @@ function run_unit_tests()
     $global_usr = $usr;
 
     // just to test the database abstraction layer, but without real connection to any database
-    $db_con= New sql_db;
+    $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
     // create a list with all prepared sql queries to check if the name is unique
     $sql_names = array();
@@ -264,28 +264,27 @@ function run_unit_tests()
     unit_test_init_log_tables();
 
     // do the unit tests
-    run_string_unit_tests(); // test functions not yet split into single unit tests
-    run_system_unit_tests();
-    run_word_unit_tests();
-    run_word_link_unit_tests();
-    run_word_list_unit_tests();
-    run_word_link_list_unit_tests();
-    (new phrase_list_unit_tests)->run();
-    run_phrase_group_unit_tests();
-    run_view_unit_tests();
-    run_view_component_link_unit_tests();
-    run_value_unit_tests();
-    run_value_list_unit_tests();
-    run_formula_unit_tests();
-    run_figure_unit_tests();
-    run_user_sandbox_unit_tests();
-    run_ref_unit_tests();
-    run_user_log_unit_tests();
+    run_string_unit_tests($t); // test functions not yet split into single unit tests
+    run_system_unit_tests($t);
+    run_word_unit_tests($t);
+    run_word_link_unit_tests($t);
+    run_word_list_unit_tests($t);
+    run_word_link_list_unit_tests($t);
+    (new phrase_list_unit_tests)->run($t);
+    run_phrase_group_unit_tests($t);
+    run_view_unit_tests($t);
+    run_view_component_link_unit_tests($t);
+    run_value_unit_tests($t);
+    run_value_list_unit_tests($t);
+    run_formula_unit_tests($t);
+    run_figure_unit_tests($t);
+    run_user_sandbox_unit_tests($t);
+    run_ref_unit_tests($t);
+    run_user_log_unit_tests($t);
 
     // restore the global vars
     $db_con = $global_db_con;
     $sql_names = $global_sql_names;
     $usr = $global_usr;
-
 
 }

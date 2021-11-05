@@ -165,10 +165,10 @@ class value extends user_sandbox_display
                 // check if phrase_group_id and time_word_id are user specific or time series specific
                 $this->grp_id = $db_row['phrase_group_id'];
                 $this->time_id = $db_row['time_word_id'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->source_id = $db_row['source_id'];
                 $this->last_update = new DateTime($db_row['last_update']);
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_value_id'];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
@@ -1265,7 +1265,7 @@ class value extends user_sandbox_display
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        $change_user_id = $db_row['user_id'];
+        $change_user_id = $db_row[self::FLD_USER];
         if ($change_user_id > 0) {
             $result = false;
         }
@@ -1341,7 +1341,7 @@ class value extends user_sandbox_display
             $db_con->usr_id = $this->usr->id;
             $db_row = $db_con->get1($sql);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['user_id'];
+                $this->usr_cfg_id = $db_row[self::FLD_USER];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -30,35 +30,36 @@
 
 */
 
-function run_verb_test () {
+function run_verb_test(testing $t)
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the verb class (classes/verb.php)');
+    $t->header('Test the verb class (classes/verb.php)');
 
-  // check the loading of the "is a" verb
-  $vrb = New verb;
-  $vrb->id= cl(db_cl::VERB, verb::IS_A);
-  $vrb->usr = $usr;
-  $vrb->load();
-  $target = 'is a';
-  $result = $vrb->name;
-  test_dsp('verb->load ', $target, $result);
+    // check the loading of the "is a" verb
+    $vrb = new verb;
+    $vrb->id = cl(db_cl::VERB, verb::IS_A);
+    $vrb->usr = $usr;
+    $vrb->load();
+    $target = 'is a';
+    $result = $vrb->name;
+    $t->dsp('verb->load ', $target, $result);
 
 
-  test_header('Test the verb list class (classes/verb_list.php)');
+    $t->header('Test the verb list class (classes/verb_list.php)');
 
-  // check the loading of the "is a" verb
-  $wrd_ZH = load_word(word::TN_ZH);
-  $vrb_lst = $wrd_ZH->link_types ('up');
-  $target = 'is a';
-  $result = '';
-  // select the first verb
-  foreach ($vrb_lst->lst AS $vrb) {
-    if ($result == '') {
-      $result = $vrb->name;
+    // check the loading of the "is a" verb
+    $wrd_ZH = $t->load_word(word::TN_ZH);
+    $vrb_lst = $wrd_ZH->link_types('up');
+    $target = 'is a';
+    $result = '';
+    // select the first verb
+    foreach ($vrb_lst->lst as $vrb) {
+        if ($result == '') {
+            $result = $vrb->name;
+        }
     }
-  }
-  test_dsp('verb_list->load ', $target, $result);
+    $t->dsp('verb_list->load ', $target, $result);
 
 }

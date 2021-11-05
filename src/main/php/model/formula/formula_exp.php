@@ -36,7 +36,7 @@ class formula_exp extends user_sandbox_exp_named
     public ?string $expression = '';
     public ?string $description = '';
     public ?string $type = '';
-    //public ?string $assigned_word = '';
+    public ?string $assigned_word = '';
 
     function reset()
     {
@@ -46,7 +46,7 @@ class formula_exp extends user_sandbox_exp_named
         $this->description = '';
         $this->type = '';
 
-        //$this->assigned_word = '';
+        $this->assigned_word = '';
     }
 
 }

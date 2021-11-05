@@ -103,7 +103,7 @@ if (isset($_POST['submit'])) {
         $db_con->set_where(null,$usr_name);
         $sql = $db_con->select();
         $db_row = $db_con->get1($sql);
-        $usr_id = $db_row['user_id'];
+        $usr_id = $db_row[self::FLD_USER];
         if ($usr_id > 0) {
             // auto login
             session_start();

@@ -26,15 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_db_link_test()
+function run_db_link_test(testing $t)
 {
 
-    test_header('Test database link functions (zu_lib_sql_code_link.php)');
+    $t->header('Test database link functions (zu_lib_sql_code_link.php)');
 
     // test code link
     $id = change_log_table::WORD;
     $target = 5;
     $result = cl(db_cl::LOG_TABLE, $id);
-    test_dsp(", sql_code_link " . $id, $target, $result);
+    $t->dsp(", sql_code_link " . $id, $target, $result);
 
 }

@@ -26,18 +26,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_import_test($file_list)
+function run_import_test($file_list, testing $t)
 {
     global $usr;
 
-    test_header('Zukunft.com integration tests by importing the sample cases');
+    $t->header('Zukunft.com integration tests by importing the sample cases');
 
     $import_path = PATH_TEST_IMPORT_FILES;
 
     foreach ($file_list as $json_test_filename) {
         $result = import_json_file($import_path . $json_test_filename, $usr);
         $target = 'done';
-        test_dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_IMPORT);
+        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_IMPORT);
     }
 
 }

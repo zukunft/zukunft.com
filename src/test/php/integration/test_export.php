@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,30 +26,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_export_test () {
+function run_export_test(testing $t)
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the xml export class (classes/xml.php)');
+    $t->header('Test the xml export class (classes/xml.php)');
 
-  $phr_lst = New phrase_list;
-  $phr_lst->usr = $usr;
-  $phr_lst->add_name(word::TN_READ);
-  $phr_lst->load();
-  $xml_export = New xml_io;
-  $xml_export->usr     = $usr;
-  $xml_export->phr_lst = $phr_lst;
-  $result = $xml_export->export();
-  $target = 'Mathematical constant';
-  test_dsp_contains(', xml->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $phr_lst = new phrase_list;
+    $phr_lst->usr = $usr;
+    $phr_lst->add_name(word::TN_READ);
+    $phr_lst->load();
+    $xml_export = new xml_io;
+    $xml_export->usr = $usr;
+    $xml_export->phr_lst = $phr_lst;
+    $result = $xml_export->export();
+    $target = 'Mathematical constant';
+    $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
 
-  test_header('Test the json export class (classes/json.php)');
+    $t->header('Test the json export class (classes/json.php)');
 
-  $json_export = New json_io;
-  $json_export->usr     = $usr;
-  $json_export->phr_lst = $phr_lst;
-  $result = $json_export->export();
-  $target = 'Mathematical constant';
-  test_dsp_contains(', json->export for '.$phr_lst->dsp_id().' contains at least '.$target, $target, $result, TIMEOUT_LIMIT_PAGE);
-  
+    $json_export = new json_io;
+    $json_export->usr = $usr;
+    $json_export->phr_lst = $phr_lst;
+    $result = $json_export->export();
+    $target = 'Mathematical constant';
+    $t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
+
 }

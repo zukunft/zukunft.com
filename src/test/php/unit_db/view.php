@@ -26,53 +26,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_view_unit_db_tests()
+function run_view_unit_db_tests(testing $t)
 {
 
     global $db_con;
     global $usr;
 
-    test_header('Unit database tests of the view class (src/main/php/model/value/view.php)');
+    $t->header('Unit database tests of the view class (src/main/php/model/value/view.php)');
 
-    test_subheader('System view tests');
+    $t->subheader('System view tests');
 
     // load the views used by the system e.g. change word
     $lst = new view_list();
     $lst->usr = $usr;
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_view->load', $target, $result);
+    $t->dsp('unit_db_view->load', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW, view::WORD);
     $target = 1;
-    test_dsp('unit_db_view->check' . view::WORD, $result, $target);
+    $t->dsp('unit_db_view->check' . view::WORD, $result, $target);
 
-    test_subheader('View types tests');
+    $t->subheader('View types tests');
 
     // load the view types
     $lst = new view_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_view->load_types', $target, $result);
+    $t->dsp('unit_db_view->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW_TYPE, view_type::DEFAULT);
     $target = 1;
-    test_dsp('unit_db_view->check type' . view_type::DEFAULT, $result, $target);
+    $t->dsp('unit_db_view->check type' . view_type::DEFAULT, $result, $target);
 
-    test_subheader('View component types tests');
+    $t->subheader('View component types tests');
 
     // load the view component types
     $cmp_lst = new view_cmp_type_list();
     $result = $cmp_lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_view_component->load_types', $target, $result);
+    $t->dsp('unit_db_view_component->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
     $target = 3;
-    test_dsp('unit_db_view_component->check component type' . view_cmp_type::TEXT, $result, $target);
+    $t->dsp('unit_db_view_component->check component type' . view_cmp_type::TEXT, $result, $target);
 
 }
 

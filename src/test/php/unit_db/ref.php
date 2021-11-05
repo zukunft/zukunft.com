@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_ref_unit_db_tests()
+function run_ref_unit_db_tests(testing $t)
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
+    $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
 
-    test_subheader('Reference types tests');
+    $t->subheader('Reference types tests');
 
     // load the ref types
     $lst = new ref_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_ref->load_types', $target, $result);
+    $t->dsp('unit_db_ref->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::WORD_TYPE, word_type_list::DBL_NORMAL);
     $target = 1;
-    test_dsp('unit_db_ref->check ' . word_type_list::DBL_NORMAL, $result, $target);
+    $t->dsp('unit_db_ref->check ' . word_type_list::DBL_NORMAL, $result, $target);
 
 }
 

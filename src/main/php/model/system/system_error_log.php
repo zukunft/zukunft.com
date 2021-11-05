@@ -81,7 +81,7 @@ class system_error_log
             $db_con->usr_id = $this->id;
             $db_row = $db_con->get1($sql);
             if ($db_row['sys_log_id'] > 0) {
-                $this->usr_id = $db_row['user_id'];
+                $this->usr_id = $db_row[self::FLD_USER];
                 $this->solver_id = $db_row['solver_id'];
                 $this->log_time = $db_row['sys_log_time'];
                 $this->type_id = $db_row['sys_log_type_id'];

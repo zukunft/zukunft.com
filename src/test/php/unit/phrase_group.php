@@ -26,15 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_group_unit_tests()
+function run_phrase_group_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the phrase group class (src/main/php/model/phrase/word.php)');
+    $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/word.php)');
 
-    test_subheader('SQL statement tests');
+    $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
 
@@ -42,10 +42,10 @@ function run_phrase_group_unit_tests()
     $phr_grp = new phrase_group();
     $phr_grp->id = 1;
     $phr_grp->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $phr_grp->get_by_wrd_lst_sql($db_con);
     $expected_sql = "SELECT phrase_group_id FROM phrase_groups WHERE phrase_group_id = 1 GROUP BY phrase_group_id;";
-    test_dsp('phrase_group->get_by_wrd_lst_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -55,7 +55,7 @@ function run_phrase_group_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('phrase_group->get_by_wrd_lst_sql by word id check sql name', $result, $target);
+    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id check sql name', $result, $target);
 
     // sql to load the word list ids
     $wrd_lst = new word_list();
@@ -72,7 +72,7 @@ function run_phrase_group_unit_tests()
     $phr_grp->id = null;
     $phr_grp->wrd_lst = $wrd_lst;
     $phr_grp->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $phr_grp->get_by_wrd_lst_sql($db_con);
     $expected_sql = "SELECT l1.phrase_group_id 
                        FROM phrase_group_word_links l1, 
@@ -82,7 +82,7 @@ function run_phrase_group_unit_tests()
                         AND l2.word_id = l1.word_id AND l2.word_id = 2 
                         AND l3.word_id = l2.word_id AND l3.word_id = 3 
                    GROUP BY l1.phrase_group_id;";
-    test_dsp('phrase_group->get_by_wrd_lst_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -92,6 +92,6 @@ function run_phrase_group_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('phrase_group->get_by_wrd_lst_sql by word id check sql name', $result, $target);
+    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id check sql name', $result, $target);
 
 }

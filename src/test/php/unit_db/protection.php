@@ -26,25 +26,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_protection_unit_db_tests()
+function run_protection_unit_db_tests(testing $t)
 {
 
     global $db_con;
 
-    test_header('Unit database tests of the protection handling');
+    $t->header('Unit database tests of the protection handling');
 
-    test_subheader('Protection types tests');
+    $t->subheader('Protection types tests');
 
     // load the protection types
     $lst = new protection_type_list();
     $result = $lst->load($db_con);
     $target = true;
-    test_dsp('unit_db_protection->load_types', $target, $result);
+    $t->dsp('unit_db_protection->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
     $target = 1;
-    test_dsp('unit_db_protection->check ' . protection_type_list::DBL_NO, $result, $target);
+    $t->dsp('unit_db_protection->check ' . protection_type_list::DBL_NO, $result, $target);
 
 }
 

@@ -26,15 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_batch_job_test()
+function run_batch_job_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the batch job class (classes/batch_job.php)');
+    $t->header('Test the batch job class (classes/batch_job.php)');
 
     // make sure that the test value is set independent of any previous database tests
-    test_value(array(
+    $t->test_value(array(
         word::TN_CH,
         word::TN_INHABITANT,
         word::TN_MIO,
@@ -57,7 +57,7 @@ function run_batch_job_test()
     $val->load();
     $result = $val->number;
     $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
-    test_dsp('batch_job->value to link', $target, $result);
+    $t->dsp('batch_job->value to link', $target, $result);
 
     // test adding a batch job
     $job = new batch_job;
@@ -67,19 +67,19 @@ function run_batch_job_test()
     if ($result > 0) {
         $target = $result;
     }
-    test_dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
 }
 
-function run_batch_job_list_test()
+function run_batch_job_list_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the batch job list class (classes/batch_job_list.php)');
+    $t->header('Test the batch job list class (classes/batch_job_list.php)');
 
     // prepare test adding a batch job via a list
-    $frm = load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula::TN_INCREASE);
     $phr_lst = new phrase_list;
     $phr_lst->usr = $usr;
     $phr_lst->add_name(word::TN_CH);
@@ -100,6 +100,6 @@ function run_batch_job_list_test()
     if ($result > 0) {
         $target = $result;
     }
-    test_dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    $t->dsp('batch_job->add has number "' . $result . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
 }

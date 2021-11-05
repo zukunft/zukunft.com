@@ -87,11 +87,11 @@ class formula_link extends user_sandbox
         if ($db_row != null) {
             if ($db_row['formula_link_id'] > 0) {
                 $this->id = $db_row['formula_link_id'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->formula_id = $db_row['formula_id'];
                 $this->phrase_id = $db_row['phrase_id'];
                 $this->link_type_id = $db_row['link_type_id'];
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_formula_link_id'];
                 }
@@ -353,7 +353,7 @@ class formula_link extends user_sandbox
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
         if ($db_row != null) {
-            if ($db_row['user_id'] > 0) {
+            if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
             }
         }
@@ -448,7 +448,7 @@ class formula_link extends user_sandbox
         log_debug('formula_link->del_usr_cfg_if_not_needed check for ' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($db_row['formula_link_id'] > 0) {
             if ($db_row['link_type_id'] == Null
-                and $db_row['excluded'] == Null) {
+                and $db_row[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('formula_link->del_usr_cfg_if_not_needed any more for ' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $result = $this->del_usr_cfg_exe($db_con);

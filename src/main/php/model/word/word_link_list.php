@@ -188,7 +188,7 @@ class word_link_list
                 }
             }
         }
-        // .. else if an original word is set, select all related word links depending on the direction
+        // ... else if an original word is set, select all related word links depending on the direction
         // in this case only the fields from the target words needs to be included in the result
         if ($sql_where == '') {
             if (isset($this->wrd)) {
@@ -204,7 +204,7 @@ class word_link_list
                 log_debug('word_link_list->load where wrd ' . $sql_where);
             }
         }
-        // .. else if a list of original words is given select all word links related to the list
+        // ... else if a list of original words is given select all word links related to the list
         // in this case also the fields from the original words needs to be included in the result
         if ($sql_where == '') {
             if (isset($this->wrd_lst)) {
@@ -328,7 +328,7 @@ class word_link_list
                                 $new_verb->row_mapper($db_lnk);
                                 $new_link->verb = $new_verb;
                             }
-                            // fill the from word
+                            // fill the "from" word
                             // if the source word is set, the query result probably does not contain the values of the source word
                             if (isset($this->wrd)) {
                                 log_debug('word_link_list->load ... use "' . $this->wrd->name . '" as from');
@@ -440,7 +440,7 @@ class word_link_list
     }
 
     // shows all words the link to the given word
-    // returns the html code to select a word that can be edit
+    // returns the html code to select a word that can be edited
     function display(string $back = ''): string
     {
         $result = '';

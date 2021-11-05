@@ -131,11 +131,11 @@ class view extends user_sandbox
             if ($db_row['view_id'] > 0) {
                 $this->id = $db_row['view_id'];
                 $this->name = $db_row['view_name'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_type_id'];
                 $this->code_id = $db_row['code_id'];
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_id'];
                 }

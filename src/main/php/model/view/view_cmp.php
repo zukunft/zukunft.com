@@ -126,7 +126,7 @@ class view_cmp extends user_sandbox
             if ($db_row['view_component_id'] > 0) {
                 $this->id = $db_row['view_component_id'];
                 $this->name = $db_row['view_component_name'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['view_component_type_id'];
                 $this->word_id_row = $db_row['word_id_row'];
@@ -134,7 +134,7 @@ class view_cmp extends user_sandbox
                 $this->formula_id = $db_row['formula_id'];
                 $this->word_id_col = $db_row['word_id_col'];
                 $this->word_id_col2 = $db_row['word_id_col2'];
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_view_component_id'];
                     //$this->share_id = $db_row[sql_db::FLD_SHARE];
@@ -327,7 +327,7 @@ class view_cmp extends user_sandbox
             if ($db_lst != null) {
                 foreach ($db_lst as $db_row) {
                     log_debug('view_component->assign_dsp_ids -> check exclusion ');
-                    if (is_null($db_row['excluded']) or $db_row['excluded'] == 0) {
+                    if (is_null($db_row[self::FLD_EXCLUDED]) or $db_row[self::FLD_EXCLUDED] == 0) {
                         $result[] = $db_row['view_id'];
                     }
                 }

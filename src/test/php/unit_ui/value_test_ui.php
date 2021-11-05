@@ -26,12 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_value_ui_test()
+function run_value_ui_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the value frontend scripts (e.g. /value_add.php)');
+    $t->header('Test the value frontend scripts (e.g. /value_add.php)');
 
     // prepare the frontend testing
     $phr_lst_added = new phrase_list;
@@ -57,39 +57,39 @@ function run_value_ui_test()
     $back = 0;
     $result = file_get_contents('https://zukunft.com/http/value_add.php?back=' . $back . $phr_lst_added->id_url_long() . '');
     $target = word::TN_RENAMED;
-    test_dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     $result = file_get_contents('https://zukunft.com/http/value_add.php?back=' . $back . $phr_lst_ch->id_url_long() . '');
     $target = word::TN_CH;
-    test_dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . word::TN_CH, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . word::TN_CH, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test the edit value frontend
     $result = file_get_contents('https://zukunft.com/http/value_edit.php?id=' . $val_added->id . '&back=' . $back . '');
     $target = word::TN_RENAMED;
-    test_dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     $result = file_get_contents('https://zukunft.com/http/value_edit.php?id=' . $val_ch->id . '&back=' . $back . '');
     $target = word::TN_CH;
-    test_dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . word::TN_CH, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . word::TN_CH, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test the del value frontend
     $result = file_get_contents('https://zukunft.com/http/value_del.php?id=' . $val_added->id . '&back=' . $back . '');
     $target = word::TN_RENAMED;
-    test_dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . word::TN_RENAMED, $target, $result, TIMEOUT_LIMIT_PAGE);
 
     $result = file_get_contents('https://zukunft.com/http/value_del.php?id=' . $val_ch->id . '&back=' . $back . '');
     $target = word::TN_CH;
-    test_dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . word::TN_CH, $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . word::TN_CH, $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
-    test_header('Test the value list class (classes/value_list.php)');
+    $t->header('Test the value list class (classes/value_list.php)');
 
     // check the database consistency for all values
     $val_lst = new value_list;
     $val_lst->usr = $usr;
     $result = $val_lst->check_all();
     $target = '';
-    test_dsp('value_list->check_all', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->dsp('value_list->check_all', $target, $result, TIMEOUT_LIMIT_DB);
 
     // test get a single value from a value list by group and time
     // get all value for Switzerland
@@ -110,13 +110,13 @@ function run_value_ui_test()
     $grp = $wrd_lst->get_grp();
     $result = $grp->id;
     $target = '2116';
-    test_dsp('word_list->get_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->dsp('word_list->get_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
     $val = $val_lst->get_by_grp($grp, $wrd_time);
     if ($val != null) {
         $result = $val->number;
     }
     $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
-    test_dsp('value_list->get_by_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->dsp('value_list->get_by_grp for ' . $wrd_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... get all times of the Switzerland values
     $time_lst = $val_lst->time_lst();
@@ -130,7 +130,7 @@ function run_value_ui_test()
         $result = false;
     }
     $target = true;
-    test_dsp('value_list->time_lst is ' . $time_lst->name() . ', which includes ' . $wrd_2014->name . '', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->dsp('value_list->time_lst is ' . $time_lst->name() . ', which includes ' . $wrd_2014->name . '', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... and filter by times
     $time_lst = new word_list;
@@ -146,7 +146,7 @@ function run_value_ui_test()
         $result = false;
     }
     $target = false;
-    test_dsp('value_list->time_lst is ' . $used_time_lst->name() . ', which does not include ' . $wrd_2014->name . '', $target, $result);
+    $t->dsp('value_list->time_lst is ' . $used_time_lst->name() . ', which does not include ' . $wrd_2014->name . '', $target, $result);
 
     // ... but not 2020
     $wrd_2020 = new word_dsp;
@@ -159,7 +159,7 @@ function run_value_ui_test()
         $result = false;
     }
     $target = true;
-    test_dsp('value_list->filter_by_phrase_lst is ' . $used_time_lst->name() . ', but includes ' . $wrd_2020->name . '', $target, $result);
+    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_time_lst->name() . ', but includes ' . $wrd_2020->name . '', $target, $result);
 
     // ... and filter by phrases
     $sector_lst = new word_list;
@@ -180,7 +180,7 @@ function run_value_ui_test()
         $result = false;
     }
     $target = false;
-    test_dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', which does not include ' . $wrd_auto->name . '', $target, $result);
+    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', which does not include ' . $wrd_auto->name . '', $target, $result);
 
     // ... but not 2016
     $wrd_power = new word_dsp;
@@ -193,10 +193,10 @@ function run_value_ui_test()
         $result = false;
     }
     $target = true;
-    test_dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', but includes ' . $wrd_power->name . '', $target, $result);
+    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', but includes ' . $wrd_power->name . '', $target, $result);
 
 
-    test_header('Test the value list display class (classes/value_list_display.php)');
+    $t->header('Test the value list display class (classes/value_list_display.php)');
 
     // test the value table
     $wrd = new word_dsp;
@@ -212,9 +212,9 @@ function run_value_ui_test()
     $val_lst->usr = $usr;
     $result = $val_lst->dsp_table($wrd_col, $wrd->id);
     $target = TV_NESN_SALES_2016_FORMATTED;
-    test_dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
+    $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
     //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
     //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id);
-    //test_dsp('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, TIMEOUT_LIMIT_DB);
+    //$t->dsp('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, TIMEOUT_LIMIT_DB);
 
 }

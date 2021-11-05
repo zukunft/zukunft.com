@@ -63,9 +63,9 @@ class value_time_series extends user_sandbox_display
                 $this->id = $db_row['value_time_series_id'];
                 $this->source_id = $db_row['source_id'];
                 $this->grp_id = $db_row['phrase_group_id'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->last_update = new DateTime($db_row['last_update']);
-                $this->excluded = $db_row['excluded'];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_value_time_series_id'];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
@@ -119,7 +119,7 @@ class value_time_series extends user_sandbox_display
         $db_con->usr_id = $this->usr->id;
         // TODO not value_time_series ???
         $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT 
                 v.value_time_series_id,
                 u.value_time_series_id AS user_value_time_series_id,

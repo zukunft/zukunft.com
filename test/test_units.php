@@ -40,15 +40,14 @@ include_once '../src/test/php/utils/test_base.php';
 // prepare testing
 // ---------------
 
-test_start();
+$t = new testing();
 
 // ------------------
 // start unit testing
 // ------------------
 
-run_unit_tests();
+run_unit_tests($t);
 
 // display the test results
-zu_test_dsp_result();
-
-test_dsp_result();
+$t->dsp_result_html();
+$t->dsp_result();

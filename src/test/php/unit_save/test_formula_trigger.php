@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -26,90 +26,91 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_formula_trigger_test () {
+function run_formula_trigger_test(testing $t)
+{
 
-  global $usr;
+    global $usr;
 
-  test_header('Test the formula calculation triggers');
+    $t->header('Test the formula calculation triggers');
 
-  // prepare the calculation trigger test
-  $phr_lst1 = New phrase_list;
-  $phr_lst1->usr = $usr;
-  $phr_lst1->add_name(word::TN_CH);
-  $phr_lst1->add_name(word::TN_INHABITANT);
-  $phr_lst1->add_name(word::TN_MIO);
-  $phr_lst2 = clone $phr_lst1;
-  $phr_lst1->add_name(word::TN_2019);
-  $phr_lst1->load();
-  $phr_lst2->add_name(word::TN_2020);
-  $phr_lst2->load();
-  $frm = load_formula(formula::TN_INCREASE);
+    // prepare the calculation trigger test
+    $phr_lst1 = new phrase_list;
+    $phr_lst1->usr = $usr;
+    $phr_lst1->add_name(word::TN_CH);
+    $phr_lst1->add_name(word::TN_INHABITANT);
+    $phr_lst1->add_name(word::TN_MIO);
+    $phr_lst2 = clone $phr_lst1;
+    $phr_lst1->add_name(word::TN_2019);
+    $phr_lst1->load();
+    $phr_lst2->add_name(word::TN_2020);
+    $phr_lst2->load();
+    $frm = $t->load_formula(formula::TN_INCREASE);
 
-  // add a number to the test word
-  $val_add1 = New value;
-  $val_add1->ids = $phr_lst1->ids;
-  $val_add1->number = TV_TEST_SALES_2016;
-  $val_add1->usr = $usr;
-  $result = $val_add1->save();
-  // add a second number to the test word
-  $val_add2 = New value;
-  $val_add2->ids = $phr_lst2->ids;
-  $val_add2->number = TV_TEST_SALES_2017;
-  $val_add2->usr = $usr;
-  $result = $val_add2->save();
+    // add a number to the test word
+    $val_add1 = new value;
+    $val_add1->ids = $phr_lst1->ids;
+    $val_add1->number = TV_TEST_SALES_2016;
+    $val_add1->usr = $usr;
+    $result = $val_add1->save();
+    // add a second number to the test word
+    $val_add2 = new value;
+    $val_add2->ids = $phr_lst2->ids;
+    $val_add2->number = TV_TEST_SALES_2017;
+    $val_add2->usr = $usr;
+    $result = $val_add2->save();
 
-  // check if the first number have been saved correctly
-  $added_val = New value;
-  $added_val->ids = $phr_lst1->ids;
-  $added_val->usr = $usr;
-  $added_val->load();
-  $result = $added_val->number;
-  $target = TV_TEST_SALES_2016;
-  test_dsp('value->check added test value for "'.$phr_lst1->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
-  // check if the second number have been saved correctly
-  $added_val2 = New value;
-  $added_val2->ids = $phr_lst2->ids;
-  $added_val2->usr = $usr;
-  $added_val2->load();
-  $result = $added_val2->number;
-  $target = TV_TEST_SALES_2017;
-  test_dsp('value->check added test value for "'.$phr_lst2->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    // check if the first number have been saved correctly
+    $added_val = new value;
+    $added_val->ids = $phr_lst1->ids;
+    $added_val->usr = $usr;
+    $added_val->load();
+    $result = $added_val->number;
+    $target = TV_TEST_SALES_2016;
+    $t->dsp('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    // check if the second number have been saved correctly
+    $added_val2 = new value;
+    $added_val2->ids = $phr_lst2->ids;
+    $added_val2->usr = $usr;
+    $added_val2->load();
+    $result = $added_val2->number;
+    $target = TV_TEST_SALES_2017;
+    $t->dsp('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
-  // check if requesting the best number for the first number returns a useful value
-  $best_val = New value;
-  $best_val->ids = $phr_lst1->ids;
-  $best_val->usr = $usr;
-  $best_val->load_best();
-  $result = $best_val->number;
-  $target = TV_TEST_SALES_2016;
-  test_dsp('value->check best value for "'.$phr_lst1->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
-  // check if requesting the best number for the second number returns a useful value
-  $best_val2 = New value;
-  $best_val2->ids = $phr_lst2->ids;
-  $best_val2->usr = $usr;
-  $best_val2->load_best();
-  $result = $best_val2->number;
-  $target = TV_TEST_SALES_2017;
-  test_dsp('value->check best value for "'.$phr_lst2->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    // check if requesting the best number for the first number returns a useful value
+    $best_val = new value;
+    $best_val->ids = $phr_lst1->ids;
+    $best_val->usr = $usr;
+    $best_val->load_best();
+    $result = $best_val->number;
+    $target = TV_TEST_SALES_2016;
+    $t->dsp('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
+    // check if requesting the best number for the second number returns a useful value
+    $best_val2 = new value;
+    $best_val2->ids = $phr_lst2->ids;
+    $best_val2->usr = $usr;
+    $best_val2->load_best();
+    $result = $best_val2->number;
+    $target = TV_TEST_SALES_2017;
+    $t->dsp('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
-  // calculate the increase and check the result
-  $fv_lst = $frm->calc($phr_lst2, 0);
-  if (count($fv_lst) > 0) {
-    $fv = $fv_lst[0];
-    $result = trim($fv->display(0));
-  } else {
-    $result = '';
-  }
-  $target = TV_TEST_SALES_INCREASE_2017_FORMATTED;
-  test_dsp('formula result for '.$frm->dsp_id().' from '.$phr_lst1->dsp_id().' to '.$phr_lst2->dsp_id().'', $target, $result, TIMEOUT_LIMIT_LONG);
+    // calculate the increase and check the result
+    $fv_lst = $frm->calc($phr_lst2, 0);
+    if (count($fv_lst) > 0) {
+        $fv = $fv_lst[0];
+        $result = trim($fv->display(0));
+    } else {
+        $result = '';
+    }
+    $target = TV_TEST_SALES_INCREASE_2017_FORMATTED;
+    $t->dsp('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_LONG);
 
-  // remove the test values
-  $val_add1->del();
-  $val_add2->del();
+    // remove the test values
+    $val_add1->del();
+    $val_add2->del();
 
-  // change the second number and test if the result has been updated
-  // a second user changes the value back to the original value and check if for the second number the result is updated
-  // check if the result for the first user is not changed
-  // the first user also changes back the value to the original value and now the values for both user should be the same
+    // change the second number and test if the result has been updated
+    // a second user changes the value back to the original value and check if for the second number the result is updated
+    // check if the result for the first user is not changed
+    // the first user also changes back the value to the original value and now the values for both user should be the same
 
 }

@@ -26,10 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_figure_unit_tests()
+function run_figure_unit_tests(testing $t)
 {
 
-    test_header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
+    $t->header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
 
     // if the user has changed the formula, that related figure is not standard anymore
     $frm = new formula();
@@ -38,7 +38,7 @@ function run_figure_unit_tests()
     $fig->obj = $frm;
     $result = $fig->is_std();
     $target = false;
-    test_dsp('figure->is_std if formula is changed by the user', $target, $result);
+    $t->dsp('figure->is_std if formula is changed by the user', $target, $result);
 
 }
 

@@ -32,12 +32,12 @@
 
 */
 
-function run_formula_value_test()
+function run_formula_value_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the formula value class (classes/formula_value.php)');
+    $t->header('Test the formula value class (classes/formula_value.php)');
 
     // test load result without time
     $phr_lst = new phrase_list;
@@ -60,7 +60,7 @@ function run_formula_value_test()
     }
     // todo review
     $target = '0.0078718332961637';
-    test_dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result, TIMEOUT_LIMIT_LONG);
+    $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
     // test load result with time
     $phr_lst->add_name(word::TN_2020);
@@ -82,9 +82,9 @@ function run_formula_value_test()
     //$result = $ch_increase->phr_grp_id;
     $target = '0.0078718332961637';
     if (isset($time_phr) and isset($ch_up_grp)) {
-        test_dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result);
+        $t->dsp('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result);
     } else {
-        test_dsp('value->val_formatted incl time for ', $target, $result);
+        $t->dsp('value->val_formatted incl time for ', $target, $result);
     }
 
     // test the scaling
@@ -117,7 +117,7 @@ function run_formula_value_test()
     $k_val->load();
     $result = $k_val->value;
     $target = 8505.251;
-    test_dsp('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test getting the "best guess" value
     // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
@@ -135,7 +135,7 @@ function run_formula_value_test()
     $result = $val_best_guess->number;
     $target = 0.18264281677284;
     //$target = 0.007871833296164;
-    test_dsp('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     /*
 
@@ -151,16 +151,16 @@ function run_formula_value_test()
 
 }
 
-function run_formula_value_list_test()
+function run_formula_value_list_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the formula value list class (classes/formula_value_list.php)');
+    $t->header('Test the formula value list class (classes/formula_value_list.php)');
 
     // todo add PE frm test
-    //$frm = load_formula(TF_PE);
-    $frm = load_formula(formula::TN_INCREASE);
+    //$frm = $t->load_formula(TF_PE);
+    $frm = $t->load_formula(formula::TN_INCREASE);
     $fv_lst = new formula_value_list;
     $fv_lst->frm_id = $frm->id;
     $fv_lst->usr = $usr;
@@ -168,6 +168,6 @@ function run_formula_value_list_test()
     $result = $fv_lst->dsp_id();
     $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
     $target = word::TN_INHABITANT;
-    test_dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

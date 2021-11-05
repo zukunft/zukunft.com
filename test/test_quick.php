@@ -45,7 +45,7 @@ if ($start_usr->id > 0) {
     if ($start_usr->is_admin()) {
 
         // prepare testing
-        test_start();
+        $t = new testing();
 
         // switch to the test user
         $usr = new user;
@@ -53,90 +53,89 @@ if ($start_usr->id > 0) {
         if ($usr->id > 0) {
 
             // create the testing users
-            test_users();
+            $t->set_users();
 
             // cleanup also before testing to remove any leftovers
-            run_test_cleanup();
+            run_test_cleanup($t);
 
             // -----------------------------------------------
             // start testing the selected system functionality
             // -----------------------------------------------
 
-            run_system_test(); // testing of the basic system functions like ip blocking
+            run_system_test($t); // testing of the basic system functions like ip blocking
             //run_user_test ();   // testing of the user display functions
 
             // creating the test data
-            create_test_words();
-            create_test_phrases();
-            create_test_sources();
-            create_base_times();
-            create_test_formulas();
-            create_test_formula_links();
-            create_test_views();
-            create_test_view_components();
-            create_test_view_component_links();
-            create_test_values();
+            create_test_words($t);
+            create_test_phrases($t);
+            create_test_sources($t);
+            create_base_times($t);
+            create_test_formulas($t);
+            create_test_formula_links($t);
+            create_test_views($t);
+            create_test_view_components($t);
+            create_test_view_component_links($t);
+            create_test_values($t);
 
             /*
-            run_db_link_test();
-            run_string_unit_tests(); // test functions not yet split into single unit tests
-            run_math_test();
-            run_user_sandbox_test();
-            run_word_tests();
-            //run_word_ui_test();
-            run_word_display_test ();
-            run_word_list_test();
-            run_word_link_test ();
-            run_ref_test();
-            run_phrase_test ();
-            run_phrase_group_test ();
-            run_phrase_group_list_test ();
-            run_graph_test ();
-            run_verb_test ();
-            run_term_test ();
-            run_value_test ();
-            //run_value_ui_test ();
-            run_source_test ();
+            run_db_link_test($t);
+            run_string_unit_tests($t); // test functions not yet split into single unit tests
+            run_math_test($t);
+            run_user_sandbox_test($t);
+            run_word_tests($t);
+            //run_word_ui_test($t);
+            run_word_display_test ($t);
+            run_word_list_test($t);
+            run_word_link_test ($t);
+            run_ref_test($t);
+            run_phrase_test ($t);
+            run_phrase_group_test ($t);
+            run_phrase_group_list_test ($t);
+            run_graph_test ($t);
+            run_verb_test ($t);
+            run_term_test ($t);
+            run_value_test ($t);
+            //run_value_ui_test ($t);
+            run_source_test ($t);
             */
-            run_expression_test ();
-            run_formula_test ();
-            run_formula_list_test ();
-            //run_formula_ui_test ();
-            run_formula_link_test ();
-            run_formula_link_list_test ();
-            run_formula_trigger_test ();
-            run_formula_value_test ();
-            run_formula_value_list_test ();
-            run_formula_element_test ();
-            run_formula_element_list_test ();
-            run_formula_element_group_test ();
+            run_expression_test ($t);
+            run_formula_test ($t);
+            run_formula_list_test ($t);
+            //run_formula_ui_test ($t);
+            run_formula_link_test ($t);
+            run_formula_link_list_test ($t);
+            run_formula_trigger_test ($t);
+            run_formula_value_test ($t);
+            run_formula_value_list_test ($t);
+            run_formula_element_test ($t);
+            run_formula_element_list_test ($t);
+            run_formula_element_group_test ($t);
             /*
-            run_batch_job_test ();
-            run_batch_job_list_test ();
-            run_view_test ();
-            run_view_component_test ();
-            run_view_component_link_test ();
-            run_display_test ();
-            run_export_test ();
-            //run_permission_test ();
-            run_legacy_test();
+            run_batch_job_test ($t);
+            run_batch_job_list_test ($t);
+            run_view_test ($t);
+            run_view_component_test ($t);
+            run_view_component_link_test ($t);
+            run_display_test ($t);
+            run_export_test ($t);
+            //run_permission_test ($t);
+            run_legacy_test($t);
             */
 
 
             // testing cleanup to remove any remaining test records
-            run_test_cleanup();
+            run_test_cleanup($t);
 
             // start the integration tests by loading the base and sample data
-            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST_QUICK));
-            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST));
+            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST_QUICK), $t);
+            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);
 
             // display the test results
-            zu_test_dsp_result();
+            $t->dsp_result_html();
+            $t->dsp_result();
         }
     }
 }
 
 // Closing connection
 prg_end($db_con);
-
-test_dsp_result();

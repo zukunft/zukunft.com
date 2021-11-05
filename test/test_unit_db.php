@@ -61,17 +61,19 @@ if ($usr->id > 0) {
         // start unit testing without writing to the database
         // --------------------------------------------------
 
+        // prepare testing
+        $t = new testing();
+
         load_usr_data();
 
-        run_unit_db_tests();
+        run_unit_db_tests($t);
 
         // display the test results
-        zu_test_dsp_result();
+        $t->dsp_result_html();
+        $t->dsp_result();
 
     }
 }
 
 // Closing connection
 prg_end($db_con);
-
-test_dsp_result();

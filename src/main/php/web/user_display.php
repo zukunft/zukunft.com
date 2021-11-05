@@ -146,7 +146,7 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard word_link
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT u.word_link_id AS id, 
                    l.user_id      AS owner_id, 
                    l.from_phrase_id, 
@@ -353,7 +353,7 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard formula_link
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT u.formula_link_id AS id, 
                    l.user_id              AS owner_id, 
                    l.formula_id, 
@@ -513,7 +513,7 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard value
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT 
                     u.value_id                                                                         AS id, 
                     v.user_id                                                                          AS owner_id, 
@@ -683,7 +683,7 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard view
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT 
                     u.view_id AS id, 
                     m.user_id AS owner_id, 
@@ -848,7 +848,7 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard view_component
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT
                     u.view_component_id AS id, 
                     m.user_id AS owner_id, 
@@ -1013,9 +1013,9 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard view_component_link
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
         } else {
-            if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+            if (SQL_DB_TYPE == sql_db::POSTGRES) {
                 $sql = "SELECT 
                     u.view_component_link_id AS id, 
                     l.user_id            AS owner_id, 
@@ -1183,7 +1183,7 @@ class user_dsp extends user
         $db_con->usr_id = $this->id;
 
         // get all values changed by the user to a non standard source
-        if (SQL_DB_TYPE == DB_TYPE_POSTGRES) {
+        if (SQL_DB_TYPE == sql_db::POSTGRES) {
             $sql = "SELECT
                     u.source_id AS id, 
                     m.user_id   AS owner_id, 

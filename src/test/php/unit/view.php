@@ -28,19 +28,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 use Swaggest\JsonDiff\JsonDiff;
 
-function run_view_unit_tests()
+function run_view_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the view class (src/main/php/model/value/view.php)');
+    $t->header('Unit tests of the view class (src/main/php/model/value/view.php)');
 
     /*
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
      */
 
-    test_subheader('SQL statement tests');
+    $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
 
@@ -48,7 +48,7 @@ function run_view_unit_tests()
     $dsp = new view;
     $dsp->id = 2;
     $dsp->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $dsp->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.view_id,  
@@ -62,7 +62,7 @@ function run_view_unit_tests()
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
                       WHERE s.view_id = 2;";
-    test_dsp('view->load_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -72,14 +72,14 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('view->load_sql by view id check sql name', $result, $target);
+    $t->dsp('view->load_sql by view id check sql name', $result, $target);
 
     // sql to load the view by code id
     $dsp = new view;
     $dsp->id = 0;
     $dsp->code_id = view::WORD;
     $dsp->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $dsp->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.view_id,  
@@ -94,7 +94,7 @@ function run_view_unit_tests()
                                                           AND u.user_id = 1 
                       WHERE s.code_id = '" . view::WORD . "' 
                         AND s.code_id != NULL;";
-    test_dsp('view->load_sql by code id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_sql by code id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -104,7 +104,7 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('view->load_sql by code id check sql name', $result, $target);
+    $t->dsp('view->load_sql by code id check sql name', $result, $target);
 
     // sql to load the view by name
     $dsp = new view;
@@ -112,7 +112,7 @@ function run_view_unit_tests()
     $dsp->code_id = null;
     $dsp->name = view::TN_ADD;
     $dsp->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $dsp->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.view_id,  
@@ -127,7 +127,7 @@ function run_view_unit_tests()
                                                           AND u.user_id = 1 
                       WHERE (u.view_name = '" . view::TN_ADD . "'
                          OR (s.view_name = '" . view::TN_ADD . "' AND u.view_name IS NULL));";
-    test_dsp('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -137,13 +137,13 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('view->load_sql by name check sql name', $result, $target);
+    $t->dsp('view->load_sql by name check sql name', $result, $target);
 
     // sql to load the view components
     $dsp = new view;
     $dsp->id = 2;
     $dsp->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $dsp->load_components_sql($db_con);
     $expected_sql = "SELECT e.view_component_id, 
                     u.view_component_id AS user_entry_id,
@@ -170,7 +170,7 @@ function run_view_unit_tests()
               WHERE l.view_id = 2 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY order_nbr;";
-    test_dsp('view->load_components_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_components_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -180,10 +180,10 @@ function run_view_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('view->load_components_sql check sql name', $result, $target);
+    $t->dsp('view->load_components_sql check sql name', $result, $target);
 
     // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = DB_TYPE_MYSQL;
+    $db_con->db_type = sql_db::MYSQL;
     $created_sql = $dsp->load_components_sql($db_con);
     $sql_avoid_code_check_prefix = "SELECT";
     $expected_sql = $sql_avoid_code_check_prefix . " e.view_component_id, 
@@ -211,13 +211,13 @@ function run_view_unit_tests()
               WHERE l.view_id = 2 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY order_nbr;";
-    test_dsp('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
     /*
      * im- and export tests
      */
 
-    test_subheader('Im- and Export tests');
+    $t->subheader('Im- and Export tests');
 
     $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/view/car_costs.json'), true);
     $dsp = new view_dsp;
@@ -225,13 +225,13 @@ function run_view_unit_tests()
     $json_ex = json_decode(json_encode($dsp->export_obj(false)), true);
     $result = json_is_similar($json_in, $json_ex);
     $target = true;
-    test_dsp('view->import check name', $target, $result);
+    $t->dsp('view->import check name', $target, $result);
 
     /*
      * Display tests
      */
 
-    test_subheader('Display tests');
+    $t->subheader('Display tests');
 
     /*
      * needs database connection
@@ -244,7 +244,7 @@ function run_view_unit_tests()
     $wrd->name = word::TEST_NAME;
     $result = $dsp->display($wrd, 1);
     $target = '';
-    test_dsp('view->display', $target, $result);
+    $t->dsp('view->display', $target, $result);
     */
 
 }

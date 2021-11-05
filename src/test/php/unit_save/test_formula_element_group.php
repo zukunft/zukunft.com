@@ -37,15 +37,15 @@
 
 */
 
-function run_formula_element_group_test()
+function run_formula_element_group_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the formula element group list class (classes/formula_element_group_list.php)');
+    $t->header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
     // load increase formula for testing
-    $frm = load_formula(formula::TN_INCREASE);
+    $frm = $t->load_formula(formula::TN_INCREASE);
 
     // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
     $exp = $frm->expression();
@@ -54,10 +54,10 @@ function run_formula_element_group_test()
 
     $result = $elm_grp_lst->dsp_id();
     $target = '"this" (18),"prior" (20) for user 2 (zukunft.com system test)';
-    test_dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
+    $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 
-    test_header('Test the formula element group class (classes/formula_element_group.php)');
+    $t->header('Test the formula element group class (classes/formula_element_group.php)');
 
     // define the element group object to retrieve the value
     if (count($elm_grp_lst->lst) > 0) {
@@ -78,28 +78,28 @@ function run_formula_element_group_test()
         // test debug id first
         $result = $elm_grp->dsp_id();
         $target = '"this" (18) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant","System Test Scaling Word e.g. millions"';
-        test_dsp('formula_element_group->dsp_id', $target, $result);
+        $t->dsp('formula_element_group->dsp_id', $target, $result);
 
         // test symbol for text replacement in the formula expression text
         $result = $elm_grp->build_symbol();
         $target = '{f18}';
-        test_dsp('formula_element_group->build_symbol', $target, $result);
+        $t->dsp('formula_element_group->build_symbol', $target, $result);
 
         // test the display name that can be used for user debugging
         $result = trim($elm_grp->dsp_names());
         $target = trim('<a href="/http/formula_edit.php?id=18&back=">this</a>');
-        test_dsp('formula_element_group->dsp_names', $target, $result);
+        $t->dsp('formula_element_group->dsp_names', $target, $result);
 
         // test if the values for an element group are displayed correctly
         $time_phr = $phr_lst->assume_time();
         $result = $elm_grp->dsp_values($time_phr);
         $target = '<a href="/http/value_edit.php?id=5&back="  >8.51</a>';
-        test_dsp('formula_element_group->dsp_values', $target, $result);
+        $t->dsp('formula_element_group->dsp_values', $target, $result);
 
         // remember the figure list for the figure and figure list class test
         $fig_lst = $elm_grp->figures();
 
-        test_header('Test the figure class (classes/figure.php)');
+        $t->header('Test the figure class (classes/figure.php)');
 
         // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
         $fig_count = 0;
@@ -114,21 +114,21 @@ function run_formula_element_group_test()
             if (isset($fig)) {
                 $result = $fig->display();
                 $target = "8.51";
-                test_dsp('figure->display', $target, $result);
+                $t->dsp('figure->display', $target, $result);
 
                 $result = $fig->display_linked();
                 //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
                 $target = '<a href="/http/value_edit.php?id=5&back="  >8.51</a>';
-                test_dsp('figure->display_linked', $target, $result);
+                $t->dsp('figure->display_linked', $target, $result);
             }
         } else {
             $result = 'figure list is empty';
             $target = 'this (3) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
-            test_dsp('formula_element_group->figures', $target, $result);
+            $t->dsp('formula_element_group->figures', $target, $result);
         }
 
 
-        test_header('Test the figure list class (classes/figure_lst.php)');
+        $t->header('Test the figure list class (classes/figure_lst.php)');
 
         $result = htmlspecialchars($fig_lst->dsp_id());
         //$target = htmlspecialchars("<font class=\"user_specific\">35'481</font> (438)");
@@ -153,16 +153,16 @@ function run_formula_element_group_test()
         $result = str_replace("'","&#39;",$result);
         $target = str_replace("'","&#39;",$target);
         */
-        test_dsp('figure_list->dsp_id', $target, $result);
+        $t->dsp('figure_list->dsp_id', $target, $result);
 
         $result = $fig_lst->display();
         $target = "8.51 ";
-        test_dsp('figure_list->display', $target, $result);
+        $t->dsp('figure_list->display', $target, $result);
 
     } else {
         $result = 'formula element group list is empty';
         $target = 'this (3) and "ABB","Sales","CHF","million","2015"@';
-        test_dsp('formula_element_group->dsp_names', $target, $result);
+        $t->dsp('formula_element_group->dsp_names', $target, $result);
     }
 
 }

@@ -26,12 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_group_list_test()
+function run_phrase_group_list_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the phrase group list class (src/main/php/model/phrase/phrase_group_list.php)');
+    $t->header('Test the phrase group list class (src/main/php/model/phrase/phrase_group_list.php)');
 
     // define some phrase groups for testing
 
@@ -74,7 +74,7 @@ function run_phrase_group_list_test()
     $target = '' . word::TN_MIO . ',' . word::TN_CH . ',' . word::TN_INHABITANT .
         ' and ' . word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT .
         ' and ' . word::TN_MIO . ',' . word::TN_CITY . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
-    test_dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
     // test getting the common phrases of several group
@@ -103,6 +103,6 @@ function run_phrase_group_list_test()
     $phr_lst = $grp_lst->common_phrases();
     $result = $phr_lst->name();
     $target = '"' . word::TN_MIO . '","' . word::TN_INHABITANT . '"';
-    test_dsp('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
+    $t->dsp('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
 
 }

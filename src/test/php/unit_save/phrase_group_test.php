@@ -26,12 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_phrase_group_test()
+function run_phrase_group_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
+    $t->header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
     // test getting the phrase group id based on word ids
     $wrd_lst = new word_list;
@@ -51,7 +51,7 @@ function run_phrase_group_test()
         $target = $result;
         $id_without_year = $result;
     }
-    test_dsp('phrase_group->load by ids for ' . implode(",", $wrd_lst->names()), $target, $result);
+    $t->dsp('phrase_group->load by ids for ' . implode(",", $wrd_lst->names()), $target, $result);
 
     // ... and if the time word is correctly excluded
     $wrd_lst->add_name(word::TN_2020);
@@ -66,7 +66,7 @@ function run_phrase_group_test()
     if ($result > 0) {
         $target = $result;
     }
-    test_dsp('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
+    $t->dsp('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
 
     // load based on id
     if ($phr_grp->id > 0) {
@@ -78,7 +78,7 @@ function run_phrase_group_test()
         $wrd_lst_reloaded = $phr_grp_reload->wrd_lst;
         $result = implode(",", $wrd_lst_reloaded->names());
         $target = word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
-        test_dsp('phrase_group->load for id ' . $phr_grp->id, $target, $result);
+        $t->dsp('phrase_group->load for id ' . $phr_grp->id, $target, $result);
     }
 
     // test getting the phrase group id based on word and word link ids
@@ -94,12 +94,12 @@ function run_phrase_group_test()
     if ($result > 0) {
         $target = $result;
     }
-    test_dsp('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test names
     $result = implode(",", $zh_city_grp->names());
     $target = word::TN_INHABITANT . ',' . phrase::TN_ZH_CITY;
-    test_dsp('phrase_group->names', $target, $result);
+    $t->dsp('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated
     $phr_lst = new phrase_list;
@@ -115,7 +115,7 @@ function run_phrase_group_test()
     $grp_check->load();
     $result = $grp_check->load_link_ids();
     $target = $grp->ids;
-    test_dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // second test if the phrase group links are correctly recreated when a group is updated
     $phr_lst = new phrase_list;
@@ -133,7 +133,7 @@ function run_phrase_group_test()
     $grp_check->load();
     $result = $grp_check->load_link_ids();
     $target = $grp->ids;
-    test_dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test value
     // test value_scaled

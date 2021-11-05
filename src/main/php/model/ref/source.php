@@ -93,7 +93,7 @@ class source extends user_sandbox
             if ($db_row['source_id'] > 0) {
                 $this->id = $db_row['source_id'];
                 $this->name = $db_row['source_name'];
-                $this->owner_id = $db_row['user_id'];
+                $this->owner_id = $db_row[self::FLD_USER];
                 $this->url = $db_row['url'];
                 $this->comment = $db_row['comment'];
                 $this->type_id = $db_row['source_type_id'];
@@ -412,7 +412,7 @@ class source extends user_sandbox
         }
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        $change_user_id = $db_row['user_id'];
+        $change_user_id = $db_row[self::FLD_USER];
         if ($change_user_id > 0) {
             $result = false;
         }

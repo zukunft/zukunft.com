@@ -26,43 +26,43 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function create_test_phrases()
+function create_test_phrases(testing $t)
 {
-    test_header('Check if all base phrases are correct');
+    $t->header('Check if all base phrases are correct');
 
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
-    test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
+    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_CANTON, phrase::TN_ZH_CANTON);
+    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY, phrase::TN_ZH_CITY, phrase::TN_ZH_CITY);
+    $t->test_word_link(word::TN_ZH, verb::IS_A, word::TN_COMPANY, phrase::TN_ZH_COMPANY, phrase::TN_ZH_COMPANY);
 
-    test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
-    test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
-    test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
+    $t->test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
+    $t->test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
+    $t->test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
-    test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
+    $t->test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
 
-    test_header('Check if all base phrases are correct');
-    test_phrase(phrase::TN_ZH_COMPANY);
+    $t->header('Check if all base phrases are correct');
+    $t->test_phrase(phrase::TN_ZH_COMPANY);
 }
 
-function create_base_times()
+function create_base_times(testing $t)
 {
-    test_header('Check if base time words are correct');
+    $t->header('Check if base time words are correct');
 
-    zu_test_time_setup();
+    zu_test_time_setup($t);
 }
 
-function run_phrase_test()
+function run_phrase_test(testing $t)
 {
 
     global $usr;
 
-    test_header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
+    $t->header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
 
     // load the main test word
-    $wrd_company = test_word(word::TN_COMPANY);
+    $wrd_company = $t->test_word(word::TN_COMPANY);
 
     // prepare the Insurance Zurich
-    $wrd_zh = load_word(word::TN_ZH);
+    $wrd_zh = $t->load_word(word::TN_ZH);
     $lnk_company = new word_link;
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
@@ -81,7 +81,7 @@ function run_phrase_test()
     $phr->load();
     $result = $phr->name;
     $target = word::TN_COMPANY;
-    test_dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
+    $t->dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
     $target = ' <td> <a href="/http/view.php?words='. $wrd_company->id . '" title="">' . word::TN_COMPANY . '</a></td> ';
@@ -98,7 +98,7 @@ function run_phrase_test()
             }
         }
     }
-    test_dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
+    $t->dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
 
     // test the phrase display functions (triple side)
     $phr = new phrase;
@@ -107,7 +107,7 @@ function run_phrase_test()
     $phr->load();
     $result = $phr->name;
     $target = phrase::TN_ZH_COMPANY;
-    test_dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
+    $t->dsp('phrase->load triple by id ' . $zh_company_id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
     $target = ' <td> <a href="/http/view.php?link=' . $lnk_company->id . '" title="' . phrase::TN_ZH_COMPANY . '">' . phrase::TN_ZH_COMPANY . '</a></td> ';
@@ -124,7 +124,7 @@ function run_phrase_test()
             }
         }
     }
-    test_dsp('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
+    $t->dsp('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
 
     // test the phrase selector
     $form_name = 'test_phrase_selector';
@@ -136,7 +136,7 @@ function run_phrase_test()
     $phr->load();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
     $target = phrase::TN_ZH_COMPANY;
-    test_dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
     $wrd_ABB = new word_dsp;
@@ -150,15 +150,15 @@ function run_phrase_test()
     $wrd_company->load();
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
     $target = TW_ABB;
-    test_dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+    $t->dsp_contains(', phrase->dsp_selector of type ' . TEST_WORD . ': ' . $result . ' with ABB selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test getting the parent for phrase Vestas
-    $phr = load_phrase(TW_VESTAS);
+    $phr = $t->load_phrase(TW_VESTAS);
     $is_phr = $phr->is_mainly();
     if ($is_phr != null) {
         $result = $is_phr->name;
     }
     $target = TEST_WORD;
-    test_dsp('phrase->is_mainly for ' . $phr->name, $target, $result);
+    $t->dsp('phrase->is_mainly for ' . $phr->name, $target, $result);
 
 }

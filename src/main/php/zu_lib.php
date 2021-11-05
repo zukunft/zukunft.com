@@ -6,7 +6,7 @@
   __________
 
 TODO fix syntax suggestions
-TODO move IP blacklist to import
+TODO capsule in classes
 TODO create unit tests
 TODO cleanup object by removing duplicates
 TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
@@ -48,8 +48,8 @@ TODO make use of __DIR__ ?
 TODO create a User Interface API
 TODO offer to use FreeOTP for two factor authentication
 TODO change config files from json to yaml to complete "reduce to the max"
-TODO create a user cache with all the data that the user usually usses for fast reactions
-TODO move the user fields to words with the aord with the prefix "system user"
+TODO create a user cache with all the data that the user usually uses for fast reactions
+TODO move the user fields to words with the reserved words with the prefix "system user"
 TODO for the registration mask first preselect the country based on the geolocation and offer to switch language, than select the places based on country and geolocation and the street
 TODO in the user registration mask allow to add places and streets on the fly and show a link to add missing street on open street map
 TODO use the object constructor if useful
@@ -911,23 +911,23 @@ function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION
 }
 
 // unit_test for prg_version_is_newer
-function prg_version_is_newer_test()
+function prg_version_is_newer_test(testing $t)
 {
     $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
     $target = 'false';
-    test_dsp('prg_version 0.0.1 is newer than ' . PRG_VERSION, $target, $result);
+    $t->dsp('prg_version 0.0.1 is newer than ' . PRG_VERSION, $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION));
     $target = 'false';
-    test_dsp('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
+    $t->dsp('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION));
     $target = 'true';
-    test_dsp('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
+    $t->dsp('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9'));
     $target = 'true';
-    test_dsp('prg_version 0.1.0 is newer than 0.0.9', $target, $result);
+    $t->dsp('prg_version 0.1.0 is newer than 0.0.9', $target, $result);
     $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1'));
     $target = 'false';
-    test_dsp('prg_version 0.2.3 is newer than 1.1.1', $target, $result);
+    $t->dsp('prg_version 0.2.3 is newer than 1.1.1', $target, $result);
 }
 
 /*

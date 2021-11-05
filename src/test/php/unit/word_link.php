@@ -26,16 +26,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_word_link_unit_tests()
+function run_word_link_unit_tests(testing $t)
 {
 
     global $usr;
     global $sql_names;
 
-    test_header('Unit tests of the word class (src/main/php/model/word/word_link.php)');
+    $t->header('Unit tests of the word class (src/main/php/model/word/word_link.php)');
 
 
-    test_subheader('SQL statement tests');
+    $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
 
@@ -43,7 +43,7 @@ function run_word_link_unit_tests()
     $wrd = new word_link;
     $wrd->id = 2;
     $wrd->usr = $usr;
-    $db_con->db_type = DB_TYPE_POSTGRES;
+    $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $wrd->load_sql($db_con);
     $expected_sql = "SELECT 
                             s.word_link_id,  
@@ -61,7 +61,7 @@ function run_word_link_unit_tests()
                        FROM word_links s LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                                                     AND u.user_id = 1 
                       WHERE s.word_link_id = 2;";
-    test_dsp('word_link->load_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link->load_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -71,10 +71,10 @@ function run_word_link_unit_tests()
         $sql_names[] = $sql_name;
     }
     $target = true;
-    test_dsp('word_link->load_sql by word id check sql name', $result, $target);
+    $t->dsp('word_link->load_sql by word id check sql name', $result, $target);
 
 
-    test_subheader('Im- and Export tests');
+    $t->subheader('Im- and Export tests');
 
     $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/triple/pi.json'), true);
     $lnk = new word_link;
@@ -82,6 +82,6 @@ function run_word_link_unit_tests()
     $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
     $result = json_is_similar($json_in, $json_ex);
     $target = true;
-    test_dsp('word_link->import check name', $target, $result);
+    $t->dsp('word_link->import check name', $target, $result);
 }
 

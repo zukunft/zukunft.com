@@ -29,14 +29,14 @@
 
 */
 
-function run_graph_test()
+function run_graph_test(testing $t)
 {
 
     global $usr;
 
     $back = 0;
 
-    test_header('Test the graph class (classes/word_link_list.php)');
+    $t->header('Test the graph class (classes/word_link_list.php)');
 
     // get all phrase links used for a phrase and its related values
     // e.g. for the phrase "Company" the link "Company has a balance sheet" should be returned
@@ -73,11 +73,11 @@ function run_graph_test()
     // check if at least the basic relations are in the database
     /*
     $target = '' . word::TN_CITY_AS_CATEGORY . ' has a balance sheet';
-    test_dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     $target = 'Company has a forecast';
-    test_dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     $target = 'Company uses employee';
-    test_dsp_contains(', word ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', word ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
     */
 
     // similar to above, but just for the zurich
@@ -95,7 +95,7 @@ function run_graph_test()
     $result = $lnk_lst->name();
     // to be reviewed
     $target = 'System Test Phrase: Zurich (City),System Test Phrase: Zurich Insurance,System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)';
-    test_dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
+    $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
     // load the words related to ZH in compare with the old function
@@ -125,7 +125,7 @@ function run_graph_test()
             }
         }
     }
-    test_dsp('graph->load for ZH down is', $target, $result);
+    $t->dsp('graph->load for ZH down is', $target, $result);
 
     // the other side
     $graph->direction = 'up';
@@ -144,6 +144,6 @@ function run_graph_test()
         }
     } */
     $target = word::TN_COMPANY;
-    test_dsp_contains('graph->load for ZH up is', $target, $result);
+    $t->dsp_contains('graph->load for ZH up is', $target, $result);
 
 }

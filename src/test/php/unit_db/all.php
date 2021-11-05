@@ -28,19 +28,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-function run_unit_db_tests()
+function run_unit_db_tests(testing $t)
 {
-    test_header('Start the zukunft.com unit database read only tests');
+    $t->header('Start the zukunft.com unit database read only tests');
 
     // do the database unit tests
-    run_system_unit_db_tests();
-    run_sql_db_unit_db_tests();
-    run_formula_unit_db_tests();
-    run_protection_unit_db_tests();
-    run_ref_unit_db_tests();
-    run_share_unit_db_tests();
-    run_user_unit_db_tests();
-    run_verb_unit_db_tests();
-    run_view_unit_db_tests();
-    run_word_unit_db_tests();
+    run_system_unit_db_tests($t);
+    run_sql_db_unit_db_tests($t);
+    run_formula_unit_db_tests($t);
+    run_protection_unit_db_tests($t);
+    run_ref_unit_db_tests($t);
+    run_share_unit_db_tests($t);
+    run_user_unit_db_tests($t);
+    run_verb_unit_db_tests($t);
+    run_view_unit_db_tests($t);
+    run_word_unit_db_tests($t);
 }

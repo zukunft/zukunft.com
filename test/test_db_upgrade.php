@@ -55,15 +55,17 @@ $result = $usr->get();
 if ($usr->id > 0) {
     if ($usr->is_admin()) {
 
+        // prepare testing
+        $t = new testing();
+
         db_upgrade_0_0_3($db_con);
 
         // display the test results
-        zu_test_dsp_result();
+        $t->dsp_result_html();
+        $t->dsp_result();
 
     }
 }
 
 // Closing connection
 prg_end($db_con);
-
-test_dsp_result();

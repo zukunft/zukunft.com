@@ -109,8 +109,20 @@ class user_sandbox
         $this->tob = null;
     }
 
+    /**
+     * simply return the id database field name of the object
+     * should actually be static, but seems to be not yet possible
+     */
     function fld_id(): string {
         return $this->obj_name . sql_db::FLD_EXT_ID;
+    }
+
+    function fld_usr_id(): string {
+        return sql_db::USER_PREFIX . $this->obj_name . sql_db::FLD_EXT_ID;
+    }
+
+    function fld_name(): string {
+        return $this->obj_name . sql_db::FLD_EXT_NAME;
     }
 
     /**
@@ -433,7 +445,7 @@ class user_sandbox
         $sql = $this->changer_sql($db_con);
         $db_row = $db_con->get1($sql);
         if ($db_row != false) {
-            $user_id = $db_row['user_id'];
+            $user_id = $db_row[self::FLD_USER];
         }
 
         log_debug($this->obj_name . '->changer is ' . $user_id);
@@ -482,8 +494,8 @@ class user_sandbox
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        if ($db_row['user_id'] > 0) {
-            $result = $db_row['user_id'];
+        if ($db_row[self::FLD_USER] > 0) {
+            $result = $db_row[self::FLD_USER];
         } else {
             if ($this->owner_id > 0) {
                 $result = $this->owner_id;
