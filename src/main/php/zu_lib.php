@@ -452,7 +452,6 @@ define("BASE_CODE_LINK_FILES", serialize(array(
     'source_types',
     'sys_log_status',
     'sys_log_types',
-    'task_types',
     'user_official_types',
     'user_profiles',
     'user_types',
@@ -571,9 +570,9 @@ function log_msg($msg_text, $msg_description, $msg_log_level, $function_name, $f
             $msg_text = str_replace("'", "", $msg_text);
             $msg_description = str_replace("'", "", $msg_description);
             $function_trace = str_replace("'", "", $function_trace);
-            $msg_text = sf($msg_text);
-            $msg_description = sf($msg_description);
-            $function_trace = sf($function_trace);
+            $msg_text = $db_con->sf($msg_text);
+            $msg_description = $db_con->sf($msg_description);
+            $function_trace = $db_con->sf($function_trace);
             $fields = array();
             $values = array();
             $fields[] = "sys_log_type_id";
@@ -806,7 +805,7 @@ function prg_end($db_con)
         } else {
             $calling_uri = 'localhost';
         }
-        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . sf($calling_uri) . ");";
+        $sql = "INSERT INTO sys_script_times (sys_script_start, sys_script_id, url) VALUES ('" . $start_time_sql . "'," . $sys_script_id . "," . $db_con->sf($calling_uri) . ");";
         $db_con->exe($sql);
     }
 
@@ -886,9 +885,11 @@ version control functions
 */
 
 
-// returns true if the version to check is older than this program version
-// used e.g. for import to allow importing of files of an older version without warning
-function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION)
+/**
+ * returns true if the version to check is older than this program version
+ * used e.g. for import to allow importing of files of an older version without warning
+ */
+function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION): bool
 {
     $is_newer = false;
 
@@ -910,7 +911,9 @@ function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION
     return $is_newer;
 }
 
-// unit_test for prg_version_is_newer
+/**
+ * unit_test for prg_version_is_newer
+ */
 function prg_version_is_newer_test(testing $t)
 {
     $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));

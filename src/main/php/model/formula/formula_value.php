@@ -1088,7 +1088,7 @@ class formula_value
 
             // if value exists, check it an update is needed
             if ($row_id > 0) {
-                if (sf($db_val) <> sf($this->value)) {
+                if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
                     $db_con->set_type(DB_TYPE_FORMULA_VALUE);
                     if ($db_con->update($row_id, array('formula_value', 'last_update'), array($this->value, 'Now()'))) {
                         $this->id = $row_id;

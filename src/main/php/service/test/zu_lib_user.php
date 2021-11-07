@@ -484,7 +484,7 @@ function zuu_upd_par($user_id, $usr_par, $usr_row, $fld_pos, $fld_name, $par_nam
     $result = true;
     if ($usr_row[$fld_pos] <> $usr_par[$par_name] and $usr_par[$par_name] <> "") {
         if (zu_log($user_id, "update", "users", $fld_name, $usr_row[$fld_pos], $usr_par[$par_name], $user_id) > 0) {
-            $result = zu_sql_update("users", $user_id, $fld_name, sf($usr_par[$par_name]), $user_id);
+            $result = zu_sql_update("users", $user_id, $fld_name, $db_con->sf($usr_par[$par_name]), $user_id);
         }
     }
     return $result;

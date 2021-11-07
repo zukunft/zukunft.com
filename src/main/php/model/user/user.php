@@ -175,9 +175,9 @@ class user
         } elseif ($this->code_id > 0) {
             $sql_where = "u.code_id = " . $this->code_id;
         } elseif ($this->name <> '') {
-            $sql_where = "u.user_name = " . sf($this->name);
+            $sql_where = "u.user_name = " . $db_con->sf($this->name);
         } elseif ($this->ip_addr <> '') {
-            $sql_where = "u.ip_address = " . sf($this->ip_addr);
+            $sql_where = "u.ip_address = " . $db_con->sf($this->ip_addr);
         }
 
         log_debug('user->load search by "' . $sql_where . '"');

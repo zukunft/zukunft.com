@@ -279,17 +279,17 @@ class word_link extends word_link_object
             if ($this->from->id <> 0
                 and $this->verb->id > 0
                 and $this->to->id <> 0) {
-                $sql_where = "from_phrase_id = " . sf($this->from->id) . "
-                      AND verb_id        = " . sf($this->verb->id) . "
-                      AND to_phrase_id   = " . sf($this->to->id);
+                $sql_where = "from_phrase_id = " . $db_con->sf($this->from->id) . "
+                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
+                      AND to_phrase_id   = " . $db_con->sf($this->to->id);
                 // search for a backward link e.g. Cask Flow Statement contains Taxes
             } elseif ($this->from->id <> 0
                 and $this->verb->id < 0
                 and $this->to->id <> 0) {
 
-                $sql_where = "from_phrase_id = " . sf($this->to->id) . "
-                      AND verb_id        = " . sf($this->verb->id) . "
-                      AND to_phrase_id   = " . sf($this->from->id);
+                $sql_where = "from_phrase_id = " . $db_con->sf($this->to->id) . "
+                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
+                      AND to_phrase_id   = " . $db_con->sf($this->from->id);
             }
         }
 
@@ -332,7 +332,7 @@ class word_link extends word_link_object
      */
     function load_sql(sql_db $db_con, bool $get_name = false): string
     {
-        $sql_name = 'word_link_by_';
+        $sql_name = self::class . '_by_';
 
         // set the where clause depending on the values given
         $sql = '';
@@ -345,18 +345,18 @@ class word_link extends word_link_object
             and $this->verb->id > 0
             and $this->to->id <> 0
             and !is_null($this->usr->id)) {
-            $sql_where = "s.from_phrase_id = " . sf($this->from->id) . "
-                      AND s.verb_id        = " . sf($this->verb->id) . "
-                      AND s.to_phrase_id   = " . sf($this->to->id);
+            $sql_where = "s.from_phrase_id = " . $db_con->sf($this->from->id) . "
+                      AND s.verb_id        = " . $db_con->sf($this->verb->id) . "
+                      AND s.to_phrase_id   = " . $db_con->sf($this->to->id);
             $sql_name .= 'link_id';
             // search for a backward link e.g. Cask Flow Statement contains Taxes
         } elseif ($this->from->id <> 0
             and $this->verb->id < 0
             and $this->to->id <> 0
             and !is_null($this->usr->id)) {
-            $sql_where = "s.from_phrase_id = " . sf($this->to->id) . "
-                      AND s.verb_id        = " . sf($this->verb->id) . "
-                      AND s.to_phrase_id   = " . sf($this->from->id);
+            $sql_where = "s.from_phrase_id = " . $db_con->sf($this->to->id) . "
+                      AND s.verb_id        = " . $db_con->sf($this->verb->id) . "
+                      AND s.to_phrase_id   = " . $db_con->sf($this->from->id);
             $sql_name .= 'reverse_id';
             /*
             // if the search including the type is not requested, try without the type
@@ -364,12 +364,12 @@ class word_link extends word_link_object
                   AND $this->verb->id   > 0
                   AND $this->to->id    <> 0
                   AND !is_null($this->usr->id)) {
-              $sql_where  =      "s.from_phrase_id = ".sf($this->from->id)."
-                              AND s.verb_id        = ".sf($this->verb->id)."
-                              AND s.to_phrase_id   = ".sf($this->to->id);
+              $sql_where  =      "s.from_phrase_id = ".$db_con->sf($this->from->id)."
+                              AND s.verb_id        = ".$db_con->sf($this->verb->id)."
+                              AND s.to_phrase_id   = ".$db_con->sf($this->to->id);
             */
         } elseif ($this->name <> '' and !is_null($this->usr->id)) {
-            $sql_where = "s.word_link_name = " . sf($this->name, sql_db::FLD_FORMAT_TEXT);
+            $sql_where = "s.word_link_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT);
             $sql_name .= 'name';
         }
 

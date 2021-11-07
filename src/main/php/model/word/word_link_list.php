@@ -75,10 +75,8 @@ class word_link_list
     }
     */
 
-    private function load_wrd_fields($pos): string
+    private function load_wrd_fields(sql_db $db_con, $pos): string
     {
-        global $db_con;
-
         return "t" . $pos . ".word_id AS word_id" . $pos . ",
                 t" . $pos . ".user_id AS user_id" . $pos . ",
                 " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, 'word_name' . $pos) . ",
@@ -154,12 +152,9 @@ class word_link_list
     }
 
     // create the sql statement to fill a word link list
-    function load_sql(): string
+    function load_sql(sql_db $db_con): string
     {
-
-        global $db_con;
-
-        $result = '';
+        $sql = '';
 
         // set the where clause depending on the defined select values
         $sql_where = '';
@@ -176,12 +171,12 @@ class word_link_list
                 $id_txt = sql_array($this->ids);
                 if ($id_txt <> '') {
                     $sql_where = 'l.word_link_id IN (' . $id_txt . ')';
-                    $sql_wrd1_fields = $this->load_wrd_fields('');
+                    $sql_wrd1_fields = $this->load_wrd_fields($db_con, '');
                     $sql_wrd1_from = $this->load_wrd_from('');
                     $sql_wrd1 = 'AND l.from_phrase_id = t.word_id';
                     $sql_wrd1_fields .= ', ';
                     $sql_wrd1_from .= ', ';
-                    $sql_wrd2_fields = $this->load_wrd_fields('2');
+                    $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                     $sql_wrd2_from = $this->load_wrd_from('2');
                     $sql_wrd2 = 'l.to_phrase_id = t2.word_id';
                     log_debug('word_link_list->load where ids ' . $sql_where);
@@ -192,7 +187,7 @@ class word_link_list
         // in this case only the fields from the target words needs to be included in the result
         if ($sql_where == '') {
             if (isset($this->wrd)) {
-                $sql_wrd2_fields = $this->load_wrd_fields('2');
+                $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                 $sql_wrd2_from = $this->load_wrd_from('2');
                 if ($this->direction == self::DIRECTION_UP) {
                     $sql_where = 'l.from_phrase_id = ' . $this->wrd->id;
@@ -210,11 +205,11 @@ class word_link_list
             if (isset($this->wrd_lst)) {
                 if ($this->wrd_lst->ids_txt() != '') {
                     log_debug('word_link_list->load based on word list');
-                    $sql_wrd1_fields = $this->load_wrd_fields('');
+                    $sql_wrd1_fields = $this->load_wrd_fields($db_con, '');
                     $sql_wrd1_from = $this->load_wrd_from('');
                     $sql_wrd1_fields .= ', ';
                     $sql_wrd1_from .= ', ';
-                    $sql_wrd2_fields = $this->load_wrd_fields('2');
+                    $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
                     $sql_wrd2_from = $this->load_wrd_from('2');
                     log_debug('word_link_list->load based on word list loaded');
                     if ($this->direction == self::DIRECTION_UP) {
@@ -254,7 +249,7 @@ class word_link_list
             // load the word link and the destination word with one sql statement to save time
             // similar to word->load and word_link->load
             // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
-            $result = "SELECT l.word_link_id,
+            $sql = "SELECT l.word_link_id,
                        l.from_phrase_id,
                        l.verb_id,
                        l.to_phrase_id,
@@ -286,7 +281,7 @@ class word_link_list
               ORDER BY l.verb_id, word_link_name;";  // maybe used word_name_t1 and word_name_t2
             // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
         }
-        return $result;
+        return $sql;
     }
 
     // load the word link without the linked objects, because in many cases the object are already loaded by the caller
@@ -302,7 +297,7 @@ class word_link_list
             log_err("The user id must be set to load a graph.", "word_link_list->load");
         } else {
             $db_con->set_usr($this->usr->id);
-            $sql = $this->load_sql();
+            $sql = $this->load_sql($db_con);
             $db_lst = $db_con->get($sql);
             log_debug('word_link_list->load ... sql "' . $sql . '"');
             $this->lst = array();

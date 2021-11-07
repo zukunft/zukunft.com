@@ -282,14 +282,14 @@ function zu_sql_update($table, $id, $fields, $values, $user_id): bool
             $sql_upd = '';
             foreach (array_keys($fields) as $i) {
                 if ($sql_upd == '') {
-                    $sql_upd .= ' SET ' . $fields[$i] . ' = ' . sf($values[$i]) . ' ';
+                    $sql_upd .= ' SET ' . $fields[$i] . ' = ' . $db_con->sf($values[$i]) . ' ';
                 } else {
-                    $sql_upd .= ', SET ' . $fields[$i] . ' = ' . sf($values[$i]) . ' ';
+                    $sql_upd .= ', SET ' . $fields[$i] . ' = ' . $db_con->sf($values[$i]) . ' ';
                 }
             }
-            $sql = $sql . $sql_upd . ' WHERE ' . $id_field . ' = ' . sf($id) . ';';
+            $sql = $sql . $sql_upd . ' WHERE ' . $id_field . ' = ' . $db_con->sf($id) . ';';
         } else {
-            $sql = 'UPDATE ' . $table . ' SET ' . $fields . ' = ' . sf($values) . ' WHERE ' . $id_field . ' = ' . sf($id) . ';';
+            $sql = 'UPDATE ' . $table . ' SET ' . $fields . ' = ' . $db_con->sf($values) . ' WHERE ' . $id_field . ' = ' . $db_con->sf($id) . ';';
         }
         $result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_update", (new Exception)->getTraceAsString());
     }
@@ -312,13 +312,13 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
     // don't insert empty lines
     if (trim($new_value) <> '') {
         // check if value is already added
-        $id_value_lst = zu_sql_get("SELECT " . $id_field . " FROM " . zu_sql_table_name($table) . " WHERE " . $value_field . " = " . sf($new_value) . ";");
+        $id_value_lst = zu_sql_get("SELECT " . $id_field . " FROM " . zu_sql_table_name($table) . " WHERE " . $value_field . " = " . $db_con->sf($new_value) . ";");
         $id_value = $id_value_lst[0];
         if ($id_value > 0) {
             log_debug("sql_insert -> " . $new_value . "already exists");
         } else {
             log_debug("sql_insert -> do insert " . $new_value . "");
-            $sql = "INSERT INTO " . zu_sql_table_name($table) . " (" . $value_field . ") VALUES (" . sf($new_value) . ");";
+            $sql = "INSERT INTO " . zu_sql_table_name($table) . " (" . $value_field . ") VALUES (" . $db_con->sf($new_value) . ");";
             $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "sql_insert", (new Exception)->getTraceAsString());
             if (!$result) {
                 if ($table <> 'events') {
@@ -328,7 +328,7 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
                 }
             } else {
                 log_debug("sql_insert -> get id for " . $new_value . "");
-                $id_value_lst = zu_sql_get("SELECT " . $id_field . " FROM " . zu_sql_table_name($table) . " WHERE " . $value_field . " = " . sf($new_value) . ";");
+                $id_value_lst = zu_sql_get("SELECT " . $id_field . " FROM " . zu_sql_table_name($table) . " WHERE " . $value_field . " = " . $db_con->sf($new_value) . ";");
                 $id_value = $id_value_lst[0];
                 //echo "SELECT ".$value_field." FROM ".$table." WHERE ".$value_field." = '".$new_value."';<br>";
                 //echo $id_value;
@@ -355,7 +355,7 @@ function sql_set_no_log($table, $id_field, $id_value, $value_field, $new_value, 
         $new_value = date("Y-m-d", $new_value);
     }
     if ($db_value <> $new_value) {
-        $sql_query = "UPDATE " . zu_sql_table_name($table) . " SET `" . $value_field . "` = '" . $new_value . "' WHERE `" . $id_field . "` = " . sf($id_value) . ";";
+        $sql_query = "UPDATE " . zu_sql_table_name($table) . " SET `" . $value_field . "` = '" . $new_value . "' WHERE `" . $id_field . "` = " . $db_con->sf($id_value) . ";";
         //echo $sql_query;
         mysqli_query($sql_query);
     }
@@ -603,7 +603,7 @@ function zu_sql_add_id($type, $name, $user_id)
     $table_name = zu_sql_std_table($type);
     $id_name = zu_sql_std_id_field($type);
     $field_name = zu_sql_std_name_field($type);
-    $result = zu_sql_insert($table_name, $field_name, sf($name), $user_id);
+    $result = zu_sql_insert($table_name, $field_name, $db_con->sf($name), $user_id);
 
     log_debug("zu_sql_add_id ... done (" . $result . ")");
 
@@ -619,7 +619,7 @@ function zu_sql_add_id_2key($type, $name, $field2_name, $field2_value, $user_id)
     $table_name = zu_sql_std_table($type);
     $id_name = zu_sql_std_id_field($type);
     $field_name = zu_sql_std_name_field($type);
-    $result = zu_sql_insert($table_name, $field_name . "," . $field2_name, sf($name) . "," . sf($field2_value), $user_id);
+    $result = zu_sql_insert($table_name, $field_name . "," . $field2_name, $db_con->sf($name) . "," . $db_con->sf($field2_value), $user_id);
 
     log_debug("zu_sql_add_id ... done (" . $result . ")");
 

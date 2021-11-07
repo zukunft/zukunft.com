@@ -81,34 +81,70 @@ function run_user_sandbox_unit_tests(testing $t)
     $t->subheader('Test sql base functions');
 
     // test sf (Sql Formatting) function
+    $db_con = new sql_db();
+
+    // ... postgres version
+    $db_con->db_type = sql_db::POSTGRES;
     $text = "'4'";
     $target = "'''4'''";
-    $result = sf($text);
+    $result = $db_con->sf($text);
     $t->dsp(", sf: ".$text."", $target, $result);
 
     $text = "'4'";
     $target = "4";
-    $result = sf($text, sql_db::FLD_FORMAT_VAL);
+    $result = $db_con->sf($text, sql_db::FLD_FORMAT_VAL);
     $t->dsp(", sf: ".$text."", $target, $result);
 
     $text = "2021";
     $target = "'2021'";
-    $result = sf($text, sql_db::FLD_FORMAT_TEXT);
+    $result = $db_con->sf($text, sql_db::FLD_FORMAT_TEXT);
     $t->dsp(", sf: ".$text."", $target, $result);
 
     $text = "four";
     $target = "'four'";
-    $result = sf($text);
+    $result = $db_con->sf($text);
     $t->dsp(", sf: ".$text."", $target, $result);
 
     $text = "'four'";
     $target = "'''four'''";
-    $result = sf($text);
+    $result = $db_con->sf($text);
     $t->dsp(", sf: ".$text."", $target, $result);
 
     $text = " ";
     $target = "NULL";
-    $result = sf($text);
+    $result = $db_con->sf($text);
+    $t->dsp(", sf: ".$text."", $target, $result);
+
+    // ... MySQL version
+    $db_con->db_type = sql_db::MYSQL;
+    $text = "'4'";
+    $target = "'\'4\''";
+    $result = $db_con->sf($text);
+    $t->dsp(", sf: ".$text."", $target, $result);
+
+    $text = "'4'";
+    $target = "4";
+    $result = $db_con->sf($text, sql_db::FLD_FORMAT_VAL);
+    $t->dsp(", sf: ".$text."", $target, $result);
+
+    $text = "2021";
+    $target = "'2021'";
+    $result = $db_con->sf($text, sql_db::FLD_FORMAT_TEXT);
+    $t->dsp(", sf: ".$text."", $target, $result);
+
+    $text = "four";
+    $target = "'four'";
+    $result = $db_con->sf($text);
+    $t->dsp(", sf: ".$text."", $target, $result);
+
+    $text = "'four'";
+    $target = "'\'four\''";
+    $result = $db_con->sf($text);
+    $t->dsp(", sf: ".$text."", $target, $result);
+
+    $text = " ";
+    $target = "NULL";
+    $result = $db_con->sf($text);
     $t->dsp(", sf: ".$text."", $target, $result);
 
     $t->subheader('Test the version control');

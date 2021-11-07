@@ -89,32 +89,42 @@ class word_list
         return $result;
     }
 
-    // create the sql statement to fill a word list
-    function load_sql(): string
+    /**
+     * create the sql statement to fill a word list
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
     {
-        global $db_con;
-
-        $result = '';
+        $sql = '';
+        $sql_name = 'wrd_lst_by_';
 
         // set the where clause depending on the values given
-        $sql_where = $this->load_sql_where();
-
-        if ($sql_where == '') {
-            // the id list can be empty, because not needed to check this always in the calling function, so maybe in a later stage this could be an info
-            if (is_null($this->usr->id)) {
-                log_err("The user must be set.", "word_list->load");
-            } else {
-                log_info("The list of database ids should not be empty.", "word_list->load");
-            }
+        if ($get_name) {
+            $sql_name .= $this->load_sql_where($get_name);
         } else {
-            $db_con->set_type(DB_TYPE_WORD);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-            $db_con->set_usr_num_fields(array('word_type_id', 'excluded'));
-            $db_con->set_fields(array('values'));
-            $db_con->set_where_text($sql_where);
-            $db_con->set_order_text('s.values DESC, word_name');
-            $result = $db_con->select();
+            $sql_where = $this->load_sql_where($get_name);
+            if ($sql_where == '') {
+                // the id list can be empty, because not needed to check this always in the calling function, so maybe in a later stage this could be an info
+                if (is_null($this->usr->id)) {
+                    log_err("The user must be set.", "word_list->load");
+                } else {
+                    log_info("The list of database ids should not be empty.", "word_list->load");
+                }
+            } else {
+                $db_con->set_type(DB_TYPE_WORD);
+                $db_con->set_usr($this->usr->id);
+                $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
+                $db_con->set_usr_num_fields(array('word_type_id', 'excluded'));
+                $db_con->set_fields(array('values'));
+                $db_con->set_where_text($sql_where);
+                $db_con->set_order_text('s.values DESC, word_name');
+                $sql = $db_con->select();
+            }
+        }
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
         }
         return $result;
     }
@@ -133,7 +143,7 @@ class word_list
             log_err("The user must be set.", "word_list->load");
         } else {
             $db_con->set_usr($this->usr->id);
-            $sql = $this->load_sql();
+            $sql = $this->load_sql($db_con);
             $db_wrd_lst = $db_con->get($sql);
             $this->lst = array();
             $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
@@ -173,10 +183,8 @@ class word_list
     /**
      * create the sql statement to add related words to a word list
      */
-    function add_by_type_sql($verb_id, $direction, bool $get_name = false): string
+    function add_by_type_sql(sql_db $db_con, $verb_id, $direction, bool $get_name = false): string
     {
-        global $db_con;
-
         $sql_name = '';
         $sql_where = '';
         $sql_wrd = '';
@@ -245,7 +253,7 @@ class word_list
         } elseif (count($this->lst) <= 0) {
             log_warning("The word list is empty, so nothing could be found.", "word_list->add_by_type");
         } else {
-            $sql = $this->add_by_type_sql($verb_id, $direction);
+            $sql = $this->add_by_type_sql($db_con, $verb_id, $direction);
             log_debug('word_list->add_by_type -> add with "' . $sql);
             $db_con->usr_id = $this->usr->id;
             $db_wrd_lst = $db_con->get($sql);

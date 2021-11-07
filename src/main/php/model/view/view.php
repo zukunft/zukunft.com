@@ -180,7 +180,7 @@ class view extends user_sandbox
      */
     function load_sql(sql_db $db_con, bool $get_name = false): string
     {
-        $sql_name = 'view_by_';
+        $sql_name = self::class . '_by_';
         if ($this->id != 0) {
             $sql_name .= 'id';
         } elseif ($this->code_id != '') {

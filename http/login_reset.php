@@ -83,7 +83,7 @@ if ($usr->id > 0) {
             //$db_con = new mysql;
             $db_con->set_type(DB_TYPE_USER);
             $db_con->set_usr($usr->id);
-            if (!$db_con->update($user_id, array("activation_key", "activation_key_timeout"), array(sf($key), 'NOW() + INTERVAL 1 DAY'))) {
+            if (!$db_con->update($user_id, array("activation_key", "activation_key_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
                 log_err('Saving of activation key failed for user ' . $user_id, 'login_reset');
             }
 

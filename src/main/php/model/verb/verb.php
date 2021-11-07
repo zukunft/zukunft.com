@@ -120,7 +120,7 @@ class verb
         } elseif ($this->id > 0) {
             $sql_where = "verb_id = " . $this->id;
         } elseif ($this->name <> '') {
-            $sql_where = "( verb_name = " . sf($this->name, sql_db::FLD_FORMAT_TEXT) . " OR formula_name = " . sf($this->name, sql_db::FLD_FORMAT_TEXT) . ")";
+            $sql_where = "( verb_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT) . " OR formula_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT) . ")";
         }
 
         if ($sql_where == '') {

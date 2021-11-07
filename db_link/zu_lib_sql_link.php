@@ -4,6 +4,8 @@
 const SQL_DB_TYPE = sql_db::POSTGRES;
 const SQL_DB_USER = "zukunft";
 const SQL_DB_PASSWD = "zukunft";
-//const SQL_DB_TYPE = "mysql";
-//const SQL_DB_USER = "zukunft_db_root";
-//const SQL_DB_PASSWD = "xxxxxxxxxx";
+/*
+const SQL_DB_TYPE = sql_db::MYSQL;
+const SQL_DB_USER = "zukunft";
+const SQL_DB_PASSWD = "y9CJxs2JkVKvGmP";
+*/

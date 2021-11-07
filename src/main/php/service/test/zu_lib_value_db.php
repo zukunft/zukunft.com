@@ -270,7 +270,7 @@ function zuvs_db_upd($val_id, $src_id, $user_id) {
       $old_text = zus_name($old_id);
       $new_text = zus_name($src_id);
       if (zu_log_link_ref($user_id, "update", "values", 
-                          $val_id, "", sf($old_id), 
+                          $val_id, "", $db_con->sf($old_id),
                           $val_id, "", $src_id, $val_id, "source") > 0 ) {
         $result = zu_sql_update("values", $val_id, "source_id", $src_id, $user_id);
       }

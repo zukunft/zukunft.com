@@ -41,6 +41,8 @@ function db_check($db_con): string
     if ($db_version != PRG_VERSION) {
         $do_consistency_check = true;
         if (prg_version_is_newer($db_version)) {
+            log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
+        } else {
             switch ($db_version) {
                 case NEXT_VERSION:
                     $result = db_upgrade_0_0_4($db_con);
@@ -49,8 +51,6 @@ function db_check($db_con): string
                     $result = db_upgrade_0_0_3($db_con);
                     break;
             }
-        } else {
-            log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
         }
     } else {
         $last_consistency_check = cfg_get(CFG_LAST_CONSISTENCY_CHECK, $db_con);
@@ -78,59 +78,64 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
-    $db_con->add_column('user_profiles', 'right_level', 'smallint;');
-    $db_con->add_column('user_words', 'share_type_id', 'smallint;');
-    $db_con->add_column('user_words', 'protection_type_id', 'smallint;');
-    $db_con->add_column('words', 'share_type_id', 'smallint;');
-    $db_con->add_column('words', 'protection_type_id', 'smallint;');
-    $db_con->add_column('user_word_links', 'share_type_id', 'smallint;');
-    $db_con->add_column('user_word_links', 'protection_type_id', 'smallint;');
-    $db_con->add_column('word_links', 'share_type_id', 'smallint;');
-    $db_con->add_column('word_links', 'protection_type_id', 'smallint;');
-    $db_con->add_column('word_links', 'word_type_id', 'bigint;');
-    $db_con->add_column('formula_links', 'order_nbr', 'smallint;');
-    $db_con->change_column_name('user_values', 'user_value', 'word_value');
-    $db_con->change_column_name('user_value', 'user_value', 'word_value;');
-    $db_con->change_column_name('word_links', 'name', 'word_link_name');
-    $db_con->change_column_name('user_word_links', 'name', 'word_link_name');
-    $db_con->change_column_name('value_time_series', 'value_time_serie_id', 'value_time_series_id;');
-    $db_con->change_column_name('user_blocked_ips', 'isactive', 'is_active;');
-    $db_con->change_column_name('users', 'isactive', 'is_active;');
-    $db_con->change_column_name('users', 'email_alternativ', 'email_alternative;');
-    $db_con->change_column_name('formula_element_types', 'formula_element_type_name', 'type_name;');
-    $db_con->change_column_name('view_component_types', 'view_component_type_name', 'type_name;');
-    $db_con->change_column_name('formula_types', 'name', 'type_name;');
-    $db_con->change_column_name('ref_types', 'ref_type_name', 'type_name;');
-    $db_con->change_column_name('share_types', 'share_type_name', 'type_name;');
-    $db_con->change_column_name('protection_types', 'protection_type_name', 'type_name;');
-    $db_con->change_column_name('user_profiles', 'user_profile_name', 'type_name;');
-    $db_con->change_column_name('user_profiles', 'commen', 'description;');
-    $db_con->change_column_name('public.sys_log_status', 'comment', 'description;');
-    $db_con->change_column_name('public.sys_log_status', 'sys_log_status_name', 'type_name;');
-    $db_con->change_column_name('calc_and_cleanup_task_types', 'calc_and_cleanup_task_type_name', 'type_name;');
-    $db_con->remove_prefix('sys_log_status', 'code_id', 'log_status_');
-    $db_con->remove_prefix('calc_and_cleanup_task_types', 'code_id', 'job_');
-    $db_con->remove_prefix('view_component_types', 'code_id', 'dsp_comp_type_');
-    $db_con->remove_prefix('verbs', 'code_id', 'vrb_');
-    $db_con->change_code_id('verbs', 'vrb_contains', 'is_part_of');
-    $db_con->column_allow_null('word_types', 'word_symbol');
-    $db_con->column_allow_null('values', 'exclude');
-    $db_con->column_allow_null('change_tables', 'description');
-    $db_con->column_allow_null('views', 'comment');
-    $db_con->column_allow_null('view_component_types', 'description');
-    $db_con->column_allow_null('values', 'protection_type_id');
-    $db_con->column_allow_null('user_values', 'protection_type_id');
-    $db_con->column_allow_null('value_time_series', 'protection_type_id');
-    $db_con->column_allow_null('user_sources', 'source_name');
-    $db_con->column_allow_null('user_sources', 'url');
-    // TODO should not be needed
-    $db_con->column_allow_null('sys_log_functions', 'function_name');
-    $db_con->column_force_not_null('user_sources', 'user_id');
+    // TODO check if chang has been successful
+    $result .= $db_con->add_column(DB_TYPE_USER_PROFILE, 'right_level', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'share_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protection_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_WORD, 'share_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_WORD, 'protection_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'share_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'share_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'word_type_id', 'bigint;');
+    $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint;');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value;');
+    $result .= $db_con->change_column_name(DB_TYPE_WORD_LINK, 'name', 'word_link_name');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'name', 'word_link_name');
+    $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id;');
+    $result .= $db_con->change_column_name(DB_TYPE_IP, 'isactive', 'is_active;');
+    $result .= $db_con->change_column_name(DB_TYPE_USER, 'isactive', 'is_active;');
+    $result .= $db_con->change_column_name(DB_TYPE_USER, 'email_alternativ', 'email_alternative;');
+    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_TYPE, 'name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_REF_TYPE, 'ref_type_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_SHARE, 'share_type_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_PROTECTION, 'protection_type_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'user_profile_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'commen', 'description;');
+    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'comment', 'description;');
+    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name;');
+    $result .= $db_con->remove_prefix(DB_TYPE_SYS_LOG_STATUS, 'code_id', 'log_status_');
+    $result .= $db_con->remove_prefix(DB_TYPE_TASK_TYPE, 'code_id', 'job_');
+    $result .= $db_con->remove_prefix(DB_TYPE_VIEW_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
+    $result .= $db_con->remove_prefix(DB_TYPE_VERB, 'code_id', 'vrb_');
+    $result .= $db_con->change_code_id(DB_TYPE_VERB, 'vrb_contains', 'is_part_of');
+    $result .= $db_con->column_allow_null(DB_TYPE_WORD_TYPE, 'word_symbol');
+    $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_TABLE, 'description');
+    $result .= $db_con->column_allow_null(DB_TYPE_VIEW, 'comment');
+    $result .= $db_con->column_allow_null(DB_TYPE_VIEW_COMPONENT_TYPE, 'description');
+    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'exclude');
+    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'protection_type_id');
+    $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protection_type_id');
+    $result .= $db_con->column_allow_null(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id');
+    $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'source_name');
+    $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'url');
+    $result .= $db_con->column_allow_null(DB_TYPE_SYS_LOG_FUNCTION, 'function_name');
+    $result .= $db_con->column_force_not_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'user_id');
     // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links
 
     // Change code_id in verbs from contains to is_part_of
 
+    // update the database version number in the config
+    cfg_set(CFG_VERSION_DB, PRG_VERSION, $db_con);
+
+
     // TODO create table user_value_time_series
+    // check if the config save has been successful
     $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
         $result = 'Database upgrade to 0.0.3 has failed';

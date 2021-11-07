@@ -157,19 +157,19 @@ function zul_db_add ($verb_name, $name_plural, $name_reverse, $name_plural_rever
       $log_id = zu_log($user_id, "add", "verbs", "verb_name", "", $verb_name, 0);
       if ($log_id > 0) {
         // insert the new verb
-        $verb_id = zu_sql_insert("verbs", "verb_name", sf($verb_name), $user_id);
+        $verb_id = zu_sql_insert("verbs", "verb_name", $db_con->sf($verb_name), $user_id);
         if ($verb_id > 0) {
           // update the id in the log
           $result = zu_log_upd($log_id, $verb_id, $user_id);
           // save the other verb names
           if (zu_log($user_id, "update", "verbs", "name_plural", "", $name_plural, $verb_id) > 0 ) {
-            $result = zu_sql_update("verbs", $verb_id, "name_plural", sf($name_plural), $user_id);
+            $result = zu_sql_update("verbs", $verb_id, "name_plural", $db_con->sf($name_plural), $user_id);
           }
           if (zu_log($user_id, "update", "verbs", "name_reverse", "", $name_reverse, $verb_id) > 0 ) {
-            $result = zu_sql_update("verbs", $verb_id, "name_reverse", sf($name_reverse), $user_id);
+            $result = zu_sql_update("verbs", $verb_id, "name_reverse", $db_con->sf($name_reverse), $user_id);
           }
           if (zu_log($user_id, "update", "verbs", "name_plural_reverse", "", $name_plural_reverse, $verb_id) > 0 ) {
-            $result = zu_sql_update("verbs", $verb_id, "name_plural_reverse", sf($name_plural_reverse), $user_id);
+            $result = zu_sql_update("verbs", $verb_id, "name_plural_reverse", $db_con->sf($name_plural_reverse), $user_id);
           }
         } else {
           log_err("Adding verb ".$verb_name." failed.", "zul_db_add");

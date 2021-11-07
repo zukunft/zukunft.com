@@ -39,12 +39,13 @@ function run_word_list_unit_tests(testing $t)
      */
 
     $db_con = new sql_db();
+    $db_con->db_type = sql_db::POSTGRES;
 
     // sql to load by word list by ids
     $wrd_lst = new word_list;
     $wrd_lst->ids = [1, 2, 3];
     $wrd_lst->usr = $usr;
-    $created_sql = $wrd_lst->load_sql();
+    $created_sql = $wrd_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                         s.word_id,
                         u.word_id AS user_word_id,
@@ -64,7 +65,7 @@ function run_word_list_unit_tests(testing $t)
 
     // ... and check if the prepared sql name is unique
     $result = false;
-    $sql_name = $wrd_lst->load_sql_where(true);
+    $sql_name = $wrd_lst->load_sql($db_con, true);
     if (!in_array($sql_name, $sql_names)) {
         $result = true;
         $sql_names[] = $sql_name;
@@ -74,6 +75,7 @@ function run_word_list_unit_tests(testing $t)
 
     // ... and the same for MySQL by replication the SQL builder statements
     $db_con->db_type = sql_db::MYSQL;
+    /*
     $db_con->set_type(DB_TYPE_WORD);
     $db_con->set_usr($usr->id);
     $db_con->set_usr_fields(array('plural',sql_db::FLD_DESCRIPTION));
@@ -82,6 +84,8 @@ function run_word_list_unit_tests(testing $t)
     $db_con->set_where_text('s.word_id IN (1,2,3)');
     $db_con->set_order_text('s.values DESC, word_name');
     $created_sql = $db_con->select();
+    */
+    $created_sql = $wrd_lst->load_sql($db_con);
     $sql_avoid_code_check_prefix = "SELECT";
     $expected_sql = $sql_avoid_code_check_prefix . " s.word_id,
                         u.word_id AS user_word_id,
@@ -104,7 +108,7 @@ function run_word_list_unit_tests(testing $t)
     $wrd_lst = new word_list;
     $wrd_lst->grp_id = 1;
     $wrd_lst->usr = $usr;
-    $created_sql = $wrd_lst->load_sql();
+    $created_sql = $wrd_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                         s.word_id,
                         u.word_id AS user_word_id,
@@ -126,7 +130,7 @@ function run_word_list_unit_tests(testing $t)
 
     // ... and check if the prepared sql name is unique
     $result = false;
-    $sql_name = $wrd_lst->load_sql_where(true);
+    $sql_name = $wrd_lst->load_sql($db_con, true);
     if (!in_array($sql_name, $sql_names)) {
         $result = true;
         $sql_names[] = $sql_name;
@@ -140,7 +144,7 @@ function run_word_list_unit_tests(testing $t)
     $wrd_lst = new word_list;
     $wrd_lst->usr = $usr;
     $wrd_lst->ids = [7];
-    $created_sql = $wrd_lst->add_by_type_sql(2, verb::DIRECTION_UP);
+    $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP);
     $expected_sql = "SELECT s.word_id,
                      s.user_id,
                      CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN s.word_name    ELSE u.word_name    END AS word_name,
@@ -162,7 +166,7 @@ function run_word_list_unit_tests(testing $t)
 
     // ... and check if the prepared sql name is unique
     $result = false;
-    $sql_name = $wrd_lst->add_by_type_sql(2, verb::DIRECTION_UP,true);
+    $sql_name = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP,true);
     if (!in_array($sql_name, $sql_names)) {
         $result = true;
         $sql_names[] = $sql_name;

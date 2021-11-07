@@ -44,7 +44,7 @@ function run_sql_db_unit_db_tests(testing $t)
     $t->dsp('sql_db->change_column_name', $target, $result);
 
     $result = $db_con->change_column_name('user_values','user_value','word_value');
-    $target = true;
+    $target = '';
     $t->dsp('sql_db->change_column_name', $target, $result);
 
 }

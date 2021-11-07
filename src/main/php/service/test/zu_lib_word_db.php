@@ -474,7 +474,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id) 
       $log_id = zu_log($user_id, "add", "words", "word_name", "", $wrd_name, 0);
       if ($log_id > 0) {
         // insert the new word
-        $wrd_id = zu_sql_insert("words", "word_name", sf($wrd_name), $user_id);
+        $wrd_id = zu_sql_insert("words", "word_name", $db_con->sf($wrd_name), $user_id);
         if ($wrd_id > 0) {
           // update the id in the log
           $result = zu_log_upd($log_id, $wrd_id, $user_id);
@@ -579,14 +579,14 @@ function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_descriptio
     if ($old_name <> $wrd_name) {
       if (zut_can_change($wrd_id, $user_id)) {
         if (zu_log($user_id, "update", "words", "word_name", $old_name, $wrd_name, $wrd_id) > 0 ) {
-          $result = zu_sql_update("words", $wrd_id, "word_name", sf($wrd_name), $user_id);
+          $result = zu_sql_update("words", $wrd_id, "word_name", $db_con->sf($wrd_name), $user_id);
         }
       } else {
         if (zu_log($user_id, "update", "user_words", "word_name", $old_name, $wrd_name, $wrd_id) > 0 ) {
           // create an entry in the user sandbox if needed
           $result = zut_db_usr_add ($wrd_id, $user_id);
           // update the user value
-          $sql = "UPDATE user_words SET word_name = ".sf($wrd_name)." WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
+          $sql = "UPDATE user_words SET word_name = ".$db_con->sf($wrd_name)." WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
           $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zut_db_usr_check", (new Exception)->getTraceAsString());
           // check if the user sandbox is still needed for this word
           $result = zut_db_usr_check ($wrd_id, $user_id);
@@ -598,14 +598,14 @@ function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_descriptio
     if ($old_plural <> $wrd_plural) {
       if (zut_can_change($wrd_id, $user_id)) {
         if (zu_log($user_id, "update", "words", "plural", $old_plural, $wrd_plural, $wrd_id) > 0 ) {
-          $result = zu_sql_update("words", $wrd_id, "plural", sf($wrd_plural), $user_id);
+          $result = zu_sql_update("words", $wrd_id, "plural", $db_con->sf($wrd_plural), $user_id);
         }
       } else {
         if (zu_log($user_id, "update", "user_words", "plural", $old_plural, $wrd_plural, $wrd_id) > 0 ) {
           // create an entry in the user sandbox if needed
           $result = zut_db_usr_add ($wrd_id, $user_id);
           // update the user value
-          $sql = "UPDATE user_words SET plural = ".sf($wrd_plural)." WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
+          $sql = "UPDATE user_words SET plural = ".$db_con->sf($wrd_plural)." WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
           $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zut_db_usr_check", (new Exception)->getTraceAsString());
           // check if the user sandbox is still needed for this word
           $result = zut_db_usr_check ($wrd_id, $user_id);
@@ -617,14 +617,14 @@ function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_descriptio
     if ($old_description <> $wrd_description) {
       if (zut_can_change($wrd_id, $user_id)) {
         if (zu_log($user_id, "update", "words", "description", $old_description, $wrd_description, $wrd_id) > 0 ) {
-          $result = zu_sql_update("words", $wrd_id, "description", sf($wrd_description), $user_id);
+          $result = zu_sql_update("words", $wrd_id, "description", $db_con->sf($wrd_description), $user_id);
         }
       } else {
         if (zu_log($user_id, "update", "user_words", "description", $old_description, $wrd_description, $wrd_id) > 0 ) {
           // create an entry in the user sandbox if needed
           $result = zut_db_usr_add ($wrd_id, $user_id);
           // update the user value
-          $sql = "UPDATE user_words SET description = ".sf($wrd_description)." WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
+          $sql = "UPDATE user_words SET description = ".$db_con->sf($wrd_description)." WHERE word_id = ".$wrd_id." AND user_id = ".$user_id.";";
           $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zut_db_usr_check", (new Exception)->getTraceAsString());
           // check if the user sandbox is still needed for this word
           $result = zut_db_usr_check ($wrd_id, $user_id);

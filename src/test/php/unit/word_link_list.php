@@ -38,11 +38,14 @@ function run_word_link_list_unit_tests(testing $t)
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements
      */
 
+    $db_con = new sql_db();
+    $db_con->db_type = sql_db::POSTGRES;
+
     // sql to load by word link list by ids
     $wrd_lnk_lst = new word_link_list;
     $wrd_lnk_lst->ids = [1, 2, 3];
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
@@ -109,7 +112,7 @@ function run_word_link_list_unit_tests(testing $t)
     $wrd_lnk_lst->wrd = $wrd;
     $wrd_lnk_lst->direction = word_link_list::DIRECTION_UP;
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
@@ -164,7 +167,7 @@ function run_word_link_list_unit_tests(testing $t)
     $wrd_lnk_lst->wrd = $wrd;
     $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
@@ -219,7 +222,7 @@ function run_word_link_list_unit_tests(testing $t)
     $wrd_lnk_lst->wrd_lst = $wrd_lst;
     $wrd_lnk_lst->direction = word_link_list::DIRECTION_UP;
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
@@ -286,7 +289,7 @@ function run_word_link_list_unit_tests(testing $t)
     $wrd_lnk_lst->wrd_lst = $wrd_lst;
     $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
@@ -356,7 +359,7 @@ function run_word_link_list_unit_tests(testing $t)
     $wrd_lnk_lst->vrb = $vrb;
     $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
@@ -427,7 +430,7 @@ function run_word_link_list_unit_tests(testing $t)
     $wrd_lnk_lst->vrb_lst = $vrb_lst;
     $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
     $wrd_lnk_lst->usr = $usr;
-    $created_sql = $wrd_lnk_lst->load_sql();
+    $created_sql = $wrd_lnk_lst->load_sql($db_con);
     $expected_sql = "SELECT 
                           l.word_link_id,
                           l.from_phrase_id,
