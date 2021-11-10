@@ -79,54 +79,101 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
     // TODO check if chang has been successful
-    $result .= $db_con->add_column(DB_TYPE_USER_PROFILE, 'right_level', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'share_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protection_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_WORD, 'share_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_WORD, 'protection_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'share_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'share_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint;');
-    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'word_type_id', 'bigint;');
-    $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint;');
+    $result .= $db_con->add_column(DB_TYPE_USER_PROFILE, 'right_level', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_WORD, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_WORD, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'word_type_id', 'bigint');
+    $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint');
+    $result .= $db_con->change_table_name('languages_forms', DB_TYPE_LANGUAGE_FORM);
+    $result .= $db_con->change_column_name(DB_TYPE_LANGUAGE_FORM, 'lanuages_id', 'language_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value;');
     $result .= $db_con->change_column_name(DB_TYPE_WORD_LINK, 'name', 'word_link_name');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'name', 'word_link_name');
-    $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id;');
-    $result .= $db_con->change_column_name(DB_TYPE_IP, 'isactive', 'is_active;');
-    $result .= $db_con->change_column_name(DB_TYPE_USER, 'isactive', 'is_active;');
-    $result .= $db_con->change_column_name(DB_TYPE_USER, 'email_alternativ', 'email_alternative;');
-    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_TYPE, 'name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_REF_TYPE, 'ref_type_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_SHARE, 'share_type_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_PROTECTION, 'protection_type_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'user_profile_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'commen', 'description;');
-    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'comment', 'description;');
-    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name;');
-    $result .= $db_con->change_column_name(DB_TYPE_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name;');
+    $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
+    $result .= $db_con->change_column_name(DB_TYPE_IP, 'isactive', 'is_active');
+    $result .= $db_con->change_column_name(DB_TYPE_USER, 'isactive', 'is_active');
+    $result .= $db_con->change_column_name(DB_TYPE_USER, 'email_alternativ', 'email_alternative');
+    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_ELEMENT_TYPE, 'formula_element_type_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_VIEW_COMPONENT_TYPE, 'view_component_type_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_TYPE, 'name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_REF_TYPE, 'ref_type_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_SHARE, 'share_type_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_PROTECTION, 'protection_type_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'user_profile_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'commen', 'description');
+    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'comment', 'description');
+    $result .= $db_con->change_column_name(DB_TYPE_SYS_LOG_STATUS, 'sys_log_status_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_TASK_TYPE, 'calc_and_cleanup_task_type_name', 'type_name');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PROFILE, 'comment', 'description');
+    $result .= $db_con->remove_prefix(DB_TYPE_USER_PROFILE, 'code_id', 'usr_role_');
     $result .= $db_con->remove_prefix(DB_TYPE_SYS_LOG_STATUS, 'code_id', 'log_status_');
     $result .= $db_con->remove_prefix(DB_TYPE_TASK_TYPE, 'code_id', 'job_');
+    $result .= $db_con->remove_prefix(DB_TYPE_VIEW, 'code_id', 'dsp_');
     $result .= $db_con->remove_prefix(DB_TYPE_VIEW_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
     $result .= $db_con->remove_prefix(DB_TYPE_VERB, 'code_id', 'vrb_');
     $result .= $db_con->change_code_id(DB_TYPE_VERB, 'vrb_contains', 'is_part_of');
     $result .= $db_con->column_allow_null(DB_TYPE_WORD_TYPE, 'word_symbol');
     $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_TABLE, 'description');
+    $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_FIELD, 'code_id');
     $result .= $db_con->column_allow_null(DB_TYPE_VIEW, 'comment');
     $result .= $db_con->column_allow_null(DB_TYPE_VIEW_COMPONENT_TYPE, 'description');
-    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'exclude');
+    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'excluded');
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'source_name');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'url');
-    $result .= $db_con->column_allow_null(DB_TYPE_SYS_LOG_FUNCTION, 'function_name');
+    $result .= $db_con->column_allow_null(DB_TYPE_SYS_LOG_FUNCTION, 'sys_log_function_name');
     $result .= $db_con->column_force_not_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'user_id');
+    // TODO set default profile_id in users to 1
+    if ($db_con->db_type == sql_db::MYSQL) {
+        $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';
+        $db_con->exe($sql);
+        $sql = 'UPDATE' . ' `users` SET `dt` = CURRENT_TIMESTAMP WHERE `users`.`dt` = 0';
+        $db_con->exe($sql);
+        $sql = 'UPDATE' . ' `users` SET `last_logoff` = CURRENT_TIMESTAMP WHERE `users`.`last_logoff` = 0';
+        $db_con->exe($sql);
+        $sql = 'UPDATE' . ' `users` SET `activation_key_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_key_timeout` = 0';
+        $db_con->exe($sql);
+    }
+    $result .= $db_con->add_foreign_key('users_fk_2', DB_TYPE_USER, 'user_profile_id', DB_TYPE_USER_PROFILE, 'profile_id');
     // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links
+
+    if ($db_con->db_type == sql_db::MYSQL) {
+
+        global $user_profiles;
+        $user_profiles = new user_profile_list();
+        $user_profiles->load($db_con);
+
+        // add missing system users if needed
+        $sys_usr = new user();
+        if (!$sys_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
+            $sys_usr->name = 'zukunft.com system';
+            $sys_usr->load($db_con);
+            $sys_usr->set_profile(user_profile::SYSTEM);
+            $sys_usr->save($db_con);
+        }
+
+        // add missing system test users if needed
+        $test_usr = new user();
+        if (!$test_usr->has_any_user_this_profile(user_profile::TEST, $db_con)) {
+            $test_usr->name = 'zukunft.com system test';
+            $test_usr->load($db_con);
+            $test_usr->set_profile(user_profile::TEST);
+            $test_usr->save($db_con);
+            $test_usr2 = new user();
+            $test_usr2->name = 'zukunft.com system test partner';
+            $test_usr2->load($db_con);
+            $test_usr2->set_profile(user_profile::TEST);
+            $test_usr2->save($db_con);
+        }
+    }
 
     // Change code_id in verbs from contains to is_part_of
 
@@ -225,7 +272,7 @@ function db_fill_code_links(sql_db $db_con)
                             // check, which values needs to be updates
                             for ($i = 1; $i < count($data); $i++) {
                                 $col_name = $col_names[$i];
-                                if (array_key_exists($col_name,$db_row)) {
+                                if (array_key_exists($col_name, $db_row)) {
                                     $db_value = $db_row[$col_name];
                                 } else {
                                     log_err('Column check did not work for ' . $col_name);

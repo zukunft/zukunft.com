@@ -1808,7 +1808,8 @@ ALTER TABLE sys_script_times
 -- Constraints for table users
 --
 ALTER TABLE users
-    ADD CONSTRAINT users_fk_1 FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id);
+    ADD CONSTRAINT users_fk_1 FOREIGN KEY (user_type_id) REFERENCES user_types (user_type_id),
+    ADD CONSTRAINT users_fk_2 FOREIGN KEY (user_profile_id) REFERENCES user_profiles (profile_id);
 
 --
 -- Constraints for table user_formulas

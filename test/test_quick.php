@@ -49,7 +49,7 @@ if ($start_usr->id > 0) {
 
         // switch to the test user
         $usr = new user;
-        $usr->load_user_by_profile(user::SYSTEM_TEST);
+        $usr->load_user_by_profile(user::SYSTEM_TEST, $db_con);
         if ($usr->id > 0) {
 
             // create the testing users

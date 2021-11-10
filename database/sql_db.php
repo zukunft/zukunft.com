@@ -42,11 +42,11 @@
 class sql_db
 {
 
+    // these databases can be used at the moment
     const POSTGRES = "PostgreSQL";
     const MYSQL = "MySQL";
 
-    const FLD_EXT_ID = '_id';
-    const FLD_EXT_NAME = '_name';
+    // reserved words that are automatically escaped
 
     // based on https://www.postgresql.org/docs/current/sql-keywords-appendix.html from 2021-06-13
     const POSTGRES_RESERVED_NAMES = ['AND ', 'ANY ', 'ARRAY ', 'AS ', 'ASC ', 'ASYMMETRIC ', 'BOTH ', 'CASE ', 'CAST ', 'CHECK ', 'COLLATE ', 'COLUMN ', 'CONSTRAINT ', 'CREATE ', 'CURRENT_CATALOG ', 'CURRENT_DATE ', 'CURRENT_ROLE ', 'CURRENT_TIME ', 'CURRENT_TIMESTAMP ', 'CURRENT_USER ', 'DEFAULT ', 'DEFERRABLE ', 'DESC ', 'DISTINCT ', 'DO ', 'ELSE ', 'END ', 'EXCEPT ', 'FALSE ', 'FETCH ', 'FOR ', 'FOREIGN ', 'FROM ', 'GRANT ', 'GROUP ', 'HAVING ', 'IN ', 'INITIALLY ', 'INTERSECT ', 'INTO ', 'LATERAL ', 'LEADING ', 'LIMIT ', 'LOCALTIME ', 'LOCALTIMESTAMP ', 'NOT ', 'NULL ', 'OFFSET ', 'ON ', 'ONLY ', 'OR ', 'ORDER ', 'PLACING ', 'PRIMARY ', 'REFERENCES ', 'RETURNING ', 'SELECT ', 'SESSION_USER ', 'SOME ', 'SYMMETRIC ', 'TABLE ', 'THEN ', 'TO ', 'TRAILING ', 'TRUE ', 'UNION ', 'UNIQUE ', 'USER ', 'USING ', 'VARIADIC ', 'WHEN ', 'WHERE ', 'WINDOW ', 'WITH ',];
@@ -65,6 +65,9 @@ class sql_db
     const DB_TYPES_LINK = [DB_TYPE_WORD_LINK, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
 
     const NULL_VALUE = 'NULL';
+
+    const FLD_EXT_ID = '_id';
+    const FLD_EXT_NAME = '_name';
 
     const USER_PREFIX = "user_";                 // prefix used for tables where the user sandbox values are stored
 
@@ -86,8 +89,12 @@ class sql_db
     const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of a value for the SQL statement formatting
     const FLD_FORMAT_BOOL = "boolean";           // to force the boolean formatting of a value for the SQL statement formatting
 
+    /*
+     * object variables
+     */
+
     public ?string $db_type = null;              // the database type which should be used for this connection e.g. postgreSQL or MYSQL
-    public $postgres_link;                                // the link object to the database
+    public $postgres_link;                       // the link object to the database
     public mysqli $mysql;                        // the MySQL object to the database
     public ?int $usr_id = null;                  // the user id of the person who request the database changes
     private ?int $usr_view_id = null;            // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
@@ -300,7 +307,9 @@ class sql_db
         $this->join_type = $join_type;
     }
 
-// set the SQL statement for the user sandbox fields that should be returned in an select query which can be user specific
+    /**
+     * set the SQL statement for the user sandbox fields that should be returned in an select query which can be user specific
+     */
     function set_usr_fields($usr_field_lst)
     {
         $this->usr_query = true;
@@ -523,7 +532,9 @@ class sql_db
     */
 
 
-// functions for the standard naming of tables
+    /**
+     * functions for the standard naming of tables
+     */
     function get_table_name($type): string
     {
         // set the standard table name based on the type
@@ -553,12 +564,27 @@ class sql_db
         if ($result == 'user_valuess') {
             $result = 'user_values';
         }
+        // for the database upgrade process only
+        if ($result == 'calc_and_cleanup_task_typess') {
+            $result = 'calc_and_cleanup_task_types';
+        }
+        if ($result == 'view_component_typess') {
+            $result = 'view_component_types';
+        }
+        if ($result == 'user_profiless') {
+            $result = 'user_profiles';
+        }
+        if ($result == 'verbss') {
+            $result = 'verbs';
+        }
+        if ($result == 'viewss') {
+            $result = 'views';
+        }
         return $result;
     }
 
-//
-    private
-    function set_table($usr_table = false)
+    //
+    private function set_table($usr_table = false)
     {
         if ($usr_table) {
             $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->type);
@@ -569,8 +595,7 @@ class sql_db
         log_debug("sql_db->set_table to (" . $this->table . ")");
     }
 
-    public
-    function get_id_field_name($type): string
+    public function get_id_field_name($type): string
     {
         // exceptions for user overwrite tables
         if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)) {
@@ -668,6 +693,7 @@ class sql_db
      * add the writing of potential sql errors to the sys log table to the sql execution
      * includes the user to be able to ask the user for details how the error has been created
      * the log level is given by the calling function because after some errors the program may nevertheless continue
+     * TODO with php 8 switch to the union return type resource|false
      */
     function exe($sql, $sql_name = '', $sql_array = array(), $log_level = sys_log_level::ERROR)
     {
@@ -688,10 +714,10 @@ class sql_db
                 $sql = str_replace("\n", "", $sql);
                 if ($sql_name == '') {
                     $result = pg_query($this->postgres_link, $sql);
-                    if (!$result) {
+                    if ($result === false) {
                         $msg = 'Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql;
                         log_err($msg, 'sql_db->PostgreSQL->exe->' . $sql_name);
-                        $result .= $msg;
+                        $result = $msg;
                     }
 
                 } else {
@@ -729,11 +755,12 @@ class sql_db
                     $stmt->execute();
                     $result = $stmt->get_result();
                 }
-                if (!$result) {
+                if ($result === false) {
                     $msg_text = mysqli_error($this->mysql);
                     $sql = str_replace("'", "", $sql);
                     $sql = str_replace("\"", "", $sql);
                     $msg_text .= " (" . $sql . ")";
+                    // set the global db connection to be able to report error also on db restart
                     $result = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $this->usr_id);
                     log_debug("sql_db->exe -> error (" . $result . ")");
                 }
@@ -1372,7 +1399,7 @@ class sql_db
                 //$sql_result = $this->exe($sql, 'insert_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
                 $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
                 if ($sql_result) {
-                    $result = mysqli_insert_id();
+                    $result = mysqli_insert_id($this->mysql);
                     log_debug('sql_db->insert -> done "' . $result . '"');
                 } else {
                     $result = -1;
@@ -1450,7 +1477,7 @@ class sql_db
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
         if (substr($this->type, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->type <> 'user') {
+            if ($this->type <> 'user' and $this->type <> 'user_profile') {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
@@ -1736,6 +1763,33 @@ class sql_db
     }
 
     /**
+     * check if a table name exists
+     * @param string $table_name
+     * @return bool true if the table name exists
+     */
+    function has_table(string $table_name): bool
+    {
+        $result = false;
+        $sql_check = 'SELECT' . ' TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE ';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql_check .= "TABLE_NAME = '" . $table_name . "';";
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql_check .= "TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+        } else {
+            $msg = 'Unknown database type "' . $this->db_type . '"';
+            log_err($msg, 'sql_db->has_column');
+            $result .= $msg;
+        }
+        if ($sql_check != '') {
+            $sql_result = $this->get1($sql_check);
+            if ($sql_result) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * check if a column name exists
      * @param string $table_name
      * @param string $column_name
@@ -1749,6 +1803,10 @@ class sql_db
             $sql_check = "SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
+        } else {
+            $msg = 'Unknown database type "' . $this->db_type . '"';
+            log_err($msg, 'sql_db->has_column');
+            $result .= $msg;
         }
         if ($sql_check != '') {
             $sql_result = $this->get1($sql_check);
@@ -1760,7 +1818,89 @@ class sql_db
     }
 
     /**
-     * acc a database column but only if needed
+     * check if a foreign key exists
+     * @param string $table_name
+     * @param string $key_name
+     * @return bool true if the key name exists in the given table
+     */
+    function has_key(string $table_name, string $key_name): bool
+    {
+        $result = false;
+        $sql_check = '';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql_check = "SELECT" . " TRUE 
+                            FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
+                           WHERE CONSTRAINT_SCHEMA = 'zukunft' 
+                             AND REFERENCED_TABLE_NAME = '" . $table_name . "' 
+                             AND CONSTRAINT_NAME = '" . $key_name . "';";
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql_check = "SELECT" . " TRUE 
+                            FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
+                           WHERE CONSTRAINT_SCHEMA = 'zukunft' 
+                             AND TABLE_NAME = '" . $table_name . "' 
+                             AND CONSTRAINT_NAME = '" . $key_name . "';";
+        } else {
+            $msg = 'Unknown database type "' . $this->db_type . '"';
+            log_err($msg, 'sql_db->has_column');
+            $result .= $msg;
+        }
+        if ($sql_check != '') {
+            $sql_result = $this->get1($sql_check);
+            if ($sql_result) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add a foreign key to the database
+     * @param string $key_name
+     * @param string $from_table
+     * @param string $from_column
+     * @param string $to_table
+     * @param string $to_column
+     * @return string an empty string if the adding has been successful or is not added and an error message if the adding has failed
+     */
+    function add_foreign_key(string $key_name,
+                             string $from_table,
+                             string $from_column,
+                             string $to_table,
+                             string $to_column): string
+    {
+        $result = '';
+
+        // adjust the parameters to the used database used
+        $from_table = $this->get_table_name($from_table);
+        $to_table = $this->get_table_name($to_table);
+
+        // check if the old column name is still valid
+        if (!$this->has_key($from_table, $key_name)) {
+
+            // actually add the column
+            $sql = '';
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql = 'ALTER TABLE ' . $from_table . ' ADD CONSTRAINT ' . $key_name . ' FOREIGN KEY (' . $from_column . ') REFERENCES ' . $to_table . ' (' . $to_column . ');';
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $sql = 'ALTER TABLE `' . $from_table . '` ADD CONSTRAINT `' . $key_name . '` FOREIGN KEY (`' . $from_column . '`) REFERENCES `' . $to_table . '`(`' . $to_column . '`) ON DELETE RESTRICT ON UPDATE RESTRICT; ';
+            } else {
+                $msg = 'Unknown database type "' . $this->db_type . '"';
+                log_err($msg, 'sql_db->has_column');
+                $result .= $msg;
+            }
+            $db_result = $this->exe($sql);
+            if ($db_result !== true) {
+                if (get_class($db_result) == 'string') {
+                    $result = $db_result;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * add a database column but only if needed
      * @param string $table_name
      * @param string $column_name
      * @param string $type_name
@@ -1786,8 +1926,10 @@ class sql_db
             // actually add the column
             $sql = 'ALTER TABLE ' . $table_name . ' ADD COLUMN ' . $column_name . ' ' . $type_name . ';';
             $db_result = $this->exe($sql);
-            if (get_class($db_result) == 'string') {
-                $result = $db_result;
+            if ($db_result !== true) {
+                if (get_class($db_result) == 'string') {
+                    $result = $db_result;
+                }
             }
         }
 
@@ -1811,10 +1953,70 @@ class sql_db
 
         // check if the old column name is still valid
         if ($this->has_column($table_name, $from_column_name)) {
-            $sql = 'ALTER TABLE ' . $table_name . ' RENAME ' . $from_column_name . ' TO ' . $to_column_name . ';';
-            $db_result = $this->exe($sql);
-            if (get_class($db_result) == 'string') {
-                $result = $db_result;
+            $sql = '';
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql = 'ALTER TABLE ' . $table_name . ' RENAME ' . $from_column_name . ' TO ' . $to_column_name . ';';
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $pre_sql = "SELECT " . "CONCAT(COLUMN_TYPE,
+                                    if(IS_NULLABLE='NO',' not null',''),
+                                    if(COLUMN_DEFAULT is not null,concat(' default ',if(DATA_TYPE!='int','\'',''),COLUMN_DEFAULT,if(DATA_TYPE!='int','\'','')),'')) AS COL_TYPE 
+                               FROM INFORMATION_SCHEMA.COLUMNS 
+                              WHERE table_name = '" . $table_name . "' 
+                                AND COLUMN_NAME = '" . $from_column_name . "';";
+                $db_row = $this->get1($pre_sql);
+                $db_format = $db_row['COL_TYPE'];
+                $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $from_column_name . "` `" . $to_column_name . "` " . $db_format . ";";
+            } else {
+                $msg = 'Unknown database type "' . $this->db_type . '"';
+                log_err($msg, 'sql_db->change_column_name');
+                $result .= $msg;
+            }
+            if ($sql != '') {
+                $db_result = $this->exe($sql);
+                if ($db_result !== true) {
+                    if (get_class($db_result) == 'string') {
+                        $result = $db_result;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to change the name of a table and execute it
+     *
+     * @param string $table_name
+     * @param string $to_table_name
+     * @return bool true if the renaming has been successful or is not needed
+     */
+    function change_table_name(string $table_name, string $to_table_name): string
+    {
+        $result = '';
+
+        // adjust the parameters to the used database name
+        $to_table_name = $this->get_table_name($to_table_name);
+
+        // check if the old table name is still valid
+        if ($this->has_table($table_name)) {
+            $sql = '';
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql = 'ALTER TABLE ' . $table_name . ' RENAME TO ' . $to_table_name . ';';
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $sql = 'RENAME TABLE ' . $table_name . ' TO ' . $to_table_name . ';';
+            } else {
+                $msg = 'Unknown database type "' . $this->db_type . '"';
+                log_err($msg, 'sql_db->change_column_name');
+                $result .= $msg;
+            }
+            if ($sql != '') {
+                $db_result = $this->exe($sql);
+                if ($db_result !== true) {
+                    if (get_class($db_result) == 'string') {
+                        $result = $db_result;
+                    }
+                }
             }
         }
 
@@ -1830,10 +2032,35 @@ class sql_db
 
         // check if the column name is still valid
         if ($this->has_column($table_name, $column_name)) {
-            $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' DROP NOT NULL;';
-            $db_result = $this->exe($sql);
-            if (get_class($db_result) == 'string') {
-                $result = $db_result;
+            $sql = '';
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' DROP NOT NULL;';
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $pre_sql = "SELECT " . "CONCAT(COLUMN_TYPE,
+                                    if(COLUMN_DEFAULT is not null,concat(' default ',if(DATA_TYPE!='int','\'',''),COLUMN_DEFAULT,if(DATA_TYPE!='int','\'','')),''),
+                                    ' NULL ') AS COL_TYPE 
+                               FROM INFORMATION_SCHEMA.COLUMNS 
+                              WHERE table_name = '" . $table_name . "' 
+                                AND COLUMN_NAME = '" . $column_name . "';";
+                $db_row = $this->get1($pre_sql);
+                $db_format = $db_row['COL_TYPE'];
+                $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
+                //$sql_a = 'ALTER TABLE `word_types` CHANGE `word_symbol` `word_symbol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'e.g. for percent the symbol is %'; '
+            } else {
+                $msg = 'Unknown database type "' . $this->db_type . '"';
+                log_err($msg, 'sql_db->change_column_name');
+                $result .= $msg;
+            }
+            if ($sql != '') {
+                $db_result = $this->exe($sql);
+                if ($db_result === false) {
+                    $msg = 'Allow null failed "' . $this->db_type . '"';
+                    log_err($msg, 'sql_db->change_column_name');
+                    $result .= $msg;
+                    if (get_class($db_result) == 'string') {
+                        $result = $db_result;
+                    }
+                }
             }
         } else {
             log_warning('Cannot allow null in ' . $table_name . ' because ' . $column_name . ' is missing');
@@ -1851,10 +2078,31 @@ class sql_db
 
         // check if the column name is still valid
         if ($this->has_column($table_name, $column_name)) {
-            $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' SET NOT NULL;';
-            $db_result = $this->exe($sql);
-            if (get_class($db_result) == 'string') {
-                $result = $db_result;
+            $sql = '';
+            if ($this->db_type == sql_db::POSTGRES) {
+                $sql = 'ALTER TABLE ' . $table_name . ' ALTER COLUMN ' . $column_name . ' SET NOT NULL;';
+            } elseif ($this->db_type == sql_db::MYSQL) {
+                $pre_sql = "SELECT " . "CONCAT(COLUMN_TYPE,
+                                    ' not null',
+                                    if(COLUMN_DEFAULT is not null,concat(' default ',if(DATA_TYPE!='int','\'',''),COLUMN_DEFAULT,if(DATA_TYPE!='int','\'','')),'')) AS COL_TYPE 
+                               FROM INFORMATION_SCHEMA.COLUMNS 
+                              WHERE table_name = '" . $table_name . "' 
+                                AND COLUMN_NAME = '" . $column_name . "';";
+                $db_row = $this->get1($pre_sql);
+                $db_format = $db_row['COL_TYPE'];
+                $sql = "ALTER TABLE `" . $table_name . "` CHANGE `" . $column_name . "` `" . $column_name . "` " . $db_format . ";";
+            } else {
+                $msg = 'Unknown database type "' . $this->db_type . '"';
+                log_err($msg, 'sql_db->change_column_name');
+                $result .= $msg;
+            }
+            if ($sql != '') {
+                $db_result = $this->exe($sql);
+                if ($db_result !== true) {
+                    if (get_class($db_result) == 'string') {
+                        $result = $db_result;
+                    }
+                }
             }
         } else {
             log_warning('Cannot force not null in ' . $table_name . ' because ' . $column_name . ' is missing');
@@ -1866,6 +2114,9 @@ class sql_db
     function remove_prefix(string $table_name, string $column_name, string $prefix_name): bool
     {
         $result = false;
+
+        // adjust the parameters to the used database name
+        $table_name = $this->get_table_name($table_name);
 
         $sql_select = "SELECT " . $column_name . " FROM " . $table_name . ";";
         $db_row_lst = $this->get($sql_select);
@@ -1884,6 +2135,9 @@ class sql_db
     {
         $result = false;
 
+        // adjust the parameters to the used database name
+        $table_name = $this->get_table_name($table_name);
+
         if ($new_code_id != '' and $old_code_id != '' and $old_code_id != $new_code_id) {
             $sql = "UPDATE " . $table_name . " SET code_id = '" . $new_code_id . "' WHERE code_id = '" . $old_code_id . "';";
             $this->exe($sql);
@@ -1896,14 +2150,25 @@ class sql_db
     function get_column_names(string $table_name): array
     {
         $result = array();
-        $sql = "select column_name from information_schema.columns where table_name = '" . $table_name . "';";
-        $col_rows = $this->get($sql);
-        if ($col_rows != null) {
-            foreach ($col_rows as $col_row) {
-                if ($this->db_type == sql_db::POSTGRES) {
-                    $result[] = $col_row['column_name'];
-                } else {
-                    $result[] = $col_row['COLUMN_NAME'];
+        $sql = 'SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE ';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql .= " table_name = '" . $table_name . "';";
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql .= " TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+        } else {
+            $msg = 'Unknown database type "' . $this->db_type . '"';
+            log_err($msg, 'sql_db->has_column');
+            $result .= $msg;
+        }
+        if ($sql != '') {
+            $col_rows = $this->get($sql);
+            if ($col_rows != null) {
+                foreach ($col_rows as $col_row) {
+                    if ($this->db_type == sql_db::POSTGRES) {
+                        $result[] = $col_row['column_name'];
+                    } else {
+                        $result[] = $col_row['COLUMN_NAME'];
+                    }
                 }
             }
         }

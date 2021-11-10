@@ -31,7 +31,7 @@
 
 const PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
 const NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
-const FIRST_VERSION = "0.0.3"; // the first program version which has a basic upgrade process
+const FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
 
 // log level
 const DSP_LEVEL = sys_log_level::ERROR;   // starting from this criticality level messages are shown to the user

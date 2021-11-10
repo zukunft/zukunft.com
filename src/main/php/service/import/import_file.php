@@ -74,6 +74,8 @@ function import_json_file(string $filename, user $usr): string
 
 function import_system_users(): bool
 {
+    global $db_con;
+
     $result = false;
 
     // allow adding only if there is not yet any system user in the database
@@ -85,7 +87,7 @@ function import_system_users(): bool
 
         // check if there is really no user in the database with a system profile
         $check_usr = new user();
-        if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+        if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
             // if the system users are missing always reset all users as a double line of defence to prevent system
             // TODO ask for final confirmation before deleting all users !!!
             run_table_truncate(DB_TYPE_USER);
@@ -97,6 +99,7 @@ function import_system_users(): bool
             }
         }
     }
+
     return $result;
 }
 

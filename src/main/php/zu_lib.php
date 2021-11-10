@@ -143,6 +143,8 @@ const DB_TYPE_SYS_SCRIPT = 'sys_script'; // to log the execution times for code 
 const DB_TYPE_TASK = 'calc_and_cleanup_task';
 const DB_TYPE_TASK_TYPE = 'calc_and_cleanup_task_type';
 
+const DB_TYPE_LANGUAGE_FORM = 'language_form';
+
 const DB_TYPE_SHARE = 'share_type';
 const DB_TYPE_PROTECTION = 'protection_type';
 
@@ -528,108 +530,131 @@ function log_debug($msg_text, $debug_overwrite = null)
 // $function_trace  is the complete system trace to get more details
 // $usr             is the user id who has probably seen the error message
 // return           the text that can be shown to the user in the navigation bar
-function log_msg($msg_text, $msg_description, $msg_log_level, $function_name, $function_trace, $usr): string
+function log_msg(string $msg_text,
+                 string $msg_description,
+                 string $msg_log_level,
+                 string $function_name,
+                 string $function_trace,
+                 int    $user_id): string
 {
 
     global $sys_log_msg_lst;
     global $db_con;
+
     $result = '';
 
-    // fill up fields with default values
-    if ($msg_description == '') {
-        $msg_description = $msg_text;
-    }
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = zu_str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
-        $function_name = zu_str_left_of($function_name, ': log_');
-    }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
-    }
-    $user_id = SYSTEM_USER_ID; // fallback
-    if (isset($usr)) {
-        $user_id = $usr->id;
-    } elseif (isset($_SESSION['usr_id'])) {
-        $user_id = $_SESSION['usr_id'];
-    }
+    if ($db_con == null) {
+        echo 'FATAL ERROR! ' . $msg_text;
+    } else {
 
-    // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
-    $msg_type_text = $user_id . substr($msg_text, 0, 200);
-    if (!in_array($msg_type_text, $sys_log_msg_lst)) {
-        $db_con->usr_id = $user_id;
-        $sys_log_id = 0;
 
-        $sys_log_msg_lst[] = $msg_type_text;
-        if ($msg_log_level > LOG_LEVEL) {
-            $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
-            $function_id = $db_con->get_id($function_name);
-            if ($function_id <= 0) {
-                $function_id = $db_con->add_id($function_name);
-            }
-            $msg_text = str_replace("'", "", $msg_text);
-            $msg_description = str_replace("'", "", $msg_description);
-            $function_trace = str_replace("'", "", $function_trace);
-            $msg_text = $db_con->sf($msg_text);
-            $msg_description = $db_con->sf($msg_description);
-            $function_trace = $db_con->sf($function_trace);
-            $fields = array();
-            $values = array();
-            $fields[] = "sys_log_type_id";
-            $values[] = $msg_log_level;
-            $fields[] = "sys_log_function_id";
-            $values[] = $function_id;
-            $fields[] = "sys_log_text";
-            $values[] = $msg_text;
-            $fields[] = "sys_log_description";
-            $values[] = $msg_description;
-            $fields[] = "sys_log_trace";
-            $values[] = $function_trace;
-            if ($user_id > 0) {
-                $fields[] = "user_id";
-                $values[] = $user_id;
-            }
-            $db_con->set_type(DB_TYPE_SYS_LOG);
-            $sys_log_id = $db_con->insert($fields, $values, false);
-            //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
-            //$sys_log_id = mysqli_insert_id();
+        // fill up fields with default values
+        if ($msg_description == '') {
+            $msg_description = $msg_text;
         }
-        if ($msg_log_level >= MSG_LEVEL) {
-            echo "Zukunft.com has detected an critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
-            if ($sys_log_id > 0) {
-                echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
+        if ($function_name == '' or $function_name == null) {
+            $function_name = (new Exception)->getTraceAsString();
+            $function_name = zu_str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+            $function_name = zu_str_left_of($function_name, ': log_');
+        }
+        if ($function_trace == '') {
+            $function_trace = (new Exception)->getTraceAsString();
+        }
+        if ($user_id <= 0) {
+            $user_id = $_SESSION['usr_id'] ?? SYSTEM_USER_ID;
+        }
+
+        // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
+        $msg_type_text = $user_id . substr($msg_text, 0, 200);
+        if (!in_array($msg_type_text, $sys_log_msg_lst)) {
+            $db_con->usr_id = $user_id;
+            $sys_log_id = 0;
+
+            $sys_log_msg_lst[] = $msg_type_text;
+            if ($msg_log_level > LOG_LEVEL) {
+                $db_con->set_type(DB_TYPE_SYS_LOG_FUNCTION);
+                $function_id = $db_con->get_id($function_name);
+                if ($function_id <= 0) {
+                    $function_id = $db_con->add_id($function_name);
+                }
+                $msg_text = str_replace("'", "", $msg_text);
+                $msg_description = str_replace("'", "", $msg_description);
+                $function_trace = str_replace("'", "", $function_trace);
+                $msg_text = $db_con->sf($msg_text);
+                $msg_description = $db_con->sf($msg_description);
+                $function_trace = $db_con->sf($function_trace);
+                $fields = array();
+                $values = array();
+                $fields[] = "sys_log_type_id";
+                $values[] = $msg_log_level;
+                $fields[] = "sys_log_function_id";
+                $values[] = $function_id;
+                $fields[] = "sys_log_text";
+                $values[] = $msg_text;
+                $fields[] = "sys_log_description";
+                $values[] = $msg_description;
+                $fields[] = "sys_log_trace";
+                $values[] = $function_trace;
+                if ($user_id > 0) {
+                    $fields[] = "user_id";
+                    $values[] = $user_id;
+                }
+                $db_con->set_type(DB_TYPE_SYS_LOG);
+                $sys_log_id = $db_con->insert($fields, $values, false);
+                //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
+                //$sys_log_id = mysqli_insert_id();
             }
-        } else {
-            if ($msg_log_level >= DSP_LEVEL) {
-                $dsp = new view_dsp;
-                $result .= $dsp->dsp_navbar_simple();
-                $result .= $msg_text . " (by " . $function_name . ").<br><br>";
+            if ($msg_log_level >= MSG_LEVEL) {
+                echo "Zukunft.com has detected an critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
+                if ($sys_log_id > 0) {
+                    echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
+                }
+            } else {
+                if ($msg_log_level >= DSP_LEVEL) {
+                    $dsp = new view_dsp;
+                    $result .= $dsp->dsp_navbar_simple();
+                    $result .= $msg_text . " (by " . $function_name . ").<br><br>";
+                }
             }
         }
     }
     return $result;
 }
 
-function log_info($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
+function get_user_id(?user $calling_usr = null): int
 {
-    return log_msg($msg_text, $msg_description, sys_log_level::INFO, $function_name, $function_trace, $usr);
+    global $usr;
+    $user_id = 0;
+    if ($calling_usr != null) {
+        $user_id = $calling_usr->id;
+    } else {
+        if ($usr != null) {
+            $user_id = $usr->id;
+        }
+    }
+    return $user_id;
 }
 
-function log_warning($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
+function log_info(string $msg_text, string $function_name = '', string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
 {
-    return log_msg($msg_text, $msg_description, sys_log_level::WARNING, $function_name, $function_trace, $usr);
+    return log_msg($msg_text, $msg_description, sys_log_level::INFO, $function_name, $function_trace, get_user_id($calling_usr));
 }
 
-function log_err($msg_text, $function_name = '', $msg_description = '', $function_trace = '', $usr = null): string
+function log_warning(string $msg_text, string $function_name = '', string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
 {
-    return log_msg($msg_text, $msg_description, sys_log_level::ERROR, $function_name, $function_trace, $usr);
+    return log_msg($msg_text, $msg_description, sys_log_level::WARNING, $function_name, $function_trace, get_user_id($calling_usr));
 }
 
-function log_fatal($msg_text, $function_name, $msg_description = '', $function_trace = '', $usr = null): string
+function log_err(string $msg_text, string $function_name = '', string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
+{
+    return log_msg($msg_text, $msg_description, sys_log_level::ERROR, $function_name, $function_trace, get_user_id($calling_usr));
+}
+
+function log_fatal(string $msg_text, string $function_name, string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
 {
     echo 'FATAL ERROR! ' . $msg_text;
     // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
-    return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, sys_log_level::FATAL, $function_name, $function_trace, $usr);
+    return log_msg('FATAL ERROR! ' . $msg_text, $msg_description, sys_log_level::FATAL, $function_name, $function_trace, get_user_id($calling_usr));
 }
 
 /**
@@ -694,6 +719,7 @@ function prg_restart(string $code_name): sql_db
     // check the system setup
     $result = db_check($db_con);
     if ($result != '') {
+        echo '\n';
         echo $result;
         $db_con->close();
         $db_con = null;

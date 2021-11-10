@@ -45,7 +45,9 @@ function run_view_unit_db_tests(testing $t)
 
     // ... and check if at least the most critical is loaded
     $result = cl(db_cl::VIEW, view::WORD);
-    $target = 1;
+    if ($result > 0) {
+        $target = $result; // just check if the id is found
+    }
     $t->dsp('unit_db_view->check' . view::WORD, $result, $target);
 
     $t->subheader('View types tests');

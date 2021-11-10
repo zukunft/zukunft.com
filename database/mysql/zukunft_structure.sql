@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `calc_and_cleanup_task_id`      int(11)   NOT NULL,
     `user_id`                       int(11)   NOT NULL,
     `request_time`                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `start_time`                    timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `end_time`                      timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `start_time`                    timestamp NOT NULL,
+    `end_time`                      timestamp NOT NULL,
     `calc_and_cleanup_task_type_id` int(11)   NOT NULL,
     `row_id`                        int(11)   NOT NULL,
     `change_field_id`               int(11)            DEFAULT NULL
@@ -2417,7 +2417,8 @@ ALTER TABLE `sys_script_times`
 -- Constraints for table`users`
 --
 ALTER TABLE `users`
-    ADD CONSTRAINT `users_fk_1` FOREIGN KEY (`user_type_id`) REFERENCES `user_types` (`user_type_id`);
+    ADD CONSTRAINT `users_fk_1` FOREIGN KEY (`user_type_id`) REFERENCES `user_types` (`user_type_id`),
+    ADD CONSTRAINT `users_fk_2` FOREIGN KEY (`user_profile_id`) REFERENCES `user_profiles` (`profile_id`);
 
 --
 -- Constraints for table`user_formulas`

@@ -10,19 +10,19 @@
       "name": "not set"
     },
     {
-      "name": "has a",
-      "code_id": "",
-      "name_plural_reverse": "is used for",
-      "name_plural": "has",
-      "name_reverse": "is used for"
-    },
-    {
       "name": "is a",
       "code_id": "is",
       "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
       "name_plural_reverse": "are",
       "name_plural": "are",
       "name_reverse": "are"
+    },
+    {
+      "name": "has a",
+      "code_id": "",
+      "name_plural_reverse": "is used for",
+      "name_plural": "has",
+      "name_reverse": "is used for"
     },
     {
       "name": "is time jump for",

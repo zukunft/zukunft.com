@@ -161,10 +161,8 @@ class user
     }
 
     //
-    private function load_db()
+    private function load_db(sql_db $db_con)
     {
-
-        global $db_con;
 
         $db_usr = null;
         // select the user either by id, code_id, name or ip
@@ -204,11 +202,11 @@ class user
 
     /**
      * load the missing user parameters from the database
-     * private because the loading should be done via the get method
+     * should be private because the loading should be done via the get method
      */
-    private function load(): bool
+    function load($db_con): bool
     {
-        $db_usr = $this->load_db();
+        $db_usr = $this->load_db($db_con);
         return $this->row_mapper($db_usr);
     }
 
@@ -216,12 +214,12 @@ class user
     // TODO used also in the user sandbox: check if this is correct
     function load_test_user(): bool
     {
-        return $this->load();
+        global $db_con;
+        return $this->load($db_con);
     }
 
-    function load_user_by_profile(string $profile_code_id): bool
+    function load_user_by_profile(string $profile_code_id, sql_db $db_con): bool
     {
-        global $db_con;
         $profile_id = cl(db_cl::USER_PROFILE, $profile_code_id);
 
         $sql = "SELECT * FROM users WHERE user_profile_id = " . $profile_id . ";";
@@ -229,9 +227,9 @@ class user
         return $this->row_mapper($db_usr);
     }
 
-    function has_any_user_this_profile(string $profile_code_id): bool
+    function has_any_user_this_profile(string $profile_code_id, sql_db $db_con): bool
     {
-        return $this->load_user_by_profile($profile_code_id);
+        return $this->load_user_by_profile($profile_code_id, $db_con);
     }
 
     private function ip_in_range($ip_addr, $min, $max): bool
@@ -303,22 +301,23 @@ class user
             if (isset($_SESSION['logged'])) {
                 if ($_SESSION['logged']) {
                     $this->id = $_SESSION['usr_id'];
-                    $this->load();
+                    global $db_con;
+                    $this->load($db_con);
                     log_debug('user->get -> use (' . $this->id . ')');
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
+                global $user_profiles;
+                global $db_con;
+
                 $this->get_ip();
-                $this->load();
+                $this->load($db_con);
                 if ($this->id <= 0) {
                     // use the ip address as the username and add the user
                     $this->name = $this->ip_addr;
 
                     // allow to fill the database only if a local user has logged in
                     if ($this->name == 'localhost') {
-
-                        global $user_profiles;
-                        global $db_con;
 
                         // TODO move to functions used here to check class
                         if ($user_profiles->is_empty()) {
@@ -334,12 +333,12 @@ class user
 
                         // create the admin users
                         $check_usr = new user();
-                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
+                        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN, $db_con)) {
                             $this->set_profile(user_profile::ADMIN);
                         }
 
                         // add the local admin user to use it for the import
-                        $upd_result = $this->save();
+                        $upd_result = $this->save($db_con);
 
                         //
                         import_verbs($this);
@@ -348,7 +347,7 @@ class user
                         import_base_config();
 
                     } else {
-                        $upd_result = $this->save();
+                        $upd_result = $this->save($db_con);
                     }
 
 
@@ -399,7 +398,8 @@ class user
             // the user profiles must always be in the order that the lower ID has same or less rights
             // TODO use the right level of the profile
             if ($profile_id >= $this->profile_id) {
-                $result .= $this->save();
+                global $db_con;
+                $result .= $this->save($db_con);
             }
         }
 
@@ -415,7 +415,8 @@ class user
         $result = false;
 
         if (!isset($this->profile_id)) {
-            $this->load();
+            global $db_con;
+            $this->load($db_con);
         }
         if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
             $result = true;
@@ -430,7 +431,8 @@ class user
         $result = false;
 
         if (!isset($this->profile_id)) {
-            $this->load();
+            global $db_con;
+            $this->load($db_con);
         }
         if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
             or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::SYSTEM)) {
@@ -446,7 +448,8 @@ class user
         $result = false;
 
         if (!isset($this->profile_id)) {
-            $this->load();
+            global $db_con;
+            $this->load($db_con);
         }
         if ($this->profile_id == cl(db_cl::USER_PROFILE, user_profile::ADMIN)
             or $this->profile_id == cl(db_cl::USER_PROFILE, user_profile::TEST)
@@ -598,12 +601,10 @@ class user
 
     /**
      * create a new user or update the existing
-     * @return string an empty string if all user data are saved inthe database otherwise the message that should be shown to the user
+     * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
      */
-    function save(): string
+    function save(sql_db $db_con): string
     {
-        global $db_con;
-
         $result = '';
 
         // build the database object because the is anyway needed
