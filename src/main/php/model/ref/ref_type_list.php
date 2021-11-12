@@ -82,7 +82,8 @@ class ref_type_list extends user_type_list
     /**
      * adding the ref types used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy()
+    {
         parent::load_dummy();
         $type = new ref_type();
         $type->id = 2;
@@ -95,7 +96,8 @@ class ref_type_list extends user_type_list
     /**
      * return the database id of the default ref type
      */
-    function default_id(): int {
+    function default_id(): int
+    {
         return parent::id(ref_type::WIKIPEDIA);
     }
 

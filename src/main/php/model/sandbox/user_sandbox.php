@@ -32,6 +32,7 @@
 
 */
 
+// TODO split the object into user_sandbox_base, user_sandbox_named and user_sandbox_link to reduce the object size to to minimum
 // TODO align the function return types with the source (ref) object
 // TODO use the user sandbox also for the word object
 // TODO check if handling of negative ids is correct

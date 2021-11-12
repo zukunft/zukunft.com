@@ -82,7 +82,7 @@ class change_log_table extends user_type_list
     }
 
     /**
-     * return the database id of the default view type
+     * return the database id of the default log type
      */
     function default_id(): int
     {

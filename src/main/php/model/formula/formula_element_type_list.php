@@ -59,7 +59,7 @@ class formula_element_type_list extends user_type_list
     }
 
     /**
-     * return the database id of the default view component type
+     * return the database id of the default formula element type
      */
     function default_id(): int
     {

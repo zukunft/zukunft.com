@@ -62,7 +62,7 @@ class sys_log_status extends user_type_list
     }
 
     /**
-     * return the database id of the default view type
+     * return the database id of the default system log status
      */
     function default_id(): int
     {

@@ -71,9 +71,10 @@ class protection_type_list extends user_type_list
     }
 
     /**
-     * return the database id of the default word type
+     * return the database id of the default protection type
      */
-    function default_id(): int {
+    function default_id(): int
+    {
         return parent::id(protection_type_list::DBL_NO);
     }
 

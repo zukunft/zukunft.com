@@ -2,10 +2,9 @@
 
 /*
 
-  user_profile_list.php - a list of possible user profiles with the database id
-  ---------------------
-
-
+  formula_link_types.php - to link coded functionality to a formula link
+  ----------------------
+  
   This file is part of zukunft.com - calc with words
 
   zukunft.com is free software: you can redistribute it and/or modify it
@@ -30,9 +29,9 @@
   
 */
 
-global $user_profiles;
+global $formula_link_types;
 
-class user_profile_list extends user_type_list
+class formula_link_type_list extends user_type_list
 {
 
     /**
@@ -40,32 +39,30 @@ class user_profile_list extends user_type_list
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @return bool true if load was successful
      */
-    function load(sql_db $db_con, string $db_type = DB_TYPE_USER_PROFILE): bool
+    function load(sql_db $db_con, string $db_type = DB_TYPE_FORMULA_LINK_TYPE): bool
     {
         return parent::load($db_con, $db_type);
     }
 
     /**
-     * create dummy type list for the unit tests without database connection
+     * adding the formula link types used for unit tests to the dummy list
      */
     function load_dummy()
     {
-        $this->lst = array();
-        $this->hash = array();
+        parent::load_dummy();
         $type = new user_type();
-        $type->name = user_profile::NORMAL;
-        $type->code_id = user_profile::NORMAL;
+        $type->name = formula_link::DEFAULT;
+        $type->code_id = formula_link::DEFAULT;
         $this->lst[2] = $type;
-        $this->hash[user_profile::NORMAL] = 2;
-
+        $this->hash[formula_link::DEFAULT] = 2;
     }
 
     /**
-     * return the database id of the default user profile
+     * return the database id of the default formula link type
      */
     function default_id(): int
     {
-        return parent::id(user_profile::NORMAL);
+        return parent::id(formula_link::DEFAULT);
     }
 
 }

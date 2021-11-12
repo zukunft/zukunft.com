@@ -1140,6 +1140,7 @@ class formula extends user_sandbox_description
         if ($do_load) {
             $phr_lst = $this->assign_phr_lst_direct();
             foreach ($phr_lst->lst as $phr) {
+                // TODO add the link type
                 $result->assigned_word = $phr->name();
             }
         }

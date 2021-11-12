@@ -64,7 +64,8 @@ class word_type_list extends user_type_list
     /**
      * adding the word types used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy()
+    {
         parent::load_dummy();
         $type = new user_type();
         $type->name = word_type_list::DBL_NORMAL;
@@ -86,7 +87,8 @@ class word_type_list extends user_type_list
     /**
      * return the database id of the default word type
      */
-    function default_id(): int {
+    function default_id(): int
+    {
         return parent::id(word_type_list::DBL_NORMAL);
     }
 

@@ -71,9 +71,10 @@ class share_type_list extends user_type_list
     }
 
     /**
-     * return the database id of the default word type
+     * return the database id of the default share type
      */
-    function default_id(): int {
+    function default_id(): int
+    {
         return parent::id(share_type_list::DBL_PUBLIC);
     }
 

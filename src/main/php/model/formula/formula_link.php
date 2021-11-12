@@ -2,35 +2,39 @@
 
 /*
 
-  formula_link.php - link a formula to a word
-  ----------------
-  
-  This file is part of zukunft.com - calc with words
+    formula_link.php - link a formula to a word
+    ----------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
 class formula_link extends user_sandbox
 {
+
+    // list of the formula link types that have a coded functionality
+    const DEFAULT = "default";        // a simple link between a formula and a phrase
+    const TIME_PERIOD = "default";    // for time based links
 
     // database fields additional to the user sandbox fields
     public ?int $formula_id = null;   // the id of the formula to which the word or triple should be linked
@@ -67,19 +71,21 @@ class formula_link extends user_sandbox
         $this->owner_id = null;
         $this->excluded = null;
 
+        $this->reset_objects();
+
         $this->formula_id = null;
         $this->phrase_id = null;
         $this->link_type_id = null;
         $this->link_name = '';
-
-        $this->reset_objects();
     }
 
-    // reset the in memory fields used e.g. if some ids are updated
+    /**
+     * reset the in memory fields used e.g. if some ids are updated
+     */
     private function reset_objects()
     {
-        $this->fob = null;
-        $this->tob = null;
+        $this->fob = new formula();
+        $this->tob = new phrase();
     }
 
     private function row_mapper($db_row, $map_usr_fields = false)
@@ -220,30 +226,24 @@ class formula_link extends user_sandbox
         return $result;
     }
 
-    //
+    /**
+     * @return mixed|string|null the name of the formula link e.g. to describe to the user what can be done with undo
+     */
     function link_type_name()
     {
         log_debug('formula_link->link_type_name do');
 
-        global $db_con;
+        global $formula_link_type_list;
 
         if ($this->link_type_id > 0 and $this->link_name == '') {
-            $sql = "SELECT type_name, description
-                FROM formula_link_types
-               WHERE formula_link_type_id = " . $this->link_type_id . ";";
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql);
-            $this->link_name = $db_type[sql_db::FLD_TYPE_NAME];
+            $this->link_name = cl_name(db_cl::FORMULA_LINK_TYPE, $this->link_type_id);
         }
         log_debug('formula_link->link_type_name done');
         return $this->link_name;
     }
 
     /*
-
     display functions
-
     */
 
     // return the html code to display the link name
@@ -299,8 +299,10 @@ class formula_link extends user_sandbox
         return $result;
     }
 
-    // return the html code to display the link name
-    function name()
+    /**
+     * return the html code to display the link name
+     */
+    function name(): string
     {
         $result = '';
 
@@ -315,9 +317,7 @@ class formula_link extends user_sandbox
     }
 
     /*
-
     save functions
-
     */
 
     // true if no one has used this formula
@@ -410,16 +410,14 @@ class formula_link extends user_sandbox
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['formula_link_id'];
             }
-            if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
-                $log_id = $db_con->insert(array('formula_link_id', 'user_id'), array($this->id, $this->usr->id));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_formula_link failed.');
-                    $result = false;
-                } else {
-                    $result = true;
-                }
+            // create an entry in the user sandbox
+            $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
+            $log_id = $db_con->insert(array('formula_link_id', 'user_id'), array($this->id, $this->usr->id));
+            if ($log_id <= 0) {
+                log_err('Insert of user_formula_link failed.');
+                $result = false;
+            } else {
+                $result = true;
             }
         }
         return $result;

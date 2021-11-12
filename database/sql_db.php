@@ -661,6 +661,9 @@ class sql_db
         if ($result == 'formula_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'formula_link_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'ref_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
@@ -1830,8 +1833,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_SCHEMA = 'zukunft' 
-                             AND REFERENCED_TABLE_NAME = '" . $table_name . "' 
+                           WHERE CONSTRAINT_CATALOG = 'zukunft' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql_check = "SELECT" . " TRUE 
