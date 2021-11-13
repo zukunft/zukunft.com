@@ -44,7 +44,7 @@ class user_sandbox_description extends user_sandbox
     /**
      * set the update parameters for the word description
      */
-    function save_field_description($db_con, $db_rec, $std_rec): string
+    function save_field_description(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         // if the description is not set, don't overwrite any db entry

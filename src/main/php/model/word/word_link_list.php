@@ -63,7 +63,7 @@ class word_link_list
                 " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos) . ",
                 " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos) . ",
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
-                " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
+                " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
                   t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
         return $sql;
     }
@@ -84,7 +84,7 @@ class word_link_list
                 " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sql_db::FLD_DESCRIPTION . $pos) . ",
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
                 " . $db_con->get_usr_field('view_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'view_id' . $pos) . ",
-                " . $db_con->get_usr_field('excluded', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
+                " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
                   t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
     }
 
@@ -264,7 +264,7 @@ class word_link_list
                        v.formula_name,
                        v.description,
                        v.words,
-                       " . $db_con->get_usr_field('excluded', 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
                        " . $sql_wrd1_fields . "
                        " . $sql_wrd2_fields . "
                   FROM word_links l
@@ -304,7 +304,7 @@ class word_link_list
             $this->ids = array();
             if ($db_lst != null) {
                 foreach ($db_lst as $db_lnk) {
-                    if (is_null($db_lnk['excluded']) or $db_lnk['excluded'] == 0) {
+                    if (is_null($db_lnk[user_sandbox::FLD_EXCLUDED]) or $db_lnk[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_lnk['word_link_id'] > 0) {
                             // create one work link object and fill it
                             $new_link = new word_link;

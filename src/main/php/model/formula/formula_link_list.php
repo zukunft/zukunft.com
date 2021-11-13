@@ -44,16 +44,16 @@ class formula_link_list
     {
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                if ($db_row['formula_link_id'] > 0) {
+                if ($db_row[formula_link::FLD_ID] > 0) {
                     $frm_lnk = new formula_link;
-                    $frm_lnk->id = $db_row['formula_link_id'];
+                    $frm_lnk->id = $db_row[formula_link::FLD_ID];
                     $frm_lnk->usr = $this->usr;
                     $frm_lnk->usr_cfg_id = $db_row['user_link_id'];
-                    $frm_lnk->owner_id = $db_row['user_id'];
-                    $frm_lnk->formula_id = $db_row['formula_id'];
-                    $frm_lnk->phrase_id = $db_row['phrase_id'];
-                    $frm_lnk->link_type_id = $db_row['link_type_id'];
-                    $frm_lnk->excluded = $db_row['excluded'];
+                    $frm_lnk->owner_id = $db_row[user_sandbox::FLD_USER];
+                    $frm_lnk->fob->id = $db_row[formula::FLD_ID];
+                    $frm_lnk->tob->id = $db_row[phrase::FLD_ID];
+                    $frm_lnk->link_type_id = $db_row[formula_link::FLD_TYPE];
+                    $frm_lnk->excluded = $db_row[user_sandbox::FLD_EXCLUDED];
                     $this->lst[] = $frm_lnk;
                 }
             }
@@ -89,8 +89,8 @@ class formula_link_list
                        l.user_id,
                        l.formula_id, 
                        l.phrase_id,
-                    " . $db_con->get_usr_field('link_type_id', 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'l', 'u', sql_db::FLD_FORMAT_VAL) . "
+                    " . $db_con->get_usr_field(formula_link::FLD_TYPE, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM formula_link_types t, formula_links l
              LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
                                                 AND u.user_id = " . $this->usr->id . " 
@@ -114,13 +114,13 @@ class formula_link_list
 
         if ($this->lst != null) {
             foreach ($this->lst as $frm_lnk) {
-                if ($frm_lnk->phrase_id <> 0) {
+                if ($frm_lnk->phrase_id() <> 0) {
                     if ($sbx) {
                         if ($frm_lnk->excluded <= 0) {
-                            $result[] = $frm_lnk->phrase_id;
+                            $result[] = $frm_lnk->phrase_id();
                         }
                     } else {
-                        $result[] = $frm_lnk->phrase_id;
+                        $result[] = $frm_lnk->phrase_id();
                     }
                 }
             }
@@ -147,10 +147,10 @@ class formula_link_list
                         $db_con->usr_id = $this->usr->id;
                         // delete first all user configuration that have also been excluded
                         $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
-                        $result = $db_con->delete(array('formula_link_id', 'excluded'), array($frm_lnk->id, '1'));
+                        $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id, '1'));
                         if ($result) {
                             $db_con->set_type(DB_TYPE_FORMULA_LINK);
-                            $result = $db_con->delete('formula_link_id', $frm_lnk->id);
+                            $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id);
                         }
                     } else {
                         log_err("Cannot delete a formula word link (id " . $frm_lnk->id . "), which is used or created by another user.", "formula_link_list->del_without_log");

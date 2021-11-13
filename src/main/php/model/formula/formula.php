@@ -34,6 +34,7 @@ class formula extends user_sandbox_description
     // object specific database and JSON object field names
     // means: database fields only used for formulas
     // table fields where the change should be encoded before shown to the user
+    const FLD_ID = 'formula_id';
     const FLD_NAME = 'formula_name';
     const FLD_FORMULA_TEXT = 'formula_text';       // the internal formula expression with the database references
     const FLD_FORMULA_USER_TEXT = 'resolved_text'; // the formula expression as shown to the user which can include formatting for better readability

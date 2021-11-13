@@ -109,7 +109,7 @@ class system_error_log
     }
 
     // actually update an error field in the main database record or the user sandbox
-    private function save_field_do($db_con, $log): bool
+    private function save_field_do(sql_db $db_con, $log): bool
     {
         $result = true;
         if ($log->add()) {
@@ -121,7 +121,7 @@ class system_error_log
     }
 
     // set the update parameters for the error status
-    private function save_field_status($db_con, $db_rec): bool
+    private function save_field_status(sql_db $db_con, $db_rec): bool
     {
         log_debug('system_error_log->save_field_status');
         $result = false;

@@ -77,6 +77,7 @@ include_once $path_unit . 'phrase_group.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'value_list.php';
 include_once $path_unit . 'formula.php';
+include_once $path_unit . 'formula_link.php';
 include_once $path_unit . 'figure.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_component_link.php';

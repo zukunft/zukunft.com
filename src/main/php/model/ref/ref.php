@@ -80,7 +80,7 @@ class ref
 
             $db_con->set_type(DB_TYPE_REF);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields('phrase_id', 'ref_type_id');
+            $db_con->set_link_fields(phrase::FLD_ID, 'ref_type_id');
             $db_con->set_fields(array('external_key'));
             $db_con->set_where_link($this->id, $this->phr->id, $this->ref_type->id);
             $sql = $db_con->select();
@@ -90,7 +90,7 @@ class ref
                 if ($db_ref != null) {
                     if ($db_ref['ref_id'] > 0) {
                         $this->id = $db_ref['ref_id'];
-                        $this->phr->id = $db_ref['phrase_id'];
+                        $this->phr->id = $db_ref[phrase::FLD_ID];
                         $this->external_key = $db_ref['external_key'];
                         $this->ref_type = get_ref_type_by_id($db_ref['ref_type_id']);
                         if ($this->load_objects()) {
@@ -324,7 +324,7 @@ class ref
             $db_con->set_usr($this->usr->id);
 
             $this->id = $db_con->insert(
-                array('phrase_id', 'external_key', 'ref_type_id'),
+                array(phrase::FLD_ID, 'external_key', 'ref_type_id'),
                 array($this->phr->id, $this->external_key, $this->ref_type->id));
             if ($this->id > 0) {
                 // update the id in the log for the correct reference

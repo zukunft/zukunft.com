@@ -138,7 +138,7 @@ class view_cmp_link extends user_sandbox
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields('view_id', 'view_component_id');
-        $db_con->set_fields(array('order_nbr', 'position_type', 'excluded', 'user_id'));
+        $db_con->set_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED, user_sandbox::FLD_USER));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $sql = $db_con->select();
 
@@ -167,7 +167,7 @@ class view_cmp_link extends user_sandbox
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields('view_id', 'view_component_id');
-        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
+        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $sql = $db_con->select();
 
@@ -206,7 +206,7 @@ class view_cmp_link extends user_sandbox
                 $db_dsl = $db_con->get1($sql);
                 $this->row_mapper($db_dsl);
                 if ($this->id > 0) {
-                    //if (is_null($db_item['excluded']) OR $db_item['excluded'] == 0) {
+                    //if (is_null($db_item[self::FLD_EXCLUDED]) OR $db_item[self::FLD_EXCLUDED] == 0) {
                     //}
                     log_debug('view_component_link->load of ' . $this->id . ' done');
                     $result = true;
@@ -504,7 +504,7 @@ class view_cmp_link extends user_sandbox
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT_LINK);
-                $log_id = $db_con->insert(array('view_component_link_id', 'user_id'), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('view_component_link_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component_link failed.');
                     $result = false;
@@ -542,7 +542,7 @@ class view_cmp_link extends user_sandbox
             if ($usr_cfg['view_component_link_id'] > 0) {
                 if ($usr_cfg['order_nbr'] == Null
                     and $usr_cfg['position_type'] == Null
-                    and $usr_cfg['excluded'] == Null) {
+                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
                     log_debug('view_component_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id());
                     $result = $this->del_usr_cfg_exe($db_con);
@@ -555,7 +555,7 @@ class view_cmp_link extends user_sandbox
 
     // set the update parameters for the view component order_nbr
     private
-    function save_field_order_nbr($db_con, $db_rec, $std_rec): string
+    function save_field_order_nbr(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->order_nbr <> $this->order_nbr) {
@@ -571,7 +571,7 @@ class view_cmp_link extends user_sandbox
     }
 
     // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->pos_type_id <> $this->pos_type_id) {
@@ -590,7 +590,7 @@ class view_cmp_link extends user_sandbox
     }
 
     // save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

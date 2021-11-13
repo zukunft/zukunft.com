@@ -986,7 +986,7 @@ function zuc_upd_lst_fv($val_wrd_lst, $wrd_id, $frm_ids, $frm_row, $usr_id)
         // build the single calculation request
         $calc_row = array();
         $calc_row['usr_id'] = $usr_id;
-        $calc_row['frm_id'] = $frm_row['formula_id'];
+        $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
         $calc_row['frm_name'] = $frm_row['formula_name'];
         $calc_row['frm_text'] = $frm_row['formula_text'];
         $calc_row['wrd_ids'] = $wrd_ids;
@@ -1036,7 +1036,7 @@ function zuc_upd_lst_val($wrd_id, $frm_wrd_ids, $frm_row, $usr_id)
         // build the single calculation request
         $calc_row = array();
         $calc_row['usr_id'] = $usr_id;
-        $calc_row['frm_id'] = $frm_row['formula_id'];
+        $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
         $calc_row['frm_name'] = $frm_row['formula_name'];
         $calc_row['frm_text'] = $frm_row['formula_text'];
         $calc_row['wrd_ids'] = $wrd_ids;
@@ -1132,7 +1132,7 @@ function zuc_upd_lst_usr($val_wrd_lst, $frm_ids_updated, $usr_id, $last_msg_time
                 $frm_ids = array();
                 foreach ($all_frm_ids as $chk_frm_id) {
                     if (zuf_is_special($chk_frm_id, $usr_id)) {
-                        $special_frm_wrd_ids = zuc_upd_lst_frm_special($frm_row['formula_id'], $frm_row['formula_text'], $usr_id, $special_frm_wrd_ids);
+                        $special_frm_wrd_ids = zuc_upd_lst_frm_special($frm_row[formula::FLD_ID], $frm_row['formula_text'], $usr_id, $special_frm_wrd_ids);
 
                         //get all values related to the words
                     } else {
@@ -1465,7 +1465,7 @@ function zuc_batch_all($back)
     $sql_result = zuf_wrd_lst($frm_ids_updated, $user_id);
     // get the words where the formula is used including the based on the assigned word e.g. Company or year
     while ($frm_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        $frm_id = $frm_row['formula_id'];
+        $frm_id = $frm_row[formula::FLD_ID];
         log_debug('zuc_batch_all -> formula (' . $frm_row['resolved_text'] . ' (' . $frm_id . '), word ' . zut_name($frm_row['word_id'], $user_id) . ' (' . $frm_row['word_id'] . ')');
         $frm_wrd_id = zut_id($frm_row['formula_name'], $user_id);
         if ($frm_wrd_id <= 0) {

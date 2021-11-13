@@ -159,7 +159,7 @@ class view extends user_sandbox
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr($this->usr->id);
         // TODO the user_id should be loaded for all standard records to know the owner of the standrad
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_type_id', 'code_id', 'excluded'));
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_type_id', 'code_id', self::FLD_EXCLUDED));
         $db_con->set_where($this->id, $this->name, $this->code_id);
         $sql = $db_con->select();
 
@@ -195,7 +195,7 @@ class view extends user_sandbox
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('code_id'));
         $db_con->set_usr_fields(array('comment'));
-        $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
+        $db_con->set_usr_num_fields(array('view_type_id', self::FLD_EXCLUDED));
         $db_con->set_where($this->id, $this->name, $this->code_id);
         $sql = $db_con->select();
 
@@ -258,11 +258,11 @@ class view extends user_sandbox
                     " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
                     " . $db_con->get_usr_field('word_id_row', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('link_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('formula_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(formula::FLD_ID, 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('word_id_col', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('word_id_col2', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'l', 'y', sql_db::FLD_FORMAT_VAL, 'link_excluded') . ",
-                    " . $db_con->get_usr_field('excluded', 'e', 'u', sql_db::FLD_FORMAT_VAL) . "
+                    " . $db_con->get_usr_field(self::FLD_EXCLUDED, 'l', 'y', sql_db::FLD_FORMAT_VAL, 'link_excluded') . ",
+                    " . $db_con->get_usr_field(self::FLD_EXCLUDED, 'e', 'u', sql_db::FLD_FORMAT_VAL) . "
                FROM view_component_links l            
           LEFT JOIN user_view_component_links y ON y.view_component_link_id = l.view_component_link_id 
                                                AND y.user_id = " . $this->usr->id . ", 
@@ -301,18 +301,18 @@ class view extends user_sandbox
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 // this is only for the view of the active user, so a direct exclude can be done
-                if ((is_null($db_entry['excluded']) or $db_entry['excluded'] == 0)
+                if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
                     and (is_null($db_entry['link_excluded']) or $db_entry['link_excluded'] == 0)) {
                     $new_entry = new view_cmp_dsp;
                     $new_entry->id = $db_entry['view_component_id'];
                     $new_entry->usr = $this->usr;
-                    $new_entry->owner_id = $db_entry['user_id'];
+                    $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
                     $new_entry->order_nbr = $db_entry['order_nbr'];
                     $new_entry->name = $db_entry['view_component_name'];
                     $new_entry->word_id_row = $db_entry['word_id_row'];
                     $new_entry->link_type_id = $db_entry['link_type_id'];
                     $new_entry->type_id = $db_entry['view_component_type_id'];
-                    $new_entry->formula_id = $db_entry['formula_id'];
+                    $new_entry->formula_id = $db_entry[formula::FLD_ID];
                     $new_entry->word_id_col = $db_entry['word_id_col'];
                     $new_entry->word_id_col2 = $db_entry['word_id_col2'];
                     $new_entry->code_id = $db_entry[sql_db::FLD_CODE_ID];
@@ -676,7 +676,7 @@ class view extends user_sandbox
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW);
-                $log_id = $db_con->insert(array('view_id', 'user_id'), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('view_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view failed.');
                     $result = false;
@@ -716,7 +716,7 @@ class view extends user_sandbox
         if ($usr_cfg['view_id'] > 0) {
             if ($usr_cfg['comment'] == ''
                 and $usr_cfg['view_type_id'] == Null
-                and $usr_cfg['excluded'] == Null) {
+                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('view->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $result = $this->del_usr_cfg_exe($db_con);
@@ -729,7 +729,7 @@ class view extends user_sandbox
     /**
      * set the update parameters for the view comment
      */
-    function save_field_comment($db_con, $db_rec, $std_rec): string
+    function save_field_comment(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->comment <> $this->comment) {
@@ -747,7 +747,7 @@ class view extends user_sandbox
     /**
      * set the update parameters for the view code_id (only allowed for admin)
      */
-    function save_field_code_id($db_con, $db_rec, $std_rec): string
+    function save_field_code_id(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         // special case: do not remove a code id
@@ -768,7 +768,7 @@ class view extends user_sandbox
     /**
      * set the update parameters for the word type
      */
-    function save_field_type($db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -789,7 +789,7 @@ class view extends user_sandbox
     /**
      * save all updated view fields excluding the name, because already done when adding a view
      */
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

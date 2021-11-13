@@ -123,7 +123,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_FIELD, 'code_id');
     $result .= $db_con->column_allow_null(DB_TYPE_VIEW, 'comment');
     $result .= $db_con->column_allow_null(DB_TYPE_VIEW_COMPONENT_TYPE, 'description');
-    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'excluded');
+    $result .= $db_con->column_allow_null(DB_TYPE_VALUE, user_sandbox::FLD_EXCLUDED);
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id');

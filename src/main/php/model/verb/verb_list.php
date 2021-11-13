@@ -58,7 +58,7 @@ class verb_list extends user_type_list
         }
         $db_con->set_type($db_type);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_usr_num_fields(array('excluded'));
+        $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'), DB_TYPE_VERB);
         $db_con->set_fields(array('verb_id'));
         $db_con->set_where_text($sql_where);

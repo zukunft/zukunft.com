@@ -185,7 +185,7 @@ class user_sandbox
                     log_err('Cannot set owner, because not user is set');
                 } else {
                     $db_con->set_usr($this->usr->id);
-                    if ($db_con->update($this->id, 'user_id', $this->usr->id)) {
+                    if ($db_con->update($this->id, user_sandbox::FLD_USER, $this->usr->id)) {
                         $result = true;
                     }
                 }
@@ -471,7 +471,7 @@ class user_sandbox
                 AND (excluded <> 1 OR excluded is NULL)';
         $db_usr_lst = $db_con->get($sql);
         foreach ($db_usr_lst as $db_usr) {
-            $result->add_by_id($db_usr['user_id']);
+            $result->add_by_id($db_usr[user_sandbox::FLD_USER]);
         }
         $result->load_by_id();
 
@@ -582,7 +582,7 @@ class user_sandbox
 
             $db_con->set_type($this->obj_name);
             $db_con->set_usr($this->usr->id);
-            if (!$db_con->update($this->id, 'user_id', $new_owner_id)) {
+            if (!$db_con->update($this->id, user_sandbox::FLD_USER, $new_owner_id)) {
                 $result = false;
             }
 
@@ -691,7 +691,7 @@ class user_sandbox
 
         $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
         $result = $db_con->delete(
-            array($this->obj_name . '_id', 'user_id'),
+            array($this->obj_name . '_id', user_sandbox::FLD_USER),
             array($this->id, $this->usr->id));
         if (!$result) {
             $result .= 'Deletion of user ' . $this->obj_name . ' ' . $this->id . ' failed for ' . $this->usr->name . '.';
@@ -951,7 +951,7 @@ class user_sandbox
      * set the update parameters for the word type
      * TODO: log the ref
      */
-    function save_field_type($db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -973,7 +973,7 @@ class user_sandbox
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      */
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
     {
         return '';
     }
@@ -1051,7 +1051,7 @@ class user_sandbox
             }
             $new_value = $this->excluded;
             $std_value = $std_rec->excluded;
-            $log->field = 'excluded';
+            $log->field = self::FLD_EXCLUDED;
             // similar to $this->save_field_do
             if ($this->can_change()) {
                 $db_con->set_type($this->obj_name);

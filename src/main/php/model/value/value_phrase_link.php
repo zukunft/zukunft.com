@@ -83,7 +83,7 @@ class val_lnk
             $db_val = $db_con->get1($sql);
             $this->id = $db_val['value_phrase_link_id'];
             $this->val_id = $db_val['value_id'];
-            $this->wrd_id = $db_val['phrase_id'];
+            $this->wrd_id = $db_val[phrase::FLD_ID];
         } else {
             log_err("Cannot find value word link, because neither the id nor the value and word are set", "val_lnk->load");
         }
@@ -128,7 +128,7 @@ class val_lnk
         $log->usr = $this->usr;
         $log->action = 'update';
         $log->table = 'value_phrase_links'; // no user sandbox for links, only the values itself can differ from user to user
-        //$log->field = 'phrase_id';
+        //$log->field = phrase::FLD_ID;
         $log->old_from = $db_rec->val;
         $log->old_to = $db_rec->wrd;
         $log->new_from = $this->val;
@@ -155,14 +155,14 @@ class val_lnk
     }
 
     // save the new word link
-    private function save_field_wrd($db_con, $db_rec)
+    private function save_field_wrd(sql_db $db_con, $db_rec)
     {
         $result = '';
         if ($db_rec->wrd->id <> $this->wrd->id) {
             $log = $this->log_upd();
             if ($log->add()) {
                 $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
-                $result .= $db_con->update($this->id, 'phrase_id', $this->wrd->id);
+                $result .= $db_con->update($this->id, phrase::FLD_ID, $this->wrd->id);
             }
         }
         return $result;
@@ -181,7 +181,7 @@ class val_lnk
         $db_row = $db_con->get1($sql);
         $this->id = $db_row['value_phrase_link_id'];
         if ($this->id > 0) {
-            //$result = $db_con->delete(array('value_id','phrase_id','value_phrase_link_id'), array($this->val->id,$this->wrd->id,$this->id));
+            //$result = $db_con->delete(array('value_id',phrase::FLD_ID,'value_phrase_link_id'), array($this->val->id,$this->wrd->id,$this->id));
             $sql_del = "DELETE FROM value_phrase_links 
                     WHERE value_id = " . $this->val->id . " 
                       AND phrase_id  = " . $this->wrd->id . " 
@@ -284,7 +284,7 @@ class val_lnk
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
                 $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
-                $result .= $db_con->delete(array('value_id', 'phrase_id'), array($this->val->id, $this->wrd->id));
+                $result .= $db_con->delete(array('value_id', phrase::FLD_ID), array($this->val->id, $this->wrd->id));
             }
         } else {
             // check if removing a word link is matching another value

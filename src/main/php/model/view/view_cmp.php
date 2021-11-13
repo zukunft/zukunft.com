@@ -131,7 +131,7 @@ class view_cmp extends user_sandbox
                 $this->type_id = $db_row['view_component_type_id'];
                 $this->word_id_row = $db_row['word_id_row'];
                 $this->link_type_id = $db_row['link_type_id'];
-                $this->formula_id = $db_row['formula_id'];
+                $this->formula_id = $db_row[formula::FLD_ID];
                 $this->word_id_col = $db_row['word_id_col'];
                 $this->word_id_col2 = $db_row['word_id_col2'];
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
@@ -159,7 +159,7 @@ class view_cmp extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
+        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', self::FLD_EXCLUDED));
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -193,7 +193,7 @@ class view_cmp extends user_sandbox
             $db_con->set_usr($this->usr->id);
             $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_type');
             $db_con->set_usr_fields(array('comment'));
-            $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', 'formula_id', 'word_id_col', 'word_id_col2', 'excluded'));
+            $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', self::FLD_EXCLUDED));
             $db_con->set_where($this->id, $this->name);
             $sql = $db_con->select();
 
@@ -319,7 +319,7 @@ class view_cmp extends user_sandbox
             $db_con->set_usr($this->usr->id);
             //$db_con->set_join_fields(array('position_type'), 'position_type');
             $db_con->set_fields(array('view_id', 'view_component_id'));
-            $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
+            $db_con->set_usr_num_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED));
             $db_con->set_where_text('view_component_id = ' . $this->id);
             $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
@@ -600,7 +600,7 @@ class view_cmp extends user_sandbox
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT);
-                $log_id = $db_con->insert(array('view_component_id', 'user_id'), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('view_component_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component failed.');
                     $result = false;
@@ -648,10 +648,10 @@ class view_cmp extends user_sandbox
                 and $usr_cfg['view_component_type_id'] == Null
                 and $usr_cfg['word_id_row'] == Null
                 and $usr_cfg['link_type_id'] == Null
-                and $usr_cfg['formula_id'] == Null
+                and $usr_cfg[formula::FLD_ID] == Null
                 and $usr_cfg['word_id_col'] == Null
                 and $usr_cfg['word_id_col2'] == Null
-                and $usr_cfg['excluded'] == Null) {
+                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $result = $this->del_usr_cfg_exe($db_con);
@@ -766,7 +766,7 @@ class view_cmp extends user_sandbox
             $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
             $log->row_id = $this->id;
-            $log->field = 'formula_id';
+            $log->field = formula::FLD_ID;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;

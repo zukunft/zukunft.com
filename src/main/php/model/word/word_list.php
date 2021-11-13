@@ -113,7 +113,7 @@ class word_list
                 $db_con->set_type(DB_TYPE_WORD);
                 $db_con->set_usr($this->usr->id);
                 $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-                $db_con->set_usr_num_fields(array('word_type_id', 'excluded'));
+                $db_con->set_usr_num_fields(array('word_type_id', user_sandbox::FLD_EXCLUDED));
                 $db_con->set_fields(array('values'));
                 $db_con->set_where_text($sql_where);
                 $db_con->set_order_text('s.values DESC, word_name');
@@ -149,12 +149,12 @@ class word_list
             $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
             if ($db_wrd_lst != null) {
                 foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd['excluded']) or $db_wrd['excluded'] == 0) {
+                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         $new_word = new word_dsp;
                         $new_word->id = $db_wrd['word_id'];
                         $new_word->usr = $this->usr;
                         $new_word->usr_cfg_id = $db_wrd['user_word_id'];
-                        $new_word->owner_id = $db_wrd['user_id'];
+                        $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
                         $new_word->name = $db_wrd['word_name'];
                         $new_word->plural = $db_wrd['plural'];
                         $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];
@@ -260,12 +260,12 @@ class word_list
             if ($db_wrd_lst) {
                 log_debug('word_list->add_by_type -> got ' . dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd['excluded']) or $db_wrd['excluded'] == 0) {
+                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_wrd['word_id'] > 0 and !in_array($db_wrd['word_id'], $this->ids)) {
                             $new_word = new word_dsp;
                             $new_word->id = $db_wrd['word_id'];
                             $new_word->usr = $this->usr;
-                            $new_word->owner_id = $db_wrd['user_id'];
+                            $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
                             $new_word->name = $db_wrd['word_name'];
                             $new_word->plural = $db_wrd['plural'];
                             $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];

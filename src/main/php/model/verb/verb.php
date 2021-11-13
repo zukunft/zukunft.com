@@ -438,7 +438,7 @@ class verb
     }
 
     // actually update a formula field in the main database record or the user sandbox
-    private function save_field_do($db_con, $log): string
+    private function save_field_do(sql_db $db_con, $log): string
     {
         $result = '';
         if ($log->new_id > 0) {
@@ -462,7 +462,7 @@ class verb
         return $result;
     }
 
-    private function save_field_code_id($db_con, $db_rec): string
+    private function save_field_code_id(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->name <> $this->code_id) {
@@ -479,7 +479,7 @@ class verb
 
 
     // set the update parameters for the verb name
-    private function save_field_name($db_con, $db_rec): string
+    private function save_field_name(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->name <> $this->name) {
@@ -495,7 +495,7 @@ class verb
     }
 
     // set the update parameters for the verb plural
-    private function save_field_plural($db_con, $db_rec): string
+    private function save_field_plural(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->plural <> $this->plural) {
@@ -511,7 +511,7 @@ class verb
     }
 
     // set the update parameters for the verb reverse
-    private function save_field_reverse($db_con, $db_rec): string
+    private function save_field_reverse(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->reverse <> $this->reverse) {
@@ -527,7 +527,7 @@ class verb
     }
 
     // set the update parameters for the verb rev_plural
-    private function save_field_rev_plural($db_con, $db_rec): string
+    private function save_field_rev_plural(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->rev_plural <> $this->rev_plural) {
@@ -543,7 +543,7 @@ class verb
     }
 
     // set the update parameters for the verb description
-    private function save_field_description($db_con, $db_rec): string
+    private function save_field_description(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->description <> $this->description) {
@@ -559,7 +559,7 @@ class verb
     }
 
     // set the update parameters for the verb description
-    private function save_field_formula_name($db_con, $db_rec): string
+    private function save_field_formula_name(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->description <> $this->frm_name) {
@@ -575,7 +575,7 @@ class verb
     }
 
     // save all updated verb fields excluding the name, because already done when adding a verb
-    private function save_fields($db_con, $db_rec): string
+    private function save_fields(sql_db $db_con, $db_rec): string
     {
         $result = $this->save_field_code_id($db_con, $db_rec);
         $result .= $this->save_field_plural($db_con, $db_rec);

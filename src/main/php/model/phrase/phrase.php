@@ -57,6 +57,9 @@ class phrase
     const TN_ZH_COMPANY = "System Test Phrase: Zurich Insurance";
     const RESERVED_PHRASES = array(self::TN_ZH_CANTON, self::TN_ZH_CITY, self::TN_ZH_COMPANY);
 
+    // the database and JSON object duplicate field names for combined word and triples
+    const FLD_ID = 'phrase_id';
+
     // database duplicate fields
     public ?int $id = null;            // if positive the database id of the word or if negative of a triple
     public ?user $usr = null;          // the person for whom the word is loaded, so to say the viewer

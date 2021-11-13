@@ -541,7 +541,7 @@ class phrase_group
         $db_con->usr_id = $this->usr->id;
         $lnk_id_lst = $db_con->get($sql);
         foreach ($lnk_id_lst as $db_row) {
-            $result[] = $db_row['phrase_id'];
+            $result[] = $db_row[phrase::FLD_ID];
         }
 
         asort($result);

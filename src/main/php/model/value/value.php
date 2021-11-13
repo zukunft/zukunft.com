@@ -201,7 +201,7 @@ class value extends user_sandbox_display
         if ($this->id > 0) {
             $db_con->set_type(DB_TYPE_VALUE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('value_id', sql_db::FLD_USER_ID, 'word_value', 'phrase_group_id', 'time_word_id', 'source_id', 'last_update', 'excluded', sql_db::FLD_PROTECT));
+            $db_con->set_fields(array('value_id', sql_db::FLD_USER_ID, 'word_value', 'phrase_group_id', 'time_word_id', 'source_id', 'last_update', self::FLD_EXCLUDED, sql_db::FLD_PROTECT));
             $db_con->where(array('value_id'), array($this->id));
             $sql = $db_con->select();
 
@@ -225,7 +225,7 @@ class value extends user_sandbox_display
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-        $db_con->set_usr_num_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, 'excluded'));
+        $db_con->set_usr_num_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, self::FLD_EXCLUDED));
         $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
         $db_con->set_where_text($sql_where);
         $sql = $db_con->select();
@@ -770,7 +770,7 @@ class value extends user_sandbox_display
                         $wrd_lnk_lst = $db_con->get($sql);
                         $wrd_ids = array();
                         foreach ($wrd_lnk_lst as $wrd_lnk) {
-                            $wrd_ids[] = $wrd_lnk['phrase_id'];
+                            $wrd_ids[] = $wrd_lnk[phrase::FLD_ID];
                         }
                         // todo: add the triple links
                         $this->ids = $wrd_ids;
@@ -1346,7 +1346,7 @@ class value extends user_sandbox_display
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE);
-                $log_id = $db_con->insert(array('value_id', 'user_id'), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('value_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_value failed.');
                     $result = false;
@@ -1383,7 +1383,7 @@ class value extends user_sandbox_display
             if ($usr_cfg['value_id'] > 0) {
                 if ($usr_cfg['word_value'] == Null
                     and $usr_cfg['source_id'] == Null
-                    and $usr_cfg['excluded'] == Null) {
+                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
                     log_debug('value->del_usr_cfg_if_not_needed any more for "' . $this->id . ' und user ' . $this->usr->name);
                     $result = $this->del_usr_cfg_exe($db_con);
@@ -1444,7 +1444,7 @@ class value extends user_sandbox_display
         $db_con->usr_id = $this->usr->id;
 
         $table_name = 'value_phrase_links';
-        $field_name = 'phrase_id';
+        $field_name = phrase::FLD_ID;
 
         // read all existing phrase to value links
         $sql = 'SELECT ' . $field_name . '

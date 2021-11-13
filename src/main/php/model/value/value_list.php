@@ -60,7 +60,7 @@ class value_list
                      u.value_id AS user_value_id,
                      v.user_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u') . ",
-                    " . $db_con->get_usr_field('excluded', 'v', 'u') . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u') . ",
                     " . $db_con->get_usr_field('last_update', 'v', 'u') . ",
                     " . $db_con->get_usr_field('source_id', 'v', 'u') . ",
                      v.phrase_group_id,
@@ -81,13 +81,13 @@ class value_list
             $db_con->usr_id = $this->usr->id;
             $db_val_lst = $db_con->get($sql);
             foreach ($db_val_lst as $db_val) {
-                if (is_null($db_val['excluded']) or $db_val['excluded'] == 0) {
+                if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                     $val = new value;
                     $val->id = $db_val['value_id'];
                     $val->usr_cfg_id = $db_val['user_value_id'];
-                    $val->owner_id = $db_val['user_id'];
+                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
                     $val->usr = $this->usr;
-                    $val->owner_id = $db_val['user_id'];
+                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
                     $val->number = $db_val['word_value'];
                     $val->source_id = $db_val['source_id'];
                     $val->last_update = new DateTime($db_val['last_update']);
@@ -116,7 +116,7 @@ class value_list
                      u.value_id AS user_value_id,
                      v.user_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                      v.phrase_group_id,
@@ -134,13 +134,13 @@ class value_list
             $db_con->usr_id = $this->usr->id;
             $db_val_lst = $db_con->get($sql);
             foreach ($db_val_lst as $db_val) {
-                if (is_null($db_val['excluded']) or $db_val['excluded'] == 0) {
+                if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                     $val = new value;
                     $val->id = $db_val['value_id'];
                     $val->usr_cfg_id = $db_val['user_value_id'];
-                    $val->owner_id = $db_val['user_id'];
+                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
                     $val->usr = $this->usr;
-                    $val->owner_id = $db_val['user_id'];
+                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
                     $val->number = $db_val['word_value'];
                     $val->source_id = $db_val['source_id'];
                     $val->last_update = new DateTime($db_val['last_update']);
@@ -174,7 +174,7 @@ class value_list
                       u.value_id AS user_value_id,
                       v.user_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.phrase_group_id,
@@ -192,13 +192,13 @@ class value_list
                 $db_val_lst = $db_con->get($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
-                        if (is_null($db_val['excluded']) or $db_val['excluded'] == 0) {
+                        if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value;
                             $val->id = $db_val['value_id'];
                             $val->usr_cfg_id = $db_val['user_value_id'];
-                            $val->owner_id = $db_val['user_id'];
+                            $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->usr = $this->usr;
-                            $val->owner = $db_val['user_id'];
+                            $val->owner = $db_val[user_sandbox::FLD_USER];
                             $val->number = $db_val['word_value'];
                             $val->source_id = $db_val['source_id'];
                             $val->last_update = new DateTime($db_val['last_update']);
@@ -251,7 +251,7 @@ class value_list
         if ($sql_where <> '') {
             $sql = "SELECT DISTINCT v.value_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        v.user_id,
@@ -290,11 +290,11 @@ class value_list
                 $db_val_lst = $db_con->get($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
-                        if (is_null($db_val['excluded']) or $db_val['excluded'] == 0) {
+                        if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value;
                             $val->id = $db_val['value_id'];
                             $val->usr = $this->usr;
-                            $val->owner_id = $db_val['user_id'];
+                            $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->number = $db_val['word_value'];
                             $val->source_id = $db_val['source_id'];
                             $val->last_update = new DateTime($db_val['last_update']);
@@ -701,7 +701,7 @@ class value_list
             $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
             foreach ($db_lst as $db_val) {
                 if ($value_id == $db_val['value_id']) {
-                    $phr_result[] = $db_val['phrase_id'];
+                    $phr_result[] = $db_val[phrase::FLD_ID];
                 } else {
                     if ($value_id >= 0) {
                         // remember the previous values
@@ -714,7 +714,7 @@ class value_list
                     $row_result = array();
                     $row_result[] = $val_num;
                     $phr_result = array();
-                    $phr_result[] = $db_val['phrase_id'];
+                    $phr_result[] = $db_val[phrase::FLD_ID];
                 }
             }
             if ($value_id >= 0) {

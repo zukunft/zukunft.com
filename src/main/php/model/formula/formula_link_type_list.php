@@ -55,6 +55,11 @@ class formula_link_type_list extends user_type_list
         $type->code_id = formula_link::DEFAULT;
         $this->lst[2] = $type;
         $this->hash[formula_link::DEFAULT] = 2;
+        $type = new user_type();
+        $type->name = formula_link::TIME_PERIOD;
+        $type->code_id = formula_link::TIME_PERIOD;
+        $this->lst[3] = $type;
+        $this->hash[formula_link::TIME_PERIOD] = 3;
     }
 
     /**

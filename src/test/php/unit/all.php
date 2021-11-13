@@ -290,6 +290,7 @@ function run_unit_tests(testing $t)
     run_value_unit_tests($t);
     run_value_list_unit_tests($t);
     run_formula_unit_tests($t);
+    run_formula_link_unit_tests($t);
     run_figure_unit_tests($t);
     run_user_sandbox_unit_tests($t);
     run_ref_unit_tests($t);

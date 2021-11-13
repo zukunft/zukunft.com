@@ -98,6 +98,7 @@ TODO create a table startup page with a
 
 */
 
+// a list of all object names used
 // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
 // TODO use const for all object names
 const DB_TYPE_USER = 'user';

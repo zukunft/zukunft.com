@@ -105,8 +105,8 @@ class formula_value
                     $this->id = 0;
                 } else {
                     $this->id = $val_row['formula_value_id'];
-                    $this->frm_id = $val_row['formula_id'];
-                    $this->owner_id = $val_row['user_id'];
+                    $this->frm_id = $val_row[formula::FLD_ID];
+                    $this->owner_id = $val_row[user_sandbox::FLD_USER];
                     $this->src_phr_grp_id = $val_row['source_phrase_group_id'];
                     $this->src_time_id = $val_row['source_time_word_id'];
                     $this->phr_grp_id = $val_row['phrase_group_id'];
@@ -866,7 +866,7 @@ class formula_value
         $db_con->usr_id = $this->usr->id;
         $frm_rows = $db_con->get($sql);
         foreach ($frm_rows as $frm_row) {
-            $frm_ids[] = $frm_row['formula_id'];
+            $frm_ids[] = $frm_row[formula::FLD_ID];
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
         if (!empty($frm_ids)) {
@@ -880,7 +880,7 @@ class formula_value
             $db_con->usr_id = $this->usr->id;
             $val_rows = $db_con->get($sql);
             foreach ($val_rows as $val_row) {
-                $frm_ids[] = $val_row['formula_id'];
+                $frm_ids[] = $val_row[formula::FLD_ID];
                 $fv_upd = new formula_value;
                 $fv_upd->usr = $this->usr;
                 $fv_upd->id = $val_row['formula_value_id'];
@@ -1103,7 +1103,7 @@ class formula_value
             } else {
                 $field_names = array();
                 $field_values = array();
-                $field_names[] = 'formula_id';
+                $field_names[] = formula::FLD_ID;
                 $field_values[] = $this->frm_id;
                 $field_names[] = 'formula_value';
                 $field_values[] = $this->value;
@@ -1116,7 +1116,7 @@ class formula_value
                 $field_names[] = 'source_time_word_id';
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
-                    $field_names[] = 'user_id';
+                    $field_names[] = user_sandbox::FLD_USER;
                     $field_values[] = $this->usr->id;
                 }
                 $field_names[] = 'last_update';

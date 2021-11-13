@@ -49,7 +49,7 @@ class view_list extends user_type_list
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('code_id'));
         $db_con->set_usr_fields(array('comment'));
-        $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
+        $db_con->set_usr_num_fields(array('view_type_id', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('code_id IS NOT NULL');
         $sql = $db_con->select();
         $db_lst = $db_con->get($sql);

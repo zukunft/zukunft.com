@@ -468,14 +468,14 @@ class word extends word_link_object
         global $db_con;
 
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
-        $db_con->set_link_fields('formula_id', 'phrase_id');
+        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link(null, null, $this->id);
         $sql = $db_con->select();
         $db_row = $db_con->get1($sql);
         $frm = new formula;
         if ($db_row !== false) {
-            if ($db_row['formula_id'] > 0) {
-                $frm->id = $db_row['formula_id'];
+            if ($db_row[formula::FLD_ID] > 0) {
+                $frm->id = $db_row[formula::FLD_ID];
                 $frm->usr = $this->usr;
                 $frm->load();
             }

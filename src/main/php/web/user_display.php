@@ -253,7 +253,7 @@ class user_dsp extends user
                         $wrd_lnk_other->usr = $usr_other;
                         $wrd_lnk_other->load();
                         $wrd_lnk_other->name = $wrd_lnk_other_row['name'];
-                        $wrd_lnk_other->excluded = $wrd_lnk_other_row['excluded'];
+                        $wrd_lnk_other->excluded = $wrd_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -330,8 +330,8 @@ class user_dsp extends user
             $result .= '<td>' . $frm_row['formula_name'] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
             $result .= '<td>' . $frm_row['formula_text'] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row['formula_id'].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id . '&undo_formula=' . $frm_row['formula_id'] . '&back=' . $back . '';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
+            $url = '/http/user.php?id=' . $this->id . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
             $result .= '<td>' . btn_del("Undo your change and use the standard formula " . $frm_row['formula_text'], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -390,10 +390,10 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the formula_link objects with the minimal parameter needed
-                $frm_usr = new formula_link;
+                $frm_usr = new formula_link();
                 $frm_usr->id = $sbx_row['id'];
-                $frm_usr->formula_id = $sbx_row['formula_id'];
-                $frm_usr->phrase_id = $sbx_row['phrase_id'];
+                $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
+                $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
                 $frm_usr->link_type_id = $sbx_row['usr_type'];
                 $frm_usr->excluded = $sbx_row['usr_excluded'];
                 $frm_usr->usr = $this;
@@ -458,7 +458,7 @@ class user_dsp extends user
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->usr = $usr_other;
                         $frm_lnk_other->link_type_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->excluded = $frm_lnk_other_row['excluded'];
+                        $frm_lnk_other->excluded = $frm_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -630,7 +630,7 @@ class user_dsp extends user
                         $val_other->usr = $usr_other;
                         $val_other->number = $val_other_row['user_value'];
                         $val_other->source_id = $val_other_row['source_id'];
-                        $val_other->excluded = $val_other_row['excluded'];
+                        $val_other->excluded = $val_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -796,7 +796,7 @@ class user_dsp extends user
                         $dsp_other->name = $dsp_other_row['view_name'];
                         $dsp_other->comment = $dsp_other_row['comment'];
                         $dsp_other->type_id = $dsp_other_row['view_type_id'];
-                        $dsp_other->excluded = $dsp_other_row['excluded'];
+                        $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -961,7 +961,7 @@ class user_dsp extends user
                         $cmp_other->name = $cmp_other_row['view_component_name'];
                         $cmp_other->comment = $cmp_other_row['comment'];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
-                        $cmp_other->excluded = $cmp_other_row['excluded'];
+                        $cmp_other->excluded = $cmp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1129,7 +1129,7 @@ class user_dsp extends user
                         $dsp_lnk_other->usr = $usr_other;
                         $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
                         $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->excluded = $dsp_lnk_other_row['excluded'];
+                        $dsp_lnk_other->excluded = $dsp_lnk_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1307,7 +1307,7 @@ class user_dsp extends user
                         $dsp_other->url = $dsp_other_row['url'];
                         $dsp_other->comment = $dsp_other_row['comment'];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->excluded = $dsp_other_row['excluded'];
+                        $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

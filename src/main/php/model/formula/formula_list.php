@@ -51,8 +51,8 @@ class formula_list
     {
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                if (is_null($db_row['excluded']) or $db_row['excluded'] == 0) {
-                    if ($db_row['formula_id'] > 0) {
+                if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
+                    if ($db_row[formula::FLD_ID] > 0) {
                         $frm = new formula;
                         $frm->usr = $this->usr;
                         $frm->row_mapper($db_row);
@@ -123,7 +123,7 @@ class formula_list
                     " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
                     " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM " . $sql_from . " 
              LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
                                       AND u.user_id = " . $this->usr->id . " 

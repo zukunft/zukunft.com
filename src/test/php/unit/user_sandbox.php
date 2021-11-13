@@ -297,7 +297,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test a simple SQL select the formulas linked to a phrase
     $db_con->db_type = sql_db::POSTGRES;
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
-    $db_con->set_link_fields('formula_id', 'phrase_id');
+    $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
     $db_con->set_where_link(null,null, 1);
     $created_sql = $db_con->select();
     $expected_sql = 'SELECT 
@@ -311,7 +311,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
-    $db_con->set_link_fields('formula_id', 'phrase_id');
+    $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
     $db_con->set_where_link(null,null, 1);
     $created_sql = $db_con->select();
     $expected_sql = 'SELECT 
@@ -435,7 +435,7 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // ... similar with joined fields
     $db_con->set_type(DB_TYPE_FORMULA);
-    $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', 'excluded'));
+    $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
     $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
     $db_con->set_where(1, '');
     $created_sql = $db_con->select();
@@ -460,7 +460,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
     $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
     $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update'));
-    $db_con->set_usr_bool_fields(array('excluded'));
+    $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1, '');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT s.formula_id,
@@ -487,7 +487,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_type(DB_TYPE_VALUE);
     $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
     $db_con->set_usr_num_fields(array('word_value', 'source_id', sql_db::FLD_PROTECT, 'last_update'));
-    $db_con->set_usr_bool_fields(array('excluded'));
+    $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
     $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
     $db_con->set_where_text('s.phrase_group_id = 1');
     $created_sql = $db_con->select();
@@ -512,7 +512,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // ... same for a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', 'verb_id', 'word_type_id'));
-    $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION, 'excluded'));
+    $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('s.word_link_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT s.word_link_id,
@@ -533,7 +533,7 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the view load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW);
-    $db_con->set_fields(array('comment', 'view_type_id', 'excluded'));
+    $db_con->set_fields(array('comment', 'view_type_id', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT view_id,
@@ -548,7 +548,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the view load SQL creation
     $db_con->set_type(DB_TYPE_VIEW);
     $db_con->set_usr_fields(array('comment'));
-    $db_con->set_usr_num_fields(array('view_type_id', 'excluded'));
+    $db_con->set_usr_num_fields(array('view_type_id', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -568,7 +568,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the view_component_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
     $db_con->set_link_fields('view_id', 'view_component_id');
-    $db_con->set_fields(array('order_nbr', 'position_type', 'excluded'));
+    $db_con->set_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1, 2, 3);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT view_component_link_id,
@@ -584,7 +584,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // ... same but select by the link ids
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
     $db_con->set_link_fields('view_id', 'view_component_id');
-    $db_con->set_fields(array('order_nbr', 'position_type', 'excluded'));
+    $db_con->set_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(0, 2, 3);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT view_component_link_id,
@@ -600,7 +600,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the view_component_link load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
     $db_con->set_link_fields('view_id', 'view_component_id');
-    $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
+    $db_con->set_usr_num_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1, 2, 3);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -620,8 +620,8 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the formula_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
-    $db_con->set_link_fields('formula_id', 'phrase_id');
-    $db_con->set_fields(array('link_type_id', 'excluded'));
+    $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+    $db_con->set_fields(array(formula_link::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT formula_link_id,
@@ -635,8 +635,8 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the formula_link load SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
-    $db_con->set_link_fields('formula_id', 'phrase_id');
-    $db_con->set_usr_num_fields(array('link_type_id', 'excluded'));
+    $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+    $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -655,7 +655,7 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the view_component load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
-    $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row','link_type_id','formula_id','word_id_col','word_id_col2','excluded'));
+    $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row','link_type_id',formula::FLD_ID,'word_id_col','word_id_col2',user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT view_component_id,
@@ -676,7 +676,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
     $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), DB_TYPE_VIEW_COMPONENT_TYPE);
     $db_con->set_usr_fields(array('comment'));
-    $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row','link_type_id','formula_id','word_id_col','word_id_col2','excluded'));
+    $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row','link_type_id',formula::FLD_ID,'word_id_col','word_id_col2',user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -704,7 +704,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
-    $db_con->set_fields(array(sql_db::FLD_DESCRIPTION,'excluded'));
+    $db_con->set_fields(array(sql_db::FLD_DESCRIPTION,user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT word_link_id,
@@ -723,7 +723,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
     $db_con->set_fields(array('word_type_id'));
-    $db_con->set_usr_num_fields(array('excluded'));
+    $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -745,7 +745,7 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the verb_list load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
-    $db_con->set_usr_num_fields(array('excluded'));
+    $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
     $db_con->set_join_fields(array(sql_db::FLD_CODE_ID,'verb_name','name_plural','name_reverse','name_plural_reverse','formula_name',sql_db::FLD_DESCRIPTION), DB_TYPE_VERB);
     $db_con->set_fields(array('verb_id'));
     $db_con->set_where_text('s.to_phrase_id = 2');
@@ -864,7 +864,7 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // ... similar with joined fields
     $db_con->set_type(DB_TYPE_FORMULA);
-    $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', 'excluded'));
+    $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
     $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
     $db_con->set_where(1, '');
     $created_sql = $db_con->select();
@@ -888,7 +888,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_type(DB_TYPE_FORMULA);
     $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
     $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
-    $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', 'excluded'));
+    $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1, '');
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";
@@ -916,7 +916,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
     $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-    $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, 'excluded'));
+    $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, user_sandbox::FLD_EXCLUDED));
     $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
     $db_con->set_where_text('s.phrase_group_id = 1');
     $created_sql = $db_con->select();
@@ -942,7 +942,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // ... same for a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_fields(array('from_phrase_id', 'to_phrase_id', 'verb_id', 'word_type_id'));
-    $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION, 'excluded'));
+    $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION, user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('s.word_link_id = 1');
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";
@@ -965,7 +965,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the view_component_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
     $db_con->set_link_fields('view_id', 'view_component_id');
-    $db_con->set_fields(array('order_nbr', 'position_type', 'excluded'));
+    $db_con->set_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -982,7 +982,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the view_component_link load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
     $db_con->set_link_fields('view_id', 'view_component_id');
-    $db_con->set_usr_num_fields(array('order_nbr', 'position_type', 'excluded'));
+    $db_con->set_usr_num_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1, 2, 3);
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";
@@ -1001,8 +1001,8 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the formula_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
-    $db_con->set_link_fields('formula_id', 'phrase_id');
-    $db_con->set_fields(array('link_type_id', 'excluded'));
+    $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+    $db_con->set_fields(array(formula_link::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT formula_link_id,
@@ -1016,8 +1016,8 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the formula_link load SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
-    $db_con->set_link_fields('formula_id', 'phrase_id');
-    $db_con->set_usr_num_fields(array('link_type_id', 'excluded'));
+    $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+    $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_link(1);
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";
@@ -1037,7 +1037,7 @@ function run_user_sandbox_unit_tests(testing $t)
 
     // test the view_component load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
-    $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row','link_type_id','formula_id','word_id_col','word_id_col2','excluded'));
+    $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row','link_type_id',formula::FLD_ID,'word_id_col','word_id_col2',user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1);
     $created_sql = $db_con->select();
     $expected_sql = "SELECT view_component_id,
@@ -1058,7 +1058,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
     $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), DB_TYPE_VIEW_COMPONENT_TYPE);
     $db_con->set_usr_fields(array('comment'));
-    $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row','link_type_id','formula_id','word_id_col','word_id_col2','excluded'));
+    $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row','link_type_id',formula::FLD_ID,'word_id_col','word_id_col2',user_sandbox::FLD_EXCLUDED));
     $db_con->set_where(1);
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";
@@ -1086,7 +1086,7 @@ function run_user_sandbox_unit_tests(testing $t)
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
-    $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'word_type_id', 'excluded'));
+    $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, 'word_type_id', user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
@@ -1107,7 +1107,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_link_fields('from_phrase_id','to_phrase_id','verb_id');
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
     $db_con->set_fields(array('word_type_id'));
-    $db_con->set_usr_num_fields(array('excluded'));
+    $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('word_link_id = 1');
     $created_sql = $db_con->select();
     $sql_avoid_code_check_prefix = "SELECT";
@@ -1146,7 +1146,7 @@ function run_user_sandbox_unit_tests(testing $t)
                        " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
                        " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                        " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                       " . $db_con->get_usr_field('excluded', 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
+                       " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM " . $sql_from . " 
              LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
                                       AND u.user_id = 1 
@@ -1180,7 +1180,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      u.value_id AS user_value_id,
                      v.user_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('excluded', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                      v.phrase_group_id,
@@ -1286,7 +1286,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
     //$db_con->set_join_fields(array('position_type'), 'position_type');
     $db_con->set_fields(array('view_id','view_component_id'));
-    $db_con->set_usr_num_fields(array('order_nbr','position_type','excluded'));
+    $db_con->set_usr_num_fields(array('order_nbr','position_type',user_sandbox::FLD_EXCLUDED));
     $db_con->set_where_text('s.view_component_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT s.view_component_link_id,
@@ -1499,7 +1499,7 @@ function run_user_sandbox_unit_tests(testing $t)
                        v.name_plural_reverse,
                        v.formula_name,
                        v.description,
-                       " . $db_con->get_usr_field('excluded', 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
                        " . $sql_wrd1_fields . "
                        " . $sql_wrd2_fields . "
                   FROM word_links l
@@ -1585,7 +1585,7 @@ function run_user_sandbox_unit_tests(testing $t)
                        v.name_plural_reverse,
                        v.formula_name,
                        v.description,
-                       " . $db_con->get_usr_field('excluded', 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
+                       " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'ul', sql_db::FLD_FORMAT_VAL) . ",
                        " . $sql_wrd1_fields . "
                        " . $sql_wrd2_fields . "
                   FROM word_links l

@@ -79,7 +79,7 @@ function run_word_list_unit_tests(testing $t)
     $db_con->set_type(DB_TYPE_WORD);
     $db_con->set_usr($usr->id);
     $db_con->set_usr_fields(array('plural',sql_db::FLD_DESCRIPTION));
-    $db_con->set_usr_num_fields(array('word_type_id','excluded'));
+    $db_con->set_usr_num_fields(array('word_type_id',user_sandbox::FLD_EXCLUDED));
     $db_con->set_fields(array('values'));
     $db_con->set_where_text('s.word_id IN (1,2,3)');
     $db_con->set_order_text('s.values DESC, word_name');

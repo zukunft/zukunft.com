@@ -299,7 +299,7 @@ class word_link extends word_link_object
             $db_con->set_type(DB_TYPE_WORD_LINK);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, 'word_type_id', 'excluded', 'user_id'));
+            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, 'word_type_id', self::FLD_EXCLUDED, user_sandbox::FLD_USER));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
 
@@ -380,7 +380,7 @@ class word_link extends word_link_object
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
             $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
             $db_con->set_fields(array('word_type_id'));
-            $db_con->set_usr_num_fields(array('excluded', sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
+            $db_con->set_usr_num_fields(array(self::FLD_EXCLUDED, sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
         }
@@ -953,7 +953,7 @@ class word_link extends word_link_object
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK);
-                $log_id = $db_con->insert(array('word_link_id', 'user_id'), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('word_link_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_word_link failed.');
                     $result = false;
@@ -992,7 +992,7 @@ class word_link extends word_link_object
         if ($usr_cfg['word_link_id'] > 0) {
             if ($usr_cfg['word_link_name'] == Null
                 and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
-                and $usr_cfg['excluded'] == Null) {
+                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $result = $this->del_usr_cfg_exe($db_con);
@@ -1080,7 +1080,7 @@ class word_link extends word_link_object
      * set the update parameters for the phrase link name
      */
     private
-    function save_field_name($db_con, $db_rec, $std_rec): string
+    function save_field_name(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
 
@@ -1103,7 +1103,7 @@ class word_link extends word_link_object
     /**
      * set the update parameters for the phrase link description
      */
-    function save_field_description($db_con, $db_rec, $std_rec): string
+    function save_field_description(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = '';
         if ($db_rec->description <> $this->description) {
@@ -1121,7 +1121,7 @@ class word_link extends word_link_object
     /**
      * save all updated word_link fields excluding id fields (from, verb and to), because already done when adding a word_link
      */
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
     {
         $result = $this->save_field_name($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_description($db_con, $db_rec, $std_rec);

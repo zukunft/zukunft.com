@@ -128,14 +128,14 @@ class formula_value_list
                         $fv = new formula_value;
                         $fv->usr = $this->usr;
                         $fv->id = $val_row['formula_value_id'];
-                        $fv->frm_id = $val_row['formula_id'];
+                        $fv->frm_id = $val_row[formula::FLD_ID];
                         $fv->src_phr_grp_id = $val_row['source_phrase_group_id'];
                         $fv->src_time_id = $val_row['source_time_word_id'];
                         $fv->phr_grp_id = $val_row['phrase_group_id'];
                         $fv->time_id = $val_row['time_word_id'];
                         $fv->value = $val_row['formula_value'];
                         // todo get user for the case that not all value are for the same unser
-                        //$fv->usr            = $val_row['user_id'];
+                        //$fv->usr            = $val_row[user_sandbox::FLD_USER];
 
                         log_debug('formula_value_list->load_frm get words');
                         $fv->load_phrases();
@@ -351,7 +351,7 @@ class formula_value_list
             // build the single calculation request
             $calc_row = array();
             $calc_row['usr_id'] = $this->usr->id;
-            $calc_row['frm_id'] = $frm_row['formula_id'];
+            $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
             $calc_row['frm_name'] = $frm_row['formula_name'];
             $calc_row['frm_text'] = $frm_row['formula_text'];
             $calc_row['phr_ids'] = $phr_ids;
@@ -629,14 +629,14 @@ class formula_value_list
         $db_lst = $db_con->get($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_fv) {
-                $frm_id = $db_fv['formula_id'];
+                $frm_id = $db_fv[formula::FLD_ID];
                 $formula_text = $db_fv['formula_text'];
                 $formula_value = zuc_math_parse($formula_text, $phr_lst->ids, $time_phr);
                 // if the formula value is empty use the id to be able to select the formula
                 if ($formula_value == '') {
-                    $formula_value = $db_fv['formula_id'];
+                    $formula_value = $db_fv[formula::FLD_ID];
                 }
-                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv['formula_id'] . '&back=' . $back . '">' . $formula_value . '</a> ';
+                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv[formula::FLD_ID] . '&back=' . $back . '">' . $formula_value . '</a> ';
             }
         }
 

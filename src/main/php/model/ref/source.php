@@ -455,7 +455,7 @@ class source extends user_sandbox
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
-                $log_id = $db_con->insert(array('source_id', 'user_id'), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_source failed.');
                     $result = false;
@@ -497,11 +497,11 @@ class source extends user_sandbox
                 and $usr_wrd_cfg['url'] == ''
                 and $usr_wrd_cfg['comment'] == ''
                 and $usr_wrd_cfg['source_type_id'] == Null
-                and $usr_wrd_cfg['excluded'] == Null) {
+                and $usr_wrd_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
                 log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
-                if ($db_con->delete(array('source_id', 'user_id'), array($this->id, $this->usr->id))) {
+                if ($db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id))) {
                     $result = true;
                 } else {
                     log_err('Deletion of user_source failed.');
