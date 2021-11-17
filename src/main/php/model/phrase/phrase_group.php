@@ -1033,7 +1033,7 @@ class phrase_group
 
     // create links to the group from words or triples for faster selection of the phrase groups based on single words or triples
     // word and triple links are saved in two different tables to be able use the database foreign keys
-    private function save_phr_links($type)
+    private function save_phr_links($type): string
     {
         log_debug('phrase_group->save_phr_links');
 
@@ -1097,10 +1097,8 @@ class phrase_group
             }
             if ($sql <> '') {
                 //$sql_result = $db_con->exe($sql, 'phrase_group->save_phr_links', array());
-                $sql_result = $db_con->exe($sql);
-                if ($sql_result === False) {
-                    $result .= 'Error adding new group links "' . dsp_array($add_ids) . '" for ' . $this->id . '.';
-                }
+                $result = $db_con->exe_try('Adding of group links "' . dsp_array($add_ids) . '" for ' . $this->id,
+                    $sql);
             }
         }
         log_debug('phrase_group->save_phr_links -> added links "' . dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
@@ -1113,13 +1111,12 @@ class phrase_group
                WHERE phrase_group_id = ' . $this->id . '
                  AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
             //$sql_result = $db_con->exe($sql, "phrase_group->delete_phr_links", array());
-            $sql_result = $db_con->exe($sql);
-            if ($sql_result === False) {
-                $result .= 'Error removing group links "' . dsp_array($del_ids) . '" from ' . $this->id . '.';
-            }
+            $result = $db_con->exe_try('Removing of group links "' . dsp_array($del_ids) . '" from ' . $this->id,
+                $sql);
         }
         log_debug('phrase_group->save_phr_links -> deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
 
+        return $result;
     }
 
     /**

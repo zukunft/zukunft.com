@@ -31,7 +31,7 @@
   
 */
 
-class word extends word_link_object
+class word extends user_sandbox_description
 {
     // object specific database and JSON object field names
     // means: database fields only used for words
@@ -1225,13 +1225,13 @@ class word extends word_link_object
 
     /**
      * check if the database record for the user specific settings can be removed
+     * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('word->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
+        $result = true;
 
         //if ($this->has_usr_cfg) {
 

@@ -40,12 +40,13 @@ function run_value_unit_tests(testing $t)
 
     $db_con = new sql_db();
 
-    // sql to load by word list by ids
+    // sql to load by word list by ids for PostgreSQL
     $val = new value;
     $val->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
     $val->time_id = 4;
     $val->usr = $usr;
-    $created_sql = $val->load_sql();
+    $db_con->db_type = sql_db::POSTGRES;
+    $created_sql = $val->load_sql($db_con);
     $expected_sql = "SELECT
                             value_id 
                        FROM values
@@ -57,7 +58,7 @@ function run_value_unit_tests(testing $t)
 
     // ... and check if the prepared sql name is unique
     $result = false;
-    $sql_name = $val->load_sql(true);
+    $sql_name = $val->load_sql($db_con, true);
     if (!in_array($sql_name, $sql_names)) {
         $result = true;
         $sql_names[] = $sql_name;
@@ -69,10 +70,10 @@ function run_value_unit_tests(testing $t)
     $db_con->db_type = sql_db::MYSQL;
     $val->time_id = 4;
     $val->usr = $usr;
-    $created_sql = $val->load_sql();
+    $created_sql = $val->load_sql($db_con);
     $sql_avoid_code_check_prefix = "SELECT";
     $expected_sql = $sql_avoid_code_check_prefix . " value_id 
-                           FROM values
+                           FROM `values`
                           WHERE phrase_group_id IN (SELECT l1.phrase_group_id 
                                                       FROM phrase_group_word_links l1 
                                                      WHERE l1.word_id = 1) 

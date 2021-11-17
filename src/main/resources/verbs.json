@@ -54,7 +54,7 @@
     },
     {
       "name": "is part of",
-      "code_id": "is_part_of",
+      "code_id": "contains",
       "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
       "name_plural_reverse": "contains",
       "name_plural": "is part of",

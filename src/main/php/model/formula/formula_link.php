@@ -29,7 +29,7 @@
   
 */
 
-class formula_link extends user_sandbox
+class formula_link extends user_sandbox_link
 {
 
     // list of the formula link types that have a coded functionality
@@ -39,6 +39,12 @@ class formula_link extends user_sandbox
     // the database and JSON object field names used only for formula links
     const FLD_ID = 'formula_link_id';
     const FLD_TYPE = 'link_type_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        self::FLD_TYPE,
+        self::FLD_EXCLUDED
+    );
 
     // database fields additional to the user sandbox fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
@@ -76,7 +82,7 @@ class formula_link extends user_sandbox
         $this->tob = new phrase();
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row[formula_link::FLD_ID] > 0) {
@@ -100,24 +106,6 @@ class formula_link extends user_sandbox
     /*
      * internal check function
      */
-
-    /**
-     * @return bool true if the object value are valid for identifying a unique formula link
-     */
-    private function is_unique(): bool
-    {
-        $result = false;
-        if ($this->id > 0) {
-            $result = true;
-        } else {
-            if ($this->fob != null and $this->tob != null) {
-                if ($this->fob->id > 0 and $this->tob->id > 0) {
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
 
     /**
      * @return bool true if the user is valid
@@ -546,31 +534,30 @@ class formula_link extends user_sandbox
 
     /**
      * check if the database record for the user specific settings can be removed
-     * @return bool true if the database row for the user changes has been removed
+     * @return bool true  if the checking and the potential removing has been successful,
+     *                       which does not mean, that the user sandbox database row has actually been removed
+     *              false if the deleting has cause an internal error
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('formula_link->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('formula_link->del_usr_cfg_if_not_needed for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
-
-        //if ($this->has_usr_cfg) {
+        $result = true;
 
         // check again if there ist not yet a record
         $sql = $this->load_user_sql($db_con);
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        log_debug('formula_link->del_usr_cfg_if_not_needed check for ' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($db_row[formula_link::FLD_ID] > 0) {
-            if ($db_row[formula_link::FLD_TYPE] == Null
-                and $db_row[self::FLD_EXCLUDED] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('formula_link->del_usr_cfg_if_not_needed any more for ' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($db_row) {
+            if ($db_row[formula_link::FLD_ID] > 0) {
+                // check if all fields are null
+                if (!$this->is_usr_cfg_used($db_row, self::FLD_NAMES)) {
+                    // actually delete the entry in the user sandbox
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
             }
         }
-        //}
         return $result;
     }
 
@@ -623,7 +610,7 @@ class formula_link extends user_sandbox
     function save_fields(sql_db $db_con, $db_rec, $std_rec): string
     {
         // link type not used at the moment
-        $result = $this->save_field_type     ($db_con, $db_rec, $std_rec);
+        $result = $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('formula_link->save_fields all fields for "' . $this->fob->name . '" to "' . $this->tob->name . '" has been saved');
         return $result;

@@ -138,7 +138,7 @@ function run_word_link_test(testing $t)
     $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->del();
-    $target = true;
+    $target = '';
     $t->dsp('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
@@ -189,7 +189,7 @@ function run_word_link_test(testing $t)
     $lnk->to->id = $wrd->id;
     $lnk->load();
     $result = $lnk->del();
-    $target = true;
+    $target = '';
     $t->dsp('triple->del "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging

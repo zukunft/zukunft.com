@@ -1187,7 +1187,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      v.time_word_id,
                      g.word_ids,
                      g.triple_ids
-                FROM phrase_groups g, " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
+                FROM phrase_groups g, " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = 1
                WHERE g.phrase_group_id = v.phrase_group_id 

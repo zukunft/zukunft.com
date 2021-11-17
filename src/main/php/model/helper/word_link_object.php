@@ -30,7 +30,7 @@
   
 */
 
-class word_link_object extends user_sandbox_description
+class word_link_object extends user_sandbox_link_description
 {
 
 }

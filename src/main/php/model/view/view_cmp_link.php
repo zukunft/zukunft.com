@@ -35,11 +35,22 @@
   
 */
 
-class view_cmp_link extends user_sandbox
+class view_cmp_link extends user_sandbox_link
 {
 
     const POS_BELOW = 1;  // the view component is placed below the previous component
     const POS_SIDE = 2;   // the view component is placed on the right (or left for right to left writing) side of the previous component
+
+    // the database and JSON object field names used only for formula links
+    const FLD_ID = 'view_component_link_id';
+    const FLD_ORDER_NBR = 'order_nbr';
+    const FLD_POS_TYPE = 'position_type';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        self::FLD_POS_TYPE,
+        self::FLD_EXCLUDED
+    );
 
     public ?int $view_id = null;            // the id of the view to which the display item should be linked
     public ?int $view_component_id = null;  // the id of the linked display item
@@ -59,28 +70,26 @@ class view_cmp_link extends user_sandbox
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
     }
 
-    // reset the in memory fields used e.g. if some ids are updated
-    private function reset_objects()
-    {
-        $this->fob = null; // the display (view) object (used to save the correct name in the log)
-        $this->tob = null; // the display component (view entry) object (used to save the correct name in the log)
-    }
-
     function reset()
     {
-        $this->id = null;
-        $this->usr_cfg_id = null;
-        $this->usr = null;
-        $this->owner_id = null;
-        $this->excluded = null;
+        parent::reset();
+
+        $this->reset_objects();
 
         $this->view_id = null;
         $this->view_component_id = null;
         $this->order_nbr = null;
         $this->pos_type_id = null;
         $this->pos_code = null;
+    }
 
-        $this->reset_objects();
+    /**
+     * reset the in memory fields used e.g. if some ids are updated
+     */
+    private function reset_objects()
+    {
+        $this->fob = new view(); // the display (view) object (used to save the correct name in the log)
+        $this->tob = new view_cmp(); // the display component (view entry) object (used to save the correct name in the log)
     }
 
     // build the sql where string
@@ -99,16 +108,16 @@ class view_cmp_link extends user_sandbox
     private function row_mapper($db_row, $map_usr_fields = false)
     {
         if ($db_row != null) {
-            if ($db_row['view_component_link_id'] > 0) {
-                $this->id = $db_row['view_component_link_id'];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
                 $this->owner_id = $db_row[self::FLD_USER];
-                $this->view_id = $db_row['view_id'];
-                $this->view_component_id = $db_row['view_component_id'];
-                $this->order_nbr = $db_row['order_nbr'];
-                $this->pos_type_id = $db_row['position_type'];
+                $this->view_id = $db_row[view::FLD_ID];
+                $this->view_component_id = $db_row[view_cmp::FLD_ID];
+                $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
+                $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_view_component_link_id'];
+                    $this->usr_cfg_id = $db_row[sql_db::USER_PREFIX . $this->obj_name . sql_db::FLD_EXT_ID];
                 }
             } else {
                 $this->id = 0;
@@ -116,6 +125,35 @@ class view_cmp_link extends user_sandbox
         } else {
             $this->id = 0;
         }
+    }
+
+    /*
+     * internal check function
+     */
+
+    /**
+     * create an SQL statement to retrieve the parameters of the standard view component link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_standard_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = self::class . '_standard_by_' . $this->load_sql_name_extension();
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_fields(array(sql_db::FLD_USER_ID));
+        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
+        $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
+        $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
     }
 
     // load the view component link parameters for all users
@@ -137,8 +175,8 @@ class view_cmp_link extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
-        $db_con->set_link_fields('view_id', 'view_component_id');
-        $db_con->set_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED, user_sandbox::FLD_USER));
+        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $sql = $db_con->select();
 
@@ -166,8 +204,8 @@ class view_cmp_link extends user_sandbox
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_link_fields('view_id', 'view_component_id');
-        $db_con->set_usr_num_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED));
+        $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
+        $db_con->set_usr_num_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $sql = $db_con->select();
 
@@ -499,12 +537,12 @@ class view_cmp_link extends user_sandbox
             $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['view_component_link_id'];
+                $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW_COMPONENT_LINK);
-                $log_id = $db_con->insert(array('view_component_link_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_view_component_link failed.');
                     $result = false;
@@ -517,12 +555,16 @@ class view_cmp_link extends user_sandbox
     }
 
     // check if the database record for the user specific settings can be removed
+    /**
+     * check if the database record for the user specific settings can be removed
+     * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
+     */
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('view_component_link->del_usr_cfg_if_not_needed pre check for ' . $this->dsp_id());
 
         global $db_con;
-        $result = false;
+        $result = true;
 
         //if ($this->has_usr_cfg) {
 
@@ -537,14 +579,12 @@ class view_cmp_link extends user_sandbox
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($sql);
-        log_debug('view_component_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' with (' . $sql . ')');
         if ($usr_cfg != false) {
-            if ($usr_cfg['view_component_link_id'] > 0) {
-                if ($usr_cfg['order_nbr'] == Null
-                    and $usr_cfg['position_type'] == Null
+            if ($usr_cfg[self::FLD_ID] > 0) {
+                if ($usr_cfg[self::FLD_ORDER_NBR] == Null
+                    and $usr_cfg[self::FLD_POS_TYPE] == Null
                     and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
-                    log_debug('view_component_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id());
                     $result = $this->del_usr_cfg_exe($db_con);
                 }
             }
@@ -564,7 +604,7 @@ class view_cmp_link extends user_sandbox
             $log->new_value = $this->order_nbr;
             $log->std_value = $std_rec->order_nbr;
             $log->row_id = $this->id;
-            $log->field = 'order_nbr';
+            $log->field = self::FLD_ORDER_NBR;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -583,7 +623,7 @@ class view_cmp_link extends user_sandbox
             $log->std_value = $std_rec->pos_type_name();
             $log->std_id = $std_rec->pos_type_id;
             $log->row_id = $this->id;
-            $log->field = 'position_type';
+            $log->field = self::FLD_POS_TYPE;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;

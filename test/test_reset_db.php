@@ -144,8 +144,12 @@ function run_table_truncate(string $table_name)
 {
     global $db_con;
 
-    $sql = 'TRUNCATE ' . $db_con->get_table_name($table_name) . ' CASCADE;';
-    $db_con->exe($sql);
+    $sql = 'TRUNCATE ' . $db_con->get_table_name_esc($table_name) . ' CASCADE;';
+    try {
+        $db_con->exe($sql);
+    } catch (Exception $e) {
+        log_err('Cannot truncate table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
+    }
 }
 
 function run_db_seq_reset()
@@ -205,6 +209,10 @@ function run_seq_reset(string $seq_name)
     global $db_con;
 
     $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART 1;';
-    $db_con->exe($sql);
+    try {
+        $db_con->exe($sql);
+    } catch (Exception $e) {
+        log_err('Cannot do sequence reset with "' . $sql . '" because: ' . $e->getMessage());
+    }
 }
 

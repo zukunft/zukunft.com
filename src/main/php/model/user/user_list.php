@@ -37,7 +37,8 @@ class user_list
     public ?array $lst = null;  // the list of users
     public array $code_id_hash = [];
 
-    // fill the user objects of the list based on an sql
+    // fill the user objects of the list based on a sql
+    // TODO review
     private function load_sql($sql, sql_db $db_con)
     {
 

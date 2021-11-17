@@ -36,7 +36,7 @@ class verb
 
     // predefined word link types or verbs
     const IS_A = "is";
-    const IS_PART_OF = "is_part_of";
+    const IS_PART_OF = "contains";
     const DBL_FOLLOW = "follow";
     const DBL_DIFFERENTIATOR = "can_contain";
     const DBL_CAN_BE = "can_be";
@@ -746,27 +746,31 @@ class verb
         return $result;
     }
 
-    // exclude or delete a verb
-    function del(): bool
+    /**
+     * exclude or delete a verb
+     * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     */
+    function del(): string
     {
         log_debug('verb->del');
 
         global $db_con;
-        $result = false;
+        $result = '';
 
-        $result .= $this->load();
-        if ($this->id > 0 and $result == '') {
-            log_debug('verb->del ' . $this->dsp_id());
-            if ($this->can_change()) {
-                $log = $this->log_del();
-                if ($log->id > 0) {
-                    //$db_con = new mysql;
-                    $db_con->usr_id = $this->usr->id;
-                    $db_con->set_type(DB_TYPE_VERB);
-                    $result = $db_con->delete('verb_id', $this->id);
+        if ($this->load()) {
+            if ($this->id > 0) {
+                log_debug('verb->del ' . $this->dsp_id());
+                if ($this->can_change()) {
+                    $log = $this->log_del();
+                    if ($log->id > 0) {
+                        //$db_con = new mysql;
+                        $db_con->usr_id = $this->usr->id;
+                        $db_con->set_type(DB_TYPE_VERB);
+                        $result = $db_con->delete('verb_id', $this->id);
+                    }
+                } else {
+                    // todo: create a new verb and request to delete the old
                 }
-            } else {
-                // todo: create a new verb and request to delete the old
             }
         }
         return $result;

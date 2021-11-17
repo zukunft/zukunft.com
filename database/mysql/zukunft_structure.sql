@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS `calc_and_cleanup_tasks`
     `calc_and_cleanup_task_id`      int(11)   NOT NULL,
     `user_id`                       int(11)   NOT NULL,
     `request_time`                  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `start_time`                    timestamp NOT NULL,
-    `end_time`                      timestamp NOT NULL,
+    `start_time`                    timestamp          DEFAULT NULL,
+    `end_time`                      timestamp          DEFAULT NULL,
     `calc_and_cleanup_task_type_id` int(11)   NOT NULL,
     `row_id`                        int(11)   NOT NULL,
     `change_field_id`               int(11)            DEFAULT NULL
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `formula_links`
     `user_id`         int(11)    DEFAULT NULL,
     `formula_id`      int(11) NOT NULL,
     `phrase_id`       int(11) NOT NULL,
-    `link_type_id`    int(11) NOT NULL,
+    `link_type_id`    int(11)    DEFAULT NULL,
     `order_nbr`       int(11) NOT NULL,
     `excluded`        tinyint(4) DEFAULT NULL
 ) ENGINE = InnoDB

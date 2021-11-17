@@ -118,6 +118,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->remove_prefix(DB_TYPE_VIEW_COMPONENT_TYPE, 'code_id', 'dsp_comp_type_');
     $result .= $db_con->remove_prefix(DB_TYPE_VERB, 'code_id', 'vrb_');
     $result .= $db_con->change_code_id(DB_TYPE_VERB, 'vrb_contains', 'is_part_of');
+    $result .= $db_con->column_allow_null(DB_TYPE_WORD, 'plural');
     $result .= $db_con->column_allow_null(DB_TYPE_WORD_TYPE, 'word_symbol');
     $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_TABLE, 'description');
     $result .= $db_con->column_allow_null(DB_TYPE_CHANGE_FIELD, 'code_id');
@@ -125,22 +126,25 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->column_allow_null(DB_TYPE_VIEW_COMPONENT_TYPE, 'description');
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE, user_sandbox::FLD_EXCLUDED);
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE, 'protection_type_id');
+    $result .= $db_con->column_allow_null(DB_TYPE_FORMULA_LINK, 'link_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'source_name');
     $result .= $db_con->column_allow_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'url');
     $result .= $db_con->column_allow_null(DB_TYPE_SYS_LOG_FUNCTION, 'sys_log_function_name');
+    $result .= $db_con->column_allow_null(DB_TYPE_TASK, 'start_time');
+    $result .= $db_con->column_allow_null(DB_TYPE_TASK, 'end_time');
     $result .= $db_con->column_force_not_null(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE, 'user_id');
     // TODO set default profile_id in users to 1
     if ($db_con->db_type == sql_db::MYSQL) {
         $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';
-        $db_con->exe($sql);
+        $result .= $db_con->exe_try('Setting missing user profiles', $sql);
         $sql = 'UPDATE' . ' `users` SET `dt` = CURRENT_TIMESTAMP WHERE `users`.`dt` = 0';
-        $db_con->exe($sql);
+        $result .= $db_con->exe_try('Filling missing timestamps for users', $sql);
         $sql = 'UPDATE' . ' `users` SET `last_logoff` = CURRENT_TIMESTAMP WHERE `users`.`last_logoff` = 0';
-        $db_con->exe($sql);
+        $result .= $db_con->exe_try('Filling missing logoff timestamps for users', $sql);
         $sql = 'UPDATE' . ' `users` SET `activation_key_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_key_timeout` = 0';
-        $db_con->exe($sql);
+        $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
     }
     $result .= $db_con->add_foreign_key('users_fk_2', DB_TYPE_USER, 'user_profile_id', DB_TYPE_USER_PROFILE, 'profile_id');
     // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links

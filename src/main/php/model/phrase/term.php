@@ -123,6 +123,7 @@ class term
 
     /**
      * simply load a formula
+     * without fixing any missing related word issues
      */
     private function load_formula(): bool
     {
@@ -130,7 +131,7 @@ class term
         $frm = new formula;
         $frm->name = $this->name;
         $frm->usr = $this->usr;
-        if ($frm->load()) {
+        if ($frm->load(false)) {
             $this->id = $frm->id;
             $this->type = formula::class;
             $this->obj = $frm;

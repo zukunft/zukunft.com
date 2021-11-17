@@ -86,7 +86,7 @@ function run_view_component_link_test(testing $t)
     $dsp->usr = $t->usr2;
     $dsp->load();
     $result = $cmp->unlink($dsp);
-    $target = '1';
+    $target = '';
     $t->dsp('view component_link->unlink "' . $dsp->name . '" from "' . $cmp->name . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
@@ -121,7 +121,7 @@ function run_view_component_link_test(testing $t)
 
     // if the first user also removes the link, both records should be deleted
     $result = $cmp->unlink($dsp);
-    $target = '1';
+    $target = '';
     $t->dsp('view component_link->unlink "' . $dsp->name . '" from "' . $cmp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging
@@ -267,12 +267,12 @@ function run_view_component_link_test(testing $t)
     // cleanup the component link test
     // unlink the first component
     $result = $cmp->unlink($dsp);
-    $target = '1';
+    $target = '';
     $t->dsp('view component_link->unlink again first component "' . $dsp->name . '" from "' . $cmp->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // unlink the second component
     $result = $cmp2->unlink($dsp);
-    $target = '1';
+    $target = '';
     $t->dsp('view component_link->unlink again second component "' . $dsp->name . '" from "' . $cmp2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
 

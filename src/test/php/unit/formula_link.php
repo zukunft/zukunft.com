@@ -134,16 +134,6 @@ function run_formula_link_unit_tests(testing $t)
                         AND user_id = 1;";
     $t->dsp('formula_link->load_user_sql by formula link id', zu_trim($expected_sql), zu_trim($created_sql));
 
-    // ... and check if the prepared sql name is unique
-    $result = false;
-    $sql_name = $lnk->load_standard_sql($db_con, true);
-    if (!in_array($sql_name, load_user_sql)) {
-        $result = true;
-        $sql_names[] = $sql_name;
-    }
-    $target = true;
-    $t->dsp('formula_link->load_user_sql by formula link id check sql name', $result, $target);
-
     // sql to check if no one else has changed the formula link
     $lnk = new formula_link();
     $lnk->id = 2;

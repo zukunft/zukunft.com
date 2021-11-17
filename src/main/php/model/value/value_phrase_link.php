@@ -268,10 +268,12 @@ class val_lnk
         log_debug("val_lnk->save ... done");
     }
 
-    // remove a link
-    // the user id is the user who has requested the change,
-    // but it is a parameter and not part of the object, because there are not user specific value word links
-    function del($user_id)
+    /**
+     * remove a link
+     * the user id is the user who has requested the change,
+     * but it is a parameter and not part of the object, because there are not user specific value word links
+     */
+    function del($user_id): string
     {
         log_debug("val_lnk->del (v" . $this->val_id . ",t" . $this->wrd->id . ",u" . $user_id . ")");
 
@@ -297,5 +299,3 @@ class val_lnk
     }
 
 }
-
-?>

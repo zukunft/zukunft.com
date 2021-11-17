@@ -235,7 +235,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     user_id         bigint   DEFAULT NULL,
     formula_id      bigint NOT NULL,
     phrase_id       bigint NOT NULL,
-    link_type_id    bigint NOT NULL,
+    link_type_id    bigint   DEFAULT NULL,
     order_nbr       bigint NOT NULL,
     excluded        smallint DEFAULT NULL
 );

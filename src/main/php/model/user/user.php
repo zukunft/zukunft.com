@@ -283,7 +283,7 @@ class user
     }
 
     // get the active session user object
-    function get()
+    function get(): string
     {
         $result = ''; // for the result message e.g. if the user is blocked
 

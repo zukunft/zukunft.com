@@ -67,7 +67,7 @@ class value_list
                      v.time_word_id,
                      g.word_ids,
                      g.triple_ids
-                FROM phrase_groups g, " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
+                FROM phrase_groups g, " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = " . $this->usr->id . " 
                WHERE g.phrase_group_id = v.phrase_group_id 
@@ -121,7 +121,7 @@ class value_list
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                      v.phrase_group_id,
                      v.time_word_id
-                FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
+                FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
            LEFT JOIN user_values u ON u.value_id = v.value_id 
                                   AND u.user_id = " . $this->usr->id . " 
                WHERE v.value_id IN ( SELECT value_id 
@@ -179,7 +179,7 @@ class value_list
                     " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                       v.phrase_group_id,
                       v.time_word_id
-                  FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
+                  FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
             LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->usr->id . " 
                 WHERE v.value_id IN ( SELECT value_id 
@@ -257,12 +257,12 @@ class value_list
                        v.user_id,
                        v.phrase_group_id,
                        v.time_word_id
-                  FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
+                  FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
              LEFT JOIN user_values u ON u.value_id = v.value_id 
                                     AND u.user_id = " . $this->usr->id . " 
                  WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
                                          FROM " . $sql_from . "
-                                              " . $db_con->get_table_name(DB_TYPE_VALUE) . " v
+                                              " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v
                                               " . $sql_where . " )
               ORDER BY v.phrase_group_id, v.time_word_id;";
         }
@@ -688,7 +688,7 @@ class value_list
                     v.excluded, 
                     u.excluded AS user_excluded 
                 FROM value_phrase_links l,
-                    " . $db_con->get_table_name(DB_TYPE_VALUE) . " v 
+                    " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
           LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $user_id . " 
               WHERE l.value_id = v.value_id
                 AND l.phrase_id NOT IN (" . implode(",", $phr_ids) . ")

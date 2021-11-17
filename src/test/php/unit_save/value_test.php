@@ -204,7 +204,7 @@ function run_value_test(testing $t)
     $mio_val->load();
     $fig = $mio_val->figure();
     $result = $fig->display_linked('1');
-    $target = '<a href="/http/value_edit.php?id=2&back=1"  >1.55</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != null) {
         if (in_array('view', $diff)) {
@@ -225,7 +225,7 @@ function run_value_test(testing $t)
     // test the HTML code creation including the hyperlink
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-    $target = '<a href="/http/value_edit.php?id=2&back=1"  >1.55</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != null) {
         if (in_array('view', $diff)) {
@@ -242,7 +242,7 @@ function run_value_test(testing $t)
     $mio_val->number = value::TEST_VALUE;
     $result = $mio_val->display_linked('1');
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-    $target = '<a href="/http/value_edit.php?id=2&back=1"  >123\'456</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >123\'456</a>';
     $diff = str_diff($result, $target);
     if ($diff != null) {
         if (in_array('view', $diff)) {

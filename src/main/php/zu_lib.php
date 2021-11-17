@@ -6,6 +6,9 @@
   __________
 
 TODO fix syntax suggestions
+TODO if a functions failure needs some user action a string the the suggested action is returned e.g. save() and add()
+TODO if a function failure needs only admin or dev action an exception is raised and the function returns true or false
+TODO if an internal failure is expected not to be fixable without user interaction, the user should ge a failure link for the follow up actions
 TODO capsule in classes
 TODO create unit tests
 TODO cleanup object by removing duplicates
@@ -158,6 +161,8 @@ const DB_FIELD_EXT_NAME = '_name';
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
 
+const ROOT_PATH = '../';
+
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_com; // the database connection
@@ -177,22 +182,24 @@ $sys_time_start = time();
 $sys_time_limit = time() + 2;
 $sys_log_msg_lst = array();
 
-
+/*
 global $root_path;
 
 if ($root_path == '') {
     $root_path = '../';
 }
+*/
 
 // set the paths of the program code
-$path_php = $root_path . 'src/main/php/'; // path of the main php source code
+$path_php = ROOT_PATH . 'src/main/php/'; // path of the main php source code
 
 // database links
-include_once $root_path . 'database/sql_db.php';
+include_once ROOT_PATH . 'database/sql_db.php';
 include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/system/log.php';
 include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
 include_once $path_php . 'model/system/ip_range.php';
@@ -214,6 +221,10 @@ include_once $path_php . 'model/user/user_log_link.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
 include_once $path_php . 'model/sandbox/user_sandbox.php';
+include_once $path_php . 'model/sandbox/user_sandbox_named.php';
+include_once $path_php . 'model/sandbox/user_sandbox_value.php';
+include_once $path_php . 'model/sandbox/user_sandbox_link.php';
+include_once $path_php . 'model/sandbox/user_sandbox_link_description.php';
 include_once $path_php . 'model/sandbox/user_sandbox_description.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
@@ -289,7 +300,7 @@ include_once $path_php . 'model/view/view_cmp_link.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
 
 // include all other libraries that are usually needed
-include_once $root_path . 'db_link/zu_lib_sql_link.php';
+include_once ROOT_PATH . 'db_link/zu_lib_sql_link.php';
 include_once $path_php . 'service/db_code_link.php';
 include_once $path_php . 'service/zu_lib_sql_code_link.php';
 include_once $path_php . 'service/config.php';
@@ -440,7 +451,7 @@ const ZUH_IMG_EDIT_FA = "fa-edit";
 const ZUH_IMG_DEL_FA = "fa-times-circle";
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
-define("PATH_BASE_CONFIG_FILES", $root_path . 'src/main/resources/');
+define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 define("BASE_CODE_LINK_FILES", serialize(array(
     'calc_and_cleanup_task_types',
@@ -481,7 +492,7 @@ define("BASE_CONFIG_FILES", serialize(array(
 )));
 
 # list of all static import files for testing the system consistency
-define("PATH_TEST_IMPORT_FILES", $root_path . 'src/test/resources/');
+define("PATH_TEST_IMPORT_FILES", ROOT_PATH . 'src/test/resources/');
 define("TEST_IMPORT_FILE_LIST", serialize(array(
     'companies.json',
     'ABB_2013.json',
@@ -533,6 +544,7 @@ function log_debug($msg_text, $debug_overwrite = null)
 // $function_trace  is the complete system trace to get more details
 // $usr             is the user id who has probably seen the error message
 // return           the text that can be shown to the user in the navigation bar
+// TODO return the link to the log message so that the user can trace the bug fixing
 function log_msg(string $msg_text,
                  string $msg_description,
                  string $msg_log_level,
@@ -638,22 +650,52 @@ function get_user_id(?user $calling_usr = null): int
     return $user_id;
 }
 
-function log_info(string $msg_text, string $function_name = '', string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
+function log_info(string $msg_text,
+                  string $function_name = '',
+                  string $msg_description = '',
+                  string $function_trace = '',
+                  ?user $calling_usr = null): string
 {
-    return log_msg($msg_text, $msg_description, sys_log_level::INFO, $function_name, $function_trace, get_user_id($calling_usr));
+    return log_msg($msg_text,
+        $msg_description,
+        sys_log_level::INFO,
+        $function_name, $function_trace,
+        get_user_id($calling_usr));
 }
 
-function log_warning(string $msg_text, string $function_name = '', string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
+function log_warning(string $msg_text,
+                     string $function_name = '',
+                     string $msg_description = '',
+                     string $function_trace = '',
+                     ?user $calling_usr = null): string
 {
-    return log_msg($msg_text, $msg_description, sys_log_level::WARNING, $function_name, $function_trace, get_user_id($calling_usr));
+    return log_msg($msg_text,
+        $msg_description,
+        sys_log_level::WARNING,
+        $function_name,
+        $function_trace,
+        get_user_id($calling_usr));
 }
 
-function log_err(string $msg_text, string $function_name = '', string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
+function log_err(string $msg_text,
+                 string $function_name = '',
+                 string $msg_description = '',
+                 string $function_trace = '',
+                 ?user $calling_usr = null): string
 {
-    return log_msg($msg_text, $msg_description, sys_log_level::ERROR, $function_name, $function_trace, get_user_id($calling_usr));
+    return log_msg($msg_text,
+        $msg_description,
+        sys_log_level::ERROR,
+        $function_name,
+        $function_trace,
+        get_user_id($calling_usr));
 }
 
-function log_fatal(string $msg_text, string $function_name, string $msg_description = '', string $function_trace = '', ?user $calling_usr = null): string
+function log_fatal(string $msg_text,
+                   string $function_name,
+                   string $msg_description = '',
+                   string $function_trace = '',
+                   ?user $calling_usr = null): string
 {
     echo 'FATAL ERROR! ' . $msg_text;
     // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible

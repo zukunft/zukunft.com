@@ -719,6 +719,32 @@ class testing
         }
     }
 
+    function load_word_link(string $from_name,
+                            string $verb_code_id,
+                            string $to_name): word_link
+    {
+        global $usr;
+        global $verbs;
+
+        $wrd_from = $this->load_word($from_name);
+        $wrd_to = $this->load_word($to_name);
+        $from = $wrd_from->phrase();
+        $to = $wrd_to->phrase();
+
+        $vrb = $verbs->get_verb($verb_code_id);
+
+        $lnk_test = new word_link;
+        if ($from->id > 0 or $to->id > 0) {
+            // check if the forward link exists
+            $lnk_test->from = $from;
+            $lnk_test->verb = $vrb;
+            $lnk_test->to = $to;
+            $lnk_test->usr = $usr;
+            $lnk_test->load();
+        }
+        return $lnk_test;
+    }
+
     /**
      * check if a word link exists and if not and requested create it
      * $phrase_name should be set if the standard name for the link should not be used
@@ -894,7 +920,9 @@ class testing
                 $test_result = true;
             }
         } else {
-            $result = $this->test_remove_color($result);
+            if ($result != null) {
+                $result = $this->test_remove_color($result);
+            }
             if ($result == $target) {
                 $test_result = true;
             }
@@ -1062,10 +1090,10 @@ function zu_test_time_setup(testing $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_word_link(TW_YEAR, verb::IS_A, $this_year, true, '');
+            $wrd_lnk = $t->test_word_link(TW_YEAR, verb::IS_A, $this_year);
             $result = $wrd_lnk->name;
             if ($prev_year <> '') {
-                $t->test_word_link($prev_year, verb::DBL_FOLLOW, $this_year, true, '');
+                $t->test_word_link($prev_year, verb::DBL_FOLLOW, $this_year);
             }
             $prev_year = $this_year;
         }

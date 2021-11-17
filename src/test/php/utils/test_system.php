@@ -69,7 +69,13 @@ function run_system_test(testing $t)
 
     $t->header('Test the user class (classes/user.php)');
 
-    $target = '<a href="/http/user.php?id=' . TEST_USER_ID . '">zukunft.com system test</a>';
+    // load by name
+    $usr_test->reset();
+    $usr_test = new user;
+    $usr_test->name = testing::USER_NAME;
+
+    $usr_test->load_test_user();
+    $target = '<a href="/http/user.php?id=' . $usr_test->id . '">zukunft.com system test</a>';
     $result = $usr->display();
     $t->dsp('user->load for id ' . $wrd_company->id, $target, $result);
 

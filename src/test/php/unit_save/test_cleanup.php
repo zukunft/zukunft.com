@@ -47,7 +47,7 @@ function run_test_cleanup(testing $t)
                 // check again, because some id may be added twice
                 if ($val->id > 0) {
                     $result = $val->del();
-                    $target = true;
+                    $target = '';
                     $t->dsp('value->del test value for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
                 }
             }
@@ -130,7 +130,7 @@ function run_test_cleanup(testing $t)
         $cmp = $t->load_view_component($cmp_name);
         if ($cmp->id > 0) {
             $result = $cmp->del();
-            $target = true;
+            $target = '';
             $t->dsp('view_component->del of "' . $cmp_name . '"', $target, $result);
         }
     }
@@ -140,7 +140,7 @@ function run_test_cleanup(testing $t)
         $dsp = $t->load_view($dsp_name);
         if ($dsp->id > 0) {
             $result = $dsp->del();
-            $target = true;
+            $target = '';
             $t->dsp('view->del of "' . $dsp_name . '"', $target, $result);
         }
     }
@@ -154,7 +154,7 @@ function run_test_cleanup(testing $t)
     // request to delete the test view component for user 2
     if ($cmp_usr2->id > 0) {
         $result = $cmp_usr2->del();
-        $target = true;
+        $target = '';
         $t->dsp('cleanup: del of first component "' . view_cmp::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -167,8 +167,7 @@ function run_test_cleanup(testing $t)
     // request to delete the test view component
     if ($cmp->id > 0) {
         $result = $cmp->del();
-        $target = true;
-        //$target = '';
+        $target = '';
         $t->dsp('cleanup: del of first component "' . view_cmp::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -178,8 +177,7 @@ function run_test_cleanup(testing $t)
     // request to delete the second added test view component
     if ($cmp2->id > 0) {
         $result = $cmp2->del();
-        $target = true;
-        //$target = '';
+        $target = '';
         $t->dsp('cleanup: del of second component "' . view_cmp::TN_ADD2 . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -199,7 +197,7 @@ function run_test_cleanup(testing $t)
     // request to delete the added test view for user 2 first
     if ($dsp_usr2->id > 0) {
         $result = $dsp_usr2->del();
-        $target = true;
+        $target = '';
         $t->dsp('cleanup: del of view "' . view::TN_ADD . '" for user 2', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -212,7 +210,7 @@ function run_test_cleanup(testing $t)
     // request to delete the added test view
     if ($dsp->id > 0) {
         $result = $dsp->del();
-        $target = true;
+        $target = '';
         $t->dsp('cleanup: del of view "' . view::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -221,7 +219,7 @@ function run_test_cleanup(testing $t)
         $dsp = $t->load_view($dsp_name);
         if ($dsp->id > 0) {
             $result = $dsp->del();
-            $target = true;
+            $target = '';
             $t->dsp('view->del of "' . $dsp_name . '"', $target, $result);
         }
     }
@@ -230,7 +228,7 @@ function run_test_cleanup(testing $t)
     $ref = $t->load_ref(word::TN_ADD, ref_type::WIKIDATA);
     if ($ref->id > 0) {
         $result = $ref->del();
-        $target = true;
+        $target = '';
         $t->dsp('ref->del of "' . word::TN_ADD . '"', $target, $result);
     }
 
@@ -239,7 +237,7 @@ function run_test_cleanup(testing $t)
         $dsp =$t->load_formula($frm_name);
         if ($dsp->id > 0) {
             $result = $dsp->del();
-            $target = true;
+            $target = '';
             $t->dsp('formula->del of "' . $frm_name . '"', $target, $result);
         }
     }
@@ -249,7 +247,7 @@ function run_test_cleanup(testing $t)
     $wrd = $t->load_word(word::TN_ADD);
     if ($wrd->id > 0) {
         $result = $wrd->del();
-        $target = '1';
+        $target = '';
         $t->dsp('word->del of "' . word::TN_ADD . '"', $target, $result);
     }
 
@@ -257,7 +255,7 @@ function run_test_cleanup(testing $t)
     $wrd = $t->load_word(word::TN_RENAMED);
     if ($wrd->id > 0) {
         $result = $wrd->del();
-        $target = true;
+        $target = '';
         $t->dsp('word->del of "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 
@@ -265,7 +263,7 @@ function run_test_cleanup(testing $t)
     $src = $t->load_source(source::TN_RENAMED);
     if ($src->id > 0) {
         $result = $src->del();
-        $target = true;
+        $target = '';
         $t->dsp('source->del of "' . source::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB);
     }
 

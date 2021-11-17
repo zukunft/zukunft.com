@@ -44,6 +44,10 @@ function run_formula_element_group_test(testing $t)
 
     $t->header('Test the formula element group list class (classes/formula_element_group_list.php)');
 
+    // load the test ids
+    $frm_this = $t->load_formula('this');
+    $frm_prior = $t->load_formula('prior');
+
     // load increase formula for testing
     $frm = $t->load_formula(formula::TN_INCREASE);
 
@@ -53,7 +57,7 @@ function run_formula_element_group_test(testing $t)
     $elm_grp_lst = $exp->element_grp_lst();
 
     $result = $elm_grp_lst->dsp_id();
-    $target = '"this" (18),"prior" (20) for user 2 (zukunft.com system test)';
+    $target = '"this" ('.$frm_this->id.'),"prior" ('.$frm_prior->id.') for user 2 (zukunft.com system test)';
     $t->dsp_contains(', formula_element_group_list->dsp_id', $target, $result);
 
 
@@ -77,23 +81,24 @@ function run_formula_element_group_test(testing $t)
 
         // test debug id first
         $result = $elm_grp->dsp_id();
-        $target = '"this" (18) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant","System Test Scaling Word e.g. millions"';
+        $target = '"this" ('.$frm_this->id.') and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant","System Test Scaling Word e.g. millions"';
         $t->dsp('formula_element_group->dsp_id', $target, $result);
 
         // test symbol for text replacement in the formula expression text
         $result = $elm_grp->build_symbol();
-        $target = '{f18}';
+        $target = '{f'.$frm_this->id.'}';
         $t->dsp('formula_element_group->build_symbol', $target, $result);
 
         // test the display name that can be used for user debugging
         $result = trim($elm_grp->dsp_names());
-        $target = trim('<a href="/http/formula_edit.php?id=18&back=">this</a>');
+        $target = trim('<a href="/http/formula_edit.php?id='.$frm_this->id.'&back=">this</a>');
         $t->dsp('formula_element_group->dsp_names', $target, $result);
 
         // test if the values for an element group are displayed correctly
         $time_phr = $phr_lst->assume_time();
         $result = $elm_grp->dsp_values($time_phr);
-        $target = '<a href="/http/value_edit.php?id=5&back="  >8.51</a>';
+        $fig_lst = $elm_grp->figures();
+        $target = '<a href="/http/value_edit.php?id='.$fig_lst->get_first_id().'&back="  >8.51</a>';
         $t->dsp('formula_element_group->dsp_values', $target, $result);
 
         // remember the figure list for the figure and figure list class test
@@ -118,7 +123,7 @@ function run_formula_element_group_test(testing $t)
 
                 $result = $fig->display_linked();
                 //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
-                $target = '<a href="/http/value_edit.php?id=5&back="  >8.51</a>';
+                $target = '<a href="/http/value_edit.php?id='.$fig->id.'&back="  >8.51</a>';
                 $t->dsp('figure->display_linked', $target, $result);
             }
         } else {
@@ -134,7 +139,8 @@ function run_formula_element_group_test(testing $t)
         //$target = htmlspecialchars("<font class=\"user_specific\">35'481</font> (438)");
         $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
         //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
-        $target = '8.51  (5)';
+        $fig_lst = $elm_grp->figures();
+        $target = '8.51  ('.$fig_lst->get_first_id().')';
         // to overwrite any special char
         $diff = str_diff($result, $target);
         if ($diff != null) {

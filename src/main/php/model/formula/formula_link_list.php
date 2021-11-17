@@ -46,14 +46,8 @@ class formula_link_list
             foreach ($db_rows as $db_row) {
                 if ($db_row[formula_link::FLD_ID] > 0) {
                     $frm_lnk = new formula_link;
-                    $frm_lnk->id = $db_row[formula_link::FLD_ID];
+                    $frm_lnk->row_mapper($db_row, true);
                     $frm_lnk->usr = $this->usr;
-                    $frm_lnk->usr_cfg_id = $db_row['user_link_id'];
-                    $frm_lnk->owner_id = $db_row[user_sandbox::FLD_USER];
-                    $frm_lnk->fob->id = $db_row[formula::FLD_ID];
-                    $frm_lnk->tob->id = $db_row[phrase::FLD_ID];
-                    $frm_lnk->link_type_id = $db_row[formula_link::FLD_TYPE];
-                    $frm_lnk->excluded = $db_row[user_sandbox::FLD_EXCLUDED];
                     $this->lst[] = $frm_lnk;
                 }
             }
@@ -85,7 +79,7 @@ class formula_link_list
             } else {
                 $sql = "SELECT DISTINCT 
                        l.formula_link_id,
-                       u.formula_link_id AS user_link_id,
+                       u.formula_link_id AS user_formula_link_id,
                        l.user_id,
                        l.formula_id, 
                        l.phrase_id,
@@ -130,25 +124,27 @@ class formula_link_list
         return $result;
     }
 
-    // delete all links without log because this is used only when deleting a formula
-    // and the main event of deleting the formula is already logged
-    function del_without_log(): bool
+    /**
+     * delete all links without log because this is used only when deleting a formula
+     * and the main event of deleting the formula is already logged
+     */
+    function del_without_log(): string
     {
         log_debug('formula_link_list->del_without_log');
 
         global $db_con;
-        $result = true;
+        $result = '';
 
         if ($this->lst != null) {
             foreach ($this->lst as $frm_lnk) {
-                if ($result) {
+                if ($result == '') {
                     if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
                         //$db_con = new mysql;
                         $db_con->usr_id = $this->usr->id;
                         // delete first all user configuration that have also been excluded
                         $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
                         $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id, '1'));
-                        if ($result) {
+                        if ($result == '') {
                             $db_con->set_type(DB_TYPE_FORMULA_LINK);
                             $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id);
                         }

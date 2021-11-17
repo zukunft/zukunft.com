@@ -29,7 +29,7 @@
 
 */
 
-class source extends user_sandbox
+class source extends user_sandbox_named
 {
 
     // persevered source names for unit and integration tests
@@ -474,7 +474,7 @@ class source extends user_sandbox
         log_debug('source->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
+        $result = true;
 
         //if ($this->has_usr_cfg) {
 
@@ -501,9 +501,9 @@ class source extends user_sandbox
                 // delete the entry in the user sandbox
                 log_debug('source->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_SOURCE);
-                if ($db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id))) {
-                    $result = true;
-                } else {
+                $del_result = $db_con->delete(array('source_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                if ($del_result != '') {
+                    $result = false;
                     log_err('Deletion of user_source failed.');
                 }
             }

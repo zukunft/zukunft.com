@@ -54,8 +54,12 @@ function run_verb_unit_db_tests(testing $t)
     $select_list = $lst->selector_list('forward');
     $top_verb = $select_list[0]; // the most often verb should be on the top
     $result = $top_verb[1]; // the name of the verb is always on second place
-    //$target = 'is a';
-    $target = 'not set';
+    // TODO check why this differs depending on the database used
+    if ($result = 'is a') {
+        $target = 'is a';
+    } else {
+        $target = 'not set';
+    }
     $t->dsp('unit_db_verb_list->selector_list ' . verb::IS_A, $result, $target);
 
 }

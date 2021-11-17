@@ -175,7 +175,7 @@ class formula extends user_sandbox_description
     /**
      * load the corresponding name word for the formula name
      */
-    function load_wrd(): bool
+    function load_wrd(bool $with_automatic_error_fixing = true): bool
     {
         $result = true;
 
@@ -194,12 +194,48 @@ class formula extends user_sandbox_description
             if ($name_wrd->id > 0) {
                 $this->name_wrd = $name_wrd;
             } else {
-                $result = false;
+                // if the loading of the corresponding word fails,
+                // try to recreate it and report the internal error
+                // because this should actually never happen
+                if ($with_automatic_error_fixing) {
+                    if (!$this->add_wrd()) {
+                        log_err('The formula word recreation for ' . $this->dsp_id() . ' failed');
+                        $result = false;
+                    }
+                } else {
+                    $result = false;
+                }
+
             }
         }
         return $result;
     }
 
+
+    /**
+     * add the corresponding name word for the formula name to the database without similar check
+     * this should only be used to fix internal errors
+     */
+    function add_wrd(): bool
+    {
+        log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
+        $result = false;
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word_dsp;
+        $name_wrd->name = $this->name;
+        $name_wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+        $name_wrd->usr = $this->usr;
+        $name_wrd->add();
+        if ($name_wrd->id > 0) {
+            //zu_info('Word with the formula name "'.$this->name.'" has been missing for id '.$this->id.'.','formula->calc');
+            $this->name_wrd = $name_wrd;
+            $result = true;
+        } else {
+            log_err('Word with the formula name "' . $this->name . '" missing for id ' . $this->id . '.', 'formula->create_wrd');
+        }
+        return $result;
+    }
 
     /**
      * create the corresponding name word for the formula name
@@ -322,7 +358,7 @@ class formula extends user_sandbox_description
     /**
      * load the missing formula parameters from the database
      */
-    function load(): bool
+    function load(bool $with_automatic_error_fixing = true): bool
     {
         global $db_con;
         $result = false;
@@ -345,7 +381,7 @@ class formula extends user_sandbox_description
 
                     // load the formula name word object
                     if (is_null($this->name_wrd)) {
-                        $result = $this->load_wrd();
+                        $result = $this->load_wrd($with_automatic_error_fixing);
                     } else {
                         $result = true;
                     }
@@ -594,8 +630,11 @@ class formula extends user_sandbox_description
 
     /**
      * delete all formula values (results) for this formula
+     * @return string an empty string if the deletion has been successful
+     *                or the error message that should be shown to the user
+     *                which may include a link for error tracing
      */
-    function fv_del(): bool
+    function fv_del(): string
     {
         log_debug("formula->fv_del (" . $this->id . ")");
 
@@ -1331,7 +1370,8 @@ class formula extends user_sandbox_description
             $field_names[] = 'ref_id';
             $field_values[] = $elm_del_id;
             $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
-            if (!$db_con->delete($field_names, $field_values)) {
+            $del_result = $db_con->delete($field_names, $field_values);
+            if ($del_result != '') {
                 $result = false;
             }
         }
@@ -1405,7 +1445,7 @@ class formula extends user_sandbox_description
     /**
      * unlink this formula from a word or triple
      */
-    function unlink_phr($phr)
+    function unlink_phr($phr): string
     {
         $result = '';
         if (isset($phr) and isset($this->usr)) {
@@ -1502,7 +1542,7 @@ class formula extends user_sandbox_description
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1($sql);
-        if ($db_row !== false) {
+        if ($db_row != null) {
             if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
             }
@@ -1582,7 +1622,7 @@ class formula extends user_sandbox_description
         log_debug('formula->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
+        $result = true;
 
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
@@ -1620,22 +1660,46 @@ class formula extends user_sandbox_description
     }
 
     /**
-     * simply remove a user adjustment without check
+     * overwrite of the user sandbox function to
+     * simply remove a formula user adjustment without check including the formula elements
+     * log a system error if a technical error has occurred
+     *
+     *
+     * @return bool true if user sandbox row has successfully been deleted
      */
     function del_usr_cfg_exe($db_con): bool
     {
+        log_debug('formula->del_usr_cfg_exe ' . $this->dsp_id());
+
+        $result = false;
+        $action = 'Deletion of user formula ';
+        $msg_failed = $this->id . ' failed for ' . $this->usr->name;
+        $msg = '';
 
         $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
-        $result = $db_con->delete(
-            array($this->fld_id(), self::FLD_USER),
-            array($this->id, $this->usr->id));
-        if ($result) {
-            $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA);
-            $result = $db_con->delete(
+        try {
+            $msg = $db_con->delete(
                 array($this->fld_id(), self::FLD_USER),
                 array($this->id, $this->usr->id));
-            if (!$result) {
-                $result .= 'Deletion of user formula ' . $this->id . ' failed for ' . $this->usr->name . '.';
+        } catch (Exception $e) {
+            log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
+        }
+        if ($msg != '') {
+            log_err($action . ' elements ' . $msg_failed . ' because ' . $msg);
+        } else {
+            $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA);
+            try {
+                $msg = $db_con->delete(
+                    array($this->fld_id(), self::FLD_USER),
+                    array($this->id, $this->usr->id));
+                if ($msg == '') {
+                    $this->usr_cfg_id = null;
+                    $result = true;
+                } else {
+                    log_err($action . $msg_failed . ' because ' . $msg);
+                }
+            } catch (Exception $e) {
+                log_err($action . $msg_failed . ' because ' . $e);
             }
         }
 
@@ -1880,13 +1944,15 @@ class formula extends user_sandbox_description
     {
         $result = false;
         if ($trm->type == formula::class) {
-            $result = $trm;
+            //$result = $trm;
+            $result = true;
         } elseif ($trm->type == word::class or $trm->type == word_dsp::class) {
             if ($trm->obj == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
                 if ($trm->obj->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
-                    $result = $trm;
+                    //$result = $trm;
+                    $result = true;
                 }
             }
         }
@@ -2106,9 +2172,9 @@ class formula extends user_sandbox_description
     }
 
     // TODO user specific???
-    function del_links(): bool
+    function del_links(): string
     {
-        $result = false;
+        $result = '';
         $frm_lnk_lst = new formula_link_list;
         $frm_lnk_lst->usr = $this->usr;
         $frm_lnk_lst->frm = $this;

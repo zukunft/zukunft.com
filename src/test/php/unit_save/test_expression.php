@@ -60,6 +60,11 @@ function run_expression_test(testing $t)
     $exp_sector->usr = $usr;
     $exp_sector->ref_text = $exp_sector->get_ref_text();
 
+    // load the test ids
+    $wrd_percent = $t->load_word('percent');
+    $frm_this = $t->load_formula('this');
+    $frm_prior = $t->load_formula('prior');
+
     // test the expression processing of the user readable part
     $target = '"percent"';
     $result = $exp->fv_part_usr();
@@ -70,18 +75,18 @@ function run_expression_test(testing $t)
     $target = 'true';
     $result = zu_dsp_bool($exp->has_ref());
     $t->dsp('expression->has_ref for "' . $frm->usr_text . '"', $target, $result);
-    $target = '{t5}=({f18}-{f20})/{f20}';
+    $target = '{t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'}';
     $result = $exp->get_ref_text();
     $t->dsp('expression->get_ref_text for "' . $frm->usr_text . '"', $target, $result);
 
     // test the expression processing of the database reference
     $exp_db = new expression;
-    $exp_db->ref_text = '{t5} = ( is.numeric( {f18} ) & is.numeric( {f20} ) ) ( {f18} - {f20} ) / {f20}';
+    $exp_db->ref_text = '{t'.$wrd_percent->id.'} = ( is.numeric( {f'.$frm_this->id.'} ) & is.numeric( {f'.$frm_prior->id.'} ) ) ( {f'.$frm_this->id.'} - {f'.$frm_prior->id.'} ) / {f'.$frm_prior->id.'}';
     $exp_db->usr = $usr;
-    $target = '{t5}';
+    $target = '{t'.$wrd_percent->id.'}';
     $result = $exp_db->fv_part();
     $t->dsp('expression->fv_part_usr for "' . $exp_db->ref_text . '"', $target, $result);
-    $target = '( is.numeric( {f18} ) & is.numeric( {f20} ) ) ( {f18} - {f20} ) / {f20}';
+    $target = '( is.numeric( {f'.$frm_this->id.'} ) & is.numeric( {f'.$frm_prior->id.'} ) ) ( {f'.$frm_this->id.'} - {f'.$frm_prior->id.'} ) / {f'.$frm_prior->id.'}';
     $result = $exp_db->r_part();
     $t->dsp('expression->r_part_usr for "' . $exp_db->ref_text . '"', $target, $result);
     $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';

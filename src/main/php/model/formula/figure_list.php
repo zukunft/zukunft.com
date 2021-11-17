@@ -37,6 +37,22 @@ class figure_list
     public ?phrase $time_phr = null;     // the time word object, if the figure value time is adjusted by a special formula
     public ?bool $fig_missing = false; // true if at least one of the formula values is not set which means is NULL (but zero is a value)
 
+    function get_first_id(): int {
+        $result = 0;
+        if ($this != null) {
+            if ($this->lst != null) {
+                if (count($this->lst) > 0) {
+                    $fig = $this->lst[0];
+                    if ($fig != null) {
+                        $result = $fig->id;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+
     /*
     display functions
     */

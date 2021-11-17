@@ -29,8 +29,18 @@
   
 */
 
-class view_cmp extends user_sandbox
+class view_cmp extends user_sandbox_named
 {
+
+    // the database and JSON object field names used only for formula links
+    const FLD_ID = 'view_component_id';
+    const FLD_TYPE = 'view_component_type_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        self::FLD_TYPE,
+        self::FLD_EXCLUDED
+    );
 
     // database fields additional to the user sandbox fields for the view component
     public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
@@ -558,9 +568,9 @@ class view_cmp extends user_sandbox
         return $dsp_lnk->save();
     }
 
-// remove a view component from a view
-// to do: check if the view component is not linked anywhere else
-// and if yes, delete the view component after confirmation
+    // remove a view component from a view
+    // to do: check if the view component is not linked anywhere else
+    // and if yes, delete the view component after confirmation
     function unlink($dsp): string
     {
         $result = '';
@@ -589,8 +599,9 @@ class view_cmp extends user_sandbox
             log_debug('view_component->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
             // check again if there ist not yet a record
-            $db_con->set_type(DB_TYPE_WORD, true);
+            $db_con->set_type(DB_TYPE_VIEW_COMPONENT, true);
             $db_con->set_usr($this->usr->id);
+            $db_con->set_fields(array('view_component_id'));
             $db_con->set_where($this->id);
             $sql = $db_con->select();
             $db_row = $db_con->get1($sql);
@@ -620,7 +631,7 @@ class view_cmp extends user_sandbox
         log_debug('view_component->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
+        $result = true;
 
         //if ($this->has_usr_cfg) {
 
@@ -642,19 +653,21 @@ class view_cmp extends user_sandbox
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($sql);
         log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_cfg['view_component_id'] > 0) {
-            if ($usr_cfg['view_component_name'] == ''
-                and $usr_cfg['comment'] == ''
-                and $usr_cfg['view_component_type_id'] == Null
-                and $usr_cfg['word_id_row'] == Null
-                and $usr_cfg['link_type_id'] == Null
-                and $usr_cfg[formula::FLD_ID] == Null
-                and $usr_cfg['word_id_col'] == Null
-                and $usr_cfg['word_id_col2'] == Null
-                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($usr_cfg != null) {
+            if ($usr_cfg['view_component_id'] > 0) {
+                if ($usr_cfg['view_component_name'] == ''
+                    and $usr_cfg['comment'] == ''
+                    and $usr_cfg['view_component_type_id'] == Null
+                    and $usr_cfg['word_id_row'] == Null
+                    and $usr_cfg['link_type_id'] == Null
+                    and $usr_cfg[formula::FLD_ID] == Null
+                    and $usr_cfg['word_id_col'] == Null
+                    and $usr_cfg['word_id_col2'] == Null
+                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
+                    // delete the entry in the user sandbox
+                    log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
             }
         }
         //}

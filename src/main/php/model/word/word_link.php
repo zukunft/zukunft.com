@@ -32,7 +32,7 @@
   
 */
 
-class word_link extends word_link_object
+class word_link extends user_sandbox_link_description
 {
 
     // the word link object
@@ -975,9 +975,7 @@ class word_link extends word_link_object
         global $db_con;
         $result = false;
 
-        //if ($this->has_usr_cfg) {
-
-        // check again if there ist not yet a record
+        // check again if there is user sandbox row
         $sql = "SELECT word_link_id,
                      word_link_name,
                      description,
@@ -985,20 +983,27 @@ class word_link extends word_link_object
                 FROM user_word_links
                WHERE word_link_id = " . $this->id . " 
                  AND user_id = " . $this->usr->id . ";";
-        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1($sql);
         log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_cfg['word_link_id'] > 0) {
-            if ($usr_cfg['word_link_name'] == Null
-                and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
-                and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                // delete the entry in the user sandbox
-                log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($usr_cfg) {
+            if ($usr_cfg['word_link_id'] > 0) {
+                // TODO use the FLD_NAMES array with all relevant field names
+                if ($usr_cfg['word_link_name'] == Null
+                    and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
+                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
+                    // delete the entry in the user sandbox
+                    log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                    $result = $this->del_usr_cfg_exe($db_con);
+                }
             }
         }
-        //}
+
+        // don't throw an error message if another account has removed the user sandbox row in the meantime
+        if (!$this->has_usr_cfg()) {
+            $result = true;
+        }
+
         return $result;
     }
 
@@ -1006,9 +1011,9 @@ class word_link extends word_link_object
      * set the log entry parameter for a new value
      * e.g. that the user can see "added ABB is a Company"
      */
-    function log_add(): user_log_link
+    function log_link_add(): user_log_link
     {
-        log_debug('word_link->log_add for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
+        log_debug('word_link->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
         $log = new user_log_link;
         $log->usr = $this->usr;
         $log->action = 'add';
@@ -1240,7 +1245,7 @@ class word_link extends word_link_object
         $result = '';
 
         // log the insert attempt first
-        $log = $this->log_add();
+        $log = $this->log_link_add();
         if ($log->id > 0) {
             // insert the new word_link
             $db_con->set_type(DB_TYPE_WORD_LINK);

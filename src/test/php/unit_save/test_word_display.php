@@ -65,16 +65,21 @@ function run_word_display_test(testing $t)
     $wrd_2020->usr = $usr;
     $wrd_2020->load();
     $direction = 'down';
+    $wrd_2021 = new word_dsp;
+    $wrd_2021->name = word::TN_2021;
+    $wrd_2021->usr = $usr;
+    $wrd_2021->load();
+    $lnk_20_to_21 = $t->load_word_link(word::TN_2021, verb::DBL_FOLLOW, word::TN_2020);
     // TODO change direction?
     $target = ' is followed by<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=209" title="">System Test Time Word e.g. 2021</a>
+      <a href="/http/view.php?words=' . $wrd_2021->id . '" title="">System Test Time Word e.g. 2021</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=22&back=208" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=' . $lnk_20_to_21->id . '&back=' . $wrd_2020->id . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=22&back=208" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=' . $lnk_20_to_21->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);
@@ -88,26 +93,29 @@ function run_word_display_test(testing $t)
 
     // ... and the other side
     $direction = 'up';
-    //$target = zut_html_list_related($wrd_2020->id, $direction, $usr->id);
+    $wrd_2019 = $t->load_word(word::TN_2019);
+    $wrd_year = $t->load_word(word::TN_YEAR);
+    $lnk_20_is_year = $t->load_word_link(word::TN_2020, verb::IS_A, word::TN_YEAR);
+    $lnk_19_to_20 = $t->load_word_link(word::TN_2020, verb::DBL_FOLLOW, word::TN_2019);
     $target = ' are<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=195" title="">System Test Time Word Category e.g. Year</a>
+      <a href="/http/view.php?words=' . $wrd_year->id . '" title="">System Test Time Word Category e.g. Year</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=19&back=208" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=' . $lnk_20_is_year->id . '&back=' . $wrd_2020->id . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=19&back=208" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=' . $lnk_20_is_year->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
  is follower of<table class="table col-sm-5 table-borderless">
   <tr>
     <td>
-      <a href="/http/view.php?words=207" title="">System Test Another Time Word e.g. 2019</a>
+      <a href="/http/view.php?words=' . $wrd_2019->id . '" title="">System Test Another Time Word e.g. 2019</a>
     </td>
     <td>
-<a href="/http/link_edit.php?id=20&back=208" title="edit word link"><i class="far fa-edit"></i></a>    </td>
+<a href="/http/link_edit.php?id=' . $lnk_19_to_20->id . '&back=' . $wrd_2020->id . '" title="edit word link"><i class="far fa-edit"></i></a>    </td>
     <td>
-<a href="/http/link_del.php?id=20&back=208" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
+<a href="/http/link_del.php?id=' . $lnk_19_to_20->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);

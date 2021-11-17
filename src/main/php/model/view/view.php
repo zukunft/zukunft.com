@@ -29,7 +29,7 @@
   
 */
 
-class view extends user_sandbox
+class view extends user_sandbox_named
 {
     // list of the view used by the program that are never supposed to be changed
     const START = "start";
@@ -87,6 +87,16 @@ class view extends user_sandbox
     const TEST_VIEWS = array(
         self::TN_COMPLETE,
         self::TN_TABLE
+    );
+
+    // the database and JSON object field names used only for formula links
+    const FLD_ID = 'view_id';
+    const FLD_TYPE = 'view_type_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        self::FLD_TYPE,
+        self::FLD_EXCLUDED
     );
 
     // database fields additional to the user sandbox fields for the view component
@@ -696,7 +706,7 @@ class view extends user_sandbox
         log_debug('view->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
+        $result = true;
 
         //if ($this->has_usr_cfg) {
 

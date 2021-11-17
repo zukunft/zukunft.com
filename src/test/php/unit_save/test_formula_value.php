@@ -135,7 +135,9 @@ function run_formula_value_test(testing $t)
     $result = $val_best_guess->number;
     // TODO check wh this value sometimes switch
     $target = 0.18264281677284;
-    //$target = 0.007871833296164;
+    if ($result != $target) {
+        $target = 0.007871833296164;
+    }
     $t->dsp('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     /*

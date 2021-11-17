@@ -2,33 +2,33 @@
 
 /*
 
-  user_sandbox.php - the superclass for handling user specific objects including the database saving
-  ----------------
+    user_sandbox.php - the superclass for handling user specific objects including the database saving
+    ----------------
 
-  This superclass should be used by the classes words, formula, ... to enable user specific values and links
+    This superclass should be used by the classes words, formula, ... to enable user specific values and links
 
 
-  This file is part of zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
 
-  http://zukunft.com
+    http://zukunft.com
 
 */
 
@@ -43,6 +43,11 @@ class user_sandbox
     // user sandbox database and JSON object field names
     const FLD_EXCLUDED = 'excluded';
     const FLD_USER = 'user_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        self::FLD_EXCLUDED
+    );
 
     const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
     const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
@@ -102,27 +107,28 @@ class user_sandbox
         $this->owner_id = null;
         $this->excluded = null;
 
-        $this->name = '';
-
-        $this->number = null;
-
-        $this->fob = null;
-        $this->tob = null;
     }
+
+    /*
+     * internal check function
+     */
 
     /**
      * simply return the id database field name of the object
      * should actually be static, but seems to be not yet possible
      */
-    function fld_id(): string {
+    function fld_id(): string
+    {
         return $this->obj_name . sql_db::FLD_EXT_ID;
     }
 
-    function fld_usr_id(): string {
+    function fld_usr_id(): string
+    {
         return sql_db::USER_PREFIX . $this->obj_name . sql_db::FLD_EXT_ID;
     }
 
-    function fld_name(): string {
+    function fld_name(): string
+    {
         return $this->obj_name . sql_db::FLD_EXT_NAME;
     }
 
@@ -138,13 +144,6 @@ class user_sandbox
         $dsp_obj->usr = $this->usr;
         $dsp_obj->owner_id = $this->owner_id;
         $dsp_obj->excluded = $this->excluded;
-
-        $dsp_obj->name = $this->name;
-
-        $dsp_obj->number = $this->number;
-
-        $dsp_obj->fob = $this->fob;
-        $dsp_obj->tob = $this->tob;
 
         return $dsp_obj;
     }
@@ -215,47 +214,12 @@ class user_sandbox
         return true;
     }
 
-    // return best possible identification for this object mainly used for debugging
+    /**
+     * return best possible identification for this object mainly used for debugging
+     */
     function dsp_id(): string
     {
         $result = '';
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            if ($this->name <> '') {
-                $result .= '"' . $this->name . '"';
-                if ($this->id > 0) {
-                    $result .= ' (' . $this->id . ')';
-                }
-            } else {
-                $result .= $this->id;
-            }
-        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-            if (isset($this->fob) or isset($this->tob)) {
-                if (isset($this->fob)) {
-                    $result .= 'from ' . $this->fob->dsp_id() . ' ';
-                }
-                if (isset($this->tob)) {
-                    $result .= 'to ' . $this->tob->dsp_id();
-                }
-                $result .= ' of type ';
-            } else {
-                $result .= $this->name . ' (' . $this->id . ') of type ';
-            }
-            $result .= $this->obj_name . ' ' . $this->obj_type;
-        } elseif ($this->obj_type == user_sandbox::TYPE_VALUE) {
-            if (isset($this->grp)) {
-                $result .= $this->grp->dsp_id();
-            }
-            if (isset($this->time_phr)) {
-                if ($result <> '') {
-                    $result .= '@';
-                }
-                if (gettype($this->time_phr) == 'object') {
-                    $result .= $this->time_phr->dsp_id();
-                }
-            }
-        } else {
-            $result .= $this->obj_name . ' with id ' . $this->id . ' and unexpected type ' . $this->obj_type;
-        }
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
         }
@@ -683,32 +647,54 @@ class user_sandbox
     }
 
     /**
-     * simply remove a user adjustment without check
-     */
-    function del_usr_cfg_exe($db_con): bool
-    {
-        log_debug($this->obj_name . '->del_usr_cfg_exe ' . $this->dsp_id());
-
-        $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
-        $result = $db_con->delete(
-            array($this->obj_name . '_id', user_sandbox::FLD_USER),
-            array($this->id, $this->usr->id));
-        if (!$result) {
-            $result .= 'Deletion of user ' . $this->obj_name . ' ' . $this->id . ' failed for ' . $this->usr->name . '.';
-        }
-
-        return $result;
-    }
-
-    /**
      * check if any of the object fields including the name and the excluding flag is changed by the user
      * changed means the user value differs from the standard value
      *
      * @return bool true if the user sandbox database row for this user is used
      */
-    function is_usr_cfg_used(): bool {
+    function is_usr_cfg_used(array $db_row, array $fld_names): bool
+    {
         $result = false;
-        return true;
+        if ($db_row != null) {
+            foreach ($fld_names as $fld_name) {
+                if ($db_row[$fld_name] == Null) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /**
+     * simply remove a user adjustment without check
+     * log a system error if a technical error has occurred
+     *
+     * @return bool true if user sandbox row has successfully been deleted
+     */
+    function del_usr_cfg_exe($db_con): bool
+    {
+        log_debug($this->obj_name . '->del_usr_cfg_exe ' . $this->dsp_id());
+
+        $result = false;
+        $action = 'Deletion of user ' . $this->obj_name . ' ';
+        $msg_failed = $this->id . ' failed for ' . $this->usr->name;
+
+        $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
+        try {
+            $msg = $db_con->delete(
+                array($this->obj_name . '_id', user_sandbox::FLD_USER),
+                array($this->id, $this->usr->id));
+            if ($msg == '') {
+                $this->usr_cfg_id = null;
+                $result = true;
+            } else {
+                log_err($action . $msg_failed . ' because ' . $msg);
+            }
+        } catch (Exception $e) {
+            log_err($action . $msg_failed . ' because ' . $e);
+        }
+        return $result;
     }
 
     // remove user adjustment and log it (used by user.php to undo the user changes)
@@ -785,30 +771,17 @@ class user_sandbox
         return true;
     }
 
-    // set the log entry parameter for a new named object
-    // for all not named objects like links, this function is overwritten
-    // e.g. that the user can see "added formula 'scale millions' to word 'mio'"
-    function log_add()
+    /**
+     * set the log entry parameter for a new named object
+     * for all not named objects like links, this function is overwritten
+     * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     */
+    function log_add(): user_log
     {
         log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            $log = new user_log;
-            $log->field = $this->obj_name . '_name';
-            $log->old_value = '';
-            $log->new_value = $this->name;
-        } elseif ($this->obj_type == user_sandbox::TYPE_VALUE) {
-            $log = new user_log;
-            $log->field = 'word_value';
-            $log->old_value = '';
-            $log->new_value = $this->number;
-        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-            $log = new user_log_link;
-            $log->new_from = $this->fob;
-            $log->new_to = $this->tob;
-        } else {
-            $log = new user_log;
-            log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_add');
-        }
+
+        $log = new user_log;
+
         $log->usr = $this->usr;
         $log->action = 'add';
         // TODO add the table exceptions from sql_db
@@ -864,7 +837,9 @@ class user_sandbox
         return $this->log_upd_common($log);
     }
 
-    // set the log entry parameter to delete a object
+    /**
+     * set the log entry parameter to delete a object
+     */
     function log_del()
     {
         log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
@@ -1326,65 +1301,6 @@ class user_sandbox
         return $result;
     }
 
-    // create a new object
-    // returns the id of the creates object
-    // TODO do a rollback in case of an error
-    function add(): string
-    {
-        log_debug($this->obj_name . '->add ' . $this->dsp_id());
-
-        global $db_con;
-        $result = '';
-
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id > 0) {
-
-            // insert the new object and save the object key
-            // TODO check that always before a db action is called the db type is set correctly
-            $db_con->set_type($this->obj_name);
-            $db_con->set_usr($this->usr->id);
-            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                $this->id = $db_con->insert(array($this->obj_name . '_name', "user_id"), array($this->name, $this->usr->id));
-            } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-                $this->id = $db_con->insert(array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'), array($this->fob->id, $this->tob->id, $this->usr->id, $this->order_nbr));
-            } else {
-                $result .= 'Method add cannot (yet) handle objects of type ' . $this->obj_type . '.';
-            }
-
-            // save the object fields if saving the key was successful
-            if ($this->id > 0) {
-                log_debug($this->obj_name . '->add ' . $this->obj_type . ' ' . $this->dsp_id() . ' has been added');
-                // update the id in the log
-                if (!$log->add_ref($this->id)) {
-                    $result .= 'Updating the reference in the log failed';
-                    // TODO do rollback or retry?
-                } else {
-                    //$result .= $this->set_owner($new_owner_id);
-
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_rec = clone $this;
-                    $db_rec->reset();
-                    if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                        $db_rec->name = $this->name;
-                    } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-                        $db_rec->fob = $this->fob;
-                        $db_rec->tob = $this->tob;
-                    }
-                    $db_rec->usr = $this->usr;
-                    $std_rec = clone $db_rec;
-                    // save the object fields
-                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
-                }
-
-            } else {
-                $result .= 'Adding ' . $this->obj_type . ' ' . $this->dsp_id() . ' failed due to logging error.';
-            }
-        }
-
-        return $result;
-    }
-
     // check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
     private function is_same_std($obj_to_check): bool
     {
@@ -1718,20 +1634,22 @@ class user_sandbox
         return $result;
     }
 
-    // dummy function to remove depending objects, which needs to be overwritten by the child classes
-    function del_links(): bool
+    // dummy function to remove depending on objects, which needs to be overwritten by the child classes
+    function del_links(): string
     {
-        return true;
+        return '';
     }
 
-    // delete the complete object (the calling function del must have checked that no one uses this object)
-    // returns false if something went wrong
-    private function del_exe(): bool
+    /**
+     * delete the complete object (the calling function del must have checked that no one uses this object)
+     * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     */
+    private function del_exe(): string
     {
         log_debug($this->obj_name . '->del_exe ' . $this->dsp_id());
 
         global $db_con;
-        $result = true;
+        $result = '';
 
         // log the deletion request
         $log = $this->log_del();
@@ -1744,21 +1662,21 @@ class user_sandbox
                 $result = $this->del_links();
 
                 // and the corresponding formula elements
-                if ($result) {
+                if ($result == '') {
                     $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
                     $db_con->set_usr($this->usr->id);
                     $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
                 }
 
                 // and the corresponding formula values
-                if ($result) {
+                if ($result == '') {
                     $db_con->set_type(DB_TYPE_FORMULA_VALUE);
                     $db_con->set_usr($this->usr->id);
                     $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
                 }
 
                 // and the corresponding word if possible
-                if ($result) {
+                if ($result == '') {
                     $wrd = new word();
                     $wrd->name = $this->name;
                     $wrd->usr = $this->usr;
@@ -1769,14 +1687,14 @@ class user_sandbox
             }
 
             // delete first all user configuration that have also been excluded
-            if ($result) {
+            if ($result == '') {
                 $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->usr->id);
                 $result = $db_con->delete(
                     array($this->obj_name . DB_FIELD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
             }
-            if ($result) {
+            if ($result == '') {
                 // finally, delete the object
                 $db_con->set_type($this->obj_name);
                 $db_con->set_usr($this->usr->id);
@@ -1790,16 +1708,20 @@ class user_sandbox
         return $result;
     }
 
-    // exclude or delete an object
-    // TODO if the owner deletes it, change the owner to the new median user
-    // TODO check if all have deleted the object
-    //      does not remove the user excluding if no one else is using it
-    function del(): bool
+    /**
+     * exclude or delete an object
+     * @return string the message that should be shown to the user if something went wrong or an empty string
+     *
+     * TODO if the owner deletes it, change the owner to the new median user
+     * TODO check if all have deleted the object
+     *      does not remove the user excluding if no one else is using it
+     */
+    function del(): string
     {
         log_debug($this->obj_name . '->del ' . $this->dsp_id());
 
         global $db_con;
-        $result = false;
+        $result = '';
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
@@ -1813,7 +1735,7 @@ class user_sandbox
             } else {
                 // check if the object simply can be deleted, because it has never been used
                 if (!$this->used_by_someone_else()) {
-                    $result = $this->del_exe();
+                    $result .= $this->del_exe();
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id == $this->usr->id) {
@@ -1828,12 +1750,16 @@ class user_sandbox
                             // TODO change the original object, so that it uses the configuration of the new owner
 
                             // set owner
-                            $result = $this->set_owner($new_owner_id);
+                            if (!$this->set_owner($new_owner_id)) {
+                                $result .= 'Setting of owner while deleting ' . $this->obj_name . ' failed';
+                                log_err($result, $this->obj_name . '->del');
+
+                            }
 
                             // delete all user records of the new owner
                             // does not use del_usr_cfg because the deletion request has already been logged
-                            if ($result) {
-                                $result = $this->del_usr_cfg_exe($db_con);
+                            if ($result == '') {
+                                $result .= $this->del_usr_cfg_exe($db_con);
                             }
 
                         }
@@ -1842,7 +1768,7 @@ class user_sandbox
                     // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else()) {
                         log_debug($this->obj_name . '->del can delete ' . $this->dsp_id() . ' after owner change');
-                        $result = $this->del_exe();
+                        $result .= $this->del_exe();
                     } else {
                         log_debug($this->obj_name . '->del exclude ' . $this->dsp_id());
                         $this->excluded = 1;
@@ -1853,23 +1779,26 @@ class user_sandbox
                         $db_rec->reset();
                         $db_rec->id = $this->id;
                         $db_rec->usr = $this->usr;
-                        $result = $db_rec->load();
-                        if ($result) {
+                        if ($db_rec->load()) {
                             log_debug($this->obj_name . '->save reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->obj_type == user_sandbox::TYPE_LINK) {
-                                $result = $db_rec->load_objects();
+                                if (!$db_rec->load_objects()) {
+                                    $result .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                                }
                             }
                         }
-                        if ($result) {
+                        if ($result == '') {
                             $std_rec = clone $this;
                             $std_rec->reset();
                             $std_rec->id = $this->id;
                             $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
-                            $result = $std_rec->load_standard();
+                            if (!$std_rec->load_standard()) {
+                                $result .= 'Reloading of standard ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                            }
                         }
-                        if ($result) {
+                        if ($result == '') {
                             log_debug($this->obj_name . '->save loaded standard ' . $std_rec->dsp_id());
-                            $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         }
                     }
                 }

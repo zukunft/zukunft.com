@@ -89,7 +89,7 @@ class formula_element_group
         return dsp_array($this->names());
     }
 
-    // list of the formula element names independent from the element type
+    // list of the formula element names independent of the element type
     // this function is called from dsp_id, so no other call is allowed
     private function names(): array
     {

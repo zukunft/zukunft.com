@@ -157,7 +157,7 @@ class verb_list extends user_type_list
     }
 
     // calculates how many times a word is used, because this can be helpful for sorting
-    function calc_usage()
+    function calc_usage(): string
     {
         log_debug('verb_list->calc_usage');
 
@@ -169,7 +169,7 @@ class verb_list extends user_type_list
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
         $db_con->usr_id = $this->usr->id;
-        return $db_con->exe($sql);
+        return $db_con->exe_try('Calculation of the verb usage', $sql);
     }
 
     /*

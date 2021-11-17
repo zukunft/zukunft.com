@@ -69,18 +69,6 @@
       "code_id": "formula_test"
     },
     {
-      "name": "Add New View",
-      "code_id": "view_add"
-    },
-    {
-      "name": "Change View",
-      "code_id": "view_edit"
-    },
-    {
-      "name": "Delete view",
-      "code_id": "view_del"
-    },
-    {
       "name": "Add New Source",
       "code_id": "source_add"
     },

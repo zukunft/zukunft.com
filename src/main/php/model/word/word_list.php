@@ -215,7 +215,7 @@ class word_list
                          " . $db_con->get_usr_field("word_type_id", "s", "u", sql_db::FLD_FORMAT_VAL) . ",
                          " . $db_con->get_usr_field("excluded", "s", "u", sql_db::FLD_FORMAT_VAL) . ",
                          l.verb_id,
-                         s." . $db_con->get_table_name(DB_TYPE_VALUE) . "
+                         s." . $db_con->get_table_name_esc(DB_TYPE_VALUE) . "
                     FROM word_links l, 
                          words s 
                LEFT JOIN user_words u ON s.word_id = u.word_id 

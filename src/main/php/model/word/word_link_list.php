@@ -85,7 +85,7 @@ class word_link_list
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
                 " . $db_con->get_usr_field('view_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'view_id' . $pos) . ",
                 " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
-                  t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
+                  t" . $pos . "." . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " AS values" . $pos . "";
     }
 
     private function load_wrd_from($pos): string
@@ -152,6 +152,7 @@ class word_link_list
     }
 
     // create the sql statement to fill a word link list
+    // TODO add query name
     function load_sql(sql_db $db_con): string
     {
         $sql = '';
@@ -171,9 +172,9 @@ class word_link_list
                 $id_txt = sql_array($this->ids);
                 if ($id_txt <> '') {
                     $sql_where = 'l.word_link_id IN (' . $id_txt . ')';
-                    $sql_wrd1_fields = $this->load_wrd_fields($db_con, '');
-                    $sql_wrd1_from = $this->load_wrd_from('');
-                    $sql_wrd1 = 'AND l.from_phrase_id = t.word_id';
+                    $sql_wrd1_fields = $this->load_wrd_fields($db_con, '1');
+                    $sql_wrd1_from = $this->load_wrd_from('1');
+                    $sql_wrd1 = 'AND l.from_phrase_id = t1.word_id';
                     $sql_wrd1_fields .= ', ';
                     $sql_wrd1_from .= ', ';
                     $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
@@ -205,8 +206,8 @@ class word_link_list
             if (isset($this->wrd_lst)) {
                 if ($this->wrd_lst->ids_txt() != '') {
                     log_debug('word_link_list->load based on word list');
-                    $sql_wrd1_fields = $this->load_wrd_fields($db_con, '');
-                    $sql_wrd1_from = $this->load_wrd_from('');
+                    $sql_wrd1_fields = $this->load_wrd_fields($db_con, '1');
+                    $sql_wrd1_from = $this->load_wrd_from('1');
                     $sql_wrd1_fields .= ', ';
                     $sql_wrd1_from .= ', ';
                     $sql_wrd2_fields = $this->load_wrd_fields($db_con, '2');
@@ -214,11 +215,11 @@ class word_link_list
                     log_debug('word_link_list->load based on word list loaded');
                     if ($this->direction == self::DIRECTION_UP) {
                         $sql_where = 'l.from_phrase_id IN (' . $this->wrd_lst->ids_txt() . ')';
-                        $sql_wrd1 = 'AND l.from_phrase_id = t.word_id';
+                        $sql_wrd1 = 'AND l.from_phrase_id = t1.word_id';
                         $sql_wrd2 = 'l.to_phrase_id   = t2.word_id';
                     } else {
                         $sql_where = 'l.to_phrase_id   IN (' . $this->wrd_lst->ids_txt() . ')';
-                        $sql_wrd1 = 'AND l.to_phrase_id   = t.word_id';
+                        $sql_wrd1 = 'AND l.to_phrase_id   = t1.word_id';
                         $sql_wrd2 = 'l.from_phrase_id = t2.word_id';
                     }
                     log_debug('word_link_list->load where wrd in ' . $sql_where);
@@ -332,17 +333,23 @@ class word_link_list
                                     $new_link->from_name = $this->wrd->name;
                                 }
                             } else {
-                                if ($db_lnk['word_id'] > 0) {
+                                if ($db_lnk['word_id1'] > 0) {
                                     $new_word = new word_dsp;
                                     $new_word->usr = $this->usr;
-                                    $new_word->row_mapper($db_lnk);
+                                    $new_word->id = $db_lnk['word_id1'];
+                                    $new_word->owner_id = $db_lnk['user_id1'];
+                                    $new_word->name = $db_lnk['word_name1'];
+                                    $new_word->plural = $db_lnk['plural1'];
+                                    $new_word->description = $db_lnk['description1'];
+                                    $new_word->type_id = $db_lnk['word_type_id1'];
+                                    //$new_word->row_mapper($db_lnk);
                                     $new_word->link_type_id = $db_lnk['verb_id'];
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
-                                } elseif ($db_lnk['word_id'] < 0) {
+                                } elseif ($db_lnk['word_id1'] < 0) {
                                     $new_word = new word_link;
                                     $new_word->usr = $this->usr;
-                                    $new_word->id = $db_lnk['word_id'] * -1; // TODO check if not word_id is correct
+                                    $new_word->id = $db_lnk['word_id1'] * -1; // TODO check if not word_id is correct
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
                                 } else {

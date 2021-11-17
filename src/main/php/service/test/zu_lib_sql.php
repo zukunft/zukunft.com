@@ -378,8 +378,12 @@ function zu_sql_get_all($sql)
         log_debug('zu_sql_get_all (' . substr($sql, 0, 100) . ' ... )');
     }
 
-    $result = $db_con->exe($sql);
-    //$result = zu_sql_exe($sql, $usr->id, sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
+    try {
+        $result = $db_con->exe($sql);
+        //$result = zu_sql_exe($sql, $usr->id, sys_log_level::FATAL, "zu_sql_get_all", (new Exception)->getTraceAsString());
+    } catch (Exception $e) {
+        log_err('Cannot get all rows with "' . $sql . '" because: ' . $e->getMessage());
+    }
 
     log_debug("zu_sql_get_all ... done");
 
@@ -641,6 +645,7 @@ function zu_sql_get_field($type, $id, $field_name)
 
     return $result;
 }
+
 /*
 // save a change in the log table
 // must be called BEFORE the change is done in the database

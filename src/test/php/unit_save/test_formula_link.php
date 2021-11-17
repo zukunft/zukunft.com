@@ -124,7 +124,7 @@ function run_formula_link_test(testing $t)
     $phr->usr = $t->usr2;
     $phr->load();
     $result = $frm->unlink_phr($phr);
-    $target = true;
+    $target = '';
     $t->dsp('formula_link->unlink_phr "' . $phr->name . '" from "' . $frm->name . '" by user "' . $t->usr2->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... check if the removal of the link for the second user has been logged
@@ -162,7 +162,7 @@ function run_formula_link_test(testing $t)
 
     // if the first user also removes the link, both records should be deleted
     $result = $frm->unlink_phr($phr);
-    $target = true;
+    $target = '';
     $t->dsp('formula_link->unlink_phr "' . $phr->name . '" from "' . $frm->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check the correct logging

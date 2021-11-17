@@ -293,10 +293,8 @@ class value extends user_sandbox_display
      * create the SQL to load a single value
      * @return string the SQL statement or the name of the SQL statement
      */
-    function load_sql(bool $get_name = false): string
+    function load_sql(sql_db $db_con, bool $get_name = false): string
     {
-        global $db_con;
-
         $sql_name = '';
 
         $sql_grp = $this->load_sql_group();
@@ -317,7 +315,7 @@ class value extends user_sandbox_display
                 $sql_time = ' AND time_word_id = ' . $this->time_id . ' ';
             }
             $sql_val = $sql_avoid_code_check_prefix . " value_id 
-                            FROM " . $db_con->get_table_name(DB_TYPE_VALUE) . "
+                            FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . "
                           WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
         }
         if ($get_name) {
@@ -374,7 +372,7 @@ class value extends user_sandbox_display
                 if ($this->id <= 0 and isset($this->phr_lst)) {
                     if (count($this->phr_lst->lst) > 0) {
 
-                        $sql_val = $this->load_sql();
+                        $sql_val = $this->load_sql($db_con);
                         log_debug('value->load sql val "' . $sql_val . '"');
                         //$db_con = new mysql;
                         $db_con->usr_id = $this->usr->id;
@@ -804,7 +802,7 @@ class value extends user_sandbox_display
         log_debug('value->check phrases loaded');
 
         // remove duplicate entries in value phrase link table
-        if (!$this->upd_phr_links()) {
+        if ($this->upd_phr_links() != '') {
             $result = false;
         }
 
@@ -1358,14 +1356,14 @@ class value extends user_sandbox_display
         return $result;
     }
 
-// check if the database record for the user specific settings can be removed
-// exposed at the moment to user_display.php for consistency check, but this should not be needed
+    // check if the database record for the user specific settings can be removed
+    // exposed at the moment to user_display.php for consistency check, but this should not be needed
     function del_usr_cfg_if_not_needed(): bool
     {
         log_debug('value->del_usr_cfg_if_not_needed pre check for "' . $this->id . ' und user ' . $this->usr->name);
 
         global $db_con;
-        $result = false;
+        $result = true;
 
         // check again if the user config is still needed (don't use $this->has_usr_cfg to include all updated)
         $sql = "SELECT value_id,
@@ -1432,12 +1430,12 @@ class value extends user_sandbox_display
 // e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
 //      to be able to search the value by a single phrase
 // to do: make it user specific!
-    function upd_phr_links(): bool
+    function upd_phr_links(): string
     {
         log_debug('value->upd_phr_links');
 
         global $db_con;
-        $result = true;
+        $result = '';
 
         // create the db link object for all actions
         //$db_con = New mysql;
@@ -1504,10 +1502,17 @@ class value extends user_sandbox_display
             log_debug('value->upd_phr_links -> add sql');
             if ($sql <> '') {
                 //$sql_result = $db_con->exe($sql, "value->upd_phr_links", array());
-                $sql_result = $db_con->exe($sql);
-                if ($sql_result === False) {
-                    log_err('Error adding new group links "' . dsp_array($add_ids) . '" for ' . $this->id);
-                    $result = false;
+                try {
+                    $sql_result = $db_con->exe($sql);
+                    if ($sql_result) {
+                        $sql_error = pg_result_error($sql_result);
+                        if ($sql_error != '') {
+                            log_err('Error adding new group links "' . dsp_array($add_ids) . '" for ' . $this->id . ' using ' . $sql . ' failed due to ' . $sql_error);
+                        }
+                    }
+                } catch (Exception $e) {
+                    $trace_link = log_err('Cannot remove phrase group links with "' . $sql . '" because: ' . $e->getMessage());
+                    $result = 'Removing of the phrase group links' . log::MSG_ERR_INTERNAL . $trace_link;
                 }
             }
         }
@@ -1521,10 +1526,16 @@ class value extends user_sandbox_display
                WHERE value_id = ' . $this->id . '
                  AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
             //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());
-            $sql_result = $db_con->exe($sql);
-            if ($sql_result === False) {
-                log_err('Error removing group links "' . dsp_array($del_ids) . '" from ' . $this->id);
-                $result = false;
+            try {
+                $sql_result = $db_con->exe($sql);
+                if ($sql_result != '') {
+                    $msg = 'Removing the phrase group links "' . dsp_array($del_ids) . '" from ' . $this->id . ' failed because: ' . $sql_result;
+                    log_warning($msg);
+                    $result = $msg;
+                }
+            } catch (Exception $e) {
+                $trace_link = log_err('Cannot remove phrase group links with "' . $sql . '" because: ' . $e->getMessage());
+                $result = 'Removing of the phrase group links' . log::MSG_ERR_INTERNAL . $trace_link;
             }
         }
         log_debug('value->upd_phr_links -> deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
@@ -1860,7 +1871,7 @@ class value extends user_sandbox_display
                     }
 
                     // update the phrase links for fast searching
-                    if (!$this->upd_phr_links()) {
+                    if ($this->upd_phr_links() != '') {
                         $result = 'adding the phrase links of the value time series failed';
                         $this->id = 0;
                     }
@@ -1876,12 +1887,14 @@ class value extends user_sandbox_display
                     // save the value
                     $db_con_ts = clone $db_con;
                     $db_con_ts->set_type(DB_TYPE_VALUE_TIME_SERIES_DATA);
-                    $db_con_ts->insert(array("value_time_series_id", "val_time", "number"),
+                    $db_con_ts->insert(
+                        array("value_time_series_id", "val_time", "number"),
                         array($this->id, $this->time_stamp->format(DateTimeInterface::ATOM), $this->number));
                 }
             } else {
                 $db_con->set_type(DB_TYPE_VALUE);
-                $this->id = $db_con->insert(array("phrase_group_id", "time_word_id", "user_id", "word_value", "last_update"),
+                $this->id = $db_con->insert(
+                    array("phrase_group_id", "time_word_id", "user_id", "word_value", "last_update"),
                     array($this->grp_id, $this->time_id, $this->usr->id, $this->number, "Now()"));
                 if ($this->id > 0) {
                     // update the reference in the log
@@ -1890,7 +1903,7 @@ class value extends user_sandbox_display
                     }
 
                     // update the phrase links for fast searching
-                    if (!$this->upd_phr_links()) {
+                    if ($this->upd_phr_links() != '') {
                         $result = 'adding the phrase links of the value failed';
                         $this->id = 0;
                     }
@@ -1915,7 +1928,9 @@ class value extends user_sandbox_display
         return $result;
     }
 
-// insert or update a number in the database or save a user specific number
+    /**
+     * insert or update a number in the database or save a user specific number
+     */
     function save(): string
     {
         log_debug('value->save "' . $this->number . '" for user ' . $this->usr->name);
@@ -2002,9 +2017,10 @@ class value extends user_sandbox_display
         return $result;
     }
 
-// true if the value (or value list) is saved as a time series
-    private
-    function is_time_series(): bool
+    /**
+     * true if the value (or value list) is saved as a time series
+     */
+    private function is_time_series(): bool
     {
         return isset($this->time_stamp);
     }

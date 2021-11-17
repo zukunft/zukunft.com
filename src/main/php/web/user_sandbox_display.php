@@ -30,7 +30,7 @@
   
 */
 
-class user_sandbox_display extends user_sandbox {
+class user_sandbox_display extends user_sandbox_value {
 
   // create the HTML code to display the protection setting (but only if allowed)
   function dsp_share($form_name, $back) {

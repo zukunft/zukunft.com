@@ -63,15 +63,15 @@ function run_word_link_list_unit_tests(testing $t)
                           v.description,
                           v.words,
                           CASE WHEN (ul.excluded          IS     NULL) THEN l.excluded      ELSE ul.excluded     END AS excluded,
-                          t.word_id AS word_id,
-                          t.user_id AS user_id,
-                          CASE WHEN (u.word_name    <> '' IS NOT TRUE) THEN t.word_name     ELSE u.word_name     END AS word_name,
-                          CASE WHEN (u.plural       <> '' IS NOT TRUE) THEN t.plural        ELSE u.plural        END AS plural,
-                          CASE WHEN (u.description  <> '' IS NOT TRUE) THEN t.description   ELSE u.description   END AS description,
-                          CASE WHEN (u.word_type_id       IS     NULL) THEN t.word_type_id  ELSE u.word_type_id  END AS word_type_id,
-                          CASE WHEN (u.view_id            IS     NULL) THEN t.view_id       ELSE u.view_id       END AS view_id,
-                          CASE WHEN (u.excluded           IS     NULL) THEN t.excluded      ELSE u.excluded      END AS excluded,
-                          t.values AS values, 
+                          t1.word_id AS word_id1,
+                          t1.user_id AS user_id1,
+                          CASE WHEN (u1.word_name    <> '' IS NOT TRUE) THEN t1.word_name     ELSE u1.word_name     END AS word_name1,
+                          CASE WHEN (u1.plural       <> '' IS NOT TRUE) THEN t1.plural        ELSE u1.plural        END AS plural1,
+                          CASE WHEN (u1.description  <> '' IS NOT TRUE) THEN t1.description   ELSE u1.description   END AS description1,
+                          CASE WHEN (u1.word_type_id       IS     NULL) THEN t1.word_type_id  ELSE u1.word_type_id  END AS word_type_id1,
+                          CASE WHEN (u1.view_id            IS     NULL) THEN t1.view_id       ELSE u1.view_id       END AS view_id1,
+                          CASE WHEN (u1.excluded           IS     NULL) THEN t1.excluded      ELSE u1.excluded      END AS excluded1,
+                          t1.values AS values1, 
                           t2.word_id AS word_id2,
                           t2.user_id AS user_id2,
                           CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name2,
@@ -84,12 +84,12 @@ function run_word_link_list_unit_tests(testing $t)
                      FROM word_links l LEFT JOIN user_word_links ul  ON ul.word_link_id = l.word_link_id 
                                                                     AND ul.user_id = 1,
                           verbs v, 
-                          words t      LEFT JOIN user_words u        ON u.word_id  = t.word_id 
-                                                                    AND u.user_id  = 1 , 
+                          words t1     LEFT JOIN user_words u1       ON u1.word_id  = t1.word_id 
+                                                                    AND u1.user_id  = 1 , 
                           words t2     LEFT JOIN user_words u2       ON u2.word_id = t2.word_id 
                                                                     AND u2.user_id = 1 
                     WHERE l.verb_id        = v.verb_id 
-                      AND l.from_phrase_id = t.word_id
+                      AND l.from_phrase_id = t1.word_id
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.word_link_id  IN (1,2,3)                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
@@ -240,15 +240,15 @@ function run_word_link_list_unit_tests(testing $t)
                           v.description,
                           v.words,
                           CASE WHEN (ul.excluded         IS     NULL) THEN l.excluded     ELSE ul.excluded    END AS excluded,
-                          t.word_id AS word_id,
-                          t.user_id AS user_id,
-                          CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN t.word_name    ELSE u.word_name    END AS word_name,
-                          CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN t.plural       ELSE u.plural       END AS plural,
-                          CASE WHEN (u.description <> '' IS NOT TRUE) THEN t.description  ELSE u.description  END AS description,
-                          CASE WHEN (u.word_type_id      IS     NULL) THEN t.word_type_id ELSE u.word_type_id END AS word_type_id,
-                          CASE WHEN (u.view_id           IS     NULL) THEN t.view_id      ELSE u.view_id      END AS view_id,
-                          CASE WHEN (u.excluded          IS     NULL) THEN t.excluded     ELSE u.excluded     END AS excluded,
-                          t.values AS values, 
+                          t1.word_id AS word_id1,
+                          t1.user_id AS user_id1,
+                          CASE WHEN (u1.word_name <> ''   IS NOT TRUE) THEN t1.word_name    ELSE u1.word_name    END AS word_name1,
+                          CASE WHEN (u1.plural <> ''      IS NOT TRUE) THEN t1.plural       ELSE u1.plural       END AS plural1,
+                          CASE WHEN (u1.description <> '' IS NOT TRUE) THEN t1.description  ELSE u1.description  END AS description1,
+                          CASE WHEN (u1.word_type_id      IS     NULL) THEN t1.word_type_id ELSE u1.word_type_id END AS word_type_id1,
+                          CASE WHEN (u1.view_id           IS     NULL) THEN t1.view_id      ELSE u1.view_id      END AS view_id1,
+                          CASE WHEN (u1.excluded          IS     NULL) THEN t1.excluded     ELSE u1.excluded     END AS excluded1,
+                          t1.values AS values1, 
                           t2.word_id AS word_id2,
                           t2.user_id AS user_id2,
                           CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name2,
@@ -261,12 +261,12 @@ function run_word_link_list_unit_tests(testing $t)
                      FROM word_links l LEFT JOIN user_word_links ul  ON ul.word_link_id = l.word_link_id 
                                                                     AND ul.user_id = 1,
                           verbs v, 
-                          words t      LEFT JOIN user_words u        ON u.word_id = t.word_id 
-                                                                    AND u.user_id = 1 , 
+                          words t1     LEFT JOIN user_words u1       ON u1.word_id = t1.word_id 
+                                                                    AND u1.user_id = 1 , 
                           words t2     LEFT JOIN user_words u2       ON u2.word_id = t2.word_id 
                                                                     AND u2.user_id = 1 
                     WHERE l.verb_id        = v.verb_id 
-                      AND l.from_phrase_id = t.word_id
+                      AND l.from_phrase_id = t1.word_id
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id IN (1,2)
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
@@ -307,15 +307,15 @@ function run_word_link_list_unit_tests(testing $t)
                           v.description,
                           v.words,
                           CASE WHEN (ul.excluded         IS     NULL) THEN l.excluded     ELSE ul.excluded    END AS excluded,
-                          t.word_id AS word_id,
-                          t.user_id AS user_id,
-                          CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN t.word_name    ELSE u.word_name    END AS word_name,
-                          CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN t.plural       ELSE u.plural       END AS plural,
-                          CASE WHEN (u.description <> '' IS NOT TRUE) THEN t.description  ELSE u.description  END AS description,
-                          CASE WHEN (u.word_type_id      IS     NULL) THEN t.word_type_id ELSE u.word_type_id END AS word_type_id,
-                          CASE WHEN (u.view_id           IS     NULL) THEN t.view_id      ELSE u.view_id      END AS view_id,
-                          CASE WHEN (u.excluded          IS     NULL) THEN t.excluded     ELSE u.excluded     END AS excluded,
-                          t.values AS values, 
+                          t1.word_id AS word_id1,
+                          t1.user_id AS user_id1,
+                          CASE WHEN (u1.word_name <> ''   IS NOT TRUE) THEN t1.word_name    ELSE u1.word_name    END AS word_name1,
+                          CASE WHEN (u1.plural <> ''      IS NOT TRUE) THEN t1.plural       ELSE u1.plural       END AS plural1,
+                          CASE WHEN (u1.description <> '' IS NOT TRUE) THEN t1.description  ELSE u1.description  END AS description1,
+                          CASE WHEN (u1.word_type_id      IS     NULL) THEN t1.word_type_id ELSE u1.word_type_id END AS word_type_id1,
+                          CASE WHEN (u1.view_id           IS     NULL) THEN t1.view_id      ELSE u1.view_id      END AS view_id1,
+                          CASE WHEN (u1.excluded          IS     NULL) THEN t1.excluded     ELSE u1.excluded     END AS excluded1,
+                          t1.values AS values1, 
                           t2.word_id AS word_id2,
                           t2.user_id AS user_id2,
                           CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name2,
@@ -328,12 +328,12 @@ function run_word_link_list_unit_tests(testing $t)
                      FROM word_links l LEFT JOIN user_word_links ul  ON ul.word_link_id = l.word_link_id 
                                                                     AND ul.user_id = 1,
                           verbs v, 
-                          words t      LEFT JOIN user_words u        ON u.word_id = t.word_id 
-                                                                    AND u.user_id = 1 , 
+                          words t1     LEFT JOIN user_words u1       ON u1.word_id = t1.word_id 
+                                                                    AND u1.user_id = 1 , 
                           words t2     LEFT JOIN user_words u2       ON u2.word_id = t2.word_id 
                                                                     AND u2.user_id = 1 
                     WHERE l.verb_id        = v.verb_id 
-                      AND l.to_phrase_id   = t.word_id
+                      AND l.to_phrase_id   = t1.word_id
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
@@ -377,15 +377,15 @@ function run_word_link_list_unit_tests(testing $t)
                           v.description,
                           v.words,
                           CASE WHEN (ul.excluded         IS     NULL) THEN l.excluded     ELSE ul.excluded    END AS excluded,
-                          t.word_id AS word_id,
-                          t.user_id AS user_id,
-                          CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN t.word_name    ELSE u.word_name    END AS word_name,
-                          CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN t.plural       ELSE u.plural       END AS plural,
-                          CASE WHEN (u.description <> '' IS NOT TRUE) THEN t.description  ELSE u.description  END AS description,
-                          CASE WHEN (u.word_type_id      IS     NULL) THEN t.word_type_id ELSE u.word_type_id END AS word_type_id,
-                          CASE WHEN (u.view_id           IS     NULL) THEN t.view_id      ELSE u.view_id      END AS view_id,
-                          CASE WHEN (u.excluded          IS     NULL) THEN t.excluded     ELSE u.excluded     END AS excluded,
-                          t.values AS values, 
+                          t1.word_id AS word_id1,
+                          t1.user_id AS user_id1,
+                          CASE WHEN (u1.word_name <> ''   IS NOT TRUE) THEN t1.word_name    ELSE u1.word_name    END AS word_name1,
+                          CASE WHEN (u1.plural <> ''      IS NOT TRUE) THEN t1.plural       ELSE u1.plural       END AS plural1,
+                          CASE WHEN (u1.description <> '' IS NOT TRUE) THEN t1.description  ELSE u1.description  END AS description1,
+                          CASE WHEN (u1.word_type_id      IS     NULL) THEN t1.word_type_id ELSE u1.word_type_id END AS word_type_id1,
+                          CASE WHEN (u1.view_id           IS     NULL) THEN t1.view_id      ELSE u1.view_id      END AS view_id1,
+                          CASE WHEN (u1.excluded          IS     NULL) THEN t1.excluded     ELSE u1.excluded     END AS excluded1,
+                          t1.values AS values1, 
                           t2.word_id AS word_id2,
                           t2.user_id AS user_id2,
                           CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name2,
@@ -398,12 +398,12 @@ function run_word_link_list_unit_tests(testing $t)
                      FROM word_links l LEFT JOIN user_word_links ul  ON ul.word_link_id = l.word_link_id 
                                                                     AND ul.user_id = 1,
                           verbs v, 
-                          words t      LEFT JOIN user_words u        ON u.word_id = t.word_id 
-                                                                    AND u.user_id = 1 , 
+                          words t1     LEFT JOIN user_words u1       ON u1.word_id = t1.word_id 
+                                                                    AND u1.user_id = 1 , 
                           words t2     LEFT JOIN user_words u2       ON u2.word_id = t2.word_id 
                                                                     AND u2.user_id = 1 
                     WHERE l.verb_id        = v.verb_id 
-                      AND l.to_phrase_id   = t.word_id
+                      AND l.to_phrase_id   = t1.word_id
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id = 2 
@@ -448,15 +448,15 @@ function run_word_link_list_unit_tests(testing $t)
                           v.description,
                           v.words,
                           CASE WHEN (ul.excluded         IS     NULL) THEN l.excluded     ELSE ul.excluded    END AS excluded,
-                          t.word_id AS word_id,
-                          t.user_id AS user_id,
-                          CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN t.word_name    ELSE u.word_name    END AS word_name,
-                          CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN t.plural       ELSE u.plural       END AS plural,
-                          CASE WHEN (u.description <> '' IS NOT TRUE) THEN t.description  ELSE u.description  END AS description,
-                          CASE WHEN (u.word_type_id      IS     NULL) THEN t.word_type_id ELSE u.word_type_id END AS word_type_id,
-                          CASE WHEN (u.view_id           IS     NULL) THEN t.view_id      ELSE u.view_id      END AS view_id,
-                          CASE WHEN (u.excluded          IS     NULL) THEN t.excluded     ELSE u.excluded     END AS excluded,
-                          t.values AS values, 
+                          t1.word_id AS word_id1,
+                          t1.user_id AS user_id1,
+                          CASE WHEN (u1.word_name <> ''   IS NOT TRUE) THEN t1.word_name    ELSE u1.word_name    END AS word_name1,
+                          CASE WHEN (u1.plural <> ''      IS NOT TRUE) THEN t1.plural       ELSE u1.plural       END AS plural1,
+                          CASE WHEN (u1.description <> '' IS NOT TRUE) THEN t1.description  ELSE u1.description  END AS description1,
+                          CASE WHEN (u1.word_type_id      IS     NULL) THEN t1.word_type_id ELSE u1.word_type_id END AS word_type_id1,
+                          CASE WHEN (u1.view_id           IS     NULL) THEN t1.view_id      ELSE u1.view_id      END AS view_id1,
+                          CASE WHEN (u1.excluded          IS     NULL) THEN t1.excluded     ELSE u1.excluded     END AS excluded1,
+                          t1.values AS values1, 
                           t2.word_id AS word_id2,
                           t2.user_id AS user_id2,
                           CASE WHEN (u2.word_name   <> '' IS NOT TRUE) THEN t2.word_name    ELSE u2.word_name    END AS word_name2,
@@ -469,12 +469,12 @@ function run_word_link_list_unit_tests(testing $t)
                      FROM word_links l LEFT JOIN user_word_links ul  ON ul.word_link_id = l.word_link_id 
                                                                     AND ul.user_id = 1,
                           verbs v, 
-                          words t      LEFT JOIN user_words u        ON u.word_id = t.word_id 
-                                                                    AND u.user_id = 1 , 
+                          words t1     LEFT JOIN user_words u1       ON u1.word_id = t1.word_id 
+                                                                    AND u1.user_id = 1 , 
                           words t2     LEFT JOIN user_words u2       ON u2.word_id = t2.word_id 
                                                                     AND u2.user_id = 1 
                     WHERE l.verb_id        = v.verb_id 
-                      AND l.to_phrase_id   = t.word_id
+                      AND l.to_phrase_id   = t1.word_id
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id IN (1,2) 

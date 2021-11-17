@@ -431,8 +431,12 @@ class ref
                 $log = $this->log_del();
                 if ($log->id > 0) {
                     $db_con->set_type(DB_TYPE_REF);
-                    $result = $db_con->delete('ref_id', $this->id);
-                    log_debug('ref->del update -> done.' . $result . '');
+                    $del_result = $db_con->delete('ref_id', $this->id);
+                    if ($del_result == '') {
+                        log_debug('ref->del update -> done.' . $result . '');
+                    } else {
+                        $result = false;
+                    }
                 }
             }
         }
