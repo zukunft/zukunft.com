@@ -37,7 +37,7 @@ class user_type_list
     const TEST_NAME = 'System Test Type Name';
     const TEST_TYPE = 'System Test Type Code ID';
 
-    public array $lst = [];
+    public array $lst = []; // a list of type objects
     public array $hash = []; // hash list with the code id for fast selection
 
     /**
@@ -69,6 +69,11 @@ class user_type_list
         return $this->lst;
     }
 
+    /**
+     * recreate the hash table to get the database id for a code_id
+     * @param array $type_list the list of the code_id indexed by the database id
+     * @return array with the database ids indexed by the code_id
+     */
     function get_hash(array $type_list): array
     {
         $this->hash = [];
@@ -101,7 +106,7 @@ class user_type_list
      * return the database row id based on the code_id
      *
      * @param string $code_id
-     * @return int
+     * @return int the database id for the given code_id
      */
     function id(string $code_id): int
     {
@@ -129,7 +134,7 @@ class user_type_list
         $result = '';
         if ($id != null) {
 
-            $type = $this->get($id);
+            $type = $this->get_by_id($id);
             if ($type != null) {
                 $result = $type->name;
             } else {
@@ -144,7 +149,7 @@ class user_type_list
      * @param int $id the database id of the expected type
      * @return user_type the type object
      */
-    function get(int $id): user_type
+    function get_by_id(int $id): user_type
     {
         $result = null;
         if ($id > 0) {
@@ -162,15 +167,15 @@ class user_type_list
     /**
      * TODO to rename to get and rename get to get_by_id
      */
-    function get_by_code_id(string $code_id)
+    function get_by_code_id(string $code_id): user_type
     {
-        return $this->get($this->id($code_id));
+        return $this->get_by_id($this->id($code_id));
     }
 
     function code_id(int $id): string
     {
         $result = '';
-        $type = $this->get($id);
+        $type = $this->get_by_id($id);
         if ($type != null) {
             $result = $type->code_id;
         } else {
@@ -179,7 +184,10 @@ class user_type_list
         return $result;
     }
 
-    function is_empty()
+    /**
+     * @return bool true if the list is empty (and a foreach loop will fail)
+     */
+    function is_empty(): bool
     {
         $result = false;
         if (empty($this->lst)) {
@@ -188,6 +196,38 @@ class user_type_list
         return $result;
     }
 
+    /*
+     * display functions
+     */
+
+    /**
+     * @return string the verb list with the internal database ids for debugging
+     */
+    function dsp_id(): string
+    {
+        $names = '';
+        $ids = '';
+        if (!$this->is_empty()) {
+            foreach ($this->lst as $key => $type) {
+                if ($names != '') {
+                    $names .= ', ';
+                }
+                $names .= '"' . $type->name . '"';
+
+                if ($ids != '') {
+                    $ids .= ', ';
+                }
+                $ids .= $key;
+            }
+        }
+        return $names . ' (' . $ids . ')';
+    }
+
+
+
+    /*
+     * unit test support functions
+     */
 
     /**
      * create dummy type list for the unit tests without database connection

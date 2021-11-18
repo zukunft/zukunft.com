@@ -1034,6 +1034,15 @@ class testing
     }
 
     /**
+     * @param string $msg the message to display to the person who executes the system
+     */
+    function dsp_warning(string $msg) {
+        echo $msg;
+        echo '<br>';
+        echo '\n';
+    }
+
+    /**
      * display the test results in HTML format
      */
     function dsp_result_html()

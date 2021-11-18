@@ -175,55 +175,55 @@ class db_cl
     function word_type(int $id)
     {
         global $word_types;
-        return $word_types->get($id);
+        return $word_types->get_by_id($id);
     }
 
     function formula_type(int $id)
     {
         global $formula_types;
-        return $formula_types->get($id);
+        return $formula_types->get_by_id($id);
     }
 
     function formula_link_type(int $id)
     {
         global $formula_link_types;
-        return $formula_link_types->get($id);
+        return $formula_link_types->get_by_id($id);
     }
 
     function formula_element_type(int $id)
     {
         global $formula_element_types;
-        return $formula_element_types->get($id);
+        return $formula_element_types->get_by_id($id);
     }
 
     function view_type(int $id)
     {
         global $view_types;
-        return $view_types->get($id);
+        return $view_types->get_by_id($id);
     }
 
     function view_component_type(int $id)
     {
         global $view_component_types;
-        return $view_component_types->get($id);
+        return $view_component_types->get_by_id($id);
     }
 
     function share_type(int $id)
     {
         global $share_types;
-        return $share_types->get($id);
+        return $share_types->get_by_id($id);
     }
 
     function protection_type(int $id)
     {
         global $protection_types;
-        return $protection_types->get($id);
+        return $protection_types->get_by_id($id);
     }
 
     function job_type(int $id)
     {
         global $job_types;
-        return $job_types->get($id);
+        return $job_types->get_by_id($id);
     }
 
     function log_table(int $id)

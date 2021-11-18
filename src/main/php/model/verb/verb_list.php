@@ -156,7 +156,10 @@ class verb_list extends user_type_list
         $this->hash[verb::IS_A] = 2;
     }
 
-    // calculates how many times a word is used, because this can be helpful for sorting
+    /**
+     * calculates how many times a word is used, because this can be helpful for sorting
+     * @returns string error message for the user or an empty string
+     */
     function calc_usage(): string
     {
         log_debug('verb_list->calc_usage');
@@ -214,13 +217,13 @@ class verb_list extends user_type_list
                     if (array_key_exists($id, $this->lst)) {
                         $result = $this->lst[$id];
                     } else {
-                        log_err('Type with is ' . $id . ' not found in ' . dsp_array($this->lst));
+                        log_err('Verb "' . $code_id . '" with is ' . $id . ' not found in ' . $this->dsp_id());
                     }
                 } else {
-                    log_debug('Type id not set');
+                    log_debug('Verb id not set while try to get "' . $code_id . '"');
                 }
             } else {
-                log_err('Type id not found for ' . $code_id . ' in ' . dsp_array($this->hash));
+                log_err('Verb "' . $code_id . '" not found in ' . $this->dsp_id());
             }
         } else {
             log_debug('Type code id not not set');
@@ -283,7 +286,7 @@ class verb_list extends user_type_list
                 $use_sorted_id[$row[0]] = $row[2];
             }
             rsort($use_sorted);
-            $most_used = array_slice($use_sorted, 0, $n);;
+            $most_used = array_slice($use_sorted, 0, $n);
             foreach ($most_used as $top_usage) {
                 $id = array_search($top_usage, $use_sorted_id);
                 $result[] = $combined_list[$id];
@@ -316,13 +319,17 @@ class verb_list extends user_type_list
       -----------------
     */
 
-    // return a list of the verb ids as a sql compatible text
+    /**
+     * @return string list of the verb ids as a sql compatible text
+     */
     function ids_txt(): string
     {
         return sql_array($this->ids());
     }
 
-    // display all verbs and allow an admin to change it
+    /**
+     * @return string html code to display all verbs and allow an admin to change it
+     */
     function dsp_list(): string
     {
         return dsp_list($this->lst, "link_type");

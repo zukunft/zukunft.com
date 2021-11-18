@@ -106,7 +106,7 @@ class ref_type_list extends user_type_list
      * @param int $id the database id of the expected type
      * @return ref_type the type object
      */
-    function get(int $id): ref_type
+    function get_by_id(int $id): ref_type
     {
         global $ref_types;
         $result = null;
@@ -132,7 +132,7 @@ function get_ref_type(string $code_id): ref_type
 {
     global $ref_types;
     $id = $ref_types->id($code_id);
-    return $ref_types->get($id);
+    return $ref_types->get_by_id($id);
 }
 
 function get_ref_type_id(string $code_id): int
@@ -144,5 +144,5 @@ function get_ref_type_id(string $code_id): int
 function get_ref_type_by_id(string $id): ref_type
 {
     global $ref_types;
-    return $ref_types->get($id);
+    return $ref_types->get_by_id($id);
 }
