@@ -115,38 +115,17 @@ function run_display_test(testing $t)
     // about does not return a page for unknown reasons at the moment
     //$t->dsp_contains(', frontend about.php '.$result.' contains at least '.$target, $target, $result, TIMEOUT_LIMIT_PAGE);
 
-    $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
-    if ($is_connected) {
-        $result = file_get_contents('https://zukunft.com/http/privacy_policy.html');
-        if ($result === false) {
-            $t->dsp_warning($msg_net_off);
-            $is_connected = false;
-        } else {
-            $target = 'Swiss purpose of data protection';
-            $t->dsp_contains(', frontend privacy_policy.php ' . $result . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE_SEMI);
-        }
-    }
-
-    if ($is_connected) {
-        $result = file_get_contents('https://zukunft.com/http/error_update.php?id=1');
-        if ($result === false) {
-            $t->dsp_warning($msg_net_off);
-            $is_connected = false;
-        } else {
-            $target = 'not permitted';
-            $t->dsp_contains(', frontend error_update.php ' . $result . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
-        }
-    }
-
-    if ($is_connected) {
-        $result = file_get_contents('https://zukunft.com/http/find.php?pattern=' . TW_ABB);
-        if ($result === false) {
-            $t->dsp_warning($msg_net_off);
-            $is_connected = false;
-        } else {
-            $target = TW_ABB;
-            $t->dsp_contains(', frontend find.php ' . TW_ABB . ' contains at least ' . $target, $target, $result, TIMEOUT_LIMIT_PAGE);
-        }
-    }
+    $is_connected = $t->dsp_web_test(
+        'http/privacy_policy.html',
+        'Swiss purpose of data protection',
+        ', frontend privacy_policy.php contains at least');
+    $is_connected = $t->dsp_web_test(
+        'http/error_update.php?id=1',
+        'not permitted',
+        ', frontend error_update.php contains at least', $is_connected);
+    $t->dsp_web_test(
+        'http/find.php?pattern=' . TW_ABB,
+        TW_ABB,
+        ', frontend find.php contains at least', $is_connected);
 
 }

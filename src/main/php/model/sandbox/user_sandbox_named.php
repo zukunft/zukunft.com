@@ -104,6 +104,28 @@ class user_sandbox_named extends user_sandbox
     }
 
     /**
+     * set the log entry parameter to delete a object
+     * @returns user_log_link with the object presets e.g. th object name
+     */
+    function log_del(): user_log
+    {
+        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
+
+        $log = new user_log;
+        $log->field = $this->obj_name . '_name';
+        $log->old_value = $this->name;
+        $log->new_value = '';
+
+        $log->usr = $this->usr;
+        $log->action = 'del';
+        $log->table = $this->obj_name . 's';
+        $log->row_id = $this->id;
+        $log->add();
+
+        return $log;
+    }
+
+    /**
      * create a new named object
      * returns the id of the creates object
      * TODO do a rollback in case of an error
@@ -150,6 +172,45 @@ class user_sandbox_named extends user_sandbox
             }
         }
 
+        return $result;
+    }
+
+    /**
+     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
+     * should only be called if the user is the owner and nobody has used the display component link
+     * @param sql_db $db_con the active database connection
+     * @param $db_rec the the database record before the saving
+     * @param $std_rec the database record defined as standrad because it is used by most users
+     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @throws Exception
+     */
+    function save_id_fields(sql_db $db_con, $db_rec, $std_rec): string
+    {
+        $result = '';
+        log_debug($this->obj_name . '->save_id_fields ' . $this->dsp_id());
+
+        if ($this->is_id_updated($db_rec)) {
+            $log = null;
+            log_debug($this->obj_name . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+
+            $log = $this->log_upd_field();
+            $log->old_value = $db_rec->name;
+            $log->new_value = $this->name;
+            $log->std_value = $std_rec->name;
+            $log->field = $this->obj_name . '_name';
+
+            $log->row_id = $this->id;
+            if ($log->add()) {
+                $db_con->set_type($this->obj_name);
+                $db_con->set_usr($this->usr->id);
+                if (!$db_con->update($this->id,
+                    array($this->obj_name . '_name'),
+                    array($this->name))) {
+                    $result .= 'update of name to ' . $this->name . 'failed';
+                }
+            }
+        }
+        log_debug($this->obj_name . '->save_id_fields for ' . $this->dsp_id() . ' done');
         return $result;
     }
 

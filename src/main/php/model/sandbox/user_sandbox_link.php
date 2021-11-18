@@ -108,6 +108,7 @@ class user_sandbox_link extends user_sandbox
      * set the log entry parameter for a new link object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * @returns user_log_link with the object presets e.g. th object name
      */
     function log_link_add(): user_log_link
     {
@@ -122,6 +123,27 @@ class user_sandbox_link extends user_sandbox
         // TODO add the table exceptions from sql_db
         $log->table = $this->obj_name . 's';
         $log->row_id = 0;
+        $log->add();
+
+        return $log;
+    }
+
+    /**
+     * set the log entry parameter to delete a object
+     * @returns user_log_link with the object presets e.g. th object name
+     */
+    function log_link_del(): user_log_link
+    {
+        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
+
+        $log = new user_log_link;
+        $log->old_from = $this->fob;
+        $log->old_to = $this->tob;
+
+        $log->usr = $this->usr;
+        $log->action = 'del';
+        $log->table = $this->obj_name . 's';
+        $log->row_id = $this->id;
         $log->add();
 
         return $log;
@@ -189,7 +211,7 @@ class user_sandbox_link extends user_sandbox
 
         if ($db_rec->excluded <> $this->excluded) {
             if ($this->excluded == 1) {
-                $log = $this->log_del();
+                $log = $this->log_link_del();
             } else {
                 $log = $this->log_link_add();
             }
@@ -227,6 +249,47 @@ class user_sandbox_link extends user_sandbox
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
+     * should only be called if the user is the owner and nobody has used the display component link
+     * @param sql_db $db_con the active database connection
+     * @param object $db_rec the database record before the saving
+     * @param object $std_rec the database record defined as standrad because it is used by most users
+     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @throws Exception
+     */
+    function save_id_fields(sql_db $db_con, $db_rec, $std_rec): string
+    {
+        $result = '';
+        log_debug($this->obj_name . '->save_id_fields ' . $this->dsp_id());
+
+        if ($this->is_id_updated($db_rec)) {
+            $log = null;
+            log_debug($this->obj_name . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
+
+            $log = $this->log_upd_link();
+            $log->old_from = $db_rec->fob;
+            $log->new_from = $this->fob;
+            $log->std_from = $std_rec->fob;
+            $log->old_to = $db_rec->tob;
+            $log->new_to = $this->tob;
+            $log->std_to = $std_rec->tob;
+
+            $log->row_id = $this->id;
+            if ($log->add()) {
+                $db_con->set_type($this->obj_name);
+                $db_con->set_usr($this->usr->id);
+                if (!$db_con->update($this->id,
+                    array($this->from_name . '_id', $this->from_name . '_id'),
+                    array($this->fob->id, $this->tob->id))) {
+                    $result .= 'update from link to ' . $this->from_name . 'failed';
+                }
+            }
+        }
+        log_debug($this->obj_name . '->save_id_fields for ' . $this->dsp_id() . ' done');
         return $result;
     }
 

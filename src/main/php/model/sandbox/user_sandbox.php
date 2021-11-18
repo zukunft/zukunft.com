@@ -838,36 +838,21 @@ class user_sandbox
     }
 
     /**
-     * set the log entry parameter to delete a object
+     * dummy function definition that will be overwritte by the child object
+     * @return user_log_link
      */
-    function log_del()
+    function log_link_del(): user_log_link
     {
-        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            $log = new user_log;
-            $log->field = $this->obj_name . '_name';
-            $log->old_value = $this->name;
-            $log->new_value = '';
-        } elseif ($this->obj_type == user_sandbox::TYPE_VALUE) {
-            $log = new user_log;
-            $log->field = 'word_value';
-            $log->old_value = $this->number;
-            $log->new_value = '';
-        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-            $log = new user_log_link;
-            $log->old_from = $this->fob;
-            $log->old_to = $this->tob;
-        } else {
-            $log = new user_log;
-            log_err('Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name, $this->obj_name . '->log_del');
-        }
-        $log->usr = $this->usr;
-        $log->action = 'del';
-        $log->table = $this->obj_name . 's';
-        $log->row_id = $this->id;
-        $log->add();
+        return new user_log_link();
+    }
 
-        return $log;
+    /**
+     * dummy function definition that will be overwritte by the child object
+     * @return user_log
+     */
+    function log_del(): user_log
+    {
+        return new user_log();
     }
 
     /**
@@ -1131,64 +1116,9 @@ class user_sandbox
         return $result;
     }
 
-    // updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
-    // should only be called if the user is the owner and nobody has used the display component link
-    // returns either the id of the updated or created source or a message to the user with the reason, why it has failed
-    function save_id_fields($db_con, $db_rec, $std_rec): string
-    {
-        $result = '';
-        log_debug($this->obj_name . '->save_id_fields ' . $this->dsp_id());
-
-        if ($this->is_id_updated($db_rec)) {
-            $log = null;
-            log_debug($this->obj_name . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
-            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                $log = $this->log_upd_field();
-                $log->old_value = $db_rec->name;
-                $log->new_value = $this->name;
-                $log->std_value = $std_rec->name;
-                $log->field = $this->obj_name . '_name';
-            } elseif ($this->obj_type == user_sandbox::TYPE_VALUE) {
-                $result .= 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
-            } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-                $log = $this->log_upd_link();
-                $log->old_from = $db_rec->fob;
-                $log->new_from = $this->fob;
-                $log->std_from = $std_rec->fob;
-                $log->old_to = $db_rec->tob;
-                $log->new_to = $this->tob;
-                $log->std_to = $std_rec->tob;
-            } else {
-                $result .= 'Unknown user sandbox type ' . $this->obj_type . ' in ' . $this->obj_name;
-            }
-            $log->row_id = $this->id;
-            if ($log->add()) {
-                if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                    $db_con->set_type($this->obj_name);
-                    $db_con->set_usr($this->usr->id);
-                    if (!$db_con->update($this->id,
-                        array($this->obj_name . '_name'),
-                        array($this->name))) {
-                        $result .= 'update of name to ' . $this->name . 'failed';
-                    }
-                } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-                    $db_con->set_type($this->obj_name);
-                    $db_con->set_usr($this->usr->id);
-                    if (!$db_con->update($this->id,
-                        array($this->from_name . '_id', $this->from_name . '_id'),
-                        array($this->fob->id, $this->tob->id))) {
-                        $result .= 'update from link to ' . $this->from_name . 'failed';
-                    }
-                }
-            }
-        }
-        log_debug($this->obj_name . '->save_id_fields for ' . $this->dsp_id() . ' done');
-        return $result;
-    }
-
     // check if the id parameters are supposed to be changed
     // TODO add the link type for word links
-    private function is_id_updated($db_rec): bool
+    function is_id_updated($db_rec): bool
     {
         $result = False;
         log_debug($this->obj_name . '->is_id_updated ' . $this->dsp_id());
@@ -1652,7 +1582,12 @@ class user_sandbox
         $result = '';
 
         // log the deletion request
-        $log = $this->log_del();
+
+        if ($this->obj_type == user_sandbox::TYPE_LINK) {
+            $log = $this->log_link_del();
+        } else {
+            $log = $this->log_del();
+        }
         if ($log->id > 0) {
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;

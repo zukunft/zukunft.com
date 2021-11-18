@@ -107,6 +107,45 @@ class user_sandbox_value extends user_sandbox
         return $log;
     }
 
+    /**
+     * set the log entry parameter to delete a object
+     * @returns user_log_link with the object presets e.g. th object name
+     */
+    function log_del(): user_log
+    {
+        log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
+
+        $log = new user_log;
+        $log->field = 'word_value';
+        $log->old_value = $this->number;
+        $log->new_value = '';
+
+        $log->usr = $this->usr;
+        $log->action = 'del';
+        $log->table = $this->obj_name . 's';
+        $log->row_id = $this->id;
+        $log->add();
+
+        return $log;
+    }
+
+    /**
+     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
+     * should only be called if the user is the owner and nobody has used the display component link
+     * @param sql_db $db_con the active database connection
+     * @param $db_rec the the database record before the saving
+     * @param $std_rec the database record defined as standrad because it is used by most users
+     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @throws Exception
+     */
+    function save_id_fields(sql_db $db_con, $db_rec, $std_rec): string
+    {
+        $result = '';
+
+        $result .= 'The user sandbox save_id_fields does not support ' . $this->obj_type . ' for ' . $this->obj_name;
+        return $result;
+    }
+
 }
 
 

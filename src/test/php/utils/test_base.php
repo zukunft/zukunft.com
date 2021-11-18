@@ -316,6 +316,8 @@ function str_diff($from, $to): array
 
 class testing
 {
+    // the url which should be used for testing (maybe later https://test.zukunft.com/)
+    const URL = 'https://zukunft.com/';
 
     // the fixed system user used for testing
     const USER_NAME = "zukunft.com system test";
@@ -871,7 +873,6 @@ class testing
      * Display functions
      */
 
-
     /**
      * the HTML code to display the header text
      */
@@ -1010,16 +1011,6 @@ class testing
     }
 
     /**
-     * remove color setting from the result to reduce confusion by misleading colors
-     */
-    function test_remove_color(string $result): string
-    {
-        $result = str_replace('<p style="color:red">', '', $result);
-        $result = str_replace('<p class="user_specific">', '', $result);
-        return str_replace('</p>', '', $result);
-    }
-
-    /**
      * similar to test_show_result, but the target only needs to be part of the result
      * e.g. "Zurich" is part of the canton word list
      */
@@ -1033,6 +1024,21 @@ class testing
         return $this->dsp($test_text, $target, $result, $exe_max_time, $comment, 'contains');
     }
 
+
+    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true): bool {
+        $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
+        if ($is_connected) {
+            $result = file_get_contents(self::URL . $url_path);
+            if ($result === false) {
+                $this->dsp_warning($msg_net_off);
+                $is_connected = false;
+            } else {
+                $this->dsp_contains($msg, $must_contain, $result, TIMEOUT_LIMIT_PAGE_SEMI);
+            }
+        }
+        return $is_connected;
+    }
+
     /**
      * @param string $msg the message to display to the person who executes the system
      */
@@ -1040,6 +1046,16 @@ class testing
         echo $msg;
         echo '<br>';
         echo '\n';
+    }
+
+    /**
+     * remove color setting from the result to reduce confusion by misleading colors
+     */
+    function test_remove_color(string $result): string
+    {
+        $result = str_replace('<p style="color:red">', '', $result);
+        $result = str_replace('<p class="user_specific">', '', $result);
+        return str_replace('</p>', '', $result);
     }
 
     /**
