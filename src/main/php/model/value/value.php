@@ -1229,7 +1229,11 @@ class value extends user_sandbox_display
 
     */
 
-// true if no one has used this value
+    function used(): bool {
+        return !$this->not_used();
+    }
+
+    // true if no one has used this value
     function not_used(): bool
     {
         log_debug('value->not_used (' . $this->id . ')');
@@ -1398,7 +1402,7 @@ class value extends user_sandbox_display
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->usr->id);
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'values';
         } else {

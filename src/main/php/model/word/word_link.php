@@ -1034,7 +1034,7 @@ class word_link extends user_sandbox_link_description
     {
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'word_links';
         } else {
@@ -1071,7 +1071,7 @@ class word_link extends user_sandbox_link_description
     {
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'word_links';
         } else {

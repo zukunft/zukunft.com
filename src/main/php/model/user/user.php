@@ -490,9 +490,10 @@ class user
     // create the display user object based on the object (no needed any more if always the display user object is used)
     function dsp_user(): user_dsp
     {
+        global $db_con;
         $dsp_user = new user_dsp;
         $dsp_user->id = $this->id;
-        $dsp_user->load();
+        $dsp_user->load($db_con);
         return $dsp_user;
     }
 
@@ -539,7 +540,7 @@ class user
         log_debug('user->log_upd user ' . $this->name);
         $log = new user_log_named;
         $log->usr = $this;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         $log->table = 'users';
 
         return $log;
@@ -580,7 +581,7 @@ class user
 
         $db_usr = new user;
         $db_usr->id = $this->id;
-        $db_row = $db_usr->load_db();
+        $db_row = $db_usr->load_db($db_con);
         log_debug('user->save -> database user loaded "' . $db_row['name'] . '"');
 
         $this->upd_par($db_con, $usr_par, $db_row, "user_name", 'name');

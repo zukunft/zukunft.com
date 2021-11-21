@@ -38,6 +38,9 @@
 class user_type
 {
 
+    // database and JSON object field names
+    const FLD_NAME = 'type_name';
+
     // the standard fields of a type
     // the database id is used as the array pointer
     public ?string $code_id = '';  // this id text is unique for all code links and is used for system im- and export

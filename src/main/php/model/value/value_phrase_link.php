@@ -96,9 +96,11 @@ class val_lnk
         $result = true;
 
         if (isset($this->val)) {
-            log_debug('val_lnk->used check if value with id ' . $this->val->id . ' has never been used');
-            $result = $this->val->used();
-            log_debug('val_lnk->used for id ' . $this->val->id . ' is ' . zu_dsp_bool($result));
+            if ($this->val != null) {
+                log_debug('val_lnk->used check if value with id ' . $this->val->id . ' has never been used');
+                $result = $this->val->used();
+                log_debug('val_lnk->used for id ' . $this->val->id . ' is ' . zu_dsp_bool($result));
+            }
         }
         return $result;
     }
@@ -126,7 +128,7 @@ class val_lnk
         log_debug('val_lnk->log_upd for "' . $this->wrd->id . ' to ' . $this->val->id);
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         $log->table = 'value_phrase_links'; // no user sandbox for links, only the values itself can differ from user to user
         //$log->field = phrase::FLD_ID;
         $log->old_from = $db_rec->val;
@@ -159,7 +161,7 @@ class val_lnk
     {
         $result = '';
         if ($db_rec->wrd->id <> $this->wrd->id) {
-            $log = $this->log_upd();
+            $log = $this->log_upd($db_con);
             if ($log->add()) {
                 $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
                 $result .= $db_con->update($this->id, phrase::FLD_ID, $this->wrd->id);
@@ -264,6 +266,7 @@ class val_lnk
         } else {
             // try to create a new value and link all words
             // if the value already exist, create a user entry
+            log_warning('val_lnk->save creating of a new value for "' . $this->id . '" not yet coded');
         }
         log_debug("val_lnk->save ... done");
     }
@@ -292,6 +295,7 @@ class val_lnk
             // check if removing a word link is matching another value
             // if yes merge value with this value
             // if no create a new value
+            log_warning('val_lnk->del check if removing a word link is matching another value for "' . $this->id . '" not yet coded');
         }
 
         log_debug("val_lnk->del -> (" . $result . ")");

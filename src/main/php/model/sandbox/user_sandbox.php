@@ -813,7 +813,7 @@ class user_sandbox
     {
         log_debug($this->obj_name . '->log_upd_common ' . $this->dsp_id());
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->table = $this->obj_name . 's';

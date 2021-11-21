@@ -1271,7 +1271,7 @@ class word extends user_sandbox_description
 
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         $log->table = 'words';
         $log->field = self::FLD_VIEW;
         if ($this->view_id > 0) {

@@ -571,7 +571,7 @@ class formula_link extends user_sandbox_link
     {
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         if ($this->can_change()) {
             $log->table = 'formula_links';
         } else {

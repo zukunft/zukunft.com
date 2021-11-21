@@ -267,7 +267,7 @@ class ref
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new user_log_link;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         $log->table = 'refs';
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->ref_type;

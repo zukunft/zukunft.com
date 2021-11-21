@@ -310,7 +310,7 @@ class ip_range
         log_debug(self::class . '->log_upd ' . $this->dsp_id());
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         $log->table = DB_TYPE_IP;
 
         return $log;

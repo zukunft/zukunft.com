@@ -59,7 +59,7 @@ class sql_db
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
     // tables that does not have a name e.g. DB_TYPE_WORD_LINK is a link, but is nevertheless named
-    const DB_TYPES_NOT_NAMED = [DB_TYPE_VALUE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF, DB_TYPE_IP];
+    const DB_TYPES_NOT_NAMED = [DB_TYPE_VALUE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF, DB_TYPE_IP, DB_TYPE_SYS_LOG];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [DB_TYPE_WORD_LINK, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
@@ -69,64 +69,70 @@ class sql_db
     const FLD_EXT_ID = '_id';
     const FLD_EXT_NAME = '_name';
 
-    const USER_PREFIX = "user_";                 // prefix used for tables where the user sandbox values are stored
+    const USER_PREFIX = "user_";                  // prefix used for tables where the user sandbox values are stored
 
-    const STD_TBL = "s";                         // prefix used for the standard table where data for all users are stored
-    const USR_TBL = "u";                         // prefix used for the standard table where the user sandbox data is stored
-    const LNK_TBL = "l";                         // prefix used for the table which should be joined in the result
-    const ULK_TBL = "c";                         // prefix used for the table which should be joined in the result of the user sandbox data
+    const STD_TBL = "s";                          // prefix used for the standard table where data for all users are stored
+    const USR_TBL = "u";                          // prefix used for the standard table where the user sandbox data is stored
+    const LNK_TBL = "l";                          // prefix used for the table which should be joined in the result
+    const LNK2_TBL = "l2";                        // prefix used for the second table which should be joined in the result
+    const ULK_TBL = "c";                          // prefix used for the table which should be joined in the result of the user sandbox data
 
-    const FLD_CODE_ID = "code_id";               // field name for the code link
-    const FLD_USER_ID = "user_id";               // field name for the user table foreign key field
-    const FLD_VALUE = "value";                   // field name e.g. for the configuration value
-    const FLD_DESCRIPTION = "description";       // field name for the any description
-    const FLD_TYPE_NAME = "type_name";           // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_SHARE = "share_type_id";           // field name for the share permission
-    const FLD_PROTECT = "protection_type_id";    // field name for the protection level
+    const FLD_CODE_ID = "code_id";                // field name for the code link
+    const FLD_USER_ID = "user_id";                // field name for the user table foreign key field
+    const FLD_VALUE = "value";                    // field name e.g. for the configuration value
+    const FLD_DESCRIPTION = "description";        // field name for the any description
+    const FLD_TYPE_NAME = "type_name";            // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_SHARE = "share_type_id";            // field name for the share permission
+    const FLD_PROTECT = "protection_type_id";     // field name for the protection level
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
-    const FLD_FORMAT_TEXT = "text";              // to force the text formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_VAL = "number";             // to force the numeric formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_BOOL = "boolean";           // to force the boolean formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_TEXT = "text";               // to force the text formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_VAL = "number";              // to force the numeric formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_BOOL = "boolean";            // to force the boolean formatting of a value for the SQL statement formatting
 
     /*
      * object variables
      */
 
-    public ?string $db_type = null;              // the database type which should be used for this connection e.g. postgreSQL or MYSQL
-    public $postgres_link;                       // the link object to the database
-    public mysqli $mysql;                        // the MySQL object to the database
-    public ?int $usr_id = null;                  // the user id of the person who request the database changes
-    private ?int $usr_view_id = null;            // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    public ?string $db_type = null;               // the database type which should be used for this connection e.g. postgreSQL or MYSQL
+    public $postgres_link;                        // the link object to the database
+    public mysqli $mysql;                         // the MySQL object to the database
+    public ?int $usr_id = null;                   // the user id of the person who request the database changes
+    private ?int $usr_view_id = null;             // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
 
-    private ?string $type = '';                  // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
-    private ?string $table = '';                 // name of the table that is used for the next query
-    private ?string $id_field = '';              // primary key field of the table used
-    private ?string $id_from_field = '';         // only for link objects the id field of the source object
-    private ?string $id_to_field = '';           // only for link objects the id field of the destination object
-    private ?string $id_link_field = '';         // only for link objects the id field of the link type object
-    private ?string $name_field = '';            // unique text key field of the table used
-    private ?array $field_lst = [];              // list of fields that should be returned to the next select query
-    private ?array $usr_field_lst = [];          // list of user specific fields that should be returned to the next select query
-    private ?array $usr_num_field_lst = [];      // list of user specific numeric fields that should be returned to the next select query
-    private ?array $usr_bool_field_lst = [];     // list of user specific boolean / tinyint fields that should be returned to the next select query
-    private ?array $usr_only_field_lst = [];     // list of fields that are only in the user sandbox
-    private ?array $join_field_lst = [];         // list of fields that should be returned to the next select query that are taken from a joined table
-    private ?array $join_usr_field_lst = [];     // list of fields that should be returned to the next select query that are taken from a joined table
-    private ?array $join_usr_num_field_lst = []; // list of fields that should be returned to the next select query that are taken from a joined table
-    private ?string $join_type = '';             // the type name of the table to join
-    private bool $usr_query = false;             // true, if the query is expected to retrieve user specific data
-    private bool $usr_join_query = false;        // true, if the joined query is also expected to retrieve user specific data
-    private bool $usr_only_query = false;        // true, if the query is expected to retrieve ONLY the user specific data without the standard values
+    private ?string $type = '';                   // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
+    private ?string $table = '';                  // name of the table that is used for the next query
+    private ?string $id_field = '';               // primary key field of the table used
+    private ?string $id_from_field = '';          // only for link objects the id field of the source object
+    private ?string $id_to_field = '';            // only for link objects the id field of the destination object
+    private ?string $id_link_field = '';          // only for link objects the id field of the link type object
+    private ?string $name_field = '';             // unique text key field of the table used
+    private ?array $field_lst = [];               // list of fields that should be returned to the next select query
+    private ?array $usr_field_lst = [];           // list of user specific fields that should be returned to the next select query
+    private ?array $usr_num_field_lst = [];       // list of user specific numeric fields that should be returned to the next select query
+    private ?array $usr_bool_field_lst = [];      // list of user specific boolean / tinyint fields that should be returned to the next select query
+    private ?array $usr_only_field_lst = [];      // list of fields that are only in the user sandbox
+    private ?array $join_field_lst = [];          // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join2_field_lst = [];         // same as $join_field_lst but for the second join
+    private ?array $join_usr_field_lst = [];      // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join2_usr_field_lst = [];     // same as $join_usr_field_lst but for the second join
+    private ?array $join_usr_num_field_lst = [];  // list of fields that should be returned to the next select query that are taken from a joined table
+    private ?array $join2_usr_num_field_lst = []; // same as $join_usr_num_field_lst but for the second join
+    private ?string $join_type = '';              // the type name of the table to join
+    private ?string $join2_type = '';             // the type name of the second table to join (maybe later switch to join n tables)
+    private bool $usr_query = false;              // true, if the query is expected to retrieve user specific data
+    private bool $join_usr_query = false;         // true, if the joined query is also expected to retrieve user specific data
+    private bool $join2_usr_query = false;        // same as $usr_join_query but for the second join
+    private bool $usr_only_query = false;         // true, if the query is expected to retrieve ONLY the user specific data without the standard values
 
-    private ?string $fields = '';                // the fields                SQL statement that is used for the next select query
-    private ?string $from = '';                  // the FROM                  SQL statement that is used for the next select query
-    private ?string $join = '';                  // the JOIN                  SQL statement that is used for the next select query
-    private ?string $where = '';                 // the WHERE condition as an SQL statement that is used for the next select query
-    private ?string $order = '';                 // the WHERE condition as an SQL statement that is used for the next select query
+    private ?string $fields = '';                 // the fields                SQL statement that is used for the next select query
+    private ?string $from = '';                   // the FROM                  SQL statement that is used for the next select query
+    private ?string $join = '';                   // the JOIN                  SQL statement that is used for the next select query
+    private ?string $where = '';                  // the WHERE condition as an SQL statement that is used for the next select query
+    private ?string $order = '';                  // the WHERE condition as an SQL statement that is used for the next select query
 
-    private ?array $prepared_sql_names = [];     // list of all SQL queries that have already been prepared during the open connection
-    private ?array $prepared_stmt = [];          // list of the MySQL stmt
+    private ?array $prepared_sql_names = [];      // list of all SQL queries that have already been prepared during the open connection
+    private ?array $prepared_stmt = [];           // list of the MySQL stmt
 
     /*
      * set up the environment
@@ -150,9 +156,15 @@ class sql_db
         $this->usr_bool_field_lst = [];
         $this->usr_only_field_lst = [];
         $this->join_field_lst = [];
+        $this->join2_field_lst = [];
         $this->join_usr_field_lst = [];
+        $this->join2_usr_field_lst = [];
         $this->join_usr_num_field_lst = [];
+        $this->join2_usr_num_field_lst = [];
         $this->join_type = '';
+        $this->join2_type = '';
+        $this->join_usr_query = false;
+        $this->join2_usr_query = false;
         $this->usr_query = false;
         $this->usr_only_query = false;
         $this->fields = '';
@@ -280,17 +292,27 @@ class sql_db
         $this->id_link_field = $id_link_field;
     }
 
-    /** add a list of fields to the result that are taken from another table
-     *  must be set AFTER the set_usr_fields, set_usr_num_fields, set_usr_bool_fields, set_usr_bool_fields or set_usr_only_fields for correct handling of $this->usr_join_query
-     * $field_lst are the field names that should be included in the result
-     * $join_table is the table from where the fields should be taken; use the type name, not the table name
-     * $join_field is the index field that should be used for the join that must exist in both tables, default is the id of the joined table
+    /**
+     * add a list of fields to the result that are taken from another table
+     * must be set AFTER the set_usr_fields, set_usr_num_fields, set_usr_bool_fields, set_usr_bool_fields or set_usr_only_fields for correct handling of $this->usr_join_query
+     * @param array $join_field_lst are the field names that should be included in the result
+     * @param string $join_type is the table from where the fields should be taken; use the type name, not the table name
+     * @param string $join_field is the index field that should be used for the join that must exist in both tables, default is the id of the joined table
+     *                           if empty the field will be guessed
      */
-    function set_join_fields($join_field_lst, $join_type, $join_field = '')
+    function set_join_fields(array $join_field_lst, string $join_type, $join_field = '')
     {
-        $this->join_field_lst = $join_field_lst;
-        $this->usr_join_query = false;
-        $this->join_type = $join_type;
+        if ($this->join_type == '') {
+            $this->join_type = $join_type;
+            $this->join_field_lst = $join_field_lst;
+            $this->join_usr_query = false;
+        } elseif ($this->join2_type == '') {
+            $this->join2_type = $join_type;
+            $this->join2_field_lst = $join_field_lst;
+            $this->join2_usr_query = false;
+        } else {
+            log_err('Max two table joins expected on version ' . PRG_VERSION);
+        }
     }
 
     /**
@@ -298,44 +320,62 @@ class sql_db
      */
     function set_join_usr_fields($join_field_lst, $join_type, $join_field = '')
     {
-        $this->join_usr_field_lst = $join_field_lst;
-        $this->join_type = $join_type;
+        if ($this->join_type == '') {
+            $this->join_type = $join_type;
+            $this->join_usr_field_lst = $join_field_lst;
+            $this->join_usr_query = true;
+        } elseif ($this->join2_type == '') {
+            $this->join2_type = $join_type;
+            $this->join2_usr_field_lst = $join_field_lst;
+            $this->join2_usr_query = true;
+        } else {
+            log_err('Max two table joins expected on version ' . PRG_VERSION);
+        }
     }
 
     function set_join_usr_num_fields($join_field_lst, $join_type, $join_field = '')
     {
-        $this->join_usr_num_field_lst = $join_field_lst;
-        $this->join_type = $join_type;
+        if ($this->join_type == '') {
+            $this->join_type = $join_type;
+            $this->join_usr_num_field_lst = $join_field_lst;
+            $this->join_usr_query = true;
+        } elseif ($this->join2_type == '') {
+            $this->join2_type = $join_type;
+            $this->join2_usr_num_field_lst = $join_field_lst;
+            $this->join2_usr_query = true;
+        } else {
+            log_err('Max two table joins expected on version ' . PRG_VERSION);
+        }
     }
 
     /**
-     * set the SQL statement for the user sandbox fields that should be returned in an select query which can be user specific
+     * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user specific
      */
     function set_usr_fields($usr_field_lst)
     {
         $this->usr_query = true;
-        $this->usr_join_query = true;
+        $this->join_usr_query = true;
         $this->usr_field_lst = $usr_field_lst;
     }
 
     function set_usr_num_fields($usr_field_lst)
     {
         $this->usr_query = true;
-        $this->usr_join_query = true;
+        $this->join_usr_query = true;
         $this->usr_num_field_lst = $usr_field_lst;
     }
 
     function set_usr_bool_fields($usr_field_lst)
     {
         $this->usr_query = true;
-        $this->usr_join_query = true;
+        $this->join_usr_query = true;
         $this->usr_bool_field_lst = $usr_field_lst;
     }
 
     function set_usr_only_fields($field_lst)
     {
         $this->usr_query = true;
-        $this->usr_join_query = true;
+        $this->join_usr_query = true;
         $this->usr_only_field_lst = $field_lst;
     }
 
@@ -432,7 +472,7 @@ class sql_db
             }
             // user cannot change the links like they can change the name, instead a link is removed and another link is created
             if (in_array($this->type, sql_db::DB_TYPES_LINK)) {
-                // allow to use also the set_fields method for link fields e.g. for more complex where cases
+                // allow also using the set_fields method for link fields e.g. for more complex where cases
                 if ($this->id_from_field <> '') {
                     $field_lst[] = $this->id_from_field;
                 }
@@ -457,6 +497,7 @@ class sql_db
             $this->usr_field_lst = $usr_field_lst;
         }
 
+        // add normal fields
         foreach ($this->field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
@@ -477,11 +518,12 @@ class sql_db
             }
         }
 
+        // add join fields
         foreach ($this->join_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->fields .= ' ' . sql_db::LNK_TBL . '.' . $field;
-            if ($this->usr_query and $this->usr_join_query) {
+            if ($this->usr_query and $this->join_usr_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
@@ -489,31 +531,63 @@ class sql_db
             }
         }
 
+        // add second join fields
+        foreach ($this->join2_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->fields .= ' ' . sql_db::LNK2_TBL . '.' . $field;
+            if ($this->usr_query and $this->join2_usr_query) {
+                if ($this->fields != '') {
+                    $this->fields .= ', ';
+                }
+                $this->fields .= ' ' . sql_db::ULK_TBL . '.' . $field;
+            }
+        }
+
+        // add user specific fields
         foreach ($this->usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field);
         }
 
+        // add user specific numeric fields
         foreach ($this->usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field);
         }
 
+        // add user specific boolean fields
         foreach ($this->usr_bool_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_bool($field);
         }
 
+        // add user specific join fields
         foreach ($this->join_usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field, sql_db::LNK_TBL, sql_db::ULK_TBL);
         }
 
+        // add user specific second join fields
+        foreach ($this->join2_usr_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->set_field_usr_text($field, sql_db::LNK_TBL, sql_db::ULK_TBL);
+        }
+
+        // add user specific numeric join fields
         foreach ($this->join_usr_num_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->set_field_usr_num($field);
+        }
+
+        // add user specific numeric second join fields
+        foreach ($this->join2_usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field);
@@ -1223,7 +1297,10 @@ class sql_db
         $result = '';
 
         if ($id <> 0) {
-            if ($this->usr_query or $this->join <> '') {
+            if ($this->usr_query
+                or $this->join <> ''
+                or $this->join_type <> ''
+                or $this->join2_type <> '') {
                 $result .= sql_db::STD_TBL . '.';
             }
             $result .= $this->id_field . " = " . $id;
@@ -1390,9 +1467,19 @@ class sql_db
             $join_id_field = $this->get_id_field_name($this->join_type);
             $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
-            if ($this->usr_query and $this->usr_join_query) {
+            if ($this->usr_query and $this->join_usr_query) {
                 $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::ULK_TBL;
                 $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
+            }
+        }
+        if ($this->join2_type <> '') {
+            $join2_table_name = $this->get_table_name($this->join2_type);
+            $join2_id_field = $this->get_id_field_name($this->join2_type);
+            $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::LNK2_TBL;
+            $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join2_id_field . ' = ' . sql_db::LNK2_TBL . '.' . $join2_id_field;
+            if ($this->usr_query and $this->join2_usr_query) {
+                $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::ULK_TBL;
+                $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join2_id_field;
             }
         }
         $this->from = ' FROM ' . $this->name_sql_esc($this->table);
@@ -1437,7 +1524,15 @@ class sql_db
              WHERE user_id IS NULL;";
 
         //return $this->exe($sql, 'user_default', array());
-        return $this->exe($sql, '', array());
+        try {
+            $result = $this->exe($sql, '', array());
+        } catch (Exception $e) {
+            $msg = 'Select';
+            $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+            $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+        }
+
+        return $result;
     }
 
     /*
@@ -1608,7 +1703,6 @@ class sql_db
      * update some values in a table
      * $id is the primary id of the db table or an array with the ids of the primary keys
      * @return bool false if the update has failed (and the error messages are logged)
-     * @throws Exception
      */
     function update($id, $fields, $values, string $id_field = ''): bool
     {
@@ -1659,9 +1753,15 @@ class sql_db
             $sql = $sql_upd . $sql_set . $sql_where . ';';
             log_debug('sql_db->update sql "' . $sql . '"');
             //$result = $this->exe($sql, 'update_' . $this->name_sql_esc($this->table), array(), sys_log_level::FATAL);
-            $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
-            if (!$sql_result) {
-                $result = false;
+            try {
+                $sql_result = $this->exe($sql, '', array(), sys_log_level::FATAL);
+                if (!$sql_result) {
+                    $result = false;
+                }
+            } catch (Exception $e) {
+                $msg = 'Update';
+                $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
             }
         }
 

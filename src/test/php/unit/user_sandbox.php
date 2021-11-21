@@ -402,7 +402,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_usr_num_fields(array('source_type_id'));
     $db_con->set_where(0, '', 'wikidata');
     $created_sql = $db_con->select();
-    $expected_sql = "SELECT
+    $expected_sql = "SELECT "."
                         s.source_id,
                         u.source_id AS user_source_id,
                         s.user_id,
@@ -452,7 +452,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      l.code_id 
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-               WHERE formula_id = 1;";
+               WHERE s.formula_id = 1;";
     $t->dsp('PostgreSQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for user sandbox data (should match with the parameters in formula->load)
@@ -724,7 +724,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
     $db_con->set_fields(array('word_type_id'));
     $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
-    $db_con->set_where_text('word_link_id = 1');
+    $db_con->set_where_text('s.word_link_id = 1');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT 
                         s.word_link_id, 
@@ -740,7 +740,7 @@ function run_user_sandbox_unit_tests(testing $t)
                    FROM word_links s 
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
-                  WHERE word_link_id = 1;";
+                  WHERE s.word_link_id = 1;";
     $t->dsp('PostgreSQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // test the verb_list load SQL creation
@@ -881,7 +881,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      l.code_id
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-               WHERE formula_id = 1;";
+               WHERE s.formula_id = 1;";
     $t->dsp('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
 
     // ... same for user sandbox data
@@ -1228,14 +1228,14 @@ function run_user_sandbox_unit_tests(testing $t)
                       FROM words w   
                  LEFT JOIN user_words u ON u.word_id = w.word_id
                                        AND u.user_id = 1
-                  GROUP BY word_name ;';
+                  GROUP BY w.word_id, w.word_name ;';
     $expected_sql = "SELECT w.word_id AS id, 
                        CASE WHEN (u.word_name  <> '' IS NOT TRUE) THEN          w.word_name    ELSE          u.word_name   END AS word_name,
                        CASE WHEN (u.excluded         IS     NULL) THEN COALESCE(w.excluded,0)  ELSE COALESCE(u.excluded,0) END AS excluded
                        FROM words w   
                   LEFT JOIN user_words u ON u.word_id = w.word_id
                                         AND u.user_id = 1
-                   GROUP BY word_name ;";
+                   GROUP BY w.word_id, w.word_name ;";
     $t->dsp('phrase load word query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word link query
@@ -1246,14 +1246,14 @@ function run_user_sandbox_unit_tests(testing $t)
                       FROM word_links l
                  LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                             AND u.user_id = 1
-                  GROUP BY word_link_name ;';
+                  GROUP BY l.word_link_id, l.word_link_name ;';
     $expected_sql = "SELECT l.word_link_id * -1 AS id,
                        CASE WHEN (u.word_link_name  <> '' IS NOT TRUE) THEN          l.word_link_name ELSE          u.word_link_name   END AS word_link_name,
                        CASE WHEN (u.excluded              IS     NULL) THEN COALESCE(l.excluded,0)    ELSE COALESCE(u.excluded,0) END AS excluded
                        FROM word_links l
                  LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                             AND u.user_id = 1
-                  GROUP BY word_link_name ;";
+                  GROUP BY l.word_link_id, l.word_link_name ;";
     $t->dsp('phrase load word link query', zu_trim($expected_sql), zu_trim($created_sql));
 
     // the phrase load word link query by type

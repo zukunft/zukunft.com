@@ -414,7 +414,7 @@ class verb
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
         $log = new user_log_named;
         $log->usr = $this->usr;
-        $log->action = 'update';
+        $log->action = user_log::ACTION_UPDATE;
         $log->table = 'verbs';
 
         return $log;
@@ -457,6 +457,7 @@ class verb
 
             } else {
                 // todo: create a new verb and request to delete the old
+                log_warning('verb->save_field_do creating of a new verb not yet coded');
             }
         }
         return $result;

@@ -199,6 +199,7 @@ include_once $path_php . 'db/db_check.php';
 // utils
 include_once $path_php . 'utils/json_utils.php';
 include_once $path_php . 'model/user/user_type_list.php';
+include_once $path_php . 'model/system/type_list.php';
 include_once $path_php . 'model/system/log.php';
 include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
