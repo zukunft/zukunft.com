@@ -1261,7 +1261,7 @@ class word extends user_sandbox_description
      * set the log entry parameters for a value update
      */
     private
-    function log_upd_view($view_id): user_log
+    function log_upd_view($view_id): user_log_named
     {
         log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
         $dsp_new = new view_dsp;
@@ -1269,7 +1269,7 @@ class word extends user_sandbox_description
         $dsp_new->usr = $this->usr;
         $dsp_new->load();
 
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         $log->table = 'words';

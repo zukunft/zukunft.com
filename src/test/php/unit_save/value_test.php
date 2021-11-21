@@ -284,7 +284,7 @@ function run_value_test(testing $t)
 
     // ... check if the value adding has been logged
     if ($add_val->id > 0) {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->table = 'values';
         $log->field = 'word_value';
         $log->row_id = $add_val->id;
@@ -332,7 +332,7 @@ function run_value_test(testing $t)
 
     // ... check if the value adding has been logged
     if ($add_val->id > 0) {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->table = 'values';
         $log->field = 'word_value';
         $log->row_id = $add_val2->id;
@@ -365,7 +365,7 @@ function run_value_test(testing $t)
 
     // ... check if the value change has been logged
     if ($added_val->id > 0) {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->table = 'values';
         $log->field = 'word_value';
         $log->row_id = $added_val->id;
@@ -410,7 +410,7 @@ function run_value_test(testing $t)
     $val_usr2->usr = $t->usr2;
     $val_usr2->load();
     if ($val_usr2->id > 0) {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->table = 'user_values';
         $log->field = 'word_value';
         $log->row_id = $val_usr2->id;
@@ -454,7 +454,7 @@ function run_value_test(testing $t)
     $val_usr2->usr = $t->usr2;
     $val_usr2->load();
     if ($val_usr2->id > 0) {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->table = 'user_values';
         $log->field = 'word_value';
         $log->row_id = $val_usr2->id;

@@ -303,7 +303,7 @@ function run_formula_test(testing $t)
     $t->dsp('formula->load the added "' . $frm->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
     // ... check the correct logging
-    $log = new user_log;
+    $log = new user_log_named;
     $log->table = 'formulas';
     $log->field = 'formula_name';
     $log->row_id = $frm->id;
@@ -342,7 +342,7 @@ function run_formula_test(testing $t)
     $t->dsp('formula->load renamed formula "' . formula::TN_RENAMED . '"', $target, $result);
 
     // ... and if the formula renaming has been logged
-    $log = new user_log;
+    $log = new user_log_named;
     $log->table = 'formulas';
     $log->field = 'formula_name';
     $log->row_id = $frm_renamed->id;
@@ -379,7 +379,7 @@ function run_formula_test(testing $t)
     $t->dsp('formula->load need_all_val for "' . formula::TN_RENAMED . '"', $target, $result);
 
     // ... and if the formula parameter adding have been logged
-    $log = new user_log;
+    $log = new user_log_named;
     $log->table = 'formulas';
     $log->field = 'resolved_text';
     $log->row_id = $frm_reloaded->id;

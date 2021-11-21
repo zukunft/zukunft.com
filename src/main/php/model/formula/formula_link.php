@@ -565,11 +565,11 @@ class formula_link extends user_sandbox_link
     /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
-     * @return user_log the change log object with the presets for formula links
+     * @return user_log_named the change log object with the presets for formula links
      */
-    function log_upd_field(): user_log
+    function log_upd_field(): user_log_named
     {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         if ($this->can_change()) {
@@ -614,6 +614,17 @@ class formula_link extends user_sandbox_link
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('formula_link->save_fields all fields for "' . $this->fob->name . '" to "' . $this->tob->name . '" has been saved');
         return $result;
+    }
+
+    /**
+     * create a new link object including the order number
+     * @returns int the id of the creates object
+     */
+    function add_insert(): int {
+        global $db_con;
+        return $db_con->insert(
+            array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),
+            array($this->fob->id, $this->tob->id, $this->usr->id, $this->order_nbr));
     }
 
     /**

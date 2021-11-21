@@ -78,8 +78,6 @@ class user_sandbox
 
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
-    public ?object $fob = null;        // the object from which this linked object is creating the connection
-    public ?object $tob = null;        // the object to   which this linked object is creating the connection
     public ?string $from_name = null;  // the name of the from object type e.g. view for view_component_links
     public ?string $to_name = '';      // the name of the  to  object type e.g. view for view_component_links
 
@@ -193,29 +191,38 @@ class user_sandbox
         return $result;
     }
 
-    // dummy function to get the missing objects from the database that is always overwritten by the child class
-    // returns false if the loading has failed
+    /**
+     * dummy function to get the missing objects from the database that is always overwritten by the child class
+     * @returns bool  false if the loading has failed
+     */
     function load_objects(): bool
     {
-        return true;
-    }
-
-    // dummy function to get the missing reference object values from the database that is always overwritten by the child class
-    // returns false if the loading has failed
-    function load_standard(): bool
-    {
-        return true;
-    }
-
-    // dummy function to get the missing object values from the database that is always overwritten by the child class
-    // returns false if the loading has failed
-    function load(): bool
-    {
+        log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
     }
 
     /**
-     * return best possible identification for this object mainly used for debugging
+     * dummy function to get the missing reference object values from the database that is always overwritten by the child class
+     * @returns bool false if the loading has failed
+     */
+    function load_standard(): bool
+    {
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return true;
+    }
+
+    /**
+     * dummy function to get the missing object values from the database that is always overwritten by the child class
+     * @returns bool  false if the loading has failed
+     */
+    function load(): bool
+    {
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return true;
+    }
+
+    /**
+     * @returns string best possible identification for this object mainly used for debugging
      */
     function dsp_id(): string
     {
@@ -288,10 +295,8 @@ class user_sandbox
     }
 
     /*
-
-    type loading functions TODO load type lists upfront
-
-    */
+     *  type loading functions TODO load type lists upfront
+     */
 
     // load the share type and return the share code id
     function share_type_code_id(): string
@@ -776,11 +781,11 @@ class user_sandbox
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): user_log
+    function log_add(): user_log_named
     {
         log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
 
-        $log = new user_log;
+        $log = new user_log_named;
 
         $log->usr = $this->usr;
         $log->action = 'add';
@@ -792,7 +797,18 @@ class user_sandbox
         return $log;
     }
 
-    // set the main log entry parameters for updating one field
+    /**
+     * set the log entry parameter for a new link object
+     */
+    function log_link_add(): user_log_link
+    {
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return new user_log_link();
+    }
+
+    /**
+     * set the main log entry parameters for updating one field
+     */
     private function log_upd_common($log)
     {
         log_debug($this->obj_name . '->log_upd_common ' . $this->dsp_id());
@@ -808,24 +824,30 @@ class user_sandbox
         return $log;
     }
 
-    // create a log object for an update of an object field
-    function log_upd_field(): user_log
+    /**
+     * create a log object for an update of an object field
+     */
+    function log_upd_field(): user_log_named
     {
         log_debug($this->obj_name . '->log_upd_field ' . $this->dsp_id());
-        $log = new user_log;
+        $log = new user_log_named;
         return $this->log_upd_common($log);
     }
 
-    // create a log object for an update of link
-    function log_upd_link(): user_log
+    /**
+     * create a log object for an update of link
+     */
+    function log_upd_link(): user_log_link
     {
         log_debug($this->obj_name . '->log_upd_link ' . $this->dsp_id());
         $log = new user_log_link;
         return $this->log_upd_common($log);
     }
 
-    // create a log object for an update of an object field or an link
-    // e.g. that the user can see "moved formula list to position 3 in phrase view"
+    /**
+     * create a log object for an update of an object field or a link
+     * e.g. that the user can see "moved formula list to position 3 in phrase view"
+     */
     function log_upd()
     {
         log_debug($this->obj_name . '->log_upd ' . $this->dsp_id());
@@ -838,74 +860,36 @@ class user_sandbox
     }
 
     /**
-     * dummy function definition that will be overwritte by the child object
+     * dummy function definition that will be overwritten by the child object
      * @return user_log_link
      */
-    function log_link_del(): user_log_link
+    function log_del_link(): user_log_link
     {
+        log_err('The dummy parent method get_similar has been called, which should never happen');
         return new user_log_link();
     }
 
     /**
-     * dummy function definition that will be overwritte by the child object
-     * @return user_log
+     * dummy function definition that will be overwritten by the child object
+     * @return user_log_named
      */
-    function log_del(): user_log
+    function log_del(): user_log_named
     {
-        return new user_log();
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return new user_log_named();
     }
 
     /**
+     * dummy function definition that will be overwritten by the child object
      * check if this object uses any preserved names and if return a message to the user
-     *
      * @return string
      */
     protected function check_preserved(): string
     {
-        global $usr;
-
-        $result = '';
-        if (!$usr->is_system()) {
-            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                if ($this->obj_name == DB_TYPE_WORD) {
-                    if (in_array($this->name, word::RESERVED_WORDS)) {
-                        // the admin user needs to add the read test word during initial load
-                        if ($usr->is_admin() and $this->name == word::TN_READ) {
-                            $result = '';
-                        } else {
-                            $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
-                        }
-                    }
-                } elseif ($this->obj_name == DB_TYPE_PHRASE) {
-                    if (in_array($this->name, phrase::RESERVED_PHRASES)) {
-                        $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
-                    }
-                } elseif ($this->obj_name == DB_TYPE_FORMULA) {
-                    if (in_array($this->name, formula::RESERVED_FORMULAS)) {
-                        $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
-                    }
-                } elseif ($this->obj_name == DB_TYPE_VIEW) {
-                    if (in_array($this->name, view::RESERVED_VIEWS)) {
-                        $result = '"' . $this->name . '" is a reserved view name for system testing. Please use another name';
-                    }
-                } elseif ($this->obj_name == DB_TYPE_VIEW_COMPONENT) {
-                    if (in_array($this->name, view_cmp::RESERVED_VIEW_COMPONENTS)) {
-                        $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
-                    }
-                } elseif ($this->obj_name == DB_TYPE_SOURCE) {
-                    if (in_array($this->name, source::RESERVED_SOURCES)) {
-                        // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name == source::TN_READ) {
-                            $result = '';
-                        } else {
-                            $result = '"' . $this->name . '" is a reserved source name for system testing. Please use another name';
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return '';
     }
+
 
     /**
      * set the update parameters for the word type
@@ -938,8 +922,10 @@ class user_sandbox
         return '';
     }
 
-    // actually update a field in the main database record or the user sandbox
-    // the usr id is taken into account in sql_db->update (maybe move outside)
+    /**
+     * actually update a field in the main database record or the user sandbox
+     * the usr id is taken into account in sql_db->update (maybe move outside)
+     */
     function save_field_do(sql_db $db_con, $log): string
     {
         $result = '';
@@ -996,22 +982,45 @@ class user_sandbox
         return $result;
     }
 
-    // set the update parameters for the value excluded
-    // returns false if something has gone wrong
-    function save_field_excluded($db_con, $db_rec, $std_rec): string
+    /**
+     * @param user_sandbox $db_rec the object as saved in the database before the change
+     * @return user_log the log object predefined for excluding
+     */
+    function save_field_excluded_log(user_sandbox $db_rec): user_log
+    {
+        $log = new user_log();
+        if ($db_rec->excluded <> $this->excluded) {
+            if ($this->excluded == 1) {
+                if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                    $log = $this->log_del_link();
+                } else {
+                    $log = $this->log_del();
+                }
+            } else {
+                if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                    $log = $this->log_link_add();
+                } else {
+                    $log = $this->log_add();
+                }
+            }
+        }
+        $log->field = self::FLD_EXCLUDED;
+        return $log;
+    }
+
+    /**
+     * set the update parameters for the value excluded
+     * returns false if something has gone wrong
+     */
+    function save_field_excluded(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         log_debug($this->obj_name . '->save_field_excluded ' . $this->dsp_id());
         $result = '';
 
         if ($db_rec->excluded <> $this->excluded) {
-            if ($this->excluded == 1) {
-                $log = $this->log_del();
-            } else {
-                $log = $this->log_add();
-            }
+            $log = $this->save_field_excluded_log($db_rec);
             $new_value = $this->excluded;
             $std_value = $std_rec->excluded;
-            $log->field = self::FLD_EXCLUDED;
             // similar to $this->save_field_do
             if ($this->can_change()) {
                 $db_con->set_type($this->obj_name);
@@ -1046,7 +1055,9 @@ class user_sandbox
         return $result;
     }
 
-    // save the share level in the database if allowed
+    /**
+     * save the share level in the database if allowed
+     */
     function save_field_share($db_con, $db_rec, $std_rec): string
     {
         log_debug($this->obj_name . '->save_field_share ' . $this->dsp_id());
@@ -1092,8 +1103,10 @@ class user_sandbox
         return $result;
     }
 
-    // save the protection level in the database if allowed
-    // TODO is the setting of the standard needed?
+    /**
+     * save the protection level in the database if allowed
+     * TODO is the setting of the standard needed?
+     */
     function save_field_protection($db_con, $db_rec, $std_rec): string
     {
         $result = '';
@@ -1116,32 +1129,15 @@ class user_sandbox
         return $result;
     }
 
-    // check if the id parameters are supposed to be changed
-    // TODO add the link type for word links
-    function is_id_updated($db_rec): bool
+    /**
+     * dummy function definition that will be overwritten by the child objects
+     * check if the id parameters are supposed to be changed
+     * @param user_sandbox $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields have been changed
+     */
+    function is_id_updated(user_sandbox $db_rec): bool
     {
-        $result = False;
-        log_debug($this->obj_name . '->is_id_updated ' . $this->dsp_id());
-
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            log_debug($this->obj_name . '->is_id_updated compare name ' . $db_rec->name . ' with ' . $this->name);
-            if ($db_rec->name <> $this->name) {
-                $result = True;
-            }
-        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-            log_debug($this->obj_name . '->is_id_updated compare id ' . $db_rec->fob->id . '/' . $db_rec->tob->id . ' with ' . $this->fob->id . '/' . $this->tob->id);
-            if ($db_rec->fob->id <> $this->fob->id
-                or $db_rec->tob->id <> $this->tob->id) {
-                $result = True;
-                // TODO check if next line is needed
-                // $this->reset_objects();
-            }
-        } else {
-            log_err('Unexpected type ' . $this->obj_type);
-        }
-
-        log_debug($this->obj_name . '->is_id_updated -> (' . zu_dsp_bool($result) . ')');
-        return $result;
+        return false;
     }
 
     /**
@@ -1159,9 +1155,25 @@ class user_sandbox
         return $db_chk;
     }
 
-    // check if the id parameters are supposed to be changed
-    // return an empty string if everything is fine or a messages for the user what should be changed
-    function save_id_if_updated($db_con, $db_rec, $std_rec): string
+    /**
+     * @return string text that request the user to use another name
+     * overwritten in the word class for formula link words
+     */
+    function msg_id_already_used(): string
+    {
+        return '';
+    }
+
+    /**
+     * check if the id parameters are supposed to be changed
+     * and change the id (which can start a longer lasting confirmation process)
+     *
+     * @param sql_db $db_con the active database connection
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @returns string an empty string if everything is fine or a messages for the user what should be changed
+     */
+    function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         log_debug($this->obj_name . '->save_id_if_updated ' . $this->dsp_id());
         $result = '';
@@ -1194,11 +1206,7 @@ class user_sandbox
                         }
                     }
                 } else {
-                    if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-                        $result .= 'A ' . $this->obj_name . ' with the name "' . $this->name . '" already exists. Please use another name.';
-                    } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-                        $result .= 'A ' . $this->obj_name . ' from ' . $this->fob->dsp_id() . ' to ' . $this->tob->dsp_id() . ' already exists.';
-                    }
+                    $result .= $this->msg_id_already_used();
                 }
             } else {
                 log_debug($this->obj_name . '->save_id_if_updated target does not yet exist');
@@ -1208,7 +1216,13 @@ class user_sandbox
                     log_debug($this->obj_name . '->save_id_if_updated change the existing ' . $this->obj_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
                     // TODO check if next line is needed
                     //$this->load_objects();
-                    $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
+                    if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                        $result .= $this->save_id_fields_link($db_con, $db_rec, $std_rec);
+                    } elseif ($this->obj_type == user_sandbox::TYPE_NAMED) {
+                        $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
+                    } else {
+
+                    }
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
@@ -1231,34 +1245,40 @@ class user_sandbox
         return $result;
     }
 
-    // check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
-    private function is_same_std($obj_to_check): bool
+    /**
+     * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     *
+     * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
+     * should only be called if the user is the owner and nobody has used the display component link
+     * @param sql_db $db_con the active database connection
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
+     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     */
+    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
-        $result = false;
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            if ($this->name == $obj_to_check->name) {
-                $result = true;
-            }
-        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-            if (isset($this->fob)
-                and isset($this->tob)
-                and isset($obj_to_check->fob)
-                and isset($obj_to_check->tob)) {
-                if ($this->fob->id == $obj_to_check->fob->id and
-                    $this->tob->id == $obj_to_check->tob->id) {
-                    $result = true;
-                }
-            } else {
-                log_err('The objects of ' . $this->dsp_id() . ' and ' . $obj_to_check->dsp_id() . ' are not loaded');
-            }
-        }
-        return $result;
+        log_warning($this->obj_name . '->save_id_fields ' . $this->dsp_id());
+        return '';
     }
 
-    // check that the given object is by the unique keys the same as the actual object
-    // handles the specials case that for each formula a corresponding word is created (which needs to be check if this is really needed)
-    // so if a formula word "millions" is not the same as the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
-    // in short: if two objects are the same by this definition, they are supposed to be merged
+    /**
+     * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     *
+     * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the objects represent the same
+     */
+    function is_same_std(object $obj_to_check): bool
+    {
+        return false;
+    }
+
+    /**
+     * check that the given object is by the unique keys the same as the actual object
+     * handles the specials case that for each formula a corresponding word is created (which needs to be check if this is really needed)
+     * so if a formula word "millions" is not the same as the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
+     * in short: if two objects are the same by this definition, they are supposed to be merged
+     */
     function is_same($obj_to_check): bool
     {
         $result = false;
@@ -1304,10 +1324,14 @@ class user_sandbox
         return $result;
     }
 
-    // just to double check if the get similar function is working correctly
-    // so if the formulas "millions" is compared with the word "millions" this function returns true
-    // in short: if two objects are similar by this definition, they should not be both in the database
-    function is_similar($obj_to_check): bool
+    /**
+     * just to double-check if the get similar function is working correctly
+     * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * in short: if two objects are similar by this definition, they should not be both in the database
+     * @param null|object $obj_to_check the object used for the comparison
+     * @return bool true if the objects represent the same
+     */
+    function is_similar(?object $obj_to_check): bool
     {
         $result = false;
         if ($obj_to_check != null) {
@@ -1325,87 +1349,23 @@ class user_sandbox
         return $result;
     }
 
-    // check if an object with the unique key already exists
-    // returns null if no similar object is found
-    // or returns the object with the same unique key that is not the actual object
-    // any warning or error message needs to be created in the calling function
-    // e.g. if the user tries to create a formula named "millions"
-    //      but a word with the same name already exists, a term with the word "millions" is returned
-    //      in this case the calling function should suggest the user to name the formula "scale millions"
-    //      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-    function get_similar()
+    /**
+     * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     *
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @returns string a filled object that has the same name or links the same objects
+     */
+    function get_similar(): user_sandbox
     {
-        $result = null;
-
-        // check potential duplicate by name
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
-            // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
-            // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
-            if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_FORMULA) {
-                $similar_trm = $this->term();
-                if ($similar_trm != null) {
-                    if ($similar_trm->obj != null) {
-                        $result = $similar_trm->obj;
-                        if (!$this->is_similar($result)) {
-                            log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
-                        }
-                    }
-                }
-            } else {
-                // used for view, view_component, source, ...
-                $db_chk = clone $this;
-                $db_chk->reset();
-                $db_chk->usr = $this->usr;
-                $db_chk->name = $this->name;
-                // check with the standard namespace
-                if ($db_chk->load_standard()) {
-                    if ($db_chk->id > 0) {
-                        log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
-                        $result = $db_chk;
-                    }
-                }
-                // check with the user namespace
-                if ($result == null) {
-                    $db_chk->usr = $this->usr;
-                    if ($db_chk->load()) {
-                        if ($db_chk->id > 0) {
-                            log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                            $result = $db_chk;
-                        }
-                    }
-                }
-            }
-        } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
-            // check for linked objects
-            if (!isset($this->fob) or !isset($this->tob)) {
-                log_err('The linked objects for ' . $this->dsp_id() . ' are missing.', 'user_sandbox->get_similar');
-            } else {
-                $db_chk = clone $this;
-                $db_chk->reset();
-                $db_chk->fob = $this->fob;
-                $db_chk->tob = $this->tob;
-                if ($db_chk->load_standard()) {
-                    if ($db_chk->id > 0) {
-                        log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '" of the standard linkspace');
-                        $result = $db_chk;
-                    }
-                }
-                // check with the user linkspace
-                if ($result == null) {
-                    $db_chk->usr = $this->usr;
-                    if ($db_chk->load()) {
-                        if ($db_chk->id > 0) {
-                            log_debug($this->obj_name . '->get_similar the ' . $this->fob->name . ' "' . $this->fob->name . '" is already linked to "' . $this->tob->name . '" of the user linkspace');
-                            $result = $db_chk;
-                        }
-                    }
-                }
-            }
-        } else {
-            $result = log_err('Method get_similar cannot (yet) handle objects of type ' . $this->obj_type . '.', 'user_sandbox->get_similar');
-        }
-
-        return $result;
+        log_err('The dummy parent method get_similar has been called, which should never happen');
+        return new user_sandbox();
     }
 
     /*
@@ -1564,7 +1524,9 @@ class user_sandbox
         return $result;
     }
 
-    // dummy function to remove depending on objects, which needs to be overwritten by the child classes
+    /**
+     * dummy function to remove depending on objects, which needs to be overwritten by the child classes
+     */
     function del_links(): string
     {
         return '';
@@ -1584,7 +1546,7 @@ class user_sandbox
         // log the deletion request
 
         if ($this->obj_type == user_sandbox::TYPE_LINK) {
-            $log = $this->log_link_del();
+            $log = $this->log_del_link();
         } else {
             $log = $this->log_del();
         }
@@ -1694,7 +1656,9 @@ class user_sandbox
                             // delete all user records of the new owner
                             // does not use del_usr_cfg because the deletion request has already been logged
                             if ($result == '') {
-                                $result .= $this->del_usr_cfg_exe($db_con);
+                                if (!$this->del_usr_cfg_exe($db_con)) {
+                                    $result .= 'Deleting of ' . $this->obj_name . ' failed';
+                                }
                             }
 
                         }

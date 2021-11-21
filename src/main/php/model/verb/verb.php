@@ -392,10 +392,10 @@ class verb
     }
 
     // set the log entry parameter for a new verb
-    private function log_add(): user_log
+    private function log_add(): user_log_named
     {
         log_debug('verb->log_add ' . $this->dsp_id());
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'add';
         $log->table = 'verbs';
@@ -409,10 +409,10 @@ class verb
     }
 
     // set the main log entry parameters for updating one verb field
-    private function log_upd(): user_log
+    private function log_upd(): user_log_named
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         $log->table = 'verbs';
@@ -421,10 +421,10 @@ class verb
     }
 
     // set the log entry parameter to delete a verb
-    private function log_del(): user_log
+    private function log_del(): user_log_named
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->usr->name);
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'del';
         $log->table = 'verbs';

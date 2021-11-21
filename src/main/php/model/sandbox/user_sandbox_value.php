@@ -88,11 +88,11 @@ class user_sandbox_value extends user_sandbox
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): user_log
+    function log_add(): user_log_named
     {
         log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
 
-        $log = new user_log;
+        $log = new user_log_named;
         $log->field = 'word_value';
         $log->old_value = '';
         $log->new_value = $this->number;
@@ -111,11 +111,11 @@ class user_sandbox_value extends user_sandbox
      * set the log entry parameter to delete a object
      * @returns user_log_link with the object presets e.g. th object name
      */
-    function log_del(): user_log
+    function log_del(): user_log_named
     {
         log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
 
-        $log = new user_log;
+        $log = new user_log_named;
         $log->field = 'word_value';
         $log->old_value = $this->number;
         $log->new_value = '';

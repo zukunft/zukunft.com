@@ -49,7 +49,7 @@ function run_user_sandbox_test(testing $t)
 
     // ... but it is similar
     $target = true;
-    $result = $wrd1->is_similar($wrd2);
+    $result = $wrd1->is_similar_named($wrd2);
     $t->dsp("... but it is similar", $target, $result);
 
     $t->subheader('Test the saving function');

@@ -84,11 +84,11 @@ class user_sandbox_named extends user_sandbox
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): user_log
+    function log_add(): user_log_named
     {
         log_debug($this->obj_name . '->log_add ' . $this->dsp_id());
 
-        $log = new user_log;
+        $log = new user_log_named;
         $log->field = $this->obj_name . '_name';
         $log->old_value = '';
         $log->new_value = $this->name;
@@ -107,11 +107,11 @@ class user_sandbox_named extends user_sandbox
      * set the log entry parameter to delete a object
      * @returns user_log_link with the object presets e.g. th object name
      */
-    function log_del(): user_log
+    function log_del(): user_log_named
     {
         log_debug($this->obj_name . '->log_del ' . $this->dsp_id());
 
-        $log = new user_log;
+        $log = new user_log_named;
         $log->field = $this->obj_name . '_name';
         $log->old_value = $this->name;
         $log->new_value = '';
@@ -123,6 +123,58 @@ class user_sandbox_named extends user_sandbox
         $log->add();
 
         return $log;
+    }
+
+    /**
+     * check if this object uses any preserved names and if return a message to the user
+     *
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        global $usr;
+
+        $result = '';
+        if (!$usr->is_system()) {
+            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+                if ($this->obj_name == DB_TYPE_WORD) {
+                    if (in_array($this->name, word::RESERVED_WORDS)) {
+                        // the admin user needs to add the read test word during initial load
+                        if ($usr->is_admin() and $this->name == word::TN_READ) {
+                            $result = '';
+                        } else {
+                            $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
+                        }
+                    }
+                } elseif ($this->obj_name == DB_TYPE_PHRASE) {
+                    if (in_array($this->name, phrase::RESERVED_PHRASES)) {
+                        $result = '"' . $this->name . '" is a reserved phrase name for system testing. Please use another name';
+                    }
+                } elseif ($this->obj_name == DB_TYPE_FORMULA) {
+                    if (in_array($this->name, formula::RESERVED_FORMULAS)) {
+                        $result = '"' . $this->name . '" is a reserved formula name for system testing. Please use another name';
+                    }
+                } elseif ($this->obj_name == DB_TYPE_VIEW) {
+                    if (in_array($this->name, view::RESERVED_VIEWS)) {
+                        $result = '"' . $this->name . '" is a reserved view name for system testing. Please use another name';
+                    }
+                } elseif ($this->obj_name == DB_TYPE_VIEW_COMPONENT) {
+                    if (in_array($this->name, view_cmp::RESERVED_VIEW_COMPONENTS)) {
+                        $result = '"' . $this->name . '" is a reserved view component name for system testing. Please use another name';
+                    }
+                } elseif ($this->obj_name == DB_TYPE_SOURCE) {
+                    if (in_array($this->name, source::RESERVED_SOURCES)) {
+                        // the admin user needs to add the read test source during initial load
+                        if ($usr->is_admin() and $this->name == source::TN_READ) {
+                            $result = '';
+                        } else {
+                            $result = '"' . $this->name . '" is a reserved source name for system testing. Please use another name';
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -176,21 +228,48 @@ class user_sandbox_named extends user_sandbox
     }
 
     /**
+     * check if the id parameters are supposed to be changed
+     * TODO add the link type for word links
+     * @param user_sandbox $db_rec the object data as it is now in the database
+     * @return bool true if one of the object id fields have been changed
+     */
+    function is_id_updated(user_sandbox $db_rec): bool
+    {
+        $result = False;
+        log_debug($this->obj_name . '->is_id_updated ' . $this->dsp_id());
+
+        log_debug($this->obj_name . '->is_id_updated compare name ' . $db_rec->name . ' with ' . $this->name);
+        if ($db_rec->name <> $this->name) {
+            $result = True;
+        }
+
+        log_debug($this->obj_name . '->is_id_updated -> (' . zu_dsp_bool($result) . ')');
+        return $result;
+    }
+
+    /**
+     * @return string text that request the user to use another name
+     */
+    function msg_id_already_used(): string
+    {
+        return 'A ' . $this->obj_name . ' with the name "' . $this->name . '" already exists. Please use another name.';
+    }
+
+    /**
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param $db_rec the the database record before the saving
-     * @param $std_rec the database record defined as standrad because it is used by most users
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         log_debug($this->obj_name . '->save_id_fields ' . $this->dsp_id());
 
         if ($this->is_id_updated($db_rec)) {
-            $log = null;
             log_debug($this->obj_name . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd_field();
@@ -211,6 +290,99 @@ class user_sandbox_named extends user_sandbox
             }
         }
         log_debug($this->obj_name . '->save_id_fields for ' . $this->dsp_id() . ' done');
+        return $result;
+    }
+
+    /**
+     * check if the unique key (not the db id) of two user sandbox object is the same if the object type is the same, so the simple case
+     * @param object $obj_to_check the object used for the comparison
+     * @return bool true if the objects have the same unique name
+     */
+    function is_same_std(object $obj_to_check): bool
+    {
+        if ($this->name == $obj_to_check->name) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * just to double-check if the get similar function is working correctly
+     * so if the formulas "millions" is compared with the word "millions" this function returns true
+     * in short: if two objects are similar by this definition, they should not be both in the database
+     * @param null|object $obj_to_check the object used for the comparison
+     * @return bool true if the objects represent the same
+     */
+    function is_similar_named(?object $obj_to_check): bool
+    {
+        $result = false;
+        if ($obj_to_check != null) {
+            if ($this->obj_name == $obj_to_check->obj_name) {
+                $result = $this->is_same_std($obj_to_check);
+            } else {
+                // create a synthetic unique index over words, phrase, verbs and formulas
+                if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_PHRASE or $this->obj_name == DB_TYPE_FORMULA or $this->obj_name == DB_TYPE_VERB) {
+                    if ($this->name == $obj_to_check->name) {
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if an object with the unique key already exists
+     * returns null if no similar object is found
+     * or returns the object with the same unique key that is not the actual object
+     * any warning or error message needs to be created in the calling function
+     * e.g. if the user tries to create a formula named "millions"
+     *      but a word with the same name already exists, a term with the word "millions" is returned
+     *      in this case the calling function should suggest the user to name the formula "scale millions"
+     *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @returns string a filled object that has the same name
+     */
+    function get_similar(): user_sandbox
+    {
+        $result = new user_sandbox_named();
+
+        // check potential duplicate by name
+        // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
+        // for verbs the check is inside the verbs class because verbs are not part of the user sandbox
+        if ($this->obj_name == DB_TYPE_WORD or $this->obj_name == DB_TYPE_FORMULA) {
+            $similar_trm = $this->term();
+            if ($similar_trm != null) {
+                if ($similar_trm->obj != null) {
+                    $result = $similar_trm->obj;
+                    if (!$this->is_similar_named($result)) {
+                        log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
+                    }
+                }
+            }
+        } else {
+            // used for view, view_component, source, ...
+            $db_chk = clone $this;
+            $db_chk->reset();
+            $db_chk->usr = $this->usr;
+            $db_chk->name = $this->name;
+            // check with the standard namespace
+            if ($db_chk->load_standard()) {
+                if ($db_chk->id > 0) {
+                    log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
+                    $result = $db_chk;
+                }
+            }
+            // check with the user namespace
+            $db_chk->usr = $this->usr;
+            if ($db_chk->load()) {
+                if ($db_chk->id > 0) {
+                    log_debug($this->obj_name . '->get_similar "' . $this->dsp_id() . '" has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $result = $db_chk;
+                }
+            }
+        }
+
         return $result;
     }
 

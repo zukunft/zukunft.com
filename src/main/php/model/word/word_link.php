@@ -1048,7 +1048,7 @@ class word_link extends user_sandbox_link_description
      * set the log entry parameter to delete a triple
      * e.g. that the user can see "ABB is a Company not anymore"
      */
-    function log_link_del(): user_log_link
+    function log_del_link(): user_log_link
     {
         log_debug('word_link->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->usr->name . '"');
         $log = new user_log_link;
@@ -1067,9 +1067,9 @@ class word_link extends user_sandbox_link_description
     /**
      * set the main log entry parameters for updating one display word link field
      */
-    function log_upd_field(): user_log
+    function log_upd_field(): user_log_named
     {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         if ($this->can_change()) {

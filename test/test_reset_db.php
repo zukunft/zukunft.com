@@ -45,6 +45,7 @@ if ($usr->id > 0) {
         // use the system user for the database updates
         $usr = new user;
         $usr->id = SYSTEM_USER_ID;
+        $usr->load($db_con);
 
         // run reset the main database tables
         run_db_truncate();

@@ -359,7 +359,7 @@ class value extends user_sandbox_display
                 }
             } else {
                 // if no value for a word group is found it is not an error, this is why here the error message is not at the same point as in other load methods
-                log_err('Either the database ID (' . $this->id . '), the word group (' . $this->grp_id . ') or the word list (' . implode(",", $this->ids) . ') and the user (' . $this->usr->id . ') must be set to load a value.', 'value->load');
+                log_err('Either the database ID (' . $this->id . '), the word group (' . $this->grp_id . ') or the word list (' . dsp_array($this->ids) . ') and the user (' . $this->usr->id . ') must be set to load a value.', 'value->load');
             }
 
             // check if a valid identification is given and load the result
@@ -1396,7 +1396,7 @@ class value extends user_sandbox_display
     function log_upd()
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->usr->id);
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         if ($this->can_change()) {
@@ -1412,7 +1412,7 @@ class value extends user_sandbox_display
     // set the log entry parameter to delete a value
     function log_del($db_type) {
     zu_debug('value->log_del "'.$this->id.'" for user '.$this->usr->name);
-    $log = New user_log;
+    $log = New user_log_named;
     $log->usr       = $this->usr;
     $log->action    = 'del';
     $log->table     = $db_type;

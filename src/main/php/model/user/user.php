@@ -534,10 +534,10 @@ class user
     }
 
     // set the main log entry parameters for updating one word field
-    private function log_upd(): user_log
+    private function log_upd(): user_log_named
     {
         log_debug('user->log_upd user ' . $this->name);
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this;
         $log->action = 'update';
         $log->table = 'users';

@@ -287,13 +287,13 @@ class ip_range
     /**
      * set the log entry parameter for a new ip range
      *
-     * @return user_log
+     * @return user_log_named
      */
-    function log_add(): user_log
+    function log_add(): user_log_named
     {
         log_debug(self::class . '->log_add ' . $this->dsp_id());
 
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'add';
         $log->table = DB_TYPE_IP;
@@ -305,10 +305,10 @@ class ip_range
     }
 
     // set the main log entry parameters for updating one verb field
-    private function log_upd(): user_log
+    private function log_upd(): user_log_named
     {
         log_debug(self::class . '->log_upd ' . $this->dsp_id());
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         $log->table = DB_TYPE_IP;

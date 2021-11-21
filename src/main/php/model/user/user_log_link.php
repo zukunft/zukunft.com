@@ -45,15 +45,9 @@
 */
 
 
-class user_log_link
+class user_log_link extends user_log
 {
 
-    public ?int $id = null;                // the database id of the log entry (used to update a log entry in case of an insert where the ref id is not yet know at insert)
-    public ?user $usr = null;              // the user who has done the change
-    public ?string $action = null;         // text for the user action e.g. "add", "update" or "delete"
-    private ?int $action_id = null;        // database id for the action text
-    public ?string $table = null;          // name of the table that has been updated
-    private ?int $table_id = null;         // database id for the table text
     // object set by the calling function
     public ?object $old_from = null;       // the from reference before the user change; should be the object, but is sometimes still the id
     public ?object $old_link = null;       // the reference type before the user change
@@ -113,7 +107,7 @@ class user_log_link
     }
 
     // identical to the functions in user_log (maybe move to a common object??)
-    private function set_table()
+    protected function set_table()
     {
         log_debug('user_log_link->set_table "' . $this->table . '" for ' . $this->usr->dsp_id());
 
@@ -147,7 +141,7 @@ class user_log_link
         $db_con->set_type($db_type);
     }
 
-    private function set_action()
+    protected function set_action()
     {
         log_debug('user_log_link->set_action "' . $this->action . '" for ' . $this->usr->dsp_id());
 
@@ -294,7 +288,7 @@ class user_log_link
 
     // display the last change related to one object (word, formula, value, verb, ...)
     // mainly used for testing
-    function dsp_last($ex_time)
+    function dsp_last($ex_time): string
     {
 
         global $db_con;

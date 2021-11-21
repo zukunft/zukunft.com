@@ -97,10 +97,10 @@ class system_error_log
     }
 
     // set the main log entry parameters for updating one error field
-    private function log_upd(): user_log
+    private function log_upd(): user_log_named
     {
         log_debug('system_error_log->log_upd');
-        $log = new user_log;
+        $log = new user_log_named;
         $log->usr = $this->usr;
         $log->action = 'update';
         $log->table = 'sys_log';

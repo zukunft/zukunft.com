@@ -69,7 +69,7 @@ function run_source_test(testing $t)
 
     // ... check if the source creation has been logged
     if ($src_add->id > 0) {
-        $log = new user_log;
+        $log = new user_log_named;
         $log->table = 'sources';
         $log->field = 'source_name';
         $log->row_id = $src_add->id;
@@ -107,7 +107,7 @@ function run_source_test(testing $t)
     $t->dsp('source->load renamed source "' . source::TN_RENAMED . '"', $target, $result);
 
     // check if the source renaming has been logged
-    $log = new user_log;
+    $log = new user_log_named;
     $log->table = 'sources';
     $log->field = 'source_name';
     $log->row_id = $src_renamed->id;
@@ -133,7 +133,7 @@ function run_source_test(testing $t)
     $t->dsp('source->load description for "' . source::TN_RENAMED . '"', $target, $result);
 
     // check if the source parameter adding have been logged
-    $log = new user_log;
+    $log = new user_log_named;
     $log->table = 'sources';
     $log->field = 'url';
     $log->row_id = $src_reloaded->id;

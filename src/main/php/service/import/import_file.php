@@ -110,7 +110,7 @@ function import_verbs(user $usr): bool
 
     $result = false;
 
-    if ($usr->is_admin()) {
+    if ($usr->is_admin() or $usr->is_system()) {
         $import_result = import_json_file(SYSTEM_VERB_CONFIG_FILE, $usr);
         if (str_starts_with($import_result, ' done ')) {
             $result = true;
