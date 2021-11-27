@@ -258,6 +258,7 @@ function zu_sql_update($table, $id, $fields, $values, $user_id): bool
 {
     log_debug("zu_sql_update (" . $table . "," . $id . "," . $fields . ",v" . $values . ",u" . $user_id . ")");
     global $debug;
+    global $db_con;
     $result = false;
 
     // check parameter
@@ -307,6 +308,8 @@ function zu_sql_update($table, $id, $fields, $values, $user_id): bool
 function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
 {
     log_debug("sql_insert (tbl:" . $table . ",id_fld:" . $id_field . "," . $value_field . "," . $new_value . "," . $user_id . ")");
+    global $db_con;
+
 
     $id_value = null;
     // don't insert empty lines
@@ -347,6 +350,7 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
 function sql_set_no_log($table, $id_field, $id_value, $value_field, $new_value, $value_type)
 {
     log_debug("sql_set_no_log ... ");
+    global $db_con;
 
     // get the existing value
     $db_value = zu_sql_get_value($table, $id_field, $id_value, $value_field);
@@ -602,6 +606,7 @@ function zu_sql_get_id_usr($type, $name, $user_id)
 function zu_sql_add_id($type, $name, $user_id)
 {
     log_debug("zu_sql_add_id (" . $type . "," . $name . "," . $user_id . ")");
+    global $db_con;
 
     $result = '';
     $table_name = zu_sql_std_table($type);
@@ -618,6 +623,7 @@ function zu_sql_add_id($type, $name, $user_id)
 function zu_sql_add_id_2key($type, $name, $field2_name, $field2_value, $user_id)
 {
     log_debug("zu_sql_add_id_2key (" . $type . "," . $name . "," . $field2_name . "," . $field2_value . "," . $user_id . ")");
+    global $db_con;
 
     $result = '';
     $table_name = zu_sql_std_table($type);
@@ -1017,70 +1023,6 @@ function zu_sql_wrd_ids_to_lst($word_ids, $user_id)
     return $result;
 }
 
-// get a list of values related to a word with the word ids link to each value
-function zu_sql_val_lst_wrd($word_id, $user_id)
-{
-    log_debug('zu_sql_val_lst_wrd(' . $word_id . ',' . $user_id . ')');
-
-    $result = array();
-    if ($word_id > 0) {
-        $sql = " SELECT l.value_id, 
-                    IF(u.user_value IS NULL,v.word_value,u.user_value) AS word_value, 
-                    t.word_id, 
-                    v.excluded, 
-                    u.excluded AS user_excluded,
-                    IF(u.user_value IS NULL,0,u.user_id) AS user_id
-               FROM `value_phrase_links` l, 
-                    `value_phrase_links` t, 
-                    `values` v 
-          LEFT JOIN user_values u ON v.value_id = u.value_id AND u.user_id = " . $user_id . " 
-              WHERE l.phrase_id = " . $word_id . " 
-                AND l.value_id = v.value_id 
-                AND (u.excluded IS NULL OR u.excluded = 0) 
-                AND v.value_id = t.value_id 
-           GROUP BY l.value_id, t.word_id 
-           ORDER BY l.value_id, t.word_id;";
-
-        $result = array();
-        if ($sql <> "") {
-            //zu_debug('zu_sql_val_lst_wrd -> sql '.$sql.')');
-            $sql_result = zu_sql_get_all($sql);
-            $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
-            while ($val_entry = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-                if ($value_id == $val_entry['value_id']) {
-                    $wrd_result[] = $val_entry['word_id'];
-                    //zu_debug('zu_sql_val_lst_wrd -> add word '.$val_entry['word_id'].' to ('.$value_id.')');
-                } else {
-                    if ($value_id >= 0) {
-                        // remember the previous values
-                        $row_result[] = $wrd_result;
-                        $result[$value_id] = $row_result;
-                        //zu_debug('zu_sql_val_lst_wrd -> add value '.$value_id.'');
-                    }
-                    // remember the values for a new result row
-                    $value_id = $val_entry['value_id'];
-                    $val_num = $val_entry['word_value'];
-                    $val_usr = $val_entry['user_id'];
-                    $row_result = array();
-                    $row_result[] = $val_num;
-                    $row_result[] = $val_usr;
-                    $wrd_result = array();
-                    $wrd_result[] = $val_entry['word_id'];
-                    //zu_debug('zu_sql_val_lst_wrd -> found value '.$value_id.'');
-                }
-            }
-            if ($value_id >= 0) {
-                // remember the last values
-                $row_result[] = $wrd_result;
-                $result[$value_id] = $row_result;
-            }
-        }
-
-        log_debug('zu_sql_val_lst_wrd ... done (' . zu_lst_dsp($result) . ')');
-    }
-
-    return $result;
-}
 
 // select the values related to a word list
 function zu_sql_word_lst_values($word_ids, $value_ids, $user_id)
@@ -1140,8 +1082,6 @@ function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
         //  $result[$lst_entry] = $in_lst[$lst_entry];
         //}
     }
-    return $result;
-
     log_debug('zu_sql_word_lst_add_differentiator ... done (' . implode(",", $result) . ')');
 
     return $result;

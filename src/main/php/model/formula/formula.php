@@ -1893,6 +1893,7 @@ class formula extends user_sandbox_description
                 // create a new formula
                 // and request the deletion confirms for the old from all changers
                 // ???? or update the user formula table
+                log_warning('formula->save_field_name automatic creation of a new formula (' . $this->dsp_id() . ') and deletion of the old  (' . $db_rec->dsp_id() . ') is not yet coded');
             }
         }
         return $result;

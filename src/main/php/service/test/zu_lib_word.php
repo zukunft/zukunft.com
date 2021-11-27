@@ -662,18 +662,6 @@ function zut_names_to_lst($word_names, $user_id)
     return $result;
 }
 
-// calculates how many times a word is used, because this can be helpful for sorting
-function zut_calc_usage()
-{
-    log_debug('zut_calc_usage');
-
-    $sql = "UPDATE words t
-             SET `values` = ( 
-          SELECT COUNT(value_id) 
-            FROM value_phrase_links l
-           WHERE l.phrase_id = t.word_id);";
-    return zu_sql_exe($sql, cl(db_cl::SYS_USER, user::SYSTEM), sys_log_level::ERROR, "zut_calc_usage", (new Exception)->getTraceAsString());
-}
 
 // returns an array with only the time word
 /* function zut_time_ids ($word_ids) {

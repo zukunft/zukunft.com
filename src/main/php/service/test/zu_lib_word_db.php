@@ -437,6 +437,8 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
 function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id) {
   log_debug("zut_db_add (".$wrd_name.",to".$wrd_to.",type".$type_id.",add".$add_id.",v".$link_id.",u".$user_id.")");
 
+  global $db_con;
+
   // check the parameter
   if ($link_id == 0) {
     $wrd_name = "";
@@ -552,6 +554,7 @@ function zut_db_usr_check ($wrd_id, $user_id) {
 // if a user (not the owner) adds a description, it should be changed in the original record
 function zut_db_upd ($wrd_id, $wrd_name, $wrd_plural, $wrd_type, $wrd_description, $user_id) {
   log_debug("zut_db_upd (t".$wrd_id.",".$wrd_name.",".$wrd_plural.",".substr($wrd_description,0,50).",".$wrd_type.",u".$user_id.")");
+  global $db_con;
   $result = "";
   
   // read the database values to be able to check if something has been changed; done first, because it needs to be done for user and general words

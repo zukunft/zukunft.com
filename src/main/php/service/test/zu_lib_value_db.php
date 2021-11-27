@@ -261,6 +261,7 @@ function zuvs_db_add($val_id, $src_id, $user_id) {
 // update the source of the value
 function zuvs_db_upd($val_id, $src_id, $user_id) {
   log_debug("zuvs_db_upd (".$val_id.",s".$src_id.",u".$user_id.")");
+  global $db_con;
   $result = false;
   
   // if the user is the owner and no other user has adjusted the value, really delete the value in the database

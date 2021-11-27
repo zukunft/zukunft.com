@@ -65,7 +65,7 @@ if ($usr->id > 0) {
         // display all program issues if the user is an admin
         $err_lst = new system_error_log_list;
         $err_lst->usr = $usr;
-        $err_lst->dsp_type = "all";
+        $err_lst->dsp_type = system_error_log_list::DSP_ALL;
         $err_lst->page = 1;
         $err_lst->size = 20;
         $err_lst->back = $back;

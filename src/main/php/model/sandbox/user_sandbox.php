@@ -43,6 +43,7 @@ class user_sandbox
     // user sandbox database and JSON object field names
     const FLD_EXCLUDED = 'excluded';
     const FLD_USER = 'user_id';
+    const FLD_USER_NAME = 'user_name';
 
     // all database field names excluding the id
     const FLD_NAMES = array(

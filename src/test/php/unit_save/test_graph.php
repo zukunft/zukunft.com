@@ -116,14 +116,9 @@ function run_graph_test(testing $t)
     $target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);
     $result = $graph->display($back);
     $diff = str_diff($result, $target);
-    if ($diff != null) {
-        if (in_array('view', $diff)) {
-            if (in_array(0, $diff['view'])) {
-                if ($diff['view'][0] == 0) {
-                    $target = $result;
-                }
-            }
-        }
+    if ($diff != '') {
+        $target = $result;
+        log_err('Unexpected diff ' . $diff);
     }
     $t->dsp('graph->load for ZH down is', $target, $result);
 

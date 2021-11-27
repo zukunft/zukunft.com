@@ -257,7 +257,7 @@ class phrase_group_list
             $sql_select = 'SELECT v.value_id,
                             v.phrase_group_id,
                             v.time_word_id
-                       FROM `values` v';
+                       FROM values v';
         } else {
             $sql_select = 'SELECT v.formula_value_id AS value_id,
                             v.phrase_group_id,

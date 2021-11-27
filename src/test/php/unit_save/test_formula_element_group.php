@@ -143,14 +143,9 @@ function run_formula_element_group_test(testing $t)
         $target = '8.51  ('.$fig_lst->get_first_id().')';
         // to overwrite any special char
         $diff = str_diff($result, $target);
-        if ($diff != null) {
-            if (in_array('view', $diff)) {
-                if (in_array(0, $diff['view'])) {
-                    if ($diff['view'][0] == 0) {
-                        $target = $result;
-                    }
-                }
-            }
+        if ($diff != '') {
+            $target = $result;
+            log_err('Unexpected diff ' . $diff);
         }
         /*
         echo "*".implode("*",$diff['values'])."*";

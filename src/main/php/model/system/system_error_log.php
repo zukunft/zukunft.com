@@ -44,7 +44,20 @@ class system_error_log
     const FLD_TRACE = 'sys_log_trace';
     const FLD_STATUS = 'sys_log_status_id';
 
-    // database fields
+    // all database field names excluding the id
+    // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
+    const FLD_NAMES = array(
+        user_sandbox::FLD_USER,
+        self::FLD_SOLVER,
+        self::FLD_TIME,
+        self::FLD_TYPE,
+        self::FLD_FUNCTION,
+        self::FLD_TEXT,
+        self::FLD_TRACE,
+        self::FLD_STATUS
+    );
+
+    // object vars for the database fields
     public ?int $id = null;             // the database id of the log entry
     public ?user $usr = null;           // the user who wants to see the error
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
@@ -82,6 +95,9 @@ class system_error_log
     }
 
     /**
+     * create the SQL statement to load one system log entry
+     * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
+     * @param bool $get_name to receive the unique name to be able to precompile the statement to prevent code injections
      * @return string the database depending on sql statement to load a system error from the log table
      *                or the unique name for the query
      */
@@ -92,16 +108,7 @@ class system_error_log
             $sql_name .= 'id';
 
             $db_con->set_type(DB_TYPE_SYS_LOG);
-            $db_con->set_fields(array(
-                user_sandbox::FLD_USER,
-                self::FLD_SOLVER,
-                self::FLD_TIME,
-                self::FLD_TYPE,
-                self::FLD_FUNCTION,
-                self::FLD_TEXT,
-                self::FLD_TRACE,
-                self::FLD_STATUS
-            ));
+            $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
             $db_con->set_where($this->id);

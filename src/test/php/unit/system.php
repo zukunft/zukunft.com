@@ -32,6 +32,8 @@ function run_system_unit_tests(testing $t)
     global $usr;
     global $sql_names;
 
+    $db_con = new sql_db();
+
     $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
 
     $t->subheader('IP filter tests');
@@ -40,7 +42,6 @@ function run_system_unit_tests(testing $t)
      * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
      */
 
-    $db_con = new sql_db();
     $ip_range = new ip_range();
 
     // sql to load by id
@@ -144,7 +145,6 @@ function run_system_unit_tests(testing $t)
 
     $t->subheader('System log tests');
 
-    $db_con = new sql_db();
     $log = new system_error_log();
 
     // sql to load by id
@@ -197,6 +197,75 @@ function run_system_unit_tests(testing $t)
            LEFT JOIN sys_log_status l2    ON s.sys_log_status_id  = l2.sys_log_status_id
               WHERE s.sys_log_id = 1;";
     $t->dsp('system_error_log->load_sql by id for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+
+    $t->subheader('System log list tests');
+
+    $log_lst = new system_error_log_list();
+
+    // sql to load all
+    $db_con->db_type = sql_db::POSTGRES;
+    $log_lst->dsp_type = system_error_log_list::DSP_ALL;
+    $created_sql = $log_lst->load_sql($db_con);
+    $expected_sql = "SELECT 
+                        s.sys_log_id, 
+                        s.user_id,
+                        s.solver_id,
+                        s.sys_log_time, 
+                        s.sys_log_type_id, 
+                        s.sys_log_function_id,
+                        s.sys_log_text, 
+                        s.sys_log_trace, 
+                        s.sys_log_status_id,
+                        l.sys_log_function_name,
+                        l2.type_name,
+                        l3.user_name,
+                        l4.user_name AS solver_name
+                   FROM sys_log s 
+              LEFT JOIN sys_log_functions l ON s.sys_log_function_id = l.sys_log_function_id
+              LEFT JOIN sys_log_status l2   ON s.sys_log_status_id   = l2.sys_log_status_id
+              LEFT JOIN users l3            ON s.user_id             = l3.user_id
+              LEFT JOIN users l4            ON s.solver_id           = l4.user_id
+                  WHERE (s.sys_log_status_id <> 3 OR s.sys_log_status_id IS NULL)
+               ORDER BY s.sys_log_time DESC
+                  LIMIT 20;";
+    $t->dsp('system_error_log_list->load_sql by id', zu_trim($expected_sql), zu_trim($created_sql));
+
+    // ... and check if the prepared sql name is unique
+    $result = false;
+    $sql_name = $log_lst->load_sql($db_con, true);
+    if (!in_array($sql_name, $sql_names)) {
+        $result = true;
+        $sql_names[] = $sql_name;
+    }
+    $target = true;
+    $t->dsp('system_error_log_list->load_sql all', $result, $target);
+
+    // ... and the same for MySQL by replication the SQL builder statements
+    $db_con->db_type = sql_db::MYSQL;
+    $created_sql = $log_lst->load_sql($db_con);
+    $expected_sql = "SELECT 
+                        s.sys_log_id, 
+                        s.user_id,
+                        s.solver_id,
+                        s.sys_log_time, 
+                        s.sys_log_type_id, 
+                        s.sys_log_function_id,
+                        s.sys_log_text, 
+                        s.sys_log_trace, 
+                        s.sys_log_status_id,
+                        l.sys_log_function_name,
+                        l2.type_name,
+                        l3.user_name,
+                        l4.user_name AS solver_name
+                   FROM sys_log s 
+              LEFT JOIN sys_log_functions l ON s.sys_log_function_id = l.sys_log_function_id
+              LEFT JOIN sys_log_status l2   ON s.sys_log_status_id   = l2.sys_log_status_id
+              LEFT JOIN users l3            ON s.user_id             = l3.user_id
+              LEFT JOIN users l4            ON s.solver_id           = l4.user_id
+                  WHERE (s.sys_log_status_id <> 3 OR s.sys_log_status_id IS NULL)
+               ORDER BY s.sys_log_time DESC
+                  LIMIT 20;";
+    $t->dsp('system_error_log_list->load_sql by id for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
 
 }
 

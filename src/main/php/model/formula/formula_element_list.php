@@ -94,7 +94,7 @@ class formula_element_type extends BasicEnum
     const TRIPLE = 4;
 
     protected static function get_description($value): string {
-        $result = parent::get_description($value);
+        $result = 'formula element type "' . $value . '" not yet defined';
 
         switch ($value) {
 

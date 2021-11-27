@@ -400,87 +400,11 @@ function zuu_dsp_changes($user_id, $back_link)
     return $result;
 }
 
-// display the error that are related to the user, so that he can track when they are closed
-// or display the error that are related to the user, so that he can track when they are closed
-function zuu_dsp_errors($user_id, $user_profile, $dsp_type, $back)
-{
-    log_debug('zuu_dsp_errors(u' . $user_id . ')');
-    $result = ''; // reset the html code var
-
-    // set the filter for the requested display type
-    if ($dsp_type == "all") {
-        $user_sql = "";
-    } else {
-        if ($dsp_type == "other") {
-            $user_sql = " (l.user_id <> " . $user_id . " OR l.user_id IS NULL) AND ";
-        } else {
-            $user_sql = " (l.user_id = " . $user_id . " OR l.user_id IS NULL) AND ";
-        }
-    }
-
-    // get word changes by the user that are not standard
-    $sql = "SELECT l.sys_log_id, 
-                 l.sys_log_time, 
-                 l.sys_log_text, 
-                 l.sys_log_trace, 
-                 l.sys_log_function_id,
-                 f.sys_log_function_name,
-                 l.user_id,
-                 u.user_name,
-                 l.solver_id,
-                 a.user_name AS solver_name,
-                 l.sys_log_status_id,
-                 s.sys_log_status_name
-            FROM sys_log l 
-       LEFT JOIN sys_log_status s    ON l.sys_log_status_id   = s.sys_log_status_id
-       LEFT JOIN users u             ON l.user_id             = u.user_id
-       LEFT JOIN users a             ON l.solver_id           = a.user_id
-       LEFT JOIN sys_log_functions f ON l.sys_log_function_id = f.sys_log_function_id
-           WHERE " . $user_sql . " 
-                (l.sys_log_status_id <> " . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED) . " OR l.sys_log_status_id IS NULL);";
-    $sql_result = zu_sql_get_all($sql);
-
-    if (mysqli_num_rows($sql_result) > 0) {
-        // prepare to show the word link
-        $result .= '<table>';
-        $row_nbr = 0;
-        while ($wrd_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-            $row_nbr++;
-            $result .= '<tr>';
-            if ($row_nbr == 1) {
-                $result .= '<th> creation time     </th>';
-                $result .= '<th> user              </th>';
-                $result .= '<th> issue description </th>';
-                $result .= '<th> trace             </th>';
-                $result .= '<th> program part      </th>';
-                $result .= '<th> owner             </th>';
-                $result .= '<th> status            </th>';
-            }
-            $result .= '</tr><tr>';
-            $result .= '<td>' . $wrd_row["sys_log_time"] . '</td>';
-            $result .= '<td>' . $wrd_row["user_name"] . '</td>';
-            $result .= '<td>' . $wrd_row["sys_log_text"] . '</td>';
-            $result .= '<td>' . $wrd_row["sys_log_trace"] . '</td>';
-            $result .= '<td>' . $wrd_row["sys_log_function_name"] . '</td>';
-            $result .= '<td>' . $wrd_row["solver_name"] . '</td>';
-            $result .= '<td>' . $wrd_row["sys_log_status_name"] . '</td>';
-            if ($user_profile == cl(db_cl::USER_PROFILE, user_profile::ADMIN)) {
-                $result .= '<td><a href="/http/error_update.php?id=' . $wrd_row["sys_log_id"] . '&status=' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED) . '&back=' . $back . '">close</a></td>';
-            }
-
-            //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$id.'"><img src="/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $result .= '</tr>';
-        }
-        $result .= '</table>';
-    }
-
-    log_debug('zuu_dsp_errors -> done');
-    return $result;
-}
 
 // check and update a single user parameter
 function zuu_upd_par($user_id, $usr_par, $usr_row, $fld_pos, $fld_name, $par_name): bool
 {
+    global $db_con;
     $result = true;
     if ($usr_row[$fld_pos] <> $usr_par[$par_name] and $usr_par[$par_name] <> "") {
         if (zu_log($user_id, "update", "users", $fld_name, $usr_row[$fld_pos], $usr_par[$par_name], $user_id) > 0) {

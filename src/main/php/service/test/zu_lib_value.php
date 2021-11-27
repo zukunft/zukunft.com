@@ -712,28 +712,3 @@ function zuv_words($value_id, $ex_word_id, $user_id, $return_type)
     return $result;
 }
 
-// lists all words related to a given value execpt the given word
-function zuv_words_name($value_id, $ex_word_id, $user_id)
-{
-    return zuv_words($value_id, $ex_word_id, $user_id, 'names');
-}
-
-// lists all words related to a given value execpt the given word
-function zuv_words_names_linked($value_id, $ex_word_id, $user_id)
-{
-    return zuv_words($value_id, $ex_word_id, $user_id, 'names_linked');
-}
-
-// creats a short string with the word ids related to a given value
-function zuv_words_id_txt($value_id, $ex_word_id, $user_id)
-{
-    return zuv_words($value_id, $ex_word_id, $user_id, 'id_text');
-}
-
-// creats a short string with the word ids related to a given value
-function zuv_words_id_txt_ex_time($value_id, $ex_word_id, $user_id)
-{
-    return zuv_words($value_id, $ex_word_id, $user_id, 'id_text_ex_time');
-}
-
-?>

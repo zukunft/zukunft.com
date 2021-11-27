@@ -84,10 +84,9 @@ function run_word_display_test(testing $t)
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);
     $diff = str_diff($result, $target);
-    if ($diff['view'] != null) {
-        if ($diff['view'][0] == 0) {
-            $target = $result;
-        }
+    if ($diff != '') {
+        $target = $result;
+        log_err('Unexpected diff ' . $diff);
     }
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 
@@ -120,10 +119,9 @@ function run_word_display_test(testing $t)
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);
     $diff = str_diff($result, $target);
-    if ($diff['view'] != null) {
-        if ($diff['view'][0] == 0) {
-            $target = $result;
-        }
+    if ($diff != '') {
+        $target = $result;
+        log_err('Unexpected diff ' . $diff);
     }
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 

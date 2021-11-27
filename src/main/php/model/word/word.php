@@ -2,33 +2,33 @@
 
 /*
 
-  word.php - the main word object
-  --------
-  
-  TODO move plural to a linked word?
-  
-  This file is part of zukunft.com - calc with words
+    word.php - the main word object
+    --------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    TODO move plural to a linked word?
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 class word extends user_sandbox_description
@@ -1015,6 +1015,22 @@ class word extends user_sandbox_description
             $result->load();
         }
         return $result;
+    }
+
+    /**
+     * calculates how many times a word is used, because this can be helpful for sorting
+     */
+    function calc_usage(): bool
+    {
+        global $db_con;
+
+        $sql = 'UPDATE words t
+             SET ' . $db_con->sf("values") . ' = ( 
+          SELECT COUNT(value_id) 
+            FROM value_phrase_links l
+           WHERE l.phrase_id = t.word_id);';
+        $db_con->exe_try($sql);
+        return true;
     }
 
     /**

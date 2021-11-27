@@ -33,6 +33,11 @@
 class system_error_log_list
 {
 
+    // display types
+    const DSP_ALL = 'all';
+    const DSP_MY = 'my';
+    const DSP_OTHER = 'other';
+
     public ?array $lst = null;      // a list of system error objects
     public ?user $usr = null;       // the user who wants to see the errors
     public ?string $dsp_type = '';  //
@@ -40,9 +45,57 @@ class system_error_log_list
     public ?int $size = null;       //
     public ?string $back = '';      //
 
-    // display the error that are related to the user, so that he can track when they are closed
-    // or display the error that are related to the user, so that he can track when they are closed
-    // called also from user_display.php/dsp_errors
+    /**
+     * create the SQL statement to load a list of system log entries
+     * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
+     * @param bool $get_name to receive the unique name to be able to precompile the statement to prevent code injections
+     * @return string the database depending on sql statement to load a system error from the log table
+     *                or the unique name for the query
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = self::class . '_';
+        $sql_where = '';
+        $sql_status = '('.sql_db::STD_TBL.'.'.system_error_log::FLD_STATUS.' <> ' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+        $sql_status .= ' OR '.sql_db::STD_TBL.'.'.system_error_log::FLD_STATUS.' IS NULL)';
+        if ($this->dsp_type == self::DSP_ALL) {
+            $sql_where = $sql_status;
+            $sql_name .= self::DSP_ALL;
+        } elseif ($this->dsp_type == self::DSP_OTHER) {
+            $sql_where = $sql_status . ' AND ('.sql_db::STD_TBL.'.'.user_sandbox::FLD_USER.' <> ' . $this->usr->id . ' OR '.sql_db::STD_TBL.'.user_id IS NULL) ';
+        } elseif ($this->dsp_type == self::DSP_MY) {
+            $sql_where = $sql_status . ' AND ('.sql_db::STD_TBL.'.'.user_sandbox::FLD_USER.' = ' . $this->usr->id . ' OR '.sql_db::STD_TBL.'.user_id IS NULL) ';
+        } else {
+            log_err('Unknown system log selection "' . $this->dsp_type . '"');
+        }
+
+        if ($sql_where <> '') {
+            $db_con->set_type(DB_TYPE_SYS_LOG);
+            $db_con->set_fields(system_error_log::FLD_NAMES);
+            $db_con->set_join_fields(array(system_error_log::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
+            $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS solver_name'), DB_TYPE_USER, 'solver_id');
+            $db_con->set_where_text($sql_where);
+            $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
+            $db_con->set_page($this->page, $this->size);
+            $sql = $db_con->select();
+
+            if ($get_name) {
+                return $sql_name;
+            } else {
+                return $sql;
+            }
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * display the error that are related to the user, so that he can track when they are closed
+     * or display the error that are related to the user, so that he can track when they are closed
+     * called also from user_display.php/dsp_errors
+     */
     function display(): string
     {
         log_debug('system_error_log_list->display for user "' . $this->usr->name . '"');
@@ -59,40 +112,7 @@ class system_error_log_list
             }
         }
 
-        // set the filter for the requested display type
-        if ($this->dsp_type == "all") {
-            $user_sql = "";
-        } else {
-            if ($this->dsp_type == "other") {
-                $user_sql = " (l.user_id <> " . $this->usr->id . " OR l.user_id IS NULL) AND ";
-            } else {
-                $user_sql = " (l.user_id = " . $this->usr->id . " OR l.user_id IS NULL) AND ";
-            }
-        }
-
-        // get word changes by the user that are not standard
-        $sql = "SELECT l.sys_log_id, 
-                   l.sys_log_time, 
-                   l.sys_log_text, 
-                   l.sys_log_trace, 
-                   l.sys_log_function_id,
-                   f.sys_log_function_name,
-                   l.user_id,
-                   u.user_name,
-                   l.solver_id,
-                   a.user_name AS solver_name,
-                   l.sys_log_status_id,
-                   s.sys_log_status_name
-              FROM sys_log l 
-         LEFT JOIN sys_log_status s    ON l.sys_log_status_id   = s.sys_log_status_id
-         LEFT JOIN users u             ON l.user_id             = u.user_id
-         LEFT JOIN users a             ON l.solver_id           = a.user_id
-         LEFT JOIN sys_log_functions f ON l.sys_log_function_id = f.sys_log_function_id
-             WHERE " . $user_sql . " 
-                  (l.sys_log_status_id <> " . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED) . " OR l.sys_log_status_id IS NULL)
-          ORDER BY l.sys_log_time DESC
-             LIMIT " . $this->size . ";";
-        //$db_con = New mysql;
+        $sql = $this->load_sql($db_con);
         $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get($sql);
 
@@ -100,7 +120,7 @@ class system_error_log_list
             log_debug('system_error_log_list->display -> ' . dsp_count($db_lst) . ' rows');
             // prepare to show the word link
             $db_row = $db_lst[0];
-            if ($db_row["sys_log_time"] <> '') {
+            if ($db_row[system_error_log::FLD_TIME] <> '') {
                 $result .= dsp_tbl_start();
                 $row_nbr = 0;
                 foreach ($db_lst as $db_row) {
@@ -116,7 +136,7 @@ class system_error_log_list
                         $result .= '<th> status            </th>';
                     }
                     $result .= '</tr><tr>';
-                    $result .= '<td>' . $db_row["sys_log_time"] . '</td>';
+                    $result .= '<td>' . $db_row[system_error_log::FLD_TIME] . '</td>';
                     $result .= '<td>' . $db_row["user_name"] . '</td>';
                     $result .= '<td>' . $db_row["sys_log_text"] . '</td>';
                     $result .= '<td>' . $db_row["sys_log_trace"] . '</td>';

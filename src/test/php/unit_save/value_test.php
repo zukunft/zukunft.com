@@ -206,14 +206,9 @@ function run_value_test(testing $t)
     $result = $fig->display_linked('1');
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
     $diff = str_diff($result, $target);
-    if ($diff != null) {
-        if (in_array('view', $diff)) {
-            if (in_array(0, $diff['view'])) {
-                if ($diff['view'][0] == 0) {
-                    $target = $result;
-                }
-            }
-        }
+    if ($diff != '') {
+        $target = $result;
+        log_err('Unexpected diff ' . $diff);
     }
     $t->dsp(', value->figure->display_linked for word list ' . $wrd_lst->dsp_id() . '', $target, $result);
 
@@ -227,14 +222,9 @@ function run_value_test(testing $t)
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
     $diff = str_diff($result, $target);
-    if ($diff != null) {
-        if (in_array('view', $diff)) {
-            if (in_array(0, $diff['view'])) {
-                if ($diff['view'][0] == 0) {
-                    $target = $result;
-                }
-            }
-        }
+    if ($diff != '') {
+        $target = $result;
+        log_err('Unexpected diff ' . $diff);
     }
     $t->dsp(', value->display_linked', $target, $result);
 
@@ -244,14 +234,9 @@ function run_value_test(testing $t)
     //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >123\'456</a>';
     $diff = str_diff($result, $target);
-    if ($diff != null) {
-        if (in_array('view', $diff)) {
-            if (in_array(0, $diff['view'])) {
-                if ($diff['view'][0] == 0) {
-                    $target = $result;
-                }
-            }
-        }
+    if ($diff != '') {
+        $target = $result;
+        log_err('Unexpected diff ' . $diff);
     }
     $t->dsp(', value->display_linked', $target, $result);
 
