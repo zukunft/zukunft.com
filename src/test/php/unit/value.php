@@ -54,7 +54,7 @@ function run_value_unit_tests(testing $t)
                                                   FROM phrase_group_word_links l1 
                                                  WHERE l1.word_id = 1)  
                         AND time_word_id = 4 ;";
-    $t->dsp('value->load_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value->load_sql by group and time', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -78,7 +78,7 @@ function run_value_unit_tests(testing $t)
                                                       FROM phrase_group_word_links l1 
                                                      WHERE l1.word_id = 1) 
                             AND time_word_id = 4 ;";
-    $t->dsp('value->load_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value->load_sql by group and time for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
 
     /*
      * im- and export tests

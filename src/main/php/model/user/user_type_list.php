@@ -241,7 +241,6 @@ class user_type_list
         $type->code_id = user_type_list::TEST_TYPE;
         $this->lst[1] = $type;
         $this->hash[user_type_list::TEST_TYPE] = 1;
-
     }
 
 }

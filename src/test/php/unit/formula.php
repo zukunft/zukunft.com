@@ -62,7 +62,7 @@ function run_formula_unit_tests(testing $t)
                                        LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                                        LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id 
                       WHERE s.formula_id = 2;";
-    $t->dsp('formula->load_sql by formula id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula->load_sql by formula id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

@@ -45,7 +45,7 @@ function run_phrase_group_unit_tests(testing $t)
     $db_con->db_type = sql_db::POSTGRES;
     $created_sql = $phr_grp->get_by_wrd_lst_sql($db_con);
     $expected_sql = "SELECT phrase_group_id FROM phrase_groups WHERE phrase_group_id = 1 GROUP BY phrase_group_id;";
-    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -82,7 +82,7 @@ function run_phrase_group_unit_tests(testing $t)
                         AND l2.word_id = l1.word_id AND l2.word_id = 2 
                         AND l3.word_id = l2.word_id AND l3.word_id = 3 
                    GROUP BY l1.phrase_group_id;";
-    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase_group->get_by_wrd_lst_sql by word id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

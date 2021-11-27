@@ -78,17 +78,20 @@ class user_dsp extends user
 
     // display the error that are related to the user, so that he can track when they are closed
     // or display the error that are related to the user, so that he can track when they are closed
-    function dsp_errors($dsp_type, $size, $page, $back)
+    function dsp_errors($dsp_type, $size, $page, $back): string
     {
         log_debug('user_dsp->dsp_errors ' . $dsp_type . ' errors for user ' . $this->name);
 
+        $result = '';
         $err_lst = new system_error_log_list;
         $err_lst->usr = $this;
         $err_lst->page = $page;
         $err_lst->size = $size;
         $err_lst->dsp_type = $dsp_type;
         $err_lst->back = $back;
-        $result = $err_lst->display();
+        if ($err_lst->load()) {
+            $result = $err_lst->display();
+        }
 
         log_debug('user_dsp->dsp_errors -> done');
         return $result;

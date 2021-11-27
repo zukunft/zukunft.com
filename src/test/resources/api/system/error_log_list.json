@@ -1,0 +1,24 @@
+{
+  "system_errors": [
+    {
+      "id": 1,
+      "time": "2021-11-27 08:15:25",
+      "user": "test",
+      "text": "system test text",
+      "trace": "",
+      "prg_part": "system test",
+      "owner": "test",
+      "status": "2"
+    },
+    {
+      "id": 2,
+      "time": "2021-11-27 12:49:34",
+      "user": "test",
+      "text": "system test text 2",
+      "trace": "",
+      "prg_part": "system test 2",
+      "owner": "test",
+      "status": "3"
+    }
+  ]
+}

@@ -61,7 +61,7 @@ function run_word_list_unit_tests(testing $t)
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    $t->dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -101,7 +101,7 @@ function run_word_list_unit_tests(testing $t)
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    $t->dsp('word_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
     // sql to load by word list by phrase group
     $db_con->db_type = sql_db::POSTGRES;
@@ -126,7 +126,7 @@ function run_word_list_unit_tests(testing $t)
                                          FROM phrase_group_word_links
                                         WHERE phrase_group_id = 1)
                ORDER BY s.values DESC, word_name;";
-    $t->dsp('word_list->load_sql by phrase group', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->load_sql by phrase group', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -162,7 +162,7 @@ function run_word_list_unit_tests(testing $t)
                  AND l.from_phrase_id IN (7)
                  AND l.verb_id = 2 
             ORDER BY s.values DESC, s.word_name;";
-    $t->dsp('word_list->add_by_type_sql by verb and up', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_list->add_by_type_sql by verb and up', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

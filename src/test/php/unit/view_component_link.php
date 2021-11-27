@@ -61,7 +61,7 @@ function run_view_component_link_unit_tests(testing $t)
                                                     AND u.user_id = 1 
                    WHERE s.view_id = 1 
                      AND s.view_component_id = 2;";
-    $t->dsp('view_component_link->load_sql by view and component', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view_component_link->load_sql by view and component', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -92,7 +92,7 @@ function run_view_component_link_unit_tests(testing $t)
                                                     AND u.user_id = 1 
                    WHERE s.view_id = 1 
                      AND s.view_component_id = 2;";
-    $t->dsp('view_component_link->load_sql by view and component for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view_component_link->load_sql by view and component for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
 
 }
 

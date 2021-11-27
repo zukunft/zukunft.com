@@ -66,7 +66,7 @@ function run_user_log_unit_tests(testing $t)
                     AND c.user_id = 1  
                ORDER BY c.change_time DESC
                   LIMIT 20;";
-    $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

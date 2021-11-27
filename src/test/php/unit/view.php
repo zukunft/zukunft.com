@@ -62,7 +62,7 @@ function run_view_unit_tests(testing $t)
                        FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
                                                           AND u.user_id = 1 
                       WHERE s.view_id = 2;";
-    $t->dsp('view->load_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -94,7 +94,7 @@ function run_view_unit_tests(testing $t)
                                                           AND u.user_id = 1 
                       WHERE s.code_id = '" . view::WORD . "' 
                         AND s.code_id != NULL;";
-    $t->dsp('view->load_sql by code id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_sql by code id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -127,7 +127,7 @@ function run_view_unit_tests(testing $t)
                                                           AND u.user_id = 1 
                       WHERE (u.view_name = '" . view::TN_ADD . "'
                          OR (s.view_name = '" . view::TN_ADD . "' AND u.view_name IS NULL));";
-    $t->dsp('view->load_sql by name', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_sql by name', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -170,7 +170,7 @@ function run_view_unit_tests(testing $t)
               WHERE l.view_id = 2 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY order_nbr;";
-    $t->dsp('view->load_components_sql by view id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_components_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -211,7 +211,7 @@ function run_view_unit_tests(testing $t)
               WHERE l.view_id = 2 
                 AND l.view_component_id = e.view_component_id 
            ORDER BY order_nbr;";
-    $t->dsp('view->load_components_sql for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('view->load_components_sql for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
 
     /*
      * im- and export tests

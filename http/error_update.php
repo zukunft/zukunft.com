@@ -63,13 +63,16 @@ if ($usr->id > 0) {
         }
 
         // display all program issues if the user is an admin
+        $errors_all = '';
         $err_lst = new system_error_log_list;
         $err_lst->usr = $usr;
         $err_lst->dsp_type = system_error_log_list::DSP_ALL;
         $err_lst->page = 1;
         $err_lst->size = 20;
         $err_lst->back = $back;
-        $errors_all = $err_lst->display();
+        if ($err_lst->load()) {
+            $errors_all = $err_lst->display();
+        }
         //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back);
         if ($errors_all <> "") {
             $result .= dsp_text_h3("Program issues that other user have found, that have not yet been solved.");

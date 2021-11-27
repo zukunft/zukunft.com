@@ -57,7 +57,11 @@ class user_profile_list extends user_type_list
         $type->code_id = user_profile::NORMAL;
         $this->lst[2] = $type;
         $this->hash[user_profile::NORMAL] = 2;
-
+        $type = new user_type();
+        $type->name = user_profile::ADMIN;
+        $type->code_id = user_profile::ADMIN;
+        $this->lst[3] = $type;
+        $this->hash[user_profile::ADMIN] = 3;
     }
 
     /**

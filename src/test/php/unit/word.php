@@ -37,6 +37,7 @@ function run_word_unit_tests(testing $t)
     $t->subheader('SQL statement tests');
 
     $db_con = new sql_db();
+    $usr->id = 1;
 
     // sql to load the word by id
     $wrd = new word;
@@ -60,7 +61,7 @@ function run_word_unit_tests(testing $t)
                        FROM words s LEFT JOIN user_words u ON s.word_id = u.word_id 
                                                           AND u.user_id = 1 
                       WHERE s.word_id = 2;";
-    $t->dsp('word->load_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word->load_sql by word id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -96,7 +97,7 @@ function run_word_unit_tests(testing $t)
                                                           AND u.user_id = 1 
                       WHERE (u.word_name = '" . word::TN_READ . "'
                          OR (s.word_name = '" . word::TN_READ . "' AND u.word_name IS NULL));";
-    $t->dsp('word->load_sql by word name', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word->load_sql by word name', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

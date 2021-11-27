@@ -64,7 +64,7 @@ function run_value_list_unit_tests(testing $t)
                                                WHERE l1.phrase_id = 1 AND l1.value_id = v.value_id  
                                                  AND l2.phrase_id = 2 AND l2.value_id = v.value_id  )
               ORDER BY v.phrase_group_id, v.time_word_id;";
-    $t->dsp('value_list->load_by_phr_lst_sql by group and time', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value_list->load_by_phr_lst_sql by group and time', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -98,7 +98,7 @@ function run_value_list_unit_tests(testing $t)
                                                WHERE l1.phrase_id = 1 AND l1.value_id = v.value_id 
                                                  AND l2.phrase_id = 2 AND l2.value_id = v.value_id  )
               ORDER BY v.phrase_group_id, v.time_word_id;";
-    $t->dsp('value_list->load_by_phr_lst_sql by group and time for MySQL', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value_list->load_by_phr_lst_sql by group and time for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
 
 }
 

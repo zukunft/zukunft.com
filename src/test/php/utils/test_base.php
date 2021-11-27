@@ -244,7 +244,7 @@ function str_diff(string $from, string $to): string
         $t = str_split($to);
 
         $i = 0;
-        while ($i < count($f)) {
+        while ($i < count($f) and $result == '') {
             if ($f[$i] != $t[$i]) {
                 $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
                 $result .= ', near ' . substr($from, $i - 10, 20);
@@ -817,6 +817,58 @@ class testing
     }
 
     /*
+     * Format functions
+     */
+
+    /**
+     * @return string text with just single spaces
+     */
+    function trim(string $string_with_multiple_spaces): string
+    {
+        return trim(preg_replace('!\s+!', ' ', $string_with_multiple_spaces));
+    }
+
+    /**
+     * @return string text with just single spaces and without line feeds
+     */
+    function trim_lines(string $string_with_new_lines): string
+    {
+        return $this->trim(preg_replace('/[\n\r]/', '', $string_with_new_lines));
+    }
+
+    /**
+     * @return string text with just single spaces and all spaces removed not needed in a JSON
+     */
+    function trim_json(string $json_string): string
+    {
+        $result = $this->trim_lines($json_string);
+        $result = preg_replace('/\[ {/', '[{', $result);
+        $result = preg_replace('/} ]/', '}]', $result);
+        $result = preg_replace('/" }/', '"}', $result);
+        $result = preg_replace('/": /', '":', $result);
+        $result = preg_replace('/, "/', ',"', $result);
+        $result = preg_replace('/{ "/', '{"', $result);
+        return preg_replace('/}, {/', '},{', $result);
+    }
+
+    /**
+     * @return string text with just single spaces and all spaces removed not needed for HTML
+     */
+    function trim_html(string $html_string): string
+    {
+        $result = $this->trim_lines($html_string);
+        $result = preg_replace('/ <th>/', '<th>', $result);
+        $result = preg_replace('/ <\/th>/', '</th>', $result);
+        $result = preg_replace('/ <tr>/', '<tr>', $result);
+        $result = preg_replace('/ <\/tr>/', '</tr>', $result);
+        $result = preg_replace('/"> <tr>/', '"><tr>', $result);
+        $result = preg_replace('/<tr> <th>/', '<tr><th>', $result);
+        $result = preg_replace('/<\/th> <th>/', '</th><th>', $result);
+        $result = preg_replace('/<tr> <td>/', '<tr><td>', $result);
+        return preg_replace('/<\/td> <td>/', '</td><td>', $result);
+    }
+
+    /*
      * Display functions
      */
 
@@ -876,7 +928,7 @@ class testing
                 $test_result = true;
             } else {
                 $diff = str_diff($result, $target);
-                if ($diff != '') {
+                if ($diff == '') {
                     $target = $result;
                     log_err('Unexpected diff ' . $diff);
                 }
@@ -982,7 +1034,8 @@ class testing
     }
 
 
-    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true): bool {
+    function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true): bool
+    {
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
             $result = file_get_contents(self::URL . $url_path);
@@ -999,7 +1052,8 @@ class testing
     /**
      * @param string $msg the message to display to the person who executes the system
      */
-    function dsp_warning(string $msg) {
+    function dsp_warning(string $msg)
+    {
         echo $msg;
         echo '<br>';
         echo '\n';

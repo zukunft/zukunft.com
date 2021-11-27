@@ -166,7 +166,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_where(null,'Test User');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
-    $t->dsp('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL select max', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -175,7 +175,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_where(null,'Test User');
     $created_sql = $db_con->select();
     $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
-    $t->dsp('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL select max', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a simple SQL max select creation for PostgreSQL without where
     $db_con->db_type = sql_db::POSTGRES;
@@ -183,7 +183,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->set_fields(array('MAX(value_id) AS max_id'));
     $created_sql = $db_con->select(false);
     $expected_sql = "SELECT MAX(value_id) AS max_id FROM values;";
-    $t->dsp('PostgreSQL select max', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL select max', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -192,7 +192,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $created_sql = $db_con->select(false);
     $sql_avoid_code_check_prefix = "SELECT";
     $expected_sql = $sql_avoid_code_check_prefix. " MAX(value_id) AS max_id FROM `values`;";
-    $t->dsp('MySQL select max', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL select max', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a simple SQL select creation for PostgreSQL without the standard id and name identification
     $db_con->db_type = sql_db::POSTGRES;
@@ -201,7 +201,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->where(array(sql_db::FLD_CODE_ID), array(CFG_VERSION_DB));
     $created_sql = $db_con->select(false);
     $expected_sql = "SELECT value FROM config WHERE code_id = 'version_database';";
-    $t->dsp('non id PostgreSQL select', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('non id PostgreSQL select', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -210,7 +210,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $db_con->where(array(sql_db::FLD_CODE_ID), array(CFG_VERSION_DB));
     $created_sql = $db_con->select(false);
     $expected_sql = "SELECT `value` FROM config WHERE code_id = 'version_database';";
-    $t->dsp('non id MySQL select', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('non id MySQL select', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a simple SQL select creation for PostgreSQL with the standard id and name identification
     $db_con->db_type = sql_db::POSTGRES;
@@ -220,7 +220,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $expected_sql = "SELECT source_type_id, source_type_name
                 FROM source_types
                WHERE source_type_id = 2;";
-    $t->dsp('PostgreSQL select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -230,7 +230,7 @@ function run_user_sandbox_unit_tests(testing $t)
     $expected_sql = "SELECT source_type_id, source_type_name
                 FROM source_types
                WHERE source_type_id = 2;";
-    $t->dsp('MySQL select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a simple SQL select of the user defined word for PostgreSQL by the id
     $db_con->db_type = sql_db::POSTGRES;
@@ -248,7 +248,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $t->dsp('PostgreSQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user word select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -266,7 +266,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $t->dsp('MySQL user word select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user word select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a very simple SQL select of the user defined word for PostgreSQL by the id
     $db_con->db_type = sql_db::POSTGRES;
@@ -279,7 +279,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $t->dsp('PostgreSQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user word id select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -292,7 +292,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM user_words
                WHERE word_id = 1 
                  AND user_id = 1;';
-    $t->dsp('MySQL user word id select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user word id select based on id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a simple SQL select the formulas linked to a phrase
     $db_con->db_type = sql_db::POSTGRES;
@@ -306,7 +306,7 @@ function run_user_sandbox_unit_tests(testing $t)
                         phrase_id
                    FROM formula_links
                   WHERE phrase_id = 1;';
-    $t->dsp('PostgreSQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL formulas linked to a phrase select based on phrase id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for MySQL
     $db_con->db_type = sql_db::MYSQL;
@@ -320,7 +320,7 @@ function run_user_sandbox_unit_tests(testing $t)
                     phrase_id
                FROM formula_links
               WHERE phrase_id = 1;';
-    $t->dsp('MySQL formulas linked to a phrase select based on phrase id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL formulas linked to a phrase select based on phrase id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test a list of links SQL select creation for PostgreSQL selected by a linked object
     /*
@@ -342,7 +342,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      ".$sql_where." 
             GROUP BY v.verb_id 
             ORDER BY v.verb_id;";
-    $t->dsp('PostgreSQL select based on id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL select based on id', $t->trim($expected_sql), $t->trim($created_sql));
     */
 
     /*
@@ -370,7 +370,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.source_id = 1;";
-    $t->dsp('PostgreSQL user sandbox select', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user sandbox select', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for search by name
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -393,7 +393,7 @@ function run_user_sandbox_unit_tests(testing $t)
                                       AND u.user_id = 1 
                   WHERE (u.source_name = 'wikidata' 
                      OR (s.source_name = 'wikidata' AND u.source_name IS NULL));";
-    $t->dsp('PostgreSQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user sandbox select by name', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for search by code_id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -415,7 +415,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.code_id = 'wikidata' AND s.code_id != NULL;";
-    $t->dsp('PostgreSQL user sandbox select by code_id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user sandbox select by code_id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for all users by id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -431,7 +431,7 @@ function run_user_sandbox_unit_tests(testing $t)
                         source_type_id
                    FROM sources 
                   WHERE source_id = 1;";
-    $t->dsp('PostgreSQL all user select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL all user select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... similar with joined fields
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -453,7 +453,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                WHERE s.formula_id = 1;";
-    $t->dsp('PostgreSQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for user sandbox data (should match with the parameters in formula->load)
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -481,7 +481,7 @@ function run_user_sandbox_unit_tests(testing $t)
              LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
                WHERE s.formula_id = 1;";
-    $t->dsp('PostgreSQL user sandbox join select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user sandbox join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
@@ -507,7 +507,7 @@ function run_user_sandbox_unit_tests(testing $t)
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
               WHERE s.phrase_group_id = 1;";
-    $t->dsp('PostgreSQL user sandbox value select by where text', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user sandbox value select by where text', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -529,7 +529,7 @@ function run_user_sandbox_unit_tests(testing $t)
            LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                       AND u.user_id = 1 
                WHERE s.word_link_id = 1;";
-    $t->dsp('PostgreSQL user sandbox link select by where text', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL user sandbox link select by where text', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW);
@@ -543,7 +543,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM views
                WHERE view_id = 1;";
-    $t->dsp('PostgreSQL view load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view load SQL creation
     $db_con->set_type(DB_TYPE_VIEW);
@@ -563,7 +563,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_views u ON s.view_id = u.view_id 
                                     AND u.user_id = 1 
                   WHERE s.view_id = 1;";
-    $t->dsp('PostgreSQL view load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -579,7 +579,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM view_component_links 
                WHERE view_component_link_id = 1;";
-    $t->dsp('PostgreSQL view_component_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view_component_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same but select by the link ids
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -595,7 +595,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM view_component_links 
                WHERE view_id = 2 AND view_component_id = 3;";
-    $t->dsp('PostgreSQL view_component_link load_standard select by link ids', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view_component_link load_standard select by link ids', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component_link load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -616,7 +616,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
                   WHERE s.view_component_link_id = 1;";
-    $t->dsp('PostgreSQL view_component_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view_component_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the formula_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -631,7 +631,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = 1;";
-    $t->dsp('PostgreSQL formula_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL formula_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the formula_link load SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -651,7 +651,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1 
                   WHERE s.formula_link_id = 1;";
-    $t->dsp('PostgreSQL formula_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL formula_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -670,7 +670,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM view_components
                WHERE view_component_id = 1;";
-    $t->dsp('PostgreSQL view_component load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view_component load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -699,7 +699,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id 
               LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id 
                   WHERE s.view_component_id = 1;";
-    $t->dsp('PostgreSQL view_component load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -716,7 +716,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM word_links 
                WHERE word_link_id = 1;";
-    $t->dsp('PostgreSQL word_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL word_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the word_link load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -741,7 +741,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
                   WHERE s.word_link_id = 1;";
-    $t->dsp('PostgreSQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL word_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the verb_list load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -769,7 +769,7 @@ function run_user_sandbox_unit_tests(testing $t)
                                              AND u.user_id = 1 
                   LEFT JOIN verbs l ON s.verb_id = l.verb_id 
                       WHERE s.to_phrase_id = 2;";
-    $t->dsp('PostgreSQL verb_list load', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('PostgreSQL verb_list load', $t->trim($expected_sql), $t->trim($created_sql));
 
     /*
      * Start of the corresponding MySQL tests
@@ -797,7 +797,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.source_id = 1;";
-    $t->dsp('MySQL user sandbox select', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user sandbox select', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for search by name
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -821,7 +821,7 @@ function run_user_sandbox_unit_tests(testing $t)
                                       AND u.user_id = 1 
                   WHERE (u.source_name = 'wikidata' 
                      OR (s.source_name = 'wikidata' AND u.source_name IS NULL));";
-    $t->dsp('MySQL user sandbox select by name', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user sandbox select by name', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for search by code_id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -844,7 +844,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_sources u ON s.source_id = u.source_id 
                                       AND u.user_id = 1 
                   WHERE s.code_id = 'wikidata';";
-    $t->dsp('MySQL user sandbox select by code_id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user sandbox select by code_id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for all users by id
     $db_con->set_type(DB_TYPE_SOURCE);
@@ -860,7 +860,7 @@ function run_user_sandbox_unit_tests(testing $t)
                         source_type_id
                    FROM sources 
                   WHERE source_id = 1;";
-    $t->dsp('MySQL all user select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL all user select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... similar with joined fields
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -882,7 +882,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM formulas s
            LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
                WHERE s.formula_id = 1;";
-    $t->dsp('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for user sandbox data
     $db_con->set_type(DB_TYPE_FORMULA);
@@ -911,7 +911,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
               LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id 
                   WHERE s.formula_id = 1;";
-    $t->dsp('MySQL all user join select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for the special case of a table without name e.g. the value table
     $db_con->set_type(DB_TYPE_VALUE);
@@ -937,7 +937,7 @@ function run_user_sandbox_unit_tests(testing $t)
           LEFT JOIN user_values u ON s.value_id = u.value_id 
                                  AND u.user_id = 1 
               WHERE s.phrase_group_id = 1;";
-    $t->dsp('MySQL user sandbox value select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user sandbox value select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... same for a link table
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -960,7 +960,7 @@ function run_user_sandbox_unit_tests(testing $t)
            LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                       AND u.user_id = 1 
                WHERE s.word_link_id = 1;";
-    $t->dsp('MySQL user sandbox link select by where text', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL user sandbox link select by where text', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -977,7 +977,7 @@ function run_user_sandbox_unit_tests(testing $t)
                         excluded
                    FROM view_component_links 
                   WHERE view_component_link_id = 1;";
-    $t->dsp('MySQL view_component_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL view_component_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component_link load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
@@ -997,7 +997,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                                    AND u.user_id = 1 
                   WHERE s.view_component_link_id = 1;";
-    $t->dsp('MySQL view_component_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL view_component_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the formula_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -1012,7 +1012,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = 1;";
-    $t->dsp('MySQL formula_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL formula_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the formula_link load SQL creation
     $db_con->set_type(DB_TYPE_FORMULA_LINK);
@@ -1033,7 +1033,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1
                   WHERE s.formula_link_id = 1;";
-    $t->dsp('MySQL formula_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL formula_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component load_standard SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -1052,7 +1052,7 @@ function run_user_sandbox_unit_tests(testing $t)
                      excluded
                 FROM view_components
                WHERE view_component_id = 1;";
-    $t->dsp('MySQL view_component load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL view_component load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the view_component load SQL creation
     $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
@@ -1081,7 +1081,7 @@ function run_user_sandbox_unit_tests(testing $t)
              LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id
              LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id
                  WHERE s.view_component_id = 1;";
-    $t->dsp('MySQL view_component load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the word_link load_standard SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -1100,7 +1100,7 @@ function run_user_sandbox_unit_tests(testing $t)
                         excluded
                    FROM word_links 
                   WHERE word_link_id = 1;";
-    $t->dsp('MySQL word_link load_standard select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL word_link load_standard select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // test the word_link load SQL creation
     $db_con->set_type(DB_TYPE_WORD_LINK);
@@ -1126,7 +1126,7 @@ function run_user_sandbox_unit_tests(testing $t)
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
                   WHERE word_link_id = 1;";
-    $t->dsp('MySQL word_link load select by id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('MySQL word_link load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
     /*
      * Build sample queries in the PostgreSQL format to use the database syntax check of the IDE
@@ -1171,7 +1171,7 @@ function run_user_sandbox_unit_tests(testing $t)
              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
                  WHERE l.phrase_id = 1 AND l.formula_id = f.formula_id
               GROUP BY f.formula_id;";
-    $t->dsp('formula list load query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula list load query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the value list load query
     $db_con->db_type = sql_db::POSTGRES;
@@ -1218,7 +1218,7 @@ function run_user_sandbox_unit_tests(testing $t)
                                    GROUP BY value_id )
             ORDER BY v.phrase_group_id, v.time_word_id
                LIMIT 10;";
-    $t->dsp('value list load query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('value list load query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the phrase load word query
     $db_con->db_type = sql_db::POSTGRES;
@@ -1236,7 +1236,7 @@ function run_user_sandbox_unit_tests(testing $t)
                   LEFT JOIN user_words u ON u.word_id = w.word_id
                                         AND u.user_id = 1
                    GROUP BY w.word_id, w.word_name ;";
-    $t->dsp('phrase load word query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the phrase load word link query
     $db_con->db_type = sql_db::POSTGRES;
@@ -1254,7 +1254,7 @@ function run_user_sandbox_unit_tests(testing $t)
                  LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                             AND u.user_id = 1
                   GROUP BY l.word_link_id, l.word_link_name ;";
-    $t->dsp('phrase load word link query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word link query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the phrase load word link query by type
     $db_con->db_type = sql_db::POSTGRES;
@@ -1279,7 +1279,7 @@ function run_user_sandbox_unit_tests(testing $t)
                          WHERE l.to_phrase_id = 2 
                            AND l.verb_id = 2 ) AS a 
                          WHERE (excluded <> 1 OR excluded is NULL);";
-    $t->dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word link query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the view component link query by type (used in word_display->assign_dsp_ids)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1301,7 +1301,7 @@ function run_user_sandbox_unit_tests(testing $t)
            LEFT JOIN user_view_component_links u ON s.view_component_link_id = u.view_component_link_id 
                                             AND u.user_id = 1  
                WHERE s.view_component_id = 1;";
-    $t->dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word link query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the view component link max order number query (used in word_display->next_nbr)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1319,7 +1319,7 @@ function run_user_sandbox_unit_tests(testing $t)
                            LEFT JOIN user_view_component_links u ON u.view_component_link_id = l.view_component_link_id 
                                                                 AND u.user_id = 1
                                WHERE l.view_id = 1 ) AS m;";
-    $t->dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word link query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the phrase load word link query by phrase
     $db_con->db_type = sql_db::POSTGRES;
@@ -1398,7 +1398,7 @@ function run_user_sandbox_unit_tests(testing $t)
                             AND w.word_id = a.id    
                        GROUP BY word_name ) AS w 
                     WHERE (excluded <> 1 OR excluded is NULL);";
-    $t->dsp('phrase load word link query by type', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word link query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the time word selector query by type (used in word_display->dsp_time_selector)
     // $sql_avoid_code_check_prefix is used to avoid SQL code checks by the IDE on the query building process,
@@ -1435,7 +1435,7 @@ function run_user_sandbox_unit_tests(testing $t)
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    
           ORDER BY name;";
-    $t->dsp('time word selector query by type', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('time word selector query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the verb selector query (used in word_display->selector_link)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1465,7 +1465,7 @@ function run_user_sandbox_unit_tests(testing $t)
              WHERE name_reverse <> '' 
                AND name_reverse <> verb_name) AS links
           ORDER BY words DESC, name;";
-    $t->dsp('verb selector query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('verb selector query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the word link list load query (used in word_link_list->load)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1550,7 +1550,7 @@ function run_user_sandbox_unit_tests(testing $t)
                        AND l.verb_id = 2 
               GROUP BY t2.word_id, l.verb_id
               ORDER BY l.verb_id, word_name;";
-    $t->dsp('word link list load query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word link list load query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the phrase load word link query by ...
     // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
@@ -1633,7 +1633,7 @@ function run_user_sandbox_unit_tests(testing $t)
                         AND l.to_phrase_id   = 3
                         AND l.verb_id = 2
                    ORDER BY l.verb_id, word_name;";
-    $t->dsp('phrase load word link query by ...', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('phrase load word link query by ...', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the general phrase list query (as created in phrase->sql_list)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1673,7 +1673,7 @@ function run_user_sandbox_unit_tests(testing $t)
                    ) AS p
              WHERE excluded = 0
           ORDER BY p.phrase_name;";
-    $t->dsp('general phrase list query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('general phrase list query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the general phrase list query by type (as created in phrase->sql_list)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1800,7 +1800,7 @@ function run_user_sandbox_unit_tests(testing $t)
                          WHERE excluded = 0  ) AS p
              WHERE excluded = 0
           ORDER BY p.phrase_name;";
-    $t->dsp('general phrase list query by type', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('general phrase list query by type', $t->trim($expected_sql), $t->trim($created_sql));
 
     // the word changer query (used in user_sandbox->changer_sql)
     $db_con->db_type = sql_db::POSTGRES;
@@ -1811,7 +1811,7 @@ function run_user_sandbox_unit_tests(testing $t)
                 FROM user_words 
                WHERE word_id = 1
                  AND (excluded <> 1 OR excluded is NULL)";
-    $t->dsp('word changer query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word changer query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -1834,7 +1834,7 @@ function run_user_sandbox_unit_tests(testing $t)
                WHERE word_id = 1
                  AND user_id <> 2
                  AND (excluded <> 1 OR excluded is NULL)";
-    $t->dsp('word changer ex owner query', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word changer ex owner query', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

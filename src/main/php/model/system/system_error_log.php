@@ -44,6 +44,9 @@ class system_error_log
     const FLD_TRACE = 'sys_log_trace';
     const FLD_STATUS = 'sys_log_status_id';
 
+    // join database and export JSON object field names
+    const FLD_SOLVER_NAME = 'solver_name';
+
     // all database field names excluding the id
     // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
     const FLD_NAMES = array(
@@ -61,16 +64,18 @@ class system_error_log
     public ?int $id = null;             // the database id of the log entry
     public ?user $usr = null;           // the user who wants to see the error
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
+    public string $usr_name = '';       // the username who was logged in when the error happened
     public ?int $solver_id = null;      // the admin id who has solved the problem
+    public string $solver_name = '';    // the admin id who has solved the problem
     public ?DateTime $log_time = null;  // timestamp when the issue appeared
     public ?int $type_id = null;        // type of the error
     public ?int $function_id = null;    // the program function where the issue happened
     public ?string $log_text = null;    // the description of the problem
-    public ?string $log_trace = null;   // the system trace
+    public string $log_trace = '';      // the system trace
     public ?int $status_id = null;      // the status of the error
 
-    public ?string $function_name = null;  //
-    public ?string $status_name = null;    //
+    public string $function_name = '';  //
+    public string $status_name = '';    //
 
     /**
      * @return bool true if a row is found
@@ -78,8 +83,11 @@ class system_error_log
     function row_mapper($db_row): bool
     {
         if ($db_row[self::FLD_ID] > 0) {
+            $this->id = $db_row[self::FLD_ID];
             $this->usr_id = $db_row[user_sandbox::FLD_USER];
+            $this->usr_name = $db_row[user_sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
+            $this->solver_name = $db_row[self::FLD_SOLVER_NAME];
             $this->log_time = $db_row[self::FLD_TIME];
             $this->type_id = $db_row[self::FLD_TYPE];
             $this->function_id = $db_row[self::FLD_FUNCTION];
@@ -92,6 +100,23 @@ class system_error_log
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return system_error_log_dsp a filled frontend api object
+     */
+    function get_dsp_obj(): system_error_log_dsp
+    {
+        $dsp_obj = new system_error_log_dsp();
+        $dsp_obj->id = $this->id;
+        $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
+        $dsp_obj->user = $this->usr_name;
+        $dsp_obj->text = $this->log_text;
+        $dsp_obj->trace = $this->log_trace;
+        $dsp_obj->prg_part = $this->function_name;
+        $dsp_obj->owner = $this->solver_name;
+        $dsp_obj->status = $this->status_name;
+        return $dsp_obj;
     }
 
     /**
@@ -111,6 +136,8 @@ class system_error_log
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_join_fields(array(self::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
+            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), DB_TYPE_USER, self::FLD_SOLVER);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
 

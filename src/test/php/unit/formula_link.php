@@ -56,7 +56,7 @@ function run_formula_link_unit_tests(testing $t)
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1 
                   WHERE s.formula_link_id = 2;";
-    $t->dsp('formula_link->load_sql by formula link id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula_link->load_sql by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -83,7 +83,7 @@ function run_formula_link_unit_tests(testing $t)
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
                                             AND u.user_id = 1 
                   WHERE s.formula_link_id = 2;";
-    $t->dsp('formula_link->load_sql for MySQL by formula link id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula_link->load_sql for MySQL by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // sql to load the standard formula link by id
     $db_con->db_type = sql_db::POSTGRES;
@@ -97,7 +97,7 @@ function run_formula_link_unit_tests(testing $t)
                         excluded 
                    FROM formula_links 
                   WHERE formula_link_id = 2;";
-    $t->dsp('formula_link->load_standard_sql by formula link id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula_link->load_standard_sql by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -121,7 +121,7 @@ function run_formula_link_unit_tests(testing $t)
                         excluded 
                    FROM formula_links 
                   WHERE formula_link_id = 2;";
-    $t->dsp('formula_link->load_standard_sql for MySQL by formula link id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula_link->load_standard_sql for MySQL by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // sql to load the user formula link by id
     $db_con->db_type = sql_db::POSTGRES;
@@ -132,7 +132,7 @@ function run_formula_link_unit_tests(testing $t)
                        FROM user_formula_links
                       WHERE formula_link_id = 2 
                         AND user_id = 1;";
-    $t->dsp('formula_link->load_user_sql by formula link id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula_link->load_user_sql by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // sql to check if no one else has changed the formula link
     $lnk = new formula_link();
@@ -145,7 +145,7 @@ function run_formula_link_unit_tests(testing $t)
                WHERE formula_link_id = 2 
                  AND user_id <> 3 
                  AND (excluded <> 1 OR excluded is NULL);";
-    $t->dsp('formula_link->not_changed_sql by owner id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('formula_link->not_changed_sql by owner id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

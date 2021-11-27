@@ -61,7 +61,7 @@ function run_word_link_unit_tests(testing $t)
                        FROM word_links s LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                                                     AND u.user_id = 1 
                       WHERE s.word_link_id = 2;";
-    $t->dsp('word_link->load_sql by word id', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link->load_sql by word id', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

@@ -93,7 +93,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.word_link_id  IN (1,2,3)                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by IDs', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -148,7 +148,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id = 1                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by word and up', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by word and up', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -203,7 +203,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.from_phrase_id   = t2.word_id 
                       AND l.to_phrase_id = 2                        
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by word and down', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by word and down', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -270,7 +270,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id IN (1,2)
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by word list and up', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by word list and up', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -337,7 +337,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by word list and down', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by word list and down', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -408,7 +408,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id = 2 
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by word list and down filtered by a verb', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by word list and down filtered by a verb', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;
@@ -479,7 +479,7 @@ function run_word_link_list_unit_tests(testing $t)
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id IN (1,2) 
                  ORDER BY l.verb_id, word_link_name;"; // order adjusted based on the number of usage
-    $t->dsp('word_link_list->load_sql by word list and down filtered by a verb list', zu_trim($expected_sql), zu_trim($created_sql));
+    $t->dsp('word_link_list->load_sql by word list and down filtered by a verb list', $t->trim($expected_sql), $t->trim($created_sql));
 
     // ... and check if the prepared sql name is unique
     $result = false;

@@ -39,7 +39,7 @@ function run_string_unit_tests(testing $t)
     // test zu_trim
     $text = "  This  text  has  many  spaces  ";
     $target = "This text has many spaces";
-    $result = zu_trim($text);
+    $result = $t->trim($text);
     $t->dsp(", zu_trim", $target, $result);
 
     // test zu_str_left
