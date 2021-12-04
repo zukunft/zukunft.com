@@ -50,6 +50,12 @@ class source extends user_sandbox_named
         self::TN_RENAMED
     );
 
+    // object specific database and JSON object field names
+    const FLD_ID = 'source_id';
+    const FLD_NAME = 'source_name';
+    const FLD_URL = 'url';
+    const FLD_COMMENT = 'comment';
+
     // database fields additional to the user sandbox fields
     public ?string $url = null;      // the internet link to the source
     public ?string $comment = null;  // the source description that is shown as a mouseover explain to the user
@@ -87,15 +93,15 @@ class source extends user_sandbox_named
     }
 
     // map the database object to this source class fields
-    private function row_mapper($db_row, $map_usr_fields = false)
+    private function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
-            if ($db_row['source_id'] > 0) {
-                $this->id = $db_row['source_id'];
-                $this->name = $db_row['source_name'];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
+                $this->name = $db_row[self::FLD_NAME];
                 $this->owner_id = $db_row[self::FLD_USER];
-                $this->url = $db_row['url'];
-                $this->comment = $db_row['comment'];
+                $this->url = $db_row[self::FLD_URL];
+                $this->comment = $db_row[self::FLD_COMMENT];
                 $this->type_id = $db_row['source_type_id'];
                 $this->code_id = $db_row[sql_db::FLD_CODE_ID];
                 if ($map_usr_fields) {

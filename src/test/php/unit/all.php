@@ -8,23 +8,27 @@
   the zukunft.com unit tests should test all class methods, that can be tested without database access
 
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
@@ -277,24 +281,24 @@ function run_unit_tests(testing $t)
     unit_test_init_log_tables();
 
     // do the unit tests
-    run_string_unit_tests($t); // test functions not yet split into single unit tests
+    (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
     (new system_unit_tests)->run($t);
-    run_word_unit_tests($t);
-    run_word_link_unit_tests($t);
-    run_word_list_unit_tests($t);
-    run_word_link_list_unit_tests($t);
+    (new word_unit_tests)->run($t);
+    (new word_link_unit_tests)->run($t);
+    (new word_list_unit_tests)->run($t);
+    (new word_link_list_unit_tests)->run($t);
     (new phrase_list_unit_tests)->run($t);
-    run_phrase_group_unit_tests($t);
-    run_view_unit_tests($t);
-    run_view_component_link_unit_tests($t);
-    run_value_unit_tests($t);
-    run_value_list_unit_tests($t);
-    run_formula_unit_tests($t);
-    run_formula_link_unit_tests($t);
-    run_figure_unit_tests($t);
-    run_user_sandbox_unit_tests($t);
-    run_ref_unit_tests($t);
-    run_user_log_unit_tests($t);
+    (new phrase_group_unit_tests)->run($t);
+    (new view_unit_tests)->run($t);
+    (new view_component_link_unit_tests)->run($t);
+    (new value_unit_tests)->run($t);
+    (new value_list_unit_tests)->run($t);
+    (new formula_unit_tests)->run($t);
+    (new formula_link_unit_tests)->run($t);
+    (new figure_unit_tests)->run($t);
+    (new user_sandbox_unit_tests)->run($t);
+    (new ref_unit_tests)->run($t);
+    (new user_log_unit_tests)->run($t);
 
     // restore the global vars
     $db_con = $global_db_con;

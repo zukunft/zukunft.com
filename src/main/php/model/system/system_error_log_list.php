@@ -46,11 +46,11 @@ class system_error_log_list
     public ?string $back = '';      //
 
     /**
-     * @return system_error_log_list_dsp a filled frontend api object
+     * @return system_error_log_list_api a filled frontend api object
      */
-    function get_dsp_obj(): system_error_log_list_dsp
+    function get_dsp_obj(): system_error_log_list_api
     {
-        $dsp_obj = new system_error_log_list_dsp();
+        $dsp_obj = new system_error_log_list_api();
         foreach ($this->lst AS $log) {
             $dsp_obj->system_errors[] = $log->get_dsp_obj();
         }

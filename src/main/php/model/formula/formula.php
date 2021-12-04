@@ -261,7 +261,7 @@ class formula extends user_sandbox_description
         return $result;
     }
 
-    function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row[$this->fld_id()] > 0) {
@@ -273,12 +273,7 @@ class formula extends user_sandbox_description
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
                 $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
                 $this->type_cl = $db_row[sql_db::FLD_CODE_ID];
-                try {
-                    $this->last_update = new DateTime($db_row[self::FLD_LAST_UPDATE]);
-                } catch (Exception $e) {
-                    $this->last_update = new DateTime();
-                    log_err('Reset last update of formula ' . $this->dsp_id() . ', because the database ' . $db_row[self::FLD_LAST_UPDATE] . 'value has not been valid');
-                }
+                $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 // TODO create a boolean converter for shorter code here
                 if ($db_row[self::FLD_ALL_NEEDED] == 1) {
@@ -1454,7 +1449,8 @@ class formula extends user_sandbox_description
             $frm_lnk->usr = $this->usr;
             $frm_lnk->fob = $this;
             $frm_lnk->tob = $phr;
-            $result = $frm_lnk->del();
+            $msg = $frm_lnk->del();
+            $result = $msg->get_message();
         } else {
             $result .= log_err("Cannot unlink formula, phrase is not set.", "formula.php");
         }
@@ -1988,7 +1984,8 @@ class formula extends user_sandbox_description
                     if (UI_CAN_CHANGE_FORMULA_NAME) {
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
-                        $result .= $to_del->del();
+                        $msg = $to_del->del();
+                        $result .= $msg->get_last_message();
                         // ... and use it for the update
                         $this->id = $db_chk->id;
                         $this->owner_id = $db_chk->owner_id;
@@ -2011,7 +2008,8 @@ class formula extends user_sandbox_description
                         // if the target link has not yet been created
                         // ... request to delete the old
                         $to_del = clone $db_rec;
-                        $result .= $to_del->del();
+                        $msg = $to_del->del();
+                        $result .= $msg->get_last_message();
                         // .. and create a deletion request for all users ???
 
                         // ... and create a new display component link
@@ -2173,14 +2171,15 @@ class formula extends user_sandbox_description
     }
 
     // TODO user specific???
-    function del_links(): string
+    function del_links(): user_message
     {
-        $result = '';
+        $result = new user_message();
         $frm_lnk_lst = new formula_link_list;
         $frm_lnk_lst->usr = $this->usr;
         $frm_lnk_lst->frm = $this;
         if ($frm_lnk_lst->load()) {
-            $result = $frm_lnk_lst->del_without_log();
+            $msg = $frm_lnk_lst->del_without_log();
+            $result->add_message($msg);
         }
         return $result;
     }

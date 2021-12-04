@@ -59,6 +59,12 @@ class value extends user_sandbox_display
     const TV_SHARE_PRICE = 17.08;
     const TV_EARNINGS_PER_SHARE = 1.22;
 
+    // object specific database and JSON object field names
+    const FLD_ID = 'value_id';
+    const FLD_VALUE = 'word_value';
+    const FLD_TIME_WORD = 'time_word_id';
+    const FLD_LAST_UPDATE = 'last_update';
+
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from
     public ?int $grp_id = null;           // id of the group of phrases that are linked to this value for fast selections
@@ -156,21 +162,21 @@ class value extends user_sandbox_display
         return $dsp_obj;
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
-            if ($db_row['value_id'] > 0) {
-                $this->id = $db_row['value_id'];
-                $this->number = $db_row['word_value'];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
+                $this->number = $db_row[self::FLD_VALUE];
                 // check if phrase_group_id and time_word_id are user specific or time series specific
-                $this->grp_id = $db_row['phrase_group_id'];
-                $this->time_id = $db_row['time_word_id'];
+                $this->grp_id = $db_row[phrase_group::FLD_ID];
+                $this->time_id = $db_row[self::FLD_TIME_WORD];
                 $this->owner_id = $db_row[self::FLD_USER];
-                $this->source_id = $db_row['source_id'];
-                $this->last_update = new DateTime($db_row['last_update']);
+                $this->source_id = $db_row[source::FLD_ID];
+                $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_value_id'];
+                    $this->usr_cfg_id = $db_row['user_' . self::FLD_ID];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -934,11 +940,7 @@ class value extends user_sandbox_display
 
             if ($key == 'timestamp') {
                 if (strtotime($value)) {
-                    try {
-                        $this->time_stamp = new DateTime($value);
-                    } catch (Exception $e) {
-                        log_warning('"' . $value . '" cannot be converted to a value timestamp');
-                    }
+                    $this->time_stamp = get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
                     log_err('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id(), 'value->import_obj');
                 }
@@ -1831,7 +1833,8 @@ class value extends user_sandbox_display
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
-                    $result .= $to_del->del();
+                    $msg = $to_del->del();
+                    $result .= $msg->get_last_message();
                     // .. and create a deletion request for all users ???
 
                     // ... and create a new display component link

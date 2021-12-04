@@ -38,6 +38,9 @@
 // TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
 // TODO mainly for data from the internet use prepared statements to prevent SQL injections
 
+const SQL_DB_TYPE = sql_db::POSTGRES;
+// const SQL_DB_TYPE = sql_db::MYSQL;
+
 
 class sql_db
 {
@@ -58,11 +61,11 @@ class sql_db
     // extra names for backward compatibility
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
-    // tables that does not have a name e.g. DB_TYPE_WORD_LINK is a link, but is nevertheless named
+    // tables that does not have a name e.g. DB_TYPE_TRIPLE is a link, but is nevertheless named
     const DB_TYPES_NOT_NAMED = [DB_TYPE_VALUE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF, DB_TYPE_IP, DB_TYPE_SYS_LOG];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
-    const DB_TYPES_LINK = [DB_TYPE_WORD_LINK, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
+    const DB_TYPES_LINK = [DB_TYPE_TRIPLE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
 
     const ORDER_DESC = 'DESC';
 
@@ -111,6 +114,8 @@ class sql_db
     private ?string $id_to_field = '';            // only for link objects the id field of the destination object
     private ?string $id_link_field = '';          // only for link objects the id field of the link type object
     private ?string $name_field = '';             // unique text key field of the table used
+    private ?string $query_name = '';             // unique name of the query to precompile and use the query
+    private ?array $par_types = [];               // list of the parameter types, which also defines a precompiled query
     private ?array $field_lst = [];               // list of fields that should be returned to the next select query
     private ?array $usr_field_lst = [];           // list of user specific fields that should be returned to the next select query
     private ?array $usr_num_field_lst = [];       // list of user specific numeric fields that should be returned to the next select query
@@ -124,6 +129,10 @@ class sql_db
     private string $join2_field = '';             // same as $join_field but for the second join
     private string $join3_field = '';             // same as $join_field but for the third join
     private string $join4_field = '';             // same as $join_field but for the fourth join
+    private string $join_to_field = '';           // if set the field name in the joined table that should be used for the join; only needed, if the joined field name differ from the type id field
+    private string $join2_to_field = '';          // same as $join_field but for the second join
+    private string $join3_to_field = '';          // same as $join_field but for the third join
+    private string $join4_to_field = '';          // same as $join_field but for the fourth join
     private ?array $join_usr_field_lst = [];      // list of fields that should be returned to the next select query that are taken from a joined table
     private ?array $join2_usr_field_lst = [];     // same as $join_usr_field_lst but for the second join
     private ?array $join3_usr_field_lst = [];     // same as $join_usr_field_lst but for the third join
@@ -169,11 +178,21 @@ class sql_db
         $this->id_to_field = '';
         $this->id_link_field = '';
         $this->name_field = '';
+        $this->query_name = '';
+        $this->par_types = [];
         $this->field_lst = [];
         $this->usr_field_lst = [];
         $this->usr_num_field_lst = [];
         $this->usr_bool_field_lst = [];
         $this->usr_only_field_lst = [];
+        $this->join_field = '';
+        $this->join2_field = '';
+        $this->join3_field = '';
+        $this->join4_field = '';
+        $this->join_to_field = '';
+        $this->join2_to_field = '';
+        $this->join3_to_field = '';
+        $this->join4_to_field = '';
         $this->join_field_lst = [];
         $this->join2_field_lst = [];
         $this->join3_field_lst = [];
@@ -218,7 +237,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $this->mysql = mysqli_connect('localhost', SQL_DB_USER, SQL_DB_PASSWD, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
+            $this->mysql = mysqli_connect('localhost', SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
         } else {
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
@@ -303,6 +322,12 @@ class sql_db
         $this->usr_view_id = $usr_id;
     }
 
+    function set_par_types(string $query_name, array $parameter_types)
+    {
+        $this->query_name = $query_name;
+        $this->par_types = $parameter_types;
+    }
+
     /**
      * define the fields that should be returned in a select query
      */
@@ -330,27 +355,31 @@ class sql_db
      * @param string $join_field is the index field that should be used for the join that must exist in both tables, default is the id of the joined table
      *                           if empty the field will be guessed
      */
-    function set_join_fields(array $join_field_lst, string $join_type, string $join_field = '')
+    function set_join_fields(array $join_field_lst, string $join_type, string $join_field = '', string $join_to_field = '')
     {
         if ($this->join_type == '') {
             $this->join_type = $join_type;
             $this->join_field_lst = $join_field_lst;
             $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
             $this->join_usr_query = false;
         } elseif ($this->join2_type == '') {
             $this->join2_type = $join_type;
             $this->join2_field_lst = $join_field_lst;
             $this->join2_field = $join_field;
+            $this->join2_to_field = $join_to_field;
             $this->join2_usr_query = false;
         } elseif ($this->join3_type == '') {
             $this->join3_type = $join_type;
             $this->join3_field_lst = $join_field_lst;
             $this->join3_field = $join_field;
+            $this->join3_to_field = $join_to_field;
             $this->join3_usr_query = false;
         } elseif ($this->join4_type == '') {
             $this->join4_type = $join_type;
             $this->join4_field_lst = $join_field_lst;
             $this->join4_field = $join_field;
+            $this->join4_to_field = $join_to_field;
             $this->join4_usr_query = false;
         } else {
             log_err('Max four table joins expected on version ' . PRG_VERSION);
@@ -951,7 +980,7 @@ class sql_db
                 // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 throw new Exception($msg);
             } else {
-                $sql = str_replace("\n", "", $sql);
+                $sql = str_replace("\n", " ", $sql);
                 if ($sql_name == '') {
                     $result = pg_query($this->postgres_link, $sql);
                     if ($result === false) {
@@ -959,17 +988,35 @@ class sql_db
                     }
 
                 } else {
-                    if (!in_array($sql_name, $this->prepared_sql_names)) {
-                        $result = pg_prepare($this->postgres_link, $sql_name, $sql);
-                        if ($result == false) {
-                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
+                    if (str_starts_with($sql, 'PREPARE')) {
+                        if (!in_array($sql_name, $this->prepared_sql_names)) {
+                            $sql .= ' EXECUTE ' . $sql_name . '(' . implode(',', $sql_array) . ')';
+                            $result = pg_query($this->postgres_link, $sql);
+                            if ($result === false) {
+                                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
+                            } else {
+                                $this->prepared_sql_names[] = $sql_name;
+                            }
                         } else {
-                            $this->prepared_sql_names[] = $sql_name;
+                            $sql = 'EXECUTE ' . $sql_name . '(' . implode(',', $sql_array) . ')';
+                            $result = pg_query($this->postgres_link, $sql);
+                            if ($result === false) {
+                                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
+                            }
                         }
-                    }
-                    $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
-                    if ($result == false) {
-                        throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when executing ' . $sql);
+                    } else {
+                        if (!in_array($sql_name, $this->prepared_sql_names)) {
+                            $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                            if ($result == false) {
+                                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
+                            } else {
+                                $this->prepared_sql_names[] = $sql_name;
+                            }
+                        }
+                        $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                        if ($result == false) {
+                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when executing ' . $sql);
+                        }
                     }
                 }
             }
@@ -1141,10 +1188,10 @@ class sql_db
     /**
      * returns all values of an SQL query in an array
      */
-    function get($sql): array
+    function get(string $sql, string $sql_name = '', array $sql_array = array()): array
     {
         $this->debug_msg($sql, 'get');
-        return $this->fetch_all($sql);
+        return $this->fetch_all($sql, $sql_name, $sql_array);
     }
 
     /**
@@ -1458,11 +1505,13 @@ class sql_db
         return $result;
     }
 
-// set the SQL WHERE statement for link tables
-// if $id_from or $id_to is null all links to the other side are selected
-// e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
-// TODO allow also to retrieve a list of linked objects
-// TOTO get the user specific list of linked objects
+    /**
+     * set the SQL WHERE statement for link tables
+     * if $id_from or $id_to is null all links to the other side are selected
+     *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
+     * TODO allow also to retrieve a list of linked objects
+     * TODO get the user specific list of linked objects
+     */
     function set_where_link($id, $id_from = 0, $id_to = 0, $id_type = 0): string
     {
         $result = '';
@@ -1530,16 +1579,20 @@ class sql_db
         return $result;
     }
 
-// get the where statement supposed to be used for the next query creation
-// mainly used to test if the search has valid parameters
+    /**
+     * get the where statement supposed to be used for the next query creation
+     * mainly used to test if the search has valid parameters
+     */
     function get_where(): string
     {
         return $this->where;
     }
 
-// set the where statement for a later call of the select function
-// mainly used to overwrite the for special cases, where the set_where function cannot be used
-// TODO prevent code injections e.g. by using only predefined queries
+    /**
+     * set the where statement for a later call of the select function
+     * mainly used to overwrite the for special cases, where the set_where function cannot be used
+     * TODO prevent code injections e.g. by using only predefined queries
+     */
     function set_where_text($where_text)
     {
         $this->where = ' WHERE ' . $where_text;
@@ -1619,6 +1672,9 @@ class sql_db
             } else {
                 $join_from_id_field = $this->join_field;
             }
+            if ($this->join_to_field != '') {
+                $join_id_field = $this->join_to_field;
+            }
             $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
             if ($this->usr_query and $this->join_usr_query) {
@@ -1633,6 +1689,9 @@ class sql_db
                 $join2_from_id_field = $join2_id_field;
             } else {
                 $join2_from_id_field = $this->join2_field;
+            }
+            if ($this->join2_to_field != '') {
+                $join2_id_field = $this->join2_to_field;
             }
             $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::LNK2_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join2_from_id_field . ' = ' . sql_db::LNK2_TBL . '.' . $join2_id_field;
@@ -1649,6 +1708,9 @@ class sql_db
             } else {
                 $join3_from_id_field = $this->join3_field;
             }
+            if ($this->join3_to_field != '') {
+                $join3_id_field = $this->join3_to_field;
+            }
             $this->join .= ' LEFT JOIN ' . $join3_table_name . ' ' . sql_db::LNK3_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join3_from_id_field . ' = ' . sql_db::LNK3_TBL . '.' . $join3_id_field;
             if ($this->usr_query and $this->join3_usr_query) {
@@ -1663,6 +1725,9 @@ class sql_db
                 $join4_from_id_field = $join4_id_field;
             } else {
                 $join4_from_id_field = $this->join4_field;
+            }
+            if ($this->join4_to_field != '') {
+                $join4_id_field = $this->join4_to_field;
             }
             $this->join .= ' LEFT JOIN ' . $join4_table_name . ' ' . sql_db::LNK4_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join4_from_id_field . ' = ' . sql_db::LNK4_TBL . '.' . $join4_id_field;
@@ -1680,14 +1745,23 @@ class sql_db
 // create a SQL select statement for the connected database
     function select($has_id = true): string
     {
-        $sql = 'SELECT';
+        $sql = '';
+        if ($this->query_name != '') {
+            if (count($this->par_types) > 0) {
+                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $this->par_types) . ') AS SELECT';
+            } else {
+                log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
+            }
+        } else {
+            $sql = 'SELECT';
+        }
         $this->set_field_statement($has_id);
         $this->set_from();
         $sql .= $this->fields . $this->from . $this->join . $this->where . $this->order . $this->page . ';';
         return $sql;
     }
 
-// return all database ids, where the owner is not yet set
+    // return all database ids, where the owner is not yet set
     function missing_owner()
     {
         log_debug("sql_db->missing_owner (" . $this->type . ")");
@@ -2017,7 +2091,7 @@ class sql_db
     /**
      * load all types of a type/table at once
      */
-    function load_types($table, $additional_field_lst)
+    function load_types($table, $additional_field_lst): array
     {
         log_debug('sql_db->load_types');
 
@@ -2615,10 +2689,8 @@ class sql_db
 
 
 /*
-
   name shortcuts - rename some often used functions to make to code look nicer and not draw the focus away from the important part
   --------------
-
 */
 
 

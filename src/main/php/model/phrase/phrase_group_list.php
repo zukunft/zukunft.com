@@ -40,9 +40,110 @@ class phrase_group_list
 
     public ?array $phr_lst_lst = null;  // list of a list of phrases
 
+    // search fields
+    public ?phrase $phr; //
+
+    /**
+     * create an SQL statement to retrieve a list of phrase groups from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $result = '';
+        $sql_where = '';
+        $sql_name = self::class . '_by_';
+        if ($this->phr != null) {
+            if ($this->phr->id <> 0) {
+                if ($this->phr->is_word()) {
+                    $sql_name .= 'word_id';
+                    $sql_where = 'l.word_id = $1';
+                } else {
+                    $sql_name .= 'triple_id';
+                    $sql_where = 'l.triple_id = $1';
+                }
+            }
+        }
+        if ($sql_where == '') {
+            log_err("The phrase and the user must be set to load a phrase group list.", "phrase_group_list->load");
+        } else {
+
+            $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+            $db_con->set_par_types($sql_name, array('int'));
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_fields(phrase_group::FLD_NAMES);
+            if ($this->phr->is_word()) {
+                $db_con->set_join_fields(array(word::FLD_ID), DB_TYPE_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+            } else {
+                $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+            }
+            $db_con->set_where_text($sql_where);
+            $sql = $db_con->select();
+
+            if ($get_name) {
+                $result = $sql_name;
+            } else {
+                $result = $sql;
+            }
+        }
+
+        return $result;
+    }
+
+    function load(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } else {
+            $sql = $this->load_sql($db_con);
+            $sql_name = $this->load_sql($db_con, true);
+
+            if ($db_con->get_where() == '') {
+                log_err('The phrase must be set to load ' . self::class, self::class . '->load');
+            } else {
+                // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
+                $db_rows = $db_con->get($sql, $sql_name, array($this->phr->id));
+                if ($db_rows != null) {
+                    foreach ($db_rows as $db_row) {
+                        $phr_grp = new phrase_group();
+                        $phr_grp->usr = $this->usr;
+                        $phr_grp->row_mapper($db_row);
+                        $this->lst[] = $phr_grp;
+                        $result = true;
+                    }
+                }
+            }
+
+        }
+
+        return $result;
+    }
+
+    /**
+     * delete all loaded phrase groups e.g. to delete al the phrase groups linked to a phrase
+     * @return user_message
+     */
+    function del(): user_message
+    {
+        $result = new user_message();
+
+        if ($this->lst != null) {
+            foreach ($this->lst as $phr_grp) {
+                $result->add($phr_grp->del());
+            }
+        }
+        return new user_message();
+    }
+
     /*
-    add functions
-    */
+     * add functions
+     */
 
     /**
      * combine the group id and the time id to a unique index
@@ -199,9 +300,11 @@ class phrase_group_list
           if the value has been update, create a calculation request
     */
 
-    // query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
-    // e.g. which value that have "Sales" and "2016"?
-    private function get_grp_by_phr($type, $phr_linked, $phr_used)
+    /**
+     * query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
+     * e.g. which value that have "Sales" and "2016"?
+     */
+    private function get_grp_by_phr($type, $phr_linked, $phr_used): array
     {
         log_debug('get values because formula is assigned to phrases ' . $phr_linked->name() . ' and phrases ' . $phr_used->name() . ' are used in the formula');
 
@@ -289,8 +392,7 @@ class phrase_group_list
         log_debug('phr_grp_lst->get_grp_by_phr -> sql "' . $sql . '"');
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $result = $db_con->get($sql);
-        return $result;
+        return $db_con->get($sql);
     }
 
     // combined code to add values assigned by a word or a predefined formula like "this", "prior" or "next"

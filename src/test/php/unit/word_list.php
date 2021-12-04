@@ -6,47 +6,53 @@
   -----------------------
   
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
-function run_word_list_unit_tests(testing $t)
+class word_list_unit_tests
 {
+    function run(testing $t)
+    {
 
-    global $usr;
-    global $sql_names;
+        global $usr;
+        global $sql_names;
 
-    $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
+        $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
-    /*
-     * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-     */
+        /*
+         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
+         */
 
-    $db_con = new sql_db();
-    $db_con->db_type = sql_db::POSTGRES;
+        $db_con = new sql_db();
+        $db_con->db_type = sql_db::POSTGRES;
 
-    // sql to load by word list by ids
-    $wrd_lst = new word_list;
-    $wrd_lst->ids = [1, 2, 3];
-    $wrd_lst->usr = $usr;
-    $created_sql = $wrd_lst->load_sql($db_con);
-    $expected_sql = "SELECT 
+        // sql to load by word list by ids
+        $wrd_lst = new word_list;
+        $wrd_lst->ids = [1, 2, 3];
+        $wrd_lst->usr = $usr;
+        $created_sql = $wrd_lst->load_sql($db_con);
+        $expected_sql = "SELECT 
                         s.word_id,
                         u.word_id AS user_word_id,
                         s.user_id,
@@ -61,33 +67,33 @@ function run_word_list_unit_tests(testing $t)
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    $t->dsp('word_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('word_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
-    // ... and check if the prepared sql name is unique
-    $result = false;
-    $sql_name = $wrd_lst->load_sql($db_con, true);
-    if (!in_array($sql_name, $sql_names)) {
-        $result = true;
-        $sql_names[] = $sql_name;
-    }
-    $target = true;
-    $t->dsp('word_list->load_sql_name by IDs', $result, $target);
+        // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = $wrd_lst->load_sql($db_con, true);
+        if (!in_array($sql_name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $target = true;
+        $t->dsp('word_list->load_sql_name by IDs', $result, $target);
 
-    // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = sql_db::MYSQL;
-    /*
-    $db_con->set_type(DB_TYPE_WORD);
-    $db_con->set_usr($usr->id);
-    $db_con->set_usr_fields(array('plural',sql_db::FLD_DESCRIPTION));
-    $db_con->set_usr_num_fields(array('word_type_id',user_sandbox::FLD_EXCLUDED));
-    $db_con->set_fields(array('values'));
-    $db_con->set_where_text('s.word_id IN (1,2,3)');
-    $db_con->set_order_text('s.values DESC, word_name');
-    $created_sql = $db_con->select();
-    */
-    $created_sql = $wrd_lst->load_sql($db_con);
-    $sql_avoid_code_check_prefix = "SELECT";
-    $expected_sql = $sql_avoid_code_check_prefix . " s.word_id,
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        /*
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_usr($usr->id);
+        $db_con->set_usr_fields(array('plural',sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_num_fields(array('word_type_id',user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array('values'));
+        $db_con->set_where_text('s.word_id IN (1,2,3)');
+        $db_con->set_order_text('s.values DESC, word_name');
+        $created_sql = $db_con->select();
+        */
+        $created_sql = $wrd_lst->load_sql($db_con);
+        $sql_avoid_code_check_prefix = "SELECT";
+        $expected_sql = $sql_avoid_code_check_prefix . " s.word_id,
                         u.word_id AS user_word_id,
                         s.user_id,
                         s.`values`,
@@ -101,15 +107,15 @@ function run_word_list_unit_tests(testing $t)
                                     AND u.user_id = 1 
                   WHERE s.word_id IN (1,2,3)
                ORDER BY s.values DESC, word_name;";
-    $t->dsp('word_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('word_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
-    // sql to load by word list by phrase group
-    $db_con->db_type = sql_db::POSTGRES;
-    $wrd_lst = new word_list;
-    $wrd_lst->grp_id = 1;
-    $wrd_lst->usr = $usr;
-    $created_sql = $wrd_lst->load_sql($db_con);
-    $expected_sql = "SELECT 
+        // sql to load by word list by phrase group
+        $db_con->db_type = sql_db::POSTGRES;
+        $wrd_lst = new word_list;
+        $wrd_lst->grp_id = 1;
+        $wrd_lst->usr = $usr;
+        $created_sql = $wrd_lst->load_sql($db_con);
+        $expected_sql = "SELECT 
                         s.word_id,
                         u.word_id AS user_word_id,
                         s.user_id,
@@ -126,26 +132,26 @@ function run_word_list_unit_tests(testing $t)
                                          FROM phrase_group_word_links
                                         WHERE phrase_group_id = 1)
                ORDER BY s.values DESC, word_name;";
-    $t->dsp('word_list->load_sql by phrase group', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('word_list->load_sql by phrase group', $t->trim($expected_sql), $t->trim($created_sql));
 
-    // ... and check if the prepared sql name is unique
-    $result = false;
-    $sql_name = $wrd_lst->load_sql($db_con, true);
-    if (!in_array($sql_name, $sql_names)) {
-        $result = true;
-        $sql_names[] = $sql_name;
-    }
-    $target = true;
-    $t->dsp('word_list->load_sql_name by phrase group', $result, $target);
+        // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = $wrd_lst->load_sql($db_con, true);
+        if (!in_array($sql_name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $target = true;
+        $t->dsp('word_list->load_sql_name by phrase group', $result, $target);
 
-    // TODO add the missing word list loading SQL
+        // TODO add the missing word list loading SQL
 
-    // SQL to add by word list by a relation e.g. for "Zurich" and direction "up" add "City", "Canton" and "Company"
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
-    $wrd_lst->ids = [7];
-    $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP);
-    $expected_sql = "SELECT s.word_id,
+        // SQL to add by word list by a relation e.g. for "Zurich" and direction "up" add "City", "Canton" and "Company"
+        $wrd_lst = new word_list;
+        $wrd_lst->usr = $usr;
+        $wrd_lst->ids = [7];
+        $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP);
+        $expected_sql = "SELECT s.word_id,
                      s.user_id,
                      CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN s.word_name    ELSE u.word_name    END AS word_name,
                      CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN s.plural       ELSE u.plural       END AS plural,
@@ -162,19 +168,18 @@ function run_word_list_unit_tests(testing $t)
                  AND l.from_phrase_id IN (7)
                  AND l.verb_id = 2 
             ORDER BY s.values DESC, s.word_name;";
-    $t->dsp('word_list->add_by_type_sql by verb and up', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('word_list->add_by_type_sql by verb and up', $t->trim($expected_sql), $t->trim($created_sql));
 
-    // ... and check if the prepared sql name is unique
-    $result = false;
-    $sql_name = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP,true);
-    if (!in_array($sql_name, $sql_names)) {
-        $result = true;
-        $sql_names[] = $sql_name;
+        // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP, true);
+        if (!in_array($sql_name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $target = true;
+        $t->dsp('word_list->add_by_type_sql by verb and up', $result, $target);
+
     }
-    $target = true;
-    $t->dsp('word_list->add_by_type_sql by verb and up', $result, $target);
-
-
 
 }
-

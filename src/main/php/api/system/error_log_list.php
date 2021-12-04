@@ -2,7 +2,7 @@
 
 /*
 
-    system_error_log_list_dsp.php - the simple export object to create a json for the frontend API
+    api/system/error_log_list.php - the simple export object to create a json for the frontend API
     -----------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,7 +29,7 @@
 
 */
 
-class system_error_log_list_dsp
+class system_error_log_list_api extends api_message
 {
 
     // field names used for JSON creation
@@ -37,6 +37,8 @@ class system_error_log_list_dsp
 
     function __construct()
     {
+        parent::__construct();
+        $this->type = api_message::SYS_LOG;
         $this->system_errors = null;
     }
 
@@ -78,6 +80,12 @@ class system_error_log_list_dsp
 
         log_debug('system_error_log_list->display -> done');
         return $result;
+    }
+
+
+    function get_html_page(user $usr, string $back): string
+    {
+        return parent::get_html_header('System log') . $this->get_html($usr, $back) . parent::get_html_footer();
     }
 
     /**

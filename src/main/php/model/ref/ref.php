@@ -417,10 +417,10 @@ class ref
     }
 
     // delete a reference of return false if it fails
-    function del(): bool
+    function del(): user_message
     {
         global $db_con;
-        $result = false;
+        $result = new user_message();
 
         if (!$this->load()) {
             log_warning('Reload of ref ' . $this->dsp_id() . ' for deletion failed', 'ref->del');
@@ -433,9 +433,9 @@ class ref
                     $db_con->set_type(DB_TYPE_REF);
                     $del_result = $db_con->delete('ref_id', $this->id);
                     if ($del_result == '') {
-                        log_debug('ref->del update -> done.' . $result . '');
+                        log_debug('ref->del update -> done.');
                     } else {
-                        $result = false;
+                        $result->add_message($del_result);
                     }
                 }
             }

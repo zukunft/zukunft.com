@@ -130,7 +130,7 @@ class view_cmp extends user_sandbox_named
         $this->back = null;
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    private function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['view_component_id'] > 0) {
@@ -581,7 +581,8 @@ class view_cmp extends user_sandbox_named
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
             $dsp_lnk->usr = $this->usr;
-            $result .= $dsp_lnk->del();
+            $msg = $dsp_lnk->del();
+            $result .= $msg->get_last_message();
         } else {
             $result .= log_err("Cannot unlink view component, because view is not set.", "view_component.php");
         }

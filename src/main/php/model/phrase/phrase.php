@@ -205,7 +205,7 @@ class phrase
     /**
      * @return bool true if this phrase is a word or supposed to be a word
      */
-    protected function is_word(): bool
+    function is_word(): bool
     {
         $result = false;
         if (isset($this->obj)) {
@@ -747,6 +747,32 @@ class phrase
         }
         */
 
+        return $result;
+    }
+
+    /**
+     * delete either a word or triple
+     * @return user_message an empty string if deleting has been successful
+     */
+    function del(): user_message
+    {
+        log_debug('phrase->del ' . $this->dsp_id());
+        $result = new user_message();
+
+        // direct delete if the object is loaded
+        if ($this->is_triple()) {
+            $lnk = $this->obj;
+            if ($lnk != null) {
+                $result->add($lnk->del());
+            }
+        } elseif ($this->is_word()) {
+            $wrd = $this->obj;
+            if ($wrd != null) {
+                $result->add($wrd->del());
+            }
+        } else {
+            log_err('Unknown object type of ' . $this->dsp_id());
+        }
         return $result;
     }
 

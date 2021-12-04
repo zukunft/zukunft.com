@@ -128,7 +128,7 @@ class phrase_list
                         // TODO check if old can ge removed: if ($phr->id > 0) {
                         if (get_class($phr->obj) == word::class or get_class($phr->obj) == word_dsp::class) {
                             $wrd_lst->add($phr->obj);
-                        } elseif (get_class($phr->obj) == DB_TYPE_WORD_LINK) {
+                        } elseif (get_class($phr->obj) == DB_TYPE_TRIPLE) {
                             // use the recursive triple function to include the foaf words
                             $sub_wrd_lst = $phr->obj->wrd_lst();
                             foreach ($sub_wrd_lst->lst as $wrd) {
@@ -1070,6 +1070,7 @@ class phrase_list
     }
 
     // to review !!!!
+    // get the most useful time for the given words
     function assume_time(): ?phrase
     {
         $time_phr = null;

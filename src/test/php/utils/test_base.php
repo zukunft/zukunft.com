@@ -243,14 +243,22 @@ function str_diff(string $from, string $to): string
         $f = str_split($from);
         $t = str_split($to);
 
+        // add message if just one string is shorter
+        if (count($f) < count($t)) {
+            $result = 'pos ' . count($t) . ' additional: ' . substr($to, count($f), count($t)- count($f));
+        } elseif (count($t) < count($f)) {
+            $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f)- count($t));
+        }
+
         $i = 0;
-        while ($i < count($f) and $result == '') {
+        while ($i < count($f) and $i < count($t) and $result == '') {
             if ($f[$i] != $t[$i]) {
                 $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
                 $result .= ', near ' . substr($from, $i - 10, 20);
             }
             $i++;
         }
+
     }
 
     return $result;
@@ -261,7 +269,7 @@ function str_diff(string $from, string $to): string
  *   -------------
 */
 
-class testing
+class test_base
 {
     // the url which should be used for testing (maybe later https://test.zukunft.com/)
     const URL = 'https://zukunft.com/';
@@ -434,6 +442,11 @@ class testing
         return $phr;
     }
 
+    /**
+     * test if a phrase with the given name exists, but does not create it, if it has not yet been created
+     * @param string $phr_name name of the phrase to test
+     * @return phrase the loaded phrase object
+     */
     function test_phrase(string $phr_name): phrase
     {
         $phr = $this->load_phrase($phr_name);
@@ -655,17 +668,15 @@ class testing
 
     function test_view_cmp_unlink(string $dsp_name, string $cmp_name): string
     {
+        $result = '';
         $dsp = $this->load_view($dsp_name);
         $cmp = $this->load_view_component($cmp_name);
         if ($dsp != null and $cmp != null) {
             if ($dsp->id > 0 and $cmp->id > 0) {
-                return $cmp->unlink($dsp);
-            } else {
-                return '';
+                $result = $cmp->unlink($dsp);
             }
-        } else {
-            return '';
         }
+        return $result;
     }
 
     function load_word_link(string $from_name,
@@ -857,15 +868,20 @@ class testing
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
+        $result = preg_replace('/ <td>/', '<td>', $result);
+        $result = preg_replace('/ <\/td>/', '</td>', $result);
         $result = preg_replace('/ <th>/', '<th>', $result);
         $result = preg_replace('/ <\/th>/', '</th>', $result);
         $result = preg_replace('/ <tr>/', '<tr>', $result);
         $result = preg_replace('/ <\/tr>/', '</tr>', $result);
-        $result = preg_replace('/"> <tr>/', '"><tr>', $result);
-        $result = preg_replace('/<tr> <th>/', '<tr><th>', $result);
-        $result = preg_replace('/<\/th> <th>/', '</th><th>', $result);
-        $result = preg_replace('/<tr> <td>/', '<tr><td>', $result);
-        return preg_replace('/<\/td> <td>/', '</td><td>', $result);
+        $result = preg_replace('/> <div/', '><div', $result);
+        $result = preg_replace('/> <\/div/', '></div', $result);
+        $result = preg_replace('/> <table/', '><table', $result);
+        $result = preg_replace('/> <\/table/', '></table', $result);
+        $result = preg_replace('/> <footer/', '><footer', $result);
+        $result = preg_replace('/> <\/footer/', '></footer', $result);
+        $result = preg_replace('/" \/>/', '"/>', $result);
+        return preg_replace('/"> </', '"><', $result);
     }
 
     /*
@@ -886,6 +902,23 @@ class testing
     function subheader($header_text)
     {
         echo '<br><h3>' . $header_text . '</h3><br>';
+    }
+
+    /**
+     * check if the test result is as expected and display the test result to an admin user
+     * TODO replace all dsp calls with this but the
+     *
+     * @param string $msg (unique) description of the test
+     * @param $result
+     * @param $target
+     * @param $exe_max_time
+     * @param $comment
+     * @param $test_type
+     * @return bool
+     */
+    function assert(string $msg, $result, $target, $exe_max_time = TIMEOUT_LIMIT, $comment = '', $test_type = ''): bool
+    {
+        return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
     /**

@@ -78,7 +78,7 @@ class verb
 
     // set the class vars based on a database record
     // $db_row is an array with the database values
-    function row_mapper($db_row): bool
+    function row_mapper(array $db_row): bool
     {
         $result = false;
         if ($db_row != null) {

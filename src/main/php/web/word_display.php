@@ -32,6 +32,10 @@
 class word_dsp extends word
 {
 
+    // default view settings
+    const TIME_MIN_COLS = 3; // minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display
+    const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
+
     // display a word as the view header
     function dsp_header(): string
     {

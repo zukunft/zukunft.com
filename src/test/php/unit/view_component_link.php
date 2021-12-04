@@ -6,48 +6,54 @@
   ---------------------------------
   
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
-function run_view_component_link_unit_tests(testing $t)
+class view_component_link_unit_tests
 {
+    function run(testing $t)
+    {
 
-    global $usr;
-    global $sql_names;
+        global $usr;
+        global $sql_names;
 
-    $t->header('Unit tests of the view component link class (src/main/php/model/view/view_component_link.php)');
+        $t->header('Unit tests of the view component link class (src/main/php/model/view/view_component_link.php)');
 
-    /*
-     * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-     */
+        /*
+         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
+         */
 
-    $db_con = new sql_db();
-    $db_con->db_type = sql_db::POSTGRES;
+        $db_con = new sql_db();
+        $db_con->db_type = sql_db::POSTGRES;
 
-    // sql to load a list of value by the phrase ids
-    $lnk = new view_cmp_link();
-    $lnk->view_id = 1;
-    $lnk->view_component_id = 2;
-    $lnk->usr = $usr;
-    $created_sql = $lnk->load_sql($db_con);
-    $expected_sql = "SELECT 
+        // sql to load a list of value by the phrase ids
+        $lnk = new view_cmp_link();
+        $lnk->view_id = 1;
+        $lnk->view_component_id = 2;
+        $lnk->usr = $usr;
+        $created_sql = $lnk->load_sql($db_con);
+        $expected_sql = "SELECT 
                          s.view_component_link_id,  
                          u.view_component_link_id AS user_view_component_link_id,  
                          s.user_id,  
@@ -61,24 +67,24 @@ function run_view_component_link_unit_tests(testing $t)
                                                     AND u.user_id = 1 
                    WHERE s.view_id = 1 
                      AND s.view_component_id = 2;";
-    $t->dsp('view_component_link->load_sql by view and component', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('view_component_link->load_sql by view and component', $t->trim($expected_sql), $t->trim($created_sql));
 
-    // ... and check if the prepared sql name is unique
-    $result = false;
-    $sql_name = $lnk->load_sql($db_con, true);
-    if (!in_array($sql_name, $sql_names)) {
-        $result = true;
-        $sql_names[] = $sql_name;
-    }
-    $target = true;
-    $t->dsp('view_component_link->load_sql by view and component', $result, $target);
+        // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = $lnk->load_sql($db_con, true);
+        if (!in_array($sql_name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $target = true;
+        $t->dsp('view_component_link->load_sql by view and component', $result, $target);
 
-    // ... and the same for MySQL by replication the SQL builder statements
-    $db_con->db_type = sql_db::MYSQL;
-    $lnk->usr = $usr;
-    $created_sql = $lnk->load_sql($db_con);
-    $sql_avoid_code_check_prefix = "SELECT";
-    $expected_sql = $sql_avoid_code_check_prefix . " 
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $lnk->usr = $usr;
+        $created_sql = $lnk->load_sql($db_con);
+        $sql_avoid_code_check_prefix = "SELECT";
+        $expected_sql = $sql_avoid_code_check_prefix . " 
                          s.view_component_link_id,  
                          u.view_component_link_id AS user_view_component_link_id,  
                          s.user_id,  
@@ -92,7 +98,8 @@ function run_view_component_link_unit_tests(testing $t)
                                                     AND u.user_id = 1 
                    WHERE s.view_id = 1 
                      AND s.view_component_id = 2;";
-    $t->dsp('view_component_link->load_sql by view and component for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('view_component_link->load_sql by view and component for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+
+    }
 
 }
-

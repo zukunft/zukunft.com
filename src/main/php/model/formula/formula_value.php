@@ -111,8 +111,8 @@ class formula_value
                     $this->src_time_id = $val_row['source_time_word_id'];
                     $this->phr_grp_id = $val_row['phrase_group_id'];
                     $this->time_id = $val_row['time_word_id'];
-                    $this->last_update = new DateTime($val_row['last_update']);
-                    $this->last_val_update = new DateTime($val_row['last_update']);
+                    $this->last_update = get_datetime($val_row['last_update']);
+                    $this->last_val_update = get_datetime($val_row['last_update']);
                     $this->value = $val_row['formula_value'];
                     $result = true;
                 }

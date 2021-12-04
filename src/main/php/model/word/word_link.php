@@ -48,7 +48,7 @@ class word_link extends user_sandbox_link_description
     {
         parent::__construct();
         $this->obj_type = user_sandbox::TYPE_LINK;
-        $this->obj_name = DB_TYPE_WORD_LINK;
+        $this->obj_name = DB_TYPE_TRIPLE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
 
@@ -75,7 +75,7 @@ class word_link extends user_sandbox_link_description
         $this->to = new phrase();
     }
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    private function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['word_link_id'] > 0) {
@@ -135,7 +135,7 @@ class word_link extends user_sandbox_link_description
      */
     function load_objects(): bool
     {
-        log_debug('word_link->load_objects.' . $this->from->id . ' ' . $this->verb->id . ' ' . $this->to->id . '');
+        log_debug('word_link->load_objects.' . $this->from->id . ' ' . $this->verb->id . ' ' . $this->to->id);
         $result = true;
 
         // after every load call from outside the class the order should be checked and reversed if needed
@@ -296,7 +296,7 @@ class word_link extends user_sandbox_link_description
         if ($sql_where == '') {
             log_err('The database ID (' . $this->id . ') or the word and verb ids (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') must be set to load a triple.', "word_link->load");
         } else {
-            $db_con->set_type(DB_TYPE_WORD_LINK);
+            $db_con->set_type(DB_TYPE_TRIPLE);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
             $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, 'word_type_id', self::FLD_EXCLUDED, user_sandbox::FLD_USER));
@@ -313,7 +313,7 @@ class word_link extends user_sandbox_link_description
                 $new_name = $this->name();
                 log_debug('word_link->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
-                    $db_con->set_type(DB_TYPE_WORD_LINK);
+                    $db_con->set_type(DB_TYPE_TRIPLE);
                     $result = $db_con->update($this->id, 'word_link_name', $new_name);
                     $this->name = $new_name;
                 }
@@ -375,7 +375,7 @@ class word_link extends user_sandbox_link_description
 
         if ($sql_where != '') {
             // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-            $db_con->set_type(DB_TYPE_WORD_LINK);
+            $db_con->set_type(DB_TYPE_TRIPLE);
             $db_con->set_usr($this->usr->id);
             $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
             $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
@@ -421,7 +421,7 @@ class word_link extends user_sandbox_link_description
                 $new_name = $this->name();
                 log_debug('word_link->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
-                    $db_con->set_type(DB_TYPE_WORD_LINK);
+                    $db_con->set_type(DB_TYPE_TRIPLE);
                     $db_con->update($this->id, 'word_link_name', $new_name);
                     $this->name = $new_name;
                 }
@@ -545,9 +545,6 @@ class word_link extends user_sandbox_link_description
                         if ($this->name <> '') {
                             $result .= ' for triple "' . $this->name . '"';
                         }
-                    } else {
-                        $this->verb->id = $vrb->id;
-                        $this->verb->name = $vrb->name;
                     }
                 }
                 $this->verb = $vrb;
@@ -942,7 +939,7 @@ class word_link extends user_sandbox_link_description
             }
 
             // check again if there ist not yet a record
-            $db_con->set_type(DB_TYPE_WORD_LINK, true);
+            $db_con->set_type(DB_TYPE_TRIPLE, true);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
@@ -952,7 +949,7 @@ class word_link extends user_sandbox_link_description
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK);
+                $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE);
                 $log_id = $db_con->insert(array('word_link_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_word_link failed.');
@@ -1160,7 +1157,7 @@ class word_link extends user_sandbox_link_description
             $log->row_id = $this->id;
             //$log->field    = 'from_phrase_id';
             if ($log->add()) {
-                $db_con->set_type(DB_TYPE_WORD_LINK);
+                $db_con->set_type(DB_TYPE_TRIPLE);
                 if (!$db_con->update($this->id,
                     array("from_phrase_id", "verb_id", "to_phrase_id"),
                     array($this->from->id, $this->verb->id, $this->to->id))) {
@@ -1191,7 +1188,9 @@ class word_link extends user_sandbox_link_description
             if ($db_chk->id > 0) {
                 // ... if yes request to delete or exclude the record with the id parameters before the change
                 $to_del = clone $db_rec;
-                if (!$to_del->del()) {
+                $msg = $to_del->del();
+                $result .= $msg->get_last_message();
+                if (!$msg->is_ok()) {
                     $result .= 'Failed to delete the unused work link';
                 }
                 if ($result = '') {
@@ -1215,7 +1214,9 @@ class word_link extends user_sandbox_link_description
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
-                    if (!$to_del->del()) {
+                    $msg = $to_del->del();
+                    $result .= $msg->get_last_message();
+                    if (!$msg->is_ok()) {
                         $result .= 'Failed to delete the unused work link';
                     }
                     // ... and create a deletion request for all users ???
@@ -1248,7 +1249,7 @@ class word_link extends user_sandbox_link_description
         $log = $this->log_link_add();
         if ($log->id > 0) {
             // insert the new word_link
-            $db_con->set_type(DB_TYPE_WORD_LINK);
+            $db_con->set_type(DB_TYPE_TRIPLE);
             $this->id = $db_con->insert(array("from_phrase_id", "verb_id", "to_phrase_id", "user_id"),
                 array($this->from->id, $this->verb->id, $this->to->id, $this->usr->id));
             // TODO make sure on all add functions that the database object is always set
@@ -1295,7 +1296,7 @@ class word_link extends user_sandbox_link_description
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->usr->id);
-        $db_con->set_type(DB_TYPE_WORD_LINK);
+        $db_con->set_type(DB_TYPE_TRIPLE);
 
         // check if the opposite triple already exists and if yes, ask for confirmation
         if ($this->id <= 0) {
@@ -1369,6 +1370,31 @@ class word_link extends user_sandbox_link_description
         if ($result != '') {
             log_err($result);
         }
+
+        return $result;
+    }
+
+    /**
+     * delete the phrase groups which where this triple is used
+     */
+    function del_links(): user_message
+    {
+        global $db_con;
+        $result = new user_message();
+
+        $grp_lst = new phrase_group_list();
+        $grp_lst->usr = $this->usr;
+        $grp_lst->phr = $this->phrase();
+        $grp_lst->load();
+
+        /*
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
+        $db_con->set_usr($this->usr->id);
+        $msg = $db_con->delete('triple_id', $this->id);
+        $result->add_message($msg);
+        */
+
+        $result->add($grp_lst->del());
 
         return $result;
     }

@@ -82,7 +82,7 @@ class formula_link extends user_sandbox_link
         $this->tob = new phrase();
     }
 
-    function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row[formula_link::FLD_ID] > 0) {

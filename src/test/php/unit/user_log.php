@@ -6,47 +6,53 @@
   ----------------------
   
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
-function run_user_log_unit_tests(testing $t)
+class user_log_unit_tests
 {
+    function run(testing $t)
+    {
 
-    global $usr;
-    global $sql_names;
+        global $usr;
+        global $sql_names;
 
-    $t->header('Unit tests of the user log display class (src/main/php/web/user_log_display.php)');
+        $t->header('Unit tests of the user log display class (src/main/php/web/user_log_display.php)');
 
 
-    $t->subheader('SQL statement tests');
+        $t->subheader('SQL statement tests');
 
-    $db_con = new sql_db();
+        $db_con = new sql_db();
 
-    // sql to load the word by id
-    $log_dsp = new user_log_display();
-    $log_dsp->type = 'user';
-    $log_dsp->usr = $usr;
-    $log_dsp->size = SQL_ROW_LIMIT;
-    $db_con->db_type = sql_db::POSTGRES;
-    $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
-    $expected_sql = "SELECT 
+        // sql to load the word by id
+        $log_dsp = new user_log_display();
+        $log_dsp->type = 'user';
+        $log_dsp->usr = $usr;
+        $log_dsp->size = SQL_ROW_LIMIT;
+        $db_con->db_type = sql_db::POSTGRES;
+        $created_sql = $log_dsp->dsp_hist_links_sql($db_con);
+        $expected_sql = "SELECT 
                         c.change_link_id, 
                         c.change_time AS time, 
                         u.user_name, 
@@ -66,18 +72,18 @@ function run_user_log_unit_tests(testing $t)
                     AND c.user_id = 1  
                ORDER BY c.change_time DESC
                   LIMIT 20;";
-    $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $t->trim($expected_sql), $t->trim($created_sql));
+        $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $t->trim($expected_sql), $t->trim($created_sql));
 
-    // ... and check if the prepared sql name is unique
-    $result = false;
-    $sql_name = $log_dsp->dsp_hist_links_sql($db_con, true);
-    if (!in_array($sql_name, $sql_names)) {
-        $result = true;
-        $sql_names[] = $sql_name;
+        // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = $log_dsp->dsp_hist_links_sql($db_con, true);
+        if (!in_array($sql_name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $target = true;
+        $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type . ' id check sql name', $result, $target);
+
     }
-    $target = true;
-    $t->dsp('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type . ' id check sql name', $result, $target);
-
 
 }
-

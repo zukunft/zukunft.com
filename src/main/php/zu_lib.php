@@ -12,6 +12,9 @@ TODO if an internal failure is expected not to be fixable without user interacti
 TODO capsule in classes
 TODO create unit tests
 TODO cleanup object by removing duplicates
+TODO call include only if needed
+TODO check that all class function follow the setup suggested in user_message
+TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
 TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
 TODO add JSON tests that check if a just imported JSON file can be exactly recreated with export
 TODO if a formula is supposed to be created with the same name of a phrase suggest to add (formula) at the end
@@ -77,27 +80,27 @@ TODO create a table startup page with a
      Typing an operator sign after a space starts the formula creation and a formula name is suggested
 
 
-  This file is part of zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
@@ -108,10 +111,12 @@ const DB_TYPE_USER = 'user';
 const DB_TYPE_USER_PROFILE = 'user_profile';
 const DB_TYPE_WORD = 'word';
 const DB_TYPE_WORD_TYPE = 'word_type';
-const DB_TYPE_WORD_LINK = 'word_link';
+const DB_TYPE_TRIPLE = 'word_link';
 const DB_TYPE_VERB = 'verb';
 const DB_TYPE_PHRASE = 'phrase';
 const DB_TYPE_PHRASE_GROUP = 'phrase_group';
+const DB_TYPE_PHRASE_GROUP_WORD_LINK = 'phrase_group_word_link';
+const DB_TYPE_PHRASE_GROUP_TRIPLE_LINK = 'phrase_group_triple_link';
 const DB_TYPE_VALUE = 'value';
 const DB_TYPE_VALUE_TIME_SERIES = 'value_time_series';
 const DB_TYPE_VALUE_TIME_SERIES_DATA = 'value_ts_data';
@@ -190,6 +195,8 @@ if ($root_path == '') {
 }
 */
 
+
+
 // set the paths of the program code
 $path_php = ROOT_PATH . 'src/main/php/'; // path of the main php source code
 
@@ -205,6 +212,7 @@ include_once $path_php . 'model/system/system_utils.php';
 include_once $path_php . 'model/system/system_error_log_status_list.php';
 include_once $path_php . 'model/system/ip_range.php';
 include_once $path_php . 'model/change/log_table.php';
+include_once $path_php . 'api/message_header.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';
@@ -213,6 +221,7 @@ include_once $path_php . 'service/export/json.php';
 include_once $path_php . 'service/export/xml.php';
 // classes
 include_once $path_php . 'model/user/user.php';
+include_once $path_php . 'model/user/user_message.php';
 include_once $path_php . 'model/user/user_type.php';
 include_once $path_php . 'model/user/user_profile.php';
 include_once $path_php . 'model/user/user_profile_list.php';
@@ -234,9 +243,9 @@ include_once $path_php . 'model/sandbox/share_type_list.php';
 include_once $path_php . 'model/sandbox/protection_type_list.php';
 include_once $path_php . 'web/user_sandbox_display.php';
 include_once $path_php . 'model/system/system_error_log.php';
-include_once $path_php . 'model/system/system_error_log_dsp.php';
+include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'model/system/system_error_log_list.php';
-include_once $path_php . 'model/system/system_error_log_list_dsp.php';
+include_once $path_php . 'api/system/error_log_list.php';
 include_once $path_php . 'web/display_interface.php';
 include_once $path_php . 'web/display_html.php';
 include_once $path_php . 'web/display_button.php';
@@ -905,12 +914,13 @@ function prg_end($db_con)
 // special page closing only for the about page
 function prg_end_about($link)
 {
+    global $db_con;
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
     echo dsp_footer(true);
 
     // Closing connection
-    zu_sql_close($link);
+    $db_con->close();
 
     // free the global vars
     unset($sys_log_msg_lst);
@@ -925,10 +935,11 @@ function prg_end_about($link)
 // for the api e.g. the csv export no footer should be shown
 function prg_end_api($link)
 {
+    global $db_con;
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
     // Closing connection
-    zu_sql_close($link);
+    $db_con->close();
 
     // free the global vars
     unset($sys_log_msg_lst);
@@ -1605,3 +1616,30 @@ function trim_all(string $to_trim): string
     }
     return $result;
 }
+
+/**
+ * convert a database datetime string to a php DateTime object
+ *
+ * @param string $datetime_text the datetime as received from the database
+ * @return DateTime the converted DateTime value or now()
+ */
+function get_datetime(string $datetime_text, string $obj_name = '', string $process = ''): DateTime
+{
+    $result = new DateTime();
+    try {
+        $result = new DateTime($datetime_text);
+    } catch (Exception $e) {
+        $msg = 'Failed to convert the database DateTime value ' . $datetime_text;
+        if ($obj_name != '') {
+            $msg .= ' for ' . $obj_name;
+        }
+        if ($process != '') {
+            $msg .= ' during ' . $process;
+        }
+        $msg .= ', because ' . $e;
+        $msg .= ' reset to now';
+        log_err($msg);
+    }
+    return $result;
+}
+

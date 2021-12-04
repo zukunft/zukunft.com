@@ -38,8 +38,12 @@ class system_unit_tests
         global $sql_names;
 
         $db_con = new sql_db();
+        // TODO move to __construct of unit test
         if ($usr->name == null) {
             $usr->name = user::SYSTEM_TEST;
+        }
+        if ($usr->profile_id == null) {
+            $usr->profile_id = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
         }
 
         $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
@@ -58,7 +62,7 @@ class system_unit_tests
         $ip_range->usr = $usr;
         $created_sql = $ip_range->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_blocked.sql');
-        $t->dsp('ip_range->load_sql by id', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('ip_range->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -67,14 +71,13 @@ class system_unit_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $target = true;
-        $t->dsp('ip_range->load_sql by id', $result, $target);
+        $t->assert('ip_range->load_sql by id', $result, true);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $ip_range->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_blocked_mysql.sql');
-        $t->dsp('ip_range->load_sql by id for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load by ip range
         $db_con->db_type = sql_db::POSTGRES;
@@ -84,7 +87,7 @@ class system_unit_tests
         $ip_range->usr = $usr;
         $created_sql = $ip_range->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_range.sql');
-        $t->dsp('ip_range->load_sql by ip range', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('ip_range->load_sql by ip range', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -93,14 +96,13 @@ class system_unit_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $target = true;
-        $t->dsp('ip_range->load_sql by id range', $result, $target);
+        $t->assert('ip_range->load_sql by id range', $result, true);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $ip_range->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_range_mysql.sql');
-        $t->dsp('ip_range->load_sql by id for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         /*
          * im- and export tests
@@ -114,8 +116,7 @@ class system_unit_tests
         $ip_range->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
         $result = json_is_similar($json_in, $json_ex);
-        $target = true;
-        $t->dsp('ip_range->import check', $target, $result);
+        $t->assert('ip_range->import check', $result, true);
 
         /*
          * system log SQL creation tests
@@ -130,7 +131,7 @@ class system_unit_tests
         $log->id = 1;
         $created_sql = $log->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log.sql');
-        $t->dsp('system_error_log->load_sql by id', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('system_error_log->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -139,14 +140,13 @@ class system_unit_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $target = true;
-        $t->dsp('system_error_log->load_sql by id', $result, $target);
+        $t->assert('system_error_log->load_sql by id', $result, true);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log_mysql.sql');
-        $t->dsp('system_error_log->load_sql by id for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         $t->subheader('System log list tests');
 
@@ -157,7 +157,7 @@ class system_unit_tests
         $log_lst->dsp_type = system_error_log_list::DSP_ALL;
         $created_sql = $log_lst->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log_list.sql');
-        $t->dsp('system_error_log_list->load_sql by id', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('system_error_log_list->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $result = false;
@@ -166,14 +166,13 @@ class system_unit_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $target = true;
-        $t->dsp('system_error_log_list->load_sql all', $result, $target);
+        $t->assert('system_error_log_list->load_sql all', $result, true);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log_lst->load_sql($db_con);
         $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log_list_mysql.sql');
-        $t->dsp('system_error_log_list->load_sql by id for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $t->assert('system_error_log_list->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         /*
          * system log frontend API tests
@@ -193,11 +192,11 @@ class system_unit_tests
         $log_dsp = $log->get_dsp_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'api/system/error_log.json');
-        $t->dsp('system_error_log_dsp->get_json', $t->trim_json($expected), $t->trim_json($created));
+        $t->assert('system_error_log_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
 
         $created = $log_dsp->get_html($usr, '');
         $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log.html');
-        $t->dsp('system_error_log_dsp->get_json', $t->trim_html($expected), $t->trim_html($created));
+        $t->assert('system_error_log_dsp->get_json', $t->trim_html($created), $t->trim_html($expected));
 
         // create a second system log entry to create a list
         $log2 = new system_error_log();
@@ -217,11 +216,15 @@ class system_unit_tests
         $log_lst_dsp = $log_lst->get_dsp_obj();
         $created = $log_lst_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'api/system/error_log_list.json');
-        $t->dsp('system_error_log_list_dsp->get_json', $t->trim_json($expected), $t->trim_json($created));
+        $t->assert('system_error_log_list_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr, '');
         $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log_list.html');
-        $t->dsp('system_error_log_list_dsp->display', $t->trim_html($expected), $t->trim_html($created));
+        $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
+
+        $created = $log_lst_dsp->get_html_page($usr, '');
+        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log_list_page.html');
+        $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
     }
 
 }

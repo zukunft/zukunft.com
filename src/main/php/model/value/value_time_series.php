@@ -56,15 +56,15 @@ class value_time_series extends user_sandbox_display
     database load functions that reads the object from the database
     */
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    private function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['value_time_series_id'] > 0) {
                 $this->id = $db_row['value_time_series_id'];
                 $this->source_id = $db_row['source_id'];
-                $this->grp_id = $db_row['phrase_group_id'];
+                $this->grp_id = $db_row[phrase_group::FLD_ID];
                 $this->owner_id = $db_row[self::FLD_USER];
-                $this->last_update = new DateTime($db_row['last_update']);
+                $this->last_update = $this->get_datetime($db_row['last_update'], $this->dsp_id());
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
                     $this->usr_cfg_id = $db_row['user_value_time_series_id'];

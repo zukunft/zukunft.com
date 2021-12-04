@@ -43,7 +43,63 @@ class value_list
     public ?int $page_size = SQL_ROW_LIMIT;  // if not defined, use the default page size
     public ?int $page = 0;                   // start to display with this page
 
-    // the general load function (either by word, word list, formula or group)
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = self::class . '_by_';
+        if ($this->phr != null) {
+            if ($this->phr->id <> 0) {
+                $sql_name .= 'phrase_id';
+            }
+        } elseif ($this->phr_lst != '') {
+            $sql_name .= 'phrase_list';
+        } else {
+            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
+        }
+        $limit = $this->page_size;
+
+        $sql = "PREPARE " . $sql_name . " (int, int, int) AS
+              SELECT v.value_id,
+                     u.value_id AS user_value_id,
+                     v.user_id,
+                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                     v.phrase_group_id,
+                     v.time_word_id,
+                     g.word_ids,
+                     g.triple_ids
+                FROM phrase_groups g, " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
+           LEFT JOIN user_values u ON u.value_id = v.value_id 
+                                  AND u.user_id = $1 
+               WHERE g.phrase_group_id = v.phrase_group_id 
+                 AND v.value_id IN (SELECT value_id 
+                                       FROM value_phrase_links 
+                                      WHERE phrase_id = $2 
+                                   GROUP BY value_id)
+            ORDER BY v.phrase_group_id, v.time_word_id
+               LIMIT $3;";
+        /*
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array('values'));
+        $db_con->set_usr_fields(array(self::FLD_PLURAL, sql_db::FLD_DESCRIPTION));
+        $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_VIEW, self::FLD_EXCLUDED, sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
+        $db_con->set_where($this->id, $this->name);
+        $sql = $db_con->select();
+        */
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * the general load function (either by word, word list, formula or group)
+     */
     function load()
     {
 
@@ -83,16 +139,8 @@ class value_list
             foreach ($db_val_lst as $db_val) {
                 if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                     $val = new value;
-                    $val->id = $db_val['value_id'];
-                    $val->usr_cfg_id = $db_val['user_value_id'];
-                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
+                    $val->row_mapper($db_val, true);
                     $val->usr = $this->usr;
-                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
-                    $val->number = $db_val['word_value'];
-                    $val->source_id = $db_val['source_id'];
-                    $val->last_update = new DateTime($db_val['last_update']);
-                    $val->grp_id = $db_val['phrase_group_id'];
-                    $val->time_id = $db_val['time_word_id'];
                     $this->lst[] = $val;
                 }
             }
@@ -136,15 +184,9 @@ class value_list
             foreach ($db_val_lst as $db_val) {
                 if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                     $val = new value;
-                    $val->id = $db_val['value_id'];
-                    $val->usr_cfg_id = $db_val['user_value_id'];
-                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
+                    $val->row_mapper($db_val, true);
                     $val->usr = $this->usr;
-                    $val->owner_id = $db_val[user_sandbox::FLD_USER];
-                    $val->number = $db_val['word_value'];
-                    $val->source_id = $db_val['source_id'];
-                    $val->last_update = new DateTime($db_val['last_update']);
-                    $val->grp_id = $db_val['phrase_group_id'];
+                    $val->usr = $this->usr;
                     if ($db_val['time_word_id'] <> 0) {
                         $time_phr = new phrase();
                         $time_phr->id = $db_val['time_word_id'];
@@ -160,17 +202,10 @@ class value_list
         }
     }
 
-    // load a list of values that are related to one
-    function load_all()
+    function load_all_sql(): string
     {
-
         global $db_con;
-
-        // the id and the user must be set
-        if (isset($this->phr_lst)) {
-            if (count($this->phr_lst->ids) > 0 and !is_null($this->usr->id)) {
-                log_debug('value_list->load_all for ' . $this->phr_lst->dsp_id());
-                $sql = "SELECT v.value_id,
+        $sql = "SELECT v.value_id,
                       u.value_id AS user_value_id,
                       v.user_id,
                     " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
@@ -187,23 +222,30 @@ class value_list
                                         WHERE phrase_id IN (" . implode(",", $this->phr_lst->ids()) . ")
                                     GROUP BY value_id )
               ORDER BY v.phrase_group_id, v.time_word_id;";
-                //$db_con = New mysql;
+        return $sql;
+    }
+
+    /**
+     * load a list of values that are related to one
+     */
+    function load_all()
+    {
+
+        global $db_con;
+
+        // the id and the user must be set
+        if (isset($this->phr_lst)) {
+            if (count($this->phr_lst->ids) > 0 and !is_null($this->usr->id)) {
+                log_debug('value_list->load_all for ' . $this->phr_lst->dsp_id());
+                $sql = $this->load_all_sql();
                 $db_con->usr_id = $this->usr->id;
                 $db_val_lst = $db_con->get($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value;
-                            $val->id = $db_val['value_id'];
-                            $val->usr_cfg_id = $db_val['user_value_id'];
-                            $val->owner_id = $db_val[user_sandbox::FLD_USER];
+                            $val->row_mapper($db_val, true);
                             $val->usr = $this->usr;
-                            $val->owner = $db_val[user_sandbox::FLD_USER];
-                            $val->number = $db_val['word_value'];
-                            $val->source_id = $db_val['source_id'];
-                            $val->last_update = new DateTime($db_val['last_update']);
-                            $val->grp_id = $db_val['phrase_group_id'];
-                            $val->time_phr = $db_val['time_word_id'];
                             $this->lst[] = $val;
                         }
                     }
@@ -297,7 +339,7 @@ class value_list
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->number = $db_val['word_value'];
                             $val->source_id = $db_val['source_id'];
-                            $val->last_update = new DateTime($db_val['last_update']);
+                            $val->last_update = get_datetime($db_val['last_update']);
                             $val->grp_id = $db_val['phrase_group_id'];
                             $val->time_id = $db_val['time_word_id'];
                             $this->lst[] = $val;

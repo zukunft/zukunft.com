@@ -2,7 +2,7 @@
 
 /*
 
-    system_error_log_dsp.php - the simple export object to create a json for the frontend API
+    api/system/error_log.php - the simple object to create a json for the frontend API
     ------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,7 +29,7 @@
 
 */
 
-class system_error_log_dsp
+class system_error_log_api
 {
 
     // field names used for JSON creation
@@ -55,6 +55,7 @@ class system_error_log_dsp
     }
 
     /**
+     * just used for unit testing
      * @return false|string the frontend API JSON string
      */
     function get_json(): string

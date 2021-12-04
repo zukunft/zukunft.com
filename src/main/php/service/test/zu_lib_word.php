@@ -58,23 +58,27 @@
 
   
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
@@ -180,41 +184,6 @@ function zut_id($wrd_name, $user_id)
     return $wrd_id;
 }
 
-// the verb id for the given string
-// old function, please replace with zul_id
-function zutv_id($verb)
-{
-    log_debug('zutv_id(' . $verb . ')');
-    return zu_sql_get_id('link_type', $verb);
-}
-
-// the word id for the given word string
-function zutv_formula_id($verb)
-{
-    log_debug('zutv_formula_id(' . $verb . ')');
-    return zu_sql_get_value('link_types', 'link_type_id', 'formula_name', $verb);
-}
-
-// returns an array of word ids based on a word string list like "turnover", "Nestlé"
-function zut_ids($words, $user_id)
-{
-    log_debug('zut_ids ... words ' . $words);
-    // split the word list in single words
-    $word_list = explode(",", $words);
-    // loop over the words and get the ids
-    $word_id_list = array();
-    foreach ($word_list as $word_name) {
-        $word_id = zut_id(zu_str_between($word_name, '"', '"'), $user_id);
-        if ($word_id > 0) {
-            log_debug('zut_ids -> ' . $word_name . '=' . $word_id);
-            array_push($word_id_list, $word_id);
-        } else {
-            log_debug('zut_ids -> no id found for ' . $word_id);
-        }
-    }
-    return $word_id_list;
-}
-
 // get all words of one type
 function zut_type_lst($wrd_type, $user_id)
 {
@@ -241,51 +210,6 @@ function zut_is_a($word_id, $related_word_id)
     return $result;
 }
 
-// get all values related to the word
-function zut_val_lst($wrd_id, $user_id)
-{
-    log_debug('zut_val_lst (' . $wrd_id . ',u' . $user_id . ')');
-
-    $sql = "SELECT v.value_id, v.word_value FROM `values` v, value_phrase_links l WHERE l.phrase_id = " . $wrd_id . " AND l.value_id = v.value_id;";
-    $result = zu_sql_get_lst($sql);
-
-    log_debug('zut_val_lst -> ' . zu_lst_dsp($result) . '' . $wrd_id);
-    return $result;
-}
-
-// returns an array of word ids based on an array of word names "turnover", "Nestlé"
-function zut_array_ids($word_array, $user_id)
-{
-    log_debug('zut_ids ... words ' . $word_array);
-    // loop over the words and get the ids
-    $word_ids = array();
-    foreach ($word_array as $word_name) {
-        $word_id = zut_id($word_name, $user_id);
-        if ($word_id > 0) {
-            log_debug('zut_ids ... ' . $word_name . '=' . $word_id);
-            $word_ids[] = $word_id;
-        } else {
-            log_debug('zut_ids ... no id found for ' . $word_id);
-        }
-    }
-    return $word_ids;
-}
-
-// creates an SQL string to request the word group from a given word array
-function zut_sql_ids($word_ids)
-{
-    log_debug('zut_sql_ids ... ');
-    $word_list = "";
-    // loop over the words and get the ids
-    foreach ($word_ids as $word_id) {
-        if ($word_list == "") {
-            $word_list = $word_id;
-        } else {
-            $word_list .= "," . $word_id;
-        }
-    }
-    return $word_list;
-}
 
 /* 
   ----------------------------
@@ -470,29 +394,6 @@ function zut_time_useful($word_lst)
 
 
     log_debug('zut_time_useful -> (' . zu_lst_dsp($result) . ')');
-    return $result;
-}
-
-// get the most useful time for the given words
-function zut_assume_time($word_ids, $user_id)
-{
-    // fix wrd_ids if needed
-    $word_ids = zu_ids_not_empty($word_ids);
-
-    log_debug('zut_assume_time(' . implode(",", $word_ids) . ',u' . $user_id . ')');
-
-    $word_lst = zu_sql_wrd_ids_to_lst($word_ids, $user_id);
-    if (zut_has_time($word_lst)) {
-        $time_word_lst = zut_time_lst($word_lst);
-        $time_word_ids = array_keys($time_word_lst);
-        // shortcut, replace with a most_useful function
-        $result = $time_word_ids[0];
-    } else {
-        //$result = zut_get_max_time($word_ids[0], $word_ids, $user_id);
-        $result = zut_get_max_time_all($word_ids[0], $word_ids, $user_id);
-    }
-
-    log_debug('zut_assume_time -> time used "' . zut_name($result, $user_id) . '" (' . $result . ')');
     return $result;
 }
 

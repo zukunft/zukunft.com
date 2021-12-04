@@ -132,7 +132,7 @@ class user
         return $dsp_obj;
     }
 
-    function row_mapper($db_usr): bool
+    function row_mapper(array $db_usr): bool
     {
         $result = false;
         if ($db_usr == false) {

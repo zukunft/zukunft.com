@@ -35,6 +35,7 @@ class word extends user_sandbox_description
 {
     // object specific database and JSON object field names
     // means: database fields only used for words
+    const FLD_ID = 'word_id';
     const FLD_NAME = 'word_name';
     const FLD_PLURAL = 'plural';
     const FLD_TYPE = 'word_type_id';
@@ -157,9 +158,9 @@ class word extends user_sandbox_description
     const TEST_WORDS_TIME = array(self::TN_2019, self::TN_2020, self::TN_2021, self::TN_2022);
 
     // database fields additional to the user sandbox fields
-    public ?string $plural = null;      // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
-    public ?int $view_id = null;        // defines the default view for this word
-    public ?int $values = null;         // the total number of values linked to this word as an indication how common the word is and to sort the words
+    public ?string $plural = null;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    public ?int $view_id = null;      // defines the default view for this word
+    public ?int $values = null;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
     public ?string $is_wrd = null;    // the main type object e.g. for "ABB" it is the word object for "Company"
@@ -234,7 +235,7 @@ class word extends user_sandbox_description
         return $dsp_obj;
     }
 
-    function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             // TODO excluded words should not be loaded, but it should be possible to restore them
@@ -382,6 +383,18 @@ class word extends user_sandbox_description
     /*
     data retrieval functions
     */
+
+    /**
+     * get a list of values related to this word
+     * @param int $limit
+     * @return value_list a list object with the most relevant values related to this word
+     */
+    function value_list(int $limit = SQL_ROW_LIMIT): value_list
+    {
+        $val_lst = new value_list();
+        $val_lst->load();
+        return $val_lst;
+    }
 
     /**
      * get the view object for this word
@@ -980,7 +993,7 @@ class word extends user_sandbox_description
         $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_WORD_LINK);
+        $db_con->set_type(DB_TYPE_TRIPLE);
         $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id);
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
@@ -1005,7 +1018,7 @@ class word extends user_sandbox_description
         $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_WORD_LINK);
+        $db_con->set_type(DB_TYPE_TRIPLE);
         $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id);
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
@@ -1029,7 +1042,7 @@ class word extends user_sandbox_description
           SELECT COUNT(value_id) 
             FROM value_phrase_links l
            WHERE l.phrase_id = t.word_id);';
-        $db_con->exe_try($sql);
+        $db_con->exe_try('Calculate word usage', $sql);
         return true;
     }
 
@@ -1123,6 +1136,16 @@ class word extends user_sandbox_description
     {
         log_debug('word->not_used (' . $this->id . ')');
 
+        if (parent::not_used()) {
+            $result = true;
+            // check if no value is related to the word
+            // check if no phrase group is linked to the word
+            // TODO if a value or formula is linked to the word the user should see a warning message, which he can confirm
+            return $result;
+        } else {
+            return false;
+        }
+
         /*    $change_user_id = 0;
             $sql = "SELECT user_id
                       FROM user_words
@@ -1135,7 +1158,7 @@ class word extends user_sandbox_description
             if ($change_user_id > 0) {
               $result = false;
             } */
-        return $this->not_changed();
+        //return $this->not_changed();
     }
 
     /**

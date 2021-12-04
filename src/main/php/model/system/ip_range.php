@@ -70,7 +70,7 @@ class ip_range
         $this->usr = null;
     }
 
-    function row_mapper($db_row)
+    function row_mapper(array $db_row)
     {
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {

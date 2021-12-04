@@ -284,8 +284,11 @@ class user_sandbox
     }
     */
 
-    // get the term corresponding to this word or formula name
-    // so in this case, if a formula or verb with the same name already exists, get it
+    /**
+     * get the term corresponding to this word or formula name
+     * so in this case, if a formula or verb with the same name already exists, get it
+     * @return term
+     */
     function term(): term
     {
         $trm = new term;
@@ -1186,7 +1189,8 @@ class user_sandbox
                 if ($this->rename_can_switch) {
                     // ... if yes request to delete or exclude the record with the id parameters before the change
                     $to_del = clone $db_rec;
-                    if (!$to_del->del()) {
+                    $msg = $to_del->del();
+                    if (!$msg->is_ok()) {
                         $result .= 'Failed to delete the unused ' . $this->obj_name;
                     }
                     if ($result = '') {
@@ -1228,7 +1232,8 @@ class user_sandbox
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
-                    if (!$to_del->del()) {
+                    $msg = $to_del->del();
+                    if (!$msg->is_ok()) {
                         $result .= 'Failed to delete the unused ' . $this->obj_name;
                     }
                     // TODO .. and create a deletion request for all users ???
@@ -1528,9 +1533,9 @@ class user_sandbox
     /**
      * dummy function to remove depending on objects, which needs to be overwritten by the child classes
      */
-    function del_links(): string
+    function del_links(): user_message
     {
-        return '';
+        return new user_message();
     }
 
     /**
@@ -1542,89 +1547,104 @@ class user_sandbox
         log_debug($this->obj_name . '->del_exe ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
+        $msg = '';
+        $result = new user_message();
 
         // log the deletion request
-
         if ($this->obj_type == user_sandbox::TYPE_LINK) {
             $log = $this->log_del_link();
         } else {
             $log = $this->log_del();
         }
         if ($log->id > 0) {
-            //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
 
             // for formulas first delete all links
             if ($this->obj_name == DB_TYPE_FORMULA) {
-                $result = $this->del_links();
+                $msg = $this->del_links();
+                $result->add($msg);
 
                 // and the corresponding formula elements
-                if ($result == '') {
+                if ($result->is_ok()) {
                     $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
                     $db_con->set_usr($this->usr->id);
-                    $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $msg = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $result->add_message($msg);
                 }
 
                 // and the corresponding formula values
-                if ($result == '') {
+                if ($result->is_ok()) {
                     $db_con->set_type(DB_TYPE_FORMULA_VALUE);
                     $db_con->set_usr($this->usr->id);
-                    $result = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $msg = $db_con->delete(DB_TYPE_FORMULA . DB_FIELD_EXT_ID, $this->id);
+                    $result->add_message($msg);
                 }
 
                 // and the corresponding word if possible
-                if ($result == '') {
+                if ($result->is_ok()) {
                     $wrd = new word();
                     $wrd->name = $this->name;
                     $wrd->usr = $this->usr;
                     $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
-                    $result = $wrd->del();
+                    $msg = $wrd->del();
+                    $result->add($msg);
                 }
 
             }
 
+            // for triples first delete all links
+            if ($this->obj_name == DB_TYPE_TRIPLE) {
+                $msg = $this->del_links();
+                $result->add($msg);
+            }
+
             // delete first all user configuration that have also been excluded
-            if ($result == '') {
+            if ($result->is_ok()) {
                 $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
                 $db_con->set_usr($this->usr->id);
-                $result = $db_con->delete(
+                $msg = $db_con->delete(
                     array($this->obj_name . DB_FIELD_EXT_ID, 'excluded'),
                     array($this->id, '1'));
+                $result->add_message($msg);
             }
-            if ($result == '') {
+            if ($result->is_ok()) {
                 // finally, delete the object
                 $db_con->set_type($this->obj_name);
                 $db_con->set_usr($this->usr->id);
-                $result = $db_con->delete($this->obj_name . '_id', $this->id);
+                $msg = $db_con->delete($this->obj_name . '_id', $this->id);
+                $result->add_message($msg);
                 log_debug($this->obj_name . '->del_exe of ' . $this->dsp_id() . ' done');
             } else {
-                log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $result, (new Exception)->getTraceAsString(), $this->usr);
+                log_err('Delete failed for ' . $this->obj_name, $this->obj_name . '->del_exe', 'Delete failed, because removing the user settings for ' . $this->obj_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->usr);
             }
         }
 
-        return $result;
+        return $result->get_last_message();
     }
 
     /**
      * exclude or delete an object
-     * @return string the message that should be shown to the user if something went wrong or an empty string
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
      *
      * TODO if the owner deletes it, change the owner to the new median user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(): string
+    function del(): user_message
     {
         log_debug($this->obj_name . '->del ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
+        $result = new user_message();
+        $msg = '';
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
         if (!$this->load()) {
-            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $result . '.', (new Exception)->getTraceAsString(), $this->usr);
+            log_warning('Reload of for deletion has lead to unexpected', $this->obj_name . '->del', 'Reload of ' . $this->obj_name . ' ' . $this->dsp_id() . ' for deletion or exclude has unexpectedly lead to ' . $msg . '.', (new Exception)->getTraceAsString(), $this->usr);
         } else {
             log_debug($this->obj_name . '->del reloaded ' . $this->dsp_id());
             // check if the object is still valid
@@ -1633,7 +1653,7 @@ class user_sandbox
             } else {
                 // check if the object simply can be deleted, because it has never been used
                 if (!$this->used_by_someone_else()) {
-                    $result .= $this->del_exe();
+                    $msg .= $this->del_exe();
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id == $this->usr->id) {
@@ -1649,16 +1669,16 @@ class user_sandbox
 
                             // set owner
                             if (!$this->set_owner($new_owner_id)) {
-                                $result .= 'Setting of owner while deleting ' . $this->obj_name . ' failed';
-                                log_err($result, $this->obj_name . '->del');
+                                $msg .= 'Setting of owner while deleting ' . $this->obj_name . ' failed';
+                                log_err($msg, $this->obj_name . '->del');
 
                             }
 
                             // delete all user records of the new owner
                             // does not use del_usr_cfg because the deletion request has already been logged
-                            if ($result == '') {
+                            if ($msg == '') {
                                 if (!$this->del_usr_cfg_exe($db_con)) {
-                                    $result .= 'Deleting of ' . $this->obj_name . ' failed';
+                                    $msg .= 'Deleting of ' . $this->obj_name . ' failed';
                                 }
                             }
 
@@ -1668,7 +1688,7 @@ class user_sandbox
                     // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else()) {
                         log_debug($this->obj_name . '->del can delete ' . $this->dsp_id() . ' after owner change');
-                        $result .= $this->del_exe();
+                        $msg .= $this->del_exe();
                     } else {
                         log_debug($this->obj_name . '->del exclude ' . $this->dsp_id());
                         $this->excluded = 1;
@@ -1683,22 +1703,22 @@ class user_sandbox
                             log_debug($this->obj_name . '->save reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->obj_type == user_sandbox::TYPE_LINK) {
                                 if (!$db_rec->load_objects()) {
-                                    $result .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                                    $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
                                 }
                             }
                         }
-                        if ($result == '') {
+                        if ($msg == '') {
                             $std_rec = clone $this;
                             $std_rec->reset();
                             $std_rec->id = $this->id;
                             $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
                             if (!$std_rec->load_standard()) {
-                                $result .= 'Reloading of standard ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
+                                $msg .= 'Reloading of standard ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
                             }
                         }
-                        if ($result == '') {
+                        if ($msg == '') {
                             log_debug($this->obj_name . '->save loaded standard ' . $std_rec->dsp_id());
-                            $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         }
                     }
                 }
@@ -1707,7 +1727,23 @@ class user_sandbox
             log_debug($this->obj_name . '->del done');
         }
 
+        $result->add_message($msg);
         return $result;
+    }
+
+    /*
+     * helper functions
+     */
+
+    /**
+     * convert a database datetime string to a php DateTime object
+     *
+     * @param string $datetime_text the datetime as received from the database
+     * @return DateTime the converted DateTime value or now()
+     */
+    function get_datetime(string $datetime_text, string $obj_name = ''): DateTime
+    {
+       return get_datetime($datetime_text, $obj_name);
     }
 
 }

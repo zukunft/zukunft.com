@@ -135,7 +135,7 @@ class view extends user_sandbox_named
     }
 
     // TODO check if there is any case where the user fields should not be set
-    function row_mapper($db_row, $map_usr_fields = false)
+    function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row['view_id'] > 0) {

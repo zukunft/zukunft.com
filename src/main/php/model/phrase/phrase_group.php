@@ -36,6 +36,21 @@
 
 class phrase_group
 {
+    // object specific database and JSON object field names
+    const FLD_ID = 'phrase_group_id';
+    const FLD_NAME = 'phrase_group_name';
+    const FLD_DESCRIPTION = 'auto_description';
+    const FLD_WORD_IDS = 'word_ids';
+    const FLD_TRIPLE_IDS = 'triple_ids';
+
+    // all database field names excluding the id
+    // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
+    const FLD_NAMES = array(
+        self::FLD_NAME,
+        self::FLD_DESCRIPTION,
+        self::FLD_WORD_IDS,
+        self::FLD_TRIPLE_IDS
+    );
 
     // database fields
     public ?int $id = null;                  // the database id of the word group
@@ -78,10 +93,27 @@ class phrase_group
         $this->phr_lst = null;
     }
 
+    function row_mapper(array $db_row)
+    {
+        if ($db_row != null) {
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
+                $this->grp_name = $db_row[self::FLD_NAME];
+                $this->auto_name = $db_row[self::FLD_DESCRIPTION];
+                $this->wrd_id_txt = $db_row[self::FLD_WORD_IDS];
+                $this->lnk_id_txt = $db_row[self::FLD_TRIPLE_IDS];
+                $this->wrd_ids = explode(",", $this->wrd_id_txt);
+                $this->lnk_ids = explode(",", $this->lnk_id_txt);
+                $this->set_ids_from_wrd_or_lnk_ids();
+            } else {
+                $this->id = 0;
+                //$this->reset();
+            }
+        }
+    }
+
     /*
-
-    load functions - the set functions are used to defined the loading selection criteria
-
+    load functions - the set functions are used to define the loading selection criteria
     */
 
     // separate the words from the triples (word_links)
@@ -731,9 +763,7 @@ class phrase_group
     }
 
     /*
-
     display functions
-
     */
 
     // return best possible id for this element mainly used for debugging
@@ -1024,15 +1054,20 @@ class phrase_group
         return $this->id;
     }
 
-    // create the word group links for faster selection of the word groups based on single words
-    private function save_links()
+    /**
+     * create the word group links for faster selection of the word groups based on single words
+     */
+    private function save_links(): string
     {
-        $this->save_phr_links('words');
-        $this->save_phr_links('triples');
+        $result = $this->save_phr_links(DB_TYPE_WORD);
+        $result .= $this->save_phr_links(DB_TYPE_TRIPLE);
+        return $result;
     }
 
-    // create links to the group from words or triples for faster selection of the phrase groups based on single words or triples
-    // word and triple links are saved in two different tables to be able use the database foreign keys
+    /**
+     * create links to the group from words or triples for faster selection of the phrase groups based on single words or triples
+     * word and triple links are saved in two different tables to be able to use the database foreign keys
+     */
     private function save_phr_links($type): string
     {
         log_debug('phrase_group->save_phr_links');
@@ -1045,11 +1080,11 @@ class phrase_group
         $db_con->usr_id = $this->usr->id;
 
         // switch between the word and triple settings
-        if ($type == 'words') {
-            $table_name = 'phrase_group_word_links';
+        if ($type == DB_TYPE_WORD) {
+            $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_WORD_LINK);
             $field_name = 'word_id';
         } else {
-            $table_name = 'phrase_group_triple_links';
+            $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
             $field_name = 'triple_id';
         }
 
@@ -1067,7 +1102,7 @@ class phrase_group
         }
 
         // switch between the word and triple settings
-        if ($type == 'words') {
+        if ($type == DB_TYPE_WORD) {
             log_debug('phrase_group->save_phr_links -> should have word ids ' . implode(",", $this->wrd_ids));
             $add_ids = array_diff($this->wrd_ids, $db_ids);
             $del_ids = array_diff($db_ids, $this->wrd_ids);
@@ -1146,6 +1181,41 @@ class phrase_group
                 }
             }
         }
+    }
+
+    /**
+     * delete all phrase links to the phrase group e.g. to be able to delete the phrase group
+     * @return user_message
+     */
+    function del_phr_links(): user_message
+    {
+        global $db_con;
+        $result = new user_message();
+
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP_WORD_LINK);
+        $db_con->usr_id = $this->usr->id;
+        $msg = $db_con->delete('phrase_group_id', $this->id);
+        $result->add_message($msg);
+
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
+        $db_con->usr_id = $this->usr->id;
+        $msg = $db_con->delete('phrase_group_id', $this->id);
+        $result->add_message($msg);
+
+        return $result;
+    }
+
+    function del(): user_message
+    {
+        global $db_con;
+        $result = $this->del_phr_links();
+
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+        $db_con->usr_id = $this->usr->id;
+        $msg = $db_con->delete('phrase_group_id', $this->id);
+        $result->add_message($msg);
+
+        return $result;
     }
 
 }

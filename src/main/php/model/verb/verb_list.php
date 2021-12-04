@@ -87,7 +87,7 @@ class verb_list extends user_type_list
      * load a list of verbs that are used by a given word
      *
      */
-    function load_work_links(sql_db $db_con, string $db_type = DB_TYPE_WORD_LINK): bool
+    function load_work_links(sql_db $db_con, string $db_type = DB_TYPE_TRIPLE): bool
     {
 
         $result = false;

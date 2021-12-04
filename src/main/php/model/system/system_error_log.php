@@ -80,7 +80,7 @@ class system_error_log
     /**
      * @return bool true if a row is found
      */
-    function row_mapper($db_row): bool
+    function row_mapper(array $db_row): bool
     {
         if ($db_row[self::FLD_ID] > 0) {
             $this->id = $db_row[self::FLD_ID];
@@ -103,11 +103,11 @@ class system_error_log
     }
 
     /**
-     * @return system_error_log_dsp a filled frontend api object
+     * @return system_error_log_api a filled frontend api object
      */
-    function get_dsp_obj(): system_error_log_dsp
+    function get_dsp_obj(): system_error_log_api
     {
-        $dsp_obj = new system_error_log_dsp();
+        $dsp_obj = new system_error_log_api();
         $dsp_obj->id = $this->id;
         $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
         $dsp_obj->user = $this->usr_name;

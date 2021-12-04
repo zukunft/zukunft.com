@@ -6,23 +6,27 @@
   ------------
   
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Blumentalstrasse 15, 8707 Uetikon am See, Switzerland
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
 
 */
 
@@ -84,17 +88,17 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protection_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_WORD, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_WORD, 'protection_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'share_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'protection_type_id', 'smallint');
-    $result .= $db_con->add_column(DB_TYPE_WORD_LINK, 'word_type_id', 'bigint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'word_type_id', 'bigint');
     $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint');
     $result .= $db_con->change_table_name('languages_forms', DB_TYPE_LANGUAGE_FORM);
     $result .= $db_con->change_column_name(DB_TYPE_LANGUAGE_FORM, 'lanuages_id', 'language_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');
-    $result .= $db_con->change_column_name(DB_TYPE_WORD_LINK, 'name', 'word_link_name');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_WORD_LINK, 'name', 'word_link_name');
+    $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'name', 'word_link_name');
+    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'name', 'word_link_name');
     $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
     $result .= $db_con->change_column_name(DB_TYPE_IP, 'isactive', 'is_active');
     $result .= $db_con->change_column_name(DB_TYPE_USER, 'isactive', 'is_active');

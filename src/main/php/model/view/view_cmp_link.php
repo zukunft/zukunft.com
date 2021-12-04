@@ -105,7 +105,7 @@ class view_cmp_link extends user_sandbox_link
     }
     */
 
-    private function row_mapper($db_row, $map_usr_fields = false)
+    private function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {
