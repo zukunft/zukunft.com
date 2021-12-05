@@ -1034,6 +1034,7 @@ CREATE TABLE IF NOT EXISTS `values`
     `last_update`        timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
     `description`        text COMMENT 'temp field used during dev phase for easy value to trm assigns',
     `excluded`           tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `share_type_id`      smallint           DEFAULT NULL,
     `protection_type_id` int(11)   NOT NULL DEFAULT '1'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1

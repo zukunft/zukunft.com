@@ -1431,4 +1431,34 @@ class word extends user_sandbox_description
         return $db_chk;
     }
 
+    /**
+     * delete the phrase groups which where this word is used
+     */
+    function del_links(): user_message
+    {
+        $result = new user_message();
+
+        // collect all phrase groups where this word is used
+        $grp_lst = new phrase_group_list();
+        $grp_lst->usr = $this->usr;
+        $grp_lst->phr = $this->phrase();
+        $grp_lst->load();
+
+        // collect all values related to word triple
+        $val_lst = new value_list();
+        $val_lst->usr = $this->usr;
+        $val_lst->phr = $this->phrase();
+        $val_lst->load();
+
+        // if there are still values, ask if they really should be deleted
+        if ($val_lst->has_values()) {
+            $result->add($val_lst->del());
+        }
+
+        // delete the phrase groups
+        $result->add($grp_lst->del());
+
+        return $result;
+    }
+
 }

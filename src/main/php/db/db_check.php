@@ -82,7 +82,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
 
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
-    // TODO check if chang has been successful
+    // TODO check if change has been successful
     $result .= $db_con->add_column(DB_TYPE_USER_PROFILE, 'right_level', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protection_type_id', 'smallint');
@@ -94,6 +94,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'protection_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'word_type_id', 'bigint');
     $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_VALUE, 'share_type_id', 'smallint');
     $result .= $db_con->change_table_name('languages_forms', DB_TYPE_LANGUAGE_FORM);
     $result .= $db_con->change_column_name(DB_TYPE_LANGUAGE_FORM, 'lanuages_id', 'language_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');

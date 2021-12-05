@@ -982,6 +982,7 @@ CREATE TABLE IF NOT EXISTS values
     last_update        timestamp        NULL     DEFAULT NULL,
     description        text,
     excluded           smallint                  DEFAULT NULL,
+    share_type_id      smallint                  DEFAULT NULL,
     protection_type_id bigint           NOT NULL DEFAULT '1'
 );
 

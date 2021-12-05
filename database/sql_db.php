@@ -1662,7 +1662,12 @@ class sql_db
             $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
             $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
-            $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ' . $this->usr_view_id;
+            $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+            if ($this->query_name == '') {
+                $this->join .= $this->usr_view_id;
+            } else {
+                $this->join .= '$1';
+            }
         }
         if ($this->join_type <> '') {
             $join_table_name = $this->get_table_name($this->join_type);

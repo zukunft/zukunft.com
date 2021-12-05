@@ -44,7 +44,6 @@ class phrase_group
     const FLD_TRIPLE_IDS = 'triple_ids';
 
     // all database field names excluding the id
-    // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
     const FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_DESCRIPTION,
@@ -71,6 +70,11 @@ class phrase_group
     public ?phrase_list $phr_lst = null;     // the phrase list object
     public ?word_list $wrd_lst = null;       // the word list object
     public ?word_link_list $lnk_lst = null;  // the triple (word_link) object
+
+    function __construct()
+    {
+        $this->reset();
+    }
 
     private function reset()
     {
@@ -734,7 +738,7 @@ class phrase_group
                     $prev_pos = $pos;
                     $pos++;
                 }
-                $sql = "SELECT l1.phrase_group_id 
+                $sql = "SELECT"." l1.phrase_group_id 
                   FROM " . $sql_from . "
                  WHERE " . $sql_where . "
               GROUP BY l1.phrase_group_id;";
@@ -1194,17 +1198,24 @@ class phrase_group
 
         $db_con->set_type(DB_TYPE_PHRASE_GROUP_WORD_LINK);
         $db_con->usr_id = $this->usr->id;
-        $msg = $db_con->delete('phrase_group_id', $this->id);
+        $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         $db_con->set_type(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
         $db_con->usr_id = $this->usr->id;
-        $msg = $db_con->delete('phrase_group_id', $this->id);
+        $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         return $result;
     }
 
+    /**
+     * delete a phrase group that is supposed not to be used anymore
+     * the removal if the linked values must be done before calling this function
+     * the word and triple links related to this phrase group are also removed
+     *
+     * @return user_message
+     */
     function del(): user_message
     {
         global $db_con;
@@ -1212,7 +1223,7 @@ class phrase_group
 
         $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $db_con->usr_id = $this->usr->id;
-        $msg = $db_con->delete('phrase_group_id', $this->id);
+        $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
         return $result;

@@ -1559,6 +1559,18 @@ class user_sandbox
         if ($log->id > 0) {
             $db_con->usr_id = $this->usr->id;
 
+            // for words first delete all links
+            if ($this->obj_name == DB_TYPE_WORD) {
+                $msg = $this->del_links();
+                $result->add($msg);
+            }
+
+            // for triples first delete all links
+            if ($this->obj_name == DB_TYPE_TRIPLE) {
+                $msg = $this->del_links();
+                $result->add($msg);
+            }
+
             // for formulas first delete all links
             if ($this->obj_name == DB_TYPE_FORMULA) {
                 $msg = $this->del_links();
@@ -1590,12 +1602,6 @@ class user_sandbox
                     $result->add($msg);
                 }
 
-            }
-
-            // for triples first delete all links
-            if ($this->obj_name == DB_TYPE_TRIPLE) {
-                $msg = $this->del_links();
-                $result->add($msg);
             }
 
             // delete first all user configuration that have also been excluded

@@ -65,6 +65,22 @@ class value extends user_sandbox_display
     const FLD_TIME_WORD = 'time_word_id';
     const FLD_LAST_UPDATE = 'last_update';
 
+    // all database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        phrase_group::FLD_ID,
+        self::FLD_TIME_WORD
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+        self::FLD_LAST_UPDATE,
+        self::FLD_EXCLUDED,
+        sql_db::FLD_SHARE,
+        sql_db::FLD_PROTECT
+    );
+
+
     // database fields additional to the user sandbox fields for the value object
     public ?int $source_id = null;        // the id of source where the value is coming from
     public ?int $grp_id = null;           // id of the group of phrases that are linked to this value for fast selections

@@ -48,14 +48,14 @@ class value_list_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load a list of value by the phrase id
-        $phr = new phrase();
-        $phr->id = 1;
+        $wrd = new word();
+        $wrd->id = 1;
         $val_lst = new value_list;
-        $val_lst->phr = $phr;
+        $val_lst->phr = $wrd->phrase();
         $val_lst->usr = $usr;
         $created_sql = $val_lst->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_list_by_phrase_id.sql');
-        $t->dsp('value_list->load_sql by phrase id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_list_by_word_id.sql');
+        $t->assert('value_list->load_sql by phrase id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load a list of value by the phrase ids
         $val_lst = new value_list;

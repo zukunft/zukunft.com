@@ -1382,17 +1382,23 @@ class word_link extends user_sandbox_link_description
         global $db_con;
         $result = new user_message();
 
+        // collect all phrase groups where this triple is used
         $grp_lst = new phrase_group_list();
         $grp_lst->usr = $this->usr;
         $grp_lst->phr = $this->phrase();
         $grp_lst->load();
 
-        /*
-        $db_con->set_type(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
-        $db_con->set_usr($this->usr->id);
-        $msg = $db_con->delete('triple_id', $this->id);
-        $result->add_message($msg);
-        */
+        // collect all values related to this triple
+        $val_lst = new value_list();
+        $val_lst->usr = $this->usr;
+        $val_lst->phr = $this->phrase();
+        $val_lst->load();
+
+        // if there are still values, ask if they really should be deleted
+        if ($val_lst->has_values()) {
+            $result->add($val_lst->del());
+        }
+        // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
 
         $result->add($grp_lst->del());
 

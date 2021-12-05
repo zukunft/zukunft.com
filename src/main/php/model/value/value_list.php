@@ -40,112 +40,104 @@ class value_list
     public ?phrase_list $phr_lst = null;     // show the values related to these phrases
 
     // display and select fields to increase the response time
-    public ?int $page_size = SQL_ROW_LIMIT;  // if not defined, use the default page size
-    public ?int $page = 0;                   // start to display with this page
+    public int $page_size = SQL_ROW_LIMIT;   // if not defined, use the default page size
+    public int $page = 0;                    // start to display with this page
 
+    // TODO review the VAR and LIMIT definitions
     function load_sql(sql_db $db_con, bool $get_name = false): string
     {
+        $result = '';
+        $sql_where = '';
         $sql_name = self::class . '_by_';
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {
-                $sql_name .= 'phrase_id';
+                if ($this->phr->is_word()) {
+                    $sql_name .= 'word_id';
+                    $sql_where = 'l2.word_id = $2';
+                } else {
+                    $sql_name .= 'triple_id';
+                    $sql_where = 'l2.triple_id = $2';
+                }
             }
         } elseif ($this->phr_lst != '') {
             $sql_name .= 'phrase_list';
-        } else {
-            log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         }
-        $limit = $this->page_size;
-
-        $sql = "PREPARE " . $sql_name . " (int, int, int) AS
-              SELECT v.value_id,
-                     u.value_id AS user_value_id,
-                     v.user_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                     v.phrase_group_id,
-                     v.time_word_id,
-                     g.word_ids,
-                     g.triple_ids
-                FROM phrase_groups g, " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
-           LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                  AND u.user_id = $1 
-               WHERE g.phrase_group_id = v.phrase_group_id 
-                 AND v.value_id IN (SELECT value_id 
-                                       FROM value_phrase_links 
-                                      WHERE phrase_id = $2 
-                                   GROUP BY value_id)
-            ORDER BY v.phrase_group_id, v.time_word_id
-               LIMIT $3;";
-        /*
-        $db_con->set_type(DB_TYPE_WORD);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('values'));
-        $db_con->set_usr_fields(array(self::FLD_PLURAL, sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_VIEW, self::FLD_EXCLUDED, sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
-        $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
-        */
-
-        if ($get_name) {
-            $result = $sql_name;
+        if ($sql_where == '') {
+            log_err("Either a phrase or the phrase list and the user must be set to load a value list.", self::class . '->load_sql');
         } else {
-            $result = $sql;
+
+            $db_con->set_type(DB_TYPE_VALUE);
+            $db_con->set_par_types($sql_name, array('int', 'int', 'int'));
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_fields(value::FLD_NAMES);
+            $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+            $db_con->set_join_fields(array(phrase_group::FLD_ID), DB_TYPE_PHRASE_GROUP);
+            if ($this->phr->is_word()) {
+                $db_con->set_join_fields(array(word::FLD_ID), DB_TYPE_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+            } else {
+                $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+            }
+            $db_con->set_where_text($sql_where . ' LIMIT $3');
+            $sql = $db_con->select();
+
+            if ($get_name) {
+                $result = $sql_name;
+            } else {
+                $result = $sql;
+            }
         }
+
         return $result;
     }
 
     /**
-     * the general load function (either by word, word list, formula or group)
+     * the general load function (either by word, triple or phrase list)
+     *
+     * @param int $page
+     * @param int $size
+     * @return bool
      */
-    function load()
+    function load(int $page = 1, int $size = SQL_ROW_LIMIT): bool
     {
 
         global $db_con;
+        $result = false;
 
-        // the id and the user must be set
-        if ($this->phr->id > 0 and !is_null($this->usr->id)) {
-            log_debug('value_list->load for "' . $this->phr->name . '"');
-            $limit = $this->page_size;
-            if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
-            }
-            $sql = "SELECT v.value_id,
-                     u.value_id AS user_value_id,
-                     v.user_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u') . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u') . ",
-                    " . $db_con->get_usr_field('last_update', 'v', 'u') . ",
-                    " . $db_con->get_usr_field('source_id', 'v', 'u') . ",
-                     v.phrase_group_id,
-                     v.time_word_id,
-                     g.word_ids,
-                     g.triple_ids
-                FROM phrase_groups g, " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
-           LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                  AND u.user_id = " . $this->usr->id . " 
-               WHERE g.phrase_group_id = v.phrase_group_id 
-                 AND v.value_id IN ( SELECT value_id 
-                                       FROM value_phrase_links 
-                                      WHERE phrase_id = " . $this->phr->id . " 
-                                   GROUP BY value_id )
-            ORDER BY v.phrase_group_id, v.time_word_id
-               LIMIT " . $limit . ";";
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_val_lst = $db_con->get($sql);
-            foreach ($db_val_lst as $db_val) {
-                if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                    $val = new value;
-                    $val->row_mapper($db_val, true);
-                    $val->usr = $this->usr;
-                    $this->lst[] = $val;
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } else {
+            $sql = $this->load_sql($db_con);
+            $sql_name = $this->load_sql($db_con, true);
+
+            if ($db_con->get_where() == '') {
+                log_err('The phrase must be set to load ' . self::class, self::class . '->load');
+            } else {
+                $db_con->usr_id = $this->usr->id;
+                $db_val_lst = $db_con->get($sql, $sql_name, array($this->usr->id, $this->phr->id, $size));
+                foreach ($db_val_lst as $db_val) {
+                    if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
+                        $val = new value;
+                        $val->row_mapper($db_val, true);
+                        $val->usr = $this->usr;
+                        // TODO either integrate this in the query or load this with one sql for all values
+                        if ($db_val['time_word_id'] <> 0) {
+                            $time_phr = new phrase();
+                            $time_phr->id = $db_val['time_word_id'];
+                            $time_phr->usr = $this->usr;
+                            if ($time_phr->load()) {
+                                $val->time_phr = $time_phr;
+                            }
+                        }
+                        $this->lst[] = $val;
+                        $result = true;
+                    }
                 }
+                log_debug('value_list->load (' . dsp_count($this->lst) . ')');
             }
-            log_debug('value_list->load (' . dsp_count($this->lst) . ')');
         }
+
+        return $result;
     }
 
     // load a list of values that are related to a phrase or a list of phrases
@@ -466,9 +458,7 @@ class value_list
     }
 
     /*
-
     filter and select functions
-
     */
 
     // return a value list object that contains only values that match the time word list
@@ -611,6 +601,20 @@ class value_list
         return $result;
     }
 
+    /**
+     * @return bool true if the user
+     */
+    function has_values(): bool
+    {
+        $result = false;
+        if ($this->lst != null) {
+            if (count($this->lst) > 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
 
     /*
       convert functions
@@ -649,9 +653,7 @@ class value_list
     }
 
     /*
-
     check / database consistency functions
-
     */
 
     // check the consistency for all values
@@ -944,7 +946,20 @@ class value_list
         return $result;
     }
 
+    /**
+     * delete all loaded values e.g. to delete al the values linked to a phrase
+     * @return user_message
+     */
+    function del(): user_message
+    {
+        $result = new user_message();
+
+        if ($this->lst != null) {
+            foreach ($this->lst as $val) {
+                $result->add($val->del());
+            }
+        }
+        return new user_message();
+    }
 
 }
-
-?>

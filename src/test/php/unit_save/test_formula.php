@@ -251,7 +251,7 @@ function run_formula_test(testing $t)
     $result = trim($frm_dsp->dsp_result($wrd, $back));
     //$target = '0.79 %';
     $target = '0.01';
-    $t->dsp('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name() . '', $target, $result);
+    $t->dsp('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name(), $target, $result);
 
     /* TODO reactivate
     $result = $frm->btn_edit();

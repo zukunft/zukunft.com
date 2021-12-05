@@ -256,17 +256,15 @@ class view_cmp_dsp extends view_cmp
             }
             $val_lst->usr = $this->usr;
             log_debug('view_component_dsp->all load values for word "' . $phr->name . '" and user "' . $this->usr->name . '"');
-            $val_lst->load_by_phr();
+            $val_lst->load();
             $result .= $val_lst->html($back);
         }
         return $result;
     }
 
     /*
-
-    to display the view component itself, so that the user can change it
-
-    */
+     * to display the view component itself, so that the user can change it
+     */
 
 
     // allow the user to unlink a view

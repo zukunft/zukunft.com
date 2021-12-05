@@ -1,4 +1,4 @@
-PREPARE value_list_by_phrase_id (int, int, int) AS
+PREPARE value_list_by_triple_id (int, int, int) AS
     SELECT v.value_id,
            u.value_id                                                                  AS user_value_id,
            v.user_id,

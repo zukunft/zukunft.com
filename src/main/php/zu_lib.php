@@ -2,82 +2,94 @@
 
 /*
 
-  zu_lib.php - the main ZUkunft.com LIBrary
-  __________
+    zu_lib.php - the main ZUkunft.com LIBrary
+    ----------
 
-TODO fix syntax suggestions
-TODO if a functions failure needs some user action a string the the suggested action is returned e.g. save() and add()
-TODO if a function failure needs only admin or dev action an exception is raised and the function returns true or false
-TODO if an internal failure is expected not to be fixable without user interaction, the user should ge a failure link for the follow up actions
-TODO capsule in classes
-TODO create unit tests
-TODO cleanup object by removing duplicates
-TODO call include only if needed
-TODO check that all class function follow the setup suggested in user_message
-TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
-TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
-TODO add JSON tests that check if a just imported JSON file can be exactly recreated with export
-TODO if a formula is supposed to be created with the same name of a phrase suggest to add (formula) at the end
-TODO create a test case where one user has created a word and another user has created a formula with the same name
-TODO all save and import functions should return an empty string, if everything is fine and otherwise the error message that should be shown to the user
-TODO in load_standard the user id of db_con does not need to be set -> remove it
-TODO create json config files for the default and system views
-TODO add JSON im- and export port for verbs
-TODO remove the database fields from the objects, that are already part of a linked object e.g. use ref->phr->id instead of ref->phr_id
-TODO allow to load user via im- and export, but make sure that no one can get higher privileges
-TODO replace to id search with object based search e.g. use wrd_lnk->from->id instead of wrd_lnk->from_id
-TODO add im- and export of users and move the system user loading to one json
-TODO create the unit tests for the core elements such as word, value, formula, view
-TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
-TODO for import offer to use all time phrases e.g. "year of fixation": 1975 for "speed of light"
-TODO split the database from the memory object to save memory
-TODO add an im- and export code_id that is only unique for each type
-TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
-TODO use the type hash tables for words, formulas, view and components
-TODO create all export objects and add all import export unit tests
-TODO complete the database abstraction layer
-TODO create unit tests for all module classes
-TODO name all queries with user data as prepared queries to prevent SQL code injections
-TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
-TODO crawl all public available information from the web and add it as user preset to the database
-TODO rename dsp_text in formula to display
-TODO rename name_linked in formula_element to name_linked
-TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
-TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
-TODO check all data from an URL or from a user form that it contains no SQL code
-TODO move the init database fillings to on class instead of on SQL statement for each database
-TODO prevent XSS attacks and script attacks
-TODO check the primary index of all user tables
-TODO load the config, that is not expected to be changed during a session once at startup
-TODO start the backend only once and react to REST calls from the frontend
-TODO make use of __DIR__ ?
-TODO create a User Interface API
-TODO offer to use FreeOTP for two factor authentication
-TODO change config files from json to yaml to complete "reduce to the max"
-TODO create a user cache with all the data that the user usually uses for fast reactions
-TODO move the user fields to words with the reserved words with the prefix "system user"
-TODO for the registration mask first preselect the country based on the geolocation and offer to switch language, than select the places based on country and geolocation and the street
-TODO in the user registration mask allow to add places and streets on the fly and show a link to add missing street on open street map
-TODO use the object constructor if useful
-TODO capsule all critical functions in classes for security reason, to make sure that they never call be called without check e.g. database reset
-TODO to speed up create one database statement for each user action if possible
-TODO split the user sandbox object into a user sandbox base object and extend it either for a named or a link object
-TODO remove e.g. the word->type_id field and use word->type->id instead to reduce the number of fields
-TODO try to use interface function and make var private to have a well defined interface
-TODO remove all duplicates in objects like the list of ids and replace it by a creation function; if cache is needed do this in the calling function because this knows when to refresh
-TODO allow admin users to change IP blacklist
-TODO include IP blacklist by default for admin users
-TODO add log_info on all database actions to detect the costly code parts
+    for coding new features the target process is before committing:
+    1. create a unit test for the new feature
+    2. code the feature and fix the unit tests and code smells
+    3. create and fix the database unit and integration test for the new feature
+    4. commit
+
+    but first this needs to be fixed:
+    TODO fix unit and integration test errors for existing feature with postgreSQL
+    TODO fix error in upgrade process for MySQL
+    TODO fix syntax suggestions in existing code
+
+    after that this should be done while keeping step 1. to 4. for each commit:
+    TODO cleanup the objects and remove all vars not needed any more e.g. id arrays
+    TODO if a functions failure needs some user action a string the the suggested action is returned e.g. save() and add()
+    TODO if a function failure needs only admin or dev action an exception is raised and the function returns true or false
+    TODO if an internal failure is expected not to be fixable without user interaction, the user should ge a failure link for the follow up actions
+    TODO capsule in classes
+    TODO create unit tests
+    TODO cleanup object by removing duplicates
+    TODO call include only if needed
+    TODO check that all class function follow the setup suggested in user_message
+    TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
+    TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
+    TODO add JSON tests that check if a just imported JSON file can be exactly recreated with export
+    TODO if a formula is supposed to be created with the same name of a phrase suggest to add (formula) at the end
+    TODO create a test case where one user has created a word and another user has created a formula with the same name
+    TODO all save and import functions should return an empty string, if everything is fine and otherwise the error message that should be shown to the user
+    TODO in load_standard the user id of db_con does not need to be set -> remove it
+    TODO create json config files for the default and system views
+    TODO add JSON im- and export port for verbs
+    TODO remove the database fields from the objects, that are already part of a linked object e.g. use ref->phr->id instead of ref->phr_id
+    TODO allow to load user via im- and export, but make sure that no one can get higher privileges
+    TODO replace to id search with object based search e.g. use wrd_lnk->from->id instead of wrd_lnk->from_id
+    TODO add im- and export of users and move the system user loading to one json
+    TODO create the unit tests for the core elements such as word, value, formula, view
+    TODO review types again and capsule (move const to to base object e.g. the word type time to the word object)
+    TODO for import offer to use all time phrases e.g. "year of fixation": 1975 for "speed of light"
+    TODO split the database from the memory object to save memory
+    TODO add an im- and export code_id that is only unique for each type
+    TODO move init data to one class that creates the initial records for all databases and create the documentation for the wiki
+    TODO use the type hash tables for words, formulas, view and components
+    TODO create all export objects and add all import export unit tests
+    TODO complete the database abstraction layer
+    TODO create unit tests for all module classes
+    TODO name all queries with user data as prepared queries to prevent SQL code injections
+    TODO split the load and the load_sql functions to be able to add unit tests for all sql statements
+    TODO crawl all public available information from the web and add it as user preset to the database
+    TODO rename dsp_text in formula to display
+    TODO rename name_linked in formula_element to name_linked
+    TODO separate the API JSON from the HTML building e.g. dsp_graph should return an JSON file for the one page JS frontend, which can be converted to HTML code
+    TODO use separate db users for the db creation (user zukunft_root), admin (user zukunft_admin), the other user roles and (zukunft_insert und zukunft_select) as s second line of defence
+    TODO check all data from an URL or from a user form that it contains no SQL code
+    TODO move the init database fillings to on class instead of on SQL statement for each database
+    TODO prevent XSS attacks and script attacks
+    TODO check the primary index of all user tables
+    TODO load the config, that is not expected to be changed during a session once at startup
+    TODO start the backend only once and react to REST calls from the frontend
+    TODO make use of __DIR__ ?
+    TODO create a User Interface API
+    TODO offer to use FreeOTP for two factor authentication
+    TODO change config files from json to yaml to complete "reduce to the max"
+    TODO create a user cache with all the data that the user usually uses for fast reactions
+    TODO move the user fields to words with the reserved words with the prefix "system user"
+    TODO for the registration mask first preselect the country based on the geolocation and offer to switch language, than select the places based on country and geolocation and the street
+    TODO in the user registration mask allow to add places and streets on the fly and show a link to add missing street on open street map
+    TODO use the object constructor if useful
+    TODO capsule all critical functions in classes for security reason, to make sure that they never call be called without check e.g. database reset
+    TODO to speed up create one database statement for each user action if possible
+    TODO split the user sandbox object into a user sandbox base object and extend it either for a named or a link object
+    TODO remove e.g. the word->type_id field and use word->type->id instead to reduce the number of fields
+    TODO try to use interface function and make var private to have a well defined interface
+    TODO remove all duplicates in objects like the list of ids and replace it by a creation function; if cache is needed do this in the calling function because this knows when to refresh
+    TODO allow admin users to change IP blacklist
+    TODO include IP blacklist by default for admin users
+    TODO add log_info on all database actions to detect the costly code parts
 
 
-TODO create a table startup page with a
-     Table with two col and two rows and four last used pages below. If now last used pages show the demo pages.
-     Typing words in the top left cell select a word with the default page
-     Typing in the top right cell adds one more column and two rows and typing offer to select a word and also adds related row names based on child words
-     Typing in the lower left cell also adds one more row and two cols and typing shows related parent words as column headers
-     Typing in the lower right cell starts the formula selection and an = is added as first char.
-     Typing = in any cell starts the formula selection
-     Typing an operator sign after a space starts the formula creation and a formula name is suggested
+    TODO create a table startup page with a
+         Table with two col and two rows and four last used pages below. If now last used pages show the demo pages.
+         Typing words in the top left cell select a word with the default page
+         Typing in the top right cell adds one more column and two rows and typing offer to select a word and also adds related row names based on child words
+         Typing in the lower left cell also adds one more row and two cols and typing shows related parent words as column headers
+         Typing in the lower right cell starts the formula selection and an = is added as first char.
+         Typing = in any cell starts the formula selection
+         Typing an operator sign after a space starts the formula creation and a formula name is suggested
 
 
     This file is part of zukunft.com - calc with words
