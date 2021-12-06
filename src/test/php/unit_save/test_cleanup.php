@@ -269,12 +269,14 @@ class testing extends test_base
 
         // request to delete the added test sources
         foreach (source::RESERVED_SOURCES as $src_name) {
-            $src = $this->load_source($src_name);
-            if ($src->id > 0) {
-                $msg = $src->del();
-                $result .= $msg->get_last_message();
-                $target = '';
-                $this->dsp('source->del of "' . $src_name . '"', $target, $result);
+            if ($src_name != source::TN_READ) {
+                $src = $this->load_source($src_name);
+                if ($src->id > 0) {
+                    $msg = $src->del();
+                    $result .= $msg->get_last_message();
+                    $target = '';
+                    $this->dsp('source->del of "' . $src_name . '"', $target, $result);
+                }
             }
         }
 
@@ -330,12 +332,15 @@ class testing extends test_base
 
         // request to delete the added test words
         foreach (word::RESERVED_WORDS as $wrd_name) {
-            $wrd = $this->load_word($wrd_name);
-            if ($wrd->id > 0) {
-                $msg = $wrd->del();
-                $result .= $msg->get_last_message();
-                $target = '';
-                $this->dsp('word->del of "' . $wrd_name . '"', $target, $result);
+            // ... but keep the read only test word
+            if ($wrd_name != word::TN_READ) {
+                $wrd = $this->load_word($wrd_name);
+                if ($wrd->id > 0) {
+                    $msg = $wrd->del();
+                    $result .= $msg->get_last_message();
+                    $target = '';
+                    $this->dsp('word->del of "' . $wrd_name . '"', $target, $result);
+                }
             }
         }
 
