@@ -817,7 +817,7 @@ function zut_plural($wrd_id, $user_id)
 }
 
 // return the word name for the user
-// todo: combine to one query
+// TODO: combine to one query
 function zut_name($wrd_id, $user_id)
 {
     log_debug('zut_name (' . $wrd_id . ',u' . $user_id . ')');

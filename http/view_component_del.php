@@ -75,7 +75,7 @@ if ($usr->id > 0) {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
 
-            // todo: display how the views would be changed
+            // TODO: display how the views would be changed
 
             $result .= btn_yesno('Delete the view element "' . $cmp_del->name . '"? ', '/http/view_component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }

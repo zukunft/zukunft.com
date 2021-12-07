@@ -860,7 +860,7 @@ class word_link extends user_sandbox_link_description
     {
         log_debug('word_link->not_used (' . $this->id . ')');
 
-        // todo review: maybe replace by a database foreign key check
+        // TODO review: maybe replace by a database foreign key check
         return $this->not_changed();
     }
 

@@ -84,7 +84,7 @@ function run_formula_test(testing $t)
             $val = $elm_frm->special_result($phr_lst, $time_phr);
             $result = $val->number;
             $target = word::TN_2019;
-            // todo: get the best matching number
+            // TODO: get the best matching number
             //$t->dsp('formula->special_result for "'.$elm_frm->name.'"', $target, $result);
 
             if (count($frm_lst->lst) > 1) {

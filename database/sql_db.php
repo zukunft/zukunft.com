@@ -49,6 +49,9 @@ class sql_db
     const POSTGRES = "PostgreSQL";
     const MYSQL = "MySQL";
 
+    // the parameter types for prepared queries independent from the SQL dialect
+    const PAR_INT = 'int';
+
     // reserved words that are automatically escaped
 
     // based on https://www.postgresql.org/docs/current/sql-keywords-appendix.html from 2021-06-13
@@ -61,8 +64,16 @@ class sql_db
     // extra names for backward compatibility
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
-    // tables that does not have a name e.g. DB_TYPE_TRIPLE is a link, but is nevertheless named
-    const DB_TYPES_NOT_NAMED = [DB_TYPE_VALUE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF, DB_TYPE_IP, DB_TYPE_SYS_LOG];
+    // tables that do not have a name e.g. DB_TYPE_TRIPLE is a link, but is nevertheless named
+    const DB_TYPES_NOT_NAMED = [
+        DB_TYPE_VALUE,
+        DB_TYPE_FORMULA_LINK,
+        DB_TYPE_VIEW_COMPONENT_LINK,
+        DB_TYPE_VALUE_PHRASE_LINK,
+        DB_TYPE_REF,
+        DB_TYPE_IP,
+        DB_TYPE_SYS_LOG
+    ];
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
     const DB_TYPES_LINK = [DB_TYPE_TRIPLE, DB_TYPE_FORMULA_LINK, DB_TYPE_VIEW_COMPONENT_LINK, DB_TYPE_REF];
@@ -115,6 +126,7 @@ class sql_db
     private ?string $id_link_field = '';          // only for link objects the id field of the link type object
     private ?string $name_field = '';             // unique text key field of the table used
     private ?string $query_name = '';             // unique name of the query to precompile and use the query
+    private int $par_pos = 1;                     // counter for the parameter of prepared queries
     private ?array $par_types = [];               // list of the parameter types, which also defines a precompiled query
     private ?array $field_lst = [];               // list of fields that should be returned to the next select query
     private ?array $usr_field_lst = [];           // list of user specific fields that should be returned to the next select query
@@ -179,6 +191,7 @@ class sql_db
         $this->id_link_field = '';
         $this->name_field = '';
         $this->query_name = '';
+        $this->par_pos = 1;
         $this->par_types = [];
         $this->field_lst = [];
         $this->usr_field_lst = [];
@@ -322,10 +335,34 @@ class sql_db
         $this->usr_view_id = $usr_id;
     }
 
-    function set_par_types(string $query_name, array $parameter_types)
+    /**
+     * add a parameter for a prepared query
+     */
+    function add_par(string $par_type)
+    {
+        $this->par_types[] = $par_type;
+    }
+
+    /**
+     * @return string the SQL var name for the latest added query parameter
+     */
+    function par_name(): string
+    {
+        if ($this->db_type == sql_db::MYSQL) {
+            return '?';
+        } elseif ($this->db_type == sql_db::POSTGRES) {
+            return '$' .  count($this->par_types);
+        } else {
+            return '?';
+        }
+    }
+
+    function set_name(string $query_name, ?array $parameter_types = null)
     {
         $this->query_name = $query_name;
-        $this->par_types = $parameter_types;
+        if ($parameter_types != null) {
+            $this->par_types = $parameter_types;
+        }
     }
 
     /**
@@ -989,7 +1026,7 @@ class sql_db
 
                 } else {
                     if (str_starts_with($sql, 'PREPARE')) {
-                        if (!in_array($sql_name, $this->prepared_sql_names)) {
+                        if (!$this->has_query($sql_name)) {
                             $sql .= ' EXECUTE ' . $sql_name . '(' . implode(',', $sql_array) . ')';
                             $result = pg_query($this->postgres_link, $sql);
                             if ($result === false) {
@@ -1005,7 +1042,7 @@ class sql_db
                             }
                         }
                     } else {
-                        if (!in_array($sql_name, $this->prepared_sql_names)) {
+                        if (!$this->has_query($sql_name)) {
                             $result = pg_prepare($this->postgres_link, $sql_name, $sql);
                             if ($result == false) {
                                 throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
@@ -1030,7 +1067,7 @@ class sql_db
                 if ($sql_name == '') {
                     $result = mysqli_query($this->mysql, $sql);
                 } else {
-                    if (in_array($sql_name, $this->prepared_sql_names)) {
+                    if ($this->has_query($sql_name)) {
                         $stmt = $this->prepared_stmt[$sql_name];
                     } else {
                         $stmt = mysqli_prepare($this->mysql, $sql);
@@ -1069,6 +1106,21 @@ class sql_db
         }
 
         return $result;
+    }
+
+    /**
+     * check if a query is already prepared
+     *
+     * @param string $sql_name the unique name of the query
+     * @return bool true if the query is prepared
+     */
+    function has_query(string $sql_name): bool
+    {
+        if (in_array($sql_name, $this->prepared_sql_names)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*

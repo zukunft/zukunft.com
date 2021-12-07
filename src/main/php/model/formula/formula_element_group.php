@@ -376,7 +376,7 @@ class formula_element_group
                 }
             }
 
-            // todo: show the time phrase only if it differs from the main time phrase
+            // TODO: show the time phrase only if it differs from the main time phrase
             if (isset($fig_lst->time_phr) and isset($time_default)) {
                 if ($fig_lst->time_phr->id <> $time_default->id) {
                     $result .= ' (' . $fig_lst->time_phr->name . ')';

@@ -169,7 +169,7 @@ class expression
                     $wrd_ids[] = $new_wrd_id;
                 }
                 $ref_text = zu_str_right_of($ref_text, ZUP_CHAR_WORD_START . $new_wrd_id . ZUP_CHAR_WORD_END);
-                log_debug('remaining: ' . $ref_text . '');
+                log_debug('remaining: ' . $ref_text);
                 $new_wrd_id = $this->get_wrd_id($ref_text);
             }
 
@@ -237,7 +237,7 @@ class expression
                             $elm->type = formula_element::TYPE_WORD;
                             $elm->id = $elm_id;
                             $pos = strpos($work, ZUP_CHAR_WORD_START);
-                            log_debug('expression->element_lst_all -> wrd pos ' . $pos . '');
+                            log_debug('expression->element_lst_all -> wrd pos ' . $pos);
                         }
                     }
                 }
@@ -245,7 +245,7 @@ class expression
                 // find the next verb reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_VERB) {
                     $new_pos = strpos($work, ZUP_CHAR_LINK_START);
-                    log_debug('expression->element_lst_all -> verb pos ' . $new_pos . '');
+                    log_debug('expression->element_lst_all -> verb pos ' . $new_pos);
                     if ($new_pos < $pos) {
                         $elm_id = zu_str_between($work, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
                         if (is_numeric($elm_id)) {
@@ -261,7 +261,7 @@ class expression
                 // find the next formula reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_FORMULA or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
                     $new_pos = strpos($work, ZUP_CHAR_FORMULA_START);
-                    log_debug('expression->element_lst_all -> frm pos ' . $new_pos . '');
+                    log_debug('expression->element_lst_all -> frm pos ' . $new_pos);
                     if ($new_pos < $pos) {
                         $elm_id = zu_str_between($work, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
                         if (is_numeric($elm_id)) {

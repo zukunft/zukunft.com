@@ -285,6 +285,7 @@ include_once $path_php . 'model/value/value_exp.php';
 include_once $path_php . 'model/value/value_list.php';
 include_once $path_php . 'web/value_list_display.php';
 include_once $path_php . 'model/value/value_phrase_link.php';
+include_once $path_php . 'model/value/value_phrase_link_list.php';
 include_once $path_php . 'model/ref/source.php';
 include_once $path_php . 'model/ref/ref.php';
 include_once $path_php . 'model/ref/ref_exp.php';

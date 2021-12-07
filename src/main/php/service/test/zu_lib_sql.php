@@ -674,7 +674,7 @@ function zu_sql_val_add($new_value, $word_lst)
     log_debug('zu_sql_val_add(' . $new_value . ',' . dsp_array($word_lst) . ')');
     $result = 0;
 
-    // todo: log the change
+    // TODO: log the change
     $sql = "INSERT INTO `values` "
         . "            (word_value)  "
         . "     VALUES ('" . $new_value . "');";

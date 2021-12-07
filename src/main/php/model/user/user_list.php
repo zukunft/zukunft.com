@@ -82,7 +82,7 @@ class user_list
                   GROUP BY user_id ) AS c
             WHERE u.user_id = c.user_id
          ORDER BY u.user_id;";
-        // todo check if the user needs to be set to the original value again
+        // TODO check if the user needs to be set to the original value again
         $db_con->usr_id = $usr->id;
         $this->load_sql($sql, $db_con);
 

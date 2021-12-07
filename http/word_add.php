@@ -38,7 +38,7 @@ select a related word, because no word should be added without relation to an ex
 select the relation type
 ------------------------
 
-To Do:
+TODO
 
 Split word into two words and create a group for the combined word
 Delete a word (check if nothing is depending on the word to delete)
@@ -118,7 +118,7 @@ if ($usr->id > 0) {
             $trm->load();
             if ($trm->id > 0) {
                 /*
-                // todo: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
+                // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
                 if (substr($id_txt, 0, strlen(ZUP_CHAR_FORMULA_START)) == ZUP_CHAR_FORMULA_START) {
                   // maybe ask for confirmation
                   // change the link type to "formula link"

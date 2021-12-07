@@ -34,7 +34,7 @@
 class word_list
 {
 
-    // todo: check the consistence usage of the parameter $back
+    // TODO: check the consistence usage of the parameter $back
 
     public ?array $lst = array(); // array of the loaded word objects
     // (key is at the moment the database id, but it looks like this has no advantages,
@@ -730,7 +730,7 @@ class word_list
         return $result;
     }
 
-    // todo: use word_link_list->display instead
+    // TODO: use word_link_list->display instead
     // list of related words filtered by a link type
     // returns the html code
     // database link must be open

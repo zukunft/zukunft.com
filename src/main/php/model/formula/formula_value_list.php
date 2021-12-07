@@ -134,7 +134,7 @@ class formula_value_list
                         $fv->phr_grp_id = $val_row['phrase_group_id'];
                         $fv->time_id = $val_row['time_word_id'];
                         $fv->value = $val_row['formula_value'];
-                        // todo get user for the case that not all value are for the same unser
+                        // TODO get user for the case that not all value are for the same unser
                         //$fv->usr            = $val_row[user_sandbox::FLD_USER];
 
                         log_debug('formula_value_list->load_frm get words');
@@ -304,7 +304,7 @@ class formula_value_list
     //      2. calculate "operating income" for "ABB", "CHF" and "2016"
     //      3. calculate "operating income" for "ABB", "EUR" and "2017"
     //      4. calculate "operating income" for "ABB", "CHF" and "2017"
-    // todo: check if a value is used in the formula
+    // TODO: check if a value is used in the formula
     //       exclude the time word and if needed loop over the time words
     //       if the value has been update, create a calculation request
     // ex zuc_upd_lst_val
@@ -363,20 +363,20 @@ class formula_value_list
     }
 
     // add all formula results to the list that may needs to be updated if a formula is updated for one user
-    // todo: only request the user specific calculation if needed
+    // TODO: only request the user specific calculation if needed
     function frm_upd_lst_usr($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         log_debug('fv_lst->frm_upd_lst_usr(' . $this->frm->name . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
         $result = new batch_job_list;
         $added = 0;
 
-        // todo: check if the assigned words are different for the user
+        // TODO: check if the assigned words are different for the user
 
-        // todo: check if the formula words are different for the user
+        // TODO: check if the formula words are different for the user
 
-        // todo: check if the assigned words, formula words OR the user has different values or formula values
+        // TODO: check if the assigned words, formula words OR the user has different values or formula values
 
-        // todo: filter the words if just a value has been updated
+        // TODO: filter the words if just a value has been updated
         /*    if (!empty($val_wrd_lst)) {
               zu_debug('fv_lst->frm_upd_lst_usr -> update related words ('.implode(",",$val_wrd_lst).')');
               $used_word_ids = array_intersect($is_word_ids, array_keys($val_wrd_lst));
@@ -562,7 +562,7 @@ class formula_value_list
 
         // depending on the formula setting (all words or at least one word)
         // create a formula value list with all needed word combinations
-        // to do this get all values that
+        // TODO this get all values that
         // 1. have at least one assigned word and one formula word (one of each)
         // 2. remove all assigned words and formula words from the value word list
         // 3. aggregate the word list for all values
@@ -664,7 +664,7 @@ class formula_value_list
     // combine two calculation queues
     function merge($lst_to_merge)
     {
-        // todo remove always $debug from dsp_id
+        // TODO remove always $debug from dsp_id
         log_debug('fv_lst->merge ' . $lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($lst_to_merge->lst)) {
             foreach ($lst_to_merge->lst as $new_fv) {

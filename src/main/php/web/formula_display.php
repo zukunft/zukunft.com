@@ -277,7 +277,7 @@ class formula_dsp extends formula
         $result .= '</div>';
         $result .= dsp_form_fld("description", $this->description, "Description:", "col-sm-9");
         // predefined formulas like "this" or "next" should only be changed by an admin
-        // todo check if formula user or login user should be used
+        // TODO check if formula user or login user should be used
         if (!$this->is_special() or $this->usr->is_admin()) {
             $result .= dsp_form_fld("formula_text", $resolved_text, "Expression:", "col-sm-10");
         }

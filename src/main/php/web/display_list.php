@@ -45,7 +45,7 @@ class dsp_list {
   private function id_to_edit() {
     log_debug("zu_id_to_edit(".$this->id_field.")");
     $result = zu_str_left_of($this->id_field, "_id")."_edit.php";
-    // todo: cleanup
+    // TODO: cleanup
     if ($result == 'view_component_edit.php') { $result = 'view_component_edit.php'; }
     return $result;
   }

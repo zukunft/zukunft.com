@@ -128,7 +128,7 @@ class value_list_dsp extends value_list
             log_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: ' . $xtra_phrases->name());
 
             // display the common words
-            // to do: sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
+            // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
             if (count($common_lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
@@ -219,7 +219,7 @@ class value_list_dsp extends value_list
                             if ($sub_wrd->id > 0) {
                                 $add_phr_lst->add($sub_wrd->phrase());
                                 $add_phr_ids[] = $sub_wrd->id;
-                                $type_ids[] = $sub_wrd->id; // todo check if it should not be $type_word_id
+                                $type_ids[] = $sub_wrd->id; // TODO check if it should not be $type_word_id
                             }
                             // if values for just one column are added, the column head word id is already in the commen id list and due to that does not need to be added
                             if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id > 0) {

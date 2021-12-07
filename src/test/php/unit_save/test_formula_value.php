@@ -58,7 +58,7 @@ function run_formula_value_test(testing $t)
     } else {
         $result = 'no ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
     }
-    // todo review
+    // TODO review
     $target = '0.0078718332961637';
     $t->dsp('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id . ')', $target, $result, TIMEOUT_LIMIT_LONG);
 
@@ -161,7 +161,7 @@ function run_formula_value_list_test(testing $t)
 
     $t->header('Test the formula value list class (classes/formula_value_list.php)');
 
-    // todo add PE frm test
+    // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
     $frm = $t->load_formula(formula::TN_INCREASE);
     $fv_lst = new formula_value_list;

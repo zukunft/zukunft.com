@@ -95,7 +95,7 @@ if ($usr->id > 0) {
                 'Reply-To: admin@zukunft.com' . "\r\n" .
                 'X-Mailer: PHP/' . phpversion();
             mail($mail_to, $mail_subject, $mail_body, $mail_header);
-            // to do: ask if cookies are allowed: if yes, the session id does not need to be forwarded
+            // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
             // if no, use the session id
             header("Location: http/login_activate.php?id=" . $user_id . ""); // Modify to go to the page you would like
             //header("Location: view.php?sid=".SID.""); // Modify to go to the page you would like

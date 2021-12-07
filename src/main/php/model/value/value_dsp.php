@@ -315,7 +315,7 @@ class value_dsp extends value
     // lists all phrases related to a given value except the given phrase
     // and offer to add a formula to the value as an alternative
     // $wrd_add is only optional to display the last added phrase at the end
-    // todo: take user unlink of phrases into account
+    // TODO: take user unlink of phrases into account
     // save data to the database only if "save" is pressed add and remove the phrase links "on the fly", which means that after the first call the edit view is more or less the same as the add view
     function dsp_edit($type_ids, $back): string
     {

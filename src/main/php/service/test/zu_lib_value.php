@@ -132,7 +132,7 @@ function zuv_lst_get($val_lst_wrd, $word_ids)
 */
 
 // simply get the value from the database if the value id is known
-// todo: combine to one query
+// TODO: combine to one query
 function zuv_value($val_id, $user_id)
 {
     $result = null;

@@ -151,7 +151,7 @@ if ($session_usr->id > 0) {
             // build the calculation queue
             // the standard value will always be checked first
             // and after that the user specific value will be calculated if needed
-            // todo: but only if the user has done some changes
+            // TODO: but only if the user has done some changes
             $calc_fv_lst = new formula_value_list;
             $calc_fv_lst->usr = $usr;
             foreach ($frm_lst->lst as $frm) {

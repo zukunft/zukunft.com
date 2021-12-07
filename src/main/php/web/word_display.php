@@ -271,7 +271,7 @@ class word_dsp extends word
         $row_lst->osort();
         $col_lst->osort();
 
-        // to do: use this for fast loading
+        // TODO use this for fast loading
         $val_matrix = $row_lst->val_matrix($col_lst);
         $result .= $row_lst->dsp_val_matrix($val_matrix);
 
@@ -445,7 +445,7 @@ class word_dsp extends word
 
     // returns the html code to select a word link type
     // database link must be open
-    // todo: similar to verb->dsp_selector maybe combine???
+    // TODO: similar to verb->dsp_selector maybe combine???
     function selector_link($id, $form, $back): string
     {
         log_debug('word_dsp->selector_link ... verb id ' . $id);

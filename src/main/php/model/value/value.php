@@ -317,11 +317,11 @@ class value extends user_sandbox_display
      */
     function load_sql(sql_db $db_con, bool $get_name = false): string
     {
-        $sql_name = '';
+        $sql_name = self::class . '_by_';
 
         $sql_grp = $this->load_sql_group();
 
-        // todo:
+        // TODO:
         // count the number of phrases per group
         // and add the user specific phrase links
         // select also the time
@@ -329,13 +329,17 @@ class value extends user_sandbox_display
         $sql_avoid_code_check_prefix = "SELECT";
 
         if (isset($this->time_stamp)) {
+            $sql_name .= 'phrase_group_id';
             $sql_val = "SELECT value_time_series_id 
                             FROM value_time_series
                           WHERE phrase_group_id IN (" . $sql_grp . ");";
         } else {
+            $sql_name_time = '';
             if ($this->time_id > 0) {
+                $sql_name_time = '_and_time';
                 $sql_time = ' AND time_word_id = ' . $this->time_id . ' ';
             }
+            $sql_name .= 'phrase_group_id' . $sql_name_time;
             $sql_val = $sql_avoid_code_check_prefix . " value_id 
                             FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . "
                           WHERE phrase_group_id IN (" . $sql_grp . ") " . $sql_time . ";";
@@ -451,7 +455,7 @@ class value extends user_sandbox_display
                     $grp_unscale = $phr_lst_converted->get_grp();
                     $this->grp_id = $grp_unscale->id;
                     $this->load();
-                    // todo:
+                    // TODO:
                     // check if there are any matching values at all
                     // if yes, get the most often used phrase
                     // repeat adding a phrase utils a number is found
@@ -792,7 +796,7 @@ class value extends user_sandbox_display
                         foreach ($wrd_lnk_lst as $wrd_lnk) {
                             $wrd_ids[] = $wrd_lnk[phrase::FLD_ID];
                         }
-                        // todo: add the triple links
+                        // TODO: add the triple links
                         $this->ids = $wrd_ids;
                         $this->set_grp_by_ids();
                     } else {
@@ -896,7 +900,7 @@ class value extends user_sandbox_display
                                                 log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
                                                 log_debug('value->scale -> replace done (' . $r_part . ')');
-                                                // todo separate time from value words
+                                                // TODO separate time from value words
                                                 $calc = new math();
                                                 $result = $calc->parse($r_part);
                                             } else {
@@ -913,7 +917,7 @@ class value extends user_sandbox_display
                 }
             }
 
-            // todo: scale the number to the target scaling
+            // TODO: scale the number to the target scaling
             // if no target scaling is defined leave the scaling at one
             //if ($target_wrd_lst->has_scaling()) {
             //}
@@ -1199,7 +1203,7 @@ class value extends user_sandbox_display
      */
 
 // get a list of all formula results that are depending on this value
-// todo: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
+// TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
     function fv_lst_depending()
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp_id . '" for user ' . $this->usr->name . '');
@@ -1307,7 +1311,7 @@ class value extends user_sandbox_display
     }
 
 // true if the loaded value is not user specific
-// todo: check the difference between is_std and can_change
+// TODO: check the difference between is_std and can_change
     function is_std(): bool
     {
         $result = false;
@@ -1448,10 +1452,12 @@ class value extends user_sandbox_display
     }
     */
 
-// update the phrase links to the value based on the group and time for faster searching
-// e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
-//      to be able to search the value by a single phrase
-// to do: make it user specific!
+    /**
+     * update the phrase links to the value based on the group and time for faster searching
+     * e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
+     *      to be able to search the value by a single phrase
+     * TODO: make it user specific!
+     */
     function upd_phr_links(): string
     {
         log_debug('value->upd_phr_links');
@@ -1460,7 +1466,6 @@ class value extends user_sandbox_display
         $result = '';
 
         // create the db link object for all actions
-        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
 
         $table_name = 'value_phrase_links';
@@ -1615,7 +1620,7 @@ class value extends user_sandbox_display
         $val_wrd_id = $db_con->insert(array("value_id","phrase_id"), array($this->id,$phr_id));
         if ($val_wrd_id > 0) {
           // get the link id, but updating the reference in the log should not be done, because the row id should be the ref to the original value
-          // todo: call the word group creation
+          // TODO: call the word group creation
         }
       }
     } else {
@@ -1647,7 +1652,9 @@ class value extends user_sandbox_display
     }
     */
 
-// update the time stamp to trigger an update of the depending results
+    /**
+     * update the time stamp to trigger an update of the depending on results
+     */
     function save_field_trigger_update($db_con): string
     {
         $result = '';
@@ -1894,8 +1901,9 @@ class value extends user_sandbox_display
                     }
 
                     // update the phrase links for fast searching
-                    if ($this->upd_phr_links() != '') {
-                        $result = 'adding the phrase links of the value time series failed';
+                    $upd_result = $this->upd_phr_links();
+                    if ($upd_result != '') {
+                        $result = 'Adding the phrase links of the value time series failed because ' . $upd_result;
                         $this->id = 0;
                     }
 
@@ -1926,8 +1934,9 @@ class value extends user_sandbox_display
                     }
 
                     // update the phrase links for fast searching
-                    if ($this->upd_phr_links() != '') {
-                        $result = 'adding the phrase links of the value failed';
+                    $upd_result = $this->upd_phr_links();
+                    if ($upd_result != '') {
+                        $result = 'Adding the phrase links of the value failed because ' . $upd_result;
                         $this->id = 0;
                     }
 
@@ -1999,7 +2008,7 @@ class value extends user_sandbox_display
         } else {
             log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->usr->id);
             // update a value
-            // todo: if no one else has ever changed the value, change to default value, else create a user overwrite
+            // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values

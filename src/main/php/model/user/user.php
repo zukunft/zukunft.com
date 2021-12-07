@@ -515,7 +515,7 @@ class user
     }
 
     // remember the last source that the user has used
-    // todo add the database field
+    // TODO add the database field
     function set_verb($vrb_id): bool
     {
         log_debug('user->set_verb(' . $this->id . ',s' . $vrb_id . ')');

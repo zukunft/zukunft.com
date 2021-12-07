@@ -456,7 +456,7 @@ class verb
                 }
 
             } else {
-                // todo: create a new verb and request to delete the old
+                // TODO: create a new verb and request to delete the old
                 log_warning('verb->save_field_do creating of a new verb not yet coded');
             }
         }
@@ -593,7 +593,7 @@ class verb
     {
         $result = '';
         /*
-            todo:
+            TODO:
             if ($db_rec->name <> $this->name) {
               // check if target link already exists
               zu_debug('verb->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")');
@@ -724,7 +724,7 @@ class verb
                     if ($this->can_change()) {
                         $result .= $this->save_field_name($db_con, $db_rec);
                     } else {
-                        // todo: create a new verb and request to delete the old
+                        // TODO: create a new verb and request to delete the old
                     }
                 }
             }
@@ -770,7 +770,7 @@ class verb
                         $result = $db_con->delete('verb_id', $this->id);
                     }
                 } else {
-                    // todo: create a new verb and request to delete the old
+                    // TODO: create a new verb and request to delete the old
                 }
             }
         }

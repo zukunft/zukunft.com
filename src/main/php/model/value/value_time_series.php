@@ -197,7 +197,7 @@ class value_time_series extends user_sandbox_display
         } else {
             log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->usr->id);
             // update a value
-            // todo: if no one else has ever changed the value, change to default value, else create a user overwrite
+            // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values

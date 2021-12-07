@@ -34,7 +34,7 @@
 // the general html header
 function dsp_header($title, $style = ""): string {
   $result  = '<!DOCTYPE html>';
-  $result .= '<html lang="en">'; // todo: to be adjusted depending on the display language
+  $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
   if ($title <> "") {
     $result .= '<head><title>'.$title.' (zukunft.com)</title>';
   } else {

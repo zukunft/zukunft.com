@@ -1261,7 +1261,7 @@ class user_dsp extends user
                     and $dsp_usr->comment == $dsp_std->comment
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->excluded == $dsp_std->excluded) {
-                    // todo: add user config also to source?
+                    // TODO: add user config also to source?
                     //$dsp_usr->del_usr_cfg();
                     $dsp_usr->del();
                 } else {

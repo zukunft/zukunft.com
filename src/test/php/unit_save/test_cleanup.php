@@ -81,7 +81,7 @@ class testing extends test_base
         }
 
         // secure cleanup the test views
-        // todo: if a user has changed the view during the test, delete also the user views
+        // TODO: if a user has changed the view during the test, delete also the user views
 
         $result .= $this->test_view_cmp_unlink(view::TN_COMPLETE, view_cmp::TN_TITLE);
         $result .= $this->test_view_cmp_unlink(view::TN_COMPLETE, view_cmp::TN_VALUES);
@@ -312,7 +312,7 @@ class testing extends test_base
         }
 
         // request to delete the added test word
-        // todo: if a user has changed the word during the test, delete also the user words
+        // TODO: if a user has changed the word during the test, delete also the user words
         $wrd = $this->load_word(word::TN_ADD);
         if ($wrd->id > 0) {
             $msg = $wrd->del();

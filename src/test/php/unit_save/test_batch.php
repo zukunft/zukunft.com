@@ -99,7 +99,7 @@ function run_batch_job_list_test(testing $t)
     $calc_request->usr = $usr;
     $calc_request->phr_lst = $phr_lst;
     $result = $job_lst->add($calc_request);
-    // todo review
+    // TODO review
     $target = 0;
     if ($result > 0) {
         $target = $result;

@@ -569,7 +569,7 @@ class view_cmp extends user_sandbox_named
     }
 
     // remove a view component from a view
-    // to do: check if the view component is not linked anywhere else
+    // TODO check if the view component is not linked anywhere else
     // and if yes, delete the view component after confirmation
     function unlink($dsp): string
     {

@@ -921,7 +921,7 @@ function zuc_upd_val_lst($val_ids_updated, $upd_usr)
     $fv_lst = zuc_val_frm_upd($val_wrd_lst, $frm_ids, $upd_usr, "");
     // 3. if the result has changed repeat with 1.
 
-    // to do: check that the same value is not updated twice
+    // TODO check that the same value is not updated twice
     $calc_layer = 1;
     while (!empty($fv_lst) and $calc_layer < ZUC_MAX_CALC_LAYERS) {
         $fv_next_layer = array();
@@ -1006,7 +1006,7 @@ function zuc_upd_lst_fv($val_wrd_lst, $wrd_id, $frm_ids, $frm_row, $usr_id)
 // e.g. the formula is assigned to Company and the operating income formula result should be calulated
 //      so Sales and Cost are words of the formula
 //      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database
-// todo: check if a value is used in the formula
+// TODO: check if a value is used in the formula
 //       exclude the time word and if needed loop over the time words
 //       if the value has been update, create a calculation request
 function zuc_upd_lst_val($wrd_id, $frm_wrd_ids, $frm_row, $usr_id)
@@ -1206,7 +1206,7 @@ function zuc_upd_lst($frm_ids_updated, $upd_usr_id)
 // and save the result in the database
 // the formula text is a parameter to save time
 // always returns an array of formula values
-// todo: check if calculation is really needed
+// TODO: check if calculation is really needed
 function zuc_frm($frm_id, $frm_text, $wrd_ids, $time_word_id, $user_id) {
   zu_debug('zuc_frm (f'.$frm_id.','.$frm_text.',t'.implode(",",$wrd_ids).',u'.$user_id.')');
 
@@ -1249,7 +1249,7 @@ function zuc_frm($frm_id, $frm_text, $wrd_ids, $time_word_id, $user_id) {
       $fv->usr_id = $result_user;
       $result_txt = $val_result[$r_key][0].' ('.$val_result[$r_key][1].'), ';
       $row_wrd_id = zut_id($val_result[$r_key][1], $user_id);
-      // to do:
+      // TODO
       // calculate the standard value for all users and check for each user if there could be a different result
       $result_wrd_ids = $wrd_ids;
       $result_wrd_ids[] = $frm_wrd_id;

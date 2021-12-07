@@ -71,7 +71,7 @@ if ($usr->id > 0) {
             $_SESSION['usr_id'] = $row['user_id'];
             $_SESSION['user_name'] = $row['user_name'];
             $_SESSION['logged'] = TRUE;
-            // to do: ask if cookies are allowed: if yes, the session id does not need to be forwarded
+            // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded
             // if no, use the session id
             if ($back <> '') {
                 header("Location: " . $back);

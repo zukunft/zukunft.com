@@ -67,7 +67,7 @@ class value_list
         } else {
 
             $db_con->set_type(DB_TYPE_VALUE);
-            $db_con->set_par_types($sql_name, array('int', 'int', 'int'));
+            $db_con->set_name($sql_name, array('int', 'int', 'int'));
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(value::FLD_NAMES);
             $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
@@ -794,7 +794,7 @@ class value_list
     // return the html code to display all values related to a given word
     // $phr->id is the related word that shoud not be included in the display
     // $this->usr->id is a parameter, because the viewer must not be the owner of the value
-    // to do: add back
+    // TODO add back
     function html($back)
     {
         log_debug('value_list->html (' . dsp_count($this->lst) . ')');

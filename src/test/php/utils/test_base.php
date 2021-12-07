@@ -922,6 +922,25 @@ class test_base
     }
 
     /**
+     * check if the SQL query name is unique
+     * should be called once per query, but not for each SQL dialect
+     *
+     * @param string $sql_name the SQL query name that is supposed to be unique
+     * @return bool true if the name has not been tested before and is therefore expected to be unique
+     */
+    function assert_sql_name_unique(string $sql_name): bool
+    {
+        global $sql_names;
+
+        $result = false;
+        if (!in_array($sql_name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        return $this->assert('is SQL name ' . $sql_name . ' unique', $result, true);
+    }
+
+    /**
      * display the result of one test e.g. if adding a value has been successful
      *
      * @return bool true if the test result is fine
@@ -981,7 +1000,7 @@ class test_base
         } else {
             $txt .= '<p style="color:red">Error' . $msg;
             $this->error_counter++;
-            // todo: create a ticket
+            // TODO: create a ticket
         }
 
         // explain the check

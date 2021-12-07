@@ -71,7 +71,7 @@ class phrase_group_list
         } else {
 
             $db_con->set_type(DB_TYPE_PHRASE_GROUP);
-            $db_con->set_par_types($sql_name, array('int'));
+            $db_con->set_name($sql_name, array('int'));
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(phrase_group::FLD_NAMES);
             if ($this->phr->is_word()) {

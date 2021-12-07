@@ -1789,7 +1789,7 @@ class formula extends user_sandbox_description
 
     /**
      * set the update parameters for the formula type
-     * todo: save the reference also in the log
+     * TODO: save the reference also in the log
      */
     function save_field_type($db_con, $db_rec, $std_rec): string
     {

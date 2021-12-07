@@ -1561,6 +1561,10 @@ class user_sandbox
 
             // for words first delete all links
             if ($this->obj_name == DB_TYPE_WORD) {
+                // for fast debugging only
+                if ($this->obj_name == word::TN_2019) {
+                    $wrd_name = word::TN_2019;
+                }
                 $msg = $this->del_links();
                 $result->add($msg);
             }

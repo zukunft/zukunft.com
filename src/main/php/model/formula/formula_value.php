@@ -5,7 +5,7 @@
   formula_value.php - the calculated numeric result of a formula
   -----------------
   
-  todo: add these function
+  TODO: add these function
   
   set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
   set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
@@ -288,7 +288,7 @@ class formula_value
                         . $sql_order;
                 } elseif ($sql_wrd <> '') {
                     // if only the target value list is set, get the "best" result
-                    // to do: define what is the best result
+                    // TODO define what is the best result
                     $sql_where = $sql_time
                         . $sql_wrd
                         . $sql_frm
@@ -331,7 +331,7 @@ class formula_value
                             $sql_grp = 'SELECT l1.phrase_group_id 
                             FROM ' . $sql_grp_from . ' 
                           WHERE ' . $sql_grp_where;
-                            // todo:
+                            // TODO:
                             // count the number of phrases per group
                             // and add the user specific phrase links
                             // select also the time
@@ -522,7 +522,7 @@ class formula_value
             // exclude all time words before the word group creation
             $this->src_phr_lst->ex_time();
             // get the word group id (and create the group if needed)
-            // to do: include triples
+            // TODO include triples
             if (count($this->src_phr_lst->ids) > 0) {
                 log_debug("formula_value->save_prepare_phr_lst_src -> source group for " . $this->src_phr_lst->dsp_id() . ".");
                 $grp = new phrase_group;
@@ -557,7 +557,7 @@ class formula_value
             // exclude all time words before the word group creation
             $this->phr_lst->ex_time();
             // get the word group id (and create the group if needed)
-            // to do: include triples
+            // TODO include triples
             $grp = new phrase_group;
             $grp->usr = $this->usr;
             $grp->ids = $this->phr_lst->ids;

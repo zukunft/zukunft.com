@@ -71,7 +71,7 @@ class formula_list
     }
 
     // load the missing formula parameters from the database
-    // todo: if this list contains already some formula, don't add them again!
+    // TODO: if this list contains already some formula, don't add them again!
     /**
      * @throws Exception
      */

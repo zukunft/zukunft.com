@@ -435,7 +435,7 @@ class view_cmp_dsp extends view_cmp
         return $result;
     }
 
-    // todo HTML code to add a view component
+    // TODO HTML code to add a view component
     function dsp_add($add_link, $wrd, $back)
     {
         return $this->dsp_edit($add_link, $wrd, $back);

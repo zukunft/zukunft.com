@@ -90,7 +90,7 @@ function zuv_can_change($val_id, $user_id) {
 */  
 
 // add a value to the database and link the words
-// to do: combine the sql statements in one commit
+// TODO combine the sql statements in one commit
 function zuv_db_add($new_value, $wrd_ids, $user_id) {
   log_debug("zuv_db_add (".$new_value.",t".implode(",",$wrd_ids).",u".$user_id.")");
   $result = false;
@@ -137,7 +137,7 @@ function zuvt_db_add($val_id, $wrd_id, $user_id) {
         $val_wrd_id = mysqli_insert_id();
         // next line switched off because the row id should be the ref to the original value
         //$result = zu_log_link_upd($log_id, $val_wrd_id, $user_id);
-        // todo: call the word group creation 
+        // TODO: call the word group creation 
       }
     }
   } else {
@@ -152,7 +152,7 @@ function zuvt_db_add($val_id, $wrd_id, $user_id) {
 */  
 
 // update a value
-// todo: if noone else has ever changed the value, change to default value, else create a user overwrite
+// TODO: if noone else has ever changed the value, change to default value, else create a user overwrite
 function zuv_db_upd($val_id, $new_value, $user_id) {
   log_debug("zuv_db_upd (v".$val_id.",".$new_value.",u".$user_id.")");
   $result = "";
@@ -212,7 +212,7 @@ function zuv_db_upd($val_id, $new_value, $user_id) {
 function zuvt_db_upd($link_id, $val_id, $wrd_new_id, $user_id) {
   log_debug("zuvt_db_upd (l".$link_id.",v".$val_id.",t".$wrd_new_id.",u".$user_id.")");
 
-  // to do: move some parts to the calling function
+  // TODO move some parts to the calling function
   $wrd_old_id = zu_sql_get1("SELECT phrase_id FROM value_phrase_links WHERE value_phrase_link_id  = ".$link_id.";");
   if (zu_log_link_ref($user_id, "update", "value_phrase_links", 
                       $val_id, 0, $wrd_old_id, 
@@ -392,7 +392,7 @@ function zuvt_db_del($val_id, $wrd_id, $user_id) {
       $sql = "DELETE FROM `value_phrase_links` WHERE value_id = ".$val_id." AND word_id = ".$wrd_id.";";
       $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "zuvt_db_del");
       if ($result) {
-        // todo: call the word group creation 
+        // TODO: call the word group creation 
       }
     }  
   } else {

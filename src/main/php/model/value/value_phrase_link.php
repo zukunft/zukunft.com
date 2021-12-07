@@ -2,57 +2,147 @@
 
 /*
 
-  value_phrase_link.php - only for fast selection of the values assigned to one word or a list of words
-  ---------------------
-  
-  replication of the group saved in the value
-  no sure if this object is still needed
-  
-  a user specific value word link is not allowed
-  If a user changes the word links of a value where he is not owner a new value is created
-  or if a value with the word conbination already exists, the changes are applied to this value
-  
-  This file is part of zukunft.com - calc with words
+    value_phrase_link.php - only for fast selection of the values assigned to one word, a triple or a list of words or triples
+    ---------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    replication of the group saved in the value
+    no sure if this object is still needed
+
+    a user specific value word link is not allowed
+    If a user changes the word links of a value where he is not owner a new value is created
+    or if a value with the word combination already exists, the changes are applied to this value
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
-class val_lnk
+class value_phrase_link
 {
+    // object specific database and JSON object field names
+    const FLD_ID = 'value_phrase_link_id';
+    const FLD_WEIGHT = 'weight';
+    const FLD_TYPE = 'link_type_id';
+    const FLD_FORMULA = 'condition_formula_id';
+
+    // all database field names excluding the id
+    const FLD_NAMES = array(
+        user_sandbox::FLD_USER,
+        value::FLD_ID,
+        phrase::FLD_ID,
+        self::FLD_WEIGHT,
+        self::FLD_TYPE,
+        self::FLD_FORMULA
+    );
 
     // database fields
-    public ?int $id = null;     // the primary database id of the numeric value, which is the same for the standard and the user specific value
-    public ?user $usr = null;   // the person for whom the value word is loaded, so to say the viewer
+    public int $id;        // the primary database id of the numeric value, which is the same for the standard and the user specific value
+    public user $usr;      // the person for whom the value word is loaded, so to say the viewer
+    public value $val;     // the value object to which the words are linked
+    public phrase $phr;    // the word (not the triple) object to be linked to the value
+    // maybe not used at the moment
+    public ?float $weight; //
+    public ?int $type;     //
+    public ?int $frm_id;   //
+
+    // deprecated fields
     public ?int $val_id = null; // the id of the linked value
     public ?int $wrd_id = null; // the id of the linked word
-
-    // field for modifications
-    public ?value $val = null;  // the value object to which the words are linked
     public ?word $wrd = null;   // the word (not the triple) object to be linked to the value
 
-    // maybe not used at the moment
-    //public $type         = null;  //
-    //public $weight       = null;  //
-    //public $frm_id       = null;  //
+
+    /**
+     * always create the linked related objects to be able to use the value and phrase id
+     */
+    function __construct(user $usr)
+    {
+        $this->id = 0;
+        $this->usr = $usr;
+        $this->val = new value();
+        $this->phr = new phrase();
+
+        $this->type = null;
+        $this->weight = null;
+        $this->frm_id = null;
+    }
+
+    function row_mapper(array $db_row)
+    {
+        if ($db_row != null) {
+            if ($db_row[user_sandbox::FLD_USER] != $this->usr->id AND $db_row[user_sandbox::FLD_USER] > 0) {
+                log_err('Value ');
+                $this->id = 0;
+            } else {
+                $this->id = $db_row[self::FLD_ID];
+                $this->val->id = $db_row[value::FLD_ID];
+                $this->phr->id = $db_row[phrase::FLD_ID];
+                $this->weight = $db_row[self::FLD_WEIGHT];
+                $this->type = $db_row[self::FLD_TYPE];
+                $this->frm_id = $db_row[self::FLD_FORMULA];
+            }
+        } else {
+            $this->id = 0;
+        }
+    }
+
+    /**
+     * create an SQL statement to retrieve all phrase links for this value
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $result = '';
+        $sql_where = '';
+        $sql_name = self::class . '_by_';
+        if ($this->id != 0) {
+            $sql_name .= 'id';
+            $sql_where .= value::FLD_ID . ' = $1';
+        } else {
+            log_err("The value id must be set to load the value phrase links", self::class . '->load_sql');
+        }
+
+        // TODO review
+        if ($this->usr != null) {
+            $sql_where .= ' AND ' . user_sandbox::FLD_USER . ' = $2';
+        }
+
+        if ($sql_where != '') {
+            $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_fields(array(self::FLD_NAMES));
+            $db_con->set_where_text($sql_where);
+            $sql = $db_con->select();
+
+            if ($get_name) {
+                $result = $sql_name;
+            } else {
+                $result = $sql;
+            }
+        }
+        return $result;
+    }
 
     // load the word to value link from the database
     function load()
@@ -221,7 +311,7 @@ class val_lnk
             if ($this->id <= 0) {
                 log_debug("val_lnk->save check if word " . $this->wrd->name . " is already linked to " . $this->val->id . ".");
                 // check if a value_phrase_link with the same word is already in the database
-                $db_chk = new val_lnk;
+                $db_chk = new value_phrase_link;
                 $db_chk->val = $this->val;
                 $db_chk->wrd = $this->wrd;
                 $db_chk->usr = $this->usr;
@@ -250,7 +340,7 @@ class val_lnk
                 log_debug('val_lnk->save update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
-                $db_rec = new val_lnk;
+                $db_rec = new value_phrase_link;
                 $db_rec->id = $this->id;
                 $db_rec->usr = $this->usr;
                 $db_rec->load();

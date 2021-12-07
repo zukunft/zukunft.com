@@ -42,7 +42,7 @@ The normal word table contain the value, word, formula, verb or links that is us
 for each normal table there is an overwrite table with the user changes/overwrites
 maybe for each huge table is also a log table with the hist of the user changes
 
-todo:
+TODO:
 
 cache table, field and action id to speed up, because this will never change
 
@@ -186,7 +186,7 @@ class user_log
 
     // display the last change related to one object (word, formula, value, verb, ...)
     // mainly used for testing
-    // to do: if changes on table values are requested include also the table "user_values"
+    // TODO if changes on table values are requested include also the table "user_values"
     function dsp_last($ex_time): string
     {
 

@@ -54,7 +54,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // get the word(s) to display
-    // to do: replace it with phrase 
+    // TODO replace it with phrase
     $wrd = new word_dsp;
     $wrd->usr = $usr;
     if (isset($_GET['words'])) {

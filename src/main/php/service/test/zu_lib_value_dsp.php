@@ -61,7 +61,7 @@
 // lists all words related to a given value except the given word
 // and offer to add a formula to the value as an alternative
 // $wrd_add is onöy optional to display the last added word at the end
-// todo: take user unlink of words into account
+// TODO: take user unlink of words into account
 // save data to the database only if "save" is pressed add and remove the word links "on the fly", which means that after the first call the edit view is more or less the same as the add view
 function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $back_link, $user_id) {
   log_debug("zuv_dsp_edit_or_add (".$val_id.",t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",db".implode(",",$db_ids)."b".$back_link.",u".$user_id.")");
@@ -389,7 +389,7 @@ function zuv_table ($word_id, $related_word_id, $user_id) {
 
   // display the common words 
   log_debug("zuv_table common");
-  // to do: sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
+  // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
   if (count($common_lst) > 0) {
     $commen_text = '(in ';
     foreach (array_keys($common_lst) as $common_word) {

@@ -51,6 +51,9 @@
 
 class phrase
 {
+    // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
+    const FLD_ID = 'phrase_id';
+
     // persevered word names for unit and integration tests
     const TN_ZH_CANTON = "System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)"; // for testing the generic name creation
     const TN_ZH_CITY = "System Test Phrase: Zurich (City)"; // to test the named phrase
@@ -60,9 +63,6 @@ class phrase
         self::TN_ZH_CITY,
         self::TN_ZH_COMPANY
     );
-
-    // the database and JSON object duplicate field names for combined word and triples
-    const FLD_ID = 'phrase_id';
 
     // database duplicate fields
     public ?int $id = null;            // if positive the database id of the word or if negative of a triple
@@ -519,7 +519,7 @@ class phrase
         $sql_type_where = '';
 
         // if no phrase type is define, list all words and triples
-        // todo: but if word has several types don't offer to the user to select the simple word
+        // TODO: but if word has several types don't offer to the user to select the simple word
         //                                                      ^
         $sql_words = 'SELECT DISTINCT w.word_id AS id, 
                              ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',

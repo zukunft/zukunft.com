@@ -26,7 +26,7 @@
   
 
   
-  to do: create a word object with functions .id .name
+  TODO create a word object with functions .id .name
   
   
   
