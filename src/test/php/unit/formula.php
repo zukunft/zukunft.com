@@ -50,35 +50,17 @@ class formula_unit_tests
         $frm->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $frm->load_sql($db_con);
-        $expected_sql = "SELECT 
-                            s.formula_id,  
-                            u.formula_id AS user_formula_id,  
-                            s.user_id,  
-                            CASE WHEN (u.formula_name <> '' IS NOT TRUE) THEN s.formula_name ELSE u.formula_name END AS formula_name,  
-                            CASE WHEN (u.formula_text <> '' IS NOT TRUE) THEN s.formula_text ELSE u.formula_text END AS formula_text,  
-                            CASE WHEN (u.resolved_text <> '' IS NOT TRUE) THEN s.resolved_text ELSE u.resolved_text END AS resolved_text,  
-                            CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description,  
-                            CASE WHEN (u.formula_type_id IS NULL) THEN s.formula_type_id ELSE u.formula_type_id END AS formula_type_id,  
-                            CASE WHEN (u.all_values_needed IS NULL) THEN s.all_values_needed ELSE u.all_values_needed END AS all_values_needed,  
-                            CASE WHEN (u.last_update IS NULL) THEN s.last_update ELSE u.last_update END AS last_update,  
-                            CASE WHEN (u.excluded IS NULL) THEN s.excluded ELSE u.excluded END AS excluded,  
-                            CASE WHEN (c.code_id <> '' IS NOT TRUE) THEN l.code_id ELSE c.code_id END AS code_id 
-                       FROM formulas s LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
-                                                                AND u.user_id = 1 
-                                       LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-                                       LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id 
-                      WHERE s.formula_id = 2;";
-        $t->dsp('formula->load_sql by formula id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_by_id.sql');
+        $t->assert('formula->load_sql by formula id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $frm->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('formula->load_sql by formula id check sql name', $result, $target);
+        $t->assert_sql_name_unique($frm->load_sql($db_con, true));
+
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $created_sql = $frm->load_sql($db_con);
+        $expected_sql = $t->file('db/formula/formula_by_id_mysql.sql');
+        $t->assert('formula->load_sql by formula id', $t->trim($created_sql), $t->trim($expected_sql));
 
 
         $t->subheader('Im- and Export tests');
@@ -88,8 +70,7 @@ class formula_unit_tests
         $frm->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($frm->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
-        $target = true;
-        $t->dsp('formula->import check name', $target, $result);
+        $t->assert('formula->import check name', $result, true);
 
     }
 

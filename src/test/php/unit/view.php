@@ -30,8 +30,6 @@
 
 */
 
-use Swaggest\JsonDiff\JsonDiff;
-
 class view_unit_tests
 {
     function run(testing $t)
@@ -56,29 +54,11 @@ class view_unit_tests
         $dsp->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_sql($db_con);
-        $expected_sql = "SELECT 
-                            s.view_id,  
-                            u.view_id AS user_view_id,  
-                            s.user_id,  
-                            s.code_id, 
-                            CASE WHEN (u.view_name <> '' IS NOT TRUE) THEN s.view_name    ELSE u.view_name    END AS view_name,  
-                            CASE WHEN (u.comment <> ''   IS NOT TRUE) THEN s.comment      ELSE u.comment      END AS comment,  
-                            CASE WHEN (u.view_type_id    IS     NULL) THEN s.view_type_id ELSE u.view_type_id END AS view_type_id,  
-                            CASE WHEN (u.excluded        IS     NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
-                       FROM views s LEFT JOIN user_views u ON s.view_id = u.view_id 
-                                                          AND u.user_id = 1 
-                      WHERE s.view_id = 2;";
-        $t->dsp('view->load_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/view/view_by_id.sql');
+        $t->assert('view->load_sql by view id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $dsp->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('view->load_sql by view id check sql name', $result, $target);
+        $t->assert_sql_name_unique($dsp->load_sql($db_con, true));
 
         // sql to load the view by code id
         $dsp = new view;
@@ -103,14 +83,7 @@ class view_unit_tests
         $t->dsp('view->load_sql by code id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $dsp->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('view->load_sql by code id check sql name', $result, $target);
+        $t->assert_sql_name_unique($dsp->load_sql($db_con, true));
 
         // sql to load the view by name
         $dsp = new view;
@@ -136,14 +109,7 @@ class view_unit_tests
         $t->dsp('view->load_sql by name', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $dsp->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('view->load_sql by name check sql name', $result, $target);
+        $t->assert_sql_name_unique($dsp->load_sql($db_con, true));
 
         // sql to load the view components
         $dsp = new view;
@@ -179,14 +145,7 @@ class view_unit_tests
         $t->dsp('view->load_components_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $dsp->load_components_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('view->load_components_sql check sql name', $result, $target);
+        $t->assert_sql_name_unique($dsp->load_components_sql($db_con, true));
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;

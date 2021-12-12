@@ -70,14 +70,7 @@ class word_link_unit_tests
         $t->dsp('word_link->load_sql by word id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link->load_sql by word id check sql name', $result, $target);
+        $t->assert_sql_name_unique($wrd->load_sql($db_con, true));
 
 
         $t->subheader('Im- and Export tests');

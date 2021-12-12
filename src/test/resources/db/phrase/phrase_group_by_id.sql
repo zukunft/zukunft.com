@@ -1,0 +1,1 @@
+SELECT phrase_group_id FROM phrase_groups WHERE phrase_group_id = 1 GROUP BY phrase_group_id;

@@ -156,7 +156,8 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     }
     if ($db_con->db_type == sql_db::POSTGRES) {
         $sql = file_get_contents(PATH_BASE_CONFIG_FILES . 'db/upgrade/v0.0.3/upgrade_postgres.sql');
-        $result .= $db_con->exe_try('Finally add the new views', $sql);
+        //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
+        //$result .= $db_con->exe_try('Finally add the new views', $sql);
     }
     $result .= $db_con->add_foreign_key('users_fk_2', DB_TYPE_USER, 'user_profile_id', DB_TYPE_USER_PROFILE, 'profile_id');
     // TODO change prime key for postgres user_sources, user_values, user_view, user_view_components and user_view_component_links

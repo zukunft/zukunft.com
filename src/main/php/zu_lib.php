@@ -17,6 +17,9 @@
     TODO fix syntax suggestions in existing code
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO move all sample SQL statements from the unit test to separate files for auto syntax check
+    TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
+    TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays
     TODO if a functions failure needs some user action a string the the suggested action is returned e.g. save() and add()
     TODO if a function failure needs only admin or dev action an exception is raised and the function returns true or false

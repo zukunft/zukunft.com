@@ -54,7 +54,7 @@ class value_list_unit_tests
         $val_lst->phr = $wrd->phrase();
         $val_lst->usr = $usr;
         $created_sql = $val_lst->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_list_by_word_id.sql');
+        $expected_sql = $t->file('db/value/value_list_by_word_id.sql');
         $t->assert('value_list->load_sql by phrase id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load a list of value by the phrase ids
@@ -63,58 +63,18 @@ class value_list_unit_tests
         $val_lst->phr_lst->ids = $val_lst->phr_lst->ids();
         $val_lst->usr = $usr;
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
-        $expected_sql = "SELECT DISTINCT v.value_id,
-                         CASE WHEN (u.word_value IS NULL)  THEN v.word_value  ELSE u.word_value  END AS word_value,
-                         CASE WHEN (u.excluded IS NULL)    THEN v.excluded    ELSE u.excluded    END AS excluded,
-                         CASE WHEN (u.last_update IS NULL) THEN v.last_update ELSE u.last_update END AS last_update,
-                         CASE WHEN (u.source_id IS NULL)   THEN v.source_id   ELSE u.source_id   END AS source_id,
-                       v.user_id,
-                       v.phrase_group_id,
-                       v.time_word_id
-                  FROM values v 
-             LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                    AND u.user_id = 1 
-                 WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
-                                         FROM  value_phrase_links l1,  value_phrase_links l2, 
-                                              values v
-                                               WHERE l1.phrase_id = 1 AND l1.value_id = v.value_id  
-                                                 AND l2.phrase_id = 2 AND l2.value_id = v.value_id  )
-              ORDER BY v.phrase_group_id, v.time_word_id;";
-        $t->dsp('value_list->load_by_phr_lst_sql by group and time', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
+        $t->assert('value_list->load_by_phr_lst_sql by group and time', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $val_lst->load_by_phr_lst_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('value_list->load_by_phr_lst_sql by group and time', $result, $target);
+        $t->assert_sql_name_unique($val_lst->load_by_phr_lst_sql($db_con, true));
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $val_lst->usr = $usr;
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
-        $sql_avoid_code_check_prefix = "SELECT";
-        $expected_sql = $sql_avoid_code_check_prefix . " DISTINCT v.value_id,
-                             IF(u.word_value IS NULL, v.word_value, u.word_value)    AS word_value,
-                             IF(u.excluded IS NULL, v.excluded, u.excluded)    AS excluded,
-                             IF(u.last_update IS NULL, v.last_update, u.last_update)    AS last_update,
-                             IF(u.source_id IS NULL, v.source_id, u.source_id)    AS source_id,
-                       v.user_id,
-                       v.phrase_group_id,
-                       v.time_word_id
-                  FROM `values` v 
-             LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                    AND u.user_id = 1 
-                 WHERE v.value_id IN ( SELECT DISTINCT v.value_id 
-                                         FROM  value_phrase_links l1,  value_phrase_links l2, 
-                                              `values` v
-                                               WHERE l1.phrase_id = 1 AND l1.value_id = v.value_id 
-                                                 AND l2.phrase_id = 2 AND l2.value_id = v.value_id  )
-              ORDER BY v.phrase_group_id, v.time_word_id;";
-        $t->dsp('value_list->load_by_phr_lst_sql by group and time for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/value/value_list_by_triple_id_list_mysql.sql');
+        $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
     }
 

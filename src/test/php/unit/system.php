@@ -61,7 +61,7 @@ class system_unit_tests
         $ip_range->id = 1;
         $ip_range->usr = $usr;
         $created_sql = $ip_range->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_blocked.sql');
+        $expected_sql = $t->file('db/system/ip_blocked.sql');
         $t->assert('ip_range->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
@@ -76,7 +76,7 @@ class system_unit_tests
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $ip_range->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_blocked_mysql.sql');
+        $expected_sql = $t->file('db/system/ip_blocked_mysql.sql');
         $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load by ip range
@@ -86,7 +86,7 @@ class system_unit_tests
         $ip_range->to = '66.249.64.95';
         $ip_range->usr = $usr;
         $created_sql = $ip_range->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_range.sql');
+        $expected_sql = $t->file('db/system/ip_range.sql');
         $t->assert('ip_range->load_sql by ip range', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
@@ -101,7 +101,7 @@ class system_unit_tests
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $ip_range->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/ip_range_mysql.sql');
+        $expected_sql = $t->file('db/system/ip_range_mysql.sql');
         $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         /*
@@ -130,7 +130,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $log->id = 1;
         $created_sql = $log->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log.sql');
+        $expected_sql = $t->file('db/system/error_log.sql');
         $t->assert('system_error_log->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
@@ -145,7 +145,7 @@ class system_unit_tests
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log_mysql.sql');
+        $expected_sql = $t->file('db/system/error_log_mysql.sql');
         $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         $t->subheader('System log list tests');
@@ -156,7 +156,7 @@ class system_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $log_lst->dsp_type = system_error_log_list::DSP_ALL;
         $created_sql = $log_lst->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log_list.sql');
+        $expected_sql = $t->file('db/system/error_log_list.sql');
         $t->assert('system_error_log_list->load_sql by id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
@@ -171,7 +171,7 @@ class system_unit_tests
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $log_lst->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/system/error_log_list_mysql.sql');
+        $expected_sql = $t->file('db/system/error_log_list_mysql.sql');
         $t->assert('system_error_log_list->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         /*

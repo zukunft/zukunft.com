@@ -51,18 +51,11 @@ class word_unit_tests
         $wrd->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $wrd->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/word/word_by_id.sql');
+        $expected_sql = $t->file('db/word/word_by_id.sql');
         $t->dsp('word->load_sql by word id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word->load_sql by word id check sql name', $result, $target);
+        $t->assert_sql_name_unique($wrd->load_sql($db_con, true));
 
         // sql to load the word by name
         $wrd = new word;
@@ -88,18 +81,11 @@ class word_unit_tests
                                                           AND u.user_id = 1 
                       WHERE (u.word_name = '" . word::TN_READ . "'
                          OR (s.word_name = '" . word::TN_READ . "' AND u.word_name IS NULL));";
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/word/word_by_name.sql');
+        $expected_sql = $t->file('db/word/word_by_name.sql');
         $t->dsp('word->load_sql by word name', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word->load_sql by word name check sql name', $result, $target);
+        $t->assert_sql_name_unique($wrd->load_sql($db_con, true));
 
 
         $t->subheader('Im- and Export tests');

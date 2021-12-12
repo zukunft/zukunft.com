@@ -50,95 +50,38 @@ class formula_link_unit_tests
         $lnk->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_sql($db_con);
-        $expected_sql = "SELECT 
-                        s.formula_link_id,  
-                        u.formula_link_id AS user_formula_link_id,  
-                        s.user_id,  
-                        s.formula_id,  
-                        s.phrase_id,  
-                        CASE WHEN (u.link_type_id IS NULL) THEN s.link_type_id ELSE u.link_type_id END AS link_type_id,  
-                        CASE WHEN (u.excluded     IS NULL) THEN s.excluded     ELSE u.excluded     END AS excluded 
-                   FROM formula_links s 
-              LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
-                                            AND u.user_id = 1 
-                  WHERE s.formula_link_id = 2;";
-        $t->dsp('formula_link->load_sql by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
+        $t->assert('formula_link->load_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $lnk->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('formula_link->load_sql by formula link id check sql name', $result, $target);
+        $t->assert_sql_name_unique($lnk->load_sql($db_con, true));
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $lnk->load_sql($db_con);
-        $expected_sql = "SELECT " . " 
-                        s.formula_link_id,  
-                        u.formula_link_id AS user_formula_link_id,  
-                        s.user_id,  
-                        s.formula_id,  
-                        s.phrase_id,  
-                        IF(u.link_type_id IS NULL, s.link_type_id, u.link_type_id) AS link_type_id,          
-                        IF(u.excluded     IS NULL, s.excluded,         u.excluded) AS excluded 
-                   FROM formula_links s 
-              LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
-                                            AND u.user_id = 1 
-                  WHERE s.formula_link_id = 2;";
-        $t->dsp('formula_link->load_sql for MySQL by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_link_by_id_mysql.sql');
+        $t->assert('formula_link->load_sql for MySQL by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load the standard formula link by id
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_standard_sql($db_con);
-        $expected_sql = "SELECT 
-                        formula_link_id,  
-                        formula_id,  
-                        phrase_id,  
-                        user_id,  
-                        link_type_id,  
-                        excluded 
-                   FROM formula_links 
-                  WHERE formula_link_id = 2;";
-        $t->dsp('formula_link->load_standard_sql by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_link_std_by_id.sql');
+        $t->assert('formula_link->load_standard_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $lnk->load_standard_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('formula_link->load_standard_sql by formula link id check sql name', $result, $target);
+        $t->assert_sql_name_unique($lnk->load_standard_sql($db_con, true));
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $lnk->load_standard_sql($db_con);
-        $expected_sql = "SELECT " . " 
-                        formula_link_id,  
-                        formula_id,  
-                        phrase_id,  
-                        user_id,  
-                        link_type_id,  
-                        excluded 
-                   FROM formula_links 
-                  WHERE formula_link_id = 2;";
-        $t->dsp('formula_link->load_standard_sql for MySQL by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_link_std_by_id_mysql.sql');
+        $t->assert('formula_link->load_standard_sql for MySQL by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_user_sql($db_con);
-        $expected_sql = "SELECT formula_link_id,
-                            link_type_id,
-                            excluded
-                       FROM user_formula_links
-                      WHERE formula_link_id = 2 
-                        AND user_id = 1;";
-        $t->dsp('formula_link->load_user_sql by formula link id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_link_by_id_e_user.sql');
+        $t->assert('formula_link->load_user_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to check if no one else has changed the formula link
         $lnk = new formula_link();
@@ -146,22 +89,11 @@ class formula_link_unit_tests
         $lnk->owner_id = 3;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->not_changed_sql();
-        $expected_sql = "SELECT user_id 
-                FROM user_formula_links 
-               WHERE formula_link_id = 2 
-                 AND user_id <> 3 
-                 AND (excluded <> 1 OR excluded is NULL);";
-        $t->dsp('formula_link->not_changed_sql by owner id', $t->trim($expected_sql), $t->trim($created_sql));
+        $expected_sql = $t->file('db/formula/formula_link_by_id_other_user.sql');
+        $t->assert('formula_link->not_changed_sql by owner id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $lnk->not_changed_sql(true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('formula_link->not_changed_sql by owner id check sql name', $result, $target);
+        $t->assert_sql_name_unique($lnk->not_changed_sql(true));
 
         // MySQL check not needed, because it is the same as for PostgreSQL
 

@@ -311,10 +311,9 @@ class value_phrase_link
             if ($this->id <= 0) {
                 log_debug("val_lnk->save check if word " . $this->wrd->name . " is already linked to " . $this->val->id . ".");
                 // check if a value_phrase_link with the same word is already in the database
-                $db_chk = new value_phrase_link;
+                $db_chk = new value_phrase_link($this->usr);
                 $db_chk->val = $this->val;
                 $db_chk->wrd = $this->wrd;
-                $db_chk->usr = $this->usr;
                 $db_chk->load();
                 if ($db_chk->id > 0) {
                     $this->id = $db_chk->id;
@@ -340,9 +339,8 @@ class value_phrase_link
                 log_debug('val_lnk->save update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
-                $db_rec = new value_phrase_link;
+                $db_rec = new value_phrase_link($this->usr);
                 $db_rec->id = $this->id;
-                $db_rec->usr = $this->usr;
                 $db_rec->load();
                 log_debug("val_lnk->save -> database value_phrase_link loaded (" . $db_rec->id . ")");
 

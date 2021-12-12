@@ -905,6 +905,14 @@ class test_base
     }
 
     /**
+     * @return string the content of the test resource file
+     */
+    function file(string $test_resource_path): string
+    {
+        return file_get_contents(PATH_TEST_IMPORT_FILES . $test_resource_path);
+    }
+
+    /**
      * check if the test result is as expected and display the test result to an admin user
      * TODO replace all dsp calls with this but the
      *

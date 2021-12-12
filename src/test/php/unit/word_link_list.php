@@ -102,14 +102,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by IDs', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word and up
         $wrd = new word();
@@ -157,14 +150,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by word and up', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by word and up', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word and down
         $wrd = new word();
@@ -212,14 +198,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by word and down', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by word and down', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and up
         $wrd_lst = new word_list();
@@ -279,14 +258,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by word list and up', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by word list and up', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and down
         $wrd_lst = new word_list();
@@ -346,14 +318,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by word list and down', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by word list and down', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and down filtered by a verb
         $wrd_lst = new word_list();
@@ -417,14 +382,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by word list and down filtered by a verb', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by word list and down filtered by a verb', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and down filtered by a verb list
         $wrd_lst = new word_list();
@@ -488,14 +446,7 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by word list and down filtered by a verb list', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $wrd_lnk_lst->load_sql_name();
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('word_link_list->load_sql_name by word list and down filtered by a verb list', $result, $target);
+        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
     }
 

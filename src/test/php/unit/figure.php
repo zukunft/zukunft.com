@@ -43,8 +43,7 @@ class figure_unit_tests
         $fig = new figure();
         $fig->obj = $frm;
         $result = $fig->is_std();
-        $target = false;
-        $t->dsp('figure->is_std if formula is changed by the user', $target, $result);
+        $t->assert('figure->is_std if formula is changed by the user', $result, false);
 
     }
 

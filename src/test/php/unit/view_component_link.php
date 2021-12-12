@@ -70,14 +70,7 @@ class view_component_link_unit_tests
         $t->dsp('view_component_link->load_sql by view and component', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $lnk->load_sql($db_con, true);
-        if (!in_array($sql_name, $sql_names)) {
-            $result = true;
-            $sql_names[] = $sql_name;
-        }
-        $target = true;
-        $t->dsp('view_component_link->load_sql by view and component', $result, $target);
+        $t->assert_sql_name_unique($lnk->load_sql($db_con, true));
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;

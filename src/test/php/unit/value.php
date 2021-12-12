@@ -55,7 +55,7 @@ class value_unit_tests
         $val->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $val->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_by_phrase_group_id_and_time.sql');
+        $expected_sql = $t->file('db/value/value_by_phrase_group_id_and_time.sql');
         $t->assert('value->load_sql by group and time', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
@@ -66,7 +66,7 @@ class value_unit_tests
         $val->time_id = 4;
         $val->usr = $usr;
         $created_sql = $val->load_sql($db_con);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_by_phrase_group_id_and_time_mysql.sql');
+        $expected_sql = $t->file('db/value/value_by_phrase_group_id_and_time_mysql.sql');
         $t->assert('value->load_sql by group and time for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         $t->subheader('Database query creation tests for internal value phrase links');
@@ -77,7 +77,7 @@ class value_unit_tests
         $wrd->id = 1; // dummy number just to test the SQL creation
         $val_phr_lnk_lst = new value_phrase_link_list($usr);
         $created_sql = $val_phr_lnk_lst->load_sql($db_con, $wrd->phrase(), null);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_phrase_link_list_by_phrase_id.sql');
+        $expected_sql = $t->file('db/value/value_phrase_link_list_by_phrase_id.sql');
         $t->assert('value_phrase_link_list->load_sql by phrase', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
@@ -86,7 +86,7 @@ class value_unit_tests
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $val_phr_lnk_lst->load_sql($db_con, $wrd->phrase(), null);
-        $expected_sql = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/value/value_phrase_link_list_by_phrase_id_mysql.sql');
+        $expected_sql = $t->file('db/value/value_phrase_link_list_by_phrase_id_mysql.sql');
         $t->assert('value_phrase_link_list->load_sql by phrase for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         /*
