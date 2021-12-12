@@ -48,7 +48,7 @@ class value_unit_tests
 
         $db_con = new sql_db();
 
-        // sql to load by word list by ids for PostgreSQL
+        // sql to load a user specific value by word list ids and time id for PostgreSQL
         $val = new value;
         $val->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
         $val->time_id = 4;
@@ -63,11 +63,24 @@ class value_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $val->time_id = 4;
-        $val->usr = $usr;
         $created_sql = $val->load_sql($db_con);
         $expected_sql = $t->file('db/value/value_by_phrase_group_id_and_time_mysql.sql');
         $t->assert('value->load_sql by group and time for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+
+        // ... and the related default value for PostgreSQL
+        $db_con->db_type = sql_db::POSTGRES;
+        $created_sql = $val->load_standard_sql($db_con);
+        $expected_sql = $t->file('db/value/value_std_by_phrase_group_id_and_time.sql');
+        $t->assert('value->load_standard_sql by group and time', $t->trim($created_sql), $t->trim($expected_sql));
+
+        // ... and check if the prepared sql name is unique
+        $t->assert_sql_name_unique($val->load_standard_sql($db_con, true));
+
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $created_sql = $val->load_standard_sql($db_con);
+        $expected_sql = $t->file('db/value/value_std_by_phrase_group_id_and_time_mysql.sql');
+        $t->assert('value->load_standard_sql by group and time for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
         $t->subheader('Database query creation tests for internal value phrase links');
 

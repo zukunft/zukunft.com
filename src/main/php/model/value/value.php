@@ -79,6 +79,11 @@ class value extends user_sandbox_display
         sql_db::FLD_SHARE,
         sql_db::FLD_PROTECT
     );
+    // list of field names that are only on the user sandbox row
+    // e.g. the standard value does not need the share type, because it is by definition public (or not? e.g. share types within a group of users)
+    const FLD_NAMES_USR_ONLY = array(
+        sql_db::FLD_SHARE
+    );
 
 
     // database fields additional to the user sandbox fields for the value object
@@ -192,7 +197,7 @@ class value extends user_sandbox_display
                 $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_' . self::FLD_ID];
+                    $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . self::FLD_ID];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
                 } else {
@@ -213,6 +218,28 @@ class value extends user_sandbox_display
      */
 
     /**
+     * create the SQL to load the single default value
+     * @return string the SQL statement or the name of the SQL statement
+     */
+    function load_standard_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = self::class . '_std_by_id';
+
+        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
+        $db_con->add_par(sql_db::PAR_INT);
+        $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
      * load the standard value use by most users for the given phrase group and time
      */
     function load_standard(): bool
@@ -220,15 +247,20 @@ class value extends user_sandbox_display
         global $db_con;
         $result = false;
 
-        if ($this->id > 0) {
-            $db_con->set_type(DB_TYPE_VALUE);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array('value_id', sql_db::FLD_USER_ID, 'word_value', 'phrase_group_id', 'time_word_id', 'source_id', 'last_update', self::FLD_EXCLUDED, sql_db::FLD_PROTECT));
-            $db_con->where(array('value_id'), array($this->id));
-            $sql = $db_con->select();
+        if ($this->id <= 0) {
+            log_err('The value id must be set to load ' . self::class, self::class . '->load');
+        } else {
+            $sql_name = $this->load_standard_sql($db_con, true);
+            if ($sql_name == '') {
+                log_err('The value standard query name must be set to load ' . self::class, self::class . '->load');
+            } else {
+                $sql = '';
+                if (!$db_con->has_query($sql_name)) {
+                    $sql = $this->load_standard_sql($db_con);
+                }
 
-            if ($db_con->get_where() <> '') {
-                $db_val = $db_con->get1($sql);
+                // if $sql is an empty string, the prepared statement should be used
+                $db_val = $db_con->get1($sql, $sql_name, array($this->id));
                 $this->row_mapper($db_val);
                 $result = $this->load_owner();
             }
@@ -237,20 +269,38 @@ class value extends user_sandbox_display
     }
 
     /**
-     * load the record from the database
-     * in a separate function, because this can be called twice from the load function
+     * create the SQL to load a value by a give selection statement
+     * @return string the SQL statement or the name of the SQL statement
      */
-    function load_rec($sql_where)
+    function load_rec_sql(sql_db $db_con, string $sql_where, string $sql_name_extension, array $par_list, bool $get_name = false): string
     {
-        global $db_con;
+        $sql_name = self::class . '_by_' . $sql_name_extension;
 
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-        $db_con->set_usr_num_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, self::FLD_EXCLUDED));
-        $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
         $db_con->set_where_text($sql_where);
         $sql = $db_con->select();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
+        }
+        return $result;
+    }
+
+    /**
+     * load the record from the database
+     * in a separate function, because this can be called twice from the load function
+     */
+    function load_rec(string $sql_where, string $sql_name_extension, array $par_list)
+    {
+        global $db_con;
+
+        $sql = $this->load_rec_sql($db_con, $sql_where, $sql_name_extension, $par_list);
 
         $db_val = $db_con->get1($sql);
         $this->row_mapper($db_val, true);
@@ -312,7 +362,7 @@ class value extends user_sandbox_display
     }
 
     /**
-     * create the SQL to load a single value
+     * create the SQL to load a single user specific value
      * @return string the SQL statement or the name of the SQL statement
      */
     function load_sql(sql_db $db_con, bool $get_name = false): string
@@ -368,19 +418,31 @@ class value extends user_sandbox_display
             log_debug('value->load');
 
             $sql_where = '';
+            $sql_name = '';
+            $sql_par_list = [];
             if ($this->id > 0) {
                 $sql_where = 's.value_id = ' . $this->id;
+                $sql_name = 'id';
+                $sql_par_list[] = sql_db::PAR_INT;
             } elseif ($this->grp_id > 0) {
                 $sql_where = 's.phrase_group_id = ' . $this->grp_id;
+                $sql_name = 'phrase_group_id';
+                $sql_par_list[] = sql_db::PAR_INT;
                 if ($this->time_id > 0) {
                     $sql_where .= ' AND s.time_word_id = ' . $this->time_id . ' ';
+                    $sql_name .= '_and_time_id';
+                    $sql_par_list[] = sql_db::PAR_INT;
                 }
             } elseif (!empty($this->ids)) {
                 $this->set_grp_and_time_by_ids();
                 if ($this->grp_id > 0) {
                     $sql_where = 's.phrase_group_id = ' . $this->grp_id;
+                    $sql_name = 'phrase_group_id';
+                    $sql_par_list[] = sql_db::PAR_INT;
                     if ($this->time_id > 0) {
                         $sql_where .= ' AND s.time_word_id = ' . $this->time_id . ' ';
+                        $sql_name .= '_and_time_id';
+                        $sql_par_list[] = sql_db::PAR_INT;
                     }
                 }
             } else {
@@ -391,7 +453,7 @@ class value extends user_sandbox_display
             // check if a valid identification is given and load the result
             if ($sql_where <> '') {
                 log_debug('value->load -> by "' . $sql_where . '"');
-                $this->load_rec($sql_where);
+                $this->load_rec($sql_where, $sql_name, $sql_par_list);
 
                 // if not direct value is found try to get a more specific value
                 // similar to formula_value
@@ -409,7 +471,7 @@ class value extends user_sandbox_display
                                 $this->id = $val_id_row['value_id'];
                                 if ($this->id > 0) {
                                     $sql_where = "s.value_id = " . $this->id;
-                                    $this->load_rec($sql_where);
+                                    $this->load_rec($sql_where, $sql_name, $sql_par_list);
                                     log_debug('value->loaded best guess id (' . $this->id . ')');
                                 }
                             }
@@ -1251,7 +1313,8 @@ class value extends user_sandbox_display
 
     */
 
-    function used(): bool {
+    function used(): bool
+    {
         return !$this->not_used();
     }
 

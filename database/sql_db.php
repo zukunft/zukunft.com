@@ -1249,7 +1249,7 @@ class sql_db
     /**
      * get only the first record from the database
      */
-    function get1($sql): ?array
+    function get1($sql, string $sql_name = '', array $sql_array = array()): ?array
     {
         $this->debug_msg($sql, 'get1');
 
@@ -1263,7 +1263,7 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql);
+        return $this->fetch_first($sql, $sql_name, $sql_array);
     }
 
     /**
@@ -1814,6 +1814,13 @@ class sql_db
         }
         $this->set_field_statement($has_id);
         $this->set_from();
+
+        // if nothing is defined assume to load the row by the main if
+        if ($this->where == '') {
+            if (count($this->par_types) > 0) {
+                $this->where = ' WHERE ' . $this->id_field . ' = ' . $this->par_name();
+            }
+        }
         $sql .= $this->fields . $this->from . $this->join . $this->where . $this->order . $this->page . ';';
         return $sql;
     }
