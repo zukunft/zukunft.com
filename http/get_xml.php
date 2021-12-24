@@ -54,8 +54,7 @@ if ($usr->id > 0) {
     $word_names = explode(",", $phrases);
 
     // get all related Phrases
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     foreach ($word_names as $wrd_name) {
         if ($wrd_name <> '') {
             $phr_lst->add_name($wrd_name);

@@ -181,7 +181,7 @@ class view_cmp_link extends user_sandbox_link
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_dsl = $db_con->get1($sql);
+            $db_dsl = $db_con->get1_old($sql);
             $this->row_mapper($db_dsl);
             // TODO check if correct
             if ($this->usr != null) {
@@ -241,7 +241,7 @@ class view_cmp_link extends user_sandbox_link
             $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_dsl = $db_con->get1($sql);
+                $db_dsl = $db_con->get1_old($sql);
                 $this->row_mapper($db_dsl);
                 if ($this->id > 0) {
                     //if (is_null($db_item[self::FLD_EXCLUDED]) OR $db_item[self::FLD_EXCLUDED] == 0) {
@@ -364,7 +364,7 @@ class view_cmp_link extends user_sandbox_link
                WHERE view_component_position_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql);
+            $db_type = $db_con->get1_old($sql);
             $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         log_debug('view_component_link->pos_type_name done');
@@ -535,7 +535,7 @@ class view_cmp_link extends user_sandbox_link
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
@@ -578,7 +578,7 @@ class view_cmp_link extends user_sandbox_link
                  AND user_id = ' . $this->usr->id . ';';
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql);
+        $usr_cfg = $db_con->get1_old($sql);
         if ($usr_cfg != false) {
             if ($usr_cfg[self::FLD_ID] > 0) {
                 if ($usr_cfg[self::FLD_ORDER_NBR] == Null

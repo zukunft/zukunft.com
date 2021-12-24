@@ -46,7 +46,7 @@ class ref_type_list extends user_type_list
         $db_con->set_type($db_type);
         $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, 'base_url'));
         $sql = $db_con->select();
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_obj = new ref_type();

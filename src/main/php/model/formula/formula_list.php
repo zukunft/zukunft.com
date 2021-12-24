@@ -132,7 +132,7 @@ class formula_list
                  WHERE " . $sql_where . ";";
                 // GROUP BY f.formula_id;";
                 $db_con->usr_id = $this->usr->id;
-                $db_lst = $db_con->get($sql);
+                $db_lst = $db_con->get_old($sql);
                 $this->rows_mapper($db_lst);
             }
         }

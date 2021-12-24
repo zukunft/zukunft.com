@@ -40,9 +40,27 @@ class word extends user_sandbox_description
     const FLD_PLURAL = 'plural';
     const FLD_TYPE = 'word_type_id';
     const FLD_VIEW = 'view_id';
+    const FLD_VALUES = 'values';
 
-    // all database field names excluding the id
+    // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
+        self::FLD_VALUES
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        self::FLD_PLURAL,
+        sql_db::FLD_DESCRIPTION
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_TYPE,
+        self::FLD_VIEW,
+        self::FLD_EXCLUDED,
+        sql_db::FLD_SHARE,
+        sql_db::FLD_PROTECT
+    );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_PLURAL,
         sql_db::FLD_DESCRIPTION,
@@ -240,8 +258,8 @@ class word extends user_sandbox_description
         if ($db_row != null) {
             // TODO excluded words should not be loaded, but it should be possible to restore them
             //if ($db_row[self::FLD_EXCLUDED] != 1) {
-            if ($db_row[$this->fld_id()] > 0) {
-                $this->id = $db_row[$this->fld_id()];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
                 $this->name = $db_row[self::FLD_NAME];
                 $this->owner_id = $db_row[self::FLD_USER];
                 $this->plural = $db_row[self::FLD_PLURAL];
@@ -282,7 +300,7 @@ class word extends user_sandbox_description
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_wrd = $db_con->get1($sql);
+            $db_wrd = $db_con->get1_old($sql);
             $this->row_mapper($db_wrd);
             $result = $this->load_owner();
         }
@@ -309,9 +327,9 @@ class word extends user_sandbox_description
 
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('values'));
-        $db_con->set_usr_fields(array(self::FLD_PLURAL, sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_VIEW, self::FLD_EXCLUDED, sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where($this->id, $this->name);
         $sql = $db_con->select();
 
@@ -344,7 +362,7 @@ class word extends user_sandbox_description
 
             if ($db_con->get_where() <> '') {
                 // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-                $db_wrd = $db_con->get1($sql);
+                $db_wrd = $db_con->get1_old($sql);
                 $this->row_mapper($db_wrd, true);
                 if ($this->id <> 0) {
                     if (is_null($db_wrd[self::FLD_EXCLUDED]) or $db_wrd[self::FLD_EXCLUDED] == 0) {
@@ -391,7 +409,7 @@ class word extends user_sandbox_description
      */
     function value_list(int $limit = SQL_ROW_LIMIT): value_list
     {
-        $val_lst = new value_list();
+        $val_lst = new value_list($this->usr);
         $val_lst->load();
         return $val_lst;
     }
@@ -445,7 +463,7 @@ class word extends user_sandbox_description
           ORDER BY users DESC;";
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if (isset($db_row)) {
             $view_id = $db_row[self::FLD_VIEW];
         }
@@ -460,8 +478,7 @@ class word extends user_sandbox_description
     function val_lst(): value_list
     {
         log_debug('word->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
-        $val_lst = new value_list;
-        $val_lst->usr = $this->usr;
+        $val_lst = new value_list($this->usr);
         $val_lst->phr = $this->phrase();
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
@@ -484,7 +501,7 @@ class word extends user_sandbox_description
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link(null, null, $this->id);
         $sql = $db_con->select();
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         $frm = new formula;
         if ($db_row !== false) {
             if ($db_row[formula::FLD_ID] > 0) {
@@ -850,8 +867,7 @@ class word extends user_sandbox_description
      */
     private function lst(): phrase_list
     {
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
         $phr_lst->add($this->phrase());
         return $phr_lst;
     }
@@ -994,7 +1010,7 @@ class word extends user_sandbox_description
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_TRIPLE);
-        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, 'verb_id', $link_id);
+        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
         }
@@ -1019,7 +1035,7 @@ class word extends user_sandbox_description
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_TRIPLE);
-        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, 'verb_id', $link_id);
+        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id, verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
         }
@@ -1186,7 +1202,7 @@ class word extends user_sandbox_description
         }
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         $change_user_id = $db_row[self::FLD_USER];
         if ($change_user_id > 0) {
             $result = false;
@@ -1213,7 +1229,7 @@ class word extends user_sandbox_description
                AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row != null) {
             $user_id = $db_row[self::FLD_USER];
         }
@@ -1254,7 +1270,7 @@ class word extends user_sandbox_description
     private function no_usr_fld_used($db_row): bool
     {
         $result = true;
-        foreach (self::FLD_NAMES as $field_name) {
+        foreach (self::ALL_FLD_NAMES as $field_name) {
             if ($db_row[$field_name] != '') {
                 $result = false;
             }
@@ -1278,13 +1294,13 @@ class word extends user_sandbox_description
         // TODO add user id to where
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_fields(self::ALL_FLD_NAMES);
         $db_con->set_where($this->id);
         $sql = $db_con->select();
-        $usr_wrd_cfg = $db_con->get1($sql);
+        $usr_wrd_cfg = $db_con->get1_old($sql);
         if ($usr_wrd_cfg != null) {
             log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-            if ($usr_wrd_cfg[$this->fld_id()] > 0) {
+            if ($usr_wrd_cfg[self::FLD_ID] > 0) {
                 if ($this->no_usr_fld_used($usr_wrd_cfg)) {
                     // delete the entry in the user sandbox
                     log_debug('word->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -1445,8 +1461,7 @@ class word extends user_sandbox_description
         $grp_lst->load();
 
         // collect all values related to word triple
-        $val_lst = new value_list();
-        $val_lst->usr = $this->usr;
+        $val_lst = new value_list($this->usr);
         $val_lst->phr = $this->phrase();
         $val_lst->load();
 

@@ -106,10 +106,8 @@ if ($session_usr->id > 0) {
             $phr_ids = explode(",", $phr_ids_txt);
             $phr_ids = zu_ids_not_empty($phr_ids);
             if (!empty($phr_ids)) {
-                $phr_lst = new phrase_list;
-                $phr_lst->ids = $phr_ids;
-                $phr_lst->usr = $usr;
-                $phr_lst->load();
+                $phr_lst = new phrase_list($usr);
+                $phr_lst->load_by_ids($phr_ids);
                 $dsp_lst = "for " . $phr_lst->name_linked() . " ";
             }
         }

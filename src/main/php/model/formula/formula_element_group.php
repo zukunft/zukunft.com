@@ -177,7 +177,7 @@ class formula_element_group
         if (isset($this->time_phr)) {
             if ($this->time_phr->id == 0) {
                 // switched off because it is not working for "this"
-                log_err('No time found for "'.$frm_elm->obj->name.'".', 'formula_element_group->figures');
+                log_err('No time found for "' . $frm_elm->obj->name . '".', 'formula_element_group->figures');
             } else {
                 log_debug('formula_element_group->set_formula_time_phrase -> get predefined time result');
                 if (isset($frm_elm->obj)) {
@@ -206,7 +206,6 @@ class formula_element_group
 
         return $val_time_phr;
     }
-
 
 
     /**
@@ -303,12 +302,11 @@ class formula_element_group
             } else {
                 log_debug('formula_element_group->figures -> load word value for ' . $val_phr_lst->dsp_id());
             }
-            $wrd_val = new value;
-            $wrd_val->grp_id = $val_phr_grp->id;
+            $wrd_val = new value($this->usr);
+            $wrd_val->grp = $val_phr_grp;
             if ($val_time_phr != null) {
-                $wrd_val->time_id = $val_time_phr->id;
+                $wrd_val->time_phr = $val_time_phr;
             }
-            $wrd_val->usr = $this->usr;
             // TODO create $wrd_val->load_best();
             $wrd_val->load();
 
@@ -331,7 +329,9 @@ class formula_element_group
                 log_debug('formula_element_group->figures -> load formula value for ' . $val_phr_lst->name());
                 $grp_fv = new formula_value;
                 $grp_fv->phr_grp_id = $val_phr_grp->id;
-                $grp_fv->time_id = $val_time_phr->id;
+                if ($val_time_phr != null) {
+                    $grp_fv->time_phr = $val_time_phr;
+                }
                 $grp_fv->usr = $this->usr;
                 $grp_fv->load();
 

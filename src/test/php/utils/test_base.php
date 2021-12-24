@@ -75,6 +75,7 @@ include_once $path_unit . 'word_link_list.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
 include_once $path_unit . 'value.php';
+include_once $path_unit . 'value_phrase_link.php';
 include_once $path_unit . 'value_list.php';
 include_once $path_unit . 'formula.php';
 include_once $path_unit . 'formula_link.php';
@@ -231,34 +232,35 @@ const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in se
 
 /**
  * highlight the first difference between two string
- * @param string $from the expected text
- * @param string $to the text to compare
+ * @param string|null $from the expected text
+ * @param string|null $to the text to compare
  * @return string the first char that differs or an empty string
  */
-function str_diff(string $from, string $to): string
+function str_diff(?string $from, ?string $to): string
 {
     $result = '';
 
-    if ($from != $to) {
-        $f = str_split($from);
-        $t = str_split($to);
+    if ($from != null and $to != null) {
+        if ($from != $to) {
+            $f = str_split($from);
+            $t = str_split($to);
 
-        // add message if just one string is shorter
-        if (count($f) < count($t)) {
-            $result = 'pos ' . count($t) . ' additional: ' . substr($to, count($f), count($t)- count($f));
-        } elseif (count($t) < count($f)) {
-            $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f)- count($t));
-        }
-
-        $i = 0;
-        while ($i < count($f) and $i < count($t) and $result == '') {
-            if ($f[$i] != $t[$i]) {
-                $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
-                $result .= ', near ' . substr($from, $i - 10, 20);
+            // add message if just one string is shorter
+            if (count($f) < count($t)) {
+                $result = 'pos ' . count($t) . ' additional: ' . substr($to, count($f), count($t) - count($f));
+            } elseif (count($t) < count($f)) {
+                $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f) - count($t));
             }
-            $i++;
-        }
 
+            $i = 0;
+            while ($i < count($f) and $i < count($t) and $result == '') {
+                if ($f[$i] != $t[$i]) {
+                    $result = 'pos ' . $i . ': ' . $f[$i] . ' (' . ord($f[$i]) . ') != ' . $t[$i] . ' (' . ord($t[$i]) . ')';
+                    $result .= ', near ' . substr($from, $i - 10, 20);
+                }
+                $i++;
+            }
+        }
     }
 
     return $result;
@@ -484,8 +486,7 @@ class test_base
     function load_phrase_list($array_of_word_str): phrase_list
     {
         global $usr;
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $usr;
+        $phr_lst = new phrase_list($usr);
         foreach ($array_of_word_str as $word_str) {
             $phr_lst->add_name($word_str);
         }
@@ -502,14 +503,21 @@ class test_base
         return $phr_lst;
     }
 
+    function load_phrase_group($array_of_phrase_str): phrase_group
+    {
+        return $this->load_phrase_list($array_of_phrase_str)->get_grp();
+    }
+
 
     function load_value($array_of_word_str): value
     {
         global $usr;
         $phr_lst = $this->load_phrase_list($array_of_word_str);
-        $val = new value;
-        $val->ids = $phr_lst->ids;
-        $val->usr = $usr;
+        $time_phr = $phr_lst->time_useful();
+        $phr_grp = $phr_lst->get_grp();
+        $val = new value($usr);
+        $val->grp = $phr_grp;
+        $val->time_phr = $time_phr;
         $val->load();
         return $val;
     }
@@ -518,11 +526,13 @@ class test_base
     {
         global $usr;
         $phr_lst = $this->load_phrase_list($array_of_word_str);
+        $time_phr = $phr_lst->time_useful();
+        $phr_grp = $phr_lst->get_grp();
         $val = $this->load_value($array_of_word_str);
         if ($val->id == 0) {
-            $val = new value;
-            $val->ids = $phr_lst->ids;
-            $val->usr = $usr;
+            $val = new value($usr);
+            $val->grp = $phr_grp;
+            $val->time_phr = $time_phr;
             $val->number = $target;
             $val->save();
         }

@@ -46,6 +46,9 @@ class verb
     const DIRECTION_DOWN = 'down';    // or forward  to get a list of 'to' phrases
     const DIRECTION_UP = 'up';        // or backward to get a list of 'from' phrases based on a given to phrase
 
+    // object specific database and JSON object field names
+    const FLD_ID = 'verb_id';
+
     public ?int $id = null;           // the database id of the word link type (verb)
     public ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
     //                                   otherwise if id is 0 (not NULL) the standard word link type, otherwise the user specific verb
@@ -82,8 +85,8 @@ class verb
     {
         $result = false;
         if ($db_row != null) {
-            if ($db_row['verb_id'] > 0) {
-                $this->id = $db_row['verb_id'];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
                 $this->code_id = $db_row[sql_db::FLD_CODE_ID];
                 $this->name = $db_row['verb_name'];
                 $this->plural = $db_row['name_plural'];
@@ -138,7 +141,7 @@ class verb
             } else {
                 $db_con->usr_id = $this->usr->id;
             }
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             $result = $this->row_mapper($db_row);
             log_debug('verb->load (' . $this->dsp_id() . ')');
         }
@@ -342,7 +345,7 @@ class verb
               FROM verbs 
              WHERE verb_id = " . $this->id . ";";
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         $used_by_words = $db_row['words'];
         if ($used_by_words > 0) {
             $result = false;
@@ -767,7 +770,7 @@ class verb
                         //$db_con = new mysql;
                         $db_con->usr_id = $this->usr->id;
                         $db_con->set_type(DB_TYPE_VERB);
-                        $result = $db_con->delete('verb_id', $this->id);
+                        $result = $db_con->delete(self::FLD_ID, $this->id);
                     }
                 } else {
                     // TODO: create a new verb and request to delete the old

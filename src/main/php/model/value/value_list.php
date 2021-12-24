@@ -43,20 +43,34 @@ class value_list
     public int $page_size = SQL_ROW_LIMIT;   // if not defined, use the default page size
     public int $page = 0;                    // start to display with this page
 
+    /**
+     * always set the user because a value list is always user specific
+     * @param user $usr the user who requested to see this value list
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
+
     // TODO review the VAR and LIMIT definitions
     function load_sql(sql_db $db_con, bool $get_name = false): string
     {
         $result = '';
-        $sql_where = '';
         $sql_name = self::class . '_by_';
+        $sql_where = '';
+
+        $db_con->set_type(DB_TYPE_VALUE);
+
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {
                 if ($this->phr->is_word()) {
                     $sql_name .= 'word_id';
-                    $sql_where = 'l2.word_id = $2';
+                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id);
+                    $sql_where = 'l2.word_id = ' . $db_con->par_name();
                 } else {
                     $sql_name .= 'triple_id';
-                    $sql_where = 'l2.triple_id = $2';
+                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1);
+                    $sql_where = 'l2.triple_id = ' . $db_con->par_name();
                 }
             }
         } elseif ($this->phr_lst != '') {
@@ -66,18 +80,19 @@ class value_list
             log_err("Either a phrase or the phrase list and the user must be set to load a value list.", self::class . '->load_sql');
         } else {
 
-            $db_con->set_type(DB_TYPE_VALUE);
-            $db_con->set_name($sql_name, array('int', 'int', 'int'));
+            $db_con->set_name($sql_name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(value::FLD_NAMES);
             $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+            $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
             $db_con->set_join_fields(array(phrase_group::FLD_ID), DB_TYPE_PHRASE_GROUP);
             if ($this->phr->is_word()) {
                 $db_con->set_join_fields(array(word::FLD_ID), DB_TYPE_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
                 $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
-            $db_con->set_where_text($sql_where . ' LIMIT $3');
+            $db_con->set_where_text($sql_where);
+            $db_con->set_page_par();
             $sql = $db_con->select();
 
             if ($get_name) {
@@ -114,12 +129,11 @@ class value_list
                 log_err('The phrase must be set to load ' . self::class, self::class . '->load');
             } else {
                 $db_con->usr_id = $this->usr->id;
-                $db_val_lst = $db_con->get($sql, $sql_name, array($this->usr->id, $this->phr->id, $size));
+                $db_val_lst = $db_con->get_old($sql, $sql_name, array($this->usr->id, $this->phr->id, $size));
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $val = new value;
+                        $val = new value($this->usr);
                         $val->row_mapper($db_val, true);
-                        $val->usr = $this->usr;
                         // TODO either integrate this in the query or load this with one sql for all values
                         if ($db_val['time_word_id'] <> 0) {
                             $time_phr = new phrase();
@@ -140,58 +154,63 @@ class value_list
         return $result;
     }
 
-    // load a list of values that are related to a phrase or a list of phrases
-    function load_by_phr($limit = 0)
+    /**
+     * create an SQL statement to retrieve a list of values linked to a phrase from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase $phr if set to get all values for this phrase
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
     {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_phrase_id';
 
+        $db_con->set_type(DB_TYPE_VALUE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(value::FLD_NAMES);
+        $db_con->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+        $db_con->set_join_fields(
+            array(value::FLD_ID), DB_TYPE_VALUE_PHRASE_LINK,
+            value::FLD_ID, value::FLD_ID,
+            phrase::FLD_ID, $phr->id);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load a list of values that are related to a phrase or a list of phrases
+     *
+     * @param phrase $phr if set to get all values for this phrase
+     * @return bool true if at least one value has been loaded
+     */
+    function load_by_phr(phrase $phr, int $limit = 0): bool
+    {
         global $db_con;
+        $result = false;
 
-        // the id and the user must be set
-        if ($this->phr->id > 0 and !is_null($this->usr->id)) {
-            log_debug('value_list->load for "' . $this->phr->name . '"');
-            if ($limit <= 0) {
-                $limit = SQL_ROW_LIMIT;
-            }
-            $sql = "SELECT v.value_id,
-                     u.value_id AS user_value_id,
-                     v.user_id,
-                    " . $db_con->get_usr_field('word_value', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('source_id', 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                     v.phrase_group_id,
-                     v.time_word_id
-                FROM " . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " v 
-           LEFT JOIN user_values u ON u.value_id = v.value_id 
-                                  AND u.user_id = " . $this->usr->id . " 
-               WHERE v.value_id IN ( SELECT value_id 
-                                       FROM value_phrase_links 
-                                      WHERE phrase_id = " . $this->phr->id . " 
-                                   GROUP BY value_id )
-            ORDER BY v.phrase_group_id, v.time_word_id
-               LIMIT " . $limit . ";";
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_val_lst = $db_con->get($sql);
-            foreach ($db_val_lst as $db_val) {
-                if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                    $val = new value;
-                    $val->row_mapper($db_val, true);
-                    $val->usr = $this->usr;
-                    $val->usr = $this->usr;
-                    if ($db_val['time_word_id'] <> 0) {
-                        $time_phr = new phrase();
-                        $time_phr->id = $db_val['time_word_id'];
-                        $time_phr->usr = $this->usr;
-                        if ($time_phr->load()) {
-                            $val->time_phr = $time_phr;
-                        }
-                    }
-                    $this->lst[] = $val;
-                }
-            }
-            log_debug('value_list->load_by_phr (' . dsp_count($this->lst) . ')');
+        if ($limit <= 0) {
+            $limit = SQL_ROW_LIMIT;
         }
+
+        $qp = $this->load_by_phr_sql($db_con, $phr);
+
+        $db_con->usr_id = $this->usr->id;
+        $db_val_lst = $db_con->get($qp);
+        foreach ($db_val_lst as $db_val) {
+            if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
+                $val = new value($this->usr);
+                $val->row_mapper($db_val, true);
+                $this->lst[] = $val;
+                log_debug('value_list->load_by_phr (' . dsp_count($this->lst) . ')');
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     function load_all_sql(): string
@@ -231,13 +250,12 @@ class value_list
                 log_debug('value_list->load_all for ' . $this->phr_lst->dsp_id());
                 $sql = $this->load_all_sql();
                 $db_con->usr_id = $this->usr->id;
-                $db_val_lst = $db_con->get($sql);
+                $db_val_lst = $db_con->get_old($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                            $val = new value;
+                            $val = new value($this->usr);
                             $val->row_mapper($db_val, true);
-                            $val->usr = $this->usr;
                             $this->lst[] = $val;
                         }
                     }
@@ -321,19 +339,18 @@ class value_list
 
             if ($sql <> '') {
                 $db_con->usr_id = $this->usr->id;
-                $db_val_lst = $db_con->get($sql);
+                $db_val_lst = $db_con->get_old($sql);
                 if ($db_val_lst != false) {
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
-                            $val = new value;
+                            $val = new value($this->usr);
                             $val->id = $db_val['value_id'];
-                            $val->usr = $this->usr;
                             $val->owner_id = $db_val[user_sandbox::FLD_USER];
                             $val->number = $db_val['word_value'];
-                            $val->source_id = $db_val['source_id'];
+                            $val->set_source_id($db_val['source_id']);
                             $val->last_update = get_datetime($db_val['last_update']);
-                            $val->grp_id = $db_val['phrase_group_id'];
-                            $val->time_id = $db_val['time_word_id'];
+                            $val->grp->id = $db_val['phrase_group_id'];
+                            $val->set_time_id($db_val['time_word_id']);
                             $this->lst[] = $val;
                         }
                     }
@@ -366,8 +383,7 @@ class value_list
                 $all_ids = array_unique(array_merge($all_ids, array($val->time_id)));
             }
         }
-        $phr_lst = new phrase_list();
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
         if (count($all_ids) > 0) {
             $phr_lst->ids = $all_ids;
             $phr_lst->load();
@@ -380,8 +396,7 @@ class value_list
     function phr_lst()
     {
         log_debug('value_list->phr_lst by ids (needs review)');
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
 
         if ($this->lst != null) {
             foreach ($this->lst as $val) {
@@ -670,11 +685,10 @@ class value_list
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_usr($this->usr->id);
         $sql = $db_con->select();
-        $db_val_lst = $db_con->get($sql);
+        $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
-            $val = new value;
+            $val = new value($this->usr);
             $val->id = $db_val['value_id'];
-            $val->usr = $this->usr;
             $val->load();
             if (!$val->check()) {
                 $result = false;
@@ -705,7 +719,7 @@ class value_list
                 AND l2.phrase_id IN (" . implode(",", $phr_ids) . ");";
             //$db_con = New mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($sql);
+            $db_lst = $db_con->get_old($sql);
             foreach ($db_lst as $db_val) {
                 $result = $db_val['value_id'];
             }
@@ -741,7 +755,7 @@ class value_list
             GROUP BY l.value_id, l.phrase_id;";
             //$db_con = New mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($sql);
+            $db_lst = $db_con->get_old($sql);
             $value_id = -1; // set to an id that is never used to force the creation of a new entry at start
             foreach ($db_lst as $db_val) {
                 if ($value_id == $db_val['value_id']) {
@@ -802,20 +816,22 @@ class value_list
 
         // get common words
         $common_phr_ids = array();
-        foreach ($this->lst as $val) {
-            if ($val->check() > 0) {
-                log_warning('The group id for value ' . $val->id . ' has not been updated, but should now be correct.', "value_list->html");
-            }
-            $val->load_phrases();
-            log_debug('value_list->html loaded');
-            $val_phr_lst = $val->phr_lst;
-            if ($val_phr_lst->lst != null) {
-                if (count($val_phr_lst->lst) > 0) {
-                    log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
-                    if (empty($common_phr_ids)) {
-                        $common_phr_ids = $val_phr_lst->ids;
-                    } else {
-                        $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids);
+        if ($this->lst != null) {
+            foreach ($this->lst as $val) {
+                if ($val->check() > 0) {
+                    log_warning('The group id for value ' . $val->id . ' has not been updated, but should now be correct.', "value_list->html");
+                }
+                $val->load_phrases();
+                log_debug('value_list->html loaded');
+                $val_phr_lst = $val->phr_lst;
+                if ($val_phr_lst->lst != null) {
+                    if (count($val_phr_lst->lst) > 0) {
+                        log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
+                        if (empty($common_phr_ids)) {
+                            $common_phr_ids = $val_phr_lst->ids;
+                        } else {
+                            $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids);
+                        }
                     }
                 }
             }

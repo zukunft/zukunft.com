@@ -116,7 +116,7 @@ class system_error_log_list
 
         $sql = $this->load_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
 
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {

@@ -56,8 +56,7 @@ if ($usr->id > 0) {
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
     // create the value object to store the parameters so that if the edit form is shown again it is already filled
-    $val = new value;
-    $val->usr = $usr;
+    $val = new value($usr);
     $val->id = $_GET['id'];            // the database id of the value that should be changed
     $val->load();              // to load any missing parameters of the edit view like the group and phrases from the database
 
@@ -70,7 +69,7 @@ if ($usr->id > 0) {
             $val->usr_value = $_GET['value'];
         }  // the value as changed by the user
         if (isset($_GET['source'])) {
-            $val->source_id = $_GET['source'];
+            $val->set_source_id($_GET['source']);
         } // the source id as changed by the user
         //if (isset($_GET['time']))   { $val->time_id   = $_GET['time']; }   // the time word separate to the other phrases
 

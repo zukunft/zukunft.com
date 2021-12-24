@@ -50,7 +50,7 @@ function err_dsp($err_id, $user_id)
              WHERE l.sys_log_id = " . $err_id . ";";
     //$db_con = New mysql;
     $db_con->usr_id = $user_id;
-    $db_err = $db_con->get1($sql);
+    $db_err = $db_con->get1_old($sql);
 
     $result .= dsp_text_h2("Status of error #" . $err_id . ': ' . $db_err['sys_log_status_name']);
     $result .= '"' . $db_err['sys_log_text'] . '" <br>';

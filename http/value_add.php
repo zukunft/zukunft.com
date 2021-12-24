@@ -56,8 +56,7 @@ if ($usr->id > 0) {
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
-    $val = new value;
-    $val->usr = $usr;
+    $val = new value($usr);
 
     // before the value conversion, all phrases should be loaded to use the updated words for the conversion e.g. percent
     // get the linked phrases from url
@@ -106,10 +105,10 @@ if ($usr->id > 0) {
             // update the parameters on the object, so that the object save can update the database
             // save the source id as changed by the user
             if (isset($_GET['source'])) {
-                $val->source_id = $_GET['source'];
-                if ($val->source_id > 0) {
-                    log_debug("value_add -> save source" . $val->source_id . ".");
-                    $usr->set_source($val->source_id);
+                $val->set_source_id($_GET['source']);
+                if ($val->get_source_id() > 0) {
+                    log_debug("value_add -> save source" . $val->get_source_id() . ".");
+                    $usr->set_source($val->get_source_id());
                     $upd_result = $val->save();
                     log_debug("value_add -> save source done.");
                 }

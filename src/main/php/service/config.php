@@ -56,7 +56,7 @@ function cfg_get(string $code_id, sql_db $db_con): ?string
     $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE));
     $db_con->where(array(sql_db::FLD_CODE_ID), array($code_id));
     $sql = $db_con->select(false);
-    $db_row = $db_con->get1($sql);
+    $db_row = $db_con->get1_old($sql);
     if ($db_row == null) {
         // automatically create the config entry
         if (cfg_create($code_id, $db_con)) {
@@ -96,7 +96,7 @@ function cfg_set(string $code_id, string $value, sql_db $db_con, string $descrip
     $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
     $db_con->where(array(sql_db::FLD_CODE_ID), array($code_id));
     $sql = $db_con->select(false);
-    $db_row = $db_con->get1($sql);
+    $db_row = $db_con->get1_old($sql);
     if ($db_row == null) {
         // automatically add the config entry
         $result = cfg_add($code_id, $value, $description, $db_con);

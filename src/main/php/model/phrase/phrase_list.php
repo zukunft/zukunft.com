@@ -41,10 +41,120 @@ class phrase_list
     public ?array $ids = array();  // array of ids corresponding to the lst->id to load a list of phrases from the database
     public ?user $usr = null;      // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
+    /**
+     * always set the user because a phrase list is always user specific
+     * @param user $usr the user who requested to see this phrase list
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
 
     /*
     load function
     */
+
+    /**
+     * create an SQL statement to retrieve a list of words from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $ids word ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_wrd_ids(sql_db $db_con, array $ids): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_ids_word_part';
+
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(word::FLD_NAMES);
+        $db_con->set_usr_fields(word::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
+        $db_con->set_where_id_in(word::FLD_ID, $ids);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of triples from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $ids triple ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_trp_ids(sql_db $db_con, array $ids): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_ids_triple_part';
+
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(word_link::FLD_FROM, word_link::FLD_TO, verb::FLD_ID);
+        $db_con->set_fields(word_link::FLD_NAMES);
+        $db_con->set_usr_fields(word_link::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(word_link::FLD_NAMES_NUM_USR);
+        $db_con->set_where_id_in(word_link::FLD_ID, $ids);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the phrases selected by the id
+     *
+     * @param array $ids of phrase ids that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(array $ids): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // split the ids by type
+        $wrd_ids = [];
+        $lnk_ids = [];
+        foreach ($ids as $id) {
+            if ($id > 0) {
+                $wrd_ids[] = $id;
+            } elseif ($id < 0) {
+                $lnk_ids[] = $id;
+            }
+        }
+
+        $qp = $this->load_by_wrd_ids($db_con, $wrd_ids);
+        $db_con->usr_id = $this->usr->id;
+        $db_wrd_lst = $db_con->get($qp);
+        foreach ($db_wrd_lst as $db_wrd) {
+            if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
+                $wrd = new word();
+                $wrd->usr = $this->usr;
+                $wrd->row_mapper($db_wrd, true);
+                $this->lst[] = $wrd->phrase();
+                $result = true;
+            }
+        }
+
+        $qp = $this->load_by_trp_ids($db_con, $lnk_ids);
+        $db_con->usr_id = $this->usr->id;
+        $db_trp_lst = $db_con->get($qp);
+        foreach ($db_trp_lst as $db_trp) {
+            if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
+                $trp = new word_link();
+                $trp->usr = $this->usr;
+                $trp->row_mapper($db_trp, true);
+                $this->lst[] = $trp->phrase();
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
 
     // load the phrases based on the id list or set the id list based on the objects
     function load(): bool
@@ -1025,7 +1135,7 @@ class phrase_list
 
     // create a useful list of time phrase
     // to review !!!!
-    function time_useful()
+    function time_useful(): ?phrase
     {
         log_debug('phrase_list->time_useful for ' . $this->name());
 
@@ -1091,8 +1201,7 @@ class phrase_list
     {
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
 
-        $result = new phrase_list;
-        $result->usr = $this->usr;
+        $result = new phrase_list($this->usr);
         $measure_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst as $phr) {
@@ -1117,8 +1226,7 @@ class phrase_list
     {
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
 
-        $result = new phrase_list;
-        $result->usr = $this->usr;
+        $result = new phrase_list($this->usr);
         $scale_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
         $scale_hidden_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
@@ -1287,9 +1395,8 @@ class phrase_list
     // get all values related to this phrase list
     function val_lst()
     {
-        $val_lst = new value_list;
+        $val_lst = new value_list($this->usr);
         $val_lst->phr_lst = $this;
-        $val_lst->usr = $this->usr;
         $val_lst->load_all();
 
         return $val_lst;
@@ -1322,9 +1429,8 @@ class phrase_list
     */
     function value()
     {
-        $val = new value;
-        $val->ids = $this->ids;
-        $val->usr = $this->usr;
+        $val = new value($this->usr);
+        $val->grp = $this->get_grp();
         $val->load();
 
         return $val;

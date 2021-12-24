@@ -248,13 +248,12 @@ class view_cmp_dsp extends view_cmp
                 $result .= btn_add("Please link " . $phr->name . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
             }
             $result .= '<br><br>values<br>';
-            $val_lst = new value_list;
+            $val_lst = new value_list($this->usr);;
             if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
                 $val_lst->phr = $phr->phrase();
             } else {
                 $val_lst->phr = $phr;
             }
-            $val_lst->usr = $this->usr;
             log_debug('view_component_dsp->all load values for word "' . $phr->name . '" and user "' . $this->usr->name . '"');
             $val_lst->load();
             $result .= $val_lst->html($back);
@@ -297,7 +296,7 @@ class view_cmp_dsp extends view_cmp
                AND l.view_id = m.view_id;";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $view_lst = $db_con->get($sql);
+        $view_lst = $db_con->get_old($sql);
         foreach ($view_lst as $view) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";

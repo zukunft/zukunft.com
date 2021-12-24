@@ -366,8 +366,7 @@ class phrase
     function val_lst(): value_list
     {
         log_debug('phrase->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
-        $val_lst = new value_list;
-        $val_lst->usr = $this->usr;
+        $val_lst = new value_list($this->usr);
         $val_lst->phr = $this;
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
@@ -460,8 +459,7 @@ class phrase
     // helper function that returns a word list object just with the word object
     function lst(): phrase_list
     {
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
         $phr_lst->add($this);
         log_debug('phrase->lst -> ' . $phr_lst->name());
         return $phr_lst;

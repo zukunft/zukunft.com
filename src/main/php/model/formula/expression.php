@@ -137,9 +137,8 @@ class expression
                 $ref_text = zu_str_right_of($ref_text, ZUP_CHAR_WORD_START . $new_wrd_id . ZUP_CHAR_WORD_END);
                 $new_wrd_id = $this->get_wrd_id($ref_text);
             }
-            $phr_lst = new phrase_list;
+            $phr_lst = new phrase_list($this->usr);
             $phr_lst->ids = $wrd_ids;
-            $phr_lst->usr = $this->usr;
             $phr_lst->load();
             log_debug('expression->fv_phr_lst -> ' . $phr_lst->name());
         }
@@ -174,9 +173,8 @@ class expression
             }
 
             // load the word parameters
-            $phr_lst = new phrase_list;
+            $phr_lst = new phrase_list($this->usr);
             $phr_lst->ids = $wrd_ids;
-            $phr_lst->usr = $this->usr;
             if (!empty($wrd_ids)) {
                 $phr_lst->load();
             }
@@ -395,8 +393,7 @@ class expression
         log_debug('expression->phr_verb_lst');
         $elm_lst = $this->element_lst_all(expression::SELECT_PHRASE, FALSE, $back);
         log_debug('expression->phr_verb_lst -> got ' . dsp_count($elm_lst->lst) . ' formula elements');
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst as $elm) {
             log_debug('expression->phr_verb_lst -> check elements ' . $elm->name());
             if ($elm->type == 'formula') {
@@ -422,10 +419,9 @@ class expression
      */
     function element_special_following(string $back = ''): phrase_list
     {
-        $phr_lst = new phrase_list;
+        $phr_lst = new phrase_list($this->usr);
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);
         if (!empty($elm_lst->lst)) {
-            $phr_lst->usr = $this->usr;
             foreach ($elm_lst->lst as $elm) {
                 if ($elm->frm_type == formula::THIS
                     or $elm->frm_type == formula::NEXT

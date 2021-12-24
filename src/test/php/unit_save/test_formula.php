@@ -67,7 +67,7 @@ function run_formula_test(testing $t)
 
     $exp = $frm->expression();
     $frm_lst = $exp->element_special_following_frm($back);
-    $phr_lst = new phrase_list;
+    $phr_lst = new phrase_list($t->usr1);
     if ($frm_lst->lst != null) {
         if (count($frm_lst->lst) > 0) {
             $elm_frm = $frm_lst->lst[0];
@@ -75,7 +75,6 @@ function run_formula_test(testing $t)
             $target = zu_dsp_bool(true);
             $t->dsp('formula->is_special for "' . $elm_frm->name . '"', $target, $result);
 
-            $phr_lst->usr = $t->usr1;
             $phr_lst->add_name(word::TN_CH);
             $phr_lst->add_name(word::TN_INHABITANT);
             $phr_lst->add_name(word::TN_2019);
@@ -130,8 +129,7 @@ function run_formula_test(testing $t)
     // loading another formula (Price Earning ratio ) to have more test cases
     $frm_pe = $t->load_formula(formula::TN_RATIO);
 
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $t->usr1;
+    $phr_lst = new phrase_list($t->usr1);
     $phr_lst->add_name(word::TN_SHARE);
     $phr_lst->add_name(word::TN_CHF);
     $phr_lst->load();
@@ -149,8 +147,7 @@ function run_formula_test(testing $t)
     $t->dsp('formula->assign_phr_ulst for "' . $frm->name . '"', $target, $result);
 
     // test the calculation of one value
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $t->usr1;
+    $phr_lst = new phrase_list($t->usr1);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_2020);
@@ -200,8 +197,7 @@ function run_formula_test(testing $t)
     $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the scaling back to thousand
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $t->usr1;
+    $phr_lst = new phrase_list($t->usr1);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_2020);

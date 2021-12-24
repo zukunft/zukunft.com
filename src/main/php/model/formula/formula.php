@@ -307,7 +307,7 @@ class formula extends user_sandbox_description
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_rec = $db_con->get1($sql);
+            $db_rec = $db_con->get1_old($sql);
             $this->row_mapper($db_rec);
             $result = $this->load_owner();
         }
@@ -368,7 +368,7 @@ class formula extends user_sandbox_description
             $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_frm = $db_con->get1($sql);
+                $db_frm = $db_con->get1_old($sql);
                 $this->row_mapper($db_frm, true);
                 if ($this->id > 0) {
                     // TODO check the exclusion handling
@@ -530,9 +530,8 @@ class formula extends user_sandbox_description
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids) > 0) {
-                $phr_lst = new phrase_list;
+                $phr_lst = new phrase_list($this->usr);
                 $phr_lst->ids = $phr_ids;
-                $phr_lst->usr = $this->usr;
                 $phr_lst->load();
                 log_debug("formula->assign_phr_glst_direct -> number of words " . dsp_count($phr_lst->lst));
             }
@@ -565,8 +564,7 @@ class formula extends user_sandbox_description
      */
     function assign_phr_glst($sbx): phrase_list
     {
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
 
         if ($this->id > 0 and isset($this->usr)) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
@@ -1308,7 +1306,7 @@ class formula extends user_sandbox_description
         }
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
 
         $elm_db_ids = array();
         if ($db_lst != null) {
@@ -1397,7 +1395,7 @@ class formula extends user_sandbox_description
         $sql = "SELECT user_id FROM user_formulas WHERE formula_id = " . $this->id . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
@@ -1537,7 +1535,7 @@ class formula extends user_sandbox_description
         }
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row != null) {
             if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
@@ -1591,7 +1589,7 @@ class formula extends user_sandbox_description
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[$this->fld_id()];
             }
@@ -1634,7 +1632,7 @@ class formula extends user_sandbox_description
              WHERE formula_id = " . $this->id . " 
                AND user_id = " . $this->usr->id . ";";
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql);
+        $usr_cfg = $db_con->get1_old($sql);
         log_debug('formula->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg[$this->fld_id()] > 0) {
             if ($usr_cfg[self::FLD_NAME] == ''

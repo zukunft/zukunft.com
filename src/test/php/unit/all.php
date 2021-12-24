@@ -292,6 +292,7 @@ function run_unit_tests(testing $t)
     (new view_unit_tests)->run($t);
     (new view_component_link_unit_tests)->run($t);
     (new value_unit_tests)->run($t);
+    (new value_phrase_link_unit_tests)->run($t);
     (new value_list_unit_tests)->run($t);
     (new formula_unit_tests)->run($t);
     (new formula_link_unit_tests)->run($t);

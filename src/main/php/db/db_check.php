@@ -275,7 +275,7 @@ function db_fill_code_links(sql_db $db_con)
                         $id = $data[0];
                         // check if the row id exists
                         $sql = "select * from " . $table_name . " where " . $id_col_name . " = " . $id . ";";
-                        $db_row = $db_con->get1($sql);
+                        $db_row = $db_con->get1_old($sql);
                         // check if the db row needs to be added
                         if ($db_row == null) {
                             // add the row

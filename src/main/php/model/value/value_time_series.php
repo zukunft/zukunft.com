@@ -5,7 +5,7 @@
   value_time_series.php - the header object for time series values
   --------------------
   
-  To save time and space values that have a timestamp are saved in a separate table
+  To save values that have a timestamp more efficient in a separate table
 
   TODO add function that decides if the user values should saved in a complete new time series or if overwrites should be saved
   
@@ -37,180 +37,273 @@
 class value_time_series extends user_sandbox_display
 {
 
+    // object specific database and JSON object field names
+    const FLD_ID = 'value_time_series_id';
+    const FLD_LAST_UPDATE = 'last_update';
+
+    // all database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        phrase_group::FLD_ID
+    );
+
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        source::FLD_ID,
+        self::FLD_EXCLUDED,
+        sql_db::FLD_PROTECT
+    );
+
+    // list of field names that are only on the user sandbox row
+    // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
+    const FLD_NAMES_USR_ONLY = array(
+        sql_db::FLD_SHARE
+    );
+
+    // related objects used also for database mapping
+    public phrase_group $grp;  // phrases (word or triple) group object for this value
+    public ?source $source;    // the source object
+
     // database fields additional to the user sandbox fields for the value object
-    public ?int $source_id = null;        // the id of source where the value is coming from
-    public ?int $grp_id = null;           // id of the group of phrases that are linked to this value for fast selections
-    public ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results
+    public DateTime $last_update; // the time of the last update of fields that may influence the calculated results
 
-    // in memory only fields
-
-    function __construct()
+    /**
+     * set the user sandbox type for a value time series object and set the user, which is needed in all cases
+     * @param user $usr the user who requested to see this value
+     */
+    function __construct(user $usr)
     {
+        parent::__construct();
         $this->obj_type = user_sandbox::TYPE_VALUE;
-        $this->obj_name = 'value_time_series';
+        $this->obj_name = DB_TYPE_VALUE_TIME_SERIES;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
+
+        $this->reset($usr);
+    }
+
+    function reset(?user $usr = null)
+    {
+        parent::reset();
+
+        $this->grp = new phrase_group();
+        $this->source = null;
+
+        if ($usr != null) {
+            $this->usr = $usr;
+        }
+
+        $this->last_update = new DateTime();
     }
 
     /*
-    database load functions that reads the object from the database
-    */
+     * database load functions that reads the object from the database
+     */
 
-    private function row_mapper(array $db_row, bool $map_usr_fields = false)
+    private function row_mapper(array $db_row, bool $map_usr_fields = false): bool
     {
+        $result = false;
         if ($db_row != null) {
-            if ($db_row['value_time_series_id'] > 0) {
-                $this->id = $db_row['value_time_series_id'];
-                $this->source_id = $db_row['source_id'];
-                $this->grp_id = $db_row[phrase_group::FLD_ID];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
                 $this->owner_id = $db_row[self::FLD_USER];
-                $this->last_update = $this->get_datetime($db_row['last_update'], $this->dsp_id());
+                $this->grp->id = $db_row[phrase_group::FLD_ID];
+                if ($db_row[source::FLD_ID] > 0) {
+                    $this->source = new source();
+                    $this->source->id = $db_row[source::FLD_ID];
+                }
+                $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_value_time_series_id'];
-                    $this->share_id = $db_row[sql_db::FLD_SHARE];
-                    $this->protection_id = $db_row[sql_db::FLD_PROTECT];
+                    parent::row_mapper_usr($db_row, self::FLD_ID);
                 } else {
-                    $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
-                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
+                    parent::row_mapper_std();
                 }
+                $result = true;
             } else {
                 $this->id = 0;
             }
         } else {
             $this->id = 0;
         }
+        return $result;
     }
 
-    // load the standard value use by most users
+    /**
+     * create the SQL to load the default time series always by the id
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+        $db_con->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(sql_db::FLD_USER_ID)));
+
+        return parent::load_standard_sql($db_con, self::class);
+    }
+
+    /**
+     * load the standard value use by most users
+     * @return bool true if a time series has been loaded
+     */
     function load_standard(): bool
     {
 
         global $db_con;
         $result = false;
 
-        if ($this->id > 0) {
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
-            $sql = 'SELECT v.value_time_series_id,
-                     v.user_id,
-                     v.source_id,
-                     v.phrase_group_id,
-                     v.last_update,
-                     v.excluded,
-                     v.share_type_id,
-                     v.protection_type_id
-                FROM value_time_series v 
-               WHERE v.value_time_series_id = ' . $this->id . ';';
-            $db_val = $db_con->get1($sql);
-            $this->row_mapper($db_val);
-            $result = $this->load_owner();
+        if ($this->id <= 0) {
+            log_err('The value id must be set to load ' . self::class, self::class . '->load_standard');
+        } else {
+            $qp = $this->load_standard_sql($db_con);
+            $db_val = $db_con->get1($qp);
+            $result = $this->row_mapper($db_val);
         }
         return $result;
     }
 
-    // load the record from the database
-    // in a separate function, because this can be called twice from the load function
-    function load_rec($sql_where)
+    /**
+     * create the SQL to load user specific time series values
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
     {
-        global $db_con;
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        // TODO not value_time_series ???
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_';
+        $sql_where = '';
+
         $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
-        if (SQL_DB_TYPE == sql_db::POSTGRES) {
-            $sql = "SELECT 
-                v.value_time_series_id,
-                u.value_time_series_id AS user_value_time_series_id,
-                v.user_id,
-                v.phrase_group_id,
-                u.share_type_id,
-                CASE WHEN (u.source_id          <> '' IS NOT TRUE) THEN v.source_id          ELSE u.source_id          END AS source_id,
-                CASE WHEN (u.last_update        <> '' IS NOT TRUE) THEN v.last_update        ELSE u.last_update        END AS last_update,
-                CASE WHEN (u.excluded           <> '' IS NOT TRUE) THEN v.excluded           ELSE u.excluded           END AS excluded,
-                CASE WHEN (u.protection_type_id <> '' IS NOT TRUE) THEN v.protection_type_id ELSE u.protection_type_id END AS protection_type_id
-           FROM value_time_series v 
-      LEFT JOIN user_values u ON u.value_time_series_id = v.value_time_series_id 
-                             AND u.user_id = " . $this->usr->id . " 
-          WHERE " . $sql_where . ";";
-        } else {
-            $sql = 'SELECT 
-                v.value_time_series_id,
-                u.value_time_series_id AS user_value_time_series_id,
-                v.user_id,
-                v.phrase_group_id,
-                v.time_word_id,
-                u.share_type_id,
-                IF(u.source_id          IS NULL, v.source_id,          u.source_id)          AS source_id,
-                IF(u.last_update        IS NULL, v.last_update,        u.last_update)        AS last_update,
-                IF(u.excluded           IS NULL, v.excluded,           u.excluded)           AS excluded,
-                IF(u.protection_type_id IS NULL, v.protection_type_id, u.protection_type_id) AS protection_type_id
-           FROM `value_time_series` v 
-      LEFT JOIN user_values u ON u.value_time_series_id = v.value_time_series_id 
-                             AND u.user_id = ' . $this->usr->id . ' 
-          WHERE ' . $sql_where . ';';
-        }
-        log_debug('value_time_series->load_rec -> sql "' . $sql . '"');
-        $db_val = $db_con->get1($sql);
-        $this->row_mapper($db_val, true);
+
         if ($this->id > 0) {
-            log_debug('value_time_series->load_rec -> got ' . $this->number . ' with id ' . $this->id);
+            $qp->name .= 'id';
+            $sql_where = $db_con->where_id(self::FLD_ID, $this->id, true);
+        } elseif ($this->grp->id > 0) {
+            $qp->name .= 'phrase_group_id';
+            $sql_where = $db_con->where_par(array(phrase_group::FLD_ID), array($this->grp->id), true);
+        } else {
+            log_err('At least the id or phrase group must be set to load a time series values', self::class . '->load_sql');
         }
+
+        if ($sql_where != '') {
+            $db_con->set_name($qp->name);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_fields(self::FLD_NAMES);
+            $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+            $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+            $db_con->set_where_text($sql_where);
+            $qp->sql = $db_con->select();
+            $qp->par = $db_con->get_par();
+        }
+
+        return $qp;
     }
 
-    // insert or update a number in the database or save a user specific number
+    /**
+     * load the record from the database
+     * in a separate function, because this can be called twice from the load function
+     *
+     * TODO load the related time series data
+     */
+    function load(): bool
+    {
+        global $db_con;
+        $result = true;
+
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err('The user must be set to load a time series for a user', self::class . '->load');
+        } else {
+            log_debug(self::class . '->load');
+
+            $qp = $this->load_sql($db_con);
+            $db_val = $db_con->get1($qp);
+            $result = $this->row_mapper($db_val, true);
+        }
+
+        return $result;
+    }
+
+    /**
+     * add a new time series
+     */
+    function add(): user_message
+    {
+        log_debug(self::class . '->add');
+
+        global $db_con;
+        $result = new user_message();
+
+        // log the insert attempt first
+        $log = $this->log_add();
+        if ($log->id > 0) {
+            $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+            $this->id = $db_con->insert(
+                array(phrase_group::FLD_ID, self::FLD_USER, self::FLD_LAST_UPDATE),
+                array($this->grp->id, $this->usr->id, "Now()"));
+            if ($this->id > 0) {
+                // update the reference in the log
+                if (!$log->add_ref($this->id)) {
+                    $result->add_message('adding the value time series reference in the system log failed');
+                }
+
+                // update the phrase links for fast searching
+                /*
+                $upd_result = $this->upd_phr_links();
+                if ($upd_result != '') {
+                    $result->add_message('Adding the phrase links of the value time series failed because ' . $upd_result);
+                    $this->id = 0;
+                }
+                */
+
+                // create an empty db_rec element to force saving of all set fields
+                //$db_vts = new value_time_series($this->usr);
+                //$db_vts->id = $this->id;
+                // TODO add the data list saving
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * insert or update a time series in the database or save user specific time series numbers
+     */
     function save(): string
     {
-        log_debug('value->save "' . $this->number . '" for user ' . $this->usr->name);
+        log_debug(self::class . '->save');
 
         global $db_con;
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
         $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);
+        $db_con->set_usr($this->usr->id);
 
-        // rebuild the value ids if needed e.g. if the front end function has just set a list of phrase ids get the responding group
-        $result .= $this->set_grp_and_time_by_ids();
-
-        // check if a new value is supposed to be added
+        // check if a new time series is supposed to be added
         if ($this->id <= 0) {
-            log_debug('value->save check if a value for "' . $this->name() . '" and user ' . $this->usr->name . ' is already in the database');
-            // check if a value for this words is already in the database
-            $db_chk = new value;
-            $db_chk->grp_id = $this->grp_id;
-            $db_chk->time_id = $this->time_id;
-            $db_chk->time_stamp = $this->time_stamp;
-            $db_chk->usr = $this->usr;
+            // check if a time series for the phrase group is already in the database
+            $db_chk = new value_time_series($this->usr);
+            $db_chk->grp = $this->grp;
             $db_chk->load();
             if ($db_chk->id > 0) {
-                log_debug('value->save value for "' . $this->grp->name() . '"@"' . $this->time_phr->name . '" and user ' . $this->usr->name . ' is already in the database and will be updated');
                 $this->id = $db_chk->id;
             }
         }
 
         if ($this->id <= 0) {
-            log_debug('value->save "' . $this->name() . '": ' . $this->number . ' for user ' . $this->usr->name . ' as a new value');
-
-            $result .= $this->add($db_con);
+            $result .= $this->add()->get_last_message();
         } else {
-            log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->usr->id);
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
-            $db_rec = new value;
+            $db_rec = new value_time_series($this->usr);
             $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
             $db_rec->load();
-            log_debug("value->save -> old database value loaded (" . $db_rec->number . ") with group " . $db_rec->grp_id . ".");
-            $std_rec = new value;
+            $std_rec = new value_time_series($this->usr); // user must also be set to allow to take the ownership
             $std_rec->id = $this->id;
-            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
             $std_rec->load_standard();
-            log_debug("value->save -> standard value settings loaded (" . $std_rec->number . ")");
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
             if ($this->owner_id <= 0) {
@@ -218,9 +311,7 @@ class value_time_series extends user_sandbox_display
             }
 
             // check if the id parameters are supposed to be changed
-            if ($result == '') {
-                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
-            }
+            $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
@@ -239,5 +330,3 @@ class value_time_series extends user_sandbox_display
     }
 
 }
-
-?>

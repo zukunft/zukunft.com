@@ -158,8 +158,7 @@ class file_import
                     }
                 } elseif ($key == 'values') {
                     foreach ($json_obj as $value) {
-                        $val = new value;
-                        $val->usr = $this->usr;
+                        $val = new value($this->usr);
                         $import_result = $val->import_obj($value);
                         if ($import_result == '') {
                             $this->values_done++;

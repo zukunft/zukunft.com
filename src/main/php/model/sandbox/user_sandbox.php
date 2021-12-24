@@ -161,6 +161,28 @@ class user_sandbox
 
     */
 
+    /**
+     * map the standard user sandbox database fields to this user specific object
+     *
+     * @param array $db_row with the data loaded from the database
+     * @return void
+     */
+    function row_mapper_usr(array $db_row, $id_fld) {
+        $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . $id_fld];
+        $this->share_id = $db_row[sql_db::FLD_SHARE];
+        $this->protection_id = $db_row[sql_db::FLD_PROTECT];
+    }
+
+    /**
+     * map the standard user sandbox database fields to this default object for all users
+     *
+     * @return void
+     */
+    function row_mapper_std() {
+        $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
+        $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
+    }
+
     function load_owner(): bool
     {
         global $db_con;
@@ -327,7 +349,7 @@ class user_sandbox
              WHERE share_type_id = " . $this->share_id . ";";
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if (isset($db_row)) {
             $result = $db_row['type_name'];
         }
@@ -363,7 +385,7 @@ class user_sandbox
              WHERE protection_type_id = " . $this->protection_id . ";";
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if (isset($db_row)) {
             $result = $db_row['type_name'];
         }
@@ -417,7 +439,7 @@ class user_sandbox
         $db_con->set_type($this->obj_name);
         $db_con->set_usr($this->usr->id);
         $sql = $this->changer_sql($db_con);
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row != false) {
             $user_id = $db_row[self::FLD_USER];
         }
@@ -442,7 +464,7 @@ class user_sandbox
               FROM user_' . $this->obj_name . 's 
               WHERE ' . $this->obj_name . '_id = ' . $this->id . '
                 AND (excluded <> 1 OR excluded is NULL)';
-        $db_usr_lst = $db_con->get($sql);
+        $db_usr_lst = $db_con->get_old($sql);
         foreach ($db_usr_lst as $db_usr) {
             $result->add_by_id($db_usr[user_sandbox::FLD_USER]);
         }
@@ -467,7 +489,7 @@ class user_sandbox
                 AND (excluded <> 1 OR excluded is NULL)';
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row[self::FLD_USER] > 0) {
             $result = $db_row[self::FLD_USER];
         } else {
@@ -753,7 +775,7 @@ class user_sandbox
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[$db_con->get_id_field()];
             }

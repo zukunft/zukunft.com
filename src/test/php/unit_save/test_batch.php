@@ -48,16 +48,14 @@ function run_batch_job_test(testing $t)
 
 
     // prepare test adding a batch job via a list
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_MIO);
     $phr_lst->add_name(word::TN_2020);
     $phr_lst->load();
-    $val = new value;
-    $val->ids = $phr_lst->ids;
-    $val->usr = $usr;
+    $val = new value($usr);
+    $val->grp = $phr_lst->get_grp();
     $val->load();
     $result = $val->number;
     $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
@@ -84,8 +82,7 @@ function run_batch_job_list_test(testing $t)
 
     // prepare test adding a batch job via a list
     $frm = $t->load_formula(formula::TN_INCREASE);
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_MIO);

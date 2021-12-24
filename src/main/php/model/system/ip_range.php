@@ -141,7 +141,7 @@ class ip_range
         $sql = $this->load_sql($db_con);
 
         if ($sql <> '') {
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             $this->row_mapper($db_row);
         }
 

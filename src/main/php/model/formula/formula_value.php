@@ -97,7 +97,7 @@ class formula_value
         log_debug('formula_value->load (' . $sql . ' for user ' . $this->usr->id . ')');
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $val_rows = $db_con->get($sql);
+        $val_rows = $db_con->get_old($sql);
         if ($val_rows != null) {
             if (count($val_rows) > 0) {
                 $val_row = $val_rows[0];
@@ -158,8 +158,7 @@ class formula_value
 
                 // create the source phrase list if just the word is given
                 if ($this->phr_lst == null and $this->wrd != null) {
-                    $new_phr_lst = new phrase_list();
-                    $new_phr_lst->usr = $this->usr;
+                    $new_phr_lst = new phrase_list($this->usr);
                     $new_phr_lst->add($this->wrd->phrase());
                     $this->phr_lst = $new_phr_lst;
                 }
@@ -203,17 +202,15 @@ class formula_value
                         log_debug('formula_value->load -> get group by ' . $phr_lst->name());
                         // ... or based on the phrase ids
                     } elseif (!empty($this->wrd_ids)) {
-                        $phr_lst = new phrase_list;
+                        $phr_lst = new phrase_list($this->usr);
                         $phr_lst->ids = $this->wrd_ids;
-                        $phr_lst->usr = $this->usr;
                         $phr_lst->load();
                         log_debug('formula_value->load -> get group by ids ' . dsp_array($phr_lst->ids));
                         // ... or to get the most interesting result for this word
                     } elseif (isset($this->wrd) and isset($this->frm)) {
                         if ($this->wrd->id > 0 and $this->frm->id > 0 and isset($this->frm->name_wrd)) {
                             // get the best matching word group
-                            $phr_lst = new phrase_list;
-                            $phr_lst->usr = $this->usr;
+                            $phr_lst = new phrase_list($this->usr);
                             $phr_lst->add($this->wrd->phrase());
                             $phr_lst->add($this->frm->name_wrd->phrase());
                             log_debug('formula_value->load -> get group by words ' . $phr_lst->name());
@@ -345,7 +342,7 @@ class formula_value
                             log_debug('formula_value->load sql val "' . $sql_val . '"');
                             //$db_con = new mysql;
                             $db_con->usr_id = $this->usr->id;
-                            $val_ids_rows = $db_con->get($sql_val);
+                            $val_ids_rows = $db_con->get_old($sql_val);
                             if ($val_ids_rows != null) {
                                 if (count($val_ids_rows) > 0) {
                                     $val_id_row = $val_ids_rows[0];
@@ -864,7 +861,7 @@ class formula_value
                AND formula_element_type_id = " . $frm_elm_type . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $frm_rows = $db_con->get($sql);
+        $frm_rows = $db_con->get_old($sql);
         foreach ($frm_rows as $frm_row) {
             $frm_ids[] = $frm_row[formula::FLD_ID];
         }
@@ -878,7 +875,7 @@ class formula_value
                  AND user_id         = " . $this->usr->id . ";";
             //$db_con = New mysql;
             $db_con->usr_id = $this->usr->id;
-            $val_rows = $db_con->get($sql);
+            $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $frm_ids[] = $val_row[formula::FLD_ID];
                 $fv_upd = new formula_value;

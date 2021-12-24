@@ -2,10 +2,10 @@
 
 /*
 
-  test_unit_db.php - for unit testing that only read from the database
-  ----------------
+    test_unit_db.php - for unit testing that only read from the database
+    ----------------
 
-  because these tests are read from the database and it does not read any critical data we don't care if the is called by any user
+    because these tests are read from the database and it does not read any critical data we don't care if the is called by any user
 
 
     This file is part of zukunft.com - calc with words

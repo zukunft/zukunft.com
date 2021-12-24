@@ -38,8 +38,7 @@ function run_formula_trigger_test(testing $t)
     $t->header('Test the formula calculation triggers');
 
     // prepare the calculation trigger test
-    $phr_lst1 = new phrase_list;
-    $phr_lst1->usr = $usr;
+    $phr_lst1 = new phrase_list($usr);
     $phr_lst1->add_name(word::TN_CH);
     $phr_lst1->add_name(word::TN_INHABITANT);
     $phr_lst1->add_name(word::TN_MIO);
@@ -51,47 +50,41 @@ function run_formula_trigger_test(testing $t)
     $frm = $t->load_formula(formula::TN_INCREASE);
 
     // add a number to the test word
-    $val_add1 = new value;
-    $val_add1->ids = $phr_lst1->ids;
+    $val_add1 = new value($usr);
+    $val_add1->grp = $phr_lst1->get_grp();
     $val_add1->number = TV_TEST_SALES_2016;
-    $val_add1->usr = $usr;
     $result = $val_add1->save();
     // add a second number to the test word
-    $val_add2 = new value;
-    $val_add2->ids = $phr_lst2->ids;
+    $val_add2 = new value($usr);
+    $val_add2->grp = $phr_lst2->get_grp();
     $val_add2->number = TV_TEST_SALES_2017;
-    $val_add2->usr = $usr;
     $result = $val_add2->save();
 
     // check if the first number have been saved correctly
-    $added_val = new value;
-    $added_val->ids = $phr_lst1->ids;
-    $added_val->usr = $usr;
+    $added_val = new value($usr);
+    $added_val->grp = $phr_lst1->get_grp();
     $added_val->load();
     $result = $added_val->number;
     $target = TV_TEST_SALES_2016;
     $t->dsp('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // check if the second number have been saved correctly
-    $added_val2 = new value;
-    $added_val2->ids = $phr_lst2->ids;
-    $added_val2->usr = $usr;
+    $added_val2 = new value($usr);
+    $added_val2->grp = $phr_lst2->get_grp();
     $added_val2->load();
     $result = $added_val2->number;
     $target = TV_TEST_SALES_2017;
     $t->dsp('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if requesting the best number for the first number returns a useful value
-    $best_val = new value;
-    $best_val->ids = $phr_lst1->ids;
-    $best_val->usr = $usr;
+    $best_val = new value($usr);
+    $best_val->grp = $phr_lst1->get_grp();
     $best_val->load_best();
     $result = $best_val->number;
     $target = TV_TEST_SALES_2016;
     $t->dsp('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     // check if requesting the best number for the second number returns a useful value
-    $best_val2 = new value;
-    $best_val2->ids = $phr_lst2->ids;
-    $best_val2->usr = $usr;
+    $best_val2 = new value($usr);
+    $best_val2->grp = $phr_lst2->get_grp();
     $best_val2->load_best();
     $result = $best_val2->number;
     $target = TV_TEST_SALES_2017;
@@ -99,9 +92,13 @@ function run_formula_trigger_test(testing $t)
 
     // calculate the increase and check the result
     $fv_lst = $frm->calc($phr_lst2, 0);
-    if (count($fv_lst) > 0) {
-        $fv = $fv_lst[0];
-        $result = trim($fv->display(0));
+    if ($fv_lst != null) {
+        if (count($fv_lst) > 0) {
+            $fv = $fv_lst[0];
+            $result = trim($fv->display(0));
+        } else {
+            $result = '';
+        }
     } else {
         $result = '';
     }

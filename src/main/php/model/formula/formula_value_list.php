@@ -122,7 +122,7 @@ class formula_value_list
                 log_debug('formula_value_list->load sql ' . $sql);
                 //$db_con = New mysql;
                 $db_con->usr_id = $this->usr->id;
-                $val_rows = $db_con->get($sql);
+                $val_rows = $db_con->get_old($sql);
                 if ($val_rows != false) {
                     foreach ($val_rows as $val_row) {
                         $fv = new formula_value;
@@ -322,8 +322,7 @@ class formula_value_list
         $wrd->usr = $this->usr;
         $wrd->load();
 
-        $val_lst = new value_list;
-        $val_lst->usr = $this->usr;
+        $val_lst = new value_list($this->usr);
         $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->usr->id);
 
         foreach (array_keys($value_lst) as $val_id) {
@@ -626,7 +625,7 @@ class formula_value_list
         $sql = "SELECT l.formula_id, f.formula_text FROM value_formula_links l, formulas f WHERE l.value_id = " . $val->id . " AND l.formula_id = f.formula_id;";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_fv) {
                 $frm_id = $db_fv[formula::FLD_ID];

@@ -503,7 +503,7 @@ function zu_sql_get_value($table_name, $field_name, $id_name, $id)
 
     $result = '';
     $query = "SELECT " . $field_name . " FROM " . zu_sql_table_name($table_name) . " WHERE " . $id_name . " = '" . $id . "';";
-    $sql_array = $db_con->get($query);
+    $sql_array = $db_con->get_old($query);
     //$sql_array = zu_sql_get($query);
     if ($sql_array != false) {
         $result = $sql_array[0];

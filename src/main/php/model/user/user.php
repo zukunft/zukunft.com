@@ -195,7 +195,7 @@ class user
                 FROM users u 
               WHERE " . $sql_where . ";";
             $db_con->usr_id = $this->id;
-            $db_usr = $db_con->get1($sql);
+            $db_usr = $db_con->get1_old($sql);
         }
         return $db_usr;
     }
@@ -223,7 +223,7 @@ class user
         $profile_id = cl(db_cl::USER_PROFILE, $profile_code_id);
 
         $sql = "SELECT * FROM users WHERE user_profile_id = " . $profile_id . ";";
-        $db_usr = $db_con->get1($sql);
+        $db_usr = $db_con->get1_old($sql);
         return $this->row_mapper($db_usr);
     }
 
@@ -258,7 +258,7 @@ class user
               FROM user_blocked_ips 
              WHERE is_active = 1;";
         $db_con->usr_id = $this->id;
-        $ip_lst = $db_con->get($sql);
+        $ip_lst = $db_con->get_old($sql);
         foreach ($ip_lst as $ip_range) {
             log_debug('user->ip_check range (' . $ip_range['ip_from'] . ' to ' . $ip_range['ip_to'] . ')');
             if ($this->ip_in_range($ip_addr, $ip_range['ip_from'], $ip_range['ip_to'])) {
@@ -523,7 +523,7 @@ class user
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
         $result = $db_con->set_type(DB_TYPE_USER);
-        //$result = $db_con->update($this->id, 'verb_id', $vrb_id);
+        //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
         return $result;
     }
 

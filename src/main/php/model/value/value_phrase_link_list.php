@@ -48,34 +48,36 @@ class value_phrase_link_list
      * create an SQL statement to retrieve a list of value phrase links from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param phrase|null $phr if set to get all values for this phrase
+     * @param value|null $val if set to get all phrase for this value
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null, bool $get_name = false): string
+    function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null): sql_par
     {
-        $sql = '';
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_';
         $sql_where = '';
-        $sql_name = self::class . '_by_';
+
         $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         if ($val != null) {
             if ($val->id > 0) {
-                $sql_name .= value::FLD_ID;
-                $db_con->add_par(sql_db::PAR_INT);
+                $qp->name .= value::FLD_ID;
+                $db_con->add_par(sql_db::PAR_INT, $val->id);
                 $sql_where = 'l.' . value::FLD_ID . ' = ' . $db_con->par_name();
             }
         } elseif ($phr != null) {
             if ($phr->id <> 0) {
-                $sql_name .= phrase::FLD_ID;
-                $db_con->add_par(sql_db::PAR_INT);
+                $qp->name .= phrase::FLD_ID;
+                $db_con->add_par(sql_db::PAR_INT, $phr->id);
                 $sql_where = 'l.' . phrase::FLD_ID . ' = ' . $db_con->par_name();
             }
         }
         if ($sql_where == '') {
             log_err("The phrase and the user must be set to load a phrase group list.", self::class . '->load_sql');
-            $sql_name = '';
+            $qp->name = '';
         } else {
 
-            $db_con->set_name($sql_name);
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(value_phrase_link::FLD_NAMES);
             if ($val != null) {
@@ -84,14 +86,11 @@ class value_phrase_link_list
                 $db_con->set_join_fields(array(phrase::FLD_ID), DB_TYPE_PHRASE);
             }
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
+            $qp->sql = $db_con->select();
+            $qp->par = $db_con->get_par();
         }
 
-        if ($get_name) {
-            return  $sql_name;
-        } else {
-            return  $sql;
-        }
+        return $qp;
     }
 
     /**
@@ -112,15 +111,11 @@ class value_phrase_link_list
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $this->usr = $usr;
-            $sql_name = $this->load_sql($db_con, $phr, $val, true);
-            if ($sql_name == '') {
+            $qp = $this->load_sql($db_con, $phr, $val);
+            if ($qp->name == '') {
                 log_err('A value or phrase must be set to load ' . self::class, self::class . '->load');
             } else {
 
-                $sql = '';
-                if (!$db_con->has_query($sql_name)) {
-                    $sql = $this->load_sql($db_con, $phr, $val);
-                }
                 if ($val != null) {
                     $id = $val->id;
                 } else {
@@ -128,7 +123,7 @@ class value_phrase_link_list
                 }
 
                 // if $sql is an empty string, the prepared statement should be used
-                $db_rows = $db_con->get($sql, $sql_name, array($id));
+                $db_rows = $db_con->get_old($qp->sql, $qp->name, array($id));
                 if ($db_rows != null) {
                     foreach ($db_rows as $db_row) {
                         $val_phr_lnk = new value_phrase_link($usr);
@@ -176,13 +171,48 @@ class value_phrase_link_list
         $result = new user_message();
 
         if ($this->lst != null) {
-            foreach ($this->lst as $phr_grp) {
-                $result->add($phr_grp->del());
+            foreach ($this->lst as $val_phr_lmk) {
+                $result->add($val_phr_lmk->del());
             }
         }
         return new user_message();
     }
 
+    /*
+     * extract function
+     */
+
+    /**
+     * @return array with all phrase ids
+     */
+    function phr_ids(): array
+    {
+        $result = array();
+        foreach ($this->lst as $lnk) {
+            if ($lnk->phr->id <> 0) {
+                if (in_array($lnk->phr->id, $result)) {
+                    $result[] = $lnk->phr->id;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array with all phrase ids
+     */
+    function val_ids(): array
+    {
+        $result = array();
+        foreach ($this->lst as $lnk) {
+            if ($lnk->val->id <> 0) {
+                if (in_array($lnk->val->id, $result)) {
+                    $result[] = $lnk->val->id;
+                }
+            }
+        }
+        return $result;
+    }
 
     /*
       display functions

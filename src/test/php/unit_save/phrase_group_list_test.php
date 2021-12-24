@@ -40,8 +40,7 @@ function run_phrase_group_list_test(testing $t)
     // define some phrase groups for testing
 
     // Switzerland inhabitants
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_MIO);
@@ -49,8 +48,7 @@ function run_phrase_group_list_test(testing $t)
     $country_grp = $phr_lst->get_grp();
 
     // Canton of Zurich inhabitants
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_ZH);
     $phr_lst->add_name(word::TN_CANTON);
     $phr_lst->add_name(word::TN_INHABITANT);
@@ -59,8 +57,7 @@ function run_phrase_group_list_test(testing $t)
     $canton_grp = $phr_lst->get_grp();
 
     // City of Zurich inhabitants
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_ZH);
     $phr_lst->add_name(word::TN_CITY);
     $phr_lst->add_name(word::TN_INHABITANT);

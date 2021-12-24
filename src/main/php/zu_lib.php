@@ -17,6 +17,7 @@
     TODO fix syntax suggestions in existing code
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
@@ -289,6 +290,7 @@ include_once $path_php . 'model/value/value_list.php';
 include_once $path_php . 'web/value_list_display.php';
 include_once $path_php . 'model/value/value_phrase_link.php';
 include_once $path_php . 'model/value/value_phrase_link_list.php';
+include_once $path_php . 'model/value/value_time_series.php';
 include_once $path_php . 'model/ref/source.php';
 include_once $path_php . 'model/ref/ref.php';
 include_once $path_php . 'model/ref/ref_exp.php';
@@ -1097,7 +1099,7 @@ function zu_str_right($text, $pos)
 }
 
 // TODO rename to the php 8.0 function str_starts_with
-function zu_str_is_left($text, $maker)
+function zu_str_is_left(string $text, string $maker):string
 {
     $result = false;
     if (substr($text, 0, strlen($maker)) == $maker) {

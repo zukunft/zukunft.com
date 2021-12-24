@@ -35,6 +35,28 @@
 class word_link extends user_sandbox_link_description
 {
 
+    // object specific database and JSON object field names
+    const FLD_ID = 'word_link_id';
+    const FLD_FROM = 'from_phrase_id';
+    const FLD_TO = 'to_phrase_id';
+    const FLD_NAME = 'word_link_name';
+    const FLD_TYPE = 'word_type_id';
+
+    // all database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        self::FLD_TYPE
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        sql_db::FLD_DESCRIPTION
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_EXCLUDED,
+        sql_db::FLD_SHARE,
+        sql_db::FLD_PROTECT
+    );
+
     // the word link object
     public ?phrase $from = null; // the first object (either word, triple or group)
     public ?verb $verb = null; // the link type object
@@ -75,21 +97,21 @@ class word_link extends user_sandbox_link_description
         $this->to = new phrase();
     }
 
-    private function row_mapper(array $db_row, bool $map_usr_fields = false)
+    function row_mapper(array $db_row, bool $map_usr_fields = false)
     {
         if ($db_row != null) {
-            if ($db_row['word_link_id'] > 0) {
-                $this->id = $db_row['word_link_id'];
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
                 $this->owner_id = $db_row[self::FLD_USER];
-                $this->from->id = $db_row['from_phrase_id'];
-                $this->to->id = $db_row['to_phrase_id'];
-                $this->verb->id = $db_row['verb_id'];
-                $this->name = $db_row['word_link_name'];
+                $this->from->id = $db_row[self::FLD_FROM];
+                $this->to->id = $db_row[self::FLD_TO];
+                $this->verb->id = $db_row[verb::FLD_ID];
+                $this->name = $db_row[self::FLD_NAME];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                $this->type_id = $db_row['word_type_id'];
+                $this->type_id = $db_row[self::FLD_TYPE];
                 $this->excluded = $db_row[self::FLD_EXCLUDED];
                 if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_word_link_id'];
+                    $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . self::FLD_ID];
                     $this->owner_id = $db_row[self::FLD_USER];
                     $this->share_id = $db_row[sql_db::FLD_SHARE];
                     $this->protection_id = $db_row[sql_db::FLD_PROTECT];
@@ -298,12 +320,12 @@ class word_link extends user_sandbox_link_description
         } else {
             $db_con->set_type(DB_TYPE_TRIPLE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, 'word_type_id', self::FLD_EXCLUDED, user_sandbox::FLD_USER));
+            $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
+            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, self::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
 
-            $db_lnk = $db_con->get1($sql);
+            $db_lnk = $db_con->get1_old($sql);
             $this->row_mapper($db_lnk);
             $result = $this->load_owner();
 
@@ -314,7 +336,7 @@ class word_link extends user_sandbox_link_description
                 log_debug('word_link->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
                     $db_con->set_type(DB_TYPE_TRIPLE);
-                    $result = $db_con->update($this->id, 'word_link_name', $new_name);
+                    $result = $db_con->update($this->id, self::FLD_NAME, $new_name);
                     $this->name = $new_name;
                 }
             }
@@ -377,10 +399,10 @@ class word_link extends user_sandbox_link_description
             // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
             $db_con->set_type(DB_TYPE_TRIPLE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields('from_phrase_id', 'to_phrase_id', 'verb_id');
-            $db_con->set_usr_fields(array(sql_db::FLD_DESCRIPTION));
-            $db_con->set_fields(array('word_type_id'));
-            $db_con->set_usr_num_fields(array(self::FLD_EXCLUDED, sql_db::FLD_SHARE, sql_db::FLD_PROTECT));
+            $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
+            $db_con->set_fields(self::FLD_NAMES);
+            $db_con->set_usr_fields(self::FLD_NAMES_USR);
+            $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
             $db_con->set_where_text($sql_where);
             $sql = $db_con->select();
         }
@@ -413,7 +435,7 @@ class word_link extends user_sandbox_link_description
                 log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
             }
         } else {
-            $db_lnk = $db_con->get1($sql);
+            $db_lnk = $db_con->get1_old($sql);
             $this->row_mapper($db_lnk, true);
             if ($this->id > 0) {
                 // automatically update the generic name
@@ -422,7 +444,7 @@ class word_link extends user_sandbox_link_description
                 log_debug('word_link->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
                     $db_con->set_type(DB_TYPE_TRIPLE);
-                    $db_con->update($this->id, 'word_link_name', $new_name);
+                    $db_con->update($this->id, self::FLD_NAME, $new_name);
                     $this->name = $new_name;
                 }
                 $result = true;
@@ -888,7 +910,7 @@ class word_link extends user_sandbox_link_description
         }
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row[self::FLD_USER] > 0) {
             $result = false;
         }
@@ -943,14 +965,14 @@ class word_link extends user_sandbox_link_description
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
-                $this->usr_cfg_id = $db_row['word_link_id'];
+                $this->usr_cfg_id = $db_row[self::FLD_ID];
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE);
-                $log_id = $db_con->insert(array('word_link_id', user_sandbox::FLD_USER), array($this->id, $this->usr->id));
+                $log_id = $db_con->insert(array(self::FLD_ID, user_sandbox::FLD_USER), array($this->id, $this->usr->id));
                 if ($log_id <= 0) {
                     log_err('Insert of user_word_link failed.');
                     $result = false;
@@ -981,12 +1003,12 @@ class word_link extends user_sandbox_link_description
                WHERE word_link_id = " . $this->id . " 
                  AND user_id = " . $this->usr->id . ";";
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql);
+        $usr_cfg = $db_con->get1_old($sql);
         log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg) {
-            if ($usr_cfg['word_link_id'] > 0) {
+            if ($usr_cfg[self::FLD_ID] > 0) {
                 // TODO use the FLD_NAMES array with all relevant field names
-                if ($usr_cfg['word_link_name'] == Null
+                if ($usr_cfg[self::FLD_NAME] == Null
                     and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
                     and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
@@ -1096,7 +1118,7 @@ class word_link extends user_sandbox_link_description
             $log->new_value = $this->name;
             $log->std_value = $std_rec->name;
             $log->row_id = $this->id;
-            $log->field = 'word_link_name';
+            $log->field = self::FLD_NAME;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -1155,7 +1177,7 @@ class word_link extends user_sandbox_link_description
             $log->new_to = $this->to;
             $log->std_to = $std_rec->to;
             $log->row_id = $this->id;
-            //$log->field    = 'from_phrase_id';
+            //$log->field    = self::FLD_FROM;
             if ($log->add()) {
                 $db_con->set_type(DB_TYPE_TRIPLE);
                 if (!$db_con->update($this->id,
@@ -1389,10 +1411,8 @@ class word_link extends user_sandbox_link_description
         $grp_lst->load();
 
         // collect all values related to this triple
-        $val_lst = new value_list();
-        $val_lst->usr = $this->usr;
-        $val_lst->phr = $this->phrase();
-        $val_lst->load();
+        $val_lst = new value_list($this->usr);
+        $val_lst->load_by_phr($this->phrase());
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {

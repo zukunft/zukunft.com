@@ -37,8 +37,7 @@ function run_export_test(testing $t)
 
     $t->header('Test the xml export class (classes/xml.php)');
 
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_READ);
     $phr_lst->load();
     $xml_export = new xml_io;

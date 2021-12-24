@@ -86,8 +86,7 @@ function run_phrase_group_test(testing $t)
     }
 
     // test getting the phrase group id based on word and word link ids
-    $phr_lst = new phrase_list();
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(phrase::TN_ZH_CITY);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->load();
@@ -106,8 +105,7 @@ function run_phrase_group_test(testing $t)
     $t->dsp('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_ZH);
     $phr_lst->add_name(word::TN_CANTON);
     $phr_lst->add_name(word::TN_INHABITANT);
@@ -122,8 +120,7 @@ function run_phrase_group_test(testing $t)
     $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // second test if the phrase group links are correctly recreated when a group is updated
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_ZH);
     $phr_lst->add_name(word::TN_CANTON);
     $phr_lst->add_name(word::TN_INHABITANT);

@@ -72,9 +72,8 @@ if ($usr->id > 0) {
 
     // undo user changes for values
     if ($undo_val > 0) {
-        $val = new value;
+        $val = new value($usr);
         $val->id = $undo_val;
-        $val->usr = $usr;
         $val->del_usr_cfg();
     }
 

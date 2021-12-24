@@ -68,7 +68,7 @@ class selector
         $db_lst = $this->lst;
         if ($this->sql != '') {
             $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($this->sql);
+            $db_lst = $db_con->get_old($this->sql);
         }
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {

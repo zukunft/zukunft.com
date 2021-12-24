@@ -114,7 +114,7 @@ class user_dsp extends user
              WHERE u.user_id = " . $this->id . "
                AND u.word_id = t.word_id;";
         $db_con->usr_id = $this->id;
-        $wrd_lst = $db_con->get($sql);
+        $wrd_lst = $db_con->get_old($sql);
 
         // prepare to show the word link
         $row_nbr = 0;
@@ -178,7 +178,7 @@ class user_dsp extends user
              WHERE u.user_id = " . $this->id . "
                AND u.word_link_id = l.word_link_id;";
         }
-        $sbx_lst = $db_con->get($sql);
+        $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different word_entry_link than a normal viewer
@@ -191,7 +191,7 @@ class user_dsp extends user
                 $wrd_usr = new word_link;
                 $wrd_usr->id = $sbx_row['id'];
                 $wrd_usr->from->id = $sbx_row['from_phrase_id'];
-                $wrd_usr->verb->id = $sbx_row['verb_id'];
+                $wrd_usr->verb->id = $sbx_row[verb::FLD_ID];
                 $wrd_usr->to->id = $sbx_row['to_phrase_id'];
                 $wrd_usr->name = $sbx_row['usr_name'];
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
@@ -245,7 +245,7 @@ class user_dsp extends user
                            AND u.word_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $wrd_lnk_other_row['user_id'];
@@ -316,7 +316,7 @@ class user_dsp extends user
             WHERE u.user_id = " . $this->id . "
               AND u.formula_id = f.formula_id;";
         $db_con->usr_id = $this->id;
-        $frm_lst = $db_con->get($sql);
+        $frm_lst = $db_con->get_old($sql);
 
         // prepare to show the word link
         $row_nbr = 0;
@@ -383,7 +383,7 @@ class user_dsp extends user
              WHERE u.user_id = " . $this->id . "
                AND u.formula_link_id = l.formula_link_id;";
         }
-        $sbx_lst = $db_con->get($sql);
+        $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different formula_entry_link than a normal viewer
@@ -451,7 +451,7 @@ class user_dsp extends user
                            AND u.formula_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $frm_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $frm_lnk_other_row['user_id'];
@@ -549,7 +549,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.value_id = v.value_id;";
         }
-        $val_lst = $db_con->get($sql);
+        $val_lst = $db_con->get_old($sql);
 
         if (count($val_lst) > 0) {
             // prepare to show where the user uses different value than a normal viewer
@@ -559,14 +559,13 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the value objects with the minimal parameter needed
-                $val_usr = new value;
+                $val_usr = new value($this);
                 $val_usr->id = $val_row['id'];
                 $val_usr->number = $val_row['usr_value'];
-                $val_usr->source_id = $val_row['usr_value'];
+                $val_usr->set_source_id($val_row['usr_source']);
                 $val_usr->excluded = $val_row['usr_excluded'];
-                $val_usr->grp_id = $val_row['phrase_group_id'];
-                $val_usr->time_id = $val_row['time_word_id'];
-                $val_usr->usr = $this;
+                $val_usr->grp->id = $val_row['phrase_group_id'];
+                $val_usr->set_time_id($val_row['time_word_id']);
                 $val_usr->load_phrases();
 
                 // to review: try to avoid using load_test_user
@@ -577,12 +576,12 @@ class user_dsp extends user
                 $val_std = clone $val_usr;
                 $val_std->usr = $usr_std;
                 $val_std->number = $val_row['std_value'];
-                $val_std->source_id = $val_row['std_excluded'];
+                $val_std->set_source_id($val_row['std_source']);
                 $val_std->excluded = $val_row['std_excluded'];
 
                 // check database consistency and correct it if needed
                 if ($val_usr->number == $val_std->number
-                    and $val_usr->source_id == $val_std->source_id
+                    and $val_usr->source == $val_std->source
                     and $val_usr->excluded == $val_std->excluded) {
                     $val_usr->del_usr_cfg();
                 } else {
@@ -622,7 +621,7 @@ class user_dsp extends user
                            AND u.value_id = " . $val_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $val_lst_other = $db_con->get($sql_other);
+                    $val_lst_other = $db_con->get_old($sql_other);
                     foreach ($val_lst_other as $val_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $val_other_row['user_id'];
@@ -632,7 +631,7 @@ class user_dsp extends user
                         $val_other = clone $val_usr;
                         $val_other->usr = $usr_other;
                         $val_other->number = $val_other_row['user_value'];
-                        $val_other->source_id = $val_other_row['source_id'];
+                        $val_other->set_source_id($val_other_row['source_id']);
                         $val_other->excluded = $val_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -719,7 +718,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.view_id = m.view_id;";
         }
-        $sbx_lst = $db_con->get($sql);
+        $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view than a normal viewer
@@ -787,7 +786,7 @@ class user_dsp extends user
                            AND u.view_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $dsp_other_row['user_id'];
@@ -884,7 +883,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.view_component_id = m.view_component_id;";
         }
-        $sbx_lst = $db_con->get($sql);
+        $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view_component than a normal viewer
@@ -952,7 +951,7 @@ class user_dsp extends user
                            AND u.view_component_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $cmp_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $cmp_other_row['user_id'];
@@ -1052,7 +1051,7 @@ class user_dsp extends user
                 AND u.view_component_link_id = l.view_component_link_id;";
             }
         }
-        $sbx_lst = $db_con->get($sql);
+        $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different view_entry_link than a normal viewer
@@ -1121,7 +1120,7 @@ class user_dsp extends user
                            AND u.view_component_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_lnk_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $dsp_lnk_other_row['user_id'];
@@ -1223,7 +1222,7 @@ class user_dsp extends user
               WHERE u.user_id = " . $this->id . "
                 AND u.source_id = m.source_id;";
         }
-        $sbx_lst = $db_con->get($sql);
+        $sbx_lst = $db_con->get_old($sql);
 
         if (count($sbx_lst) > 0) {
             // prepare to show where the user uses different source than a normal viewer
@@ -1297,7 +1296,7 @@ class user_dsp extends user
                            AND u.source_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
                     log_debug('user_dsp->dsp_sandbox_val other sql (' . $sql_other . ')');
-                    $sbx_lst_other = $db_con->get($sql_other);
+                    $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
                         $usr_other->id = $dsp_other_row['user_id'];

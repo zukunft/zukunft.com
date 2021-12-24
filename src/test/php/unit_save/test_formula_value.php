@@ -40,8 +40,7 @@ function run_formula_value_test(testing $t)
     $t->header('Test the formula value class (classes/formula_value.php)');
 
     // test load result without time
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(formula::TN_INCREASE);
     // TODO check why are these two words needed??
@@ -89,8 +88,7 @@ function run_formula_value_test(testing $t)
 
     // test the scaling
     // test the scaling of a value
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_IN_K);
@@ -102,9 +100,8 @@ function run_formula_value_test(testing $t)
     $dest_wrd_lst->usr = $usr;
     $dest_wrd_lst->add_name(word::TN_INHABITANT);
     $dest_wrd_lst->load();
-    $mio_val = new value;
+    $mio_val = new value($usr);
     $mio_val->ids = $wrd_lst->ids;
-    $mio_val->usr = $usr;
     $mio_val->load();
     log_debug('value->scale value loaded');
     $result = $mio_val->scale($dest_wrd_lst);
@@ -122,15 +119,13 @@ function run_formula_value_test(testing $t)
     // test getting the "best guess" value
     // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
     //      based
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(word::TN_CH);
     $phr_lst->add_name(word::TN_INHABITANT);
     $phr_lst->add_name(word::TN_2020);
     $phr_lst->load();
-    $val_best_guess = new value;
-    $val_best_guess->ids = $phr_lst->ids;
-    $val_best_guess->usr = $usr;
+    $val_best_guess = new value($usr);
+    $val_best_guess->grp = $phr_lst->get_grp();
     $val_best_guess->load();
     $result = $val_best_guess->number;
     // TODO check wh this value sometimes switch

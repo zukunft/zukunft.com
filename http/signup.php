@@ -102,7 +102,7 @@ if (isset($_POST['submit'])) {
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where(null,$usr_name);
         $sql = $db_con->select();
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         $usr_id = $db_row[self::FLD_USER];
         if ($usr_id > 0) {
             // auto login

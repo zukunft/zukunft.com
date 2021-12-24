@@ -61,9 +61,8 @@ if ($usr->id > 0) {
     if ($val_id > 0) {
 
         // create the value object to have an object to update the parameters
-        $val = new value;
+        $val = new value($usr);
         $val->id = $val_id;
-        $val->usr = $usr;
         $val->load();
 
         if ($confirm == 1) {

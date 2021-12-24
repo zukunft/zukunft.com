@@ -58,8 +58,7 @@ function run_phrase_list_test(testing $t)
     $wrd_lst->load();
     $id_lst = $wrd_lst->ids;
     $id_lst[] = $triple_sample_id * -1;
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->ids = $id_lst;
     $phr_lst->load();
     $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . phrase::TN_ZH_COMPANY . '"';
@@ -103,8 +102,7 @@ function run_phrase_list_test(testing $t)
     $t->dsp('phrase_list->is for ' . $phr_lst->name() . ' up', $target, $result);
 
     // test the excluding function
-    $phr_lst = new phrase_list;
-    $phr_lst->usr = $usr;
+    $phr_lst = new phrase_list($usr);
     $phr_lst->add_name(TW_ABB);
     $phr_lst->add_name(TW_SALES);
     $phr_lst->add_name(TW_CHF);

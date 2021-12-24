@@ -86,7 +86,7 @@ class ref
             $sql = $db_con->select();
 
             if ($db_con->get_where() <> '') {
-                $db_ref = $db_con->get1($sql);
+                $db_ref = $db_con->get1_old($sql);
                 if ($db_ref != null) {
                     if ($db_ref['ref_id'] > 0) {
                         $this->id = $db_ref['ref_id'];

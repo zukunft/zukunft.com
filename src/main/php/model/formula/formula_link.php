@@ -213,7 +213,7 @@ class formula_link extends user_sandbox_link
             $sql = $this->load_standard_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_frm = $db_con->get1($sql);
+                $db_frm = $db_con->get1_old($sql);
                 $this->row_mapper($db_frm);
                 $result = $this->load_owner();
             }
@@ -266,7 +266,7 @@ class formula_link extends user_sandbox_link
                 $sql = $this->load_sql($db_con);
 
                 if ($db_con->get_where() <> '') {
-                    $db_row = $db_con->get1($sql);
+                    $db_row = $db_con->get1_old($sql);
                     $this->row_mapper($db_row, true);
                     if ($this->id > 0) {
                         log_debug('formula_link->load (' . $this->id . ')');
@@ -443,7 +443,7 @@ class formula_link extends user_sandbox_link
         $result = true;
         $sql = $this->not_changed_sql();
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row != null) {
             if ($db_row[self::FLD_USER] > 0) {
                 $result = false;
@@ -515,7 +515,7 @@ class formula_link extends user_sandbox_link
         if (!$this->has_usr_cfg()) {
             // check again if there ist not yet a record
             $sql = $this->load_user_sql($db_con);
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
             }
@@ -548,7 +548,7 @@ class formula_link extends user_sandbox_link
         // check again if there ist not yet a record
         $sql = $this->load_user_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if ($db_row) {
             if ($db_row[formula_link::FLD_ID] > 0) {
                 // check if all fields are null

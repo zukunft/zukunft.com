@@ -30,51 +30,52 @@
   
 */
 
-class user_sandbox_display extends user_sandbox_value {
+class user_sandbox_display extends user_sandbox_value
+{
 
-  // create the HTML code to display the protection setting (but only if allowed)
-  function dsp_share($form_name, $back) {
-    log_debug($this->obj_name.'->dsp_share '.$this->dsp_id());
-    $result = ''; // reset the html code var
+    // create the HTML code to display the protection setting (but only if allowed)
+    function dsp_share($form_name, $back): string
+    {
+        log_debug($this->obj_name . '->dsp_share ' . $this->dsp_id());
+        $result = ''; // reset the html code var
 
-    // only the owner can change the share type (TODO or an admin)
-    if ($this->usr->id == $this->owner_id) {
-      $sel = New selector;
-      $sel->usr        = $this->usr;
-      $sel->form       = $form_name;
-      $sel->name       = "share";  
-      $sel->sql        = sql_lst ("share_type");
-      $sel->selected   = $this->share_id;
-      $sel->dummy_text = 'please define the share level';
-      $result .= 'share type '.$sel->display ().' ';
+        // only the owner can change the share type (TODO or an admin)
+        if ($this->usr->id == $this->owner_id) {
+            $sel = new selector;
+            $sel->usr = $this->usr;
+            $sel->form = $form_name;
+            $sel->name = "share";
+            $sel->sql = sql_lst("share_type");
+            $sel->selected = $this->share_id;
+            $sel->dummy_text = 'please define the share level';
+            $result .= 'share type ' . $sel->display() . ' ';
+        }
+
+        log_debug($this->obj_name . '->dsp_share ' . $this->dsp_id() . ' -> done');
+        return $result;
     }
-    
-    log_debug($this->obj_name.'->dsp_share '.$this->dsp_id().' -> done');
-    return $result;    
-  }
-  
-  // create the HTML code to display the protection setting (but only if allowed)
-  function dsp_protection($form_name, $back) {
-    log_debug($this->obj_name.'->dsp_protection '.$this->dsp_id());
-    $result = ''; // reset the html code var
 
-    // only the owner can change the protection level (TODO or an admin)
-    if ($this->usr->id == $this->owner_id) {
-      $sel = New selector;
-      $sel->usr        = $this->usr;
-      $sel->form       = $form_name;
-      $sel->name       = "protection";  
-      $sel->sql        = sql_lst ("protection_type");
-      $sel->selected   = $this->protection_id;
-      log_debug($this->obj_name.'->dsp_protection '.$this->dsp_id().' id '.$this->protection_id);
-      $sel->dummy_text = 'please define the protection level';
-      $result .= 'protection '.$sel->display ().' ';
+    // create the HTML code to display the protection setting (but only if allowed)
+    function dsp_protection($form_name, $back): string
+    {
+        log_debug($this->obj_name . '->dsp_protection ' . $this->dsp_id());
+        $result = ''; // reset the html code var
+
+        // only the owner can change the protection level (TODO or an admin)
+        if ($this->usr->id == $this->owner_id) {
+            $sel = new selector;
+            $sel->usr = $this->usr;
+            $sel->form = $form_name;
+            $sel->name = "protection";
+            $sel->sql = sql_lst("protection_type");
+            $sel->selected = $this->protection_id;
+            log_debug($this->obj_name . '->dsp_protection ' . $this->dsp_id() . ' id ' . $this->protection_id);
+            $sel->dummy_text = 'please define the protection level';
+            $result .= 'protection ' . $sel->display() . ' ';
+        }
+
+        log_debug($this->obj_name . '->dsp_protection ' . $this->dsp_id() . ' -> done');
+        return $result;
     }
-    
-    log_debug($this->obj_name.'->dsp_protection '.$this->dsp_id().' -> done');
-    return $result;    
-  }
-  
+
 }
-
-?>

@@ -335,7 +335,7 @@ class user_log_link extends user_log
         $db_type = $db_con->get_type();
         $db_con->set_type(DB_TYPE_CHANGE_LINK);
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         if (!$ex_time) {
             $result .= $db_row['change_time'] . ' ';
         }

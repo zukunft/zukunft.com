@@ -65,9 +65,8 @@ class testing extends test_base
             foreach ($test_val_lst as $val_id) {
                 if ($val_id > 0) {
                     // request to delete the added test value
-                    $val = new value;
+                    $val = new value($this->usr1);
                     $val->id = $val_id;
-                    $val->usr = $this->usr1;
                     $val->load();
                     // check again, because some id may be added twice
                     if ($val->id > 0) {
@@ -408,7 +407,7 @@ class testing extends test_base
 
         $result = true;
         $sql = file_get_contents(PATH_TEST_IMPORT_FILES . $sql_file_name);
-        $db_rows = $db_con->get($sql);
+        $db_rows = $db_con->get_old($sql);
         if ($db_rows != false) {
             log_err('There are ' . count($db_rows) . ' unexpected system test rows detected by ' . $sql_file_name);
             $result = false;

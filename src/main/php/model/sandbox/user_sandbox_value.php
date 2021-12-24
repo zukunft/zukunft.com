@@ -47,6 +47,40 @@ class user_sandbox_value extends user_sandbox
     }
 
     /**
+     * create the SQL to load the single default value always by the id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = $class . '_std_by_id';
+
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load a single user specific value
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_';
+
+        return $qp;
+    }
+
+    /**
      * fill a similar object that is extended with display interface functions
      *
      * @return object the object fill with all user sandbox value

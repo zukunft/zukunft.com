@@ -112,9 +112,9 @@ class word_list
             } else {
                 $db_con->set_type(DB_TYPE_WORD);
                 $db_con->set_usr($this->usr->id);
-                $db_con->set_usr_fields(array('plural', sql_db::FLD_DESCRIPTION));
-                $db_con->set_usr_num_fields(array('word_type_id', user_sandbox::FLD_EXCLUDED));
-                $db_con->set_fields(array('values'));
+                $db_con->set_fields(word::FLD_NAMES);
+                $db_con->set_usr_fields(word::FLD_NAMES_USR);
+                $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
                 $db_con->set_where_text($sql_where);
                 $db_con->set_order_text('s.values DESC, word_name');
                 $sql = $db_con->select();
@@ -144,7 +144,7 @@ class word_list
         } else {
             $db_con->set_usr($this->usr->id);
             $sql = $this->load_sql($db_con);
-            $db_wrd_lst = $db_con->get($sql);
+            $db_wrd_lst = $db_con->get_old($sql);
             $this->lst = array();
             $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
             if ($db_wrd_lst != null) {
@@ -256,7 +256,7 @@ class word_list
             $sql = $this->add_by_type_sql($db_con, $verb_id, $direction);
             log_debug('word_list->add_by_type -> add with "' . $sql);
             $db_con->usr_id = $this->usr->id;
-            $db_wrd_lst = $db_con->get($sql);
+            $db_wrd_lst = $db_con->get_old($sql);
             if ($db_wrd_lst) {
                 log_debug('word_list->add_by_type -> got ' . dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
@@ -270,11 +270,11 @@ class word_list
                             $new_word->plural = $db_wrd['plural'];
                             $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];
                             $new_word->type_id = $db_wrd['word_type_id'];
-                            $new_word->link_type_id = $db_wrd['verb_id'];
+                            $new_word->link_type_id = $db_wrd[verb::FLD_ID];
                             $this->lst[] = $new_word;
                             $this->ids[] = $new_word->id;
                             $added_wrd_lst->add($new_word);
-                            log_debug('word_list->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd['verb_id'] . ')');
+                            log_debug('word_list->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
                         }
                     }
                 }
@@ -830,7 +830,7 @@ class word_list
              ORDER BY name
                 LIMIT 200;";
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
 
         // loop over the words and display it with the link
         foreach ($db_lst as $db_row) {
@@ -858,9 +858,9 @@ class word_list
     // or an array with the value and the user_id if the result is user specific
     function value(): value
     {
-        $val = new value;
-        $val->ids = $this->ids;
-        $val->usr = $this->usr;
+        $val = new value($this->usr);
+        $phr_grp = $this->phrase_lst()->get_grp();
+        $val->grp = $phr_grp;
         $val->load();
 
         log_debug('word_list->value "' . $val->name . '" for "' . $this->usr->name . '" is ' . $val->number);
@@ -872,9 +872,9 @@ class word_list
     {
         log_debug("word_list->value_scaled " . $this->dsp_id() . " for " . $this->usr->name . ".");
 
-        $val = new value;
-        $val->ids = $this->ids;
-        $val->usr = $this->usr;
+        $val = new value($this->usr);
+        $phr_grp = $this->phrase_lst()->get_grp();
+        $val->grp = $phr_grp;
         $val->load();
 
         // get all words related to the value id; in many cases this does not match with the value_words there are use to get the word: it may contains additional word ids
@@ -1391,9 +1391,8 @@ class word_list
         $wrd = null;
 
         // load the list of all value related to the word list
-        $val_lst = new value_list;
+        $val_lst = new value_list($this->usr);
         $val_lst->phr_lst = $this->phrase_lst();
-        $val_lst->usr = $this->usr;
         $val_lst->load_by_phr_lst();
         log_debug('word_list->max_val_time ... ' . dsp_count($val_lst->lst) . ' values for ' . $this->dsp_id());
 
@@ -1561,8 +1560,7 @@ class word_list
     function phrase_lst(): phrase_list
     {
         log_debug('word_list->phrase_lst ' . $this->dsp_id());
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
         foreach ($this->lst as $wrd) {
             if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
                 $phr_lst->lst[] = $wrd->phrase();

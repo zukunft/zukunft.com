@@ -32,11 +32,19 @@
 
 class value_list_unit_tests
 {
+    const TEST_NAME = 'value_list->';
+    const PATH = 'db/value/';
+    const FILE_EXT = '.sql';
+    const FILE_MYSQL = '_mysql';
+
+    public testing $test;
+    public value_list $lst;
+    public sql_db $db_con;
+
     function run(testing $t)
     {
 
         global $usr;
-        global $sql_names;
 
         $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 
@@ -46,22 +54,21 @@ class value_list_unit_tests
 
         $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
+        $this->test = $t;
 
-        // sql to load a list of value by the phrase id
+        // sql to load a list of value by the word id
         $wrd = new word();
         $wrd->id = 1;
-        $val_lst = new value_list;
+        $val_lst = new value_list($usr);
         $val_lst->phr = $wrd->phrase();
-        $val_lst->usr = $usr;
         $created_sql = $val_lst->load_sql($db_con);
         $expected_sql = $t->file('db/value/value_list_by_word_id.sql');
         $t->assert('value_list->load_sql by phrase id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load a list of value by the phrase ids
-        $val_lst = new value_list;
+        $val_lst = new value_list($usr);
         $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
         $val_lst->phr_lst->ids = $val_lst->phr_lst->ids();
-        $val_lst->usr = $usr;
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time', $t->trim($created_sql), $t->trim($expected_sql));
@@ -71,11 +78,45 @@ class value_list_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $val_lst->usr = $usr;
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list_mysql.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
 
+
+        // sql to load a list of value by the phrase id
+        $phr = new phrase();
+        $phr->id = 1;
+        $qp = $this->assert_by_phr_sql($phr, sql_db::POSTGRES);
+        $this->assert_by_phr_sql($phr, sql_db::MYSQL);
+        $this->test->assert_sql_name_unique($qp->name);
+    }
+
+    /**
+     * test the SQL statement creation for a value list
+     *
+     * @param phrase $phr filled with an id to be able to load
+     * @param string $dialect if not PostgreSQL the name of the SQL dialect
+     * @return void
+     */
+    private function assert_by_phr_sql(phrase $phr, string $dialect = ''): sql_par
+    {
+        global $usr;
+
+        $lst = new value_list($usr);
+        $db_con = new sql_db();
+        $db_con->db_type = $dialect;
+        $dialect_ext = '';
+        if ($dialect == sql_db::MYSQL) {
+            $dialect_ext = self::FILE_MYSQL;
+        }
+        $qp = $lst->load_by_phr_sql($db_con, $phr);
+        $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
+        $this->test->assert(
+            self::TEST_NAME . $qp->name . $dialect,
+            $this->test->trim($qp->sql),
+            $this->test->trim($expected_sql)
+        );
+        return $qp;
     }
 
 }

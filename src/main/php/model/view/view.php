@@ -174,7 +174,7 @@ class view extends user_sandbox_named
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_dsp = $db_con->get1($sql);
+            $db_dsp = $db_con->get1_old($sql);
             $this->row_mapper($db_dsp);
             $result = $this->load_owner();
         }
@@ -237,7 +237,7 @@ class view extends user_sandbox_named
             $sql = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_view = $db_con->get1($sql);
+                $db_view = $db_con->get1_old($sql);
                 $this->row_mapper($db_view, true);
                 if ($this->id > 0) {
                     log_debug('view->load ' . $this->dsp_id());
@@ -306,7 +306,7 @@ class view extends user_sandbox_named
 
         $db_con->usr_id = $this->usr->id;
         $sql = $this->load_components_sql($db_con);
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
         $this->cmp_lst = array();
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
@@ -354,7 +354,7 @@ class view extends user_sandbox_named
                WHERE view_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql);
+            $db_type = $db_con->get1_old($sql);
             $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         return $this->type_name;
@@ -512,7 +512,7 @@ class view extends user_sandbox_named
 
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $dsp_lst = $db_con->get($sql);
+        $dsp_lst = $db_con->get_old($sql);
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];
             $view_name = $dsp['name'];
@@ -679,7 +679,7 @@ class view extends user_sandbox_named
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['view_id'];
             }
@@ -721,7 +721,7 @@ class view extends user_sandbox_named
                  AND user_id = " . $this->usr->id . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql);
+        $usr_cfg = $db_con->get1_old($sql);
         log_debug('view->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg['view_id'] > 0) {
             if ($usr_cfg['comment'] == ''

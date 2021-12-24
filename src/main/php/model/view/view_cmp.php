@@ -174,7 +174,7 @@ class view_cmp extends user_sandbox_named
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_cmp = $db_con->get1($sql);
+            $db_cmp = $db_con->get1_old($sql);
             $this->row_mapper($db_cmp);
             $result = $this->load_owner();
             if ($result) {
@@ -208,7 +208,7 @@ class view_cmp extends user_sandbox_named
             $sql = $db_con->select();
 
             if ($db_con->get_where() <> '') {
-                $db_item = $db_con->get1($sql);
+                $db_item = $db_con->get1_old($sql);
                 //zu_debug('view_component->level-22 '.$debug.' done.', 10);
                 log_debug('view_component->load with ' . $sql);
                 //zu_debug('view_component->level-2 '.$debug.' done.', 10);
@@ -333,7 +333,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_where_text('view_component_id = ' . $this->id);
             $sql = $db_con->select();
             $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($sql);
+            $db_lst = $db_con->get_old($sql);
             if ($db_lst != null) {
                 foreach ($db_lst as $db_row) {
                     log_debug('view_component->assign_dsp_ids -> check exclusion ');
@@ -370,7 +370,7 @@ class view_cmp extends user_sandbox_named
                WHERE view_component_type_id = " . $this->type_id . ";";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_type = $db_con->get1($sql);
+            $db_type = $db_con->get1_old($sql);
             $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         log_debug('view_component->type_name done');
@@ -505,7 +505,7 @@ class view_cmp extends user_sandbox_named
                         WHERE l.view_id = " . $view_id . " ) AS m;";
             //$db_con = new mysql;
             $db_con->usr_id = $this->usr->id;
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             $result = $db_row["max_order_nbr"];
 
             // if nothing is found, assume one as the next free number
@@ -605,7 +605,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_fields(array('view_component_id'));
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['view_component_id'];
             }
@@ -652,7 +652,7 @@ class view_cmp extends user_sandbox_named
                  AND user_id = " . $this->usr->id . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1($sql);
+        $usr_cfg = $db_con->get1_old($sql);
         log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg != null) {
             if ($usr_cfg['view_component_id'] > 0) {

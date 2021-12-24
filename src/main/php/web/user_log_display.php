@@ -126,7 +126,7 @@ class user_log_display
                LIMIT " . $this->size . ";";
             log_debug('user_log_display->dsp_hist ' . $sql);
             $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get($sql);
+            $db_lst = $db_con->get_old($sql);
 
             // prepare to show where the user uses different word than a normal viewer
             $row_nbr = 0;
@@ -376,7 +376,7 @@ class user_log_display
 
         $sql = $this->dsp_hist_links_sql($db_con);
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
 
         // display the changes
         $row_nbr = 0;

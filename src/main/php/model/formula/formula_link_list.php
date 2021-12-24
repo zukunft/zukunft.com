@@ -91,7 +91,7 @@ class formula_link_list
                   WHERE " . $sql_where . ";";
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
-                $db_lst = $db_con->get($sql);
+                $db_lst = $db_con->get_old($sql);
                 $this->rows_mapper($db_lst);
                 $result = true;
                 log_debug('formula_link_list->load -> ' . dsp_count($this->lst) . ' links loaded');

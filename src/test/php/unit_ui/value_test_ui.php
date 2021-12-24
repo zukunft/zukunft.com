@@ -38,8 +38,7 @@ function run_value_ui_test(testing $t)
     $t->header('Test the value frontend scripts (e.g. /value_add.php)');
 
     // prepare the frontend testing
-    $phr_lst_added = new phrase_list;
-    $phr_lst_added->usr = $usr;
+    $phr_lst_added = new phrase_list($usr);
     $phr_lst_added->add_name(word::TN_INHABITANT);
     $phr_lst_added->add_name(word::TN_MIO);
     $phr_lst_added->add_name(word::TN_2020);
@@ -48,13 +47,11 @@ function run_value_ui_test(testing $t)
     $phr_lst_ch->load();
     $phr_lst_added->add_name(word::TN_RENAMED);
     $phr_lst_added->load();
-    $val_added = new value;
+    $val_added = new value($usr);
     $val_added->ids = $phr_lst_added->ids;
-    $val_added->usr = $usr;
     $val_added->load();
-    $val_ch = new value;
+    $val_ch = new value($usr);
     $val_ch->ids = $phr_lst_ch->ids;
-    $val_ch->usr = $usr;
     $val_ch->load();
 
     // call the add value page and check if at least some basic keywords are returned
@@ -89,8 +86,7 @@ function run_value_ui_test(testing $t)
     $t->header('Test the value list class (classes/value_list.php)');
 
     // check the database consistency for all values
-    $val_lst = new value_list;
-    $val_lst->usr = $usr;
+    $val_lst = new value_list($usr);
     $result = $val_lst->check_all();
     $target = '';
     $t->dsp('value_list->check_all', $target, $result, TIMEOUT_LIMIT_DB);

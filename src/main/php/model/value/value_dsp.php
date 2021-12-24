@@ -34,13 +34,14 @@ class value_dsp extends value
 {
 
 
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
     }
 
-    function reset()
+    function reset(?user $usr = null)
     {
+        parent::reset($usr);
     }
 
     /*
@@ -221,6 +222,7 @@ class value_dsp extends value
 
     // display some value samples related to the wrd_id
     // with a preference of the start_word_ids
+    // TODO use value_phrase_link_list as a base
     function dsp_samples($wrd_id, $start_wrd_ids, $size, $back)
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
@@ -247,7 +249,7 @@ class value_dsp extends value
              LIMIT " . $size . ";";
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get($sql);
+        $db_lst = $db_con->get_old($sql);
 
         // prepare to show where the user uses different value than a normal viewer
         $row_nbr = 0;
@@ -509,7 +511,7 @@ class value_dsp extends value
 
             // show the time word
             log_debug('value->dsp_edit -> show time');
-            if ($this->time_id > 0) {
+            if ($this->get_time_id() <> 0) {
                 if (isset($this->time_phr)) {
                     $result .= '  <tr>';
                     if ($this->time_phr->id == 0) {

@@ -220,13 +220,13 @@ function zut_html_list_related($id, $direction, $user_id): string
     } else {
         $type_query = "SELECT verb_id FROM word_links WHERE from_phrase_id = " . $id . " GROUP BY verb_id;";
     }
-    $db_lst = $db_con->get($type_query);
+    $db_lst = $db_con->get_old($type_query);
     //$sql_type_result = zu_sql_get_all($type_query);
 
     // loop over the link types
     if ($db_lst != null) {
         foreach ($db_lst as $link_type_id) {
-            $verb_id = $link_type_id['verb_id'];
+            $verb_id = $link_type_id[verb::FLD_ID];
 
             //while ($type_entry = mysqli_fetch_array($sql_type_result, MySQLi_NUM)) {
 
@@ -234,7 +234,7 @@ function zut_html_list_related($id, $direction, $user_id): string
             // select the words
             //$link_type_id = $type_entry[0];
             $sql = zu_sql_words_linked($id, $verb_id, $direction, $user_id);
-            $sql_result = $db_con->get($sql);
+            $sql_result = $db_con->get_old($sql);
 
             //$sql_result = zu_sql_get_all($sql);
 
@@ -800,11 +800,11 @@ function zut_plural($wrd_id, $user_id)
     log_debug('zut_plural (' . $wrd_id . ',u' . $user_id . ')');
     $result = null;
     if ($wrd_id > 0) {
-        $wrd_del = $db_con->get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
+        $wrd_del = $db_con->get1_old("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         //$wrd_del = zu_sql_get1("SELECT word_id FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND excluded = 1;");
         // only return a word if the user has not yet excluded the word
         if ($wrd_id <> $wrd_del) {
-            $result = $db_con->get1("SELECT plural FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
+            $result = $db_con->get1_old("SELECT plural FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
             //$result = zu_sql_get1("SELECT plural FROM user_words WHERE word_id = " . $wrd_id . " AND user_id = " . $user_id . " AND (excluded is NULL OR excluded = 0);");
             if ($result == NULL) {
                 $result = zu_sql_get_field('word', $wrd_id, 'plural');

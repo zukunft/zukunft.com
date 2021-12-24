@@ -489,7 +489,7 @@ class phrase_group
                 $db_con->set_where_text($sql_where);
                 $sql = $db_con->select();
 
-                $db_grp = $db_con->get1($sql);
+                $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
                     if ($db_grp['phrase_group_id'] > 0) {
                         $this->id = $db_grp['phrase_group_id'];
@@ -575,7 +575,7 @@ class phrase_group
              WHERE phrase_group_id = ' . $this->id . ';';
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
-        $lnk_id_lst = $db_con->get($sql);
+        $lnk_id_lst = $db_con->get_old($sql);
         foreach ($lnk_id_lst as $db_row) {
             $result[] = $db_row[phrase::FLD_ID];
         }
@@ -745,7 +745,7 @@ class phrase_group
                 log_debug('phrase_group->get_by_wrd_lst sql ' . $sql);
                 //$db_con = New mysql;
                 $db_con->usr_id = $this->usr->id;
-                $db_grp = $db_con->get1($sql);
+                $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
                     $this->id = $db_grp['phrase_group_id'];
                     if ($this->id > 0) {
@@ -860,9 +860,8 @@ class phrase_group
     // or an array with the value and the user_id if the result is user specific
     function value()
     {
-        $val = new value;
+        $val = new value($this->usr);
         $val->wrd_lst = $this;
-        $val->usr = $this->usr;
         $val->load();
 
         log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->usr->name . '" is ' . $val->number);
@@ -911,7 +910,7 @@ class phrase_group
              WHERE phrase_group_id = " . $this->id . "
                AND " . $sql_time . "
                AND user_id = " . $this->usr->id . ";";
-        $result = $db_con->get1($sql);
+        $result = $db_con->get1_old($sql);
 
         // if no user specific result is found, get the standard result
         if ($result === false) {
@@ -923,7 +922,7 @@ class phrase_group
                WHERE phrase_group_id = " . $this->id . "
                  AND " . $sql_time . "
                  AND (user_id = 0 OR user_id IS NULL);";
-            $result = $db_con->get1($sql);
+            $result = $db_con->get1_old($sql);
 
             // get any time value: to be adjusted to: use the latest
             if ($result === false) {
@@ -934,7 +933,7 @@ class phrase_group
                   FROM formula_values 
                  WHERE phrase_group_id = " . $this->id . "
                    AND (user_id = 0 OR user_id IS NULL);";
-                $result = $db_con->get1($sql);
+                $result = $db_con->get1_old($sql);
                 log_debug("phrase_group->result -> (" . $result['num'] . ")");
             } else {
                 log_debug("phrase_group->result -> (" . $result['num'] . ")");
@@ -1096,7 +1095,7 @@ class phrase_group
         $sql = 'SELECT ' . $field_name . '
               FROM ' . $table_name . '
              WHERE phrase_group_id = ' . $this->id . ';';
-        $grp_lnk_rows = $db_con->get($sql);
+        $grp_lnk_rows = $db_con->get_old($sql);
         $db_ids = array();
         if ($grp_lnk_rows != null) {
             foreach ($grp_lnk_rows as $grp_lnk_row) {
@@ -1165,7 +1164,7 @@ class phrase_group
     function sync_lists()
     {
         if ($this->phr_lst == null) {
-            $this->phr_lst = new phrase_list();
+            $this->phr_lst = new phrase_list($this->usr);
             if ($this->wrd_lst != null) {
                 if ($this->wrd_lst->lst != null) {
                     foreach ($this->wrd_lst->lst as $wrd) {
@@ -1205,6 +1204,15 @@ class phrase_group
         $db_con->usr_id = $this->usr->id;
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
+
+        // delete the related value
+        $val = new value($this->usr);
+        $val->grp = $this;
+        $val->load();
+
+        if ($val->id > 0) {
+            $val->del();
+        }
 
         return $result;
     }

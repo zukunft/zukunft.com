@@ -166,7 +166,7 @@ class system_error_log
         $sql = $this->load_sql($db_con);
         if ($sql != '') {
             $db_con->usr_id = $this->id;
-            return $this->row_mapper($db_con->get1($sql));
+            return $this->row_mapper($db_con->get1_old($sql));
         } else {
             return false;
         }

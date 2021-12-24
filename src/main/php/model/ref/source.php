@@ -128,7 +128,7 @@ class source extends user_sandbox_named
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
-            $db_src = $db_con->get1($sql);
+            $db_src = $db_con->get1_old($sql);
             $this->row_mapper($db_src);
             $result = $this->load_owner();
         }
@@ -157,7 +157,7 @@ class source extends user_sandbox_named
             $sql = $db_con->select();
 
             if ($db_con->get_where() <> '') {
-                $db_row = $db_con->get1($sql);
+                $db_row = $db_con->get1_old($sql);
                 $this->row_mapper($db_row, true);
                 if ($this->id > 0) {
                     log_debug('source->load (' . $this->dsp_id() . ')');
@@ -180,7 +180,7 @@ class source extends user_sandbox_named
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->type_id);
             $sql = $db_con->select();
-            $db_type = $db_con->get1($sql);
+            $db_type = $db_con->get1_old($sql);
             $this->type_name = $db_type['source_type_name'];
         }
         return $this->type_name;
@@ -417,7 +417,7 @@ class source extends user_sandbox_named
                  AND (excluded <> 1 OR excluded is NULL)";
         }
         $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1($sql);
+        $db_row = $db_con->get1_old($sql);
         $change_user_id = $db_row[self::FLD_USER];
         if ($change_user_id > 0) {
             $result = false;
@@ -454,7 +454,7 @@ class source extends user_sandbox_named
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
             $sql = $db_con->select();
-            $db_row = $db_con->get1($sql);
+            $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['source_id'];
             }
@@ -494,7 +494,7 @@ class source extends user_sandbox_named
                WHERE source_id = " . $this->id . " 
                  AND user_id = " . $this->usr->id . ";";
         $db_con->usr_id = $this->usr->id;
-        $usr_wrd_cfg = $db_con->get1($sql);
+        $usr_wrd_cfg = $db_con->get1_old($sql);
         log_debug('source->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_wrd_cfg['source_id'] > 0) {
             // TODO check that this converts all fields for all types

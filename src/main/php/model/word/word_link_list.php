@@ -299,7 +299,7 @@ class word_link_list
         } else {
             $db_con->set_usr($this->usr->id);
             $sql = $this->load_sql($db_con);
-            $db_lst = $db_con->get($sql);
+            $db_lst = $db_con->get_old($sql);
             log_debug('word_link_list->load ... sql "' . $sql . '"');
             $this->lst = array();
             $this->ids = array();
@@ -313,12 +313,12 @@ class word_link_list
                             $new_link->usr = $this->usr;
                             $new_link->id = $db_lnk['word_link_id'];
                             $new_link->from->id = $db_lnk['from_phrase_id'];
-                            $new_link->verb->id = $db_lnk['verb_id'];
+                            $new_link->verb->id = $db_lnk[verb::FLD_ID];
                             $new_link->to->id = $db_lnk['to_phrase_id'];
                             $new_link->description = $db_lnk[sql_db::FLD_DESCRIPTION];
                             $new_link->name = $db_lnk['word_link_name'];
                             // fill the verb
-                            if ($db_lnk['verb_id'] > 0) {
+                            if ($db_lnk[verb::FLD_ID] > 0) {
                                 $new_verb = new verb;
                                 $new_verb->usr = $this->usr;
                                 $new_verb->row_mapper($db_lnk);
@@ -343,7 +343,7 @@ class word_link_list
                                     $new_word->description = $db_lnk['description1'];
                                     $new_word->type_id = $db_lnk['word_type_id1'];
                                     //$new_word->row_mapper($db_lnk);
-                                    $new_word->link_type_id = $db_lnk['verb_id'];
+                                    $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
                                 } elseif ($db_lnk['word_id1'] < 0) {
@@ -366,9 +366,9 @@ class word_link_list
                                 $new_word->plural = $db_lnk['plural2'];
                                 $new_word->description = $db_lnk['description2'];
                                 $new_word->type_id = $db_lnk['word_type_id2'];
-                                $new_word->link_type_id = $db_lnk['verb_id'];
+                                $new_word->link_type_id = $db_lnk[verb::FLD_ID];
                                 //$added_wrd2_lst->add($new_word);
-                                log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk['verb_id'] . ')');
+                                log_debug('word_link_list->load -> added word "' . $new_word->name . '" for verb (' . $db_lnk[verb::FLD_ID] . ')');
                                 $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name;
                             } elseif ($db_lnk['word_id2'] < 0) {
@@ -580,8 +580,7 @@ class word_link_list
     // convert the word list object into a phrase list object
     function phrase_lst(): phrase_list
     {
-        $phr_lst = new phrase_list;
-        $phr_lst->usr = $this->usr;
+        $phr_lst = new phrase_list($this->usr);
         foreach ($this->lst as $lnk) {
             $phr_lst->lst[] = $lnk->phrase();
         }

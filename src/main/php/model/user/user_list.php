@@ -42,7 +42,7 @@ class user_list
     private function load_sql($sql, sql_db $db_con)
     {
 
-        $db_usr_lst = $db_con->get($sql);
+        $db_usr_lst = $db_con->get_old($sql);
 
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
