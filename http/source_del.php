@@ -49,9 +49,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::SOURCE_DEL);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -62,9 +61,8 @@ if ($usr->id > 0) {
     if ($src_id > 0) {
 
         // create the source object to have an object to update the parameters
-        $src = new source;
+        $src = new source($usr);
         $src->id = $src_id;
-        $src->usr = $usr;
         $src->load();
 
         if ($confirm == 1) {

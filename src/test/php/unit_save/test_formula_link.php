@@ -53,9 +53,8 @@ function run_formula_link_test(testing $t)
 
     // link the test formula to another word
     $frm = $t->load_formula(formula::TN_RENAMED);
-    $phr = new phrase;
+    $phr = new phrase($t->usr2);
     $phr->name = word::TN_RENAMED;
-    $phr->usr = $t->usr2;
     $phr->load();
     $result = $frm->link_phr($phr);
     $target = '';
@@ -72,14 +71,12 @@ function run_formula_link_test(testing $t)
     $t->dsp('formula_link->link_phr logged for "' . $phr->name . '" to "' . $frm->name . '"', $target, $result);
 
     // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
-    $frm_lnk = new formula_link;
-    $frm_lnk->usr = $t->usr1;
+    $frm_lnk = new formula_link($t->usr1);
     $frm_lnk->fob = $frm;
     $frm_lnk->tob = $phr;
     $frm_lnk->load();
 
-    $frm_lnk2 = new formula_link;
-    $frm_lnk2->usr = $t->usr1;
+    $frm_lnk2 = new formula_link($t->usr1);
     $frm_lnk2->id = $frm_lnk->id;
     $frm_lnk2->load();
     $frm_lnk2->load_objects();
@@ -107,8 +104,7 @@ function run_formula_link_test(testing $t)
     $t->dsp('formula->assign_phr_ulst contains "' . $phr->name . '" for user "' . $t->usr1->name . '"', $target, $result);
 
     // ... check if the link is shown correctly also for the second user
-    $frm = new formula;
-    $frm->usr = $t->usr2;
+    $frm = new formula($t->usr2);
     $frm->name = formula::TN_RENAMED;
     $frm->load();
     $phr_lst = $frm->assign_phr_ulst();
@@ -119,13 +115,11 @@ function run_formula_link_test(testing $t)
     // ... check if the value update has been triggered
 
     // if second user removes the new link
-    $frm = new formula;
-    $frm->usr = $t->usr2;
+    $frm = new formula($t->usr2);
     $frm->name = formula::TN_RENAMED;
     $frm->load();
-    $phr = new phrase;
+    $phr = new phrase($t->usr2);
     $phr->name = word::TN_RENAMED;
-    $phr->usr = $t->usr2;
     $phr->load();
     $result = $frm->unlink_phr($phr);
     $target = '';
@@ -143,8 +137,7 @@ function run_formula_link_test(testing $t)
 
 
     // ... check if the link is really not used any more for the second user
-    $frm = new formula;
-    $frm->usr = $t->usr2;
+    $frm = new formula($t->usr2);
     $frm->name = formula::TN_RENAMED;
     $frm->load();
     $phr_lst = $frm->assign_phr_ulst();

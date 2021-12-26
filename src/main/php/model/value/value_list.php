@@ -136,9 +136,8 @@ class value_list
                         $val->row_mapper($db_val, true);
                         // TODO either integrate this in the query or load this with one sql for all values
                         if ($db_val['time_word_id'] <> 0) {
-                            $time_phr = new phrase();
+                            $time_phr = new phrase($this->usr);
                             $time_phr->id = $db_val['time_word_id'];
-                            $time_phr->usr = $this->usr;
                             if ($time_phr->load()) {
                                 $val->time_phr = $time_phr;
                             }
@@ -891,9 +890,8 @@ class value_list
                     //if (isset($val->time_phr)) {
                     log_debug('value_list->html -> add time ' . $val->id);
                     if ($val->time_id > 0) {
-                        $time_phr = new phrase;
+                        $time_phr = new phrase($cal->usr);
                         $time_phr->id = $val->time_id;
-                        $time_phr->usr = $val->usr;
                         $time_phr->load();
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
@@ -953,7 +951,8 @@ class value_list
         if (isset($commen_phr_lst)) {
             if (!empty($commen_phr_lst->lst)) {
                 $commen_phr_lst->add($this->phr);
-                $result .= $commen_phr_lst->btn_add_value($back);
+                $phr_lst_dsp = $commen_phr_lst->dsp_obj();
+                $result .= $phr_lst_dsp->btn_add_value($back);
             }
         }
 

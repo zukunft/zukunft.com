@@ -13,4 +13,4 @@ PREPARE phrase_list_by_ids_triple_part FROM
         IF(u.protection_type_id IS NULL, s.protection_type_id, u.protection_type_id) AS protection_type_id
     FROM word_links s
         LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id AND u.user_id = ?
-    WHERE word_link_id IN [?,?,?]';
+    WHERE s.word_link_id IN (?,?,?)';

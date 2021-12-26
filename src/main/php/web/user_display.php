@@ -188,14 +188,13 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the word_link objects with the minimal parameter needed
-                $wrd_usr = new word_link;
+                $wrd_usr = new word_link($this);
                 $wrd_usr->id = $sbx_row['id'];
                 $wrd_usr->from->id = $sbx_row['from_phrase_id'];
                 $wrd_usr->verb->id = $sbx_row[verb::FLD_ID];
                 $wrd_usr->to->id = $sbx_row['to_phrase_id'];
                 $wrd_usr->name = $sbx_row['usr_name'];
                 $wrd_usr->excluded = $sbx_row['usr_excluded'];
-                $wrd_usr->usr = $this;
                 $wrd_usr->load();
 
                 // to review: try to avoid using load_test_user
@@ -393,13 +392,12 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the formula_link objects with the minimal parameter needed
-                $frm_usr = new formula_link();
+                $frm_usr = new formula_link($this);
                 $frm_usr->id = $sbx_row['id'];
                 $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
                 $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
                 $frm_usr->link_type_id = $sbx_row['usr_type'];
                 $frm_usr->excluded = $sbx_row['usr_excluded'];
-                $frm_usr->usr = $this;
                 $frm_usr->load_objects();
 
                 // to review: try to avoid using load_test_user
@@ -893,13 +891,12 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the view_component object with the minimal parameter needed
-                $dsp_usr = new view_cmp_dsp;
+                $dsp_usr = new view_cmp_dsp($this);
                 $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->name = $sbx_row['usr_name'];
                 $dsp_usr->comment = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
-                $dsp_usr->usr = $this;
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -1061,14 +1058,13 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the view_component_link objects with the minimal parameter needed
-                $dsp_usr = new view_cmp_link;
+                $dsp_usr = new view_cmp_link($this);
                 $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->view_id = $sbx_row['view_id'];
                 $dsp_usr->view_component_id = $sbx_row['view_component_id'];
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
-                $dsp_usr->usr = $this;
                 $dsp_usr->load_objects();
 
                 // to review: try to avoid using load_test_user
@@ -1232,14 +1228,13 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the source objects with the minimal parameter needed
-                $dsp_usr = new source;
+                $dsp_usr = new source($this);
                 $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->name = $sbx_row['usr_name'];
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->comment = $sbx_row['usr_comment'];
                 $dsp_usr->type_id = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
-                $dsp_usr->usr = $this;
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;

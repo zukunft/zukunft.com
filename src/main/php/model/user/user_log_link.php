@@ -194,9 +194,8 @@ class user_log_link extends user_log
         $result = '';
         if ($id > 0) {
             $this->set_usr();
-            $wrd = new word_dsp;
+            $wrd = new word_dsp($this->usr);
             $wrd->id = $id;
-            $wrd->usr = $this->usr;
             $wrd->load();
             $result = $wrd->name;
             log_debug('user_log_link->word_name got ' . $result);

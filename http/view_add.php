@@ -94,9 +94,8 @@ if ($usr->id > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // sample word that is used to simulate the view changes
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->id = $_GET['word'];
-        $wrd->usr = $usr;
         //$wrd->type_id = $view_type;
         if ($wrd->id > 0) {
             $wrd->load();

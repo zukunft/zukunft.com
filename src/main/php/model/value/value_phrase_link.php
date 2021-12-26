@@ -73,7 +73,7 @@ class value_phrase_link
         $this->id = 0;
         $this->usr = $usr;
         $this->val = new value($usr);
-        $this->phr = new phrase();
+        $this->phr = new phrase($usr);
 
         $this->type = null;
         $this->weight = null;

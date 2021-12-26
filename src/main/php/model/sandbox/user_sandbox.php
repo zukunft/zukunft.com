@@ -40,6 +40,11 @@
 
 class user_sandbox
 {
+    // the main types of user sandbox objects
+    const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
+    const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
+    const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
+
     // user sandbox database and JSON object field names
     const FLD_EXCLUDED = 'excluded';
     const FLD_USER = 'user_id';
@@ -50,9 +55,6 @@ class user_sandbox
         self::FLD_EXCLUDED
     );
 
-    const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
-    const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
-    const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
 
     // fields to define the object; should be set in the constructor of the child object
     public ?string $obj_name = null;       // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
@@ -62,7 +64,7 @@ class user_sandbox
     // database fields that are used in all objects and that have a specific behavior
     public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
     public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
-    public ?user $usr = null;          // the person for whom the object is loaded, so to say the viewer
+    public user $usr       ;           // the person for whom the object is loaded, so to say the viewer
     public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     public ?int $share_id = null;      // id for public, personal, group or private
     public ?int $protection_id = null; // id for no, user, admin or full protection
@@ -88,10 +90,17 @@ class user_sandbox
     public ?string $type_name = ''; // the name of the word type, word link type, view type, view component type or formula type
 
 
-    // to be overwritten by the child object
-    function __construct()
+    /**
+     * all user sandbox object are user specific, that's why the user is always set
+     * and most user sandbox objects are named object
+     * but this is in many cases be overwritten by the child object
+     * @param user $usr the user how has requested to see his view on the object
+     */
+    function __construct(user $usr)
     {
         $this->obj_type = user_sandbox::TYPE_NAMED;
+
+        $this->usr = $usr;
     }
 
     /**
@@ -102,7 +111,6 @@ class user_sandbox
     {
         $this->id = null;
         $this->usr_cfg_id = null;
-        $this->usr = null;
         $this->owner_id = null;
         $this->excluded = null;
 
@@ -1620,9 +1628,8 @@ class user_sandbox
 
                 // and the corresponding word if possible
                 if ($result->is_ok()) {
-                    $wrd = new word();
+                    $wrd = new word($this->usr);
                     $wrd->name = $this->name;
-                    $wrd->usr = $this->usr;
                     $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
                     $msg = $wrd->del();
                     $result->add($msg);

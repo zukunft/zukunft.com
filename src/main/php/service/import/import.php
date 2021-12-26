@@ -110,8 +110,7 @@ class file_import
                     $result .= $import_result;
                 } elseif ($key == 'words') {
                     foreach ($json_obj as $word) {
-                        $wrd = new word;
-                        $wrd->usr = $this->usr;
+                        $wrd = new word($this->usr);
                         $import_result = $wrd->import_obj($word);
                         if ($import_result == '') {
                             $this->words_done++;
@@ -122,8 +121,7 @@ class file_import
                     }
                 } elseif ($key == 'triples') {
                     foreach ($json_obj as $triple) {
-                        $wrd_lnk = new word_link;
-                        $wrd_lnk->usr = $this->usr;
+                        $wrd_lnk = new word_link($this->usr);
                         $import_result = $wrd_lnk->import_obj($triple);
                         if ($import_result == '') {
                             $this->triples_done++;
@@ -134,8 +132,7 @@ class file_import
                     }
                 } elseif ($key == 'formulas') {
                     foreach ($json_obj as $formula) {
-                        $frm = new formula;
-                        $frm->usr = $this->usr;
+                        $frm = new formula($this->usr);
                         $import_result = $frm->import_obj($formula);
                         if ($import_result == '') {
                             $this->formulas_done++;
@@ -146,8 +143,7 @@ class file_import
                     }
                 } elseif ($key == 'sources') {
                     foreach ($json_obj as $value) {
-                        $src = new source;
-                        $src->usr = $this->usr;
+                        $src = new source($this->usr);
                         $import_result = $src->import_obj($value);
                         if ($import_result == '') {
                             $this->sources_done++;
@@ -169,8 +165,7 @@ class file_import
                     }
                 } elseif ($key == 'views') {
                     foreach ($json_obj as $view) {
-                        $view_obj = new view;
-                        $view_obj->usr = $this->usr;
+                        $view_obj = new view($this->usr);
                         $import_result = $view_obj->import_obj($view);
                         if ($import_result == '') {
                             $this->views_done++;

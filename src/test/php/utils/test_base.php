@@ -340,8 +340,7 @@ class test_base
             $test_usr = $usr;
         }
 
-        $wrd = new word;
-        $wrd->usr = $test_usr;
+        $wrd = new word($test_usr);
         $wrd->name = $wrd_name;
         $wrd->load();
         return $wrd;
@@ -376,8 +375,7 @@ class test_base
         $wrd = $this->load_word($wrd_name);
         $phr = $wrd->phrase();
 
-        $ref = new ref;
-        $ref->usr = $usr;
+        $ref = new ref($usr);
         $ref->phr = $phr;
         $ref->ref_type = get_ref_type($type_name);
         if ($phr->id != 0) {
@@ -405,8 +403,7 @@ class test_base
     function load_formula(string $frm_name): formula
     {
         global $usr;
-        $frm = new formula_dsp;
-        $frm->usr = $usr;
+        $frm = new formula_dsp($usr);
         $frm->name = $frm_name;
         $frm->load();
         return $frm;
@@ -437,8 +434,7 @@ class test_base
     function load_phrase(string $phr_name): phrase
     {
         global $usr;
-        $phr = new phrase;
-        $phr->usr = $usr;
+        $phr = new phrase($usr);
         $phr->name = $phr_name;
         $phr->load();
         return $phr;
@@ -551,8 +547,7 @@ class test_base
     function load_source(string $src_name): source
     {
         global $usr;
-        $src = new source;
-        $src->usr = $usr;
+        $src = new source($usr);
         $src->name = $src_name;
         $src->load();
         return $src;
@@ -586,8 +581,7 @@ class test_base
             $test_usr = $usr;
         }
 
-        $dsp = new view_dsp;
-        $dsp->usr = $test_usr;
+        $dsp = new view_dsp($test_usr);
         $dsp->name = $dsp_name;
         $dsp->load();
         return $dsp;
@@ -626,8 +620,7 @@ class test_base
             $test_usr = $usr;
         }
 
-        $cmp = new view_cmp;
-        $cmp->usr = $test_usr;
+        $cmp = new view_cmp($test_usr);
         $cmp->name = $cmp_name;
         $cmp->load();
         return $cmp;
@@ -665,11 +658,10 @@ class test_base
         global $usr;
         $dsp = $this->load_view($dsp_name);
         $cmp = $this->load_view_component($cmp_name);
-        $lnk = new view_cmp_link();
+        $lnk = new view_cmp_link($usr);
         $lnk->fob = $dsp;
         $lnk->tob = $cmp;
         $lnk->order_nbr = $pos;
-        $lnk->usr = $usr;
         $result = $lnk->save();
         $target = '';
         $this->dsp('view component link', $target, $result);
@@ -703,13 +695,12 @@ class test_base
 
         $vrb = $verbs->get_verb($verb_code_id);
 
-        $lnk_test = new word_link;
+        $lnk_test = new word_link($usr);
         if ($from->id > 0 or $to->id > 0) {
             // check if the forward link exists
             $lnk_test->from = $from;
             $lnk_test->verb = $vrb;
             $lnk_test->to = $to;
-            $lnk_test->usr = $usr;
             $lnk_test->load();
         }
         return $lnk_test;
@@ -749,7 +740,7 @@ class test_base
 
         $vrb = $verbs->get_verb($verb_code_id);
 
-        $lnk_test = new word_link;
+        $lnk_test = new word_link($usr);
         if ($from->id == 0 or $to->id == 0) {
             log_err("Words " . $from_name . " and " . $to_name . " cannot be created");
         } else {
@@ -757,7 +748,6 @@ class test_base
             $lnk_test->from = $from;
             $lnk_test->verb = $vrb;
             $lnk_test->to = $to;
-            $lnk_test->usr = $usr;
             $lnk_test->load();
             if ($lnk_test->id > 0) {
                 // refresh the given name if needed
@@ -810,17 +800,14 @@ class test_base
 
         $result = '';
 
-        $frm = new formula;
-        $frm->usr = $usr;
+        $frm = new formula($usr);
         $frm->name = $formula_name;
         $frm->load();
-        $phr = new word;
+        $phr = new word($usr);
         $phr->name = $word_name;
-        $phr->usr = $usr;
         $phr->load();
         if ($frm->id > 0 and $phr->id <> 0) {
-            $frm_lnk = new formula_link;
-            $frm_lnk->usr = $usr;
+            $frm_lnk = new formula_link($usr);
             $frm_lnk->fob = $frm;
             $frm_lnk->tob = $phr;
             $frm_lnk->load();

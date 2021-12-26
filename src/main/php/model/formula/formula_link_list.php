@@ -45,9 +45,8 @@ class formula_link_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 if ($db_row[formula_link::FLD_ID] > 0) {
-                    $frm_lnk = new formula_link;
+                    $frm_lnk = new formula_link($this->usr);
                     $frm_lnk->row_mapper($db_row, true);
-                    $frm_lnk->usr = $this->usr;
                     $this->lst[] = $frm_lnk;
                 }
             }

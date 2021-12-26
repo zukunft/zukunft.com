@@ -21,4 +21,4 @@ PREPARE phrase_list_by_ids_triple_part (int, int, int, int) AS
                ELSE u.protection_type_id END                                                                AS protection_type_id
     FROM word_links s
              LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id AND u.user_id = $4
-    WHERE word_link_id IN [$1,$2,$3];
+    WHERE s.word_link_id IN ($1,$2,$3);

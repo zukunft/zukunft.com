@@ -121,7 +121,7 @@ class value extends user_sandbox_display
      */
     function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_VALUE;
         $this->obj_name = DB_TYPE_VALUE;
 
@@ -130,16 +130,12 @@ class value extends user_sandbox_display
         $this->reset($usr);
     }
 
-    function reset(?user $usr = null)
+    function reset()
     {
         parent::reset();
 
         $this->grp = new phrase_group();
         $this->source = null;
-
-        if ($usr != null) {
-            $this->usr = $usr;
-        }
 
         $this->last_update = null;
 
@@ -561,8 +557,7 @@ class value extends user_sandbox_display
         if ($id != null) {
             if ($id <> 0) {
                 if ($this->time_phr == null) {
-                    $this->time_phr = new phrase();
-                    $this->usr = $this->usr;
+                    $this->time_phr = new phrase($this->usr);
                 }
                 $this->time_phr->id = $id;
             }
@@ -590,8 +585,7 @@ class value extends user_sandbox_display
         if ($id != null) {
             if ($id <> 0) {
                 if ($this->source == null) {
-                    $this->source = new source();
-                    $this->source->usr = $this->usr;
+                    $this->source = new source($this->usr);
                 }
                 $this->source->id = $id;
             }
@@ -913,8 +907,7 @@ class value extends user_sandbox_display
             }
 
             if ($key == 'time') {
-                $phr = new phrase;
-                $phr->usr = $this->usr;
+                $phr = new phrase($this->usr);
                 if (!$phr->import_obj($value, $do_save)) {
                     $result = 'Failed to import time ' . $value;
                 }
@@ -937,8 +930,7 @@ class value extends user_sandbox_display
             }
 
             if ($key == 'source') {
-                $src = new source;
-                $src->usr = $this->usr;
+                $src = new source($this->usr);
                 $src->name = $value;
                 if ($do_save) {
                     $src->load();

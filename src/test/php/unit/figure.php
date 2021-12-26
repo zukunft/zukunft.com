@@ -35,10 +35,12 @@ class figure_unit_tests
     function run(testing $t)
     {
 
+        global $usr;
+
         $t->header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
 
         // if the user has changed the formula, that related figure is not standard anymore
-        $frm = new formula();
+        $frm = new formula($usr);
         $frm->usr_cfg_id = 1;
         $fig = new figure();
         $fig->obj = $frm;

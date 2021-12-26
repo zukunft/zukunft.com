@@ -45,9 +45,8 @@ class formula_link_unit_tests
         $db_con = new sql_db();
 
         // sql to load the formula link by id
-        $lnk = new formula_link();
+        $lnk = new formula_link($usr);
         $lnk->id = 2;
-        $lnk->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_sql($db_con);
         $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
@@ -84,7 +83,7 @@ class formula_link_unit_tests
         $t->assert('formula_link->load_user_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to check if no one else has changed the formula link
-        $lnk = new formula_link();
+        $lnk = new formula_link($usr);
         $lnk->id = 2;
         $lnk->owner_id = 3;
         $db_con->db_type = sql_db::POSTGRES;
@@ -101,7 +100,7 @@ class formula_link_unit_tests
         $t->subheader('Im- and Export tests');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
-        $lnk = new formula;
+        $lnk = new formula($usr);
         $lnk->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);

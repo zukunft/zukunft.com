@@ -53,9 +53,8 @@ class formula_element
     {
         if ($this->id > 0 and isset($this->usr)) {
             if ($this->type == self::TYPE_WORD) {
-                $wrd = new word_dsp;
+                $wrd = new word_dsp($this->usr);
                 $wrd->id = $this->id;
-                $wrd->usr = $this->usr;
                 $wrd->load();
                 $this->name = $wrd->name;
                 $this->dsp_name = $wrd->display($this->back);
@@ -73,18 +72,16 @@ class formula_element
                 $this->obj = $lnk;
             }
             if ($this->type == self::TYPE_FORMULA) {
-                $frm = new formula;
+                $frm = new formula($this->usr);
                 $frm->id = $this->id;
-                $frm->usr = $this->usr;
                 $frm->load();
                 $this->name = $frm->name;
                 $this->dsp_name = $frm->dsp_obj()->name_linked($this->back);
                 $this->symbol = ZUP_CHAR_FORMULA_START . $frm->id . ZUP_CHAR_FORMULA_END;
                 $this->obj = $frm;
                 // in case of a formula load also the corresponding word
-                $wrd = new word_dsp;
+                $wrd = new word_dsp($this->usr);
                 $wrd->name = $frm->name;
-                $wrd->usr = $this->usr;
                 $wrd->load();
                 $this->wrd_id = $wrd->id;
                 $this->wrd_obj = $wrd;

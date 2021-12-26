@@ -47,16 +47,14 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_EDIT);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];
 
     // create the formula object to have an place to update the parameters
-    $frm = new formula;
+    $frm = new formula($usr);
     $frm->id = $_GET['id']; // id of the formula that can be changed
-    $frm->usr = $usr;
     $frm->load();
 
     // load the parameters to the formula object to display the user input again in case of an error
@@ -88,18 +86,16 @@ if ($usr->id > 0) {
         // do the direct changes initiated by other buttons than the save button
         // to link the formula to another word
         if ($_GET['link_phrase'] > 0) {
-            $phr = new phrase;
+            $phr = new phrase($usr);
             $phr->id = $_GET['link_phrase'];
-            $phr->usr = $usr;
             $phr->load();
             $upd_result = $frm->link_phr($phr);
         }
 
         // to unlink a word from the formula
         if ($_GET['unlink_phrase'] > 0) {
-            $phr = new phrase;
+            $phr = new phrase($usr);
             $phr->id = $_GET['unlink_phrase'];
-            $phr->usr = $usr;
             $phr->load();
             $upd_result = $frm->unlink_phr($phr);
         }

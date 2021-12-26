@@ -37,15 +37,16 @@ class user_sandbox_unit_tests
     function run(testing $t)
     {
 
+        global $usr;
         global $sql_names;
 
         $t->subheader('Test user sandbox functions that does not need a database connection');
 
         // test if two sources are supposed to be the same
-        $src1 = new source;
+        $src1 = new source($usr);
         $src1->id = 1;
         $src1->name = TS_IPCC_AR6_SYNTHESIS;
-        $src2 = new source;
+        $src2 = new source($usr);
         $src2->id = 2;
         $src2->name = TS_IPCC_AR6_SYNTHESIS;
         $target = true;
@@ -58,10 +59,10 @@ class user_sandbox_unit_tests
         $t->dsp("... and similar", $target, $result);
 
         // a source can have the same name as a word
-        $wrd1 = new word;
+        $wrd1 = new word($usr);
         $wrd1->id = 1;
         $wrd1->name = TS_IPCC_AR6_SYNTHESIS;
-        $src2 = new source;
+        $src2 = new source($usr);
         $src2->id = 2;
         $src2->name = TS_IPCC_AR6_SYNTHESIS;
         $target = false;
@@ -69,9 +70,9 @@ class user_sandbox_unit_tests
         $t->dsp("a source is not the same as a word even if they have the same name", $target, $result);
 
         // but a formula should not have the same name as a word
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->name = TW_MIO;
-        $frm = new formula();
+        $frm = new formula($usr);
         $frm->name = TW_MIO;
         $target = true;
         $result = $wrd->is_similar($frm);
@@ -1810,7 +1811,7 @@ class user_sandbox_unit_tests
 
         // the word changer query (used in user_sandbox->changer_sql)
         $db_con->db_type = sql_db::POSTGRES;
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->id = 1;
         $created_sql = $wrd->changer_sql($db_con);
         $expected_sql = "SELECT user_id 
@@ -1831,7 +1832,7 @@ class user_sandbox_unit_tests
 
         // the word changer ex owner query (used in user_sandbox->changer_sql)
         $db_con->db_type = sql_db::POSTGRES;
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->id = 1;
         $wrd->owner_id = 2;
         $created_sql = $wrd->changer_sql($db_con);

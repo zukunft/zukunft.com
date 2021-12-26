@@ -46,9 +46,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_DEL);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];
 
@@ -60,9 +59,8 @@ if ($usr->id > 0) {
     if ($formula_id > 0) {
 
         // init the formula object
-        $frm = new formula;
+        $frm = new formula($usr);
         $frm->id = $formula_id;
-        $frm->usr = $usr;
         $frm->load();
 
         if ($confirm == 1) {

@@ -53,9 +53,8 @@ class view_cmp_dsp extends view_cmp
                 $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
             } else {
                 log_debug('view_component_dsp->word_name in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
-                $wrd_dsp = new word_dsp;
+                $wrd_dsp = new word_dsp($wrd->usr);
                 $wrd_dsp->id = $wrd->id;
-                $wrd_dsp->usr = $wrd->usr;
                 $result .= $wrd_dsp->dsp_header();
             }
         }
@@ -76,9 +75,8 @@ class view_cmp_dsp extends view_cmp
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::VALUES_RELATED)) {
             log_debug('view_component_dsp->table of view component ' . $this->dsp_id() . ' for "' . $phr->name . '" with columns "' . $this->wrd_row->name . '" and user "' . $this->usr->name . '"');
-            $val_lst = new value_list_dsp;
+            $val_lst = new value_list_dsp($this->usr);
             $val_lst->phr = $phr;
-            $val_lst->usr = $this->usr;
             $result .= $val_lst->dsp_table($this->wrd_row, $phr->id);
         }
         return $result;
@@ -95,9 +93,8 @@ class view_cmp_dsp extends view_cmp
             // check the parameters
             if (get_class($wrd) <> word_dsp::class) {
                 $result .= log_warning('The word parameter has type ' . get_class($wrd) . ', but should be word_dsp.', "view_component_dsp->num_list");
-                $wrd_dsp = new word_dsp;
+                $wrd_dsp = new word_dsp($this->usr);
                 $wrd_dsp->id = $wrd->id;
-                $wrd_dsp->usr = $this->usr;
                 $wrd_dsp->load();
                 $wrd = $wrd_dsp;
             }

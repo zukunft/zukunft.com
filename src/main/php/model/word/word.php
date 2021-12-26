@@ -7,6 +7,15 @@
 
     TODO move plural to a linked word?
 
+    TODO check if all objects follow these rules
+        - database fields are defined within the object wit a const staring with FLD_
+        - the object is as small as possible, means there are no redundant fields
+        - for each selection and database reading function a separate load function with the search field is defined e.g. load_by_name(string name)
+        - for each load function a separate load_sql function exists, which is unit tested
+        - the row_mapper function is always used map the database field to the object fields
+        - a minimal object exists with for display only for one user only e.g. for a word object, just the id and the name
+        - a ex- and import object exists, that does not include any internal database ids
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -195,9 +204,9 @@ class word extends user_sandbox_description
     /**
      * define the settings for this word object
      */
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_name = DB_TYPE_WORD;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
@@ -229,7 +238,7 @@ class word extends user_sandbox_description
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new word_dsp();
+        $dsp_obj = new word_dsp($this->usr);
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
@@ -428,8 +437,7 @@ class word extends user_sandbox_description
         } else {
             if ($this->view_id > 0) {
                 log_debug('word->view got id ' . $this->view_id);
-                $result = new view;
-                $result->usr = $this->usr;
+                $result = new view($this->usr);
                 $result->id = $this->view_id;
                 if ($result->load()) {
                     $this->view = $result;
@@ -502,11 +510,10 @@ class word extends user_sandbox_description
         $db_con->set_where_link(null, null, $this->id);
         $sql = $db_con->select();
         $db_row = $db_con->get1_old($sql);
-        $frm = new formula;
+        $frm = new formula($this->usr);
         if ($db_row !== false) {
             if ($db_row[formula::FLD_ID] > 0) {
                 $frm->id = $db_row[formula::FLD_ID];
-                $frm->usr = $this->usr;
                 $frm->load();
             }
         }
@@ -559,9 +566,8 @@ class word extends user_sandbox_description
                 $this->protection_id = $protection_types->id($value);
             }
             if ($key == 'view') {
-                $wrd_view = new view;
+                $wrd_view = new view($this->usr);
                 $wrd_view->name = $value;
-                $wrd_view->usr = $this->usr;
                 if ($do_save) {
                     $wrd_view->load();
                     if ($wrd_view->id == 0) {
@@ -595,8 +601,7 @@ class word extends user_sandbox_description
                     if ($result or !$do_save) {
                         if ($key == 'refs') {
                             foreach ($value as $ref_data) {
-                                $ref_obj = new ref;
-                                $ref_obj->usr = $this->usr;
+                                $ref_obj = new ref($this->usr);
                                 $ref_obj->phr = $this->phrase();
                                 $result = $ref_obj->import_obj($ref_data, $do_save);
                                 $this->ref_lst[] = $ref_obj;
@@ -926,11 +931,10 @@ class word extends user_sandbox_description
         $result = false;
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
-            $wrd_lnk = new word_link();
+            $wrd_lnk = new word_link($this->usr);
             $wrd_lnk->from = $child->phrase();
             $wrd_lnk->verb = $verbs->get_verb(verb::IS_A);
             $wrd_lnk->to = $this->phrase();
-            $wrd_lnk->usr = $this->usr;
             if ($wrd_lnk->save() == '') {
                 $result = true;
             }
@@ -1004,7 +1008,7 @@ class word extends user_sandbox_description
         log_debug('word->next ' . $this->dsp_id() . ' and user ' . $this->usr->name);
 
         global $db_con;
-        $result = new word_dsp;
+        $result = new word_dsp($this->usr);
 
         $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
         //$db_con = new mysql;
@@ -1014,7 +1018,6 @@ class word extends user_sandbox_description
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
         }
-        $result->usr = $this->usr;
         if ($result->id > 0) {
             $result->load();
         }
@@ -1029,7 +1032,7 @@ class word extends user_sandbox_description
         log_debug('word->prior(' . $this->dsp_id() . ',u' . $this->usr->id . ')');
 
         global $db_con;
-        $result = new word_dsp;
+        $result = new word_dsp($this->usr);
 
         $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
         //$db_con = new mysql;
@@ -1039,7 +1042,6 @@ class word extends user_sandbox_description
         if (is_numeric($key_result)) {
             $result->id = intval($key_result);
         }
-        $result->usr = $this->usr;
         if ($result->id > 0) {
             $result->load();
         }
@@ -1135,8 +1137,7 @@ class word extends user_sandbox_description
      */
     function phrase(): phrase
     {
-        $phr = new phrase;
-        $phr->usr = $this->usr;
+        $phr = new phrase($this->usr);
         $phr->id = $this->id;
         $phr->name = $this->name;
         $phr->obj = $this;

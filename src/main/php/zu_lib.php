@@ -278,6 +278,7 @@ include_once $path_php . 'model/word/word_link_exp.php';
 include_once $path_php . 'model/word/word_link_list.php';
 include_once $path_php . 'model/phrase/phrase.php';
 include_once $path_php . 'model/phrase/phrase_list.php';
+include_once $path_php . 'model/phrase/phrase_list_dsp.php';
 include_once $path_php . 'model/phrase/phrase_group.php';
 include_once $path_php . 'model/phrase/phrase_group_list.php';
 include_once $path_php . 'model/verb/verb.php';
@@ -882,8 +883,7 @@ function load_usr_data()
     $verbs->usr = $usr;
     $verbs->load($db_con);
 
-    $system_views = new view_list();
-    $system_views->usr = $usr;
+    $system_views = new view_list($usr);
     $system_views->load($db_con);
 
 }

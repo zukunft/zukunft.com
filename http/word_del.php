@@ -62,9 +62,8 @@ if ($usr->id > 0) {
     if ($wrd_id > 0) {
 
         // create the word object to have an object to update the parameters
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->id = $wrd_id;
-        $wrd->usr = $usr;
         $wrd->load();
 
         if ($confirm == 1) {

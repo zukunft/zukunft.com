@@ -48,10 +48,9 @@ class view_component_link_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load a list of value by the phrase ids
-        $lnk = new view_cmp_link();
+        $lnk = new view_cmp_link($usr);
         $lnk->view_id = 1;
         $lnk->view_component_id = 2;
-        $lnk->usr = $usr;
         $created_sql = $lnk->load_sql($db_con);
         $expected_sql = "SELECT 
                          s.view_component_link_id,  

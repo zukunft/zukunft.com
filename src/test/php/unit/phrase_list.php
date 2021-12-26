@@ -101,10 +101,9 @@ class phrase_list_unit_tests
     private function get_phrase(): phrase
     {
         global $usr;
-        $wrd = new word();
+        $wrd = new word($usr);
         $wrd->id = 1;
         $wrd->name = word::TN_ADD;
-        $wrd->usr = $usr;
         return $wrd->phrase();
     }
 
@@ -114,10 +113,9 @@ class phrase_list_unit_tests
     private function get_time_phrase(): phrase
     {
         global $usr;
-        $wrd = new word();
+        $wrd = new word($usr);
         $wrd->id = 2;
         $wrd->name = word::TN_RENAMED;
-        $wrd->usr = $usr;
         $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
         return $wrd->phrase();
     }
@@ -140,14 +138,14 @@ class phrase_list_unit_tests
         if ($dialect == sql_db::MYSQL) {
             $dialect_ext = self::FILE_MYSQL;
         }
-        $qp = $lst->load_by_wrd_ids($db_con, $ids);
+        $qp = $lst->load_by_wrd_ids_sql($db_con, $ids);
         $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
         $this->test->assert(
             self::TEST_NAME . $qp->name . $dialect,
             $this->test->trim($qp->sql),
             $this->test->trim($expected_sql)
         );
-        $qp = $lst->load_by_trp_ids($db_con, $ids);
+        $qp = $lst->load_by_trp_ids_sql($db_con, $ids);
         $expected_sql = $this->test->file(self::PATH . $qp->name . $dialect_ext . self::FILE_EXT);
         $this->test->assert(
             self::TEST_NAME . $qp->name . $dialect,

@@ -47,22 +47,19 @@ function run_source_test(testing $t)
     $src_read = $t->test_word(source::TN_READ);
 
     // check if loading a source by name and id works
-    $src_by_name = new source;
+    $src_by_name = new source($t->usr1);
     $src_by_name->name = source::TN_READ;
-    $src_by_name->usr = $t->usr1;
     $src_by_name->load();
-    $src_by_id = new source;
+    $src_by_id = new source($t->usr1);
     $src_by_id->id = $src_by_name->id;
-    $src_by_id->usr = $t->usr1;
     $src_by_id->load();
     $target = source::TN_READ;
     $result = $src_by_id->name;
     $t->dsp('source->load of ' . $src_read->id . ' by id ' . $src_by_name->id, $target, $result);
 
     // test the creation of a new source
-    $src_add = new source;
+    $src_add = new source($t->usr1);
     $src_add->name = source::TN_ADD;
-    $src_add->usr = $t->usr1;
     $result = $src_add->save();
     $target = '';
     $t->dsp('source->save for "' . source::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
@@ -95,9 +92,8 @@ function run_source_test(testing $t)
     $t->dsp('source->save rename "' . source::TN_ADD . '" to "' . source::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the source renaming was successful
-    $src_renamed = new source;
+    $src_renamed = new source($t->usr1);
     $src_renamed->name = source::TN_RENAMED;
-    $src_renamed->usr = $t->usr1;
     if ($src_renamed->load()) {
         if ($src_renamed->id > 0) {
             $result = $src_renamed->name;
@@ -149,9 +145,8 @@ function run_source_test(testing $t)
     $t->dsp('source->load description for "' . source::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific source is created if another user changes the source
-    $src_usr2 = new source;
+    $src_usr2 = new source($t->usr2);
     $src_usr2->name = source::TN_RENAMED;
-    $src_usr2->usr = $t->usr2;
     $src_usr2->load();
     $src_usr2->url = source::TEST_URL_CHANGED;
     $src_usr2->comment = source::TEST_DESCRIPTION_CHANGED;
@@ -160,9 +155,8 @@ function run_source_test(testing $t)
     $t->dsp('source->save all source fields for user 2 beside the name for "' . source::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific source changes have been saved
-    $src_usr2_reloaded = new source;
+    $src_usr2_reloaded = new source($t->usr2);
     $src_usr2_reloaded->name = source::TN_RENAMED;
-    $src_usr2_reloaded->usr = $t->usr2;
     $src_usr2_reloaded->load();
     $result = $src_usr2_reloaded->url;
     $target = source::TEST_URL_CHANGED;
@@ -181,9 +175,8 @@ function run_source_test(testing $t)
     $t->dsp('source->load description for "' . source::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user source
-    $src_usr2 = new source;
+    $src_usr2 = new source($t->usr2);
     $src_usr2->name = source::TN_RENAMED;
-    $src_usr2->usr = $t->usr2;
     $src_usr2->load();
     $src_usr2->url = source::TEST_URL;
     $src_usr2->comment = source::TEST_DESCRIPTION;
@@ -192,9 +185,8 @@ function run_source_test(testing $t)
     $t->dsp('source->save undo the user source fields beside the name for "' . source::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific source changes have been saved
-    $src_usr2_reloaded = new source;
+    $src_usr2_reloaded = new source($t->usr2);
     $src_usr2_reloaded->name = source::TN_RENAMED;
-    $src_usr2_reloaded->usr = $t->usr2;
     $src_usr2_reloaded->load();
     $result = $src_usr2_reloaded->url;
     $target = source::TEST_URL;

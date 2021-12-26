@@ -59,8 +59,7 @@ if ($usr->id > 0) {
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
-    $lnk = new word_link;
-    $lnk->usr = $usr;
+    $lnk = new word_link($usr);
 
     // load the parameters to the triple object to display it again in case of an error
     if (isset($_GET['from'])) {

@@ -267,8 +267,7 @@ class value_dsp extends value
             }
 
             $new_value_id = $db_row["value_id"];
-            $wrd = new word_dsp;
-            $wrd->usr = $this->usr;
+            $wrd = new word_dsp($this->usr);
             $wrd->id = $db_row["word_id"];
             $wrd->name = $db_row["word_name"];
             if ($value_id <> $new_value_id) {
@@ -386,9 +385,8 @@ class value_dsp extends value
                 foreach (array_keys($this->ids) as $pos) {
                     if ($phr->id == $this->ids[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
-                        $is_wrd = new word_dsp;
+                        $is_wrd = new word_dsp($this->usr);
                         $is_wrd->id = $phr->is_wrd_id;
-                        $is_wrd->usr = $this->usr;
                         $phr->is_wrd = $is_wrd;
                         $phr->dsp_pos = $pos;
                     }
@@ -535,8 +533,7 @@ class value_dsp extends value
                 if ($phr_id == 0) {
                     $result .= '    <td colspan="2">';
 
-                    $phr_new = new phrase;
-                    $phr_new->usr = $this->usr;
+                    $phr_new = new phrase($this->usr);
                     $result .= $phr_new->dsp_selector(0, $script, $url_pos, '', $back);
                     $url_pos++;
 

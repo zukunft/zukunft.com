@@ -465,9 +465,8 @@ class user
         if ($this->wrd_id <= 0) {
             $this->wrd_id = DEFAULT_WORD_ID;
         }
-        $wrd = new word_dsp;
+        $wrd = new word_dsp($this);
         $wrd->id = $this->wrd_id;
-        $wrd->usr = $this;
         $wrd->load();
         $this->wrd = $wrd;
         return $wrd;

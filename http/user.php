@@ -79,57 +79,50 @@ if ($usr->id > 0) {
 
     // undo user changes for words
     if ($undo_wrd > 0) {
-        $wrd = new word_dsp;
+        $wrd = new word_dsp($usr);
         $wrd->id = $undo_wrd;
-        $wrd->usr = $usr;
         $wrd->del_usr_cfg();
     }
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
-        $lnk = new word_link;
+        $lnk = new word_link($usr);
         $lnk->id = $undo_lnk;
-        $lnk->usr = $usr;
         $lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_frm > 0) {
-        $frm = new formula;
+        $frm = new formula($usr);
         $frm->id = $undo_frm;
-        $frm->usr = $usr;
         $frm->del_usr_cfg();
     }
 
     // undo user changes for formula word links
     if ($undo_frm_lnk > 0) {
-        $frm_lnk = new formula_link;
+        $frm_lnk = new formula_link($usr);
         $frm_lnk->id = $undo_frm_lnk;
-        $frm_lnk->usr = $usr;
         $frm_lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_dsp > 0) {
-        $dsp = new view;
+        $dsp = new view($usr);
         $dsp->id = $undo_dsp;
-        $dsp->usr = $usr;
         $dsp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
-        $cmp = new view_cmp;
+        $cmp = new view_cmp($usr);
         $cmp->id = $undo_cmp;
-        $cmp->usr = $usr;
         $cmp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
-        $cmp_lnk = new view_cmp_link;
+        $cmp_lnk = new view_cmp_link($usr);
         $cmp_lnk->id = $undo_cmp_lnk;
-        $cmp_lnk->usr = $usr;
         $cmp_lnk->del_usr_cfg();
     }
 

@@ -44,9 +44,8 @@ function run_word_display_test(testing $t)
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
-    $wrd_ZH = new word_dsp;
+    $wrd_ZH = new word_dsp($usr);
     $wrd_ZH->name = word::TN_ZH;
-    $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
     $direction = 'up';
     $target = TEST_WORD;
@@ -54,9 +53,8 @@ function run_word_display_test(testing $t)
     $t->dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the other side
-    $wrd_ZH = new word_dsp;
+    $wrd_ZH = new word_dsp($usr);
     $wrd_ZH->name = word::TN_ZH;
-    $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
     $direction = 'down';
     $target = '';
@@ -64,14 +62,12 @@ function run_word_display_test(testing $t)
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the graph display for 2019
-    $wrd_2020 = new word_dsp;
+    $wrd_2020 = new word_dsp($usr);
     $wrd_2020->name = word::TN_2020;
-    $wrd_2020->usr = $usr;
     $wrd_2020->load();
     $direction = 'down';
-    $wrd_2021 = new word_dsp;
+    $wrd_2021 = new word_dsp($usr);
     $wrd_2021->name = word::TN_2021;
-    $wrd_2021->usr = $usr;
     $wrd_2021->load();
     $lnk_20_to_21 = $t->load_word_link(word::TN_2021, verb::DBL_FOLLOW, word::TN_2020);
     // TODO change direction?
@@ -130,13 +126,11 @@ function run_word_display_test(testing $t)
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 
     // the value table for ABB
-    $wrd_ZH = new word_dsp;
+    $wrd_ZH = new word_dsp($usr);
     $wrd_ZH->name = word::TN_ZH;
-    $wrd_ZH->usr = $usr;
     $wrd_ZH->load();
-    $wrd_year = new word_dsp;
+    $wrd_year = new word_dsp($usr);
     $wrd_year->name = word::TN_YEAR;
-    $wrd_year->usr = $usr;
     $wrd_year->load();
     /*
     $target = zut_dsp_list_wrd_val($wrd_ZH->id, $wrd_year->id, $usr->id);

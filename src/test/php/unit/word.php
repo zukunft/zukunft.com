@@ -46,9 +46,8 @@ class word_unit_tests
         $usr->id = 1;
 
         // sql to load the word by id
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->id = 2;
-        $wrd->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $wrd->load_sql($db_con);
         $expected_sql = $t->file('db/word/word_by_id.sql');
@@ -58,9 +57,8 @@ class word_unit_tests
         $t->assert_sql_name_unique($wrd->load_sql($db_con, true));
 
         // sql to load the word by name
-        $wrd = new word;
+        $wrd = new word($usr);
         $wrd->id = 0;
-        $wrd->usr = $usr;
         $wrd->name = word::TN_READ;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $wrd->load_sql($db_con);
@@ -91,7 +89,7 @@ class word_unit_tests
         $t->subheader('Im- and Export tests');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/word/second.json'), true);
-        $wrd = new word_dsp;
+        $wrd = new word_dsp($usr);
         $wrd->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($wrd->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);

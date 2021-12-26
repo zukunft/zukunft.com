@@ -53,13 +53,11 @@ class formula_list
             foreach ($db_rows as $db_row) {
                 if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
                     if ($db_row[formula::FLD_ID] > 0) {
-                        $frm = new formula;
-                        $frm->usr = $this->usr;
+                        $frm = new formula($this->usr);
                         $frm->row_mapper($db_row);
                         if ($frm->name <> '') {
-                            $name_wrd = new word_dsp;
+                            $name_wrd = new word_dsp($this->usr);
                             $name_wrd->name = $frm->name;
-                            $name_wrd->usr = $this->usr;
                             $name_wrd->load();
                             $frm->name_wrd = $name_wrd;
                         }
@@ -70,10 +68,9 @@ class formula_list
         }
     }
 
-    // load the missing formula parameters from the database
-    // TODO: if this list contains already some formula, don't add them again!
     /**
-     * @throws Exception
+     * load the missing formula parameters from the database
+     * TODO: if this list contains already some formula, don't add them again!
      */
     function load()
     {
@@ -96,11 +93,12 @@ class formula_list
                 $sql_from = 'formula_links l, formulas f';
                 $sql_where = 'l.phrase_id = ' . $this->wrd->id . ' AND l.formula_id = f.formula_id';
             } elseif (isset($this->phr_lst)) {
-                if ($this->phr_lst->ids_txt() <> '') {
+                $phr_lst_dsp = $this->phr_lst->dsp_obj();
+                if ($phr_lst_dsp->ids_txt() <> '') {
                     $sql_from = 'formula_links l, formulas f';
-                    $sql_where = 'l.phrase_id IN (' . $this->phr_lst->ids_txt() . ') AND l.formula_id = f.formula_id';
+                    $sql_where = 'l.phrase_id IN (' . $phr_lst_dsp->ids_txt() . ') AND l.formula_id = f.formula_id';
                 } else {
-                    log_err("A phrase list is set (" . $this->phr_lst->dsp_id() . "), but the id list is " . $this->phr_lst->ids_txt() . ".", "formula_list->load");
+                    log_err("A phrase list is set (" . $this->phr_lst->dsp_id() . "), but the id list is " . $phr_lst_dsp->ids_txt() . ".", "formula_list->load");
 
                     $sql_from = 'formula_links l, formulas f';
                     $sql_where = 'l.formula_id = f.formula_id';

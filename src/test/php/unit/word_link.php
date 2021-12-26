@@ -46,9 +46,8 @@ class word_link_unit_tests
         $db_con = new sql_db();
 
         // sql to load the word by id
-        $wrd = new word_link;
+        $wrd = new word_link($usr);
         $wrd->id = 2;
-        $wrd->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $wrd->load_sql($db_con);
         $expected_sql = "SELECT 
@@ -76,7 +75,7 @@ class word_link_unit_tests
         $t->subheader('Im- and Export tests');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/triple/pi.json'), true);
-        $lnk = new word_link;
+        $lnk = new word_link($usr);
         $lnk->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);

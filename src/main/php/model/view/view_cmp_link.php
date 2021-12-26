@@ -59,9 +59,9 @@ class view_cmp_link extends user_sandbox_link
     public ?string $pos_code = null;        // side or below or ....
 
 
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_VIEW_COMPONENT_LINK;
         $this->from_name = DB_TYPE_VIEW;
@@ -74,7 +74,7 @@ class view_cmp_link extends user_sandbox_link
     {
         parent::reset();
 
-        $this->reset_objects();
+        $this->reset_objects($this->usr);
 
         $this->view_id = null;
         $this->view_component_id = null;
@@ -86,10 +86,10 @@ class view_cmp_link extends user_sandbox_link
     /**
      * reset the in memory fields used e.g. if some ids are updated
      */
-    private function reset_objects()
+    private function reset_objects(user $usr)
     {
-        $this->fob = new view(); // the display (view) object (used to save the correct name in the log)
-        $this->tob = new view_cmp(); // the display component (view entry) object (used to save the correct name in the log)
+        $this->fob = new view($usr); // the display (view) object (used to save the correct name in the log)
+        $this->tob = new view_cmp($usr); // the display component (view entry) object (used to save the correct name in the log)
     }
 
     // build the sql where string
@@ -260,9 +260,8 @@ class view_cmp_link extends user_sandbox_link
     {
         $result = true;
         if (!isset($this->fob) and $this->view_id > 0) {
-            $dsp = new view_dsp;
+            $dsp = new view_dsp($this->usr);
             $dsp->id = $this->view_id;
-            $dsp->usr = $this->usr;
             if ($dsp->load()) {
                 $this->fob = $dsp;
             } else {
@@ -270,9 +269,8 @@ class view_cmp_link extends user_sandbox_link
             }
         }
         if (!isset($this->tob) and $this->view_component_id > 0) {
-            $cmp = new view_dsp;
+            $cmp = new view_dsp($this->usr);
             $cmp->id = $this->view_component_id;
-            $cmp->usr = $this->usr;
             if ($cmp->load()) {
                 $this->tob = $cmp;
             } else {
@@ -412,10 +410,9 @@ class view_cmp_link extends user_sandbox_link
                 $order_nbr = 1;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_cmp_link;
+                    $cmp_lnk = new view_cmp_link($this->usr);
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
-                    $cmp_lnk->usr = $this->usr;
                     $cmp_lnk->load();
                     // fix any wrong order numbers
                     if ($cmp_lnk->order_nbr != $order_nbr) {
@@ -434,10 +431,9 @@ class view_cmp_link extends user_sandbox_link
                     // check if correction was successful
                     $order_nbr = 0;
                     foreach ($this->fob->cmp_lst as $entry) {
-                        $cmp_lnk = new view_cmp_link;
+                        $cmp_lnk = new view_cmp_link($this->usr);
                         $cmp_lnk->fob = $this->fob;
                         $cmp_lnk->tob = $entry;
-                        $cmp_lnk->usr = $this->usr;
                         $cmp_lnk->load();
                         if ($cmp_lnk->order_nbr != $order_nbr) {
                             log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "view_component_link->move");
@@ -453,10 +449,9 @@ class view_cmp_link extends user_sandbox_link
                 $prev_entry_down = false;
                 foreach ($this->fob->cmp_lst as $entry) {
                     // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                    $cmp_lnk = new view_cmp_link;
+                    $cmp_lnk = new view_cmp_link($this->usr);
                     $cmp_lnk->fob = $this->fob;
                     $cmp_lnk->tob = $entry;
-                    $cmp_lnk->usr = $this->usr;
                     $cmp_lnk->load();
                     if ($prev_entry_down) {
                         if (isset($prev_entry)) {

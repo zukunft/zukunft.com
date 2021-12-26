@@ -1581,7 +1581,14 @@ class sql_db
      */
     function where_in_par(string $field, array $values): string
     {
-        $result = $field . " IN [";
+        $result = '';
+        if ($this->usr_query
+            or $this->join <> ''
+            or $this->join_type <> ''
+            or $this->join2_type <> '') {
+            $result .= sql_db::STD_TBL . '.';
+        }
+        $result .= $field . ' IN (';
         $i = 1;
         foreach ($values as $value) {
             $this->add_par(sql_db::PAR_INT, $value);
@@ -1591,7 +1598,7 @@ class sql_db
             $result .= $this->par_name();
             $i++;
         }
-        $result .= ']';
+        $result .= ')';
         return $result;
     }
 

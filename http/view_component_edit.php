@@ -54,20 +54,17 @@ if ($usr->id > 0) {
         log_info("The view component id must be set to display a view.", "view_component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
         // init the display object to show the standard elements such as the header
-        $dsp = new view_dsp;
-        $dsp->usr = $usr;
+        $dsp = new view_dsp($usr);
 
         // create the view component object to apply the user changes to it
-        $cmp = new view_cmp_dsp;
+        $cmp = new view_cmp_dsp($usr);
         $cmp->id = $_GET['id'];
-        $cmp->usr = $usr;
         $result .= $cmp->load();
 
-        // get the word used as a sample the illustrate the changes
-        $wrd = new word;
+        // get the word used as a sample to illustrate the changes
+        $wrd = new word($usr);
         if (isset($_GET['word'])) {
             $wrd->id = $_GET['word'];
-            $wrd->usr = $usr;
             $result .= $wrd->load();
         } else {
             // get the default word for the view $dsp
@@ -80,9 +77,8 @@ if ($usr->id > 0) {
         // link or unlink a view
         $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
         if ($dsp_link_id > 0) {
-            $dsp_link = new view_dsp;
+            $dsp_link = new view_dsp($usr);
             $dsp_link->id = $dsp_link_id;
-            $dsp_link->usr = $usr;
             $result .= $dsp_link->load();
             $order_nbr = $cmp->next_nbr($dsp_link_id);
             $upd_result = $cmp->link($dsp_link, $order_nbr);
@@ -90,9 +86,8 @@ if ($usr->id > 0) {
 
         $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
         if ($dsp_unlink_id > 0) {
-            $dsp_unlink = new view_dsp;
+            $dsp_unlink = new view_dsp($usr);
             $dsp_unlink->id = $dsp_unlink_id;
-            $dsp_unlink->usr = $usr;
             $result .= $dsp_unlink->load();
             $upd_result .= $cmp->unlink($dsp_unlink);
         }

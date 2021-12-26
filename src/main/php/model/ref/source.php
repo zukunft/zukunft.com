@@ -65,9 +65,9 @@ class source extends user_sandbox_named
     public ?string $back = null; // the calling stack
 
     // define the settings for this source object
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_name = DB_TYPE_SOURCE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
@@ -77,7 +77,6 @@ class source extends user_sandbox_named
     {
         $this->id = null;
         $this->usr_cfg_id = null;
-        $this->usr = null;
         $this->owner_id = null;
         $this->excluded = null;
 

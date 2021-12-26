@@ -51,15 +51,13 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_ADD);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];
 
     // init the formula object
-    $frm = new formula;
-    $frm->usr = $usr;
+    $frm = new formula($usr);
 
     // load the parameters to the formula object to display the user input again in case of an error
     if (isset($_GET['formula_name'])) {
@@ -81,10 +79,9 @@ if ($usr->id > 0) {
     }
 
     // get the word to which the new formula should be linked to
-    $wrd = new word_dsp;
+    $wrd = new word_dsp($usr);
     if (isset($_GET['word'])) {
         $wrd->id = $_GET['word'];
-        $wrd->usr = $usr;
         $wrd->load();
     }
 

@@ -72,7 +72,7 @@ class value_time_series extends user_sandbox_display
      */
     function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_VALUE;
         $this->obj_name = DB_TYPE_VALUE_TIME_SERIES;
 
@@ -81,16 +81,12 @@ class value_time_series extends user_sandbox_display
         $this->reset($usr);
     }
 
-    function reset(?user $usr = null)
+    function reset()
     {
         parent::reset();
 
         $this->grp = new phrase_group();
         $this->source = null;
-
-        if ($usr != null) {
-            $this->usr = $usr;
-        }
 
         $this->last_update = new DateTime();
     }
@@ -108,7 +104,7 @@ class value_time_series extends user_sandbox_display
                 $this->owner_id = $db_row[self::FLD_USER];
                 $this->grp->id = $db_row[phrase_group::FLD_ID];
                 if ($db_row[source::FLD_ID] > 0) {
-                    $this->source = new source();
+                    $this->source = new source($this->usr);
                     $this->source->id = $db_row[source::FLD_ID];
                 }
                 $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());

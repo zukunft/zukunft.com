@@ -72,9 +72,8 @@ function run_word_tests(testing $t)
 
     // check if loading a word by name and id works
     $wrd_by_name = $t->add_word(word::TN_READ, null, $t->usr1);
-    $wrd_by_id = new word;
+    $wrd_by_id = new word($t->usr1);
     $wrd_by_id->id = $wrd_by_name->id;
-    $wrd_by_id->usr = $t->usr1;
     $wrd_by_id->load();
     $target = word::TN_READ;
     $result = $wrd_by_id->name;
@@ -259,18 +258,16 @@ function run_word_tests(testing $t)
     $t->dsp('word->is_part for "' . word::TN_CHILD_NON_INHERITANCE . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // save a new word
-    $wrd_new = new word;
+    $wrd_new = new word($t->usr1);
     $wrd_new->name = word::TN_READ;
-    $wrd_new->usr = $t->usr1;
     $result = $wrd_new->save();
     //$target = 'A word with the name "'.word::TEST_NAME_READ.'" already exists. Please use another name.';
     $target = '';
     $t->dsp('word->save for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT_DB);
 
     // test the creation of a new word
-    $wrd_add = new word;
+    $wrd_add = new word($t->usr1);
     $wrd_add->name = word::TN_ADD;
-    $wrd_add->usr = $t->usr1;
     $result = $wrd_add->save();
     $target = '';
     $t->dsp('word->save for "' . word::TN_ADD . '"', $target, $result, TIMEOUT_LIMIT_DB);
@@ -305,7 +302,7 @@ function run_word_tests(testing $t)
     $t->dsp('word->save rename "' . word::TN_ADD . '" to "' . word::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB);
 
     // check if the word renaming was successful
-    $wrd_renamed = new word;
+    $wrd_renamed = new word($t->usr1);
     $wrd_renamed->name = word::TN_RENAMED;
     $wrd_renamed->usr = $t->usr1;
     if ($wrd_renamed->load()) {
@@ -366,9 +363,8 @@ function run_word_tests(testing $t)
     $t->dsp('word->load type_id for "' . word::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific word is created if another user changes the word
-    $wrd_usr2 = new word;
+    $wrd_usr2 = new word($t->usr2);
     $wrd_usr2->name = word::TN_RENAMED;
-    $wrd_usr2->usr = $t->usr2;
     $wrd_usr2->load();
     $wrd_usr2->plural = word::TN_RENAMED . 's2';
     $wrd_usr2->description = word::TN_RENAMED . ' description2';
@@ -378,9 +374,8 @@ function run_word_tests(testing $t)
     $t->dsp('word->save all word fields for user 2 beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific word changes have been saved
-    $wrd_usr2_reloaded = new word;
+    $wrd_usr2_reloaded = new word($t->usr2);
     $wrd_usr2_reloaded->name = word::TN_RENAMED;
-    $wrd_usr2_reloaded->usr = $t->usr2;
     $wrd_usr2_reloaded->load();
     $result = $wrd_usr2_reloaded->plural;
     $target = word::TN_RENAMED . 's2';
@@ -405,9 +400,8 @@ function run_word_tests(testing $t)
     $t->dsp('word->load type_id for "' . word::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user word
-    $wrd_usr2 = new word;
+    $wrd_usr2 = new word($t->usr2);
     $wrd_usr2->name = word::TN_RENAMED;
-    $wrd_usr2->usr = $t->usr2;
     $wrd_usr2->load();
     $wrd_usr2->plural = word::TN_RENAMED . 's';
     $wrd_usr2->description = word::TN_RENAMED . ' description';
@@ -417,9 +411,8 @@ function run_word_tests(testing $t)
     $t->dsp('word->save undo the user word fields beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // check if a user specific word changes have been saved
-    $wrd_usr2_reloaded = new word;
+    $wrd_usr2_reloaded = new word($t->usr2);
     $wrd_usr2_reloaded->name = word::TN_RENAMED;
-    $wrd_usr2_reloaded->usr = $t->usr2;
     $wrd_usr2_reloaded->load();
     $result = $wrd_usr2_reloaded->plural;
     $target = word::TN_RENAMED . 's';
@@ -455,24 +448,24 @@ function run_word_tests(testing $t)
     // check if the user specific changes can be removed with one click
 
     // check if the deletion request has been logged
-    //$wrd = new word;
+    //$wrd = new word($t->usr1);
 
     // check if the deletion has been requested
-    //$wrd = new word;
+    //$wrd = new word($t->usr1);
 
     // confirm the deletion requested
-    //$wrd = new word;
+    //$wrd = new word($t->usr1);
 
     // check if the confirmation of the deletion requested has been logged
-    //$wrd = new word;
+    //$wrd = new word($t->usr1);
 
     // check if the word has been deleted
-    //$wrd = new word;
+    //$wrd = new word($t->usr1);
 
     // review and check if still needed
     // main word from url
     /*
-    $wrd = new word;
+    $wrd = new word($t->usr1);
     $wrd->usr = $t->usr1;
     $wrd->main_wrd_from_txt($wrd_read->id . ',' . $wrd_read->id);
     $target = word::TEST_NAME_READ;

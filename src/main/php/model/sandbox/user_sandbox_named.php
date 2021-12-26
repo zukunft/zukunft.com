@@ -140,9 +140,7 @@ class user_sandbox_named extends user_sandbox
                 if ($this->obj_name == DB_TYPE_WORD) {
                     if (in_array($this->name, word::RESERVED_WORDS)) {
                         // the admin user needs to add the read test word during initial load
-                        if ($usr->is_admin() and $this->name == word::TN_READ) {
-                            $result = '';
-                        } else {
+                        if ($usr->is_admin() and $this->name != word::TN_READ) {
                             $result = '"' . $this->name . '" is a reserved name for system testing. Please use another name';
                         }
                     }
@@ -165,9 +163,7 @@ class user_sandbox_named extends user_sandbox
                 } elseif ($this->obj_name == DB_TYPE_SOURCE) {
                     if (in_array($this->name, source::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name == source::TN_READ) {
-                            $result = '';
-                        } else {
+                        if ($usr->is_admin() and $this->name != source::TN_READ) {
                             $result = '"' . $this->name . '" is a reserved source name for system testing. Please use another name';
                         }
                     }
@@ -341,11 +337,11 @@ class user_sandbox_named extends user_sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns string a filled object that has the same name
+     * @return user_sandbox a filled object that has the same name
      */
     function get_similar(): user_sandbox
     {
-        $result = new user_sandbox_named();
+        $result = new user_sandbox_named($this->usr);
 
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist

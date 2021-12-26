@@ -28,4 +28,4 @@ PREPARE phrase_list_by_ids_word_part (int, int, int, int) AS
                ELSE u.protection_type_id END                                      AS protection_type_id
     FROM words s
              LEFT JOIN user_words u ON s.word_id = u.word_id AND u.user_id = $4
-    WHERE word_id IN [$1,$2,$3];
+    WHERE s.word_id IN ($1,$2,$3);

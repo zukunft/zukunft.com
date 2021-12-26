@@ -57,8 +57,7 @@ if ($usr->id > 0) {
     $back = $_GET['back'];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
-    $src = new source;
-    $src->usr = $usr;
+    $src = new source($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
     if (isset($_GET['name'])) {
@@ -80,9 +79,8 @@ if ($usr->id > 0) {
         } else {
 
             // check if source name already exists (move this part to the save function??)
-            $db_src = new source;
+            $db_src = new source($usr);
             $db_src->name = $src->name;
-            $db_src->usr = $usr;
             $db_src->load();
             if ($db_src->id > 0) {
                 $msg .= 'Name ' . $src->name . ' is already existing. Please enter another name or use the existing source.';

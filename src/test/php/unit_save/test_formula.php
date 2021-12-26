@@ -52,8 +52,7 @@ function run_formula_test(testing $t)
     $back = 0;
 
     // test loading of one formula
-    $frm = new formula;
-    $frm->usr = $t->usr1;
+    $frm = new formula($t->usr1);
     $frm->name = formula::TN_INCREASE;
     $frm->load();
     $result = $frm->usr_text;
@@ -240,8 +239,7 @@ function run_formula_test(testing $t)
     $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id . '&back=0">' . formula::TN_INCREASE . '</a>';
     $t->dsp('formula->display for ' . $frm->dsp_id() . '', $target, $result);
 
-    $wrd = new word_dsp;
-    $wrd->usr = $t->usr1;
+    $wrd = new word_dsp($t->usr1);
     $wrd->name = word::TN_CH;
     $wrd->load();
     $result = trim($frm_dsp->dsp_result($wrd, $back));
@@ -286,10 +284,9 @@ function run_formula_test(testing $t)
     // to link and unlink a formula is tested in the formula_link section
 
     // test adding of one formula
-    $frm = new formula;
+    $frm = new formula($t->usr1);
     $frm->name = formula::TN_ADD;
     $frm->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
-    $frm->usr = $t->usr1;
     $result = $frm->save();
     if ($frm->id > 0) {
         $result = $frm->usr_text;
@@ -314,10 +311,9 @@ function run_formula_test(testing $t)
     $t->dsp('formula->save adding logged for "' . formula::TN_ADD . '"', $target, $result);
 
     // check if adding the same formula again creates a correct error message
-    $frm = new formula;
+    $frm = new formula($t->usr1);
     $frm->name = formula::TN_ADD;
     $frm->usr_text = '"percent" = 1 - ( "this" / "prior" )';
-    $frm->usr = $t->usr1;
     $result = $frm->save();
     // use the next line if system config is non standard
     //$target = 'A formula with the name "'.formula::TN_ADD.'" already exists. Please use another name.';
@@ -332,9 +328,8 @@ function run_formula_test(testing $t)
     $t->dsp('formula->save rename "' . formula::TN_ADD . '" to "' . formula::TN_RENAMED . '".', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if the formula renaming was successful
-    $frm_renamed = new formula;
+    $frm_renamed = new formula($t->usr1);
     $frm_renamed->name = formula::TN_RENAMED;
-    $frm_renamed->usr = $t->usr1;
     $frm_renamed->load();
     if ($frm_renamed->id > 0) {
         $result = $frm_renamed->name;
@@ -412,9 +407,8 @@ function run_formula_test(testing $t)
     $t->dsp('formula->load all_values_needed for "' . formula::TN_RENAMED . '" logged', $target, $result);
 
     // check if a user specific formula is created if another user changes the formula
-    $frm_usr2 = new formula;
+    $frm_usr2 = new formula($t->usr2);
     $frm_usr2->name = formula::TN_RENAMED;
-    $frm_usr2->usr = $t->usr2;
     $frm_usr2->load();
     $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
     $frm_usr2->description = formula::TN_RENAMED . ' description2';
@@ -425,9 +419,8 @@ function run_formula_test(testing $t)
     $t->dsp('formula->save all formula fields for user 2 beside the name for "' . formula::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if a user specific formula changes have been saved
-    $frm_usr2_reloaded = new formula;
+    $frm_usr2_reloaded = new formula($t->usr2);
     $frm_usr2_reloaded->name = formula::TN_RENAMED;
-    $frm_usr2_reloaded->usr = $t->usr2;
     $frm_usr2_reloaded->load();
     $result = $frm_usr2_reloaded->usr_text;
     $target = '"percent" = ( "this" - "prior" ) / "prior"';
@@ -464,9 +457,8 @@ function run_formula_test(testing $t)
     $t->dsp('formula->load need_all_val for "' . formula::TN_RENAMED . '"', $target, $result);
 
     // check if undo all specific changes removes the user formula
-    $frm_usr2 = new formula;
+    $frm_usr2 = new formula($t->usr2);
     $frm_usr2->name = formula::TN_RENAMED;
-    $frm_usr2->usr = $t->usr2;
     $frm_usr2->load();
     $frm_usr2->usr_text = '= "this"';
     $frm_usr2->description = formula::TN_RENAMED . ' description';
@@ -477,9 +469,8 @@ function run_formula_test(testing $t)
     $t->dsp('formula->save undo the user formula fields beside the name for "' . formula::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 
     // ... and if a user specific formula changes have been saved
-    $frm_usr2_reloaded = new formula;
+    $frm_usr2_reloaded = new formula($t->usr2);
     $frm_usr2_reloaded->name = formula::TN_RENAMED;
-    $frm_usr2_reloaded->usr = $t->usr2;
     $frm_usr2_reloaded->load();
     $result = $frm_usr2_reloaded->usr_text;
     $target = '= "this"';
@@ -514,9 +505,8 @@ function run_formula_list_test(testing $t)
     // load the main test word
     $wrd_share = $t->test_word(word::TN_SHARE);
 
-    $wrd = new word;
+    $wrd = new word($t->usr1);
     $wrd->id = $wrd_share->id;
-    $wrd->usr = $t->usr1;
     $wrd->load();
     $frm_lst = new formula_list;
     $frm_lst->wrd = $wrd;

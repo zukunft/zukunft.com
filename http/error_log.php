@@ -84,8 +84,7 @@ $result .= $usr->get();
 if ($back <= 0) {
     $back = 1; // replace with the fallback word id
 }
-$wrd = new word;
-$wrd->usr = $usr;
+$wrd = new word($usr);
 $wrd->id = $back;
 $wrd->load();
 

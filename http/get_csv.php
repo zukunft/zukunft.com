@@ -71,11 +71,10 @@ if ($usr->id > 0) {
     log_debug("get_csv -> other words (" . implode(",", $word_names) . ")");
 
     // get formula
-    $frm = new formula;
+    $frm = new formula($usr);
     $formula_name = zut_get_formula($word_names);
     $formula_text = '';
     if ($formula_name <> '') {
-        $frm->usr = $usr;
         $frm->name = $formula_name;
         $frm->load();
         //$word_names = zu_lst_not_in($word_names, $formula_name);

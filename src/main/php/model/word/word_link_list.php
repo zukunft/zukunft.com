@@ -308,9 +308,8 @@ class word_link_list
                     if (is_null($db_lnk[user_sandbox::FLD_EXCLUDED]) or $db_lnk[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_lnk['word_link_id'] > 0) {
                             // create one work link object and fill it
-                            $new_link = new word_link;
+                            $new_link = new word_link($this->usr);
                             // fill the fields used for searching
-                            $new_link->usr = $this->usr;
                             $new_link->id = $db_lnk['word_link_id'];
                             $new_link->from->id = $db_lnk['from_phrase_id'];
                             $new_link->verb->id = $db_lnk[verb::FLD_ID];
@@ -334,8 +333,7 @@ class word_link_list
                                 }
                             } else {
                                 if ($db_lnk['word_id1'] > 0) {
-                                    $new_word = new word_dsp;
-                                    $new_word->usr = $this->usr;
+                                    $new_word = new word_dsp($this->usr);
                                     $new_word->id = $db_lnk['word_id1'];
                                     $new_word->owner_id = $db_lnk['user_id1'];
                                     $new_word->name = $db_lnk['word_name1'];
@@ -347,8 +345,7 @@ class word_link_list
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
                                 } elseif ($db_lnk['word_id1'] < 0) {
-                                    $new_word = new word_link;
-                                    $new_word->usr = $this->usr;
+                                    $new_word = new word_link($this->usr);
                                     $new_word->id = $db_lnk['word_id1'] * -1; // TODO check if not word_id is correct
                                     $new_link->from = $new_word->phrase();
                                     $new_link->from_name = $new_word->name;
@@ -358,8 +355,7 @@ class word_link_list
                             }
                             // fill the to word
                             if ($db_lnk['word_id2'] > 0) {
-                                $new_word = new word_dsp;
-                                $new_word->usr = $this->usr;
+                                $new_word = new word_dsp($this->usr);
                                 $new_word->id = $db_lnk['word_id2'];
                                 $new_word->owner_id = $db_lnk['user_id2'];
                                 $new_word->name = $db_lnk['word_name2'];
@@ -372,8 +368,7 @@ class word_link_list
                                 $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name;
                             } elseif ($db_lnk['word_id2'] < 0) {
-                                $new_word = new word_link;
-                                $new_word->usr = $this->usr;
+                                $new_word = new word_link($this->usr);
                                 $new_word->id = $db_lnk['word_id2'] * -1;
                                 $new_link->to = $new_word->phrase();
                                 $new_link->to_name = $new_word->name;

@@ -83,9 +83,8 @@ class term
     private function load_word(): bool
     {
         $result = false;
-        $wrd = new word_dsp;
+        $wrd = new word_dsp($this->usr);
         $wrd->name = $this->name;
-        $wrd->usr = $this->usr;
         if ($wrd->load()) {
             log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK));
             if ($wrd->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
@@ -107,9 +106,8 @@ class term
     {
         $result = false;
         if ($including_word_links) {
-            $lnk = new word_link;
+            $lnk = new word_link($this->usr);
             $lnk->name = $this->name;
-            $lnk->usr = $this->usr;
             if ($lnk->load()) {
                 $this->id = $lnk->id;
                 //$this->type = word_link::class;
@@ -128,9 +126,8 @@ class term
     private function load_formula(): bool
     {
         $result = false;
-        $frm = new formula;
+        $frm = new formula($this->usr);
         $frm->name = $this->name;
-        $frm->usr = $this->usr;
         if ($frm->load(false)) {
             $this->id = $frm->id;
             $this->type = formula::class;

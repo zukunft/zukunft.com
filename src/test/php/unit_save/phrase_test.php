@@ -67,11 +67,10 @@ function run_phrase_test(testing $t)
 
     // prepare the Insurance Zurich
     $wrd_zh = $t->load_word(word::TN_ZH);
-    $lnk_company = new word_link;
+    $lnk_company = new word_link($usr);
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_company->to->id = $wrd_company->id;
-    $lnk_company->usr = $usr;
     $lnk_company->load();
 
     // remember the id for later use
@@ -79,7 +78,7 @@ function run_phrase_test(testing $t)
 
 
     // test the phrase display functions (word side)
-    $phr = new phrase;
+    $phr = new phrase($usr);
     $phr->id = $wrd_company->id;
     $phr->usr = $usr;
     $phr->load();
@@ -102,9 +101,8 @@ function run_phrase_test(testing $t)
     $t->dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
 
     // test the phrase display functions (triple side)
-    $phr = new phrase;
+    $phr = new phrase($usr);
     $phr->id = $zh_company_id * -1;
-    $phr->usr = $usr;
     $phr->load();
     $result = $phr->name;
     $target = phrase::TN_ZH_COMPANY;
@@ -128,23 +126,20 @@ function run_phrase_test(testing $t)
     $form_name = 'test_phrase_selector';
     $pos = 1;
     $back = $wrd_company->id;
-    $phr = new phrase;
+    $phr = new phrase($usr);
     $phr->id = $zh_company_id * -1;
-    $phr->usr = $usr;
     $phr->load();
     $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
     $target = phrase::TN_ZH_COMPANY;
     $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
-    $wrd_ABB = new word_dsp;
+    $wrd_ABB = new word_dsp($usr);
     $wrd_ABB->name = TW_ABB;
-    $wrd_ABB->usr = $usr;
     $wrd_ABB->load();
     $phr = $wrd_ABB->phrase();
-    $wrd_company = new word_dsp;
+    $wrd_company = new word_dsp($usr);
     $wrd_company->name = TEST_WORD;
-    $wrd_company->usr = $usr;
     $wrd_company->load();
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);
     $target = TW_ABB;

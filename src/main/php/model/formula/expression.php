@@ -138,8 +138,11 @@ class expression
                 $new_wrd_id = $this->get_wrd_id($ref_text);
             }
             $phr_lst = new phrase_list($this->usr);
-            $phr_lst->ids = $wrd_ids;
-            $phr_lst->load();
+            if (count($wrd_ids) > 0) {
+                $phr_lst->load_by_ids($wrd_ids);
+            }
+            //$phr_lst->ids = $wrd_ids;
+            //$phr_lst->load();
             log_debug('expression->fv_phr_lst -> ' . $phr_lst->name());
         }
 
@@ -481,9 +484,8 @@ class expression
         $id = zu_str_between($result, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
         while ($id > 0) {
             $db_sym = ZUP_CHAR_WORD_START . $id . ZUP_CHAR_WORD_END;
-            $wrd = new word_dsp;
+            $wrd = new word_dsp($this->usr);
             $wrd->id = $id;
-            $wrd->usr = $this->usr;
             $wrd->load();
             $result = str_replace($db_sym, ZUP_CHAR_WORD . $wrd->name . ZUP_CHAR_WORD, $result);
             $id = zu_str_between($result, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
@@ -493,9 +495,8 @@ class expression
         $id = zu_str_between($result, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
         while ($id > 0) {
             $db_sym = ZUP_CHAR_FORMULA_START . $id . ZUP_CHAR_FORMULA_END;
-            $frm = new formula;
+            $frm = new formula($this->usr);
             $frm->id = $id;
-            $frm->usr = $this->usr;
             $frm->load();
             $result = str_replace($db_sym, ZUP_CHAR_WORD . $frm->name . ZUP_CHAR_WORD, $result);
             $id = zu_str_between($result, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
@@ -565,9 +566,8 @@ class expression
 
                 // check for formulas first, because for every formula a word is also existing
                 // similar to a part in get_usr_part, maybe combine
-                $frm = new formula;
+                $frm = new formula($this->usr);
                 $frm->name = $name;
-                $frm->usr = $this->usr;
                 $frm->load();
                 if ($frm->id > 0) {
                     $db_sym = ZUP_CHAR_FORMULA_START . $frm->id . ZUP_CHAR_FORMULA_END;
@@ -576,9 +576,8 @@ class expression
 
                 // check for words
                 if ($db_sym == '') {
-                    $wrd = new word_dsp;
+                    $wrd = new word_dsp($this->usr);
                     $wrd->name = $name;
-                    $wrd->usr = $this->usr;
                     $wrd->load();
                     if ($wrd->id > 0) {
                         $db_sym = ZUP_CHAR_WORD_START . $wrd->id . ZUP_CHAR_WORD_END;

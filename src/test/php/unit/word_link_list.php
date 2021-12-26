@@ -105,7 +105,7 @@ class word_link_list_unit_tests
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word and up
-        $wrd = new word();
+        $wrd = new word($usr);
         $wrd->id = 1;
         $wrd_lnk_lst = new word_link_list;
         $wrd_lnk_lst->wrd = $wrd;
@@ -153,7 +153,7 @@ class word_link_list_unit_tests
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word and down
-        $wrd = new word();
+        $wrd = new word($usr);
         $wrd->id = 2;
         $wrd_lnk_lst = new word_link_list;
         $wrd_lnk_lst->wrd = $wrd;

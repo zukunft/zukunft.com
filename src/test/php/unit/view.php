@@ -49,9 +49,8 @@ class view_unit_tests
         $db_con = new sql_db();
 
         // sql to load the view by id
-        $dsp = new view;
+        $dsp = new view($usr);
         $dsp->id = 2;
-        $dsp->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_sql($db_con);
         $expected_sql = $t->file('db/view/view_by_id.sql');
@@ -61,10 +60,9 @@ class view_unit_tests
         $t->assert_sql_name_unique($dsp->load_sql($db_con, true));
 
         // sql to load the view by code id
-        $dsp = new view;
+        $dsp = new view($usr);
         $dsp->id = 0;
         $dsp->code_id = view::WORD;
-        $dsp->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_sql($db_con);
         $expected_sql = "SELECT 
@@ -86,11 +84,10 @@ class view_unit_tests
         $t->assert_sql_name_unique($dsp->load_sql($db_con, true));
 
         // sql to load the view by name
-        $dsp = new view;
+        $dsp = new view($usr);
         $dsp->id = 0;
         $dsp->code_id = null;
         $dsp->name = view::TN_ADD;
-        $dsp->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_sql($db_con);
         $expected_sql = "SELECT 
@@ -112,9 +109,8 @@ class view_unit_tests
         $t->assert_sql_name_unique($dsp->load_sql($db_con, true));
 
         // sql to load the view components
-        $dsp = new view;
+        $dsp = new view($usr);
         $dsp->id = 2;
-        $dsp->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $dsp->load_components_sql($db_con);
         $expected_sql = "SELECT e.view_component_id, 
@@ -185,7 +181,7 @@ class view_unit_tests
         $t->subheader('Im- and Export tests');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/view/car_costs.json'), true);
-        $dsp = new view_dsp;
+        $dsp = new view_dsp($usr);
         $dsp->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($dsp->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
@@ -205,7 +201,7 @@ class view_unit_tests
         $dsp->code_id = null;
         $dsp->name = view::TEST_NAME_ADD;
         $dsp->usr = $usr;
-        $wrd = new word();
+        $wrd = new word($usr);
         $wrd->name = word::TEST_NAME;
         $result = $dsp->display($wrd, 1);
         $target = '';

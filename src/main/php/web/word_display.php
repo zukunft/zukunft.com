@@ -273,7 +273,8 @@ class word_dsp extends word
 
         // TODO use this for fast loading
         $val_matrix = $row_lst->val_matrix($col_lst);
-        $result .= $row_lst->dsp_val_matrix($val_matrix);
+        $row_lst_dsp = $row_lst->dsp_obj();
+        $result .= $row_lst_dsp->dsp_val_matrix($val_matrix);
 
         log_debug('word_dsp->dsp_val_list -> table');
 
@@ -284,8 +285,7 @@ class word_dsp extends word
             // display the column headers
             // not needed any more if wrd lst is created based on word_display elements
             // to review
-            $row_phr_dsp = new word_dsp;
-            $row_phr_dsp->usr = $this->usr;
+            $row_phr_dsp = new word_dsp($this->usr);
             $row_phr_dsp->id = $row_phr->id;
             $row_phr_dsp->load();
             if ($row_nbr == 0) {

@@ -94,9 +94,9 @@ class view_cmp extends user_sandbox_named
         self::TN_TABLE
     );
 
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_name = 'view_component';
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
@@ -106,7 +106,6 @@ class view_cmp extends user_sandbox_named
     {
         $this->id = null;
         $this->usr_cfg_id = null;
-        $this->usr = null;
         $this->owner_id = null;
         $this->excluded = null;
 
@@ -244,9 +243,8 @@ class view_cmp extends user_sandbox_named
     {
         $result = false;
         if ($this->word_id_row > 0) {
-            $wrd_row = new word_dsp;
+            $wrd_row = new word_dsp($this->usr);
             $wrd_row->id = $this->word_id_row;
-            $wrd_row->usr = $this->usr;
             $wrd_row->load();
             $this->wrd_row = $wrd_row;
             $result = $wrd_row->name;
@@ -264,9 +262,8 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_col > 0) {
-            $wrd_col = new word_dsp;
+            $wrd_col = new word_dsp($this->usr);
             $wrd_col->id = $this->word_id_col;
-            $wrd_col->usr = $this->usr;
             $wrd_col->load();
             $this->wrd_col = $wrd_col;
             $result = $wrd_col->name;
@@ -279,9 +276,8 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
-            $wrd_col2 = new word_dsp;
+            $wrd_col2 = new word_dsp($this->usr);
             $wrd_col2->id = $this->word_id_col2;
-            $wrd_col2->usr = $this->usr;
             $wrd_col2->load();
             $this->wrd_col2 = $wrd_col2;
             $result = $wrd_col2->name;
@@ -294,9 +290,8 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->formula_id > 0) {
-            $frm = new formula;
+            $frm = new formula($this->usr);
             $frm->id = $this->formula_id;
-            $frm->usr = $this->usr;
             $frm->load();
             $this->frm = $frm;
             $result = $frm->name;
@@ -559,10 +554,9 @@ class view_cmp extends user_sandbox_named
     {
         log_debug('view_component->link ' . $this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
-        $dsp_lnk = new view_cmp_link;
+        $dsp_lnk = new view_cmp_link($this->usr);
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
-        $dsp_lnk->usr = $this->usr;
         $dsp_lnk->order_nbr = $order_nbr;
         $dsp_lnk->pos_type_id = 1; // to be reviewed
         return $dsp_lnk->save();
@@ -577,10 +571,9 @@ class view_cmp extends user_sandbox_named
 
         if (isset($dsp) and isset($this->usr)) {
             log_debug('view_component->unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
-            $dsp_lnk = new view_cmp_link;
+            $dsp_lnk = new view_cmp_link($this->usr);
             $dsp_lnk->fob = $dsp;
             $dsp_lnk->tob = $this;
-            $dsp_lnk->usr = $this->usr;
             $msg = $dsp_lnk->del();
             $result .= $msg->get_last_message();
         } else {

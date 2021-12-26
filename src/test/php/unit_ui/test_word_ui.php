@@ -43,9 +43,8 @@ function run_word_ui_test(testing $t)
     $t->header('Test the word frontend scripts (e.g. /word_add.php)');
 
     // call the add word page and check if at least some keywords are returned
-    $wrd = new word_dsp;
+    $wrd = new word_dsp($usr);
     $wrd->name = word::TN_READ;
-    $wrd->usr = $usr;
     $wrd->load();
     $vrb_is = cl(db_cl::VERB, verb::IS_A);
     $wrd_type = $word_types->default_id();

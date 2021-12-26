@@ -40,9 +40,8 @@ function run_display_test(testing $t)
 
     // test the usage of a view to create the HTML code
     $wrd = $t->load_word(word::TN_READ);
-    $dsp = new view;
+    $dsp = new view($usr);
     $dsp->name = 'Company ratios';
-    $dsp->usr = $usr;
     $dsp->load();
     //$result = $dsp->display($wrd, $back);
     $target = true;
@@ -52,7 +51,7 @@ function run_display_test(testing $t)
     $t->header('Test the view component display class (classes/view_component_dsp.php)');
 
     // test if a simple text component can be created
-    $cmp = new view_cmp_dsp;
+    $cmp = new view_cmp_dsp($usr);
     $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
     $cmp->name = TS_NESN_2016_NAME;
     $result = $cmp->text();

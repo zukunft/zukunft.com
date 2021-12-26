@@ -429,9 +429,8 @@ class formula_value
         if ($this->src_time_id <> 0) {
             log_debug('formula_value->load_time_wrd_src for source time "' . $this->src_time_id . '"');
             //if (!isset($this->src_time_phr)) {
-            $time_phr = new phrase;
+            $time_phr = new phrase($this->usr);
             $time_phr->id = $this->src_time_id;
-            $time_phr->usr = $this->usr;
             $time_phr->load();
             if (isset($time_phr)) {
                 $this->src_time_phr = $time_phr;
@@ -450,9 +449,8 @@ class formula_value
         if ($this->time_id <> 0) {
             log_debug('formula_value->load_phr_lst for time "' . $this->time_id . '"');
             //if (!isset($this->time_phr)) {
-            $time_phr = new phrase;
+            $time_phr = new phrase($this->usr);
             $time_phr->id = $this->time_id;
-            $time_phr->usr = $this->usr;
             $time_phr->load();
             if (isset($time_phr)) {
                 $this->time_phr = $time_phr;
@@ -482,9 +480,8 @@ class formula_value
     {
         if ($this->frm_id > 0) {
             log_debug('formula_value->load_formula for user ' . $this->usr->name);
-            $frm = new formula;
+            $frm = new formula($this->usr);
             $frm->id = $this->frm_id;
-            $frm->usr = $this->usr;
             $frm->load();
             $this->frm = $frm;
         }
@@ -768,9 +765,8 @@ class formula_value
         $result .= '</br></br>' . "\n";
 
         // display the formula with links
-        $frm = new formula;
+        $frm = new formula($this->usr);
         $frm->id = $this->frm_id;
-        $frm->usr = $this->usr;
         $frm->load();
         $result .= ' based on</br>' . $frm->name_linked($back);
         $result .= ' ' . $frm->dsp_text($back) . "\n";

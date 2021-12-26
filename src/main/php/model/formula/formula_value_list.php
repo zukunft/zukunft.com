@@ -272,8 +272,9 @@ class formula_value_list
                     log_debug("fv_lst->display -> add time " . $fv->time_phr->name . ".");
                     $phr_lst->add($fv->time_phr);
                 }
+                $phr_lst_dsp = $phr_lst->dsp_obj();
                 $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst->name_linked() . '</td>';
+                $result .= '<td>' . $phr_lst_dsp->name_linked() . '</td>';
                 $result .= '<td>' . $fv->display_linked($back) . '</td>';
                 $result .= '</tr>';
             }
@@ -317,9 +318,8 @@ class formula_value_list
         $result = array();
 
         // temp utils the call is reviewed
-        $wrd = new word_dsp;
+        $wrd = new word_dsp($this->usr);
         $wrd->id = $phr_id;
-        $wrd->usr = $this->usr;
         $wrd->load();
 
         $val_lst = new value_list($this->usr);
@@ -331,9 +331,8 @@ class formula_value_list
                 $debug_txt = "";
                 $debug_phr_ids = $value_lst[$val_id][1];
                 foreach ($debug_phr_ids as $debug_phr_id) {
-                    $debug_wrd = new word_dsp;
+                    $debug_wrd = new word_dsp($this->usr);
                     $debug_wrd->id = $debug_phr_id;
-                    $debug_wrd->usr = $this->usr;
                     $debug_wrd->load();
                     $debug_txt .= ", " . $debug_wrd->name;
                 }
@@ -613,8 +612,7 @@ class formula_value_list
     {
         global $db_con;
 
-        $time_phr = new phrase;
-        $time_phr->usr = $this->usr;
+        $time_phr = new phrase($this->usr);
         $time_phr->id = $time_id;
         $time_phr->load();
         log_debug("fv_lst->val_phr_lst ... for value " . $val->id);

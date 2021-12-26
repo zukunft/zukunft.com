@@ -43,13 +43,14 @@ class ref
     public ?string $external_key = null;  // the unique key in the external system
 
     // in memory only fields
-    public ?user $usr = null;             // just needed for logging the changes
+    public user $usr;                     // just needed for logging the changes
     public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
     public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
 
-    function __construct()
+    function __construct(user $usr)
     {
-        $this->create_objects();
+        $this->usr = $usr;
+        $this->create_objects($usr);
     }
 
     function reset()
@@ -57,13 +58,12 @@ class ref
         $this->id = null;
         $this->external_key = '';
 
-        $this->usr = null;
-        $this->create_objects();
+        $this->create_objects($this->usr);
     }
 
-    private function create_objects()
+    private function create_objects(user $usr)
     {
-        $this->phr = new phrase();
+        $this->phr = new phrase($usr);
         $this->ref_type = new ref_type();
     }
 
@@ -113,9 +113,8 @@ class ref
 
         if ($this->phr->name == null or $this->phr->name == '') {
             if ($this->phr->id <> 0) {
-                $phr = new phrase;
+                $phr = new phrase($this->usr);
                 $phr->id = $this->phr->id;
-                $phr->usr = $this->usr;
                 if ($phr->load()) {
                     $this->phr = $phr;
                     log_debug('ref->load_objects -> phrase ' . $this->phr->dsp_id() . ' loaded');
@@ -351,7 +350,6 @@ class ref
         $db_chk->reset();
         $db_chk->phr = $this->phr;
         $db_chk->ref_type = $this->ref_type;
-        $db_chk->usr = $this->usr;
         $db_chk->load();
         if ($db_chk->id > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
@@ -371,7 +369,9 @@ class ref
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->usr->id);
+        if ($this->usr != null) {
+            $db_con->set_usr($this->usr->id);
+        }
         $db_con->set_type(DB_TYPE_REF);
 
         // check if the external reference is supposed to be added
@@ -398,7 +398,6 @@ class ref
             $db_rec = clone $this;
             $db_rec->reset();
             $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
             $db_rec->load();
             log_debug('ref->save reloaded from db');
 

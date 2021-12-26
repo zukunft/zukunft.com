@@ -95,8 +95,7 @@ function run_graph_test(testing $t)
 
 
     // load the words related to ZH in compare with the old function
-    $ZH = new word_dsp;
-    $ZH->usr = $usr;
+    $ZH = new word_dsp($usr);
     $ZH->name = word::TN_ZH;
     $ZH->load();
     $is = new verb;

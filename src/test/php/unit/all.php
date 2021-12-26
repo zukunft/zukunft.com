@@ -131,11 +131,11 @@ function unit_test_init_formula_element_types()
 /**
  * create an array of the system views for the unit tests without database connection
  */
-function unit_test_init_views()
+function unit_test_init_views(user $usr)
 {
     global $system_views;
 
-    $system_views = new view_list();
+    $system_views = new view_list($usr);
     $system_views->load_dummy();
 
 }
@@ -270,7 +270,7 @@ function run_unit_tests(testing $t)
     unit_test_init_formula_types();
     unit_test_init_formula_link_types();
     unit_test_init_formula_element_types();
-    unit_test_init_views();
+    unit_test_init_views($usr);
     unit_test_init_view_types();
     unit_test_init_view_component_types();
     unit_test_init_view_component_link_types();

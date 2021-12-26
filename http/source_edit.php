@@ -49,16 +49,14 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::SOURCE_EDIT);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
-    $src = new source;
+    $src = new source($usr);
     $src->id = $_GET['id'];
-    $src->usr = $usr;
     $src->load();
 
     if ($src->id <= 0) {

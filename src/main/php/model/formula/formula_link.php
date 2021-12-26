@@ -53,13 +53,14 @@ class formula_link extends user_sandbox_link
     /**
      * formula_link constructor that set the parameters for the user_sandbox object
      */
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_FORMULA_LINK;
         $this->from_name = DB_TYPE_FORMULA;
         $this->to_name = DB_TYPE_PHRASE;
+
         $this->reset();
     }
 
@@ -67,7 +68,7 @@ class formula_link extends user_sandbox_link
     {
         parent::reset();
 
-        $this->reset_objects();
+        $this->reset_objects($this->usr);
 
         $this->order_nbr = null;
         $this->link_type_id = null;
@@ -76,10 +77,10 @@ class formula_link extends user_sandbox_link
     /**
      * reset the in memory fields used e.g. if some ids are updated
      */
-    private function reset_objects()
+    private function reset_objects(user $usr)
     {
-        $this->fob = new formula();
-        $this->tob = new phrase();
+        $this->fob = new formula($usr);
+        $this->tob = new phrase($usr);
     }
 
     function row_mapper(array $db_row, bool $map_usr_fields = false)
@@ -287,9 +288,8 @@ class formula_link extends user_sandbox_link
     {
         $result = true;
         if ($this->formula_id() > 0) {
-            $frm = new formula;
+            $frm = new formula($this->usr);
             $frm->id = $this->formula_id();
-            $frm->usr = $this->usr;
             if ($frm->load()) {
                 $this->fob = $frm;
             } else {
@@ -298,9 +298,8 @@ class formula_link extends user_sandbox_link
         }
         if ($result) {
             if ($this->phrase_id() <> 0) {
-                $phr = new phrase;
+                $phr = new phrase($this->usr);
                 $phr->id = $this->phrase_id();
-                $phr->usr = $this->usr;
                 if ($phr->load()) {
                     $this->tob = $phr;
                 } else {
@@ -657,10 +656,9 @@ class formula_link extends user_sandbox_link
         if ($this->id <= 0) {
             log_debug('formula_link->save check if a new formula_link for "' . $this->fob->name . '" and "' . $this->tob->name . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
-            $db_chk = new formula_link;
+            $db_chk = new formula_link($this->usr);
             $db_chk->fob = $this->fob;
             $db_chk->tob = $this->tob;
-            $db_chk->usr = $this->usr;
             $db_chk->load_standard();
             if ($db_chk->id > 0) {
                 $this->id = $db_chk->id;
@@ -674,16 +672,14 @@ class formula_link extends user_sandbox_link
             log_debug('formula_link->save update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
-            $db_rec = new formula_link;
+            $db_rec = new formula_link($this->usr);
             $db_rec->id = $this->id;
-            $db_rec->usr = $this->usr;
             $db_rec->load();
             $db_rec->load_objects();
             $db_con->set_type(DB_TYPE_FORMULA_LINK);
             log_debug("formula_link->save -> database formula loaded (" . $db_rec->id . ")");
-            $std_rec = new formula_link;
+            $std_rec = new formula_link($this->usr); // must also be set to allow to take the ownership
             $std_rec->id = $this->id;
-            $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
             $std_rec->load_standard();
             log_debug("formula_link->save -> standard formula settings loaded (" . $std_rec->id . ")");
 

@@ -57,7 +57,7 @@ class value_list_unit_tests
         $this->test = $t;
 
         // sql to load a list of value by the word id
-        $wrd = new word();
+        $wrd = new word($usr);
         $wrd->id = 1;
         $val_lst = new value_list($usr);
         $val_lst->phr = $wrd->phrase();
@@ -84,7 +84,7 @@ class value_list_unit_tests
 
 
         // sql to load a list of value by the phrase id
-        $phr = new phrase();
+        $phr = new phrase($usr);
         $phr->id = 1;
         $qp = $this->assert_by_phr_sql($phr, sql_db::POSTGRES);
         $this->assert_by_phr_sql($phr, sql_db::MYSQL);

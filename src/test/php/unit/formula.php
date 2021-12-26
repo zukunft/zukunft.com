@@ -45,7 +45,7 @@ class formula_unit_tests
         $db_con = new sql_db();
 
         // sql to load the formula by id
-        $frm = new formula;
+        $frm = new formula($usr);
         $frm->id = 2;
         $frm->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
@@ -66,7 +66,7 @@ class formula_unit_tests
         $t->subheader('Im- and Export tests');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
-        $frm = new formula;
+        $frm = new formula($usr);
         $frm->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($frm->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);

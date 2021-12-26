@@ -93,9 +93,8 @@ function run_value_ui_test(testing $t)
 
     // test get a single value from a value list by group and time
     // get all value for Switzerland
-    $wrd = new word_dsp;
+    $wrd = new word_dsp($usr);
     $wrd->name = word::TN_CH;
-    $wrd->usr = $usr;
     $wrd->load();
     $val_lst = $wrd->val_lst();
     // build the phrase list to select the value Sales for 2014
@@ -120,9 +119,8 @@ function run_value_ui_test(testing $t)
 
     // ... get all times of the Switzerland values
     $time_lst = $val_lst->time_lst();
-    $wrd_2014 = new word_dsp;
+    $wrd_2014 = new word_dsp($usr);
     $wrd_2014->name = TW_2014;
-    $wrd_2014->usr = $usr;
     $wrd_2014->load();
     if ($time_lst->does_contain($wrd_2014)) {
         $result = true;
@@ -149,9 +147,8 @@ function run_value_ui_test(testing $t)
     $t->dsp('value_list->time_lst is ' . $used_time_lst->name() . ', which does not include ' . $wrd_2014->name . '', $target, $result);
 
     // ... but not 2020
-    $wrd_2020 = new word_dsp;
+    $wrd_2020 = new word_dsp($usr);
     $wrd_2020->name = word::TN_2020;
-    $wrd_2020->usr = $usr;
     $wrd_2020->load();
     if ($time_lst->does_contain($wrd_2020)) {
         $result = true;
@@ -170,9 +167,8 @@ function run_value_ui_test(testing $t)
     $phr_lst = $sector_lst->phrase_lst();
     $used_value_lst = $val_lst->filter_by_phrase_lst($phr_lst);
     $used_phr_lst = $used_value_lst->phr_lst();
-    $wrd_auto = new word_dsp;
+    $wrd_auto = new word_dsp($usr);
     $wrd_auto->name = 'Discrete Automation and Motion';
-    $wrd_auto->usr = $usr;
     $wrd_auto->load();
     if ($used_phr_lst->does_contain($wrd_auto)) {
         $result = true;
@@ -183,9 +179,8 @@ function run_value_ui_test(testing $t)
     $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', which does not include ' . $wrd_auto->name . '', $target, $result);
 
     // ... but not 2016
-    $wrd_power = new word_dsp;
+    $wrd_power = new word_dsp($usr);
     $wrd_power->name = 'Power Products';
-    $wrd_power->usr = $usr;
     $wrd_power->load();
     if ($used_phr_lst->does_contain($wrd_power)) {
         $result = true;
@@ -199,17 +194,14 @@ function run_value_ui_test(testing $t)
     $t->header('Test the value list display class (classes/value_list_display.php)');
 
     // test the value table
-    $wrd = new word_dsp;
+    $wrd = new word_dsp($usr);
     $wrd->name = 'Nestlé';
-    $wrd->usr = $usr;
     $wrd->load();
-    $wrd_col = new word_dsp;
+    $wrd_col = new word_dsp($usr);
     $wrd_col->name = TW_CF;
-    $wrd_col->usr = $usr;
     $wrd_col->load();
-    $val_lst = new value_list_dsp;
+    $val_lst = new value_list_dsp($usr);
     $val_lst->phr = $wrd->phrase();
-    $val_lst->usr = $usr;
     $result = $val_lst->dsp_table($wrd_col, $wrd->id);
     $target = TV_NESN_SALES_2016_FORMATTED;
     $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name . '" (' . $result . ') contains ' . $target . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);

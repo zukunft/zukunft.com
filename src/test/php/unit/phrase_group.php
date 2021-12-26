@@ -58,13 +58,13 @@ class phrase_group_unit_tests
 
         // sql to load the word list ids
         $wrd_lst = new word_list();
-        $wrd1 = new word();
+        $wrd1 = new word($usr);
         $wrd1->id = 1;
         $wrd_lst->lst[] = $wrd1;
-        $wrd2 = new word();
+        $wrd2 = new word($usr);
         $wrd2->id = 2;
         $wrd_lst->lst[] = $wrd2;
-        $wrd3 = new word();
+        $wrd3 = new word($usr);
         $wrd3->id = 3;
         $wrd_lst->lst[] = $wrd3;
         $phr_grp = new phrase_group();

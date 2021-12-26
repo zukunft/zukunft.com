@@ -74,7 +74,7 @@ class value_phrase_link_unit_tests
 
         // sql to load a value phrase link list by value id
         $val_phr_lnk_lst = new value_phrase_link_list($usr);
-        $phr = new phrase();
+        $phr = new phrase($usr);
         $phr-> id = 2;
         $this->assert_lst_sql_all($val_phr_lnk_lst, $phr);
 

@@ -76,6 +76,15 @@ class phrase
     public ?int $link_type_id = null;  // used in the word list to know based on which relation the word was added to the list
 
     /**
+     * always set the user because a phrase is always user specific
+     * @param user $usr the user who requested to see this phrase
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
+
+    /**
      * load either a word or triple
      * @return true if loading has been successful
      */
@@ -86,17 +95,15 @@ class phrase
 
         // direct load if the type is known
         if ($this->is_triple()) {
-            $lnk = new word_link;
+            $lnk = new word_link($this->usr);
             $lnk->id = $this->id * -1;
-            $lnk->usr = $this->usr;
             $result = $lnk->load();
             $this->obj = $lnk;
             $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('phrase->loaded triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
-            $wrd = new word_dsp;
+            $wrd = new word_dsp($this->usr);
             $wrd->id = $this->id;
-            $wrd->usr = $this->usr;
             $result = $wrd->load();
             $this->obj = $wrd;
             $this->name = $wrd->name;
@@ -118,9 +125,8 @@ class phrase
             } elseif ($trm->type == formula::class) {
                 // for the phrase load the realted word instead of the formula
                 // TODO integrate this into the term loading by load both object a once
-                $wrd = new word_dsp;
+                $wrd = new word_dsp($this->usr);
                 $wrd->name = $this->name;
-                $wrd->usr = $this->usr;
                 $result = $wrd->load();
                 $this->obj = $wrd;
                 $this->id = $wrd->id;
@@ -266,10 +272,9 @@ class phrase
 
     protected function get_word_dsp(): word_dsp
     {
-        $wrd = new word_dsp();
+        $wrd = new word_dsp($this->usr);
         $wrd->id = $this->id;
         //$wrd->usr_cfg_id = $this->usr_cfg_id;
-        $wrd->usr = $this->usr;
         //$wrd->owner_id = $this->owner_id;
         //$wrd->excluded = $this->excluded;
         $wrd->name = $this->name;
@@ -283,10 +288,9 @@ class phrase
 
     protected function get_triple_dsp(): word_link
     {
-        $lnk = new word_link();
+        $lnk = new word_link($this->usr);
         $lnk->id = $this->id;
         //$wrd->usr_cfg_id = $this->usr_cfg_id;
-        $lnk->usr = $this->usr;
         //$wrd->owner_id = $this->owner_id;
         //$wrd->excluded = $this->excluded;
         $lnk->name = $this->name;
@@ -332,9 +336,8 @@ class phrase
         if ($do_save) {
             $result = $this->load();
             if ($this->id == 0) {
-                $wrd = new word;
+                $wrd = new word($this->usr);
                 $wrd->name = $json_value;
-                $wrd->usr = $this->usr;
                 $result = $wrd->load();
                 if ($wrd->id == 0) {
                     $wrd->name = $json_value;

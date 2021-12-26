@@ -43,8 +43,7 @@ function run_ref_test(testing $t)
 
     // load by phrase and type
     $ref_type = get_ref_type(ref_type::WIKIDATA);
-    $ref = new ref;
-    $ref->usr = $usr;
+    $ref = new ref($usr);
     $ref->phr = $wrd->phrase();
     $ref->ref_type = $ref_type;
     $ref->load();
@@ -54,8 +53,7 @@ function run_ref_test(testing $t)
 
     if ($ref->id > 0) {
         // load by id and test the loading of the objects
-        $ref2 = new ref;
-        $ref2->usr = $usr;
+        $ref2 = new ref($usr);
         $ref2->id = $ref->id;
         $ref2->load();
         $result = $ref2->phr->name;

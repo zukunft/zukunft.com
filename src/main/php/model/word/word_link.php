@@ -66,16 +66,18 @@ class word_link extends user_sandbox_link_description
     public ?string $description = null;   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company); if the description is empty the generic created name is used
 
 
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_TRIPLE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
 
+        $this->usr = $usr;
+
         // also create the link objects because there is now case where they are supposed to be null
-        $this->create_objects();
+        $this->create_objects($usr);
     }
 
     // reset the in memory fields used e.g. if some ids are updated
@@ -83,18 +85,17 @@ class word_link extends user_sandbox_link_description
     {
         $this->id = null;
         $this->usr_cfg_id = null;
-        $this->usr = null;
         $this->owner_id = null;
         $this->excluded = null;
 
-        $this->create_objects();
+        $this->create_objects($this->usr);
     }
 
-    private function create_objects()
+    private function create_objects(user $usr)
     {
-        $this->from = new phrase();
+        $this->from = new phrase($this->usr);
         $this->verb = new verb();
-        $this->to = new phrase();
+        $this->to = new phrase($this->usr);
     }
 
     function row_mapper(array $db_row, bool $map_usr_fields = false)
@@ -169,9 +170,8 @@ class word_link extends user_sandbox_link_description
         } else {
             if ($this->from->id <> 0 and !is_null($this->usr->id)) {
                 if ($this->from->id > 0) {
-                    $wrd = new word_dsp;
+                    $wrd = new word_dsp($this->usr);
                     $wrd->id = $this->from->id;
-                    $wrd->usr = $this->usr;
                     $wrd->load();
                     if ($wrd->name <> '') {
                         $this->from = $wrd->phrase();
@@ -181,9 +181,8 @@ class word_link extends user_sandbox_link_description
                         $result = false;
                     }
                 } elseif ($this->from->id < 0) {
-                    $lnk = new word_link;
+                    $lnk = new word_link($this->usr);
                     $lnk->id = $this->from->id * -1;
-                    $lnk->usr = $this->usr;
                     $lnk->load();
                     if ($lnk->id > 0) {
                         $this->from = $lnk->phrase();
@@ -194,8 +193,7 @@ class word_link extends user_sandbox_link_description
                     }
                 } else {
                     // if type is not (yet) set, create a dummy object to enable the selection
-                    $phr = new phrase;
-                    $phr->usr = $this->usr;
+                    $phr = new phrase($this->usr);
                     $this->from = $phr;
                 }
                 log_debug('word_link->load_objects -> from ' . $this->from->name);
@@ -221,16 +219,14 @@ class word_link extends user_sandbox_link_description
         if (!isset($this->to)) {
             if ($this->to->id == 0) {
                 // set a dummy word
-                $wrd_to = new word_dsp;
-                $wrd_to->usr = $this->usr;
+                $wrd_to = new word_dsp($this->usr);
                 $this->to = $wrd_to->phrase();
             }
         } else {
             if ($this->to->id <> 0 and !is_null($this->usr->id)) {
                 if ($this->to->id > 0) {
-                    $wrd_to = new word_dsp;
+                    $wrd_to = new word_dsp($this->usr);
                     $wrd_to->id = $this->to->id;
-                    $wrd_to->usr = $this->usr;
                     $wrd_to->load();
                     if ($wrd_to->name <> '') {
                         $this->to = $wrd_to->phrase();
@@ -240,9 +236,8 @@ class word_link extends user_sandbox_link_description
                         $result = false;
                     }
                 } elseif ($this->to->id < 0) {
-                    $lnk = new word_link;
+                    $lnk = new word_link($this->usr);
                     $lnk->id = $this->to->id * -1;
-                    $lnk->usr = $this->usr;
                     $lnk->load();
                     if ($lnk->id > 0) {
                         $this->to = $lnk->phrase();
@@ -253,8 +248,7 @@ class word_link extends user_sandbox_link_description
                     }
                 } else {
                     // if type is not (yet) set, create a dummy object to enable the selection
-                    $phr_to = new phrase;
-                    $phr_to->usr = $this->usr;
+                    $phr_to = new phrase($this->usr);
                     $this->to = $phr_to;
                 }
                 log_debug('word_link->load_objects -> to ' . $this->to->name);
@@ -509,15 +503,13 @@ class word_link extends user_sandbox_link_description
     {
         global $word_types;
 
-        $result = new phrase;
+        $result = new phrase($this->usr);
         $result->name = $name;
-        $result->usr = $this->usr;
         if ($do_save) {
             $result->load();
             if ($result->id == 0) {
-                $wrd = new word;
+                $wrd = new word($this->usr);
                 $wrd->name = $name;
-                $wrd->usr = $this->usr;
                 $wrd->load();
                 if ($wrd->id == 0) {
                     $wrd->name = $name;
@@ -862,8 +854,7 @@ class word_link extends user_sandbox_link_description
      */
     function phrase(): phrase
     {
-        $phr = new phrase;
-        $phr->usr = $this->usr;
+        $phr = new phrase($this->usr);
         $phr->id = $this->id;
         $phr->name = $this->name;
         $phr->obj = $this;
@@ -1284,11 +1275,10 @@ class word_link extends user_sandbox_link_description
                 } else {
 
                     // create an empty db_rec element to force saving of all set fields
-                    $db_rec = new word_link;
+                    $db_rec = new word_link($this->usr);
                     $db_rec->from = $this->from;
                     $db_rec->verb = $this->verb;
                     $db_rec->to = $this->to;
-                    $db_rec->usr = $this->usr;
                     $std_rec = clone $db_rec;
                     // save the word_link fields
                     $result .= $this->save_fields($db_con, $db_rec, $std_rec);
@@ -1356,16 +1346,14 @@ class word_link extends user_sandbox_link_description
                 log_debug('word_link->save update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed;
                 // done first, because it needs to be done for user and general phrases
-                $db_rec = new word_link;
+                $db_rec = new word_link($this->usr);
                 $db_rec->id = $this->id;
-                $db_rec->usr = $this->usr;
                 if (!$db_rec->load()) {
                     $result .= 'Reloading of word_link failed';
                 }
                 log_debug('word_link->save -> database triple "' . $db_rec->name . '" (' . $db_rec->id . ') loaded');
-                $std_rec = new word_link;
+                $std_rec = new word_link($this->usr); // the user must also be set to allow to take the ownership
                 $std_rec->id = $this->id;
-                $std_rec->usr = $this->usr; // must also be set to allow to take the ownership
                 if (!$std_rec->load_standard()) {
                     $result .= 'Reloading of the default values for word_link failed';
                 }

@@ -55,9 +55,8 @@ if ($usr->id > 0) {
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
     // create the link object to have an place to update the parameters
-    $lnk = new word_link;
+    $lnk = new word_link($usr);
     $lnk->id = $_GET['id'];
-    $lnk->usr = $usr;
     $lnk->load();
 
     // edit the link or ask for confirmation

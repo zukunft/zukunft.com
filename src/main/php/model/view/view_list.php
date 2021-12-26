@@ -34,7 +34,12 @@ global $system_views;
 class view_list extends user_type_list
 {
 
-    public ?user $usr = null;   // the user object of the person for whom the verb list is loaded, so to say the viewer
+    public user $usr;   // the user object of the person for whom the verb list is loaded, so to say the viewer
+
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
 
     /**
      * force to reload the list of views from the database that have a used code id
@@ -55,7 +60,7 @@ class view_list extends user_type_list
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $vrb = new view();
+                $vrb = new view($this->usr);
                 $vrb->row_mapper($db_row, true);
                 $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
             }
@@ -84,7 +89,7 @@ class view_list extends user_type_list
      */
     function load_dummy() {
         parent::load_dummy();
-        $dsp = new view();
+        $dsp = new view($this->usr);
         $dsp->name = view::WORD;
         $dsp->code_id = view::WORD;
         $this->lst[2] = $dsp;

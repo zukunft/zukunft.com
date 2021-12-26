@@ -62,9 +62,8 @@ if ($usr->id > 0) {
     if ($dsp_del_id > 0) {
 
         // create the view object to have an object to update the parameters
-        $dsp_del = new view;
+        $dsp_del = new view($usr);
         $dsp_del->id = $dsp_del_id;
-        $dsp_del->usr = $usr;
         $dsp_del->load();
 
         if ($confirm == 1) {

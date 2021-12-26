@@ -49,16 +49,14 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::WORD_EDIT);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have an place to update the parameters
-    $wrd = new word_dsp;
+    $wrd = new word_dsp($usr);
     $wrd->id = $_GET['id'];
-    $wrd->usr = $usr;
     $wrd->load();
 
     if ($wrd->id <= 0) {

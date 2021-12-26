@@ -107,9 +107,9 @@ class view extends user_sandbox_named
     public ?array $cmp_lst = null;  // array of the view component objects in correct order
     public ?string $back = null;    // the calling stack
 
-    function __construct()
+    function __construct(user $usr)
     {
-        parent::__construct();
+        parent::__construct($usr);
         $this->obj_name = DB_TYPE_VIEW;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
@@ -119,7 +119,6 @@ class view extends user_sandbox_named
     {
         $this->id = null;
         $this->usr_cfg_id = null;
-        $this->usr = null;
         $this->owner_id = null;
         $this->excluded = null;
 
@@ -313,9 +312,8 @@ class view extends user_sandbox_named
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
                     and (is_null($db_entry['link_excluded']) or $db_entry['link_excluded'] == 0)) {
-                    $new_entry = new view_cmp_dsp;
+                    $new_entry = new view_cmp_dsp($this->usr);
                     $new_entry->id = $db_entry['view_component_id'];
-                    $new_entry->usr = $this->usr;
                     $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
                     $new_entry->order_nbr = $db_entry['order_nbr'];
                     $new_entry->name = $db_entry['view_component_name'];
@@ -424,8 +422,7 @@ class view extends user_sandbox_named
             } else {
                 if ($do_save) {
                     $cmp->save();
-                    $cmp_lnk = new view_cmp_link();
-                    $cmp_lnk->usr = $this->usr;
+                    $cmp_lnk = new view_cmp_link($this->usr);
                     $cmp_lnk->view_id = $this->id;
                     $cmp_lnk->view_component_id = $cmp->id;
                     $cmp_lnk->order_nbr = $cmp->order_nbr;
@@ -452,14 +449,12 @@ class view extends user_sandbox_named
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new view_cmp_dsp;
+            $cmp = new view_cmp_dsp($this->usr);
             $cmp->id = $view_component_id;
-            $cmp->usr = $this->usr;
             $cmp->load();
-            $cmp_lnk = new view_cmp_link;
+            $cmp_lnk = new view_cmp_link($this->usr);
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
-            $cmp_lnk->usr = $this->usr;
             $cmp_lnk->load();
             $result .= $cmp_lnk->move_up();
         }
@@ -476,14 +471,12 @@ class view extends user_sandbox_named
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new view_cmp_dsp;
+            $cmp = new view_cmp_dsp($this->usr);
             $cmp->id = $view_component_id;
-            $cmp->usr = $this->usr;
             $cmp->load();
-            $cmp_lnk = new view_cmp_link;
+            $cmp_lnk = new view_cmp_link($this->usr);
             $cmp_lnk->fob = $this;
             $cmp_lnk->tob = $cmp;
-            $cmp_lnk->usr = $this->usr;
             $cmp_lnk->load();
             $result .= $cmp_lnk->move_down();
         }
@@ -597,8 +590,7 @@ class view extends user_sandbox_named
                 $json_lst = $value;
                 $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
-                    $cmp = new view_cmp();
-                    $cmp->usr = $usr;
+                    $cmp = new view_cmp($usr);
                     $cmp->import_obj($json_cmp, $do_save);
                     // on import first add all view components to the view object and save them all at once
                     $this->add_cmp($cmp, $cmp_pos, $do_save);

@@ -1351,10 +1351,9 @@ function zuc_val_frm_upd($val_wrd_lst, $frm_ids, $usr, $back)
     $last_msg_time = time();
     foreach ($frm_upd_lst as $r) {
         //zu_debug("calculate ".round($calc_pct,2)."% (".$r['frm_name']." for ".implode(",",$wrd_names).") = ".$r[$r_key][0]);
-        $frm = new formula;
+        $frm = new formula($usr);
         $frm->id = $r['frm_id'];
         $frm->ref_text = $r['frm_text'];
-        $frm->usr = $usr;
         $fv_lst = $frm->calc($r['wrd_ids'], $back);
         $result = array_merge($result, $fv_lst);
         //$in_result = $frm->calc($r['wrd_ids'], 0);
@@ -1401,15 +1400,13 @@ function zuc_frm_upd($frm_ids_updated, $usr, $back)
     $calc_pos = 0;
     $last_msg_time = time();
     foreach ($frm_upd_lst as $r) {
-        $frm = new formula;
+        $frm = new formula($usr);
         $frm->id = $r['frm_id'];
         //$frm->ref_text = $r['frm_text'];
-        $frm->usr_id = $usr;
         $frm->load();
         log_debug('zuc_frm_upd -> (' . $frm->name . ' - ' . $frm->id . ')');
-        $wrd_lst = new word_list;
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = $r['wrd_ids'];
-        $wrd_lst->usr_id = $usr;
         $wrd_lst->load();
         $fv_lst = $frm->calc($wrd_lst, $back);
         log_debug('zuc_frm_upd -> done (' . $frm->name . ' - ' . $frm->id . ')');
@@ -1481,7 +1478,7 @@ function zuc_batch_all($back)
             if ($result_nbr < 1000) {
                 $wrd_ids = array();
                 $wrd_ids[] = $wrd_id;
-                $frm = new formula;
+                $frm = new formula($user_id);
                 $frm->id = $frm_id;
                 $frm->ref_text = $frm_row['formula_text'];
                 //$frm->usr = $usr;

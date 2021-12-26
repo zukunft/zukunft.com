@@ -154,7 +154,7 @@ class formula_element_group
     {
         log_debug('formula_element_group->set_formula_time_phrase for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
 
-        $val_time_phr = new phrase();
+        $val_time_phr = new phrase($this->usr);
 
         // guess the time word if needed
         if (isset($this->time_phr)) {

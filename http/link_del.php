@@ -62,9 +62,8 @@ if ($usr->id > 0) {
     if ($link_id > 0) {
 
         // create the source object to have an object to update the parameters
-        $lnk = new word_link;
+        $lnk = new word_link($usr);
         $lnk->id = $link_id;
-        $lnk->usr = $usr;
         $lnk->load();
 
         if ($confirm == 1) {

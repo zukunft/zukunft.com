@@ -150,9 +150,8 @@ class word_list
             if ($db_wrd_lst != null) {
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $new_word = new word_dsp;
+                        $new_word = new word_dsp($this->usr);
                         $new_word->id = $db_wrd['word_id'];
-                        $new_word->usr = $this->usr;
                         $new_word->usr_cfg_id = $db_wrd['user_word_id'];
                         $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
                         $new_word->name = $db_wrd['word_name'];
@@ -262,9 +261,8 @@ class word_list
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_wrd['word_id'] > 0 and !in_array($db_wrd['word_id'], $this->ids)) {
-                            $new_word = new word_dsp;
+                            $new_word = new word_dsp($this->usr);
                             $new_word->id = $db_wrd['word_id'];
-                            $new_word->usr = $this->usr;
                             $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
                             $new_word->name = $db_wrd['word_name'];
                             $new_word->plural = $db_wrd['plural'];
@@ -740,9 +738,8 @@ class word_list
         $result = '';
 
         // this is how it should be replaced in the calling function
-        $wrd = new word_dsp;
+        $wrd = new word_dsp($this->usr);
         $wrd->id = $word_id;
-        $wrd->usr = $this->usr;
         $wrd->load();
         $vrb = new verb;
         $vrb->id = $verb_id;
@@ -836,15 +833,13 @@ class word_list
         foreach ($db_lst as $db_row) {
             //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             if ($db_row['type'] == "word") {
-                $wrd = new word_dsp;
-                $wrd->usr = $this->usr;
+                $wrd = new word_dsp($this->usr);
                 $wrd->id = $db_row['id'];
                 $wrd->name = $db_row['name'];
                 $result .= $wrd->dsp_tbl_row();
             }
             if ($db_row['type'] == "formula") {
-                $frm = new formula;
-                $frm->usr = $this->usr;
+                $frm = new formula($this->usr);
                 $frm->id = $db_row['id'];
                 $frm->name = $db_row['name'];
                 $result .= $frm->name_linked($back);
@@ -926,9 +921,8 @@ class word_list
         log_debug('word_list->add_id (' . $wrd_id_to_add . ')');
         if (!in_array($wrd_id_to_add, $this->ids)) {
             if ($wrd_id_to_add > 0) {
-                $wrd_to_add = new word_dsp;
+                $wrd_to_add = new word_dsp($this->usr);
                 $wrd_to_add->id = $wrd_id_to_add;
-                $wrd_to_add->usr = $this->usr;
                 $wrd_to_add->load();
 
                 $this->add($wrd_to_add);
@@ -943,9 +937,8 @@ class word_list
         if (is_null($this->usr->id)) {
             log_err("The user must be set.", "word_list->add_name");
         } else {
-            $wrd_to_add = new word_dsp;
+            $wrd_to_add = new word_dsp($this->usr);
             $wrd_to_add->name = $wrd_name_to_add;
-            $wrd_to_add->usr = $this->usr;
             $wrd_to_add->load();
 
             $this->add($wrd_to_add);
@@ -1368,8 +1361,7 @@ class word_list
     function max_time()
     {
         log_debug('word_list->max_time (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
-        $max_wrd = new word_dsp;
-        $max_wrd->usr = $this->usr;
+        $max_wrd = new word_dsp($this->usr);
         if (count($this->lst) > 0) {
             foreach ($this->lst as $wrd) {
                 // to be replace by "is following"

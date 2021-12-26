@@ -49,8 +49,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // in view edit views the view cannot be changed
-    $dsp = new view_dsp;
-    $dsp->usr = $usr;
+    $dsp = new view_dsp($usr);
     //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
     $result .= $dsp->dsp_navbar_no_view($back);
@@ -66,9 +65,8 @@ if ($usr->id > 0) {
     }
 
     // show the word name
-    $wrd = new word_dsp;
+    $wrd = new word_dsp($usr);
     if ($word_id > 0) {
-        $wrd->usr = $usr;
         $wrd->id = $word_id;
         $wrd->load();
         $result .= dsp_text_h2('Select the display format for "' . $wrd->name . '"');
@@ -77,8 +75,7 @@ if ($usr->id > 0) {
     }
 
     // allow to change to type
-    $dsp = new view;
-    $dsp->usr = $usr;
+    $dsp = new view($usr);
     $dsp->id = $view_id;
     $result .= $dsp->selector_page($word_id, $back);
 

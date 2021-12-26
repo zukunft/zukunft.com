@@ -50,8 +50,12 @@ if ($usr->id > 0) {
     log_debug("get_json(" . $phrases . ")");
     $word_names = explode(",", $phrases);
 
-    // get all related Phrases
+    // load the phrases
     $phr_lst = new phrase_list($usr);
+    if (count($word_names) > 0) {
+        $phr_lst->load_by_names($word_names);
+    }
+    // get all related Phrases
     foreach ($word_names as $wrd_name) {
         if ($wrd_name <> '') {
             $phr_lst->add_name($wrd_name);
@@ -59,6 +63,7 @@ if ($usr->id > 0) {
     }
 
     if (count($phr_lst->lst) > 0) {
+        // TODO check if this is really needed, because add_name already does load
         $phr_lst->load();
         $phr_lst = $phr_lst->are();
 

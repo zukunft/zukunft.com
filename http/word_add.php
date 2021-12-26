@@ -66,15 +66,13 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::WORD_ADD);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
-    $wrd = new word_dsp;
-    $wrd->usr = $usr;
+    $wrd = new word_dsp($usr);
 
     // update the parameters on the object, so that the object save can update the database
     if (isset($_GET['word_name'])) {
@@ -133,8 +131,7 @@ if ($usr->id > 0) {
 
         } elseif ($wrd_id > 0) {
             // check link of the existing word already exists
-            $lnk_test = new word_link;
-            $lnk_test->usr = $usr;
+            $lnk_test = new word_link($usr);
             $lnk_test->from->id = $wrd_id;
             $lnk_test->verb->id = $vrb_id;
             $lnk_test->to->id = $wrd_to;
@@ -144,8 +141,7 @@ if ($usr->id > 0) {
                 log_debug('word_add -> check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
                 $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name . ' ' . $lnk_test->to_name . '" already exists. ';
             }
-            $lnk_rev = new word_link;
-            $lnk_rev->usr = $usr;
+            $lnk_rev = new word_link($usr);
             $lnk_rev->from->id = $wrd_to;
             $lnk_rev->verb->id = $vrb_id;
             $lnk_rev->to->id = $wrd_id;
@@ -171,8 +167,7 @@ if ($usr->id > 0) {
             if ($wrd->id > 0 and $vrb_id <> 0 and $wrd_to > 0) {
                 // ... and link it to an existing word
                 log_debug('word_add -> word ' . $wrd->id . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
-                $lnk = new word_link;
-                $lnk->usr = $usr;
+                $lnk = new word_link($usr);
                 $lnk->from->id = $wrd->id;
                 $lnk->verb->id = $vrb_id;
                 $lnk->to->id = $wrd_to;

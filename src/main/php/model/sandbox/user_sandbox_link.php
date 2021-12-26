@@ -316,7 +316,7 @@ class user_sandbox_link extends user_sandbox
      */
     function get_similar(): user_sandbox
     {
-        $result = new user_sandbox();
+        $result = new user_sandbox($this->usr);
 
         // check potential duplicate by name
         // check for linked objects

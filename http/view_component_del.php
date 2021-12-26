@@ -49,9 +49,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::DEL);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -62,9 +61,8 @@ if ($usr->id > 0) {
     if ($cmp_del_id > 0) {
 
         // create the view object to have an object to update the parameters
-        $cmp_del = new view_cmp;
+        $cmp_del = new view_cmp($usr);
         $cmp_del->id = $cmp_del_id;
-        $cmp_del->usr = $usr;
         $cmp_del->load();
 
         if ($confirm == 1) {

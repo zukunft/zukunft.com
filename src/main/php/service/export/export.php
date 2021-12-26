@@ -67,7 +67,8 @@ class export
                 $export_obj->pod = cfg_get(CFG_SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $this->usr->name;
-                $export_obj->selection = $this->phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
+                $phr_lst_dsp = $this->phr_lst->dsp_obj();
+                $export_obj->selection = $phr_lst_dsp->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
 
                 // 1.1. collect all personal values - value that cannot be seen by other user
 

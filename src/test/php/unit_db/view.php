@@ -41,7 +41,7 @@ function run_view_unit_db_tests(testing $t)
     $t->subheader('System view tests');
 
     // load the views used by the system e.g. change word
-    $lst = new view_list();
+    $lst = new view_list($usr);
     $lst->usr = $usr;
     $result = $lst->load($db_con);
     $target = true;

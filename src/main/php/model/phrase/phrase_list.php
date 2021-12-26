@@ -50,6 +50,18 @@ class phrase_list
         $this->usr = $usr;
     }
 
+    /**
+     * @return phrase_list_dsp the word object with the display interface functions
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new phrase_list_dsp($this->usr);
+
+        $dsp_obj->lst = $this->lst;
+
+        return $dsp_obj;
+    }
+
     /*
     load function
     */
@@ -61,7 +73,7 @@ class phrase_list
      * @param array $ids word ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_wrd_ids(sql_db $db_con, array $ids): sql_par
+    function load_by_wrd_ids_sql(sql_db $db_con, array $ids): sql_par
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_ids_word_part';
@@ -86,7 +98,7 @@ class phrase_list
      * @param array $ids triple ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_trp_ids(sql_db $db_con, array $ids): sql_par
+    function load_by_trp_ids_sql(sql_db $db_con, array $ids): sql_par
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_ids_triple_part';
@@ -127,30 +139,50 @@ class phrase_list
             }
         }
 
-        $qp = $this->load_by_wrd_ids($db_con, $wrd_ids);
-        $db_con->usr_id = $this->usr->id;
-        $db_wrd_lst = $db_con->get($qp);
-        foreach ($db_wrd_lst as $db_wrd) {
-            if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                $wrd = new word();
-                $wrd->usr = $this->usr;
-                $wrd->row_mapper($db_wrd, true);
-                $this->lst[] = $wrd->phrase();
-                $result = true;
+        if (count($wrd_ids) > 0) {
+            $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
+            $db_con->usr_id = $this->usr->id;
+            $db_wrd_lst = $db_con->get($qp);
+            foreach ($db_wrd_lst as $db_wrd) {
+                if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
+                    $wrd = new word($this->usr);
+                    $wrd->row_mapper($db_wrd, true);
+                    $this->lst[] = $wrd->phrase();
+                    $result = true;
+                }
             }
         }
 
-        $qp = $this->load_by_trp_ids($db_con, $lnk_ids);
-        $db_con->usr_id = $this->usr->id;
-        $db_trp_lst = $db_con->get($qp);
-        foreach ($db_trp_lst as $db_trp) {
-            if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
-                $trp = new word_link();
-                $trp->usr = $this->usr;
-                $trp->row_mapper($db_trp, true);
-                $this->lst[] = $trp->phrase();
-                $result = true;
+        if (count($lnk_ids) > 0) {
+            $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
+            $db_con->usr_id = $this->usr->id;
+            $db_trp_lst = $db_con->get($qp);
+            foreach ($db_trp_lst as $db_trp) {
+                if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
+                    $trp = new word_link($this->usr);
+                    $trp->row_mapper($db_trp, true);
+                    $this->lst[] = $trp->phrase();
+                    $result = true;
+                }
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load the phrases selected by the given names
+     * TODO create SQL loading
+     *
+     * @param array $names of phrase names that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_names(array $names): bool
+    {
+        $result = false;
+
+        if ($this->count($names) > 0) {
+            $result = true;
         }
 
         return $result;
@@ -176,9 +208,8 @@ class phrase_list
                 $this->lst = array();
                 foreach ($this->ids as $phr_id) {
                     if ($phr_id <> 0) {
-                        $phr = new phrase;
+                        $phr = new phrase($this->usr);
                         $phr->id = $phr_id;
-                        $phr->usr = $this->usr;
                         $phr->load();
                         $this->lst[] = $phr;
                         $result = true;
@@ -542,15 +573,13 @@ class phrase_list
         $result = false;
         foreach ($json_obj as $value) {
             if ($value != '') {
-                $phr = new phrase();
+                $phr = new phrase($this->usr);
                 $phr->name = $value;
-                $phr->usr = $this->usr;
                 if ($do_save) {
                     $phr->load();
                     if ($phr->id == 0) {
-                        $wrd = new word;
+                        $wrd = new word($this->usr);
                         $wrd->name = $value;
-                        $wrd->usr = $this->usr;
                         $wrd->load();
                         if ($wrd->id == 0) {
                             $wrd->name = $value;
@@ -652,14 +681,8 @@ class phrase_list
     }
 
     /*
-      display functions
-      -----------------
-
-      the functions dsp_id and name should exist for all objects
-      these function should never call any other function especially not debug functions,
-      because only these two functions can be called from debug statements
-
-    */
+     * display functions
+     */
 
     // return best possible id for this element mainly used for debugging
     function dsp_id(): string
@@ -702,84 +725,6 @@ class phrase_list
             }
             $result .= '"';
         }
-        return $result;
-    }
-
-
-    // return a list of the phrase names
-    function names(): array
-    {
-        $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $phr) {
-                $result[] = $phr->name;
-                if (!isset($phr->usr)) {
-                    log_err('The user of a phrase list element differs from the list user.', 'phrase_list->names', 'The user of "' . $phr->name . '" is missing, but the list user is "' . $this->usr->name . '".', (new Exception)->getTraceAsString(), $this->usr);
-                } elseif ($phr->usr <> $this->usr) {
-                    log_err('The user of a phrase list element differs from the list user.', 'phrase_list->names', 'The user "' . $phr->usr->name . '" of "' . $phr->name . '" does not match the list user "' . $this->usr->name . '".', (new Exception)->getTraceAsString(), $this->usr);
-                }
-            }
-        }
-        log_debug('phrase_list->names (' . implode(",", $result) . ')');
-        return $result;
-    }
-
-    // return a list of the phrase names with html links
-    function names_linked(): array
-    {
-        log_debug('phrase_list->names_linked (' . dsp_count($this->lst) . ')');
-        $result = array();
-        foreach ($this->lst as $phr) {
-            $result[] = $phr->display();
-        }
-        log_debug('phrase_list->names_linked (' . implode(",", $result) . ')');
-        return $result;
-    }
-
-    // return a list of the phrase ids as an sql compatible text
-    function ids_txt()
-    {
-        $result = dsp_array($this->ids());
-        return $result;
-    }
-
-    // return one string with all names of the list without hiquotes for the user, but not nessesary as a unique text
-    // e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
-    //      but this "short" form probably confuses the user less and
-    //      if the user cannot change the tags anyway the saving of a related value is possible
-    function name_dsp()
-    {
-        $result = implode(' ', $this->names());
-        return $result;
-    }
-
-    // return one string with all names of the list with the link
-    function name_linked()
-    {
-        $result = dsp_array($this->names_linked());
-        return $result;
-    }
-
-    // offer the user to add a new value for this phrases
-    // similar to value.php/btn_add
-    function btn_add_value($back)
-    {
-        $result = btn_add_value($this, Null, $back);
-        /*
-        zu_debug('phrase_list->btn_add_value');
-        $val_btn_title = '';
-        $url_phr = '';
-        if (!empty($this->lst)) {
-          $val_btn_title = "add new value similar to ".htmlentities($this->name());
-        } else {
-          $val_btn_title = "add new value";
-        }
-        $url_phr = $this->id_url_long();
-
-        $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
-        $result .= btn_add ($val_btn_title, $val_btn_call);
-        zu_debug('phrase_list->btn_add_value -> done');
-        */
         return $result;
     }
 
@@ -832,9 +777,8 @@ class phrase_list
         log_debug('phrase_list->add_id (' . $phr_id_to_add . ')');
         if (!in_array($phr_id_to_add, $this->ids)) {
             if ($phr_id_to_add <> 0) {
-                $phr_to_add = new phrase;
+                $phr_to_add = new phrase($this->usr);
                 $phr_to_add->id = $phr_id_to_add;
-                $phr_to_add->usr = $this->usr;
                 $phr_to_add->load();
 
                 $this->add($phr_to_add);
@@ -842,16 +786,17 @@ class phrase_list
         }
     }
 
-    // add one phrase to the phrase list defined by the phrase name
+    /**
+     * add one phrase to the phrase list defined by the phrase name
+     */
     function add_name($phr_name_to_add)
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
         if (is_null($this->usr->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
-            $phr_to_add = new phrase;
+            $phr_to_add = new phrase($this->usr);
             $phr_to_add->name = $phr_name_to_add;
-            $phr_to_add->usr = $this->usr;
             $phr_to_add->load();
 
             if ($phr_to_add->id <> 0) {
@@ -1147,9 +1092,8 @@ class phrase_list
         log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids));
         foreach ($time_wrds->ids as $time_id) {
             if (is_null($result)) {
-                $time_wrd = new word_dsp;
+                $time_wrd = new word_dsp($this->usr);
                 $time_wrd->id = $time_id;
-                $time_wrd->usr = $this->usr;
                 $time_wrd->load();
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
@@ -1302,8 +1246,7 @@ class phrase_list
     function max_time()
     {
         log_debug('phrase_list->max_time (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
-        $max_phr = new phrase;
-        $max_phr->usr = $this->usr;
+        $max_phr = new phrase($this->usr);
         if (count($this->lst) > 0) {
             foreach ($this->lst as $phr) {
                 // to be replaced by "is following"
@@ -1347,7 +1290,7 @@ class phrase_list
     }
 
     /**
-     * return all phrases that are part of each phrase group of the list
+     * @return array all phrases that are part of each phrase group of the list
      */
     function common($filter_lst): array
     {
@@ -1371,8 +1314,10 @@ class phrase_list
         return $result;
     }
 
-    // combine two phrase lists
-    function concat_unique($join_phr_lst)
+    /**
+     * @return phrase_list the combined list of this list and the given list without changing this phrase list
+     */
+    function concat_unique($join_phr_lst): phrase_list
     {
         log_debug('phrase_list->concat_unique');
         $result = clone $this;
@@ -1389,11 +1334,13 @@ class phrase_list
     }
 
     /*
-    data request function
-    */
+     * data request function
+     */
 
-    // get all values related to this phrase list
-    function val_lst()
+    /**
+     * @return value_list all values related to this phrase list
+     */
+    function val_lst(): value_list
     {
         $val_lst = new value_list($this->usr);
         $val_lst->phr_lst = $this;
@@ -1402,8 +1349,10 @@ class phrase_list
         return $val_lst;
     }
 
-    // get all formulas related to this phrase list
-    function frm_lst()
+    /**
+     * @return formula_list all formulas related to this phrase list
+     */
+    function frm_lst(): formula_list
     {
         $frm_lst = new formula_list;
         $frm_lst->phr_lst = $this;
@@ -1414,20 +1363,20 @@ class phrase_list
     }
 
 
-    // get the best matching value or value list for this phrase list
-    /*
-
-    e.g. if for "ABB", "Sales" no direct number is found,
-         1) try to get a formula result, if also no formula result,
-         2) assume an additional phrase by getting the phrase with the most values for the phrase list
-         which could be in this case "millions"
-         3) repeat with 2(
-
-     e.g. if many numbers matches the phrase list e.g. Nestlé Sales million, CHF (and Water, and Coffee)
-          the value with the least additional phrases is selected
-
-    */
-    function value()
+    /**
+     * get the best matching value or value list for this phrase list
+     * e.g. if for "ABB", "Sales" no direct number is found,
+     *   1) try to get a formula result, if also no formula result,
+     *   2) assume an additional phrase by getting the phrase with the most values for the phrase list
+     *      which could be in this case "millions"
+     *   3) repeat with 2(
+     *
+     * e.g. if many numbers matches the phrase list e.g. Nestlé Sales million, CHF (and Water, and Coffee)
+     *      the value with the least additional phrases is selected
+     *
+     * @return value the best matching value
+     */
+    function value(): value
     {
         $val = new value($this->usr);
         $val->grp = $this->get_grp();
@@ -1436,7 +1385,10 @@ class phrase_list
         return $val;
     }
 
-    function value_scaled()
+    /**
+     * @return value the best matching value scaled to one
+     */
+    function value_scaled(): value
     {
         $val = $this->value();
         $wrd_lst = $this->wrd_lst_all();
@@ -1445,7 +1397,10 @@ class phrase_list
         return $val;
     }
 
-    // this should create a value matrix
+    /**
+     * TODO this should create a value matrix
+     * @return array with all value related to this phrase list as a matrix
+     */
     function val_matrix($col_lst): array
     {
         if ($col_lst != null) {
@@ -1456,15 +1411,16 @@ class phrase_list
         return array();
     }
 
-    function dsp_val_matrix($val_matrix): string
-    {
-        if ($val_matrix != null) {
-            log_debug('word_list->dsp_val_matrix for ' . $val_matrix->dsp_id());
-        }
-        return '';
-    }
+    /*
+     * database function
+     */
 
-    // TODO speed up by creation one SQL statement
+    /**
+     * save all changes of the phrase list to the database
+     * TODO speed up by creation one SQL statement
+     *
+     * @return void
+     */
     function save()
     {
         foreach ($this->lst as $phr) {

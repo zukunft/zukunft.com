@@ -50,11 +50,10 @@ function run_word_link_test(testing $t)
     $wrd_canton = $t->load_word(word::TN_CANTON);
 
     // ... now test the Canton Zurich
-    $lnk_canton = new word_link;
+    $lnk_canton = new word_link($t->usr1);
     $lnk_canton->from->id = $wrd_zh->id;
     $lnk_canton->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_canton->to->id = $wrd_canton->id;
-    $lnk_canton->usr = $t->usr1;
     $lnk_canton->load();
     $target = word::TN_ZH . ' (' . word::TN_CANTON . ')';
     $result = $lnk_canton->name;
@@ -66,11 +65,10 @@ function run_word_link_test(testing $t)
     $t->dsp('triple->load for Canton Zurich using the function', $target, $result);
 
     // ... now test the Insurance Zurich
-    $lnk_company = new word_link;
+    $lnk_company = new word_link($t->usr1);
     $lnk_company->from->id = $wrd_zh->id;
     $lnk_company->verb->id = cl(db_cl::VERB, verb::IS_A);
     $lnk_company->to->id = $wrd_company->id;
-    $lnk_company->usr = $t->usr1;
     $lnk_company->load();
     $target = phrase::TN_ZH_COMPANY;
     $result = $lnk_company->name;
@@ -88,8 +86,7 @@ function run_word_link_test(testing $t)
     $vrb->id = cl(db_cl::VERB, verb::IS_A);
     $vrb->usr = $t->usr1;
     $vrb->load();
-    $lnk = new word_link;
-    $lnk->usr = $t->usr1;
+    $lnk = new word_link($t->usr1);
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -112,8 +109,7 @@ function run_word_link_test(testing $t)
 
     // ... check if the link is shown correctly
 
-    $lnk = new word_link;
-    $lnk->usr = $t->usr1;
+    $lnk = new word_link($t->usr1);
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -122,8 +118,7 @@ function run_word_link_test(testing $t)
     $target = '' . word::TN_RENAMED . ' (' . TEST_WORD . ')';
     $t->dsp('triple->load', $target, $result);
     // ... check if the link is shown correctly also for the second user
-    $lnk2 = new word_link;
-    $lnk2->usr = $t->usr2;
+    $lnk2 = new word_link($t->usr2);
     $lnk2->from->id = $wrd_added->id;
     $lnk2->verb->id = $vrb->id;
     $lnk2->to->id = $wrd->id;
@@ -135,8 +130,7 @@ function run_word_link_test(testing $t)
     // ... check if the value update has been triggered
 
     // if second user removes the new link
-    $lnk = new word_link;
-    $lnk->usr = $t->usr2;
+    $lnk = new word_link($t->usr2);
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -159,8 +153,7 @@ function run_word_link_test(testing $t)
 
 
     // ... check if the link is really not used any more for the second user
-    $lnk2 = new word_link;
-    $lnk2->usr = $t->usr2;
+    $lnk2 = new word_link($t->usr2);
     $lnk2->from->id = $wrd_added->id;
     $lnk2->verb->id = $vrb->id;
     $lnk2->to->id = $wrd->id;
@@ -174,8 +167,7 @@ function run_word_link_test(testing $t)
     // ... check all places where the word maybe used ...
 
     // ... check if the link is still used for the first user
-    $lnk = new word_link;
-    $lnk->usr = $t->usr1;
+    $lnk = new word_link($t->usr1);
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -187,8 +179,7 @@ function run_word_link_test(testing $t)
     // ... check if the values for the first user are still the same
 
     // if the first user also removes the link, both records should be deleted
-    $lnk = new word_link;
-    $lnk->usr = $t->usr1;
+    $lnk = new word_link($t->usr1);
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
@@ -210,8 +201,7 @@ function run_word_link_test(testing $t)
     $t->dsp('triple->del logged for "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '" and user "' . $t->usr1->name . '"', $target, $result);
 
     // check if the formula is not used any more for both users
-    $lnk = new word_link;
-    $lnk->usr = $t->usr1;
+    $lnk = new word_link($t->usr1);
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;

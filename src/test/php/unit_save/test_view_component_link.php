@@ -85,9 +85,8 @@ function run_view_component_link_test(testing $t)
 
     // if second user removes the new link
     $cmp = $t->load_view_component(view_cmp::TN_ADD, $t->usr2);
-    $dsp = new view;
+    $dsp = new view($t->usr2);
     $dsp->name = view::TN_RENAMED;
-    $dsp->usr = $t->usr2;
     $dsp->load();
     $result = $cmp->unlink($dsp);
     $target = '';
@@ -154,10 +153,9 @@ function run_view_component_link_test(testing $t)
     $dsp2 = $t->load_view(view::TN_RENAMED, $t->usr2);
     $cmp = $t->load_view_component(view_cmp::TN_ADD,);
     // create a second view element to be able to test the change of the view order
-    $cmp2 = new view_cmp;
+    $cmp2 = new view_cmp($t->usr1);
     $cmp2->name = view_cmp::TN_ADD2;
     $cmp2->comment = 'Just added a second view component for testing';
-    $cmp2->usr = $t->usr1;
     $result = $cmp2->save();
     if ($cmp2->id > 0) {
         $result = $cmp2->comment;
@@ -210,8 +208,7 @@ function run_view_component_link_test(testing $t)
     }
 
     // ... if the second user changes the link e.g. the order
-    $cmp_lnk = new view_cmp_link;
-    $cmp_lnk->usr = $t->usr2;
+    $cmp_lnk = new view_cmp_link($t->usr2);
     $cmp_lnk->fob = $dsp2;
     $cmp_lnk->tob = $cmp2;
     $cmp_lnk->load();
