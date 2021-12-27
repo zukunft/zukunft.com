@@ -63,7 +63,7 @@ class formula_element_group_list
     }
 
     // this function is called from dsp_id, so no other call is allowed
-    function ids(): array
+    function ids(): ?array
     {
         $result = null;
         if (isset($this->lst)) {

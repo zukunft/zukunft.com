@@ -2,38 +2,42 @@
 
 /*
 
-  word_link.php - the object that links two words (an RDF triple)
-  -------------
-  
-  A link can also be used in replacement for a word
-  e.g. "Zurich (Company)" where the link "Zurich is a company" is used
-  
-  This file is part of zukunft.com - calc with words
+    word_link.php - the object that links two words (an RDF triple)
+    -------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    A link can also be used in replacement for a word
+    e.g. "Zurich (Company)" where the link "Zurich is a company" is used
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 class word_link extends user_sandbox_link_description
 {
+
+    /*
+     * database link
+     */
 
     // object specific database and JSON object field names
     const FLD_ID = 'word_link_id';
@@ -57,6 +61,10 @@ class word_link extends user_sandbox_link_description
         sql_db::FLD_PROTECT
     );
 
+    /*
+     * object vars
+     */
+
     // the word link object
     public ?phrase $from = null; // the first object (either word, triple or group)
     public ?verb $verb = null; // the link type object
@@ -65,7 +73,14 @@ class word_link extends user_sandbox_link_description
     // database fields additional to the user sandbox fields
     public ?string $description = null;   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company); if the description is empty the generic created name is used
 
+    /*
+     * construct and map
+     */
 
+    /**
+     * define the settings for this triple object
+     * @param user $usr the user who requested to see this triple
+     */
     function __construct(user $usr)
     {
         parent::__construct($usr);
@@ -74,13 +89,13 @@ class word_link extends user_sandbox_link_description
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
 
-        $this->usr = $usr;
-
         // also create the link objects because there is now case where they are supposed to be null
         $this->create_objects($usr);
     }
 
-    // reset the in memory fields used e.g. if some ids are updated
+    /**
+     * reset the in memory fields used e.g. if some ids are updated
+     */
     function reset()
     {
         $this->id = null;
@@ -98,34 +113,118 @@ class word_link extends user_sandbox_link_description
         $this->to = new phrase($this->usr);
     }
 
-    function row_mapper(array $db_row, bool $map_usr_fields = false)
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default triple used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the triple is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->from->id = $db_row[self::FLD_FROM];
-                $this->to->id = $db_row[self::FLD_TO];
-                $this->verb->id = $db_row[verb::FLD_ID];
-                $this->name = $db_row[self::FLD_NAME];
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                $this->type_id = $db_row[self::FLD_TYPE];
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . self::FLD_ID];
-                    $this->owner_id = $db_row[self::FLD_USER];
-                    $this->share_id = $db_row[sql_db::FLD_SHARE];
-                    $this->protection_id = $db_row[sql_db::FLD_PROTECT];
-                } else {
-                    $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
-                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
-                }
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->from->id = $db_row[self::FLD_FROM];
+            $this->to->id = $db_row[self::FLD_TO];
+            $this->verb->id = $db_row[verb::FLD_ID];
+            $this->name = $db_row[self::FLD_NAME];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->type_id = $db_row[self::FLD_TYPE];
         }
+        return $result;
+    }
+
+    /*
+     * loading
+     */
+
+    /**
+     * create the SQL to load the default formula always by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        // TODO review
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES,
+            array(sql_db::FLD_USER_ID)
+        ));
+
+        return parent::load_standard_sql($db_con, self::class);
+    }
+
+    /**
+     * load the triple parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard triple has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // after every load call from outside the class the order should be checked and reversed if needed
+        $this->check_order();
+
+        //
+
+        // set the where clause depending on the values given
+        // TODO create with $db_con->set_where_link
+        $sql_where = '';
+        if ($this->id > 0) {
+            $sql_where = "word_link_id = " . $this->id;
+        } elseif ($this->has_objects()) {
+            if ($this->from->id <> 0
+                and $this->verb->id > 0
+                and $this->to->id <> 0) {
+                $sql_where = "from_phrase_id = " . $db_con->sf($this->from->id) . "
+                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
+                      AND to_phrase_id   = " . $db_con->sf($this->to->id);
+                // search for a backward link e.g. Cask Flow Statement contains Taxes
+            } elseif ($this->from->id <> 0
+                and $this->verb->id < 0
+                and $this->to->id <> 0) {
+
+                $sql_where = "from_phrase_id = " . $db_con->sf($this->to->id) . "
+                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
+                      AND to_phrase_id   = " . $db_con->sf($this->from->id);
+            }
+        }
+
+        if ($sql_where == '') {
+            log_err('The database ID (' . $this->id . ') or the word and verb ids (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') must be set to load a triple.', "word_link->load");
+        } else {
+            $db_con->set_type(DB_TYPE_TRIPLE);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
+            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, self::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
+            $db_con->set_where_text($sql_where);
+            $sql = $db_con->select();
+
+            $db_lnk = $db_con->get1_old($sql);
+            $this->row_mapper($db_lnk, false);
+            $result = $this->load_owner();
+
+            // automatically update the generic name
+            if ($result) {
+                $this->load_objects();
+                $new_name = $this->name();
+                log_debug('word_link->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
+                if ($new_name <> $this->name) {
+                    $db_con->set_type(DB_TYPE_TRIPLE);
+                    $result = $db_con->update($this->id, self::FLD_NAME, $new_name);
+                    $this->name = $new_name;
+                }
+            }
+            log_debug('word_link->load_standard ... done (' . $this->description . ')');
+        }
+        return $result;
     }
 
     /**
@@ -276,86 +375,24 @@ class word_link extends user_sandbox_link_description
         return $result;
     }
 
-    function load_standard(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // after every load call from outside the class the order should be checked and reversed if needed
-        $this->check_order();
-
-        //
-
-        // set the where clause depending on the values given
-        // TODO create with $db_con->set_where_link
-        $sql_where = '';
-        if ($this->id > 0) {
-            $sql_where = "word_link_id = " . $this->id;
-        } elseif ($this->has_objects()) {
-            if ($this->from->id <> 0
-                and $this->verb->id > 0
-                and $this->to->id <> 0) {
-                $sql_where = "from_phrase_id = " . $db_con->sf($this->from->id) . "
-                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
-                      AND to_phrase_id   = " . $db_con->sf($this->to->id);
-                // search for a backward link e.g. Cask Flow Statement contains Taxes
-            } elseif ($this->from->id <> 0
-                and $this->verb->id < 0
-                and $this->to->id <> 0) {
-
-                $sql_where = "from_phrase_id = " . $db_con->sf($this->to->id) . "
-                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
-                      AND to_phrase_id   = " . $db_con->sf($this->from->id);
-            }
-        }
-
-        if ($sql_where == '') {
-            log_err('The database ID (' . $this->id . ') or the word and verb ids (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') must be set to load a triple.', "word_link->load");
-        } else {
-            $db_con->set_type(DB_TYPE_TRIPLE);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
-            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, self::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
-            $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
-
-            $db_lnk = $db_con->get1_old($sql);
-            $this->row_mapper($db_lnk);
-            $result = $this->load_owner();
-
-            // automatically update the generic name
-            if ($result) {
-                $this->load_objects();
-                $new_name = $this->name();
-                log_debug('word_link->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
-                if ($new_name <> $this->name) {
-                    $db_con->set_type(DB_TYPE_TRIPLE);
-                    $result = $db_con->update($this->id, self::FLD_NAME, $new_name);
-                    $this->name = $new_name;
-                }
-            }
-            log_debug('word_link->load_standard ... done (' . $this->description . ')');
-        }
-        return $result;
-    }
-
     /**
      * create an SQL statement to retrieve the parameters of a triple from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $sql_name = self::class . '_by_';
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_';
 
         // set the where clause depending on the values given
         $sql = '';
         $sql_where = '';
         if ($this->id > 0 and !is_null($this->usr->id)) {
             $sql_where = "s.word_link_id = " . $this->id;
-            $sql_name .= 'id';
+            $qp->name .= 'id';
             // search for a forward link e.g. Taxes is part of Cask Flow Statement
         } elseif ($this->from->id <> 0
             and $this->verb->id > 0
@@ -364,7 +401,7 @@ class word_link extends user_sandbox_link_description
             $sql_where = "s.from_phrase_id = " . $db_con->sf($this->from->id) . "
                       AND s.verb_id        = " . $db_con->sf($this->verb->id) . "
                       AND s.to_phrase_id   = " . $db_con->sf($this->to->id);
-            $sql_name .= 'link_id';
+            $qp->name .= 'link_id';
             // search for a backward link e.g. Cask Flow Statement contains Taxes
         } elseif ($this->from->id <> 0
             and $this->verb->id < 0
@@ -373,7 +410,7 @@ class word_link extends user_sandbox_link_description
             $sql_where = "s.from_phrase_id = " . $db_con->sf($this->to->id) . "
                       AND s.verb_id        = " . $db_con->sf($this->verb->id) . "
                       AND s.to_phrase_id   = " . $db_con->sf($this->from->id);
-            $sql_name .= 'reverse_id';
+            $qp->name .= 'reverse_id';
             /*
             // if the search including the type is not requested, try without the type
             elseif ($this->from->id  <> 0
@@ -386,7 +423,7 @@ class word_link extends user_sandbox_link_description
             */
         } elseif ($this->name <> '' and !is_null($this->usr->id)) {
             $sql_where = "s.word_link_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT);
-            $sql_name .= 'name';
+            $qp->name .= 'name';
         }
 
         if ($sql_where != '') {
@@ -398,15 +435,11 @@ class word_link extends user_sandbox_link_description
             $db_con->set_usr_fields(self::FLD_NAMES_USR);
             $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
+            $qp->sql = $db_con->select();
+            $qp->par = $db_con->get_par();
         }
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /**
@@ -420,17 +453,17 @@ class word_link extends user_sandbox_link_description
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
-        $sql = $this->load_sql($db_con);
+        $qp = $this->load_sql($db_con);
 
-        if ($sql == '') {
+        if ($qp->sql == '') {
             if (is_null($this->usr->id)) {
                 log_err("The user id must be set to load a word.", "word_link->load");
             } else {
                 log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
             }
         } else {
-            $db_lnk = $db_con->get1_old($sql);
-            $this->row_mapper($db_lnk, true);
+            $db_lnk = $db_con->get1($qp);
+            $this->row_mapper($db_lnk);
             if ($this->id > 0) {
                 // automatically update the generic name
                 $this->load_objects();
@@ -578,7 +611,7 @@ class word_link extends user_sandbox_link_description
      * create a triple object for the export
      * @return word_link_exp a reduced triple object that can be used to create a JSON message
      */
-    function export_obj(): word_link_exp
+    function export_obj(bool $do_load = true): user_sandbox_exp
     {
         log_debug('word_link->export_obj');
         $result = new word_link_exp();
@@ -887,23 +920,28 @@ class word_link extends user_sandbox_link_description
         global $db_con;
         $result = true;
 
-        if ($this->owner_id > 0) {
-            $sql = "SELECT user_id 
+        if ($this->id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            if ($this->owner_id > 0) {
+                $sql = "SELECT user_id 
                 FROM user_word_links 
                WHERE word_link_id = " . $this->id . "
                  AND user_id <> " . $this->owner_id . "
                  AND (excluded <> 1 OR excluded is NULL)";
-        } else {
-            $sql = "SELECT user_id 
+            } else {
+                $sql = "SELECT user_id 
                 FROM user_word_links 
                WHERE word_link_id = " . $this->id . "
                  AND (excluded <> 1 OR excluded is NULL)";
-        }
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_row = $db_con->get1_old($sql);
-        if ($db_row[self::FLD_USER] > 0) {
-            $result = false;
+            }
+
+            //$db_con = new mysql;
+            $db_con->usr_id = $this->usr->id;
+            $db_row = $db_con->get1_old($sql);
+            if ($db_row[self::FLD_USER] > 0) {
+                $result = false;
+            }
         }
         log_debug('word_link->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
         return $result;
@@ -986,25 +1024,29 @@ class word_link extends user_sandbox_link_description
         $result = false;
 
         // check again if there is user sandbox row
-        $sql = "SELECT word_link_id,
+        if ($this->id == 0) {
+            log_err('cannot delete user sandbox if id is missing');
+        } else {
+            $sql = "SELECT word_link_id,
                      word_link_name,
                      description,
                      excluded
                 FROM user_word_links
                WHERE word_link_id = " . $this->id . " 
                  AND user_id = " . $this->usr->id . ";";
-        $db_con->usr_id = $this->usr->id;
-        $usr_cfg = $db_con->get1_old($sql);
-        log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
-        if ($usr_cfg) {
-            if ($usr_cfg[self::FLD_ID] > 0) {
-                // TODO use the FLD_NAMES array with all relevant field names
-                if ($usr_cfg[self::FLD_NAME] == Null
-                    and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
-                    and $usr_cfg[self::FLD_EXCLUDED] == Null) {
-                    // delete the entry in the user sandbox
-                    log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-                    $result = $this->del_usr_cfg_exe($db_con);
+            $db_con->usr_id = $this->usr->id;
+            $usr_cfg = $db_con->get1_old($sql);
+            log_debug('word_link->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+            if ($usr_cfg) {
+                if ($usr_cfg[self::FLD_ID] > 0) {
+                    // TODO use the FLD_NAMES array with all relevant field names
+                    if ($usr_cfg[self::FLD_NAME] == Null
+                        and $usr_cfg[sql_db::FLD_DESCRIPTION] == Null
+                        and $usr_cfg[self::FLD_EXCLUDED] == Null) {
+                        // delete the entry in the user sandbox
+                        log_debug('word_link->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                        $result = $this->del_usr_cfg_exe($db_con);
+                    }
                 }
             }
         }

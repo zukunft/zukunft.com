@@ -64,7 +64,7 @@ class user_sandbox
     // database fields that are used in all objects and that have a specific behavior
     public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
     public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
-    public user $usr       ;           // the person for whom the object is loaded, so to say the viewer
+    public user $usr;           // the person for whom the object is loaded, so to say the viewer
     public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     public ?int $share_id = null;      // id for public, personal, group or private
     public ?int $protection_id = null; // id for no, user, admin or full protection
@@ -158,9 +158,6 @@ class user_sandbox
     /*
       these functions differ for each object, so they are always in the child class and not this in the superclass
 
-      private function row_mapper() {
-      }
-
       private function load_standard() {
       }
 
@@ -170,12 +167,42 @@ class user_sandbox
     */
 
     /**
+     * map the database fields to the object fields
+     * to be extended by the child functions
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default object used for all users
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if the user sandbox object is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = ''): bool
+    {
+        $this->id = 0;
+        $result = false;
+        if ($db_row != null) {
+            if ($db_row[$id_fld] > 0) {
+                $this->id = $db_row[$id_fld];
+                $this->owner_id = $db_row[self::FLD_USER];
+                $this->excluded = $db_row[self::FLD_EXCLUDED];
+                if ($map_usr_fields) {
+                    $this->row_mapper_usr($db_row, $id_fld);
+                } else {
+                    $this->row_mapper_std();
+                }
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * map the standard user sandbox database fields to this user specific object
      *
      * @param array $db_row with the data loaded from the database
      * @return void
      */
-    function row_mapper_usr(array $db_row, $id_fld) {
+    private function row_mapper_usr(array $db_row, $id_fld)
+    {
         $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . $id_fld];
         $this->share_id = $db_row[sql_db::FLD_SHARE];
         $this->protection_id = $db_row[sql_db::FLD_PROTECT];
@@ -186,9 +213,65 @@ class user_sandbox
      *
      * @return void
      */
-    function row_mapper_std() {
+    private function row_mapper_std()
+    {
         $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
         $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
+    }
+
+    /**
+     * create the SQL to load the single default value always by the id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = $class . '_std_by_id';
+
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the object parameters for all users
+     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard(?sql_par $qp, string $class): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($this->id <= 0) {
+            log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
+        } else {
+            $db_row = $db_con->get1($qp);
+            $result = $this->row_mapper($db_row, false);
+        }
+        return $result;
+    }
+
+    /**
+     * create the SQL to load a single user specific value
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = $class . '_by_';
+
+        return $qp;
     }
 
     function load_owner(): bool
@@ -227,16 +310,6 @@ class user_sandbox
      * @returns bool  false if the loading has failed
      */
     function load_objects(): bool
-    {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return true;
-    }
-
-    /**
-     * dummy function to get the missing reference object values from the database that is always overwritten by the child class
-     * @returns bool false if the loading has failed
-     */
-    function load_standard(): bool
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
@@ -480,6 +553,34 @@ class user_sandbox
 
         return $result;
     }
+
+
+    /**
+     * dummy function to import a user sandbox object from a json string
+     * to be overwritten by the child object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return string an empty string if the import has been successfully saved to the database
+     *                or the message that should be shown to the user
+     */
+    function import_obj(array $json_obj, bool $do_save = true): string
+    {
+        return '';
+    }
+
+    /**
+     * create an object for the export which does not include the internal references
+     * to be overwritten by the child object
+     *
+     * @param bool $do_load can be set to false for unit testing
+     * @return user_sandbox_exp a reduced export object that can be used to create a JSON message
+     */
+    function export_obj(bool $do_load = true): user_sandbox_exp
+    {
+        return (new user_sandbox_exp());
+    }
+
 
     // get the user id of the most often used link (position) beside the standard (position)
     //
@@ -1782,7 +1883,22 @@ class user_sandbox
      */
     function get_datetime(string $datetime_text, string $obj_name = ''): DateTime
     {
-       return get_datetime($datetime_text, $obj_name);
+        return get_datetime($datetime_text, $obj_name);
+    }
+
+    /**
+     * convert a database boolean tiny int value to a php boolean object
+     *
+     * @param int $bool_value the value as received from the database
+     * @return bool true if the database value is 1
+     */
+    function get_bool(int $bool_value): bool
+    {
+        if ($bool_value == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

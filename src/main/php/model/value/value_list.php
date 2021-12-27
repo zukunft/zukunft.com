@@ -133,7 +133,7 @@ class value_list
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->usr);
-                        $val->row_mapper($db_val, true);
+                        $val->row_mapper($db_val);
                         // TODO either integrate this in the query or load this with one sql for all values
                         if ($db_val['time_word_id'] <> 0) {
                             $time_phr = new phrase($this->usr);
@@ -203,7 +203,7 @@ class value_list
         foreach ($db_val_lst as $db_val) {
             if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                 $val = new value($this->usr);
-                $val->row_mapper($db_val, true);
+                $val->row_mapper($db_val);
                 $this->lst[] = $val;
                 log_debug('value_list->load_by_phr (' . dsp_count($this->lst) . ')');
                 $result = true;
@@ -254,7 +254,7 @@ class value_list
                     foreach ($db_val_lst as $db_val) {
                         if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                             $val = new value($this->usr);
-                            $val->row_mapper($db_val, true);
+                            $val->row_mapper($db_val);
                             $this->lst[] = $val;
                         }
                     }

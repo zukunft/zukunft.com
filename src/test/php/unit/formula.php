@@ -36,41 +36,29 @@ class formula_unit_tests
     {
 
         global $usr;
-        global $sql_names;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'formula->';
+        $t->resource_path = 'db/formula/';
+        $json_file = 'unit/formula/scale_second_to_minute.json';
+        $usr->id = 1;
 
         $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
 
         $t->subheader('SQL statement tests');
 
-        $db_con = new sql_db();
 
         // sql to load the formula by id
         $frm = new formula($usr);
         $frm->id = 2;
-        $frm->usr = $usr;
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $frm->load_sql($db_con);
-        $expected_sql = $t->file('db/formula/formula_by_id.sql');
-        $t->assert('formula->load_sql by formula id', $t->trim($created_sql), $t->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($frm->load_sql($db_con, true));
-
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $frm->load_sql($db_con);
-        $expected_sql = $t->file('db/formula/formula_by_id_mysql.sql');
-        $t->assert('formula->load_sql by formula id', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert_load_sql($db_con, $frm);
+        $t->assert_load_standard_sql($db_con, $frm);
 
 
         $t->subheader('Im- and Export tests');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
-        $frm = new formula($usr);
-        $frm->import_obj($json_in, false);
-        $json_ex = json_decode(json_encode($frm->export_obj(false)), true);
-        $result = json_is_similar($json_in, $json_ex);
-        $t->assert('formula->import check name', $result, true);
+        $t->assert_json(new formula($usr), $json_file);
 
     }
 

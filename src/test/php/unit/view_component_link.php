@@ -51,7 +51,7 @@ class view_component_link_unit_tests
         $lnk = new view_cmp_link($usr);
         $lnk->view_id = 1;
         $lnk->view_component_id = 2;
-        $created_sql = $lnk->load_sql($db_con);
+        $created_sql = $lnk->load_sql($db_con)->sql;
         $expected_sql = "SELECT 
                          s.view_component_link_id,  
                          u.view_component_link_id AS user_view_component_link_id,  
@@ -69,12 +69,12 @@ class view_component_link_unit_tests
         $t->dsp('view_component_link->load_sql by view and component', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_sql($db_con, true));
+        $t->assert_sql_name_unique($lnk->load_sql($db_con)->name);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $lnk->usr = $usr;
-        $created_sql = $lnk->load_sql($db_con);
+        $created_sql = $lnk->load_sql($db_con)->sql;
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . " 
                          s.view_component_link_id,  

@@ -37,6 +37,10 @@
 class value_time_series extends user_sandbox_display
 {
 
+    /*
+     * database link
+     */
+
     // object specific database and JSON object field names
     const FLD_ID = 'value_time_series_id';
     const FLD_LAST_UPDATE = 'last_update';
@@ -59,12 +63,20 @@ class value_time_series extends user_sandbox_display
         sql_db::FLD_SHARE
     );
 
+    /*
+     * object vars
+     */
+
     // related objects used also for database mapping
     public phrase_group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
 
     // database fields additional to the user sandbox fields for the value object
     public DateTime $last_update; // the time of the last update of fields that may influence the calculated results
+
+    /*
+     * construct and map
+     */
 
     /**
      * set the user sandbox type for a value time series object and set the user, which is needed in all cases
@@ -95,31 +107,24 @@ class value_time_series extends user_sandbox_display
      * database load functions that reads the object from the database
      */
 
-    private function row_mapper(array $db_row, bool $map_usr_fields = false): bool
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default value time series used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the value time series is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        $result = false;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->grp->id = $db_row[phrase_group::FLD_ID];
-                if ($db_row[source::FLD_ID] > 0) {
-                    $this->source = new source($this->usr);
-                    $this->source->id = $db_row[source::FLD_ID];
-                }
-                $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    parent::row_mapper_usr($db_row, self::FLD_ID);
-                } else {
-                    parent::row_mapper_std();
-                }
-                $result = true;
-            } else {
-                $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->grp->id = $db_row[phrase_group::FLD_ID];
+            if ($db_row[source::FLD_ID] > 0) {
+                $this->source = new source($this->usr);
+                $this->source->id = $db_row[source::FLD_ID];
             }
-        } else {
-            $this->id = 0;
+            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
         }
         return $result;
     }
@@ -138,22 +143,15 @@ class value_time_series extends user_sandbox_display
 
     /**
      * load the standard value use by most users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if a time series has been loaded
      */
-    function load_standard(): bool
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
-
         global $db_con;
-        $result = false;
-
-        if ($this->id <= 0) {
-            log_err('The value id must be set to load ' . self::class, self::class . '->load_standard');
-        } else {
-            $qp = $this->load_standard_sql($db_con);
-            $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper($db_val);
-        }
-        return $result;
+        $qp = $this->load_standard_sql($db_con);
+        return parent::load_standard($qp, self::class);
     }
 
     /**
@@ -162,7 +160,7 @@ class value_time_series extends user_sandbox_display
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_';
@@ -213,7 +211,7 @@ class value_time_series extends user_sandbox_display
 
             $qp = $this->load_sql($db_con);
             $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper($db_val, true);
+            $result = $this->row_mapper($db_val);
         }
 
         return $result;

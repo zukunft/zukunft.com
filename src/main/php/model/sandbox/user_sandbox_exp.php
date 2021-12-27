@@ -2,9 +2,9 @@
 
 /*
 
-  test/unit/ref.php - unit testing of the reference functions
-  -----------------
-  
+    user_sandbox_exp.php - the superclass for the export objects
+    --------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,25 +30,7 @@
 
 */
 
-class ref_unit_tests
+class user_sandbox_exp
 {
-    function run(testing $t)
-    {
-
-        global $usr;
-
-        $t->header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
-
-        $t->subheader('Im- and Export tests');
-
-        $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/ref/wikipedia.json'), true);
-        $ref = new ref($usr);
-        $ref->import_obj($json_in, false);
-        $json_ex = json_decode(json_encode($ref->export_obj(false)), true);
-        $result = json_is_similar($json_in, $json_ex);
-        $t->assert('ref->import check name', $result, true);
-
-    }
 
 }
-

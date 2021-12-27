@@ -32,6 +32,30 @@
 class source extends user_sandbox_named
 {
 
+    /*
+     * database link
+     */
+
+    // object specific database and JSON object field names
+    const FLD_ID = 'source_id';
+    const FLD_NAME = 'source_name';
+    const FLD_TYPE = 'source_type_id';
+    const FLD_URL = 'url';
+    const FLD_COMMENT = 'comment';
+
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const FLD_NAMES = array(
+        self::FLD_NAME,
+        self::FLD_URL,
+        self::FLD_COMMENT,
+        self::FLD_TYPE,
+        sql_db::FLD_CODE_ID
+    );
+
+    /*
+     * for system testing
+     */
+
     // persevered source names for unit and integration tests
     const TN_READ = 'wikidata';
     const TN_ADD = 'System Test Source';
@@ -50,11 +74,9 @@ class source extends user_sandbox_named
         self::TN_RENAMED
     );
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'source_id';
-    const FLD_NAME = 'source_name';
-    const FLD_URL = 'url';
-    const FLD_COMMENT = 'comment';
+    /*
+     * object vars
+     */
 
     // database fields additional to the user sandbox fields
     public ?string $url = null;      // the internet link to the source
@@ -63,6 +85,10 @@ class source extends user_sandbox_named
 
     // in memory only fields
     public ?string $back = null; // the calling stack
+
+    /*
+     * construct and map
+     */
 
     // define the settings for this source object
     function __construct(user $usr)
@@ -91,44 +117,62 @@ class source extends user_sandbox_named
         $this->back = null;
     }
 
-    // map the database object to this source class fields
-    private function row_mapper(array $db_row, bool $map_usr_fields = false)
+    /**
+     * map the database object to this source class fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default source used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the source is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = false, string $id_fld = self::FLD_ID): bool
     {
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->name = $db_row[self::FLD_NAME];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->url = $db_row[self::FLD_URL];
-                $this->comment = $db_row[self::FLD_COMMENT];
-                $this->type_id = $db_row['source_type_id'];
-                $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_source_id'];
-                }
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->url = $db_row[self::FLD_URL];
+            $this->comment = $db_row[self::FLD_COMMENT];
+            $this->type_id = $db_row[self::FLD_TYPE];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
         }
+        return $result;
     }
 
-    // load the source parameters for all users
-    // return false if load fails
-    function load_standard(): bool
+    /*
+     * loading
+     */
+
+    /**
+     * create the SQL to load the default source always by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES,
+            array(sql_db::FLD_USER_ID)
+        ));
+
+        return parent::load_standard_sql($db_con, self::class);
+    }
+
+    /**
+     * load the source parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard source has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $result = false;
+        $qp = $this->load_standard_sql($db_con);
+        $result = parent::load_standard($qp, self::class);
 
-        $db_con->set_type(DB_TYPE_SOURCE);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'url', 'comment', 'source_type_id', sql_db::FLD_CODE_ID));
-        $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
-
-        if ($db_con->get_where() <> '') {
-            $db_src = $db_con->get1_old($sql);
-            $this->row_mapper($db_src);
+        if ($result) {
             $result = $this->load_owner();
         }
         return $result;
@@ -157,7 +201,7 @@ class source extends user_sandbox_named
 
             if ($db_con->get_where() <> '') {
                 $db_row = $db_con->get1_old($sql);
-                $this->row_mapper($db_row, true);
+                $this->row_mapper($db_row);
                 if ($this->id > 0) {
                     log_debug('source->load (' . $this->dsp_id() . ')');
                     $result = true;
@@ -185,33 +229,8 @@ class source extends user_sandbox_named
         return $this->type_name;
     }
 
-    // create an object for the export
-    function export_obj(): source
-    {
-        log_debug('source->export_obj');
-        $result = new source();
-
-        // add the source parameters
-        $result->name = $this->name;
-        if ($this->url <> '') {
-            $result->url = $this->url;
-        }
-        if ($this->comment <> '') {
-            $result->comment = $this->comment;
-        }
-        if ($this->type_name() <> '') {
-            $result->obj_type = $this->type_name();
-        }
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
-        }
-
-        log_debug('source->export_obj -> ' . json_encode($result));
-        return $result;
-    }
-
     // import a source from an object
-    function import_obj($json_obj): string
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         log_debug('source->import_obj');
         $result = '';
@@ -244,10 +263,33 @@ class source extends user_sandbox_named
         return $result;
     }
 
+    // create an object for the export
+    function export_obj(bool $do_load = true): user_sandbox_exp
+    {
+        log_debug('source->export_obj');
+        $result = new source();
+
+        // add the source parameters
+        $result->name = $this->name;
+        if ($this->url <> '') {
+            $result->url = $this->url;
+        }
+        if ($this->comment <> '') {
+            $result->comment = $this->comment;
+        }
+        if ($this->type_name() <> '') {
+            $result->obj_type = $this->type_name();
+        }
+        if ($this->code_id <> '') {
+            $result->code_id = $this->code_id;
+        }
+
+        log_debug('source->export_obj -> ' . json_encode($result));
+        return $result;
+    }
+
     /*
-
     display functions
-
     */
 
     // display the unique id fields

@@ -948,12 +948,14 @@ CREATE TABLE IF NOT EXISTS `user_value_time_series`
 
 CREATE TABLE IF NOT EXISTS `user_views`
 (
-    `view_id`      int(11) NOT NULL,
-    `user_id`      int(11) NOT NULL,
-    `view_name`    varchar(200) DEFAULT NULL,
-    `comment`      text,
-    `view_type_id` int(11)      DEFAULT NULL,
-    `excluded`     tinyint(4)   DEFAULT NULL
+    `view_id`            int(11) NOT NULL,
+    `user_id`            int(11) NOT NULL,
+    `view_name`          varchar(200) DEFAULT NULL,
+    `comment`            text,
+    `view_type_id`       int(11)      DEFAULT NULL,
+    `excluded`           tinyint(4)   DEFAULT NULL,
+    `share_type_id`      smallint     DEFAULT NULL,
+    `protection_type_id` smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='user specific mask settings';
 
@@ -1187,13 +1189,15 @@ CREATE TABLE IF NOT EXISTS `verb_usages`
 
 CREATE TABLE IF NOT EXISTS `views`
 (
-    `view_id`      int(11)      NOT NULL,
-    `user_id`      int(11)      DEFAULT NULL,
-    `view_name`    varchar(100) NOT NULL COMMENT 'for easy selection',
-    `comment`      text         DEFAULT NULL,
-    `view_type_id` int(11)      DEFAULT NULL,
-    `code_id`      varchar(100) DEFAULT NULL,
-    `excluded`     tinyint(4)   DEFAULT NULL
+    `view_id`            int(11)      NOT NULL,
+    `user_id`            int(11)      DEFAULT NULL,
+    `view_name`          varchar(100) NOT NULL COMMENT 'for easy selection',
+    `comment`            text         DEFAULT NULL,
+    `view_type_id`       int(11)      DEFAULT NULL,
+    `code_id`            varchar(100) DEFAULT NULL,
+    `excluded`           tinyint(4)   DEFAULT NULL,
+    `share_type_id`      smallint     DEFAULT NULL,
+    `protection_type_id` smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='all user interfaces should be listed here';

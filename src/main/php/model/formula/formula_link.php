@@ -83,25 +83,23 @@ class formula_link extends user_sandbox_link
         $this->tob = new phrase($usr);
     }
 
-    function row_mapper(array $db_row, bool $map_usr_fields = false)
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default formula link used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the formula link is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        if ($db_row != null) {
-            if ($db_row[formula_link::FLD_ID] > 0) {
-                $this->id = $db_row[formula_link::FLD_ID];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->fob->id = $db_row[formula::FLD_ID];
-                $this->tob->id = $db_row[phrase::FLD_ID];
-                $this->link_type_id = $db_row[formula_link::FLD_TYPE];
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row[sql_db::USER_PREFIX . $this->obj_name . sql_db::FLD_EXT_ID];
-                }
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->fob->id = $db_row[formula::FLD_ID];
+            $this->tob->id = $db_row[phrase::FLD_ID];
+            $this->link_type_id = $db_row[self::FLD_TYPE];
         }
+        return $result;
     }
 
     /*
@@ -178,33 +176,32 @@ class formula_link extends user_sandbox_link
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, bool $get_name = false): string
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $sql_name = self::class . '_standard_by_' . $this->load_sql_name_extension();
+        $qp = new sql_par();
+        $qp->name = self::class . '_standard_by_' . $this->load_sql_name_extension();
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
-        $sql = $db_con->select();
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /**
      * load the standard formula link to check if the user has done some personal changes
      * e.g. switched off a formula assignment
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the loading of the standard formula link been successful
      */
-    function load_standard(): bool
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
 
         global $db_con;
@@ -215,7 +212,7 @@ class formula_link extends user_sandbox_link
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1_old($sql);
-                $this->row_mapper($db_frm);
+                $this->row_mapper($db_frm, false);
                 $result = $this->load_owner();
             }
         }
@@ -226,25 +223,21 @@ class formula_link extends user_sandbox_link
      * create an SQL statement to retrieve the parameters of a formula link from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $sql_name = self::class . '_by_' . $this->load_sql_name_extension();
+        $qp = parent::load_sql($db_con, self::class);
+        $qp->name .= $this->load_sql_name_extension();
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
-        $sql = $db_con->select();
+        $qp->sql = $db_con->select();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /**
@@ -268,7 +261,7 @@ class formula_link extends user_sandbox_link
 
                 if ($db_con->get_where() <> '') {
                     $db_row = $db_con->get1_old($sql);
-                    $this->row_mapper($db_row, true);
+                    $this->row_mapper($db_row);
                     if ($this->id > 0) {
                         log_debug('formula_link->load (' . $this->id . ')');
                         $result = true;
@@ -619,7 +612,8 @@ class formula_link extends user_sandbox_link
      * create a new link object including the order number
      * @returns int the id of the creates object
      */
-    function add_insert(): int {
+    function add_insert(): int
+    {
         global $db_con;
         return $db_con->insert(
             array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),

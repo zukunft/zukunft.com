@@ -298,11 +298,11 @@ class view_cmp_dsp extends view_cmp
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
             $dsp = new view_dsp;
-            $dsp->id = $view['view_id'];
-            $dsp->name = $view['view_name'];
+            $dsp->id = $view[view::FLD_ID];
+            $dsp->name = $view[view::FLD_NAME];
             $result .= '      ' . $dsp->name_linked($wrd, $back) . '' . "\n";
             $result .= '    </td>' . "\n";
-            $result .= $this->btn_unlink($view['view_id'], $wrd, $back);
+            $result .= $this->btn_unlink($view[view::FLD_ID], $wrd, $back);
             $result .= '  </tr>' . "\n";
         }
 

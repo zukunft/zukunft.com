@@ -95,7 +95,7 @@ function run_view_component_test(testing $t)
     // check if the view_component adding has been logged
     $log = new user_log_named;
     $log->table = 'view_components';
-    $log->field = 'view_component_name';
+    $log->field = view_cmp::FLD_NAME;
     $log->row_id = $cmp->id;
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -136,7 +136,7 @@ function run_view_component_test(testing $t)
     // check if the view_component renaming has been logged
     $log = new user_log_named;
     $log->table = 'view_components';
-    $log->field = 'view_component_name';
+    $log->field = view_cmp::FLD_NAME;
     $log->row_id = $cmp_renamed->id;
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);

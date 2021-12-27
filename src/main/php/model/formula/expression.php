@@ -154,7 +154,7 @@ class expression
     /**
      * extracts an array with the words from a given formula text and load the words
      */
-    function phr_lst(): phrase_list
+    function phr_lst(): ?phrase_list
     {
         log_debug('expression->phr_lst "' . $this->ref_text . ',u' . $this->usr->name . '"');
         $phr_lst = null;
@@ -183,7 +183,9 @@ class expression
             }
         }
 
-        log_debug('expression->phr_lst -> ' . $phr_lst->name());
+        if ($phr_lst != null) {
+            log_debug('expression->phr_lst -> ' . $phr_lst->name());
+        }
         $this->phr_lst = $phr_lst;
         return $phr_lst;
     }

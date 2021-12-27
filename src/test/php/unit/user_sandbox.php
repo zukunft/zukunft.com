@@ -540,7 +540,7 @@ class user_sandbox_unit_tests
 
         // test the view load_standard SQL creation
         $db_con->set_type(DB_TYPE_VIEW);
-        $db_con->set_fields(array('comment', 'view_type_id', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array('comment', view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where(1);
         $created_sql = $db_con->select();
         $expected_sql = "SELECT view_id,
@@ -555,7 +555,7 @@ class user_sandbox_unit_tests
         // test the view load SQL creation
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr_fields(array('comment'));
-        $db_con->set_usr_num_fields(array('view_type_id', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array(view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where(1);
         $created_sql = $db_con->select();
         $expected_sql = "SELECT 
@@ -574,7 +574,7 @@ class user_sandbox_unit_tests
 
         // test the view_component_link load_standard SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields('view_id', 'view_component_id');
+        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_link(1, 2, 3);
         $created_sql = $db_con->select();
@@ -590,7 +590,7 @@ class user_sandbox_unit_tests
 
         // ... same but select by the link ids
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields('view_id', 'view_component_id');
+        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_link(0, 2, 3);
         $created_sql = $db_con->select();
@@ -606,7 +606,7 @@ class user_sandbox_unit_tests
 
         // test the view_component_link load SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields('view_id', 'view_component_id');
+        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_link(1, 2, 3);
         $created_sql = $db_con->select();
@@ -971,7 +971,7 @@ class user_sandbox_unit_tests
 
         // test the view_component_link load_standard SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields('view_id', 'view_component_id');
+        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
         $db_con->set_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_link(1);
         $created_sql = $db_con->select();
@@ -988,7 +988,7 @@ class user_sandbox_unit_tests
 
         // test the view_component_link load SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-        $db_con->set_link_fields('view_id', 'view_component_id');
+        $db_con->set_link_fields(view::FLD_ID, 'view_component_id');
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_link(1, 2, 3);
         $created_sql = $db_con->select();
@@ -1292,7 +1292,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         //$db_con->set_join_fields(array('position_type'), 'position_type');
-        $db_con->set_fields(array('view_id', 'view_component_id'));
+        $db_con->set_fields(array(view::FLD_ID, 'view_component_id'));
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.view_component_id = 1');
         $created_sql = $db_con->select();

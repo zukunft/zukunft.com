@@ -48,31 +48,31 @@ class formula_link_unit_tests
         $lnk = new formula_link($usr);
         $lnk->id = 2;
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_sql($db_con);
+        $created_sql = $lnk->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_id.sql');
         $t->assert('formula_link->load_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_sql($db_con, true));
+        $t->assert_sql_name_unique($lnk->load_sql($db_con, true)->name);
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $lnk->load_sql($db_con);
+        $created_sql = $lnk->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_id_mysql.sql');
         $t->assert('formula_link->load_sql for MySQL by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // sql to load the standard formula link by id
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_standard_sql($db_con);
+        $created_sql = $lnk->load_standard_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_std_by_id.sql');
         $t->assert('formula_link->load_standard_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_standard_sql($db_con, true));
+        $t->assert_sql_name_unique($lnk->load_standard_sql($db_con, 'formula')->name);
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $lnk->load_standard_sql($db_con);
+        $created_sql = $lnk->load_standard_sql($db_con)->sql;
         $expected_sql = $t->file('db/formula/formula_link_std_by_id_mysql.sql');
         $t->assert('formula_link->load_standard_sql for MySQL by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 

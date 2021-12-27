@@ -1,5 +1,4 @@
-SELECT
-           s.word_id,
+SELECT     s.word_id,
            u.word_id AS user_word_id,
            s.user_id,
            s.`values`,
@@ -13,6 +12,6 @@ SELECT
            IF(u.protection_type_id IS NULL, s.protection_type_id, u.protection_type_id) AS protection_type_id
       FROM words s
  LEFT JOIN user_words u ON s.word_id = u.word_id
-       AND u.user_id = 1
-     WHERE s.word_id IN (1,2,3)
-  ORDER BY s.values DESC, word_name;
+                       AND u.user_id = 1
+     WHERE (u.word_name = 'Mathematical constant'
+        OR (s.word_name = 'Mathematical constant' AND u.word_name IS NULL));

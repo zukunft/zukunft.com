@@ -31,6 +31,10 @@
 
 class formula extends user_sandbox_description
 {
+    /*
+     * database link
+     */
+
     // object specific database and JSON object field names
     // means: database fields only used for formulas
     // table fields where the change should be encoded before shown to the user
@@ -38,7 +42,7 @@ class formula extends user_sandbox_description
     const FLD_NAME = 'formula_name';
     const FLD_FORMULA_TEXT = 'formula_text';       // the internal formula expression with the database references
     const FLD_FORMULA_USER_TEXT = 'resolved_text'; // the formula expression as shown to the user which can include formatting for better readability
-    const FLD_REF_TEXT = "ref_text";               // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
+    //const FLD_REF_TEXT = "ref_text";               // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
     const FLD_FORMULA_TYPE = 'formula_type_id';    // the id of the formula type
     const FLD_ALL_NEEDED = 'all_values_needed';    // the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
     const FLD_LAST_UPDATE = 'last_update';
@@ -50,11 +54,14 @@ class formula extends user_sandbox_description
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
         sql_db::FLD_DESCRIPTION,
-        self::FLD_REF_TEXT,
         self::FLD_FORMULA_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_EXCLUDED
     );
+
+    /*
+     * for system testing
+     */
 
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula';
@@ -91,6 +98,10 @@ class formula extends user_sandbox_description
         self::TN_SCALE_BIL
     );
 
+    /*
+     * code links
+     */
+
     // list of the formula types that have a coded functionality
     const CALC = "default";    // a normal calculation formula
     const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
@@ -98,6 +109,9 @@ class formula extends user_sandbox_description
     const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
     const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
 
+    /*
+     * object vars
+     */
 
     // database fields additional to the user sandbox fields
     public ?string $ref_text = '';         // the formula expression with the names replaced by database references
@@ -113,6 +127,14 @@ class formula extends user_sandbox_description
     public bool $needs_fv_upd = false;     // true if the formula results needs to be updated
     public ?string $ref_text_r = '';       // the part of the formula expression that is right of the equation sign (used as a work-in-progress field for calculation)
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * define the settings for this formula object
+     * @param user $usr the user who requested to see this formula
+     */
     function __construct(user $usr)
     {
         parent::__construct($usr);
@@ -169,6 +191,66 @@ class formula extends user_sandbox_description
         $dsp_obj->ref_text_r = $this->ref_text_r;
 
         return $dsp_obj;
+    }
+
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default formula used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the formula is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
+    {
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
+            $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
+            $this->type_cl = $db_row[sql_db::FLD_CODE_ID];
+            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
+        }
+        return $result;
+    }
+
+    /**
+     * create the SQL to load the default formula always by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES,
+            array(sql_db::FLD_USER_ID)
+        ));
+
+        return parent::load_standard_sql($db_con, self::class);
+    }
+
+    /**
+     * load the formula parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard formula has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    {
+        global $db_con;
+        $qp = $this->load_standard_sql($db_con);
+        $result = parent::load_standard($qp, self::class);
+
+        if ($result) {
+            $result = $this->load_owner();
+        }
+        return $result;
     }
 
     /**
@@ -257,75 +339,25 @@ class formula extends user_sandbox_description
         return $result;
     }
 
-    function row_mapper(array $db_row, bool $map_usr_fields = false)
-    {
-        if ($db_row != null) {
-            if ($db_row[$this->fld_id()] > 0) {
-                $this->id = $db_row[$this->fld_id()];
-                $this->name = $db_row[self::FLD_NAME];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
-                $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
-                $this->type_cl = $db_row[sql_db::FLD_CODE_ID];
-                $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                // TODO create a boolean converter for shorter code here
-                if ($db_row[self::FLD_ALL_NEEDED] == 1) {
-                    $this->need_all_val = true;
-                } else {
-                    $this->need_all_val = false;
-                }
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row[$this->fld_usr_id()];
-                }
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
-        }
-    }
-
-    /**
-     * load the formula parameters for all users
+    /*
+     * loading
      */
-    function load_standard(): bool
-    {
-        global $db_con;
-        $result = false;
-
-        $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT, sql_db::FLD_DESCRIPTION, self::FLD_FORMULA_TYPE, self::FLD_ALL_NEEDED, self::FLD_LAST_UPDATE, self::FLD_EXCLUDED)); // the user_id should be included to all user sandbox tables to detect the owner of the standard value
-        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
-        $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
-
-        if ($db_con->get_where() <> '') {
-            $db_rec = $db_con->get1_old($sql);
-            $this->row_mapper($db_rec);
-            $result = $this->load_owner();
-        }
-        log_debug('formula->load_standard -> done');
-        return $result;
-    }
 
     /**
      * create an SQL statement to retrieve the parameters of a formula from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
 
-        $sql_name = self::class . '_by_';
+        $qp = parent::load_sql($db_con, self::class);
         if ($this->id != 0) {
-            $sql_name .= 'id';
+            $qp->name .= 'id';
         } elseif ($this->name != '') {
-            $sql_name .= 'name';
+            $qp->name .= 'name';
         } else {
             log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         }
@@ -336,14 +368,10 @@ class formula extends user_sandbox_description
         $db_con->set_usr_fields(array(self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT, sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(self::FLD_FORMULA_TYPE, self::FLD_ALL_NEEDED, self::FLD_LAST_UPDATE, self::FLD_EXCLUDED));
         $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /**
@@ -361,11 +389,11 @@ class formula extends user_sandbox_description
             log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a formula.", "formula->load");
         } else {
 
-            $sql = $this->load_sql($db_con);
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_frm = $db_con->get1_old($sql);
-                $this->row_mapper($db_frm, true);
+                $db_frm = $db_con->get1($qp);
+                $this->row_mapper($db_frm);
                 if ($this->id > 0) {
                     // TODO check the exclusion handling
                     log_debug('formula->load ' . $this->dsp_id() . ' not excluded');
@@ -541,7 +569,7 @@ class formula extends user_sandbox_description
     /**
      * the complete list of a phrases assigned to a formula
      */
-    function assign_phr_lst_direct(): phrase_list
+    function assign_phr_lst_direct(): ?phrase_list
     {
         return $this->assign_phr_glst_direct(false);
     }
@@ -549,7 +577,7 @@ class formula extends user_sandbox_description
     /**
      * the user specific list of a phrases assigned to a formula
      */
-    function assign_phr_ulst_direct(): phrase_list
+    function assign_phr_ulst_direct(): ?phrase_list
     {
         return $this->assign_phr_glst_direct(true);
     }
@@ -1132,7 +1160,7 @@ class formula extends user_sandbox_description
     /**
      * create an object for the export
      */
-    function export_obj(bool $do_load = true): formula_exp
+    function export_obj(bool $do_load = true): user_sandbox_exp
     {
         global $formula_types;
 

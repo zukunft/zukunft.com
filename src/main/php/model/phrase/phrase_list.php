@@ -146,7 +146,7 @@ class phrase_list
             foreach ($db_wrd_lst as $db_wrd) {
                 if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                     $wrd = new word($this->usr);
-                    $wrd->row_mapper($db_wrd, true);
+                    $wrd->row_mapper($db_wrd);
                     $this->lst[] = $wrd->phrase();
                     $result = true;
                 }
@@ -160,7 +160,7 @@ class phrase_list
             foreach ($db_trp_lst as $db_trp) {
                 if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
                     $trp = new word_link($this->usr);
-                    $trp->row_mapper($db_trp, true);
+                    $trp->row_mapper($db_trp);
                     $this->lst[] = $trp->phrase();
                     $result = true;
                 }

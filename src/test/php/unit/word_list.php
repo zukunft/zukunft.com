@@ -36,7 +36,13 @@ class word_list_unit_tests
     {
 
         global $usr;
-        global $sql_names;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'word_list->';
+        $t->resource_path = 'db/word/';
+        $usr->id = 1;
+
 
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
@@ -44,7 +50,6 @@ class word_list_unit_tests
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
          */
 
-        $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load by word list by ids

@@ -133,7 +133,7 @@ class user_log_display
             $result .= dsp_tbl_start_hist();
             foreach ($db_lst as $db_row) {
                 // display the row only if the field is not an "admin only" field
-                if ($db_row["code_id"] <> formula::FLD_REF_TEXT) {
+                //if ($db_row["code_id"] <> formula::FLD_REF_TEXT) {
                     $row_nbr++;
                     $result .= '<tr>';
                     if ($row_nbr == 1) {
@@ -264,7 +264,7 @@ class user_log_display
                     }
 
                     $result .= '</tr>';
-                }
+                //}
             }
             $result .= dsp_tbl_end();
         }

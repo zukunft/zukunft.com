@@ -898,12 +898,14 @@ COMMENT ON TABLE user_value_time_series is 'common parameters for a user specifi
 
 CREATE TABLE IF NOT EXISTS user_views
 (
-    view_id      bigint NOT NULL,
-    user_id      bigint NOT NULL,
-    view_name    varchar(200) DEFAULT NULL,
-    comment      text,
-    view_type_id bigint       DEFAULT NULL,
-    excluded     smallint     DEFAULT NULL
+    view_id            bigint   NOT NULL,
+    user_id            bigint   NOT NULL,
+    view_name          varchar(200)      DEFAULT NULL,
+    comment            text,
+    view_type_id       bigint            DEFAULT NULL,
+    excluded           smallint          DEFAULT NULL,
+    share_type_id      smallint          DEFAULT NULL,
+    protection_type_id smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE user_views is 'user specific mask settings';
@@ -1149,13 +1151,15 @@ CREATE TABLE IF NOT EXISTS verb_usages
 
 CREATE TABLE IF NOT EXISTS views
 (
-    view_id      BIGSERIAL PRIMARY KEY,
-    user_id      bigint       DEFAULT NULL,
-    view_name    varchar(100) NOT NULL,
-    comment      text         DEFAULT NULL,
-    view_type_id bigint       DEFAULT NULL,
-    code_id      varchar(100) DEFAULT NULL,
-    excluded     smallint     DEFAULT NULL
+    view_id            BIGSERIAL PRIMARY KEY,
+    user_id            bigint                DEFAULT NULL,
+    view_name          varchar(100) NOT NULL,
+    comment            text                  DEFAULT NULL,
+    view_type_id       bigint                DEFAULT NULL,
+    code_id            varchar(100)          DEFAULT NULL,
+    excluded           smallint              DEFAULT NULL,
+    share_type_id      smallint              DEFAULT NULL,
+    protection_type_id smallint     NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE views is 'all user interfaces should be listed here';

@@ -54,14 +54,14 @@ class view_list extends user_type_list
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array('code_id'));
         $db_con->set_usr_fields(array('comment'));
-        $db_con->set_usr_num_fields(array('view_type_id', user_sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array(view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('code_id IS NOT NULL');
         $sql = $db_con->select();
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new view($this->usr);
-                $vrb->row_mapper($db_row, true);
+                $vrb->row_mapper($db_row);
                 $this->lst[$db_row[$db_con->get_id_field_name($db_type)]] = $vrb;
             }
         }

@@ -280,6 +280,9 @@ class test_base
     const USER_NAME = "zukunft.com system test";
     const USER_PARTNER_NAME = "zukunft.com system test partner";
 
+    const FILE_EXT = '.sql';
+    const FILE_MYSQL = '_mysql';
+
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
 
@@ -291,6 +294,9 @@ class test_base
     private int $timeout_counter;
     private int $total_tests;
 
+    public string $name;
+    public string $resource_path;
+
     function __construct()
     {
         // init the times to be able to detect potential timeouts
@@ -301,6 +307,9 @@ class test_base
         $this->error_counter = 0;
         $this->timeout_counter = 0;
         $this->total_tests = 0;
+
+        $this->name = '';
+        $this->resource_path = '';
     }
 
     function set_users()
@@ -926,6 +935,93 @@ class test_base
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
+    function assert_json(user_sandbox $usr_obj, string $json_file_name): bool
+    {
+        $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . $json_file_name), true);
+        $usr_obj->import_obj($json_in, false);
+        $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
+        $result = json_is_similar($json_in, $json_ex);
+        return $this->assert($this->name . 'import check name', $result, true);
+    }
+
+    /**
+     * check the object load SQL statements for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql($db_con, get_class($usr_obj));
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql($db_con, get_class($usr_obj));
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the object load SQL statements to get the default object value for all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_load_standard_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_standard_sql($db_con, get_class($usr_obj));
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_standard_sql($db_con, get_class($usr_obj));
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * test the SQL statement creation for a value
+     *
+     * @param sql_par $qp the query parameters that should be tested
+     * @param string $dialect if not PostgreSQL the name of the SQL dialect
+     * @return void
+     */
+    function assert_qp(sql_par $qp, string $dialect = ''): bool
+    {
+        if ($dialect == sql_db::POSTGRES) {
+            $file_name_ext = '';
+        } elseif ($dialect == sql_db::MYSQL) {
+            $file_name_ext = self::FILE_MYSQL;
+        } else {
+            $file_name_ext = $dialect;
+        }
+        $file_name = $this->resource_path . $qp->name . $file_name_ext . self::FILE_EXT;
+        $expected_sql = $this->file($file_name);
+        $result = $this->assert(
+            $this->name . $qp->name . '_' . $dialect,
+            $this->trim($qp->sql),
+            $this->trim($expected_sql)
+        );
+
+        // check if the prepared sql name is unique always based on the  PostgreSQL query parameter creation
+        if ($dialect == sql_db::POSTGRES) {
+            $result = $this->assert_sql_name_unique($qp->name);
+        }
+
+        return $result;
+    }
+
     /**
      * check if the SQL query name is unique
      * should be called once per query, but not for each SQL dialect
@@ -984,10 +1080,14 @@ class test_base
             if ($result == $target) {
                 $test_result = true;
             } else {
-                $diff = str_diff($result, $target);
-                if ($diff == '') {
-                    $target = $result;
-                    log_err('Unexpected diff ' . $diff);
+                if ($target == '') {
+                    log_err('Target is not expected to be empty ' . $result);
+                } else {
+                    $diff = str_diff($result, $target);
+                    if ($diff == '') {
+                        $target = $result;
+                        log_err('Unexpected diff ' . $diff);
+                    }
                 }
             }
         }
@@ -1008,7 +1108,7 @@ class test_base
             // TODO: create a ticket
         }
 
-        // explain the check
+// explain the check
         if (is_array($target)) {
             if ($test_type == 'contains') {
                 $txt .= " should contain \"" . dsp_array($target) . "\"";
@@ -1060,11 +1160,11 @@ class test_base
             $txt .= ' (' . $comment . ')';
         }
 
-        // show the execution time
+// show the execution time
         $txt .= ', took ';
         $txt .= round($since_start, 4) . ' seconds';
 
-        // --- and finally display the test result
+// --- and finally display the test result
         $txt .= '</p>';
         echo $txt;
         echo "\n";

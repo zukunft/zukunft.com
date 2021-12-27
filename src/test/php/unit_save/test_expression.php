@@ -80,18 +80,18 @@ function run_expression_test(testing $t)
     $target = 'true';
     $result = zu_dsp_bool($exp->has_ref());
     $t->dsp('expression->has_ref for "' . $frm->usr_text . '"', $target, $result);
-    $target = '{t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'}';
+    $target = '{t' . $wrd_percent->id . '}=({f' . $frm_this->id . '}-{f' . $frm_prior->id . '})/{f' . $frm_prior->id . '}';
     $result = $exp->get_ref_text();
     $t->dsp('expression->get_ref_text for "' . $frm->usr_text . '"', $target, $result);
 
     // test the expression processing of the database reference
     $exp_db = new expression;
-    $exp_db->ref_text = '{t'.$wrd_percent->id.'} = ( is.numeric( {f'.$frm_this->id.'} ) & is.numeric( {f'.$frm_prior->id.'} ) ) ( {f'.$frm_this->id.'} - {f'.$frm_prior->id.'} ) / {f'.$frm_prior->id.'}';
+    $exp_db->ref_text = '{t' . $wrd_percent->id . '} = ( is.numeric( {f' . $frm_this->id . '} ) & is.numeric( {f' . $frm_prior->id . '} ) ) ( {f' . $frm_this->id . '} - {f' . $frm_prior->id . '} ) / {f' . $frm_prior->id . '}';
     $exp_db->usr = $usr;
-    $target = '{t'.$wrd_percent->id.'}';
+    $target = '{t' . $wrd_percent->id . '}';
     $result = $exp_db->fv_part();
     $t->dsp('expression->fv_part_usr for "' . $exp_db->ref_text . '"', $target, $result);
-    $target = '( is.numeric( {f'.$frm_this->id.'} ) & is.numeric( {f'.$frm_prior->id.'} ) ) ( {f'.$frm_this->id.'} - {f'.$frm_prior->id.'} ) / {f'.$frm_prior->id.'}';
+    $target = '( is.numeric( {f' . $frm_this->id . '} ) & is.numeric( {f' . $frm_prior->id . '} ) ) ( {f' . $frm_this->id . '} - {f' . $frm_prior->id . '} ) / {f' . $frm_prior->id . '}';
     $result = $exp_db->r_part();
     $t->dsp('expression->r_part_usr for "' . $exp_db->ref_text . '"', $target, $result);
     $target = '"percent"=( is.numeric( "this" ) & is.numeric( "prior" ) ) ( "this" - "prior" ) / "prior"';
@@ -100,13 +100,17 @@ function run_expression_test(testing $t)
 
     // test getting phrases that should be added to the result of a formula
     $phr_lst_fv = $exp->fv_phr_lst();
-    $result = $phr_lst_fv->name();
+    if ($phr_lst_fv != null) {
+        $result = $phr_lst_fv->name();
+    }
     $target = '"percent"';
     $t->dsp('expression->fv_phr_lst for "' . $exp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_LONG); // ??? why???
 
     // ... and the phrases used in the formula
     $phr_lst_fv = $exp_pe->phr_lst();
-    $result = $phr_lst_fv->name();
+    if ($phr_lst_fv != null) {
+        $result = $phr_lst_fv->name();
+    }
     $target = '"System Test Word Share Price","System Test Word Earnings"';
     $t->dsp('expression->phr_lst for "' . $exp_pe->dsp_id() . '"', $target, $result);
 

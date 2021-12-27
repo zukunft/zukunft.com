@@ -42,6 +42,10 @@
 
 class word extends user_sandbox_description
 {
+    /*
+     * database link
+     */
+
     // object specific database and JSON object field names
     // means: database fields only used for words
     const FLD_ID = 'word_id';
@@ -77,6 +81,10 @@ class word extends user_sandbox_description
         self::FLD_VIEW,
         self::FLD_EXCLUDED
     );
+
+    /*
+     * for system testing
+     */
 
     // persevered word names for system settings
     const DB_SETTINGS = 'System database settings';
@@ -184,6 +192,10 @@ class word extends user_sandbox_description
     // the time words must be in correct order because the following is set during creation
     const TEST_WORDS_TIME = array(self::TN_2019, self::TN_2020, self::TN_2021, self::TN_2022);
 
+    /*
+     * object vars
+     */
+
     // database fields additional to the user sandbox fields
     public ?string $plural = null;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
     public ?int $view_id = null;      // defines the default view for this word
@@ -201,8 +213,13 @@ class word extends user_sandbox_description
     private ?view $view = null; // name of the default view for this word
     private ?array $ref_lst = [];
 
+    /*
+     * construct and map
+     */
+
     /**
      * define the settings for this word object
+     * @param user $usr the user who requested to see this word
      */
     function __construct(user $usr)
     {
@@ -212,6 +229,10 @@ class word extends user_sandbox_description
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
     }
 
+    /**
+     * clear the object values
+     * @return void
+     */
     function reset()
     {
         parent::reset();
@@ -262,55 +283,64 @@ class word extends user_sandbox_description
         return $dsp_obj;
     }
 
-    function row_mapper(array $db_row, bool $map_usr_fields = false)
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default word used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the word is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        if ($db_row != null) {
-            // TODO excluded words should not be loaded, but it should be possible to restore them
-            //if ($db_row[self::FLD_EXCLUDED] != 1) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->name = $db_row[self::FLD_NAME];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->plural = $db_row[self::FLD_PLURAL];
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                $this->type_id = $db_row[self::FLD_TYPE];
-                $this->view_id = $db_row[self::FLD_VIEW];
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row[$this->fld_usr_id()];
-                    $this->share_id = $db_row[sql_db::FLD_SHARE];
-                    $this->protection_id = $db_row[sql_db::FLD_PROTECT];
-                } else {
-                    $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
-                    $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
-                }
-            } else {
-                $this->id = 0;
-            }
-            //} else {
-            //    $this->id = 0;
-            //}
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->plural = $db_row[self::FLD_PLURAL];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->type_id = $db_row[self::FLD_TYPE];
+            $this->view_id = $db_row[self::FLD_VIEW];
         }
+        return $result;
+    }
+
+    /*
+     * loading
+     */
+
+    /**
+     * create the SQL to load the default word always by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(sql_db::FLD_USER_ID)
+        ));
+
+        return parent::load_standard_sql($db_con, self::class);
     }
 
     /**
      * load the word parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard word has been loaded
      */
-    function load_standard(): bool
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $result = '';
+        $qp = $this->load_standard_sql($db_con);
+        $result = parent::load_standard($qp, self::class);
 
-        $db_con->set_type(DB_TYPE_WORD);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, self::FLD_PLURAL, sql_db::FLD_DESCRIPTION, self::FLD_TYPE, self::FLD_VIEW, self::FLD_EXCLUDED));
-        $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
-
-        if ($db_con->get_where() <> '') {
-            $db_wrd = $db_con->get1_old($sql);
-            $this->row_mapper($db_wrd);
+        if ($result) {
             $result = $this->load_owner();
         }
         return $result;
@@ -320,16 +350,16 @@ class word extends user_sandbox_description
      * create an SQL statement to retrieve the parameters of a word from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $sql_name = self::class . '_by_';
+        $qp = parent::load_sql($db_con, self::class);
         if ($this->id != 0) {
-            $sql_name .= 'id';
+            $qp->name .= 'id';
         } elseif ($this->name != '') {
-            $sql_name .= 'name';
+            $qp->name .= 'name';
         } else {
             log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         }
@@ -340,14 +370,10 @@ class word extends user_sandbox_description
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     /**
@@ -367,12 +393,12 @@ class word extends user_sandbox_description
             log_err("Either the database ID (" . $this->id . ") or the word name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
         } else {
 
-            $sql = $this->load_sql($db_con);
+            $sql = $this->load_sql($db_con)->sql;
 
             if ($db_con->get_where() <> '') {
                 // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
                 $db_wrd = $db_con->get1_old($sql);
-                $this->row_mapper($db_wrd, true);
+                $this->row_mapper($db_wrd);
                 if ($this->id <> 0) {
                     if (is_null($db_wrd[self::FLD_EXCLUDED]) or $db_wrd[self::FLD_EXCLUDED] == 0) {
                         // additional user sandbox fields
@@ -617,9 +643,9 @@ class word extends user_sandbox_description
     /**
      * create a word object for the export
      * @param bool $do_load can be set to false for unit testing
-     * @return word_exp a reduced word object that can be used to create a JSON message
+     * @return user_sandbox_exp_named a reduced word object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): word_exp
+    function export_obj(bool $do_load = true): user_sandbox_exp_named
     {
         global $word_types;
 

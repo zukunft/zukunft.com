@@ -793,9 +793,9 @@ class user_dsp extends user
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->usr = $usr_other;
-                        $dsp_other->name = $dsp_other_row['view_name'];
+                        $dsp_other->name = $dsp_other_row[view::FLD_NAME];
                         $dsp_other->comment = $dsp_other_row['comment'];
-                        $dsp_other->type_id = $dsp_other_row['view_type_id'];
+                        $dsp_other->type_id = $dsp_other_row[view::FLD_TYPE];
                         $dsp_other->excluded = $dsp_other_row[user_sandbox::FLD_EXCLUDED];
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -957,7 +957,7 @@ class user_dsp extends user
                         // to review: load all user view_components with one query
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->usr = $usr_other;
-                        $cmp_other->name = $cmp_other_row['view_component_name'];
+                        $cmp_other->name = $cmp_other_row[view_cmp::FLD_NAME];
                         $cmp_other->comment = $cmp_other_row['comment'];
                         $cmp_other->type_id = $cmp_other_row['view_component_type_id'];
                         $cmp_other->excluded = $cmp_other_row[user_sandbox::FLD_EXCLUDED];
@@ -1060,7 +1060,7 @@ class user_dsp extends user
                 // create the view_component_link objects with the minimal parameter needed
                 $dsp_usr = new view_cmp_link($this);
                 $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->view_id = $sbx_row['view_id'];
+                $dsp_usr->view_id = $sbx_row[view::FLD_ID];
                 $dsp_usr->view_component_id = $sbx_row['view_component_id'];
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];

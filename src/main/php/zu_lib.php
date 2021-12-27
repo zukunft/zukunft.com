@@ -253,6 +253,7 @@ include_once $path_php . 'model/sandbox/user_sandbox_value.php';
 include_once $path_php . 'model/sandbox/user_sandbox_link.php';
 include_once $path_php . 'model/sandbox/user_sandbox_link_description.php';
 include_once $path_php . 'model/sandbox/user_sandbox_description.php';
+include_once $path_php . 'model/sandbox/user_sandbox_exp.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
 include_once $path_php . 'model/sandbox/share_type_list.php';

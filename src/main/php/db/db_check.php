@@ -95,6 +95,10 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'word_type_id', 'bigint');
     $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'order_nbr', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_VALUE, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_VIEW, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_VIEW, 'protection_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW, 'share_type_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW, 'protection_type_id', 'smallint');
     $result .= $db_con->change_table_name('languages_forms', DB_TYPE_LANGUAGE_FORM);
     $result .= $db_con->change_column_name(DB_TYPE_LANGUAGE_FORM, 'lanuages_id', 'language_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');

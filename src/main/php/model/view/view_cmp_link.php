@@ -105,26 +105,24 @@ class view_cmp_link extends user_sandbox_link
     }
     */
 
-    private function row_mapper(array $db_row, bool $map_usr_fields = false)
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default view component link used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the view component link is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->view_id = $db_row[view::FLD_ID];
-                $this->view_component_id = $db_row[view_cmp::FLD_ID];
-                $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
-                $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row[sql_db::USER_PREFIX . $this->obj_name . sql_db::FLD_EXT_ID];
-                }
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->view_id = $db_row[view::FLD_ID];
+            $this->view_component_id = $db_row[view_cmp::FLD_ID];
+            $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
+            $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
         }
+        return $result;
     }
 
     /*
@@ -135,29 +133,31 @@ class view_cmp_link extends user_sandbox_link
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_db $db_con, bool $get_name = false): string
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $sql_name = self::class . '_standard_by_' . $this->load_sql_name_extension();
+        $qp = new sql_par();
+        $qp->name = self::class . '_std_by_id';
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
-        $sql = $db_con->select();
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
-    // load the view component link parameters for all users
-    function load_standard(): bool
+    /**
+     * load the view component link parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard view component link has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
 
         global $db_con;
@@ -182,7 +182,7 @@ class view_cmp_link extends user_sandbox_link
 
         if ($db_con->get_where() <> '') {
             $db_dsl = $db_con->get1_old($sql);
-            $this->row_mapper($db_dsl);
+            $this->row_mapper($db_dsl, false);
             // TODO check if correct
             if ($this->usr != null) {
                 $result = $this->load_owner();
@@ -191,13 +191,14 @@ class view_cmp_link extends user_sandbox_link
         return $result;
     }
 
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $sql_name = 'dsp_cmp_lst_by_';
+        $qp = parent::load_sql($db_con, self::class);
+        //$sql_name = 'dsp_cmp_lst_by_';
         if ($this->id > 0) {
-            $sql_name .= 'id';
+            $qp->name .= 'id';
         } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
-            $sql_name .= 'view_and_cmp_id';
+            $qp->name .= 'view_and_cmp_id';
         } else {
             log_err("At lease on phrase ID must be set to load a value list.", "value_list->load_by_phr_lst_sql");
         }
@@ -207,14 +208,10 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_usr_num_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
-        $sql = $db_con->select();
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
 
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
+        return $qp;
     }
 
     // load the missing view component parameters from the database for the requesting user
@@ -238,10 +235,10 @@ class view_cmp_link extends user_sandbox_link
                 }
             }
 
-            $sql = $this->load_sql($db_con);
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_dsl = $db_con->get1_old($sql);
+                $db_dsl = $db_con->get1($qp);
                 $this->row_mapper($db_dsl);
                 if ($this->id > 0) {
                     //if (is_null($db_item[self::FLD_EXCLUDED]) OR $db_item[self::FLD_EXCLUDED] == 0) {
@@ -550,6 +547,7 @@ class view_cmp_link extends user_sandbox_link
     }
 
     // check if the database record for the user specific settings can be removed
+
     /**
      * check if the database record for the user specific settings can be removed
      * @return bool true if the checking and the potential removing has been successful, which does not mean, that the user sandbox database row has actually been removed
@@ -638,7 +636,8 @@ class view_cmp_link extends user_sandbox_link
      * create a new link object including the order number
      * @returns int the id of the creates object
      */
-    function add_insert(): int {
+    function add_insert(): int
+    {
         global $db_con;
         return $db_con->insert(
             array($this->from_name . '_id', $this->to_name . '_id', "user_id", 'order_nbr'),

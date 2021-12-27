@@ -51,21 +51,9 @@
 
 class value extends user_sandbox_display
 {
-    // a list of dummy values that are used for system tests
-    const TEST_VALUE = 123456;
-    const TEST_FLOAT = 123.456;
-    const TEST_BIG = 123456789;
-    const TEST_BIGGER = 234567890;
-    const TEST_USER_HIGH_QUOTE = "123'456";
-    const TEST_USER_SPACE = "123 456";
-    const TEST_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
-    const TEST_INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
-    const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
-    const TV_CITY_ZH_INHABITANTS_2019 = 415367;
-    const TV_CH_INHABITANTS_2019_IN_MIO = 8.438822;
-    const TV_CH_INHABITANTS_2020_IN_MIO = 8.505251;
-    const TV_SHARE_PRICE = 17.08;
-    const TV_EARNINGS_PER_SHARE = 1.22;
+    /*
+     * database link
+     */
 
     // object specific database and JSON object field names
     const FLD_ID = 'value_id';
@@ -92,6 +80,30 @@ class value extends user_sandbox_display
         sql_db::FLD_SHARE
     );
 
+    /*
+     * for system testing
+     */
+
+    // a list of dummy values that are used for system tests
+    const TEST_VALUE = 123456;
+    const TEST_FLOAT = 123.456;
+    const TEST_BIG = 123456789;
+    const TEST_BIGGER = 234567890;
+    const TEST_USER_HIGH_QUOTE = "123'456";
+    const TEST_USER_SPACE = "123 456";
+    const TEST_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
+    const TEST_INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
+    const TV_CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
+    const TV_CITY_ZH_INHABITANTS_2019 = 415367;
+    const TV_CH_INHABITANTS_2019_IN_MIO = 8.438822;
+    const TV_CH_INHABITANTS_2020_IN_MIO = 8.505251;
+    const TV_SHARE_PRICE = 17.08;
+    const TV_EARNINGS_PER_SHARE = 1.22;
+
+    /*
+     * object vars
+     */
+
     // related database objects
     public phrase_group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
@@ -114,6 +126,10 @@ class value extends user_sandbox_display
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
+
+    /*
+     * construct and map
+     */
 
     /**
      * set the user sandbox type for a value object and set the user, which is needed in all cases
@@ -184,31 +200,24 @@ class value extends user_sandbox_display
         return $dsp_obj;
     }
 
-    function row_mapper(array $db_row, bool $map_usr_fields = false): bool
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default value used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the value is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        $result = false;
-        if ($db_row != null) {
-            if ($db_row[self::FLD_ID] > 0) {
-                $this->id = $db_row[self::FLD_ID];
-                $this->number = $db_row[self::FLD_VALUE];
-                // check if phrase_group_id and time_word_id are user specific or time series specific
-                $this->grp->id = $db_row[phrase_group::FLD_ID];
-                $this->set_source_id($db_row[source::FLD_ID]);
-                $this->set_time_id($db_row[self::FLD_TIME_WORD]);
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    parent::row_mapper_usr($db_row, self::FLD_ID);
-                } else {
-                    parent::row_mapper_std();
-                }
-                $result = true;
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->number = $db_row[self::FLD_VALUE];
+            // TODO check if phrase_group_id and time_word_id are user specific or time series specific
+            $this->grp->id = $db_row[phrase_group::FLD_ID];
+            $this->set_source_id($db_row[source::FLD_ID]);
+            $this->set_time_id($db_row[self::FLD_TIME_WORD]);
+            $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE]);
         }
         return $result;
     }
@@ -232,22 +241,15 @@ class value extends user_sandbox_display
 
     /**
      * load the standard value use by most users for the given phrase group and time
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard value has been loaded
      */
-    function load_standard(): bool
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $result = false;
-
-        if ($this->id <= 0) {
-            log_err('The value id must be set to load ' . self::class, self::class . '->load_standard');
-        } else {
-            $qp = $this->load_standard_sql($db_con);
-            $db_val = $db_con->get1($qp);
-            if ($this->row_mapper($db_val)) {
-                $result = true;
-            }
-        }
-        return $result;
+        $qp = $this->load_standard_sql($db_con);
+        return parent::load_standard($qp, self::class);
     }
 
     /**
@@ -256,10 +258,9 @@ class value extends user_sandbox_display
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = parent::load_sql($db_con, self::class);
         $sql_where = '';
         $sql_grp = '';
 
@@ -358,7 +359,7 @@ class value extends user_sandbox_display
 
             $qp = $this->load_sql($db_con);
             $db_val = $db_con->get1($qp);
-            $result = $this->row_mapper($db_val, true);
+            $result = $this->row_mapper($db_val);
 
             // if not direct value is found try to get a more specific value
             // similar to formula_value
@@ -962,7 +963,7 @@ class value extends user_sandbox_display
     /**
      * create an object for the export
      */
-    function export_obj(bool $do_load = true): value_exp
+    function export_obj(bool $do_load = true): user_sandbox_exp
     {
         log_debug('value->export_obj');
         $result = new value_exp();

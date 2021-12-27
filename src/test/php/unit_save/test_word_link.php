@@ -90,7 +90,11 @@ function run_word_link_test(testing $t)
     $lnk->from->id = $wrd_added->id;
     $lnk->verb->id = $vrb->id;
     $lnk->to->id = $wrd->id;
-    $result = $lnk->save();
+    if ($wrd->id <> 0) {
+        $result = $lnk->save();
+    } else {
+        $result = 'id missing';
+    }
     $target = '';
     $t->dsp('triple->save "' . $wrd_added->name . '" ' . $vrb->name . ' "' . $wrd->name . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
 

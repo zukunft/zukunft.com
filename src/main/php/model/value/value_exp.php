@@ -29,7 +29,7 @@
   
 */
 
-class value_exp
+class value_exp extends user_sandbox_exp
 {
 
     // field names used for JSON creation

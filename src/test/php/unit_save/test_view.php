@@ -95,7 +95,7 @@ function run_view_test(testing $t)
     // check if the view adding has been logged
     $log = new user_log_named;
     $log->table = 'views';
-    $log->field = 'view_name';
+    $log->field = view::FLD_NAME;
     $log->row_id = $dsp->id;
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -134,7 +134,7 @@ function run_view_test(testing $t)
     // check if the view renaming has been logged
     $log = new user_log_named;
     $log->table = 'views';
-    $log->field = 'view_name';
+    $log->field = view::FLD_NAME;
     $log->row_id = $dsp_renamed->id;
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
@@ -168,7 +168,7 @@ function run_view_test(testing $t)
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added Just added for testing the user sandbox';
     $t->dsp('view->load comment for "' . view::TN_RENAMED . '" logged', $target, $result);
-    $log->field = 'view_type_id';
+    $log->field = view::FLD_TYPE;
     $result = $log->dsp_last(true);
     $target = 'zukunft.com system test added word default';
     $t->dsp('view->load view_type_id for "' . view::TN_RENAMED . '" logged', $target, $result);

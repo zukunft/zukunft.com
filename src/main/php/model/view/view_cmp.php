@@ -32,13 +32,29 @@
 class view_cmp extends user_sandbox_named
 {
 
-    // the database and JSON object field names used only for formula links
+    /*
+     * database link
+     */
+
+    // the database and JSON object field names used only for view components links
     const FLD_ID = 'view_component_id';
+    const FLD_NAME = 'view_component_name';
     const FLD_TYPE = 'view_component_type_id';
+    const FLD_ROW_PHRASE = 'word_id_row';
+    const FLD_COL_PHRASE = 'word_id_col';
+    const FLD_COL2_PHRASE = 'word_id_col2';
+    const FLD_LINK_TYPE = 'link_type_id';
+    const FLD_COMMENT = 'comment';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
         self::FLD_TYPE,
+        self::FLD_LINK_TYPE,
+        self::FLD_ROW_PHRASE,
+        self::FLD_COL_PHRASE,
+        self::FLD_COL2_PHRASE,
+        formula::FLD_ID,
+        self::FLD_COMMENT,
         self::FLD_EXCLUDED
     );
 
@@ -129,56 +145,65 @@ class view_cmp extends user_sandbox_named
         $this->back = null;
     }
 
-    private function row_mapper(array $db_row, bool $map_usr_fields = false)
+    /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default view component used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the view component is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
-        if ($db_row != null) {
-            if ($db_row['view_component_id'] > 0) {
-                $this->id = $db_row['view_component_id'];
-                $this->name = $db_row['view_component_name'];
-                $this->owner_id = $db_row[self::FLD_USER];
-                $this->comment = $db_row['comment'];
-                $this->type_id = $db_row['view_component_type_id'];
-                $this->word_id_row = $db_row['word_id_row'];
-                $this->link_type_id = $db_row['link_type_id'];
-                $this->formula_id = $db_row[formula::FLD_ID];
-                $this->word_id_col = $db_row['word_id_col'];
-                $this->word_id_col2 = $db_row['word_id_col2'];
-                $this->excluded = $db_row[self::FLD_EXCLUDED];
-                if ($map_usr_fields) {
-                    $this->usr_cfg_id = $db_row['user_view_component_id'];
-                    //$this->share_id = $db_row[sql_db::FLD_SHARE];
-                    //$this->protection_id = $db_row[sql_db::FLD_PROTECT];
-                } else {
-                    //$this->share_id = cl(DBL_SHARE_PUBLIC);
-                    //$this->protection_id = cl(DBL_PROTECT_NO);
-                }
-            } else {
-                $this->id = 0;
-            }
-        } else {
-            $this->id = 0;
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->comment = $db_row[self::FLD_COMMENT];
+            $this->type_id = $db_row[self::FLD_TYPE];
+            $this->word_id_row = $db_row[self::FLD_ROW_PHRASE];
+            $this->link_type_id = $db_row[self::FLD_LINK_TYPE];
+            $this->formula_id = $db_row[formula::FLD_ID];
+            $this->word_id_col = $db_row[self::FLD_COL_PHRASE];
+            $this->word_id_col2 = $db_row[self::FLD_COL2_PHRASE];
         }
+        return $result;
     }
 
-    // load the view component parameters for all users
-    function load_standard(): bool
+    /**
+     * create the SQL to load the default view always by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES,
+            array(sql_db::FLD_USER_ID)
+        ));
+
+        return parent::load_standard_sql($db_con, self::class);
+    }
+
+    /**
+     * load the view component parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard view component has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $result = false;
+        $qp = $this->load_standard_sql($db_con);
+        $result = parent::load_standard($qp, self::class);
 
-        $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array(sql_db::FLD_USER_ID, 'comment', 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', self::FLD_EXCLUDED));
-        $db_con->set_where($this->id, $this->name);
-        $sql = $db_con->select();
-
-        if ($db_con->get_where() <> '') {
-            $db_cmp = $db_con->get1_old($sql);
-            $this->row_mapper($db_cmp);
+        if ($result) {
             $result = $this->load_owner();
-            if ($result) {
-                $result = $this->load_phrases();
-            }
+        }
+        if ($result) {
+            $result = $this->load_phrases();
         }
         return $result;
     }
@@ -201,8 +226,8 @@ class view_cmp extends user_sandbox_named
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
             $db_con->set_usr($this->usr->id);
             $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_type');
-            $db_con->set_usr_fields(array('comment'));
-            $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', self::FLD_EXCLUDED));
+            $db_con->set_usr_fields(array(self::FLD_COMMENT));
+            $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_ROW_PHRASE, self::FLD_LINK_TYPE, formula::FLD_ID, self::FLD_COL_PHRASE, self::FLD_COL2_PHRASE, self::FLD_EXCLUDED));
             $db_con->set_where($this->id, $this->name);
             $sql = $db_con->select();
 
@@ -211,7 +236,7 @@ class view_cmp extends user_sandbox_named
                 //zu_debug('view_component->level-22 '.$debug.' done.', 10);
                 log_debug('view_component->load with ' . $sql);
                 //zu_debug('view_component->level-2 '.$debug.' done.', 10);
-                $this->row_mapper($db_item, true);
+                $this->row_mapper($db_item);
                 if ($this->id > 0) {
                     $this->load_phrases();
                     log_debug('view_component->load of ' . $this->dsp_id() . ' done');
@@ -323,7 +348,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
             $db_con->set_usr($this->usr->id);
             //$db_con->set_join_fields(array('position_type'), 'position_type');
-            $db_con->set_fields(array('view_id', 'view_component_id'));
+            $db_con->set_fields(array(view::FLD_ID, 'view_component_id'));
             $db_con->set_usr_num_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED));
             $db_con->set_where_text('view_component_id = ' . $this->id);
             $sql = $db_con->select();
@@ -333,7 +358,7 @@ class view_cmp extends user_sandbox_named
                 foreach ($db_lst as $db_row) {
                     log_debug('view_component->assign_dsp_ids -> check exclusion ');
                     if (is_null($db_row[self::FLD_EXCLUDED]) or $db_row[self::FLD_EXCLUDED] == 0) {
-                        $result[] = $db_row['view_id'];
+                        $result[] = $db_row[view::FLD_ID];
                     }
                 }
             }
@@ -382,9 +407,9 @@ class view_cmp extends user_sandbox_named
      * import a view component from a JSON object
      * @param array $json_obj an array with the data of the json object
      * @param bool $do_save can be set to false for unit testing
-     * @return bool true if the import has been successfully saved to the database
+     * @return string true if the import has been successfully saved to the database
      */
-    function import_obj(array $json_obj, bool $do_save = true): bool
+    function import_obj(array $json_obj, bool $do_save = true): string
     {
         $result = false;
 
@@ -419,7 +444,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // create an object for the export
-    function export_obj(): view_cmp_exp
+    function export_obj(bool $do_load = true): user_sandbox_exp
     {
         log_debug('view_component->export_obj ' . $this->dsp_id());
         $result = new view_cmp_exp();
@@ -649,14 +674,14 @@ class view_cmp extends user_sandbox_named
         log_debug('view_component->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg != null) {
             if ($usr_cfg['view_component_id'] > 0) {
-                if ($usr_cfg['view_component_name'] == ''
-                    and $usr_cfg['comment'] == ''
-                    and $usr_cfg['view_component_type_id'] == Null
-                    and $usr_cfg['word_id_row'] == Null
-                    and $usr_cfg['link_type_id'] == Null
+                if ($usr_cfg[self::FLD_NAME] == ''
+                    and $usr_cfg[self::FLD_COMMENT] == ''
+                    and $usr_cfg[self::FLD_TYPE] == Null
+                    and $usr_cfg[self::FLD_ROW_PHRASE] == Null
+                    and $usr_cfg[self::FLD_LINK_TYPE] == Null
                     and $usr_cfg[formula::FLD_ID] == Null
-                    and $usr_cfg['word_id_col'] == Null
-                    and $usr_cfg['word_id_col2'] == Null
+                    and $usr_cfg[self::FLD_COL_PHRASE] == Null
+                    and $usr_cfg[self::FLD_COL2_PHRASE] == Null
                     and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                     // delete the entry in the user sandbox
                     log_debug('view_component->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
@@ -678,7 +703,7 @@ class view_cmp extends user_sandbox_named
             $log->new_value = $this->comment;
             $log->std_value = $std_rec->comment;
             $log->row_id = $this->id;
-            $log->field = 'comment';
+            $log->field = self::FLD_COMMENT;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -697,7 +722,7 @@ class view_cmp extends user_sandbox_named
             $log->std_value = $std_rec->type_name();
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
-            $log->field = 'view_component_type_id';
+            $log->field = self::FLD_TYPE;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -716,7 +741,7 @@ class view_cmp extends user_sandbox_named
             $log->std_value = $std_rec->load_wrd_row();
             $log->std_id = $std_rec->word_id_row;
             $log->row_id = $this->id;
-            $log->field = 'word_id_row';
+            $log->field = self::FLD_ROW_PHRASE;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -735,7 +760,7 @@ class view_cmp extends user_sandbox_named
             $log->std_value = $std_rec->load_wrd_col();
             $log->std_id = $std_rec->word_id_col;
             $log->row_id = $this->id;
-            $log->field = 'word_id_col';
+            $log->field = self::FLD_COL_PHRASE;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -754,7 +779,7 @@ class view_cmp extends user_sandbox_named
             $log->std_value = $std_rec->load_wrd_col2();
             $log->std_id = $std_rec->word_id_col2;
             $log->row_id = $this->id;
-            $log->field = 'word_id_col2';
+            $log->field = self::FLD_COL2_PHRASE;
             $result = $this->save_field_do($db_con, $log);
         }
         return $result;
