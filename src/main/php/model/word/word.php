@@ -69,8 +69,8 @@ class word extends user_sandbox_description
         self::FLD_TYPE,
         self::FLD_VIEW,
         self::FLD_EXCLUDED,
-        sql_db::FLD_SHARE,
-        sql_db::FLD_PROTECT
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_FLD_NAMES = array(

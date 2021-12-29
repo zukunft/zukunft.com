@@ -7,7 +7,7 @@ PREPARE value_std_by_id FROM
             source_id,
             last_update,
             excluded,
-            protection_type_id,
+            protect_id,
             user_id
        FROM `values`
       WHERE value_id = ?';

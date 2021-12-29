@@ -57,6 +57,7 @@ class value_list
     {
         $result = '';
         $sql_name = self::class . '_by_';
+        $sql_name_ext = '';
         $sql_where = '';
 
         $db_con->set_type(DB_TYPE_VALUE);
@@ -64,22 +65,18 @@ class value_list
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {
                 if ($this->phr->is_word()) {
-                    $sql_name .= 'word_id';
-                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id);
-                    $sql_where = 'l2.word_id = ' . $db_con->par_name();
+                    $sql_name_ext .= 'word_id';
                 } else {
-                    $sql_name .= 'triple_id';
-                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1);
-                    $sql_where = 'l2.triple_id = ' . $db_con->par_name();
+                    $sql_name_ext .= 'triple_id';
                 }
             }
         } elseif ($this->phr_lst != '') {
-            $sql_name .= 'phrase_list';
+            $sql_name_ext .= 'phrase_list';
         }
-        if ($sql_where == '') {
+        if ($sql_name_ext == '') {
             log_err("Either a phrase or the phrase list and the user must be set to load a value list.", self::class . '->load_sql');
         } else {
-
+            $sql_name .= $sql_name_ext;
             $db_con->set_name($sql_name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(value::FLD_NAMES);
@@ -90,6 +87,17 @@ class value_list
                 $db_con->set_join_fields(array(word::FLD_ID), DB_TYPE_PHRASE_GROUP_WORD_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             } else {
                 $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
+            }
+            if ($this->phr != null) {
+                if ($this->phr->id <> 0) {
+                    if ($this->phr->is_word()) {
+                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id);
+                        $sql_where = 'l2.word_id = ' . $db_con->par_name();
+                    } else {
+                        $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1);
+                        $sql_where = 'l2.triple_id = ' . $db_con->par_name();
+                    }
+                }
             }
             $db_con->set_where_text($sql_where);
             $db_con->set_page_par();

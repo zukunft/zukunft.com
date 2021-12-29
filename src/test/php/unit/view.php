@@ -59,6 +59,7 @@ class view_unit_tests
         $dsp = new view($usr);
         $dsp->name = view::TN_ADD;
         $t->assert_load_sql($db_con, $dsp);
+        $t->assert_load_standard_sql($db_con, $dsp);
 
         // sql to load the view by code id
         $dsp = new view($usr);

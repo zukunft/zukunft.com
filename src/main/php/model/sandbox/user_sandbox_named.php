@@ -46,6 +46,58 @@ class user_sandbox_named extends user_sandbox
     }
 
     /**
+     * create the SQL to load the single default value always by the id or name
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql_db $db_con, string $class): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = $class . '_std_by_';
+        if ($this->id != 0) {
+            $qp->name .= 'id';
+        } elseif ($this->name != '') {
+            $qp->name .= 'name';
+        } else {
+            log_err('Either the id or name must be set to get a named user sandbox object');
+        }
+
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        if ($this->id != 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select();
+        } else {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $qp->sql = $db_con->select_by_name();
+        }
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the object parameters for all users
+     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard(?sql_par $qp, string $class): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($this->id == 0 and $this->name == '') {
+            log_err('The ' . $class . ' id or name must be set to load ' . $class, $class . '->load_standard');
+        } else {
+            $db_row = $db_con->get1($qp);
+            $result = $this->row_mapper($db_row, false);
+        }
+        return $result;
+    }
+
+    /**
      * fill a similar object that is extended with display interface functions
      *
      * @return object the object fill with all user sandbox value

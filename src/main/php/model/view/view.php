@@ -44,10 +44,18 @@ class view extends user_sandbox_named
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_CODE_ID,
+        self::FLD_CODE_ID
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        self::FLD_COMMENT
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        self::FLD_COMMENT,
-        self::FLD_EXCLUDED
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
 
     /*
@@ -128,6 +136,14 @@ class view extends user_sandbox_named
     public ?array $cmp_lst = null;  // array of the view component objects in correct order
     public ?string $back = null;    // the calling stack
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * define the settings for this view object
+     * @param user $usr the user who requested to see this view
+     */
     function __construct(user $usr)
     {
         parent::__construct($usr);
@@ -191,6 +207,8 @@ class view extends user_sandbox_named
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)
         ));
 
@@ -238,9 +256,9 @@ class view extends user_sandbox_named
 
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array(self::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(self::FLD_COMMENT));
-        $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_EXCLUDED));
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where($this->id, $this->name, $this->code_id);
         $qp->sql = $db_con->select();
         $qp->par = $db_con->get_par();

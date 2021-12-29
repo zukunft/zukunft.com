@@ -40,21 +40,39 @@
 
 class user_sandbox
 {
+    /*
+     * types
+     */
+
     // the main types of user sandbox objects
     const TYPE_NAMED = 'named';  // for user sandbox objects which have a unique name like formulas
     const TYPE_LINK = 'link';    // for user sandbox objects that link two objects like formula links
     const TYPE_VALUE = 'value';  // for user sandbox objects that are used to save values
 
-    // user sandbox database and JSON object field names
+    /*
+     * database link
+     */
+
+    // database and JSON object field names used in many user sandbox objects
     const FLD_EXCLUDED = 'excluded';
     const FLD_USER = 'user_id';
     const FLD_USER_NAME = 'user_name';
+    const FLD_SHARE = "share_type_id";    // field name for the share permission
+    const FLD_PROTECT = "protect_id";     // field name for the protection level
 
-    // all database field names excluding the id
-    const FLD_NAMES = array(
-        self::FLD_EXCLUDED
+    // numeric and user specific database field names that are user for most user sandbox objects
+    const FLD_NAMES_NUM_USR_SBX = array(
+        self::FLD_EXCLUDED,
+        self::FLD_PROTECT
+    );
+    // numeric database field names that only exist in the table for the user specific data
+    const FLD_NAMES_NUM_USR_ONLY_SBX = array(
+        self::FLD_SHARE // the standard value is per definition share to public
     );
 
+    /*
+     * object vars
+     */
 
     // fields to define the object; should be set in the constructor of the child object
     public ?string $obj_name = null;       // the object type to create the correct database fields e.g. for the type "word" the database field for the id is "word_id"
@@ -64,7 +82,7 @@ class user_sandbox
     // database fields that are used in all objects and that have a specific behavior
     public ?int $id = null;            // the database id of the object, which is the same for the standard and the user specific object
     public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
-    public user $usr;           // the person for whom the object is loaded, so to say the viewer
+    public user $usr;                  // the person for whom the object is loaded, so to say the viewer
     public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     public ?int $share_id = null;      // id for public, personal, group or private
     public ?int $protection_id = null; // id for no, user, admin or full protection
@@ -98,7 +116,7 @@ class user_sandbox
      */
     function __construct(user $usr)
     {
-        $this->obj_type = user_sandbox::TYPE_NAMED;
+        $this->obj_type = self::TYPE_NAMED;
 
         $this->usr = $usr;
     }
@@ -204,8 +222,8 @@ class user_sandbox
     private function row_mapper_usr(array $db_row, $id_fld)
     {
         $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . $id_fld];
-        $this->share_id = $db_row[sql_db::FLD_SHARE];
-        $this->protection_id = $db_row[sql_db::FLD_PROTECT];
+        $this->share_id = $db_row[self::FLD_SHARE];
+        $this->protection_id = $db_row[self::FLD_PROTECT];
     }
 
     /**
@@ -296,7 +314,7 @@ class user_sandbox
                     log_err('Cannot set owner, because not user is set');
                 } else {
                     $db_con->set_usr($this->usr->id);
-                    if ($db_con->update($this->id, user_sandbox::FLD_USER, $this->usr->id)) {
+                    if ($db_con->update($this->id, self::FLD_USER, $this->usr->id)) {
                         $result = true;
                     }
                 }
@@ -342,7 +360,7 @@ class user_sandbox
      */
     function id_used_msg(user_sandbox $obj_to_add): string
     {
-        return 'a ' . $this->obj_name . ' with the name ' . $this->dsp_id() . ' already exists, so not ' . $obj_to_add->obj_name . ' with the same name can be added';
+        return 'a ' . $this->obj_name . ' with the name ' . $obj_to_add->dsp_id() . ' already exists, so no ' . $obj_to_add->obj_name . ' with the same name can be added';
     }
 
     /*
@@ -547,7 +565,7 @@ class user_sandbox
                 AND (excluded <> 1 OR excluded is NULL)';
         $db_usr_lst = $db_con->get_old($sql);
         foreach ($db_usr_lst as $db_usr) {
-            $result->add_by_id($db_usr[user_sandbox::FLD_USER]);
+            $result->add_by_id($db_usr[self::FLD_USER]);
         }
         $result->load_by_id();
 
@@ -686,7 +704,7 @@ class user_sandbox
 
             $db_con->set_type($this->obj_name);
             $db_con->set_usr($this->usr->id);
-            if (!$db_con->update($this->id, user_sandbox::FLD_USER, $new_owner_id)) {
+            if (!$db_con->update($this->id, self::FLD_USER, $new_owner_id)) {
                 $result = false;
             }
 
@@ -823,7 +841,7 @@ class user_sandbox
         $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);
         try {
             $msg = $db_con->delete(
-                array($this->obj_name . '_id', user_sandbox::FLD_USER),
+                array($this->obj_name . '_id', self::FLD_USER),
                 array($this->id, $this->usr->id));
             if ($msg == '') {
                 $this->usr_cfg_id = null;
@@ -867,9 +885,9 @@ class user_sandbox
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+            if ($this->obj_type == self::TYPE_NAMED) {
                 log_debug($this->obj_name . '->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
-            } elseif ($this->obj_type == user_sandbox::TYPE_LINK) {
+            } elseif ($this->obj_type == self::TYPE_LINK) {
                 if (isset($this->from) and isset($this->to)) {
                     log_debug($this->obj_name . '->add_usr_cfg for "' . $this->from->name . '"/"' . $this->to->name . '" by user "' . $this->usr->name . '"');
                 } else {
@@ -986,7 +1004,7 @@ class user_sandbox
     function log_upd()
     {
         log_debug($this->obj_name . '->log_upd ' . $this->dsp_id());
-        if ($this->obj_type == user_sandbox::TYPE_NAMED) {
+        if ($this->obj_type == self::TYPE_NAMED) {
             $log = $this->log_upd_field();
         } else {
             $log = $this->log_upd_link();
@@ -1126,13 +1144,13 @@ class user_sandbox
         $log = new user_log();
         if ($db_rec->excluded <> $this->excluded) {
             if ($this->excluded == 1) {
-                if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                if ($this->obj_type == self::TYPE_LINK) {
                     $log = $this->log_del_link();
                 } else {
                     $log = $this->log_del();
                 }
             } else {
-                if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                if ($this->obj_type == self::TYPE_LINK) {
                     $log = $this->log_link_add();
                 } else {
                     $log = $this->log_add();
@@ -1208,7 +1226,7 @@ class user_sandbox
             $log->std_value = $std_rec->share_type_name();
             $log->std_id = $std_rec->share_id;
             $log->row_id = $this->id;
-            $log->field = sql_db::FLD_SHARE;
+            $log->field = self::FLD_SHARE;
 
             // save_field_do is not used because the share type can only be set on the user record
             if ($log->new_id > 0) {
@@ -1256,7 +1274,7 @@ class user_sandbox
             $log->std_value = $std_rec->protection_type_name();
             $log->std_id = $std_rec->protection_id;
             $log->row_id = $this->id;
-            $log->field = sql_db::FLD_PROTECT;
+            $log->field = self::FLD_PROTECT;
             $result .= $this->save_field_do($db_con, $log);
         }
 
@@ -1352,9 +1370,9 @@ class user_sandbox
                     log_debug($this->obj_name . '->save_id_if_updated change the existing ' . $this->obj_name . ' ' . $this->dsp_id() . ' (db ' . $db_rec->dsp_id() . ', standard ' . $std_rec->dsp_id() . ')');
                     // TODO check if next line is needed
                     //$this->load_objects();
-                    if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                    if ($this->obj_type == self::TYPE_LINK) {
                         $result .= $this->save_id_fields_link($db_con, $db_rec, $std_rec);
-                    } elseif ($this->obj_type == user_sandbox::TYPE_NAMED) {
+                    } elseif ($this->obj_type == self::TYPE_NAMED) {
                         $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                     } else {
 
@@ -1551,7 +1569,7 @@ class user_sandbox
         if ($result == '') {
 
             // load the objects if needed
-            if ($this->obj_type == user_sandbox::TYPE_LINK) {
+            if ($this->obj_type == self::TYPE_LINK) {
                 $this->load_objects();
             }
 
@@ -1610,7 +1628,7 @@ class user_sandbox
                         $result .= 'Reloading of user ' . $this->obj_name . ' failed';
                     } else {
                         log_debug($this->obj_name . '->save reloaded from db');
-                        if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                        if ($this->obj_type == self::TYPE_LINK) {
                             if (!$db_rec->load_objects()) {
                                 $result .= 'Reloading of the object for ' . $this->obj_name . ' failed';
                             }
@@ -1682,7 +1700,7 @@ class user_sandbox
         $result = new user_message();
 
         // log the deletion request
-        if ($this->obj_type == user_sandbox::TYPE_LINK) {
+        if ($this->obj_type == self::TYPE_LINK) {
             $log = $this->log_del_link();
         } else {
             $log = $this->log_del();
@@ -1841,7 +1859,7 @@ class user_sandbox
                         $db_rec->usr = $this->usr;
                         if ($db_rec->load()) {
                             log_debug($this->obj_name . '->save reloaded ' . $db_rec->dsp_id() . ' from database');
-                            if ($this->obj_type == user_sandbox::TYPE_LINK) {
+                            if ($this->obj_type == self::TYPE_LINK) {
                                 if (!$db_rec->load_objects()) {
                                     $msg .= 'Reloading of linked objects ' . $this->obj_name . ' ' . $this->dsp_id() . ' failed.';
                                 }
@@ -1889,10 +1907,10 @@ class user_sandbox
     /**
      * convert a database boolean tiny int value to a php boolean object
      *
-     * @param int $bool_value the value as received from the database
+     * @param int|null $bool_value the value as received from the database
      * @return bool true if the database value is 1
      */
-    function get_bool(int $bool_value): bool
+    function get_bool(?int $bool_value): bool
     {
         if ($bool_value == 1) {
             return true;

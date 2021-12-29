@@ -47,40 +47,27 @@ class view_cmp extends user_sandbox_named
     const FLD_COMMENT = 'comment';
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const FLD_NAMES = array();
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        self::FLD_COMMENT
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        self::FLD_LINK_TYPE,
         self::FLD_ROW_PHRASE,
+        self::FLD_LINK_TYPE,
+        formula::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        formula::FLD_ID,
-        self::FLD_COMMENT,
-        self::FLD_EXCLUDED
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
 
-    // database fields additional to the user sandbox fields for the view component
-    public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
-    public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
-    //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
-    public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
-    public ?int $formula_id = null;         // to select a formula (no used case at the moment)
-    public ?int $word_id_col = null;        // for a table to defined which columns should be used (if not defined by the calling word)
-    public ?int $word_id_col2 = null;       // for a table to defined second columns layer or the second axis in case of a chart
-    //                                         e.g. for a "company cash flow statement" the "col word" could be "Year"
-    //                                              "col2 word" could be "Quarter" to show the Quarters between the year upon request
-
-    // database fields repeated from the component link for a easy to use in memory view object
-    public ?int $order_nbr = null;          // the position in the linked view
-    public ?int $pos_type = null;           // the position in the linked view
-
-    // linked fields
-    public ?word $wrd_row = null;           // the word object for $word_id_row
-    public ?word $wrd_col = null;           // the word object for $word_id_col
-    public ?word $wrd_col2 = null;          // the word object for $word_id_col2
-    public ?formula $frm = null;            // the formula object for $formula_id
-    public ?string $link_type_name = null;  //
-    public ?string $code_id = null;         // the entry type code id
-    public ?string $back = null;            // the calling stack
+    /*
+     * for system testing
+     */
 
     // persevered view component names for unit and integration tests
     const TN_ADD = 'System Test View Component';
@@ -110,10 +97,46 @@ class view_cmp extends user_sandbox_named
         self::TN_TABLE
     );
 
+    /*
+     * object vars
+     */
+
+    // database fields additional to the user sandbox fields for the view component
+    public ?string $comment = null;         // the view component description that is shown as a mouseover explain to the user
+    public ?int $word_id_row = null;        // if the view component uses a related word tree this is the start node
+    //                                         e.g. for "company" the start node could be "cash flow statement" to show the cash flow for any company
+    public ?int $link_type_id = null;       // the word link type used to build the word tree started with the $start_word_id
+    public ?int $formula_id = null;         // to select a formula (no used case at the moment)
+    public ?int $word_id_col = null;        // for a table to defined which columns should be used (if not defined by the calling word)
+    public ?int $word_id_col2 = null;       // for a table to defined second columns layer or the second axis in case of a chart
+    //                                         e.g. for a "company cash flow statement" the "col word" could be "Year"
+    //                                              "col2 word" could be "Quarter" to show the Quarters between the year upon request
+
+    // database fields repeated from the component link for a easy to use in memory view object
+    public ?int $order_nbr = null;          // the position in the linked view
+    public ?int $pos_type = null;           // the position in the linked view
+
+    // linked fields
+    public ?word $wrd_row = null;           // the word object for $word_id_row
+    public ?word $wrd_col = null;           // the word object for $word_id_col
+    public ?word $wrd_col2 = null;          // the word object for $word_id_col2
+    public ?formula $frm = null;            // the formula object for $formula_id
+    public ?string $link_type_name = null;  //
+    public ?string $code_id = null;         // the entry type code id
+    public ?string $back = null;            // the calling stack
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * define the settings for this view component object
+     * @param user $usr the user who requested to see this view
+     */
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_name = 'view_component';
+        $this->obj_name = DB_TYPE_VIEW_COMPONENT;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
     }
@@ -169,6 +192,10 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
+    /*
+     * loading
+     */
+
     /**
      * create the SQL to load the default view always by the id
      *
@@ -181,6 +208,8 @@ class view_cmp extends user_sandbox_named
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)
         ));
 
@@ -208,6 +237,44 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
+    /**
+     * create an SQL statement to retrieve the parameters of a view component from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $qp = parent::load_sql($db_con, self::class);
+        if ($this->id != 0) {
+            $qp->name .= 'id';
+        } elseif ($this->name != '') {
+            $qp->name .= 'name';
+        } else {
+            log_err('Either the id, code_id or name must be set to get a view');
+        }
+
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_type');
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        if ($this->id != 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select();
+        } elseif ($this->name != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $qp->sql = $db_con->select_by_name();
+        } else {
+            log_err('Either the id or name must be set to get a named user sandbox object');
+        }
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     // load the missing view component parameters from the database
     function load(): bool
     {
@@ -223,25 +290,14 @@ class view_cmp extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . ") or the display item name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to find a display item.", "view_component->load");
         } else {
 
-            $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'view_component_type');
-            $db_con->set_usr_fields(array(self::FLD_COMMENT));
-            $db_con->set_usr_num_fields(array(self::FLD_TYPE, self::FLD_ROW_PHRASE, self::FLD_LINK_TYPE, formula::FLD_ID, self::FLD_COL_PHRASE, self::FLD_COL2_PHRASE, self::FLD_EXCLUDED));
-            $db_con->set_where($this->id, $this->name);
-            $sql = $db_con->select();
+            $qp = $this->load_sql($db_con);
+            $db_cmp = $db_con->get1($qp);
 
-            if ($db_con->get_where() <> '') {
-                $db_item = $db_con->get1_old($sql);
-                //zu_debug('view_component->level-22 '.$debug.' done.', 10);
-                log_debug('view_component->load with ' . $sql);
-                //zu_debug('view_component->level-2 '.$debug.' done.', 10);
-                $this->row_mapper($db_item);
-                if ($this->id > 0) {
-                    $this->load_phrases();
-                    log_debug('view_component->load of ' . $this->dsp_id() . ' done');
-                    $result = true;
-                }
+            $this->row_mapper($db_cmp);
+            if ($this->id > 0) {
+                $this->load_phrases();
+                log_debug('view_component->load of ' . $this->dsp_id() . ' done');
+                $result = true;
             }
         }
         log_debug('view_component->load of ' . $this->dsp_id() . ' quit');

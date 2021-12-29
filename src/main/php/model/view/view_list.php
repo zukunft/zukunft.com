@@ -52,9 +52,9 @@ class view_list extends user_type_list
         $this->lst = [];
         $db_con->set_type($db_type);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_fields(array('code_id'));
-        $db_con->set_usr_fields(array('comment'));
-        $db_con->set_usr_num_fields(array(view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(view::FLD_NAMES);
+        $db_con->set_usr_fields(view::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
         $db_con->set_where_text('code_id IS NOT NULL');
         $sql = $db_con->select();
         $db_lst = $db_con->get_old($sql);

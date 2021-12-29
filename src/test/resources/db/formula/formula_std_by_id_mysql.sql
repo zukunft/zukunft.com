@@ -8,7 +8,10 @@ PREPARE formula_std_by_id FROM
         description,
         formula_type_id,
         all_values_needed,
+        last_update,
         excluded,
+        share_type_id,
+        protect_id,
         user_id
    FROM formulas
   WHERE formula_id = ?';

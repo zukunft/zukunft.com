@@ -38,8 +38,9 @@
 class view_cmp_link extends user_sandbox_link
 {
 
-    const POS_BELOW = 1;  // the view component is placed below the previous component
-    const POS_SIDE = 2;   // the view component is placed on the right (or left for right to left writing) side of the previous component
+    /*
+     * database link
+     */
 
     // the database and JSON object field names used only for formula links
     const FLD_ID = 'view_component_link_id';
@@ -48,9 +49,26 @@ class view_cmp_link extends user_sandbox_link
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_POS_TYPE,
-        self::FLD_EXCLUDED
     );
+    // list of the user specific database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_ORDER_NBR,
+        self::FLD_POS_TYPE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
+    );
+
+    /*
+     * code links
+     */
+
+    const POS_BELOW = 1;  // the view component is placed below the previous component
+    const POS_SIDE = 2;   // the view component is placed on the right (or left for right to left writing) side of the previous component
+
+    /*
+     * object vars
+     */
 
     public ?int $view_id = null;            // the id of the view to which the display item should be linked
     public ?int $view_component_id = null;  // the id of the linked display item
@@ -58,6 +76,9 @@ class view_cmp_link extends user_sandbox_link
     public ?int $pos_type_id = null;        // to to position the display item relative the the previous item (1 = below, 2= side, )
     public ?string $pos_code = null;        // side or below or ....
 
+    /*
+     * construct and map
+     */
 
     function __construct(user $usr)
     {
@@ -126,7 +147,7 @@ class view_cmp_link extends user_sandbox_link
     }
 
     /*
-     * internal check function
+     * loading
      */
 
     /**
@@ -176,21 +197,29 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
-        $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
+        $db_con->set_fields(array_merge(
+            self::FLD_NAMES_NUM_USR,
+            array(sql_db::FLD_USER_ID)));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $sql = $db_con->select();
 
         if ($db_con->get_where() <> '') {
             $db_dsl = $db_con->get1_old($sql);
-            $this->row_mapper($db_dsl, false);
-            // TODO check if correct
-            if ($this->usr != null) {
+            $result = $this->row_mapper($db_dsl, false);
+            if ($result) {
                 $result = $this->load_owner();
             }
         }
         return $result;
     }
 
+    /**
+     * create an SQL statement to retrieve the parameters of a view component link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
     function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
@@ -206,7 +235,7 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
-        $db_con->set_usr_num_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
         $qp->sql = $db_con->select();
         $qp->par = $db_con->get_par();

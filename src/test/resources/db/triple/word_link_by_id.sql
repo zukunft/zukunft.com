@@ -10,7 +10,7 @@ SELECT
             CASE WHEN (u.description <> ''    IS NOT TRUE) THEN s.description        ELSE u.description        END AS description,
             CASE WHEN (u.excluded             IS     NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,
             CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id      ELSE u.share_type_id      END AS share_type_id,
-            CASE WHEN (u.protection_type_id   IS     NULL) THEN s.protection_type_id ELSE u.protection_type_id END AS protection_type_id
+            CASE WHEN (u.protect_id   IS     NULL) THEN s.protect_id ELSE u.protect_id END AS protect_id
        FROM word_links s
   LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id
         AND u.user_id = 1

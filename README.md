@@ -2,6 +2,13 @@ zukunft.com
 
 Calculating with RDF data.
 
+This program should
+- allow each user have her/his own OLAP cube
+- make efficient community learning easy by connecting all user OLAP cubes point to point
+- allow double-sided tree structures within the cubes by using phrases
+- use common sense by using opencyc via conceptnet.io
+- enable data exchange to wikidata and other interlinking databases
+
 Install
 -------
 
@@ -54,7 +61,7 @@ Naming conventions:
 -------------------
 - wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
 and used to retrieve the numeric values
-- val (VALue)              - a numeric value the can be used for calculations
+- val (VALue)              - a numeric value that can be used for calculations
 - frm (FoRMula)            - a formula in the zukunft.com format,
 which can be either in the usr (USeR) format with real words
 or in the db (DataBase) format with database id references
@@ -65,7 +72,8 @@ by default a verb can be used forward and backward e.g. ABB is a company and com
 if the reverse name is empty, the verb can only be used the forward way
 if a link should only be used one way for one phrase link, the negative verb is saved
 verbs are also named as word_links
-- lnk (LiNK)               - a triple/sentence, so a word connected to another word with a verb (word_link.php is the related class)
+- trp (TRiPle)             - a triple/sentence, so a word connected to another word with a verb (word_link.php is the related class)
+- lnk (LiNK)               - n-to-m connection e.g. between a phrase and a view
 - phr (PHRase)             - transformed triple or word in order to use them together as one object
 - grp (GrouP)              - a group of terms or triples excluding time terms to reduce the number of groups needed and speed up the system
 - trm (TeRM)               - either a word, verb or triple (formula names have always a corresponding phrase)

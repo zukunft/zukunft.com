@@ -58,8 +58,9 @@ class sql_db
     const POSTGRES = "PostgreSQL";
     const MYSQL = "MySQL";
 
-    // the parameter types for prepared queries independent from the SQL dialect
+    // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
+    const PAR_TEXT = 'text';
 
     // reserved words that are automatically escaped
 
@@ -110,8 +111,6 @@ class sql_db
     const FLD_VALUE = "value";                    // field name e.g. for the configuration value
     const FLD_DESCRIPTION = "description";        // field name for the any description
     const FLD_TYPE_NAME = "type_name";            // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_SHARE = "share_type_id";            // field name for the share permission
-    const FLD_PROTECT = "protection_type_id";     // field name for the protection level
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = "text";               // to force the text formatting of a value for the SQL statement formatting
@@ -182,6 +181,7 @@ class sql_db
     private bool $join2_usr_query = false;        // same as $usr_join_query but for the second join
     private bool $join3_usr_query = false;        // same as $usr_join_query but for the third join
     private bool $join4_usr_query = false;        // same as $usr_join_query but for the fourth join
+    private bool $join_usr_added = false;         // true, if the user join statement has been created
     private bool $usr_only_query = false;         // true, if the query is expected to retrieve ONLY the user specific data without the standard values
 
     private ?string $fields = '';                 // the fields                SQL statement that is used for the next select query
@@ -256,6 +256,7 @@ class sql_db
         $this->join2_usr_query = false;
         $this->join3_usr_query = false;
         $this->join4_usr_query = false;
+        $this->join_usr_added = false;
         $this->usr_query = false;
         $this->usr_only_query = false;
         $this->fields = '';
@@ -526,6 +527,7 @@ class sql_db
         $this->usr_query = true;
         $this->join_usr_query = true;
         $this->usr_field_lst = $usr_field_lst;
+        $this->set_user_join();
     }
 
     function set_usr_num_fields($usr_field_lst)
@@ -533,6 +535,7 @@ class sql_db
         $this->usr_query = true;
         $this->join_usr_query = true;
         $this->usr_num_field_lst = $usr_field_lst;
+        $this->set_user_join();
     }
 
     function set_usr_bool_fields($usr_field_lst)
@@ -540,6 +543,7 @@ class sql_db
         $this->usr_query = true;
         $this->join_usr_query = true;
         $this->usr_bool_field_lst = $usr_field_lst;
+        $this->set_user_join();
     }
 
     function set_usr_only_fields($field_lst)
@@ -547,6 +551,7 @@ class sql_db
         $this->usr_query = true;
         $this->join_usr_query = true;
         $this->usr_only_field_lst = $field_lst;
+        $this->set_user_join();
     }
 
     private function set_field_sep()
@@ -842,6 +847,9 @@ class sql_db
         // exceptions from the standard table for 'nicer' names
         if ($result == 'value_time_seriess') {
             $result = 'value_time_series';
+        }
+        if ($result == 'user_value_time_seriess') {
+            $result = 'user_value_time_series';
         }
         if ($result == 'value_ts_datas') {
             $result = 'value_ts_data';
@@ -1631,6 +1639,8 @@ class sql_db
                 } else {
                     if (gettype($values[$pos]) == 'integer') {
                         $this->add_par(sql_db::PAR_INT, $values[$pos]);
+                    } elseif (gettype($values[$pos]) == 'string') {
+                        $this->add_par(sql_db::PAR_TEXT, "'" . $values[$pos] . "'");
                     } else {
                         log_err('Unknown value type of ' . $values[$pos] . ' when creating SQL WHERE statement');
                     }
@@ -1654,23 +1664,13 @@ class sql_db
      * simple interface function for where_par to select by id
      *
      * @param string $id_field_name name of the id field which is usually self::FLD_ID
+     * @param int $id the unique object id
      * @param bool $is_join_query to force using the table name prefix
      * @return string the SQL WHERE statement
      */
     function where_id(string $id_field_name, int $id, bool $is_join_query = false): string
     {
         return $this->where_par(array($id_field_name), array($id), $is_join_query);
-    }
-
-    /**
-     * simple interface function to set the where condition by the id
-     *
-     * @param string $id_field_name name of the id field which is usually self::FLD_ID
-     * @param bool $is_join_query to force using the table name prefix
-     */
-    function set_where_id(string $id_field_name, int $id, bool $is_join_query = false)
-    {
-        $this->where = ' WHERE ' . $this->where_par(array($id_field_name), array($id), $is_join_query);
     }
 
     /**
@@ -1905,25 +1905,35 @@ class sql_db
     }
 
     /**
+     * create the "JOIN" SQL statement based on the joined user fields
+     */
+    private function set_user_join()
+    {
+        if ($this->usr_query) {
+            if (!$this->join_usr_added) {
+                $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
+                $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
+                $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
+                $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                if ($this->query_name == '') {
+                    $this->join .= $this->usr_view_id;
+                } else {
+                    $this->add_par(self::PAR_INT, $this->usr_id);
+                    $this->join .= $this->par_name();
+                }
+                $this->join_usr_added = true;
+            }
+        }
+    }
+
+    /**
      * create the "FROM" SQL statement based on the type
      */
     private function set_from()
     {
-        if ($this->usr_query) {
-            $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
-            $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
-            $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
-            $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-            if ($this->query_name == '') {
-                $this->join .= $this->usr_view_id;
-            } else {
-                $this->add_par(self::PAR_INT, $this->usr_id);
-                $this->join .= $this->par_name();
-            }
-        }
         if ($this->join_type <> '') {
-            $join_table_name = $this->get_table_name($this->join_type);
-            $join_id_field = $this->get_id_field_name($this->join_type);
+            $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
+            $join_id_field = $this->name_sql_esc($this->get_id_field_name($this->join_type));
             if ($this->join_field == '') {
                 $join_from_id_field = $join_id_field;
             } else {
@@ -1949,8 +1959,8 @@ class sql_db
             }
         }
         if ($this->join2_type <> '') {
-            $join2_table_name = $this->get_table_name($this->join2_type);
-            $join2_id_field = $this->get_id_field_name($this->join2_type);
+            $join2_table_name = $this->name_sql_esc($this->get_table_name($this->join2_type));
+            $join2_id_field = $this->name_sql_esc($this->get_id_field_name($this->join2_type));
             if ($this->join2_field == '') {
                 $join2_from_id_field = $join2_id_field;
             } else {
@@ -1976,8 +1986,8 @@ class sql_db
             }
         }
         if ($this->join3_type <> '') {
-            $join3_table_name = $this->get_table_name($this->join3_type);
-            $join3_id_field = $this->get_id_field_name($this->join3_type);
+            $join3_table_name = $this->name_sql_esc($this->get_table_name($this->join3_type));
+            $join3_id_field = $this->name_sql_esc($this->get_id_field_name($this->join3_type));
             if ($this->join3_field == '') {
                 $join3_from_id_field = $join3_id_field;
             } else {
@@ -2003,8 +2013,8 @@ class sql_db
             }
         }
         if ($this->join4_type <> '') {
-            $join4_table_name = $this->get_table_name($this->join4_type);
-            $join4_id_field = $this->get_id_field_name($this->join4_type);
+            $join4_table_name = $this->name_sql_esc($this->get_table_name($this->join4_type));
+            $join4_id_field = $this->name_sql_esc($this->get_id_field_name($this->join4_type));
             if ($this->join4_field == '') {
                 $join4_from_id_field = $join4_id_field;
             } else {
@@ -2050,6 +2060,27 @@ class sql_db
      */
     function select(bool $has_id = true): string
     {
+        return $this->select_by($this->id_field, $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database and force to use the name instead of the id
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_name(bool $has_id = true): string
+    {
+        return $this->select_by($this->name_field, $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * @param string $id_field the name of the primary id field that should be used
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    private function select_by(string $id_field, bool $has_id = true): string
+    {
         $sql = '';
         $sql_end = ';';
 
@@ -2062,12 +2093,18 @@ class sql_db
                 $i = 1;
                 foreach ($this->par_types as $par_type) {
                     if ($this->par_named[$i - 1] == false) {
-                        if ($i == 1) {
+                        if ($this->where == '') {
                             $this->where = ' WHERE ';
                         } else {
                             $this->where .= ' AND ';
                         }
-                        $this->where .= $this->id_field . ' = ' . $this->par_name();
+                        if ($this->usr_query
+                            or $this->join <> ''
+                            or $this->join_type <> ''
+                            or $this->join2_type <> '') {
+                            $this->where .= sql_db::STD_TBL . '.';
+                        }
+                        $this->where .= $id_field . ' = ' . $this->par_name();
                     }
                     $i++;
                 }

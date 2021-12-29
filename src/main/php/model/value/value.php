@@ -72,12 +72,12 @@ class value extends user_sandbox_display
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
         self::FLD_EXCLUDED,
-        sql_db::FLD_PROTECT
+        user_sandbox::FLD_PROTECT
     );
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
     const FLD_NAMES_USR_ONLY = array(
-        sql_db::FLD_SHARE
+        user_sandbox::FLD_SHARE
     );
 
     /*

@@ -50,13 +50,22 @@ class formula extends user_sandbox_description
     // all database field names excluding the id
     // TODO check if last_update must be user specific
     const FLD_NAMES = array(
-        self::FLD_NAME,
+        self::FLD_NAME
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
-        sql_db::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
         self::FLD_FORMULA_TYPE,
         self::FLD_ALL_NEEDED,
-        self::FLD_EXCLUDED
+        self::FLD_LAST_UPDATE,
+        self::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
 
     /*
@@ -210,12 +219,16 @@ class formula extends user_sandbox_description
             $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
-            $this->type_cl = $db_row[sql_db::FLD_CODE_ID];
+            //$this->type_cl = $db_row[sql_db::FLD_CODE_ID];
             $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
             $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
         }
         return $result;
     }
+
+    /*
+     * loading
+     */
 
     /**
      * create the SQL to load the default formula always by the id
@@ -229,6 +242,8 @@ class formula extends user_sandbox_description
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)
         ));
 
@@ -250,6 +265,74 @@ class formula extends user_sandbox_description
         if ($result) {
             $result = $this->load_owner();
         }
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve the parameters of a formula from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+
+        $qp = parent::load_sql($db_con, self::class);
+        if ($this->id != 0) {
+            $qp->name .= 'id';
+        } elseif ($this->name != '') {
+            $qp->name .= 'name';
+        } else {
+            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
+        }
+        // the formula name should be excluded from the user sandbox to avoid confusion
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_where($this->id, $this->name);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the missing formula parameters from the database
+     */
+    function load(bool $with_automatic_error_fixing = true): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // check the all minimal input parameters
+        if (!isset($this->usr)) {
+            log_err("The user id must be set to load a formula.", "formula->load");
+        } elseif ($this->id <= 0 and $this->name == '') {
+            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a formula.", "formula->load");
+        } else {
+
+            $qp = $this->load_sql($db_con);
+
+            if ($db_con->get_where() <> '') {
+                $db_frm = $db_con->get1($qp);
+                $this->row_mapper($db_frm);
+                if ($this->id > 0) {
+                    // TODO check the exclusion handling
+                    log_debug('formula->load ' . $this->dsp_id() . ' not excluded');
+
+                    // load the formula name word object
+                    if (is_null($this->name_wrd)) {
+                        $result = $this->load_wrd($with_automatic_error_fixing);
+                    } else {
+                        $result = true;
+                    }
+                }
+            }
+        }
+        log_debug('formula->load -> done ' . $this->dsp_id());
         return $result;
     }
 
@@ -336,78 +419,6 @@ class formula extends user_sandbox_description
         } else {
             log_err('Word with the formula name "' . $this->name . '" missing for id ' . $this->id . '.', 'formula->create_wrd');
         }
-        return $result;
-    }
-
-    /*
-     * loading
-     */
-
-    /**
-     * create an SQL statement to retrieve the parameters of a formula from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
-    {
-
-        $qp = parent::load_sql($db_con, self::class);
-        if ($this->id != 0) {
-            $qp->name .= 'id';
-        } elseif ($this->name != '') {
-            $qp->name .= 'name';
-        } else {
-            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
-        }
-        // the formula name should be excluded from the user sandbox to avoid confusion
-        $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
-        $db_con->set_usr_fields(array(self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT, sql_db::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array(self::FLD_FORMULA_TYPE, self::FLD_ALL_NEEDED, self::FLD_LAST_UPDATE, self::FLD_EXCLUDED));
-        $db_con->set_where($this->id, $this->name);
-        $qp->sql = $db_con->select();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load the missing formula parameters from the database
-     */
-    function load(bool $with_automatic_error_fixing = true): bool
-    {
-        global $db_con;
-        $result = false;
-
-        // check the all minimal input parameters
-        if (!isset($this->usr)) {
-            log_err("The user id must be set to load a formula.", "formula->load");
-        } elseif ($this->id <= 0 and $this->name == '') {
-            log_err("Either the database ID (" . $this->id . ") or the formula name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a formula.", "formula->load");
-        } else {
-
-            $qp = $this->load_sql($db_con);
-
-            if ($db_con->get_where() <> '') {
-                $db_frm = $db_con->get1($qp);
-                $this->row_mapper($db_frm);
-                if ($this->id > 0) {
-                    // TODO check the exclusion handling
-                    log_debug('formula->load ' . $this->dsp_id() . ' not excluded');
-
-                    // load the formula name word object
-                    if (is_null($this->name_wrd)) {
-                        $result = $this->load_wrd($with_automatic_error_fixing);
-                    } else {
-                        $result = true;
-                    }
-                }
-            }
-        }
-        log_debug('formula->load -> done ' . $this->dsp_id());
         return $result;
     }
 

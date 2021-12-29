@@ -8,7 +8,7 @@ PREPARE word_std_by_id (int) AS
            view_id,
            excluded,
            share_type_id,
-           protection_type_id,
+           protect_id,
            user_id
       FROM words
      WHERE word_id = $1;

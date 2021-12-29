@@ -8,7 +8,7 @@ PREPARE value_by_phrase_group_id (int, int) AS
            CASE WHEN (u.source_id          IS NULL) THEN s.source_id          ELSE u.source_id          END  AS source_id,
            CASE WHEN (u.last_update        IS NULL) THEN s.last_update        ELSE u.last_update        END  AS last_update,
            CASE WHEN (u.excluded           IS NULL) THEN s.excluded           ELSE u.excluded           END  AS excluded,
-           CASE WHEN (u.protection_type_id IS NULL) THEN s.protection_type_id ELSE u.protection_type_id END  AS protection_type_id,
+           CASE WHEN (u.protect_id IS NULL) THEN s.protect_id ELSE u.protect_id END  AS protect_id,
            u.share_type_id
 
     FROM values s

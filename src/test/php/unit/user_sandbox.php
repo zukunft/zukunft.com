@@ -493,9 +493,9 @@ class user_sandbox_unit_tests
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-        $db_con->set_usr_num_fields(array('word_value', 'source_id', sql_db::FLD_PROTECT, 'last_update'));
+        $db_con->set_usr_num_fields(array('word_value', 'source_id', user_sandbox::FLD_PROTECT, 'last_update'));
         $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
-        $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
+        $db_con->set_usr_only_fields(array(user_sandbox::FLD_SHARE));
         $db_con->set_where_text('s.phrase_group_id = 1');
         $created_sql = $db_con->select();
         $expected_sql = "SELECT 
@@ -506,7 +506,7 @@ class user_sandbox_unit_tests
                     s.time_word_id,
                     CASE WHEN (u.word_value         IS           NULL) THEN s.word_value           ELSE u.word_value           END AS word_value,
                     CASE WHEN (u.source_id          IS           NULL) THEN s.source_id            ELSE u.source_id            END AS source_id,
-                    CASE WHEN (u.protection_type_id IS           NULL) THEN s.protection_type_id   ELSE u.protection_type_id   END AS protection_type_id,
+                    CASE WHEN (u.protect_id IS           NULL) THEN s.protect_id   ELSE u.protect_id   END AS protect_id,
                     CASE WHEN (u.last_update        IS           NULL) THEN s.last_update          ELSE u.last_update          END AS last_update,
                     CASE WHEN (u.excluded           IS           NULL) THEN COALESCE(s.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded,
                     u.share_type_id
@@ -923,8 +923,8 @@ class user_sandbox_unit_tests
         // ... same for the special case of a table without name e.g. the value table
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_fields(array('phrase_group_id', 'time_word_id'));
-        $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', sql_db::FLD_PROTECT, user_sandbox::FLD_EXCLUDED));
-        $db_con->set_usr_only_fields(array(sql_db::FLD_SHARE));
+        $db_con->set_usr_fields(array('word_value', 'source_id', 'last_update', user_sandbox::FLD_PROTECT, user_sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_only_fields(array(user_sandbox::FLD_SHARE));
         $db_con->set_where_text('s.phrase_group_id = 1');
         $created_sql = $db_con->select();
         $sql_avoid_code_check_prefix = "SELECT";
@@ -937,7 +937,7 @@ class user_sandbox_unit_tests
                     IF(u.word_value         IS NULL, s.word_value,         u.word_value)         AS word_value,
                     IF(u.source_id          IS NULL, s.source_id,          u.source_id)          AS source_id,
                     IF(u.last_update        IS NULL, s.last_update,        u.last_update)        AS last_update,
-                    IF(u.protection_type_id IS NULL, s.protection_type_id, u.protection_type_id) AS protection_type_id,
+                    IF(u.protect_id IS NULL, s.protect_id, u.protect_id) AS protect_id,
                     IF(u.excluded           IS NULL, s.excluded,           u.excluded)           AS excluded,
                     u.share_type_id
                FROM `values` s 

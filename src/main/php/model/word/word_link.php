@@ -57,8 +57,8 @@ class word_link extends user_sandbox_link_description
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_EXCLUDED,
-        sql_db::FLD_SHARE,
-        sql_db::FLD_PROTECT
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
 
     /*

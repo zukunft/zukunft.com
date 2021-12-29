@@ -8,5 +8,5 @@ PREPARE value_phrase_link_list_by_value_id FROM
            s.condition_formula_id,
            l.value_id
       FROM value_phrase_links s
- LEFT JOIN values l ON s.value_id = l.value_id
+ LEFT JOIN `values` l ON s.value_id = l.value_id
     WHERE l.value_id = ?';

@@ -81,6 +81,7 @@ include_once $path_unit . 'formula.php';
 include_once $path_unit . 'formula_link.php';
 include_once $path_unit . 'figure.php';
 include_once $path_unit . 'view.php';
+include_once $path_unit . 'view_component.php';
 include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'user_log.php';
@@ -951,7 +952,7 @@ class test_base
      * @param user_sandbox $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_load_sql(sql_db $db_con, user_sandbox $usr_obj): bool
+    function assert_load_sql(sql_db $db_con, object $usr_obj): bool
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

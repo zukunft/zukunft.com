@@ -6,7 +6,7 @@ PREPARE value_std_by_id (int) AS
            source_id,
            last_update,
            excluded,
-           protection_type_id,
+           protect_id,
            user_id
     FROM values
     WHERE value_id = $1;

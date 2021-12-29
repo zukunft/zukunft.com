@@ -290,6 +290,7 @@ function run_unit_tests(testing $t)
     (new phrase_list_unit_tests)->run($t);
     (new phrase_group_unit_tests)->run($t);
     (new view_unit_tests)->run($t);
+    (new view_component_unit_tests())->run($t);
     (new view_component_link_unit_tests)->run($t);
     (new value_unit_tests)->run($t);
     (new value_phrase_link_unit_tests)->run($t);

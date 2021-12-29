@@ -46,10 +46,17 @@ class source extends user_sandbox_named
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
         self::FLD_NAME,
-        self::FLD_URL,
-        self::FLD_COMMENT,
-        self::FLD_TYPE,
         sql_db::FLD_CODE_ID
+    );
+    // list of the user specific database field names
+    const FLD_NAMES_USR = array(
+        self::FLD_URL,
+        self::FLD_COMMENT
+    );
+    // list of the user specific numeric database field names
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_TYPE,
+        self::FLD_EXCLUDED
     );
 
     /*
@@ -154,6 +161,8 @@ class source extends user_sandbox_named
         $db_con->set_type(DB_TYPE_SOURCE);
         $db_con->set_fields(array_merge(
             self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)
         ));
 
@@ -178,7 +187,39 @@ class source extends user_sandbox_named
         return $result;
     }
 
-    // load the missing source parameters from the database
+    /**
+     * create an SQL statement to retrieve the parameters of a source from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $qp = parent::load_sql($db_con, self::class);
+        if ($this->id != 0) {
+            $qp->name .= 'id';
+        } elseif ($this->name != '') {
+            $qp->name .= 'name';
+        } else {
+            log_err("Either the database ID (" . $this->id . ") or the source name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
+        }
+
+        $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $db_con->set_where($this->id, $this->name, $this->code_id);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the missing source parameters from the database
+     */
     function load(): bool
     {
         global $db_con;
@@ -191,13 +232,7 @@ class source extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a source.", "source->load");
         } else {
 
-            $db_con->set_type(DB_TYPE_SOURCE);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array(sql_db::FLD_CODE_ID));
-            $db_con->set_usr_fields(array('url', 'comment'));
-            $db_con->set_usr_num_fields(array('source_type_id'));
-            $db_con->set_where($this->id, $this->name, $this->code_id);
-            $sql = $db_con->select();
+            $sql = $this->load_sql($db_con)->sql;
 
             if ($db_con->get_where() <> '') {
                 $db_row = $db_con->get1_old($sql);

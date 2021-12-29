@@ -191,17 +191,18 @@ CREATE TABLE IF NOT EXISTS `config`
 
 CREATE TABLE IF NOT EXISTS `formulas`
 (
-    `formula_id`         int(11)      NOT NULL,
-    `formula_name`       varchar(100) NOT NULL COMMENT 'short name of the formula',
-    `user_id`            int(11)               DEFAULT NULL,
-    `formula_text`       text         NOT NULL COMMENT 'the coded formula; e.g. \\f1 for formula with ID1',
-    `resolved_text`      text         NOT NULL COMMENT 'the formula in user readable format',
-    `description`        text COMMENT 'additional to comments because many formulas have this',
-    `formula_type_id`    int(11)               DEFAULT NULL,
-    `all_values_needed`  tinyint(4)            DEFAULT NULL COMMENT 'calculate the result only if all values used in the formula are not null',
-    `last_update`        timestamp    NULL     DEFAULT NULL COMMENT 'time of the last calculation relevant update',
-    `excluded`           tinyint(4)            DEFAULT NULL,
-    `protection_type_id` int(11)      NOT NULL DEFAULT '1'
+    `formula_id`        int(11)      NOT NULL,
+    `formula_name`      varchar(100) NOT NULL COMMENT 'short name of the formula',
+    `user_id`           int(11)               DEFAULT NULL,
+    `formula_text`      text         NOT NULL COMMENT 'the coded formula; e.g. \\f1 for formula with ID1',
+    `resolved_text`     text         NOT NULL COMMENT 'the formula in user readable format',
+    `description`       text COMMENT 'additional to comments because many formulas have this',
+    `formula_type_id`   int(11)               DEFAULT NULL,
+    `all_values_needed` tinyint(4)            DEFAULT NULL COMMENT 'calculate the result only if all values used in the formula are not null',
+    `last_update`       timestamp    NULL     DEFAULT NULL COMMENT 'time of the last calculation relevant update',
+    `excluded`          tinyint(4)            DEFAULT NULL,
+    `share_type_id`     smallint              DEFAULT NULL,
+    `protect_id`        int(11)      NOT NULL DEFAULT '1'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
@@ -415,10 +416,10 @@ CREATE TABLE IF NOT EXISTS `phrase_group_word_links`
 
 CREATE TABLE IF NOT EXISTS `protection_types`
 (
-    `protection_type_id` int(11)      NOT NULL,
-    `type_name`          varchar(200) NOT NULL,
-    `code_id`            varchar(100) NOT NULL,
-    `description`        text         NOT NULL
+    `protect_id`  int(11)      NOT NULL,
+    `type_name`   varchar(200) NOT NULL,
+    `code_id`     varchar(100) NOT NULL,
+    `description` text         NOT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 5
   DEFAULT CHARSET = utf8;
@@ -911,14 +912,14 @@ CREATE TABLE IF NOT EXISTS `user_types`
 
 CREATE TABLE IF NOT EXISTS `user_values`
 (
-    `value_id`           int(11)   NOT NULL,
-    `user_id`            int(11)   NOT NULL,
-    `word_value`         double         DEFAULT NULL,
-    `source_id`          int(11)        DEFAULT NULL,
-    `excluded`           tinyint(4)     DEFAULT NULL,
-    `share_type_id`      int(11)        DEFAULT NULL,
-    `protection_type_id` int(11)        DEFAULT NULL,
-    `last_update`        timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
+    `value_id`      int(11)   NOT NULL,
+    `user_id`       int(11)   NOT NULL,
+    `word_value`    double         DEFAULT NULL,
+    `source_id`     int(11)        DEFAULT NULL,
+    `excluded`      tinyint(4)     DEFAULT NULL,
+    `share_type_id` int(11)        DEFAULT NULL,
+    `protect_id`    int(11)        DEFAULT NULL,
+    `last_update`   timestamp NULL DEFAULT NULL COMMENT 'for fast calculation of the updates'
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='for quick access to the user specific values';
 
@@ -935,7 +936,7 @@ CREATE TABLE IF NOT EXISTS `user_value_time_series`
     `source_id`            int(11)        DEFAULT NULL,
     `excluded`             tinyint(4)     DEFAULT NULL,
     `share_type_id`        int(11)        DEFAULT NULL,
-    `protection_type_id`   int(11)   NOT NULL,
+    `protect_id`           int(11)   NOT NULL,
     `last_update`          timestamp NULL DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='common parameters for a user specific list of intraday values';
@@ -948,14 +949,14 @@ CREATE TABLE IF NOT EXISTS `user_value_time_series`
 
 CREATE TABLE IF NOT EXISTS `user_views`
 (
-    `view_id`            int(11) NOT NULL,
-    `user_id`            int(11) NOT NULL,
-    `view_name`          varchar(200) DEFAULT NULL,
-    `comment`            text,
-    `view_type_id`       int(11)      DEFAULT NULL,
-    `excluded`           tinyint(4)   DEFAULT NULL,
-    `share_type_id`      smallint     DEFAULT NULL,
-    `protection_type_id` smallint     DEFAULT NULL
+    `view_id`       int(11) NOT NULL,
+    `user_id`       int(11) NOT NULL,
+    `view_name`     varchar(200) DEFAULT NULL,
+    `comment`       text,
+    `view_type_id`  int(11)      DEFAULT NULL,
+    `excluded`      tinyint(4)   DEFAULT NULL,
+    `share_type_id` smallint     DEFAULT NULL,
+    `protect_id`    smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='user specific mask settings';
 
@@ -977,6 +978,8 @@ CREATE TABLE IF NOT EXISTS `user_view_components`
     `word_id_col2`           int(11)      DEFAULT NULL,
     `formula_id`             int(11)      DEFAULT NULL,
     `excluded`               int(11)      DEFAULT NULL,
+    `share_type_id`          smallint     DEFAULT NULL,
+    `protect_id`             smallint     DEFAULT NULL,
     `link_type_id`           int(11)      DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
@@ -993,7 +996,9 @@ CREATE TABLE IF NOT EXISTS `user_view_component_links`
     `user_id`                int(11) NOT NULL,
     `order_nbr`              int(11)    DEFAULT NULL,
     `position_type`          int(11)    DEFAULT NULL,
-    `excluded`               tinyint(4) DEFAULT NULL
+    `excluded`               tinyint(4) DEFAULT NULL,
+    `share_type_id`          smallint   DEFAULT NULL,
+    `protect_id`             smallint   DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -1005,17 +1010,17 @@ CREATE TABLE IF NOT EXISTS `user_view_component_links`
 
 CREATE TABLE IF NOT EXISTS `user_words`
 (
-    `word_id`            int(11) NOT NULL,
-    `user_id`            int(11) NOT NULL,
-    `language_id`        int(11)      DEFAULT NULL,
-    `word_name`          varchar(200) DEFAULT NULL,
-    `plural`             varchar(200) DEFAULT NULL,
-    `description`        text,
-    `word_type_id`       int(11)      DEFAULT NULL,
-    `view_id`            int(11)      DEFAULT NULL,
-    `excluded`           tinyint(4)   DEFAULT NULL,
-    `share_type_id`      smallint     DEFAULT NULL,
-    `protection_type_id` smallint     DEFAULT NULL
+    `word_id`       int(11) NOT NULL,
+    `user_id`       int(11) NOT NULL,
+    `language_id`   int(11)      DEFAULT NULL,
+    `word_name`     varchar(200) DEFAULT NULL,
+    `plural`        varchar(200) DEFAULT NULL,
+    `description`   text,
+    `word_type_id`  int(11)      DEFAULT NULL,
+    `view_id`       int(11)      DEFAULT NULL,
+    `excluded`      tinyint(4)   DEFAULT NULL,
+    `share_type_id` smallint     DEFAULT NULL,
+    `protect_id`    smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -1027,13 +1032,13 @@ CREATE TABLE IF NOT EXISTS `user_words`
 
 CREATE TABLE IF NOT EXISTS `user_word_links`
 (
-    `word_link_id`       int(11) NOT NULL,
-    `user_id`            int(11)      DEFAULT NULL,
-    `description`        text,
-    `word_link_name`     varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlying)',
-    `excluded`           tinyint(4)   DEFAULT NULL,
-    `share_type_id`      smallint     DEFAULT NULL,
-    `protection_type_id` smallint     DEFAULT NULL
+    `word_link_id`   int(11) NOT NULL,
+    `user_id`        int(11)      DEFAULT NULL,
+    `description`    text,
+    `word_link_name` varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlying)',
+    `excluded`       tinyint(4)   DEFAULT NULL,
+    `share_type_id`  smallint     DEFAULT NULL,
+    `protect_id`     smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -1045,17 +1050,17 @@ CREATE TABLE IF NOT EXISTS `user_word_links`
 
 CREATE TABLE IF NOT EXISTS `values`
 (
-    `value_id`           int(11)   NOT NULL,
-    `user_id`            int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
-    `word_value`         double    NOT NULL,
-    `source_id`          int(11)            DEFAULT NULL,
-    `phrase_group_id`    int(11)            DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
-    `time_word_id`       int(11)            DEFAULT NULL COMMENT 'special field just to speed up queries',
-    `last_update`        timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
-    `description`        text COMMENT 'temp field used during dev phase for easy value to trm assigns',
-    `excluded`           tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
-    `share_type_id`      smallint           DEFAULT NULL,
-    `protection_type_id` int(11)   NOT NULL DEFAULT '1'
+    `value_id`        int(11)   NOT NULL,
+    `user_id`         int(11)            DEFAULT NULL COMMENT 'the owner / creator of the value',
+    `word_value`      double    NOT NULL,
+    `source_id`       int(11)            DEFAULT NULL,
+    `phrase_group_id` int(11)            DEFAULT NULL COMMENT 'temp field to increase speed created by the value term links',
+    `time_word_id`    int(11)            DEFAULT NULL COMMENT 'special field just to speed up queries',
+    `last_update`     timestamp NULL     DEFAULT NULL COMMENT 'for fast recalculation',
+    `description`     text COMMENT 'temp field used during dev phase for easy value to trm assigns',
+    `excluded`        tinyint(4)         DEFAULT NULL COMMENT 'the default exclude setting for most users',
+    `share_type_id`   smallint           DEFAULT NULL,
+    `protect_id`      int(11)   NOT NULL DEFAULT '1'
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='long list';
@@ -1126,7 +1131,7 @@ CREATE TABLE IF NOT EXISTS `value_time_series`
     `phrase_group_id`      int(11)   NOT NULL,
     `excluded`             tinyint(4)     DEFAULT NULL,
     `share_type_id`        int(11)        DEFAULT NULL,
-    `protection_type_id`   int(11)   NOT NULL,
+    `protect_id`           int(11)   NOT NULL,
     `last_update`          timestamp NULL DEFAULT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='common parameters for a list of intraday values';
@@ -1189,15 +1194,15 @@ CREATE TABLE IF NOT EXISTS `verb_usages`
 
 CREATE TABLE IF NOT EXISTS `views`
 (
-    `view_id`            int(11)      NOT NULL,
-    `user_id`            int(11)      DEFAULT NULL,
-    `view_name`          varchar(100) NOT NULL COMMENT 'for easy selection',
-    `comment`            text         DEFAULT NULL,
-    `view_type_id`       int(11)      DEFAULT NULL,
-    `code_id`            varchar(100) DEFAULT NULL,
-    `excluded`           tinyint(4)   DEFAULT NULL,
-    `share_type_id`      smallint     DEFAULT NULL,
-    `protection_type_id` smallint     DEFAULT NULL
+    `view_id`       int(11)      NOT NULL,
+    `user_id`       int(11)      DEFAULT NULL,
+    `view_name`     varchar(100) NOT NULL COMMENT 'for easy selection',
+    `comment`       text         DEFAULT NULL,
+    `view_type_id`  int(11)      DEFAULT NULL,
+    `code_id`       varchar(100) DEFAULT NULL,
+    `excluded`      tinyint(4)   DEFAULT NULL,
+    `share_type_id` smallint     DEFAULT NULL,
+    `protect_id`    smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='all user interfaces should be listed here';
@@ -1220,6 +1225,8 @@ CREATE TABLE IF NOT EXISTS `view_components`
     `word_id_col`                 int(11)    DEFAULT NULL COMMENT 'to define the type for the table columns',
     `word_id_col2`                int(11)    DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
     `excluded`                    tinyint(4) DEFAULT NULL,
+    `share_type_id`               smallint   DEFAULT NULL,
+    `protect_id`                  smallint   DEFAULT NULL,
     `linked_view_component_id`    int(11)    DEFAULT NULL COMMENT 'to link this mask entry to another mask entry',
     `view_component_link_type_id` int(11)    DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
     `link_type_id`                int(11)    DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms'
@@ -1241,7 +1248,9 @@ CREATE TABLE IF NOT EXISTS `view_component_links`
     `view_component_id`      int(11) NOT NULL,
     `order_nbr`              int(11) NOT NULL,
     `position_type`          int(11) NOT NULL DEFAULT '2' COMMENT '1=side, 2 =below',
-    `excluded`               tinyint(4)       DEFAULT NULL
+    `excluded`               tinyint(4)       DEFAULT NULL,
+    `share_type_id`          smallint         DEFAULT NULL,
+    `protect_id`             smallint         DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 25
   DEFAULT CHARSET = utf8 COMMENT ='A named mask entry can be used in several masks e.g. the company name';
@@ -1346,17 +1355,17 @@ CREATE TABLE IF NOT EXISTS `view_word_links`
 
 CREATE TABLE IF NOT EXISTS `words`
 (
-    `word_id`            int(11)      NOT NULL,
-    `user_id`            int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
-    `word_name`          varchar(200) NOT NULL,
-    `plural`             varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `description`        text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    `word_type_id`       int(11)      DEFAULT NULL,
-    `view_id`            int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
-    `values`             int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
-    `excluded`           tinyint(4)   DEFAULT NULL,
-    `share_type_id`      smallint     DEFAULT NULL,
-    `protection_type_id` smallint     DEFAULT NULL
+    `word_id`       int(11)      NOT NULL,
+    `user_id`       int(11)      DEFAULT NULL COMMENT 'user_id of the user that has created the term',
+    `word_name`     varchar(200) NOT NULL,
+    `plural`        varchar(200) DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `description`   text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
+    `word_type_id`  int(11)      DEFAULT NULL,
+    `view_id`       int(11)      DEFAULT NULL COMMENT 'the default mask for this term',
+    `values`        int(11)      DEFAULT NULL COMMENT 'number of values linked to the term, which gives an indication of the importance',
+    `excluded`      tinyint(4)   DEFAULT NULL,
+    `share_type_id` smallint     DEFAULT NULL,
+    `protect_id`    smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8 COMMENT ='probably all text of th db';
@@ -1415,7 +1424,7 @@ CREATE TABLE IF NOT EXISTS `word_links`
     `word_link_name`              varchar(200) DEFAULT NULL COMMENT 'the used unique name (either user created or generic based on the underlying)',
     `excluded`                    tinyint(4)   DEFAULT NULL,
     `share_type_id`               smallint     DEFAULT NULL,
-    `protection_type_id`          smallint     DEFAULT NULL
+    `protect_id`                  smallint     DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
@@ -1461,12 +1470,12 @@ DROP TABLE IF EXISTS `phrases`;
 
 CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
     SECURITY DEFINER VIEW `phrases` AS
-select `words`.`word_id`            AS `phrase_id`,
-       `words`.`user_id`            AS `user_id`,
-       `words`.`word_name`          AS `phrase_name`,
-       `words`.`excluded`           AS `excluded`,
-       `words`.`share_type_id`      AS `share_type_id`,
-       `words`.`protection_type_id` AS `protection_type_id`
+select `words`.`word_id`       AS `phrase_id`,
+       `words`.`user_id`       AS `user_id`,
+       `words`.`word_name`     AS `phrase_name`,
+       `words`.`excluded`      AS `excluded`,
+       `words`.`share_type_id` AS `share_type_id`,
+       `words`.`protect_id`    AS `protect_id`
 from `words`
 union
 select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
@@ -1475,7 +1484,7 @@ select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
           `word_links`.`description`)       AS `phrase_name`,
        `word_links`.`excluded`              AS `excluded`,
        `word_links`.`share_type_id`         AS `share_type_id`,
-       `word_links`.`protection_type_id`    AS `protection_type_id`
+       `word_links`.`protect_id`            AS `protect_id`
 from `word_links`;
 
 -- --------------------------------------------------------
@@ -1590,7 +1599,7 @@ ALTER TABLE `formulas`
     ADD UNIQUE KEY `name` (`formula_name`),
     ADD KEY `user_id` (`user_id`),
     ADD KEY `formula_type_id` (`formula_type_id`),
-    ADD KEY `protection_type_id` (`protection_type_id`);
+    ADD KEY `protect_id` (`protect_id`);
 
 --
 -- Indexes for table`formula_elements`
@@ -1872,7 +1881,7 @@ ALTER TABLE `user_values`
     ADD KEY `source_id` (`source_id`),
     ADD KEY `value_id` (`value_id`),
     ADD KEY `share_type` (`share_type_id`),
-    ADD KEY `protection_type_id` (`protection_type_id`);
+    ADD KEY `protect_id` (`protect_id`);
 
 --
 -- Indexes for table`user_value_time_series`
@@ -1883,7 +1892,7 @@ ALTER TABLE `user_value_time_series`
     ADD KEY `source_id` (`source_id`),
     ADD KEY `value_id` (`value_time_series_id`),
     ADD KEY `share_type` (`share_type_id`),
-    ADD KEY `protection_type_id` (`protection_type_id`);
+    ADD KEY `protect_id` (`protect_id`);
 
 --
 -- Indexes for table`user_views`
@@ -1940,7 +1949,7 @@ ALTER TABLE `values`
     ADD KEY `source_id` (`source_id`),
     ADD KEY `phrase_group_id` (`phrase_group_id`),
     ADD KEY `time_word_id` (`time_word_id`),
-    ADD KEY `protection_type_id` (`protection_type_id`);
+    ADD KEY `protect_id` (`protect_id`);
 
 --
 -- Indexes for table`value_formula_links`
@@ -2411,7 +2420,7 @@ ALTER TABLE `change_links`
 ALTER TABLE `formulas`
     ADD CONSTRAINT `formulas_fk_1` FOREIGN KEY (`formula_type_id`) REFERENCES `formula_types` (`formula_type_id`),
     ADD CONSTRAINT `formulas_fk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    ADD CONSTRAINT `formulas_fk_3` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
+    ADD CONSTRAINT `formulas_fk_3` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protection_type_id`);
 
 --
 -- Constraints for table`formula_elements`
@@ -2532,7 +2541,7 @@ ALTER TABLE `user_values`
     ADD CONSTRAINT `user_values_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
     ADD CONSTRAINT `user_values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
     ADD CONSTRAINT `user_values_fk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
-    ADD CONSTRAINT `user_values_fk_4` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
+    ADD CONSTRAINT `user_values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
 
 --
 -- Constraints for table`user_value_time_series`
@@ -2541,7 +2550,7 @@ ALTER TABLE `user_value_time_series`
     ADD CONSTRAINT `user_value_time_series_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
     ADD CONSTRAINT `user_value_time_series_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
     ADD CONSTRAINT `user_value_time_series_fk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
-    ADD CONSTRAINT `user_value_time_series_fk_4` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
+    ADD CONSTRAINT `user_value_time_series_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protection_type_id`);
 
 --
 -- Constraints for table`user_views`
@@ -2590,7 +2599,7 @@ ALTER TABLE `values`
     ADD CONSTRAINT `values_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
     ADD CONSTRAINT `values_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
     ADD CONSTRAINT `values_fk_3` FOREIGN KEY (`phrase_group_id`) REFERENCES `phrase_groups` (`phrase_group_id`),
-    ADD CONSTRAINT `values_fk_4` FOREIGN KEY (`protection_type_id`) REFERENCES `protection_types` (`protection_type_id`);
+    ADD CONSTRAINT `values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protection_type_id`);
 
 --
 -- Constraints for table`view_components`

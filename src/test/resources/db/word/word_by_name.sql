@@ -9,7 +9,7 @@ SELECT     s.word_id,
            CASE WHEN (u.view_id            IS     NULL) THEN s.view_id            ELSE u.view_id            END AS view_id,
            CASE WHEN (u.excluded           IS     NULL) THEN s.excluded           ELSE u.excluded           END AS excluded,
            CASE WHEN (u.share_type_id      IS     NULL) THEN s.share_type_id      ELSE u.share_type_id      END AS share_type_id,
-           CASE WHEN (u.protection_type_id IS     NULL) THEN s.protection_type_id ELSE u.protection_type_id END AS protection_type_id
+           CASE WHEN (u.protect_id IS     NULL) THEN s.protect_id ELSE u.protect_id END AS protect_id
       FROM words s
  LEFT JOIN user_words u ON s.word_id = u.word_id
                        AND u.user_id = 1

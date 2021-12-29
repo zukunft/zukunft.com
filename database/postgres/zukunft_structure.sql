@@ -183,17 +183,18 @@ CREATE TABLE IF NOT EXISTS config
 
 CREATE TABLE IF NOT EXISTS formulas
 (
-    formula_id         BIGSERIAL PRIMARY KEY,
-    formula_name       varchar(100) NOT NULL,
-    user_id            bigint                DEFAULT NULL,
-    formula_text       text         NOT NULL,
-    resolved_text      text         NOT NULL,
-    description        text,
-    formula_type_id    bigint                DEFAULT NULL,
-    all_values_needed  smallint              DEFAULT NULL,
-    last_update        timestamp    NULL     DEFAULT NULL,
-    excluded           smallint              DEFAULT NULL,
-    protection_type_id bigint       NOT NULL DEFAULT '1'
+    formula_id        BIGSERIAL PRIMARY KEY,
+    formula_name      varchar(100) NOT NULL,
+    user_id           bigint                DEFAULT NULL,
+    formula_text      text         NOT NULL,
+    resolved_text     text         NOT NULL,
+    description       text,
+    formula_type_id   bigint                DEFAULT NULL,
+    all_values_needed smallint              DEFAULT NULL,
+    last_update       timestamp    NULL     DEFAULT NULL,
+    excluded          smallint              DEFAULT NULL,
+    share_type_id     bigint                DEFAULT NULL,
+    protect_id        bigint       NOT NULL DEFAULT '1'
 );
 
 COMMENT ON COLUMN formulas.formula_name is 'short name of the formula';
@@ -858,14 +859,14 @@ CREATE TABLE IF NOT EXISTS user_types
 
 CREATE TABLE IF NOT EXISTS user_values
 (
-    value_id           bigint    NOT NULL,
-    user_id            bigint    NOT NULL,
-    word_value         double precision DEFAULT NULL,
-    source_id          bigint           DEFAULT NULL,
-    excluded           smallint         DEFAULT NULL,
-    share_type_id      bigint           DEFAULT NULL,
-    protection_type_id bigint           DEFAULT NULL,
-    last_update        timestamp NULL   DEFAULT NULL
+    value_id      bigint    NOT NULL,
+    user_id       bigint    NOT NULL,
+    word_value    double precision DEFAULT NULL,
+    source_id     bigint           DEFAULT NULL,
+    excluded      smallint         DEFAULT NULL,
+    share_type_id bigint           DEFAULT NULL,
+    protect_id    bigint           DEFAULT NULL,
+    last_update   timestamp NULL   DEFAULT NULL
 );
 
 COMMENT ON TABLE user_values is 'for quick access to the user specific values';
@@ -884,7 +885,7 @@ CREATE TABLE IF NOT EXISTS user_value_time_series
     source_id            bigint         DEFAULT NULL,
     excluded             smallint       DEFAULT NULL,
     share_type_id        bigint         DEFAULT NULL,
-    protection_type_id   bigint    NOT NULL,
+    protect_id           bigint    NOT NULL,
     last_update          timestamp NULL DEFAULT NULL
 );
 
@@ -898,14 +899,14 @@ COMMENT ON TABLE user_value_time_series is 'common parameters for a user specifi
 
 CREATE TABLE IF NOT EXISTS user_views
 (
-    view_id            bigint   NOT NULL,
-    user_id            bigint   NOT NULL,
-    view_name          varchar(200)      DEFAULT NULL,
-    comment            text,
-    view_type_id       bigint            DEFAULT NULL,
-    excluded           smallint          DEFAULT NULL,
-    share_type_id      smallint          DEFAULT NULL,
-    protection_type_id smallint NOT NULL DEFAULT '1'
+    view_id       bigint   NOT NULL,
+    user_id       bigint   NOT NULL,
+    view_name     varchar(200)      DEFAULT NULL,
+    comment       text,
+    view_type_id  bigint            DEFAULT NULL,
+    excluded      smallint          DEFAULT NULL,
+    share_type_id smallint          DEFAULT NULL,
+    protect_id    smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE user_views is 'user specific mask settings';
@@ -918,17 +919,19 @@ COMMENT ON TABLE user_views is 'user specific mask settings';
 
 CREATE TABLE IF NOT EXISTS user_view_components
 (
-    view_component_id      bigint NOT NULL,
-    user_id                bigint NOT NULL,
-    view_component_name    varchar(200) DEFAULT NULL,
+    view_component_id      bigint   NOT NULL,
+    user_id                bigint   NOT NULL,
+    view_component_name    varchar(200)      DEFAULT NULL,
     comment                text,
-    view_component_type_id bigint       DEFAULT NULL,
-    word_id_row            bigint       DEFAULT NULL,
-    word_id_col            bigint       DEFAULT NULL,
-    word_id_col2           bigint       DEFAULT NULL,
-    formula_id             bigint       DEFAULT NULL,
-    excluded               bigint       DEFAULT NULL,
-    link_type_id           bigint       DEFAULT NULL
+    view_component_type_id bigint            DEFAULT NULL,
+    word_id_row            bigint            DEFAULT NULL,
+    word_id_col            bigint            DEFAULT NULL,
+    word_id_col2           bigint            DEFAULT NULL,
+    formula_id             bigint            DEFAULT NULL,
+    excluded               bigint            DEFAULT NULL,
+    share_type_id          smallint          DEFAULT NULL,
+    protect_id             smallint NOT NULL DEFAULT '1',
+    link_type_id           bigint            DEFAULT NULL
 );
 
 -- --------------------------------------------------------
@@ -939,11 +942,13 @@ CREATE TABLE IF NOT EXISTS user_view_components
 
 CREATE TABLE IF NOT EXISTS user_view_component_links
 (
-    view_component_link_id bigint NOT NULL,
-    user_id                bigint NOT NULL,
-    order_nbr              bigint   DEFAULT NULL,
-    position_type          bigint   DEFAULT NULL,
-    excluded               smallint DEFAULT NULL
+    view_component_link_id bigint   NOT NULL,
+    user_id                bigint   NOT NULL,
+    order_nbr              bigint            DEFAULT NULL,
+    position_type          bigint            DEFAULT NULL,
+    excluded               smallint          DEFAULT NULL,
+    share_type_id          smallint          DEFAULT NULL,
+    protect_id             smallint NOT NULL DEFAULT '1'
 );
 
 -- --------------------------------------------------------
@@ -954,17 +959,17 @@ CREATE TABLE IF NOT EXISTS user_view_component_links
 
 CREATE TABLE IF NOT EXISTS user_words
 (
-    word_id            bigint   NOT NULL,
-    user_id            bigint   NOT NULL,
-    language_id        bigint   NOT NULL DEFAULT 1,
-    word_name          varchar(200)      DEFAULT NULL,
-    plural             varchar(200)      DEFAULT NULL,
-    description        text,
-    word_type_id       bigint            DEFAULT NULL,
-    view_id            bigint            DEFAULT NULL,
-    excluded           smallint          DEFAULT NULL,
-    share_type_id      smallint          DEFAULT NULL,
-    protection_type_id smallint NOT NULL DEFAULT '1'
+    word_id       bigint   NOT NULL,
+    user_id       bigint   NOT NULL,
+    language_id   bigint   NOT NULL DEFAULT 1,
+    word_name     varchar(200)      DEFAULT NULL,
+    plural        varchar(200)      DEFAULT NULL,
+    description   text,
+    word_type_id  bigint            DEFAULT NULL,
+    view_id       bigint            DEFAULT NULL,
+    excluded      smallint          DEFAULT NULL,
+    share_type_id smallint          DEFAULT NULL,
+    protect_id    smallint NOT NULL DEFAULT '1'
 );
 
 -- --------------------------------------------------------
@@ -975,13 +980,13 @@ CREATE TABLE IF NOT EXISTS user_words
 
 CREATE TABLE IF NOT EXISTS user_word_links
 (
-    word_link_id       BIGSERIAL PRIMARY KEY,
-    user_id            bigint            DEFAULT NULL,
-    description        text,
-    word_link_name     varchar(200)      DEFAULT NULL,
-    excluded           smallint          DEFAULT NULL,
-    share_type_id      smallint          DEFAULT NULL,
-    protection_type_id smallint NOT NULL DEFAULT '1'
+    word_link_id   BIGSERIAL PRIMARY KEY,
+    user_id        bigint            DEFAULT NULL,
+    description    text,
+    word_link_name varchar(200)      DEFAULT NULL,
+    excluded       smallint          DEFAULT NULL,
+    share_type_id  smallint          DEFAULT NULL,
+    protect_id     smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON COLUMN user_word_links.word_link_name is 'the used unique name (either user created or generic based on the underlying)';
@@ -994,17 +999,17 @@ COMMENT ON COLUMN user_word_links.word_link_name is 'the used unique name (eithe
 
 CREATE TABLE IF NOT EXISTS values
 (
-    value_id           BIGSERIAL PRIMARY KEY,
-    user_id            bigint                    DEFAULT NULL,
-    word_value         double precision NOT NULL,
-    source_id          bigint                    DEFAULT NULL,
-    phrase_group_id    bigint                    DEFAULT NULL,
-    time_word_id       bigint                    DEFAULT NULL,
-    last_update        timestamp        NULL     DEFAULT NULL,
-    description        text,
-    excluded           smallint                  DEFAULT NULL,
-    share_type_id      smallint                  DEFAULT NULL,
-    protection_type_id bigint           NOT NULL DEFAULT '1'
+    value_id        BIGSERIAL PRIMARY KEY,
+    user_id         bigint                    DEFAULT NULL,
+    word_value      double precision NOT NULL,
+    source_id       bigint                    DEFAULT NULL,
+    phrase_group_id bigint                    DEFAULT NULL,
+    time_word_id    bigint                    DEFAULT NULL,
+    last_update     timestamp        NULL     DEFAULT NULL,
+    description     text,
+    excluded        smallint                  DEFAULT NULL,
+    share_type_id   smallint                  DEFAULT NULL,
+    protect_id      bigint           NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE values is 'long list';
@@ -1084,7 +1089,7 @@ CREATE TABLE IF NOT EXISTS value_time_series
     phrase_group_id      bigint    NOT NULL,
     excluded             smallint       DEFAULT NULL,
     share_type_id        bigint         DEFAULT NULL,
-    protection_type_id   bigint    NOT NULL,
+    protect_id           bigint    NOT NULL,
     last_update          timestamp NULL DEFAULT NULL
 );
 
@@ -1151,15 +1156,15 @@ CREATE TABLE IF NOT EXISTS verb_usages
 
 CREATE TABLE IF NOT EXISTS views
 (
-    view_id            BIGSERIAL PRIMARY KEY,
-    user_id            bigint                DEFAULT NULL,
-    view_name          varchar(100) NOT NULL,
-    comment            text                  DEFAULT NULL,
-    view_type_id       bigint                DEFAULT NULL,
-    code_id            varchar(100)          DEFAULT NULL,
-    excluded           smallint              DEFAULT NULL,
-    share_type_id      smallint              DEFAULT NULL,
-    protection_type_id smallint     NOT NULL DEFAULT '1'
+    view_id       BIGSERIAL PRIMARY KEY,
+    user_id       bigint                DEFAULT NULL,
+    view_name     varchar(100) NOT NULL,
+    comment       text                  DEFAULT NULL,
+    view_type_id  bigint                DEFAULT NULL,
+    code_id       varchar(100)          DEFAULT NULL,
+    excluded      smallint              DEFAULT NULL,
+    share_type_id smallint              DEFAULT NULL,
+    protect_id    smallint     NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE views is 'all user interfaces should be listed here';
@@ -1177,15 +1182,17 @@ CREATE TABLE IF NOT EXISTS view_components
     user_id                     bigint       NOT NULL,
     view_component_name         varchar(100) NOT NULL,
     comment                     text,
-    view_component_type_id      bigint   DEFAULT NULL,
-    word_id_row                 bigint   DEFAULT NULL,
-    formula_id                  bigint   DEFAULT NULL,
-    word_id_col                 bigint   DEFAULT NULL,
-    word_id_col2                bigint   DEFAULT NULL,
-    excluded                    smallint DEFAULT NULL,
-    linked_view_component_id    bigint   DEFAULT NULL,
-    view_component_link_type_id bigint   DEFAULT NULL,
-    link_type_id                bigint   DEFAULT NULL
+    view_component_type_id      bigint                DEFAULT NULL,
+    word_id_row                 bigint                DEFAULT NULL,
+    formula_id                  bigint                DEFAULT NULL,
+    word_id_col                 bigint                DEFAULT NULL,
+    word_id_col2                bigint                DEFAULT NULL,
+    excluded                    smallint              DEFAULT NULL,
+    share_type_id               smallint              DEFAULT NULL,
+    protect_id                  smallint     NOT NULL DEFAULT '1',
+    linked_view_component_id    bigint                DEFAULT NULL,
+    view_component_link_type_id bigint                DEFAULT NULL,
+    link_type_id                bigint                DEFAULT NULL
 );
 
 COMMENT ON TABLE view_components is 'the single components of a mask';
@@ -1207,12 +1214,14 @@ COMMENT ON COLUMN view_components.link_type_id is 'e.g. for type 4 to select pos
 CREATE TABLE IF NOT EXISTS view_component_links
 (
     view_component_link_id BIGSERIAL PRIMARY KEY,
-    user_id                bigint NOT NULL,
-    view_id                bigint NOT NULL,
-    view_component_id      bigint NOT NULL,
-    order_nbr              bigint NOT NULL,
-    position_type          bigint NOT NULL DEFAULT '2',
-    excluded               smallint        DEFAULT NULL
+    user_id                bigint   NOT NULL,
+    view_id                bigint   NOT NULL,
+    view_component_id      bigint   NOT NULL,
+    order_nbr              bigint   NOT NULL,
+    position_type          bigint   NOT NULL DEFAULT '2',
+    excluded               smallint          DEFAULT NULL,
+    share_type_id          smallint          DEFAULT NULL,
+    protect_id             smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE view_component_links is 'A named mask entry can be used in several masks e.g. the company name';
@@ -1317,17 +1326,17 @@ COMMENT ON COLUMN view_word_links.type_id is '1 = from_term_id is link the terms
 
 CREATE TABLE IF NOT EXISTS words
 (
-    word_id            BIGSERIAL PRIMARY KEY,
-    user_id            bigint                DEFAULT NULL,
-    word_name          varchar(200) NOT NULL,
-    plural             varchar(200)          DEFAULT NULL,
-    description        text                  DEFAULT NULL,
-    word_type_id       bigint                DEFAULT NULL,
-    view_id            bigint                DEFAULT NULL,
-    values             bigint                DEFAULT NULL,
-    excluded           smallint              DEFAULT NULL,
-    share_type_id      smallint              DEFAULT NULL,
-    protection_type_id smallint     NOT NULL DEFAULT '1'
+    word_id       BIGSERIAL PRIMARY KEY,
+    user_id       bigint                DEFAULT NULL,
+    word_name     varchar(200) NOT NULL,
+    plural        varchar(200)          DEFAULT NULL,
+    description   text                  DEFAULT NULL,
+    word_type_id  bigint                DEFAULT NULL,
+    view_id       bigint                DEFAULT NULL,
+    values        bigint                DEFAULT NULL,
+    excluded      smallint              DEFAULT NULL,
+    share_type_id smallint              DEFAULT NULL,
+    protect_id    smallint     NOT NULL DEFAULT '1'
 );
 
 COMMENT ON TABLE words is 'probably all text of th db';
@@ -1391,7 +1400,7 @@ CREATE TABLE IF NOT EXISTS word_links
     word_link_name              varchar(200)      DEFAULT NULL,
     excluded                    smallint          DEFAULT NULL,
     share_type_id               smallint          DEFAULT NULL,
-    protection_type_id          smallint NOT NULL DEFAULT '1'
+    protect_id                  smallint NOT NULL DEFAULT '1'
 );
 
 COMMENT ON COLUMN word_links.word_link_condition_id is 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
@@ -1444,7 +1453,7 @@ SELECT w.word_id   AS phrase_id,
        w.word_name AS phrase_name,
        w.excluded,
        w.share_type_id,
-       w.protection_type_id
+       w.protect_id
 FROM words AS w
 UNION
 SELECT (l.word_link_id * -(1))                                                        AS phrase_id,
@@ -1452,7 +1461,7 @@ SELECT (l.word_link_id * -(1))                                                  
        CASE WHEN (l.description IS NULL) THEN l.word_link_name ELSE l.description END AS phrase_name,
        l.excluded,
        l.share_type_id,
-       l.protection_type_id
+       l.protect_id
 FROM word_links AS l;
 
 -- --------------------------------------------------------
@@ -1522,7 +1531,7 @@ CREATE UNIQUE INDEX config_idx ON config (code_id);
 CREATE UNIQUE INDEX formula_name_idx ON formulas (formula_name);
 CREATE INDEX formula_user_idx ON formulas (user_id);
 CREATE INDEX formula_type_idx ON formulas (formula_type_id);
-CREATE INDEX formula_protection_type_idx ON formulas (protection_type_id);
+CREATE INDEX formula_protect_idx ON formulas (protect_id);
 
 --
 -- Indexes for table formula_elements
@@ -1659,7 +1668,7 @@ CREATE INDEX user_value_user_idx ON user_values (user_id);
 CREATE INDEX user_value_source_idx ON user_values (source_id);
 CREATE INDEX user_value_value_idx ON user_values (value_id);
 CREATE INDEX user_value_share_idx ON user_values (share_type_id);
-CREATE INDEX user_value_protection_idx ON user_values (protection_type_id);
+CREATE INDEX user_value_protection_idx ON user_values (protect_id);
 
 --
 -- Indexes for table user_values
@@ -1669,7 +1678,7 @@ ALTER TABLE user_value_time_series
 CREATE INDEX user_value_time_series_user_idx ON user_value_time_series (user_id);
 CREATE INDEX user_value_time_series_source_idx ON user_value_time_series (source_id);
 CREATE INDEX user_value_time_series_share_idx ON user_value_time_series (share_type_id);
-CREATE INDEX user_value_time_series_protection_idx ON user_value_time_series (protection_type_id);
+CREATE INDEX user_value_time_series_protection_idx ON user_value_time_series (protect_id);
 
 --
 -- Indexes for table user_views
@@ -1722,7 +1731,7 @@ CREATE INDEX value_user_idx ON "values" (user_id);
 CREATE INDEX value_source_idx ON "values" (source_id);
 CREATE INDEX value_phrase_group_idx ON "values" (phrase_group_id);
 CREATE INDEX value_time_word_idx ON "values" (time_word_id);
-CREATE INDEX value_protection_idx ON "values" (protection_type_id);
+CREATE INDEX value_protection_idx ON "values" (protect_id);
 
 --
 -- Indexes for table value_phrase_links
@@ -1799,7 +1808,7 @@ ALTER TABLE change_links
 ALTER TABLE formulas
     ADD CONSTRAINT formulas_fk_1 FOREIGN KEY (formula_type_id) REFERENCES formula_types (formula_type_id),
     ADD CONSTRAINT formulas_fk_2 FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protection_type_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT formulas_fk_3 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
 -- Constraints for table formula_elements

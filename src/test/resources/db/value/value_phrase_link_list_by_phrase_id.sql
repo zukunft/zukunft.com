@@ -7,6 +7,6 @@ PREPARE value_phrase_link_list_by_phrase_id (int) AS
            s.link_type_id,
            s.condition_formula_id,
            l.phrase_id
-    FROM value_phrase_links s
-             LEFT JOIN phrases l ON s.phrase_id = l.phrase_id
-    WHERE l.phrase_id = $1;
+      FROM value_phrase_links s
+ LEFT JOIN phrases l ON s.phrase_id = l.phrase_id
+     WHERE l.phrase_id = $1;
