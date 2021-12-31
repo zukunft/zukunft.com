@@ -335,16 +335,18 @@ class user_log_link extends user_log
         $db_con->set_type(DB_TYPE_CHANGE_LINK);
         $db_con->usr_id = $this->usr->id;
         $db_row = $db_con->get1_old($sql);
-        if (!$ex_time) {
-            $result .= $db_row['change_time'] . ' ';
-        }
-        if ($db_row['user_name'] <> '') {
-            $result .= $db_row['user_name'] . ' ';
-        }
-        if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
-            $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
-        } elseif ($db_row['old_text_from'] <> '' and $db_row['old_text_to'] <> '') {
-            $result .= 'unlinked ' . $db_row['old_text_from'] . ' from ' . $db_row['old_text_to'];
+        if ($db_row != null) {
+            if (!$ex_time) {
+                $result .= $db_row['change_time'] . ' ';
+            }
+            if ($db_row['user_name'] <> '') {
+                $result .= $db_row['user_name'] . ' ';
+            }
+            if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
+                $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
+            } elseif ($db_row['old_text_from'] <> '' and $db_row['old_text_to'] <> '') {
+                $result .= 'unlinked ' . $db_row['old_text_from'] . ' from ' . $db_row['old_text_to'];
+            }
         }
         // restore the type before saving the log
         $db_con->set_type($db_type);

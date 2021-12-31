@@ -253,7 +253,7 @@ class value_list
 
         // the id and the user must be set
         if (isset($this->phr_lst)) {
-            if (count($this->phr_lst->ids) > 0 and !is_null($this->usr->id)) {
+            if (count($this->phr_lst->ids()) > 0 and !is_null($this->usr->id)) {
                 log_debug('value_list->load_all for ' . $this->phr_lst->dsp_id());
                 $sql = $this->load_all_sql();
                 $db_con->usr_id = $this->usr->id;
@@ -285,8 +285,9 @@ class value_list
     {
 
         $sql_name = 'phr_lst_by_';
-        if (count($this->phr_lst->ids) > 0) {
-            $sql_name .= count($this->phr_lst->ids) . 'ids';
+        $phr_ids = $this->phr_lst->ids();
+        if (count($phr_ids) > 0) {
+            $sql_name .= count($phr_ids) . 'ids';
         } else {
             log_err("At lease on phrase ID must be set to load a value list.", "value_list->load_by_phr_lst_sql");
         }
@@ -295,7 +296,7 @@ class value_list
         $sql_where = '';
         $sql_from = '';
         $sql_pos = 0;
-        foreach ($this->phr_lst->ids as $phr_id) {
+        foreach ($phr_ids as $phr_id) {
             if ($phr_id > 0) {
                 $sql_pos = $sql_pos + 1;
                 $sql_from = $sql_from . " value_phrase_links l" . $sql_pos . ", ";
@@ -341,7 +342,7 @@ class value_list
         global $db_con;
 
         // the word list and the user must be set
-        if (count($this->phr_lst->ids) > 0 and !is_null($this->usr->id)) {
+        if (count($this->phr_lst->ids()) > 0 and !is_null($this->usr->id)) {
             $sql = $this->load_by_phr_lst_sql($db_con);
 
             if ($sql <> '') {
@@ -392,8 +393,7 @@ class value_list
         }
         $phr_lst = new phrase_list($this->usr);
         if (count($all_ids) > 0) {
-            $phr_lst->ids = $all_ids;
-            $phr_lst->load();
+            $phr_lst->load_by_ids($all_ids);
         }
         log_debug('value_list->time_lst (' . dsp_count($phr_lst->lst) . ')');
         return $phr_lst;
@@ -835,9 +835,9 @@ class value_list
                     if (count($val_phr_lst->lst) > 0) {
                         log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
                         if (empty($common_phr_ids)) {
-                            $common_phr_ids = $val_phr_lst->ids;
+                            $common_phr_ids = $val_phr_lst->ids();
                         } else {
-                            $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids);
+                            $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids());
                         }
                     }
                 }

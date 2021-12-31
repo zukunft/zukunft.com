@@ -110,7 +110,7 @@ function sql_code_link($code_id, $description, $db_con)
             // insert the missing row if needed
             if ($row_id <= 0) {
                 if ($db_type == 'view') {
-                    $db_con->insert(array(sql_db::FLD_CODE_ID, 'user_id'), array($code_id, SYSTEM_USER_ID));
+                    $db_con->insert(array(sql_db::FLD_CODE_ID, user::FLD_ID), array($code_id, SYSTEM_USER_ID));
                 } else {
                     // TODO for sys_log_type include the name db field
                     $db_con->insert(sql_db::FLD_CODE_ID, $code_id);

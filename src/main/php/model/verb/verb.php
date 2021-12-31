@@ -645,7 +645,9 @@ class verb
         return $result;
     }
 
-    // create a new verb
+    /**
+     * create a new verb
+     */
     private function add($db_con): string
     {
         log_debug('verb->add the verb ' . $this->dsp_id());

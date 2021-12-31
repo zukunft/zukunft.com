@@ -256,7 +256,7 @@ class formula_element_group
             // get the element word to be able to add it later to the value selection (differs for the element type)
             if ($frm_elm->type == 'word') {
                 if ($frm_elm->id > 0) {
-                    $val_phr_lst->add($frm_elm->obj);
+                    $val_phr_lst->add($frm_elm->obj->phrase());
                     log_debug('formula_element_group->figures -> include ' . $frm_elm->dsp_id() . ' in value selection');
                 }
             }
@@ -272,7 +272,7 @@ class formula_element_group
                     }
                 } else {
                     if ($frm_elm->wrd_id > 0) {
-                        $val_phr_lst->add($frm_elm->wrd_obj);
+                        $val_phr_lst->add($frm_elm->wrd_obj->phrase());
                     }
                     log_debug('formula_element_group->figures -> include formula word "' . $frm_elm->wrd_obj->name . '" (' . $frm_elm->wrd_id . ')');
                 }

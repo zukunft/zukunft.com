@@ -44,14 +44,12 @@ function run_value_ui_test(testing $t)
     $phr_lst_added->add_name(word::TN_2020);
     $phr_lst_ch = clone $phr_lst_added;
     $phr_lst_ch->add_name(word::TN_CH);
-    $phr_lst_ch->load();
     $phr_lst_added->add_name(word::TN_RENAMED);
-    $phr_lst_added->load();
     $val_added = new value($usr);
-    $val_added->ids = $phr_lst_added->ids;
+    $val_added->ids = $phr_lst_added->ids();
     $val_added->load();
     $val_ch = new value($usr);
-    $val_ch->ids = $phr_lst_ch->ids;
+    $val_ch->ids = $phr_lst_ch->ids();
     $val_ch->load();
 
     // call the add value page and check if at least some basic keywords are returned

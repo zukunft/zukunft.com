@@ -36,56 +36,79 @@
 
 class phrase_group
 {
+    /*
+     * database link
+     */
+
     // object specific database and JSON object field names
     const FLD_ID = 'phrase_group_id';
     const FLD_NAME = 'phrase_group_name';
     const FLD_DESCRIPTION = 'auto_description';
     const FLD_WORD_IDS = 'word_ids';
     const FLD_TRIPLE_IDS = 'triple_ids';
+    const FLD_ORDER = 'id_order';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_NAME,
         self::FLD_DESCRIPTION,
         self::FLD_WORD_IDS,
-        self::FLD_TRIPLE_IDS
+        self::FLD_TRIPLE_IDS,
+        self::FLD_ORDER
     );
+
+    /*
+     * object vars
+     */
 
     // database fields
     public ?int $id = null;                  // the database id of the word group
     public ?string $grp_name = null;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
     public ?string $auto_name = null;        // the automatically created generic name for the word group, used for a quick display of values
+    public ?phrase_list $phr_lst = null;     // the phrase list object
+    public ?string $id_order_txt = null;     // the ids from above in the order that the user wants to see them
+
+    // fields to deprecate
     public ?string $wrd_id_txt = null;       // text of all linked words in ascending order for fast search (this is the master and the link table "value_phrase_links" is the slave)
     public ?string $lnk_id_txt = null;       // text of all linked triples in ascending order for fast search (as $wrd_id_txt this is the master and a negative id in "value_phrase_links" is the slave)
-    public ?string $id_order_txt = null;     // the ids from above in the order that the user wants to see them
 
     // in memory only fields
     public ?user $usr = null;                // the user object of the person for whom the word and triple list is loaded, so to say the viewer
-    public ?array $ids = null;               // list of the phrase (word (positive id) or triple (negative id)) ids
-    //                                          this is set by the frontend scripts and converted here to retrieve or create a group
-    //                                          the order is always ascending for be able to use this as a index to select the group
     public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
     public ?array $wrd_ids = array();        // list of the word ids to load a list of words with one sql statement from the database
     public ?array $lnk_ids = array();        // list of the triple ids to load a list of words with one sql statement from the database
-    public ?phrase_list $phr_lst = null;     // the phrase list object
+
+    // fields to deprecate
     public ?word_list $wrd_lst = null;       // the word list object
     public ?word_link_list $lnk_lst = null;  // the triple (word_link) object
+    public ?array $ids = null;               // list of the phrase (word (positive id) or triple (negative id)) ids
+    //                                          this is set by the frontend scripts and converted here to retrieve or create a group
+    //                                          the order is always ascending for be able to use this as a index to select the group
 
-    function __construct()
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the user which is needed in all cases
+     * @param user $usr the user who requested to see this phrase group
+     */
+    function __construct(user $usr)
     {
+        $this->usr = $usr;
+
         $this->reset();
     }
 
     private function reset()
     {
         $this->id = null;
+        $this->phr_lst = new phrase_list($this->usr);
         $this->grp_name = '';
         $this->auto_name = '';
+
         $this->wrd_id_txt = '';
         $this->lnk_id_txt = '';
         $this->id_order_txt = '';
-
-        $this->usr = null;
 
         $this->ids = array();
         $this->id_order = array();
@@ -94,31 +117,145 @@ class phrase_group
 
         $this->wrd_lst = null;
         $this->lnk_lst = null;
-        $this->phr_lst = null;
     }
 
-    function row_mapper(array $db_row)
+    function row_mapper(array $db_row): bool
     {
+        $result = false;
+        $this->id = 0;
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {
                 $this->id = $db_row[self::FLD_ID];
                 $this->grp_name = $db_row[self::FLD_NAME];
                 $this->auto_name = $db_row[self::FLD_DESCRIPTION];
-                $this->wrd_id_txt = $db_row[self::FLD_WORD_IDS];
-                $this->lnk_id_txt = $db_row[self::FLD_TRIPLE_IDS];
-                $this->wrd_ids = explode(",", $this->wrd_id_txt);
-                $this->lnk_ids = explode(",", $this->lnk_id_txt);
-                $this->set_ids_from_wrd_or_lnk_ids();
-            } else {
-                $this->id = 0;
-                //$this->reset();
+                $this->phr_lst->add_by_ids(
+                    $db_row[self::FLD_WORD_IDS],
+                    $db_row[self::FLD_TRIPLE_IDS]
+                );
+                $this->load_lst();
+                $result = true;
             }
         }
+        return $result;
     }
 
     /*
     load functions - the set functions are used to define the loading selection criteria
     */
+
+    /**
+     * create an SQL statement to retrieve a phrase groups from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_' . $this->load_sql_name_ext();
+
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $this->load_sql_select_qp($db_con, $qp);
+    }
+
+    /**
+     * load the object parameters for all users
+     * @return bool true if the phrase group object has been loaded
+     */
+    function load(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql($db_con);
+
+        if ($qp->sql == '') {
+            log_err('Some ids for a ' . self::class . ' must be set to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_row = $db_con->get1($qp);
+            $result = $this->row_mapper($db_row);
+            if ($result and $this->phr_lst->empty()) {
+
+            }
+        }
+        return $result;
+    }
+
+    function load_by_lst_ids(array $ids): bool
+    {
+        $phr_lst = new phrase_list($this->usr);
+        $phr_lst->load_by_ids($ids);
+        // TODO review
+        $phr_lst->ex_time();
+        $this->phr_lst = $phr_lst;
+        return $this->load();
+    }
+
+    /**
+     * load the word and triple objects based on the ids load from the database
+     */
+    private function load_lst()
+    {
+        if (!$this->phr_lst->loaded()) {
+            $ids = $this->phr_lst->ids();
+            $this->phr_lst->load_by_ids($ids);
+        }
+    }
+
+
+    /**
+     * @return string the name of the SQL statement name extension based on the filled fields
+     */
+    private function load_sql_name_ext(): string
+    {
+        if ($this->id != 0) {
+            return 'id';
+        } elseif (count($this->phr_lst->wrd_ids()) > 0 and count($this->phr_lst->trp_ids()) > 0) {
+            return 'wrd_and_trp_ids';
+        } elseif (count($this->phr_lst->trp_ids()) > 0) {
+            return 'trp_ids';
+        } elseif (count($this->phr_lst->wrd_ids()) > 0) {
+            return 'wrd_ids';
+        } else {
+            log_err('Either the database ID (' . $this->id . ') or the ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                self::class, self::class . '->load');
+            return '';
+        }
+    }
+
+    /**
+     * add the select parameters to the query parameters
+     *
+     * @param sql_db $db_con the db connection object with the SQL name and others parameter already set
+     * @param sql_par $qp the query parameters with the name already set
+     * @return sql_par the query parameters with the select parameters added
+     */
+    private function load_sql_select_qp(sql_db $db_con, sql_par $qp): sql_par
+    {
+        $wrd_txt = implode(',', $this->phr_lst->wrd_ids());
+        $trp_txt = implode(',', $this->phr_lst->trp_ids());
+        if ($this->id != 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select();
+        } elseif ($wrd_txt != '' and $trp_txt != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $wrd_txt . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $trp_txt . "'");
+            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_TRIPLE_IDS, self::FLD_WORD_IDS));
+        } elseif ($trp_txt != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $trp_txt . "'");
+            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_TRIPLE_IDS));
+        } elseif ($wrd_txt != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $wrd_txt . "'");
+            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_WORD_IDS));
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
 
     // separate the words from the triples (word_links)
     // this also excludes automatically any empty ids
@@ -243,7 +380,6 @@ class phrase_group
         } else {
             $this->wrd_id_txt = dsp_array($this->wrd_ids);
         }
-        log_debug('phrase_group->set_wrd_id_txt to "' . $this->wrd_id_txt . '"');
     }
 
     // create the lnk_id_txt based on the lnk_ids
@@ -317,15 +453,15 @@ class phrase_group
             and !isset($this->lnk_lst)) {
             log_debug('phrase_group->set_ids_from_phr_lst from ' . $this->phr_lst->dsp_id());
             // reload the phrases if needed
-            if (!isset($this->phr_lst->ids)) {
-                $this->phr_lst->load();
+            if (count($this->phr_lst->ids()) > 0) {
+                $this->phr_lst->load_by_ids($this->phr_lst->ids());
             }
-            if (count($this->phr_lst->ids) > 0) {
+            if (count($this->phr_lst->ids()) > 0) {
                 $wrd_lst = $this->phr_lst->wrd_lst();
                 $wrd_lst->ex_time();
                 $this->wrd_ids = $wrd_lst->ids();
 
-                $lnk_lst = $this->phr_lst->lnk_lst();
+                $lnk_lst = $this->phr_lst->trp_lst();
                 //$lnk_lst->ex_time();
                 $this->lnk_ids = $lnk_lst->ids();
             }
@@ -444,77 +580,10 @@ class phrase_group
         return $sql_where;
     }
 
-    // load the phrase group from the database by the id, the word and triple ids or the list objects
-    function load()
-    {
-        log_debug('phrase_group->load ' . $this->dsp_id());
-
-        global $db_con;
-        $result = '';
-
-        // check the all minimal input parameters
-        if (!isset($this->usr)) {
-            log_err("The user id must be set to load a phrase group.", "phrase_group->load");
-        } else {
-            // build the database object because the is anyway needed
-            //$db_con = new mysql;
-            $db_con->usr_id = $this->usr->id;
-            $db_con->set_type(DB_TYPE_PHRASE_GROUP);
-
-            // set the where clause depending on the values given
-            $sql_where = '';
-            if ($this->id > 0) {
-                $sql_where = "phrase_group_id = " . $this->id;
-            }
-            $sql_where = $this->load_by_selector($sql_where);
-            log_debug('phrase_group->load where ' . $sql_where);
-
-            /*
-            } elseif (isset($this->wrd_lst) OR isset($this->lnk_lst)) {
-              $sql_where = $this->load_by_wrd_or_lnk_lst();
-            } elseif (isset($this->wrd_ids) OR isset($this->lnk_ids)) {
-              $sql_where = $this->load_by_wrd_or_lnk_ids();
-            }
-            */
-
-
-            if ($sql_where == '') {
-                // the id list can be empty, because not needed to check this always in the calling function, so maybe in a later stage this could be an info
-                log_info("Eiter the database id or the phrase ids or list must be set to define a group.", "phrase_group->load");
-            } else {
-                log_debug('phrase_group->load select where ' . $sql_where);
-                $db_con->set_type(DB_TYPE_PHRASE_GROUP);
-                $db_con->set_usr($this->usr->id);
-                $db_con->set_fields(array('auto_description', 'word_ids', 'triple_ids'));
-                $db_con->set_where_text($sql_where);
-                $sql = $db_con->select();
-
-                $db_grp = $db_con->get1_old($sql);
-                if ($db_grp != null) {
-                    if ($db_grp['phrase_group_id'] > 0) {
-                        $this->id = $db_grp['phrase_group_id'];
-                        $this->grp_name = $db_grp['phrase_group_name'];
-                        $this->auto_name = $db_grp['auto_description'];
-                        $this->wrd_id_txt = $db_grp['word_ids'];
-                        $this->lnk_id_txt = $db_grp['triple_ids'];
-                        $this->wrd_ids = explode(",", $this->wrd_id_txt);
-                        $this->lnk_ids = explode(",", $this->lnk_id_txt);
-                        $this->set_ids_from_wrd_or_lnk_ids();
-                    } else {
-                        $this->id = 0;
-                        //$this->reset();
-                    }
-                    log_debug('phrase_group->load got ' . $this->dsp_id());
-                } else {
-                    $this->id = 0;
-                }
-            }
-        }
-        return $result;
-    }
-
-    // load the word and triple objects based on the ids load from the database
-    function load_lst()
+    /**
+     * load the word and triple objects based on the ids load from the database
+     */
+    function load_lst_old()
     {
         log_debug('phrase_group->load_lst');
 
@@ -842,7 +911,7 @@ class phrase_group
         log_debug('phrase_group->names');
 
         // if not yet done, load, the words and triple list
-        $this->load_lst();
+        $this->load_lst_old();
 
         $result = array();
         if (isset($this->wrd_lst)) {
@@ -955,7 +1024,7 @@ class phrase_group
         $result = '';
 
         // if not yet done, load, the words and triple list
-        $this->load_lst();
+        $this->load_lst_old();
 
         $word_name = '';
         if (isset($this->wrd_lst)) {
@@ -1047,8 +1116,20 @@ class phrase_group
                     $db_con->usr_id = $this->usr->id;
                 }
                 $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+
+                $wrd_id_txt = implode(',', $this->phr_lst->wrd_ids());
+                if (strlen($wrd_id_txt) > 255) {
+                    log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
+                    $wrd_id_txt = zu_str_left($wrd_id_txt, 255);
+                }
+                $trp_id_txt = implode(',', $this->phr_lst->trp_ids());
+                if (strlen($trp_id_txt) > 255) {
+                    log_err('Too many triple assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
+                    $trp_id_txt = zu_str_left($trp_id_txt, 255);
+                }
+
                 $this->id = $db_con->insert(array('word_ids', 'triple_ids', 'auto_description'),
-                    array($this->wrd_id_txt, $this->lnk_id_txt, $this->auto_name));
+                    array($wrd_id_txt, $trp_id_txt, $this->auto_name));
             } else {
                 log_err('Either a word (' . $this->wrd_id_txt . ') or triple (' . $this->lnk_id_txt . ')  must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
             }

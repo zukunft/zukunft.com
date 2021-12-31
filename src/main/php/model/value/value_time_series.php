@@ -97,7 +97,7 @@ class value_time_series extends user_sandbox_display
     {
         parent::reset();
 
-        $this->grp = new phrase_group();
+        $this->grp = new phrase_group($this->usr);
         $this->source = null;
 
         $this->last_update = new DateTime();
@@ -219,6 +219,10 @@ class value_time_series extends user_sandbox_display
 
     /**
      * add a new time series
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
      */
     function add(): user_message
     {

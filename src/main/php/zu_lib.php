@@ -1234,6 +1234,26 @@ list functions (to be dismissed / replaced by objects)
 */
 
 /**
+ * remove all empty string entries from an array
+ * @param array|null $in_array the array with empty strings or string with leading spaces
+ * @return array the value comma seperated or "null" if the array is empty
+ */
+function array_trim(?array $in_array): array
+{
+    $result = array();
+    if ($in_array != null) {
+        foreach ($in_array as $item) {
+            if (trim($item) <> '') {
+                $result[] = trim($item);
+            }
+        }
+    }
+    return $result;
+}
+
+
+
+/**
  * create a human-readable string from an array
  * @param array|null $in_array the array that should be formatted
  * @return string the value comma seperated or "null" if the array is empty
@@ -1280,22 +1300,6 @@ function sql_array(array $in_array): string
     if ($in_array != null) {
         if (count($in_array) > 0) {
             $result = implode(',', $in_array);
-        }
-    }
-    return $result;
-}
-
-/**
- * trim each array value and exclude empty values
- * @param array $in_array with leading spaces or empty strings
- * @return array without leading spaces or empty strings
- */
-function array_trim(array $in_array): array
-{
-    $result = array();
-    for ($i = 0; $i < count($in_array); $i++) {
-        if (trim($in_array[$i]) != '') {
-            $result[] = trim($in_array[$i]);
         }
     }
     return $result;

@@ -1,4 +1,4 @@
-PREPARE phrase_list_by_ids_word_part FROM
+PREPARE phrase_list_by_3ids_word_part FROM
     'SELECT
         s.word_id,
         u.word_id AS user_word_id,

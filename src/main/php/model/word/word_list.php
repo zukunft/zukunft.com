@@ -350,9 +350,11 @@ class word_list
         return $added_wrd_lst;
     }
 
-    // returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
-    // ex foaf_parent
-    function foaf_parents($verb_id)
+    /**
+     * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
+     * ex foaf_parent
+     */
+    function foaf_parents($verb_id): word_list
     {
         log_debug('word_list->foaf_parents (type id ' . $verb_id . ')');
         $level = 0;
@@ -903,7 +905,9 @@ class word_list
         return $result;
     }
 
-    // add one word to the word list, but only if it is not yet part of the word list
+    /**
+     * add one word to the word list, but only if it is not yet part of the word list
+     */
     function add($wrd_to_add)
     {
         log_debug('word_list->add ' . $wrd_to_add->dsp_id());
@@ -915,7 +919,9 @@ class word_list
         }
     }
 
-    // add one word by the id to the word list, but only if it is not yet part of the word list
+    /**
+     * add one word by the id to the word list, but only if it is not yet part of the word list
+     */
     function add_id($wrd_id_to_add)
     {
         log_debug('word_list->add_id (' . $wrd_id_to_add . ')');
@@ -1332,7 +1338,8 @@ class word_list
         log_debug('word_list->view_lst');
 
         foreach ($this->lst as $wrd) {
-            $view = $wrd->view();
+            $wrd_dsp = $wrd->dsp_obj();
+            $view = $wrd_dsp->view();
             if (isset($view)) {
                 $is_in_list = false;
                 foreach ($result as $check_view) {
@@ -1510,7 +1517,7 @@ class word_list
         log_debug('word_list->get_grp');
         $grp = null;
 
-        $grp = new phrase_group;
+        $grp = new phrase_group($this->usr);
         // check the needed data consistency
         if (isset($this->lst)) {
             if (count($this->lst) > 0) {
@@ -1524,10 +1531,9 @@ class word_list
         if (count($this->ids) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
-            $grp = new phrase_group;
+            $grp = new phrase_group($this->usr);
             $grp->wrd_lst = clone $this;
             $grp->ids = $this->ids;
-            $grp->usr = $this->usr;
             $grp->get();
         }
 
@@ -1548,7 +1554,9 @@ class word_list
         return $grp;
     }
 
-    // convert the word list object into a phrase list object
+    /**
+     * convert the word list object into a phrase list object
+     */
     function phrase_lst(): phrase_list
     {
         log_debug('word_list->phrase_lst ' . $this->dsp_id());
@@ -1559,7 +1567,7 @@ class word_list
             } elseif (get_class($wrd) == phrase::class) {
                 $phr_lst->lst[] = $wrd;
             } else {
-                log_err('unexpected objecttype ' . get_class($wrd));
+                log_err('unexpected object type ' . get_class($wrd));
             }
         }
         $phr_lst->ids();

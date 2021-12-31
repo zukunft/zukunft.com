@@ -199,19 +199,32 @@ class source extends user_sandbox_named
         $qp = parent::load_sql($db_con, self::class);
         if ($this->id != 0) {
             $qp->name .= 'id';
+        } elseif ($this->code_id != '') {
+            $qp->name .= sql_db::FLD_CODE_ID;
         } elseif ($this->name != '') {
             $qp->name .= 'name';
         } else {
-            log_err("Either the database ID (" . $this->id . ") or the source name (" . $this->name . ") and the user (" . $this->usr->id . ") must be set to load a word.", "word->load");
+            log_err('Either the database ID (' . $this->id . ') or the ' .
+                $class . ' name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                $class, $class . '->load');
         }
 
         $db_con->set_type(DB_TYPE_SOURCE);
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_where($this->id, $this->name, $this->code_id);
-        $qp->sql = $db_con->select();
+        if ($this->id != 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select();
+        } elseif ($this->code_id != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->code_id . "'");
+            $qp->sql = $db_con->select_by_code_id();
+        } elseif ($this->name != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $qp->sql = $db_con->select_by_name();
+        }
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -232,10 +245,10 @@ class source extends user_sandbox_named
             log_err("Either the database ID (" . $this->id . "), the name (" . $this->name . ") or the code_id (" . $this->code_id . ") and the user (" . $this->usr->id . ") must be set to load a source.", "source->load");
         } else {
 
-            $sql = $this->load_sql($db_con)->sql;
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() <> '') {
-                $db_row = $db_con->get1_old($sql);
+                $db_row = $db_con->get1($qp);
                 $this->row_mapper($db_row);
                 if ($this->id > 0) {
                     log_debug('source->load (' . $this->dsp_id() . ')');

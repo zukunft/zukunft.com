@@ -63,8 +63,6 @@ if ($usr->id > 0) {
     }
 
     if (count($phr_lst->lst) > 0) {
-        // TODO check if this is really needed, because add_name already does load
-        $phr_lst->load();
         $phr_lst = $phr_lst->are();
 
         log_debug("get_json.php ... phrase loaded.");

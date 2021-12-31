@@ -74,10 +74,7 @@ function run_formula_test(testing $t)
             $target = zu_dsp_bool(true);
             $t->dsp('formula->is_special for "' . $elm_frm->name . '"', $target, $result);
 
-            $phr_lst->add_name(word::TN_CH);
-            $phr_lst->add_name(word::TN_INHABITANT);
-            $phr_lst->add_name(word::TN_2019);
-            $phr_lst->load();
+            $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2019));
             $time_phr = $phr_lst->time_useful();
             $val = $elm_frm->special_result($phr_lst, $time_phr);
             $result = $val->number;
@@ -129,9 +126,7 @@ function run_formula_test(testing $t)
     $frm_pe = $t->load_formula(formula::TN_RATIO);
 
     $phr_lst = new phrase_list($t->usr1);
-    $phr_lst->add_name(word::TN_SHARE);
-    $phr_lst->add_name(word::TN_CHF);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_SHARE, word::TN_CHF));
 
     $phr_lst_all = $frm_pe->assign_phr_lst();
     $phr_lst = $phr_lst_all->filter($phr_lst);
@@ -147,12 +142,8 @@ function run_formula_test(testing $t)
 
     // test the calculation of one value
     $phr_lst = new phrase_list($t->usr1);
-    $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_2020);
-    // why is this word needed??
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->load();
+    // TODO check why is this word MIO is needed??
+    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_MIO));
 
     $frm = $t->load_formula(formula::TN_INCREASE);
     $fv_lst = $frm->to_num($phr_lst, $back);
@@ -180,7 +171,7 @@ function run_formula_test(testing $t)
         $result = '';
     }
     $target = '0.0078718332961637';
-    $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+    $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
     // test the scaling mainly to check the scaling handling of the results later
     // TODO remove any scaling words from the phrase list if the result word is of type scaling
@@ -193,16 +184,12 @@ function run_formula_test(testing $t)
         $result = '';
     }
     $target = '8505251.0';
-    $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+    $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
-    // test the scaling back to thousand
+    // test the scaling back to a thousand
     $phr_lst = new phrase_list($t->usr1);
-    $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_2020);
-    // why is this word needed??
-    $phr_lst->add_name(word::TN_ONE);
-    $phr_lst->load();
+    // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
+    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_ONE));
     $frm_scale_one_to_k = $t->load_formula(formula::TN_SCALE_TO_K);
     $fv_lst = $frm_scale_one_to_k->calc($phr_lst, $back);
     if (isset($fv_lst)) {
@@ -211,7 +198,7 @@ function run_formula_test(testing $t)
         $result = '';
     }
     $target = 8505.251;
-    $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id() . '', $target, $result);
+    $t->dsp('formula->calc "' . $frm->name . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
     // load the test ids
     $wrd_percent = $t->load_word('percent');
@@ -224,20 +211,20 @@ function run_formula_test(testing $t)
     $exp = $frm->expression();
     $result = $exp->dsp_id();
     $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'})';
-    $t->dsp('formula->expression for ' . $frm->dsp_id() . '', $target, $result);
+    $t->dsp('formula->expression for ' . $frm->dsp_id(), $target, $result);
 
     $result = $frm->name;
     $target = 'System Test Formula Increase';
-    $t->dsp('formula->name for ' . $frm->dsp_id() . '', $target, $result);
+    $t->dsp('formula->name for ' . $frm->dsp_id(), $target, $result);
 
     $result = $frm_dsp->dsp_text($back);
     $target = '"percent" = ( <a href="/http/formula_edit.php?id='.$frm_this->id.'&back=0">this</a> - <a href="/http/formula_edit.php?id='.$frm_prior->id.'&back=0">prior</a> ) / <a href="/http/formula_edit.php?id='.$frm_prior->id.'&back=0">prior</a>';
-    $t->dsp('formula->dsp_text for ' . $frm->dsp_id() . '', $target, $result);
+    $t->dsp('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
     $frm_increase = $t->load_formula(formula::TN_INCREASE);
     $result = $frm_dsp->name_linked($back);
     $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id . '&back=0">' . formula::TN_INCREASE . '</a>';
-    $t->dsp('formula->display for ' . $frm->dsp_id() . '', $target, $result);
+    $t->dsp('formula->display for ' . $frm->dsp_id(), $target, $result);
 
     $wrd = new word_dsp($t->usr1);
     $wrd->name = word::TN_CH;

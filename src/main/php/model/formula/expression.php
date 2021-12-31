@@ -177,9 +177,8 @@ class expression
 
             // load the word parameters
             $phr_lst = new phrase_list($this->usr);
-            $phr_lst->ids = $wrd_ids;
             if (!empty($wrd_ids)) {
-                $phr_lst->load();
+                $phr_lst->load_by_ids($wrd_ids);
             }
         }
 
@@ -405,16 +404,15 @@ class expression
                 if (isset($elm->wrd_obj)) {
                     $phr = $elm->wrd_obj->phrase();
                     $phr_lst->lst[] = $phr;
-                    $phr_lst->ids[] = $phr->id;
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id . '.', 'expression->phr_verb_lst');
                 }
             } else {
                 $phr_lst->lst[] = $elm;
-                $phr_lst->ids[] = $elm->id;
             }
         }
-        $phr_lst->load();
+        // TODO check if the phrases are already loaded
+        //$phr_lst->load();
         log_debug('expression->phr_verb_lst -> ' . dsp_count($phr_lst->lst));
         return $phr_lst;
     }
@@ -432,12 +430,13 @@ class expression
                     or $elm->frm_type == formula::NEXT
                     or $elm->frm_type == formula::PREV) {
                     $phr_lst->lst[] = $elm->wrd_obj;
-                    $phr_lst->ids[] = $elm->wrd_id;
                 }
             }
+            /* TODO check if the phrases are already loaded
             if (!empty($phr_lst->lst)) {
                 $phr_lst->load();
             }
+            */
         }
 
         log_debug('expression->element_special_following -> ' . dsp_count($phr_lst->lst));

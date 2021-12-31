@@ -51,7 +51,27 @@ class word_link_unit_tests
 
         // sql to load a triple by id
         $trp = new word_link($usr);
-        $trp->id = 3;
+        $trp->id = 1;
+        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_standard_sql($db_con, $trp);
+
+        // sql to load a triple by name
+        $trp = new word_link($usr);
+        $trp->name = phrase::TN_ZH_COMPANY;
+        $t->assert_load_sql($db_con, $trp);
+        $t->assert_load_standard_sql($db_con, $trp);
+
+        // sql to load a triple by link ids
+        $trp = new word_link($usr);
+        $wrd_from = new word($usr);
+        $wrd_from->id = 2;
+        $vrb = new verb($usr);
+        $vrb->id = 3;
+        $wrd_to = new word($usr);
+        $wrd_to->id = 4;
+        $trp->from = $wrd_from->phrase();
+        $trp->verb = $vrb;
+        $trp->to = $wrd_to->phrase();
         $t->assert_load_sql($db_con, $trp);
         $t->assert_load_standard_sql($db_con, $trp);
 

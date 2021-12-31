@@ -43,8 +43,7 @@ function run_graph_test(testing $t)
 
     // step 1: define the phrase list e.g. in this case only the test word for city
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_CITY);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_CITY));
 
     // step 2: get all values related to the phrases
     $val_lst = new value_list($usr);
@@ -55,7 +54,7 @@ function run_graph_test(testing $t)
     // step 3: get all phrases used for the value descriptions
     $phr_lst_used = new phrase_list($usr);
     foreach ($wrd_lst_all->lst as $wrd) {
-        if (!array_key_exists($wrd->id, $phr_lst_used->ids)) {
+        if (!array_key_exists($wrd->id, $phr_lst_used->ids())) {
             $phr_lst_used->add($wrd->phrase());
         }
     }
@@ -79,10 +78,7 @@ function run_graph_test(testing $t)
 
     // similar to above, but just for the zurich
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_ZH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_ZH, word::TN_INHABITANT, word::TN_MIO));
     $lnk_lst = new word_link_list;
     $lnk_lst->usr = $usr;
     $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();

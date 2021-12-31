@@ -45,10 +45,8 @@ function run_phrase_group_test(testing $t)
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
     $wrd_lst->load();
-    $phr_grp = new phrase_group;
-    $phr_grp->usr = $usr;
-    $phr_grp->ids = $wrd_lst->ids;
-    $phr_grp->load();
+    $phr_grp = new phrase_group($usr);
+    $phr_grp->load_by_lst_ids($wrd_lst->ids);
     $result = $phr_grp->id;
     $target = 0;
     if ($result > 0) {
@@ -60,10 +58,8 @@ function run_phrase_group_test(testing $t)
     // ... and if the time word is correctly excluded
     $wrd_lst->add_name(word::TN_2020);
     $wrd_lst->load();
-    $phr_grp = new phrase_group;
-    $phr_grp->usr = $usr;
-    $phr_grp->ids = $wrd_lst->ids;
-    $phr_grp->load();
+    $phr_grp = new phrase_group($usr);
+    $phr_grp->load_by_lst_ids($wrd_lst->ids);
     $result = $phr_grp->id;
     //if ($result > 0 and $result != $id_without_year) {
     // actually the group id with time word is supposed to the the same as the phrase group id without time word because the time word is not included in the phrase group
@@ -74,11 +70,9 @@ function run_phrase_group_test(testing $t)
 
     // load based on id
     if ($phr_grp->id > 0) {
-        $phr_grp_reload = new phrase_group;
-        $phr_grp_reload->usr = $usr;
+        $phr_grp_reload = new phrase_group($usr);
         $phr_grp_reload->id = $phr_grp->id;
         $phr_grp_reload->load();
-        $phr_grp_reload->load_lst();
         $wrd_lst_reloaded = $phr_grp_reload->wrd_lst;
         $result = implode(",", $wrd_lst_reloaded->names());
         $target = word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
@@ -87,12 +81,8 @@ function run_phrase_group_test(testing $t)
 
     // test getting the phrase group id based on word and word link ids
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(phrase::TN_ZH_CITY);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->load();
-    $zh_city_grp = new phrase_group;
-    $zh_city_grp->usr = $usr;
-    $zh_city_grp->ids = $phr_lst->ids;
+    $phr_lst->load_by_names(array(phrase::TN_ZH_CITY, word::TN_INHABITANT));
+    $zh_city_grp = $phr_lst->get_grp();
     $result = $zh_city_grp->get_id();
     if ($result > 0) {
         $target = $result;
@@ -106,13 +96,9 @@ function run_phrase_group_test(testing $t)
 
     // test if the phrase group links are correctly recreated when a group is updated
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_ZH);
-    $phr_lst->add_name(word::TN_CANTON);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT));
     $grp = $phr_lst->get_grp();
-    $grp_check = new phrase_group;
-    $grp_check->usr = $usr;
+    $grp_check = new phrase_group($usr);
     $grp_check->id = $grp->id;
     $grp_check->load();
     $result = $grp_check->load_link_ids();
@@ -121,15 +107,9 @@ function run_phrase_group_test(testing $t)
 
     // second test if the phrase group links are correctly recreated when a group is updated
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_ZH);
-    $phr_lst->add_name(word::TN_CANTON);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->add_name(word::TN_2020);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $grp = $phr_lst->get_grp();
-    $grp_check = new phrase_group;
-    $grp_check->usr = $usr;
+    $grp_check = new phrase_group($usr);
     $grp_check->id = $grp->id;
     $grp_check->load();
     $result = $grp_check->load_link_ids();

@@ -109,7 +109,7 @@ class button {
       if (get_class($phr_lst) <> phrase_list::class) {
         log_err("Object to add must be of type phrase_list, but it is ".get_class($phr_lst).".", "button->add_value", '', (new Exception)->getTraceAsString(), null);
       } else {
-        if (!empty($phr_lst->ids)) {
+        if (!empty($phr_lst->ids())) {
           $this->title = "add new value similar to ".$phr_lst->name();
         } else {
           $this->title = "add new value";

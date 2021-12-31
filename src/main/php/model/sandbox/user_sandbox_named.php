@@ -227,15 +227,18 @@ class user_sandbox_named extends user_sandbox
 
     /**
      * create a new named object
-     * returns the id of the creates object
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
      * TODO do a rollback in case of an error
      */
-    function add(): string
+    function add(): user_message
     {
         log_debug($this->obj_name . '->add ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
+        $result = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -252,10 +255,10 @@ class user_sandbox_named extends user_sandbox
                 log_debug($this->obj_name . '->add ' . $this->obj_type . ' ' . $this->dsp_id() . ' has been added');
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
-                    $result .= 'Updating the reference in the log failed';
+                    $result->add_message('Updating the reference in the log failed');
                     // TODO do rollback or retry?
                 } else {
-                    //$result .= $this->set_owner($new_owner_id);
+                    //$result->add_message($this->set_owner($new_owner_id));
 
                     // create an empty db_rec element to force saving of all set fields
                     $db_rec = clone $this;
@@ -264,11 +267,11 @@ class user_sandbox_named extends user_sandbox
                     $db_rec->usr = $this->usr;
                     $std_rec = clone $db_rec;
                     // save the object fields
-                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                 }
 
             } else {
-                $result .= 'Adding ' . $this->obj_type . ' ' . $this->dsp_id() . ' failed due to logging error.';
+                $result->add_message('Adding ' . $this->obj_type . ' ' . $this->dsp_id() . ' failed due to logging error.');
             }
         }
 

@@ -112,6 +112,7 @@ class formula_list
                 log_debug('formula_list->load by (' . $sql_where . ')');
                 // the formula name is excluded from the user sandbox to avoid confusion
                 $sql = "SELECT f.formula_id,
+                          u.formula_id AS user_formula_id,
                        f.formula_name,
                        f.user_id,
                     " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
@@ -121,7 +122,9 @@ class formula_list
                     " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
                     " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
                     " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_SHARE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_PROTECT, 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM " . $sql_from . " 
              LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
                                       AND u.user_id = " . $this->usr->id . " 

@@ -34,12 +34,11 @@
 class phrase_list
 {
 
-    public array $lst = array();   // array of the loaded phrase objects
-    //                                (key is at the moment the database id, but it looks like this has no advantages,
-    //                                so a normal 0 to n order could have more advantages)
-    // TODO remove the separate id list and replace it with functions
-    public ?array $ids = array();  // array of ids corresponding to the lst->id to load a list of phrases from the database
-    public ?user $usr = null;      // the user object of the person for whom the phrase list is loaded, so to say the viewer
+    // array of the loaded phrase objects
+    // (key is at the moment the database id, but it looks like this has no advantages,
+    // so a normal 0 to n order could have more advantages)
+    public array $lst = array();
+    public user $usr;      // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
     /**
      * always set the user because a phrase list is always user specific
@@ -56,9 +55,7 @@ class phrase_list
     function dsp_obj(): object
     {
         $dsp_obj = new phrase_list_dsp($this->usr);
-
         $dsp_obj->lst = $this->lst;
-
         return $dsp_obj;
     }
 
@@ -76,7 +73,7 @@ class phrase_list
     function load_by_wrd_ids_sql(sql_db $db_con, array $ids): sql_par
     {
         $qp = new sql_par();
-        $qp->name = self::class . '_by_ids_word_part';
+        $qp->name = self::class . '_by_' . count($ids) . 'ids_word_part';
 
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_name($qp->name);
@@ -101,7 +98,7 @@ class phrase_list
     function load_by_trp_ids_sql(sql_db $db_con, array $ids): sql_par
     {
         $qp = new sql_par();
-        $qp->name = self::class . '_by_ids_triple_part';
+        $qp->name = self::class . '_by_' . count($ids) . 'ids_triple_part';
 
         $db_con->set_type(DB_TYPE_TRIPLE);
         $db_con->set_name($qp->name);
@@ -127,6 +124,9 @@ class phrase_list
     {
         global $db_con;
         $result = false;
+
+        // clear list before loading
+        $this->lst = array();
 
         // split the ids by type
         $wrd_ids = [];
@@ -172,7 +172,7 @@ class phrase_list
 
     /**
      * load the phrases selected by the given names
-     * TODO create SQL loading
+     * TODO create one fast SQL loading statement
      *
      * @param array $names of phrase names that should be loaded
      * @return bool true if at least one phrase has been loaded
@@ -181,59 +181,74 @@ class phrase_list
     {
         $result = false;
 
-        if ($this->count($names) > 0) {
+        // clear list before loading
+        $this->lst = array();
+
+        if (count($names) > 0) {
+            foreach ($names as $name) {
+                $wrd = new word($this->usr);
+                $wrd->name = $name;
+                $wrd->load();
+                if ($wrd->id <> 0) {
+                    $this->lst[] = $wrd->phrase();
+                } else {
+                    $trp = new word_link($this->usr);
+                    $trp->name = $name;
+                    $trp->load();
+                    if ($trp->id <> 0) {
+                        $this->lst[] = $trp->phrase();
+                    } else {
+                        log_warning('Cannot load ' . $name);
+                    }
+                }
+
+            }
             $result = true;
         }
 
         return $result;
     }
 
-    // load the phrases based on the id list or set the id list based on the objects
-    function load(): bool
+    /**
+     * add the given phrase ids to the list without loading the phrases from the database
+     *
+     * @param array $wrd_ids of word ids
+     * @param array $trp_ids of triple ids
+     * @return void
+     */
+    function add_by_ids(?string $wrd_ids_txt, ?string $trp_ids_txt)
     {
-        log_debug('phrase_list->load ' . $this->dsp_id());
-        $result = false;
-
-        // check the parameters
-        if (empty($this->usr)) {
-            log_err('User must be set to load ' . $this->dsp_id(), 'phrase_list->load');
-
-        } elseif (empty($this->lst)) {
-            if (empty($this->ids)) {
-                log_err('The id list must be set to load ' . $this->dsp_id(), 'phrase_list->load');
-            } else {
-
-                // load objects by id
-                // TODO speed up by loading all with one database statement
-                $this->lst = array();
-                foreach ($this->ids as $phr_id) {
-                    if ($phr_id <> 0) {
+        // add the word ids
+        $ids = $this->ids();
+        if ($wrd_ids_txt != null) {
+            if ($wrd_ids_txt != '') {
+                $wrd_ids = explode(",", $wrd_ids_txt);
+                foreach ($wrd_ids as $id) {
+                    if (!in_array($id, $ids)) {
                         $phr = new phrase($this->usr);
-                        $phr->id = $phr_id;
-                        $phr->load();
+                        $phr->id = $id;
                         $this->lst[] = $phr;
-                        $result = true;
-                        log_debug('phrase_list->load -> add ' . $phr->dsp_id());
+                        $ids[] = $id;
                     }
                 }
             }
+        }
 
-        } elseif (empty($this->ids)) {
-            if (empty($this->lst)) {
-                log_err('The phrase list must be set to load ' . $this->dsp_id(), 'phrase_list->load');
-            } else {
-
-                // refresh the id list
-                $this->ids();
+        // add the triple ids
+        if ($trp_ids_txt != null) {
+            if ($trp_ids_txt != '') {
+                $trp_ids = explode(",", $trp_ids_txt);
+                foreach ($trp_ids as $id) {
+                    $id = $id * -1;
+                    if (!in_array($id, $ids)) {
+                        $phr = new phrase($this->usr);
+                        $phr->id = $id;
+                        $this->lst[] = $phr;
+                        $ids[] = $id;
+                    }
+                }
             }
         }
-
-        // check the consistency
-        if (count($this->ids) <> count($this->lst)) {
-            log_err('Inconsistency when load ' . $this->dsp_id(), 'phrase_list->load');
-        }
-
-        return $result;
     }
 
     /**
@@ -287,10 +302,12 @@ class phrase_list
         return $wrd_lst;
     }
 
-    // get a word list from the phrase list
+    /**
+     * get a word list from the phrase list
+     * @return word_list list of the words from the phrase list
+     */
     function wrd_lst(): word_list
     {
-        log_debug('phrase_list->wrd_lst for ' . $this->dsp_id());
         $wrd_lst = new word_list;
         $wrd_lst->usr = $this->usr;
         if (isset($this->lst)) {
@@ -302,42 +319,27 @@ class phrase_list
                 }
             }
         }
-        log_debug('phrase_list->wrd_lst -> ' . $wrd_lst->dsp_id());
         return $wrd_lst;
     }
 
-    // get a triple list from the phrase list
-    function lnk_lst(): word_link_list
+    /**
+     * get a triple list from the phrase list
+     * @return word_link_list list of the triples from the phrase list
+     */
+    function trp_lst(): word_link_list
     {
-        log_debug('phrase_list->lnk_lst for ' . $this->dsp_id());
-        $lnk_lst = new word_link_list;
-        $lnk_lst->usr = $this->usr;
+        $trp_lst = new word_link_list;
+        $trp_lst->usr = $this->usr;
         if (isset($this->lst)) {
             foreach ($this->lst as $phr) {
                 if ($phr->id < 0) {
                     if (isset($phr->obj)) {
-                        $lnk_lst->add($phr->obj);
+                        $trp_lst->add($phr->obj);
                     }
                 }
             }
         }
-        log_debug('phrase_list->lnk_lst -> ' . $lnk_lst->dsp_id());
-        return $lnk_lst;
-    }
-
-    // collect all triples from the phrase list
-    function wrd_lnk_lst(): word_link_list
-    {
-        //zu_debug('phrase_list->wrd_lnk_lst for '.$this->dsp_id());
-
-        $lnk_lst = new word_link_list;
-        $lnk_lst->wrd_lst = $this->wrd_lst();
-        $lnk_lst->usr = $this->usr;
-        $lnk_lst->direction = 'up';
-        $lnk_lst->load();
-
-        //zu_debug('phrase_list->wrd_lnk_lst -> '.$lnk_lst->dsp_id());
-        return $lnk_lst;
+        return $trp_lst;
     }
 
     /*
@@ -379,9 +381,11 @@ class phrase_list
 
     */
 
-    // returns a list of phrases, that characterises the given phrase e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
-    // ex foaf_parent
-    function foaf_parents($verb_id)
+    /**
+     * @returns array a list of phrases, that characterises the given phrase e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
+     * ex foaf_parent
+     */
+    function foaf_parents($verb_id): phrase_list
     {
         log_debug('phrase_list->foaf_parents (type id ' . $verb_id . ')');
         $wrd_lst = $this->wrd_lst_all();
@@ -410,7 +414,7 @@ class phrase_list
     // ex foaf_child
     function foaf_children($verb_id)
     {
-        log_debug('phrase_list->foaf_children type ' . $verb_id . '');
+        log_debug('phrase_list->foaf_children type ' . $verb_id);
         $added_phr_lst = null;
 
         if ($verb_id > 0) {
@@ -428,7 +432,7 @@ class phrase_list
     // ex foaf_child_step
     function children($verb_id, $level)
     {
-        log_debug('phrase_list->children type ' . $verb_id . '');
+        log_debug('phrase_list->children type ' . $verb_id);
         $wrd_lst = $this->wrd_lst_all();
         $added_wrd_lst = $wrd_lst->children($verb_id, $level);
         $added_phr_lst = $added_wrd_lst->phrase_lst();
@@ -466,10 +470,38 @@ class phrase_list
         return $phr_lst;
     }
 
-    // returns the number of phrases in this list
+    /**
+     * @returns int the number of phrases in this list
+     */
     function count(): int
     {
         return count($this->lst);
+    }
+
+    /**
+     * @returns bool true if the phrase list is empty
+     */
+    function empty(): bool
+    {
+        if ($this->count() <= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @returns bool true if all phrases of the list have a name and an id
+     */
+    function loaded(): bool
+    {
+        $result = true;
+        foreach ($this->lst as $phr) {
+            if ($phr->id == 0 or $phr->name == '') {
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     // makes sure that all combinations of "are" and "contains" are included
@@ -570,7 +602,6 @@ class phrase_list
         global $word_types;
 
         $result = '';
-        $result = false;
         foreach ($json_obj as $value) {
             if ($value != '') {
                 $phr = new phrase($this->usr);
@@ -645,19 +676,63 @@ class phrase_list
         return $result;
     }
 
-    // return a list of the phrase ids
+    /**
+     * @return array with the sorted phrase ids where a triple has a negative id
+     */
     function ids(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $phr) {
-                // use only valid ids
-                if ($phr->id <> 0) {
-                    $result[] = $phr->id;
+        if ($this->lst != null) {
+            if (count($this->lst) > 0) {
+                foreach ($this->lst as $phr) {
+                    // use only valid ids
+                    if ($phr->id <> 0) {
+                        $result[] = $phr->id;
+                    }
                 }
             }
         }
-        $this->ids = $result;
+        asort($result);
+        return $result;
+    }
+
+    /**
+     * @return array with the word ids
+     */
+    function wrd_ids(): array
+    {
+        $result = array();
+        if ($this->lst != null) {
+            if (count($this->lst) > 0) {
+                foreach ($this->lst as $phr) {
+                    // use only valid word ids
+                    if ($phr->id > 0) {
+                        $result[] = $phr->id;
+                    }
+                }
+            }
+        }
+        asort($result);
+        return $result;
+    }
+
+    /**
+     * @return array with the triple ids
+     */
+    function trp_ids(): array
+    {
+        $result = array();
+        if ($this->lst != null) {
+            if (count($this->lst) > 0) {
+                foreach ($this->lst as $phr) {
+                    // use only valid triple ids
+                    if ($phr->id < 0) {
+                        $result[] = $phr->id;
+                    }
+                }
+            }
+        }
+        asort($result);
         return $result;
     }
 
@@ -684,14 +759,16 @@ class phrase_list
      * display functions
      */
 
-    // return best possible id for this element mainly used for debugging
+    /**
+     * return best possible id for this element mainly used for debugging
+     */
     function dsp_id(): string
     {
         $name = $this->name();
         if ($name <> '""') {
-            $result = $name . ' (' . dsp_array($this->ids) . ')';
+            $result = $name . ' (' . dsp_array($this->ids()) . ')';
         } else {
-            $result = dsp_array($this->ids);
+            $result = dsp_array($this->ids());
         }
 
         /* the user is in most cases no extra info
@@ -729,7 +806,7 @@ class phrase_list
     }
 
     // true if the phrase is part of the phrase list
-    function does_contain($phr_to_check)
+    function does_contain($phr_to_check): bool
     {
         $result = false;
 
@@ -742,40 +819,37 @@ class phrase_list
         return $result;
     }
 
-    // add one phrase to the phrase list, but only if it is not yet part of the phrase list
-    function add($phr_to_add)
+    /**
+     * add one phrase to the phrase list, but only if it is not yet part of the phrase list
+     */
+    function add(?phrase $phr_to_add)
     {
-        log_debug('phrase_list->add ' . $phr_to_add->dsp_id());
         // check parameters
-        if (isset($phr_to_add)) {
-            // autocorrect word to phrase
-            if (get_class($phr_to_add) == word::class or get_class($phr_to_add) == word_dsp::class) {
-                log_debug('phrase_list->add change ' . $phr_to_add->dsp_id() . ' to phrase');
-                $phr_to_add = $phr_to_add->phrase();
-            }
+        if ($phr_to_add != null) {
+            log_debug('phrase_list->add ' . $phr_to_add->dsp_id());
             if (get_class($phr_to_add) <> phrase::class) {
                 log_err("Object to add must be of type phrase, but it is " . get_class($phr_to_add) . ".", "phrase_list->add");
             } else {
-                if ($phr_to_add->id <> 0 and isset($this->ids)) {
-                    if (!in_array($phr_to_add->id, $this->ids)) {
-                        if ($phr_to_add->id <> 0) {
+                if ($phr_to_add->id <> 0 or $phr_to_add->name != '') {
+                    if (count($this->ids()) > 0) {
+                        if (!in_array($phr_to_add->id, $this->ids())) {
                             $this->lst[] = $phr_to_add;
-                            $this->ids[] = $phr_to_add->id;
                         }
+                    } else {
+                        $this->lst[] = $phr_to_add;
                     }
-                } else {
-                    $this->lst[] = $phr_to_add;
-                    $this->ids[] = $phr_to_add->id;
                 }
             }
         }
     }
 
-    // add one phrase by the id to the phrase list, but only if it is not yet part of the phrase list
+    /**
+     * add one phrase by the id to the phrase list, but only if it is not yet part of the phrase list
+     */
     function add_id($phr_id_to_add)
     {
         log_debug('phrase_list->add_id (' . $phr_id_to_add . ')');
-        if (!in_array($phr_id_to_add, $this->ids)) {
+        if (!in_array($phr_id_to_add, $this->ids())) {
             if ($phr_id_to_add <> 0) {
                 $phr_to_add = new phrase($this->usr);
                 $phr_to_add->id = $phr_id_to_add;
@@ -812,19 +886,25 @@ class phrase_list
     function del($phr_to_del)
     {
         log_debug('phrase_list->del ' . $phr_to_del->name . ' (' . $phr_to_del->id . ')');
-        if (in_array($phr_to_del->id, $this->ids)) {
-            if (isset($this->ids)) {
-                $del_pos = array_search($phr_to_del->id, $this->ids());
-                unset ($this->ids[$del_pos]);
+        $phr_ids = $this->ids();
+        if (count($phr_ids) > 0) {
+            if (in_array($phr_to_del->id, $phr_ids)) {
+                $del_pos = array_search($phr_to_del->id, $phr_ids);
                 if (isset($this->lst)) {
-                    unset ($this->lst[$del_pos]);
+                    if ($this->lst[$del_pos]->id == $phr_to_del->id) {
+                        unset ($this->lst[$del_pos]);
+                    } else {
+                        log_err('Remove of ' . $phr_to_del->dsp_id() . ' failed');
+                    }
                 }
             }
         }
     }
 
-    // merge as a function, because the array_merge does not create a object
-    function merge($new_phr_lst)
+    /**
+     * merge as a function, because the array_merge does not create an object
+     */
+    function merge($new_phr_lst): phrase_list
     {
         log_debug('phrase_list->merge ' . $new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($new_phr_lst->lst)) {
@@ -868,7 +948,6 @@ class phrase_list
                     }
                 }
                 $result->lst = $phr_lst;
-                $result->ids = $result->ids();
             }
             log_debug('phrase_list->filter -> ' . $result->dsp_id());
         }
@@ -906,7 +985,6 @@ class phrase_list
                     }
                 }
                 $this->lst = $result;
-                $this->ids = $this->ids();
             }
         }
 
@@ -938,20 +1016,22 @@ class phrase_list
     }
     */
 
-    // similar to diff, but using an id array to exclude instaed of a phrase list object
+    /**
+     * similar to diff, but using an id array to exclude instead of a phrase list object
+     */
     function diff_by_ids($del_phr_ids)
     {
         $this->ids();
         foreach ($del_phr_ids as $del_phr_id) {
             if ($del_phr_id > 0) {
                 log_debug('phrase_list->diff_by_ids ' . $del_phr_id);
-                if ($del_phr_id > 0 and in_array($del_phr_id, $this->ids)) {
-                    $del_pos = array_search($del_phr_id, $this->ids);
+                if ($del_phr_id > 0 and in_array($del_phr_id, $this->ids())) {
+                    $del_pos = array_search($del_phr_id, $this->ids());
                     unset ($this->lst[$del_pos]);
                 }
             }
         }
-        $this->ids = array_diff($this->ids, $del_phr_ids);
+        //$this->ids = array_diff($this->ids, $del_phr_ids);
         log_debug('phrase_list->diff_by_ids -> ' . $this->dsp_id());
     }
 
@@ -1131,11 +1211,7 @@ class phrase_list
         $wrd_lst = $this->wrd_lst_all();
         $time_wrd = $wrd_lst->assume_time();
         if (isset($time_wrd)) {
-            if (get_class($time_wrd) == phrase::class) {
-                $time_phr = $time_wrd;
-            } else {
-                $time_phr = $time_wrd->phrase();
-            }
+            $time_phr = $time_wrd;
         }
         return $time_phr;
     }
@@ -1265,23 +1341,13 @@ class phrase_list
         log_debug('phrase_list->get_grp ' . $this->dsp_id());
         $grp = null;
 
-        // check the needed data consistency
-        if (isset($this->lst)) {
-            if (count($this->lst) > 0) {
-                if (count($this->ids) <> count($this->lst)) {
-                    $this->ids = $this->ids();
-                }
-            }
-        }
-
         // get or create the group
-        if (count($this->ids) <= 0) {
+        if (count($this->ids()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
-            $grp = new phrase_group;
+            $grp = new phrase_group($this->usr);
             $grp->phr_lst = $this;
-            $grp->ids = $this->ids;
-            $grp->usr = $this->usr;
+            $grp->ids = $this->ids();
             $grp->get();
         }
 
@@ -1325,7 +1391,6 @@ class phrase_list
             foreach ($join_phr_lst->lst as $phr) {
                 if (!in_array($phr, $result->lst)) {
                     $result->lst[] = $phr;
-                    $result->ids[] = $phr->id;
                 }
             }
         }
@@ -1421,10 +1486,12 @@ class phrase_list
      *
      * @return void
      */
-    function save()
+    function save(): string
     {
+        $result = '';
         foreach ($this->lst as $phr) {
-            $phr->save();
+            $result .= $phr->save();
         }
+        return $result;
     }
 }

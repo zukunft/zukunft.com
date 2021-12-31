@@ -208,7 +208,7 @@ class formula_link extends user_sandbox_link
         $result = false;
 
         if ($this->is_unique()) {
-            $sql = $this->load_standard_sql($db_con);
+            $sql = $this->load_standard_sql($db_con)->sql;
 
             if ($db_con->get_where() <> '') {
                 $db_frm = $db_con->get1_old($sql);
@@ -233,7 +233,7 @@ class formula_link extends user_sandbox_link
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_SHARE, user_sandbox::FLD_PROTECT));
         $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
         $qp->sql = $db_con->select();
 
@@ -257,7 +257,7 @@ class formula_link extends user_sandbox_link
         } else {
 
             if ($this->is_unique()) {
-                $sql = $this->load_sql($db_con);
+                $sql = $this->load_sql($db_con)->sql;
 
                 if ($db_con->get_where() <> '') {
                     $db_row = $db_con->get1_old($sql);
@@ -661,7 +661,7 @@ class formula_link extends user_sandbox_link
 
         if ($this->id <= 0) {
             log_debug('formula_link->save new link from "' . $this->fob->name . '" to "' . $this->tob->name . '"');
-            $result .= $this->add();
+            $result .= $this->add()->get_last_message();
         } else {
             log_debug('formula_link->save update "' . $this->id . '"');
             // read the database values to be able to check if something has been changed; done first,

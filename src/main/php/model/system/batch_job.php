@@ -123,7 +123,7 @@ class batch_job
                     $db_type = $db_con->get_type();
                     $db_con->set_type(DB_TYPE_TASK);
                     $db_con->set_usr($this->usr->id);
-                    $job_id = $db_con->insert(array('user_id', 'request_time', 'calc_and_cleanup_task_type_id', 'row_id'),
+                    $job_id = $db_con->insert(array(user::FLD_ID, 'request_time', 'calc_and_cleanup_task_type_id', 'row_id'),
                         array($this->usr->id, 'Now()', $this->type, $this->row_id));
                     $this->request_time = new DateTime();
 

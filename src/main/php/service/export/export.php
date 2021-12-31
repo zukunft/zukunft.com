@@ -94,7 +94,7 @@ class export
 
                 // 5. export all word relations
                 log_debug('export->get triples');
-                $lnk_lst = $this->phr_lst->wrd_lnk_lst();
+                $lnk_lst = $this->phr_lst->trp_lst();
                 $exp_triples = array();
                 if ($lnk_lst->lst != null) {
                     foreach ($lnk_lst->lst as $lnk) {

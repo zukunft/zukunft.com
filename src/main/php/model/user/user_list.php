@@ -47,7 +47,7 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->id = $db_usr['user_id'];
+                $usr->id = $db_usr[user::FLD_ID];
                 $usr->name = $db_usr['user_name'];
                 $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;

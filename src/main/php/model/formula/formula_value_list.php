@@ -134,7 +134,7 @@ class formula_value_list
                         $fv->phr_grp_id = $val_row['phrase_group_id'];
                         $fv->time_id = $val_row['time_word_id'];
                         $fv->value = $val_row['formula_value'];
-                        // TODO get user for the case that not all value are for the same unser
+                        // TODO get user for the case that not all value are for the same user
                         //$fv->usr            = $val_row[user_sandbox::FLD_USER];
 
                         log_debug('formula_value_list->load_frm get words');
@@ -645,7 +645,9 @@ class formula_value_list
         return $result;
     }
 
-    // add one phrase to the phrase list, but only if it is not yet part of the phrase list
+    /**
+     * add one phrase to the phrase list, but only if it is not yet part of the phrase list
+     */
     function add($fv_to_add)
     {
         log_debug('phrase_list->add ' . $fv_to_add->dsp_id());

@@ -63,7 +63,6 @@ function run_formula_value_test(testing $t)
 
     // test load result with time
     $phr_lst->add_name(word::TN_2020);
-    $phr_lst->load();
     $time_phr = $phr_lst->time_useful();
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id > 0) {
@@ -89,11 +88,7 @@ function run_formula_value_test(testing $t)
     // test the scaling
     // test the scaling of a value
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_IN_K);
-    $phr_lst->add_name(word::TN_2020);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_IN_K));
     $ch_k_grp = $phr_lst->get_grp();
     /*
     $dest_wrd_lst = new word_list;
@@ -120,10 +115,7 @@ function run_formula_value_test(testing $t)
     // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
     //      based
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_2020);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020));
     $val_best_guess = new value($usr);
     $val_best_guess->grp = $phr_lst->get_grp();
     $val_best_guess->load();

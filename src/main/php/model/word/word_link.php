@@ -41,14 +41,24 @@ class word_link extends user_sandbox_link_description
 
     // object specific database and JSON object field names
     const FLD_ID = 'word_link_id';
+    const FLD_NAME = 'word_link_name';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
-    const FLD_NAME = 'word_link_name';
     const FLD_TYPE = 'word_type_id';
+    const FLD_COND_ID = 'word_link_condition_id';
+    const FLD_COND_TYPE = 'word_link_condition_type_id';
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        self::FLD_TYPE
+        self::FLD_TYPE,
+        self::FLD_COND_ID,
+        self::FLD_COND_TYPE
+    );
+    // list of the link database field names
+    const FLD_NAMES_LINK = array(
+        self::FLD_FROM,
+        verb::FLD_ID,
+        self::FLD_TO
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -66,12 +76,9 @@ class word_link extends user_sandbox_link_description
      */
 
     // the word link object
-    public ?phrase $from = null; // the first object (either word, triple or group)
-    public ?verb $verb = null; // the link type object
-    public ?phrase $to = null; // the second object (either word, triple or group)
-
-    // database fields additional to the user sandbox fields
-    public ?string $description = null;   // the description that may differ from the generic created text e.g. Zurich AG instead of Zurich (Company); if the description is empty the generic created name is used
+    public phrase $from; // the first object (either word, triple or group)
+    public verb $verb;   // the link type object
+    public phrase $to;   // the second object (either word, triple or group)
 
     /*
      * construct and map
@@ -148,18 +155,25 @@ class word_link extends user_sandbox_link_description
      */
     function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        // TODO review
+        $qp = new sql_par();
+        $qp->name = $class . '_std_by_' . $this->load_sql_name_ext();
         $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
         $db_con->set_fields(array_merge(
+            self::FLD_NAMES_LINK,
             self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)
         ));
 
-        return parent::load_standard_sql($db_con, self::class);
+        return $this->load_sql_select_qp($db_con, $qp);
     }
 
     /**
      * load the triple parameters for all users
+     *
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
      * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard triple has been loaded
@@ -172,43 +186,11 @@ class word_link extends user_sandbox_link_description
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
-        //
+        $qp = $this->load_standard_sql($db_con);
 
-        // set the where clause depending on the values given
-        // TODO create with $db_con->set_where_link
-        $sql_where = '';
-        if ($this->id > 0) {
-            $sql_where = "word_link_id = " . $this->id;
-        } elseif ($this->has_objects()) {
-            if ($this->from->id <> 0
-                and $this->verb->id > 0
-                and $this->to->id <> 0) {
-                $sql_where = "from_phrase_id = " . $db_con->sf($this->from->id) . "
-                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
-                      AND to_phrase_id   = " . $db_con->sf($this->to->id);
-                // search for a backward link e.g. Cask Flow Statement contains Taxes
-            } elseif ($this->from->id <> 0
-                and $this->verb->id < 0
-                and $this->to->id <> 0) {
-
-                $sql_where = "from_phrase_id = " . $db_con->sf($this->to->id) . "
-                      AND verb_id        = " . $db_con->sf($this->verb->id) . "
-                      AND to_phrase_id   = " . $db_con->sf($this->from->id);
-            }
-        }
-
-        if ($sql_where == '') {
-            log_err('The database ID (' . $this->id . ') or the word and verb ids (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') must be set to load a triple.', "word_link->load");
-        } else {
-            $db_con->set_type(DB_TYPE_TRIPLE);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
-            $db_con->set_fields(array(sql_db::FLD_USER_ID, sql_db::FLD_DESCRIPTION, self::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
-            $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
-
-            $db_lnk = $db_con->get1_old($sql);
-            $this->row_mapper($db_lnk, false);
+        $db_lnk = $db_con->get1($qp);
+        $result = $this->row_mapper($db_lnk, false);
+        if ($result) {
             $result = $this->load_owner();
 
             // automatically update the generic name
@@ -223,6 +205,72 @@ class word_link extends user_sandbox_link_description
                 }
             }
             log_debug('word_link->load_standard ... done (' . $this->description . ')');
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve the parameters of a triple from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_' . $this->load_sql_name_ext();
+
+        // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_usr_fields(self::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $this->load_sql_select_qp($db_con, $qp);
+    }
+
+    /**
+     * load the word link without the linked objects, because in many cases the object are already loaded by the caller
+     */
+    function load(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        // after every load call from outside the class the order should be checked and reversed if needed
+        $this->check_order();
+
+        $qp = $this->load_sql($db_con);
+
+        if ($qp->sql == '') {
+            if (is_null($this->usr->id)) {
+                log_err("The user id must be set to load a word.", "word_link->load");
+            } else {
+                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
+            }
+        } else {
+            $db_lnk = $db_con->get1($qp);
+            $this->row_mapper($db_lnk);
+            if ($this->id > 0) {
+                // automatically update the generic name
+                $this->load_objects();
+                $new_name = $this->name();
+                log_debug('word_link->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
+                if ($new_name <> $this->name) {
+                    $db_con->set_type(DB_TYPE_TRIPLE);
+                    $db_con->update($this->id, self::FLD_NAME, $new_name);
+                    $this->name = $new_name;
+                }
+                $result = true;
+            } else {
+                $this->id = 0;
+            }
+            log_debug('word_link->load ... done (' . $this->name() . ')');
         }
         return $result;
     }
@@ -357,128 +405,63 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
-     * @return true if no link objects is missing
+     * @return string the name of the SQL statement name extension based on the filled fields
      */
-    private
-    function has_objects(): bool
+    private function load_sql_name_ext(): string
     {
-        $result = true;
-        if ($this->from == null) {
-            $result = false;
+        if ($this->id != 0) {
+            return 'id';
+        } elseif ($this->name != '') {
+            return 'name';
+        } elseif ($this->has_objects()) {
+            return 'link_ids';
+        } else {
+            log_err('Either the database ID (' . $this->id . ') or the ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->usr->id . ') must be set to load a ' .
+                self::class, self::class . '->load');
+            return '';
         }
-        if ($this->verb == null) {
-            $result = false;
-        }
-        if ($this->to == null) {
-            $result = false;
-        }
-        return $result;
     }
 
     /**
-     * create an SQL statement to retrieve the parameters of a triple from the database
+     * add the select parameters to the query parameters
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @param sql_db $db_con the db connection object with the SQL name and others parameter already set
+     * @param sql_par $qp the query parameters with the name already set
+     * @return sql_par the query parameters with the select parameters added
      */
-    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    private function load_sql_select_qp(sql_db $db_con, sql_par $qp): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
-
-        // set the where clause depending on the values given
-        $sql = '';
-        $sql_where = '';
-        if ($this->id > 0 and !is_null($this->usr->id)) {
-            $sql_where = "s.word_link_id = " . $this->id;
-            $qp->name .= 'id';
-            // search for a forward link e.g. Taxes is part of Cask Flow Statement
-        } elseif ($this->from->id <> 0
-            and $this->verb->id > 0
-            and $this->to->id <> 0
-            and !is_null($this->usr->id)) {
-            $sql_where = "s.from_phrase_id = " . $db_con->sf($this->from->id) . "
-                      AND s.verb_id        = " . $db_con->sf($this->verb->id) . "
-                      AND s.to_phrase_id   = " . $db_con->sf($this->to->id);
-            $qp->name .= 'link_id';
-            // search for a backward link e.g. Cask Flow Statement contains Taxes
-        } elseif ($this->from->id <> 0
-            and $this->verb->id < 0
-            and $this->to->id <> 0
-            and !is_null($this->usr->id)) {
-            $sql_where = "s.from_phrase_id = " . $db_con->sf($this->to->id) . "
-                      AND s.verb_id        = " . $db_con->sf($this->verb->id) . "
-                      AND s.to_phrase_id   = " . $db_con->sf($this->from->id);
-            $qp->name .= 'reverse_id';
-            /*
-            // if the search including the type is not requested, try without the type
-            elseif ($this->from->id  <> 0
-                  AND $this->verb->id   > 0
-                  AND $this->to->id    <> 0
-                  AND !is_null($this->usr->id)) {
-              $sql_where  =      "s.from_phrase_id = ".$db_con->sf($this->from->id)."
-                              AND s.verb_id        = ".$db_con->sf($this->verb->id)."
-                              AND s.to_phrase_id   = ".$db_con->sf($this->to->id);
-            */
-        } elseif ($this->name <> '' and !is_null($this->usr->id)) {
-            $sql_where = "s.word_link_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT);
-            $qp->name .= 'name';
-        }
-
-        if ($sql_where != '') {
-            // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-            $db_con->set_type(DB_TYPE_TRIPLE);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_link_fields(self::FLD_FROM, self::FLD_TO, verb::FLD_ID);
-            $db_con->set_fields(self::FLD_NAMES);
-            $db_con->set_usr_fields(self::FLD_NAMES_USR);
-            $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-            $db_con->set_where_text($sql_where);
+        if ($this->id != 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
             $qp->sql = $db_con->select();
-            $qp->par = $db_con->get_par();
+        } elseif ($this->name != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $qp->sql = $db_con->select_by_name();
+        } elseif ($this->has_objects()) {
+            $db_con->add_par(sql_db::PAR_INT, $this->from->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->to->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->verb->id);
+            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
         }
-
+        $qp->par = $db_con->get_par();
         return $qp;
     }
 
     /**
-     * load the word link without the linked objects, because in many cases the object are already loaded by the caller
+     * @return true if no link objects is missing
      */
-    function load(): bool
+    private function has_objects(): bool
     {
-        global $db_con;
-        $result = false;
-
-        // after every load call from outside the class the order should be checked and reversed if needed
-        $this->check_order();
-
-        $qp = $this->load_sql($db_con);
-
-        if ($qp->sql == '') {
-            if (is_null($this->usr->id)) {
-                log_err("The user id must be set to load a word.", "word_link->load");
-            } else {
-                log_err('Either the database ID (' . $this->id . '), unique word link (' . $this->from->id . ',' . $this->verb->id . ',' . $this->to->id . ') or the name (' . $this->name . ') and the user (' . $this->usr->id . ') must be set to load a word link.', "word_link->load");
-            }
-        } else {
-            $db_lnk = $db_con->get1($qp);
-            $this->row_mapper($db_lnk);
-            if ($this->id > 0) {
-                // automatically update the generic name
-                $this->load_objects();
-                $new_name = $this->name();
-                log_debug('word_link->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
-                if ($new_name <> $this->name) {
-                    $db_con->set_type(DB_TYPE_TRIPLE);
-                    $db_con->update($this->id, self::FLD_NAME, $new_name);
-                    $this->name = $new_name;
-                }
-                $result = true;
-            } else {
-                $this->id = 0;
-            }
-            log_debug('word_link->load ... done (' . $this->name() . ')');
+        $result = true;
+        if ($this->from->id == 0) {
+            $result = false;
+        }
+        if ($this->verb->id == 0) {
+            $result = false;
+        }
+        if ($this->to->id == 0) {
+            $result = false;
         }
         return $result;
     }
@@ -1279,7 +1262,7 @@ class word_link extends user_sandbox_link_description
                     // ... and create a new triple
                     $this->id = 0;
                     $this->owner_id = $this->usr->id;
-                    $result .= $this->add();
+                    $result .= $this->add()->get_last_message();
                     log_debug('word_link->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
@@ -1291,14 +1274,17 @@ class word_link extends user_sandbox_link_description
 
     /**
      * add a new triple to the database
-     * @return string an empty string if everything is fine otherwise the message that should be shown to the user
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
      */
-    function add(): string
+    function add(): user_message
     {
         log_debug('word_link->add new word_link for "' . $this->from->name . '" ' . $this->verb->name . ' "' . $this->to->name . '"');
 
         global $db_con;
-        $result = '';
+        $result = new user_message();
 
         // log the insert attempt first
         $log = $this->log_link_add();
@@ -1312,7 +1298,7 @@ class word_link extends user_sandbox_link_description
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
-                    $result .= 'Updating the reference in the log failed';
+                    $result->add_message('Updating the reference in the log failed');
                     // TODO do rollback or retry?
                 } else {
 
@@ -1323,11 +1309,11 @@ class word_link extends user_sandbox_link_description
                     $db_rec->to = $this->to;
                     $std_rec = clone $db_rec;
                     // save the word_link fields
-                    $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                 }
 
             } else {
-                $result .= "Adding word_link " . $this->name . " failed";
+                $result->add_message("Adding word_link " . $this->name . " failed");
             }
         }
 
@@ -1355,7 +1341,7 @@ class word_link extends user_sandbox_link_description
         // check if the opposite triple already exists and if yes, ask for confirmation
         if ($this->id <= 0) {
             log_debug('word_link->save check if a new word_link for "' . $this->from->name . '" and "' . $this->to->name . '" needs to be created');
-            // check if the same triple is already in the database
+            // check if the reverse triple is already in the database
             $db_chk_rev = clone $this;
             $db_chk_rev->from = $this->to;
             $db_chk_rev->from->id = $this->to->id;
@@ -1383,7 +1369,7 @@ class word_link extends user_sandbox_link_description
         if ($result == '') {
             // check if a new value is supposed to be added
             if ($this->id <= 0) {
-                $result .= $this->add();
+                $result .= $this->add()->get_last_message();
             } else {
                 log_debug('word_link->save update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed;

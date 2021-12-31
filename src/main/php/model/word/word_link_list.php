@@ -383,7 +383,9 @@ class word_link_list
         }
     }
 
-    // add one triple to the triple list, but only if it is not yet part of the list
+    /**
+     * add one triple to the triple list, but only if it is not yet part of the list
+     */
     function add($lnk_to_add)
     {
         log_debug('word_link_list->add ' . $lnk_to_add->dsp_id());

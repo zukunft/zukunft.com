@@ -925,7 +925,7 @@ class word extends user_sandbox_description
     function is(): phrase_list
     {
         $phr_lst = $this->parents();
-        $phr_lst->add($this);
+        $phr_lst->add($this->phrase());
         log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->name());
         return $phr_lst;
     }
@@ -989,7 +989,7 @@ class word extends user_sandbox_description
     function are(): phrase_list
     {
         $wrd_lst = $this->children();
-        $wrd_lst->add($this);
+        $wrd_lst->add($this->phrase());
         return $wrd_lst;
     }
 

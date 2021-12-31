@@ -36,25 +36,42 @@ class phrase_group_unit_tests
     {
 
         global $usr;
-        global $sql_names;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'phrase_group->';
+        $t->resource_path = 'db/phrase/';
+        $usr->id = 1;
 
         $t->header('Unit tests of the phrase group class (src/main/php/model/phrase/word.php)');
 
         $t->subheader('SQL statement tests');
 
-        $db_con = new sql_db();
-
-        // sql to load the word by id
-        $phr_grp = new phrase_group();
+        // sql to load the phrase group by id
+        $phr_grp = new phrase_group($usr);
         $phr_grp->id = 1;
-        $phr_grp->usr = $usr;
-        $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $phr_grp->get_by_wrd_lst_sql($db_con);
-        $expected_sql = $t->file('db/phrase/phrase_group_by_id.sql');
-        $t->assert('phrase_group->get_by_wrd_lst_sql by word id', $t->trim($created_sql), $t->trim($expected_sql));
+        $t->assert_load_sql($db_con, $phr_grp);
 
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql($db_con, true));
+        // sql to load the phrase group by word ids
+        $phr_grp = new phrase_group($usr);
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add_by_ids('2,4,3','');
+        $phr_grp->phr_lst = $phr_lst;
+        $t->assert_load_sql($db_con, $phr_grp);
+
+        // sql to load the phrase group by triple ids
+        $phr_grp = new phrase_group($usr);
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add_by_ids(null,'2,4,3');
+        $phr_grp->phr_lst = $phr_lst;
+        $t->assert_load_sql($db_con, $phr_grp);
+
+        // sql to load the phrase group by word and triple ids
+        $phr_grp = new phrase_group($usr);
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add_by_ids('4,1,3','2');
+        $phr_grp->phr_lst = $phr_lst;
+        $t->assert_load_sql($db_con, $phr_grp);
 
         // sql to load the word list ids
         $wrd_lst = new word_list();
@@ -67,10 +84,9 @@ class phrase_group_unit_tests
         $wrd3 = new word($usr);
         $wrd3->id = 3;
         $wrd_lst->lst[] = $wrd3;
-        $phr_grp = new phrase_group();
+        $phr_grp = new phrase_group($usr);
         $phr_grp->id = null;
         $phr_grp->wrd_lst = $wrd_lst;
-        $phr_grp->usr = $usr;
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $phr_grp->get_by_wrd_lst_sql($db_con);
         $expected_sql = $t->file('db/phrase/phrase_group_by_id_list.sql');

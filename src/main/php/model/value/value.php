@@ -143,14 +143,14 @@ class value extends user_sandbox_display
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
-        $this->reset($usr);
+        $this->reset();
     }
 
     function reset()
     {
         parent::reset();
 
-        $this->grp = new phrase_group();
+        $this->grp = new phrase_group($this->usr);
         $this->source = null;
 
         $this->last_update = null;
@@ -499,11 +499,10 @@ class value extends user_sandbox_display
         if (!isset($this->grp)) {
             if ($this->grp->id > 0) {
                 // ... load the group related objects means the word and triple list
-                $grp = new phrase_group;
+                $grp = new phrase_group($this->usr); // in case the word names and word links can be user specific maybe the owner should be used here
                 $grp->id = $this->grp->id;
-                $grp->usr = $this->usr; // in case the word names and word links can be user specific maybe the owner should be used here
                 $grp->get();
-                $grp->load_lst(); // to make sure that the word and triple object lists are loaded
+                $grp->load_lst_old(); // to make sure that the word and triple object lists are loaded
                 if ($grp->id > 0) {
                     $this->grp = $grp;
                 }
@@ -680,8 +679,7 @@ class value extends user_sandbox_display
                 if (!empty($this->ids)) {
                     log_debug('value->set_phr_lst_by_ids for "' . implode(",", $ids) . '" and "' . $this->usr->name . '"');
                     $phr_lst = new phrase_list($this->usr);
-                    $phr_lst->ids = $ids;
-                    if (!$phr_lst->load()) {
+                    if (!$phr_lst->load_by_ids($ids)) {
                         $result = 'Cannot load phrases by id';
                     }
                     $this->phr_lst = $phr_lst;
@@ -717,9 +715,8 @@ class value extends user_sandbox_display
         if (!isset($this->grp)) {
             if (!empty($this->ids)) {
                 log_debug('value->set_grp_by_ids for ids "' . implode(",", $this->ids) . '" for "' . $this->usr->name . '"');
-                $grp = new phrase_group;
+                $grp = new phrase_group($this->usr); // in case the word names and word links can be user specific maybe the owner should be used here
                 $grp->ids = $this->ids;
-                $grp->usr = $this->usr; // in case the word names and word links can be user specific maybe the owner should be used here
                 $grp->get();
                 if ($grp->id > 0) {
                     $this->grp = $grp;
@@ -1427,7 +1424,8 @@ class value extends user_sandbox_display
         if ($phr_lst == null) {
             log_err('Cannot load phrases for value "' . $this->dsp_id() . '" and group "' . $this->grp->dsp_id() . '".', "value->upd_phr_links");
         } else {
-            $phr_lst->load();
+            // TODO check if the phrases are already loaded
+            // $phr_lst->load();
             $grp_ids = $phr_lst->ids();
 
             // add the time phrase id if needed
@@ -1829,13 +1827,17 @@ class value extends user_sandbox_display
 
     /**
      * add a new value
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
      */
-    function add(): string
+    function add(): user_message
     {
         log_debug('value->add the value ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
+        $result = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -1848,13 +1850,13 @@ class value extends user_sandbox_display
             if ($this->id > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id)) {
-                    $result = 'adding the value reference in the system log failed';
+                    $result->add_message('adding the value reference in the system log failed');
                 }
 
                 // update the phrase links for fast searching
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
-                    $result = 'Adding the phrase links of the value failed because ' . $upd_result;
+                    $result->add_message('Adding the phrase links of the value failed because ' . $upd_result);
                     $this->id = 0;
                 }
 
@@ -1865,11 +1867,11 @@ class value extends user_sandbox_display
                     $db_val->number = $this->number; // ... but not the field saved already with the insert
                     $std_val = clone $db_val;
                     // save the value fields
-                    $result .= $this->save_fields($db_con, $db_val, $std_val);
+                    $result->add_message($this->save_fields($db_con, $db_val, $std_val));
                 }
 
             } else {
-                $result = "Adding value " . $this->id . " failed.";
+                $result->add_message("Adding value " . $this->id . " failed.");
             }
         }
 
@@ -1915,7 +1917,7 @@ class value extends user_sandbox_display
         if ($this->id <= 0) {
             log_debug('value->save "' . $this->name() . '": ' . $this->number . ' for user ' . $this->usr->name . ' as a new value');
 
-            $result .= $this->add($db_con);
+            $result .= $this->add($db_con)->get_last_message();
         } else {
             log_debug('value->save update id ' . $this->id . ' to save "' . $this->number . '" for user ' . $this->usr->id);
             // update a value

@@ -83,7 +83,9 @@ class formula_link_list
                        l.formula_id, 
                        l.phrase_id,
                     " . $db_con->get_usr_field(formula_link::FLD_TYPE, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'u', sql_db::FLD_FORMAT_VAL) . "
+                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_SHARE, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(user_sandbox::FLD_PROTECT, 'l', 'u', sql_db::FLD_FORMAT_VAL) . "
                   FROM formula_link_types t, formula_links l
              LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
                                                 AND u.user_id = " . $this->usr->id . " 

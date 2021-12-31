@@ -75,7 +75,7 @@ if ($usr->id > 0) {
         $sql_result = mysqli_query($sql);
         if (mysqli_num_rows($sql_result) == 1) {
             $row = mysqli_fetch_array($sql_result);
-            $user_id = $row['user_id'];
+            $user_id = $row[user::FLD_ID];
             $user_email = $row['email'];
 
             // save activation key

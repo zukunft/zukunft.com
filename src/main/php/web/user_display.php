@@ -247,7 +247,7 @@ class user_dsp extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $wrd_lnk_other_row['user_id'];
+                        $usr_other->id = $wrd_lnk_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user word_links with one query
@@ -452,7 +452,7 @@ class user_dsp extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $frm_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $frm_lnk_other_row['user_id'];
+                        $usr_other->id = $frm_lnk_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user formula_links with one query
@@ -622,7 +622,7 @@ class user_dsp extends user
                     $val_lst_other = $db_con->get_old($sql_other);
                     foreach ($val_lst_other as $val_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $val_other_row['user_id'];
+                        $usr_other->id = $val_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user values with one query
@@ -787,7 +787,7 @@ class user_dsp extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $dsp_other_row['user_id'];
+                        $usr_other->id = $dsp_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user views with one query
@@ -951,7 +951,7 @@ class user_dsp extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $cmp_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $cmp_other_row['user_id'];
+                        $usr_other->id = $cmp_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user view_components with one query
@@ -1119,7 +1119,7 @@ class user_dsp extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $dsp_lnk_other_row['user_id'];
+                        $usr_other->id = $dsp_lnk_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user view_component_links with one query
@@ -1294,7 +1294,7 @@ class user_dsp extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->id = $dsp_other_row['user_id'];
+                        $usr_other->id = $dsp_other_row[user::FLD_ID];
                         $usr_other->load_test_user();
 
                         // to review: load all user sources with one query

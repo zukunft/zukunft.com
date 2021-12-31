@@ -79,6 +79,7 @@ class sql_db
         DB_TYPE_VALUE,
         DB_TYPE_VALUE_TIME_SERIES,
         DB_TYPE_FORMULA_LINK,
+        DB_TYPE_FORMULA_VALUE,
         DB_TYPE_VIEW_COMPONENT_LINK,
         DB_TYPE_VALUE_PHRASE_LINK,
         DB_TYPE_REF,
@@ -368,23 +369,34 @@ class sql_db
 
     /**
      * add a parameter for a prepared query
+     * @param string $par_type the SQL parameter type used e.g. for PostgreSQL as int or text
+     * @param mixed $value the int, float value or text value that is used for the concrete execution of the query
+     * @param bool $named true if the parameter name is already used
      */
-    function add_par(string $par_type, $value)
+    function add_par(string $par_type, $value, bool $named = false)
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
-        $this->par_named[] = false;
+        $this->par_named[] = $named;
     }
 
     /**
+     * get the SQL parameter placeholder in the used SQL dialect
+     *
+     * @param int $pos to get the placeholder of another position than the last
      * @return string the SQL var name for the latest added query parameter
      */
     function par_name(int $pos = 0): string
     {
+        // if the position is not given use the last parameter added
         if ($pos == 0) {
             $pos = count($this->par_types);
         }
-        $this->par_named[count($this->par_named) - 1] = true;
+
+        // remember that the parameter name has already been used
+        $this->par_named[$pos - 1] = true;
+
+        // create the parameter placeholder for the SQL dialect
         if ($this->db_type == sql_db::MYSQL) {
             return '?';
         } elseif ($this->db_type == sql_db::POSTGRES) {
@@ -2060,7 +2072,7 @@ class sql_db
      */
     function select(bool $has_id = true): string
     {
-        return $this->select_by($this->id_field, $has_id);
+        return $this->select_by(array($this->id_field), $has_id);
     }
 
     /**
@@ -2070,16 +2082,36 @@ class sql_db
      */
     function select_by_name(bool $has_id = true): string
     {
-        return $this->select_by($this->name_field, $has_id);
+        return $this->select_by(array($this->name_field), $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database and force to use the code id instead of the id
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_code_id(bool $has_id = true): string
+    {
+        return $this->select_by(array(sql_db::FLD_CODE_ID), $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_link_ids(array $id_fields, bool $has_id = true): string
+    {
+        return $this->select_by($id_fields, $has_id);
     }
 
     /**
      * create a SQL select statement for the connected database
-     * @param string $id_field the name of the primary id field that should be used
+     * @param array $id_fields the name of the primary id field that should be used or the list of link fields
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    private function select_by(string $id_field, bool $has_id = true): string
+    private function select_by(array $id_fields, bool $has_id = true): string
     {
         $sql = '';
         $sql_end = ';';
@@ -2090,9 +2122,13 @@ class sql_db
         // if nothing is defined assume to load the row by the main if
         if ($this->where == '') {
             if (count($this->par_types) > 0) {
-                $i = 1;
+                if (count($this->par_types) <> count($this->par_named)) {
+                    log_err('Number of parameter types does not match the number of name parameter indicators');
+                }
+                $i = 0; // the position in the SQL parameter array
+                $used_fields = 0; // the position of the fields used in the where statement
                 foreach ($this->par_types as $par_type) {
-                    if ($this->par_named[$i - 1] == false) {
+                    if ($this->par_named[$i] == false) {
                         if ($this->where == '') {
                             $this->where = ' WHERE ';
                         } else {
@@ -2104,7 +2140,8 @@ class sql_db
                             or $this->join2_type <> '') {
                             $this->where .= sql_db::STD_TBL . '.';
                         }
-                        $this->where .= $id_field . ' = ' . $this->par_name();
+                        $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                        $used_fields++;
                     }
                     $i++;
                 }

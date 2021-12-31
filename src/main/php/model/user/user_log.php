@@ -240,7 +240,6 @@ class user_log
      */
     function add(): bool
     {
-
         return true;
     }
 

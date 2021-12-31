@@ -46,9 +46,24 @@
 class user
 {
 
+    /*
+     * database link
+     */
+
+    // database fields only used for user
+    const FLD_ID = 'user_id';
+
+    /*
+     * predefined user linked to the program code
+     */
+
     // list of the system users that have a coded functionality
     const SYSTEM = "system";
     const SYSTEM_TEST = "test";
+
+    /*
+     * object vars
+     */
 
     // database fields
     public ?int $id = null;               // the database id of the word link type (verb)
@@ -138,10 +153,10 @@ class user
         if ($db_usr == false) {
             $this->id = 0;
         } else {
-            if ($db_usr['user_id'] <= 0) {
+            if ($db_usr[user::FLD_ID] <= 0) {
                 $this->id = 0;
             } else {
-                $this->id = $db_usr['user_id'];
+                $this->id = $db_usr[user::FLD_ID];
                 $this->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->name = $db_usr['user_name'];
                 $this->ip_addr = $db_usr['ip_address'];

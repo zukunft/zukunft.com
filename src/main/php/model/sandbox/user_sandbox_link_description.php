@@ -2,7 +2,7 @@
 
 /*
 
-  user_sandbox_description.php - adding the description field to the user_sandbox superclass
+  user_sandbox_description.php - adding the description and type field to the user_sandbox superclass
   ----------------------------
 
   This file is part of zukunft.com - calc with words
@@ -32,8 +32,12 @@
 
 class user_sandbox_link_description extends user_sandbox_link
 {
-
-    public ?string $description = null; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
+    // the word description that is shown as a mouseover explain to the user
+    // if description is NULL the database value should not be updated
+    // or for triples the description that may differ from the generic created text
+    // e.g. Zurich AG instead of Zurich (Company)
+    // if the description is empty the generic created name is used
+    public ?string $description = null;
 
     function reset()
     {

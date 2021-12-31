@@ -220,8 +220,7 @@ function run_formula_link_list_test(testing $t)
     $frm_lnk_lst->load();
     $phr_ids = $frm_lnk_lst->phrase_ids(false);
     $phr_lst = new phrase_list($t->usr1);
-    $phr_lst->ids = $phr_ids;
-    $phr_lst->load();
+    $phr_lst->load_by_ids($phr_ids);
     $result = $phr_lst->dsp_id();
     $target = word::TN_YEAR;
     $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);

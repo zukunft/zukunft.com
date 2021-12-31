@@ -48,18 +48,11 @@ if ($usr->id > 0) {
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
     $phrases = $_GET['words'];
     log_debug("json_save(" . $phrases . ")");
-    $word_names = explode(",", $phrases);
+    $phr_names = array_trim(explode(",", $phrases));
 
-    // get all related Phrases
-    $phr_lst = new phrase_list($usr);
-    foreach ($word_names as $wrd_name) {
-        if ($wrd_name <> '') {
-            $phr_lst->add_name($wrd_name);
-        }
-    }
-
-    if (count($phr_lst->lst) > 0) {
-        $phr_lst->load();
+    if (count($phr_names) > 0) {
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->load_by_names($phr_names);
         $phr_lst = $phr_lst->are();
 
         log_debug("json_save.php ... phrase loaded.");

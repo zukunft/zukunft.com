@@ -415,6 +415,9 @@ class user_sandbox
         $trm = new term;
         $trm->name = $this->name;
         $trm->usr = $this->usr;
+        if ($this->name == 'scale billion to one') {
+            $trm->name = $this->name;
+        }
         $trm->load();
         return $trm;
     }
@@ -1391,7 +1394,7 @@ class user_sandbox
                         // ... and create a new display component link
                         $this->id = 0;
                         $this->owner_id = $this->usr->id;
-                        $result .= $this->add();
+                        $result .= $this->add()->get_last_message();
                     }
                 }
             }
@@ -1523,6 +1526,22 @@ class user_sandbox
         return new user_sandbox();
     }
 
+    /**
+     * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
+     */
+    function add(): user_message
+    {
+        $result = new user_message();
+        $msg = 'The dummy parent add function has been called, which should never happen';
+        log_err($msg);
+        $result->add_message($msg);
+        return $result;
+    }
+
     /*
 
      a word rename creates a new word and a word deletion request
@@ -1585,7 +1604,7 @@ class user_sandbox
                 log_debug($this->obj_name . '->save check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
                 if ($similar != null) {
-                    // check that the get_similar function has really found a similar object and report
+                    // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
                         $result .= $this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id();
                     }
@@ -1602,7 +1621,7 @@ class user_sandbox
             // create a new object if nothing similar has been found
             if ($this->id == 0) {
                 log_debug($this->obj_name . '->save add');
-                $result = $this->add();
+                $result = $this->add()->get_last_message();
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {

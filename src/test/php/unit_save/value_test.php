@@ -66,15 +66,17 @@ function run_value_test(testing $t)
 
         // test load by value id
         $val = new value($t->usr1);
-        $val->id = $val_by_phr_lst->id;
-        $val->load();
-        $result = $val->number;
-        $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->dsp(', value->load for value id "' . $ch_inhabitants->id . '"', $target, $result);
+        if ($val_by_phr_lst->id <> 0) {
+            $val->id = $val_by_phr_lst->id;
+            $val->load();
+            $result = $val->number;
+            $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
+            $t->dsp(', value->load for value id "' . $ch_inhabitants->id . '"', $target, $result);
 
-        // test rebuild_grp_id by value id
-        $result = $val->check();
-        $target = true;
+            // test rebuild_grp_id by value id
+            $result = $val->check();
+            $target = true;
+        }
         $t->dsp(', value->check for value id "' . $ch_inhabitants->id . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
     }
 
@@ -163,7 +165,7 @@ function run_value_test(testing $t)
     $pct_val->grp = $phr_grp;
     $pct_val->load();
     $result = $pct_val->display(0);
-    $target = number_format(round(value::TEST_PCT * 100, 2), 2) . '%' ;
+    $target = number_format(round(value::TEST_PCT * 100, 2), 2) . '%';
     $t->dsp(', value->val_formatted for a word list ' . $phr_grp->dsp_id() . '', $target, $result);
 
     // test the scaling of a value

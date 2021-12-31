@@ -248,7 +248,7 @@ function str_diff(?string $from, ?string $to): string
 
             // add message if just one string is shorter
             if (count($f) < count($t)) {
-                $result = 'pos ' . count($t) . ' additional: ' . substr($to, count($f), count($t) - count($f));
+                $result = 'pos ' . count($t) . ' less: ' . substr($to, count($f), count($t) - count($f));
             } elseif (count($t) < count($f)) {
                 $result = 'pos ' . count($f) . ' additional: ' . substr($from, count($t), count($f) - count($t));
             }
@@ -262,7 +262,12 @@ function str_diff(?string $from, ?string $to): string
                 $i++;
             }
         }
+    } elseif ($from == null and $to != null) {
+        $result = 'less: ' . $to;
+    } elseif ($from != null and $to == null) {
+        $result = 'additional: ' . $from;
     }
+
 
     return $result;
 }
@@ -493,10 +498,7 @@ class test_base
     {
         global $usr;
         $phr_lst = new phrase_list($usr);
-        foreach ($array_of_word_str as $word_str) {
-            $phr_lst->add_name($word_str);
-        }
-        $phr_lst->load();
+        $phr_lst->load_by_names($array_of_word_str);
         return $phr_lst;
     }
 
@@ -522,9 +524,13 @@ class test_base
         $time_phr = $phr_lst->time_useful();
         $phr_grp = $phr_lst->get_grp();
         $val = new value($usr);
-        $val->grp = $phr_grp;
-        $val->time_phr = $time_phr;
-        $val->load();
+        if ($phr_grp == null) {
+            log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
+        } else {
+            $val->grp = $phr_grp;
+            $val->time_phr = $time_phr;
+            $val->load();
+        }
         return $val;
     }
 
@@ -537,11 +543,16 @@ class test_base
         $val = $this->load_value($array_of_word_str);
         if ($val->id == 0) {
             $val = new value($usr);
-            $val->grp = $phr_grp;
+            if ($phr_grp == null) {
+                log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
+            } else {
+                $val->grp = $phr_grp;
+            }
             $val->time_phr = $time_phr;
             $val->number = $target;
             $val->save();
         }
+
         return $val;
     }
 
@@ -936,7 +947,7 @@ class test_base
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
-    function assert_json(user_sandbox $usr_obj, string $json_file_name): bool
+    function assert_json(object $usr_obj, string $json_file_name): bool
     {
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . $json_file_name), true);
         $usr_obj->import_obj($json_in, false);

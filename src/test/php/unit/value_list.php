@@ -68,7 +68,6 @@ class value_list_unit_tests
         // sql to load a list of value by the phrase ids
         $val_lst = new value_list($usr);
         $val_lst->phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
-        $val_lst->phr_lst->ids = $val_lst->phr_lst->ids();
         $created_sql = $val_lst->load_by_phr_lst_sql($db_con);
         $expected_sql = $t->file('db/value/value_list_by_triple_id_list.sql');
         $t->assert('value_list->load_by_phr_lst_sql by group and time', $t->trim($created_sql), $t->trim($expected_sql));

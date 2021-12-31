@@ -55,6 +55,12 @@ class formula_unit_tests
         $t->assert_load_sql($db_con, $frm);
         $t->assert_load_standard_sql($db_con, $frm);
 
+        // sql to load the formula by name
+        $frm = new formula($usr);
+        $frm->name = formula::TF_SCALE_MIO;
+        $t->assert_load_sql($db_con, $frm);
+        $t->assert_load_standard_sql($db_con, $frm);
+
 
         $t->subheader('Im- and Export tests');
 

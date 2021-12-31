@@ -12,5 +12,5 @@ PREPARE formula_std_by_id (int) AS
            share_type_id,
            protect_id,
            user_id
-    FROM formulas
-    WHERE formula_id = $1;
+      FROM formulas
+     WHERE formula_id = $1;

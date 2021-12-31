@@ -58,8 +58,7 @@ function run_phrase_list_test(testing $t)
     $id_lst = $wrd_lst->ids;
     $id_lst[] = $triple_sample_id * -1;
     $phr_lst = new phrase_list($usr);
-    $phr_lst->ids = $id_lst;
-    $phr_lst->load();
+    $phr_lst->load_by_ids($id_lst);
     $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . phrase::TN_ZH_COMPANY . '"';
     $result = $phr_lst->name();
     $t->dsp('phrase->load via id', $target, $result);
@@ -102,12 +101,7 @@ function run_phrase_list_test(testing $t)
 
     // test the excluding function
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(TW_ABB);
-    $phr_lst->add_name(TW_SALES);
-    $phr_lst->add_name(TW_CHF);
-    $phr_lst->add_name(TW_MIO);
-    $phr_lst->add_name(TW_2017);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(TW_ABB, TW_SALES, TW_CHF, TW_MIO, TW_2017));
     $phr_lst_ex = clone $phr_lst;
     $phr_lst_ex->ex_time();
     $target = '"' . TW_ABB . '","' . TW_SALES . '","' . TW_CHF . '","' . TW_MIO . '"';

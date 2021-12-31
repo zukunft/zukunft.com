@@ -164,8 +164,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name(word::TN_CHF);
     $wrd_lst->add_name(word::TN_MIO);
     $wrd_lst->load();
-    $grp = new phrase_group;
-    $grp->usr = $usr;
+    $grp = new phrase_group($usr);
     $grp->ids = $wrd_lst->ids;
     $result = $grp->get_id();
     $target = 1; // also the creation should be tested, but how?
@@ -178,7 +177,7 @@ function run_word_list_test(testing $t)
     $val = $wrd_lst->value();
     $result = $val->number;
     $target = value::TEST_VALUE;
-    $t->dsp('word_list->value for ' . $wrd_lst->dsp_id() . '', $target, $result);
+    $t->dsp('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
 
     // test word list value scaled
     // TODO review !!!

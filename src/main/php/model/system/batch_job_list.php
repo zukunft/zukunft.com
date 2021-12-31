@@ -42,7 +42,9 @@ class batch_job_list
     public ?DateTime $cut_off_time = null;  //
 
 
-    // add another job to the list, but only if needed
+    /**
+     * add another job to the list, but only if needed
+     */
     function add($job)
     {
         $result = '';

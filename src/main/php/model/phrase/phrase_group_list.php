@@ -115,8 +115,7 @@ class phrase_group_list
                 $db_rows = $db_con->get_old($sql, $sql_name, array($this->phr->id));
                 if ($db_rows != null) {
                     foreach ($db_rows as $db_row) {
-                        $phr_grp = new phrase_group();
-                        $phr_grp->usr = $this->usr;
+                        $phr_grp = new phrase_group($this->usr);
                         $phr_grp->row_mapper($db_row);
                         $this->lst[] = $phr_grp;
                         $result = true;
@@ -180,12 +179,11 @@ class phrase_group_list
         log_debug('phrase_group_list->add_grp_time_id ' . $grp_id . '@' . $time_id);
         $result = false;
 
-        $grp = new phrase_group;
+        $grp = new phrase_group($this->usr);
         if ($grp_id > 0) {
             $grp->id = $grp_id;
-            $grp->usr = $this->usr;
             $grp->load();
-            $grp->load_lst();
+            $grp->load_lst_old();
             log_debug('phrase_group_list->add_grp_time_id -> found ' . $grp->name());
         }
         $time = new word_dsp($this->usr);
@@ -235,7 +233,9 @@ class phrase_group_list
         return $result;
     }
 
-    // add a phrase group if it is not yet part of the list
+    /**
+     * add a phrase group if it is not yet part of the list
+     */
     function add($grp)
     {
         log_debug('phrase_group_list->add ' . $grp->id);
@@ -428,11 +428,10 @@ class phrase_group_list
                 log_debug('phr_grp_lst->add_grp_by_phr -> add id ' . $val_row['phrase_group_id']);
                 log_debug('phr_grp_lst->add_grp_by_phr -> add time id ' . $val_row['time_word_id']);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
-                $val_grp = new phrase_group;
-                $val_grp->usr = $this->usr;
+                $val_grp = new phrase_group($this->usr);
                 $val_grp->id = $val_row['phrase_group_id'];
                 $val_grp->load();
-                $val_grp->load_lst();
+                $val_grp->load_lst_old();
                 $used_phr_lst = clone $val_grp->phr_lst;
                 log_debug('phr_grp_lst->add_grp_by_phr -> used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
@@ -513,7 +512,7 @@ class phrase_group_list
         $pos = 0;
         if ($this->lst != null) {
             foreach ($this->lst as $grp) {
-                $grp->load_lst();
+                $grp->load_lst_old();
                 $grp->sync_lists();
                 if ($pos == 0) {
                     if (isset($grp->phr_lst)) {

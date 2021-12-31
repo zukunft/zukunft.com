@@ -44,9 +44,7 @@ function run_formula_trigger_test(testing $t)
     $phr_lst1->add_name(word::TN_MIO);
     $phr_lst2 = clone $phr_lst1;
     $phr_lst1->add_name(word::TN_2019);
-    $phr_lst1->load();
     $phr_lst2->add_name(word::TN_2020);
-    $phr_lst2->load();
     $frm = $t->load_formula(formula::TN_INCREASE);
 
     // add a number to the test word

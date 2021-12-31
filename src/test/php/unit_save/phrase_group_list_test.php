@@ -41,28 +41,17 @@ function run_phrase_group_list_test(testing $t)
 
     // Switzerland inhabitants
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_CH);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));
     $country_grp = $phr_lst->get_grp();
 
     // Canton of Zurich inhabitants
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_ZH);
-    $phr_lst->add_name(word::TN_CANTON);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_MIO));
     $canton_grp = $phr_lst->get_grp();
 
     // City of Zurich inhabitants
     $phr_lst = new phrase_list($usr);
-    $phr_lst->add_name(word::TN_ZH);
-    $phr_lst->add_name(word::TN_CITY);
-    $phr_lst->add_name(word::TN_INHABITANT);
-    $phr_lst->add_name(word::TN_MIO);
-    $phr_lst->load();
+    $phr_lst->load_by_names(array(word::TN_ZH, word::TN_CITY, word::TN_INHABITANT, word::TN_MIO));
     $city_grp = $phr_lst->get_grp();
 
     // test add a phrase group to a phrase group list

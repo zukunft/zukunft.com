@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit/ref.php - unit testing of the reference functions
-  -----------------
+    test/unit/ref.php - unit testing of the reference and source functions
+    -----------------
   
 
     This file is part of zukunft.com - calc with words
@@ -37,16 +37,42 @@ class ref_unit_tests
 
         global $usr;
 
+        // init
+        $db_con = new sql_db();
+        $t->name = 'ref->';
+        $t->resource_path = 'db/ref/';
+        $json_file = 'unit/ref/wikipedia.json';
+        $usr->id = 1;
+
         $t->header('Unit tests of the Ref class (src/main/php/model/ref/ref.php)');
 
         $t->subheader('Im- and Export tests');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/ref/wikipedia.json'), true);
-        $ref = new ref($usr);
-        $ref->import_obj($json_in, false);
-        $json_ex = json_decode(json_encode($ref->export_obj(false)), true);
-        $result = json_is_similar($json_in, $json_ex);
-        $t->assert('ref->import check name', $result, true);
+        $t->assert_json(new ref($usr), $json_file);
+
+
+        $t->resource_path = 'db/ref/';
+        $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
+
+
+        $t->subheader('SQL statement tests');
+
+        // sql to load the word by id
+        $src = new source($usr);
+        $src->id = 4;
+        $t->assert_load_sql($db_con, $src);
+        $t->assert_load_standard_sql($db_con, $src);
+
+        // sql to load the word by code id
+        $src = new source($usr);
+        $src->code_id = source::TN_READ;
+        $t->assert_load_sql($db_con, $src);
+
+        // sql to load the word by name
+        $src = new source($usr);
+        $src->name = source::TN_READ;
+        $t->assert_load_sql($db_con, $src);
+        $t->assert_load_standard_sql($db_con, $src);
 
     }
 
