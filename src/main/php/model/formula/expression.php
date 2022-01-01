@@ -71,9 +71,9 @@ class expression
      * returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
      * uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
      *
-     * @param string $ref_text
-     * @param string $start_maker
-     * @param string $end_maker
+     * @param string $ref_text with the formula reference text e.g. ={f203}
+     * @param string $start_maker the definition of the start of the reference
+     * @param string $end_maker the definition of the end of the reference
      * @return int the id found in the reference text or zero if no id is found
      */
     private function get_ref_id(string $ref_text, string $start_maker, string $end_maker): int
@@ -97,14 +97,15 @@ class expression
 
     /**
      * returns a positive word id if the formula string in the database format contains a word link
+     * @return int the word id found in the reference text or zero if no word id is found
      */
-    private function get_wrd_id($ref_text)
+    private function get_wrd_id(string $ref_text): int
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
         return $this->get_ref_id($ref_text, self::MAKER_WORD_START, self::MAKER_WORD_END);
     }
 
-    private function get_frm_id($ref_text)
+    private function get_frm_id(string $ref_text): int
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
         return $this->get_ref_id($ref_text, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);

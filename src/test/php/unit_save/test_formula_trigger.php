@@ -104,7 +104,7 @@ function run_formula_trigger_test(testing $t)
     if ($result == TV_TEST_SALES_INCREASE_2017_FORMATTED) {
         $target = TV_TEST_SALES_INCREASE_2017_FORMATTED;
     } else {
-        $target = "0.9";
+        $target = "0.79 %";
     }
     $t->dsp('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_LONG);
 

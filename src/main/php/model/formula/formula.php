@@ -212,6 +212,7 @@ class formula extends user_sandbox_description
      */
     function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
     {
+        global $formula_types;
         $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
@@ -219,9 +220,12 @@ class formula extends user_sandbox_description
             $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_FORMULA_TYPE];
-            //$this->type_cl = $db_row[sql_db::FLD_CODE_ID];
             $this->last_update = $this->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
             $this->need_all_val = $this->get_bool($db_row[self::FLD_ALL_NEEDED]);
+
+            if ($this->type_id > 0) {
+                $this->type_cl = $formula_types->code_id($this->type_id);
+            }
         }
         return $result;
     }

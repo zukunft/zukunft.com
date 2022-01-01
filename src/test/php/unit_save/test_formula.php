@@ -101,7 +101,7 @@ function run_formula_test(testing $t)
     } else {
         $result = $phr_lst->name();
     }
-    $target = '"' . word::TN_CH . '","' . word::TN_INHABITANT . '","' . word::TN_2019 . '"';
+    $target = '"' . word::TN_2019 . '","' . word::TN_CH . '","' . word::TN_INHABITANT . '"';
     $t->dsp('formula->special_phr_lst for "' . $frm->name . '"', $target, $result);
 
     $phr_lst = $frm->assign_phr_lst_direct();

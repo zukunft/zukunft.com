@@ -67,6 +67,7 @@ class formula_unit_tests
 
         $t->subheader('Expression tests');
 
+        // get the id of the phrases that should be added to the result based on the formula reference text
         $exp = new expression($usr);
         $exp->ref_text = '{t205}={t203}*1000000';
         $result = $exp->fv_phr_lst();
@@ -76,6 +77,17 @@ class formula_unit_tests
         $target->lst[] = $wrd->phrase();
         $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
+        // get the special formulas used in a formula to calculate the result
+        // e.g. "next" is a special formula to get the following values
+        /*
+        $frm_next = new formula($usr);
+        $frm_next->name = "next";
+        $frm_next->type_id = cl(db_cl::FORMULA_TYPE, formula::NEXT);
+        $frm_next->id = 1;
+        $frm_has_next = new formula($usr);
+        $frm_has_next->usr_text = '=next';
+        $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        */
     }
 
 }

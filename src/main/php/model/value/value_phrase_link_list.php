@@ -48,7 +48,6 @@ class value_phrase_link_list extends link_list
         $qp = new sql_par();
         $qp->name = self::class . '_by_';
         $sql_by = '';
-        $sql_where = '';
 
         $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         if ($val != null) {
@@ -74,7 +73,6 @@ class value_phrase_link_list extends link_list
             } else {
                 $db_con->set_join_fields(array(phrase::FLD_ID), DB_TYPE_PHRASE);
             }
-            $db_con->set_where_text($sql_where);
             if ($val != null) {
                 if ($val->id > 0) {
                     $db_con->add_par(sql_db::PAR_INT, $val->id);

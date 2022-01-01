@@ -228,21 +228,28 @@ class view_cmp_link extends user_sandbox_link
     function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
         $qp = parent::load_sql($db_con, self::class);
-        //$sql_name = 'dsp_cmp_lst_by_';
         if ($this->id > 0) {
             $qp->name .= 'id';
         } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
             $qp->name .= 'view_and_cmp_id';
         } else {
-            log_err("At lease on phrase ID must be set to load a value list.", "value_list->load_by_phr_lst_sql");
+            log_err('Either the view component link id or view id and a component id (and the user= must be set ' .
+                'to load a ' . self::class, self::class . '->load_sql');
         }
 
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
-        $qp->sql = $db_con->select();
+        if ($this->id > 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select_by_link_ids(array(view_cmp_link::FLD_ID));
+        } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->view_id);
+            $db_con->add_par(sql_db::PAR_INT, $this->view_component_id);
+            $qp->sql = $db_con->select_by_link_ids(array(view::FLD_ID, view_cmp::FLD_ID));
+        }
         $qp->par = $db_con->get_par();
 
         return $qp;
