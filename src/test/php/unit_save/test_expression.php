@@ -50,19 +50,16 @@ function run_expression_test(testing $t)
     $t->dsp('formula->user text', $target, $result, TIMEOUT_LIMIT_PAGE_LONG);
 
     // create expressions for testing
-    $exp = new expression;
+    $exp = new expression($usr);
     $exp->usr_text = $frm->usr_text;
-    $exp->usr = $usr;
     $exp->ref_text = $exp->get_ref_text();
 
-    $exp_pe = new expression;
+    $exp_pe = new expression($usr);
     $exp_pe->usr_text = $frm_pe->usr_text;
-    $exp_pe->usr = $usr;
     $exp_pe->ref_text = $exp_pe->get_ref_text();
 
-    $exp_sector = new expression;
+    $exp_sector = new expression($usr);
     $exp_sector->usr_text = $frm_sector->usr_text;
-    $exp_sector->usr = $usr;
     $exp_sector->ref_text = $exp_sector->get_ref_text();
 
     // load the test ids
@@ -85,9 +82,8 @@ function run_expression_test(testing $t)
     $t->dsp('expression->get_ref_text for "' . $frm->usr_text . '"', $target, $result);
 
     // test the expression processing of the database reference
-    $exp_db = new expression;
+    $exp_db = new expression($usr);
     $exp_db->ref_text = '{t' . $wrd_percent->id . '} = ( is.numeric( {f' . $frm_this->id . '} ) & is.numeric( {f' . $frm_prior->id . '} ) ) ( {f' . $frm_this->id . '} - {f' . $frm_prior->id . '} ) / {f' . $frm_prior->id . '}';
-    $exp_db->usr = $usr;
     $target = '{t' . $wrd_percent->id . '}';
     $result = $exp_db->fv_part();
     $t->dsp('expression->fv_part_usr for "' . $exp_db->ref_text . '"', $target, $result);

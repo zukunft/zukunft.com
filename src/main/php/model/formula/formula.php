@@ -694,9 +694,8 @@ class formula extends user_sandbox_description
 
         // check
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
-            $exp = new expression;
+            $exp = new expression($this->usr);
             $exp->ref_text = $this->ref_text;
-            $exp->usr = $this->usr;
             $this->ref_text_r = ZUP_CHAR_CALC . $exp->r_part();
         }
 
@@ -989,9 +988,8 @@ class formula extends user_sandbox_description
             }
 
             // build the formula expression for calculating the result
-            $exp = new expression;
+            $exp = new expression($this->usr);
             $exp->ref_text = $this->ref_text;
-            $exp->usr = $this->usr;
 
             // the phrase left of the equation sign should be added to the result
             $has_result_phrases = false;
@@ -1090,10 +1088,9 @@ class formula extends user_sandbox_description
      */
     function expression(): expression
     {
-        $exp = new expression;
+        $exp = new expression($this->usr);
         $exp->ref_text = $this->ref_text;
         $exp->usr_text = $this->usr_text;
-        $exp->usr = $this->usr;
         log_debug(self::class . '->expression ' . $exp->ref_text . ' for user ' . $exp->usr->name);
         return $exp;
     }
@@ -1237,12 +1234,12 @@ class formula extends user_sandbox_description
         log_debug("formula->get_word (" . $formula . ")");
         $result = 0;
 
-        $pos_start = strpos($formula, ZUP_CHAR_WORD_START);
+        $pos_start = strpos($formula, expression::MAKER_WORD_START);
         if ($pos_start === false) {
             $result = 0;
         } else {
-            $r_part = zu_str_right_of($formula, ZUP_CHAR_WORD_START);
-            $l_part = zu_str_left_of($r_part, ZUP_CHAR_WORD_END);
+            $r_part = zu_str_right_of($formula, expression::MAKER_WORD_START);
+            $l_part = zu_str_left_of($r_part, expression::MAKER_WORD_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug("formula->get_word -> " . $result);
@@ -1258,12 +1255,12 @@ class formula extends user_sandbox_description
         log_debug("formula->get_formula (" . $formula . ")");
         $result = 0;
 
-        $pos_start = strpos($formula, ZUP_CHAR_FORMULA_START);
+        $pos_start = strpos($formula, expression::MAKER_FORMULA_START);
         if ($pos_start === false) {
             $result = 0;
         } else {
-            $r_part = zu_str_right_of($formula, ZUP_CHAR_FORMULA_START);
-            $l_part = zu_str_left_of($r_part, ZUP_CHAR_FORMULA_END);
+            $r_part = zu_str_right_of($formula, expression::MAKER_FORMULA_START);
+            $l_part = zu_str_left_of($r_part, expression::MAKER_FORMULA_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug("formula->get_formula -> " . $result);
@@ -1288,7 +1285,7 @@ class formula extends user_sandbox_description
             if (!in_array($new_wrd_id, $result)) {
                 $result[] = $new_wrd_id;
             }
-            $frm_text = zu_str_right_of($frm_text, ZUP_CHAR_WORD_START . $new_wrd_id . ZUP_CHAR_WORD_END);
+            $frm_text = zu_str_right_of($frm_text, expression::MAKER_WORD_START . $new_wrd_id . expression::MAKER_WORD_END);
             $new_wrd_id = $this->get_word($frm_text);
         }
 
@@ -1310,7 +1307,7 @@ class formula extends user_sandbox_description
             if (!in_array($new_frm_id, $result)) {
                 $result[] = $new_frm_id;
             }
-            $frm_text = zu_str_right_of($frm_text, ZUP_CHAR_FORMULA_START . $new_frm_id . ZUP_CHAR_FORMULA_END);
+            $frm_text = zu_str_right_of($frm_text, expression::MAKER_FORMULA_START . $new_frm_id . expression::MAKER_FORMULA_END);
             $new_frm_id = $this->get_formula($frm_text);
         }
 
@@ -1508,9 +1505,8 @@ class formula extends user_sandbox_description
     function set_ref_text(): string
     {
         $result = '';
-        $exp = new expression;
+        $exp = new expression($this->usr);
         $exp->usr_text = $this->usr_text;
-        $exp->usr = $this->usr;
         $this->ref_text = $exp->get_ref_text();
         $result .= $exp->err_text;
         return $result;

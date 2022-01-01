@@ -48,7 +48,6 @@ class formula_unit_tests
 
         $t->subheader('SQL statement tests');
 
-
         // sql to load the formula by id
         $frm = new formula($usr);
         $frm->id = 2;
@@ -65,6 +64,17 @@ class formula_unit_tests
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new formula($usr), $json_file);
+
+        $t->subheader('Expression tests');
+
+        $exp = new expression($usr);
+        $exp->ref_text = '{t205}={t203}*1000000';
+        $result = $exp->fv_phr_lst();
+        $target = new phrase_list($usr);
+        $wrd = new word($usr);
+        $wrd->id = 205;
+        $target->lst[] = $wrd->phrase();
+        $t->assert('Expression->fv_phr_lst for ' . formula::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
     }
 

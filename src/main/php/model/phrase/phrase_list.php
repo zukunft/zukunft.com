@@ -140,29 +140,49 @@ class phrase_list
         }
 
         if (count($wrd_ids) > 0) {
-            $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
-            $db_con->usr_id = $this->usr->id;
-            $db_wrd_lst = $db_con->get($qp);
-            foreach ($db_wrd_lst as $db_wrd) {
-                if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
+            if (!$db_con->connected()) {
+                // add the words just with the id for unit testing
+                foreach ($wrd_ids as $id) {
                     $wrd = new word($this->usr);
-                    $wrd->row_mapper($db_wrd);
+                    $wrd->id = $id;
                     $this->lst[] = $wrd->phrase();
                     $result = true;
+                }
+            } else {
+                $qp = $this->load_by_wrd_ids_sql($db_con, $wrd_ids);
+                $db_con->usr_id = $this->usr->id;
+                $db_wrd_lst = $db_con->get($qp);
+                foreach ($db_wrd_lst as $db_wrd) {
+                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
+                        $wrd = new word($this->usr);
+                        $wrd->row_mapper($db_wrd);
+                        $this->lst[] = $wrd->phrase();
+                        $result = true;
+                    }
                 }
             }
         }
 
         if (count($lnk_ids) > 0) {
-            $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
-            $db_con->usr_id = $this->usr->id;
-            $db_trp_lst = $db_con->get($qp);
-            foreach ($db_trp_lst as $db_trp) {
-                if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
-                    $trp = new word_link($this->usr);
-                    $trp->row_mapper($db_trp);
-                    $this->lst[] = $trp->phrase();
+            if (!$db_con->connected()) {
+                // add the triple just with the id for unit testing
+                foreach ($lnk_ids as $id) {
+                    $wrd = new word_link($this->usr);
+                    $wrd->id = $id;
+                    $this->lst[] = $wrd->phrase();
                     $result = true;
+                }
+            } else {
+                $qp = $this->load_by_trp_ids_sql($db_con, $lnk_ids);
+                $db_con->usr_id = $this->usr->id;
+                $db_trp_lst = $db_con->get($qp);
+                foreach ($db_trp_lst as $db_trp) {
+                    if (is_null($db_trp[user_sandbox::FLD_EXCLUDED]) or $db_trp[user_sandbox::FLD_EXCLUDED] == 0) {
+                        $trp = new word_link($this->usr);
+                        $trp->row_mapper($db_trp);
+                        $this->lst[] = $trp->phrase();
+                        $result = true;
+                    }
                 }
             }
         }

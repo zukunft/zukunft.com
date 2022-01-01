@@ -58,7 +58,7 @@ class formula_element
                 $wrd->load();
                 $this->name = $wrd->name;
                 $this->dsp_name = $wrd->display($this->back);
-                $this->symbol = ZUP_CHAR_WORD_START . $wrd->id . ZUP_CHAR_WORD_END;
+                $this->symbol = expression::MAKER_WORD_START . $wrd->id . expression::MAKER_WORD_END;
                 $this->obj = $wrd;
             }
             if ($this->type == self::TYPE_VERB) {
@@ -68,7 +68,7 @@ class formula_element
                 $lnk->load();
                 $this->name = $lnk->name;
                 $this->dsp_name = $lnk->display($this->back);
-                $this->symbol = ZUP_CHAR_LINK_START . $lnk->id . ZUP_CHAR_LINK_END;
+                $this->symbol = expression::MAKER_TRIPLE_START . $lnk->id . expression::MAKER_TRIPLE_END;
                 $this->obj = $lnk;
             }
             if ($this->type == self::TYPE_FORMULA) {
@@ -77,7 +77,7 @@ class formula_element
                 $frm->load();
                 $this->name = $frm->name;
                 $this->dsp_name = $frm->dsp_obj()->name_linked($this->back);
-                $this->symbol = ZUP_CHAR_FORMULA_START . $frm->id . ZUP_CHAR_FORMULA_END;
+                $this->symbol = expression::MAKER_FORMULA_START . $frm->id . expression::MAKER_FORMULA_END;
                 $this->obj = $frm;
                 // in case of a formula load also the corresponding word
                 $wrd = new word_dsp($this->usr);

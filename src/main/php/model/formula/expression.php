@@ -32,6 +32,10 @@
 class expression
 {
 
+    /*
+     *  code links
+     */
+
     // predefined type selectors potentially used also in other classes
     const SELECT_ALL = "all";        // to get all formula elements
     const SELECT_PHRASE = "phrases";    // to filter only the words from the expression element list
@@ -39,24 +43,46 @@ class expression
     const SELECT_FORMULA = "formulas";   // to filter only the formulas from the expression element list
     const SELECT_VERB_WORD = "verb_words"; // to filter the words and the words implied by the verbs from the expression element list
 
+    // to convert word, formula or verbs database reference to word or word list and in a second step to a value or value list
+    const MAKER_WORD_START = '{t';   //
+    const MAKER_WORD_END = '}';    //
+    const MAKER_TRIPLE_START = '{l';   //
+    const MAKER_TRIPLE_END = '}';    //
+    const MAKER_FORMULA_START = '{f';   //
+    const MAKER_FORMULA_END = '}';    //
+
+    /*
+     *  object vars
+     */
+
     public ?string $usr_text = null;   // the formula expression in the human-readable format
     public ?string $ref_text = null;   // the formula expression with the database references
     public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
-    public ?user $usr = null;          // to get the user settings for the conversion
+    public user $usr;                  // to get the user settings for the conversion
     public ?phrase_list $fv_phr_lst = null;  // list object of the words that should be added to the formula result
     public ?phrase_list $phr_lst = null;     // list of the word ids that are used for the formula result
+
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
 
     /**
      * returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
      * uses the $ref_text as a parameter because to ref_text is in many cases only a part of the complete reference text
+     *
+     * @param string $ref_text
+     * @param string $start_maker
+     * @param string $end_maker
+     * @return int the id found in the reference text or zero if no id is found
      */
-    private function get_ref_id($ref_text, $start_maker, $end_maker)
+    private function get_ref_id(string $ref_text, string $start_maker, string $end_maker): int
     {
         log_debug('expression->get_ref_id >' . $ref_text . '<');
         $result = 0;
 
         $pos_start = strpos($ref_text, $start_maker);
-        if ($pos_start === false) {
+        if ($pos_start !== false) {
             $r_part = zu_str_right_of($ref_text, $start_maker);
             $l_part = zu_str_left_of($r_part, $end_maker);
             if (is_numeric($l_part)) {
@@ -75,13 +101,13 @@ class expression
     private function get_wrd_id($ref_text)
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
-        return $this->get_ref_id($ref_text, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
+        return $this->get_ref_id($ref_text, self::MAKER_WORD_START, self::MAKER_WORD_END);
     }
 
     private function get_frm_id($ref_text)
     {
         log_debug('expression->get_wrd_id "' . $ref_text . '"');
-        return $this->get_ref_id($ref_text, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
+        return $this->get_ref_id($ref_text, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
     }
 
     /**
@@ -115,6 +141,7 @@ class expression
     /**
      * get the phrases that should be added to the result of a formula
      * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
+     * @return phrase_list|null with the phrase that should be added to the result
      */
     function fv_phr_lst(): ?phrase_list
     {
@@ -132,7 +159,7 @@ class expression
                 if (!in_array($new_wrd_id, $wrd_ids)) {
                     $wrd_ids[] = $new_wrd_id;
                 }
-                $ref_text = zu_str_right_of($ref_text, ZUP_CHAR_WORD_START . $new_wrd_id . ZUP_CHAR_WORD_END);
+                $ref_text = zu_str_right_of($ref_text, self::MAKER_WORD_START . $new_wrd_id . self::MAKER_WORD_END);
                 $new_wrd_id = $this->get_wrd_id($ref_text);
             }
             $phr_lst = new phrase_list($this->usr);
@@ -168,7 +195,7 @@ class expression
                 if (!in_array($new_wrd_id, $wrd_ids)) {
                     $wrd_ids[] = $new_wrd_id;
                 }
-                $ref_text = zu_str_right_of($ref_text, ZUP_CHAR_WORD_START . $new_wrd_id . ZUP_CHAR_WORD_END);
+                $ref_text = zu_str_right_of($ref_text, self::MAKER_WORD_START . $new_wrd_id . self::MAKER_WORD_END);
                 log_debug('remaining: ' . $ref_text);
                 $new_wrd_id = $this->get_wrd_id($ref_text);
             }
@@ -231,12 +258,12 @@ class expression
 
                 // find the next word reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    $elm_id = zu_str_between($work, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
+                    $elm_id = zu_str_between($work, self::MAKER_WORD_START, self::MAKER_WORD_END);
                     if (is_numeric($elm_id)) {
                         if ($elm_id > 0) {
                             $elm->type = formula_element::TYPE_WORD;
                             $elm->id = $elm_id;
-                            $pos = strpos($work, ZUP_CHAR_WORD_START);
+                            $pos = strpos($work, self::MAKER_WORD_START);
                             log_debug('expression->element_lst_all -> wrd pos ' . $pos);
                         }
                     }
@@ -244,10 +271,10 @@ class expression
 
                 // find the next verb reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_VERB) {
-                    $new_pos = strpos($work, ZUP_CHAR_LINK_START);
+                    $new_pos = strpos($work, self::MAKER_TRIPLE_START);
                     log_debug('expression->element_lst_all -> verb pos ' . $new_pos);
                     if ($new_pos < $pos) {
-                        $elm_id = zu_str_between($work, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
+                        $elm_id = zu_str_between($work, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
                         if (is_numeric($elm_id)) {
                             if ($elm_id > 0) {
                                 $elm->type = formula_element::TYPE_VERB;
@@ -260,10 +287,10 @@ class expression
 
                 // find the next formula reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_FORMULA or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    $new_pos = strpos($work, ZUP_CHAR_FORMULA_START);
+                    $new_pos = strpos($work, self::MAKER_FORMULA_START);
                     log_debug('expression->element_lst_all -> frm pos ' . $new_pos);
                     if ($new_pos < $pos) {
-                        $elm_id = zu_str_between($work, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
+                        $elm_id = zu_str_between($work, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
                         if (is_numeric($elm_id)) {
                             if ($elm_id > 0) {
                                 $elm->type = formula_element::TYPE_FORMULA;
@@ -301,9 +328,9 @@ class expression
                                 // get the position of the next element to check if a new group should be created or added to the same
                                 $next_pos = strlen($work);
                                 log_debug('expression->element_lst_all -> next_pos ' . $next_pos);
-                                $new_pos = strpos($work, ZUP_CHAR_WORD_START);
+                                $new_pos = strpos($work, self::MAKER_WORD_START);
                                 if ($new_pos < $next_pos) {
-                                    $elm_id = zu_str_between($work, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
+                                    $elm_id = zu_str_between($work, self::MAKER_WORD_START, self::MAKER_WORD_END);
                                     if (is_numeric($elm_id)) {
                                         if ($elm_id > 0) {
                                             $next_pos = $new_pos;
@@ -311,9 +338,9 @@ class expression
                                         }
                                     }
                                 }
-                                $new_pos = strpos($work, ZUP_CHAR_LINK_START);
+                                $new_pos = strpos($work, self::MAKER_TRIPLE_START);
                                 if ($new_pos < $next_pos) {
-                                    $elm_id = zu_str_between($work, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
+                                    $elm_id = zu_str_between($work, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
                                     if (is_numeric($elm_id)) {
                                         if ($elm_id > 0) {
                                             $next_pos = $new_pos;
@@ -321,9 +348,9 @@ class expression
                                         }
                                     }
                                 }
-                                $new_pos = strpos($work, ZUP_CHAR_FORMULA_START);
+                                $new_pos = strpos($work, self::MAKER_FORMULA_START);
                                 if ($new_pos < $next_pos) {
-                                    $elm_id = zu_str_between($work, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
+                                    $elm_id = zu_str_between($work, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
                                     if (is_numeric($elm_id)) {
                                         if ($elm_id > 0) {
                                             $next_pos = $new_pos;
@@ -480,37 +507,37 @@ class expression
         $result = $formula;
 
         // replace the words
-        $id = zu_str_between($result, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
+        $id = zu_str_between($result, self::MAKER_WORD_START, self::MAKER_WORD_END);
         while ($id > 0) {
-            $db_sym = ZUP_CHAR_WORD_START . $id . ZUP_CHAR_WORD_END;
+            $db_sym = self::MAKER_WORD_START . $id . self::MAKER_WORD_END;
             $wrd = new word_dsp($this->usr);
             $wrd->id = $id;
             $wrd->load();
             $result = str_replace($db_sym, ZUP_CHAR_WORD . $wrd->name . ZUP_CHAR_WORD, $result);
-            $id = zu_str_between($result, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
+            $id = zu_str_between($result, self::MAKER_WORD_START, self::MAKER_WORD_END);
         }
 
         // replace the formulas
-        $id = zu_str_between($result, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
+        $id = zu_str_between($result, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
         while ($id > 0) {
-            $db_sym = ZUP_CHAR_FORMULA_START . $id . ZUP_CHAR_FORMULA_END;
+            $db_sym = self::MAKER_FORMULA_START . $id . self::MAKER_FORMULA_END;
             $frm = new formula($this->usr);
             $frm->id = $id;
             $frm->load();
             $result = str_replace($db_sym, ZUP_CHAR_WORD . $frm->name . ZUP_CHAR_WORD, $result);
-            $id = zu_str_between($result, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
+            $id = zu_str_between($result, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
         }
 
         // replace the verbs
-        $id = zu_str_between($result, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
+        $id = zu_str_between($result, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
         while ($id > 0) {
-            $db_sym = ZUP_CHAR_LINK_START . $id . ZUP_CHAR_LINK_END;
+            $db_sym = self::MAKER_TRIPLE_START . $id . self::MAKER_TRIPLE_END;
             $vrb = new verb;
             $vrb->id = $id;
             $vrb->usr = $this->usr;
             $vrb->load();
             $result = str_replace($db_sym, ZUP_CHAR_WORD . $vrb->name . ZUP_CHAR_WORD, $result);
-            $id = zu_str_between($result, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
+            $id = zu_str_between($result, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
         }
 
         log_debug('expression->get_usr_part -> "' . $result . '"');
@@ -569,7 +596,7 @@ class expression
                 $frm->name = $name;
                 $frm->load();
                 if ($frm->id > 0) {
-                    $db_sym = ZUP_CHAR_FORMULA_START . $frm->id . ZUP_CHAR_FORMULA_END;
+                    $db_sym = self::MAKER_FORMULA_START . $frm->id . self::MAKER_FORMULA_END;
                     log_debug('expression->get_ref_part -> found formula "' . $db_sym . '" for "' . $name . '"');
                 }
 
@@ -579,7 +606,7 @@ class expression
                     $wrd->name = $name;
                     $wrd->load();
                     if ($wrd->id > 0) {
-                        $db_sym = ZUP_CHAR_WORD_START . $wrd->id . ZUP_CHAR_WORD_END;
+                        $db_sym = self::MAKER_WORD_START . $wrd->id . self::MAKER_WORD_END;
                         log_debug('expression->get_ref_part -> found word "' . $db_sym . '" for "' . $name . '"');
                     }
                 }
@@ -591,7 +618,7 @@ class expression
                     $vrb->usr = $this->usr;
                     $vrb->load();
                     if ($vrb->id > 0) {
-                        $db_sym = ZUP_CHAR_LINK_START . $vrb->id . ZUP_CHAR_LINK_END;
+                        $db_sym = self::MAKER_TRIPLE_START . $vrb->id . self::MAKER_TRIPLE_END;
                         log_debug('expression->get_ref_part -> found verb "' . $db_sym . '" for "' . $name . '"');
                     }
                 }
@@ -658,8 +685,8 @@ class expression
 
         if ($this->get_wrd_id($this->ref_text) > 0
             or $this->get_frm_id($this->ref_text) > 0
-            or $this->get_ref_id($this->ref_text, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END) > 0
-            or $this->get_ref_id($this->ref_text, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END) > 0) {
+            or $this->get_ref_id($this->ref_text, self::MAKER_WORD_START, self::MAKER_WORD_END) > 0
+            or $this->get_ref_id($this->ref_text, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END) > 0) {
             $result = true;
         }
 
@@ -668,8 +695,8 @@ class expression
     }
 
     /*
-    display functions
-    */
+     * display functions
+     */
 
     /**
      * format the expression name to use it for debugging

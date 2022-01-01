@@ -194,8 +194,8 @@ function zuc_pos_word($formula): int
 
     $calc = new math();
 
-    $pos = $calc->pos_separator($formula, ZUP_CHAR_WORD_START, 0,);
-    $end = $calc->pos_separator($formula, ZUP_CHAR_WORD_END, $pos);
+    $pos = $calc->pos_separator($formula, expression::MAKER_WORD_START, 0,);
+    $end = $calc->pos_separator($formula, expression::MAKER_WORD_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -212,8 +212,8 @@ function zuc_pos_link($formula): int
 
     $calc = new math();
 
-    $pos = $calc->pos_separator($formula, ZUP_CHAR_LINK_START, 0,);
-    $end = $calc->pos_separator($formula, ZUP_CHAR_LINK_END, $pos);
+    $pos = $calc->pos_separator($formula, expression::MAKER_TRIPLE_START, 0,);
+    $end = $calc->pos_separator($formula, expression::MAKER_TRIPLE_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -230,8 +230,8 @@ function zuc_pos_formula($formula)
 
     $calc = new math();
 
-    $pos = $calc->pos_separator($formula, ZUP_CHAR_FORMULA_START, 0,);
-    $end = $calc->pos_separator($formula, ZUP_CHAR_FORMULA_END, $pos);
+    $pos = $calc->pos_separator($formula, expression::MAKER_FORMULA_START, 0,);
+    $end = $calc->pos_separator($formula, expression::MAKER_FORMULA_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -310,9 +310,9 @@ function zuc_get_word($formula)
     log_debug("zuc_get_word (" . $formula . ")");
     $result = 0;
 
-    if (substr($formula, 0, strlen(ZUP_CHAR_WORD_START)) == ZUP_CHAR_WORD_START) {
-        $result = zu_str_right_of($formula, ZUP_CHAR_WORD_START);
-        $result = zu_str_left_of($result, ZUP_CHAR_WORD_END);
+    if (substr($formula, 0, strlen(expression::MAKER_WORD_START)) == expression::MAKER_WORD_START) {
+        $result = zu_str_right_of($formula, expression::MAKER_WORD_START);
+        $result = zu_str_left_of($result, expression::MAKER_WORD_END);
     }
 
     log_debug("zuc_get_word ... done (" . $result . ")");
@@ -325,9 +325,9 @@ function zuc_has_word($formula)
     log_debug("zuc_has_word (" . $formula . ")");
     $result = 0;
 
-    if (substr($formula, 0, strlen(ZUP_CHAR_WORD_START)) == ZUP_CHAR_WORD_START) {
-        $result = zu_str_right_of($formula, ZUP_CHAR_WORD_START);
-        $result = zu_str_left_of($result, ZUP_CHAR_WORD_END);
+    if (substr($formula, 0, strlen(expression::MAKER_WORD_START)) == expression::MAKER_WORD_START) {
+        $result = zu_str_right_of($formula, expression::MAKER_WORD_START);
+        $result = zu_str_left_of($result, expression::MAKER_WORD_END);
     }
 
     log_debug("zuc_has_word ... done (" . $result . ")");
@@ -356,9 +356,9 @@ function zuc_get_verb($formula, $word_array, $time_word_id)
     log_debug("zuc_get_verb(" . $formula . "," . dsp_array($word_array) . "," . $time_word_id . ")");
     $result = 0;
 
-    if (substr($formula, 0, strlen(ZUP_CHAR_LINK_START)) == ZUP_CHAR_LINK_START) {
-        $result = zu_str_right_of($formula, ZUP_CHAR_LINK_START);
-        $result = zu_str_left_of($result, ZUP_CHAR_LINK_END);
+    if (substr($formula, 0, strlen(expression::MAKER_TRIPLE_START)) == expression::MAKER_TRIPLE_START) {
+        $result = zu_str_right_of($formula, expression::MAKER_TRIPLE_START);
+        $result = zu_str_left_of($result, expression::MAKER_TRIPLE_END);
     }
 
     log_debug("zuc_get_verb ... done (" . $result . ")");
@@ -397,10 +397,10 @@ function zuc_get_verb_word_array($formula, $word_array, $time_word_id)
     log_debug("zuc_get_verb_word_array (" . $formula . "," . dsp_array($word_array) . "," . $time_word_id . ")");
     $result = array();
 
-    if (substr($formula, 0, strlen(ZUP_CHAR_LINK_START)) == ZUP_CHAR_LINK_START) {
+    if (substr($formula, 0, strlen(expression::MAKER_TRIPLE_START)) == expression::MAKER_TRIPLE_START) {
         log_debug("zuc_get_verb_word_array -> found");
-        $verb_id = zu_str_right_of($formula, ZUP_CHAR_WORD_START);
-        $verb_id = zu_str_left_of($verb_id, ZUP_CHAR_WORD_END);
+        $verb_id = zu_str_right_of($formula, expression::MAKER_WORD_START);
+        $verb_id = zu_str_left_of($verb_id, expression::MAKER_WORD_END);
         // list all words that are linked to the verb e.g. country can be the differentiator for Sales, so Sales would be the result
         $verb_words = zu_sql_word_ids_linked($word_array, $verb_id, verb::DIRECTION_DOWN);
         log_debug("zuc_get_verb_word_array -> verb words " . dsp_array($verb_words));
@@ -418,8 +418,8 @@ function zuc_has_formula($formula)
 
     $result = False;
 
-    // zu_debug(" -> ".substr($formula, 0, strlen(ZUP_CHAR_FORMULA_START))." = ".ZUP_CHAR_FORMULA_START."?");
-    if (substr($formula, 0, strlen(ZUP_CHAR_FORMULA_START)) == ZUP_CHAR_FORMULA_START) {
+    // zu_debug(" -> ".substr($formula, 0, strlen(expression::MAKER_FORMULA_START))." = ".expression::MAKER_FORMULA_START."?");
+    if (substr($formula, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
         log_debug("zuc_has_formula -> found");
         $result = True;
     }
@@ -438,11 +438,11 @@ function zuc_frm_val($formula, $word_array, $time_word_id, $user_id)
     $result_user = 0;
 
     // get the formula id
-    $formula_id = strval(zu_str_between($result, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END));
+    $formula_id = strval(zu_str_between($result, expression::MAKER_FORMULA_START, expression::MAKER_FORMULA_END));
     log_debug("zuc_frm_val -> id " . $formula_id);
 
     // get what is around the formula id
-    $formula_id_txt = ZUP_CHAR_FORMULA_START . $formula_id . ZUP_CHAR_FORMULA_END;
+    $formula_id_txt = expression::MAKER_FORMULA_START . $formula_id . expression::MAKER_FORMULA_END;
     $part_l = zu_str_left_of($result, $formula_id_txt);
     $part_r = zu_str_right_of($result, $part_l . $formula_id_txt);
 
@@ -455,8 +455,8 @@ function zuc_frm_val($formula, $word_array, $time_word_id, $user_id)
             $words_to_add = zu_str_left_of($part_r, ZUP_CHAR_WORDS_END);
             $words_to_add = zu_str_right_of($words_to_add, ZUP_CHAR_WORDS_START);
             //$word_add_array = strsplit;
-            $words_to_add = zu_str_left_of($part_r, ZUP_CHAR_WORD_END);
-            $words_to_add = zu_str_right_of($words_to_add, ZUP_CHAR_WORD_START);
+            $words_to_add = zu_str_left_of($part_r, expression::MAKER_WORD_END);
+            $words_to_add = zu_str_right_of($words_to_add, expression::MAKER_WORD_START);
             log_debug("zuc_frm_val -> add words " . $words_to_add);
             $time_word_id_received = strval($words_to_add);
             if ($time_word_id_received > 0) {
@@ -685,7 +685,7 @@ function zuc_part ($formula, $result_type, $word_array, $time_word_id, $user_id)
     if ($new_word_id > 0) {
       zu_debug("zuc_part -> words");
       $word_array[] = $new_word_id; 
-      $result = zu_str_right_of($result, ZUP_CHAR_WORD_START.$new_word_id.ZUP_CHAR_WORD_END);
+      $result = zu_str_right_of($result, expression::MAKER_WORD_START.$new_word_id.expression::MAKER_WORD_END);
       // if a verb or other word follows combine the words
       if (zuc_get_verb($result, $result_type, $word_array, $time_word_id) > 0 || zuc_has_words($result, $result_type)) {
         zu_debug("zuc_part -> combined words ".implode(",",$word_array));
@@ -703,7 +703,7 @@ function zuc_part ($formula, $result_type, $word_array, $time_word_id, $user_id)
       $verb_id = zuc_get_verb($result, $result_type, $word_array, $time_word_id);
       if ($verb_id > 0) {
         zu_debug("zuc_part -> verbs");
-        $right_part = zu_str_right_of($result, ZUP_CHAR_LINK_START.$verb_id.ZUP_CHAR_LINK_END); 
+        $right_part = zu_str_right_of($result, expression::MAKER_LINK_START.$verb_id.expression::MAKER_LINK_END);
         $right_value = zuc_part($right_part, $result_type, $word_array, $time_word_id, $user_id);
 
         $new_verb_ids = zuc_get_verb_words($result, $result_type, $word_array, $time_word_id, $user_id);

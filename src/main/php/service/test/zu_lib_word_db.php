@@ -464,7 +464,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id) 
     // check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
     $id_txt = zu_sql_id($wrd_name, $user_id);
     if ($id_txt <> "") {
-      if (substr($id_txt, 0, strlen(ZUP_CHAR_FORMULA_START)) == ZUP_CHAR_FORMULA_START) {
+      if (substr($id_txt, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
         // maybe ask for confirmation
         // change the link type to "formula link"
         $type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);

@@ -680,7 +680,7 @@ class value extends user_sandbox_display
                 if (!empty($this->ids)) {
                     log_debug('value->set_phr_lst_by_ids for "' . implode(",", $ids) . '" and "' . $this->usr->name . '"');
                     $phr_lst = new phrase_list($this->usr);
-                    if (!$phr_lst->load_by_ids($ids)) {
+                    if (!$phr_lst->load_by_ids((new phr_ids($ids)))) {
                         $result = 'Cannot load phrases by id';
                     }
                     $this->phr_lst = $phr_lst;
@@ -821,9 +821,8 @@ class value extends user_sandbox_display
                                 if ($formula_text <> "") {
                                     $l_part = zu_str_left_of($formula_text, ZUP_CHAR_CALC);
                                     $r_part = zu_str_right_of($formula_text, ZUP_CHAR_CALC);
-                                    $exp = new expression;
+                                    $exp = new expression($this->usr);
                                     $exp->ref_text = $frm->ref_text;
-                                    $exp->usr = $this->usr;
                                     $fv_phr_lst = $exp->fv_phr_lst();
                                     $phr_lst = $exp->phr_lst();
                                     if (isset($fv_phr_lst)) {
@@ -836,7 +835,7 @@ class value extends user_sandbox_display
                                             // test if it is a valid scale formula
                                             if ($fv_wrd->is_type(word_type_list::DBL_SCALING_HIDDEN)
                                                 and $r_wrd->is_type(word_type_list::DBL_SCALING)) {
-                                                $wrd_symbol = ZUP_CHAR_WORD_START . $r_wrd->id . ZUP_CHAR_WORD_END;
+                                                $wrd_symbol = expression::MAKER_WORD_START . $r_wrd->id . expression::MAKER_WORD_END;
                                                 log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
                                                 log_debug('value->scale -> replace done (' . $r_part . ')');
@@ -1810,7 +1809,7 @@ class value extends user_sandbox_display
                     // ... and create a new display component link
                     $this->id = 0;
                     $this->owner_id = $this->usr->id;
-                    $result .= $this->add($db_con);
+                    $result .= $this->add($db_con)->get_last_message();
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }

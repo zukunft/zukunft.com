@@ -130,14 +130,15 @@
 // the log level is given by the calling function because after some errors the program may nevertheless continue
 function zu_sql_exe($sql, $user_id, $log_level, $function_name, $function_trace)
 {
+    global $db_con;
     log_debug("zu_sql_exe (" . $sql . ",u" . $user_id . ",ll:" . $log_level . ",fn:" . $function_name . ",ft:" . $function_trace . ")");
-    $result = mysqli_query($sql);
+    $result = mysqli_query($db_con, $sql);
     if (!$result) {
-        $msg_text = mysqli_error();
+        $msg_text = mysqli_error($db_con);
         $sql = str_replace("'", "", $sql);
         $sql = str_replace("\"", "", $sql);
         $msg_text .= " (" . $sql . ")";
-        $result = log_msg($msg_text, $log_level, $function_name, $function_trace, $user_id);
+        $result = log_msg($msg_text, '', $log_level, $function_name, $function_trace, $user_id);
         log_debug("zu_sql_exe -> error (" . $result . ")");
     }
 
@@ -201,6 +202,7 @@ function zudb_get1($sql, $user_id)
 // writing the changes to the log table for history rollback is done at the calling function also because zu_log also uses this function
 function zu_sql_insert($table, $fields, $values, $user_id)
 {
+    global $db_con;
     log_debug("zu_sql_insert (" . $table . ",fld" . $fields . ",v" . $values . ",u" . $user_id . ")");
 
     // check parameter
@@ -211,7 +213,7 @@ function zu_sql_insert($table, $fields, $values, $user_id)
         . ' VALUES (' . $values . ');';
     $sql_result = zu_sql_exe($sql, $user_id, sys_log_level::FATAL, "zu_sql_insert", (new Exception)->getTraceAsString());
     if ($sql_result) {
-        $result = mysqli_insert_id();
+        $result = mysqli_insert_id($db_con);
     } else {
         $result = -1;
     }
@@ -220,16 +222,17 @@ function zu_sql_insert($table, $fields, $values, $user_id)
     return $result;
 }
 
-// add an new user for authentification and logging
+// add a new user for authentication and logging
 function zu_sql_add_user($user_name)
 {
+    global $db_con;
     log_debug("zu_sql_add_user (" . $user_name . ")");
 
     $sql = "INSERT INTO users (user_name) VALUES ('" . $user_name . "');";
     log_debug("zu_sql_update ... exec " . $sql);
     $sql_result = zu_sql_exe($sql, 0, sys_log_level::FATAL, "zu_sql_add_user", (new Exception)->getTraceAsString());
     // log the changes???
-    $result = mysqli_insert_id();
+    $result = mysqli_insert_id($db_con);
 
     log_debug("zu_sql_add_user ... done " . $result . ".");
 
@@ -309,9 +312,12 @@ function sql_insert($table, $id_field, $value_field, $new_value, $user_id)
             $result = zu_sql_exe($sql, $user_id, sys_log_level::ERROR, "sql_insert", (new Exception)->getTraceAsString());
             if (!$result) {
                 if ($table <> 'events') {
-                    //echo event_add("Insert ".$table." ".$value_field." ".$new_value." failt", "Cannot insert into ".$table." the ".$value_field." ".$new_value." because: ".mysqli_error().".", EVENT_TYPE_SQL_ERROR, date('Y-m-d H:i:s'), "Please contact your system administrator.", "", "", "", "", "");
+                    log_err("Insert ".$table." ".$value_field." ".$new_value." failed",
+                        "Cannot insert into ".$table." the ".$value_field." ".$new_value." because: ".mysqli_error($db_con).".",
+                        EVENT_TYPE_SQL_ERROR,
+                        date('Y-m-d H:i:s'));
                 } else {
-                    echo "Error " . mysqli_error() . " when creating an event.";
+                    echo "Error " . mysqli_error($db_con) . " when creating an event.";
                 }
             } else {
                 log_debug("sql_insert -> get id for " . $new_value . "");
@@ -1411,23 +1417,23 @@ function zu_sql_id($name, $user_id)
     $result = "";
     $wrd_id = zut_id($name, $user_id);
     if ($wrd_id > 0) {
-        $result = ZUP_CHAR_WORD_START . $wrd_id . ZUP_CHAR_WORD_END;
+        $result = expression::MAKER_WORD_START . $wrd_id . expression::MAKER_WORD_END;
     }
     if ($result == '') {
         $lnk_id = zul_id($name);
         if ($lnk_id > 0) {
-            $result = ZUP_CHAR_LINK_START . $lnk_id . ZUP_CHAR_LINK_END;
+            $result = expression::MAKER_TRIPLE_START . $lnk_id . expression::MAKER_TRIPLE_END;
         } else {
             $lnk_id = zu_sql_get_value('verbs', 'link_type_id', 'formula_name', $name);
         }
         if ($lnk_id > 0) {
-            $result = ZUP_CHAR_LINK_START . $lnk_id . ZUP_CHAR_LINK_END;
+            $result = expression::MAKER_TRIPLE_START . $lnk_id . expression::MAKER_TRIPLE_END;
         }
     }
     if ($result == '') {
         $frm_id = zuf_id($name, $user_id);
         if ($frm_id > 0) {
-            $result = ZUP_CHAR_FORMULA_START . $frm_id . ZUP_CHAR_FORMULA_END;
+            $result = expression::MAKER_FORMULA_START . $frm_id . expression::MAKER_FORMULA_END;
         }
     }
     return $result;
@@ -1439,22 +1445,22 @@ function zu_sql_id_msg($id_txt, $id_name, $user_id)
     log_debug("zu_sql_id_msg (" . $id_txt . "," . $id_name . ",u" . $user_id . ")");
 
     $result = "";
-    if (zu_str_is_left($id_txt, ZUP_CHAR_WORD_START)) {
-        $wrd_id = zu_str_between($id_txt, ZUP_CHAR_WORD_START, ZUP_CHAR_WORD_END);
+    if (zu_str_is_left($id_txt, expression::MAKER_WORD_START)) {
+        $wrd_id = zu_str_between($id_txt, expression::MAKER_WORD_START, expression::MAKER_WORD_END);
         if ($wrd_id > 0) {
             $result = zuh_err('A word with the name "' . $id_name . '" already exists. Please use another name.');
         }
     }
     // check if verb exists
-    if (zu_str_is_left($id_txt, ZUP_CHAR_LINK_START)) {
-        $lnk_id = zu_str_between($id_txt, ZUP_CHAR_LINK_START, ZUP_CHAR_LINK_END);
+    if (zu_str_is_left($id_txt, expression::MAKER_TRIPLE_START)) {
+        $lnk_id = zu_str_between($id_txt, expression::MAKER_TRIPLE_START, expression::MAKER_TRIPLE_END);
         if ($lnk_id > 0) {
             $result = zuh_err('A verb with the name "' . $id_name . '" already exists. Please use another name.');
         }
     }
     // check if word exists
-    if (zu_str_is_left($id_txt, ZUP_CHAR_FORMULA_START)) {
-        $frm_id = zu_str_between($id_txt, ZUP_CHAR_FORMULA_START, ZUP_CHAR_FORMULA_END);
+    if (zu_str_is_left($id_txt, expression::MAKER_FORMULA_START)) {
+        $frm_id = zu_str_between($id_txt, expression::MAKER_FORMULA_START, expression::MAKER_FORMULA_END);
         if ($frm_id > 0) {
             $result = zuh_err('A formula with name "' . $id_name . '" already exists. Please use another name.');
         }

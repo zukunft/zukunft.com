@@ -314,6 +314,26 @@ class sql_db
         log_debug("db->close -> done");
     }
 
+    /**
+     * @return bool true if the database connection is open
+     */
+    function connected(): bool
+    {
+        $result = false;
+        if ($this->db_type == sql_db::POSTGRES) {
+            if ($this->postgres_link != null) {
+                $result = true;
+            }
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            if ($this->mysql != null) {
+                $result = true;
+            }
+        } else {
+            log_err('Database type ' . $this->db_type . ' not yet implemented');
+        }
+        return $result;
+    }
+
     /*
      * basic interface function for the private class parameter
      */

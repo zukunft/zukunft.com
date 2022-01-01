@@ -438,14 +438,6 @@ const ZUP_CHAR_SEPERATOR = ',';    //
 const ZUP_CHAR_RANGE = ':';    //
 const ZUP_CHAR_TEXT_CONCAT = '&';    //
 
-// to convert word, formula or verbs database reference to word or word list and in a second step to a value or value list
-const ZUP_CHAR_WORD_START = '{t';   //
-const ZUP_CHAR_WORD_END = '}';    //
-const ZUP_CHAR_LINK_START = '{l';   //
-const ZUP_CHAR_LINK_END = '}';    //
-const ZUP_CHAR_FORMULA_START = '{f';   //
-const ZUP_CHAR_FORMULA_END = '}';    //
-
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
 // math calc (probably not needed any more if r-project.org is used)
