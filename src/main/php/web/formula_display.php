@@ -65,7 +65,10 @@ class formula_dsp extends formula
         return $result;
     }
 
-    // display the most interesting formula result for one word
+    /**
+     * display the most interesting formula result for one word
+     * TODO define the criteria and review the formula value loading
+     */
     function dsp_result($wrd, $back): string
     {
         log_debug('formula->dsp_result for "' . $wrd->name . '" and formula ' . $this->dsp_id());

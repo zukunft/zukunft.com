@@ -205,7 +205,7 @@ function run_formula_test(testing $t)
     $frm_this = $t->load_formula('this');
     $frm_prior = $t->load_formula('prior');
 
-    // test the display functions
+    // test the formula display functions
     $frm = $t->load_formula(formula::TN_INCREASE);
     $frm_dsp = $frm->dsp_obj();
     $exp = $frm->expression();
@@ -213,26 +213,32 @@ function run_formula_test(testing $t)
     $target = '""percent" = ( "this" - "prior" ) / "prior"" ({t'.$wrd_percent->id.'}=({f'.$frm_this->id.'}-{f'.$frm_prior->id.'})/{f'.$frm_prior->id.'})';
     $t->dsp('formula->expression for ' . $frm->dsp_id(), $target, $result);
 
+    // ... the formula name
     $result = $frm->name;
     $target = 'System Test Formula Increase';
     $t->dsp('formula->name for ' . $frm->dsp_id(), $target, $result);
 
+    // ... in HTML format
     $result = $frm_dsp->dsp_text($back);
     $target = '"percent" = ( <a href="/http/formula_edit.php?id='.$frm_this->id.'&back=0">this</a> - <a href="/http/formula_edit.php?id='.$frm_prior->id.'&back=0">prior</a> ) / <a href="/http/formula_edit.php?id='.$frm_prior->id.'&back=0">prior</a>';
     $t->dsp('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
+    // ... in HTML format with link
     $frm_increase = $t->load_formula(formula::TN_INCREASE);
     $result = $frm_dsp->name_linked($back);
     $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id . '&back=0">' . formula::TN_INCREASE . '</a>';
     $t->dsp('formula->display for ' . $frm->dsp_id(), $target, $result);
 
+    // ... the formula result selected by the word and in percent
+    // TODO defined the criteria for selecting the formula value
     $wrd = new word_dsp($t->usr1);
     $wrd->name = word::TN_CH;
     $wrd->load();
+    /*
     $result = trim($frm_dsp->dsp_result($wrd, $back));
-    //$target = '0.79 %';
-    $target = '0.01';
+    $target = '0.79 %';
     $t->dsp('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name(), $target, $result);
+    */
 
     /* TODO reactivate
     $result = $frm->btn_edit();

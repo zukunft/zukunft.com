@@ -310,6 +310,16 @@ class testing extends test_base
             }
         }
 
+        // request to delete some triples not yet covered by the other cleanup jobs
+        $this->del_word_link(word::TN_2019, verb::IS_A, word::TN_YEAR);
+        $this->del_word_link(word::TN_2020, verb::IS_A, word::TN_YEAR);
+        $this->del_word_link(word::TN_2021, verb::IS_A, word::TN_YEAR);
+        $this->del_word_link(word::TN_2022, verb::IS_A, word::TN_YEAR);
+        $this->del_word_link(word::TN_2020, verb::DBL_FOLLOW, word::TN_2019);
+        $this->del_word_link(word::TN_2021, verb::DBL_FOLLOW, word::TN_2020);
+        $this->del_word_link(word::TN_2022, verb::DBL_FOLLOW, word::TN_2021);
+        $this->del_word_link(word::TN_CHILD_NON_INHERITANCE, verb::IS_PART_OF, word::TN_PARENT_NON_INHERITANCE);
+
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
         $wrd = $this->load_word(word::TN_ADD);

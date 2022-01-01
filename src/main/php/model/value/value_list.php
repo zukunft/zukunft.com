@@ -393,7 +393,7 @@ class value_list
         }
         $phr_lst = new phrase_list($this->usr);
         if (count($all_ids) > 0) {
-            $phr_lst->load_by_ids($all_ids);
+            $phr_lst->load_by_ids(new phr_ids( $all_ids));
         }
         log_debug('value_list->time_lst (' . dsp_count($phr_lst->lst) . ')');
         return $phr_lst;
@@ -624,7 +624,7 @@ class value_list
     }
 
     /**
-     * @return bool true if the user
+     * @return bool true if the list contains at least one value
      */
     function has_values(): bool
     {
@@ -643,7 +643,9 @@ class value_list
       -----------------
     */
 
-    // return a list of phrase groups for all values of this list
+    /**
+     * return a list of phrase groups for all values of this list
+     */
     function phrase_groups()
     {
         log_debug('value_list->phrase_groups');
@@ -651,7 +653,7 @@ class value_list
         $grp_lst->usr = $this->usr;
         foreach ($this->lst as $val) {
             if (!isset($val->grp)) {
-                $this->load_grp_by_id();
+                $val->load_grp_by_id();
             }
             if (isset($val->grp)) {
                 $grp_lst->lst[] = $val->grp;
@@ -917,7 +919,11 @@ class value_list
                     // list the related formula values
                     $fv_lst = new formula_value_list;
                     $fv_lst->usr = $this->usr;
-                    $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, $val->time_id);
+                    if ($val->time_phr != null) {
+                        $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, $val->time_phr->id);
+                    } else {
+                        $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, 0);
+                    }
                     $result .= '    </td>';
                     log_debug('value_list->html -> formula results ' . $val->id . ' loaded');
 
@@ -953,10 +959,12 @@ class value_list
 
         $commen_phr_lst = $commen_phr_lst->phrase_lst();
 
-        // to review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
+        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
+        /*
         if (get_class($this->phr) == word::class or get_class($this->phr) == word_dsp::class) {
             $this->phr = $this->phr->phrase();
         }
+        */
         if (isset($commen_phr_lst)) {
             if (!empty($commen_phr_lst->lst)) {
                 $commen_phr_lst->add($this->phr);
@@ -971,7 +979,7 @@ class value_list
     }
 
     /**
-     * delete all loaded values e.g. to delete al the values linked to a phrase
+     * delete all loaded values e.g. to delete all the values linked to a phrase
      * @return user_message
      */
     function del(): user_message

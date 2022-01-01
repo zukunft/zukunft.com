@@ -563,10 +563,40 @@ class word_link_list
         return $result;
     }
 
-    // returns the number of phrases in this list
+    /**
+     * returns the number of phrases in this list
+     */
     function count(): int
     {
         return count($this->lst);
+    }
+
+    /**
+     * @return bool true if the list contains at least one triple
+     */
+    function has_values(): bool
+    {
+        if ($this->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * delete all loaded triples e.g. to delete all the triples linked to a word
+     * @return user_message
+     */
+    function del(): user_message
+    {
+        $result = new user_message();
+
+        if ($this->lst != null) {
+            foreach ($this->lst as $trp) {
+                $result->add($trp->del());
+            }
+        }
+        return new user_message();
     }
 
 

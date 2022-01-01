@@ -50,6 +50,7 @@ function run_batch_job_test(testing $t)
     // prepare test adding a batch job via a list
     $phr_lst = new phrase_list($usr);
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst->ex_time();
     $val = new value($usr);
     $val->grp = $phr_lst->get_grp();
     $val->load();

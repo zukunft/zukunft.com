@@ -827,6 +827,19 @@ class test_base
         return $result;
     }
 
+    function del_word_link(string $from_name,
+                            string $verb_code_id,
+                            string $to_name): bool
+    {
+        $trp = $this->load_word_link($from_name, $verb_code_id, $to_name);
+        if ($trp->id <> 0) {
+            $trp->del();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function test_formula_link(string $formula_name, string $word_name, bool $autocreate = true): string
     {
         global $usr;

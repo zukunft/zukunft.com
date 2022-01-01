@@ -53,7 +53,7 @@ function run_formula_link_test(testing $t)
 
     // link the test formula to another word
     $frm = $t->load_formula(formula::TN_RENAMED);
-    $phr = new phrase($t->usr2);
+    $phr = new phrase($t->usr1);
     $phr->name = word::TN_RENAMED;
     $phr->load();
     $result = $frm->link_phr($phr);
@@ -67,7 +67,7 @@ function run_formula_link_test(testing $t)
     $log->new_to_id = $phr->id;
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word::TN_RENAMED;
     $t->dsp('formula_link->link_phr logged for "' . $phr->name . '" to "' . $frm->name . '"', $target, $result);
 
     // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -104,12 +104,14 @@ function run_formula_link_test(testing $t)
     $t->dsp('formula->assign_phr_ulst contains "' . $phr->name . '" for user "' . $t->usr1->name . '"', $target, $result);
 
     // ... check if the link is shown correctly also for the second user
+    // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
+    // TODO check what that the word is linked if the second user activates the word
     $frm = new formula($t->usr2);
     $frm->name = formula::TN_RENAMED;
     $frm->load();
     $phr_lst = $frm->assign_phr_ulst();
     $result = $phr_lst->does_contain($phr);
-    $target = true;
+    $target = false;
     $t->dsp('formula->assign_phr_ulst contains "' . $phr->name . '" for user "' . $t->usr2->name . '"', $target, $result);
 
     // ... check if the value update has been triggered

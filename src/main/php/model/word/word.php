@@ -1346,9 +1346,8 @@ class word extends user_sandbox_description
     function log_upd_view($view_id): user_log_named
     {
         log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
-        $dsp_new = new view_dsp;
+        $dsp_new = new view_dsp($this->usr);
         $dsp_new->id = $view_id;
-        $dsp_new->usr = $this->usr;
         $dsp_new->load();
 
         $log = new user_log_named;
@@ -1357,9 +1356,8 @@ class word extends user_sandbox_description
         $log->table = 'words';
         $log->field = self::FLD_VIEW;
         if ($this->view_id > 0) {
-            $dsp_old = new view_dsp;
+            $dsp_old = new view_dsp($this->usr);
             $dsp_old->id = $this->view_id;
-            $dsp_old->usr = $this->usr;
             $dsp_old->load();
             $log->old_value = $dsp_old->name;
             $log->old_id = $dsp_old->id;
@@ -1475,7 +1473,8 @@ class word extends user_sandbox_description
     }
 
     /**
-     * delete the phrase groups which where this word is used
+     * delete the references to this word which includes the phrase groups, the triples and values
+     *
      */
     function del_links(): user_message
     {
@@ -1487,6 +1486,12 @@ class word extends user_sandbox_description
         $grp_lst->phr = $this->phrase();
         $grp_lst->load();
 
+        // collect all triples where this word is used
+        $trp_lst = new word_link_list();
+        $trp_lst->usr = $this->usr;
+        $trp_lst->wrd = $this;
+        $trp_lst->load();
+
         // collect all values related to word triple
         $val_lst = new value_list($this->usr);
         $val_lst->phr = $this->phrase();
@@ -1495,6 +1500,11 @@ class word extends user_sandbox_description
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
             $result->add($val_lst->del());
+        }
+
+        // if there are still triples, ask if they really should be deleted
+        if ($trp_lst->has_values()) {
+            $result->add($trp_lst->del());
         }
 
         // delete the phrase groups

@@ -232,7 +232,6 @@ class formula_value
                 }
 
                 // set the source group id if the source list is set, but not the group id
-                $phr_grp = null;
                 if ($this->src_phr_grp_id <= 0 and !empty($this->src_phr_lst->lst)) {
 
                     $work_phr_lst = clone $this->src_phr_lst;
@@ -271,7 +270,7 @@ class formula_value
                         // ... or based on the phrase ids
                     } elseif (!empty($this->wrd_ids)) {
                         $phr_lst = new phrase_list($this->usr);
-                        $phr_lst->load_by_ids($this->wrd_ids);
+                        $phr_lst->load_by_ids(new phr_ids($this->wrd_ids));
                         // ... or to get the most interesting result for this word
                     } elseif (isset($this->wrd) and isset($this->frm)) {
                         if ($this->wrd->id > 0 and $this->frm->id > 0 and isset($this->frm->name_wrd)) {
@@ -444,7 +443,6 @@ class formula_value
             log_debug('formula_value->load_phr_lst_src for source group "' . $this->src_phr_grp_id . '"');
             // to review to reduce the number of loads AND check if load is really needed correctly
             //if (!isset($this->src_phr_lst)) {
-            $do_load = false;
             $phr_grp = new phrase_group($this->usr);
             $phr_grp->id = $this->src_phr_grp_id;
             $phr_grp->load();
@@ -494,7 +492,7 @@ class formula_value
             $time_phr = new phrase($this->usr);
             $time_phr->id = $this->src_time_id;
             $time_phr->load();
-            if (isset($time_phr)) {
+            if ($time_phr->id <> 0) {
                 $this->src_time_phr = $time_phr;
                 if (isset($this->src_phr_lst)) {
                     $this->src_phr_lst->add($time_phr);
@@ -514,7 +512,7 @@ class formula_value
             $time_phr = new phrase($this->usr);
             $time_phr->id = $this->time_id;
             $time_phr->load();
-            if (isset($time_phr)) {
+            if ($time_phr->id <> 0) {
                 $this->time_phr = $time_phr;
                 if (isset($this->phr_lst)) {
                     $this->phr_lst->add($time_phr);
@@ -724,8 +722,11 @@ class formula_value
         return $result;
     }
 
-    // this function is called from dsp_id, so no other call is allowed
-    function name(string $back = ''): string
+    /**
+     * this function is called from dsp_id, so no other call is allowed
+     * @return string the best possible name for the object
+     */
+    function name(): string
     {
         $result = '';
 
@@ -739,7 +740,7 @@ class formula_value
         return $result;
     }
 
-    function name_linked(string $back = ''): string
+    function name_linked(): string
     {
         log_debug('formula_value->name_linked ');
         $result = '';
@@ -762,7 +763,7 @@ class formula_value
         if (!is_null($this->value)) {
             $num_text = $this->val_formatted();
             if ($this->owner_id > 0) {
-                $result .= '<font class="user_specific">' . $num_text . '</font>' . "\n";
+                $result .= '<span class="user_specific">' . $num_text . '</span>' . "\n";
             } else {
                 $result .= $num_text . "\n";
             }
@@ -1097,9 +1098,9 @@ class formula_value
         return $result;
     }
 
-// save the formula result to the database
-// for the word selection the id list is the lead, not the object list and not the group
-// return the id of the saved record
+    // save the formula result to the database
+    // for the word selection the id list is the lead, not the object list and not the group
+    // return the id of the saved record
     function save(): int
     {
 
