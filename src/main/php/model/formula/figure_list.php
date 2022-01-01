@@ -65,9 +65,9 @@ class figure_list
         $id = $this->ids_txt();
         $name = $this->display();
         if ($name <> '""') {
-            $result = '' . $name . ' (' . $id . ')';
+            $result = $name . ' (' . $id . ')';
         } else {
-            $result = '' . $id . '';
+            $result = $id;
         }
         /*
         if (isset($this->usr)) {

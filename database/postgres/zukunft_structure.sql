@@ -1929,7 +1929,7 @@ ALTER TABLE user_values
     ADD CONSTRAINT user_values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_values_fk_3 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_values_fk_4 FOREIGN KEY (protection_type_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT user_values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
 -- Constraints for table user_value_time_series
@@ -1938,7 +1938,7 @@ ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_value_time_series_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_value_time_series_fk_3 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protection_type_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
 -- Constraints for table user_views
@@ -1987,7 +1987,7 @@ ALTER TABLE values
     ADD CONSTRAINT values_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT values_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT values_fk_3 FOREIGN KEY (phrase_group_id) REFERENCES phrase_groups (phrase_group_id),
-    ADD CONSTRAINT values_fk_4 FOREIGN KEY (protection_type_id) REFERENCES protection_types (protection_type_id);
+    ADD CONSTRAINT values_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
 -- Constraints for table view_components

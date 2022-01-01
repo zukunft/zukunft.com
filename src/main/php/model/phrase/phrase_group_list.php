@@ -177,7 +177,6 @@ class phrase_group_list
     private function add_grp_time_id($grp_id, $time_id): bool
     {
         log_debug('phrase_group_list->add_grp_time_id ' . $grp_id . '@' . $time_id);
-        $result = false;
 
         $grp = new phrase_group($this->usr);
         if ($grp_id > 0) {
@@ -310,7 +309,6 @@ class phrase_group_list
         log_debug('get values because formula is assigned to phrases ' . $phr_linked->name() . ' and phrases ' . $phr_used->name() . ' are used in the formula');
 
         global $db_con;
-        $result = null;
 
         // separate the time words from the phrases
         $time_linked = $phr_linked->time_lst();
@@ -384,9 +382,6 @@ class phrase_group_list
             // select values only by the time
             if ($sql_time <> '') {
                 $sql = $sql_select . ' WHERE ' . $sql_time . $sql_group_by . ';';
-            } else {
-                // dummy selection for an empty result
-                $sql = '';
             }
         }
 

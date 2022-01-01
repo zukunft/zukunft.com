@@ -112,10 +112,8 @@ class formula_link extends user_sandbox_link
     private function is_usr_set(): bool
     {
         $result = false;
-        if ($this->usr != null) {
-            if ($this->usr->id > 0) {
-                $result = true;
-            }
+        if ($this->usr->id > 0) {
+            $result = true;
         }
         return $result;
     }
@@ -517,8 +515,6 @@ class formula_link extends user_sandbox_link
             if ($log_id <= 0) {
                 log_err('Insert of user_formula_link failed.');
                 $result = false;
-            } else {
-                $result = true;
             }
         }
         return $result;

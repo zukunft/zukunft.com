@@ -35,8 +35,6 @@
 function db_check($db_con): string
 {
 
-    global $usr;
-
     $result = ''; // the message that should be shown to the user immediately
     $do_consistency_check = false;
 
@@ -78,8 +76,6 @@ function db_check($db_con): string
 // the version 0.0.3 is the first version, which has a build in upgrade process
 function db_upgrade_0_0_3(sql_db $db_con): string
 {
-    global $usr;
-
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
     // TODO check if change has been successful
@@ -237,8 +233,6 @@ function db_upgrade_0_0_3(sql_db $db_con): string
  */
 function db_upgrade_0_0_4($db_con): string
 {
-    global $usr;
-
     $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
     $db_version = cfg_get(CFG_VERSION_DB, $db_con);
     if ($db_version != PRG_VERSION) {
@@ -310,17 +304,17 @@ function db_fill_code_links(sql_db $db_con)
                             $db_con->set_type($db_type);
                             $db_con->insert($update_col_names, $update_col_values);
                         } else {
-                            // check, which values needs to be updates
+                            // check, which values need to be updates
                             for ($i = 1; $i < count($data); $i++) {
                                 $col_name = $col_names[$i];
                                 if (array_key_exists($col_name, $db_row)) {
                                     $db_value = $db_row[$col_name];
+                                    if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
+                                        $update_col_names[] = $col_name;
+                                        $update_col_values[] = trim($data[$i]);
+                                    }
                                 } else {
                                     log_err('Column check did not work for ' . $col_name);
-                                }
-                                if ($db_value != trim($data[$i]) and trim($data[$i]) != 'NULL') {
-                                    $update_col_names[] = $col_name;
-                                    $update_col_values[] = trim($data[$i]);
                                 }
                             }
                             // update the values is needed

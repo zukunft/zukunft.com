@@ -512,7 +512,7 @@ class formula extends user_sandbox_description
      */
     function special_time_phr($time_phr)
     {
-        log_debug(self::class . '->special_time_phr "' . $this->type_cl . '" for ' . $time_phr->dsp_id() . '');
+        log_debug(self::class . '->special_time_phr "' . $this->type_cl . '" for ' . $time_phr->dsp_id());
         $result = $time_phr;
 
         if ($this->type_id > 0) {

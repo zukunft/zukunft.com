@@ -164,13 +164,6 @@ function zuv_value_table($word_id, $word_lst)
     return zu_sql_get_field('value', $word_id, 'word_value');
 }
 
-function zuv_matrix($row_lst, $col_lst, $user_id)
-{
-    log_debug('zuv_matrix(' . $row_lst . ',' . $col_lst . ')');
-    $result = array();
-
-    return $result;
-}
 
 // get the source id of an value
 function zuv_source($id)
@@ -179,12 +172,6 @@ function zuv_source($id)
     return zu_sql_get_field('value', $id, 'source_id');
 }
 
-// return the value type
-function zuv_type($id)
-{
-    log_debug('zuv_type(' . $id . ')');
-    return zu_sql_get_field('word', $id, 'word_type_id');
-}
 
 // convert a user entry for a value to a useful database number
 // e.g. remove leading spaces and tabulators
@@ -577,34 +564,6 @@ function zuvc_frm_related_grp_wrds_part($frm_val_ids, $wrd_id, $wrd_ids, $user_i
     return $result;
 }
 
-// return the id of first value related to the word lst
-/* should not be used any more
-function zuv_of_wrd_lst_id($word_lst, $user_id) {
-  return zu_sql_word_lst_value_id ($word_lst, $user_id);
-} */
-
-// a list of all words related to a given value 
-function zuv_wrd_lst($val_id, $user_id)
-{
-    log_debug("zuv_wrd_lst (" . $val_id . ",u" . $user_id . ")");
-    $result = array();
-
-    if ($val_id > 0) {
-        $sql = "SELECT t.word_id, 
-                   IF (u.word_name IS NULL, IF (t.word_name IS NULL, 'not set', t.word_name), u.word_name) AS used_word_name
-              FROM value_phrase_links l
-         LEFT JOIN words t      ON l.phrase_id = t.word_id  
-         LEFT JOIN user_words u ON t.word_id = u.word_id AND u.user_id  = " . $user_id . "  
-             WHERE l.value_id = " . $val_id . " 
-          GROUP BY t.word_id
-          ORDER BY t.values, t.word_name;";
-        $result = zu_sql_get_lst($sql);
-    } else {
-        log_err("Missing value id", "zuv_wrd_lst");
-    }
-
-    return $result;
-}
 
 // a list of all words related to a list of value ids
 function zuv_ids_wrd_lst($val_ids, $user_id)
@@ -665,54 +624,4 @@ function zuv_wrd_ids($val_id, $user_id)
     return $result;
 }
 
-
-// lists all words related to a given value execpt the given word
-// should be replaced by zuv_wrd_lst
-function zuv_words($value_id, $ex_word_id, $user_id, $return_type)
-{
-    log_debug("zuv_words ... ");
-    if ($return_type == 'ids') {
-        $result = array();
-    } else {
-        $result = '';
-    }
-
-    $query = "SELECT phrase_id FROM value_phrase_links WHERE value_id = " . $value_id . " GROUP BY word_id;";
-    $sql_result = mysqli_query($query) or die('Query failed: ' . mysqli_error());
-    while ($value_entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-        if ($value_entry[0] <> $ex_word_id) {
-            if ($return_type == 'names') {
-                if ($ex_word_id <> $value_entry[0]) {
-                    $result .= ' ' . zut_name($value_entry[0], $user_id) . ' ';
-                }
-            }
-            if ($return_type == 'names_linked') {
-                if ($ex_word_id <> $value_entry[0]) {
-                    $result .= ' <a href="/http/view.php?words=' . $value_entry[0] . '">' . zut_name($value_entry[0], $user_id) . '</a> ';
-                }
-            }
-            if ($return_type == 'id_text') {
-                if ($result <> '') {
-                    $result .= ',';
-                }
-                $result .= $value_entry[0];
-            }
-            if ($return_type == 'ids') {
-                $result[] .= $value_entry[0];
-            }
-            if ($return_type == 'id_text_ex_time') {
-                if (zut_type($value_entry[0]) <> 2) {
-                    if ($result <> '') {
-                        $result .= ',';
-                    }
-                    $result .= $value_entry[0];
-                }
-            }
-        }
-    }
-
-    log_debug("zuv_words ... done");
-
-    return $result;
-}
 

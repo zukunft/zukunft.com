@@ -45,9 +45,9 @@ class formula_element_list
         $id = dsp_array($this->ids());
         $name = $this->name();
         if ($name <> '""') {
-            $result = '' . $name . ' (' . $id . ')';
+            $result = $name . ' (' . $id . ')';
         } else {
-            $result = '' . $id . '';
+            $result = $id;
         }
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';

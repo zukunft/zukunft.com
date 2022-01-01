@@ -150,7 +150,6 @@ include_once $root_path . 'src/main/php/service/test/zu_lib_value.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_word.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_word_db.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_calc.php';
-include_once $root_path . 'src/main/php/service/test/zu_lib_value_db.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_value_dsp.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_user.php';
 include_once $root_path . 'src/main/php/service/test/zu_lib_html.php';

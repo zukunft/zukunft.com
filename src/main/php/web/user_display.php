@@ -55,8 +55,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display the latest changes by the user
-    function dsp_changes($call, $size, $page, $back)
+    /**
+     * display the latest changes by the user
+     */
+    function dsp_changes($call, $size, $page, $back): string
     {
         log_debug('user_dsp->dsp_changes (u' . $this->id . ',b' . $back . ')');
         $result = ''; // reset the html code var
@@ -97,8 +99,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display word changes by the user which are not (yet) standard
-    function dsp_sandbox_wrd($back)
+    /**
+     * display word changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_wrd($back): string
     {
         log_debug('user_dsp->dsp_sandbox_wrd(u' . $this->id . ')');
 
@@ -137,8 +141,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display word_link changes by the user which are not (yet) standard
-    function dsp_sandbox_wrd_link($back)
+    /**
+     * display word_link changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_wrd_link($back): string
     {
         log_debug('user_dsp->dsp_sandbox_wrd_link(u' . $this->id . ')');
 
@@ -297,8 +303,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display formula changes by the user which are not (yet) standard
-    function dsp_sandbox_frm($back)
+    /**
+     * display formula changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_frm($back): string
     {
         log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id . ')');
 
@@ -343,8 +351,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display formula_link changes by the user which are not (yet) standard
-    function dsp_sandbox_frm_link($back)
+    /**
+     * display formula_link changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_frm_link($back): string
     {
         log_debug('user_dsp->dsp_sandbox_frm_link(u' . $this->id . ')');
 
@@ -502,8 +512,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display value changes by the user which are not (yet) standard
-    function dsp_sandbox_val($back)
+    /**
+     * display value changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_val($back): string
     {
         log_debug('user_dsp->dsp_sandbox_val(u' . $this->id . ')');
 
@@ -671,8 +683,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display view changes by the user which are not (yet) standard
-    function dsp_sandbox_view($back)
+    /**
+     * display view changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_view($back): string
     {
         log_debug('user_dsp->dsp_sandbox_view(u' . $this->id . ')');
 
@@ -836,8 +850,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display view_component changes by the user which are not (yet) standard
-    function dsp_sandbox_view_component($back)
+    /**
+     * display view_component changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_view_component($back): string
     {
         log_debug('user_dsp->dsp_sandbox_view_component(u' . $this->id . ')');
 
@@ -1000,8 +1016,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display view_component_link changes by the user which are not (yet) standard
-    function dsp_sandbox_view_link($back)
+    /**
+     * display view_component_link changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_view_link($back): string
     {
         log_debug('user_dsp->dsp_sandbox_view_link(u' . $this->id . ')');
 
@@ -1169,8 +1187,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display source changes by the user which are not (yet) standard
-    function dsp_sandbox_source($back)
+    /**
+     * display source changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox_source($back): string
     {
         log_debug('user_dsp->dsp_sandbox_source(u' . $this->id . ')');
 
@@ -1344,8 +1364,10 @@ class user_dsp extends user
         return $result;
     }
 
-    // display changes by the user which are not (yet) standard
-    function dsp_sandbox($back)
+    /**
+     * display changes by the user which are not (yet) standard
+     */
+    function dsp_sandbox($back): string
     {
         log_debug('user_dsp->dsp_sandbox(u' . $this->id . ',b' . $back . ')');
         $result = $this->dsp_sandbox_val($back);

@@ -474,6 +474,21 @@ class formula_value_list
             $last_msg_time = zuc_upd_lst_msg($last_msg_time, $collect_pos, mysqli_num_rows($sql_result));
             $collect_pos++;
 
+            Sample:
+            update "Sales" "water" "annual growth rate"
+            -> get the formulas where any of the value words is used (zuv_frm_lst )
+            -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate")" because "water" OR "annual growth rate" used
+            -> get the list of words of the updated value not used in the formula e.g. "Sales" "Water" ($val_wrd_ids_ex_frm_wrd)
+            -> get all values linked to the word list e.g. "Sales" AND "Water" (zuv_lst_of_wrd_ids -> $val_lst_of_wrd_ids)
+            -> get the word list for each value excluding the word used in the formula e.g. "Nestlé" "Sales" "Water" "2016" and  "Nestlé" "Sales" "Water" "2017" ($val_wrd_lst_ex_frm_wrd)
+            -> calculate the formula result for each word list (zuc_frm)
+            -> return the list of formula results e.g. "Nestlé" "Sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
+            -> r) check in which formula the formula results are used
+            -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a Year
+            -> calculate the formula result for each word list of the formula result
+            -> return the list of formula results e.g. "Nestlé" "Sales" "Water" "2019" "estimate"
+            -> repeat at r)
+
           }
         }  */
         //}

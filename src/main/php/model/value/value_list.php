@@ -399,8 +399,10 @@ class value_list
         return $phr_lst;
     }
 
-    // get a list with all unique phrase used in the complete value list
-    function phr_lst()
+    /**
+     * @return phrase_list list with all unique phrase used in the complete value list
+     */
+    function phr_lst(): phrase_list
     {
         log_debug('value_list->phr_lst by ids (needs review)');
         $phr_lst = new phrase_list($this->usr);
@@ -419,8 +421,10 @@ class value_list
         return $phr_lst;
     }
 
-    // get a list with all unique phrase including the time phrase
-    function phr_lst_all()
+    /**
+     * @return phrase_list  list with all unique phrase including the time phrase
+     */
+    function phr_lst_all(): phrase_list
     {
         log_debug('value_list->phr_lst_all');
 
@@ -431,8 +435,10 @@ class value_list
         return $phr_lst;
     }
 
-    // get a list of all words used for the value list
-    function wrd_lst()
+    /**
+     * @return word_list list of all words used for the value list
+     */
+    function wrd_lst(): word_list
     {
         log_debug('value_list->wrd_lst');
 

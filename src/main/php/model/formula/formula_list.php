@@ -84,7 +84,7 @@ class formula_list
 
             // set the where clause depending on the given selection parameters
             // default is to load all formulas to check all formula results
-            $sql_from = 'formulas f';
+            $sql_from = '';
             $sql_where = 'f.formula_id > 0';
             if (count($this->ids) > 0) {
                 $sql_from = 'formulas f';

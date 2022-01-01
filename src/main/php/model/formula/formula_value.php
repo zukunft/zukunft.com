@@ -756,8 +756,10 @@ class formula_value
         return $result;
     }
 
-    // html code to show the value with the indication if the value is influence by the user input
-    function display(string $back = ''): string
+    /**
+     * html code to show the value with the indication if the value is influence by the user input
+     */
+    function display(): string
     {
         $result = '';
         if (!is_null($this->value)) {

@@ -123,7 +123,7 @@ class phrase
                 $this->id = $trm->id * -1;
                 log_debug('phrase->loaded triple ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type == formula::class) {
-                // for the phrase load the realted word instead of the formula
+                // for the phrase load the related word instead of the formula
                 // TODO integrate this into the term loading by load both object a once
                 $wrd = new word_dsp($this->usr);
                 $wrd->name = $this->name;
@@ -159,7 +159,7 @@ class phrase
         }
         if ($this->id < 0) {
             $lnk = $this->obj;
-            $lnk->load_objects(); // try to be on the save side and it is anyway checked if loading is really needed
+            $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
             $result = $lnk->from;
         } elseif ($this->id > 0) {
             $result = $this->obj;
@@ -468,7 +468,7 @@ class phrase
     }
 
     // returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
-    function is()
+    function is(): phrase_list
     {
         $this_lst = $this->lst();
         $phr_lst = $this_lst->is();
@@ -493,7 +493,7 @@ class phrase
         return $wrd_lst;
       } */
 
-    // true if the word id has a "is a" relation to the related word
+    // true if the word id has an "is a" relation to the related word
     // e.g.for the given word string
     function is_a($related_phrase): bool
     {
@@ -501,11 +501,11 @@ class phrase
 
         $result = false;
         $is_phrases = $this->is(); // should be taken from the original array to increase speed
-        if (in_array($related_phrase->id, $is_phrases->ids)) {
+        if (in_array($related_phrase->id, $is_phrases->id_lst())) {
             $result = true;
         }
 
-        log_debug('phrase->is_a -> ' . zu_dsp_bool($result) . '' . $this->id);
+        log_debug('phrase->is_a -> ' . zu_dsp_bool($result) . $this->id);
         return $result;
     }
 
@@ -639,7 +639,7 @@ class phrase
     function dsp_selector($type, $form_name, $pos, $class, $back): string
     {
         if ($type != null) {
-            log_debug('phrase->dsp_selector -> type "' . $type->dsp_id() . ' selected for form ' . $form_name . '' . $pos);
+            log_debug('phrase->dsp_selector -> type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);
         }
         $result = '';
 

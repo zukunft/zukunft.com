@@ -232,8 +232,8 @@ class phrase_list
     /**
      * add the given phrase ids to the list without loading the phrases from the database
      *
-     * @param array $wrd_ids of word ids
-     * @param array $trp_ids of triple ids
+     * @param string|null $wrd_ids_txt with comma seperated word ids
+     * @param string|null $trp_ids_txt with comma seperated triple ids
      * @return void
      */
     function add_by_ids(?string $wrd_ids_txt, ?string $trp_ids_txt)
@@ -461,7 +461,7 @@ class phrase_list
     }
 
     // returns a list of phrases that are related to this phrase list e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
-    function is()
+    function is(): phrase_list
     {
         $phr_lst = $this->foaf_parents(cl(db_cl::VERB, verb::IS_A));
         log_debug('phrase_list->is -> (' . $this->dsp_id() . ' is ' . $phr_lst->dsp_name() . ')');
@@ -970,12 +970,19 @@ class phrase_list
         return $this;
     }
 
-    // filters a phrase list e.g. out of "2014", "2015", "2016", "2017" with the filter "2016", "2017","2018" the result is "2016", "2017"
-    function filter($filter_lst)
+    /**
+     * filters a phrase list
+     * e.g. out of "2014", "2015", "2016", "2017"
+     *      with the filter "2016", "2017","2018"
+     *      the result is "2016", "2017"
+     * @param phrase_list $filter_lst a phrase list with the phrases that should be removed from this list
+     * @returns phrase_list list a phrase excluding the given phrases
+     */
+    function filter(phrase_list $filter_lst): phrase_list
     {
         $result = clone $this;
 
-        // check an adjust the parameters
+        // check and adjust the parameters
         if (get_class($filter_lst) == word_list::class) {
             $filter_phr_lst = $filter_lst->phrase_lst();
         } else {
