@@ -80,6 +80,15 @@ class value_unit_tests
         $t->assert_json(new value($usr), $json_file);
 
 
+        $t->subheader('Convert tests');
+
+        // casting figure
+        $val = new value($usr);
+        $val->number = value::TEST_PCT;
+        $fig = $val->figure();
+        $t->assert($t->name . ' get figure',$fig->number, $val->number);
+
+
         $t->header('Unit tests of the value time series class (src/main/php/model/value/value_time_series.php)');
 
         $t->subheader('Database query creation tests');

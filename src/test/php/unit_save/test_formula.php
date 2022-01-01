@@ -108,7 +108,7 @@ function run_formula_test(testing $t)
     if (!isset($phr_lst)) {
         $result = '';
     } else {
-        $result = $phr_lst->name();
+        $result = $phr_lst->dsp_name();
     }
     $target = '"System Test Time Word Category e.g. Year"';
     $t->dsp('formula->assign_phr_lst_direct for "' . $frm->name . '"', $target, $result);
@@ -117,7 +117,7 @@ function run_formula_test(testing $t)
     if (!isset($phr_lst)) {
         $result = '';
     } else {
-        $result = $phr_lst->name();
+        $result = $phr_lst->dsp_name();
     }
     $target = '"System Test Time Word Category e.g. Year"';
     $t->dsp('formula->assign_phr_ulst_direct for "' . $frm->name . '"', $target, $result);
@@ -130,13 +130,13 @@ function run_formula_test(testing $t)
 
     $phr_lst_all = $frm_pe->assign_phr_lst();
     $phr_lst = $phr_lst_all->filter($phr_lst);
-    $result = $phr_lst->name();
+    $result = $phr_lst->dsp_name();
     $target = '"' . word::TN_SHARE . '"';
     $t->dsp('formula->assign_phr_lst for "' . $frm->name . '"', $target, $result);
 
     $phr_lst_all = $frm_pe->assign_phr_ulst();
     $phr_lst = $phr_lst_all->filter($phr_lst);
-    $result = $phr_lst->name();
+    $result = $phr_lst->dsp_name();
     $target = '"' . word::TN_SHARE . '"';
     $t->dsp('formula->assign_phr_ulst for "' . $frm->name . '"', $target, $result);
 

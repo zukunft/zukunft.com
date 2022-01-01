@@ -46,23 +46,26 @@ function run_value_test(testing $t)
     ),
         value::TV_CH_INHABITANTS_2019_IN_MIO);
 
-    if ($ch_inhabitants->id > 0) {
+    if ($ch_inhabitants->id <= 0) {
+        log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
+    } else {
         // test load by value id
-        $val = new value($t->usr1);
-        $val->id = $ch_inhabitants->id;
-        $val->load();
+        $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id);
         $result = $val->number;
         $target = value::TV_CH_INHABITANTS_2019_IN_MIO;
-        $t->dsp(', value->load for value id "' . $ch_inhabitants->id . '"', $target, $result);
+        $t->assert(', value->load for value id "' . $ch_inhabitants->id . '"', $result, $target);
 
         // test load by phrase list first to get the value id
         $phr_lst = $t->load_phrase_list(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
         $val_by_phr_lst = new value($t->usr1);
+        $time_phr = $phr_lst->time_useful();
+        $phr_lst->ex_time();
         $val_by_phr_lst->grp = $phr_lst->get_grp();
+        $val_by_phr_lst->time_phr = $time_phr;
         $val_by_phr_lst->load();
         $result = $val_by_phr_lst->number;
         $target = value::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->dsp(', value->load for another word list ' . $phr_lst->name(), $target, $result);
+        $t->dsp(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
 
         // test load by value id
         $val = new value($t->usr1);
@@ -83,8 +86,10 @@ function run_value_test(testing $t)
     // test another rebuild_grp_id by value id
     $chk_phr_grp = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020))->get_grp();
     $chk_val = new value($t->usr1);
-    $chk_val->grp = $chk_phr_grp;
-    $chk_val->load();
+    if ($chk_phr_grp != null) {
+        $chk_val->grp = $chk_phr_grp;
+        $chk_val->load();
+    }
     $target = true;
     if ($chk_val->id <= 0) {
         $result = 'No value found for ' . $chk_phr_grp->dsp_id() . '.';
@@ -99,14 +104,14 @@ function run_value_test(testing $t)
         $t->dsp(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $target, $result);
 
         // ... and check the words loaded
-        $result = dsp_array($chk_val->wrd_lst->names());
-        $target = 'System Test Another Time Word e.g. 2020,System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
+        $result = $chk_val->name();
+        $target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
         $t->dsp(', value->load words', $target, $result);
 
         // ... and check the time word
-        if ($chk_val->time_phr == null) {
-            log_err('Time word not seperated');
-        } else {
+        if ($chk_val->time_phr != null) {
+            //log_err('Time word not seperated');
+        //} else {
             $result = $chk_val->time_phr->name;
             $target = word::TN_2020;
             $t->dsp(', value->load time word', $target, $result);
@@ -150,41 +155,42 @@ function run_value_test(testing $t)
             $result = 'No value found for ' . $val->dsp_id() . '.';
         } else {
             if ($val->grp != null) {
-                if ($val->grp->wrd_lst != null) {
-                    $result = dsp_array($val->grp->wrd_lst->names());
+                if ($val->grp->phr_lst->wrd_lst() != null) {
+                    $val_lst = $val->grp->phr_lst->names();
+                    $result = array_diff($val_lst, $phr_lst->names());
                 }
             }
         }
     }
-    $target = dsp_array($phr_lst->names());
+    $target = array();
     $t->dsp(', value->load for group id "' . $grp->id . '"', $target, $result);
 
     // test the formatting of a value (percent)
-    $phr_grp = $t->load_phrase_group(array(word::TN_CANTON, word::TN_ZH, word::TN_CH, word::TN_INHABITANT, word::TN_PCT, word::TN_2020));
-    $pct_val = new value_dsp($t->usr1);
-    $pct_val->grp = $phr_grp;
-    $pct_val->load();
-    $result = $pct_val->display(0);
+    $pct_val = $t->load_value(array(word::TN_CANTON, word::TN_ZH, word::TN_CH, word::TN_INHABITANT, word::TN_PCT, word::TN_2020));
+    $result = $pct_val->dsp_obj()->display(0);
     $target = number_format(round(value::TEST_PCT * 100, 2), 2) . '%';
-    $t->dsp(', value->val_formatted for a word list ' . $phr_grp->dsp_id() . '', $target, $result);
+    $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
     // test the scaling of a value
-    $phr_lst = $t->load_word_list(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
-    $dest_wrd_lst = new word_list;
-    $dest_wrd_lst->usr = $t->usr1;
-    $dest_wrd_lst->add_name(word::TN_INHABITANT);
-    $dest_wrd_lst->add_name(word::TN_ONE);
-    $dest_wrd_lst->load();
+    $phr_lst = $t->load_phrase_list(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $time_phr = $phr_lst->time_useful();
+    $phr_lst->ex_time();
+    $dest_phr_lst = new phrase_list($t->usr1);
+    $dest_phr_lst->load_by_names(array(word::TN_INHABITANT, word::TN_ONE));
     $mio_val = new value($t->usr1);
+    $mio_val->time_phr = $time_phr;
     $mio_val->grp = $phr_lst->get_grp();
     $mio_val->load();
-    $result = $mio_val->scale($dest_wrd_lst);
+    $result = $mio_val->scale($dest_phr_lst);
     $target = value::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
     $t->dsp(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
 
     // test the figure object creation
-    $phr_lst = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $phr_lst = $t->load_phrase_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
+    $time_phr = $phr_lst->time_useful();
+    $phr_lst->ex_time();
     $mio_val = new value_dsp($t->usr1);
+    $mio_val->time_phr = $time_phr;
     $mio_val->grp = $phr_lst->get_grp();
     $mio_val->load();
     $fig = $mio_val->figure();
@@ -339,7 +345,7 @@ function run_value_test(testing $t)
 
     // ... check if the value has really been updated
     $added_val = new value($t->usr1);
-    $added_val->grp = $phr_lst->get_grp();
+    $added_val->id = $added_val_id;
     $added_val->load();
     $result = $added_val->number;
     $target = '987654321';

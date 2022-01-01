@@ -91,8 +91,7 @@ function run_formula_value_test(testing $t)
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_IN_K));
     $ch_k_grp = $phr_lst->get_grp();
     /*
-    $dest_wrd_lst = new word_list;
-    $dest_wrd_lst->usr = $usr;
+    $dest_wrd_lst = new word_list($usr);
     $dest_wrd_lst->add_name(word::TN_INHABITANT);
     $dest_wrd_lst->load();
     $mio_val = new value($usr);

@@ -237,7 +237,7 @@ class value_list
                                     AND u.user_id = " . $this->usr->id . " 
                 WHERE v.value_id IN ( SELECT value_id 
                                         FROM value_phrase_links 
-                                        WHERE phrase_id IN (" . implode(",", $this->phr_lst->ids()) . ")
+                                        WHERE phrase_id IN (" . implode(",", $this->phr_lst->id_lst()) . ")
                                     GROUP BY value_id )
               ORDER BY v.phrase_group_id, v.time_word_id;";
         return $sql;
@@ -253,7 +253,7 @@ class value_list
 
         // the id and the user must be set
         if (isset($this->phr_lst)) {
-            if (count($this->phr_lst->ids()) > 0 and !is_null($this->usr->id)) {
+            if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->usr->id)) {
                 log_debug('value_list->load_all for ' . $this->phr_lst->dsp_id());
                 $sql = $this->load_all_sql();
                 $db_con->usr_id = $this->usr->id;
@@ -285,7 +285,7 @@ class value_list
     {
 
         $sql_name = 'phr_lst_by_';
-        $phr_ids = $this->phr_lst->ids();
+        $phr_ids = $this->phr_lst->id_lst();
         if (count($phr_ids) > 0) {
             $sql_name .= count($phr_ids) . 'ids';
         } else {
@@ -342,7 +342,7 @@ class value_list
         global $db_con;
 
         // the word list and the user must be set
-        if (count($this->phr_lst->ids()) > 0 and !is_null($this->usr->id)) {
+        if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->usr->id)) {
             $sql = $this->load_by_phr_lst_sql($db_con);
 
             if ($sql <> '') {
@@ -835,9 +835,9 @@ class value_list
                     if (count($val_phr_lst->lst) > 0) {
                         log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
                         if (empty($common_phr_ids)) {
-                            $common_phr_ids = $val_phr_lst->ids();
+                            $common_phr_ids = $val_phr_lst->id_lst();
                         } else {
-                            $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->ids());
+                            $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->id_lst());
                         }
                     }
                 }
@@ -851,7 +851,7 @@ class value_list
         // display the common words
         log_debug('value_list->html common dsp');
         if (!empty($common_phr_ids)) {
-            $commen_phr_lst = new word_list;
+            $commen_phr_lst = new word_list($this->usr);
             $commen_phr_lst->ids = $common_phr_ids;
             $commen_phr_lst->usr = $this->usr;
             $commen_phr_lst->load();
@@ -881,7 +881,7 @@ class value_list
 
                     // remove the main word from the list, because it should not be shown on each line
                     log_debug('value_list->html -> remove main ' . $val->id);
-                    $dsp_phr_lst = clone $val_phr_lst;
+                    $dsp_phr_lst = $val_phr_lst->dsp_obj();
                     log_debug('value_list->html -> cloned ' . $val->id);
                     if (isset($this->phr)) {
                         if (isset($this->phr->id)) {
@@ -897,13 +897,15 @@ class value_list
 
                     //if (isset($val->time_phr)) {
                     log_debug('value_list->html -> add time ' . $val->id);
-                    if ($val->time_id > 0) {
-                        $time_phr = new phrase($cal->usr);
-                        $time_phr->id = $val->time_id;
-                        $time_phr->load();
-                        $val->time_phr = $time_phr;
-                        $dsp_phr_lst->add($time_phr);
-                        log_debug('value_list->html -> add time word ' . $val->time_phr->name);
+                    if ($val->time_phr != null) {
+                        if ($val->time_phr->id > 0) {
+                            $time_phr = new phrase($val->usr);
+                            $time_phr->id = $val->time_phr->id;
+                            $time_phr->load();
+                            $val->time_phr = $time_phr;
+                            $dsp_phr_lst->add($time_phr);
+                            log_debug('value_list->html -> add time word ' . $val->time_phr->name);
+                        }
                     }
 
                     $result .= '  <tr>';
@@ -943,10 +945,9 @@ class value_list
         // allow the user to add a completely new value
         log_debug('value_list->html new');
         if (empty($common_phr_ids)) {
-            $commen_phr_lst = new word_list;
+            $commen_phr_lst = new word_list($this->usr);
             $common_phr_ids[] = $this->phr->id;
             $commen_phr_lst->ids = $common_phr_ids;
-            $commen_phr_lst->usr = $this->usr;
             $commen_phr_lst->load();
         }
 

@@ -42,7 +42,7 @@ class figure_unit_tests
         // if the user has changed the formula, that related figure is not standard anymore
         $frm = new formula($usr);
         $frm->usr_cfg_id = 1;
-        $fig = new figure();
+        $fig = new figure($usr);
         $fig->obj = $frm;
         $result = $fig->is_std();
         $t->assert('figure->is_std if formula is changed by the user', $result, false);

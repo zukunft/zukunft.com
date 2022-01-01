@@ -9,4 +9,4 @@ PREPARE value_phrase_link_list_by_value_id (int) AS
            l.value_id
       FROM value_phrase_links s
  LEFT JOIN values l ON s.value_id = l.value_id
-     WHERE l.value_id = $1;
+     WHERE s.value_id = $1;

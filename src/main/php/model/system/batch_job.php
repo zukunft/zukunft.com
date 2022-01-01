@@ -247,9 +247,9 @@ class batch_job
         }
         if (isset($this->phr_lst)) {
             if (get_class($this->phr_lst) == phrase_list::class) {
-                $result .= ' ' . $this->phr_lst->name();
+                $result .= ' ' . $this->phr_lst->dsp_name();
             } else {
-                $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->name();
+                $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->dsp_name();
             }
         }
         return $result;

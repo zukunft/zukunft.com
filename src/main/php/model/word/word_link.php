@@ -472,8 +472,7 @@ class word_link extends user_sandbox_link_description
     function wrd_lst(): word_list
     {
         log_debug('word_link->wrd_lst ' . $this->dsp_id());
-        $wrd_lst = new word_list;
-        $wrd_lst->usr = $this->usr;
+        $wrd_lst = new word_list($this->usr);
 
         // add the "from" side
         if (isset($this->from)) {

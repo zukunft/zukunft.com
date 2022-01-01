@@ -74,7 +74,7 @@ class phrase_group_unit_tests
         $t->assert_load_sql($db_con, $phr_grp);
 
         // sql to load the word list ids
-        $wrd_lst = new word_list();
+        $wrd_lst = new word_list($usr);
         $wrd1 = new word($usr);
         $wrd1->id = 1;
         $wrd_lst->lst[] = $wrd1;
@@ -86,14 +86,14 @@ class phrase_group_unit_tests
         $wrd_lst->lst[] = $wrd3;
         $phr_grp = new phrase_group($usr);
         $phr_grp->id = null;
-        $phr_grp->wrd_lst = $wrd_lst;
+        $phr_grp->phr_lst = $wrd_lst->phrase_lst();
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $phr_grp->get_by_wrd_lst_sql($db_con);
+        $created_sql = $phr_grp->get_by_wrd_lst_sql();
         $expected_sql = $t->file('db/phrase/phrase_group_by_id_list.sql');
         $t->assert('phrase_group->get_by_wrd_lst_sql by word list ids', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql($db_con, true));
+        $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
 
         // sql to load all phrase groups linked to a word
         $wrd = $t->load_word(word::TN_CITY);

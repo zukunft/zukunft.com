@@ -62,7 +62,7 @@ class formula_element_group
         $name = dsp_array($this->names());
         $phr_name = '';
         if (isset($this->phr_lst)) {
-            $phr_name = $this->phr_lst->name();
+            $phr_name = $this->phr_lst->dsp_name();
         }
         $time_name = '';
         if (isset($this->time_phr)) {
@@ -292,7 +292,7 @@ class formula_element_group
             }
             //asort($val_phr_lst);
             $val_phr_grp = $val_phr_lst->get_grp();
-            log_debug('formula_element_group->figures -> words group for "' . $val_phr_lst->name() . '" = ' . $val_phr_grp->id);
+            log_debug('formula_element_group->figures -> words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp->id);
 
             // try to get a normal value set by the user directly for the phrase list
             // display the word group value and offer the user to change it
@@ -326,7 +326,7 @@ class formula_element_group
                 }
 
                 // get the word group result, which means a formula result
-                log_debug('formula_element_group->figures -> load formula value for ' . $val_phr_lst->name());
+                log_debug('formula_element_group->figures -> load formula value for ' . $val_phr_lst->dsp_name());
                 $grp_fv = new formula_value;
                 $grp_fv->phr_grp_id = $val_phr_grp->id;
                 if ($val_time_phr != null) {
@@ -341,7 +341,7 @@ class formula_element_group
                     $fig->symbol = $this->symbol;
                     $fig_lst->lst[] = $fig;
 
-                    log_debug('formula_element_group->figures -> formula value for ' . $val_phr_lst->name() . ', time ' . $val_time_phr->name . '" (word group ' . $val_phr_grp->id . ', user ' . $this->usr->id . ') = ' . $grp_fv->value);
+                    log_debug('formula_element_group->figures -> formula value for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name . '" (word group ' . $val_phr_grp->id . ', user ' . $this->usr->id . ') = ' . $grp_fv->value);
                 } else {
                     // if there is also not a formula result at least one number of the formula is not valid
                     $fig_lst->fig_missing = True;

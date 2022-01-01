@@ -244,7 +244,7 @@ class formula_value
                             $this->src_phr_grp_id = $phr_grp->id;
                         }
                     }
-                    log_debug('formula_value->load -> source group ' . $this->src_phr_grp_id . ' found for ' . $work_phr_lst->name());
+                    log_debug('formula_value->load -> source group ' . $this->src_phr_grp_id . ' found for ' . $work_phr_lst->dsp_name());
                 }
 
                 // assume the result time if the result phrase list is set, but not the result time
@@ -267,7 +267,7 @@ class formula_value
                     if (!empty($this->phr_lst->lst)) {
                         $phr_lst = clone $this->phr_lst;
                         $phr_lst->ex_time();
-                        log_debug('formula_value->load -> get group by ' . $phr_lst->name());
+                        log_debug('formula_value->load -> get group by ' . $phr_lst->dsp_name());
                         // ... or based on the phrase ids
                     } elseif (!empty($this->wrd_ids)) {
                         $phr_lst = new phrase_list($this->usr);
@@ -279,12 +279,12 @@ class formula_value
                             $phr_lst = new phrase_list($this->usr);
                             $phr_lst->add($this->wrd->phrase());
                             $phr_lst->add($this->frm->name_wrd->phrase());
-                            log_debug('formula_value->load -> get group by words ' . $phr_lst->name());
+                            log_debug('formula_value->load -> get group by words ' . $phr_lst->dsp_name());
                         }
                     }
                     if (isset($phr_lst)) {
                         $this->phr_lst = $phr_lst;
-                        log_debug('formula_value->load get group for ' . $phr_lst->name() . ' (including formula name)');
+                        log_debug('formula_value->load get group for ' . $phr_lst->dsp_name() . ' (including formula name)');
                         $phr_grp = $phr_lst->get_grp();
                         if (isset($phr_grp)) {
                             if ($phr_grp->id > 0) {
@@ -448,10 +448,9 @@ class formula_value
             $phr_grp = new phrase_group($this->usr);
             $phr_grp->id = $this->src_phr_grp_id;
             $phr_grp->load();
-            $phr_grp->load_lst_old();
             if (isset($phr_grp->phr_lst)) {
                 $this->src_phr_lst = $phr_grp->phr_lst;
-                log_debug('formula_value->load_phr_lst_src source words ' . $this->src_phr_lst->name() . ' loaded');
+                log_debug('formula_value->load_phr_lst_src source words ' . $this->src_phr_lst->dsp_name() . ' loaded');
             } else {
                 log_debug('formula_value->load_phr_lst_src no source words found for ' . $this->dsp_id());
             }
@@ -471,12 +470,11 @@ class formula_value
             $phr_grp = new phrase_group($this->usr);
             $phr_grp->id = $this->phr_grp_id;
             $phr_grp->load();
-            $phr_grp->load_lst_old();
             if (isset($phr_grp->phr_lst)) {
                 $this->phr_lst = $phr_grp->phr_lst;
-                log_debug('formula_value->load_phr_lst words ' . $this->phr_lst->name() . ' loaded');
+                log_debug('formula_value->load_phr_lst words ' . $this->phr_lst->dsp_name() . ' loaded');
                 // to be dismissed
-                $this->wrd_ids = $phr_grp->phr_lst->ids();
+                $this->wrd_ids = $phr_grp->phr_lst->id_lst();
             } else {
                 log_debug('formula_value->load_phr_lst no result words found for ' . $this->dsp_id());
             }
@@ -582,13 +580,13 @@ class formula_value
             $this->src_phr_lst->ex_time();
             // get the word group id (and create the group if needed)
             // TODO include triples
-            if (count($this->src_phr_lst->ids()) > 0) {
+            if (count($this->src_phr_lst->id_lst()) > 0) {
                 log_debug("formula_value->save_prepare_phr_lst_src -> source group for " . $this->src_phr_lst->dsp_id() . ".");
                 $grp = new phrase_group($this->usr);
-                $grp->ids = $this->src_phr_lst->ids();
+                $grp->load_by_lst($this->src_phr_lst);
                 $this->src_phr_grp_id = $grp->get_id();
             }
-            log_debug("formula_value->save_prepare_phr_lst_src -> source group id " . $this->src_phr_grp_id . " for " . $this->src_phr_lst->name() . ".");
+            log_debug("formula_value->save_prepare_phr_lst_src -> source group id " . $this->src_phr_grp_id . " for " . $this->src_phr_lst->dsp_name() . ".");
         }
     }
 
@@ -617,11 +615,11 @@ class formula_value
             // get the word group id (and create the group if needed)
             // TODO include triples
             $grp = new phrase_group($this->usr);
-            $grp->ids = $this->phr_lst->ids();
+            $grp->load_by_lst($this->phr_lst);
             $this->phr_grp_id = $grp->get_id();
-            log_debug("formula_value->save_prepare_phr_lst -> group id " . $this->phr_grp_id . " for " . $this->phr_lst->name() . ".");
+            log_debug("formula_value->save_prepare_phr_lst -> group id " . $this->phr_grp_id . " for " . $this->phr_lst->dsp_name() . ".");
             // to be dismissed
-            $this->wrd_ids = $this->phr_lst->ids();
+            $this->wrd_ids = $this->phr_lst->id_lst();
         }
     }
 
@@ -683,13 +681,14 @@ class formula_value
         return $result;
     }
 
-    // create and return the figure object for the value
-    function figure()
+    /**
+     * create and return the figure object for the value
+     */
+    function figure(): figure
     {
-        $fig = new figure;
+        $fig = new figure($this->usr);
         $fig->id = $this->id;
-        $fig->usr = $this->usr;
-        $fig->type = 'result';
+        $fig->type = figure::TYPE_RESULT;
         $fig->number = $this->value;
         $fig->last_update = $this->last_update;
         $fig->obj = $this;
@@ -731,7 +730,7 @@ class formula_value
         $result = '';
 
         if (isset($this->phr_lst)) {
-            $result .= $this->phr_lst->name();
+            $result .= $this->phr_lst->dsp_name();
         }
         if (isset($this->time_phr)) {
             $result .= '@' . $this->time_phr->name();
@@ -817,7 +816,7 @@ class formula_value
         // add the value  to the title
         $title .= $this->display($back);
         $result .= dsp_text_h1($title);
-        log_debug('formula_value->explain -> explain the value for ' . $val_phr_lst->name() . ' based on ' . $this->src_phr_lst->name());
+        log_debug('formula_value->explain -> explain the value for ' . $val_phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name());
 
         // display the measure and scaling of the value
         if ($val_wrd_lst->has_percent()) {
@@ -866,7 +865,7 @@ class formula_value
                 $src_phr_lst = clone $this->src_phr_lst;
                 $frm_wrd_id = $frm->name_wrd->id;
                 $src_phr_lst->diff_by_ids(array($frm_wrd_id));
-                log_debug('formula_value->explain -> formula word "' . $frm->name_wrd->name . '" excluded from ' . $src_phr_lst->name());
+                log_debug('formula_value->explain -> formula word "' . $frm->name_wrd->name . '" excluded from ' . $src_phr_lst->dsp_name());
 
                 // select or guess the element time word if needed
                 log_debug('formula_value->explain -> guess the time ... ');
@@ -886,7 +885,7 @@ class formula_value
                 $elm_grp->phr_lst = $src_phr_lst;
                 $elm_grp->time_phr = $elm_time_phr;
                 $elm_grp->usr = $this->usr;
-                log_debug('formula_value->explain -> words set ' . $elm_grp->phr_lst->name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
+                log_debug('formula_value->explain -> words set ' . $elm_grp->phr_lst->dsp_name() . ' taken from the source and user "' . $elm_grp->usr->name . '"');
 
                 // finally, display the value used in the formula
                 $result .= ' = ' . $elm_grp->dsp_values($this->time_phr, $back);
@@ -1119,7 +1118,7 @@ class formula_value
             log_err("User missing.", "formula_value->save");
         } else {
             if ($debug > 0) {
-                $debug_txt = 'formula_value->save (' . $this->value . ' for formula ' . $this->frm_id . ' with ' . $this->phr_lst->name() . ' based on ' . $this->src_phr_lst->name();
+                $debug_txt = 'formula_value->save (' . $this->value . ' for formula ' . $this->frm_id . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
                 if (!$this->is_std) {
                     $debug_txt .= ' and user ' . $this->usr->id;
                 }

@@ -183,7 +183,6 @@ class phrase_group_list
         if ($grp_id > 0) {
             $grp->id = $grp_id;
             $grp->load();
-            $grp->load_lst_old();
             log_debug('phrase_group_list->add_grp_time_id -> found ' . $grp->name());
         }
         $time = new word_dsp($this->usr);
@@ -431,7 +430,6 @@ class phrase_group_list
                 $val_grp = new phrase_group($this->usr);
                 $val_grp->id = $val_row['phrase_group_id'];
                 $val_grp->load();
-                $val_grp->load_lst_old();
                 $used_phr_lst = clone $val_grp->phr_lst;
                 log_debug('phr_grp_lst->add_grp_by_phr -> used_phr_lst ' . $used_phr_lst->dsp_id());
                 // exclude the formula name
@@ -512,8 +510,7 @@ class phrase_group_list
         $pos = 0;
         if ($this->lst != null) {
             foreach ($this->lst as $grp) {
-                $grp->load_lst_old();
-                $grp->sync_lists();
+                $grp->load();
                 if ($pos == 0) {
                     if (isset($grp->phr_lst)) {
                         $result = clone $grp->phr_lst;
@@ -524,7 +521,7 @@ class phrase_group_list
                         $result->common($grp->phr_lst);
                     }
                 }
-                log_debug('phrase_group_list->common_phrases ' . $result->name());
+                log_debug('phrase_group_list->common_phrases ' . $result->dsp_name());
                 $pos++;
             }
         }

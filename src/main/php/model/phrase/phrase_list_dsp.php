@@ -77,7 +77,7 @@ class phrase_list_dsp extends phrase_list
     // return a list of the phrase ids as an sql compatible text
     function ids_txt()
     {
-        $result = dsp_array($this->ids());
+        $result = dsp_array($this->id_lst());
         return $result;
     }
 

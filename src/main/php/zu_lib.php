@@ -229,6 +229,7 @@ include_once $path_php . 'model/system/system_error_log_status_list.php';
 include_once $path_php . 'model/system/ip_range.php';
 include_once $path_php . 'model/change/log_table.php';
 include_once $path_php . 'api/message_header.php';
+include_once $path_php . 'model/helper/link_list.php';
 // service
 include_once $path_php . 'service/import/import_file.php';
 include_once $path_php . 'service/import/import.php';
@@ -330,6 +331,7 @@ include_once $path_php . 'model/view/view_cmp_dsp.php';
 include_once $path_php . 'model/view/view_cmp_type.php';
 include_once $path_php . 'model/view/view_cmp_type_list.php';
 include_once $path_php . 'model/view/view_cmp_link.php';
+include_once $path_php . 'model/view/view_cmp_link_list.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
 
 // include all other libraries that are usually needed

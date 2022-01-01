@@ -53,9 +53,8 @@ class word_list_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load by word list by ids
-        $wrd_lst = new word_list;
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [1, 2, 3];
-        $wrd_lst->usr = $usr;
         $created_sql = $wrd_lst->load_sql($db_con);
         $expected_sql = $t->file('db/word/word_list_by_id_list.sql');
         $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
@@ -71,9 +70,8 @@ class word_list_unit_tests
 
         // sql to load by word list by phrase group
         $db_con->db_type = sql_db::POSTGRES;
-        $wrd_lst = new word_list;
+        $wrd_lst = new word_list($usr);
         $wrd_lst->grp_id = 1;
-        $wrd_lst->usr = $usr;
         $created_sql = $wrd_lst->load_sql($db_con);
         $expected_sql = $t->file('db/word/word_list_by_phrase_group.sql');
         $t->assert('word_list->load_sql by phrase group', $t->trim($created_sql), $t->trim($expected_sql));
@@ -84,8 +82,7 @@ class word_list_unit_tests
         // TODO add the missing word list loading SQL
 
         // SQL to add by word list by a relation e.g. for "Zurich" and direction "up" add "City", "Canton" and "Company"
-        $wrd_lst = new word_list;
-        $wrd_lst->usr = $usr;
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [7];
         $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP);
         $expected_sql = $t->file('db/word/word_list_by_verb_up.sql');

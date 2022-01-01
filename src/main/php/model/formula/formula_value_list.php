@@ -502,7 +502,7 @@ class formula_value_list
         // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
         $phr_lst_frm_assigned = $this->frm->assign_phr_lst();
-        log_debug('formula "' . $this->frm->name . '" is assigned to ' . $phr_lst_frm_assigned->name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
+        log_debug('formula "' . $this->frm->name . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
         // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
@@ -519,25 +519,25 @@ class formula_value_list
         $phr_lst_preset = $phr_lst_preset_following;
         $frm_lst_preset = $frm_lst_preset_following;
         if (!empty($phr_lst_preset->lst)) {
-            log_debug('predefined are ' . $phr_lst_preset->name());
+            log_debug('predefined are ' . $phr_lst_preset->dsp_name());
         }
 
         // exclude the special elements from the phrase list to avoid double usage
         $phr_lst_frm_used->diff($phr_lst_preset);
-        if ($phr_lst_preset->name() <> '""') {
-            log_debug('Excluding the predefined phrases ' . $phr_lst_preset->name() . ' the formula uses ' . $phr_lst_frm_used->name());
+        if ($phr_lst_preset->dsp_name() <> '""') {
+            log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }
 
         // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "Year"
         foreach ($frm_lst_preset_following->lst as $frm_special) {
             $frm_special->load();
-            log_debug('fv_lst->frm_upd_lst -> get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->name());
+            log_debug('fv_lst->frm_upd_lst -> get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());
             $phr_lst_preset = $frm_special->special_phr_lst($phr_lst_frm_assigned);
             log_debug('fv_lst->frm_upd_lst -> got phrases ' . $phr_lst_preset->dsp_id());
         }
         log_debug('the used ' . $phr_lst_frm_used->name_linked() . ' are taken from ' . $this->frm->usr_text);
-        if ($phr_lst_preset->name() <> '""') {
-            log_debug('the used predefined formulas ' . $frm_lst_preset->name() . ' leading to ' . $phr_lst_preset->name());
+        if ($phr_lst_preset->dsp_name() <> '""') {
+            log_debug('the used predefined formulas ' . $frm_lst_preset->name() . ' leading to ' . $phr_lst_preset->dsp_name());
         }
 
         // get the formula phrase name and the formula result phrases to exclude them already in the result phrase selection to avoid loops
@@ -555,7 +555,7 @@ class formula_value_list
         $exp = $this->frm->expression();
         $phr_lst_fv = $exp->fv_phr_lst();
         if (isset($phr_lst_fv)) {
-            log_debug('For ' . $this->frm->usr_text . ' formula results with the result phrases ' . $phr_lst_fv->name() . ' should not be used for calculation to avoid loops');
+            log_debug('For ' . $this->frm->usr_text . ' formula results with the result phrases ' . $phr_lst_fv->dsp_name() . ' should not be used for calculation to avoid loops');
         }
 
         // depending on the formula setting (all words or at least one word)
@@ -566,7 +566,7 @@ class formula_value_list
         // 3. aggregate the word list for all values
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several formula values for the same word group
-        log_debug('get all values used in the formula ' . $this->frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->name());
+        log_debug('get all values used in the formula ' . $this->frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
         $phr_grp_lst_val = new phrase_group_list;
         $phr_grp_lst_val->usr = $this->usr; // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv);

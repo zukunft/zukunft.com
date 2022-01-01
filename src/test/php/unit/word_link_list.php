@@ -201,7 +201,7 @@ class word_link_list_unit_tests
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and up
-        $wrd_lst = new word_list();
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [1, 2];
         $wrd_lnk_lst = new word_link_list;
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
@@ -261,7 +261,7 @@ class word_link_list_unit_tests
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and down
-        $wrd_lst = new word_list();
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [2, 3];
         $wrd_lnk_lst = new word_link_list;
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
@@ -321,7 +321,7 @@ class word_link_list_unit_tests
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and down filtered by a verb
-        $wrd_lst = new word_list();
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [2, 3];
         $vrb = new verb();
         $vrb->id = 2;
@@ -385,7 +385,7 @@ class word_link_list_unit_tests
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word list and down filtered by a verb list
-        $wrd_lst = new word_list();
+        $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [2, 3];
         $vrb_lst = new verb_list();
         $vrb_lst->ids = [1, 2];

@@ -63,9 +63,8 @@ if ($usr->id > 0) {
     if ($wrd_names <> '') {
 
         // load the words
-        $wrd_lst = new word_list;
+        $wrd_lst = new word_list($usr);
         $wrd_lst->name_lst = explode(",", $wrd_names);
-        $wrd_lst->usr = $usr;
         $wrd_lst->load();
 
         $result .= $wrd_lst->name_linked();

@@ -75,7 +75,7 @@ if ($usr->id > 0) {
             $result .= $dsp->dsp_navbar($back);
 
             $val->load_phrases();
-            $result .= btn_yesno('Delete ' . $val->number . ' for ' . $val->phr_lst->name() . '? ', '/http/value_del.php?id=' . $val_id . '&back=' . $back);
+            $result .= btn_yesno('Delete ' . $val->number . ' for ' . $val->phr_lst->dsp_name() . '? ', '/http/value_del.php?id=' . $val_id . '&back=' . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

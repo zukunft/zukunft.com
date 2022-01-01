@@ -912,7 +912,7 @@ class word extends user_sandbox_description
         log_debug('word->parents for ' . $this->dsp_id() . ' and user ' . $this->usr->id);
         $phr_lst = $this->lst();
         $parent_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
-        log_debug('word->parents are ' . $parent_phr_lst->name() . ' for ' . $this->dsp_id());
+        log_debug('word->parents are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
 
@@ -926,7 +926,7 @@ class word extends user_sandbox_description
     {
         $phr_lst = $this->parents();
         $phr_lst->add($this->phrase());
-        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->name());
+        log_debug('word->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
 
@@ -1102,7 +1102,7 @@ class word extends user_sandbox_description
         $phr_lst = $this->lst();
         $is_phr_lst = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_PART_OF));
 
-        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_phr_lst->name() . ')');
+        log_debug('word->is -> (' . $this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name() . ')');
         return $is_phr_lst;
     }
 

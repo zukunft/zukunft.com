@@ -2,44 +2,44 @@
 
 /*
 
-  word_list.php - a list of word objects
-  -------------
+    word_list.php - a list of word objects
+    -------------
 
-  actually only used for phrase splitting; in most other cases phrase_list is used
-  
-  This file is part of zukunft.com - calc with words
+    actually only used for phrase splitting; in most other cases phrase_list is used
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    // TODO: check the consistence usage of the parameter $back
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 class word_list
 {
 
-    // TODO: check the consistence usage of the parameter $back
-
-    public ?array $lst = array(); // array of the loaded word objects
+    public array $lst = array(); // array of the loaded word objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
-    public ?user $usr = null;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    public user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
     // search and load fields
     public ?int $grp_id = null;    // to load a list of words with one sql statement from the database that are part of this word group
@@ -49,6 +49,15 @@ class word_list
     public ?string $word_type_id = '';  // include all alias words that are of the ids
 
     public ?array $name_lst = array(); // list of the word names to load a list of words with one sql statement from the database
+
+    /**
+     * always set the user because a word list is always user specific
+     * @param user $usr the user who requested to see this word list
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
 
     /**
      * create the SQL selection statement or the name for the predefined SQL statement
@@ -241,8 +250,7 @@ class word_list
         global $db_con;
 
         if (is_null($added_wrd_lst)) {
-            $added_wrd_lst = new word_list; // list of the added word ids
-            $added_wrd_lst->usr = $this->usr;
+            $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         }
 
         if (is_null($this->usr->id)) {
@@ -335,8 +343,7 @@ class word_list
         log_debug('word_list->foaf_level loop');
         do {
             $loops = $loops + 1;
-            $additional_added = new word_list; // list of the added word ids
-            $additional_added->usr = $this->usr;
+            $additional_added = new word_list($this->usr); // list of the added word ids
             log_debug('word_list->foaf_level add');
             $additional_added = $this->add_by_type($additional_added, $verb_id, $direction);
             log_debug('word_list->foaf_level merge');
@@ -358,8 +365,7 @@ class word_list
     {
         log_debug('word_list->foaf_parents (type id ' . $verb_id . ')');
         $level = 0;
-        $added_wrd_lst = new word_list; // list of the added word ids
-        $added_wrd_lst->usr = $this->usr;
+        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_UP, 0);
 
         log_debug('word_list->foaf_parents -> (' . $added_wrd_lst->name() . ')');
@@ -372,8 +378,7 @@ class word_list
     function parents($verb_id, $level)
     {
         log_debug('word_list->parents(' . $verb_id . ')');
-        $added_wrd_lst = new word_list; // list of the added word ids
-        $added_wrd_lst->usr = $this->usr;
+        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_UP, $level);
 
         log_debug('word_list->parents -> (' . $added_wrd_lst->name() . ')');
@@ -386,8 +391,7 @@ class word_list
     {
         log_debug('word_list->foaf_children type ' . $verb_id . '');
         $level = 0;
-        $added_wrd_lst = new word_list; // list of the added word ids
-        $added_wrd_lst->usr = $this->usr;
+        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, 0);
 
         log_debug('word_list->foaf_children -> (' . $added_wrd_lst->name() . ')');
@@ -400,8 +404,7 @@ class word_list
     function children($verb_id, $level)
     {
         log_debug('word_list->children type ' . $verb_id . '');
-        $added_wrd_lst = new word_list; // list of the added word ids
-        $added_wrd_lst->usr = $this->usr;
+        $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, $level);
 
         log_debug('word_list->children -> (' . $added_wrd_lst->name() . ')');
@@ -856,8 +859,13 @@ class word_list
     function value(): value
     {
         $val = new value($this->usr);
-        $phr_grp = $this->phrase_lst()->get_grp();
+        $phr_lst = $this->phrase_lst();
+        $time_phr = $phr_lst->time_useful();
+        $phr_lst->ex_time();
+        $phr_grp = new phrase_group($this->usr);
+        $phr_grp->load_by_lst($phr_lst);
         $val->grp = $phr_grp;
+        $val->time_phr = $time_phr;
         $val->load();
 
         log_debug('word_list->value "' . $val->name . '" for "' . $this->usr->name . '" is ' . $val->number);
@@ -870,8 +878,13 @@ class word_list
         log_debug("word_list->value_scaled " . $this->dsp_id() . " for " . $this->usr->name . ".");
 
         $val = new value($this->usr);
-        $phr_grp = $this->phrase_lst()->get_grp();
+        $phr_lst = $this->phrase_lst();
+        $time_phr = $phr_lst->time_useful();
+        $phr_lst->ex_time();
+        $phr_grp = new phrase_group($this->usr);
+        $phr_grp->load_by_lst($phr_lst);
         $val->grp = $phr_grp;
+        $val->time_phr = $time_phr;
         $val->load();
 
         // get all words related to the value id; in many cases this does not match with the value_words there are use to get the word: it may contains additional word ids
@@ -1149,8 +1162,7 @@ class word_list
     {
         log_debug('word_list->time_lst for words "' . $this->dsp_id() . '"');
 
-        $result = new word_list;
-        $result->usr = $this->usr;
+        $result = new word_list($this->usr);
         $time_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
@@ -1203,8 +1215,7 @@ class word_list
     {
         log_debug('word_list->measure_lst(' . $this->dsp_id() . ')');
 
-        $result = new word_list;
-        $result->usr = $this->usr;
+        $result = new word_list($this->usr);
         $measure_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
@@ -1225,8 +1236,7 @@ class word_list
     {
         log_debug('word_list->scaling_lst(' . $this->dsp_id() . ')');
 
-        $result = new word_list;
-        $result->usr = $this->usr;
+        $result = new word_list($this->usr);
         $scale_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
         $scale_hidden_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
@@ -1249,8 +1259,7 @@ class word_list
     {
         log_debug('word_list->percent_lst(' . $this->dsp_id() . ')');
 
-        $result = new word_list;
-        $result->usr = $this->usr;
+        $result = new word_list($this->usr);
         $percent_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst as $wrd) {
@@ -1411,10 +1420,9 @@ class word_list
             }
         }
 
-        $time_lst = new word_list;
+        $time_lst = new word_list($this->usr);
         if (count($time_ids) > 0) {
             $time_lst->ids = $time_ids;
-            $time_lst->usr = $this->usr;
             $time_lst->load();
             $wrd = $time_lst->max_time();
         }
@@ -1515,7 +1523,6 @@ class word_list
     function get_grp(): ?phrase_group
     {
         log_debug('word_list->get_grp');
-        $grp = null;
 
         $grp = new phrase_group($this->usr);
         // check the needed data consistency
@@ -1532,9 +1539,7 @@ class word_list
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
             $grp = new phrase_group($this->usr);
-            $grp->wrd_lst = clone $this;
-            $grp->ids = $this->ids;
-            $grp->get();
+            $grp->load_by_ids((new phr_ids($this->ids)));
         }
 
         /*
@@ -1570,7 +1575,7 @@ class word_list
                 log_err('unexpected object type ' . get_class($wrd));
             }
         }
-        $phr_lst->ids();
+        $phr_lst->id_lst();
         log_debug('word_list->phrase_lst -> done (' . dsp_count($phr_lst->lst) . ')');
         return $phr_lst;
     }

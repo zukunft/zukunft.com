@@ -46,10 +46,10 @@ function run_value_ui_test(testing $t)
     $phr_lst_ch->add_name(word::TN_CH);
     $phr_lst_added->add_name(word::TN_RENAMED);
     $val_added = new value($usr);
-    $val_added->ids = $phr_lst_added->ids();
+    $val_added->ids = $phr_lst_added->id_lst();
     $val_added->load();
     $val_ch = new value($usr);
-    $val_ch->ids = $phr_lst_ch->ids();
+    $val_ch->ids = $phr_lst_ch->id_lst();
     $val_ch->load();
 
     // call the add value page and check if at least some basic keywords are returned
@@ -96,8 +96,7 @@ function run_value_ui_test(testing $t)
     $wrd->load();
     $val_lst = $wrd->val_lst();
     // build the phrase list to select the value Sales for 2014
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CH);
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
@@ -126,11 +125,10 @@ function run_value_ui_test(testing $t)
         $result = false;
     }
     $target = true;
-    $t->dsp('value_list->time_lst is ' . $time_lst->name() . ', which includes ' . $wrd_2014->name . '', $target, $result, TIMEOUT_LIMIT_DB);
+    $t->dsp('value_list->time_lst is ' . $time_lst->dsp_name() . ', which includes ' . $wrd_2014->name . '', $target, $result, TIMEOUT_LIMIT_DB);
 
     // ... and filter by times
-    $time_lst = new word_list;
-    $time_lst->usr = $usr;
+    $time_lst = new word_list($usr);
     $time_lst->add_name(word::TN_2019);
     $time_lst->add_name(word::TN_2021);
     $time_lst->load();
@@ -142,7 +140,7 @@ function run_value_ui_test(testing $t)
         $result = false;
     }
     $target = false;
-    $t->dsp('value_list->time_lst is ' . $used_time_lst->name() . ', which does not include ' . $wrd_2014->name . '', $target, $result);
+    $t->dsp('value_list->time_lst is ' . $used_time_lst->dsp_name() . ', which does not include ' . $wrd_2014->name . '', $target, $result);
 
     // ... but not 2020
     $wrd_2020 = new word_dsp($usr);
@@ -154,11 +152,10 @@ function run_value_ui_test(testing $t)
         $result = false;
     }
     $target = true;
-    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_time_lst->name() . ', but includes ' . $wrd_2020->name . '', $target, $result);
+    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_time_lst->dsp_name() . ', but includes ' . $wrd_2020->name . '', $target, $result);
 
     // ... and filter by phrases
-    $sector_lst = new word_list;
-    $sector_lst->usr = $usr;
+    $sector_lst = new word_list($usr);
     $sector_lst->add_name('Low Voltage Products');
     $sector_lst->add_name('Power Products');
     $sector_lst->load();
@@ -174,7 +171,7 @@ function run_value_ui_test(testing $t)
         $result = false;
     }
     $target = false;
-    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', which does not include ' . $wrd_auto->name . '', $target, $result);
+    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', which does not include ' . $wrd_auto->name . '', $target, $result);
 
     // ... but not 2016
     $wrd_power = new word_dsp($usr);
@@ -186,7 +183,7 @@ function run_value_ui_test(testing $t)
         $result = false;
     }
     $target = true;
-    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->name() . ', but includes ' . $wrd_power->name . '', $target, $result);
+    $t->dsp('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', but includes ' . $wrd_power->name . '', $target, $result);
 
 
     $t->header('Test the value list display class (classes/value_list_display.php)');

@@ -1775,6 +1775,18 @@ class user_sandbox
 
             }
 
+            // for view components first delete all links
+            if ($this->obj_name == DB_TYPE_VIEW_COMPONENT) {
+                $msg = $this->del_links();
+                $result->add($msg);
+            }
+
+            // for views first delete all links
+            if ($this->obj_name == DB_TYPE_VIEW) {
+                $msg = $this->del_links();
+                $result->add($msg);
+            }
+
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
                 $db_con->set_type(DB_TYPE_USER_PREFIX . $this->obj_name);

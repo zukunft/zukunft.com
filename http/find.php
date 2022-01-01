@@ -73,7 +73,7 @@ if ($db_con == null) {
         */
 
         // show the matching words to select
-        $wrd_lst = new word_list;
+        $wrd_lst = new word_list($usr);
         $result .= $wrd_lst->dsp_like($find_str, $usr->id);
     }
 }

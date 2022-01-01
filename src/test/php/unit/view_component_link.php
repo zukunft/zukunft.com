@@ -60,6 +60,45 @@ class view_component_link_unit_tests
         $lnk->view_component_id = 2;
         $t->assert_load_sql($db_con, $lnk);
 
+
+        $t->subheader('Database list query creation tests');
+
+        // sql to load a view component link list by view id
+        $dsp_cmp_lnk_lst = new view_cmp_link_list($usr);
+        $dsp = new view($usr);
+        $dsp-> id = 2;
+        $this->assert_lst_sql_all($t, $db_con, $dsp_cmp_lnk_lst, $dsp);
+
+        // sql to load a view component link list by component id
+        $dsp_cmp_lnk_lst = new view_cmp_link_list($usr);
+        $cmp = new view_cmp($usr);
+        $cmp-> id = 3;
+        $this->assert_lst_sql_all($t, $db_con, $dsp_cmp_lnk_lst, null, $cmp);
+
+    }
+
+    /**
+     * test the SQL statement creation for a value phrase link list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param view_cmp_link_list $lst filled with an id to be able to load
+     * @param view|null $dsp the view used for selection
+     * @param view_cmp|null $cmp the component used for selection
+     * @return void
+     */
+    private function assert_lst_sql_all(testing $t, sql_db $db_con, view_cmp_link_list $lst, ?view $dsp = null, ?view_cmp $cmp = null)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql($db_con, $dsp, $cmp);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql($db_con, $dsp, $cmp);
+        $t->assert_qp($qp, sql_db::MYSQL);
     }
 
 }

@@ -473,8 +473,7 @@ class test_base
     function load_word_list($array_of_word_str): word_list
     {
         global $usr;
-        $wrd_lst = new word_list;
-        $wrd_lst->usr = $usr;
+        $wrd_lst = new word_list($usr);
         foreach ($array_of_word_str as $word_str) {
             $wrd_lst->add_name($word_str);
         }
@@ -506,7 +505,7 @@ class test_base
     {
         $phr_lst = $this->load_phrase_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
-        $result = $phr_lst->name();
+        $result = $phr_lst->dsp_name();
         $this->dsp(', phrase list', $target, $result);
         return $phr_lst;
     }
@@ -516,13 +515,24 @@ class test_base
         return $this->load_phrase_list($array_of_phrase_str)->get_grp();
     }
 
+    function load_value_by_id(user $usr, int $id): value
+    {
+        $val = new value($usr);
+        $val->id = $id;
+        $val->load();
+        return $val;
+    }
 
-    function load_value($array_of_word_str): value
+    function load_value(array $array_of_word_str): value
     {
         global $usr;
+
+        // the time separation is done here until there is a phrase series value table that can be used also to time phrases
         $phr_lst = $this->load_phrase_list($array_of_word_str);
         $time_phr = $phr_lst->time_useful();
+        $phr_lst->ex_time();
         $phr_grp = $phr_lst->get_grp();
+
         $val = new value($usr);
         if ($phr_grp == null) {
             log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
@@ -537,11 +547,14 @@ class test_base
     function add_value($array_of_word_str, $target): value
     {
         global $usr;
-        $phr_lst = $this->load_phrase_list($array_of_word_str);
-        $time_phr = $phr_lst->time_useful();
-        $phr_grp = $phr_lst->get_grp();
         $val = $this->load_value($array_of_word_str);
         if ($val->id == 0) {
+            // the time separation is done here until there is a phrase series value table that can be used also to time phrases
+            $phr_lst = $this->load_phrase_list($array_of_word_str);
+            $time_phr = $phr_lst->time_useful();
+            $phr_lst->ex_time();
+            $phr_grp = $phr_lst->get_grp();
+
             $val = new value($usr);
             if ($phr_grp == null) {
                 log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
@@ -558,10 +571,9 @@ class test_base
 
     function test_value($array_of_word_str, $target): value
     {
-        $phr_lst = $this->load_phrase_list($array_of_word_str);
         $val = $this->add_value($array_of_word_str, $target);
         $result = $val->number;
-        $this->dsp(', value->load for a phrase list ' . $phr_lst->name(), $target, $result);
+        $this->dsp(', value->load for ' . $val->name(), $target, $result);
         return $val;
     }
 

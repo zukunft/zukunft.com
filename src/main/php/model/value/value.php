@@ -502,7 +502,7 @@ class value extends user_sandbox_display
                 $grp = new phrase_group($this->usr); // in case the word names and word links can be user specific maybe the owner should be used here
                 $grp->id = $this->grp->id;
                 $grp->get();
-                $grp->load_lst_old(); // to make sure that the word and triple object lists are loaded
+                $grp->load(); // to make sure that the word and triple object lists are loaded
                 if ($grp->id > 0) {
                     $this->grp = $grp;
                 }
@@ -516,7 +516,7 @@ class value extends user_sandbox_display
 
                 // these if's are only needed for debugging to avoid accessing an unset object, which would cause a crash
                 if (isset($this->phr_lst)) {
-                    log_debug('value->load_grp_by_id got ' . $this->phr_lst->name() . ' from group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
+                    log_debug('value->load_grp_by_id got ' . $this->phr_lst->dsp_name() . ' from group ' . $this->grp->id . ' for "' . $this->usr->name . '"');
                 }
                 if (isset($this->wrd_lst)) {
                     if (isset($this->lnk_lst)) {
@@ -603,12 +603,12 @@ class value extends user_sandbox_display
                 $this->phr_lst = $this->grp->phr_lst;
             }
             if (!isset($this->wrd_lst)) {
-                $this->wrd_lst = $this->grp->wrd_lst;
+                $this->wrd_lst = $this->grp->phr_lst->wrd_lst();
             }
             if (!isset($this->lnk_lst)) {
-                $this->lnk_lst = $this->grp->lnk_lst;
+                $this->lnk_lst = $this->grp->phr_lst->trp_lst();
             }
-            $this->ids = $this->grp->ids;
+            $this->ids = $this->grp->phr_lst->id_lst();
         }
     }
 
@@ -639,6 +639,7 @@ class value extends user_sandbox_display
         }
         return $result;
     }
+
 
     /*
      *  load object functions that extend the frontend functions
@@ -696,7 +697,7 @@ class value extends user_sandbox_display
     {
         $result = '';
         if (isset($this->phr_lst)) {
-            log_debug('value->set_time_by_phr_lst from ' . $this->phr_lst->name());
+            log_debug('value->set_time_by_phr_lst from ' . $this->phr_lst->dsp_name());
             if ($this->get_time_id() == 0) {
                 $wrd_lst = $this->phr_lst->wrd_lst_all();
                 $this->time_phr = $wrd_lst->assume_time();
@@ -716,8 +717,7 @@ class value extends user_sandbox_display
             if (!empty($this->ids)) {
                 log_debug('value->set_grp_by_ids for ids "' . implode(",", $this->ids) . '" for "' . $this->usr->name . '"');
                 $grp = new phrase_group($this->usr); // in case the word names and word links can be user specific maybe the owner should be used here
-                $grp->ids = $this->ids;
-                $grp->get();
+                $grp->load_by_ids((new phr_ids($this->ids)));
                 if ($grp->id > 0) {
                     $this->grp = $grp;
                     /* actually not needed
@@ -738,7 +738,7 @@ class value extends user_sandbox_display
      */
     function set_phr_lst_ex_time()
     {
-        log_debug('value->set_phr_lst_ex_time for "' . $this->phr_lst->name() . '" for "' . $this->usr->name . '"');
+        log_debug('value->set_phr_lst_ex_time for "' . $this->phr_lst->dsp_name() . '" for "' . $this->usr->name . '"');
         $result = '';
         $this->phr_lst->ex_time();
         return $result;
@@ -1087,7 +1087,7 @@ class value extends user_sandbox_display
     }
 
     /*
-     *  get functions that returns other linked objects
+     *  get functions that return other linked objects
      */
 
     /**
@@ -1095,15 +1095,12 @@ class value extends user_sandbox_display
      */
     function figure(): figure
     {
-        log_debug('value->figure');
-        $fig = new figure;
+        $fig = new figure($this->usr);
         $fig->id = $this->id;
-        $fig->usr = $this->usr;
-        $fig->type = 'value';
+        $fig->type = figure::TYPE_VALUE;
         $fig->number = $this->number;
         $fig->last_update = $this->last_update;
         $fig->obj = $this;
-        log_debug('value->figure -> done');
 
         return $fig;
     }
@@ -1426,7 +1423,7 @@ class value extends user_sandbox_display
         } else {
             // TODO check if the phrases are already loaded
             // $phr_lst->load();
-            $grp_ids = $phr_lst->ids();
+            $grp_ids = $phr_lst->id_lst();
 
             // add the time phrase id if needed
             // TODO remove or replace with the series phrase id

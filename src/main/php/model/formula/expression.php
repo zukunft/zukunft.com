@@ -57,8 +57,6 @@ class expression
 
         $pos_start = strpos($ref_text, $start_maker);
         if ($pos_start === false) {
-            $result = 0;
-        } else {
             $r_part = zu_str_right_of($ref_text, $start_maker);
             $l_part = zu_str_left_of($r_part, $end_maker);
             if (is_numeric($l_part)) {
@@ -139,11 +137,11 @@ class expression
             }
             $phr_lst = new phrase_list($this->usr);
             if (count($wrd_ids) > 0) {
-                $phr_lst->load_by_ids($wrd_ids);
+                $phr_lst->load_by_ids((new phr_ids($wrd_ids)));
             }
             //$phr_lst->ids = $wrd_ids;
             //$phr_lst->load();
-            log_debug('expression->fv_phr_lst -> ' . $phr_lst->name());
+            log_debug('expression->fv_phr_lst -> ' . $phr_lst->dsp_name());
         }
 
         log_debug('expression->fv_phr_lst -> done');
@@ -178,12 +176,12 @@ class expression
             // load the word parameters
             $phr_lst = new phrase_list($this->usr);
             if (!empty($wrd_ids)) {
-                $phr_lst->load_by_ids($wrd_ids);
+                $phr_lst->load_by_ids((new phr_ids($wrd_ids)));
             }
         }
 
         if ($phr_lst != null) {
-            log_debug('expression->phr_lst -> ' . $phr_lst->name());
+            log_debug('expression->phr_lst -> ' . $phr_lst->dsp_name());
         }
         $this->phr_lst = $phr_lst;
         return $phr_lst;

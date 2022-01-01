@@ -81,11 +81,11 @@ class value_list_dsp extends value_list
 
             // get all words related to the value list to be able to define the column and the row names
             $phr_lst_all = $val_lst->phr_lst();
-            log_debug('value_list_dsp->dsp_table all words: ' . $phr_lst_all->name());
+            log_debug('value_list_dsp->dsp_table all words: ' . $phr_lst_all->dsp_name());
 
             // get the time words for the column heads
             $all_time_lst = $val_lst->time_lst();
-            log_debug('value_list_dsp->dsp_table times: ' . $all_time_lst->name());
+            log_debug('value_list_dsp->dsp_table times: ' . $all_time_lst->dsp_name());
 
             // adjust the time words to display
             $time_lst = $all_time_lst->time_useful();
@@ -114,7 +114,7 @@ class value_list_dsp extends value_list
 
             // get the common words
             $common_lst = $used_value_lst->common_phrases();
-            log_debug('value_list_dsp->dsp_table common: ' . $common_lst->name());
+            log_debug('value_list_dsp->dsp_table common: ' . $common_lst->dsp_name());
 
             // get all words not yet part of the table rows, columns or common words
             $xtra_phrases = clone $phr_lst_all;
@@ -125,7 +125,7 @@ class value_list_dsp extends value_list
             if ($time_lst != null) {
                 $xtra_phrases->not_in($time_lst->phrase_lst());
             }
-            log_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: ' . $xtra_phrases->name());
+            log_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: ' . $xtra_phrases->dsp_name());
 
             // display the common words
             // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
@@ -164,7 +164,7 @@ class value_list_dsp extends value_list
                 $wrd_ids = array();
                 $wrd_ids[] = $this->phr->id;
                 $wrd_ids[] = $sub_wrd->id;
-                foreach ($common_lst->ids() as $xtra_id) {
+                foreach ($common_lst->id_lst() as $xtra_id) {
                     if (!in_array($xtra_id, $wrd_ids)) {
                         $wrd_ids[] = $xtra_id;
                     }
@@ -173,7 +173,7 @@ class value_list_dsp extends value_list
                 // check if row is empty
                 $row_has_value = false;
                 $grp = new phrase_group($this->usr);
-                $grp->load_by_lst_ids($wrd_ids);
+                $grp->load_by_ids($wrd_ids);
                 foreach ($time_lst->lst as $time_wrd) {
                     $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                     if ($tbl_value->number <> "") {
@@ -197,7 +197,7 @@ class value_list_dsp extends value_list
                         // get the phrase group for the value row
                         // to be done for the list at once
                         $grp = new phrase_group($this->usr);
-                        $grp->load_by_lst_ids($val_wrd_ids);
+                        $grp->load_by_ids($val_wrd_ids);
                         log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -206,9 +206,9 @@ class value_list_dsp extends value_list
 
                             // to review
                             $add_phr_lst = clone $common_lst;
-                            $add_phr_ids = $common_lst->ids();
+                            $add_phr_ids = $common_lst->id_lst();
                             $type_ids = array();
-                            foreach ($add_phr_lst->ids() as $pos) {
+                            foreach ($add_phr_lst->id_lst() as $pos) {
                                 $type_ids[] = 0;
                             }
 
@@ -283,7 +283,7 @@ class value_list_dsp extends value_list
                             if (!in_array($diff_phrase->id, $wrd_ids)) {
                                 $wrd_ids[] = $diff_phrase->id;
                             }
-                            foreach ($common_lst->ids() as $xtra_id) {
+                            foreach ($common_lst->id_lst() as $xtra_id) {
                                 if (!in_array($xtra_id, $wrd_ids)) {
                                     $wrd_ids[] = $xtra_id;
                                 }
@@ -298,7 +298,7 @@ class value_list_dsp extends value_list
                                 // get the phrase group for the value row
                                 // to be done for the list at once
                                 $grp = new phrase_group($this->usr);
-                                $grp->load_by_lst_ids($val_wrd_ids);
+                                $grp->load_by_ids($val_wrd_ids);
                                 log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -307,9 +307,9 @@ class value_list_dsp extends value_list
 
                                     // to review
                                     $add_phr_lst = $common_lst;
-                                    $add_phr_ids = $common_lst->ids();
+                                    $add_phr_ids = $common_lst->id_lst();
                                     $type_ids = array();
-                                    foreach ($add_phr_lst->ids() as $pos) {
+                                    foreach ($add_phr_lst->id_lst() as $pos) {
                                         $type_ids[] = 0;
                                     }
 
@@ -346,7 +346,7 @@ class value_list_dsp extends value_list
                         $result .= '      <td class="right_ref">' . "\n";
 
                         // to review
-                        $add_phr_ids = $common_lst->ids();
+                        $add_phr_ids = $common_lst->id_lst();
                         $type_ids = array();
                         foreach ($add_phr_ids as $pos) {
                             $type_ids[] = 0;

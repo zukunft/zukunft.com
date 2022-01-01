@@ -32,17 +32,8 @@
   
 */
 
-class value_phrase_link_list
+class value_phrase_link_list extends link_list
 {
-
-    public array $lst; // the list of the value phrase links
-    public user $usr;  // the person for whom the list has been created
-
-    function __construct(user $usr)
-    {
-        $this->lst = [];
-        $this->usr = $usr;
-    }
 
     /**
      * create an SQL statement to retrieve a list of value phrase links from the database
@@ -56,27 +47,25 @@ class value_phrase_link_list
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_';
+        $sql_by = '';
         $sql_where = '';
 
         $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
         if ($val != null) {
             if ($val->id > 0) {
-                $qp->name .= value::FLD_ID;
-                $db_con->add_par(sql_db::PAR_INT, $val->id);
-                $sql_where = 'l.' . value::FLD_ID . ' = ' . $db_con->par_name();
+                $sql_by = value::FLD_ID;
             }
         } elseif ($phr != null) {
             if ($phr->id <> 0) {
-                $qp->name .= phrase::FLD_ID;
-                $db_con->add_par(sql_db::PAR_INT, $phr->id);
-                $sql_where = 'l.' . phrase::FLD_ID . ' = ' . $db_con->par_name();
+                $sql_by = phrase::FLD_ID;
             }
         }
-        if ($sql_where == '') {
-            log_err("The phrase and the user must be set to load a phrase group list.", self::class . '->load_sql');
+        if ($sql_by == '') {
+            log_err('Either the value id or phrase id and the user must be set ' .
+                      'to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
-
+            $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(value_phrase_link::FLD_NAMES);
@@ -86,7 +75,17 @@ class value_phrase_link_list
                 $db_con->set_join_fields(array(phrase::FLD_ID), DB_TYPE_PHRASE);
             }
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select();
+            if ($val != null) {
+                if ($val->id > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $val->id);
+                    $qp->sql = $db_con->select_by_link_ids(array(value::FLD_ID));
+                }
+            } elseif ($phr != null) {
+                if ($phr->id <> 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $phr->id);
+                    $qp->sql = $db_con->select_by_link_ids(array(phrase::FLD_ID));
+                }
+            }
             $qp->par = $db_con->get_par();
         }
 
@@ -214,33 +213,4 @@ class value_phrase_link_list
         return $result;
     }
 
-    /*
-      display functions
-      -----------------
-    */
-
-    // display the unique id fields
-    function dsp_id(): string
-    {
-        global $debug;
-        $result = '';
-
-        if ($this->lst != null) {
-            $pos = 0;
-            foreach ($this->lst as $phr_lst) {
-                if ($debug > $pos) {
-                    if ($result <> '') {
-                        $result .= ' / ';
-                    }
-                    $result .= $phr_lst->name();
-                    $pos++;
-                }
-            }
-            if (count($this->lst) > $pos) {
-                $result .= ' ... total ' . dsp_count($this->lst);
-            }
-        }
-        return $result;
-    }
-
-}
+ }

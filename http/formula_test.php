@@ -235,4 +235,3 @@ if ($session_usr->id > 0) {
 
 // Closing connection
 prg_end($db_con);
-?>

@@ -38,15 +38,14 @@ function run_phrase_group_test(testing $t)
     $t->header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
     // test getting the phrase group id based on word ids
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
     $wrd_lst->load();
     $phr_grp = new phrase_group($usr);
-    $phr_grp->load_by_lst_ids($wrd_lst->ids);
+    $phr_grp->load_by_lst($wrd_lst->phrase_lst());
     $result = $phr_grp->id;
     $target = 0;
     if ($result > 0) {
@@ -59,7 +58,7 @@ function run_phrase_group_test(testing $t)
     $wrd_lst->add_name(word::TN_2020);
     $wrd_lst->load();
     $phr_grp = new phrase_group($usr);
-    $phr_grp->load_by_lst_ids($wrd_lst->ids);
+    $phr_grp->load_by_lst($wrd_lst->phrase_lst());
     $result = $phr_grp->id;
     //if ($result > 0 and $result != $id_without_year) {
     // actually the group id with time word is supposed to the the same as the phrase group id without time word because the time word is not included in the phrase group
@@ -73,11 +72,11 @@ function run_phrase_group_test(testing $t)
         $phr_grp_reload = new phrase_group($usr);
         $phr_grp_reload->id = $phr_grp->id;
         $phr_grp_reload->load();
-        $wrd_lst_reloaded = $phr_grp_reload->wrd_lst;
-        $result = implode(",", $wrd_lst_reloaded->names());
-        $target = word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
-        $t->dsp('phrase_group->load for id ' . $phr_grp->id, $target, $result);
+        $wrd_lst_reloaded = $phr_grp_reload->phr_lst->wrd_lst();
+        $result = array_diff($wrd_lst_reloaded->names(), array(word::TN_MIO, word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_CH));
     }
+    $target = array(word::TN_CH) ;
+    $t->dsp('phrase_group->load for id ' . $phr_grp->id, $target, $result);
 
     // test getting the phrase group id based on word and word link ids
     $phr_lst = new phrase_list($usr);
@@ -91,7 +90,7 @@ function run_phrase_group_test(testing $t)
 
     // test names
     $result = implode(",", $zh_city_grp->names());
-    $target = word::TN_INHABITANT . ',' . phrase::TN_ZH_CITY;
+    $target = phrase::TN_ZH_CITY . ',' . word::TN_INHABITANT;
     $t->dsp('phrase_group->names', $target, $result);
 
     // test if the phrase group links are correctly recreated when a group is updated
@@ -102,7 +101,7 @@ function run_phrase_group_test(testing $t)
     $grp_check->id = $grp->id;
     $grp_check->load();
     $result = $grp_check->load_link_ids();
-    $target = $grp->ids;
+    $target = $grp->phr_lst->id_lst();
     $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // second test if the phrase group links are correctly recreated when a group is updated
@@ -113,7 +112,7 @@ function run_phrase_group_test(testing $t)
     $grp_check->id = $grp->id;
     $grp_check->load();
     $result = $grp_check->load_link_ids();
-    $target = $grp->ids;
+    $target = $grp->phr_lst->id_lst();
     $t->dsp('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test value

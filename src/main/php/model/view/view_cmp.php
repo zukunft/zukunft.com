@@ -874,5 +874,25 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
+    /**
+     * delete the view component links of linked to this view component
+     */
+    function del_links(): user_message
+    {
+        $result = new user_message();
+
+        // collect all component links where this component is used
+        $lnk_lst = new view_cmp_link_list($this->usr);
+        $lnk_lst->load_by_component($this);
+
+        // if there are links, delete if not used by anybody else than the user who has requested the deletion
+        // or exclude the links for the user if the link is used by someone else
+        if (!$lnk_lst->empty()) {
+            $result->add($lnk_lst->del());
+        }
+
+        return $result;
+    }
+
 }
 

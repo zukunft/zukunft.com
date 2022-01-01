@@ -42,8 +42,7 @@ function run_word_list_test(testing $t)
     $t->header('Test the word list class (classes/word_list.php)');
 
     // test load by word list by names
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_MIO);
@@ -63,8 +62,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->load by word group id for "'.$wrd_grp_id.'"', $target, $result, TIMEOUT_LIMIT_DB_MULTI); */
 
     // test add by type
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->load();
     $wrd_lst->add_by_type(Null, cl(db_cl::VERB, verb::IS_A), verb::DIRECTION_UP);
@@ -73,8 +71,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->add_by_type for "' . word::TN_ZH . '" up', $target, $result);
 
     // test add parent
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->load();
     $wrd_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
@@ -83,8 +80,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->foaf_parent for "' . word::TN_ZH . '" up', $target, $result);
 
     // test add parent step
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->load();
     $wrd_lst->parents(cl(db_cl::VERB, verb::IS_A), 1);
@@ -93,8 +89,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->parents for "' . word::TN_ZH . '" up', $target, $result);
 
     // test add child and contains
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->load();
     $wrd_lst->foaf_children(cl(db_cl::VERB, verb::IS_A));
@@ -104,8 +99,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->foaf_children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $target, $result);
 
     // test direct children
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->load();
     $wrd_lst->children(cl(db_cl::VERB, verb::IS_A), 1,);
@@ -115,8 +109,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $target, $result);
 
     // test is
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->load();
     $lst_is = $wrd_lst->is();
@@ -126,8 +119,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->is for ' . $wrd_lst->name() . ' up', $target, $result);
 
     // test are
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->load();
     $lst_are = $wrd_lst->are();
@@ -139,8 +131,7 @@ function run_word_list_test(testing $t)
     // ....
 
     // exclude types
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_CHF);
@@ -157,15 +148,14 @@ function run_word_list_test(testing $t)
     $t->test_value(array(word::TN_CANTON, word::TN_2021, word::TN_CHF, word::TN_MIO), value::TEST_FLOAT);
 
     // test group id
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_CHF);
     $wrd_lst->add_name(word::TN_MIO);
     $wrd_lst->load();
     $grp = new phrase_group($usr);
-    $grp->ids = $wrd_lst->ids;
+    $grp->load_by_ids((new phr_ids($wrd_lst->ids)));
     $result = $grp->get_id();
     $target = 1; // also the creation should be tested, but how?
     if ($result > 0) {
@@ -187,8 +177,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->value_scaled for ' . $wrd_lst->dsp_id() . '', $target, $result);
 
     // test another group value
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_CHF);
@@ -200,8 +189,7 @@ function run_word_list_test(testing $t)
     $t->dsp('word_list->value for ' . $wrd_lst->dsp_id() . '', $target, $result);
 
     // test assume time
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_MIO);
@@ -217,15 +205,14 @@ function run_word_list_test(testing $t)
     $wrd_lst = $wrd_ZH->parents();
     $wrd_lst->osort();
     $target = '"' . word::TN_CITY . '","' . word::TN_CANTON . '","' . word::TN_COMPANY . '"';
-    $result = $wrd_lst->name();
+    $result = $wrd_lst->dsp_name();
     $t->dsp('word_list->sort for "' . word::TN_ZH . '"', $target, $result);
 
     /*
      * test the class functions not yet tested above
     */
     // test the diff functions
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name("January");
     $wrd_lst->add_name("February");
     $wrd_lst->add_name("March");
@@ -239,8 +226,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name("November");
     $wrd_lst->add_name("December");
     $wrd_lst->load();
-    $del_wrd_lst = new word_list;
-    $del_wrd_lst->usr = $usr;
+    $del_wrd_lst = new word_list($usr);
     $del_wrd_lst->add_name("May");
     $del_wrd_lst->add_name("June");
     $del_wrd_lst->add_name("Juli");

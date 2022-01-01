@@ -175,8 +175,7 @@ class phrase
      */
     function wrd_lst(): word_list
     {
-        $wrd_lst = new word_list;
-        $wrd_lst->usr = $this->usr;
+        $wrd_lst = new word_list($this->usr);
         if ($this->id < 0) {
             $sub_wrd_lst = $this->wrd_lst();
             foreach ($sub_wrd_lst as $wrd) {
@@ -464,7 +463,7 @@ class phrase
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_lst->add($this);
-        log_debug('phrase->lst -> ' . $phr_lst->name());
+        log_debug('phrase->lst -> ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
 
@@ -474,7 +473,7 @@ class phrase
         $this_lst = $this->lst();
         $phr_lst = $this_lst->is();
         //$phr_lst->add($this,);
-        log_debug('phrase->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->name());
+        log_debug('phrase->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
 

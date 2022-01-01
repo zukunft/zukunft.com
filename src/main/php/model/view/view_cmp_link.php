@@ -49,6 +49,8 @@ class view_cmp_link extends user_sandbox_link
 
     // all database field names excluding the id
     const FLD_NAMES = array(
+        view::FLD_ID,
+        view_cmp::FLD_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -69,6 +71,9 @@ class view_cmp_link extends user_sandbox_link
     /*
      * object vars
      */
+
+    public view $dsp;
+    public view_cmp $cmp;
 
     public ?int $view_id = null;            // the id of the view to which the display item should be linked
     public ?int $view_component_id = null;  // the id of the linked display item

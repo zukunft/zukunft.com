@@ -50,8 +50,7 @@ if ($usr->id > 0) {
     log_debug("get_csv(" . $words . ")");
     $word_names = explode(",", $words);
 
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     foreach ($word_names as $wrd_name) {
         $wrd_lst->add_name($wrd_name);
     }

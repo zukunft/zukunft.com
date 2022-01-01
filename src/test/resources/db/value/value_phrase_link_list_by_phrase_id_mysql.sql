@@ -9,4 +9,4 @@ PREPARE value_phrase_link_list_by_phrase_id FROM
            l.phrase_id
       FROM value_phrase_links s
  LEFT JOIN phrases l ON s.phrase_id = l.phrase_id
-     WHERE l.phrase_id = ?';
+     WHERE s.phrase_id = ?';

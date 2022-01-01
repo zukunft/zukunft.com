@@ -101,8 +101,10 @@ class formula_link_list
         return $result;
     }
 
-    // get an array with all phrases linked of this list e.g. linked to one formula
-    function phrase_ids($sbx): array
+    /**
+     * get an array with all phrases linked of this list e.g. linked to one formula
+     */
+    function phrase_ids($sbx): phr_ids
     {
         log_debug('formula_link_list->ids');
         $result = array();
@@ -122,7 +124,7 @@ class formula_link_list
         }
 
         log_debug('formula_link_list->ids -> got ' . dsp_count($result));
-        return $result;
+        return (new phr_ids($result));
     }
 
     /**

@@ -61,7 +61,7 @@ function run_phrase_group_list_test(testing $t)
     $grp_lst->add($canton_grp);
     $grp_lst->add($city_grp);
     $result = $grp_lst->name();
-    $target = '' . word::TN_MIO . ',' . word::TN_CH . ',' . word::TN_INHABITANT .
+    $target = word::TN_MIO . ',' . word::TN_CH . ',' . word::TN_INHABITANT .
         ' and ' . word::TN_MIO . ',' . word::TN_CANTON . ',' . word::TN_ZH . ',' . word::TN_INHABITANT .
         ' and ' . word::TN_MIO . ',' . word::TN_CITY . ',' . word::TN_ZH . ',' . word::TN_INHABITANT;
     $t->dsp('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
@@ -71,8 +71,7 @@ function run_phrase_group_list_test(testing $t)
     $grp_lst = new phrase_group_list;
     $grp_lst->usr = $usr;
 
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CH);
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
@@ -80,8 +79,7 @@ function run_phrase_group_list_test(testing $t)
     $country_grp = $wrd_lst->get_grp();
     $grp_lst->add($country_grp);
 
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->add_name(word::TN_INHABITANT);
@@ -91,7 +89,7 @@ function run_phrase_group_list_test(testing $t)
     $grp_lst->add($canton_grp);
 
     $phr_lst = $grp_lst->common_phrases();
-    $result = $phr_lst->name();
+    $result = $phr_lst->dsp_name();
     $target = '"' . word::TN_MIO . '","' . word::TN_INHABITANT . '"';
     $t->dsp('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
 

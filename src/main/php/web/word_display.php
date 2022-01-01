@@ -309,8 +309,7 @@ class word_dsp extends word
                 $val_wrd_ids[] = $row_phr->id;
                 $val_wrd_ids[] = $col_lst_wrd->id;
                 asort($val_wrd_ids);
-                $val_wrd_lst = new word_list;
-                $val_wrd_lst->usr = $this->usr;
+                $val_wrd_lst = new word_list($this->usr);
                 $val_wrd_lst->ids = $val_wrd_ids;
                 $val_wrd_lst->load();
                 log_debug('word_dsp->dsp_val_list -> get group ' . dsp_array($val_wrd_ids));

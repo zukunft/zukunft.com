@@ -133,8 +133,7 @@ function run_math_test(testing $t)
 
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
-    $wrd_lst = new word_list;
-    $wrd_lst->usr = $usr;
+    $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(TW_ABB);
     $wrd_lst->add_name(TW_SALES);
     $wrd_lst->add_name(TW_MIO);

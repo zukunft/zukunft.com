@@ -61,28 +61,15 @@ class phrase_group
      */
 
     // database fields
-    public ?int $id = null;                  // the database id of the word group
-    public ?string $grp_name = null;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
-    public ?string $auto_name = null;        // the automatically created generic name for the word group, used for a quick display of values
-    public ?phrase_list $phr_lst = null;     // the phrase list object
-    public ?string $id_order_txt = null;     // the ids from above in the order that the user wants to see them
-
-    // fields to deprecate
-    public ?string $wrd_id_txt = null;       // text of all linked words in ascending order for fast search (this is the master and the link table "value_phrase_links" is the slave)
-    public ?string $lnk_id_txt = null;       // text of all linked triples in ascending order for fast search (as $wrd_id_txt this is the master and a negative id in "value_phrase_links" is the slave)
+    public ?int $id = null;       // the database id of the word group
+    public ?string $grp_name;     // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
+    public ?string $auto_name;    // the automatically created generic name for the word group, used for a quick display of values
+    public phrase_list $phr_lst;  // the phrase list object
+    public ?string $id_order_txt; // the ids from above in the order that the user wants to see them
 
     // in memory only fields
-    public ?user $usr = null;                // the user object of the person for whom the word and triple list is loaded, so to say the viewer
+    public user $usr;             // the user object of the person for whom the word and triple list is loaded, so to say the viewer
     public ?array $id_order = array();       // the ids from above in the order that the user wants to see them
-    public ?array $wrd_ids = array();        // list of the word ids to load a list of words with one sql statement from the database
-    public ?array $lnk_ids = array();        // list of the triple ids to load a list of words with one sql statement from the database
-
-    // fields to deprecate
-    public ?word_list $wrd_lst = null;       // the word list object
-    public ?word_link_list $lnk_lst = null;  // the triple (word_link) object
-    public ?array $ids = null;               // list of the phrase (word (positive id) or triple (negative id)) ids
-    //                                          this is set by the frontend scripts and converted here to retrieve or create a group
-    //                                          the order is always ascending for be able to use this as a index to select the group
 
     /*
      * construct and map
@@ -102,21 +89,12 @@ class phrase_group
     private function reset()
     {
         $this->id = null;
+        $this->grp_name = null;
+        $this->auto_name = null;
         $this->phr_lst = new phrase_list($this->usr);
-        $this->grp_name = '';
-        $this->auto_name = '';
+        $this->id_order_txt = null;
 
-        $this->wrd_id_txt = '';
-        $this->lnk_id_txt = '';
-        $this->id_order_txt = '';
-
-        $this->ids = array();
         $this->id_order = array();
-        $this->wrd_ids = array();
-        $this->lnk_ids = array();
-
-        $this->wrd_lst = null;
-        $this->lnk_lst = null;
     }
 
     function row_mapper(array $db_row): bool
@@ -179,16 +157,31 @@ class phrase_group
             $db_row = $db_con->get1($qp);
             $result = $this->row_mapper($db_row);
             if ($result and $this->phr_lst->empty()) {
-
+                $this->load_lst();
             }
         }
         return $result;
     }
 
-    function load_by_lst_ids(array $ids): bool
+    /**
+     * shortcut function to create the phrase list and load the group with one call
+     * @param phr_ids $ids list of phrase ids where triples have a negative id
+     * @return bool
+     */
+    function load_by_ids(phr_ids $ids): bool
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_lst->load_by_ids($ids);
+        return $this->load_by_lst($phr_lst);
+    }
+
+    /**
+     * shortcut function to create group based on a phrase list
+     * @param phrase_list $phr_lst list of phrases
+     * @return bool
+     */
+    function load_by_lst(phrase_list $phr_lst): bool
+    {
         // TODO review
         $phr_lst->ex_time();
         $this->phr_lst = $phr_lst;
@@ -196,7 +189,7 @@ class phrase_group
     }
 
     /**
-     * load the word and triple objects based on the ids load from the database
+     * load the word and triple objects based on the ids load from the database if needed
      */
     private function load_lst()
     {
@@ -205,7 +198,6 @@ class phrase_group
             $this->phr_lst->load_by_ids($ids);
         }
     }
-
 
     /**
      * @return string the name of the SQL statement name extension based on the filled fields
@@ -257,429 +249,15 @@ class phrase_group
         return $qp;
     }
 
-    // separate the words from the triples (word_links)
-    // this also excludes automatically any empty ids
-    private function set_ids_to_wrd_or_lnk_ids()
-    {
-        $this->wrd_ids = array();
-        $this->lnk_ids = array();
-        foreach ($this->ids as $id) {
-            if ($id > 0) {
-                $this->wrd_ids[] = $id;
-            } elseif ($id < 0) {
-                $this->lnk_ids[] = $id * -1;
-            }
-        }
-        log_debug('phrase_group->set_ids_to_wrd_or_lnk_ids split "' . dsp_array($this->ids) . '" to "' . dsp_array($this->wrd_ids) . '" and "' . dsp_array($this->lnk_ids) . '"');
-    }
-
-    // the opposite of set_ids_to_wrd_or_lnk_ids
-    private function set_ids_from_wrd_or_lnk_ids()
-    {
-        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "' . dsp_array($this->wrd_ids) . '"');
-        if (isset($this->wrd_ids)) {
-            $this->ids = zu_ids_not_zero($this->wrd_ids);
-        } else {
-            $this->ids = array();
-        }
-        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids done words "' . dsp_array($this->ids) . '"');
-        if (isset($this->lnk_ids)) {
-            log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triples "' . dsp_array($this->lnk_ids) . '"');
-            foreach ($this->lnk_ids as $id) {
-                if (trim($id) <> '') {
-                    log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids try triple "' . $id . '"');
-                    if ($id == 0) {
-                        log_warning('Zero triple id excluded in phrase group "' . $this->auto_name . '" (id ' . $this->id . ').', "phrase_group->set_ids_from_wrd_or_lnk_ids");
-                    } else {
-                        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids add triple "' . $id . '"');
-                        $this->ids[] = $id * -1;
-                    }
-                }
-            }
-        }
-        log_debug('phrase_group->set_ids_from_wrd_or_lnk_ids for "' . dsp_array($this->wrd_ids) . '" done');
-    }
-
-    // load the word list based on the word id array
-    private function set_wrd_lst()
-    {
-        if (isset($this->wrd_ids)) {
-            log_debug('phrase_group->set_wrd_lst for "' . dsp_array($this->wrd_ids) . '"');
-
-            // ignore double word entries
-            $this->wrd_ids = array_unique($this->wrd_ids);
-
-            if (count($this->wrd_ids) > 0) {
-                // make sure that there is not time word
-                // maybe not needed if the calling function has done this already
-                $wrd_lst = new word_list;
-                $wrd_lst->ids = $this->wrd_ids;
-                $wrd_lst->usr = $this->usr;
-                $wrd_lst->load();
-                $wrd_lst->ex_time();
-                $this->wrd_lst = $wrd_lst;
-                $this->wrd_ids = $wrd_lst->ids;
-                // also fill the phrase list with the converted objects that are already loaded
-                $phr_lst = $wrd_lst->phrase_lst();
-                if (isset($this->phr_lst) and isset($phr_lst)) {
-                    $this->phr_lst = $this->phr_lst->concat_unique($phr_lst);
-                } else {
-                    $this->phr_lst = $phr_lst;
-                }
-                log_debug('phrase_group->set_wrd_lst got ' . $this->wrd_lst->name());
-                log_debug('phrase_group->set_wrd_lst got phrase ' . $this->phr_lst->name());
-            }
-        }
-    }
-
-    // load the triple list based on the triple id array
-    private function set_lnk_lst()
-    {
-        if (isset($this->lnk_ids)) {
-            log_debug('phrase_group->set_lnk_lst for "' . dsp_array($this->lnk_ids) . '"');
-
-            // ignore double word entries
-            $this->lnk_ids = array_unique($this->lnk_ids);
-
-            if (count($this->lnk_ids) > 0) {
-                // make sure that there is not time word
-                // maybe not needed if the calling function has done this already
-                $lnk_lst = new word_link_list;
-                $lnk_lst->ids = $this->lnk_ids;
-                $lnk_lst->usr = $this->usr;
-                $lnk_lst->load();
-                //$lnk_lst->ex_time();
-                $this->lnk_lst = $lnk_lst;
-                $this->lnk_ids = $lnk_lst->ids;
-                // also fill the phrase list with the converted objects that are already loaded
-                $phr_lst = $lnk_lst->phrase_lst();
-                if (isset($this->phr_lst) and isset($phr_lst)) {
-                    $this->phr_lst = $this->phr_lst->concat_unique($phr_lst);
-                } else {
-                    $this->phr_lst = $phr_lst;
-                }
-                log_debug('phrase_group->set_lnk_lst got ' . $this->lnk_lst->name());
-                log_debug('phrase_group->set_wrd_lst got phrase ' . $this->phr_lst->name());
-            }
-        }
-    }
-
-    // create the wrd_id_txt based on the wrd_ids
-    private function set_wrd_id_txt()
-    {
-        log_debug('phrase_group->set_wrd_id_txt for "' . dsp_array($this->wrd_ids) . '"');
-
-        // make sure that the ids have always the same order
-        asort($this->wrd_ids);
-
-        $wrd_id_txt = dsp_array($this->wrd_ids);
-        log_debug('phrase_group->set_wrd_id_txt test text "' . $wrd_id_txt . '"');
-
-        if (strlen($wrd_id_txt) > 255) {
-            log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
-        } else {
-            $this->wrd_id_txt = dsp_array($this->wrd_ids);
-        }
-    }
-
-    // create the lnk_id_txt based on the lnk_ids
-    private function set_lnk_id_txt()
-    {
-        log_debug('phrase_group->set_lnk_id_txt for "' . implode(",", $this->lnk_ids) . '"');
-
-        // make sure that the ids have always the same order
-        asort($this->lnk_ids);
-
-        $lnk_id_txt = implode(",", $this->lnk_ids);
-        log_debug('phrase_group->set_lnk_id_txt test text "' . $lnk_id_txt . '"');
-
-        if (strlen($lnk_id_txt) > 255) {
-            log_err('Too many triples assigned to one value ("' . $lnk_id_txt . '" is longer than the db size of 255).', "phrase_group->set_lnk_id_txt");
-        } else {
-            $this->lnk_id_txt = implode(",", $this->lnk_ids);
-        }
-        log_debug('phrase_group->set_lnk_id_txt to "' . $this->lnk_id_txt . '"');
-    }
-
-    private function set_ids_from_wrd_or_lnk_lst()
-    {
-        $this->wrd_ids = array();
-        $this->lnk_ids = array();
-        $this->ids = array();
-        if (isset($this->wrd_lst)) {
-            log_debug('phrase_group->set_ids_from_wrd_or_lnk_lst wrd ids for ' . $this->wrd_lst->dsp_id());
-            // reload the words if needed
-            //$this->wrd_lst->load();
-            if (count($this->wrd_lst->ids) > 0) {
-                $wrd_lst = $this->wrd_lst;
-                $wrd_lst->ex_time();
-                $this->wrd_ids = $wrd_lst->ids;
-                log_debug('phrase_group->set_ids_from_wrd_or_lnk_lst wrd ids ' . implode(",", $this->wrd_ids));
-                // also fill the phrase list with the converted objects that are already loaded
-                $phr_lst = $wrd_lst->phrase_lst();
-                if (isset($this->phr_lst) and isset($phr_lst)) {
-                    $this->phr_lst = $this->phr_lst->concat_unique($phr_lst);
-                } else {
-                    $this->phr_lst = $phr_lst;
-                }
-            }
-        }
-        if (isset($this->lnk_lst)) {
-            log_debug('phrase_group->set_ids_from_wrd_or_lnk_lst lnk ids');
-            // reload the words if needed
-            //$this->lnk_lst->load();
-            if (count($this->lnk_lst->ids) > 0) {
-                $lnk_lst = $this->lnk_lst;
-                //$lnk_lst->ex_time();
-                $this->lnk_ids = $lnk_lst->ids;
-                log_debug('phrase_group->set_ids_from_wrd_or_lnk_lst lnk ids ' . implode(",", $this->lnk_ids));
-                // also fill the phrase list with the converted objects that are already loaded
-                $phr_lst = $lnk_lst->phrase_lst();
-                if (isset($this->phr_lst) and isset($phr_lst)) {
-                    $this->phr_lst = $this->phr_lst->concat_unique($phr_lst);
-                } else {
-                    $this->phr_lst = $phr_lst;
-                }
-            }
-        }
-        $this->set_ids_from_wrd_or_lnk_ids();
-    }
-
-    // set ids based on the phrase list
-    private function set_ids_from_phr_lst()
-    {
-        if (isset($this->phr_lst)
-            and !isset($this->wrd_lst)
-            and !isset($this->lnk_lst)) {
-            log_debug('phrase_group->set_ids_from_phr_lst from ' . $this->phr_lst->dsp_id());
-            // reload the phrases if needed
-            if (count($this->phr_lst->ids()) > 0) {
-                $this->phr_lst->load_by_ids($this->phr_lst->ids());
-            }
-            if (count($this->phr_lst->ids()) > 0) {
-                $wrd_lst = $this->phr_lst->wrd_lst();
-                $wrd_lst->ex_time();
-                $this->wrd_ids = $wrd_lst->ids();
-
-                $lnk_lst = $this->phr_lst->trp_lst();
-                //$lnk_lst->ex_time();
-                $this->lnk_ids = $lnk_lst->ids();
-            }
-        }
-        $this->set_ids_from_wrd_or_lnk_ids();
-    }
-
-    // for building the where clause don't use the sf function to force the string format search
-    private function set_lst_where(): string
-    {
-        log_debug('phrase_group->set_lst_where');
-        $sql_where = '';
-        if ($this->wrd_id_txt <> '' and $this->lnk_id_txt <> '') {
-            $sql_where = "word_ids   = '" . $this->wrd_id_txt . "'
-                AND triple_ids = '" . $this->lnk_id_txt . "'";
-        } elseif ($this->wrd_id_txt <> '') {
-            $sql_where = "word_ids   = '" . $this->wrd_id_txt . "'";
-        } elseif ($this->lnk_id_txt <> '') {
-            $sql_where = "triple_ids = '" . $this->lnk_id_txt . "'";
-        }
-        log_debug('phrase_group->set_lst_where -> ' . $sql_where);
-        return $sql_where;
-    }
-
-    // this also excludes automatically any empty ids
-    private function set_ids_to_lst_and_txt()
-    {
-        log_debug('phrase_group->set_ids_to_lst_and_txt ' . $this->dsp_id());
-        $this->set_ids_to_wrd_or_lnk_ids();
-        $this->set_wrd_lst();
-        $this->set_lnk_lst();
-        $this->set_wrd_id_txt();
-        $this->set_lnk_id_txt();
-    }
-
-    // set all parameters based on the combined id list
-    // used by the frontend
-    private function load_by_ids()
-    {
-        log_debug('phrase_group->load_by_ids ' . $this->dsp_id());
-        $sql_where = '';
-        if (isset($this->ids)) {
-            if (count($this->ids) > 0) {
-                $this->set_ids_to_lst_and_txt();
-                $sql_where = $this->set_lst_where();
-            }
-        }
-        return $sql_where;
-    }
-
-    // set all parameters based on the separate id lists
-    // used by the backend if the list object is not yet loaded
-    private function load_by_wrd_or_lnk_ids()
-    {
-        log_debug('phrase_group->load_by_wrd_or_lnk_ids ' . $this->dsp_id());
-        if (isset($this->wrd_ids) and isset($this->lnk_ids)) {
-            if (count($this->wrd_ids) > 0 or count($this->lnk_ids) > 0) {
-                $this->set_wrd_lst();
-                $this->set_lnk_lst();
-                $this->set_wrd_id_txt();
-                $this->set_lnk_id_txt();
-            }
-        }
-        $sql_where = $this->set_lst_where();
-    }
-
-    // set all parameters based on the word and triple list objects
-    // use by the backend, because in the backend the list objects are probably already loaded
-    private function load_by_wrd_or_lnk_lst()
-    {
-        log_debug('phrase_group->load_by_wrd_or_lnk_lst ' . $this->dsp_id());
-        $sql_where = '';
-        if (isset($this->wrd_lst) and isset($this->lnk_lst)) {
-            if (count($this->wrd_lst) > 0 or count($this->lnk_lst) > 0) {
-                $this->set_ids_from_wrd_or_lnk_lst();
-                $this->set_wrd_id_txt();
-                $this->set_lnk_id_txt();
-                $sql_where = $this->set_lst_where();
-            }
-        }
-        return $sql_where;
-    }
-
-    // set all parameters based on the phrase list objects
-    private function load_by_phr_lst()
-    {
-        log_debug('phrase_group->load_by_phr_lst ' . $this->dsp_id());
-        $sql_where = '';
-        if (isset($this->phr_lst)) {
-            if ($this->phr_lst->count() > 0) {
-                $this->set_ids_from_phr_lst();
-                $this->set_wrd_id_txt();
-                $this->set_lnk_id_txt();
-                $sql_where = $this->set_lst_where();
-            }
-        }
-        return $sql_where;
-    }
-
-    // set all parameters based on the given setting
-    private function load_by_selector($sql_where)
-    {
-        log_debug('phrase_group->load_by_selector ' . $this->dsp_id());
-        if ($sql_where == '') {
-            $sql_where = $this->load_by_ids();
-        }
-        if ($sql_where == '') {
-            $sql_where = $this->load_by_wrd_or_lnk_ids();
-        }
-        if ($sql_where == '') {
-            $sql_where = $this->load_by_phr_lst();
-        }
-        if ($sql_where == '') {
-            $sql_where = $this->load_by_wrd_or_lnk_lst();
-        }
-        return $sql_where;
-    }
-
-    /**
-     * load the word and triple objects based on the ids load from the database
-     */
-    function load_lst_old()
-    {
-        log_debug('phrase_group->load_lst');
-
-        // load only if needed
-        if ($this->wrd_id_txt <> '') {
-            log_debug('phrase_group->load_lst words for "' . $this->wrd_id_txt . '"');
-            if ($this->wrd_ids <> explode(",", $this->wrd_id_txt)
-                or !isset($this->wrd_lst)) {
-                $this->wrd_ids = explode(",", $this->wrd_id_txt);
-                $wrd_lst = new word_list;
-                $wrd_lst->ids = $this->wrd_ids;
-                $wrd_lst->usr = $this->usr;
-                $wrd_lst->load();
-                $this->wrd_lst = $wrd_lst;
-                log_debug('phrase_group->load_lst words (' . $this->wrd_lst->count() . ')');
-                // also fill the phrase list with the converted objects that are already loaded
-                $phr_lst = $wrd_lst->phrase_lst();
-                if (isset($this->phr_lst) and isset($phr_lst)) {
-                    $this->phr_lst = $this->phr_lst->concat_unique($phr_lst);
-                } else {
-                    $this->phr_lst = $phr_lst;
-                }
-            }
-        }
-
-        if ($this->lnk_id_txt <> '') {
-            log_debug('phrase_group->load_lst triples for "' . $this->lnk_id_txt . '"');
-            if ($this->lnk_ids <> explode(",", $this->lnk_id_txt)
-                or !isset($this->lnk_lst)) {
-                $this->lnk_ids = explode(",", $this->lnk_id_txt);
-                $lnk_lst = new word_link_list;
-                $lnk_lst->ids = $this->lnk_ids;
-                $lnk_lst->usr = $this->usr;
-                $lnk_lst->load();
-                $this->lnk_lst = $lnk_lst;
-                log_debug('phrase_group->load_lst triples (' . $this->lnk_lst->count() . ')');
-                // also fill the phrase list with the converted objects that are already loaded
-                $phr_lst = $lnk_lst->phrase_lst();
-                if (isset($this->phr_lst) and isset($phr_lst)) {
-                    $this->phr_lst = $this->phr_lst->concat_unique($phr_lst);
-                } else {
-                    $this->phr_lst = $phr_lst;
-                }
-            }
-        }
-        log_debug('phrase_group->load_lst ... done');
-    }
-
-    // internal function for testing the link for fast search
-    function load_link_ids()
-    {
-
-        global $db_con;
-        $result = array();
-
-        $sql = 'SELECT phrase_id 
-              FROM phrase_group_phrase_links
-             WHERE phrase_group_id = ' . $this->id . ';';
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
-        $lnk_id_lst = $db_con->get_old($sql);
-        foreach ($lnk_id_lst as $db_row) {
-            $result[] = $db_row[phrase::FLD_ID];
-        }
-
-        asort($result);
-        return $result;
-    }
-
-    // true if the current phrase group contains at least all phrases of the given $grp
-    // e.g. $this ($val->grp) has the "ABB, Sales, million, CHF" and the table row ($grp) has "ABB, Sales" than this (value) can be used for this row
-    function has_all_phrases_of($grp)
-    {
-        log_debug("phrase_group->has_all_phrases_of");
-        $result = true;
-
-        if (isset($grp->phr_lst)) {
-            foreach ($grp->phr_lst->lst as $phr) {
-                if (!in_array($phr->id, $this->ids)) {
-                    log_debug('phrase_group->has_all_phrases_of -> "' . $phr->id . '" is missing in ' . implode(",", $this->ids));
-                    $result = false;
-                }
-            }
-        }
-
-        return $result;
-    }
 
     /*
+     * get functions - to load or create with one call
+     */
 
-    get functions - to load or create with one call
-
-    */
-
-    // get the word/triple group name (and create a new group if needed)
-    // based on a string with the word and triple ids
+    /**
+     * get the word/triple group name (and create a new group if needed)
+     * based on a string with the word and triple ids
+     */
     function get(): string
     {
         log_debug('phrase_group->get ' . $this->dsp_id());
@@ -693,10 +271,9 @@ class phrase_group
         // use the loaded group or create the word group if it is missing
         if ($test_load->id > 0) {
             $this->id = $test_load->id;
-            $result .= $this->load(); // TODO load twice should not be needed
         } else {
             log_debug('phrase_group->get save ' . $this->dsp_id());
-            $this->load_by_selector('');
+            $this->load();
             $result .= $this->save_id();
         }
 
@@ -710,9 +287,11 @@ class phrase_group
         return $result;
     }
 
-    // set the group id (and create a new group if needed)
-    // ex grp_id that returns the id
-    function get_id(): int
+    /**
+     * set the group id (and create a new group if needed)
+     * ex grp_id that returns the id
+     */
+    function get_id(): ?int
     {
         log_debug('phrase_group->get_id ' . $this->dsp_id());
         $this->get();
@@ -722,15 +301,15 @@ class phrase_group
     /**
      * create the sql statement
      */
-    function get_by_wrd_lst_sql(sql_db $db_con, bool $get_name = false): string
+    function get_by_wrd_lst_sql(bool $get_name = false): string
     {
+        $wrd_lst = $this->phr_lst->wrd_lst();
+
         $sql_name = 'phrase_group_by_';
         if ($this->id != 0) {
             $sql_name .= 'id';
-        } elseif ($this->wrd_lst != null) {
-            if (count($this->wrd_lst->lst) > 0) {
-                $sql_name .= count($this->wrd_lst->lst) . 'word_id';
-            }
+        } elseif (count($wrd_lst->lst) > 0) {
+            $sql_name .= count($wrd_lst->lst) . 'word_id';
         } else {
             log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->usr->id . ") must be set to load a phrase list.", "phrase_list->load");
         }
@@ -741,11 +320,11 @@ class phrase_group
         if ($this->id != 0) {
             $sql_from .= 'phrase_groups ';
             $sql_where .= 'phrase_group_id = ' . $this->id;
-        } elseif ($this->wrd_lst != null) {
+        } else {
             $pos = 1;
             $prev_pos = 1;
             $sql_from_prefix = 'l1.';
-            foreach ($this->wrd_lst->lst as $wrd) {
+            foreach ($wrd_lst->lst as $wrd) {
                 if ($wrd != null) {
                     if ($wrd->id <> 0) {
                         if ($sql_from == '') {
@@ -778,22 +357,25 @@ class phrase_group
         return $result;
     }
 
+    /*
     // get the best matching group for a word list
     // at the moment "best matching" is defined as the highest number of results
-    private function get_by_wrd_lst()
+    private function get_by_wrd_lst(): phrase_group
     {
 
         global $db_con;
         $result = null;
 
-        if (isset($this->wrd_lst)) {
-            if ($this->wrd_lst->lst > 0) {
+        $wrd_lst = $this->phr_lst->wrd_lst();
+
+        if (isset($wrd_lst)) {
+            if ($wrd_lst->lst > 0) {
 
                 $pos = 1;
                 $prev_pos = 1;
                 $sql_from = '';
                 $sql_where = '';
-                foreach ($this->wrd_lst->ids as $wrd_id) {
+                foreach ($wrd_lst->ids as $wrd_id) {
                     if ($sql_from == '') {
                         $sql_from .= 'phrase_group_word_links l' . $pos;
                     } else {
@@ -807,7 +389,7 @@ class phrase_group
                     $prev_pos = $pos;
                     $pos++;
                 }
-                $sql = "SELECT"." l1.phrase_group_id 
+                $sql = "SELECT" . " l1.phrase_group_id
                   FROM " . $sql_from . "
                  WHERE " . $sql_where . "
               GROUP BY l1.phrase_group_id;";
@@ -820,9 +402,9 @@ class phrase_group
                     if ($this->id > 0) {
                         log_debug('phrase_group->get_by_wrd_lst got id ' . $this->id);
                         $result = $this->load();
-                        log_debug('phrase_group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $this->wrd_lst->name() . ' and user ' . $this->usr->name);
+                        log_debug('phrase_group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $wrd_lst->name() . ' and user ' . $this->usr->name);
                     } else {
-                        log_warning('No group found for words ' . $this->wrd_lst->name() . '.', "phrase_group->get_by_wrd_lst");
+                        log_warning('No group found for words ' . $wrd_lst->name() . '.', "phrase_group->get_by_wrd_lst");
                     }
                 }
             } else {
@@ -834,18 +416,21 @@ class phrase_group
 
         return $this;
     }
-
-    /*
-    display functions
     */
 
-    // return best possible id for this element mainly used for debugging
+    /*
+     * display functions
+     */
+
+    /**
+     * return best possible id for this element mainly used for debugging
+     */
     function dsp_id(): string
     {
         $result = '';
 
-        if ($this->name(0) <> '') {
-            $result .= '"' . $this->name(0) . '" (' . $this->id . ')';
+        if ($this->name() <> '') {
+            $result .= '"' . $this->name() . '" (' . $this->id . ')';
         } else {
             $result .= $this->id;
         }
@@ -855,24 +440,6 @@ class phrase_group
         if ($result == '') {
             if (isset($this->phr_lst)) {
                 $result .= ' for phrases ' . $this->phr_lst->dsp_id();
-            } elseif ($this->ids != null) {
-                $result .= ' for phrase ids ' . implode(",", $this->ids);
-            }
-        }
-        if ($result == '') {
-            if (isset($this->wrd_lst)) {
-                $result .= ' for words ' . $this->wrd_lst->dsp_id();
-            } elseif (count($this->wrd_ids) > 0) {
-                $result .= ' for word ids ' . implode(",", $this->wrd_ids);
-            } elseif ($this->wrd_id_txt <> '') {
-                $result .= ' for word ids ' . implode(",", $this->wrd_id_txt);
-            }
-            if (isset($this->lnk_lst)) {
-                $result .= ', triples ' . $this->lnk_lst->dsp_id();
-            } elseif (count($this->lnk_ids) > 0) {
-                $result .= ', triple ids ' . implode(",", $this->lnk_ids);
-            } elseif ($this->lnk_id_txt <> '') {
-                $result .= ', triple ids ' . implode(",", $this->lnk_id_txt);
             }
         }
         if (isset($this->usr)) {
@@ -882,86 +449,59 @@ class phrase_group
         return $result;
     }
 
-    // return a string with the group name
-    function name()
+    /**
+     * @return string with the group name
+     */
+    function name(): string
     {
-        $result = '';
-
         if ($this->grp_name <> '') {
             // use the user defined description
             $result = $this->grp_name;
         } else {
             // or use the standard generic description
-            $name_lst = array();
-            if (isset($this->wrd_lst)) {
-                $name_lst = array_merge($name_lst, $this->wrd_lst->names());
-            }
-            if (isset($this->lnk_lst)) {
-                $name_lst = array_merge($name_lst, $this->lnk_lst->names());
-            }
+            $name_lst = $this->phr_lst->names();
             $result = implode(",", $name_lst);
         }
 
         return $result;
     }
 
-    // return a list of the word and triple names
-    function names()
+    /**
+     * @return array a list of the word and triple names
+     */
+    function names(): array
     {
         log_debug('phrase_group->names');
 
         // if not yet done, load, the words and triple list
-        $this->load_lst_old();
+        $this->load_lst();
 
-        $result = array();
-        if (isset($this->wrd_lst)) {
-            $result = array_merge($result, $this->wrd_lst->names());
-        }
-        if (isset($this->lnk_lst)) {
-            $result = array_merge($result, $this->lnk_lst->names());
-        }
-
-        log_debug('phrase_group->names -> ' . implode(",", $result));
-        return $result;
+        return $this->phr_lst->names();
     }
 
-    // return the first value related to the word lst
-    // or an array with the value and the user_id if the result is user specific
-    function value()
+    /**
+     * return the first value related to the word lst
+     * or an array with the value and the user_id if the result is user specific
+     */
+    function value(): value
     {
         $val = new value($this->usr);
-        $val->wrd_lst = $this;
+        $val->grp = $this;
         $val->load();
 
         log_debug('phrase_group->value ' . $val->wrd_lst->name() . ' for "' . $this->usr->name . '" is ' . $val->number);
         return $val;
     }
 
-    // get the "best" value for the word list and scale it e.g. convert "2.1 mio" to "2'100'000"
-    function value_scaled()
-    {
-        //zu_debug("phrase_group->value_scaled (".$this->name()." for ".$this->usr->name.")");
-
-        $val = $this->value();
-
-        // get all words related to the value id; in many cases this does not match with the value_words there are use to get the word: it may contains additional word ids
-        if ($val->id > 0) {
-            //zu_debug("phrase_group->value_scaled -> get word ids ".$this->name());
-            $val->load_phrases();
-            // switch on after value->scale is working fine
-            //$val->number = $val->scale($val->wrd_lst);
-        }
-
-        return $val;
-    }
-
-    //
-    function result($time_wrd_id)
+    /**
+     * @param $time_wrd_id
+     * @return array|null
+     */
+    function result($time_wrd_id): ?array
     {
         log_debug("phrase_group->result (" . $this->id . ",time" . $time_wrd_id . ",u" . $this->usr->name . ")");
 
         global $db_con;
-        $result = array();
 
         if ($time_wrd_id > 0) {
             $sql_time = " time_word_id = " . $time_wrd_id . " ";
@@ -1014,8 +554,10 @@ class phrase_group
         return $result;
     }
 
-    // create the generic group name (and update the database record if needed and possible)
-    // returns the generic name if it has been saved to the database
+    /**
+     * create the generic group name (and update the database record if needed and possible)
+     * @returns string the generic name if it has been saved to the database
+     */
     private function generic_name(): string
     {
         log_debug('phrase_group->generic_name');
@@ -1024,32 +566,18 @@ class phrase_group
         $result = '';
 
         // if not yet done, load, the words and triple list
-        $this->load_lst_old();
+        $this->load_lst();
 
-        $word_name = '';
-        if (isset($this->wrd_lst)) {
-            $word_name = $this->wrd_lst->name();
-            log_debug('phrase_group->generic_name word name ' . $word_name);
-        }
-        $triple_name = '';
-        if (isset($this->lnk_lst)) {
-            $triple_name = $this->lnk_lst->name();
-            log_debug('phrase_group->generic_name triple name ' . $triple_name);
-        }
-        if ($word_name <> '' and $triple_name <> '') {
-            $group_name = $word_name . ',' . $triple_name;
-        } else {
-            $group_name = $word_name . $triple_name;
-        }
+        // TODO take the order into account
+        $group_name = $this->phr_lst->dsp_name();
 
         // update the name if possible and needed
         if ($this->auto_name <> $group_name) {
             if ($this->id > 0) {
                 // update the generic name in the database
-                //$db_con = new mysql;
                 $db_con->usr_id = $this->usr->id;
                 $db_con->set_type(DB_TYPE_PHRASE_GROUP);
-                if ($db_con->update($this->id, 'auto_description', $group_name)) {
+                if ($db_con->update($this->id, self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('phrase_group->generic_name updated to ' . $group_name);
@@ -1061,18 +589,18 @@ class phrase_group
         return $result;
     }
 
-    // create the HTML code to select a phrase group be selecting a combination of words and triples
+    /*
+     * create the HTML code to select a phrase group be selecting a combination of words and triples
     private function selector()
     {
         $result = '';
         log_debug('phrase_group->selector for ' . $this->id . ' and user "' . $this->usr->name . '"');
 
-        /*
         new function: load_main_type to load all word and phrase types with one query
 
         Allow to remember the view order of words and phrases
 
-        the form should create a url with the ids in the view order
+        the form should create an url with the ids in the view order
         -> this is converted by this class to word ids, triple ids for selecting the group and saving the view order and the time for the value selection
 
         Create a new group if needed without asking the user
@@ -1080,25 +608,20 @@ class phrase_group
 
       update the link tables for fast selection
 
-        */
 
         return $result;
     }
+    */
 
 
     /*
+     * save function - because the phrase group is a wrapper for a word and triple list the save function should not be called from outside this class
+     */
 
-    save function - because the phrase group is a wrapper for a word and triple list the save function should not be called from outside this class
-
-    */
-
-    // save the user specific group name
-    private function save()
-    {
-    }
-
-    // create a new word group
-    private function save_id()
+    /**
+     * create a new phrase group
+     */
+    private function save_id(): ?int
     {
         log_debug('phrase_group->save_id ' . $this->dsp_id());
 
@@ -1108,30 +631,25 @@ class phrase_group
             $this->generic_name();
 
             // write new group
-            if ($this->wrd_id_txt <> '' or $this->lnk_id_txt <> '') {
-                //$db_con = new mysql;
-                if ($this->usr == null) {
-                    log_err('User missing when saving phrase group');
-                } else {
-                    $db_con->usr_id = $this->usr->id;
-                }
-                $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+            $wrd_id_txt = implode(',', $this->phr_lst->wrd_ids());
+            $trp_id_txt = implode(',', $this->phr_lst->trp_ids());
+            if ($wrd_id_txt <> '' or $trp_id_txt <> '') {
+                $db_con->usr_id = $this->usr->id;
 
-                $wrd_id_txt = implode(',', $this->phr_lst->wrd_ids());
                 if (strlen($wrd_id_txt) > 255) {
                     log_err('Too many words assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
                     $wrd_id_txt = zu_str_left($wrd_id_txt, 255);
                 }
-                $trp_id_txt = implode(',', $this->phr_lst->trp_ids());
                 if (strlen($trp_id_txt) > 255) {
                     log_err('Too many triple assigned to one value ("' . $wrd_id_txt . '" is longer than the max database size of 255).', "phrase_group->set_wrd_id_txt");
                     $trp_id_txt = zu_str_left($trp_id_txt, 255);
                 }
 
-                $this->id = $db_con->insert(array('word_ids', 'triple_ids', 'auto_description'),
+                $db_con->set_type(DB_TYPE_PHRASE_GROUP);
+                $this->id = $db_con->insert(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS, self::FLD_DESCRIPTION),
                     array($wrd_id_txt, $trp_id_txt, $this->auto_name));
             } else {
-                log_err('Either a word (' . $this->wrd_id_txt . ') or triple (' . $this->lnk_id_txt . ')  must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
+                log_err('Either a word (' . $wrd_id_txt . ') or triple (' . $trp_id_txt . ')  must be set to create a group for ' . $this->dsp_id() . '.', 'phrase_group->save_id');
             }
         }
 
@@ -1187,13 +705,11 @@ class phrase_group
 
         // switch between the word and triple settings
         if ($type == DB_TYPE_WORD) {
-            log_debug('phrase_group->save_phr_links -> should have word ids ' . implode(",", $this->wrd_ids));
-            $add_ids = array_diff($this->wrd_ids, $db_ids);
-            $del_ids = array_diff($db_ids, $this->wrd_ids);
+            $add_ids = array_diff($this->phr_lst->wrd_ids(), $db_ids);
+            $del_ids = array_diff($db_ids, $this->phr_lst->wrd_ids());
         } else {
-            log_debug('phrase_group->save_phr_links -> should have triple ids ' . implode(",", $this->lnk_ids));
-            $add_ids = array_diff($this->lnk_ids, $db_ids);
-            $del_ids = array_diff($db_ids, $this->lnk_ids);
+            $add_ids = array_diff($this->phr_lst->trp_ids(), $db_ids);
+            $del_ids = array_diff($db_ids, $this->phr_lst->trp_ids());
         }
 
         // add the missing links
@@ -1224,8 +740,7 @@ class phrase_group
 
         // remove the links not needed any more
         if (count($del_ids) > 0) {
-            log_debug('phrase_group->save_phr_links -> del ' . implode(",", $del_ids) . '');
-            $del_nbr = 0;
+            log_debug('phrase_group->save_phr_links -> del ' . implode(",", $del_ids));
             $sql = 'DELETE FROM ' . $table_name . ' 
                WHERE phrase_group_id = ' . $this->id . '
                  AND ' . $field_name . ' IN (' . sql_array($del_ids) . ');';
@@ -1236,35 +751,6 @@ class phrase_group
         log_debug('phrase_group->save_phr_links -> deleted links "' . dsp_array($del_ids) . '" lead to ' . implode(",", $db_ids));
 
         return $result;
-    }
-
-    /**
-     * create the phrase list based in the word and triple list if needed
-     * to be removed by using only the phrase list
-     */
-    function sync_lists()
-    {
-        if ($this->phr_lst == null) {
-            $this->phr_lst = new phrase_list($this->usr);
-            if ($this->wrd_lst != null) {
-                if ($this->wrd_lst->lst != null) {
-                    foreach ($this->wrd_lst->lst as $wrd) {
-                        if ($wrd != null) {
-                            $this->phr_lst->lst[] = $wrd->phrase();
-                        }
-                    }
-                }
-            }
-            if ($this->lnk_lst != null) {
-                if ($this->lnk_lst->lst != null) {
-                    foreach ($this->lnk_lst->lst as $lnk) {
-                        if ($lnk != null) {
-                            $this->phr_lst->lst[] = $lnk->phrase();
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -1315,6 +801,33 @@ class phrase_group
         $msg = $db_con->delete(self::FLD_ID, $this->id);
         $result->add_message($msg);
 
+        return $result;
+    }
+
+    /*
+     * testing only
+     */
+
+    /**
+     * internal function for testing the link for fast search
+     */
+    function load_link_ids(): array
+    {
+
+        global $db_con;
+        $result = array();
+
+        $sql = 'SELECT phrase_id 
+              FROM phrase_group_phrase_links
+             WHERE phrase_group_id = ' . $this->id . ';';
+        //$db_con = New mysql;
+        $db_con->usr_id = $this->usr->id;
+        $lnk_id_lst = $db_con->get_old($sql);
+        foreach ($lnk_id_lst as $db_row) {
+            $result[] = $db_row[phrase::FLD_ID];
+        }
+
+        asort($result);
         return $result;
     }
 

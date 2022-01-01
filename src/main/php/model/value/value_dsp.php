@@ -98,7 +98,7 @@ class value_dsp extends value
         $this->load_phrases();
         if (isset($this->phr_lst)) {
             if (!empty($this->phr_lst->lst)) {
-                $val_btn_title = "add new value similar to " . htmlentities($this->phr_lst->name());
+                $val_btn_title = "add new value similar to " . htmlentities($this->phr_lst->dsp_name());
             } else {
                 $val_btn_title = "add new value";
             }
@@ -124,13 +124,15 @@ class value_dsp extends value
             if (is_null($this->wrd_lst)) {
                 $this->load();
             }
-            if ($this->wrd_lst->has_percent()) {
-                $result = round($this->number * 100, 2) . "%";
-            } else {
-                if ($this->number >= 1000 or $this->number <= -1000) {
-                    $result .= number_format($this->number, 0, $this->usr->dec_point, $this->usr->thousand_sep);
+            if ($this->wrd_lst != null) {
+                if ($this->wrd_lst->has_percent()) {
+                    $result = round($this->number * 100, 2) . "%";
                 } else {
-                    $result = round($this->number, 2);
+                    if ($this->number >= 1000 or $this->number <= -1000) {
+                        $result .= number_format($this->number, 0, $this->usr->dec_point, $this->usr->thousand_sep);
+                    } else {
+                        $result = round($this->number, 2);
+                    }
                 }
             }
         }
@@ -359,9 +361,9 @@ class value_dsp extends value
             $result .= $this->set_phr_lst_by_ids();
             // 2. extract the time from the phrase list
             $result .= $this->set_time_by_phr_lst();
-            log_debug("value->dsp_edit phrase list incl. time " . $this->phr_lst->name());
+            log_debug("value->dsp_edit phrase list incl. time " . $this->phr_lst->dsp_name());
             $result .= $this->set_phr_lst_ex_time();
-            log_debug("value->dsp_edit phrase list excl. time " . $this->phr_lst->name());
+            log_debug("value->dsp_edit phrase list excl. time " . $this->phr_lst->dsp_name());
             $phr_lst = $this->phr_lst;
 
             /*

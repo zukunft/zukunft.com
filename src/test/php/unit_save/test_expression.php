@@ -101,7 +101,7 @@ function run_expression_test(testing $t)
     // test getting phrases that should be added to the result of a formula
     $phr_lst_fv = $exp->fv_phr_lst();
     if ($phr_lst_fv != null) {
-        $result = $phr_lst_fv->name();
+        $result = $phr_lst_fv->dsp_name();
     }
     $target = '"percent"';
     $t->dsp('expression->fv_phr_lst for "' . $exp->dsp_id() . '"', $target, $result, TIMEOUT_LIMIT_LONG); // ??? why???
@@ -109,9 +109,9 @@ function run_expression_test(testing $t)
     // ... and the phrases used in the formula
     $phr_lst_fv = $exp_pe->phr_lst();
     if ($phr_lst_fv != null) {
-        $result = $phr_lst_fv->name();
+        $result = $phr_lst_fv->dsp_name();
     }
-    $target = '"System Test Word Share Price","System Test Word Earnings"';
+    $target = '"System Test Word Earnings","System Test Word Share Price"';
     $t->dsp('expression->phr_lst for "' . $exp_pe->dsp_id() . '"', $target, $result);
 
     // ... and all elements used in the formula
@@ -129,13 +129,13 @@ function run_expression_test(testing $t)
     // test getting the phrases if the formula contains a verb
     // not sure if test is correct!
     $phr_lst = $exp_sector->phr_verb_lst($back);
-    $result = $phr_lst->name();
-    $target = '"System Test Word Parent e.g. Country","System Test Word Category e.g. Canton","System Test Word Total"';
+    $result = $phr_lst->dsp_name();
+    $target = '"System Test Word Category e.g. Canton","System Test Word Parent e.g. Country","System Test Word Total"';
     $t->dsp('expression->phr_verb_lst for "' . $exp_sector->ref_text . '"', $target, $result);
 
     // test getting special phrases
     $phr_lst = $exp->element_special_following($back);
-    $result = $phr_lst->name();
+    $result = $phr_lst->dsp_name();
     $target = '"this","prior"';
     // TODO $t->dsp('expression->element_special_following for "'.$exp->dsp_id().'"', $target, $result, TIMEOUT_LIMIT_LONG);
 
