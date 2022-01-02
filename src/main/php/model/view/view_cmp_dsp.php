@@ -154,8 +154,7 @@ class view_cmp_dsp extends view_cmp
             log_debug('view_component_dsp->formula_values in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= "<br><br>calculated values<br>";
             $frm_val_lst = new formula_value_list($this->usr);
-            $frm_val_lst->phr_id = $wrd->id;
-            $frm_val_lst->load_by_vars(SQL_ROW_LIMIT);
+            $frm_val_lst->load($wrd);
             $result .= $frm_val_lst->display($back);
         }
         return $result;
@@ -318,7 +317,7 @@ class view_cmp_dsp extends view_cmp
             $sel->dummy_text = 'select a view where the view component should also be used';
             $result .= $sel->display();
 
-            $result .= dsp_form_end();
+            $result .= dsp_form_end('', $back);
         } else {
             $result .= '      ' . btn_add('add new', '/http/view_component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }

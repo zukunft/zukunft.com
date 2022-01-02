@@ -83,6 +83,18 @@ class formula_value_unit_tests
         // ... and additional select by time
         $t->assert_load_list_sql($db_con, $fv_lst, $grp, $time_phr, true);
 
+        // sql to load a list of formula values by the word id
+        $fv_lst = new formula_value_list($usr);
+        $wrd = new word($usr);
+        $wrd->id = 2;
+        $t->assert_load_list_sql($db_con, $fv_lst, $wrd);
+
+        // sql to load a list of formula values by the triple id
+        $fv_lst = new formula_value_list($usr);
+        $trp = new word_link($usr);
+        $trp->id = 3;
+        $t->assert_load_list_sql($db_con, $fv_lst, $trp);
+
     }
 
 }

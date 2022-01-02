@@ -138,9 +138,9 @@ class sql_db
     private ?string $id_link_field = '';          // only for link objects the id field of the link type object
     private ?string $name_field = '';             // unique text key field of the table used
     private ?string $query_name = '';             // unique name of the query to precompile and use the query
-    private int $par_pos = 1;                     // counter for the parameter of prepared queries
     private ?array $par_types = [];               // list of the parameter types, which also defines a precompiled query
     private ?array $par_values = [];              // list of the parameter value to make sure they are in the same order as the parameter
+    private ?array $par_use_link = [];            // array of bool, true if the parameter should be used on the linked table
     private array $par_named = [];                // array of bool, true if the parameter placeholder is already used in the SQL statement
     private ?array $field_lst = [];               // list of fields that should be returned to the next select query
     private ?array $usr_field_lst = [];           // list of user specific fields that should be returned to the next select query
@@ -217,6 +217,7 @@ class sql_db
         $this->par_pos = 1;
         $this->par_types = [];
         $this->par_values = [];
+        $this->par_use_link = [];
         $this->par_named = [];
         $this->field_lst = [];
         $this->usr_field_lst = [];
@@ -395,11 +396,12 @@ class sql_db
      * @param mixed $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
      */
-    function add_par(string $par_type, $value, bool $named = false)
+    function add_par(string $par_type, $value, bool $named = false, bool $use_link = false)
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
         $this->par_named[] = $named;
+        $this->par_use_link[] = $use_link;
     }
 
     /**
@@ -1096,6 +1098,7 @@ class sql_db
         if ($sql_name == '') {
             // TODO switch to error when all SQL statements are named
             //log_warning('Name for SQL statement ' . $sql . ' is missing');
+            log_debug('Name for SQL statement ' . $sql . ' is missing');
         }
 
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2147,6 +2150,9 @@ class sql_db
                 if (count($this->par_types) <> count($this->par_named)) {
                     log_err('Number of parameter types does not match the number of name parameter indicators');
                 }
+                if (count($this->par_types) <> count($this->par_use_link)) {
+                    log_err('Number of parameter types does not match the number of link usage indicators');
+                }
                 $i = 0; // the position in the SQL parameter array
                 $used_fields = 0; // the position of the fields used in the where statement
                 foreach ($this->par_types as $par_type) {
@@ -2160,7 +2166,11 @@ class sql_db
                             or $this->join <> ''
                             or $this->join_type <> ''
                             or $this->join2_type <> '') {
-                            $this->where .= sql_db::STD_TBL . '.';
+                            if ($this->par_use_link[$i]) {
+                                $this->where .= sql_db::LNK_TBL . '.';
+                            } else {
+                                $this->where .= sql_db::STD_TBL . '.';
+                            }
                         }
                         $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
                         $used_fields++;
@@ -2492,7 +2502,7 @@ class sql_db
         $this->set_table();
 
         if (is_array($id_fields)) {
-            $sql = 'DELETE FROM ' . $this->name_sql_esc($this->table);
+            $sql = 'DELETE '.'FROM ' . $this->name_sql_esc($this->table);
             $sql_del = '';
             foreach (array_keys($id_fields) as $i) {
                 $del_val = $id_values[$i];

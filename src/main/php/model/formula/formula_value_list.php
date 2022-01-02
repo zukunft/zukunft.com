@@ -109,10 +109,11 @@ class formula_value_list
             $db_con->set_fields(formula_value::FLD_NAMES);
             $db_con->set_usr($this->usr->id);
             if ($obj->id > 0) {
-                $db_con->add_par(sql_db::PAR_INT, $obj->id);
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id);
                     $qp->sql = $db_con->select_by_link_ids(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id);
                     $link_fields = array();
                     if ($by_source) {
                         $link_fields[] = formula_value::FLD_SOURCE_GRP;
@@ -133,10 +134,22 @@ class formula_value_list
                     }
                     $qp->sql = $db_con->select_by_link_ids($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
-                    $db_con->set_join_fields(array(formula_value::FLD_GRP), DB_TYPE_PHRASE_GROUP_WORD_LINK);
+                    // TODO check if the results are still correct if the user has excluded the word
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
+                    $db_con->set_join_fields(
+                        array(formula_value::FLD_GRP),
+                        DB_TYPE_PHRASE_GROUP_WORD_LINK,
+                        formula_value::FLD_GRP,
+                        formula_value::FLD_GRP);
                     $qp->sql = $db_con->select_by_link_ids(array(word::FLD_ID));
                 } elseif (get_class($obj) == word_link::class) {
-                    $db_con->set_join_fields(array(formula_value::FLD_GRP), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
+                    // TODO check if the results are still correct if the user has excluded the triple
+                    $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
+                    $db_con->set_join_fields(
+                        array(formula_value::FLD_GRP),
+                        DB_TYPE_PHRASE_GROUP_TRIPLE_LINK,
+                        formula_value::FLD_GRP,
+                        formula_value::FLD_GRP);
                     $qp->sql = $db_con->select_by_link_ids(array(word_link::FLD_ID_NEW));
                 }
             }
@@ -176,104 +189,6 @@ class formula_value_list
         return $result;
     }
 
-    /**
-     * load formula results from the database related to one formula or one word
-     * similar to load of the formula_value object, but to load many results at once
-     */
-    function load_by_vars($limit = SQL_ROW_LIMIT)
-    {
-        log_debug('formula_value_list->load');
-
-        global $db_con;
-
-        // check the minimal input parameters
-        if (!isset($this->usr)) {
-            log_err("The user id must be set to load a result list.", "formula_value_list->load");
-        } elseif ($this->frm_id <= 0 and $this->grp_id <= 0 and $this->phr_id <= 0) {
-            log_err("Either the formula id (" . $this->frm_id . ") or the word id (" . $this->phr_id . ") and the user (" . $this->usr->id . ") must be set to get a result list.", "formula_value_list->load");
-        } else {
-
-            // set the where clause depending on the values given
-            $sql_from = 'formula_values fv';
-            $sql_where = '';
-            $sql_group = '';
-            if ($this->frm_id > 0) {
-                $sql_where = "fv.formula_id = " . $this->frm_id;
-            } elseif ($this->grp_id > 0) {
-                // group links
-                $sql_where = "fv.source_phrase_group_id = " . $this->grp_id;
-                $sql_group = 'GROUP BY fv.formula_value_id';
-            } elseif ($this->phr_id > 0) {
-                // word links
-                $sql_from .= ', phrase_group_word_links l
-         LEFT JOIN user_phrase_group_word_links ul ON ul.phrase_group_word_link_id = l.phrase_group_word_link_id 
-                                                  AND ul.user_id = ' . $this->usr->id;
-                $sql_where = "l.word_id = " . $this->phr_id . "
-                  AND l.phrase_group_id = fv.phrase_group_id
-                  AND COALESCE(ul.excluded, 0) <> 1";
-                $sql_group = 'GROUP BY fv.formula_value_id,
-                               fv.phrase_group_id,
-                               fv.time_word_id';
-            } elseif ($this->phr_id < 0) {
-                // triple links
-                $triple_id = $this->phr_id * -1;
-                $sql_from .= ', phrase_group_triple_links l
-         LEFT JOIN user_phrase_group_triple_links ul ON ul.phrase_group_triple_link_id = l.phrase_group_triple_link_id 
-                                                    AND ul.user_id = ' . $this->usr->id;
-                $sql_where = "l.triple_id = " . $triple_id . "
-                  AND l.phrase_group_id = fv.phrase_group_id
-                  AND COALESCE(ul.excluded, 0) <> 1";
-                $sql_group = 'GROUP BY fv.formula_value_id,
-                               fv.phrase_group_id,
-                               fv.time_word_id';
-            }
-
-            if ($sql_where == '') {
-                log_err("Internal error in the where clause.", "formula_value_list->load");
-            } else {
-                if ($limit <= 0) {
-                    $limit = SQL_ROW_LIMIT;
-                }
-                $sql = "SELECT fv.formula_value_id,
-                       fv.user_id,
-                       fv.formula_id,
-                       fv.source_phrase_group_id,
-                       fv.source_time_id,
-                       fv.phrase_group_id,
-                       fv.time_word_id,
-                       fv.formula_value
-                  FROM " . $sql_from . " 
-                 WHERE " . $sql_where . "
-                   AND (fv.user_id = " . $this->usr->id . " OR fv.user_id = 0 OR fv.user_id IS NULL)
-                       " . $sql_group . " 
-              ORDER BY last_update DESC 
-                  LIMIT " . $limit . ";";
-                log_debug('formula_value_list->load sql ' . $sql);
-                //$db_con = New mysql;
-                $db_con->usr_id = $this->usr->id;
-                $val_rows = $db_con->get_old($sql);
-                if ($val_rows != false) {
-                    foreach ($val_rows as $val_row) {
-                        $fv = new formula_value($this->usr);
-                        $fv->id = $val_row['formula_value_id'];
-                        $fv->frm_id = $val_row[formula::FLD_ID];
-                        $fv->src_phr_grp_id = $val_row['source_phrase_group_id'];
-                        $fv->src_time_id = $val_row['source_time_id'];
-                        $fv->phr_grp_id = $val_row['phrase_group_id'];
-                        $fv->time_id = $val_row['time_word_id'];
-                        $fv->value = $val_row['formula_value'];
-                        // TODO get user for the case that not all value are for the same user
-                        //$fv->usr            = $val_row[user_sandbox::FLD_USER];
-
-                        log_debug('formula_value_list->load_frm get words');
-                        $fv->load_phrases();
-
-                        $this->lst[] = $fv;
-                    }
-                }
-            }
-        }
-    }
 
     /*
      * display functions

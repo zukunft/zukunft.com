@@ -187,6 +187,14 @@ function run_formula_value_list_test(testing $t)
     $result = $fv_lst->dsp_id();
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
+    // load results by word id
+    $wrd = $t->load_word(word::TN_INHABITANT);
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($wrd);
+    $result = $fv_lst->dsp_id();
+    $target = '0.0078';
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
     // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
     $frm = $t->load_formula(formula::TN_INCREASE);

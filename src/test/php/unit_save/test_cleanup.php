@@ -356,6 +356,8 @@ class testing extends test_base
         // TODO better use a info system log message
         echo $db_con->seq_reset(DB_TYPE_VALUE) . '<br>';
         echo $db_con->seq_reset(DB_TYPE_WORD) . '<br>';
+        echo $db_con->seq_reset(DB_TYPE_PHRASE_GROUP_WORD_LINK) . '<br>';
+        echo $db_con->seq_reset(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK) . '<br>';
         echo $db_con->seq_reset(DB_TYPE_FORMULA) . '<br>';
         echo $db_con->seq_reset(DB_TYPE_FORMULA_LINK) . '<br>';
         echo $db_con->seq_reset(DB_TYPE_VIEW) . '<br>';
