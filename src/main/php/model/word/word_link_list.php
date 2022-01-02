@@ -85,7 +85,7 @@ class word_link_list
                 " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'word_type_id' . $pos) . ",
                 " . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ",
                 " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, 'excluded' . $pos) . ",
-                  t" . $pos . "." . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " AS values" . $pos . "";
+                  t" . $pos . "." . $db_con->get_table_name_esc(DB_TYPE_VALUE) . " AS values" . $pos;
     }
 
     private function load_wrd_from($pos): string

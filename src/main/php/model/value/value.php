@@ -1134,10 +1134,9 @@ class value extends user_sandbox_display
     function fv_lst_depending()
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp->id . '" for user ' . $this->usr->name . '');
-        $fv_lst = new formula_value_list;
-        $fv_lst->usr = $this->usr;
+        $fv_lst = new formula_value_list($this->usr);
         $fv_lst->grp_id = $this->grp->id;
-        $fv_lst->load(SQL_ROW_MAX);
+        $fv_lst->load_by_vars(SQL_ROW_MAX);
 
         log_debug('value->fv_lst_depending -> done');
         return $fv_lst;
@@ -1626,7 +1625,7 @@ class value extends user_sandbox_display
     }
 
 // set the update parameters for the number
-    function save_field_number($db_con, $db_rec, $std_rec): string
+    function save_field_number(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->number <> $this->number) {
@@ -1645,7 +1644,7 @@ class value extends user_sandbox_display
     }
 
 // set the update parameters for the source link
-    function save_field_source($db_con, $db_rec, $std_rec): string
+    function save_field_source(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->get_source_id() <> $this->get_source_id()) {
@@ -1664,7 +1663,7 @@ class value extends user_sandbox_display
     }
 
 // save the value number and the source
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
@@ -1679,7 +1678,7 @@ class value extends user_sandbox_display
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields($db_con, $db_rec, $std_rec): string
+    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         log_debug('value->save_id_fields');
         $result = '';

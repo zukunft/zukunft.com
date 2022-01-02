@@ -573,7 +573,7 @@ class formula_link extends user_sandbox_link
      * set the update parameters for the formula type
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->link_type_id <> $this->link_type_id) {
@@ -595,7 +595,7 @@ class formula_link extends user_sandbox_link
      * save all updated formula_link fields excluding the name, because already done when adding a formula_link
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         // link type not used at the moment
         $result = $this->save_field_type($db_con, $db_rec, $std_rec);

@@ -107,12 +107,13 @@ class user_list
     }
 
     /**
-     * add a usr with just the id for later mass load
+     * add an usr with just the id for later mass load
      */
     function add_by_id($usr_id)
     {
         $usr = new user;
         $usr->id = $usr_id;
+        $this->lst[] = $usr;
     }
 
     // fill the user objects of the list based on the id

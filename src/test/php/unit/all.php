@@ -297,6 +297,7 @@ function run_unit_tests(testing $t)
     (new value_list_unit_tests)->run($t);
     (new formula_unit_tests)->run($t);
     (new formula_link_unit_tests)->run($t);
+    (new formula_value_unit_tests)->run($t);
     (new figure_unit_tests)->run($t);
     (new user_sandbox_unit_tests)->run($t);
     (new ref_unit_tests)->run($t);

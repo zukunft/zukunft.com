@@ -137,7 +137,7 @@ class user_log_named extends user_log
         if ($log_id <= 0) {
             // write the error message in steps to get at least some message if the parameters has caused the error
             if ($this->usr == null) {
-                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString(), $this);
+                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
             } else {
                 log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . ")", "user_log->add");
                 log_fatal("Insert to change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
@@ -175,7 +175,7 @@ class user_log_named extends user_log
         } else {
             // write the error message in steps to get at least some message if the parameters has caused the error
             if ($this->usr == null) {
-                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString(), $this);
+                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
             } else {
                 log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . ")", "user_log->add_ref");
                 log_fatal("Update of reference in the change log failed with (" . $this->usr->dsp_id() . "," . $this->action . "," . $this->table . "," . $this->field . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");

@@ -629,7 +629,7 @@ class view_cmp_link extends user_sandbox_link
 
     // set the update parameters for the view component order_nbr
     private
-    function save_field_order_nbr(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_order_nbr(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->order_nbr <> $this->order_nbr) {
@@ -645,7 +645,7 @@ class view_cmp_link extends user_sandbox_link
     }
 
     // set the update parameters for the word type
-    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->pos_type_id <> $this->pos_type_id) {
@@ -664,7 +664,7 @@ class view_cmp_link extends user_sandbox_link
     }
 
     // save all updated view_component_link fields excluding the name, because already done when adding a view_component_link
-    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

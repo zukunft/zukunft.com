@@ -153,10 +153,9 @@ class view_cmp_dsp extends view_cmp
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULA_RESULTS)) {
             log_debug('view_component_dsp->formula_values in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= "<br><br>calculated values<br>";
-            $frm_val_lst = new formula_value_list;
+            $frm_val_lst = new formula_value_list($this->usr);
             $frm_val_lst->phr_id = $wrd->id;
-            $frm_val_lst->usr = $this->usr;
-            $frm_val_lst->load(SQL_ROW_LIMIT);
+            $frm_val_lst->load_by_vars(SQL_ROW_LIMIT);
             $result .= $frm_val_lst->display($back);
         }
         return $result;
@@ -297,7 +296,7 @@ class view_cmp_dsp extends view_cmp
         foreach ($view_lst as $view) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
-            $dsp = new view_dsp;
+            $dsp = new view_dsp($this->usr);
             $dsp->id = $view[view::FLD_ID];
             $dsp->name = $view[view::FLD_NAME];
             $result .= '      ' . $dsp->name_linked($wrd, $back) . '' . "\n";
@@ -473,7 +472,7 @@ class view_cmp_dsp extends view_cmp
         $result .= $this->dsp_word_row_selector($script, "col-sm-6"); // allow to change the word_row word
         $result .= $this->dsp_word_col_selector($script, "col-sm-6"); // allow to change the word col word
         $result .= '</div>';
-        $result .= dsp_form_fld("comment", $this->description, "Comment:");
+        $result .= dsp_form_fld("comment", $this->comment, "Comment:");
         if ($add_link <= 0) {
             if ($this->id > 0) {
                 $result .= dsp_form_end('', $back, "/http/view_component_del.php?id=" . $this->id . "&back=" . $back);

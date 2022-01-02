@@ -32,10 +32,14 @@
 class formula_value_list
 {
 
-    public ?array $lst = null;   // list of the formula results
+    /*
+     * object vars
+     */
 
-    // search fields
-    public ?user $usr = null;    // the person who wants to see the results
+    public array $lst;   // list of the formula results
+    public user $usr;    // the person who wants to see the results
+
+    // search fields (to deprecate)
     public ?int $frm_id = null;  // to get the results of this formula
     public ?int $phr_id = null;  // to get the results linked to a phrase
     public ?int $grp_id = null;  // to get the results linked to a phrase group
@@ -43,15 +47,90 @@ class formula_value_list
     // private in memory fields to reduce the number of function call parameters within this class
     public ?formula $frm = null; // the formula object
 
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
 
     /*
       load functions
       --------------
     */
 
-    // load formula results from the database related to one formula or one word
-    // similar to load of the formula_value object, but to load many results at once
-    function load($limit = SQL_ROW_LIMIT)
+    /**
+     * create the SQL to load a list of formula values link to
+     * - a formula
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user_sandbox_named $sbx a named object used for selection e.g. a formula
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, user_sandbox_named $sbx): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_';
+        $sql_by = '';
+        if ($sbx->id > 0) {
+            if (get_class($sbx) == formula::class or get_class($sbx) == formula_dsp::class) {
+                $sql_by = formula::FLD_ID;
+            }
+        }
+        if ($sql_by == '') {
+            log_err('Either the formula id or the phrase group id and the user (' . $this->usr->id .
+                ') must be set to load a ' . self::class, self::class . '->load_sql');
+            $qp->name = '';
+        } else {
+            $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+            $qp->name .= $sql_by;
+            $db_con->set_name($qp->name);
+            $db_con->set_fields(formula_value::FLD_NAMES);
+            $db_con->set_usr($this->usr->id);
+            if ($sbx->id > 0) {
+                $db_con->add_par(sql_db::PAR_INT, $sbx->id);
+                if (get_class($sbx) == formula::class or get_class($sbx) == formula_dsp::class) {
+                    $qp->sql = $db_con->select_by_link_ids(array(formula::FLD_ID));
+                }
+            }
+            $qp->par = $db_con->get_par();
+        }
+
+        return $qp;
+    }
+
+    /**
+     * load a list of formula values linked to
+     * - a formula
+     *
+     * @param user_sandbox_named $sbx a named object used for selection e.g. a formula
+     * @return bool true if value or phrases are found
+     */
+    function load(user_sandbox_named $sbx): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql($db_con, $sbx);
+        if ($qp->name != '') {
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $fv = new formula_value($this->usr);
+                    $fv->row_mapper($db_row);
+                    $this->lst[] = $fv;
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load formula results from the database related to one formula or one word
+     * similar to load of the formula_value object, but to load many results at once
+     */
+    function load_by_vars($limit = SQL_ROW_LIMIT)
     {
         log_debug('formula_value_list->load');
 
@@ -125,8 +204,7 @@ class formula_value_list
                 $val_rows = $db_con->get_old($sql);
                 if ($val_rows != false) {
                     foreach ($val_rows as $val_row) {
-                        $fv = new formula_value;
-                        $fv->usr = $this->usr;
+                        $fv = new formula_value($this->usr);
                         $fv->id = $val_row['formula_value_id'];
                         $fv->frm_id = $val_row[formula::FLD_ID];
                         $fv->src_phr_grp_id = $val_row['source_phrase_group_id'];
@@ -614,6 +692,15 @@ class formula_value_list
         return $result;
     }
 
+    function get_first(): formula_value
+    {
+        $result = new formula_value($this->usr);
+        if (count($this->lst) > 0) {
+            $result = $this->lst[0];
+        }
+        return $result;
+    }
+
     // create a list of all formula results that needs to be updated if a value is updated
     function val_upd_lst($val, $usr)
     {
@@ -643,7 +730,13 @@ class formula_value_list
             foreach ($db_lst as $db_fv) {
                 $frm_id = $db_fv[formula::FLD_ID];
                 $formula_text = $db_fv['formula_text'];
-                $formula_value = zuc_math_parse($formula_text, $phr_lst->ids, $time_phr);
+                $phr_lst_used = clone $phr_lst;
+                $phr_lst_used->add($time_phr);
+                $frm = new formula($this->usr);
+                $frm->id = $frm_id;
+                $frm->load();
+                $fv_list = $frm->to_num($phr_lst_used, $back);
+                $formula_value = $fv_list->get_first();
                 // if the formula value is empty use the id to be able to select the formula
                 if ($formula_value == '') {
                     $formula_value = $db_fv[formula::FLD_ID];

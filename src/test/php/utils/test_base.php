@@ -79,6 +79,7 @@ include_once $path_unit . 'value_phrase_link.php';
 include_once $path_unit . 'value_list.php';
 include_once $path_unit . 'formula.php';
 include_once $path_unit . 'formula_link.php';
+include_once $path_unit . 'formula_value.php';
 include_once $path_unit . 'figure.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_component.php';
@@ -998,6 +999,30 @@ class test_base
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
             $qp = $usr_obj->load_sql($db_con, get_class($usr_obj));
+            $result = $this->assert_qp($qp, $db_con->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statements for loading a list of objects in all allowed SQL database dialects
+     *
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param object $lst_obj the list object e.g. a formula value list
+     * @param user_sandbox $sbx_select_obj the user sandbox object used for the selection e.g. a formula
+     * @return bool true if all tests are fine
+     */
+    function assert_load_list_sql(sql_db $db_con, object $lst_obj, user_sandbox $sbx_select_obj): bool
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst_obj->load_sql($db_con, $sbx_select_obj);
+        $result = $this->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $lst_obj->load_sql($db_con, $sbx_select_obj);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

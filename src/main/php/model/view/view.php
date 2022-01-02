@@ -781,7 +781,7 @@ class view extends user_sandbox_named
     /**
      * set the update parameters for the view comment
      */
-    function save_field_comment(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->comment <> $this->comment) {
@@ -799,7 +799,7 @@ class view extends user_sandbox_named
     /**
      * set the update parameters for the view code_id (only allowed for admin)
      */
-    function save_field_code_id(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_code_id(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         // special case: do not remove a code id
@@ -820,7 +820,7 @@ class view extends user_sandbox_named
     /**
      * set the update parameters for the word type
      */
-    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -841,7 +841,7 @@ class view extends user_sandbox_named
     /**
      * save all updated view fields excluding the name, because already done when adding a view
      */
-    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

@@ -596,8 +596,8 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the log entry parameters for a value update
-    function log_link($dsp)
+    // set the log entry parameters for a value update
+    function log_link($dsp): bool
     {
         log_debug('view_component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->usr->id);
         $log = new user_log_link;
@@ -613,8 +613,8 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
-    function log_unlink($dsp)
+    // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
+    function log_unlink($dsp): bool
     {
         log_debug('view_component->log_unlink ' . $this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->usr->id);
         $log = new user_log_link;
@@ -750,7 +750,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // set the update parameters for the view component comment
-    function save_field_comment($db_con, $db_rec, $std_rec): string
+    function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->comment <> $this->comment) {
@@ -766,7 +766,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // set the update parameters for the word type
-    function save_field_type($db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -785,7 +785,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // set the update parameters for the word row
-    function save_field_wrd_row($db_con, $db_rec, $std_rec): string
+    function save_field_wrd_row(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_row <> $this->word_id_row) {
@@ -804,7 +804,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // set the update parameters for the word col
-    function save_field_wrd_col($db_con, $db_rec, $std_rec): string
+    function save_field_wrd_col(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_col <> $this->word_id_col) {
@@ -823,7 +823,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // set the update parameters for the word col2
-    function save_field_wrd_col2($db_con, $db_rec, $std_rec): string
+    function save_field_wrd_col2(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
@@ -842,7 +842,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // set the update parameters for the formula
-    function save_field_formula($db_con, $db_rec, $std_rec): string
+    function save_field_formula(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->formula_id <> $this->formula_id) {
@@ -861,7 +861,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // save all updated view_component fields excluding the name, because already done when adding a view_component
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_comment($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);

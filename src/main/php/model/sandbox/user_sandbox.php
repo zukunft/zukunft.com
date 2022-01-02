@@ -263,7 +263,7 @@ class user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return bool true if the standard object has been loaded
      */
-    function load_standard(?sql_par $qp, string $class): bool
+    function load_standard(?sql_par $qp = null, string $class = ''): bool
     {
         global $db_con;
         $result = false;
@@ -1051,7 +1051,7 @@ class user_sandbox
      * set the update parameters for the word type
      * TODO: log the ref
      */
-    function save_field_type(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -1073,7 +1073,7 @@ class user_sandbox
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class
      */
-    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         return '';
     }
@@ -1214,7 +1214,7 @@ class user_sandbox
     /**
      * save the share level in the database if allowed
      */
-    function save_field_share($db_con, $db_rec, $std_rec): string
+    function save_field_share(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         log_debug($this->obj_name . '->save_field_share ' . $this->dsp_id());
         $result = '';
@@ -1263,7 +1263,7 @@ class user_sandbox
      * save the protection level in the database if allowed
      * TODO is the setting of the standard needed?
      */
-    function save_field_protection($db_con, $db_rec, $std_rec): string
+    function save_field_protection(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         log_debug($this->obj_name . '->save_field_protection ' . $this->dsp_id());
@@ -1523,7 +1523,7 @@ class user_sandbox
     function get_similar(): user_sandbox
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new user_sandbox();
+        return new user_sandbox($this->usr);
     }
 
     /**

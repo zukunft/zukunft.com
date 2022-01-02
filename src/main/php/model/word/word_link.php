@@ -847,7 +847,7 @@ class word_link extends user_sandbox_link_description
             $result .= '&nbsp;';
             $intent = $intent - 1;
         }
-        $result .= '      ' . $this->dsp_link() . '' . "\n";
+        $result .= '      ' . $this->dsp_link() . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -1119,7 +1119,7 @@ class word_link extends user_sandbox_link_description
      * set the update parameters for the phrase link name
      */
     private
-    function save_field_name(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_name(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
 
@@ -1142,7 +1142,7 @@ class word_link extends user_sandbox_link_description
     /**
      * set the update parameters for the phrase link description
      */
-    function save_field_description(sql_db $db_con, $db_rec, $std_rec): string
+    function save_field_description(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->description <> $this->description) {
@@ -1160,7 +1160,7 @@ class word_link extends user_sandbox_link_description
     /**
      * save all updated word_link fields excluding id fields (from, verb and to), because already done when adding a word_link
      */
-    function save_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_name($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
@@ -1174,7 +1174,7 @@ class word_link extends user_sandbox_link_description
      * save updated the word_link id fields (from, verb and to)
      * should only be called if the user is the owner and nobody has used the triple
      */
-    function save_id_fields($db_con, $db_rec, $std_rec): string
+    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->from->id <> $this->from->id
@@ -1209,7 +1209,7 @@ class word_link extends user_sandbox_link_description
     /**
      * check if the id parameters are supposed to be changed
      */
-    function save_id_if_updated($db_con, $db_rec, $std_rec): string
+    function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
 

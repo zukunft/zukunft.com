@@ -83,7 +83,7 @@ class user_sandbox_named extends user_sandbox
      * @param string $class the name of the child class from where the call has been triggered
      * @return bool true if the standard object has been loaded
      */
-    function load_standard(?sql_par $qp, string $class): bool
+    function load_standard(?sql_par $qp = null, string $class = ''): bool
     {
         global $db_con;
         $result = false;

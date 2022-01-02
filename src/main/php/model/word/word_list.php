@@ -85,7 +85,7 @@ class word_list
             $sql_where = "s.word_name IN ('" . $name_text . "')";
         } elseif ($this->word_type_id > 0 and !is_null($this->usr->id)) {
             $sql_name = 'word_list_by_type_id';
-            $sql_where = "s.word_type_id = " . $this->word_type_id . "";
+            $sql_where = "s.word_type_id = " . $this->word_type_id;
         } else {
             log_warning("Selection criteria for the word list missing", "word_list->load");
         }
@@ -389,7 +389,7 @@ class word_list
     // ex foaf_child
     function foaf_children($verb_id)
     {
-        log_debug('word_list->foaf_children type ' . $verb_id . '');
+        log_debug('word_list->foaf_children type ' . $verb_id);
         $level = 0;
         $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, 0);
@@ -403,7 +403,7 @@ class word_list
     // ex foaf_child_step
     function children($verb_id, $level)
     {
-        log_debug('word_list->children type ' . $verb_id . '');
+        log_debug('word_list->children type ' . $verb_id);
         $added_wrd_lst = new word_list($this->usr); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, $level);
 

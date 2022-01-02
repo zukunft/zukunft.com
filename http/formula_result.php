@@ -62,10 +62,9 @@ if ($session_usr->id > 0) {
 
     // explain the result
     if ($frm_val_id > 0 or $frm_id > 0) {
-        $fv = new formula_value;
+        $fv = new formula_value($session_usr);
         $fv->id = $frm_val_id;
-        $fv->usr = $session_usr;
-        $fv->load();
+        $fv->load_by_vars();
         if ($fv->id > 0) {
             $result .= $fv->explain($phr_id, $back);
         } else {

@@ -133,12 +133,12 @@ class user_sandbox_value extends user_sandbox
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection
-     * @param $db_rec the the database record before the saving
-     * @param $std_rec the database record defined as standrad because it is used by most users
+     * @param user_sandbox $db_rec the database record before the saving
+     * @param user_sandbox $std_rec the database record defined as standard because it is used by most users
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, $db_rec, $std_rec): string
+    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
 

@@ -59,7 +59,6 @@ class formula_value
 
     // all database field names used
     const FLD_NAMES = array(
-        self::FLD_ID,
         formula::FLD_ID,
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
@@ -79,7 +78,7 @@ class formula_value
     public ?int $id = null;                    // the unique id for each formula result
     //                                            (the second unique key is frm_id, src_phr_grp_id, src_time_id, phr_grp_id, time_id, usr_id)
     public ?int $frm_id = null;                // the formula database id used to calculate this result
-    public ?user $usr = null;                  // the user who wants to see the result because the formula and values can differ for each user; this is
+    public user $usr;                          // the user who wants to see the result because the formula and values can differ for each user; this is
     public ?int $owner_id = null;              // the user for whom the result has been calculated; if Null the result is the standard result
     public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
     public ?int $src_phr_grp_id = null;        // the word group used for calculating the result
@@ -111,6 +110,11 @@ class formula_value
     /*
      * construct and map
      */
+
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
 
     /**
      * map the database fields to the object fields
@@ -150,10 +154,58 @@ class formula_value
      * create the SQL to load a formula values by the id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par();
+        $qp->name = self::class . '_by_';
+        $db_con->set_type(DB_TYPE_FORMULA_VALUE);
+        if ($this->id > 0) {
+            $qp->name .= 'id';
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+        } else {
+            log_err('The formula value id and the user must be set ' .
+                'to load a ' . self::class, self::class . '->load_sql');
+
+        }
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $qp->sql = $db_con->select();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load all a formula value by the id
+     *
+     * @return bool true if formula value has been loaded
+     */
+    function load(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql($db_con);
+        if ($qp->name != '') {
+            $db_row = $db_con->get1($qp);
+            $this->row_mapper($db_row);
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * create the SQL to load a formula values by a given where statement
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $sql_where the ready to use SQL where statement
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $sql_where = ''): sql_par
+    function load_sql_where(sql_db $db_con, string $sql_where = ''): sql_par
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_';
@@ -178,7 +230,7 @@ class formula_value
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con, $sql_where);
+        $qp = $this->load_sql_where($db_con, $sql_where);
         $val_rows = $db_con->get_old($qp->sql);
         if ($val_rows != null) {
             if (count($val_rows) > 0) {
@@ -192,7 +244,7 @@ class formula_value
     // load the missing formula parameters from the database
     // TODO load user specific values
     // TODO create load_sql and name the query
-    function load(): bool
+    function load_by_vars(): bool
     {
 
         global $db_con;
@@ -390,7 +442,7 @@ class formula_value
                                 $sql_grp_where .= ' l' . $pos . '.word_id = ' . $phr->id;
                                 $pos++;
                             }
-                            $sql_grp = 'SELECT'.' l1.phrase_group_id 
+                            $sql_grp = 'SELECT' . ' l1.phrase_group_id 
                             FROM ' . $sql_grp_from . ' 
                           WHERE ' . $sql_grp_where;
                             // TODO:
@@ -658,7 +710,7 @@ class formula_value
         if (!is_null($this->value)) {
             log_debug('formula_value->val_formatted');
             if (!isset($this->phr_lst)) {
-                $this->load();
+                $this->load_by_vars();
                 log_debug('formula_value->val_formatted loaded');
             }
             log_debug('formula_value->val_formatted check ' . $this->dsp_id());
@@ -695,16 +747,19 @@ class formula_value
     }
 
     /*
+     *  display functions
+     */
 
-    display functions
-
-    */
-
-    // display the unique id fields
+    /**
+     * display the value with the unique id fields
+     */
     function dsp_id(): string
     {
         $result = '';
 
+        if ($this->value != null) {
+            $result .= $this->value . ' ';
+        }
         if (isset($this->phr_lst)) {
             $result .= $this->phr_lst->dsp_id();
         }
@@ -939,10 +994,9 @@ class formula_value
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $frm_ids[] = $val_row[formula::FLD_ID];
-                $fv_upd = new formula_value;
-                $fv_upd->usr = $this->usr;
+                $fv_upd = new formula_value($this->usr);
                 $fv_upd->id = $val_row['formula_value_id'];
-                $fv_upd->load();
+                $fv_upd->load_by_vars();
                 $fv_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
                 $result[] = $fv_upd->save();
@@ -988,7 +1042,7 @@ class formula_value
     {
         $fv_check = clone $this;
         $fv_check->time_phr = null;
-        return !$fv_check->load();
+        return !$fv_check->load_by_vars();
     }
 
 // check if a single formula result needs to be saved to the database
@@ -1140,7 +1194,7 @@ class formula_value
 
             // to check if a database update is needed create a second fv object with the database values
             $fv_db = clone $this;
-            $fv_db->load();
+            $fv_db->load_by_vars();
             $row_id = $fv_db->id;
             $db_val = $fv_db->value;
 

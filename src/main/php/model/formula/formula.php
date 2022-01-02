@@ -718,12 +718,10 @@ class formula extends user_sandbox_description
         log_debug(self::class . '->to_num -> the phrases excluded time are ' . $phr_lst_ex->dsp_id());
 
         // create the formula value list
-        $fv_lst = new formula_value_list;
-        $fv_lst->usr = $this->usr;
+        $fv_lst = new formula_value_list($this->usr);
 
         // create a master formula value object to only need to fill it with the numbers in the code below
-        $fv_init = new formula_value; // maybe move the constructor of formula_value_list?
-        $fv_init->usr = $this->usr;
+        $fv_init = new formula_value($this->usr); // maybe move the constructor of formula_value_list?
         $fv_init->frm = $this;
         $fv_init->frm_id = $this->id;
         $fv_init->ref_text = $this->ref_text_r;
@@ -1787,7 +1785,7 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters for the formula text as written by the user if needed
      */
-    function save_field_usr_text($db_con, $db_rec, $std_rec): string
+    function save_field_usr_text(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->usr_text <> $this->usr_text) {
@@ -1806,7 +1804,7 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters for the formula in the database reference format
      */
-    function save_field_ref_text($db_con, $db_rec, $std_rec): string
+    function save_field_ref_text(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->ref_text <> $this->ref_text) {
@@ -1830,7 +1828,7 @@ class formula extends user_sandbox_description
      * set the update parameters for the formula type
      * TODO: save the reference also in the log
      */
-    function save_field_type($db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -1852,7 +1850,7 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters that define if all formula values are needed to calculate a result
      */
-    function save_field_need_all($db_con, $db_rec, $std_rec): string
+    function save_field_need_all(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->need_all_val <> $this->need_all_val) {
@@ -1887,7 +1885,7 @@ class formula extends user_sandbox_description
     /**
      * save all updated formula fields
      */
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_usr_text($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_ref_text($db_con, $db_rec, $std_rec);
@@ -1902,7 +1900,7 @@ class formula extends user_sandbox_description
     /**
      * set the update parameters for the formula text as written by the user if needed
      */
-    function save_field_name($db_con, $db_rec, $std_rec): string
+    function save_field_name(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->name <> $this->name) {
@@ -1937,7 +1935,7 @@ class formula extends user_sandbox_description
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
      */
-    function save_id_fields($db_con, $db_rec, $std_rec): string
+    function save_id_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->name <> $this->name) {
@@ -1997,7 +1995,7 @@ class formula extends user_sandbox_description
      * check if the id parameters are supposed to be changed
      * and check if the name is already used
      */
-    function save_id_if_updated($db_con, $db_rec, $std_rec): string
+    function save_id_if_updated(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         log_debug(self::class . '->save_id_if_updated has name changed from "' . $db_rec->name . '" to ' . $this->dsp_id());
         $result = '';

@@ -215,9 +215,9 @@ class user_log_link extends user_log
 
 
     // this should be dismissed
-    function add_link_ref()
+    function add_link_ref(): bool
     {
-        $this->add();
+        return $this->add();
     }
 
     // log a user change of a link / verb

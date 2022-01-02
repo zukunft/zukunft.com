@@ -1414,7 +1414,7 @@ class word extends user_sandbox_description
     /**
      * set the update parameters for the word plural
      */
-    private function save_field_plural($db_con, $db_rec, $std_rec): string
+    private function save_field_plural(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         // if the plural is not set, don't overwrite any db entry
@@ -1447,7 +1447,7 @@ class word extends user_sandbox_description
     /**
      * save all updated word fields
      */
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         log_debug('word->save_fields');
         $result = $this->save_field_plural($db_con, $db_rec, $std_rec);

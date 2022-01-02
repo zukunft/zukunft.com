@@ -327,13 +327,12 @@ class formula_element_group
 
                 // get the word group result, which means a formula result
                 log_debug('formula_element_group->figures -> load formula value for ' . $val_phr_lst->dsp_name());
-                $grp_fv = new formula_value;
+                $grp_fv = new formula_value($this->usr);
                 $grp_fv->phr_grp_id = $val_phr_grp->id;
                 if ($val_time_phr != null) {
                     $grp_fv->time_phr = $val_time_phr;
                 }
-                $grp_fv->usr = $this->usr;
-                $grp_fv->load();
+                $grp_fv->load_by_vars();
 
                 // save the value to the result
                 if ($grp_fv->id > 0) {

@@ -34,13 +34,14 @@ class user_sandbox_exp_named extends user_sandbox_exp
 {
 
     // field names used for JSON creation
+    public ?string $name = '';       // the name of the object
     public ?string $share = '';      // the share permissions of the object
     public ?string $protection= '';  // the protection of the given object
 
     // reset the search values of this object
     function reset()
     {
-        parent::reset();
+        $this->name = '';
         $this->share = '';
         $this->protection = '';
     }

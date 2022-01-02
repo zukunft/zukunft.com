@@ -49,10 +49,9 @@ function run_formula_value_test(testing $t)
     $phr_lst->add_name(word::TN_INHABITANT);
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id > 0) {
-        $ch_increase = new formula_value;
+        $ch_increase = new formula_value($usr);
         $ch_increase->phr_grp_id = $ch_up_grp->id;
-        $ch_increase->usr = $usr;
-        $ch_increase->load();
+        $ch_increase->load_by_vars();
         $result = $ch_increase->value;
     } else {
         $result = 'no ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
@@ -67,13 +66,12 @@ function run_formula_value_test(testing $t)
     $phr_lst->ex_time();
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id > 0) {
-        $ch_increase = new formula_value;
+        $ch_increase = new formula_value($usr);
         $ch_increase->phr_grp_id = $ch_up_grp->id;
         $ch_increase->time_id = $time_phr->id;
         //$ch_increase->wrd_lst = $phr_lst;
-        $ch_increase->usr = $usr;
         $ch_increase->usr->id = $usr->id; // temp solution utils the value is saved automatically for all users
-        $ch_increase->load();
+        $ch_increase->load_by_vars();
         $result = $ch_increase->value;
     } else {
         $result = 'no ' . word::TN_2020 . ' ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
@@ -103,11 +101,10 @@ function run_formula_value_test(testing $t)
     $result = $mio_val->scale($dest_wrd_lst);
     $result = $mio_val->scale($dest_wrd_lst);
     */
-    $k_val = new formula_value;
+    $k_val = new formula_value($usr);
     $k_val->phr_grp_id = $ch_k_grp->id;
-    $k_val->usr = $usr;
     //$result = $mio_val->check();
-    $k_val->load();
+    $k_val->load_by_vars();
     $result = $k_val->value;
     $target = 8505.251;
     $t->dsp('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);
@@ -155,13 +152,18 @@ function run_formula_value_list_test(testing $t)
     // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
     $frm = $t->load_formula(formula::TN_INCREASE);
-    $fv_lst = new formula_value_list;
+    $fv_lst = new formula_value_list($usr);
     $fv_lst->frm_id = $frm->id;
-    $fv_lst->usr = $usr;
-    $fv_lst->load();
+    $fv_lst->load_by_vars();
     $result = $fv_lst->dsp_id();
     $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
     $target = word::TN_INHABITANT;
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($frm);
+    $result = $fv_lst->dsp_id();
+    $target = '0.0078';
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

@@ -72,12 +72,11 @@ class formula_dsp extends formula
     function dsp_result($wrd, $back): string
     {
         log_debug('formula->dsp_result for "' . $wrd->name . '" and formula ' . $this->dsp_id());
-        $fv = new formula_value;
+        $fv = new formula_value($this->usr);
         $fv->frm = $this;
         $fv->wrd = $wrd;
-        $fv->usr = $this->usr;
         log_debug('formula->dsp_result load fv');
-        $fv->load();
+        $fv->load_by_vars();
         log_debug('formula->dsp_result display');
         return $fv->display($back);
     }
@@ -224,11 +223,10 @@ class formula_dsp extends formula
 
         // display some sample values
         log_debug("formula->dsp_test_and_samples value list");
-        $fv_lst = new formula_value_list;
+        $fv_lst = new formula_value_list($this->usr);
         $fv_lst->frm_id = $this->id;
-        $fv_lst->usr = $this->usr;
         log_debug("formula->dsp_test_and_samples load results for formula id (" . $fv_lst->frm_id . ")");
-        $fv_lst->load(SQL_ROW_LIMIT);
+        $fv_lst->load_by_vars(SQL_ROW_LIMIT);
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {

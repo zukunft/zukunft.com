@@ -28,6 +28,7 @@
     TODO create unit tests
     TODO cleanup object by removing duplicates
     TODO call include only if needed
+    TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
     TODO check that all class function follow the setup suggested in user_message
     TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
     TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
@@ -294,6 +295,7 @@ include_once $path_php . 'model/value/value_phrase_link.php';
 include_once $path_php . 'model/value/value_phrase_link_list.php';
 include_once $path_php . 'model/value/value_time_series.php';
 include_once $path_php . 'model/ref/source.php';
+include_once $path_php . 'model/ref/source_exp.php';
 include_once $path_php . 'model/ref/ref.php';
 include_once $path_php . 'model/ref/ref_exp.php';
 include_once $path_php . 'model/ref/ref_type.php';

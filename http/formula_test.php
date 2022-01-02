@@ -150,8 +150,7 @@ if ($session_usr->id > 0) {
             // the standard value will always be checked first
             // and after that the user specific value will be calculated if needed
             // TODO: but only if the user has done some changes
-            $calc_fv_lst = new formula_value_list;
-            $calc_fv_lst->usr = $usr;
+            $calc_fv_lst = new formula_value_list($usr);
             foreach ($frm_lst->lst as $frm) {
                 $calc_fv_lst->frm = $frm;
                 $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);

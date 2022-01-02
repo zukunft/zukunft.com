@@ -923,8 +923,7 @@ class value_list
                     log_debug('value_list->html -> linked words ' . $val->id . ' done');
                     // to review
                     // list the related formula values
-                    $fv_lst = new formula_value_list;
-                    $fv_lst->usr = $this->usr;
+                    $fv_lst = new formula_value_list($this->usr);
                     if ($val->time_phr != null) {
                         $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, $val->time_phr->id);
                     } else {

@@ -315,7 +315,7 @@ class source extends user_sandbox_named
     function export_obj(bool $do_load = true): user_sandbox_exp
     {
         log_debug('source->export_obj');
-        $result = new source();
+        $result = new source_exp();
 
         // add the source parameters
         $result->name = $this->name;
@@ -326,7 +326,7 @@ class source extends user_sandbox_named
             $result->comment = $this->comment;
         }
         if ($this->type_name() <> '') {
-            $result->obj_type = $this->type_name();
+            $result->type = $this->type_name();
         }
         if ($this->code_id <> '') {
             $result->code_id = $this->code_id;
@@ -608,7 +608,7 @@ class source extends user_sandbox_named
     }
 
     // set the update parameters for the source url
-    private function save_field_url($db_con, $db_rec, $std_rec): string
+    private function save_field_url(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->url <> $this->url) {
@@ -624,7 +624,7 @@ class source extends user_sandbox_named
     }
 
     // set the update parameters for the source comment
-    private function save_field_comment($db_con, $db_rec, $std_rec): string
+    private function save_field_comment(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->comment <> $this->comment) {
@@ -642,7 +642,7 @@ class source extends user_sandbox_named
     /**
      * set the update parameters for the word type
      */
-    function save_field_type($db_con, $db_rec, $std_rec): string
+    function save_field_type(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = '';
         if ($db_rec->type_id <> $this->type_id) {
@@ -663,7 +663,7 @@ class source extends user_sandbox_named
     /**
      * save all updated source fields excluding the name, because already done when adding a source
      */
-    function save_fields($db_con, $db_rec, $std_rec): string
+    function save_fields(sql_db $db_con, user_sandbox $db_rec, user_sandbox $std_rec): string
     {
         $result = $this->save_field_url($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_comment($db_con, $db_rec, $std_rec);

@@ -37,8 +37,11 @@ class sys_log_level extends BasicEnum
     const ERROR = 3;
     const FATAL = 4;
 
+    /**
+     * @throws ReflectionException
+     */
     protected static function get_description($value): string {
-        $result = parent::get_description($value);
+        $result = parent::getDescription($value);
 
         switch ($value) {
 
