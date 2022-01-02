@@ -149,6 +149,30 @@ function run_formula_value_list_test(testing $t)
 
     $t->header('Test the formula value list class (classes/formula_value_list.php)');
 
+    // load results by formula
+    $frm = $t->load_formula(formula::TN_INCREASE);
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($frm);
+    $result = $fv_lst->dsp_id();
+    $target = '0.0078';
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
+    // load results by phrase group
+    $grp = $t->load_phrase_group(array(word::TN_CH, word::TN_INHABITANT, word::TN_IN_K));
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($grp);
+    $result = $fv_lst->dsp_id();
+    $target = '8505.251';
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
+    // load results by source phrase group
+    $grp = $t->load_phrase_group(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($grp, true);
+    $result = $fv_lst->dsp_id();
+    $target = '0.0078';
+    $t->dsp_contains(', formula_value_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
     // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
     $frm = $t->load_formula(formula::TN_INCREASE);
@@ -158,12 +182,6 @@ function run_formula_value_list_test(testing $t)
     $result = $fv_lst->dsp_id();
     $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
     $target = word::TN_INHABITANT;
-    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
-
-    $fv_lst = new formula_value_list($usr);
-    $fv_lst->load($frm);
-    $result = $fv_lst->dsp_id();
-    $target = '0.0078';
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
 }

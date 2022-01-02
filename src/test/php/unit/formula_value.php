@@ -63,6 +63,18 @@ class formula_value_unit_tests
         $frm->id = 1;
         $t->assert_load_list_sql($db_con, $fv_lst, $frm);
 
+        // sql to load a list of formula values by the phrase group id
+        $fv_lst = new formula_value_list($usr);
+        $grp = new phrase_group($usr);
+        $grp->id = 2;
+        $t->assert_load_list_sql($db_con, $fv_lst, $grp);
+
+        // sql to load a list of formula values by the source phrase group id
+        $fv_lst = new formula_value_list($usr);
+        $grp = new phrase_group($usr);
+        $grp->id = 2;
+        $t->assert_load_list_sql($db_con, $fv_lst, $grp, true);
+
     }
 
 }

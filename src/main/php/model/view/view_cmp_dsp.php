@@ -147,7 +147,7 @@ class view_cmp_dsp extends view_cmp
     }
 
     // show a list of formula results related to a word
-    function formula_values($wrd, string $back = '')
+    function formula_values($wrd, string $back = ''): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULA_RESULTS)) {

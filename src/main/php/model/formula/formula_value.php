@@ -139,6 +139,7 @@ class formula_value
                 $this->last_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->last_val_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->dirty = $db_row[self::FLD_DIRTY];
+                $this->load_phrases();
                 $result = true;
             }
         }

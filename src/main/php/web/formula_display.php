@@ -224,9 +224,7 @@ class formula_dsp extends formula
         // display some sample values
         log_debug("formula->dsp_test_and_samples value list");
         $fv_lst = new formula_value_list($this->usr);
-        $fv_lst->frm_id = $this->id;
-        log_debug("formula->dsp_test_and_samples load results for formula id (" . $fv_lst->frm_id . ")");
-        $fv_lst->load_by_vars(SQL_ROW_LIMIT);
+        $fv_lst->load($this);
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {

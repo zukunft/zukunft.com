@@ -1131,12 +1131,11 @@ class value extends user_sandbox_display
      * get a list of all formula results that are depending on this value
      * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with SQL_ROW_MAX
      */
-    function fv_lst_depending()
+    function fv_lst_depending(): formula_value_list
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp->id . '" for user ' . $this->usr->name . '');
         $fv_lst = new formula_value_list($this->usr);
-        $fv_lst->grp_id = $this->grp->id;
-        $fv_lst->load_by_vars(SQL_ROW_MAX);
+        $fv_lst->load($this->grp, true);
 
         log_debug('value->fv_lst_depending -> done');
         return $fv_lst;

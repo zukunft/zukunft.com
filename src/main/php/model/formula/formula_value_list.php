@@ -63,17 +63,24 @@ class formula_value_list
      * - a formula
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param user_sandbox_named $sbx a named object used for selection e.g. a formula
+     * @param object $obj a named object used for selection e.g. a formula
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, user_sandbox_named $sbx): sql_par
+    function load_sql(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_';
         $sql_by = '';
-        if ($sbx->id > 0) {
-            if (get_class($sbx) == formula::class or get_class($sbx) == formula_dsp::class) {
+        if ($obj->id > 0) {
+            if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
                 $sql_by = formula::FLD_ID;
+            } elseif (get_class($obj) == phrase_group::class) {
+                if ($by_source) {
+                    $sql_by = formula_value::FLD_SOURCE_GRP;
+                } else {
+                    $sql_by = phrase_group::FLD_ID;
+                }
             }
         }
         if ($sql_by == '') {
@@ -86,10 +93,16 @@ class formula_value_list
             $db_con->set_name($qp->name);
             $db_con->set_fields(formula_value::FLD_NAMES);
             $db_con->set_usr($this->usr->id);
-            if ($sbx->id > 0) {
-                $db_con->add_par(sql_db::PAR_INT, $sbx->id);
-                if (get_class($sbx) == formula::class or get_class($sbx) == formula_dsp::class) {
+            if ($obj->id > 0) {
+                $db_con->add_par(sql_db::PAR_INT, $obj->id);
+                if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
                     $qp->sql = $db_con->select_by_link_ids(array(formula::FLD_ID));
+                } elseif (get_class($obj) == phrase_group::class) {
+                    if ($by_source) {
+                        $qp->sql = $db_con->select_by_link_ids(array(formula_value::FLD_SOURCE_GRP));
+                    } else {
+                        $qp->sql = $db_con->select_by_link_ids(array(phrase_group::FLD_ID));
+                    }
                 }
             }
             $qp->par = $db_con->get_par();
@@ -102,15 +115,16 @@ class formula_value_list
      * load a list of formula values linked to
      * - a formula
      *
-     * @param user_sandbox_named $sbx a named object used for selection e.g. a formula
+     * @param object $obj a named object used for selection e.g. a formula
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
      */
-    function load(user_sandbox_named $sbx): bool
+    function load(object $obj, bool $by_source = false): bool
     {
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con, $sbx);
+        $qp = $this->load_sql($db_con, $obj, $by_source);
         if ($qp->name != '') {
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
@@ -226,11 +240,8 @@ class formula_value_list
     }
 
     /*
-
-      display functions
-      -----------------
-
-    */
+     * display functions
+     */
 
     // return best possible id for this element mainly used for debugging
     function dsp_id(): string
