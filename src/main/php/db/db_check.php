@@ -136,6 +136,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
+    $result .= $db_con->change_column_name(DB_TYPE_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
     $result .= $db_con->remove_prefix(DB_TYPE_USER_PROFILE, 'code_id', 'usr_role_');
     $result .= $db_con->remove_prefix(DB_TYPE_SYS_LOG_STATUS, 'code_id', 'log_status_');
     $result .= $db_con->remove_prefix(DB_TYPE_TASK_TYPE, 'code_id', 'job_');

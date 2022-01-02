@@ -1135,7 +1135,7 @@ class value extends user_sandbox_display
     {
         log_debug('value->fv_lst_depending group id "' . $this->grp->id . '" for user ' . $this->usr->name . '');
         $fv_lst = new formula_value_list($this->usr);
-        $fv_lst->load($this->grp, true);
+        $fv_lst->load($this->grp, null, true);
 
         log_debug('value->fv_lst_depending -> done');
         return $fv_lst;

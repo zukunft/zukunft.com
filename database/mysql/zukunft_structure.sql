@@ -292,7 +292,7 @@ CREATE TABLE IF NOT EXISTS `formula_values`
     `formula_id`             int(11)   NOT NULL,
     `user_id`                int(11)        DEFAULT NULL,
     `source_phrase_group_id` int(11)        DEFAULT NULL,
-    `source_time_word_id`    int(11)        DEFAULT NULL,
+    `source_time_id`    int(11)        DEFAULT NULL,
     `phrase_group_id`        int(11)        DEFAULT '0' COMMENT 'temp field for fast data collection; no single links to terms because this is just a cache table and can be recreated by the underlying tables',
     `time_word_id`           int(11)        DEFAULT '0' COMMENT 'special field just to speed up queries',
     `formula_value`          double    NOT NULL,
@@ -1636,7 +1636,7 @@ ALTER TABLE `formula_types`
 ALTER TABLE `formula_values`
     ADD PRIMARY KEY (`formula_value_id`),
     ADD UNIQUE KEY `formula_id_2` (`formula_id`, `user_id`, `phrase_group_id`, `time_word_id`,
-                                   `source_phrase_group_id`, `source_time_word_id`),
+                                   `source_phrase_group_id`, `source_time_id`),
     ADD KEY `user_id` (`user_id`);
 
 --

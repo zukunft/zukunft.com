@@ -41,6 +41,7 @@ class word_link extends user_sandbox_link_description
 
     // object specific database and JSON object field names
     const FLD_ID = 'word_link_id';
+    const FLD_ID_NEW = 'triple_id';
     const FLD_NAME = 'word_link_name';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';

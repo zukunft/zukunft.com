@@ -95,7 +95,18 @@ class phrase_group_unit_tests
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($phr_grp->get_by_wrd_lst_sql(true));
 
+        // sql to load the phrase group word link by id
+        $grp_wrd_lnk = new phrase_group_word_link();
+        $grp_wrd_lnk->id = 11;
+        $t->assert_load_sql($db_con, $grp_wrd_lnk);
+
+        // sql to load the phrase group triple link by id
+        $grp_trp_lnk = new phrase_group_triple_link();
+        $grp_trp_lnk->id = 12;
+        $t->assert_load_sql($db_con, $grp_trp_lnk);
+
         // sql to load all phrase groups linked to a word
+        $db_con->db_type = sql_db::POSTGRES;
         $wrd = $t->load_word(word::TN_CITY);
         $wrd->id = 1; // dummy number just to test the SQL creation
         $phr_grp_lst = new phrase_group_list();

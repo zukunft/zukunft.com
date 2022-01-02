@@ -69,11 +69,19 @@ class formula_value_unit_tests
         $grp->id = 2;
         $t->assert_load_list_sql($db_con, $fv_lst, $grp);
 
+        // ... and additional select by time
+        $time_phr = new phrase($usr);
+        $time_phr->id = 3;
+        $t->assert_load_list_sql($db_con, $fv_lst, $grp, $time_phr);
+
         // sql to load a list of formula values by the source phrase group id
         $fv_lst = new formula_value_list($usr);
         $grp = new phrase_group($usr);
         $grp->id = 2;
-        $t->assert_load_list_sql($db_con, $fv_lst, $grp, true);
+        $t->assert_load_list_sql($db_con, $fv_lst, $grp, null, true);
+
+        // ... and additional select by time
+        $t->assert_load_list_sql($db_con, $fv_lst, $grp, $time_phr, true);
 
     }
 

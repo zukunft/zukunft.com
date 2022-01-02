@@ -165,20 +165,33 @@ function run_formula_value_list_test(testing $t)
     $target = '8505.251';
     $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
+    // ... and also with time selection
+    $time_phr = $t->load_phrase(word::TN_2020);
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($grp, $time_phr);
+    $result = $fv_lst->dsp_id();
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
     // load results by source phrase group
     $grp = $t->load_phrase_group(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));
     $fv_lst = new formula_value_list($usr);
-    $fv_lst->load($grp, true);
+    $fv_lst->load($grp, null, true);
     $result = $fv_lst->dsp_id();
     $target = '0.0078';
     $t->dsp_contains(', formula_value_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
+
+    // ... and also with time selection
+    $time_phr = $t->load_phrase(word::TN_2020);
+    $fv_lst = new formula_value_list($usr);
+    $fv_lst->load($grp, $time_phr, true);
+    $result = $fv_lst->dsp_id();
+    $t->dsp_contains(', formula_value_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // TODO add PE frm test
     //$frm = $t->load_formula(TF_PE);
     $frm = $t->load_formula(formula::TN_INCREASE);
     $fv_lst = new formula_value_list($usr);
-    $fv_lst->frm_id = $frm->id;
-    $fv_lst->load_by_vars();
+    $fv_lst->load($frm);
     $result = $fv_lst->dsp_id();
     $target = '"Sales","percent","increase","' . word::TN_RENAMED . '","2017"';
     $target = word::TN_INHABITANT;

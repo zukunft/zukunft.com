@@ -64,23 +64,38 @@ class formula_value_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
+     * @param object|null $obj2 a second named object used for selection e.g. a time phrase
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, object $obj, bool $by_source = false): sql_par
+    function load_sql(sql_db $db_con, object $obj, ?object $obj2 = null, bool $by_source = false): sql_par
     {
         $qp = new sql_par();
         $qp->name = self::class . '_by_';
         $sql_by = '';
         if ($obj->id > 0) {
             if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
-                $sql_by = formula::FLD_ID;
+                $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == phrase_group::class) {
                 if ($by_source) {
-                    $sql_by = formula_value::FLD_SOURCE_GRP;
+                    $sql_by .= formula_value::FLD_SOURCE_GRP;
+                    if ($obj2 != null) {
+                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                            $sql_by .= '_' . formula_value::FLD_SOURCE_TIME;
+                        }
+                    }
                 } else {
-                    $sql_by = phrase_group::FLD_ID;
+                    $sql_by .= phrase_group::FLD_ID;
+                    if ($obj2 != null) {
+                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                            $sql_by .= '_' . formula_value::FLD_TIME;
+                        }
+                    }
                 }
+            } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
+                $sql_by .= word::FLD_ID;
+            } elseif (get_class($obj) == word_link::class) {
+                $sql_by .= word_link::FLD_ID_NEW;
             }
         }
         if ($sql_by == '') {
@@ -90,7 +105,7 @@ class formula_value_list
         } else {
             $db_con->set_type(DB_TYPE_FORMULA_VALUE);
             $qp->name .= $sql_by;
-            $db_con->set_name($qp->name);
+            $db_con->set_name(substr($qp->name, 0, 62));
             $db_con->set_fields(formula_value::FLD_NAMES);
             $db_con->set_usr($this->usr->id);
             if ($obj->id > 0) {
@@ -98,11 +113,31 @@ class formula_value_list
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
                     $qp->sql = $db_con->select_by_link_ids(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {
+                    $link_fields = array();
                     if ($by_source) {
-                        $qp->sql = $db_con->select_by_link_ids(array(formula_value::FLD_SOURCE_GRP));
+                        $link_fields[] = formula_value::FLD_SOURCE_GRP;
+                        if ($obj2 != null) {
+                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                                $db_con->add_par(sql_db::PAR_INT, $obj2->id);
+                                $link_fields[] = formula_value::FLD_SOURCE_TIME;
+                            }
+                        }
                     } else {
-                        $qp->sql = $db_con->select_by_link_ids(array(phrase_group::FLD_ID));
+                        $link_fields[] = phrase_group::FLD_ID;
+                        if ($obj2 != null) {
+                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                                $db_con->add_par(sql_db::PAR_INT, $obj2->id);
+                                $link_fields[] = formula_value::FLD_TIME;
+                            }
+                        }
                     }
+                    $qp->sql = $db_con->select_by_link_ids($link_fields);
+                } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
+                    $db_con->set_join_fields(array(formula_value::FLD_GRP), DB_TYPE_PHRASE_GROUP_WORD_LINK);
+                    $qp->sql = $db_con->select_by_link_ids(array(word::FLD_ID));
+                } elseif (get_class($obj) == word_link::class) {
+                    $db_con->set_join_fields(array(formula_value::FLD_GRP), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
+                    $qp->sql = $db_con->select_by_link_ids(array(word_link::FLD_ID_NEW));
                 }
             }
             $qp->par = $db_con->get_par();
@@ -116,15 +151,16 @@ class formula_value_list
      * - a formula
      *
      * @param object $obj a named object used for selection e.g. a formula
+     * @param object|null $obj2 a second named object used for selection e.g. a time phrase
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if value or phrases are found
      */
-    function load(object $obj, bool $by_source = false): bool
+    function load(object $obj, ?object $obj2 = null, bool $by_source = false): bool
     {
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con, $obj, $by_source);
+        $qp = $this->load_sql($db_con, $obj, $obj2, $by_source);
         if ($qp->name != '') {
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
@@ -202,7 +238,7 @@ class formula_value_list
                        fv.user_id,
                        fv.formula_id,
                        fv.source_phrase_group_id,
-                       fv.source_time_word_id,
+                       fv.source_time_id,
                        fv.phrase_group_id,
                        fv.time_word_id,
                        fv.formula_value
@@ -222,7 +258,7 @@ class formula_value_list
                         $fv->id = $val_row['formula_value_id'];
                         $fv->frm_id = $val_row[formula::FLD_ID];
                         $fv->src_phr_grp_id = $val_row['source_phrase_group_id'];
-                        $fv->src_time_id = $val_row['source_time_word_id'];
+                        $fv->src_time_id = $val_row['source_time_id'];
                         $fv->phr_grp_id = $val_row['phrase_group_id'];
                         $fv->time_id = $val_row['time_word_id'];
                         $fv->value = $val_row['formula_value'];

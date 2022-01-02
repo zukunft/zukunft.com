@@ -50,7 +50,7 @@ class formula_value
     // database fields only used for formula values
     const FLD_ID = 'formula_value_id';
     const FLD_SOURCE_GRP = 'source_phrase_group_id';
-    const FLD_SOURCE_TIME = 'source_time_word_id';
+    const FLD_SOURCE_TIME = 'source_time_id';
     const FLD_GRP = 'phrase_group_id';
     const FLD_TIME = 'time_word_id';
     const FLD_VALUE = 'formula_value';
@@ -352,9 +352,9 @@ class formula_value
                 $sql_order = '';
                 // include the source words in the search if requested
                 if ($this->src_time_id > 0) {
-                    $sql_src_time = " source_time_word_id = " . $this->src_time_id . " ";
+                    $sql_src_time = " source_time_id = " . $this->src_time_id . " ";
                 } else {
-                    $sql_src_time = " (source_time_word_id = 0 OR source_time_word_id IS NULL) ";
+                    $sql_src_time = " (source_time_id = 0 OR source_time_id IS NULL) ";
                 }
                 if ($this->src_phr_grp_id > 0 and $this->usr->id > 0) {
                     $sql_src_wrd = " AND source_phrase_group_id = " . $this->src_phr_grp_id . "
@@ -1226,7 +1226,7 @@ class formula_value
                 $field_values[] = $this->time_id;
                 $field_names[] = 'source_phrase_group_id';
                 $field_values[] = $this->src_phr_grp_id;
-                $field_names[] = 'source_time_word_id';
+                $field_names[] = 'source_time_id';
                 $field_values[] = $this->src_time_id;
                 if (!$this->is_std) {
                     $field_names[] = user_sandbox::FLD_USER;

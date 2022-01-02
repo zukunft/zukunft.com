@@ -283,6 +283,8 @@ include_once $path_php . 'model/phrase/phrase_list.php';
 include_once $path_php . 'model/phrase/phrase_list_dsp.php';
 include_once $path_php . 'model/phrase/phrase_group.php';
 include_once $path_php . 'model/phrase/phrase_group_list.php';
+include_once $path_php . 'model/phrase/phrase_group_word_link.php';
+include_once $path_php . 'model/phrase/phrase_group_triple_link.php';
 include_once $path_php . 'model/verb/verb.php';
 include_once $path_php . 'model/verb/verb_list.php';
 include_once $path_php . 'model/phrase/term.php';
