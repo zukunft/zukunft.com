@@ -32,6 +32,19 @@
 
 */
 
+function init_unit_db_tests(testing $t)
+{
+
+    // add the database rows for read testing
+    $t->test_word_link(
+        word_link::TN_READ, verb::IS_A, word::TN_READ,
+        word_link::TN_READ_NAME, word_link::TN_READ_NAME
+    );
+    $phr_grp = $t->load_phrase_group(array(word_link::TN_READ_NAME));
+    $t->test_value_by_phr_grp($phr_grp, value::TV_READ);
+
+}
+
 function run_unit_db_tests(testing $t)
 {
     $t->header('Start the zukunft.com unit database read only tests');
@@ -47,4 +60,6 @@ function run_unit_db_tests(testing $t)
     run_verb_unit_db_tests($t);
     run_view_unit_db_tests($t);
     run_word_unit_db_tests($t);
+    run_value_unit_db_tests($t);
+
 }

@@ -46,5 +46,10 @@ function run_formula_unit_db_tests(testing $t)
     $target = 1;
     $t->dsp('unit_db_formula->check ' . formula::CALC, $result, $target);
 
+    $t->subheader('Frontend API tests');
+
+    $frm = $t->load_formula(formula::TN_READ);
+    $t->assert_api($frm);
+
 }
 

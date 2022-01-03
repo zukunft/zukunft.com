@@ -50,5 +50,17 @@ function run_word_unit_db_tests(testing $t)
     $target = 1;
     $t->dsp('unit_db_word->check ' . word_type_list::DBL_NORMAL, $result, $target);
 
+    $t->subheader('Frontend API tests');
+
+    $wrd = $t->load_word(word::TN_READ);
+    $t->assert_api($wrd);
+
+    $t->header('Unit database tests of the word class (src/main/php/model/word/word_link.php)');
+
+    $t->subheader('Frontend API tests');
+
+    $trp = $t->load_word_link(word_link::TN_READ, verb::IS_A, word::TN_READ);
+    $t->assert_api($trp);
+
 }
 

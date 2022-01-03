@@ -142,6 +142,7 @@ function import_base_config(): string
         $result .= import_json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);
     }
 
+
     log_debug('load base config ... done');
 
     return $result;

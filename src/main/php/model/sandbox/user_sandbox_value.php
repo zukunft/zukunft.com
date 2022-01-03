@@ -5,7 +5,7 @@
     user_sandbox_link.php - the superclass for handling user specific link objects including the database saving
     ---------------------
 
-    This superclass should be used by the classes word links, formula links and view link
+    This superclass should be used by the class word links, formula links and view link
 
 
     This file is part of zukunft.com - calc with words

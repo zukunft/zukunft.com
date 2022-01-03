@@ -539,7 +539,7 @@ class formula_value_list
     }
 
     // get the calculation requests if one formula has been updated
-    // returns a batch_job_list with all formula results that may needs to be updated if a formula is updated
+    // returns a batch_job_list with all formula results that may need to be updated if a formula is updated
     // $frm - formulas that needs to be checked for update
     // $usr - to define which user view should be updated
     function frm_upd_lst($usr, $back)
@@ -630,7 +630,7 @@ class formula_value_list
         $phr_grp_lst_val->get_by_fv_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_fv); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
-        // first calculate the standard values for all user and than the user specific values
+        // first calculate the standard values for all user and then the user specific values
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list;
         $usr_lst->load_active();

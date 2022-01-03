@@ -74,14 +74,14 @@ class phrase_list_dsp extends phrase_list
         return $result;
     }
 
-    // return a list of the phrase ids as an sql compatible text
+    // return a list of the phrase ids as a sql compatible text
     function ids_txt()
     {
         $result = dsp_array($this->id_lst());
         return $result;
     }
 
-    // return one string with all names of the list without hiquotes for the user, but not nessesary as a unique text
+    // return one string with all names of the list without high quotes for the user, but not necessary as a unique text
     // e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
     //      but this "short" form probably confuses the user less and
     //      if the user cannot change the tags anyway the saving of a related value is possible
@@ -98,7 +98,7 @@ class phrase_list_dsp extends phrase_list
         return $result;
     }
 
-    // offer the user to add a new value for this phrases
+    // offer the user to add a new value for these phrases
     // similar to value.php/btn_add
     function btn_add_value($back)
     {

@@ -98,6 +98,18 @@ class user_sandbox_named extends user_sandbox
     }
 
     /**
+     * @return object frontend API object filled with unique object name
+     */
+    function fill_min_obj(object $min_obj): object
+    {
+        parent::fill_min_obj($min_obj);
+
+        $min_obj->name = $this->name;
+
+        return $min_obj;
+    }
+
+    /**
      * fill a similar object that is extended with display interface functions
      *
      * @return object the object fill with all user sandbox value

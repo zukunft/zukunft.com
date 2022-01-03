@@ -565,7 +565,7 @@ class phrase_list
         return $phr_lst;
     }
 
-    // same as differentiators, but including the sub types e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
+    // same as differentiators, but including the subtypes e.g. get "energy" and "wind energy" for "sector" if "wind energy" is part of "energy"
     function differentiators_all()
     {
         log_debug('phrase_list->differentiators_all for ' . $this->dsp_id());
@@ -1204,7 +1204,7 @@ class phrase_list
         return $result;
     }
 
-    // get all phrases of this phrase list that have a least one time term
+    // get all phrases of this phrase list that have at least one time term
     function time_lst()
     {
         log_debug('phrase_list->time_lst for phrases ' . $this->dsp_id());
@@ -1490,7 +1490,7 @@ class phrase_list
      *   1) try to get a formula result, if also no formula result,
      *   2) assume an additional phrase by getting the phrase with the most values for the phrase list
      *      which could be in this case "millions"
-     *   3) repeat with 2(
+     *   3) repeat with 2)
      *
      * e.g. if many numbers matches the phrase list e.g. Nestlé Sales million, CHF (and Water, and Coffee)
      *      the value with the least additional phrases is selected

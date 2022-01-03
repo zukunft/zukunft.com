@@ -40,10 +40,10 @@ Changes on these objects can trigger a batch job:
   4. word links
   
 To update the formula results the main actions are
-  A) create the formula results (or delete formula results not valid any more)
+  A) create the formula results (or delete formula results not valid anymore)
   B) calculate und update the formula results
-  C) create the depending formula results (or delete if not valid any more)
-  D) calculate und update the depending formula results
+  C) create the depending on formula results (or delete if not valid anymore)
+  D) calculate und update the depending on formula results
   
 A add, update or delete on an object always triggers all action from A) to D)
   except the update of a value, which for which A) is not needed

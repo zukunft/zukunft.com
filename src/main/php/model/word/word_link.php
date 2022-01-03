@@ -73,6 +73,13 @@ class word_link extends user_sandbox_link_description
     );
 
     /*
+     * for system testing
+     */
+
+    const TN_READ = 'Pi';
+    const TN_READ_NAME = 'Pi (math)';
+
+    /*
      * object vars
      */
 
@@ -119,6 +126,15 @@ class word_link extends user_sandbox_link_description
         $this->from = new phrase($this->usr);
         $this->verb = new verb();
         $this->to = new phrase($this->usr);
+    }
+
+    /**
+     * @return triple_min the triple frontend api object
+     */
+    function min_obj(): object
+    {
+        $min_obj = new triple_min();
+        return parent::fill_min_obj($min_obj);
     }
 
     /**

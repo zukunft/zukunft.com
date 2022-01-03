@@ -112,6 +112,10 @@ a view object or a function that return HTML code that can be displayed
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
 
+object extensions
+- _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user
+- _exp (EXPort)            - the export object that does not have any internal database references
+
 
 database change setup
 ---------------------

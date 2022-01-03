@@ -97,6 +97,20 @@ class phrase_group
         $this->id_order = array();
     }
 
+    /**
+     * @return phrase_group the phrase group frontend API object
+     */
+    function min_obj(): object
+    {
+        $min_obj = new phrase_group_min();
+        $min_obj->lst = array();
+        foreach ($this->phr_lst->lst as $phr) {
+            $min_obj->lst[] = $phr->get_obj->min_obj();
+        }
+        $min_obj->id = $this->id;
+        return $min_obj;
+    }
+
     function row_mapper(array $db_row): bool
     {
         $result = false;

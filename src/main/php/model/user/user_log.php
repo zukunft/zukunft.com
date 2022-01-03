@@ -2,7 +2,7 @@
 
 /*
 
-    user_log.php - object to save the user changes in the database in a format, so that is can fast be displayed to the user
+    user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
     ------------
 
     This file is part of zukunft.com - calc with words
@@ -244,7 +244,7 @@ class user_log
     }
 
     // add the row id to an existing log entry
-    // e.g. because the row id is know after the adding of the real record,
+    // e.g. because the row id is known after the adding of the real record,
     // but the log entry has been created upfront to make sure that logging is complete
     function add_ref($row_id): bool
     {

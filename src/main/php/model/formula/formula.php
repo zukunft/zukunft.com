@@ -73,6 +73,7 @@ class formula extends user_sandbox_description
      */
 
     // persevered formula names for unit and integration tests
+    const TN_READ = 'increase';
     const TN_ADD = 'System Test Formula';
     const TN_RENAMED = 'System Test Formula Renamed';
     const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
@@ -174,6 +175,16 @@ class formula extends user_sandbox_description
 
         $this->needs_fv_upd = false;
         $this->ref_text_r = '';
+    }
+
+    /**
+     * @return formula_min the formula frontend api object
+     */
+    function min_obj(): object
+    {
+        $min_obj = new formula_min();
+        $min_obj->usr_text = $this->usr_text;
+        return parent::fill_min_obj($min_obj);
     }
 
     /**
@@ -753,7 +764,7 @@ class formula extends user_sandbox_description
         foreach ($elm_grp_lst->lst as $elm_grp) {
 
             // get the figures based on the context e.g. the formula element "Share Price" for the context "ABB" can be 23.11
-            // a figure is either the user edited value or a calculated formula result)
+            // a figure is either the user edited value or a calculated formula result
             $elm_grp->phr_lst = clone $phr_lst_ex;
             if (isset($time_phr)) {
                 $elm_grp->time_phr = clone $time_phr;
@@ -766,7 +777,7 @@ class formula extends user_sandbox_description
             // fill the figure into the formula text and create as much formula values / results as needed
             if ($fig_lst->lst != null) {
                 if (count($fig_lst->lst) == 1) {
-                    // if no figure if found use the master result as placeholder
+                    // if no figure is found use the master result as placeholder
                     if ($fv_lst->lst != null) {
                         if (count($fv_lst->lst) == 0) {
                             $fv_lst->lst[] = $fv_init;
@@ -817,7 +828,6 @@ class formula extends user_sandbox_description
                                                 // get the standard value
                                                 // $fig_std = ...;
                                                 $fv_std = clone $fv;
-                                                $fv_std->usr = null;
                                                 $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
                                                 if ($fv_std->last_val_update < $fig->last_update) {
                                                     $fv_std->last_val_update = $fig->last_update;
@@ -843,7 +853,6 @@ class formula extends user_sandbox_description
                                                 // get the standard value
                                                 // $fig_std = ...;
                                                 $fv_std = clone $fv_master;
-                                                $fv_std->usr = null;
                                                 $fv_std->num_text = str_replace($fig->symbol, $fig->number, $fv_std->num_text);
                                                 if ($fv_std->last_val_update < $fig->last_update) {
                                                     $fv_std->last_val_update = $fig->last_update;

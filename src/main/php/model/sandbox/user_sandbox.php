@@ -158,6 +158,15 @@ class user_sandbox
     }
 
     /**
+     * @return object frontend API object filled with the database id
+     */
+    function fill_min_obj(object $min_obj): object
+    {
+        $min_obj->id = $this->id;
+        return $min_obj;
+    }
+
+    /**
      * fill a similar object that is extended with display interface functions
      *
      * @return object the object fill with all user sandbox value
@@ -368,7 +377,7 @@ class user_sandbox
     */
 
     /*
-    // check if the owner is set for all records of an user sandbox object
+    // check if the owner is set for all records of a user sandbox object
     // e.g. if the owner of a new word_link is set correctly at creation
     //      if not changes of another can overwrite the standard and by that influence the setup of the creator
     function chk_owner ($type, $correct) {
@@ -635,23 +644,6 @@ class user_sandbox
         return $result;
     }
 
-    // create a user setting for all objects that does not match the new standard object
-    // TODO review
-    function usr_cfg_create_all($std)
-    {
-        $result = '';
-        log_debug($this->obj_name . '->usr_cfg_create_all ' . $this->dsp_id());
-
-        // get a list of users that are using this object
-        $usr_lst = $this->usr_lst();
-        foreach ($usr_lst as $usr) {
-            // create a usr cfg if needed
-        }
-
-        log_debug($this->obj_name . '->usr_cfg_create_all for ' . $this->dsp_id() . ' -> ' . $result);
-        return $result;
-    }
-
     // remove all user setting that are not needed any more based on the new standard object
     // TODO review
     function usr_cfg_cleanup($std)
@@ -663,6 +655,7 @@ class user_sandbox
         $usr_lst = $this->usr_lst();
         foreach ($usr_lst as $usr) {
             // remove the usr cfg if not needed any more
+            $this->del_usr_cfg_if_not_needed();
         }
 
         log_debug($this->obj_name . '->usr_cfg_cleanup for ' . $this->dsp_id() . ' -> ' . $result);
@@ -1378,7 +1371,7 @@ class user_sandbox
                     } elseif ($this->obj_type == self::TYPE_NAMED) {
                         $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
                     } else {
-
+                        log_info('Save of id field for ' . $this->obj_type . ' not expected');
                     }
                 } else {
                     // if the target link has not yet been created

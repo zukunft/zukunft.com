@@ -85,6 +85,7 @@ class value extends user_sandbox_display
      */
 
     // a list of dummy values that are used for system tests
+    const TV_READ = 3.14159265358979323846264338327950288419716939937510; // pi
     const TEST_VALUE = 123456;
     const TEST_FLOAT = 123.456;
     const TEST_BIG = 123456789;
@@ -126,6 +127,16 @@ class value extends user_sandbox_display
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
+
+    /**
+     * @return value_min the value frontend api object
+     */
+    function min_obj(): object
+    {
+        $min_obj = new value_min();
+        $min_obj->val = $this->number;
+        return parent::fill_min_obj($min_obj);
+    }
 
     /*
      * construct and map
@@ -1687,7 +1698,7 @@ class value extends user_sandbox_display
         $this->load_phrases();
         $std_rec->load_phrases();
 
-        if ($db_rec->grp_id <> $this->grp->id) {
+        if ($db_rec->grp->id <> $this->grp->id) {
             log_debug('value->save_id_fields to ' . $this->dsp_id() . ' from "' . $db_rec->dsp_id() . '" (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd();
@@ -1700,9 +1711,9 @@ class value extends user_sandbox_display
             if (isset($std_rec->grp)) {
                 $log->std_value = $std_rec->grp->name();
             }
-            $log->old_id = $db_rec->grp_id;
+            $log->old_id = $db_rec->grp->id;
             $log->new_id = $this->grp->id;
-            $log->std_id = $std_rec->grp_id;
+            $log->std_id = $std_rec->grp->id;
             $log->row_id = $this->id;
             $log->field = 'phrase_group_id';
             if ($log->add()) {

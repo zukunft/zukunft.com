@@ -67,6 +67,7 @@ if ($usr->id > 0) {
 
         // prepare testing
         $t = new testing();
+        init_unit_db_tests($t);
 
         load_usr_data();
 

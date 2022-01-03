@@ -105,7 +105,7 @@ class formula_value
     public ?word $wrd = null;  // to get the most interesting result for this word
 
     // to be dismissed
-    public ?array $wrd_ids = null; // a array of word ids filled while loading the formula value to the memory
+    public ?array $wrd_ids = null; // an array of word ids filled while loading the formula value to the memory
 
     /*
      * construct and map
@@ -114,6 +114,17 @@ class formula_value
     function __construct(user $usr)
     {
         $this->usr = $usr;
+    }
+
+    /**
+     * @return formula_value_min the formula result frontend api object
+     */
+    function min_obj(): object
+    {
+        $min_obj = new formula_value_min();
+        $min_obj->val = $this->value;
+        $min_obj->id = $this->id;
+        return $min_obj;
     }
 
     /**
@@ -847,7 +858,7 @@ class formula_value
     }
 
     // explain a formula result to the user
-    // create a HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
+    // create an HTML page that shows different levels of detail information for one formula result to explain to the user how the value is calculated
     function explain($lead_phr_id, $back): string
     {
         log_debug('formula_value->explain ' . $this->dsp_id() . ' for user ' . $this->usr->name);
@@ -1193,7 +1204,7 @@ class formula_value
             $this->save_prepare_wrds();
             log_debug("formula_value->save -> word list prepared (group id " . $this->phr_grp_id . " and source group id " . $this->src_phr_grp_id . ")");
 
-            // to check if a database update is needed create a second fv object with the database values
+            // to check if a database update is needed to create a second fv object with the database values
             $fv_db = clone $this;
             $fv_db->load_by_vars();
             $row_id = $fv_db->id;

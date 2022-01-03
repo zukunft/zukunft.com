@@ -501,7 +501,7 @@ class user
         return $this->name . ' (' . $this->id . ')';
     }
 
-    // create the display user object based on the object (no needed any more if always the display user object is used)
+    // create the display user object based on the object (not needed any more if always the display user object is used)
     function dsp_user(): user_dsp
     {
         global $db_con;
@@ -511,7 +511,7 @@ class user
         return $dsp_user;
     }
 
-    // create the HTML code to display the user name with the HTML link
+    // create the HTML code to display the username with the HTML link
     function display(): string
     {
         return '<a href="/http/user.php?id=' . $this->id . '">' . $this->name . '</a>';

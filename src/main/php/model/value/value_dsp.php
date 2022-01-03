@@ -2,7 +2,7 @@
 
 /*
 
-  value_dsp.php - create the UI JSON messsage or HTML code to display a value
+  value_dsp.php - create the UI JSON message or HTML code to display a value
   -------------
   
 
@@ -58,7 +58,7 @@ class value_dsp extends value
             $this->load_phrases();
             $num_text = $this->val_formatted();
             if (!$this->is_std()) {
-                $result = '<font class="user_specific">' . $num_text . '</font>';
+                $result = '<span class="user_specific">' . $num_text . '</span>';
                 //$result = $num_text;
             } else {
                 $result = $num_text;
@@ -358,7 +358,7 @@ class value_dsp extends value
 
             // rebuild the value ids if needed
             // 1. load the phrases parameters based on the ids
-            $result .= $this->set_phr_lst_by_ids();
+            $result .= $this->set_phr_lst_by_ids($type_ids);
             // 2. extract the time from the phrase list
             $result .= $this->set_time_by_phr_lst();
             log_debug("value->dsp_edit phrase list incl. time " . $this->phr_lst->dsp_name());

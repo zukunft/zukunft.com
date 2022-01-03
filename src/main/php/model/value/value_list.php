@@ -502,7 +502,7 @@ class value_list
                     $val_lst[] = $val;
                     log_debug('value_list->filter_by_time include ' . $val->name());
                 } else {
-                    log_debug('value_list->filter_by_time excluded ' . $val->name() . ' because outside the specifid time periods');
+                    log_debug('value_list->filter_by_time excluded ' . $val->name() . ' because outside the specified time periods');
                 }
             } else {
                 log_debug('value_list->filter_by_time excluded ' . $val->name() . ' because this is not time specific');
@@ -537,7 +537,7 @@ class value_list
                     } else {
                         log_debug('value_list->filter_by_phrase_lst val found, but no value phrase list');
                     }
-                    $found = true; // to make sure that each value is only added once; an improval could be to stop searching after a phrase is found
+                    $found = true; // to make sure that each value is only added once; an improvement could be to stop searching after a phrase is found
                 }
             }
             if ($found) {
@@ -821,7 +821,7 @@ class value_list
     }
 
     // return the html code to display all values related to a given word
-    // $phr->id is the related word that shoud not be included in the display
+    // $phr->id is the related word that should not be included in the display
     // $this->usr->id is a parameter, because the viewer must not be the owner of the value
     // TODO add back
     function html($back)

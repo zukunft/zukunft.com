@@ -87,13 +87,14 @@ include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'user_log.php';
 
-// load the unit testing modules with database real only
+// load the unit testing modules with database read only
 include_once $path_unit_db . 'all.php';
 include_once $path_unit_db . 'system.php';
 include_once $path_unit_db . 'sql_db.php';
 include_once $path_unit_db . 'user.php';
 include_once $path_unit_db . 'word.php';
 include_once $path_unit_db . 'verb.php';
+include_once $path_unit_db . 'value.php';
 include_once $path_unit_db . 'formula.php';
 include_once $path_unit_db . 'view.php';
 include_once $path_unit_db . 'ref.php';
@@ -577,6 +578,36 @@ class test_base
         return $val;
     }
 
+    function load_value_by_phr_grp(phrase_group $phr_grp): value
+    {
+        global $usr;
+
+        $val = new value($usr);
+        $val->grp = $phr_grp;
+        $val->load();
+        return $val;
+    }
+
+    function add_value_by_phr_grp(phrase_group $phr_grp, float $target): value
+    {
+        $val = $this->load_value_by_phr_grp($phr_grp);
+        if ($val->id == 0) {
+            $val->grp = $phr_grp;
+            $val->number = $target;
+            $val->save();
+        }
+
+        return $val;
+    }
+
+    function test_value_by_phr_grp(phrase_group $phr_grp, float $target): value
+    {
+        $val = $this->add_value_by_phr_grp($phr_grp, $target);
+        $result = $val->number;
+        $this->dsp(', value->load for ' . $val->name(), $target, $result);
+        return $val;
+    }
+
     function load_source(string $src_name): source
     {
         global $usr;
@@ -828,8 +859,8 @@ class test_base
     }
 
     function del_word_link(string $from_name,
-                            string $verb_code_id,
-                            string $to_name): bool
+                           string $verb_code_id,
+                           string $to_name): bool
     {
         $trp = $this->load_word_link($from_name, $verb_code_id, $to_name);
         if ($trp->id <> 0) {
@@ -972,6 +1003,32 @@ class test_base
         return $this->dsp(', ' . $msg, $target, $result, $exe_max_time, $comment, $test_type);
     }
 
+    /**
+     * check if the frontend API object can be created and if the recreation of the backend object result to the same object
+     *
+     * @param object $usr_obj the object which frontend API functions should be tested
+     * @return bool true if the reloaded backend object has no relevant differences
+     */
+    function assert_api(object $usr_obj): bool
+    {
+        $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
+        $recreated_json = '';
+        $api_obj = $usr_obj->min_obj();
+        if ($api_obj->id == $usr_obj->id) {
+            $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
+            $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
+        }
+        $result = json_is_similar($original_json, $recreated_json);
+        return $this->assert($this->name . 'API check', $result, true);
+    }
+
+    /**
+     * check if an object json file can be recreated by importing the object and recreating the json with the export function
+     *
+     * @param object $usr_obj the object which json im- and export functions should be tested
+     * @param string $json_file_name the resource path name to the json sample file
+     * @return bool true if the json has no relevant differences
+     */
     function assert_json(object $usr_obj, string $json_file_name): bool
     {
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . $json_file_name), true);

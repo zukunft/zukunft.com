@@ -255,6 +255,15 @@ class word extends user_sandbox_description
     }
 
     /**
+     * @return word_min the word frontend api object
+     */
+    function min_obj(): object
+    {
+        $min_obj = new word_min();
+        return parent::fill_min_obj($min_obj);
+    }
+
+    /**
      * @return word_dsp the word object with the display interface functions
      */
     function dsp_obj(): object

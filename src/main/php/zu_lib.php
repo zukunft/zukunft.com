@@ -336,6 +336,15 @@ include_once $path_php . 'model/view/view_cmp_type_list.php';
 include_once $path_php . 'model/view/view_cmp_link.php';
 include_once $path_php . 'model/view/view_cmp_link_list.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
+// frontend API classes
+include_once $path_php . 'web/sandbox/user_sandbox_min.php';
+include_once $path_php . 'web/sandbox/user_sandbox_named_min.php';
+include_once $path_php . 'web/word/word_min.php';
+include_once $path_php . 'web/word/triple_min.php';
+include_once $path_php . 'web/phrase/phrase_group_min.php';
+include_once $path_php . 'web/value/value_min.php';
+include_once $path_php . 'web/formula/formula_min.php';
+include_once $path_php . 'web/formula/formula_value_min.php';
 
 // include all other libraries that are usually needed
 include_once ROOT_PATH . 'db_link/zu_lib_sql_link.php';
@@ -655,7 +664,10 @@ function log_msg(string $msg_text,
                 }
             } else {
                 if ($msg_log_level >= DSP_LEVEL) {
-                    $dsp = new view_dsp;
+                    $usr = new user();
+                    $usr->id = $user_id;
+                    $usr->load($db_con);
+                    $dsp = new view_dsp($usr);
                     $result .= $dsp->dsp_navbar_simple();
                     $result .= $msg_text . " (by " . $function_name . ").<br><br>";
                 }

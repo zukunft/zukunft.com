@@ -133,12 +133,12 @@ class view_cmp_dsp extends view_cmp
             $parent_word_lst = $wrd->parents();
             foreach ($parent_word_lst->lst as $parent_wrd) {
                 log_debug('view_component_dsp->formulas -> parent (' . $parent_wrd->name . ')');
-                $result .= dsp_text_h3('Formulas inherented by ' . $parent_wrd->name);
+                $result .= dsp_text_h3('Formulas inherent by ' . $parent_wrd->name);
 
                 $frm_lst = $this->formula_list($parent_wrd);
                 $result .= $frm_lst->display($back);
                 // adding formulas direct to a parent word may not be intuitive
-                //$result .= btn_add ('Add formuls', "/http/formula_add.php?word=".$parent_id."");
+                //$result .= btn_add ('Add formulas', "/http/formula_add.php?word=".$parent_id."");
             }
             $result .= btn_add('Add formula', "/http/formula_add.php?word=" . $wrd->id . "&back=" . $wrd->id . "");
             $result .= '<br>';
@@ -274,7 +274,7 @@ class view_cmp_dsp extends view_cmp
     // lists of all views where a view component is used
     private function linked_views($add_link, $wrd, $back)
     {
-        log_debug("view_component_dsp->linked_view componet id " . $this->id . " and user " . $this->usr->id . " (word " . $wrd->id . ", add " . $add_link . ").");
+        log_debug("view_component_dsp->linked_view component id " . $this->id . " and user " . $this->usr->id . " (word " . $wrd->id . ", add " . $add_link . ").");
 
         global $db_con;
         $result = '';

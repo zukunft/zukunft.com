@@ -5,7 +5,7 @@
     user_sandbox_link.php - the superclass for handling user specific link objects including the database saving
     ---------------------
 
-    This superclass should be used by the classes word links, formula links and view link
+    This superclass should be used by the class word links, formula links and view link
 
 
     This file is part of zukunft.com - calc with words
@@ -223,7 +223,7 @@ class user_sandbox_link extends user_sandbox
      * @param user_sandbox_link $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
-    function is_id_updated_link(user_sandbox_link $db_rec): bool
+    function is_id_updated_link(user_sandbox $db_rec): bool
     {
         $result = False;
         log_debug($this->obj_name . '->is_id_updated ' . $this->dsp_id());

@@ -269,6 +269,22 @@ class phrase
      * conversion
      */
 
+    protected function get_word(): word
+    {
+        $wrd = new word($this->usr);
+        $wrd->id = $this->id;
+        //$wrd->usr_cfg_id = $this->usr_cfg_id;
+        //$wrd->owner_id = $this->owner_id;
+        //$wrd->excluded = $this->excluded;
+        $wrd->name = $this->name;
+        $wrd->description = $this->description;
+        //$wrd->plural = $this->plural;
+        //$wrd->type_id = $this->type_id;
+        //$wrd->view_id = $this->view_id;
+        //$wrd->values = $this->values;
+        return $wrd;
+    }
+
     protected function get_word_dsp(): word_dsp
     {
         $wrd = new word_dsp($this->usr);
@@ -285,6 +301,22 @@ class phrase
         return $wrd;
     }
 
+    protected function get_triple(): word_link
+    {
+        $lnk = new word_link($this->usr);
+        $lnk->id = $this->id;
+        //$wrd->usr_cfg_id = $this->usr_cfg_id;
+        //$wrd->owner_id = $this->owner_id;
+        //$wrd->excluded = $this->excluded;
+        $lnk->name = $this->name;
+        $lnk->description = $this->description;
+        //$wrd->plural = $this->plural;
+        //$wrd->type_id = $this->type_id;
+        //$wrd->view_id = $this->view_id;
+        //$wrd->values = $this->values;
+        return $lnk;
+    }
+
     protected function get_triple_dsp(): word_link
     {
         $lnk = new word_link($this->usr);
@@ -299,6 +331,22 @@ class phrase
         //$wrd->view_id = $this->view_id;
         //$wrd->values = $this->values;
         return $lnk;
+    }
+
+    /**
+     * get the related object
+     * so either the word object
+     * or the triple object
+     */
+    function get_obj(): ?object
+    {
+        $obj = '';
+        if ($this->is_word()) {
+            $obj = $this->get_word();
+        } elseif ($this->is_triple()) {
+            $obj = $this->get_triple();
+        }
+        return $obj;
     }
 
     /**

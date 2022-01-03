@@ -154,7 +154,9 @@ if ($start_usr->id > 0) {
     if ($start_usr->is_admin()) {
 
         // prepare testing
+        $usr = $start_usr;
         $t = new testing();
+        init_unit_db_tests($t);
 
         // run the unit tests without database connection
         run_unit_tests($t);
