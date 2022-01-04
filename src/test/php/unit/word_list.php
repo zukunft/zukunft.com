@@ -43,28 +43,29 @@ class word_list_unit_tests
         $t->resource_path = 'db/word/';
         $usr->id = 1;
 
-
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
-        /*
-         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-         */
+        $t->subheader('Database query creation tests');
+
+        $wrd_lst = new word_list($usr);
+        $wrd_names = array(word::TN_READ, word::TN_ADD);
+        $this->assert_sql_by_name($t, $db_con, $wrd_lst, $wrd_names);
 
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load by word list by ids
         $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [1, 2, 3];
-        $created_sql = $wrd_lst->load_sql($db_con);
+        $created_sql = $wrd_lst->load_sql_where($db_con);
         $expected_sql = $t->file('db/word/word_list_by_id_list.sql');
         $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql($db_con, true));
+        $t->assert_sql_name_unique($wrd_lst->load_sql_where($db_con, true));
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $wrd_lst->load_sql($db_con);
+        $created_sql = $wrd_lst->load_sql_where($db_con);
         $expected_sql = $t->file('db/word/word_list_by_id_list_mysql.sql');
         $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
 
@@ -72,12 +73,12 @@ class word_list_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $wrd_lst = new word_list($usr);
         $wrd_lst->grp_id = 1;
-        $created_sql = $wrd_lst->load_sql($db_con);
+        $created_sql = $wrd_lst->load_sql_where($db_con);
         $expected_sql = $t->file('db/word/word_list_by_phrase_group.sql');
         $t->assert('word_list->load_sql by phrase group', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql($db_con, true));
+        $t->assert_sql_name_unique($wrd_lst->load_sql_where($db_con, true));
 
         // TODO add the missing word list loading SQL
 
@@ -91,6 +92,29 @@ class word_list_unit_tests
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP, true));
 
+    }
+
+    /**
+     * test the SQL statement creation for a value phrase link list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_list $lst the empty word list object
+     * @param array $words filled with a list of words to be used for the query creation
+     * @return void
+     */
+    private function assert_sql_by_name(testing $t, sql_db $db_con, word_list $lst, array $words)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_names($db_con, $words);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_names($db_con, $words);
+        $t->assert_qp($qp, sql_db::MYSQL);
     }
 
 }

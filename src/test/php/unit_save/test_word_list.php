@@ -46,7 +46,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $result = $wrd_lst->name();
     $target = '"' . word::TN_MIO . '","' . word::TN_2021 . '","' . word::TN_ZH . '"'; // order adjusted based on the number of usage
     $t->dsp('word_list->load by names for ' . $wrd_lst->dsp_id() . '', $target, $result);
@@ -64,7 +64,7 @@ function run_word_list_test(testing $t)
     // test add by type
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_lst->add_by_type(Null, cl(db_cl::VERB, verb::IS_A), verb::DIRECTION_UP);
     $result = dsp_array($wrd_lst->names());
     $target = word::TN_ZH . "," . word::TN_CITY . "," . word::TN_CANTON . "," . word::TN_COMPANY; // order adjusted based on the number of usage
@@ -73,7 +73,7 @@ function run_word_list_test(testing $t)
     // test add parent
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
     $result = dsp_array($wrd_lst->names());
     $target = word::TN_ZH . "," . word::TN_CITY . "," . word::TN_CANTON . "," . word::TN_COMPANY; // order adjusted based on the number of usage
@@ -82,7 +82,7 @@ function run_word_list_test(testing $t)
     // test add parent step
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_lst->parents(cl(db_cl::VERB, verb::IS_A), 1);
     $result = dsp_array($wrd_lst->names());
     $target = word::TN_ZH . "," . word::TN_CITY . "," . word::TN_CANTON . "," . word::TN_COMPANY; // order adjusted based on the number of usage
@@ -91,7 +91,7 @@ function run_word_list_test(testing $t)
     // test add child and contains
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_lst->foaf_children(cl(db_cl::VERB, verb::IS_A));
     $wrd = $t->load_word(word::TN_ZH);
     $result = $wrd_lst->does_contain($wrd);
@@ -101,7 +101,7 @@ function run_word_list_test(testing $t)
     // test direct children
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_lst->children(cl(db_cl::VERB, verb::IS_A), 1,);
     $wrd = $t->load_word(word::TN_ZH);
     $result = $wrd_lst->does_contain($wrd);
@@ -111,7 +111,7 @@ function run_word_list_test(testing $t)
     // test is
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_ZH);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $lst_is = $wrd_lst->is();
     $result = dsp_array($lst_is->names());
     $target = dsp_array(array(word::TN_CITY, word::TN_CANTON)); // order adjusted based on the number of usage
@@ -121,7 +121,7 @@ function run_word_list_test(testing $t)
     // test are
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(word::TN_CANTON);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $lst_are = $wrd_lst->are();
     $wrd = $t->load_word(word::TN_ZH);
     $result = $lst_are->does_contain($wrd);
@@ -136,7 +136,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_CHF);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_lst_ex = clone $wrd_lst;
     $wrd_lst_ex->ex_time();
     $result = $wrd_lst_ex->name();
@@ -153,7 +153,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_CHF);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $grp = new phrase_group($usr);
     $grp->load_by_ids((new phr_ids($wrd_lst->ids)));
     $result = $grp->get_id();
@@ -182,7 +182,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_CHF);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $val = $wrd_lst->value();
     $result = $val->number;
     $target = value::TEST_FLOAT;
@@ -193,7 +193,7 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name(word::TN_ZH);
     $wrd_lst->add_name(word::TN_2021);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $abb_last_year = $wrd_lst->assume_time();
     $result = $abb_last_year->name;
     $target = word::TN_2021;
@@ -225,13 +225,13 @@ function run_word_list_test(testing $t)
     $wrd_lst->add_name("October");
     $wrd_lst->add_name("November");
     $wrd_lst->add_name("December");
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $del_wrd_lst = new word_list($usr);
     $del_wrd_lst->add_name("May");
     $del_wrd_lst->add_name("June");
     $del_wrd_lst->add_name("Juli");
     $del_wrd_lst->add_name("August");
-    $del_wrd_lst->load();
+    $del_wrd_lst->load_using_where();
     $wrd_lst->diff($del_wrd_lst);
     $result = $wrd_lst->names();
     $target = array("April","December","February","January","March","November","October","September");

@@ -53,11 +53,11 @@ function run_phrase_list_test(testing $t)
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(TW_ABB);
     $wrd_lst->add_name(TW_VESTAS);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $id_lst = $wrd_lst->ids;
     $id_lst[] = $triple_sample_id * -1;
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_ids($id_lst);
+    $phr_lst->load_by_ids(new phr_ids($id_lst));
     $target = '"' . TW_ABB . '","' . TW_VESTAS . '","' . phrase::TN_ZH_COMPANY . '"';
     $result = $phr_lst->dsp_name();
     $t->dsp('phrase->load via id', $target, $result);
@@ -72,7 +72,7 @@ function run_phrase_list_test(testing $t)
     // test getting the parent for phrase list with ABB
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(TW_ABB);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_parents = $phr_lst->foaf_parents(cl(db_cl::VERB, verb::IS_A));
     $result = dsp_array($lst_parents->names());
@@ -89,7 +89,7 @@ function run_phrase_list_test(testing $t)
     // ... same with Coca Cola
     $wrd_lst = new word_list($usr);
     $wrd_lst->add_name(TW_VESTAS);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $phr_lst = $wrd_lst->phrase_lst();
     $lst_is = $phr_lst->is();
     $result = dsp_array($lst_is->names());

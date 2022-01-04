@@ -172,8 +172,8 @@ class word_link extends user_sandbox_link_description
      */
     function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = $class . '_std_by_' . $this->load_sql_name_ext();
+        $qp = new sql_par($class, true);
+        $qp->name .= $this->load_sql_name_ext();
         $db_con->set_type(DB_TYPE_TRIPLE);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
@@ -236,8 +236,8 @@ class word_link extends user_sandbox_link_description
      */
     function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_' . $this->load_sql_name_ext();
+        $qp = new sql_par(self::class);
+        $qp->name .= $this->load_sql_name_ext();
 
         // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
         $db_con->set_type(DB_TYPE_TRIPLE);
@@ -459,7 +459,7 @@ class word_link extends user_sandbox_link_description
             $db_con->add_par(sql_db::PAR_INT, $this->from->id);
             $db_con->add_par(sql_db::PAR_INT, $this->to->id);
             $db_con->add_par(sql_db::PAR_INT, $this->verb->id);
-            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(self::FLD_FROM, self::FLD_TO, verb::FLD_ID));
         }
         $qp->par = $db_con->get_par();
         return $qp;

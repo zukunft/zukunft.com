@@ -35,13 +35,13 @@
 
 class word_list
 {
-
-    public array $lst = array(); // array of the loaded word objects
+    // array of the loaded word objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
+    public array $lst;
     public user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
-    // search and load fields
+    // search and load fields (to deprecate)
     public ?int $grp_id = null;    // to load a list of words with one sql statement from the database that are part of this word group
     public ?array $ids = array(); // list of the word ids to load a list of words with one sql statement from the database
     public ?bool $incl_is = null;    // include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
@@ -56,14 +56,97 @@ class word_list
      */
     function __construct(user $usr)
     {
+        $this->lst = array();
         $this->usr = $usr;
     }
+
+    /*
+     * load functions
+     */
+
+    /**
+     * set the SQL query parameters to load a list of words
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_fields(word::FLD_NAMES);
+        $db_con->set_usr_fields(word::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
+        $db_con->set_usr($this->usr->id);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of words by the names
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $wrd_names a named object used for selection e.g. a word type
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(sql_db $db_con, array $wrd_names): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if (count($wrd_names) > 0) {
+            $qp->name .= 'names';
+            $db_con->set_name($qp->name);
+            $db_con->add_par_in_txt($wrd_names);
+            $qp->sql = $db_con->select_by_field(word::FLD_NAME);
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * load this list of words
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if value or phrases are found
+     */
+    function load(sql_par $qp): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $wrd = new word($this->usr);
+                    $wrd->row_mapper($db_row);
+                    $this->lst[] = $wrd;
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load a list of words by the names
+     * @param array $wrd_names a named object used for selection e.g. a word type
+     * @return bool true if value or phrases are found
+     */
+    function load_by_names(array $wrd_names): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_names($db_con, $wrd_names);
+        return $this->load($qp);
+    }
+
+    /*
+     * load functions (to be reviewed)
+     */
 
     /**
      * create the SQL selection statement or the name for the predefined SQL statement
      * @param bool $get_name use true to get the unique name of the selection query
      */
-    function load_sql_where(bool $get_name = false): string
+    function load_sql_where_creator(bool $get_name = false): string
     {
         $sql_where = '';
         $sql_name = '';
@@ -101,16 +184,16 @@ class word_list
     /**
      * create the sql statement to fill a word list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql_where(sql_db $db_con, bool $get_name = false): string
     {
         $sql = '';
         $sql_name = 'wrd_lst_by_';
 
         // set the where clause depending on the values given
         if ($get_name) {
-            $sql_name .= $this->load_sql_where($get_name);
+            $sql_name .= $this->load_sql_where_creator($get_name);
         } else {
-            $sql_where = $this->load_sql_where($get_name);
+            $sql_where = $this->load_sql_where_creator($get_name);
             if ($sql_where == '') {
                 // the id list can be empty, because not needed to check this always in the calling function, so maybe in a later stage this could be an info
                 if (is_null($this->usr->id)) {
@@ -138,8 +221,10 @@ class word_list
         return $result;
     }
 
-    // load the word parameters from the database for a list of words
-    function load()
+    /**
+     * load the word parameters from the database for a list of words
+     */
+    function load_using_where()
     {
 
         global $db_con;
@@ -152,7 +237,7 @@ class word_list
             log_err("The user must be set.", "word_list->load");
         } else {
             $db_con->set_usr($this->usr->id);
-            $sql = $this->load_sql($db_con);
+            $sql = $this->load_sql_where($db_con);
             $db_wrd_lst = $db_con->get_old($sql);
             $this->lst = array();
             $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
@@ -652,7 +737,7 @@ class word_list
     // return one string with all names of the list with the link
     function name_linked(): string
     {
-        return '' . dsp_array($this->names_linked()) . '';
+        return dsp_array($this->names_linked());
     }
 
     // return a list of the word ids as an sql compatible text
@@ -1423,7 +1508,7 @@ class word_list
         $time_lst = new word_list($this->usr);
         if (count($time_ids) > 0) {
             $time_lst->ids = $time_ids;
-            $time_lst->load();
+            $time_lst->load_using_where();
             $wrd = $time_lst->max_time();
         }
 

@@ -164,8 +164,8 @@ class view_cmp_link extends user_sandbox_link
      */
     function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_std_by_id';
+        $qp = new sql_par(self::class);
+        $qp->name = 'id';
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
@@ -244,11 +244,11 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select_by_link_ids(array(view_cmp_link::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(view_cmp_link::FLD_ID));
         } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->view_id);
             $db_con->add_par(sql_db::PAR_INT, $this->view_component_id);
-            $qp->sql = $db_con->select_by_link_ids(array(view::FLD_ID, view_cmp::FLD_ID));
+            $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, view_cmp::FLD_ID));
         }
         $qp->par = $db_con->get_par();
 

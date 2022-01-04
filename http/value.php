@@ -52,9 +52,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::VALUE_DISPLAY);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
 
@@ -64,8 +63,7 @@ if ($usr->id > 0) {
 
         // load the words
         $wrd_lst = new word_list($usr);
-        $wrd_lst->name_lst = explode(",", $wrd_names);
-        $wrd_lst->load();
+        $wrd_lst->load_by_names(explode(",", $wrd_names));
 
         $result .= $wrd_lst->name_linked();
         $result .= ' = ';

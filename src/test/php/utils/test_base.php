@@ -478,7 +478,7 @@ class test_base
         foreach ($array_of_word_str as $word_str) {
             $wrd_lst->add_name($word_str);
         }
-        $wrd_lst->load();
+        $wrd_lst->load_using_where();
         return $wrd_lst;
     }
 

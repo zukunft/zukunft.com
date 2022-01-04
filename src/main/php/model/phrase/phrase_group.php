@@ -143,8 +143,8 @@ class phrase_group
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_' . $this->load_sql_name_ext();
+        $qp = new sql_par(self::class);
+        $qp->name .= $this->load_sql_name_ext();
 
         $db_con->set_type(DB_TYPE_PHRASE_GROUP);
         $db_con->set_name($qp->name);
@@ -251,13 +251,13 @@ class phrase_group
         } elseif ($wrd_txt != '' and $trp_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, "'" . $wrd_txt . "'");
             $db_con->add_par(sql_db::PAR_TEXT, "'" . $trp_txt . "'");
-            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_TRIPLE_IDS, self::FLD_WORD_IDS));
+            $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS, self::FLD_WORD_IDS));
         } elseif ($trp_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, "'" . $trp_txt . "'");
-            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_TRIPLE_IDS));
+            $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS));
         } elseif ($wrd_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, "'" . $wrd_txt . "'");
-            $qp->sql = $db_con->select_by_link_ids(array(self::FLD_WORD_IDS));
+            $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS));
         }
         $qp->par = $db_con->get_par();
         return $qp;

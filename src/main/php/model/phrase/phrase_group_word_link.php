@@ -74,8 +74,7 @@ class phrase_group_word_link
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_PHRASE_GROUP_WORD_LINK);
 
         if ($this->id > 0) {

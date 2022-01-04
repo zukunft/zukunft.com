@@ -101,7 +101,7 @@ function run_value_ui_test(testing $t)
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
     $wrd_lst->add_name(word::TN_2020);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $wrd_time = $wrd_lst->assume_time();
     $grp = $wrd_lst->get_grp();
     $result = $grp->id;
@@ -131,7 +131,7 @@ function run_value_ui_test(testing $t)
     $time_lst = new word_list($usr);
     $time_lst->add_name(word::TN_2019);
     $time_lst->add_name(word::TN_2021);
-    $time_lst->load();
+    $time_lst->load_using_where();
     $used_value_lst = $val_lst->filter_by_time($time_lst);
     $used_time_lst = $used_value_lst->time_lst();
     if ($time_lst->does_contain($wrd_2014)) {
@@ -158,7 +158,7 @@ function run_value_ui_test(testing $t)
     $sector_lst = new word_list($usr);
     $sector_lst->add_name('Low Voltage Products');
     $sector_lst->add_name('Power Products');
-    $sector_lst->load();
+    $sector_lst->load_using_where();
     $phr_lst = $sector_lst->phrase_lst();
     $used_value_lst = $val_lst->filter_by_phrase_lst($phr_lst);
     $used_phr_lst = $used_value_lst->phr_lst();

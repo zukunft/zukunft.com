@@ -311,7 +311,7 @@ class word_dsp extends word
                 asort($val_wrd_ids);
                 $val_wrd_lst = new word_list($this->usr);
                 $val_wrd_lst->ids = $val_wrd_ids;
-                $val_wrd_lst->load();
+                $val_wrd_lst->load_using_where();
                 log_debug('word_dsp->dsp_val_list -> get group ' . dsp_array($val_wrd_ids));
                 $wrd_grp = $val_wrd_lst->get_grp();
                 if ($wrd_grp->id > 0) {

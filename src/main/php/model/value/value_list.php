@@ -170,8 +170,8 @@ class value_list
      */
     function load_by_phr_sql(sql_db $db_con, phrase $phr): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_phrase_id';
+        $qp = new sql_par(self::class);
+        $qp->name .= 'phrase_id';
 
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_name($qp->name);
@@ -862,7 +862,7 @@ class value_list
             $commen_phr_lst = new word_list($this->usr);
             $commen_phr_lst->ids = $common_phr_ids;
             $commen_phr_lst->usr = $this->usr;
-            $commen_phr_lst->load();
+            $commen_phr_lst->load_using_where();
             $result .= ' in (' . implode(",", $commen_phr_lst->names_linked()) . ')<br>';
         }
 
@@ -959,7 +959,7 @@ class value_list
             $commen_phr_lst = new word_list($this->usr);
             $common_phr_ids[] = $this->phr->id;
             $commen_phr_lst->ids = $common_phr_ids;
-            $commen_phr_lst->load();
+            $commen_phr_lst->load_using_where();
         }
 
         $commen_phr_lst = $commen_phr_lst->phrase_lst();

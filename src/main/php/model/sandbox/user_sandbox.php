@@ -254,8 +254,8 @@ class user_sandbox
      */
     function load_standard_sql(sql_db $db_con, string $class): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = $class . '_std_by_id';
+        $qp = new sql_par($class, true);
+        $qp->name .= 'id';
 
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
@@ -295,10 +295,7 @@ class user_sandbox
      */
     function load_sql(sql_db $db_con, string $class): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = $class . '_by_';
-
-        return $qp;
+        return new sql_par($class);
     }
 
     function load_owner(): bool

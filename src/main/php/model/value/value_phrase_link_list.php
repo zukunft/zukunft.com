@@ -45,8 +45,7 @@ class value_phrase_link_list extends link_list
      */
     function load_sql(sql_db $db_con, ?phrase $phr = null, ?value $val = null): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         $sql_by = '';
 
         $db_con->set_type(DB_TYPE_VALUE_PHRASE_LINK);
@@ -76,12 +75,12 @@ class value_phrase_link_list extends link_list
             if ($val != null) {
                 if ($val->id > 0) {
                     $db_con->add_par(sql_db::PAR_INT, $val->id);
-                    $qp->sql = $db_con->select_by_link_ids(array(value::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(value::FLD_ID));
                 }
             } elseif ($phr != null) {
                 if ($phr->id <> 0) {
                     $db_con->add_par(sql_db::PAR_INT, $phr->id);
-                    $qp->sql = $db_con->select_by_link_ids(array(phrase::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(phrase::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();

@@ -170,8 +170,7 @@ class formula_value
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA_VALUE);
         if ($this->id > 0) {
             $qp->name .= 'id';
@@ -219,8 +218,7 @@ class formula_value
      */
     function load_sql_where(sql_db $db_con, string $sql_where = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA_VALUE);
         $db_con->set_fields(self::FLD_NAMES);
         //$db_con->set_name($qp->name);

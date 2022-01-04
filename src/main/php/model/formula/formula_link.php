@@ -179,8 +179,8 @@ class formula_link extends user_sandbox_link
      */
     function load_standard_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_standard_by_' . $this->load_sql_name_extension();
+        $qp = new sql_par($class, true);
+        $qp->name .= $this->load_sql_name_extension();
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_usr($this->usr->id);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);

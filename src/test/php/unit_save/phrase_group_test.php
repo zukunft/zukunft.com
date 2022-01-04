@@ -43,7 +43,7 @@ function run_phrase_group_test(testing $t)
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $phr_grp = new phrase_group($usr);
     $phr_grp->load_by_lst($wrd_lst->phrase_lst());
     $result = $phr_grp->id;
@@ -56,7 +56,7 @@ function run_phrase_group_test(testing $t)
 
     // ... and if the time word is correctly excluded
     $wrd_lst->add_name(word::TN_2020);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $phr_grp = new phrase_group($usr);
     $phr_grp->load_by_lst($wrd_lst->phrase_lst());
     $result = $phr_grp->id;

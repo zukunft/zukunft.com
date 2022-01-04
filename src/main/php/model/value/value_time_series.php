@@ -162,8 +162,7 @@ class value_time_series extends user_sandbox_display
      */
     function load_sql(sql_db $db_con, string $class = ''): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         $sql_where = '';
 
         $db_con->set_type(DB_TYPE_VALUE_TIME_SERIES);

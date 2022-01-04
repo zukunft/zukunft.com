@@ -72,8 +72,8 @@ class phrase_list
      */
     function load_by_wrd_ids_sql(sql_db $db_con, array $ids): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_' . count($ids) . 'ids_word_part';
+        $qp = new sql_par(self::class);
+        $qp->name .= count($ids) . 'ids_word_part';
 
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_name($qp->name);
@@ -97,8 +97,8 @@ class phrase_list
      */
     function load_by_trp_ids_sql(sql_db $db_con, array $ids): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_' . count($ids) . 'ids_triple_part';
+        $qp = new sql_par(self::class);
+        $qp->name .= count($ids) . 'ids_triple_part';
 
         $db_con->set_type(DB_TYPE_TRIPLE);
         $db_con->set_name($qp->name);

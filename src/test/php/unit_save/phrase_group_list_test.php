@@ -75,7 +75,7 @@ function run_phrase_group_list_test(testing $t)
     $wrd_lst->add_name(word::TN_CH);
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $country_grp = $wrd_lst->get_grp();
     $grp_lst->add($country_grp);
 
@@ -84,7 +84,7 @@ function run_phrase_group_list_test(testing $t)
     $wrd_lst->add_name(word::TN_CANTON);
     $wrd_lst->add_name(word::TN_INHABITANT);
     $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load();
+    $wrd_lst->load_using_where();
     $canton_grp = $wrd_lst->get_grp();
     $grp_lst->add($canton_grp);
 

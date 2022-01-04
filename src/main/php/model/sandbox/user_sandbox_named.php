@@ -53,8 +53,7 @@ class user_sandbox_named extends user_sandbox
      */
     function load_standard_sql(sql_db $db_con, string $class): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = $class . '_std_by_';
+        $qp = new sql_par($class, true);
         if ($this->id != 0) {
             $qp->name .= 'id';
         } elseif ($this->name != '') {

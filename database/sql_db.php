@@ -46,9 +46,24 @@ const SQL_DB_TYPE = sql_db::POSTGRES;
  */
 class sql_par
 {
-    public string $sql = '';
-    public string $name = '';
-    public array $par = [];
+    public string $sql;   // the SQL statement to create a prepared query
+    public string $name;  // the unique name of the SQL statement
+    public array $par;    // the list of the parameters used for the execution
+
+    /**
+     * @param string $class the name of the calling class used for the unique query name
+     * @param bool $is_std true if the standard data for all users should be loaded
+     */
+    function __construct(string $class, bool $is_std = false)
+    {
+        $this->sql = '';
+        if ($is_std) {
+            $this->name = $class . '_std_by_';
+        } else {
+            $this->name = $class . '_by_';
+        }
+        $this->par = array();
+    }
 }
 
 class sql_db
@@ -60,7 +75,9 @@ class sql_db
 
     // the parameter types for prepared queries independent of the SQL dialect
     const PAR_INT = 'int';
+    const PAR_INT_LIST = 'int_list';
     const PAR_TEXT = 'text';
+    const PAR_TEXT_LIST = 'text_list';
 
     // reserved words that are automatically escaped
 
@@ -405,6 +422,15 @@ class sql_db
     }
 
     /**
+     * interface function to add a "IN" parameter for a prepared query
+     * @param array $names with the strings for the WHERE IN SQL statement part
+     */
+    function add_par_in_txt(array $names)
+    {
+        $this->add_par(sql_db::PAR_TEXT_LIST, '"' . implode('","', $names) . '"');
+    }
+
+    /**
      * get the SQL parameter placeholder in the used SQL dialect
      *
      * @param int $pos to get the placeholder of another position than the last
@@ -432,7 +458,8 @@ class sql_db
 
     function set_name(string $query_name)
     {
-        $this->query_name = $query_name;
+        // the query name cannot be longer than 62 chars
+        $this->query_name = substr($query_name, 0, 62);
     }
 
     /**
@@ -2092,6 +2119,7 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database
+     * and select by the default id field
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
@@ -2102,6 +2130,7 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database and force to use the name instead of the id
+     * and select by the default name field
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
@@ -2111,7 +2140,8 @@ class sql_db
     }
 
     /**
-     * create a SQL select statement for the connected database and force to use the code id instead of the id
+     * create a SQL select statement for the connected database
+     * and force to use the code id instead of the id
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
@@ -2122,12 +2152,46 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
+     * and select by a given field
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    function select_by_link_ids(array $id_fields, bool $has_id = true): string
+    function select_by_field(string $id_field, bool $has_id = true): string
+    {
+        return $this->select_by(array($id_field), $has_id);
+    }
+
+    /**
+     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
+     * and select by a list of given fields
+     * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_by_field_list(array $id_fields, bool $has_id = true): string
     {
         return $this->select_by($id_fields, $has_id);
+    }
+
+    /**
+     * convert the parameter type list to make valid for postgres
+     * @return void
+     */
+    private function par_types_to_postgres()
+    {
+        $in_types = $this->par_types;
+        $this->par_types = array();
+        foreach ($in_types as $type) {
+            switch ($type) {
+                case self::PAR_INT_LIST:
+                    $this->par_types[] = self::PAR_INT;
+                    break;
+                case self::PAR_TEXT_LIST:
+                    $this->par_types[] = self::PAR_TEXT;
+                    break;
+                default:
+                    $this->par_types[] = $type;
+            }
+        }
     }
 
     /**
@@ -2172,7 +2236,11 @@ class sql_db
                                 $this->where .= sql_db::STD_TBL . '.';
                             }
                         }
-                        $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                        if ($par_type == self::PAR_INT_LIST or $par_type == self::PAR_TEXT_LIST) {
+                            $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
+                        } else {
+                            $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                        }
                         $used_fields++;
                     }
                     $i++;
@@ -2184,6 +2252,7 @@ class sql_db
         if ($this->query_name != '') {
             if (count($this->par_types) > 0) {
                 if ($this->db_type == sql_db::POSTGRES) {
+                    $this->par_types_to_postgres();
                     $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $this->par_types) . ') AS SELECT';
                 } elseif ($this->db_type == sql_db::MYSQL) {
                     $sql = "PREPARE " . $this->query_name . " FROM 'SELECT";
@@ -2502,7 +2571,7 @@ class sql_db
         $this->set_table();
 
         if (is_array($id_fields)) {
-            $sql = 'DELETE '.'FROM ' . $this->name_sql_esc($this->table);
+            $sql = 'DELETE ' . 'FROM ' . $this->name_sql_esc($this->table);
             $sql_del = '';
             foreach (array_keys($id_fields) as $i) {
                 $del_val = $id_values[$i];

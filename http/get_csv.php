@@ -50,11 +50,7 @@ if ($usr->id > 0) {
     log_debug("get_csv(" . $words . ")");
     $word_names = explode(",", $words);
 
-    $wrd_lst = new word_list($usr);
-    foreach ($word_names as $wrd_name) {
-        $wrd_lst->add_name($wrd_name);
-    }
-    $wrd_lst->load();
+    $wrd_lst = (new word_list($usr))->load_by_names($word_names);
 
     // get time word
     $time_word_id = 0;

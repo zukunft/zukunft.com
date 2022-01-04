@@ -68,7 +68,7 @@ class formula_link_unit_tests
         $t->assert('formula_link->load_standard_sql by formula link id', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_standard_sql($db_con, 'formula')->name);
+        $t->assert_sql_name_unique($lnk->load_standard_sql($db_con, formula_link::class)->name);
 
         // ... and for MySQL
         $db_con->db_type = sql_db::MYSQL;

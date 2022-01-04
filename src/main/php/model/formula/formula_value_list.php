@@ -54,13 +54,16 @@ class formula_value_list
     }
 
     /*
-      load functions
-      --------------
-    */
+     *  load functions
+     */
 
     /**
      * create the SQL to load a list of formula values link to
-     * - a formula
+     * a formula
+     * a phrase group
+     *   either of the source or the result
+     *   and with or without time selection
+     * a word or a triple
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
@@ -70,8 +73,7 @@ class formula_value_list
      */
     function load_sql(sql_db $db_con, object $obj, ?object $obj2 = null, bool $by_source = false): sql_par
     {
-        $qp = new sql_par();
-        $qp->name = self::class . '_by_';
+        $qp = new sql_par(self::class);
         $sql_by = '';
         if ($obj->id > 0) {
             if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
@@ -111,7 +113,7 @@ class formula_value_list
             if ($obj->id > 0) {
                 if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
                     $db_con->add_par(sql_db::PAR_INT, $obj->id);
-                    $qp->sql = $db_con->select_by_link_ids(array(formula::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {
                     $db_con->add_par(sql_db::PAR_INT, $obj->id);
                     $link_fields = array();
@@ -132,7 +134,7 @@ class formula_value_list
                             }
                         }
                     }
-                    $qp->sql = $db_con->select_by_link_ids($link_fields);
+                    $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
@@ -141,7 +143,7 @@ class formula_value_list
                         DB_TYPE_PHRASE_GROUP_WORD_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
-                    $qp->sql = $db_con->select_by_link_ids(array(word::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
                 } elseif (get_class($obj) == word_link::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_db::PAR_INT, $obj->id, false, true);
@@ -150,7 +152,7 @@ class formula_value_list
                         DB_TYPE_PHRASE_GROUP_TRIPLE_LINK,
                         formula_value::FLD_GRP,
                         formula_value::FLD_GRP);
-                    $qp->sql = $db_con->select_by_link_ids(array(word_link::FLD_ID_NEW));
+                    $qp->sql = $db_con->select_by_field_list(array(word_link::FLD_ID_NEW));
                 }
             }
             $qp->par = $db_con->get_par();
@@ -161,7 +163,11 @@ class formula_value_list
 
     /**
      * load a list of formula values linked to
-     * - a formula
+     * a formula
+     * a phrase group
+     *   either of the source or the result
+     *   and with or without time selection
+     * a word or a triple
      *
      * @param object $obj a named object used for selection e.g. a formula
      * @param object|null $obj2 a second named object used for selection e.g. a time phrase
