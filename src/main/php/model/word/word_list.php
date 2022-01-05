@@ -73,17 +73,36 @@ class word_list
     {
         $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_usr($this->usr->id);
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
-        $db_con->set_usr($this->usr->id);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of words by the ids
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $wrd_ids a list of int values with the word ids
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_db $db_con, array $wrd_ids): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if (count($wrd_ids) > 0) {
+            $qp->name .= 'ids';
+            $db_con->set_name($qp->name);
+            $db_con->add_par_in_int($wrd_ids);
+            $qp->sql = $db_con->select_by_field(word::FLD_ID);
+        }
+        $qp->par = $db_con->get_par();
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of words by the names
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param array $wrd_names a named object used for selection e.g. a word type
+     * @param array $wrd_names a list of strings with the word names
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_names(sql_db $db_con, array $wrd_names): sql_par
@@ -124,6 +143,18 @@ class word_list
         }
 
         return $result;
+    }
+
+    /**
+     * load a list of words by the ids
+     * @param array $wrd_ids a list of int values with the word ids
+     * @return bool true if value or phrases are found
+     */
+    function load_by_ids(array $wrd_ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con, $wrd_ids);
+        return $this->load($qp);
     }
 
     /**
@@ -209,7 +240,7 @@ class word_list
                 $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
                 $db_con->set_where_text($sql_where);
                 $db_con->set_order_text('s.values DESC, word_name');
-                $sql = $db_con->select();
+                $sql = $db_con->select_by_id();
             }
         }
 
@@ -1507,8 +1538,7 @@ class word_list
 
         $time_lst = new word_list($this->usr);
         if (count($time_ids) > 0) {
-            $time_lst->ids = $time_ids;
-            $time_lst->load_using_where();
+            $time_lst->load_by_ids($time_ids);
             $wrd = $time_lst->max_time();
         }
 

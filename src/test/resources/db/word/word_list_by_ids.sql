@@ -1,4 +1,4 @@
-PREPARE word_list_by_names (text[]) AS
+PREPARE word_list_by_ids (int[]) AS
     SELECT     s.word_id,
                u.word_id AS user_word_id,
                s.user_id,
@@ -14,4 +14,4 @@ PREPARE word_list_by_names (text[]) AS
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id
            AND u.user_id = 1
-         WHERE s.word_name = ANY ($1);
+         WHERE s.word_id = ANY ($1);

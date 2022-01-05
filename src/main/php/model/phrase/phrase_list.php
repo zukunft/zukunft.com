@@ -82,7 +82,7 @@ class phrase_list
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
         $db_con->set_where_id_in(word::FLD_ID, $ids);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -108,7 +108,7 @@ class phrase_list
         $db_con->set_usr_fields(word_link::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word_link::FLD_NAMES_NUM_USR);
         $db_con->set_where_id_in(word_link::FLD_ID, $ids);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;

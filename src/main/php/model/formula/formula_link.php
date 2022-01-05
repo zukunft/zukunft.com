@@ -186,7 +186,7 @@ class formula_link extends user_sandbox_link
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, formula_link::FLD_TYPE, self::FLD_EXCLUDED));
         $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -233,7 +233,7 @@ class formula_link extends user_sandbox_link
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_SHARE, user_sandbox::FLD_PROTECT));
         $db_con->set_where_link($this->id, $this->formula_id(), $this->phrase_id());
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
 
         return $qp;
     }
@@ -483,7 +483,7 @@ class formula_link extends user_sandbox_link
         $db_con->set_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED));
         $db_con->set_usr($this->usr->id);
         $db_con->set_where($this->id);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
 
         if ($get_name) {
             $result = $sql_name;

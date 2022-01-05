@@ -135,7 +135,7 @@ class verb
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'));
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             if (!isset($this->usr)) {
                 log_err("User is missing", "verb->load");
             } else {
@@ -730,6 +730,7 @@ class verb
                         $result .= $this->save_field_name($db_con, $db_rec);
                     } else {
                         // TODO: create a new verb and request to delete the old
+                        log_err('Creating a new verb is not yet possible');
                     }
                 }
             }
@@ -776,6 +777,7 @@ class verb
                     }
                 } else {
                     // TODO: create a new verb and request to delete the old
+                    log_err('Creating a new verb is not yet possible');
                 }
             }
         }

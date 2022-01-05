@@ -72,10 +72,7 @@ function run_phrase_group_list_test(testing $t)
     $grp_lst->usr = $usr;
 
     $wrd_lst = new word_list($usr);
-    $wrd_lst->add_name(word::TN_CH);
-    $wrd_lst->add_name(word::TN_INHABITANT);
-    $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load_using_where();
+    $wrd_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));
     $country_grp = $wrd_lst->get_grp();
     $grp_lst->add($country_grp);
 

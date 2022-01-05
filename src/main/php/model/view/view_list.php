@@ -56,7 +56,7 @@ class view_list extends user_type_list
         $db_con->set_usr_fields(view::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
         $db_con->set_where_text('code_id IS NOT NULL');
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {

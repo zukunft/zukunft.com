@@ -84,7 +84,7 @@ class phrase_group_list
                 $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
 
             if ($get_name) {
                 $result = $sql_name;
@@ -339,6 +339,7 @@ class phrase_group_list
                        AND COALESCE(u2.excluded, 0) <> 1
                   GROUP BY l1.phrase_group_id';
         } else {
+            log_warning('Phrases missing while loading the phrase groups');
             // e.g. if "Sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
             //   or if "Sales" is used, but never  assigned to the formula no value needs to be calculated, so no group should be used
             //   or if "Sales" is not used and not assigned to the formula no value needs to be calculated, so no group should be used
@@ -352,6 +353,7 @@ class phrase_group_list
                AND v.time_word_id IN (' . sql_array($time_used->ids) . ')';
         } else {
             // dito group
+            log_warning('Phrases missing while loading the phrase groups');
         }
 
         // create the value or result selection

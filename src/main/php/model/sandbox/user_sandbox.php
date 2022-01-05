@@ -260,7 +260,7 @@ class user_sandbox
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
         $db_con->add_par(sql_db::PAR_INT, $this->id);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -421,9 +421,6 @@ class user_sandbox
         $trm = new term;
         $trm->name = $this->name;
         $trm->usr = $this->usr;
-        if ($this->name == 'scale billion to one') {
-            $trm->name = $this->name;
-        }
         $trm->load();
         return $trm;
     }
@@ -894,7 +891,7 @@ class user_sandbox
             $db_con->set_type($this->obj_name, true);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[$db_con->get_id_field()];

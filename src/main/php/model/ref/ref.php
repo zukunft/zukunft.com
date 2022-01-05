@@ -83,7 +83,7 @@ class ref
             $db_con->set_link_fields(phrase::FLD_ID, 'ref_type_id');
             $db_con->set_fields(array('external_key'));
             $db_con->set_where_link($this->id, $this->phr->id, $this->ref_type->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
 
             if ($db_con->get_where() <> '') {
                 $db_ref = $db_con->get1_old($sql);

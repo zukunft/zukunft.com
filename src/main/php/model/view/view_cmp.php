@@ -263,9 +263,9 @@ class view_cmp extends user_sandbox_named
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             $qp->sql = $db_con->select_by_name();
         } else {
             log_err('Either the id or name must be set to get a named user sandbox object');
@@ -407,7 +407,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_fields(array(view::FLD_ID, 'view_component_id'));
             $db_con->set_usr_num_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED));
             $db_con->set_where_text('view_component_id = ' . $this->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get_old($sql);
             if ($db_lst != null) {
@@ -678,7 +678,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(array('view_component_id'));
             $db_con->set_where($this->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['view_component_id'];

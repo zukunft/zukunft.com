@@ -312,9 +312,9 @@ class formula extends user_sandbox_description
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             $qp->sql = $db_con->select_by_name();
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
@@ -1636,7 +1636,7 @@ class formula extends user_sandbox_description
             $db_con->set_type(DB_TYPE_FORMULA, true);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[$this->fld_id()];

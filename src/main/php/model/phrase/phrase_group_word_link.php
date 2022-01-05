@@ -87,7 +87,7 @@ class phrase_group_word_link
         }
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_name($qp->name);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;

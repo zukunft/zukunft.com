@@ -136,7 +136,7 @@ class value_phrase_link
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
 
         }
         return $qp;

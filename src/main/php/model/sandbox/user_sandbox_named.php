@@ -66,9 +66,9 @@ class user_sandbox_named extends user_sandbox
         $db_con->set_usr($this->usr->id);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
         } else {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             $qp->sql = $db_con->select_by_name();
         }
         $qp->par = $db_con->get_par();

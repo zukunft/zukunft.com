@@ -117,7 +117,7 @@ class ip_range
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
         }
 
         if ($get_name) {

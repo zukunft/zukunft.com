@@ -423,11 +423,22 @@ class sql_db
 
     /**
      * interface function to add a "IN" parameter for a prepared query
+     * @param array $ids with the int id values for the WHERE IN SQL statement part
+     */
+    function add_par_in_int(array $ids)
+    {
+        $this->add_par(sql_db::PAR_INT_LIST, "{" . implode(",", $ids) . "}");
+    }
+
+    /**
+     * interface function to add a "IN" parameter for a prepared query
      * @param array $names with the strings for the WHERE IN SQL statement part
      */
     function add_par_in_txt(array $names)
     {
-        $this->add_par(sql_db::PAR_TEXT_LIST, '"' . implode('","', $names) . '"');
+        // TODO check how to escape ","
+        //$this->add_par(sql_db::PAR_TEXT_LIST, "{'" . implode("','", $names) . "'}");
+        $this->add_par(sql_db::PAR_TEXT_LIST, "{" . implode(",", $names) . "}");
     }
 
     /**
@@ -1128,51 +1139,47 @@ class sql_db
             log_debug('Name for SQL statement ' . $sql . ' is missing');
         }
 
+        // PostgreSQL part
         if ($this->db_type == sql_db::POSTGRES) {
+            // check database connection
             if ($this->postgres_link == null) {
                 $msg = 'database connection lost';
                 log_fatal($msg, 'sql_db->exe: ' . $sql_name);
                 // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
                 throw new Exception($msg);
             } else {
+                // remove query formatting
                 $sql = str_replace("\n", " ", $sql);
                 if ($sql_name == '') {
+                    // simply execute old queries (to be deprecated)
                     $result = pg_query($this->postgres_link, $sql);
-                    if ($result === false) {
-                        throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
-                    }
-
                 } else {
-                    if (str_starts_with($sql, 'PREPARE')) {
-                        if (!$this->has_query($sql_name)) {
-                            $sql .= ' EXECUTE ' . $sql_name . '(' . implode(',', $sql_array) . ')';
+                    // prepare the query if needed
+                    if (!$this->has_query($sql_name)) {
+                        if (str_starts_with($sql, 'PREPARE')) {
                             $result = pg_query($this->postgres_link, $sql);
-                            if ($result === false) {
-                                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
-                            } else {
-                                $this->prepared_sql_names[] = $sql_name;
-                            }
                         } else {
-                            $sql = 'EXECUTE ' . $sql_name . '(' . implode(',', $sql_array) . ')';
-                            $result = pg_query($this->postgres_link, $sql);
-                            if ($result === false) {
-                                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
-                            }
-                        }
-                    } else {
-                        if (!$this->has_query($sql_name)) {
                             $result = pg_prepare($this->postgres_link, $sql_name, $sql);
-                            if ($result == false) {
-                                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
-                            } else {
-                                $this->prepared_sql_names[] = $sql_name;
-                            }
                         }
-                        $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
-                        if ($result == false) {
-                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when executing ' . $sql);
+                        if ($result === false) {
+                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
+                        } else {
+                            $this->prepared_sql_names[] = $sql_name;
                         }
                     }
+                    // execute the query
+                    /*
+                    $pg_array = array();
+                    $pg_array[] = '{';
+                    foreach ($sql_array as $item) {
+                        $pg_array[] = $item;
+                    }
+                    $pg_array[] = '}';
+                    */
+                    $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                }
+                if ($result === false) {
+                    throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
                 }
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
@@ -1704,7 +1711,7 @@ class sql_db
                     if (gettype($values[$pos]) == 'integer') {
                         $this->add_par(sql_db::PAR_INT, $values[$pos]);
                     } elseif (gettype($values[$pos]) == 'string') {
-                        $this->add_par(sql_db::PAR_TEXT, "'" . $values[$pos] . "'");
+                        $this->add_par(sql_db::PAR_TEXT, $values[$pos]);
                     } else {
                         log_err('Unknown value type of ' . $values[$pos] . ' when creating SQL WHERE statement');
                     }
@@ -2123,7 +2130,7 @@ class sql_db
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect
      */
-    function select(bool $has_id = true): string
+    function select_by_id(bool $has_id = true): string
     {
         return $this->select_by(array($this->id_field), $has_id);
     }
@@ -2183,10 +2190,10 @@ class sql_db
         foreach ($in_types as $type) {
             switch ($type) {
                 case self::PAR_INT_LIST:
-                    $this->par_types[] = self::PAR_INT;
+                    $this->par_types[] = 'int[]';
                     break;
                 case self::PAR_TEXT_LIST:
-                    $this->par_types[] = self::PAR_TEXT;
+                    $this->par_types[] = 'text[]';
                     break;
                 default:
                     $this->par_types[] = $type;
@@ -2237,7 +2244,11 @@ class sql_db
                             }
                         }
                         if ($par_type == self::PAR_INT_LIST or $par_type == self::PAR_TEXT_LIST) {
-                            $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
+                            if ($this->db_type == sql_db::POSTGRES) {
+                                $this->where .= $id_fields[$used_fields] . ' = ANY (' . $this->par_name($i + 1) . ')';
+                            } else {
+                                $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
+                            }
                         } else {
                             $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
                         }

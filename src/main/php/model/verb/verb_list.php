@@ -62,7 +62,7 @@ class verb_list extends user_type_list
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'), DB_TYPE_VERB);
         $db_con->set_fields(array(verb::FLD_ID));
         $db_con->set_where_text($sql_where);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $db_vrb_lst = $db_con->get_old($sql);
         $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
         if ($db_vrb_lst != null) {
@@ -119,7 +119,7 @@ class verb_list extends user_type_list
         $this->lst = [];
         $db_con->set_type($db_type);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'));
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {

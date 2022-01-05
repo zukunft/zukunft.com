@@ -101,7 +101,7 @@ class value_list
             }
             $db_con->set_where_text($sql_where);
             $db_con->set_page_par();
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
 
             if ($get_name) {
                 $result = $sql_name;
@@ -183,7 +183,7 @@ class value_list
             array(value::FLD_ID), DB_TYPE_VALUE_PHRASE_LINK,
             value::FLD_ID, value::FLD_ID,
             phrase::FLD_ID, $phr->id);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -699,7 +699,7 @@ class value_list
         // the id and the user must be set
         $db_con->set_type(DB_TYPE_VALUE);
         $db_con->set_usr($this->usr->id);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->usr);
@@ -859,11 +859,9 @@ class value_list
         // display the common words
         log_debug('value_list->html common dsp');
         if (!empty($common_phr_ids)) {
-            $commen_phr_lst = new word_list($this->usr);
-            $commen_phr_lst->ids = $common_phr_ids;
-            $commen_phr_lst->usr = $this->usr;
-            $commen_phr_lst->load_using_where();
-            $result .= ' in (' . implode(",", $commen_phr_lst->names_linked()) . ')<br>';
+            $common_phr_lst = new word_list($this->usr);
+            $common_phr_lst->load_by_ids($common_phr_ids);
+            $result .= ' in (' . implode(",", $common_phr_lst->names_linked()) . ')<br>';
         }
 
         // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
@@ -898,7 +896,7 @@ class value_list
                     }
                     log_debug('value_list->html -> removed ' . $this->phr->id);
                     $dsp_phr_lst->diff_by_ids($common_phr_ids);
-                    // remove the words of the privious row, because it should not be shown on each line
+                    // remove the words of the previous row, because it should not be shown on each line
                     if (isset($last_phr_lst->ids)) {
                         $dsp_phr_lst->diff_by_ids($last_phr_lst->ids);
                     }
@@ -956,13 +954,12 @@ class value_list
         // allow the user to add a completely new value
         log_debug('value_list->html new');
         if (empty($common_phr_ids)) {
-            $commen_phr_lst = new word_list($this->usr);
+            $common_phr_lst = new word_list($this->usr);
             $common_phr_ids[] = $this->phr->id;
-            $commen_phr_lst->ids = $common_phr_ids;
-            $commen_phr_lst->load_using_where();
+            $common_phr_lst->load_by_ids($common_phr_ids);
         }
 
-        $commen_phr_lst = $commen_phr_lst->phrase_lst();
+        $common_phr_lst = $common_phr_lst->phrase_lst();
 
         // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): view_component_dsp->all(Object(word_dsp), 291, 17
         /*
@@ -970,10 +967,10 @@ class value_list
             $this->phr = $this->phr->phrase();
         }
         */
-        if (isset($commen_phr_lst)) {
-            if (!empty($commen_phr_lst->lst)) {
-                $commen_phr_lst->add($this->phr);
-                $phr_lst_dsp = $commen_phr_lst->dsp_obj();
+        if (isset($common_phr_lst)) {
+            if (!empty($common_phr_lst->lst)) {
+                $common_phr_lst->add($this->phr);
+                $phr_lst_dsp = $common_phr_lst->dsp_obj();
                 $result .= $phr_lst_dsp->btn_add_value($back);
             }
         }

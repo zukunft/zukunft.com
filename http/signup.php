@@ -45,8 +45,8 @@ $result .= $usr->get();
 // get the parameters
 if (isset($_POST['submit'])) {
     # search the database to see if the username has been taken or not
-    $sql = sprintf("SELECT * FROM users WHERE user_name='%s' LIMIT 1", mysqli_real_escape_string($_POST['user_name']));
-    $sql_result = mysqli_query($sql);
+    $sql = sprintf("SELECT * FROM users WHERE user_name='%s' LIMIT 1", mysqli_real_escape_string($db_con->mysql, $_POST['user_name']));
+    $sql_result = mysqli_query($db_con->mysql, $sql);
     $row = mysqli_fetch_array($sql_result);
     #check to see what fields have been left empty, and if the passwords match
     $usr_name = $_POST['user_name'];
@@ -81,7 +81,7 @@ if (isset($_POST['submit'])) {
         # If all fields are not empty, and the passwords match,
         # create a session, and session variables,
         $usr_email = $_POST['email'];
-        $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password']));
+        $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
         //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
         $db_con->set_type(DB_TYPE_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
@@ -101,9 +101,9 @@ if (isset($_POST['submit'])) {
         $db_con->set_type(DB_TYPE_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
         $db_con->set_where(null,$usr_name);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $db_row = $db_con->get1_old($sql);
-        $usr_id = $db_row[self::FLD_USER];
+        $usr_id = $db_row[user_sandbox::FLD_USER];
         if ($usr_id > 0) {
             // auto login
             session_start();

@@ -217,12 +217,12 @@ class source extends user_sandbox_named
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
         } elseif ($this->code_id != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->code_id . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
             $qp->sql = $db_con->select_by_code_id();
         } elseif ($this->name != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $this->name . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
             $qp->sql = $db_con->select_by_name();
         }
         $qp->par = $db_con->get_par();
@@ -270,7 +270,7 @@ class source extends user_sandbox_named
             $db_con->set_type(DB_TYPE_SOURCE_TYPE);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->type_id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_type = $db_con->get1_old($sql);
             $this->type_name = $db_type['source_type_name'];
         }
@@ -542,7 +542,7 @@ class source extends user_sandbox_named
             $db_con->set_type(DB_TYPE_SOURCE, true);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row['source_id'];

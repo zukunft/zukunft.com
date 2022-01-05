@@ -171,7 +171,7 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -206,7 +206,7 @@ class view_cmp_link extends user_sandbox_link
             self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)));
         $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
 
         if ($db_con->get_where() <> '') {
             $db_dsl = $db_con->get1_old($sql);
@@ -567,7 +567,7 @@ class view_cmp_link extends user_sandbox_link
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK, true);
             $db_con->set_usr($this->usr->id);
             $db_con->set_where($this->id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[self::FLD_ID];

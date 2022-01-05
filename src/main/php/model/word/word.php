@@ -379,7 +379,7 @@ class word extends user_sandbox_description
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         $db_con->set_where($this->id, $this->name);
-        $qp->sql = $db_con->select();
+        $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -543,7 +543,7 @@ class word extends user_sandbox_description
         $db_con->set_type(DB_TYPE_FORMULA_LINK);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link(null, null, $this->id);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $db_row = $db_con->get1_old($sql);
         $frm = new formula($this->usr);
         if ($db_row !== false) {
@@ -1332,7 +1332,7 @@ class word extends user_sandbox_description
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(self::ALL_FLD_NAMES);
         $db_con->set_where($this->id);
-        $sql = $db_con->select();
+        $sql = $db_con->select_by_id();
         $usr_wrd_cfg = $db_con->get1_old($sql);
         if ($usr_wrd_cfg != null) {
             log_debug('word->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');

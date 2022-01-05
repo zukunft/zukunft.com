@@ -48,12 +48,16 @@ class word_list_unit_tests
         $t->subheader('Database query creation tests');
 
         $wrd_lst = new word_list($usr);
-        $wrd_names = array(word::TN_READ, word::TN_ADD);
-        $this->assert_sql_by_name($t, $db_con, $wrd_lst, $wrd_names);
+        $wrd_ids = array(3,2,4);
+        $this->assert_sql_by_ids($t, $db_con, $wrd_lst, $wrd_ids);
 
-        $db_con->db_type = sql_db::POSTGRES;
+        $wrd_names = array(word::TN_READ, word::TN_ADD);
+        $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
+
+
 
         // sql to load by word list by ids
+        $db_con->db_type = sql_db::POSTGRES;
         $wrd_lst = new word_list($usr);
         $wrd_lst->ids = [1, 2, 3];
         $created_sql = $wrd_lst->load_sql_where($db_con);
@@ -101,10 +105,33 @@ class word_list_unit_tests
      * @param testing $t the test environment
      * @param sql_db $db_con the test database connection
      * @param word_list $lst the empty word list object
-     * @param array $words filled with a list of words to be used for the query creation
+     * @param array $ids filled with a list of word ids to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_name(testing $t, sql_db $db_con, word_list $lst, array $words)
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $t->assert_qp($qp, sql_db::MYSQL);
+    }
+
+    /**
+     * test the SQL statement creation for a value phrase link list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_list $lst the empty word list object
+     * @param array $words filled with a list of word names to be used for the query creation
+     * @return void
+     */
+    private function assert_sql_by_names(testing $t, sql_db $db_con, word_list $lst, array $words)
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

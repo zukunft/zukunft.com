@@ -184,7 +184,7 @@ class value_time_series extends user_sandbox_display
             $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
             $db_con->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
             $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
             $qp->par = $db_con->get_par();
         }
 

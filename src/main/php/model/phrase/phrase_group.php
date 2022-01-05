@@ -247,16 +247,16 @@ class phrase_group
         $trp_txt = implode(',', $this->phr_lst->trp_ids());
         if ($this->id != 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
-            $qp->sql = $db_con->select();
+            $qp->sql = $db_con->select_by_id();
         } elseif ($wrd_txt != '' and $trp_txt != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $wrd_txt . "'");
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $trp_txt . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
+            $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS, self::FLD_WORD_IDS));
         } elseif ($trp_txt != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $trp_txt . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS));
         } elseif ($wrd_txt != '') {
-            $db_con->add_par(sql_db::PAR_TEXT, "'" . $wrd_txt . "'");
+            $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS));
         }
         $qp->par = $db_con->get_par();

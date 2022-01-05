@@ -91,7 +91,7 @@ class system_error_log_list
             $db_con->set_where_text($sql_where);
             $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
             $db_con->set_page($this->page, $this->size);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
 
             if ($get_name) {
                 return $sql_name;

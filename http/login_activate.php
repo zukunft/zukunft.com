@@ -81,7 +81,7 @@ if (isset($_POST['submit'])) {
         if ($error == '') {
             // If all fields are not empty, and the passwords match,
             // create a session, and session variables,
-            $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password']));
+            $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
             //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
             $db_con->set_type(DB_TYPE_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
@@ -99,7 +99,7 @@ if (isset($_POST['submit'])) {
             $db_con->set_type(DB_TYPE_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
             $db_con->set_where($usr_id);
-            $sql = $db_con->select();
+            $sql = $db_con->select_by_id();
 
             $db_row = $db_con->get1_old($sql);
             $usr_name = $db_row['user_name'];
@@ -153,7 +153,7 @@ if (!$_SESSION['logged']) {
             $result .= '<input type="hidden" name="key" value="' . $key . '">';
         } else {
             $result .= 'Please enter the activation key sent via email or open the link in the email:<br><br> ';
-            $result .= '<p>Activation key:<br><input type="reset key" name="key"></p>  ';
+            $result .= '<p>Activation key:<br><input type="text" name="key"></p>  ';
         }
 
         $result .= 'Please enter a new password:<br><br> ';
