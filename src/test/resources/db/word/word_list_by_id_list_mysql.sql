@@ -1,4 +1,5 @@
-SELECT
+PREPARE word_list_by_ids FROM
+   'SELECT
            s.word_id,
            u.word_id AS user_word_id,
            s.user_id,
@@ -14,5 +15,5 @@ SELECT
       FROM words s
  LEFT JOIN user_words u ON s.word_id = u.word_id
        AND u.user_id = 1
-     WHERE s.word_id IN (1,2,3)
-  ORDER BY s.values DESC, word_name;
+     WHERE s.word_id IN (?)
+  ORDER BY s.values DESC, word_name';

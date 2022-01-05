@@ -14,4 +14,5 @@ PREPARE word_list_by_names (text[]) AS
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id
            AND u.user_id = 1
-         WHERE s.word_name = ANY ($1);
+         WHERE s.word_name = ANY ($1)
+      ORDER BY s.values DESC, word_name;

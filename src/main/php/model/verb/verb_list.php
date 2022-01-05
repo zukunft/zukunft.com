@@ -53,7 +53,7 @@ class verb_list extends user_type_list
         // set the where clause depending on the values given
         // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
         $sql_where = " s.to_phrase_id = " . $this->wrd->id;
-        if ($this->direction == verb::DIRECTION_UP) {
+        if ($this->direction == word_select_direction::UP) {
             $sql_where = " s.from_phrase_id = " . $this->wrd->id;
         }
         $db_con->set_type($db_type);

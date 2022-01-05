@@ -169,7 +169,7 @@ class view_cmp_dsp extends view_cmp
 
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORDS_DOWN)) {
             log_debug('view_component_dsp->word_children in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
-            $result .= $wrd->dsp_graph(verb::DIRECTION_DOWN);
+            $result .= $wrd->dsp_graph(word_select_direction::DOWN);
         }
 
         return $result;
@@ -181,7 +181,7 @@ class view_cmp_dsp extends view_cmp
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORDS_DOWN)) {
             log_debug('view_component_dsp->word_parents in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
-            $result .= $wrd->dsp_graph(verb::DIRECTION_UP);
+            $result .= $wrd->dsp_graph(word_select_direction::UP);
         }
         return $result;
     }
@@ -233,8 +233,8 @@ class view_cmp_dsp extends view_cmp
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::VALUES_ALL)) {
             log_debug('view_component_dsp->all in view ' . $this->dsp_id() . ' for word ' . $phr->name . ' and user ' . $this->usr->name);
             $result .= '<br>';
-            $phrases_down = $phr->dsp_graph(verb::DIRECTION_DOWN);
-            $phrases_up = $phr->dsp_graph(verb::DIRECTION_UP,);
+            $phrases_down = $phr->dsp_graph(word_select_direction::DOWN);
+            $phrases_up = $phr->dsp_graph(word_select_direction::UP,);
             if ($phrases_down <> '' or $phrases_up <> '') {
                 $result .= $phrases_down . $phrases_up;
             } else {

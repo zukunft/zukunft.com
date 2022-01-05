@@ -134,10 +134,7 @@ function run_math_test(testing $t)
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
     $wrd_lst = new word_list($usr);
-    $wrd_lst->add_name(TW_ABB);
-    $wrd_lst->add_name(TW_SALES);
-    $wrd_lst->add_name(TW_MIO);
-    $wrd_lst->load_using_where();
+    $wrd_lst->load_by_names(array(TW_ABB, TW_SALES, TW_MIO));
     $target = 1;
     $result = $calc->is_math_symbol_or_num($formula_part_text);
     $t->dsp(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $target, $result);

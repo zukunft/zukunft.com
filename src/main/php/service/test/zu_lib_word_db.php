@@ -338,7 +338,7 @@ function zut_foaf_parent($word_id) {
   $parent_type = cl(db_cl::VERB, verb::IS_A);
 
   // find direct parent words
-  $result = zu_sql_get_lst(zu_sql_words_linked($word_id, $parent_type, verb::DIRECTION_DOWN));
+  $result = zu_sql_get_lst(zu_sql_words_linked($word_id, $parent_type, word_select_direction::DOWN));
   
   // find the indirect parents
   foreach (array_keys($result) AS $parent_id) {
@@ -360,7 +360,7 @@ function zut_db_differentiator_words($word_id) {
   $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
 
   // find direct differentiator words
-  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, verb::DIRECTION_UP));
+  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, word_select_direction::UP));
   log_debug('zut_db_differentiator_words ... words linked ('.implode(",",$word_lst).')');
   //echo '+diff: '.implode(",",$word_lst).'<br>';
 
@@ -368,7 +368,7 @@ function zut_db_differentiator_words($word_id) {
 
   // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
-  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, verb::DIRECTION_UP);
+  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, word_select_direction::UP);
   $word_lst = zu_lst_merge_with_key($word_lst, $sub_words);
   //echo 'combi: '.implode(",",$word_lst).'<br>';
 
@@ -376,7 +376,7 @@ function zut_db_differentiator_words($word_id) {
   // while (!empty($added_words)) {
 /*  if (!empty($added_words)) {
     $xtra_words = zu_lst_merge_with_key($added_words, $xtra_words);
-    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, verb::DIRECTION_DOWN);
+    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, word_select_direction::DOWN);
     $added_words = zu_lst_not_in($added_words, $xtra_words);
   } */
   
@@ -395,7 +395,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   log_debug('zut_db_differentiator_words_filtered ... type ('.$differentiator_type.')');
 
   // find direct differentiator words
-  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, verb::DIRECTION_UP));
+  $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, word_select_direction::UP));
   if (count($word_lst) > 0) {
     log_debug('zut_db_differentiator_words_filtered ... words linked ('.implode(",",$word_lst).')');
   } else {  
@@ -407,7 +407,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
 
   // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
   // temp solution for more than one differentiator
-  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, verb::DIRECTION_UP);
+  $sub_words = zu_sql_word_lst_linked($word_lst, $is_a_type, word_select_direction::UP);
   log_debug('zut_db_differentiator_words_filtered ... sub words ('.implode(",",$sub_words).')');
   $sub_words= zu_lst_in_ids($sub_words, $filter_ids);
   log_debug('zut_db_differentiator_words_filtered ... sub words filtered ('.implode(",",$sub_words).')');
@@ -419,7 +419,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   // while (!empty($added_words)) {
 /*  if (!empty($added_words)) {
     $xtra_words = zu_lst_merge_with_key($added_words, $xtra_words);
-    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, verb::DIRECTION_DOWN);
+    $added_words = zu_sql_word_lst_linked($xtra_words, $is_a_type, word_select_direction::DOWN);
     $added_words = zu_lst_not_in($added_words, $xtra_words);
   } */
   

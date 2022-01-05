@@ -43,12 +43,9 @@ class word_list
 
     // search and load fields (to deprecate)
     public ?int $grp_id = null;    // to load a list of words with one sql statement from the database that are part of this word group
-    public ?array $ids = array(); // list of the word ids to load a list of words with one sql statement from the database
     public ?bool $incl_is = null;    // include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
     public ?bool $incl_alias = null;    // include all alias words that are of the ids
     public ?string $word_type_id = '';  // include all alias words that are of the ids
-
-    public ?array $name_lst = array(); // list of the word names to load a list of words with one sql statement from the database
 
     /**
      * always set the user because a word list is always user specific
@@ -77,6 +74,7 @@ class word_list
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
+        $db_con->set_order_text(sql_db::STD_TBL . '.' . word::FLD_VALUES . ' DESC, ' . word::FLD_NAME);
         return $qp;
     }
 
@@ -182,9 +180,9 @@ class word_list
         $sql_where = '';
         $sql_name = '';
 
-        if (!empty($this->ids) and !is_null($this->usr->id)) {
+        if (!empty($this->ids()) and !is_null($this->usr->id)) {
             $sql_name = 'word_list_by_ids';
-            $id_text = sql_array($this->ids);
+            $id_text = sql_array($this->ids());
             $sql_where = "s.word_id IN (" . $id_text . ")";
             log_debug('word_list->load sql (' . $sql_where . ')');
         } elseif (!is_null($this->grp_id)) {
@@ -193,10 +191,6 @@ class word_list
                                     FROM phrase_group_word_links
                                     WHERE phrase_group_id = " . $this->grp_id . ")";
             log_debug('word_list->load sql (' . $sql_where . ')');
-        } elseif (!empty($this->name_lst) and !is_null($this->usr->id)) {
-            $sql_name = 'word_list_by_names';
-            $name_text = implode("','", $this->name_lst);
-            $sql_where = "s.word_name IN ('" . $name_text . "')";
         } elseif ($this->word_type_id > 0 and !is_null($this->usr->id)) {
             $sql_name = 'word_list_by_type_id';
             $sql_where = "s.word_type_id = " . $this->word_type_id;
@@ -253,70 +247,18 @@ class word_list
     }
 
     /**
-     * load the word parameters from the database for a list of words
-     */
-    function load_using_where()
-    {
-
-        global $db_con;
-
-        // fix ids if needed
-        $this->ids = zu_ids_not_empty($this->ids);
-
-        // check the all minimal input parameters
-        if (!isset($this->usr)) {
-            log_err("The user must be set.", "word_list->load");
-        } else {
-            $db_con->set_usr($this->usr->id);
-            $sql = $this->load_sql_where($db_con);
-            $db_wrd_lst = $db_con->get_old($sql);
-            $this->lst = array();
-            $this->ids = array(); // rebuild also the id list (actually only needed if loaded via word group id)
-            if ($db_wrd_lst != null) {
-                foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        $new_word = new word_dsp($this->usr);
-                        $new_word->id = $db_wrd['word_id'];
-                        $new_word->usr_cfg_id = $db_wrd['user_word_id'];
-                        $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
-                        $new_word->name = $db_wrd['word_name'];
-                        $new_word->plural = $db_wrd['plural'];
-                        $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];
-                        $new_word->type_id = $db_wrd['word_type_id'];
-                        $this->lst[] = $new_word;
-                        $this->ids[] = $new_word->id;
-                    }
-                }
-            }
-            /* switch off because the group can also contain triples, so the word_list should not have an assigned grp_id
-            if (!is_null($this->grp_id)) {
-              zu_debug('word_list->load add id ('.$new_word->id.') for group ('.$this->grp_id.')');
-            } else {
-              $wrd_grp = New phrase_group;
-              $wrd_grp->usr = $this->usr;
-              $wrd_grp->ids = $this->ids;
-              zu_debug('word_list->load -> get group for ('.implode(",",$this->ids).')');
-              $this->grp_id = $wrd_grp->get_id(); // get or even create the word group if needed
-              zu_debug('word_list->load -> got group id ('.$this->grp_id.') for words ('.$this->name().')');
-            }
-            */
-            log_debug('word_list->load (' . dsp_count($this->lst) . ')');
-        }
-    }
-
-    /**
      * create the sql statement to add related words to a word list
      */
-    function add_by_type_sql(sql_db $db_con, $verb_id, $direction, bool $get_name = false): string
+    function add_by_type_sql(sql_db $db_con, int $verb_id, string $direction, bool $get_name = false): string
     {
         $sql_name = '';
         $sql_where = '';
         $sql_wrd = '';
-        if ($direction == verb::DIRECTION_UP) {
+        if ($direction == word_select_direction::UP) {
             $sql_name = 'word_list_add_up';
             $sql_where = 'l.from_phrase_id IN (' . $this->ids_txt() . ')';
             $sql_wrd = 'l.to_phrase_id';
-        } elseif ($direction == verb::DIRECTION_DOWN) {
+        } elseif ($direction == word_select_direction::DOWN) {
             $sql_name = 'word_list_add_down';
             $sql_where = 'l.to_phrase_id IN (' . $this->ids_txt() . ')';
             $sql_wrd = 'l.from_phrase_id';
@@ -357,9 +299,11 @@ class word_list
         return $result;
     }
 
-    // combine this with the load function if possible
-    // load the word parameters from the database for a list of words
-    // maybe reuse parts of word_link_list.php
+    /**
+     * combine this with the load function if possible
+     * load the word parameters from the database for a list of words
+     * maybe reuse parts of word_link_list.php
+     */
     function add_by_type($added_wrd_lst, $verb_id, $direction)
     {
 
@@ -384,7 +328,7 @@ class word_list
                 log_debug('word_list->add_by_type -> got ' . dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        if ($db_wrd['word_id'] > 0 and !in_array($db_wrd['word_id'], $this->ids)) {
+                        if ($db_wrd['word_id'] > 0 and !in_array($db_wrd['word_id'], $this->ids())) {
                             $new_word = new word_dsp($this->usr);
                             $new_word->id = $db_wrd['word_id'];
                             $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
@@ -394,7 +338,6 @@ class word_list
                             $new_word->type_id = $db_wrd['word_type_id'];
                             $new_word->link_type_id = $db_wrd[verb::FLD_ID];
                             $this->lst[] = $new_word;
-                            $this->ids[] = $new_word->id;
                             $added_wrd_lst->add($new_word);
                             log_debug('word_list->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
                         }
@@ -446,8 +389,16 @@ class word_list
 
     */
 
-    // build one level of a word tree
-    private function foaf_level($level, $added_wrd_lst, $verb_id, $direction, $max_level)
+    /**
+     * build one level of a word tree
+     * @param int $level 1 if the parents of the original words are added
+     * @param word_list $added_wrd_lst list of the added word during the foaf selection process
+     * @param int $verb_id id of the verb that is used to select the parents
+     * @param string $direction to select if the parents or children should be selected - "up" to select the parents
+     * @param int $max_level the max $level that should be used for the selection
+     * @return word_list the accumulated list of added words
+     */
+    private function foaf_level(int $level, word_list $added_wrd_lst, int $verb_id, string $direction, int $max_level): word_list
     {
         log_debug('word_list->foaf_level (type id ' . $verb_id . ' level ' . $level . ' ' . $direction . ' added ' . $added_wrd_lst->name() . ')');
         if ($max_level > 0) {
@@ -476,26 +427,32 @@ class word_list
     /**
      * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is a"
      * ex foaf_parent
+     * @param int $verb_id id of the verb that is used to select the parents
+     * @returns word_list the accumulated list of added words
      */
-    function foaf_parents($verb_id): word_list
+    function foaf_parents(int $verb_id): word_list
     {
         log_debug('word_list->foaf_parents (type id ' . $verb_id . ')');
         $level = 0;
         $added_wrd_lst = new word_list($this->usr); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_UP, 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::UP, 0);
 
         log_debug('word_list->foaf_parents -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
     }
 
-    // similar to foaf_parents, but for only one level
-    // $level is the number of levels that should be looked into
-    // ex foaf_parent_step
-    function parents($verb_id, $level)
+    /**
+     * similar to foaf_parents, but for only one level
+     * ex foaf_parent_step
+     * @param int $level is the number of levels that should be looked into
+     * @param int $verb_id id of the verb that is used to select the parents
+     * @returns word_list the accumulated list of added words
+     */
+    function parents(int $verb_id, int $level): word_list
     {
         log_debug('word_list->parents(' . $verb_id . ')');
         $added_wrd_lst = new word_list($this->usr); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_UP, $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::UP, $level);
 
         log_debug('word_list->parents -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -508,7 +465,7 @@ class word_list
         log_debug('word_list->foaf_children type ' . $verb_id);
         $level = 0;
         $added_wrd_lst = new word_list($this->usr); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::DOWN, 0);
 
         log_debug('word_list->foaf_children -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -521,7 +478,7 @@ class word_list
     {
         log_debug('word_list->children type ' . $verb_id);
         $added_wrd_lst = new word_list($this->usr); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, verb::DIRECTION_DOWN, $level);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $verb_id, word_select_direction::DOWN, $level);
 
         log_debug('word_list->children -> (' . $added_wrd_lst->name() . ')');
         return $added_wrd_lst;
@@ -700,12 +657,6 @@ class word_list
                 }
             }
         }
-        // fallback solution if the load is not yet called e.g. for unit testing
-        if (count($result) <= 0) {
-            if (count($this->ids) > 0) {
-                $result = $this->ids;
-            }
-        }
         return $result;
     }
 
@@ -875,7 +826,7 @@ class word_list
 
         /*
         foreach ($this->lst AS $wrd) {
-          if ($direction == verb::DIRECTION_UP) {
+          if ($direction == word_select_direction::UP) {
             $directional_verb_id = $wrd->verb_id;
           } else {
             $directional_verb_id = $wrd->verb_id * -1;
@@ -885,14 +836,14 @@ class word_list
           $num_rows = mysqli_num_rows($sql_result);
           if ($num_rows > 1) {
             $result .= zut_plural ($word_id, $user_id);
-            if ($direction == verb::DIRECTION_UP) {
+            if ($direction == word_select_direction::UP) {
               $result .= " " . zul_plural_reverse($verb_id);
             } else {
               $result .= " " . zul_plural($verb_id);
             }
           } else {
             $result .= zut_name ($word_id, $user_id);
-            if ($direction == verb::DIRECTION_UP) {
+            if ($direction == word_select_direction::UP) {
               $result .= " " . zul_reverse($verb_id);
             } else {
               $result .= " " . zul_name($verb_id);
@@ -1017,7 +968,7 @@ class word_list
     // return an url with the word ids
     function id_url_long(): string
     {
-        return zu_ids_to_url($this->ids, "word");
+        return zu_ids_to_url($this->ids(), "word");
     }
 
     // true if the word is part of the word list
@@ -1040,10 +991,9 @@ class word_list
     function add($wrd_to_add)
     {
         log_debug('word_list->add ' . $wrd_to_add->dsp_id());
-        if (!in_array($wrd_to_add->id, $this->ids)) {
+        if (!in_array($wrd_to_add->id, $this->ids())) {
             if ($wrd_to_add->id > 0) {
                 $this->lst[] = $wrd_to_add;
-                $this->ids[] = $wrd_to_add->id;
             }
         }
     }
@@ -1054,7 +1004,7 @@ class word_list
     function add_id($wrd_id_to_add)
     {
         log_debug('word_list->add_id (' . $wrd_id_to_add . ')');
-        if (!in_array($wrd_id_to_add, $this->ids)) {
+        if (!in_array($wrd_id_to_add, $this->ids())) {
             if ($wrd_id_to_add > 0) {
                 $wrd_to_add = new word_dsp($this->usr);
                 $wrd_to_add->id = $wrd_id_to_add;
@@ -1119,7 +1069,6 @@ class word_list
                     }
                 }
                 $result->lst = $wrd_lst;
-                $result->ids = $result->ids();
             }
             log_debug('word_list->filter -> ' . $result->dsp_id() . ')');
         }
@@ -1155,7 +1104,6 @@ class word_list
                     }
                 }
                 $this->lst = $result;
-                $this->ids = $this->ids();
             }
         }
 
@@ -1168,15 +1116,14 @@ class word_list
         foreach ($del_wrd_ids as $del_wrd_id) {
             if ($del_wrd_id > 0) {
                 log_debug('word_list->diff_by_ids ' . $del_wrd_id);
-                if ($del_wrd_id > 0 and in_array($del_wrd_id, $this->ids)) {
-                    $del_pos = array_search($del_wrd_id, $this->ids);
+                if ($del_wrd_id > 0 and in_array($del_wrd_id, $this->ids())) {
+                    $del_pos = array_search($del_wrd_id, $this->ids());
                     log_debug('word_list->diff_by_ids -> exclude (' . $this->lst[$del_pos]->name . ')');
                     unset ($this->lst[$del_pos]);
                 }
             }
         }
-        $this->ids = array_diff($this->ids, $del_wrd_ids);
-        log_debug('word_list->diff_by_ids -> ' . $this->dsp_id() . ' (' . dsp_array($this->ids) . ')');
+        log_debug('word_list->diff_by_ids -> ' . $this->dsp_id() . ' (' . dsp_array($this->ids()) . ')');
     }
 
     // look at a word list and remove the general word, if there is a more specific word also part of the list e.g. remove "Country", but keep "Switzerland"
@@ -1184,15 +1131,15 @@ class word_list
     {
         log_debug('word_list->keep_only_specific (' . $this->dsp_id() . ')');
 
-        $result = $this->ids;
+        $result = $this->ids();
         foreach ($this->lst as $wrd) {
             if (!isset($wrd->usr)) {
                 $wrd->usr = $this->usr;
             }
             $wrd_lst_is = $wrd->is();
             if (isset($wrd_lst_is)) {
-                if (!empty($wrd_lst_is->ids)) {
-                    $result = zu_lst_not_in_no_key($result, $wrd_lst_is->ids);
+                if (!empty($wrd_lst_is->ids())) {
+                    $result = zu_lst_not_in_no_key($result, $wrd_lst_is->ids());
                     log_debug('word_list->keep_only_specific -> "' . $wrd->name . '" is of type ' . $wrd_lst_is->name());
                 }
             }
@@ -1337,7 +1284,6 @@ class word_list
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $measure_type) {
                 $result->lst[] = $wrd;
-                $result->ids[] = $wrd->id;
                 log_debug('word_list->measure_lst -> found (' . $wrd->name . ')');
             } else {
                 log_debug('word_list->measure_lst -> (' . $wrd->name . ') is not measure');
@@ -1360,13 +1306,12 @@ class word_list
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
                 $wrd->usr = $this->usr; // review: should not be needed
                 $result->lst[] = $wrd;
-                $result->ids[] = $wrd->id;
                 log_debug('word_list->scaling_lst -> found (' . $wrd->name . ')');
             } else {
                 log_debug('word_list->scaling_lst -> not found (' . $wrd->name . ')');
             }
         }
-        log_debug('word_list->scaling_lst -> (' . dsp_count($result->ids) . ')');
+        log_debug('word_list->scaling_lst -> (' . dsp_count($result->ids()) . ')');
         return $result;
     }
 
@@ -1381,13 +1326,12 @@ class word_list
         foreach ($this->lst as $wrd) {
             if ($wrd->type_id == $percent_type) {
                 $result->lst[] = $wrd;
-                $result->ids[] = $wrd->id;
                 log_debug('word_list->percent_lst -> found (' . $wrd->name . ')');
             } else {
                 log_debug('word_list->percent_lst -> (' . $wrd->name . ') is not percent');
             }
         }
-        log_debug('word_list->percent_lst -> (' . dsp_count($result->ids) . ')');
+        log_debug('word_list->percent_lst -> (' . dsp_count($result->ids()) . ')');
         return $result;
     }
 
@@ -1640,21 +1584,13 @@ class word_list
         log_debug('word_list->get_grp');
 
         $grp = new phrase_group($this->usr);
-        // check the needed data consistency
-        if (isset($this->lst)) {
-            if (count($this->lst) > 0) {
-                if (count($this->ids) <> count($this->lst)) {
-                    $this->ids = $this->ids();
-                }
-            }
-        }
 
         // get or create the group
-        if (count($this->ids) <= 0) {
+        if (count($this->ids()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
             $grp = new phrase_group($this->usr);
-            $grp->load_by_ids((new phr_ids($this->ids)));
+            $grp->load_by_ids((new phr_ids($this->ids())));
         }
 
         /*
@@ -1663,7 +1599,7 @@ class word_list
         if ($result->id > 0) {
           zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
         } else {
-          zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids).') and user '.$grp->usr->name);
+          zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids()).') and user '.$grp->usr->name);
           $result = $grp->get_id();
           if ($result->id > 0) {
             zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->usr->name);
@@ -1695,4 +1631,14 @@ class word_list
         return $phr_lst;
     }
 
+}
+
+/**
+ * helper class
+ */
+
+class word_select_direction
+{
+    const UP = 'up';     // to select the parents
+    const DOWN = 'down'; // to select the children
 }

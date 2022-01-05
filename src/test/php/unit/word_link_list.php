@@ -202,7 +202,12 @@ class word_link_list_unit_tests
 
         // sql to load by word link list by word list and up
         $wrd_lst = new word_list($usr);
-        $wrd_lst->ids = [1, 2];
+        $wrd = new word($usr);
+        $wrd->id = 1;
+        $wrd_lst->add($wrd);
+        $wrd = new word($usr);
+        $wrd->id = 2;
+        $wrd_lst->add($wrd);
         $wrd_lnk_lst = new word_link_list;
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_UP;
@@ -262,7 +267,12 @@ class word_link_list_unit_tests
 
         // sql to load by word link list by word list and down
         $wrd_lst = new word_list($usr);
-        $wrd_lst->ids = [2, 3];
+        $wrd = new word($usr);
+        $wrd->id = 2;
+        $wrd_lst->add($wrd);
+        $wrd = new word($usr);
+        $wrd->id = 3;
+        $wrd_lst->add($wrd);
         $wrd_lnk_lst = new word_link_list;
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
@@ -322,7 +332,12 @@ class word_link_list_unit_tests
 
         // sql to load by word link list by word list and down filtered by a verb
         $wrd_lst = new word_list($usr);
-        $wrd_lst->ids = [2, 3];
+        $wrd = new word($usr);
+        $wrd->id = 2;
+        $wrd_lst->add($wrd);
+        $wrd = new word($usr);
+        $wrd->id = 3;
+        $wrd_lst->add($wrd);
         $vrb = new verb();
         $vrb->id = 2;
         $wrd_lnk_lst = new word_link_list;
@@ -386,7 +401,12 @@ class word_link_list_unit_tests
 
         // sql to load by word link list by word list and down filtered by a verb list
         $wrd_lst = new word_list($usr);
-        $wrd_lst->ids = [2, 3];
+        $wrd = new word($usr);
+        $wrd->id = 2;
+        $wrd_lst->add($wrd);
+        $wrd = new word($usr);
+        $wrd->id = 3;
+        $wrd_lst->add($wrd);
         $vrb_lst = new verb_list();
         $vrb_lst->ids = [1, 2];
         $wrd_lnk_lst = new word_link_list;

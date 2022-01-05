@@ -37,13 +37,9 @@ function run_phrase_group_test(testing $t)
 
     $t->header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
-    // test getting the phrase group id based on word ids
+    // test getting the phrase group id based on word names
     $wrd_lst = new word_list($usr);
-    $wrd_lst->add_name(word::TN_ZH);
-    $wrd_lst->add_name(word::TN_CANTON);
-    $wrd_lst->add_name(word::TN_INHABITANT);
-    $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->load_using_where();
+    $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_MIO));
     $phr_grp = new phrase_group($usr);
     $phr_grp->load_by_lst($wrd_lst->phrase_lst());
     $result = $phr_grp->id;
@@ -55,13 +51,13 @@ function run_phrase_group_test(testing $t)
     $t->dsp('phrase_group->load by ids for ' . implode(",", $wrd_lst->names()), $target, $result);
 
     // ... and if the time word is correctly excluded
-    $wrd_lst->add_name(word::TN_2020);
-    $wrd_lst->load_using_where();
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_ZH, word::TN_CANTON, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $phr_grp = new phrase_group($usr);
     $phr_grp->load_by_lst($wrd_lst->phrase_lst());
     $result = $phr_grp->id;
     //if ($result > 0 and $result != $id_without_year) {
-    // actually the group id with time word is supposed to the the same as the phrase group id without time word because the time word is not included in the phrase group
+    // actually the group id with time word is supposed to be the same as the phrase group id without time word because the time word is not included in the phrase group
     if ($result > 0) {
         $target = $result;
     }

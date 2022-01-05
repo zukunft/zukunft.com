@@ -295,6 +295,8 @@ class word extends user_sandbox_description
     /**
      * map the database fields to the object fields
      *
+     * TODO check if "if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {" should be added
+     *
      * @param array $db_row with the data directly from the database
      * @param bool $map_usr_fields false for using the standard protection settings for the default word used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent

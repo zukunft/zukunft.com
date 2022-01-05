@@ -273,6 +273,7 @@ class phrase_list
 
     /**
      * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
+     * @return word_list with all words of the phrases split into single words
      */
     function wrd_lst_all(): word_list
     {
@@ -1092,7 +1093,9 @@ class phrase_list
         log_debug('phrase_list->diff_by_ids -> ' . $this->dsp_id());
     }
 
-    // look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "Country", but keep "Switzerland"
+    /**
+     * look at a phrase list and remove the general phrase, if there is a more specific phrase also part of the list e.g. remove "Country", but keep "Switzerland"
+     */
     function keep_only_specific()
     {
         log_debug('phrase_list->keep_only_specific (' . $this->dsp_id());
@@ -1116,8 +1119,10 @@ class phrase_list
         return $result;
     }
 
-    // true if a phrase lst contains a time phrase
-    function has_time()
+    /**
+     * @return bool true if a phrase lst contains a time phrase
+     */
+    function has_time(): bool
     {
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
@@ -1133,8 +1138,10 @@ class phrase_list
         return $result;
     }
 
-    // true if a phrase lst contains a measure phrase
-    function has_measure()
+    /**
+     * @return bool true if a phrase lst contains a measure phrase
+     */
+    function has_measure(): bool
     {
         log_debug('phrase_list->has_measure for ' . $this->dsp_id());
         $result = false;
@@ -1151,8 +1158,10 @@ class phrase_list
         return $result;
     }
 
-    // true if a phrase lst contains a scaling phrase
-    function has_scaling()
+    /**
+     * @return bool true if a phrase lst contains a scaling phrase
+     */
+    function has_scaling(): bool
     {
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
@@ -1168,8 +1177,10 @@ class phrase_list
         return $result;
     }
 
-    // true if a phrase lst contains a percent scaling phrase, which is used for a predefined formatting of the value
-    function has_percent()
+    /**
+     * @return bool true if a phrase lst contains a percent scaling phrase, which is used for a predefined formatting of the value
+     */
+    function has_percent(): bool
     {
         $result = false;
         // loop over the phrase ids and add only the time ids to the result array
@@ -1187,8 +1198,12 @@ class phrase_list
         return $result;
     }
 
-    // to be replaced by time_lst
-    function time_lst_old()
+    /**
+     * get all phrases of this phrase list that have at least one time term
+     * TODO to be replaced by time_lst
+     * @return array of time phrases
+     */
+    function time_lst_old(): array
     {
         log_debug('phrase_list->time_lst_old(' . $this->dsp_id() . ')');
 
@@ -1204,8 +1219,11 @@ class phrase_list
         return $result;
     }
 
-    // get all phrases of this phrase list that have at least one time term
-    function time_lst()
+    /**
+     * get all words of this phrase list that have at least one time term
+     * @return word_list the list object of the time words (not the time phrases!)
+     */
+    function time_lst(): word_list
     {
         log_debug('phrase_list->time_lst for phrases ' . $this->dsp_id());
 
@@ -1215,8 +1233,11 @@ class phrase_list
         return $result;
     }
 
-    // create a useful list of time phrase
-    // to review !!!!
+    /**
+     * create a useful list of time phrase
+     * TODO: review !!!!
+     * @return phrase with the most useful time phrase
+     */
     function time_useful(): ?phrase
     {
         log_debug('phrase_list->time_useful for ' . $this->dsp_name());
@@ -1226,8 +1247,8 @@ class phrase_list
         $wrd_lst = $this->wrd_lst_all();
         $time_wrds = $wrd_lst->time_lst();
         log_debug('phrase_list->time_useful times ');
-        log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids));
-        foreach ($time_wrds->ids as $time_id) {
+        log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids()));
+        foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
                 $time_wrd = new word_dsp($this->usr);
                 $time_wrd->id = $time_id;
@@ -1260,8 +1281,11 @@ class phrase_list
         return $result;
     }
 
-    // to review !!!!
-    // get the most useful time for the given words
+    /**
+     * get the most useful time for the given words
+     * TODO: review
+     * @return phrase with the most useful time phrase
+     */
     function assume_time(): ?phrase
     {
         $time_phr = null;
@@ -1273,8 +1297,11 @@ class phrase_list
         return $time_phr;
     }
 
-    // filter the measure phrases out of the list of phrases
-    function measure_lst()
+    /**
+     * filter the measure phrases out of the list of phrases
+     * @return phrase_list with the measure phrases
+     */
+    function measure_lst(): phrase_list
     {
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
 
@@ -1298,8 +1325,11 @@ class phrase_list
         return $result;
     }
 
-    // filter the scaling phrases out of the list of phrases
-    function scaling_lst()
+    /**
+     * filter the scaling phrases out of the list of phrases
+     * @return phrase_list with the scaling phrases
+     */
+    function scaling_lst(): phrase_list
     {
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
 
@@ -1319,7 +1349,9 @@ class phrase_list
         return $result;
     }
 
-    // Exclude all time phrases out of the list of phrases
+    /**
+     * Exclude all time phrases out of the list of phrases
+     */
     function ex_time()
     {
         log_debug('phrase_list->ex_time ' . $this->dsp_id());
@@ -1329,7 +1361,9 @@ class phrase_list
         log_debug('phrase_list->ex_time ' . $this->dsp_name() . ' (exclude times ' . $del_phr_lst->name() . ')');
     }
 
-    // Exclude all measure phrases out of the list of phrases
+    /**
+     * Exclude all measure phrases out of the list of phrases
+     */
     function ex_measure()
     {
         $del_phr_lst = $this->measure_lst();
@@ -1337,7 +1371,9 @@ class phrase_list
         log_debug('phrase_list->ex_measure ' . $this->dsp_name() . ' (exclude measure ' . $del_phr_lst->dsp_name() . ')');
     }
 
-    // Exclude all scaling phrases out of the list of phrases
+    /**
+     * Exclude all scaling phrases out of the list of phrases
+     */
     function ex_scaling()
     {
         $del_phr_lst = $this->scaling_lst();
@@ -1345,8 +1381,11 @@ class phrase_list
         log_debug('phrase_list->ex_scaling ' . $this->dsp_name() . ' (exclude scaling ' . $del_phr_lst->dsp_name() . ')');
     }
 
-    // sort the phrase object list by name
-    function osort(): array
+    /**
+     * sort the phrase object list by name
+     * @return array list with the phrases (not a phrase list object!) sorted by name
+     */
+    function name_sort(): array
     {
         log_debug('phrase_list->wlsort ' . $this->dsp_id() . ' and user ' . $this->usr->name);
         $name_lst = array();
@@ -1375,8 +1414,11 @@ class phrase_list
         return $result;
     }
 
-    // get the last time phrase of the phrase list
-    function max_time()
+    /**
+     * get the last time phrase of the phrase list
+     * @return phrase with the last phrase of the type time
+     */
+    function max_time(): phrase
     {
         log_debug('phrase_list->max_time (' . $this->dsp_id() . ' and user ' . $this->usr->name . ')');
         $max_phr = new phrase($this->usr);
@@ -1392,7 +1434,10 @@ class phrase_list
         return $max_phr;
     }
 
-    // get the best matching phrase group (but don't create a new group)
+    /**
+     * get the best matching phrase group (but don't create a new group)
+     * @return phrase_group|null the best matching phrase group or null if no group matches
+     */
     function get_grp(): ?phrase_group
     {
         log_debug('phrase_list->get_grp ' . $this->dsp_id());

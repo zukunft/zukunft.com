@@ -215,7 +215,7 @@ function zut_html_list_related($id, $direction, $user_id): string
 
 
     // get the link types related to the word
-    if ($direction == verb::DIRECTION_DOWN) {
+    if ($direction == word_select_direction::DOWN) {
         $type_query = "SELECT verb_id FROM word_links WHERE to_phrase_id = " . $id . " GROUP BY verb_id;";
     } else {
         $type_query = "SELECT verb_id FROM word_links WHERE from_phrase_id = " . $id . " GROUP BY verb_id;";
@@ -239,7 +239,7 @@ function zut_html_list_related($id, $direction, $user_id): string
             //$sql_result = zu_sql_get_all($sql);
 
             // select the same side of the verb
-            if ($direction == verb::DIRECTION_DOWN) {
+            if ($direction == word_select_direction::DOWN) {
                 $directional_link_type_id = $verb_id;
             } else {
                 $directional_link_type_id = $verb_id * -1;
@@ -260,7 +260,7 @@ function zut_html_list_related($id, $direction, $user_id): string
                 if (count($sql_result) > 1) {
                     $result .= zut_plural($id, $user_id);
                     log_debug('zut_html_list_related plu');
-                    if ($direction == verb::DIRECTION_DOWN) {
+                    if ($direction == word_select_direction::DOWN) {
                         $result .= " " . zul_plural_reverse($verb_id);
                     } else {
                         $result .= " " . zul_plural($verb_id);
@@ -269,7 +269,7 @@ function zut_html_list_related($id, $direction, $user_id): string
                     log_debug('zut_html_list_related rev');
                     $result .= zut_name($id, $user_id);
                     log_debug('zut_html_list_related revn');
-                    if ($direction == verb::DIRECTION_DOWN) {
+                    if ($direction == word_select_direction::DOWN) {
                         $result .= " " . zul_reverse($verb_id);
                     } else {
                         $result .= " " . zul_name($verb_id);
@@ -634,8 +634,8 @@ function zut_dsp_edit($wrd_id, $user_id, $back_link)
         $result .= '  description:        <input type="text" name="description" class="resizedTextbox" value="' . $wrd_description . '"><br>';
         $result .= zuh_form_end();
         $result .= '<br>';
-        $result .= zut_html_list_related($wrd_id, verb::DIRECTION_UP, $user_id);
-        $result .= zut_html_list_related($wrd_id, verb::DIRECTION_DOWN, $user_id);
+        $result .= zut_html_list_related($wrd_id, word_select_direction::UP, $user_id);
+        $result .= zut_html_list_related($wrd_id, word_select_direction::DOWN, $user_id);
     }
 
     // display the user changes

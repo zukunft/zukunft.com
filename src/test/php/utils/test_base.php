@@ -475,10 +475,7 @@ class test_base
     {
         global $usr;
         $wrd_lst = new word_list($usr);
-        foreach ($array_of_word_str as $word_str) {
-            $wrd_lst->add_name($word_str);
-        }
-        $wrd_lst->load_using_where();
+        $wrd_lst->load_by_names($array_of_word_str);
         return $wrd_lst;
     }
 

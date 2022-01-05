@@ -475,7 +475,7 @@ class word_link_list
                         log_debug('graph->display type "' . $lnk->verb->name . '"');
 
                         // select the same side of the verb
-                        if ($this->direction == verb::DIRECTION_DOWN) {
+                        if ($this->direction == word_select_direction::DOWN) {
                             $directional_link_type_id = $lnk->verb->id;
                         } else {
                             $directional_link_type_id = $lnk->verb->id * -1;
@@ -484,14 +484,14 @@ class word_link_list
                         // display the link type
                         if ($lnk->verb->id == $next_lnk->verb->id) {
                             $result .= $this->wrd->plural;
-                            if ($this->direction == verb::DIRECTION_DOWN) {
+                            if ($this->direction == word_select_direction::DOWN) {
                                 $result .= " " . $lnk->verb->rev_plural;
                             } else {
                                 $result .= " " . $lnk->verb->plural;
                             }
                         } else {
                             $result .= $this->wrd->name;
-                            if ($this->direction == verb::DIRECTION_DOWN) {
+                            if ($this->direction == word_select_direction::DOWN) {
                                 $result .= " " . $lnk->verb->reverse;
                             } else {
                                 $result .= " " . $lnk->verb->name;

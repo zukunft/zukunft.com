@@ -268,8 +268,8 @@ class word_dsp extends word
         $col_lst = $col_wrd->children();
         log_debug('word_dsp->dsp_val_list -> columns ' . $col_lst->dsp_id());
 
-        $row_lst->osort();
-        $col_lst->osort();
+        $row_lst->name_sort();
+        $col_lst->name_sort();
 
         // TODO use this for fast loading
         $val_matrix = $row_lst->val_matrix($col_lst);
@@ -591,8 +591,8 @@ class word_dsp extends word
             $result .= dsp_form_text("description", $this->description, "Description:");
             $result .= dsp_form_end('', $back);
             $result .= '<br>';
-            $result .= $this->dsp_graph(verb::DIRECTION_UP, $back,);
-            $result .= $this->dsp_graph(verb::DIRECTION_DOWN, $back,);
+            $result .= $this->dsp_graph(word_select_direction::UP, $back,);
+            $result .= $this->dsp_graph(word_select_direction::DOWN, $back,);
         }
 
         // display the user changes

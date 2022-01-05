@@ -139,7 +139,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
         $wrd_lst = array();
         if ($type_ids[$pos] > 0) {
           // prepare the selector for the type word
-          //$sql_type_words = zu_sql_words_linked($type_ids, cl(SQL_LINK_TYPE_IS), verb::DIRECTION_UP);
+          //$sql_type_words = zu_sql_words_linked($type_ids, cl(SQL_LINK_TYPE_IS), word_select_direction::UP);
           //$sub_words = zu_sql_get_lst($sql_type_words);
           $sub_words = zut_ids_are($type_ids[$pos]);
           log_debug("zuv_dsp_edit_or_add -> suggested word ids for position ".$pos.": ".implode(",",$sub_words).".");
@@ -492,7 +492,7 @@ function zuv_table ($word_id, $related_word_id, $user_id) {
 
     // find direct differentiator words
     $differentiator_type = cl(SQL_LINK_TYPE_DIFFERANTIATOR);
-    $type_word_ids = array_keys(zu_sql_get_lst(zu_sql_words_linked($sub_word_id, $differentiator_type, verb::DIRECTION_UP)));
+    $type_word_ids = array_keys(zu_sql_get_lst(zu_sql_words_linked($sub_word_id, $differentiator_type, word_select_direction::UP)));
     log_debug("zuv_table -> differentiator types ".implode(",",$type_word_ids).".");
     
     // if there is more than one type of differentiator group the differentiators by type

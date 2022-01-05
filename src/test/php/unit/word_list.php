@@ -59,8 +59,7 @@ class word_list_unit_tests
         // sql to load by word list by ids
         $db_con->db_type = sql_db::POSTGRES;
         $wrd_lst = new word_list($usr);
-        $wrd_lst->ids = [1, 2, 3];
-        $created_sql = $wrd_lst->load_sql_where($db_con);
+        $created_sql = $wrd_lst->load_sql_by_ids($db_con, [1, 2, 3])->sql;
         $expected_sql = $t->file('db/word/word_list_by_id_list.sql');
         $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
 
@@ -69,7 +68,7 @@ class word_list_unit_tests
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $wrd_lst->load_sql_where($db_con);
+        $created_sql = $wrd_lst->load_sql_by_ids($db_con, [1, 2, 3])->sql;
         $expected_sql = $t->file('db/word/word_list_by_id_list_mysql.sql');
         $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
 
@@ -88,13 +87,15 @@ class word_list_unit_tests
 
         // SQL to add by word list by a relation e.g. for "Zurich" and direction "up" add "City", "Canton" and "Company"
         $wrd_lst = new word_list($usr);
-        $wrd_lst->ids = [7];
-        $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP);
+        $wrd = new word($usr);
+        $wrd->id = 7;
+        $wrd_lst->add($wrd);
+        $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, word_select_direction::UP);
         $expected_sql = $t->file('db/word/word_list_by_verb_up.sql');
         $t->assert('word_list->add_by_type_sql by verb and up', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->add_by_type_sql($db_con, 2, verb::DIRECTION_UP, true));
+        $t->assert_sql_name_unique($wrd_lst->add_by_type_sql($db_con, 2, word_select_direction::UP, true));
 
     }
 

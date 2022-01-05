@@ -97,11 +97,7 @@ function run_value_ui_test(testing $t)
     $val_lst = $wrd->val_lst();
     // build the phrase list to select the value Sales for 2014
     $wrd_lst = new word_list($usr);
-    $wrd_lst->add_name(word::TN_CH);
-    $wrd_lst->add_name(word::TN_INHABITANT);
-    $wrd_lst->add_name(word::TN_MIO);
-    $wrd_lst->add_name(word::TN_2020);
-    $wrd_lst->load_using_where();
+    $wrd_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $wrd_time = $wrd_lst->assume_time();
     $grp = $wrd_lst->get_grp();
     $result = $grp->id;
@@ -129,9 +125,7 @@ function run_value_ui_test(testing $t)
 
     // ... and filter by times
     $time_lst = new word_list($usr);
-    $time_lst->add_name(word::TN_2019);
-    $time_lst->add_name(word::TN_2021);
-    $time_lst->load_using_where();
+    $wrd_lst->load_by_names(array(word::TN_2019, word::TN_2021));
     $used_value_lst = $val_lst->filter_by_time($time_lst);
     $used_time_lst = $used_value_lst->time_lst();
     if ($time_lst->does_contain($wrd_2014)) {
@@ -156,9 +150,7 @@ function run_value_ui_test(testing $t)
 
     // ... and filter by phrases
     $sector_lst = new word_list($usr);
-    $sector_lst->add_name('Low Voltage Products');
-    $sector_lst->add_name('Power Products');
-    $sector_lst->load_using_where();
+    $sector_lst->load_by_names(array('Low Voltage Products', 'Power Products'));
     $phr_lst = $sector_lst->phrase_lst();
     $used_value_lst = $val_lst->filter_by_phrase_lst($phr_lst);
     $used_phr_lst = $used_value_lst->phr_lst();
