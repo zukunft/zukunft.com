@@ -17,6 +17,7 @@
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
+    TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample

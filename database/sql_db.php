@@ -2645,7 +2645,6 @@ class sql_db
     /**
      * escape or reformat the reserved SQL names
      */
-    private
     function name_sql_esc($field)
     {
         switch ($this->db_type) {

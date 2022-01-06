@@ -61,7 +61,7 @@ function run_word_list_test(testing $t)
     // test add by type
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word::TN_ZH));
-    $wrd_lst->add_by_type(Null, cl(db_cl::VERB, verb::IS_A), word_select_direction::UP);
+    $wrd_lst->load_linked_words(Null, cl(db_cl::VERB, verb::IS_A), word_select_direction::UP);
     $result = dsp_array($wrd_lst->names());
     $target = word::TN_ZH . "," . word::TN_CITY . "," . word::TN_CANTON . "," . word::TN_COMPANY; // order adjusted based on the number of usage
     $t->dsp('word_list->add_by_type for "' . word::TN_ZH . '" up', $target, $result);

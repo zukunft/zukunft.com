@@ -96,13 +96,18 @@ class word_list_unit_tests
         $wrd = new word($usr);
         $wrd->id = 7;
         $wrd_lst->add($wrd);
-        $created_sql = $wrd_lst->add_by_type_sql($db_con, 2, word_select_direction::UP);
+        $created_sql = $wrd_lst->load_sql_linked_words($db_con, 2, word_select_direction::UP)->sql;
         $expected_sql = $t->file('db/word/word_list_by_verb_up.sql');
         $t->assert('word_list->add_by_type_sql by verb and up', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->add_by_type_sql($db_con, 2, word_select_direction::UP, true));
+        $t->assert_sql_name_unique($wrd_lst->load_sql_linked_words($db_con, 2, word_select_direction::UP)->name);
 
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $created_sql = $wrd_lst->load_sql_linked_words($db_con, 2, word_select_direction::UP)->sql;
+        $expected_sql = $t->file('db/word/word_list_by_verb_up_mysql.sql');
+        $t->assert('word_list->add_by_type_sql by verb and up MySQL', $t->trim($created_sql), $t->trim($expected_sql));
     }
 
     /**

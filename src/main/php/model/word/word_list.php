@@ -71,7 +71,7 @@ class word_list
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
-        $db_con->set_order_text(sql_db::STD_TBL . '.' . word::FLD_VALUES . ' DESC, ' . word::FLD_NAME);
+        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
         return $qp;
     }
 
@@ -165,6 +165,62 @@ class word_list
     }
 
     /**
+     * create the sql statement to select the related words
+     * the relation can be narrowed with a verb id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $verb_id to select only words linked with this verb
+     * @param string $direction to define the link direction
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_linked_words(sql_db $db_con, int $verb_id, string $direction): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        $sql_where = '';
+        $join_field = '';
+        if (count($this->lst) <= 0) {
+            log_warning('The word list is empty, so nothing could be found', self::class . "->load_sql_by_linked_type");
+            $qp->name = '';
+        } else {
+            if ($db_con->db_type == sql_db::POSTGRES) {
+                $sql_in = ' = ANY (';
+            } else {
+                $sql_in = ' IN (';
+            }
+            if ($direction == word_select_direction::UP) {
+                $qp->name .= 'add_up';
+                $db_con->add_par_in_int($this->ids());
+                $sql_where = sql_db::LNK_TBL . '.' . word_link::FLD_FROM . $sql_in . $db_con->par_name() . ')';
+                $join_field = word_link::FLD_TO;
+            } elseif ($direction == word_select_direction::DOWN) {
+                $qp->name .= 'add_down';
+                $db_con->add_par_in_int($this->ids());
+                $sql_where = sql_db::LNK_TBL . '.' . word_link::FLD_TO . $sql_in . $db_con->par_name() . ')';
+                $join_field = word_link::FLD_FROM;
+            } else {
+                log_err('Unknown direction ' . $direction);
+            }
+            // verbs can have a negative id for the reverse selection
+            if ($verb_id <> 0) {
+                $db_con->set_join_fields(
+                    array(verb::FLD_ID),
+                    DB_TYPE_TRIPLE,
+                    word::FLD_ID,
+                    $join_field,
+                    verb::FLD_ID,
+                    $verb_id);
+                $qp->name .= '_by_verb';
+            }
+            $db_con->set_name($qp->name);
+            $db_con->set_where_text($sql_where);
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
+        }
+
+        return $qp;
+    }
+
+    /**
      * load this list of words
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one word found
@@ -243,101 +299,37 @@ class word_list
         return $this->load($qp);
     }
 
-    /*
-     * load functions (to be reviewed)
-     */
-
     /**
-     * create the sql statement to add related words to a word list
+     * add the direct linked words to the list
+     * and remember which words have be added
+     *
+     * @param word_list|null $added_wrd_lst the list of words added in the previous level runs
+     * @param int $verb_id to select only words linked with this verb
+     * @param string $direction to define the link direction
+     * @return word_list with only the new added words
      */
-    function add_by_type_sql(sql_db $db_con, int $verb_id, string $direction, bool $get_name = false): string
-    {
-        $sql_name = '';
-        $sql_where = '';
-        $sql_wrd = '';
-        if ($direction == word_select_direction::UP) {
-            $sql_name = 'word_list_add_up';
-            $sql_where = 'l.from_phrase_id IN (' . $this->ids_txt() . ')';
-            $sql_wrd = 'l.to_phrase_id';
-        } elseif ($direction == word_select_direction::DOWN) {
-            $sql_name = 'word_list_add_down';
-            $sql_where = 'l.to_phrase_id IN (' . $this->ids_txt() . ')';
-            $sql_wrd = 'l.from_phrase_id';
-        } else {
-            log_err('Unknown direction ' . $direction);
-        }
-        // verbs can have a negative id for the reverse selection
-        if ($verb_id <> 0) {
-            $sql_name .= '_by_verb';
-            $sql_type = 'AND l.verb_id = ' . $verb_id;
-        } else {
-            $sql_type = '';
-        }
-        $sql = "SELECT 
-                         s.word_id,
-                         s.user_id,
-                         " . $db_con->get_usr_field("word_name", "s", "u") . ",
-                         " . $db_con->get_usr_field("plural", "s", "u") . ",
-                         " . $db_con->get_usr_field("description", "s", "u") . ",
-                         " . $db_con->get_usr_field("word_type_id", "s", "u", sql_db::FLD_FORMAT_VAL) . ",
-                         " . $db_con->get_usr_field("excluded", "s", "u", sql_db::FLD_FORMAT_VAL) . ",
-                         l.verb_id,
-                         s." . $db_con->get_table_name_esc(DB_TYPE_VALUE) . "
-                    FROM word_links l, 
-                         words s 
-               LEFT JOIN user_words u ON s.word_id = u.word_id 
-                                     AND u.user_id = " . $this->usr->id . " 
-                   WHERE " . $sql_wrd . " = s.word_id 
-                     AND " . $sql_where . "
-                         " . $sql_type . " 
-                ORDER BY s.values DESC, s.word_name;";
-
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
-    }
-
-    /**
-     * combine this with the load function if possible
-     * load the word parameters from the database for a list of words
-     * maybe reuse parts of word_link_list.php
-     */
-    function add_by_type($added_wrd_lst, $verb_id, $direction)
+    function load_linked_words(?word_list $added_wrd_lst, int $verb_id, string $direction): word_list
     {
 
         global $db_con;
 
-        if (is_null($added_wrd_lst)) {
-            $added_wrd_lst = new word_list($this->usr); // list of the added word ids
+        if ($added_wrd_lst == null) {
+            $added_wrd_lst = new word_list($this->usr); // create the list of the added words
         }
 
-        if (is_null($this->usr->id)) {
-            log_err("The user must be set.", "word_list->add_by_type");
-        } elseif (!isset($this->lst)) {
-            log_warning("The word list is empty, so nothing could be found.", "word_list->add_by_type");
-        } elseif (count($this->lst) <= 0) {
-            log_warning("The word list is empty, so nothing could be found.", "word_list->add_by_type");
+        $qp = $this->load_sql_linked_words($db_con, $verb_id, $direction);
+        if ($qp->name == '') {
+            log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
-            $sql = $this->add_by_type_sql($db_con, $verb_id, $direction);
-            log_debug('word_list->add_by_type -> add with "' . $sql);
             $db_con->usr_id = $this->usr->id;
-            $db_wrd_lst = $db_con->get_old($sql);
+            $db_wrd_lst = $db_con->get($qp);
             if ($db_wrd_lst) {
                 log_debug('word_list->add_by_type -> got ' . dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
-                        if ($db_wrd['word_id'] > 0 and !in_array($db_wrd['word_id'], $this->ids())) {
+                        if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
                             $new_word = new word_dsp($this->usr);
-                            $new_word->id = $db_wrd['word_id'];
-                            $new_word->owner_id = $db_wrd[user_sandbox::FLD_USER];
-                            $new_word->name = $db_wrd['word_name'];
-                            $new_word->plural = $db_wrd['plural'];
-                            $new_word->description = $db_wrd[sql_db::FLD_DESCRIPTION];
-                            $new_word->type_id = $db_wrd['word_type_id'];
-                            $new_word->link_type_id = $db_wrd[verb::FLD_ID];
+                            $new_word->row_mapper($db_wrd);
                             $this->lst[] = $new_word;
                             $added_wrd_lst->add($new_word);
                             log_debug('word_list->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
@@ -413,7 +405,7 @@ class word_list
             $loops = $loops + 1;
             $additional_added = new word_list($this->usr); // list of the added word ids
             log_debug('word_list->foaf_level add');
-            $additional_added = $this->add_by_type($additional_added, $verb_id, $direction);
+            $additional_added = $this->load_linked_words($additional_added, $verb_id, $direction);
             log_debug('word_list->foaf_level merge');
             $added_wrd_lst->merge($additional_added);
 
@@ -1638,7 +1630,6 @@ class word_list
 /**
  * helper class
  */
-
 class word_select_direction
 {
     const UP = 'up';     // to select the parents

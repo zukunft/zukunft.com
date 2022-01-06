@@ -121,7 +121,7 @@ function run_word_tests(testing $t)
     $wrd_pct = $t->test_word(word::TN_PCT, word_type_list::DBL_PERCENT);
     $target = True;
     $result = $wrd_pct->is_percent();
-    $t->dsp('word->is_percent for ' . word::TN_PCT . '', $target, $result);
+    $t->dsp('word->is_percent for ' . word::TN_PCT, $target, $result);
 
     // next word
     $wrd_time_next = $t->test_word(word::TN_2022, word_type_list::DBL_TIME);
@@ -129,12 +129,12 @@ function run_word_tests(testing $t)
     $target = $wrd_time_next->name;
     $wrd_next = $wrd_time->next();
     $result = $wrd_next->name;
-    $t->dsp('word->next for ' . word::TN_2021 . '', $target, $result);
+    $t->dsp('word->next for ' . word::TN_2021, $target, $result);
 
     $target = $wrd_time->name;
     $wrd_prior = $wrd_time_next->prior();
     $result = $wrd_prior->name;
-    $t->dsp('word->prior for ' . word::TN_2022 . '', $target, $result);
+    $t->dsp('word->prior for ' . word::TN_2022, $target, $result);
 
     // create a parent test word
     $wrd_parent = $t->test_word(word::TN_PARENT);
