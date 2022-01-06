@@ -1,4 +1,4 @@
-PREPARE word_list_by_names (text[]) AS
+PREPARE word_list_by_names (int, text[]) AS
     SELECT     s.word_id,
                u.word_id AS user_word_id,
                s.user_id,
@@ -13,6 +13,6 @@ PREPARE word_list_by_names (text[]) AS
                CASE WHEN (u.protect_id         IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
           FROM words s
      LEFT JOIN user_words u ON s.word_id = u.word_id
-           AND u.user_id = 1
-         WHERE s.word_name = ANY ($1)
+           AND u.user_id = $1
+         WHERE s.word_name = ANY ($2)
       ORDER BY s.values DESC, word_name;

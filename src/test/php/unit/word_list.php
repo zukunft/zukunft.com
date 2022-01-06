@@ -63,9 +63,6 @@ class word_list_unit_tests
         $expected_sql = $t->file('db/word/word_list_by_id_list.sql');
         $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
 
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql_where($db_con, true));
-
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $wrd_lst->load_sql_by_ids($db_con, [1, 2, 3])->sql;
@@ -75,13 +72,22 @@ class word_list_unit_tests
         // sql to load by word list by phrase group
         $db_con->db_type = sql_db::POSTGRES;
         $wrd_lst = new word_list($usr);
-        $wrd_lst->grp_id = 1;
-        $created_sql = $wrd_lst->load_sql_where($db_con);
+        $created_sql = $wrd_lst->load_sql_by_grp_id($db_con, 1)->sql;
         $expected_sql = $t->file('db/word/word_list_by_phrase_group.sql');
         $t->assert('word_list->load_sql by phrase group', $t->trim($created_sql), $t->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql_where($db_con, true));
+        $t->assert_sql_name_unique($wrd_lst->load_sql_by_grp_id($db_con, 1)->name);
+
+        // sql to load by word list by word type
+        $db_con->db_type = sql_db::POSTGRES;
+        $wrd_lst = new word_list($usr);
+        $created_sql = $wrd_lst->load_sql_by_type($db_con, 1)->sql;
+        $expected_sql = $t->file('db/word/word_list_by_type.sql');
+        $t->assert('word_list->load_sql by type', $t->trim($created_sql), $t->trim($expected_sql));
+
+        // ... and check if the prepared sql name is unique
+        $t->assert_sql_name_unique($wrd_lst->load_sql_by_type($db_con, 1)->name);
 
         // TODO add the missing word list loading SQL
 

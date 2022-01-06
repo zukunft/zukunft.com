@@ -698,7 +698,7 @@ class phrase_group
         // switch between the word and triple settings
         if ($type == DB_TYPE_WORD) {
             $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_WORD_LINK);
-            $field_name = 'word_id';
+            $field_name = word::FLD_ID;
         } else {
             $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
             $field_name = 'triple_id';

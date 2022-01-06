@@ -1,4 +1,4 @@
-PREPARE word_list_by_group (int, int) AS
+PREPARE word_list_by_type (int, int) AS
     SELECT
             s.word_id,
             u.word_id AS user_word_id,
@@ -15,7 +15,5 @@ PREPARE word_list_by_group (int, int) AS
        FROM words s
   LEFT JOIN user_words u ON s.word_id = u.word_id
         AND u.user_id = $1
-      WHERE s.word_id IN ( SELECT word_id
-                             FROM phrase_group_word_links
-                            WHERE phrase_group_id = $2)
+      WHERE s.word_type_id = $2
    ORDER BY s.values DESC, word_name;

@@ -14,6 +14,6 @@ PREPARE word_list_by_ids FROM
            IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id
       FROM words s
  LEFT JOIN user_words u ON s.word_id = u.word_id
-       AND u.user_id = 1
+       AND u.user_id = ?
      WHERE s.word_id IN (?)
   ORDER BY s.values DESC, word_name';

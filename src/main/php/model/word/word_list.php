@@ -7,7 +7,9 @@
 
     actually only used for phrase splitting; in most other cases phrase_list is used
 
-    // TODO: check the consistence usage of the parameter $back
+    TODO: check the consistence usage of the parameter $back
+    TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
+    TODO: add bool $incl_alias to include all alias words that are of the ids
 
     This file is part of zukunft.com - calc with words
 
@@ -41,12 +43,6 @@ class word_list
     public array $lst;
     public user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
-    // search and load fields (to deprecate)
-    public ?int $grp_id = null;    // to load a list of words with one sql statement from the database that are part of this word group
-    public ?bool $incl_is = null;    // include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
-    public ?bool $incl_alias = null;    // include all alias words that are of the ids
-    public ?string $word_type_id = '';  // include all alias words that are of the ids
-
     /**
      * always set the user because a word list is always user specific
      * @param user $usr the user who requested to see this word list
@@ -71,6 +67,7 @@ class word_list
         $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_WORD);
         $db_con->set_usr($this->usr->id);
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_fields(word::FLD_NAMES);
         $db_con->set_usr_fields(word::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
@@ -92,6 +89,8 @@ class word_list
             $db_con->set_name($qp->name);
             $db_con->add_par_in_int($wrd_ids);
             $qp->sql = $db_con->select_by_field(word::FLD_ID);
+        } else {
+            $qp->name = '';
         }
         $qp->par = $db_con->get_par();
         return $qp;
@@ -111,6 +110,55 @@ class word_list
             $db_con->set_name($qp->name);
             $db_con->add_par_in_txt($wrd_names);
             $qp->sql = $db_con->select_by_field(word::FLD_NAME);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of words by the phrase group id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $grp_id the id of the phrase group
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_grp_id(sql_db $db_con, int $grp_id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($grp_id > 0) {
+            $qp->name .= 'group';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $grp_id);
+            $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_WORD_LINK);
+            $sql_where = sql_db::STD_TBL . '.' . word::FLD_ID . ' IN ( SELECT ' . word::FLD_ID . ' 
+                                    FROM ' . $table_name . '
+                                    WHERE ' . phrase_group::FLD_ID . ' = ' . $db_con->par_name() . ')';
+            $db_con->set_where_text($sql_where);
+            $qp->sql = $db_con->select_by_id();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of words by the type
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $type_id the id of the word type
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_type(sql_db $db_con, int $type_id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($type_id > 0) {
+            $qp->name .= 'type';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $type_id);
+            $qp->sql = $db_con->select_by_field(word::FLD_TYPE);
+        } else {
+            $qp->name = '';
         }
         $qp->par = $db_con->get_par();
         return $qp;
@@ -119,7 +167,7 @@ class word_list
     /**
      * load this list of words
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
-     * @return bool true if value or phrases are found
+     * @return bool true if at least one word found
      */
     function load(sql_par $qp): bool
     {
@@ -146,7 +194,7 @@ class word_list
     /**
      * load a list of words by the ids
      * @param array $wrd_ids a list of int values with the word ids
-     * @return bool true if value or phrases are found
+     * @return bool true if at least one word found
      */
     function load_by_ids(array $wrd_ids): bool
     {
@@ -158,7 +206,7 @@ class word_list
     /**
      * load a list of words by the names
      * @param array $wrd_names a named object used for selection e.g. a word type
-     * @return bool true if value or phrases are found
+     * @return bool true if at least one word found
      */
     function load_by_names(array $wrd_names): bool
     {
@@ -167,84 +215,37 @@ class word_list
         return $this->load($qp);
     }
 
+    /**
+     * load a list of words by the phrase group id
+     * TODO needs to be checked if really needed
+     *
+     * @param int $grp_id the id of the phrase group
+     * @return bool true if at least one word found
+     */
+    function load_by_grp_id(int $grp_id): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_grp_id($db_con, $grp_id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of words by the word type id
+     * TODO needs to be checked if really needed
+     *
+     * @param int $type_id the id of the word type
+     * @return bool true if at least one word found
+     */
+    function load_by_type(int $type_id): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_type($db_con, $type_id);
+        return $this->load($qp);
+    }
+
     /*
      * load functions (to be reviewed)
      */
-
-    /**
-     * create the SQL selection statement or the name for the predefined SQL statement
-     * @param bool $get_name use true to get the unique name of the selection query
-     */
-    function load_sql_where_creator(bool $get_name = false): string
-    {
-        $sql_where = '';
-        $sql_name = '';
-
-        if (!empty($this->ids()) and !is_null($this->usr->id)) {
-            $sql_name = 'word_list_by_ids';
-            $id_text = sql_array($this->ids());
-            $sql_where = "s.word_id IN (" . $id_text . ")";
-            log_debug('word_list->load sql (' . $sql_where . ')');
-        } elseif (!is_null($this->grp_id)) {
-            $sql_name = 'word_list_by_group';
-            $sql_where = "s.word_id IN ( SELECT word_id 
-                                    FROM phrase_group_word_links
-                                    WHERE phrase_group_id = " . $this->grp_id . ")";
-            log_debug('word_list->load sql (' . $sql_where . ')');
-        } elseif ($this->word_type_id > 0 and !is_null($this->usr->id)) {
-            $sql_name = 'word_list_by_type_id';
-            $sql_where = "s.word_type_id = " . $this->word_type_id;
-        } else {
-            log_warning("Selection criteria for the word list missing", "word_list->load");
-        }
-
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql_where;
-        }
-        return $result;
-    }
-
-    /**
-     * create the sql statement to fill a word list
-     */
-    function load_sql_where(sql_db $db_con, bool $get_name = false): string
-    {
-        $sql = '';
-        $sql_name = 'wrd_lst_by_';
-
-        // set the where clause depending on the values given
-        if ($get_name) {
-            $sql_name .= $this->load_sql_where_creator($get_name);
-        } else {
-            $sql_where = $this->load_sql_where_creator($get_name);
-            if ($sql_where == '') {
-                // the id list can be empty, because not needed to check this always in the calling function, so maybe in a later stage this could be an info
-                if (is_null($this->usr->id)) {
-                    log_err("The user must be set.", "word_list->load");
-                } else {
-                    log_info("The list of database ids should not be empty.", "word_list->load");
-                }
-            } else {
-                $db_con->set_type(DB_TYPE_WORD);
-                $db_con->set_usr($this->usr->id);
-                $db_con->set_fields(word::FLD_NAMES);
-                $db_con->set_usr_fields(word::FLD_NAMES_USR);
-                $db_con->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
-                $db_con->set_where_text($sql_where);
-                $db_con->set_order_text('s.values DESC, word_name');
-                $sql = $db_con->select_by_id();
-            }
-        }
-
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
-    }
 
     /**
      * create the sql statement to add related words to a word list
@@ -537,7 +538,8 @@ class word_list
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $next_lst = $next_lst->contains();
-                $added_lst = $next_lst->diff($wrd_lst);
+                $next_lst->diff($wrd_lst);
+                $added_lst->merge($next_lst);
                 if (count($added_lst->lst) > 0) {
                     log_debug('word_list->are_and_contains -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
                 }
@@ -1082,7 +1084,7 @@ class word_list
      and the $del_wrd_lst is "May, June, Juli, August"
      than $this->diff should be "January, February, March, April, September, October, November, December" and save to eat huîtres
     */
-    function diff($del_wrd_lst)
+    function diff($del_wrd_lst): void
     {
         log_debug('word_list->diff of ' . $del_wrd_lst->dsp_id() . ' and ' . $this->dsp_id());
 
