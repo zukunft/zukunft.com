@@ -32,6 +32,8 @@
 
 */
 
+use word\triple_min;
+
 class word_link extends user_sandbox_link_description
 {
 
@@ -494,7 +496,7 @@ class word_link extends user_sandbox_link_description
         // add the "from" side
         if (isset($this->from)) {
             if ($this->from->id > 0) {
-                $wrd_lst->add($this->from);
+                $wrd_lst->add($this->from->get_word());
             } elseif ($this->from->id < 0) {
                 $sub_wrd_lst = $this->from->wrd_lst();
                 foreach ($sub_wrd_lst as $wrd) {
@@ -508,7 +510,7 @@ class word_link extends user_sandbox_link_description
         // add the "to" side
         if (isset($this->to)) {
             if ($this->to->id > 0) {
-                $wrd_lst->add($this->to);
+                $wrd_lst->add($this->to->get_word());
             } elseif ($this->to->id < 0) {
                 $sub_wrd_lst = $this->to->wrd_lst();
                 foreach ($sub_wrd_lst as $wrd) {

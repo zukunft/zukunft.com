@@ -2,8 +2,8 @@
 
 /*
 
-    formula_min.php - the minimal formula object
-    ---------------
+    triple_min.php - the minimal triple (word_link) object
+    --------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,16 +30,11 @@
 
 */
 
-class formula_min extends user_sandbox_named_min
+namespace word;
+
+use sandbox\user_sandbox_named_min;
+
+class triple_min extends user_sandbox_named_min
 {
-
-    // the formula expression as shown to the user
-    public string $usr_text;
-
-    function __construct()
-    {
-        parent::__construct();
-        $this->usr_text = '';
-    }
 
 }

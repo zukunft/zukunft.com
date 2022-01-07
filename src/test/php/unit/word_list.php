@@ -47,71 +47,64 @@ class word_list_unit_tests
 
         $t->subheader('Database query creation tests');
 
+        // load by word ids
         $wrd_lst = new word_list($usr);
         $wrd_ids = array(3,2,4);
         $this->assert_sql_by_ids($t, $db_con, $wrd_lst, $wrd_ids);
 
+        // load by word names
+        $wrd_lst = new word_list($usr);
         $wrd_names = array(word::TN_READ, word::TN_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
-
-
-        // sql to load by word list by ids
-        $db_con->db_type = sql_db::POSTGRES;
+        // load by phrase group
         $wrd_lst = new word_list($usr);
-        $created_sql = $wrd_lst->load_sql_by_ids($db_con, [1, 2, 3])->sql;
-        $expected_sql = $t->file('db/word/word_list_by_id_list.sql');
-        $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
+        $grp_id = 1;
+        $this->assert_sql_by_group_id($t, $db_con, $wrd_lst, $grp_id);
 
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $wrd_lst->load_sql_by_ids($db_con, [1, 2, 3])->sql;
-        $expected_sql = $t->file('db/word/word_list_by_id_list_mysql.sql');
-        $t->assert('word_list->load_sql by IDs', $t->trim($created_sql), $t->trim($expected_sql));
-
-        // sql to load by word list by phrase group
-        $db_con->db_type = sql_db::POSTGRES;
+        // load by type
         $wrd_lst = new word_list($usr);
-        $created_sql = $wrd_lst->load_sql_by_grp_id($db_con, 1)->sql;
-        $expected_sql = $t->file('db/word/word_list_by_phrase_group.sql');
-        $t->assert('word_list->load_sql by phrase group', $t->trim($created_sql), $t->trim($expected_sql));
+        $type_id = 1;
+        $this->assert_sql_by_type_id($t, $db_con, $wrd_lst, $type_id);
 
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql_by_grp_id($db_con, 1)->name);
-
-        // sql to load by word list by word type
-        $db_con->db_type = sql_db::POSTGRES;
+        // the parent words
         $wrd_lst = new word_list($usr);
-        $created_sql = $wrd_lst->load_sql_by_type($db_con, 1)->sql;
-        $expected_sql = $t->file('db/word/word_list_by_type.sql');
-        $t->assert('word_list->load_sql by type', $t->trim($created_sql), $t->trim($expected_sql));
+        $wrd = new word($usr);
+        $wrd->id = 6;
+        $wrd_lst->add($wrd);
+        $verb_id = 0;
+        $direction = word_select_direction::UP;
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
 
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql_by_type($db_con, 1)->name);
-
-        // TODO add the missing word list loading SQL
-
-        // SQL to add by word list by a relation e.g. for "Zurich" and direction "up" add "City", "Canton" and "Company"
+        // the parent words filtered by verb
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
         $wrd->id = 7;
         $wrd_lst->add($wrd);
-        $created_sql = $wrd_lst->load_sql_linked_words($db_con, 2, word_select_direction::UP)->sql;
-        $expected_sql = $t->file('db/word/word_list_by_verb_up.sql');
-        $t->assert('word_list->add_by_type_sql by verb and up', $t->trim($created_sql), $t->trim($expected_sql));
+        $verb_id = 1;
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
 
-        // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lst->load_sql_linked_words($db_con, 2, word_select_direction::UP)->name);
+        // the child words
+        $wrd_lst = new word_list($usr);
+        $wrd = new word($usr);
+        $wrd->id = 8;
+        $wrd_lst->add($wrd);
+        $verb_id = 0;
+        $direction = word_select_direction::DOWN;
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
 
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $wrd_lst->load_sql_linked_words($db_con, 2, word_select_direction::UP)->sql;
-        $expected_sql = $t->file('db/word/word_list_by_verb_up_mysql.sql');
-        $t->assert('word_list->add_by_type_sql by verb and up MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+        // the child words filtered by verb
+        $wrd_lst = new word_list($usr);
+        $wrd = new word($usr);
+        $wrd->id = 9;
+        $wrd_lst->add($wrd);
+        $verb_id = 1;
+        $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
+
     }
 
     /**
-     * test the SQL statement creation for a value phrase link list in all SQL dialect
+     * test the SQL statement creation for a word list in all SQL dialect
      * and check if the statement name is unique
      *
      * @param testing $t the test environment
@@ -122,6 +115,8 @@ class word_list_unit_tests
      */
     private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids)
     {
+        global $usr;
+
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_ids($db_con, $ids);
@@ -134,8 +129,7 @@ class word_list_unit_tests
     }
 
     /**
-     * test the SQL statement creation for a value phrase link list in all SQL dialect
-     * and check if the statement name is unique
+     * similar to assert_sql_by_ids, but for word names
      *
      * @param testing $t the test environment
      * @param sql_db $db_con the test database connection
@@ -153,6 +147,73 @@ class word_list_unit_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_names($db_con, $words);
+        $t->assert_qp($qp, sql_db::MYSQL);
+    }
+
+    /**
+     * similar to assert_sql_by_ids, but for a phrase group
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_list $lst the empty word list object
+     * @param int $grp_id the phrase group id that should be used for selecting the words
+     * @return void
+     */
+    private function assert_sql_by_group_id(testing $t, sql_db $db_con, word_list $lst, int $grp_id)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_grp_id($db_con, $grp_id);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_grp_id($db_con, $grp_id);
+        $t->assert_qp($qp, sql_db::MYSQL);
+    }
+
+    /**
+     * similar to assert_sql_by_ids, but for a type
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_list $lst the empty word list object
+     * @param int $type_id the phrase group id that should be used for selecting the words
+     * @return void
+     */
+    private function assert_sql_by_type_id(testing $t, sql_db $db_con, word_list $lst, int $type_id)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_type($db_con, $type_id);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_type($db_con, $type_id);
+        $t->assert_qp($qp, sql_db::MYSQL);
+    }
+
+    /**
+     * similar to assert_sql_by_ids, but for a linked words
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_list $lst the empty word list object
+     * @param int $verb_id to select only words linked with this verb
+     * @param string $direction to define the link direction
+     * @return void
+     */
+    private function assert_sql_by_linked_words(testing $t, sql_db $db_con, word_list $lst, int $verb_id, string $direction)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_linked_words($db_con, $verb_id, $direction);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_linked_words($db_con, $verb_id, $direction);
         $t->assert_qp($qp, sql_db::MYSQL);
     }
 

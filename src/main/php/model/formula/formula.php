@@ -29,6 +29,8 @@
   
 */
 
+use formula\formula_min;
+
 class formula extends user_sandbox_description
 {
     /*

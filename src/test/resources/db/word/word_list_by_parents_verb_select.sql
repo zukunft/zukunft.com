@@ -1,4 +1,4 @@
-PREPARE word_list_by_add_up_by_verb (int, int[], int) AS
+PREPARE word_list_by_parents_verb_select (int, int[], int) AS
     SELECT
            s.word_id,
            u.word_id AS user_word_id,

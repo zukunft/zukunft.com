@@ -40,6 +40,8 @@
 
 */
 
+use word\word_min;
+
 class word extends user_sandbox_description
 {
     /*
@@ -91,6 +93,7 @@ class word extends user_sandbox_description
 
     // persevered word names for unit and integration tests
     const TN_READ = 'Mathematical constant';
+    const TN_READ_SCALE = 'million';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';

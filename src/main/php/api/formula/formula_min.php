@@ -2,8 +2,8 @@
 
 /*
 
-    word_min.php - the minimal word object
-    ------------
+    formula_min.php - the minimal formula object
+    ---------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,7 +30,19 @@
 
 */
 
-class word_min extends user_sandbox_named_min
+namespace formula;
+use sandbox\user_sandbox_named_min;
+
+class formula_min extends user_sandbox_named_min
 {
+
+    // the formula expression as shown to the user
+    public string $usr_text;
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->usr_text = '';
+    }
 
 }

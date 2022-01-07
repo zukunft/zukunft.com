@@ -2,8 +2,8 @@
 
 /*
 
-    value_min.php - the minimal value object
-    -------------
+    user_sandbox_named_min.php - extends the minimal superclass for named objects such as formulas
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,17 +30,20 @@
 
 */
 
-class value_min extends user_sandbox_min
+namespace sandbox;
+
+class user_sandbox_named_min extends user_sandbox_min
 {
 
-    public phrase_group_min $grp; // the phrase group with the list of words and triples
-    public float $val; // if the number for the phrase group is not set the object is not created, so null is not needed
+    // the unique name of the object that is shown to the user
+    public string $name; // the name must always be set
 
     function __construct()
     {
         parent::__construct();
-        $this->grp = new phrase_group_min();
-        $this->val = 0;
+        $this->name = '';
     }
 
 }
+
+

@@ -49,6 +49,8 @@
 
 */
 
+use value\value_min;
+
 class value extends user_sandbox_display
 {
     /*

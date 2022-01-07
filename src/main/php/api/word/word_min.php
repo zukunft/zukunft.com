@@ -2,8 +2,8 @@
 
 /*
 
-    triple_min.php - the minimal triple (word_link) object
-    --------------
+    word_min.php - the minimal word object
+    ------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,7 +30,11 @@
 
 */
 
-class triple_min extends user_sandbox_named_min
+namespace word;
+
+use sandbox\user_sandbox_named_min;
+
+class word_min extends user_sandbox_named_min
 {
 
 }

@@ -274,8 +274,9 @@ include_once $path_php . 'model/helper/word_link_object.php';
 include_once $path_php . 'model/word/word.php';
 include_once $path_php . 'model/word/word_exp.php';
 include_once $path_php . 'model/word/word_type_list.php';
-include_once $path_php . 'web/word_display.php';
+include_once $path_php . 'web/word/word_display.php';
 include_once $path_php . 'model/word/word_list.php';
+include_once $path_php . 'web/word/word_list_dsp.php';
 include_once $path_php . 'model/word/word_link.php';
 include_once $path_php . 'model/word/word_link_exp.php';
 include_once $path_php . 'model/word/word_link_list.php';
@@ -338,14 +339,14 @@ include_once $path_php . 'model/view/view_cmp_link.php';
 include_once $path_php . 'model/view/view_cmp_link_list.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
 // frontend API classes
-include_once $path_php . 'web/sandbox/user_sandbox_min.php';
-include_once $path_php . 'web/sandbox/user_sandbox_named_min.php';
-include_once $path_php . 'web/word/word_min.php';
-include_once $path_php . 'web/word/triple_min.php';
-include_once $path_php . 'web/phrase/phrase_group_min.php';
-include_once $path_php . 'web/value/value_min.php';
-include_once $path_php . 'web/formula/formula_min.php';
-include_once $path_php . 'web/formula/formula_value_min.php';
+include_once $path_php . 'api/sandbox/user_sandbox_min.php';
+include_once $path_php . 'api/sandbox/user_sandbox_named_min.php';
+include_once $path_php . 'api/word/word_min.php';
+include_once $path_php . 'api/word/triple_min.php';
+include_once $path_php . 'api/phrase/phrase_group_min.php';
+include_once $path_php . 'api/value/value_min.php';
+include_once $path_php . 'api/formula/formula_min.php';
+include_once $path_php . 'api/formula/formula_value_min.php';
 
 // include all other libraries that are usually needed
 include_once ROOT_PATH . 'db_link/zu_lib_sql_link.php';

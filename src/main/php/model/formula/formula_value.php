@@ -40,6 +40,8 @@
   
 */
 
+use formula\formula_value_min;
+
 class formula_value
 {
 

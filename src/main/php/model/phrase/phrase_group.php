@@ -34,6 +34,8 @@
   
 */
 
+use phrase\phrase_group_min;
+
 class phrase_group
 {
     /*

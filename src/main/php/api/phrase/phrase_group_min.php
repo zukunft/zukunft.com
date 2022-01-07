@@ -2,8 +2,8 @@
 
 /*
 
-    user_sandbox_named_min.php - extends the minimal superclass for named objects such as formulas
-    --------------------------
+    phrase_group_min.php - the minimal phrase group object
+    --------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,18 +30,19 @@
 
 */
 
-class user_sandbox_named_min extends user_sandbox_min
+namespace phrase;
+use sandbox\user_sandbox_named_min;
+
+class phrase_group_min extends user_sandbox_named_min
 {
 
-    // the unique name of the object that is shown to the user
-    public string $name; // the name must always be set
+    // list of word_min and triple_min objects
+    public array $lst;
 
     function __construct()
     {
         parent::__construct();
-        $this->name = '';
+        $this->lst = [];
     }
 
 }
-
-

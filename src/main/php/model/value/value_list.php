@@ -859,7 +859,7 @@ class value_list
         // display the common words
         log_debug('value_list->html common dsp');
         if (!empty($common_phr_ids)) {
-            $common_phr_lst = new word_list($this->usr);
+            $common_phr_lst = new word_list_dsp($this->usr);
             $common_phr_lst->load_by_ids($common_phr_ids);
             $result .= ' in (' . implode(",", $common_phr_lst->names_linked()) . ')<br>';
         }

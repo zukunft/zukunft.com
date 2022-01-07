@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_group_min.php - the minimal phrase group object
-    --------------------
+    formula_value_min.php - the minimal result value object
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,16 +30,21 @@
 
 */
 
-class phrase_group_min extends user_sandbox_named_min
+namespace formula;
+use phrase\phrase_group_min;
+use sandbox\user_sandbox_min;
+
+class formula_value_min extends user_sandbox_min
 {
 
-    // list of word_min and triple_min objects
-    public array $lst;
+    public phrase_group_min $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    public float $val; // if the calculated number
 
     function __construct()
     {
         parent::__construct();
-        $this->lst = [];
+        $this->grp = new phrase_group_min();
+        $this->val = 0;
     }
 
 }

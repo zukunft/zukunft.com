@@ -2,8 +2,8 @@
 
 /*
 
-    formula_value_min.php - the minimal result value object
-    ---------------------
+    value_min.php - the minimal value object
+    -------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,11 +30,16 @@
 
 */
 
-class formula_value_min extends user_sandbox_min
+namespace value;
+
+use phrase\phrase_group_min;
+use sandbox\user_sandbox_min;
+
+class value_min extends user_sandbox_min
 {
 
-    public phrase_group_min $grp; // the phrase group with the list of words and triples (not the source words and triples)
-    public float $val; // if the calculated number
+    public phrase_group_min $grp; // the phrase group with the list of words and triples
+    public float $val; // if the number for the phrase group is not set the object is not created, so null is not needed
 
     function __construct()
     {

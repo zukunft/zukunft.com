@@ -32,6 +32,20 @@
 
 */
 
+namespace sandbox;
+
+use formula;
+use formula\formula_min;
+use user;
+use user_sandbox;
+use value;
+use value\value_min;
+use word;
+use word\triple_min;
+use word\word_min;
+use word_link;
+use function log_err;
+
 class user_sandbox_min
 {
 

@@ -34,8 +34,13 @@ function run_word_unit_db_tests(testing $t)
 {
 
     global $db_con;
+    global $usr;
+
+    // init
 
     $t->header('Unit database tests of the word class (src/main/php/model/word/word.php)');
+    $t->name = 'word->';
+    $t->resource_path = 'db/word/';
 
     $t->subheader('Word types tests');
 
@@ -55,7 +60,55 @@ function run_word_unit_db_tests(testing $t)
     $wrd = $t->load_word(word::TN_READ);
     $t->assert_api($wrd);
 
+
+    $t->header('Unit database tests of the word list class (src/main/php/model/word/word_list.php)');
+    $t->name = 'word_list->';
+
+    $t->subheader('Word list load and modification tests');
+
+    // create word objects for testing
+    $wrd = new word($usr);
+    $wrd->name = word::TN_READ;
+    $wrd->load();
+    $wrd_scale = new word($usr);
+    $wrd_scale->name = word::TN_READ_SCALE;
+    $wrd_scale->load();
+    $phr = new phrase($usr);
+    $phr->name = word_link::TN_READ_NAME;
+    $phr->load();
+    //$phr_grp = new phrase_group($usr);
+    //$phr_grp->grp_name = word::TN_READ_SCALE;
+    //$phr_grp->load_by_ids((new phr_ids( array($phr->id))));
+
+    // load a word list by the word id
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_ids(array($wrd->id));
+    $t->assert('load_by_id', $wrd_lst->name(), '"' . word::TN_READ . '"');
+
+    // load a word list by the word ids
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_ids(array($wrd->id, $wrd_scale->id));
+    $t->assert('load_by_ids', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
+
+    // load a word list by the word name
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_READ));
+    $t->assert('load_by_name', $wrd_lst->name(), '"' . word::TN_READ . '"');
+
+    // load a word list by the word ids
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_READ, word::TN_READ_SCALE));
+    $t->assert('load_by_names', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
+
+    // add a word to a list by the word id
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_ids(array($wrd->id));
+    $wrd_lst->add_id($wrd_scale->id);
+    $t->assert('add_id', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
+
+
     $t->header('Unit database tests of the word class (src/main/php/model/word/word_link.php)');
+    $t->name = 'word_link->';
 
     $t->subheader('Frontend API tests');
 

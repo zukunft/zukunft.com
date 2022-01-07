@@ -269,7 +269,7 @@ class phrase
      * conversion
      */
 
-    protected function get_word(): word
+    function get_word(): word
     {
         $wrd = new word($this->usr);
         $wrd->id = $this->id;
