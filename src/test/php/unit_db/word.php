@@ -76,9 +76,7 @@ function run_word_unit_db_tests(testing $t)
     $phr = new phrase($usr);
     $phr->name = word_link::TN_READ_NAME;
     $phr->load();
-    //$phr_grp = new phrase_group($usr);
-    //$phr_grp->grp_name = word::TN_READ_SCALE;
-    //$phr_grp->load_by_ids((new phr_ids( array($phr->id))));
+    $phr_grp = $t->load_phrase_group(array(word_link::TN_READ_NAME));
 
     // load a word list by the word id
     $wrd_lst = new word_list($usr);
@@ -105,6 +103,11 @@ function run_word_unit_db_tests(testing $t)
     $wrd_lst->load_by_ids(array($wrd->id));
     $wrd_lst->add_id($wrd_scale->id);
     $t->assert('add_id', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
+
+    // load a word list by the phrase group
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_grp_id($phr_grp->id);
+    //$t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ_NAME . '"');
 
 
     $t->header('Unit database tests of the word class (src/main/php/model/word/word_link.php)');
