@@ -68,7 +68,7 @@ class view_cmp_dsp extends view_cmp
 
     // view type table with parameters:
     // row start words (build a tree )
-    // col word (if time word set newest value to the right
+    // col word (if time word set the newest value to the right
 
     function table($phr): string
     {

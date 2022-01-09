@@ -103,7 +103,7 @@ class word_list_unit_tests
 
         $t->subheader('Modify and filter word lists');
 
-        // merge two lists
+        // create words for unit testing
         $wrd1 = new word($usr);
         $wrd1->id = 1;
         $wrd1->name = 'word1';
@@ -113,6 +113,28 @@ class word_list_unit_tests
         $wrd3 = new word($usr);
         $wrd3->id = 3;
         $wrd3->name = 'word3';
+        $wrd_time = new word($usr);
+        $wrd_time->id = 4;
+        $wrd_time->name = 'time_word';
+        $wrd_time->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+        $wrd_time2 = new word($usr);
+        $wrd_time2->id = 5;
+        $wrd_time2->name = 'time_word2';
+        $wrd_time2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+        $wrd_scale = new word($usr);
+        $wrd_scale->id = 6;
+        $wrd_scale->name = 'scale_word';
+        $wrd_scale->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
+        $wrd_percent = new word($usr);
+        $wrd_percent->id = 7;
+        $wrd_percent->name = 'percent_word';
+        $wrd_percent->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT);
+        $wrd_measure = new word($usr);
+        $wrd_measure->id = 8;
+        $wrd_measure->name = 'measure_word';
+        $wrd_measure->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_MEASURE);
+
+        // merge two lists
         $wrd_lst = new word_list($usr);
         $wrd_lst->add($wrd1);
         $wrd_lst->add($wrd3);
@@ -130,6 +152,102 @@ class word_list_unit_tests
         $wrd_lst->merge($wrd_lst2);
         $wrd_lst->diff_by_ids(array(2));
         $t->assert($t->name . '->diff by id and check by ids', $wrd_lst->ids(), array(1, 3));
+
+        // with time
+        $wrd_lst_time = new word_list($usr);
+        $wrd_lst_time->add($wrd1);
+        $wrd_lst_time->add($wrd3);
+        $wrd_lst_time->add($wrd_time);
+        $t->assert($t->name . '->with time by ids', $wrd_lst_time->ids(), array(1, 3, 4));
+
+        // ex time
+        $wrd_lst_time->ex_time();
+        $t->assert($t->name . '->ex_time by ids', $wrd_lst_time->ids(), array(1, 3));
+
+        // with scale
+        $wrd_lst_scale = new word_list($usr);
+        $wrd_lst_scale->add($wrd2);
+        $wrd_lst_scale->add($wrd_scale);
+        $wrd_lst_scale->add($wrd3);
+        $t->assert($t->name . '->with scale', $wrd_lst_scale->name(), '"word2","scale_word","word3"');
+
+        // ex scale
+        $wrd_lst_scale->ex_scaling();
+        $t->assert($t->name . '->ex_time', $wrd_lst_scale->name(), '"word2","word3"');
+
+        // with percent
+        $wrd_lst_percent = new word_list($usr);
+        $wrd_lst_percent->add($wrd1);
+        $wrd_lst_percent->add($wrd2);
+        $wrd_lst_percent->add($wrd_percent);
+        $t->assert($t->name . '->with percent', $wrd_lst_percent->name(), '"word1","word2","percent_word"');
+
+        // ex percent
+        $wrd_lst_percent->ex_percent();
+        $t->assert($t->name . '->ex_percent', $wrd_lst_percent->name(), '"word1","word2"');
+
+        // unsorted
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd3);
+        $wrd_lst->add($wrd1);
+        $wrd_lst->add($wrd2);
+        $t->assert($t->name . '->unsorted', $wrd_lst->name(), '"word3","word1","word2"');
+
+        // sorted
+        $wrd_lst->wlsort();
+        $t->assert($t->name . '->sorted', $wrd_lst->name(), '"word1","word2","word3"');
+
+        // unfiltered
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd3);
+        $wrd_lst->add($wrd1);
+        $wrd_lst->add($wrd2);
+        $wrd_lst->add($wrd_time);
+        $t->assert($t->name . '->unsorted', $wrd_lst->name(), '"word3","word1","word2","time_word"');
+
+        // filtered
+        $wrd_lst_filter = new word_list($usr);
+        $wrd_lst_filter->add($wrd3);
+        $wrd_lst_filter->add($wrd2);
+        $wrd_lst_filter->add($wrd_percent);
+        $wrd_lst_filtered = $wrd_lst->filter($wrd_lst_filter);
+        $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
+
+        // time list
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd_time);
+        $wrd_lst->add($wrd2);
+        $wrd_lst->add($wrd_time2);
+        $wrd_lst_time = $wrd_lst->time_lst();
+        $t->assert($t->name . '->time list', $wrd_lst_time->name(), '"time_word","time_word2"');
+
+        // scaling list
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd_time);
+        $wrd_lst->add($wrd_measure);
+        $wrd_lst->add($wrd_scale);
+        $wrd_lst_measure = $wrd_lst->measure_lst();
+        $t->assert($t->name . '->measure list', $wrd_lst_measure->name(), '"measure_word"');
+
+        // measure list
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd_scale);
+        $wrd_lst_scaling = $wrd_lst->scaling_lst();
+        $t->assert($t->name . '->scaling list', $wrd_lst_scaling->name(), '"scale_word"');
+
+        // percent list
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd_scale);
+        $wrd_lst_percent = $wrd_lst->percent_lst();
+        $t->assert($t->name . '->percent list', $wrd_lst_percent->name(), '""');
+
+        // JSON export list
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd_time);
+        $wrd_lst->add($wrd_measure);
+        $wrd_lst->add($wrd_scale);
+        $json = json_encode($wrd_lst->export_obj());
+        $t->assert($t->name . '->measure list', $json, '[{"plural":"","description":"","type":"time","view":"","refs":[],"name":"time_word","share":"","protection":""},{"plural":"","description":"","type":"measure","view":"","refs":[],"name":"measure_word","share":"","protection":""},{"plural":"","description":"","type":"scaling","view":"","refs":[],"name":"scale_word","share":"","protection":""}]');
 
     }
 

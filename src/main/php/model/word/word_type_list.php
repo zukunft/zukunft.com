@@ -36,20 +36,38 @@ class word_type_list extends user_type_list
     // list of the word types that have a coded functionality
     // TODO add the missing functionality and unit tests
     const DBL_NORMAL = "default";
-    const DBL_MATH_CONST = "constant";
+    const DBL_MATH_CONST = "constant"; // TODO add usage sample
     const DBL_TIME = "time";
     const DBL_TIME_JUMP = "time_jump";
-    const DBL_LATEST = "latest";
+    const DBL_LATEST = "latest"; // TODO add usage sample
     const DBL_PERCENT = "percent";
     const DBL_MEASURE = "measure";
     const DBL_SCALING = "scaling";
     const DBL_SCALING_HIDDEN = "scaling_hidden";
     const DBL_SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
-    const DBL_SCALED_MEASURE = "scaled_measure";
+    const DBL_SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
     const DBL_FORMULA_LINK = "formula_link";
-    const DBL_CALC = "calc";
-    const DBL_LAYER = "view";
+    const DBL_CALC = "calc"; // TODO add usage sample
+    const DBL_LAYER = "view"; // TODO add usage sample
     const DBL_OTHER = "type_other";
+
+    const TYPES = array(
+        self::DBL_NORMAL,
+        self::DBL_MATH_CONST,
+        self::DBL_TIME,
+        self::DBL_TIME_JUMP,
+        self::DBL_LATEST,
+        self::DBL_PERCENT,
+        self::DBL_MEASURE,
+        self::DBL_SCALING,
+        self::DBL_SCALING_HIDDEN,
+        self::DBL_SCALING_PCT,
+        self::DBL_SCALED_MEASURE,
+        self::DBL_FORMULA_LINK,
+        self::DBL_CALC,
+        self::DBL_LAYER,
+        self::DBL_OTHER
+    );
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -67,21 +85,16 @@ class word_type_list extends user_type_list
     function load_dummy()
     {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = word_type_list::DBL_NORMAL;
-        $type->code_id = word_type_list::DBL_NORMAL;
-        $this->lst[2] = $type;
-        $this->hash[word_type_list::DBL_NORMAL] = 2;
-        $type = new user_type();
-        $type->name = word_type_list::DBL_TIME;
-        $type->code_id = word_type_list::DBL_TIME;
-        $this->lst[3] = $type;
-        $this->hash[word_type_list::DBL_TIME] = 3;
-        $type = new user_type();
-        $type->name = word_type_list::DBL_MEASURE;
-        $type->code_id = word_type_list::DBL_MEASURE;
-        $this->lst[4] = $type;
-        $this->hash[word_type_list::DBL_MEASURE] = 4;
+        $i = 2;
+        foreach (self::TYPES as $type_name)
+        {
+            $type = new user_type();
+            $type->name = $type_name;
+            $type->code_id = $type_name;
+            $this->lst[$i] = $type;
+            $this->hash[$type_name] = $i;
+            $i++;
+        }
     }
 
     /**

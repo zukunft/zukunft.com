@@ -641,6 +641,35 @@ class word_list
         return $result;
     }
 
+    /**
+     * look at a word list and remove the general word,
+     * if there is a more specific word also part of the list
+     * e.g. remove "Country", but keep "Switzerland"
+     *
+     * TODO review  zu_lst_not_in_no_key
+     */
+    function keep_only_specific(): array
+    {
+        log_debug(self::class . '->keep_only_specific (' . $this->dsp_id() . ')');
+
+        $result = $this->ids();
+        foreach ($this->lst as $wrd) {
+            if (!isset($wrd->usr)) {
+                $wrd->usr = $this->usr;
+            }
+            $wrd_lst_is = $wrd->is();
+            if (isset($wrd_lst_is)) {
+                if (!empty($wrd_lst_is->ids())) {
+                    $result = zu_lst_not_in_no_key($result, $wrd_lst_is->ids());
+                    log_debug(self::class . '->keep_only_specific -> "' . $wrd->name . '" is of type ' . $wrd_lst_is->name());
+                }
+            }
+        }
+
+        log_debug(self::class . '->keep_only_specific -> (' . dsp_array($result) . ')');
+        return $result;
+    }
+
     /*
      * function that changes the list e.g. adding and filter
      */
@@ -759,33 +788,6 @@ class word_list
             }
         }
         log_debug(self::class . '->diff_by_ids -> ' . $this->dsp_id() . ' (' . dsp_array($this->ids()) . ')');
-    }
-
-    /**
-     * look at a word list and remove the general word,
-     * if there is a more specific word also part of the list
-     * e.g. remove "Country", but keep "Switzerland"
-     */
-    function keep_only_specific(): array
-    {
-        log_debug(self::class . '->keep_only_specific (' . $this->dsp_id() . ')');
-
-        $result = $this->ids();
-        foreach ($this->lst as $wrd) {
-            if (!isset($wrd->usr)) {
-                $wrd->usr = $this->usr;
-            }
-            $wrd_lst_is = $wrd->is();
-            if (isset($wrd_lst_is)) {
-                if (!empty($wrd_lst_is->ids())) {
-                    $result = zu_lst_not_in_no_key($result, $wrd_lst_is->ids());
-                    log_debug(self::class . '->keep_only_specific -> "' . $wrd->name . '" is of type ' . $wrd_lst_is->name());
-                }
-            }
-        }
-
-        log_debug(self::class . '->keep_only_specific -> (' . dsp_array($result) . ')');
-        return $result;
     }
 
     /**
