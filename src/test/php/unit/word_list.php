@@ -101,6 +101,36 @@ class word_list_unit_tests
         $verb_id = 1;
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $verb_id, $direction);
 
+        $t->subheader('Modify and filter word lists');
+
+        // merge two lists
+        $wrd1 = new word($usr);
+        $wrd1->id = 1;
+        $wrd1->name = 'word1';
+        $wrd2 = new word($usr);
+        $wrd2->id = 2;
+        $wrd2->name = 'word2';
+        $wrd3 = new word($usr);
+        $wrd3->id = 3;
+        $wrd3->name = 'word3';
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->add($wrd1);
+        $wrd_lst->add($wrd3);
+        $wrd_lst2 = new word_list($usr);
+        $wrd_lst2->add($wrd2);
+        $wrd_lst2->add($wrd3);
+        $wrd_lst->merge($wrd_lst2);
+        $t->assert($t->name . '->merge and check by ids', $wrd_lst->ids(), array(1, 2, 3));
+
+        // diff of two lists
+        $wrd_lst->diff($wrd_lst2);
+        $t->assert($t->name . '->diff and check by ids', $wrd_lst->ids(), array(1));
+
+        // diff by ids
+        $wrd_lst->merge($wrd_lst2);
+        $wrd_lst->diff_by_ids(array(2));
+        $t->assert($t->name . '->diff by id and check by ids', $wrd_lst->ids(), array(1, 3));
+
     }
 
     /**

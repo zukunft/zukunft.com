@@ -84,10 +84,12 @@ function run_value_test(testing $t)
     }
 
     // test another rebuild_grp_id by value id
-    $chk_phr_grp = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020))->get_grp();
+    $chk_phr_grp = $t->load_word_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO))->get_grp();
+    $time_phr = $t->load_phrase(word::TN_2020);
     $chk_val = new value($t->usr1);
     if ($chk_phr_grp != null) {
         $chk_val->grp = $chk_phr_grp;
+        $chk_val->time_phr = $time_phr;
         $chk_val->load();
     }
     $target = true;
@@ -105,7 +107,8 @@ function run_value_test(testing $t)
 
         // ... and check the words loaded
         $result = $chk_val->name();
-        $target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
+        //$target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
+        $target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant,System Test Another Time Word e.g. 2020';
         $t->dsp(', value->load words', $target, $result);
 
         // ... and check the time word
@@ -125,6 +128,7 @@ function run_value_test(testing $t)
                 $result = '';
             }
             $target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
+            //$target = 'System Test Word Unit e.g. inhabitant,System Test Word Member e.g. Zurich,System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton';
             $t->dsp(', value->load_phrases reloaded words', $target, $result);
 
             // ... and check the time word reloading
@@ -135,7 +139,8 @@ function run_value_test(testing $t)
             } else {
                 $result = '';
             }
-            $target = word::TN_2020;
+            //$target = word::TN_2020;
+            $target = '';
             $t->dsp(', value->load_phrases reloaded time word', $target, $result);
         }
     }

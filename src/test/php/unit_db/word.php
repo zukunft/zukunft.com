@@ -98,16 +98,22 @@ function run_word_unit_db_tests(testing $t)
     $wrd_lst->load_by_names(array(word::TN_READ, word::TN_READ_SCALE));
     $t->assert('load_by_names', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
 
+    // load a word list by the phrase group
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_grp_id($phr_grp->id);
+    //$t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ_NAME . '"');
+
     // add a word to a list by the word id
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_ids(array($wrd->id));
     $wrd_lst->add_id($wrd_scale->id);
     $t->assert('add_id', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
 
-    // load a word list by the phrase group
+    // add a word to a list by the word name
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_grp_id($phr_grp->id);
-    //$t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ_NAME . '"');
+    $wrd_lst->load_by_ids(array($wrd->id));
+    $wrd_lst->add_name(word::TN_READ_SCALE);
+    $t->assert('add_id', $wrd_lst->name(), '"' . word::TN_READ . '","' . word::TN_READ_SCALE . '"');
 
 
     $t->header('Unit database tests of the word class (src/main/php/model/word/word_link.php)');

@@ -95,6 +95,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(DB_TYPE_FORMULA_LINK, 'protect_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_VIEW, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_VIEW, 'protect_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_VIEW, 'protect_id', 'smallint');
