@@ -59,15 +59,23 @@ class phrase_group
     );
 
     /*
+     * for system testing
+     */
+
+    const TN_READ = 'Pi (math)';
+
+    /*
      * object vars
      */
 
     // database fields
     public ?int $id = null;       // the database id of the word group
     public ?string $grp_name;     // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
-    public ?string $auto_name;    // the automatically created generic name for the word group, used for a quick display of values
     public phrase_list $phr_lst;  // the phrase list object
     public ?string $id_order_txt; // the ids from above in the order that the user wants to see them
+
+    // to deprecate
+    public ?string $auto_name;    // the automatically created generic name for the word group, used for a quick display of values
 
     // in memory only fields
     public user $usr;             // the user object of the person for whom the word and triple list is loaded, so to say the viewer
@@ -228,6 +236,8 @@ class phrase_group
             return 'trp_ids';
         } elseif (count($this->phr_lst->wrd_ids()) > 0) {
             return 'wrd_ids';
+        } elseif ($this->grp_name != '') {
+            return 'name';
         } else {
             log_err('Either the database ID (' . $this->id . ') or the ' .
                 self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->usr->id . ') must be set to load a ' .
@@ -253,13 +263,16 @@ class phrase_group
         } elseif ($wrd_txt != '' and $trp_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
             $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
-            $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS, self::FLD_WORD_IDS));
+            $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS, self::FLD_TRIPLE_IDS));
         } elseif ($trp_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $trp_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_TRIPLE_IDS));
         } elseif ($wrd_txt != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $wrd_txt);
             $qp->sql = $db_con->select_by_field_list(array(self::FLD_WORD_IDS));
+        } elseif ($this->grp_name != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, $this->grp_name);
+            $qp->sql = $db_con->select_by_field_list(array(self::FLD_NAME));
         }
         $qp->par = $db_con->get_par();
         return $qp;

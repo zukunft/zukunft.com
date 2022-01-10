@@ -889,7 +889,8 @@ class word_link extends user_sandbox_link_description
     function phrase(): phrase
     {
         $phr = new phrase($this->usr);
-        $phr->id = $this->id;
+        // the triple has positive id, but the phrase uses a negative id
+        $phr->id = $this->id * -1;
         $phr->name = $this->name;
         $phr->obj = $this;
         log_debug('word_link->phrase of ' . $this->dsp_id());
@@ -1452,8 +1453,8 @@ class word_link extends user_sandbox_link_description
         if ($val_lst->has_values()) {
             $result->add($val_lst->del());
         }
-        // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
 
+        // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
         $result->add($grp_lst->del());
 
         return $result;

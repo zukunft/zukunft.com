@@ -48,12 +48,12 @@ class phrase_group_list
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con, bool $get_name = false): sql_par
     {
-        $result = '';
-        $sql_name = self::class . '_by_';
+        $qp = new sql_par(self::class);
+        $qp->name = self::class . '_by_';
         $sql_where = '';
 
         $db_con->set_type(DB_TYPE_PHRASE_GROUP);
@@ -61,11 +61,11 @@ class phrase_group_list
         if ($this->phr != null) {
             if ($this->phr->id <> 0) {
                 if ($this->phr->is_word()) {
-                    $sql_name .= 'word_id';
+                    $qp->name .= 'word_id';
                     $db_con->add_par(sql_db::PAR_INT, $this->phr->id);
                     $sql_where = 'l.word_id = ' . $db_con->par_name();
                 } else {
-                    $sql_name .= 'triple_id';
+                    $qp->name .= 'triple_id';
                     $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1 );
                     $sql_where = 'l.triple_id = ' . $db_con->par_name();
                 }
@@ -75,7 +75,7 @@ class phrase_group_list
             log_err("The phrase and the user must be set to load a phrase group list.", "phrase_group_list->load");
         } else {
 
-            $db_con->set_name($sql_name);
+            $db_con->set_name($qp->name);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(phrase_group::FLD_NAMES);
             if ($this->phr->is_word()) {
@@ -84,16 +84,12 @@ class phrase_group_list
                 $db_con->set_join_fields(array('triple_id'), DB_TYPE_PHRASE_GROUP_TRIPLE_LINK, phrase_group::FLD_ID, phrase_group::FLD_ID);
             }
             $db_con->set_where_text($sql_where);
-            $sql = $db_con->select_by_id();
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
 
-            if ($get_name) {
-                $result = $sql_name;
-            } else {
-                $result = $sql;
-            }
         }
 
-        return $result;
+        return $qp;
     }
 
     function load(): bool
@@ -105,14 +101,13 @@ class phrase_group_list
         if (!isset($this->usr)) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $sql = $this->load_sql($db_con);
-            $sql_name = $this->load_sql($db_con, true);
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() == '') {
                 log_err('The phrase must be set to load ' . self::class, self::class . '->load');
             } else {
                 // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-                $db_rows = $db_con->get_old($sql, $sql_name, array($this->phr->id));
+                $db_rows = $db_con->get($qp);
                 if ($db_rows != null) {
                     foreach ($db_rows as $db_row) {
                         $phr_grp = new phrase_group($this->usr);

@@ -508,9 +508,40 @@ class test_base
         return $phr_lst;
     }
 
-    function load_phrase_group($array_of_phrase_str): phrase_group
+    /**
+     * load a phrase group by the list of phrase names
+     * @param array $array_of_phrase_str with the names of the words or triples
+     * @return phrase_group
+     */
+    function load_phrase_group(array $array_of_phrase_str): phrase_group
     {
         return $this->load_phrase_list($array_of_phrase_str)->get_grp();
+    }
+
+    /**
+     * load a phrase group by the name
+     * which can be either the name set by the users
+     * or the automatically created name based on the phrases
+     * @param string $phrase_group_name
+     * @return phrase_group
+     */
+    function load_phrase_group_by_name(string $phrase_group_name): phrase_group
+    {
+        global $usr;
+        $phr_grp = new phrase_group($usr);
+        $phr_grp->grp_name = $phrase_group_name;
+        $phr_grp->load();
+        return $phr_grp;
+    }
+
+    function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): phrase_group
+    {
+        global $usr;
+        $phr_grp = new phrase_group($usr);
+        $phr_grp->phr_lst = $this->load_phrase_list($array_of_phrase_str);
+        $phr_grp->grp_name = $phrase_group_name;
+        $phr_grp->get();
+        return $phr_grp;
     }
 
     function load_value_by_id(user $usr, int $id): value

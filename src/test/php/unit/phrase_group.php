@@ -73,6 +73,11 @@ class phrase_group_unit_tests
         $phr_grp->phr_lst = $phr_lst;
         $t->assert_load_sql($db_con, $phr_grp);
 
+        // sql to load the phrase group by name
+        $phr_grp = new phrase_group($usr);
+        $phr_grp->grp_name = phrase_group::TN_READ;
+        $t->assert_load_sql($db_con, $phr_grp);
+
         // sql to load the word list ids
         $wrd_lst = new word_list($usr);
         $wrd1 = new word($usr);
@@ -112,7 +117,7 @@ class phrase_group_unit_tests
         $phr_grp_lst = new phrase_group_list();
         $phr_grp_lst->usr = $usr;
         $phr_grp_lst->phr = $wrd->phrase();
-        $created_sql = $phr_grp_lst->load_sql($db_con);
+        $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_word.sql');
         $t->assert('phrase_group_list->load_all_word_linked', $t->trim($created_sql), $t->trim($expected_sql));
 
@@ -122,7 +127,7 @@ class phrase_group_unit_tests
         $phr_grp_lst = new phrase_group_list();
         $phr_grp_lst->usr = $usr;
         $phr_grp_lst->phr = $lnk->phrase();
-        $created_sql = $phr_grp_lst->load_sql($db_con);
+        $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_triple.sql');
         $t->assert('phrase_group_list->load_all_triple_linked', $t->trim($created_sql), $t->trim($expected_sql));
 

@@ -746,7 +746,7 @@ class phrase_list
     }
 
     /**
-     * @return array with the triple ids
+     * @return array with the triple ids (converted from the negative phrase ids)
      */
     function trp_ids(): array
     {
@@ -756,7 +756,7 @@ class phrase_list
                 foreach ($this->lst as $phr) {
                     // use only valid triple ids
                     if ($phr->id < 0) {
-                        $result[] = $phr->id;
+                        $result[] = $phr->id * -1;
                     }
                 }
             }

@@ -37,7 +37,7 @@ function run_value_unit_db_tests(testing $t)
 
     $t->subheader('Frontend API tests');
 
-    $phr_grp = $t->load_phrase_group(array(word_link::TN_READ_NAME));
+    $phr_grp = $t->add_phrase_group(array(word_link::TN_READ_NAME),phrase_group::TN_READ);
     $val = $t->load_value_by_phr_grp($phr_grp);
     $t->assert_api($val);
 

@@ -76,7 +76,7 @@ function run_word_unit_db_tests(testing $t)
     $phr = new phrase($usr);
     $phr->name = word_link::TN_READ_NAME;
     $phr->load();
-    $phr_grp = $t->load_phrase_group(array(word_link::TN_READ_NAME));
+    $phr_grp = $t->load_phrase_group(array(word_link::TN_READ));
 
     // load a word list by the word id
     $wrd_lst = new word_list($usr);
@@ -101,6 +101,11 @@ function run_word_unit_db_tests(testing $t)
     // load a word list by the phrase group
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_grp_id($phr_grp->id);
+    $t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ . '"');
+
+    // load a word list by type
+    //$wrd_lst = new word_list($usr);
+    //$wrd_lst->load_by_grp_id($phr_grp->id);
     //$t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ_NAME . '"');
 
     // add a word to a list by the word id

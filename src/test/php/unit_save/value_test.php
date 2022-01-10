@@ -123,12 +123,13 @@ function run_value_test(testing $t)
             $chk_val->wrd_lst = null;
             $chk_val->load_phrases();
             if (isset($chk_val->wrd_lst)) {
+                $chk_val->wrd_lst->wlsort();
                 $result = dsp_array($chk_val->wrd_lst->names());
             } else {
                 $result = '';
             }
-            //$target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
-            $target = 'System Test Word Unit e.g. inhabitant,System Test Word Member e.g. Zurich,System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton';
+            //$target = 'System Test Word Unit e.g. inhabitant,System Test Word Member e.g. Zurich,System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton';
+            $target = 'System Test Scaling Word e.g. millions,System Test Word Category e.g. Canton,System Test Word Member e.g. Zurich,System Test Word Unit e.g. inhabitant';
             $t->dsp(', value->load_phrases reloaded words', $target, $result);
 
             // ... and check the time word reloading
