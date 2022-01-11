@@ -875,8 +875,8 @@ class formula_value
         $title = '';
         // add the words that specify the calculated value to the title
         $val_phr_lst = clone $this->phr_lst;
+        $val_phr_lst->add($this->time_phr);
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
-        $val_wrd_lst->add($this->time_phr);
         $title .= dsp_array($val_wrd_lst->names_linked_ex_measure_and_time());
         $time_phr = dsp_array($val_wrd_lst->names_linked_time());
         if ($time_phr <> '') {

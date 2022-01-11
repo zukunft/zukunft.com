@@ -74,7 +74,7 @@ abstract class BasicEnum {
         $calledClass = get_called_class();
         if (!array_key_exists($calledClass, self::$const_cache_array)) {
             $reflect = new ReflectionClass($calledClass);
-            self::$const_cache_array[$calledClass] = $reflect->get_constants();
+            self::$const_cache_array[$calledClass] = $reflect->getConstants();
         }
         return self::$const_cache_array[$calledClass];
     }

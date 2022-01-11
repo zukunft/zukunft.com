@@ -2,32 +2,32 @@
 
 /*
 
-  phrase_list.php - a list of phrase (word or triple) objects
-  ---------------
-  
-  Compared to phrase_groups a phrase list is a memory only object that cannot be saved to the database
-  
-  This file is part of zukunft.com - calc with words
+    phrase_list.php - a list of phrase (word or triple) objects
+    ---------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    Compared to phrase_groups a phrase list is a memory only object that cannot be saved to the database
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -37,8 +37,8 @@ class phrase_list
     // array of the loaded phrase objects
     // (key is at the moment the database id, but it looks like this has no advantages,
     // so a normal 0 to n order could have more advantages)
-    public array $lst = array();
-    public user $usr;      // the user object of the person for whom the phrase list is loaded, so to say the viewer
+    public array $lst;
+    public user $usr;  // the user object of the person for whom the phrase list is loaded, so to say the viewer
 
     /**
      * always set the user because a phrase list is always user specific
@@ -46,6 +46,7 @@ class phrase_list
      */
     function __construct(user $usr)
     {
+        $this->lst = array();
         $this->usr = $usr;
     }
 
@@ -60,8 +61,8 @@ class phrase_list
     }
 
     /*
-    load function
-    */
+     * load function
+     */
 
     /**
      * create an SQL statement to retrieve a list of words from the database
@@ -1454,23 +1455,21 @@ class phrase_list
     /**
      * @return array all phrases that are part of each phrase group of the list
      */
-    function common($filter_lst): array
+    function common(phrase_list $filter_lst): array
     {
         $result = array();
-        if (is_array($this->lst) and is_array($filter_lst->lst)) {
-            log_debug('phrase_list->common of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
-            if (count($this->lst) > 0) {
-                foreach ($this->lst as $phr) {
-                    if (isset($phr)) {
-                        log_debug('phrase_list->common check if "' . $phr->name . '" is in ' . $filter_lst->name());
-                        if (in_array($phr, $filter_lst->lst)) {
-                            $result[] = $phr;
-                        }
+        log_debug('phrase_list->common of ' . $this->dsp_name() . ' and ' . $filter_lst->name());
+        if (count($this->lst) > 0) {
+            foreach ($this->lst as $phr) {
+                if (isset($phr)) {
+                    log_debug('phrase_list->common check if "' . $phr->name . '" is in ' . $filter_lst->name());
+                    if (in_array($phr, $filter_lst->lst)) {
+                        $result[] = $phr;
                     }
                 }
-                $this->lst = $result;
-                $this->id_lst();
             }
+            $this->lst = $result;
+            $this->id_lst();
         }
         log_debug('phrase_list->common (' . dsp_count($this->lst) . ')');
         return $result;

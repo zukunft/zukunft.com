@@ -220,12 +220,7 @@ class word extends user_sandbox_description
     public ?int $values = null;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
-    public ?string $is_wrd = null;    // the main type object e.g. for "ABB" it is the word object for "Company"
-    public ?int $is_wrd_id = null;    // the id for the parent (verb "is") object
-    public ?int $dsp_pos = null;      // position of the word on the screen
-    public ?int $dsp_lnk_id = null;   // position or link id based on which to item is displayed on the screen
     public ?int $link_type_id = null; // used in the word list to know based on which relation the word was added to the list
-
 
     // only used for the export object
     private ?view $view = null; // name of the default view for this word
@@ -259,10 +254,6 @@ class word extends user_sandbox_description
         $this->view_id = null;
         $this->values = null;
 
-        $this->is_wrd = null;
-        $this->is_wrd_id = null;
-        $this->dsp_pos = null;
-        $this->dsp_lnk_id = null;
         $this->link_type_id = null;
 
         $this->share_id = null;
@@ -295,10 +286,6 @@ class word extends user_sandbox_description
         $dsp_obj->view_id = $this->view_id;
         $dsp_obj->values = $this->values;
 
-        $dsp_obj->is_wrd = $this->is_wrd;
-        $dsp_obj->is_wrd_id = $this->plural;
-        $dsp_obj->dsp_pos = $this->dsp_pos;
-        $dsp_obj->dsp_lnk_id = $this->dsp_lnk_id;
         $dsp_obj->link_type_id = $this->link_type_id;
 
         $dsp_obj->share_id = $this->share_id;

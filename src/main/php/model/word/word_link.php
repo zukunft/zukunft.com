@@ -107,7 +107,7 @@ class word_link extends user_sandbox_link_description
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
 
         // also create the link objects because there is now case where they are supposed to be null
-        $this->create_objects($usr);
+        $this->create_objects();
     }
 
     /**
@@ -120,10 +120,10 @@ class word_link extends user_sandbox_link_description
         $this->owner_id = null;
         $this->excluded = null;
 
-        $this->create_objects($this->usr);
+        $this->create_objects();
     }
 
-    private function create_objects(user $usr)
+    private function create_objects()
     {
         $this->from = new phrase($this->usr);
         $this->verb = new verb();
@@ -200,7 +200,6 @@ class word_link extends user_sandbox_link_description
     function load_standard(?sql_par $qp = null, string $class = self::class): bool
     {
         global $db_con;
-        $result = false;
 
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
