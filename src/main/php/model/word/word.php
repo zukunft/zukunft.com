@@ -111,6 +111,7 @@ class word extends user_sandbox_description
     const TN_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
     const TN_SECTOR = 'System Test Word with differentiator e.g. Sector';
     const TN_ENERGY = 'System Test Word usage as differentiator e.g. Energy';
+    const TN_WIND_ENERGY = 'System Test Word usage as differentiator e.g. Wind Energy';
     const TN_CASH = 'System Test Word multi levels e.g. Cash';
     const TN_YEAR = 'System Test Time Word Category e.g. Year';
     const TN_2019 = 'System Test Another Time Word e.g. 2019';
@@ -160,6 +161,7 @@ class word extends user_sandbox_description
         self::TN_ASSETS_CURRENT,
         self::TN_SECTOR,
         self::TN_ENERGY,
+        self::TN_WIND_ENERGY,
         self::TN_CASH,
         self::TN_YEAR,
         self::TN_2019,

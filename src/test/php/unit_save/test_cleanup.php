@@ -323,6 +323,7 @@ class testing extends test_base
         $this->del_word_link(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
         $this->del_word_link(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
         $this->del_word_link(word::TN_SECTOR, verb::DBL_CAN_CONTAIN, word::TN_ENERGY);
+        $this->del_word_link(word::TN_ENERGY, verb::DBL_CAN_CONTAIN, word::TN_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words

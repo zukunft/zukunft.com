@@ -153,6 +153,91 @@ function run_word_list_test(testing $t)
     $result = $lst_differentiators->does_contain($wrd_energy);
     $t->assert('word_list->differentiators "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ENERGY, $result, true);
 
+    // test "differentiators_all"
+    // e.g. a "Sector" "can contain" "Energy" and "Wind Energy"
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_SECTOR));
+    $lst_differentiators = $wrd_lst->differentiators_all();
+    $wrd_wind = $t->load_word(word::TN_WIND_ENERGY);
+    $result = $lst_differentiators->does_contain($wrd_wind);
+    $t->assert('word_list->differentiators_all "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_WIND_ENERGY, $result, true);
+
+    // test "differentiators_filtered"
+    // e.g. a "Sector" "can contain" "Wind Energy" and "Energy" can be filtered
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_SECTOR));
+    $wrd_lst_filter = new word_list($usr);
+    $wrd_lst_filter->load_by_names(array(word::TN_ENERGY));
+    $lst_differentiators = $wrd_lst->differentiators_filtered($wrd_lst_filter);
+    $result = $lst_differentiators->does_contain($wrd_energy);
+    $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ENERGY, $result, true);
+    $wrd_wind = $t->load_word(word::TN_WIND_ENERGY);
+    $result = $lst_differentiators->does_contain($wrd_wind);
+    $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word::TN_WIND_ENERGY, $result, false);
+    $wrd_energy = $t->load_word(word::TN_ENERGY);
+
+    // test "keep_only_specific" e.g. keep "Zurich" but remove "Canton"
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_CANTON, word::TN_ZH));
+    $lst_specific = $wrd_lst->keep_only_specific();
+    $wrd_specific = $t->load_word(word::TN_ZH);
+    $result = $lst_specific->does_contain($wrd_specific);
+    $t->assert('word_list->are "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ZH . ' ', $result, true);
+    $wrd = $t->load_word(word::TN_CANTON);
+    $result = $lst_specific->does_contain($wrd);
+    $t->assert('word_list->keep_only_specific "' . implode('","', $wrd_lst->names()) . '", which contains not ' . word::TN_CANTON . ' ', $result, false);
+
+
+    $t->subheader('Test info functions');
+
+    // test "has time" for 2020 is supposed to be true
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_2020));
+    $result = $wrd_lst->has_time();
+    $t->assert('word_list->has_time ' . $wrd_lst->dsp_id(), $result, true);
+
+    // test "has time" for Canton is supposed to be false
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $result = $wrd_lst->has_time();
+    $t->assert('word_list->has_time ' . $wrd_lst->dsp_id(), $result, false);
+
+    // test "has_measure" for CHF is supposed to be true
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_CHF));
+    $result = $wrd_lst->has_measure();
+    $t->assert('word_list->has_measure ' . $wrd_lst->dsp_id(), $result, true);
+
+    // test "has_measure" for Canton is supposed to be false
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $result = $wrd_lst->has_measure();
+    $t->assert('word_list->has_measure ' . $wrd_lst->dsp_id(), $result, false);
+
+    // test "has_scaling" for CHF is supposed to be true
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_MIO));
+    $result = $wrd_lst->has_scaling();
+    $t->assert('word_list->has_scaling ' . $wrd_lst->dsp_id(), $result, true);
+
+    // test "has_scaling" for Canton is supposed to be false
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $result = $wrd_lst->has_scaling();
+    $t->assert('word_list->has_scaling ' . $wrd_lst->dsp_id(), $result, false);
+
+    // test "has_percent" for CHF is supposed to be true
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_PCT));
+    $result = $wrd_lst->has_percent();
+    $t->assert('word_list->has_percent ' . $wrd_lst->dsp_id(), $result, true);
+
+    // test "has_percent" for Canton is supposed to be false
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_CANTON));
+    $result = $wrd_lst->has_percent();
+    $t->assert('word_list->has_percent ' . $wrd_lst->dsp_id(), $result, false);
+
     // ....
 
     // exclude types

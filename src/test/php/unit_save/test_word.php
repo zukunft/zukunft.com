@@ -88,34 +88,34 @@ function run_word_tests(testing $t)
     // is time
     $target = True;
     $result = $wrd_time->is_time();
-    $t->dsp('word->is_time for ' . word::TN_2021 . '', $target, $result);
+    $t->dsp('word->is_time for ' . word::TN_2021, $target, $result);
 
     // is not measure
     $target = False;
     $result = $wrd_time->is_measure();
-    $t->dsp('word->is_measure for ' . word::TN_2021 . '', $target, $result);
+    $t->dsp('word->is_measure for ' . word::TN_2021, $target, $result);
 
     // is measure
     $wrd_measure = $t->test_word(word::TN_CHF, word_type_list::DBL_MEASURE);
     $target = True;
     $result = $wrd_measure->is_measure();
-    $t->dsp('word->is_measure for ' . word::TN_CHF . '', $target, $result);
+    $t->dsp('word->is_measure for ' . word::TN_CHF, $target, $result);
 
     // is not scaling
     $target = False;
     $result = $wrd_measure->is_scaling();
-    $t->dsp('word->is_scaling for ' . word::TN_CHF . '', $target, $result);
+    $t->dsp('word->is_scaling for ' . word::TN_CHF, $target, $result);
 
     // is scaling
     $wrd_scaling = $t->test_word(word::TN_MIO, word_type_list::DBL_SCALING);
     $target = True;
     $result = $wrd_scaling->is_scaling();
-    $t->dsp('word->is_scaling for ' . word::TN_MIO . '', $target, $result);
+    $t->dsp('word->is_scaling for ' . word::TN_MIO, $target, $result);
 
     // is not percent
     $target = False;
     $result = $wrd_scaling->is_percent();
-    $t->dsp('word->is_percent for ' . word::TN_MIO . '', $target, $result);
+    $t->dsp('word->is_percent for ' . word::TN_MIO, $target, $result);
 
     // is percent
     $wrd_pct = $t->test_word(word::TN_PCT, word_type_list::DBL_PERCENT);
@@ -149,7 +149,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->children for "' . word::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->children for "' . word::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
     // ... word children excluding the start word, so the list of children should not include the parent
     // e.g. the list of Cantons does not include the word Canton itself
@@ -159,7 +159,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->children for "' . word::TN_PARENT . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->children for "' . word::TN_PARENT . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // word are, which includes all words related to the parent
     // e.g. which is for parent Canton the phrase "Zurich (Canton)", but not, as tested later, the phrase "Zurich (City)"
@@ -171,7 +171,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->are for "' . word::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->are for "' . word::TN_PARENT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // ... word are including the start word
     // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
@@ -181,7 +181,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->are for "' . word::TN_PARENT . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->are for "' . word::TN_PARENT . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // word parents
     $phr_lst = $wrd_read->parents();
@@ -191,7 +191,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->parents for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->parents for "' . word::TN_READ . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // ... word parents excluding the start word
     $target = '';
@@ -200,7 +200,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->parents for "' . word::TN_READ . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->parents for "' . word::TN_READ . '" excluding the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // create category test words for "Zurich is a Canton" and "Zurich is a City"
     // which implies that Canton contains Zurich and City contains Zurich
@@ -220,7 +220,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // ... and Zurich is a City
     $target = $wrd_city->name;
@@ -230,7 +230,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->and is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->and is "' . word::TN_ZH . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // ... word is including the start word
     $target = $wrd_ZH->name;
@@ -239,7 +239,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->is for "' . word::TN_ZH . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->is for "' . word::TN_ZH . '" including the start word', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // create the test words and relations for a parent child relation without inheritance
     // e.g. ...
@@ -264,7 +264,9 @@ function run_word_tests(testing $t)
     // e.g. energy can be a sector
     $t->test_word(word::TN_SECTOR);
     $t->test_word(word::TN_ENERGY);
+    $t->test_word(word::TN_WIND_ENERGY);
     $t->test_word_link(word::TN_SECTOR, verb::DBL_CAN_CONTAIN, word::TN_ENERGY);
+    $t->test_word_link(word::TN_ENERGY, verb::DBL_CAN_CONTAIN, word::TN_WIND_ENERGY);
 
     // word is part
     $target = $wrd_cf->name;
@@ -274,7 +276,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->is_part for "' . word::TN_TAX_REPORT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->is_part for "' . word::TN_TAX_REPORT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
     // save a new word
     $wrd_new = new word($t->usr1);
@@ -302,7 +304,7 @@ function run_word_tests(testing $t)
         $log->usr = $t->usr1;
         $result = $log->dsp_last(true);
     }
-    $target = 'zukunft.com system test added ' . word::TN_ADD . '';
+    $target = 'zukunft.com system test added ' . word::TN_ADD;
     $t->dsp('word->save logged for "' . word::TN_ADD . '"', $target, $result);
 
     // ... test if the new word has been created
@@ -339,7 +341,7 @@ function run_word_tests(testing $t)
     $log->row_id = $wrd_renamed->id;
     $log->usr = $t->usr1;
     $result = $log->dsp_last(true);
-    $target = 'zukunft.com system test changed ' . word::TN_ADD . ' to ' . word::TN_RENAMED . '';
+    $target = 'zukunft.com system test changed ' . word::TN_ADD . ' to ' . word::TN_RENAMED;
     $t->dsp('word->save rename logged for "' . word::TN_RENAMED . '"', $target, $result);
 
     // check if the word parameters can be added

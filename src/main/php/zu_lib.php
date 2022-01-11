@@ -1328,8 +1328,10 @@ function zu_lst_not_in($in_lst, $exclude_lst): array
     return $result;
 }
 
-// similar to zu_lst_not_in, but looking at the array value not the key
-function zu_lst_not_in_no_key($in_lst, $exclude_lst): array
+/**
+ * similar to zu_lst_not_in, but looking at the array value not the key
+ */
+function zu_lst_not_in_no_key(array $in_lst, array $exclude_lst): array
 {
     log_debug('zu_lst_not_in_no_key(' . dsp_array($in_lst) . 'ex' . dsp_array($exclude_lst) . ')');
     $result = array();
@@ -1339,32 +1341,6 @@ function zu_lst_not_in_no_key($in_lst, $exclude_lst): array
         }
     }
     log_debug('zu_lst_not_in_no_key -> (' . dsp_array($result) . ')');
-    return $result;
-}
-
-// similar to zu_lst_not_in, but excluding only one value (diff to in_array????)
-function zu_lst_excluding($in_lst, $exclude_id): array
-{
-    log_debug('zu_lst_excluding(' . dsp_array($in_lst) . 'ex' . $exclude_id . ')');
-    $result = array();
-    foreach ($in_lst as $lst_entry) {
-        if ($lst_entry <> $exclude_id) {
-            $result[] = $lst_entry;
-        }
-    }
-    log_debug('zu_lst_excluding -> (' . dsp_array($result) . ')');
-    return $result;
-}
-
-// get all entries of the list that are not in the second list
-function zu_lst_in($in_lst, $only_if_lst): array
-{
-    $result = array();
-    foreach (array_keys($in_lst) as $lst_entry) {
-        if (in_array($lst_entry, array_keys($only_if_lst))) {
-            $result[$lst_entry] = $in_lst[$lst_entry];
-        }
-    }
     return $result;
 }
 

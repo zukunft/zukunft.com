@@ -573,7 +573,6 @@ class word_list
     {
         $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
         $wrd_lst->merge($this);
-        log_debug(self::class . '->differentiators -> ' . $wrd_lst->dsp_id() . ' for ' . $this->dsp_id());
         return $wrd_lst;
     }
 
@@ -584,50 +583,21 @@ class word_list
      */
     function differentiators_all(): word_list
     {
-        log_debug(self::class . '->differentiators_all for ' . $this->dsp_id());
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
         $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
-        if (count($wrd_lst->lst) > 0) {
-            $wrd_lst = $wrd_lst->are();
-            $wrd_lst = $wrd_lst->contains();
-        }
-        $added_lst = clone $this;
-        $added_lst->diff($wrd_lst);
-        $wrd_lst->merge($added_lst);
-        // ... and after that get only for the new
-        if (count($added_lst->lst) > 0) {
-            $loops = 0;
-            do {
-                $next_lst = $added_lst->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
-                if (count($next_lst->lst) > 0) {
-                    $next_lst = $next_lst->are();
-                    $next_lst = $next_lst->contains();
-                }
-                $added_lst = clone $next_lst;
-                $added_lst->diff($wrd_lst);
-                $wrd_lst->merge($added_lst);
-                $loops++;
-            } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
-        }
-        // finally, combine the list of new words with the original list
-        $this->merge($wrd_lst);
-        log_debug(self::class . '->differentiators -> ' . $wrd_lst->name() . ' for ' . $this->dsp_id());
-        return $wrd_lst;
+        return $wrd_lst->are_and_contains();
     }
 
     /**
      * similar to differentiators, but only a filtered list of differentiators is viewed to increase speed
      * @param word_list $filter_lst with the words used to get the differentiators
-     * @returns word_list with the added words
+     * @returns word_list with the added and filtered words
      */
     function differentiators_filtered(word_list $filter_lst): word_list
     {
-        log_debug(self::class . '->differentiators_filtered for ' . $this->dsp_id());
         $result = $this->differentiators_all();
-        $result = $result->filter($filter_lst);
-        log_debug(self::class . '->differentiators_filtered -> ' . $result->dsp_id());
-        return $result;
+        return $result->filter($filter_lst);
     }
 
     /**
@@ -635,27 +605,18 @@ class word_list
      * if there is a more specific word also part of the list
      * e.g. remove "Country", but keep "Switzerland"
      *
-     * TODO review  zu_lst_not_in_no_key
+     * @returns word_list with the specific words
      */
-    function keep_only_specific(): array
+    function keep_only_specific(): word_list
     {
-        log_debug(self::class . '->keep_only_specific (' . $this->dsp_id() . ')');
-
-        $result = $this->ids();
+        $parents = new word_list($this->usr);
         foreach ($this->lst as $wrd) {
-            if (!isset($wrd->usr)) {
-                $wrd->usr = $this->usr;
-            }
-            $wrd_lst_is = $wrd->is();
-            if (isset($wrd_lst_is)) {
-                if (!empty($wrd_lst_is->ids())) {
-                    $result = zu_lst_not_in_no_key($result, $wrd_lst_is->ids());
-                    log_debug(self::class . '->keep_only_specific -> "' . $wrd->name . '" is of type ' . $wrd_lst_is->name());
-                }
-            }
+            $phr_lst = $wrd->parents();
+            $wrd_lst = $phr_lst->wrd_lst_all();
+            $parents->merge($wrd_lst);
         }
-
-        log_debug(self::class . '->keep_only_specific -> (' . dsp_array($result) . ')');
+        $result = clone $this;
+        $result->diff($parents);
         return $result;
     }
 
@@ -1027,10 +988,9 @@ class word_list
 
     /**
      * create a list of word objects for the export
-     * @param bool $do_load can be set to false for unit testing
      * @return array with the reduced word objects that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): array
+    function export_obj(): array
     {
         $exp_words = array();
         foreach ($this->lst as $wrd) {
