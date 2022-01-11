@@ -104,9 +104,9 @@ function run_word_unit_db_tests(testing $t)
     $t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ . '"');
 
     // load a word list by type
-    //$wrd_lst = new word_list($usr);
-    //$wrd_lst->load_by_grp_id($phr_grp->id);
-    //$t->assert('load_by_group', $wrd_lst->name(), '"' . word_link::TN_READ_NAME . '"');
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_type(cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT));
+    $t->assert('load_by_type', $wrd_lst->name(), '"' . word::TN_READ_PERCENT . '"');
 
     // add a word to a list by the word id
     $wrd_lst = new word_list($usr);

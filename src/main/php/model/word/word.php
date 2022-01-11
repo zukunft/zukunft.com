@@ -94,6 +94,7 @@ class word extends user_sandbox_description
     // persevered word names for unit and integration tests
     const TN_READ = 'Mathematical constant';
     const TN_READ_SCALE = 'million';
+    const TN_READ_PERCENT = 'percent';
     const TN_ADD = 'System Test Word';
     const TN_RENAMED = 'System Test Word Renamed';
     const TN_PARENT = 'System Test Word Parent';
@@ -103,8 +104,12 @@ class word extends user_sandbox_description
     const TN_CANTON = 'System Test Word Category e.g. Canton';
     const TN_CITY = 'System Test Word Another Category e.g. City';
     const TN_COMPANY = 'System Test Word Group e.g. Company';
-    const TN_PARENT_NON_INHERITANCE = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
-    const TN_CHILD_NON_INHERITANCE = 'System Test Word Child without Inheritance e.g. Income Taxes';
+    const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
+    const TN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
+    const TN_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';
+    const TN_ASSETS = 'System Test Word containing multi levels e.g. Assets';
+    const TN_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
+    const TN_CASH = 'System Test Word multi levels e.g. Cash';
     const TN_YEAR = 'System Test Time Word Category e.g. Year';
     const TN_2019 = 'System Test Another Time Word e.g. 2019';
     const TN_2020 = 'System Test Another Time Word e.g. 2020';
@@ -146,8 +151,12 @@ class word extends user_sandbox_description
         self::TN_CANTON,
         self::TN_CITY,
         self::TN_COMPANY,
-        self::TN_PARENT_NON_INHERITANCE,
-        self::TN_CHILD_NON_INHERITANCE,
+        self::TN_FIN_REPORT,
+        self::TN_CASH_FLOW,
+        self::TN_TAX_REPORT,
+        self::TN_ASSETS,
+        self::TN_ASSETS_CURRENT,
+        self::TN_CASH,
         self::TN_YEAR,
         self::TN_2019,
         self::TN_2020,
@@ -177,8 +186,8 @@ class word extends user_sandbox_description
         self::TN_CANTON,
         self::TN_CITY,
         self::TN_COMPANY,
-        self::TN_PARENT_NON_INHERITANCE,
-        self::TN_CHILD_NON_INHERITANCE,
+        self::TN_CASH_FLOW,
+        self::TN_TAX_REPORT,
         self::TN_INHABITANT,
         self::TN_INCREASE,
         self::TN_YEAR,
@@ -910,7 +919,7 @@ class word extends user_sandbox_description
     /**
      * helper function that returns a phrase list object just with the word object
      */
-    private function lst(): phrase_list
+    function lst(): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_lst->add($this->phrase());
@@ -1018,25 +1027,25 @@ class word extends user_sandbox_description
         // this first time get all related items
         $phr_lst = $this->lst();
         $phr_lst = $phr_lst->are();
-        $phr_lst = $phr_lst->contains();
-        $added_lst = $phr_lst->diff($this->lst());
+        $added_lst = $phr_lst->contains();
+        $added_lst->diff($this->lst());
         // ... and after that get only for the new
-        if (count($added_lst->lst) > 0) {
+        if ($added_lst->count() > 0) {
             $loops = 0;
-            log_debug('word->are_and_contains -> added ' . $added_lst->name() . ' to ' . $phr_lst->name());
+            log_debug('word->are_and_contains -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
             do {
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
-                $next_lst = $next_lst->contains();
-                $added_lst = $next_lst->diff($phr_lst);
+                $added_lst = $next_lst->contains();
+                $added_lst->diff($phr_lst);
                 if (count($added_lst->lst) > 0) {
-                    log_debug('word->are_and_contains -> add ' . $added_lst->name() . ' to ' . $phr_lst->name());
+                    log_debug('word->are_and_contains -> add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
             } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
         }
-        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
+        log_debug('word->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $phr_lst->dsp_id());
         return $phr_lst;
     }
 

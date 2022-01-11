@@ -471,7 +471,7 @@ class phrase_list
 
     // returns a list of phrases that are related to this phrase list e.g. for "Company" it will return "ABB" and "Daimler" and "Company"
     // e.g. to get all related values
-    function are()
+    function are(): phrase_list
     {
         log_debug('phrase_list->are -> ' . $this->dsp_id());
         $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_A));
@@ -481,8 +481,10 @@ class phrase_list
         return $phr_lst;
     }
 
-    // returns a list of phrases that are related to this phrase list
-    function contains()
+    /**
+     * @returns phrase_list a list of phrases that are related to this phrase list
+     */
+    function contains(): phrase_list
     {
         $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::IS_PART_OF));
         $phr_lst->merge($this);
@@ -536,20 +538,20 @@ class phrase_list
         $added_lst = clone $phr_lst;
         $added_lst->diff($this);
         // ... and after that get only for the new
-        if (count($added_lst->lst) > 0) {
+        if ($added_lst->count() > 0) {
             $loops = 0;
             log_debug('phrase_list->are_and_contains -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
-                $next_lst = $next_lst->contains();
-                $added_lst = $next_lst->diff($phr_lst);
-                if (count($added_lst->lst) > 0) {
-                    log_debug('phrase_list->are_and_contains -> add ' . $added_lst->name() . ' to ' . $phr_lst->name());
+                $added_lst = $next_lst->contains();
+                $added_lst->diff($phr_lst);
+                if ($added_lst->count() > 0) {
+                    log_debug('phrase_list->are_and_contains -> add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
+            } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
         }
         log_debug('phrase_list->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
         return $phr_lst;
@@ -573,23 +575,23 @@ class phrase_list
         // this first time get all related items
         $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
         $phr_lst = $phr_lst->are();
-        $phr_lst = $phr_lst->contains();
-        $added_lst = $phr_lst->diff($this);
+        $added_lst = $phr_lst->contains();
+        $added_lst->diff($this);
         // ... and after that get only for the new
-        if (count($added_lst->lst) > 0) {
+        if ($added_lst->count() > 0) {
             $loops = 0;
             log_debug('phrase_list->differentiators -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
                 $next_lst = $added_lst->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
                 $next_lst = $next_lst->are();
-                $next_lst = $next_lst->contains();
-                $added_lst = $next_lst->diff($phr_lst);
-                if (count($added_lst->lst) > 0) {
+                $added_lst = $next_lst->contains();
+                $added_lst->diff($phr_lst);
+                if ($added_lst->count() > 0) {
                     log_debug('phrase_list->differentiators -> add ' . $added_lst->name() . ' to ' . $phr_lst->name());
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
+            } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
         }
         log_debug('phrase_list->differentiators -> ' . $phr_lst->name() . ' for ' . $this->dsp_id());
         return $phr_lst;
@@ -1014,29 +1016,21 @@ class phrase_list
 
     /**
      * diff as a function, because the array_diff does not seem to work for an object list
-     * e.g. for "2014", "2015", "2016", "2017" and delete list of "2016", "2017","2018" the result is "2014", "2015"
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param phrase_list $del_lst is the list of phrases that should be removed from this list object
      */
-    function diff($del_lst)
+    function diff(phrase_list $del_lst): void
     {
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
-
-        // check and adjust the parameters
-        if (get_class($del_lst) == word_list::class) {
-            $del_phr_lst = $del_lst->phrase_lst();
-        } else {
-            $del_phr_lst = $del_lst;
-        }
-        if (!isset($del_phr_lst)) {
-            log_err('Phrases to delete are missing.', 'phrase_list->diff');
-        }
-        if (get_class($del_phr_lst) <> phrase_list::class) {
-            log_err(get_class($del_phr_lst) . ' cannot be used to delete phrases.', 'phrase_list->diff');
-        }
 
         if (isset($this->lst)) {
             if (!empty($this->lst)) {
                 $result = array();
-                $lst_ids = $del_phr_lst->id_lst();
+                $lst_ids = $del_lst->id_lst();
                 foreach ($this->lst as $phr) {
                     if (!in_array($phr->id, $lst_ids)) {
                         $result[] = $phr;
@@ -1355,7 +1349,8 @@ class phrase_list
     function ex_time()
     {
         log_debug('phrase_list->ex_time ' . $this->dsp_id());
-        $del_phr_lst = $this->time_lst();
+        $del_wrd_lst = $this->time_lst();
+        $del_phr_lst = $del_wrd_lst->phrase_lst();
         $this->diff($del_phr_lst);
         //$this->diff_by_ids($del_phr_lst->ids);
         log_debug('phrase_list->ex_time ' . $this->dsp_name() . ' (exclude times ' . $del_phr_lst->name() . ')');

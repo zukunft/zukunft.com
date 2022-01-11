@@ -318,7 +318,10 @@ class testing extends test_base
         $this->del_word_link(word::TN_2020, verb::DBL_FOLLOW, word::TN_2019);
         $this->del_word_link(word::TN_2021, verb::DBL_FOLLOW, word::TN_2020);
         $this->del_word_link(word::TN_2022, verb::DBL_FOLLOW, word::TN_2021);
-        $this->del_word_link(word::TN_CHILD_NON_INHERITANCE, verb::IS_PART_OF, word::TN_PARENT_NON_INHERITANCE);
+        $this->del_word_link(word::TN_CASH_FLOW, verb::IS_A, word::TN_FIN_REPORT);
+        $this->del_word_link(word::TN_TAX_REPORT, verb::IS_PART_OF, word::TN_CASH_FLOW);
+        $this->del_word_link(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
+        $this->del_word_link(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words

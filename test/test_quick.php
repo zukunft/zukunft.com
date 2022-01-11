@@ -2,10 +2,10 @@
 
 /*
 
-  test_quick.php - TESTing of selected integration tests
-  --------------
+    test_quick.php - TESTing of selected integration tests
+    --------------
 
-  similar to test.php but only selecting critical parts for faster testing
+    similar to test.php but only selecting critical parts for faster testing
 
     This file is part of zukunft.com - calc with words
 
@@ -31,6 +31,10 @@
 
 */
 
+// standard zukunft header for callable php files to allow debugging and lib loading
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+
 // load the main functions
 include_once '../src/main/php/zu_lib.php';
 
@@ -49,11 +53,26 @@ if ($start_usr->id > 0) {
     if ($start_usr->is_admin()) {
 
         // prepare testing
+        $usr = $start_usr;
         $t = new testing();
+        init_unit_db_tests($t);
+
+        // run the unit tests without database connection (is so fast, that it can be tested always)
+        run_unit_tests($t);
+
+        // reload the setting lists after using dummy list for the unit tests
+        $db_con->close();
+        $db_con = prg_restart("reload cache after unit testing");
 
         // switch to the test user
         $usr = new user;
         $usr->load_user_by_profile(user::SYSTEM_TEST, $db_con);
+        if ($usr->id <= 0) {
+            // create the system user before the local user and admin to get the desired database id
+            import_system_users();
+
+            $usr->load_user_by_profile(user::SYSTEM_TEST, $db_con);
+        }
         if ($usr->id > 0) {
 
             // create the testing users
@@ -66,10 +85,12 @@ if ($start_usr->id > 0) {
             // start testing the selected system functionality
             // -----------------------------------------------
 
-            run_system_test($t); // testing of the basic system functions like ip blocking
-            //run_user_test ();   // testing of the user display functions
+            load_usr_data();
+            run_unit_db_tests($t);
 
-            // creating the test data
+            run_system_test($t);
+            run_user_test($t);
+
             create_test_words($t);
             create_test_phrases($t);
             create_test_sources($t);
@@ -81,57 +102,54 @@ if ($start_usr->id > 0) {
             create_test_view_component_links($t);
             create_test_values($t);
 
-            /*
             run_db_link_test($t);
-            run_string_unit_tests($t); // test functions not yet split into single unit tests
+            (new string_unit_tests)->run($t); // test functions not yet split into single unit tests
             run_math_test($t);
-            run_user_sandbox_test($t);
             run_word_tests($t);
             //run_word_ui_test($t);
-            run_word_display_test ($t);
+            run_word_display_test($t);
             run_word_list_test($t);
-            run_word_link_test ($t);
-            run_ref_test($t);
-            run_phrase_test ($t);
-            run_phrase_group_test ($t);
-            run_phrase_group_list_test ($t);
-            run_graph_test ($t);
-            run_verb_test ($t);
-            run_term_test ($t);
-            run_value_test ($t);
-            //run_value_ui_test ($t);
-            run_source_test ($t);
-            */
-            run_expression_test ($t);
-            run_formula_test ($t);
-            run_formula_list_test ($t);
-            //run_formula_ui_test ($t);
-            run_formula_link_test ($t);
-            run_formula_link_list_test ($t);
-            run_formula_trigger_test ($t);
-            run_formula_value_test ($t);
-            run_formula_value_list_test ($t);
-            run_formula_element_test ($t);
-            run_formula_element_list_test ($t);
-            run_formula_element_group_test ($t);
             /*
-            run_batch_job_test ($t);
-            run_batch_job_list_test ($t);
-            run_view_test ($t);
-            run_view_component_test ($t);
-            run_view_component_link_test ($t);
-            run_display_test ($t);
-            run_export_test ($t);
+            run_word_link_test($t);
+            run_ref_test($t);
+            run_phrase_test($t);
+            run_phrase_group_test($t);
+            run_phrase_group_list_test($t);
+            run_graph_test($t);
+            run_verb_test($t);
+            run_term_test($t);
+            run_value_test($t);
+            //run_value_ui_test($t);
+            run_source_test($t);
+            run_expression_test($t);
+            run_formula_test($t);
+            run_formula_list_test($t);
+            //run_formula_ui_test($t);
+            run_formula_link_test($t);
+            run_formula_link_list_test($t);
+            run_formula_trigger_test($t);
+            run_formula_value_test($t);
+            run_formula_value_list_test($t);
+            run_formula_element_test($t);
+            run_formula_element_list_test($t);
+            run_formula_element_group_test($t);
+            run_batch_job_test($t);
+            run_batch_job_list_test($t);
+            run_view_test($t);
+            run_view_component_test($t);
+            run_view_component_link_test($t);
+            run_display_test($t);
+            run_export_test($t);
             //run_permission_test ($t);
             run_legacy_test($t);
             */
 
+            //import_base_config();
 
             // testing cleanup to remove any remaining test records
             $t->cleanup();
 
             // start the integration tests by loading the base and sample data
-            //run_import_test(unserialize(TEST_IMPORT_FILE_LIST_QUICK), $t);
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);
 
             // display the test results

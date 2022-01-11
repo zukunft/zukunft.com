@@ -243,9 +243,22 @@ function run_word_tests(testing $t)
 
     // create the test words and relations for a parent child relation without inheritance
     // e.g. ...
-    $wrd_cf = $t->test_word(word::TN_PARENT_NON_INHERITANCE);
-    $wrd_tax = $t->test_word(word::TN_CHILD_NON_INHERITANCE);
-    $t->test_word_link(word::TN_CHILD_NON_INHERITANCE, verb::IS_PART_OF, word::TN_PARENT_NON_INHERITANCE);
+    $wrd_cf = $t->test_word(word::TN_CASH_FLOW);
+    $wrd_tax = $t->test_word(word::TN_TAX_REPORT);
+    $t->test_word_link(word::TN_TAX_REPORT, verb::IS_PART_OF, word::TN_CASH_FLOW);
+
+    // create the test words and relations many mixed relations
+    // e.g. a financial report
+    $t->test_word(word::TN_FIN_REPORT);
+    $t->test_word_link(word::TN_CASH_FLOW, verb::IS_A, word::TN_FIN_REPORT);
+
+    // create the test words and relations for multi level contains
+    // e.g. assets contain current assets which contains cash
+    $t->test_word(word::TN_ASSETS);
+    $t->test_word(word::TN_ASSETS_CURRENT);
+    $t->test_word(word::TN_CASH);
+    $t->test_word_link(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
+    $t->test_word_link(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
 
     // word is part
     $target = $wrd_cf->name;
@@ -255,7 +268,7 @@ function run_word_tests(testing $t)
     } else {
         $result = '';
     }
-    $t->dsp('word->is_part for "' . word::TN_CHILD_NON_INHERITANCE . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
+    $t->dsp('word->is_part for "' . word::TN_TAX_REPORT . '"', $target, $result, TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id() . '');
 
     // save a new word
     $wrd_new = new word($t->usr1);

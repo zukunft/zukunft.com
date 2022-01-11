@@ -293,7 +293,6 @@ class word_list
 
     /**
      * load a list of words by the word type id
-     * TODO needs to be checked if really needed
      *
      * @param int $type_id the id of the word type
      * @return bool true if at least one word found
@@ -309,19 +308,15 @@ class word_list
      * add the direct linked words to the list
      * and remember which words have be added
      *
-     * @param word_list|null $added_wrd_lst the list of words added in the previous level runs
      * @param int $verb_id to select only words linked with this verb
      * @param string $direction to define the link direction
      * @return word_list with only the new added words
      */
-    function load_linked_words(?word_list $added_wrd_lst, int $verb_id, string $direction): word_list
+    function load_linked_words(int $verb_id, string $direction): word_list
     {
 
         global $db_con;
-
-        if ($added_wrd_lst == null) {
-            $added_wrd_lst = new word_list($this->usr); // create the list of the added words
-        }
+        $additional_added = new word_list($this->usr); // list of the added words with this call
 
         $qp = $this->load_sql_linked_words($db_con, $verb_id, $direction);
         if ($qp->name == '') {
@@ -336,16 +331,15 @@ class word_list
                         if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
                             $new_word = new word_dsp($this->usr);
                             $new_word->row_mapper($db_wrd);
-                            $this->lst[] = $new_word;
-                            $added_wrd_lst->add($new_word);
+                            $additional_added->add($new_word);
                             log_debug(self::class . '->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
                         }
                     }
                 }
-                log_debug(self::class . '->add_by_type -> added (' . $added_wrd_lst->dsp_id() . ')');
+                log_debug(self::class . '->add_by_type -> added (' . $additional_added->dsp_id() . ')');
             }
         }
-        return $added_wrd_lst;
+        return $additional_added;
     }
 
 
@@ -406,13 +400,14 @@ class word_list
             $max_loops = MAX_RECURSIVE;
         }
         $loops = 0;
-        log_debug(self::class . '->foaf_level loop');
+        $additional_added = clone $this;
         do {
             $loops = $loops + 1;
-            $additional_added = new word_list($this->usr); // list of the added word ids
-            log_debug(self::class . '->foaf_level add');
-            $additional_added = $this->load_linked_words($additional_added, $verb_id, $direction);
-            log_debug(self::class . '->foaf_level merge');
+            // load all linked words
+            $additional_added = $additional_added->load_linked_words($verb_id, $direction);
+            // get the words not added before
+            $additional_added-> diff($added_wrd_lst);
+            // remember the added words
             $added_wrd_lst->merge($additional_added);
 
             if ($loops >= MAX_RECURSIVE) {
@@ -425,7 +420,7 @@ class word_list
 
     /**
      * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is"
-     * ex foaf_parent
+     *
      * @param int $verb_id id of the verb that is used to select the parents
      * @returns word_list the accumulated list of added words
      */
@@ -493,7 +488,7 @@ class word_list
 
     /**
      * returns a list of words that are related to this word list
-     * e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
+     * e.g. for "ABB" and "Daimler" it will return "Company", but not "ABB"
      * @returns word_list with the added words
      */
     function is(): word_list
@@ -544,6 +539,9 @@ class word_list
         $wrd_lst = $wrd_lst->contains();
         $added_lst = clone $wrd_lst;
         $added_lst->diff($this);
+        if (count($added_lst->lst) > 0) {
+            log_debug(self::class . '->are_and_contains -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
+        }
         // ... and after that get only for the new
         if (count($added_lst->lst) > 0) {
             $loops = 0;
@@ -552,14 +550,14 @@ class word_list
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $next_lst = $next_lst->contains();
-                $next_lst->diff($wrd_lst);
+                $next_lst->diff($added_lst);
                 $added_lst->merge($next_lst);
-                if (count($added_lst->lst) > 0) {
-                    log_debug(self::class . '->are_and_contains -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
+                if (count($next_lst->lst) > 0) {
+                    log_debug(self::class . '->are_and_contains -> add ' . $next_lst->name() . ' to ' . $wrd_lst->name());
                 }
                 $wrd_lst->merge($added_lst);
                 $loops++;
-            } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);
+            } while (count($next_lst->lst) > 0 and $loops < MAX_LOOP);
         }
         log_debug(self::class . '->are_and_contains -> ' . $this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
         return $wrd_lst;
