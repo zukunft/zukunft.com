@@ -566,12 +566,12 @@ class word_list
     /**
      * add all potential differentiator words of the word lst
      * e.g. get "energy" for "sector"
+     *
      * @returns word_list with the added words
      */
     function differentiators(): word_list
     {
-        log_debug(self::class . '->differentiators for ' . $this->dsp_id());
-        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
+        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
         $wrd_lst->merge($this);
         log_debug(self::class . '->differentiators -> ' . $wrd_lst->dsp_id() . ' for ' . $this->dsp_id());
         return $wrd_lst;
@@ -586,35 +586,26 @@ class word_list
     {
         log_debug(self::class . '->differentiators_all for ' . $this->dsp_id());
         // this first time get all related items
-        $wrd_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
-        log_debug(self::class . '->differentiators -> children ' . $wrd_lst->dsp_id());
+        // parents and not children because the verb is "can contain", but here the question is for "can be split by"
+        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
         if (count($wrd_lst->lst) > 0) {
             $wrd_lst = $wrd_lst->are();
-            log_debug(self::class . '->differentiators -> contains ' . $wrd_lst->dsp_id());
             $wrd_lst = $wrd_lst->contains();
-            log_debug(self::class . '->differentiators -> incl. contains ' . $wrd_lst->dsp_id());
         }
         $added_lst = clone $this;
         $added_lst->diff($wrd_lst);
         $wrd_lst->merge($added_lst);
-        log_debug(self::class . '->differentiators -> added ' . $added_lst->dsp_id());
         // ... and after that get only for the new
         if (count($added_lst->lst) > 0) {
             $loops = 0;
-            log_debug(self::class . '->differentiators -> added ' . $added_lst->dsp_id() . ' to ' . $wrd_lst->name());
             do {
-                $next_lst = $added_lst->foaf_children(cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR));
-                log_debug(self::class . '->differentiators -> sub children ' . $wrd_lst->dsp_id());
+                $next_lst = $added_lst->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
                 if (count($next_lst->lst) > 0) {
                     $next_lst = $next_lst->are();
                     $next_lst = $next_lst->contains();
-                    log_debug(self::class . '->differentiators -> sub incl. contains ' . $wrd_lst->dsp_id());
                 }
                 $added_lst = clone $next_lst;
                 $added_lst->diff($wrd_lst);
-                if (count($added_lst->lst) > 0) {
-                    log_debug(self::class . '->differentiators -> add ' . $added_lst->name() . ' to ' . $wrd_lst->name());
-                }
                 $wrd_lst->merge($added_lst);
                 $loops++;
             } while (count($added_lst->lst) > 0 and $loops < MAX_LOOP);

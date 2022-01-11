@@ -38,7 +38,7 @@ class verb
     const IS_A = "is";
     const IS_PART_OF = "contains";
     const DBL_FOLLOW = "follow";
-    const DBL_DIFFERENTIATOR = "can_contain";
+    const DBL_CAN_CONTAIN = "can_contain";
     const DBL_CAN_BE = "can_be";
 
     // search directions to get related words (phrases)

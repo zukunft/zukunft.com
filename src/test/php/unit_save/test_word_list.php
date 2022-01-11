@@ -111,7 +111,6 @@ function run_word_list_test(testing $t)
     $wrd_lst->load_by_names(array(word::TN_ZH));
     $lst_is = $wrd_lst->is();
     $result = dsp_array($lst_is->names());
-    $target = dsp_array(array(word::TN_CITY, word::TN_CANTON)); // order adjusted based on the number of usage
     $target = dsp_array(array(word::TN_CITY, word::TN_CANTON, word::TN_COMPANY)); // order adjusted based on the number of usage
     $t->assert('word_list->is for ' . $wrd_lst->name() . ' up', $result, $target);
 
@@ -144,6 +143,16 @@ function run_word_list_test(testing $t)
     $result = $lst_related->does_contain($wrd_tax);
     $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_TAX_REPORT, $result, true);
 
+    // test "differentiators"
+    // e.g. a "Sector" "can contain" "Energy"
+    // or the other way round "Energy" "can be a (differentiator for)" "Sector"
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_names(array(word::TN_SECTOR));
+    $lst_differentiators = $wrd_lst->differentiators();
+    $wrd_energy = $t->load_word(word::TN_ENERGY);
+    $result = $lst_differentiators->does_contain($wrd_energy);
+    $t->assert('word_list->differentiators "' . implode('","', $wrd_lst->names()) . '", which contains ' . word::TN_ENERGY, $result, true);
+
     // ....
 
     // exclude types
@@ -174,15 +183,13 @@ function run_word_list_test(testing $t)
     // test word list value
     $val = $wrd_lst->value();
     $result = $val->number;
-    $target = value::TEST_VALUE;
-    $t->dsp('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
+    $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, value::TEST_VALUE);
 
     // test word list value scaled
     // TODO review !!!
     $val = $wrd_lst->value_scaled();
     $result = $val->number;
-    $target = value::TEST_VALUE;
-    $t->dsp('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $target, $result);
+    $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, value::TEST_VALUE);
 
     // test another group value
     $wrd_lst = new word_list($usr);

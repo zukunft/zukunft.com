@@ -1045,7 +1045,7 @@ function zu_sql_word_lst_add_differentiator($word_lst, $xtra_words)
     log_debug('zu_sql_word_lst_add_differentiator(' . $word_lst . ',' . $xtra_words . ')');
 
     $is_a_type = cl(db_cl::VERB, verb::IS_A);
-    $differentiator_type = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
+    $differentiator_type = cl(db_cl::VERB, verb::DBL_CAN_CONTAIN);
 
     // add all words that are "is a" to the $differentiator list e.g. if the extra list contains Switzerland and Country is allowed as a differentiator Switzerland should be taken into account
     echo 'extra: ' . implode(",", $xtra_words) . '<br>';

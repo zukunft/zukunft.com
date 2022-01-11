@@ -46,7 +46,7 @@ function run_formula_element_test(testing $t)
     $wrd_country = $t->load_word(word::TN_COUNTRY);
     $wrd_canton = $t->load_word(word::TN_CANTON);
     $wrd_total = $t->load_word(word::TN_TOTAL);
-    $vrb_id = cl(db_cl::VERB, verb::DBL_DIFFERENTIATOR);
+    $vrb_id = cl(db_cl::VERB, verb::DBL_CAN_CONTAIN);
 
     if (isset($elm_lst)) {
         if (isset($elm_lst->lst)) {

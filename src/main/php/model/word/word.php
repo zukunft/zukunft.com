@@ -109,6 +109,8 @@ class word extends user_sandbox_description
     const TN_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TN_ASSETS = 'System Test Word containing multi levels e.g. Assets';
     const TN_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
+    const TN_SECTOR = 'System Test Word with differentiator e.g. Sector';
+    const TN_ENERGY = 'System Test Word usage as differentiator e.g. Energy';
     const TN_CASH = 'System Test Word multi levels e.g. Cash';
     const TN_YEAR = 'System Test Time Word Category e.g. Year';
     const TN_2019 = 'System Test Another Time Word e.g. 2019';
@@ -156,6 +158,8 @@ class word extends user_sandbox_description
         self::TN_TAX_REPORT,
         self::TN_ASSETS,
         self::TN_ASSETS_CURRENT,
+        self::TN_SECTOR,
+        self::TN_ENERGY,
         self::TN_CASH,
         self::TN_YEAR,
         self::TN_2019,

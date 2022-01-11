@@ -260,6 +260,12 @@ function run_word_tests(testing $t)
     $t->test_word_link(word::TN_CASH, verb::IS_PART_OF, word::TN_ASSETS_CURRENT);
     $t->test_word_link(word::TN_ASSETS_CURRENT, verb::IS_PART_OF, word::TN_ASSETS);
 
+    // create the test words and relations for differentiators
+    // e.g. energy can be a sector
+    $t->test_word(word::TN_SECTOR);
+    $t->test_word(word::TN_ENERGY);
+    $t->test_word_link(word::TN_SECTOR, verb::DBL_CAN_CONTAIN, word::TN_ENERGY);
+
     // word is part
     $target = $wrd_cf->name;
     $phr_lst = $wrd_tax->is_part();
