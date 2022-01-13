@@ -120,6 +120,9 @@ class sql_db
 
     const STD_TBL = "s";                          // prefix used for the standard table where data for all users are stored
     const USR_TBL = "u";                          // prefix used for the standard table where the user sandbox data is stored
+    const USR2_TBL = "u2";                        // prefix used for the standard table where the second user sandbox data is stored
+    const USR3_TBL = "u3";                        // prefix used for the standard table where the third user sandbox data is stored
+    const USR4_TBL = "u4";                        // prefix used for the standard table where the fourth user sandbox data is stored
     const LNK_TBL = "l";                          // prefix used for the table which should be joined in the result
     const LNK2_TBL = "l2";                        // prefix used for the second table which should be joined in the result
     const LNK3_TBL = "l3";                        // prefix used for the third table which should be joined in the result
@@ -187,6 +190,7 @@ class sql_db
     private int $join2_select_id = 0;             // same as $join_select_id but for the second join
     private int $join3_select_id = 0;             // same as $join_select_id but for the third join
     private int $join4_select_id = 0;             // same as $join_select_id but for the fourth join
+    private string $join_usr_par_name = '';       // the parameter name for the user id
     private ?array $join_usr_field_lst = [];      // list of fields that should be returned to the next select query that are taken from a joined table
     private ?array $join2_usr_field_lst = [];     // same as $join_usr_field_lst but for the second join
     private ?array $join3_usr_field_lst = [];     // same as $join_usr_field_lst but for the third join
@@ -264,6 +268,7 @@ class sql_db
         $this->join2_field_lst = [];
         $this->join3_field_lst = [];
         $this->join4_field_lst = [];
+        $this->join_usr_par_name = '';
         $this->join_usr_field_lst = [];
         $this->join2_usr_field_lst = [];
         $this->join3_usr_field_lst = [];
@@ -662,25 +667,25 @@ class sql_db
     /**
      * internal interface function for sql_usr_field using the class db type settings and text fields
      */
-    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL)
+    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = '')
     {
-        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_TEXT, $stb_tbl, $usr_tbl);
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_TEXT, $stb_tbl, $usr_tbl, $as);
     }
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
      */
-    private function set_field_usr_num($field)
+    private function set_field_usr_num($field, $as = '')
     {
-        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, sql_db::STD_TBL, sql_db::USR_TBL);
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, sql_db::STD_TBL, sql_db::USR_TBL, $as);
     }
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
      */
-    private function set_field_usr_bool($field)
+    private function set_field_usr_bool($field, $as = '')
     {
-        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_BOOL, sql_db::STD_TBL, sql_db::USR_TBL);
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_BOOL, sql_db::STD_TBL, sql_db::USR_TBL, $as);
     }
 
     /**
@@ -867,21 +872,21 @@ class sql_db
         foreach ($this->join2_usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK2_TBL, sql_db::ULK2_TBL);
+            $this->set_field_usr_text($field, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $field . '2');
         }
 
         // add user specific third join fields
         foreach ($this->join3_usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK3_TBL, sql_db::ULK3_TBL);
+            $this->set_field_usr_text($field, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $field . '3');
         }
 
         // add user specific fourth join fields
         foreach ($this->join4_usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK4_TBL, sql_db::ULK4_TBL);
+            $this->set_field_usr_text($field, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $field . '4');
         }
 
         // add user specific numeric join fields
@@ -895,21 +900,21 @@ class sql_db
         foreach ($this->join2_usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field);
+            $this->set_field_usr_num($field, $field . '2');
         }
 
         // add user specific numeric third join fields
         foreach ($this->join3_usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field);
+            $this->set_field_usr_num($field, $field . '3');
         }
 
         // add user specific numeric fourth join fields
         foreach ($this->join4_usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field);
+            $this->set_field_usr_num($field, $field . '4');
         }
 
         foreach ($this->usr_only_field_lst as $field) {
@@ -2006,7 +2011,8 @@ class sql_db
                     $this->join .= $this->usr_view_id;
                 } else {
                     $this->add_par(self::PAR_INT, $this->usr_id);
-                    $this->join .= $this->par_name();
+                    $this->join_usr_par_name = $this->par_name();
+                    $this->join .= $this->join_usr_par_name;
                 }
                 $this->join_usr_added = true;
             }
@@ -2032,8 +2038,14 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
             if ($this->usr_query and $this->join_usr_query) {
-                $this->join .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::ULK_TBL;
-                $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join_from_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
+                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
+                $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
+                $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                if ($this->query_name == '') {
+                    $this->join .= $this->usr_view_id;
+                } else {
+                    $this->join .= $this->join_usr_par_name;
+                }
             }
             if ($this->join_select_field != '') {
                 if ($this->where == '') {
@@ -2059,8 +2071,14 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::LNK2_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join2_from_id_field . ' = ' . sql_db::LNK2_TBL . '.' . $join2_id_field;
             if ($this->usr_query and $this->join2_usr_query) {
-                $this->join .= ' LEFT JOIN ' . $join2_table_name . ' ' . sql_db::ULK2_TBL;
-                $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join2_from_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
+                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
+                $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
+                $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                if ($this->query_name == '') {
+                    $this->join .= $this->usr_view_id;
+                } else {
+                    $this->join .= $this->join_usr_par_name;
+                }
             }
             if ($this->join2_select_field != '') {
                 if ($this->where == '') {
@@ -2086,8 +2104,14 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join3_table_name . ' ' . sql_db::LNK3_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join3_from_id_field . ' = ' . sql_db::LNK3_TBL . '.' . $join3_id_field;
             if ($this->usr_query and $this->join3_usr_query) {
-                $this->join .= ' LEFT JOIN ' . $join3_table_name . ' ' . sql_db::ULK3_TBL;
-                $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join3_from_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
+                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
+                $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
+                $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                if ($this->query_name == '') {
+                    $this->join .= $this->usr_view_id;
+                } else {
+                    $this->join .= $this->join_usr_par_name;
+                }
             }
             if ($this->join3_select_field != '') {
                 if ($this->where == '') {
@@ -2113,8 +2137,14 @@ class sql_db
             $this->join .= ' LEFT JOIN ' . $join4_table_name . ' ' . sql_db::LNK4_TBL;
             $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $join4_from_id_field . ' = ' . sql_db::LNK4_TBL . '.' . $join4_id_field;
             if ($this->usr_query and $this->join4_usr_query) {
-                $this->join .= ' LEFT JOIN ' . $join4_table_name . ' ' . sql_db::ULK4_TBL;
-                $this->join .= ' ON ' . sql_db::USR_TBL . '.' . $join4_from_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
+                $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
+                $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
+                $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                if ($this->query_name == '') {
+                    $this->join .= $this->usr_view_id;
+                } else {
+                    $this->join .= $this->join_usr_par_name;
+                }
             }
             if ($this->join4_select_field != '') {
                 if ($this->where == '') {

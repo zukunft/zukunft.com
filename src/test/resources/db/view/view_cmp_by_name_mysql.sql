@@ -12,10 +12,7 @@ PREPARE view_cmp_by_name FROM
             IF(u.word_id_col2           IS NULL, s.word_id_col2,           u.word_id_col2)           AS word_id_col2,
             IF(u.excluded               IS NULL, s.excluded,               u.excluded)               AS excluded,
             IF(u.share_type_id          IS NULL, s.share_type_id,          u.share_type_id)          AS share_type_id,
-            IF(u.protect_id             IS NULL, s.protect_id,             u.protect_id)             AS protect_id,
-            IF(ul.code_id               IS NULL, l.code_id,                ul.code_id)               AS code_id
+            IF(u.protect_id             IS NULL, s.protect_id,             u.protect_id)             AS protect_id
        FROM view_components s
   LEFT JOIN user_view_components u  ON s.view_component_id = u.view_component_id AND u.user_id = ?
-  LEFT JOIN view_component_types l  ON s.view_component_type_id =  l.view_component_type_id
-  LEFT JOIN view_component_types ul ON u.view_component_type_id = ul.view_component_type_id
       WHERE s.view_component_name = ?';

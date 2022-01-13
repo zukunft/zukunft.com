@@ -309,7 +309,6 @@ class formula extends user_sandbox_description
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
-        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         if ($this->id != 0) {

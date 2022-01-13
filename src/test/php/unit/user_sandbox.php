@@ -464,7 +464,6 @@ class user_sandbox_unit_tests
 
         // ... same for user sandbox data (should match with the parameters in formula->load)
         $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update'));
         $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
@@ -480,13 +479,10 @@ class user_sandbox_unit_tests
                        CASE WHEN (u.formula_type_id   IS           NULL) THEN s.formula_type_id      ELSE u.formula_type_id      END AS formula_type_id,
                        CASE WHEN (u.all_values_needed IS           NULL) THEN s.all_values_needed    ELSE u.all_values_needed    END AS all_values_needed,
                        CASE WHEN (u.last_update       IS           NULL) THEN s.last_update          ELSE u.last_update          END AS last_update,
-                       CASE WHEN (u.excluded          IS           NULL) THEN COALESCE(s.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded,
-                       CASE WHEN (ul.code_id          <> '' IS NOT TRUE) THEN l.code_id              ELSE ul.code_id             END AS code_id
+                       CASE WHEN (u.excluded          IS           NULL) THEN COALESCE(s.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded
                   FROM formulas s
              LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                       AND u.user_id = 1 
-             LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id
-             LEFT JOIN formula_types ul ON u.formula_type_id = ul.formula_type_id
                WHERE s.formula_id = 1;";
         $t->dsp('PostgreSQL user sandbox join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
@@ -681,7 +677,6 @@ class user_sandbox_unit_tests
 
         // test the view_component load SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
-        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), DB_TYPE_VIEW_COMPONENT_TYPE);
         $db_con->set_usr_fields(array('comment'));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where(1);
@@ -698,13 +693,10 @@ class user_sandbox_unit_tests
                         CASE WHEN (u.formula_id                IS NULL)     THEN s.formula_id             ELSE u.formula_id             END AS formula_id,  
                         CASE WHEN (u.word_id_col               IS NULL)     THEN s.word_id_col            ELSE u.word_id_col            END AS word_id_col,  
                         CASE WHEN (u.word_id_col2              IS NULL)     THEN s.word_id_col2           ELSE u.word_id_col2           END AS word_id_col2,  
-                        CASE WHEN (u.excluded                  IS NULL)     THEN s.excluded               ELSE u.excluded               END AS excluded,  
-                        CASE WHEN (ul.code_id <> ''            IS NOT TRUE) THEN l.code_id                ELSE ul.code_id                END AS code_id 
+                        CASE WHEN (u.excluded                  IS NULL)     THEN s.excluded               ELSE u.excluded               END AS excluded
                    FROM view_components s 
               LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                               AND u.user_id = 1 
-              LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id 
-              LEFT JOIN view_component_types ul ON u.view_component_type_id = ul.view_component_type_id 
                   WHERE s.view_component_id = 1;";
         $t->dsp('PostgreSQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
@@ -893,7 +885,6 @@ class user_sandbox_unit_tests
 
         // ... same for user sandbox data
         $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where(1, '');
@@ -910,13 +901,10 @@ class user_sandbox_unit_tests
                         IF(u.formula_type_id   IS NULL, s.formula_type_id,   u.formula_type_id)   AS formula_type_id, 
                         IF(u.all_values_needed IS NULL, s.all_values_needed, u.all_values_needed) AS all_values_needed, 
                         IF(u.last_update       IS NULL, s.last_update,       u.last_update)       AS last_update, 
-                        IF(u.excluded          IS NULL, s.excluded,          u.excluded)          AS excluded, 
-                        IF(ul.code_id          IS NULL, l.code_id,           ul.code_id)          AS code_id 
+                        IF(u.excluded          IS NULL, s.excluded,          u.excluded)          AS excluded
                    FROM formulas s 
               LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                        AND u.user_id = 1 
-              LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-              LEFT JOIN formula_types ul ON u.formula_type_id = ul.formula_type_id 
                   WHERE s.formula_id = 1;";
         $t->dsp('MySQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
@@ -1063,7 +1051,6 @@ class user_sandbox_unit_tests
 
         // test the view_component load SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
-        $db_con->set_join_usr_fields(array(sql_db::FLD_CODE_ID), DB_TYPE_VIEW_COMPONENT_TYPE);
         $db_con->set_usr_fields(array('comment'));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
         $db_con->set_where(1);
@@ -1080,13 +1067,10 @@ class user_sandbox_unit_tests
                        IF(u.formula_id IS NULL,             s.formula_id,             u.formula_id)             AS formula_id,
                        IF(u.word_id_col IS NULL,            s.word_id_col,            u.word_id_col)            AS word_id_col,
                        IF(u.word_id_col2 IS NULL,           s.word_id_col2,           u.word_id_col2)           AS word_id_col2,
-                       IF(u.excluded IS NULL,               s.excluded,               u.excluded)               AS excluded,
-                       IF(ul.code_id IS NULL,               l.code_id,                ul.code_id)               AS code_id
+                       IF(u.excluded IS NULL,               s.excluded,               u.excluded)               AS excluded
                   FROM view_components s
              LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                              AND u.user_id = 1 
-             LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id
-             LEFT JOIN view_component_types ul ON u.view_component_type_id = ul.view_component_type_id
                  WHERE s.view_component_id = 1;";
         $t->dsp('MySQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 

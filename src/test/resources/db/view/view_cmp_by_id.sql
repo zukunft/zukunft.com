@@ -12,10 +12,7 @@ PREPARE view_cmp_by_id (int, int) AS
                CASE WHEN (u.word_id_col2              IS     NULL) THEN s.word_id_col2           ELSE u.word_id_col2           END AS word_id_col2,
                CASE WHEN (u.excluded                  IS     NULL) THEN s.excluded               ELSE u.excluded               END AS excluded,
                CASE WHEN (u.share_type_id             IS     NULL) THEN s.share_type_id          ELSE u.share_type_id          END AS share_type_id,
-               CASE WHEN (u.protect_id                IS     NULL) THEN s.protect_id             ELSE u.protect_id             END AS protect_id,
-               CASE WHEN (ul.code_id            <> '' IS NOT TRUE) THEN l.code_id                ELSE ul.code_id                END AS code_id
+               CASE WHEN (u.protect_id                IS     NULL) THEN s.protect_id             ELSE u.protect_id             END AS protect_id
           FROM view_components s
      LEFT JOIN user_view_components u  ON s.view_component_id = u.view_component_id AND u.user_id = $1
-     LEFT JOIN view_component_types l  ON s.view_component_type_id =  l.view_component_type_id
-     LEFT JOIN view_component_types ul ON u.view_component_type_id = ul.view_component_type_id
          WHERE s.view_component_id = $2;

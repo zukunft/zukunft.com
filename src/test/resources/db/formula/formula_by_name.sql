@@ -11,10 +11,7 @@ PREPARE formula_by_name (int, text) AS
            CASE WHEN (u.last_update         IS     NULL) THEN s.last_update       ELSE u.last_update       END AS last_update,
            CASE WHEN (u.excluded            IS     NULL) THEN s.excluded          ELSE u.excluded          END AS excluded,
            CASE WHEN (u.share_type_id       IS     NULL) THEN s.share_type_id     ELSE u.share_type_id     END AS share_type_id,
-           CASE WHEN (u.protect_id          IS     NULL) THEN s.protect_id        ELSE u.protect_id        END AS protect_id,
-           CASE WHEN (ul.code_id      <> '' IS NOT TRUE) THEN l.code_id           ELSE ul.code_id          END AS code_id
+           CASE WHEN (u.protect_id          IS     NULL) THEN s.protect_id        ELSE u.protect_id        END AS protect_id
       FROM formulas s
  LEFT JOIN user_formulas  u ON s.formula_id = u.formula_id AND u.user_id = $1
- LEFT JOIN formula_types  l ON s.formula_type_id =  l.formula_type_id
- LEFT JOIN formula_types ul ON u.formula_type_id = ul.formula_type_id
      WHERE s.formula_name = $2;
