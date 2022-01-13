@@ -349,8 +349,7 @@ class phrase_list
      */
     function trp_lst(): word_link_list
     {
-        $trp_lst = new word_link_list;
-        $trp_lst->usr = $this->usr;
+        $trp_lst = new word_link_list($this->usr);
         if (isset($this->lst)) {
             foreach ($this->lst as $phr) {
                 if ($phr->id < 0) {

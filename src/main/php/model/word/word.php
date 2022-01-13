@@ -1503,8 +1503,7 @@ class word extends user_sandbox_description
         $grp_lst->load();
 
         // collect all triples where this word is used
-        $trp_lst = new word_link_list();
-        $trp_lst->usr = $this->usr;
+        $trp_lst = new word_link_list($this->usr);
         $trp_lst->wrd = $this;
         $trp_lst->load();
 

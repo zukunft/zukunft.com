@@ -36,9 +36,21 @@ class word_link_list_unit_tests
     {
 
         global $usr;
-        global $sql_names;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'word_link_list->';
+        $t->resource_path = 'db/triple/';
+        $usr->id = 1;
 
         $t->header('Unit tests of the word link list class (src/main/php/model/word/word_link_list.php)');
+
+        $t->subheader('Database query creation tests');
+
+        // load by triple ids
+        $trp_lst = new word_link_list($usr);
+        $trp_ids = array(3,2,4);
+        $this->assert_sql_by_ids($t, $db_con, $trp_lst, $trp_ids);
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements
@@ -48,17 +60,22 @@ class word_link_list_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
 
         // sql to load by word link list by ids
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->ids = [1, 2, 3];
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
+        //$expected_sql = $t->file('');
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -102,23 +119,27 @@ class word_link_list_unit_tests
         $t->dsp('word_link_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
+        //$t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
         // sql to load by word link list by word and up
         $wrd = new word($usr);
         $wrd->id = 1;
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd = $wrd;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_UP;
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -155,18 +176,22 @@ class word_link_list_unit_tests
         // sql to load by word link list by word and down
         $wrd = new word($usr);
         $wrd->id = 2;
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd = $wrd;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -208,18 +233,22 @@ class word_link_list_unit_tests
         $wrd = new word($usr);
         $wrd->id = 2;
         $wrd_lst->add($wrd);
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_UP;
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -273,18 +302,22 @@ class word_link_list_unit_tests
         $wrd = new word($usr);
         $wrd->id = 3;
         $wrd_lst->add($wrd);
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -340,19 +373,23 @@ class word_link_list_unit_tests
         $wrd_lst->add($wrd);
         $vrb = new verb();
         $vrb->id = 2;
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->vrb = $vrb;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -409,19 +446,23 @@ class word_link_list_unit_tests
         $wrd_lst->add($wrd);
         $vrb_lst = new verb_list();
         $vrb_lst->ids = [1, 2];
-        $wrd_lnk_lst = new word_link_list;
+        $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;
         $wrd_lnk_lst->vrb_lst = $vrb_lst;
         $wrd_lnk_lst->direction = word_link_list::DIRECTION_DOWN;
-        $wrd_lnk_lst->usr = $usr;
         $created_sql = $wrd_lnk_lst->load_sql($db_con);
         $expected_sql = "SELECT 
                           l.word_link_id,
+                          ul.word_link_id AS user_word_link_id,
+                          l.user_id,
                           l.from_phrase_id,
                           l.verb_id,
+                          l.word_type_id,
                           l.to_phrase_id,
                           l.description,
                           l.word_link_name,
+                          l.share_type_id,
+                          l.protect_id,
                           v.verb_id,
                           v.code_id,
                           v.verb_name,
@@ -468,6 +509,29 @@ class word_link_list_unit_tests
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($wrd_lnk_lst->load_sql_name());
 
+    }
+
+    /**
+     * test the SQL statement creation for a triple list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_link_list $lst the empty triple list object
+     * @param array $ids filled with a list of word ids to be used for the query creation
+     * @return void
+     */
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_link_list $lst, array $ids)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $t->assert_qp($qp, sql_db::MYSQL);
     }
 
 }

@@ -373,10 +373,9 @@ class word_dsp extends word
                 log_debug('word_dsp->dsp_graph verb ' . $vrb->name);
 
                 // show the RDF graph for this verb
-                $graph = new word_link_list;
+                $graph = new word_link_list($this->usr);
                 $graph->wrd = $this;
                 $graph->vrb = $vrb;
-                $graph->usr = $this->usr;
                 $graph->direction = $direction;
                 $graph->load();
                 $result .= $graph->display($back);

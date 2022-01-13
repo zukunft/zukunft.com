@@ -133,10 +133,9 @@ class word_list_dsp extends word_list
         $vrb = new verb;
         $vrb->id = $verb_id;
         $vrb->load();
-        $lnk_lst = new word_link_list;
+        $lnk_lst = new word_link_list($this->usr);
         $lnk_lst->wrd = $wrd;
         $lnk_lst->vrb = $vrb;
-        $lnk_lst->usr = $this->usr;
         $lnk_lst->direction = $direction;
         $lnk_lst->load();
         $result .= $lnk_lst->display($back);

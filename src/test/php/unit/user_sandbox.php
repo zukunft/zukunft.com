@@ -481,12 +481,12 @@ class user_sandbox_unit_tests
                        CASE WHEN (u.all_values_needed IS           NULL) THEN s.all_values_needed    ELSE u.all_values_needed    END AS all_values_needed,
                        CASE WHEN (u.last_update       IS           NULL) THEN s.last_update          ELSE u.last_update          END AS last_update,
                        CASE WHEN (u.excluded          IS           NULL) THEN COALESCE(s.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded,
-                       CASE WHEN (c.code_id           <> '' IS NOT TRUE) THEN l.code_id              ELSE c.code_id              END AS code_id
+                       CASE WHEN (ul.code_id          <> '' IS NOT TRUE) THEN l.code_id              ELSE ul.code_id             END AS code_id
                   FROM formulas s
              LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                       AND u.user_id = 1 
              LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id
-             LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
+             LEFT JOIN formula_types ul ON u.formula_type_id = ul.formula_type_id
                WHERE s.formula_id = 1;";
         $t->dsp('PostgreSQL user sandbox join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
@@ -699,12 +699,12 @@ class user_sandbox_unit_tests
                         CASE WHEN (u.word_id_col               IS NULL)     THEN s.word_id_col            ELSE u.word_id_col            END AS word_id_col,  
                         CASE WHEN (u.word_id_col2              IS NULL)     THEN s.word_id_col2           ELSE u.word_id_col2           END AS word_id_col2,  
                         CASE WHEN (u.excluded                  IS NULL)     THEN s.excluded               ELSE u.excluded               END AS excluded,  
-                        CASE WHEN (c.code_id <> ''             IS NOT TRUE) THEN l.code_id                ELSE c.code_id                END AS code_id 
+                        CASE WHEN (ul.code_id <> ''            IS NOT TRUE) THEN l.code_id                ELSE ul.code_id                END AS code_id 
                    FROM view_components s 
               LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                               AND u.user_id = 1 
               LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id 
-              LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id 
+              LEFT JOIN view_component_types ul ON u.view_component_type_id = ul.view_component_type_id 
                   WHERE s.view_component_id = 1;";
         $t->dsp('PostgreSQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
@@ -911,12 +911,12 @@ class user_sandbox_unit_tests
                         IF(u.all_values_needed IS NULL, s.all_values_needed, u.all_values_needed) AS all_values_needed, 
                         IF(u.last_update       IS NULL, s.last_update,       u.last_update)       AS last_update, 
                         IF(u.excluded          IS NULL, s.excluded,          u.excluded)          AS excluded, 
-                        IF(c.code_id           IS NULL, l.code_id,           c.code_id)           AS code_id 
+                        IF(ul.code_id          IS NULL, l.code_id,           ul.code_id)          AS code_id 
                    FROM formulas s 
               LEFT JOIN user_formulas u ON s.formula_id = u.formula_id 
                                        AND u.user_id = 1 
               LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id 
-              LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id 
+              LEFT JOIN formula_types ul ON u.formula_type_id = ul.formula_type_id 
                   WHERE s.formula_id = 1;";
         $t->dsp('MySQL all user join select by id', $t->trim($expected_sql), $t->trim($created_sql));
 
@@ -1081,12 +1081,12 @@ class user_sandbox_unit_tests
                        IF(u.word_id_col IS NULL,            s.word_id_col,            u.word_id_col)            AS word_id_col,
                        IF(u.word_id_col2 IS NULL,           s.word_id_col2,           u.word_id_col2)           AS word_id_col2,
                        IF(u.excluded IS NULL,               s.excluded,               u.excluded)               AS excluded,
-                       IF(c.code_id IS NULL,                l.code_id,                c.code_id)                AS code_id
+                       IF(ul.code_id IS NULL,               l.code_id,                ul.code_id)               AS code_id
                   FROM view_components s
              LEFT JOIN user_view_components u ON s.view_component_id = u.view_component_id 
                                              AND u.user_id = 1 
              LEFT JOIN view_component_types l ON s.view_component_type_id = l.view_component_type_id
-             LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id
+             LEFT JOIN view_component_types ul ON u.view_component_type_id = ul.view_component_type_id
                  WHERE s.view_component_id = 1;";
         $t->dsp('MySQL view_component load select by id', $t->trim($expected_sql), $t->trim($created_sql));
 

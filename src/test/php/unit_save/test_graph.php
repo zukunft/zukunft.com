@@ -60,8 +60,7 @@ function run_graph_test(testing $t)
     }
     // step 4: get the word links for the used phrases
     //         these are the word links that are needed for a complete export
-    $lnk_lst = new word_link_list;
-    $lnk_lst->usr = $usr;
+    $lnk_lst = new word_link_list($usr);
     $lnk_lst->wrd_lst = $phr_lst_used->wrd_lst();
     $lnk_lst->direction = 'up';
     $lnk_lst->load();
@@ -79,8 +78,7 @@ function run_graph_test(testing $t)
     // similar to above, but just for the zurich
     $phr_lst = new phrase_list($usr);
     $phr_lst->load_by_names(array(word::TN_ZH, word::TN_INHABITANT, word::TN_MIO));
-    $lnk_lst = new word_link_list;
-    $lnk_lst->usr = $usr;
+    $lnk_lst = new word_link_list($usr);
     $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
     $lnk_lst->direction = 'up';
     $lnk_lst->load();
@@ -98,10 +96,9 @@ function run_graph_test(testing $t)
     $is->id = cl(db_cl::VERB, verb::IS_A);
     $is->usr = $usr;
     $is->load();
-    $graph = new word_link_list;
+    $graph = new word_link_list($usr);
     $graph->wrd = $ZH;
     $graph->vrb = $is;
-    $graph->usr = $usr;
     $graph->direction = 'down';
     $graph->load();
     $target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);

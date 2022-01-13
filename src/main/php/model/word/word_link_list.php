@@ -39,16 +39,26 @@ class word_link_list
     const DIRECTION_DOWN = 'down';
     const DIRECTION_BOTH = 'both';
 
-    public array $lst = array(); // the list of word links
-    public ?user $usr = null;    // the user object of the person for whom the word list is loaded, so to say the viewer
+    public array $lst; // the list of triples
+    public user $usr;    // the user object of the person for whom the triple list is loaded, so to say the viewer
 
-    // fields to select a part of the graph
+    // fields to select a part of the graph (TODO deprecated)
     public array $ids = array();  // list of link ids
     public ?word $wrd = null;          // show the graph elements related to this word
     public ?word_list $wrd_lst = null; // show the graph elements related to these words
     public ?verb $vrb = null;     // show the graph elements related to this verb
     public ?verb_list $vrb_lst = null; // show the graph elements related to these verbs
     public string $direction = self::DIRECTION_DOWN;  // either up, down or both
+
+    /**
+     * always set the user because a triple list is always user specific
+     * @param user $usr the user who requested to see this triple list
+     */
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
 
     /*
      * not really used?
@@ -74,6 +84,68 @@ class word_link_list
                                            AND u" . $pos . ".user_id = " . $this->usr->id . " ";
     }
     */
+
+    /*
+     * load functions
+     */
+
+    /**
+     * set the SQL query parameters to load a list of triples
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_new(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_link_fields(word_link::FLD_FROM, word_link::FLD_TO, verb::FLD_ID);
+        $db_con->set_fields(word_link::FLD_NAMES);
+        $db_con->set_usr_fields(word_link::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(word_link::FLD_NAMES_NUM_USR);
+        // also load the linked user specific phrase with the same SQL statement (word until now)
+        // TODO use user specific phrases instead of words
+        $db_con->set_join_usr_fields(
+            word::ALL_FLD_NAMES,
+            DB_TYPE_WORD,
+            word_link::FLD_FROM,
+            word::FLD_ID
+        );
+        $db_con->set_join_usr_fields(
+            word::ALL_FLD_NAMES,
+            DB_TYPE_WORD,
+            word_link::FLD_TO,
+            word::FLD_ID
+        );
+        $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(verb::FLD_ID) . ', ' . word_link::FLD_NAME);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of triples by the ids
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $trp_ids a list of int values with the triple ids
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_db $db_con, array $trp_ids): sql_par
+    {
+        $qp = $this->load_sql_new($db_con);
+        if (count($trp_ids) > 0) {
+            $qp->name .= 'ids';
+            $db_con->set_name($qp->name);
+            $db_con->add_par_in_int($trp_ids);
+            $qp->sql = $db_con->select_by_field(word_link::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /*
+     * load functions (to deprecate because not based on prepared queries )
+     */
 
     private function load_wrd_fields(sql_db $db_con, $pos): string
     {
@@ -251,11 +323,16 @@ class word_link_list
             // similar to word->load and word_link->load
             // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
             $sql = "SELECT l.word_link_id,
+                       ul.word_link_id AS user_word_link_id,
+                       l.user_id,
                        l.from_phrase_id,
                        l.verb_id,
+                       l.word_type_id,
                        l.to_phrase_id,
                        l.description,
                        l.word_link_name,
+                       l.share_type_id,
+                       l.protect_id,
                        v.verb_id,
                        v.code_id,
                        v.verb_name,
@@ -306,18 +383,11 @@ class word_link_list
             if ($db_lst != null) {
                 foreach ($db_lst as $db_lnk) {
                     if (is_null($db_lnk[user_sandbox::FLD_EXCLUDED]) or $db_lnk[user_sandbox::FLD_EXCLUDED] == 0) {
-                        if ($db_lnk['word_link_id'] > 0) {
-                            // create one work link object and fill it
-                            $new_link = new word_link($this->usr);
-                            // fill the fields used for searching
-                            $new_link->id = $db_lnk['word_link_id'];
-                            $new_link->from->id = $db_lnk['from_phrase_id'];
-                            $new_link->verb->id = $db_lnk[verb::FLD_ID];
-                            $new_link->to->id = $db_lnk['to_phrase_id'];
-                            $new_link->description = $db_lnk[sql_db::FLD_DESCRIPTION];
-                            $new_link->name = $db_lnk['word_link_name'];
+                        $new_link = new word_link($this->usr);
+                        $new_link->row_mapper($db_lnk);
+                        if ($new_link->id > 0) {
                             // fill the verb
-                            if ($db_lnk[verb::FLD_ID] > 0) {
+                            if ($new_link->verb->id > 0) {
                                 $new_verb = new verb;
                                 $new_verb->usr = $this->usr;
                                 $new_verb->row_mapper($db_lnk);
@@ -601,10 +671,12 @@ class word_link_list
 
 
     /*
-    convert functions
-    */
+     * convert functions
+     */
 
-    // convert the word list object into a phrase list object
+    /**
+     * convert the word list object into a phrase list object
+     */
     function phrase_lst(): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);

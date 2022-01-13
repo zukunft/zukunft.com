@@ -12,9 +12,9 @@ PREPARE formula_by_name FROM
             IF(u.excluded          IS NULL, s.excluded,          u.excluded) AS excluded,
             IF(u.share_type_id     IS NULL, s.share_type_id,     u.share_type_id) AS share_type_id,
             IF(u.protect_id        IS NULL, s.protect_id,        u.protect_id) AS protect_id,
-            IF(c.code_id           IS NULL, l.code_id,           c.code_id) AS code_id
+            IF(ul.code_id          IS NULL, l.code_id,           ul.code_id) AS code_id
        FROM formulas s
-  LEFT JOIN user_formulas u ON s.formula_id = u.formula_id AND u.user_id = ?
-  LEFT JOIN formula_types l ON s.formula_type_id = l.formula_type_id
-  LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
+  LEFT JOIN user_formulas u  ON s.formula_id = u.formula_id AND u.user_id = ?
+  LEFT JOIN formula_types l  ON s.formula_type_id =  l.formula_type_id
+  LEFT JOIN formula_types ul ON u.formula_type_id = ul.formula_type_id
       WHERE s.formula_name = ?';
