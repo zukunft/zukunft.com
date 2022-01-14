@@ -5,25 +5,56 @@
 -- --------------------------------------------------------
 
 --
--- Structure for view phrases
+-- Structure for the phrases view
 --
 
 CREATE OR REPLACE VIEW phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS phrase_name,
+       w.word_name AS name,
+       w.description,
+       w.values,
+       w.word_type_id,
        w.excluded,
        w.share_type_id,
        w.protect_id
 FROM words AS w
 UNION
-SELECT (l.word_link_id * -(1))                                                        AS phrase_id,
+SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.description IS NULL) THEN l.word_link_name ELSE l.description END AS phrase_name,
+       CASE WHEN (l.name_generated IS NULL) THEN l.name ELSE l.name_generated END AS name,
+       l.description,
+       l.values,
+       l.word_type_id,
        l.excluded,
        l.share_type_id,
        l.protect_id
 FROM word_links AS l;
+
+--
+-- Structure for the user_phrases view
+--
+
+CREATE OR REPLACE VIEW user_phrases AS
+SELECT w.word_id   AS phrase_id,
+       w.user_id,
+       w.word_name AS name,
+       w.description,
+       w.values,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM user_words AS w
+UNION
+SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
+       l.user_id,
+       CASE WHEN (l.name_generated IS NULL) THEN l.name ELSE l.name_generated END AS name,
+       l.description,
+       l.values,
+       l.excluded,
+       l.share_type_id,
+       l.protect_id
+FROM user_word_links AS l;
 
 -- --------------------------------------------------------
 
@@ -38,7 +69,7 @@ CREATE TABLE IF NOT EXISTS user_value_time_series
     source_id            bigint         DEFAULT NULL,
     excluded             smallint       DEFAULT NULL,
     share_type_id        bigint         DEFAULT NULL,
-    protect_id   bigint    NOT NULL,
+    protect_id           bigint    NOT NULL,
     last_update          timestamp NULL DEFAULT NULL
 );
 
@@ -61,7 +92,7 @@ ALTER TABLE user_value_time_series
     ADD CONSTRAINT user_value_time_series_fk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_value_time_series_fk_2 FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT user_value_time_series_fk_3 FOREIGN KEY (share_type_id) REFERENCES share_types (share_type_id),
-    ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protect_id);
+    ADD CONSTRAINT user_value_time_series_fk_4 FOREIGN KEY (protect_id) REFERENCES protection_types (protection_type_id);
 
 --
 -- database corrections

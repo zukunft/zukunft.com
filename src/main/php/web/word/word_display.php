@@ -377,7 +377,7 @@ class word_dsp extends word
                 $graph->wrd = $this;
                 $graph->vrb = $vrb;
                 $graph->direction = $direction;
-                $graph->load();
+                $graph->load_old();
                 $result .= $graph->display($back);
 
             }

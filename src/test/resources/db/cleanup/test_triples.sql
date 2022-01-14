@@ -1,3 +1,3 @@
 SELECT *
 FROM word_links
-WHERE word_link_name LIKE 'System Test%';
+WHERE name LIKE 'System Test%';

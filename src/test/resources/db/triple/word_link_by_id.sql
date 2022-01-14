@@ -9,8 +9,10 @@ PREPARE word_link_by_id (int, int) AS
                 s.word_type_id,
                 s.word_link_condition_id,
                 s.word_link_condition_type_id,
-                CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name,
+                CASE WHEN (u.name           <> '' IS NOT TRUE) THEN s.name           ELSE u.name           END AS name,
+                CASE WHEN (u.name_generated <> '' IS NOT TRUE) THEN s.name_generated ELSE u.name_generated END AS name_generated,
                 CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
+                CASE WHEN (u.values               IS     NULL) THEN s.values         ELSE u.values         END AS values,
                 CASE WHEN (u.excluded             IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded,
                 CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id  ELSE u.share_type_id  END AS share_type_id,
                 CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id     ELSE u.protect_id     END AS protect_id

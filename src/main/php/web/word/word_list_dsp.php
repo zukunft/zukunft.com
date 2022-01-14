@@ -137,7 +137,7 @@ class word_list_dsp extends word_list
         $lnk_lst->wrd = $wrd;
         $lnk_lst->vrb = $vrb;
         $lnk_lst->direction = $direction;
-        $lnk_lst->load();
+        $lnk_lst->load_old();
         $result .= $lnk_lst->display($back);
 
         /*

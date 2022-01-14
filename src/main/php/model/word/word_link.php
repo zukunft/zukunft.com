@@ -44,10 +44,12 @@ class word_link extends user_sandbox_link_description
     // object specific database and JSON object field names
     const FLD_ID = 'word_link_id';
     const FLD_ID_NEW = 'triple_id';
-    const FLD_NAME = 'word_link_name';
+    const FLD_NAME = 'name';
+    const FLD_NAME_AUTO= 'name_generated';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
     const FLD_TYPE = 'word_type_id';
+    const FLD_VALUES = 'values';
     const FLD_COND_ID = 'word_link_condition_id';
     const FLD_COND_TYPE = 'word_link_condition_type_id';
 
@@ -65,11 +67,13 @@ class word_link extends user_sandbox_link_description
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
+        self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_EXCLUDED,
+        self::FLD_VALUES,
+        user_sandbox::FLD_EXCLUDED,
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
@@ -89,6 +93,7 @@ class word_link extends user_sandbox_link_description
     public phrase $from; // the first object (either word, triple or group)
     public verb $verb;   // the link type object
     public phrase $to;   // the second object (either word, triple or group)
+    public ?int $values; // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
 
     /*
      * construct and map
@@ -118,6 +123,7 @@ class word_link extends user_sandbox_link_description
         $this->id = null;
         $this->usr_cfg_id = null;
         $this->owner_id = null;
+        $this->values = null;
         $this->excluded = null;
 
         $this->create_objects();
@@ -157,6 +163,7 @@ class word_link extends user_sandbox_link_description
             $this->name = $db_row[self::FLD_NAME];
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->type_id = $db_row[self::FLD_TYPE];
+            $this->values = $db_row[self::FLD_VALUES];
         }
         return $result;
     }
@@ -1029,7 +1036,7 @@ class word_link extends user_sandbox_link_description
             log_err('cannot delete user sandbox if id is missing');
         } else {
             $sql = "SELECT word_link_id,
-                     word_link_name,
+                     name,
                      description,
                      excluded
                 FROM user_word_links

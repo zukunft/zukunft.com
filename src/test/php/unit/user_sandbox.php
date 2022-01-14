@@ -525,9 +525,9 @@ class user_sandbox_unit_tests
                      s.to_phrase_id,
                      s.verb_id,
                      s.word_type_id,
-                     CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name,
-                     CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
-                     CASE WHEN (u.excluded       <> '' IS NOT TRUE) THEN s.excluded       ELSE u.excluded       END AS excluded
+                     CASE WHEN (u.name        <> '' IS NOT TRUE) THEN s.name        ELSE u.name        END AS name,
+                     CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description,
+                     CASE WHEN (u.excluded    <> '' IS NOT TRUE) THEN s.excluded    ELSE u.excluded    END AS excluded
                 FROM word_links s 
            LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                       AND u.user_id = 1 
@@ -707,7 +707,7 @@ class user_sandbox_unit_tests
         $db_con->set_where_text('word_link_id = 1');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT word_link_id,
-                     word_link_name,
+                     name,
                      from_phrase_id,
                      to_phrase_id,
                      verb_id,
@@ -733,9 +733,9 @@ class user_sandbox_unit_tests
                         s.to_phrase_id,
                         s.verb_id, 
                         s.word_type_id, 
-                        CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name, 
-                        CASE WHEN (u.description <> ''    IS NOT TRUE) THEN s.description    ELSE u.description    END AS description, 
-                        CASE WHEN (u.excluded             IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded 
+                        CASE WHEN (u.name        <> '' IS NOT TRUE) THEN s.name        ELSE u.name        END AS name, 
+                        CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description ELSE u.description END AS description, 
+                        CASE WHEN (u.excluded          IS     NULL) THEN s.excluded    ELSE u.excluded    END AS excluded 
                    FROM word_links s 
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
@@ -761,8 +761,8 @@ class user_sandbox_unit_tests
                             l.name_plural_reverse, 
                             l.formula_name, 
                             l.description,
-                            CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN s.word_link_name ELSE u.word_link_name END AS word_link_name, 
-                            CASE WHEN (u.excluded IS NULL) THEN s.excluded ELSE u.excluded END AS excluded 
+                            CASE WHEN (u.name <> '' IS NOT TRUE) THEN s.name     ELSE u.name     END AS name, 
+                            CASE WHEN (u.excluded   IS     NULL) THEN s.excluded ELSE u.excluded END AS excluded 
                        FROM word_links s 
                   LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                              AND u.user_id = 1 
@@ -948,9 +948,9 @@ class user_sandbox_unit_tests
                      s.to_phrase_id,
                      s.verb_id,
                      s.word_type_id,
-                     IF(u.word_link_name IS NULL, s.word_link_name, u.word_link_name) AS word_link_name,
-                     IF(u.description    IS NULL, s.description,    u.description)    AS description,
-                     IF(u.excluded       IS NULL, s.excluded,       u.excluded)       AS excluded
+                     IF(u.name        IS NULL, s.name,        u.name)        AS name,
+                     IF(u.description IS NULL, s.description, u.description) AS description,
+                     IF(u.excluded    IS NULL, s.excluded,    u.excluded)    AS excluded
                 FROM word_links s 
            LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                       AND u.user_id = 1 
@@ -1082,7 +1082,7 @@ class user_sandbox_unit_tests
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT 
                         word_link_id,
-                        word_link_name,
+                        name,
                         from_phrase_id,
                         to_phrase_id,
                         verb_id,
@@ -1110,9 +1110,9 @@ class user_sandbox_unit_tests
                         s.to_phrase_id, 
                         s.verb_id, 
                         s.word_type_id, 
-                        IF(u.word_link_name IS NULL, s.word_link_name, u.word_link_name) AS word_link_name, 
-                        IF(u.description    IS NULL, s.description,    u.description)    AS description,
-                        IF(u.excluded       IS NULL, s.excluded,       u.excluded)       AS excluded 
+                        IF(u.name        IS NULL, s.name,        u.name)        AS name, 
+                        IF(u.description IS NULL, s.description, u.description) AS description,
+                        IF(u.excluded    IS NULL, s.excluded,    u.excluded)    AS excluded 
                    FROM word_links s 
               LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id 
                                          AND u.user_id = 1 
@@ -1232,19 +1232,19 @@ class user_sandbox_unit_tests
         // the phrase load word link query
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = 'SELECT l.word_link_id * -1 AS id,
-                    ' . $db_con->get_usr_field("word_link_name", "l", "u") . ',
+                    ' . $db_con->get_usr_field("name", "l", "u") . ',
                     ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                       FROM word_links l
                  LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                             AND u.user_id = 1
-                  GROUP BY l.word_link_id, l.word_link_name ;';
+                  GROUP BY l.word_link_id, l.name ;';
         $expected_sql = "SELECT l.word_link_id * -1 AS id,
-                       CASE WHEN (u.word_link_name  <> '' IS NOT TRUE) THEN          l.word_link_name ELSE          u.word_link_name   END AS word_link_name,
+                       CASE WHEN (u.name  <> '' IS NOT TRUE) THEN          l.name ELSE          u.name   END AS name,
                        CASE WHEN (u.excluded              IS     NULL) THEN COALESCE(l.excluded,0)    ELSE COALESCE(u.excluded,0) END AS excluded
                        FROM word_links l
                  LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
                                             AND u.user_id = 1
-                  GROUP BY l.word_link_id, l.word_link_name ;";
+                  GROUP BY l.word_link_id, l.name ;";
         $t->dsp('phrase load word link query', $t->trim($expected_sql), $t->trim($created_sql));
 
         // the phrase load word link query by type
@@ -1481,7 +1481,7 @@ class user_sandbox_unit_tests
                        l.verb_id,
                        l.to_phrase_id,
                        l.description,
-                       l.word_link_name,
+                       l.name,
                        v.verb_id,
                        v.code_id,
                        v.verb_name,
@@ -1511,7 +1511,7 @@ class user_sandbox_unit_tests
                        l.verb_id,
                        l.to_phrase_id,
                        l.description,
-                       l.word_link_name,
+                       l.name,
                        v.verb_id,
                        v.code_id,
                        v.verb_name,
@@ -1567,7 +1567,7 @@ class user_sandbox_unit_tests
                        l.verb_id,
                        l.to_phrase_id,
                        l.description,
-                       l.word_link_name,
+                       l.name,
                        v.verb_id,
                        v.code_id,
                        v.verb_name,
@@ -1596,7 +1596,7 @@ class user_sandbox_unit_tests
                             l.verb_id,                       
                             l.to_phrase_id,                       
                             l.description,
-                            l.word_link_name,
+                            l.name,
                             v.verb_id,
                             v.code_id,
                             v.verb_name,
@@ -1635,7 +1635,7 @@ class user_sandbox_unit_tests
                         LEFT JOIN user_words u ON u.word_id = w.word_id 
                                               AND u.user_id = 1 ';
         $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
-                                    ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
+                                    ' . $db_con->get_usr_field("name", "l", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
                                     ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                FROM word_links l
                           LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -1656,7 +1656,7 @@ class user_sandbox_unit_tests
                                         AND u.user_id = 1
                UNION SELECT DISTINCT
                             l.word_link_id * -1 AS id, 
-                            CASE WHEN (u.word_link_name   <> '' IS NOT TRUE) THEN l.word_link_name       ELSE u.word_link_name       END AS phrase_name,
+                            CASE WHEN (u.name   <> '' IS NOT TRUE) THEN l.name       ELSE u.name       END AS phrase_name,
                             CASE WHEN (u.excluded               IS     NULL) THEN COALESCE(l.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded
                        FROM word_links l
                   LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -1705,7 +1705,7 @@ class user_sandbox_unit_tests
         $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
                         SELECT DISTINCT
                                l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
+                               ' . $db_con->get_usr_field("name", "l", "u", sql_db::FLD_FORMAT_TEXT, "phrase_name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -1761,7 +1761,7 @@ class user_sandbox_unit_tests
                        WHERE excluded = 0  UNION SELECT DISTINCT id, phrase_name, excluded FROM (
                         SELECT DISTINCT
                                l.word_link_id * -1 AS id, 
-                                CASE WHEN (u.word_link_name <> '' IS NOT TRUE) THEN l.word_link_name       ELSE u.word_link_name       END AS phrase_name,
+                                CASE WHEN (u.name <> '' IS NOT TRUE) THEN l.name       ELSE u.name       END AS phrase_name,
                                 CASE WHEN (u.excluded             IS     NULL) THEN COALESCE(l.excluded,0) ELSE COALESCE(u.excluded,0) END AS excluded
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 

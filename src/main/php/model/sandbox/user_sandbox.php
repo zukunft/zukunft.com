@@ -54,6 +54,7 @@ class user_sandbox
      */
 
     // database and JSON object field names used in many user sandbox objects
+    // the id field is not included here because it is used for the database relations and should be object specific e.g. always "word_id" instead of simply "id"
     const FLD_EXCLUDED = 'excluded';
     const FLD_USER = 'user_id';
     const FLD_USER_NAME = 'user_name';
@@ -68,6 +69,12 @@ class user_sandbox
     // numeric database field names that only exist in the table for the user specific data
     const FLD_NAMES_NUM_USR_ONLY_SBX = array(
         self::FLD_SHARE // the standard value is per definition share to public
+    );
+    // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_EXCLUDED,
+        self::FLD_SHARE,
+        self::FLD_PROTECT
     );
 
     /*
@@ -228,7 +235,7 @@ class user_sandbox
      * @param array $db_row with the data loaded from the database
      * @return void
      */
-    private function row_mapper_usr(array $db_row, $id_fld)
+    public function row_mapper_usr(array $db_row, $id_fld)
     {
         $this->usr_cfg_id = $db_row[DB_TYPE_USER_PREFIX . $id_fld];
         $this->share_id = $db_row[self::FLD_SHARE];
@@ -240,7 +247,7 @@ class user_sandbox
      *
      * @return void
      */
-    private function row_mapper_std()
+    public function row_mapper_std()
     {
         $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
         $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);

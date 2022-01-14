@@ -34,6 +34,13 @@
 
 class user_sandbox_named extends user_sandbox
 {
+    /*
+     * database link
+     */
+
+    // object specific database and JSON object field names
+    const FLD_NAME = 'name';
+
     /**
      * reset the search values of this object
      * needed to search for the standard object, because the search is work, value, formula or ... specific

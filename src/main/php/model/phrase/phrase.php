@@ -53,6 +53,21 @@ class phrase
 {
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
     const FLD_ID = 'phrase_id';
+    const FLD_VALUES = 'values';
+
+    // the common phrase database field names excluding the id and excluding the user specific fields
+    const FLD_NAMES = array(
+        word_link::FLD_TYPE
+    );
+    // list of the common user specific database field names of phrases
+    const FLD_NAMES_USR = array(
+        user_sandbox_named::FLD_NAME,
+        sql_db::FLD_DESCRIPTION
+    );
+    // list of the common user specific numeric database field names of phrases
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_VALUES
+    );
 
     // persevered word names for unit and integration tests
     const TN_ZH_CANTON = "System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)"; // for testing the generic name creation
@@ -66,10 +81,11 @@ class phrase
 
     // database duplicate fields
     public ?int $id = null;            // if positive the database id of the word or if negative of a triple
+    public ?object $obj = null;        // if loaded the linked word or triple object
+    // TODO deprecate
     public ?user $usr = null;          // the person for whom the word is loaded, so to say the viewer
     public ?string $name = null;       // simply the word or triple name to reduce the number of "->" on the code
     public string $description = '';   // simply the word or triple description to reduce the number of "->" on the code
-    public ?object $obj = null;        // if loaded the linked word or triple object
 
     // in memory only fields
     public ?string $type_name = null;  //
@@ -82,6 +98,56 @@ class phrase
     function __construct(user $usr)
     {
         $this->usr = $usr;
+    }
+
+    /**
+     * map the common word and triple database fields to the phrase fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the triple is loaded and valid
+     */
+    function row_mapper(array $db_row, string $id_fld = '', string $fld_ext = ''): bool
+    {
+        $this->id = 0;
+        $result = false;
+        if ($db_row != null) {
+            if ($db_row[$id_fld] > 0) {
+                $this->id = $db_row[$id_fld];
+                // map a word
+                $wrd = new word($this->usr);
+                $wrd->id = $db_row[$id_fld];
+                $wrd->name = $db_row[word::FLD_NAME . $fld_ext];
+                $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
+                $wrd->type_id = $db_row[word::FLD_TYPE . $fld_ext];
+                $wrd->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
+                $wrd->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
+                $wrd->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
+                $wrd->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
+                $this->obj = $wrd;
+                $result = true;
+            } elseif ($db_row[$id_fld] > 0) {
+                $this->id = $db_row[$id_fld];
+                // map a triple
+                $trp = new word_link($this->usr);
+                $trp->id = $db_row[$id_fld] * -1;
+                $trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
+                $trp->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
+                $trp->name = $db_row[word::FLD_NAME . $fld_ext];
+                $trp->name = $db_row[word_link::FLD_NAME . $fld_ext];
+                $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
+                $trp->type_id = $db_row[word_link::FLD_TYPE . $fld_ext];
+                $trp->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
+                $trp->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
+                // not yet loaded with initial load
+                // $trp->from->id = $db_row[word_link::FLD_FROM];
+                // $trp->to->id = $db_row[word_link::FLD_TO];
+                // $trp->verb->id = $db_row[verb::FLD_ID];
+                $this->obj = $trp;
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -576,7 +642,7 @@ class phrase
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
                                          AND u.user_id = ' . $this->usr->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                               ' . $db_con->get_usr_field("name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -629,7 +695,7 @@ class phrase
                 $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
                         SELECT DISTINCT
                                l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("word_link_name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                               ' . $db_con->get_usr_field("name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 

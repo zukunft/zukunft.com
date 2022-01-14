@@ -105,18 +105,47 @@ class word_link_list
         $db_con->set_usr_fields(word_link::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(word_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement (word until now)
-        // TODO use user specific phrases instead of words
-        $db_con->set_join_usr_fields(
-            word::ALL_FLD_NAMES,
-            DB_TYPE_WORD,
+        $db_con->set_join_fields(
+            phrase::FLD_NAMES,
+            DB_TYPE_PHRASE,
             word_link::FLD_FROM,
-            word::FLD_ID
+            phrase::FLD_ID
         );
         $db_con->set_join_usr_fields(
-            word::ALL_FLD_NAMES,
-            DB_TYPE_WORD,
+            phrase::FLD_NAMES_USR,
+            DB_TYPE_PHRASE,
+            word_link::FLD_FROM,
+            phrase::FLD_ID
+        );
+        $db_con->set_join_usr_num_fields(
+            array_merge(
+                phrase::FLD_NAMES_NUM_USR,
+                user_sandbox::FLD_NAMES_NUM_USR),
+            DB_TYPE_PHRASE,
+            word_link::FLD_FROM,
+            phrase::FLD_ID,
+            true
+        );
+        $db_con->set_join_fields(
+            phrase::FLD_NAMES,
+            DB_TYPE_PHRASE,
             word_link::FLD_TO,
-            word::FLD_ID
+            phrase::FLD_ID
+        );
+        $db_con->set_join_usr_fields(
+            phrase::FLD_NAMES_USR,
+            DB_TYPE_PHRASE,
+            word_link::FLD_TO,
+            phrase::FLD_ID
+        );
+        $db_con->set_join_usr_num_fields(
+            array_merge(
+                phrase::FLD_NAMES_NUM_USR,
+                user_sandbox::FLD_NAMES_NUM_USR),
+            DB_TYPE_PHRASE,
+            word_link::FLD_TO,
+            phrase::FLD_ID,
+            true
         );
         $db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(verb::FLD_ID) . ', ' . word_link::FLD_NAME);
         return $qp;
@@ -141,6 +170,59 @@ class word_link_list
         }
         $qp->par = $db_con->get_par();
         return $qp;
+    }
+
+    /**
+     * load this list of triples
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if at least one word found
+     */
+    function load(sql_par $qp): bool
+    {
+        global $db_con;
+        global $verbs;
+        $result = false;
+
+        if ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $this->lst = array();
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $trp = new word_link($this->usr);
+                    $trp->row_mapper($db_row);
+                    // the simple object row mapper allows mapping excluded objects to remove the exclusion
+                    // but an object list should not have excluded objects
+                    if (!$trp->excluded) {
+                        $this->lst[] = $trp;
+                        $result = true;
+                        // fill verb
+                        $trp->verb = $verbs->get_by_id($db_row[verb::FLD_ID]);
+                        // fill from
+                        $trp->from = new phrase($this->usr);
+                        $trp->from->row_mapper($db_row, word_link::FLD_FROM, '1');
+                        // fill to
+                        $trp->to = new phrase($this->usr);
+                        $trp->to->row_mapper($db_row, word_link::FLD_TO, '2');
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * load a list of triples by the ids
+     * @param array $wrd_ids a list of int values with the triple ids
+     * @return bool true if at least one triple found
+     */
+    function load_by_ids(array $wrd_ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con, $wrd_ids);
+        return $this->load($qp);
     }
 
     /*
@@ -330,7 +412,9 @@ class word_link_list
                        l.word_type_id,
                        l.to_phrase_id,
                        l.description,
-                       l.word_link_name,
+                       l.name,
+                       l.name_generated,
+                       l.values,
                        l.share_type_id,
                        l.protect_id,
                        v.verb_id,
@@ -356,7 +440,7 @@ class word_link_list
                    AND " . $sql_wrd2 . " 
                    AND " . $sql_where . "
                        " . $sql_type . " 
-              ORDER BY l.verb_id, word_link_name;";  // maybe used word_name_t1 and word_name_t2
+              ORDER BY l.verb_id, name;";  // maybe used word_name_t1 and word_name_t2
             // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
         }
         return $sql;
@@ -364,7 +448,7 @@ class word_link_list
 
     // load the word link without the linked objects, because in many cases the object are already loaded by the caller
     // unit tested by
-    function load()
+    function load_old()
     {
         log_debug('word_link_list->load');
 

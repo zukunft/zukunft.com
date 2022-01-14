@@ -182,6 +182,10 @@ class sql_db
     private string $join2_to_field = '';          // same as $join_field but for the second join
     private string $join3_to_field = '';          // same as $join_field but for the third join
     private string $join4_to_field = '';          // same as $join_field but for the fourth join
+    private bool $join_force_rename = false;      // if true force the fields to be renamed to create unique fields e.g. if a similar object is linked
+    private bool $join2_force_rename = false;     // same as $join_force_rename but for the second join
+    private bool $join3_force_rename = false;     // same as $join_force_rename but for the third join
+    private bool $join4_force_rename = false;     // same as $join_force_rename but for the fourth join
     private string $join_select_field = '';       // if set the field name in the joined table that should be used for a where selection
     private string $join2_select_field = '';      // same as $join_select_field but for the second join
     private string $join3_select_field = '';      // same as $join_select_field but for the third join
@@ -256,6 +260,10 @@ class sql_db
         $this->join2_to_field = '';
         $this->join3_to_field = '';
         $this->join4_to_field = '';
+        $this->join_force_rename = false;
+        $this->join2_force_rename = false;
+        $this->join3_force_rename = false;
+        $this->join4_force_rename = false;
         $this->join_select_field = '';
         $this->join2_select_field = '';
         $this->join3_select_field = '';
@@ -515,7 +523,10 @@ class sql_db
                              string $join_select_field = '',
                              int    $join_select_id = 0)
     {
-        if ($this->join_type == '') {
+        // fill up the join field places or add settings to a matching join link
+        if ($this->join_type == '' and !$this->join_force_rename
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join_type = $join_type;
             $this->join_field_lst = $join_field_lst;
             $this->join_field = $join_field;
@@ -523,7 +534,9 @@ class sql_db
             $this->join_select_field = $join_select_field;
             $this->join_select_id = $join_select_id;
             $this->join_usr_query = false;
-        } elseif ($this->join2_type == '') {
+        } elseif ($this->join2_type == '' and !$this->join2_force_rename
+            or (($this->join2_field == $join_field and $join_field != '')
+                and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join2_type = $join_type;
             $this->join2_field_lst = $join_field_lst;
             $this->join2_field = $join_field;
@@ -531,7 +544,9 @@ class sql_db
             $this->join2_select_field = $join_select_field;
             $this->join2_select_id = $join_select_id;
             $this->join2_usr_query = false;
-        } elseif ($this->join3_type == '') {
+        } elseif ($this->join3_type == '' and !$this->join3_force_rename
+            or (($this->join3_field == $join_field and $join_field != '')
+                and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join3_type = $join_type;
             $this->join3_field_lst = $join_field_lst;
             $this->join3_field = $join_field;
@@ -539,7 +554,9 @@ class sql_db
             $this->join3_select_field = $join_select_field;
             $this->join3_select_id = $join_select_id;
             $this->join3_usr_query = false;
-        } elseif ($this->join4_type == '') {
+        } elseif ($this->join4_type == '' and !$this->join4_force_rename
+            or (($this->join4_field == $join_field and $join_field != '')
+                and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join4_type = $join_type;
             $this->join4_field_lst = $join_field_lst;
             $this->join4_field = $join_field;
@@ -555,62 +572,101 @@ class sql_db
     /**
      * similar to set_join_fields but for usr specific fields
      */
-    function set_join_usr_fields(array $join_field_lst,
+    function set_join_usr_fields(array  $join_field_lst,
                                  string $join_type,
                                  string $join_field = '',
-                                 string $join_to_field = '')
+                                 string $join_to_field = '',
+                                 bool   $force_rename = false)
     {
-        if ($this->join_type == '') {
+        // fill up the join field places or add settings to a matching join link
+        // e.g. add the user fields to an existing not user specific join
+        if ($this->join_type == ''
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join_type = $join_type;
             $this->join_usr_field_lst = $join_field_lst;
             $this->join_field = $join_field;
             $this->join_to_field = $join_to_field;
+            $this->join_force_rename = $force_rename;
             $this->join_usr_query = true;
-        } elseif ($this->join2_type == '') {
+        } elseif ($this->join2_type == ''
+            or (($this->join2_field == $join_field and $join_field != '')
+                and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join2_type = $join_type;
             $this->join2_usr_field_lst = $join_field_lst;
             $this->join2_field = $join_field;
             $this->join2_to_field = $join_to_field;
+            $this->join2_force_rename = $force_rename;
             $this->join2_usr_query = true;
-        } elseif ($this->join3_type == '') {
+        } elseif ($this->join3_type == ''
+            or (($this->join3_field == $join_field and $join_field != '')
+                and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join3_type = $join_type;
             $this->join3_usr_field_lst = $join_field_lst;
             $this->join3_field = $join_field;
             $this->join3_to_field = $join_to_field;
+            $this->join3_force_rename = $force_rename;
             $this->join3_usr_query = true;
-        } elseif ($this->join4_type == '') {
+        } elseif ($this->join4_type == ''
+            or (($this->join4_field == $join_field and $join_field != '')
+                and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join4_type = $join_type;
             $this->join4_usr_field_lst = $join_field_lst;
             $this->join4_field = $join_field;
             $this->join4_to_field = $join_to_field;
+            $this->join4_force_rename = $force_rename;
             $this->join4_usr_query = true;
         } else {
-            log_err('Max two table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . PRG_VERSION);
         }
     }
 
-    function set_join_usr_num_fields(array $join_field_lst,
+    function set_join_usr_num_fields(array  $join_field_lst,
                                      string $join_type,
-                                     string $join_field = '')
+                                     string $join_field = '',
+                                     string $join_to_field = '',
+                                     bool   $force_rename = false)
     {
-        if ($this->join_type == '') {
+        // fill up the join field places or add settings to a matching join link
+        // e.g. add the user fields to an existing not user specific join
+        if ($this->join_type == ''
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join_type = $join_type;
             $this->join_usr_num_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
+            $this->join_force_rename = $force_rename;
             $this->join_usr_query = true;
-        } elseif ($this->join2_type == '') {
+        } elseif ($this->join2_type == ''
+            or (($this->join2_field == $join_field and $join_field != '')
+                and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join2_type = $join_type;
             $this->join2_usr_num_field_lst = $join_field_lst;
+            $this->join2_field = $join_field;
+            $this->join2_to_field = $join_to_field;
+            $this->join2_force_rename = $force_rename;
             $this->join2_usr_query = true;
-        } elseif ($this->join3_type == '') {
+        } elseif ($this->join3_type == ''
+            or (($this->join3_field == $join_field and $join_field != '')
+                and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join3_type = $join_type;
             $this->join3_usr_num_field_lst = $join_field_lst;
+            $this->join3_field = $join_field;
+            $this->join3_to_field = $join_to_field;
+            $this->join3_force_rename = $force_rename;
             $this->join3_usr_query = true;
-        } elseif ($this->join4_type == '') {
+        } elseif ($this->join4_type == ''
+            or (($this->join4_field == $join_field and $join_field != '')
+                and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
             $this->join4_type = $join_type;
             $this->join4_usr_num_field_lst = $join_field_lst;
+            $this->join4_field = $join_field;
+            $this->join4_to_field = $join_to_field;
+            $this->join4_force_rename = $force_rename;
             $this->join4_usr_query = true;
         } else {
-            log_err('Max two table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . PRG_VERSION);
         }
     }
 
@@ -675,9 +731,9 @@ class sql_db
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
      */
-    private function set_field_usr_num($field, $as = '')
+    private function set_field_usr_num($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = '')
     {
-        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, sql_db::STD_TBL, sql_db::USR_TBL, $as);
+        $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, $stb_tbl, $usr_tbl, $as);
     }
 
     /**
@@ -790,53 +846,61 @@ class sql_db
 
         // add join fields
         foreach ($this->join_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->fields .= ' ' . sql_db::LNK_TBL . '.' . $field;
-            if ($this->usr_query and $this->join_usr_query) {
+            $this->fields .= ' ' . sql_db::LNK_TBL . '.' . $field_esc;
+            if ($this->join_force_rename) {
+                $this->fields .= ' AS ' . $this->name_sql_esc($field . '1');
+            } elseif ($this->usr_query and $this->join_usr_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
-                $this->fields .= ' ' . sql_db::ULK_TBL . '.' . $field;
+                $this->fields .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
             }
         }
 
         // add second join fields
         foreach ($this->join2_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->fields .= ' ' . sql_db::LNK2_TBL . '.' . $field;
-            if ($this->usr_query and $this->join2_usr_query) {
+            $this->fields .= ' ' . sql_db::LNK2_TBL . '.' . $field_esc;
+            if ($this->join2_force_rename) {
+                $this->fields .= ' AS ' . $this->name_sql_esc($field . '2');
+            }elseif ($this->usr_query and $this->join2_usr_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
-                $this->fields .= ' ' . sql_db::ULK2_TBL . '.' . $field;
+                $this->fields .= ' ' . sql_db::ULK2_TBL . '.' . $field_esc;
             }
         }
 
         // add third join fields
         foreach ($this->join3_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->fields .= ' ' . sql_db::LNK3_TBL . '.' . $field;
-            if ($this->usr_query and $this->join3_usr_query) {
+            $this->fields .= ' ' . sql_db::LNK3_TBL . '.' . $field_esc;
+            if ($this->join3_force_rename) {
+                $this->fields .= ' AS ' . $this->name_sql_esc($field . '3');
+            } elseif ($this->usr_query and $this->join3_usr_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
-                $this->fields .= ' ' . sql_db::ULK3_TBL . '.' . $field;
+                $this->fields .= ' ' . sql_db::ULK3_TBL . '.' . $field_esc;
             }
         }
 
         // add fourth join fields
         foreach ($this->join4_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->fields .= ' ' . sql_db::LNK4_TBL . '.' . $field;
-            if ($this->usr_query and $this->join4_usr_query) {
+            $this->fields .= ' ' . sql_db::LNK4_TBL . '.' . $field_esc;
+            if ($this->join4_force_rename) {
+                $this->fields .= ' AS ' . $this->name_sql_esc($field . '4');
+            } elseif ($this->usr_query and $this->join4_usr_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
-                $this->fields .= ' ' . sql_db::ULK4_TBL . '.' . $field;
+                $this->fields .= ' ' . sql_db::ULK4_TBL . '.' . $field_esc;
             }
         }
 
@@ -863,58 +927,66 @@ class sql_db
 
         // add user specific join fields
         foreach ($this->join_usr_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK_TBL, sql_db::ULK_TBL);
-        }
-
-        // add user specific second join fields
-        foreach ($this->join2_usr_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
-            $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $field . '2');
-        }
-
-        // add user specific third join fields
-        foreach ($this->join3_usr_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
-            $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $field . '3');
-        }
-
-        // add user specific fourth join fields
-        foreach ($this->join4_usr_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
-            $this->set_field_sep();
-            $this->set_field_usr_text($field, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $field . '4');
+            if ($this->join_force_rename) {
+                $this->set_field_usr_text($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL, $this->name_sql_esc($field . '1'));
+            } else {
+                $this->set_field_usr_text($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL);
+            }
         }
 
         // add user specific numeric join fields
         foreach ($this->join_usr_num_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field);
+            if ($this->join_force_rename) {
+                $this->set_field_usr_num($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL, $this->name_sql_esc($field . '1'));
+            } else {
+                $this->set_field_usr_num($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL);
+            }
+        }
+
+        // add user specific second join fields
+        foreach ($this->join2_usr_field_lst as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->set_field_usr_text($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
         // add user specific numeric second join fields
         foreach ($this->join2_usr_num_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field, $field . '2');
+            $this->set_field_usr_num($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
+        }
+
+        // add user specific third join fields
+        foreach ($this->join3_usr_field_lst as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->set_field_usr_text($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
         // add user specific numeric third join fields
         foreach ($this->join3_usr_num_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field, $field . '3');
+            $this->set_field_usr_num($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
+        }
+
+        // add user specific fourth join fields
+        foreach ($this->join4_usr_field_lst as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $this->set_field_sep();
+            $this->set_field_usr_text($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
         // add user specific numeric fourth join fields
         foreach ($this->join4_usr_num_field_lst as $field) {
-            $field = $this->name_sql_esc($field);
+            $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
-            $this->set_field_usr_num($field, $field . '4');
+            $this->set_field_usr_num($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
         foreach ($this->usr_only_field_lst as $field) {
@@ -1096,6 +1168,10 @@ class sql_db
         }
         if ($result == 'calc_and_cleanup_task_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
+        }
+        // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
+        if ($result == 'word_link_name') {
+            $result = 'name';
         }
         log_debug("sql_db->set_name_field to (" . $result . ")");
         $this->name_field = $result;

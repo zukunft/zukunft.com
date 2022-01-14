@@ -114,8 +114,6 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_table_name('languages_forms', DB_TYPE_LANGUAGE_FORM);
     $result .= $db_con->change_column_name(DB_TYPE_LANGUAGE_FORM, 'lanuages_id', 'language_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE, 'user_value', 'word_value');
-    $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'name', 'word_link_name');
-    $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'name', 'word_link_name');
     $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'value_time_serie_id', 'value_time_series_id');
     $result .= $db_con->change_column_name(DB_TYPE_IP, 'isactive', 'is_active');
     $result .= $db_con->change_column_name(DB_TYPE_USER, 'isactive', 'is_active');
@@ -138,6 +136,19 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_VALUE_TIME_SERIES, 'protection_type_id', 'protect_id');
     $result .= $db_con->change_column_name(DB_TYPE_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
+    if (!$db_con->has_column($db_con->get_table_name(DB_TYPE_TRIPLE), 'name_generated')) {
+        $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'name', 'name_generated');
+        $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'description', 'name');
+        $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'description', 'text');
+    }
+    $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'values', 'bigint');
+    if (!$db_con->has_column($db_con->get_table_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE), 'name_generated')) {
+        $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'name', 'name_generated');
+        $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'name');
+        $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'text');
+    }
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'values', 'bigint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'values', 'bigint');
     $result .= $db_con->remove_prefix(DB_TYPE_USER_PROFILE, 'code_id', 'usr_role_');
     $result .= $db_con->remove_prefix(DB_TYPE_SYS_LOG_STATUS, 'code_id', 'log_status_');
     $result .= $db_con->remove_prefix(DB_TYPE_TASK_TYPE, 'code_id', 'job_');

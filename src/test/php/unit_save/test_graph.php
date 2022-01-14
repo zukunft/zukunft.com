@@ -63,7 +63,7 @@ function run_graph_test(testing $t)
     $lnk_lst = new word_link_list($usr);
     $lnk_lst->wrd_lst = $phr_lst_used->wrd_lst();
     $lnk_lst->direction = 'up';
-    $lnk_lst->load();
+    $lnk_lst->load_old();
     $result = $lnk_lst->name();
     // check if at least the basic relations are in the database
     /*
@@ -81,7 +81,7 @@ function run_graph_test(testing $t)
     $lnk_lst = new word_link_list($usr);
     $lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
     $lnk_lst->direction = 'up';
-    $lnk_lst->load();
+    $lnk_lst->load_old();
     $result = $lnk_lst->name();
     // to be reviewed
     $target = 'System Test Phrase: Zurich (City),System Test Phrase: Zurich Insurance,System Test Word Member e.g. Zurich (System Test Word Category e.g. Canton)';
@@ -100,7 +100,7 @@ function run_graph_test(testing $t)
     $graph->wrd = $ZH;
     $graph->vrb = $is;
     $graph->direction = 'down';
-    $graph->load();
+    $graph->load_old();
     $target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);
     $result = $graph->display($back);
     $diff = str_diff($result, $target);
@@ -112,7 +112,7 @@ function run_graph_test(testing $t)
 
     // the other side
     $graph->direction = 'up';
-    $graph->load();
+    $graph->load_old();
     //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);
     $result = $graph->display($back);
     /*
