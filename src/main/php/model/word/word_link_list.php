@@ -61,31 +61,6 @@ class word_link_list
     }
 
     /*
-     * not really used?
-     *
-    private function load_lnk_fields($pos): string
-    {
-        global $db_con;
-
-        $sql = "t" . $pos . ".word_id AS word_id" . $pos . ",
-                t" . $pos . ".user_id AS user_id" . $pos . ",
-                " . $db_con->get_usr_field('word_name', 't' . $pos, 'u' . $pos) . ",
-                " . $db_con->get_usr_field('plural', 't' . $pos, 'u' . $pos) . ",
-                " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos) . ",
-                " . $db_con->get_usr_field('word_type_id', 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
-                " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL) . ",
-                  t" . $pos . "." . $db_con->get_table_name(DB_TYPE_VALUE) . " AS values" . $pos . "";
-        return $sql;
-    }
-
-    private function load_lnk_from($pos): string
-    {
-        return " words t" . $pos . " LEFT JOIN user_words u" . $pos . " ON u" . $pos . ".word_id = t" . $pos . ".word_id 
-                                           AND u" . $pos . ".user_id = " . $this->usr->id . " ";
-    }
-    */
-
-    /*
      * load functions
      */
 
@@ -173,6 +148,51 @@ class word_link_list
     }
 
     /**
+     * set the SQL query parameters to load a list of triples by a phrase, verb and direction
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param string $direction to select either the parents, children or all related words ana triples
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr(sql_db $db_con, phrase $phr, ?verb $vrb = null, string $direction = self::DIRECTION_BOTH): sql_par
+    {
+        $qp = $this->load_sql_new($db_con);
+        if ($phr->id <> 0) {
+            $fields = array();
+            $qp->name .= 'phr';
+            $db_con->add_par(sql_db::PAR_INT, $phr->id);
+            if ($direction == self::DIRECTION_UP) {
+                $fields[] = word_link::FLD_FROM;
+            } elseif ($direction == self::DIRECTION_DOWN) {
+                $fields[] = word_link::FLD_TO;
+            } elseif ($direction == self::DIRECTION_BOTH) {
+                $fields[] = word_link::FLD_FROM;
+                $fields[] = word_link::FLD_TO;
+            }
+            if ($vrb != null) {
+                if ($vrb->id > 0) {
+                    $db_con->add_par(sql_db::PAR_INT, $vrb->id);
+                    $fields[] = verb::FLD_ID;
+                    $qp->name .= '_and_vrb';
+                }
+            }
+            if ($direction == self::DIRECTION_UP) {
+                $qp->name .= '_up';
+            } elseif ($direction == self::DIRECTION_DOWN) {
+                $qp->name .= '_down';
+            }
+            $db_con->set_name($qp->name);
+            $qp->sql = $db_con->select_by_field_list($fields);
+        } else {
+            $qp->name = '';
+            log_err('At least the phrase must be set to load a triple list by phrase');
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * load this list of triples
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one word found
@@ -222,6 +242,20 @@ class word_link_list
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con, $wrd_ids);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of triples by a phrase, verb and direction
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param string $direction to select either the parents, children or all related words ana triples
+     * @return bool true if at least one triple found
+     */
+    function load_by_phr(phrase $phr, ?verb $vrb = null, string $direction = self::DIRECTION_BOTH): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr($db_con, $phr, $vrb, $direction);
         return $this->load($qp);
     }
 
@@ -528,7 +562,6 @@ class word_link_list
                                 $new_link->to_name = $new_word->name;
                             }
                             $this->lst[] = $new_link;
-                            $this->ids[] = $new_link->id;
                         }
                     }
                 }

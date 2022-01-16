@@ -2120,6 +2120,10 @@ class sql_db
                 if ($this->query_name == '') {
                     $this->join .= $this->usr_view_id;
                 } else {
+                    // for MySQL the parameter needs to be repeated
+                    if ($this->db_type == self::MYSQL) {
+                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                    }
                     $this->join .= $this->join_usr_par_name;
                 }
             }
@@ -2153,6 +2157,10 @@ class sql_db
                 if ($this->query_name == '') {
                     $this->join .= $this->usr_view_id;
                 } else {
+                    // for MySQL the parameter needs to be repeated
+                    if ($this->db_type == self::MYSQL) {
+                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                    }
                     $this->join .= $this->join_usr_par_name;
                 }
             }
@@ -2186,6 +2194,10 @@ class sql_db
                 if ($this->query_name == '') {
                     $this->join .= $this->usr_view_id;
                 } else {
+                    // for MySQL the parameter needs to be repeated
+                    if ($this->db_type == self::MYSQL) {
+                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                    }
                     $this->join .= $this->join_usr_par_name;
                 }
             }
@@ -2219,6 +2231,10 @@ class sql_db
                 if ($this->query_name == '') {
                     $this->join .= $this->usr_view_id;
                 } else {
+                    // for MySQL the parameter needs to be repeated
+                    if ($this->db_type == self::MYSQL) {
+                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                    }
                     $this->join .= $this->join_usr_par_name;
                 }
             }

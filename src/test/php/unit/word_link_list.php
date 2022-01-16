@@ -52,6 +52,12 @@ class word_link_list_unit_tests
         $trp_ids = array(3,2,4);
         $this->assert_sql_by_ids($t, $db_con, $trp_lst, $trp_ids);
 
+        // load by triple phr
+        $trp_lst = new word_link_list($usr);
+        $phr = new phrase($usr);
+        $phr->id = 5;
+        $this->assert_sql_by_phr($t, $db_con, $trp_lst, $phr);
+
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements
          */
@@ -545,6 +551,37 @@ class word_link_list_unit_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_ids($db_con, $ids);
+        $t->assert_qp($qp, sql_db::MYSQL);
+    }
+
+    /**
+     * test the SQL statement creation for a triple list in all SQL dialect
+     * and check if the statement name is unique
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_link_list $lst the empty triple list object
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param string $direction to select either the parents, children or all related words ana triples
+     * @return void
+     */
+    private function assert_sql_by_phr(
+        testing $t,
+        sql_db $db_con,
+        word_link_list $lst,
+        phrase $phr,
+        ?verb $vrb = null,
+        string $direction = word_link_list::DIRECTION_BOTH)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_phr($db_con, $phr, $vrb, $direction);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_phr($db_con, $phr, $vrb, $direction);
         $t->assert_qp($qp, sql_db::MYSQL);
     }
 
