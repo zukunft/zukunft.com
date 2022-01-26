@@ -117,10 +117,10 @@ class phrase
                 // map a word
                 $wrd = new word($this->usr);
                 $wrd->id = $db_row[$id_fld];
-                $wrd->name = $db_row[word::FLD_NAME . $fld_ext];
+                $wrd->name = $db_row[user_sandbox_named::FLD_NAME . $fld_ext];
                 $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $wrd->type_id = $db_row[word::FLD_TYPE . $fld_ext];
-                $wrd->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
+                //$wrd->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
                 $wrd->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
                 $wrd->share_id = $db_row[user_sandbox::FLD_SHARE . $fld_ext];
                 $wrd->protection_id = $db_row[user_sandbox::FLD_PROTECT . $fld_ext];
@@ -131,7 +131,7 @@ class phrase
                 // map a triple
                 $trp = new word_link($this->usr);
                 $trp->id = $db_row[$id_fld] * -1;
-                $trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
+                //$trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
                 $trp->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
                 $trp->name = $db_row[word::FLD_NAME . $fld_ext];
                 $trp->name = $db_row[word_link::FLD_NAME . $fld_ext];

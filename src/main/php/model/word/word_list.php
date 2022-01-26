@@ -53,6 +53,18 @@ class word_list
         $this->usr = $usr;
     }
 
+    /**
+     * @return word_list_dsp the word list object with the display interface functions
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new word_list_dsp($this->usr);
+
+        $dsp_obj->lst = $this->lst;
+
+        return $dsp_obj;
+    }
+
     /*
      * load functions
      */

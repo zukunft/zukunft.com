@@ -291,18 +291,17 @@ class phrase_list
             }
 
             // fill the word list
-            $wrd_lst->usr = $this->usr;
             foreach ($this->lst as $phr) {
-                if (!isset($phr->obj)) {
-                    $phr->load();
-                    log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
-                }
                 if ($phr->obj == null) {
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
-                    if ($phr->obj->id <= 0) {
+                    if ($phr->obj->id == 0) {
                         log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                     } else {
+                        if ($phr->obj->name == '') {
+                            $phr->load();
+                            log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
+                        }
                         // TODO check if old can ge removed: if ($phr->id > 0) {
                         if (get_class($phr->obj) == word::class or get_class($phr->obj) == word_dsp::class) {
                             $wrd_lst->add($phr->obj);
@@ -310,6 +309,10 @@ class phrase_list
                             // use the recursive triple function to include the foaf words
                             $sub_wrd_lst = $phr->obj->wrd_lst();
                             foreach ($sub_wrd_lst->lst as $wrd) {
+                                if ($wrd->name == '') {
+                                    $wrd->load();
+                                    log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
+                                }
                                 $wrd_lst->add($wrd);
                             }
                         } else {

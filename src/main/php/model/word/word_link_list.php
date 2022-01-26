@@ -8,6 +8,12 @@
     example:
     for company the list of linked words should contain "... has a balance sheet" and "... has a cash flow statement"
 
+    related objects
+    word list   - load a list of words that
+                    are parents or children of a given word or linked to a group
+                    or based on given ids or names
+    phrase list - load a list of words or triples based on
+
 
     This file is part of zukunft.com - calc with words
 
@@ -197,7 +203,7 @@ class word_link_list
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one word found
      */
-    function load(sql_par $qp): bool
+    private function load(sql_par $qp): bool
     {
         global $db_con;
         global $verbs;
@@ -218,7 +224,7 @@ class word_link_list
                         $this->lst[] = $trp;
                         $result = true;
                         // fill verb
-                        $trp->verb = $verbs->get_by_id($db_row[verb::FLD_ID]);
+                        $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
                         // fill from
                         $trp->from = new phrase($this->usr);
                         $trp->from->row_mapper($db_row, word_link::FLD_FROM, '1');

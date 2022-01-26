@@ -1504,8 +1504,7 @@ class word extends user_sandbox_description
 
         // collect all triples where this word is used
         $trp_lst = new word_link_list($this->usr);
-        $trp_lst->wrd = $this;
-        $trp_lst->load_old();
+        $trp_lst->load_by_phr($this->phrase());
 
         // collect all values related to word triple
         $val_lst = new value_list($this->usr);

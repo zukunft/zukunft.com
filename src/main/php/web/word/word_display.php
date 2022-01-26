@@ -373,12 +373,12 @@ class word_dsp extends word
                 log_debug('word_dsp->dsp_graph verb ' . $vrb->name);
 
                 // show the RDF graph for this verb
-                $graph = new word_link_list($this->usr);
-                $graph->wrd = $this;
-                $graph->vrb = $vrb;
-                $graph->direction = $direction;
-                $graph->load_old();
-                $result .= $graph->display($back);
+                $trp_lst = new word_link_list($this->usr);
+                $trp_lst->load_by_phr($this->phrase(), $vrb, $direction);
+                $phr_lst = $trp_lst->phrase_lst();
+                $wrd_lst = $phr_lst->wrd_lst_all();
+                $wrd_lst_dsp = $wrd_lst->dsp_obj();
+                $result .= $wrd_lst_dsp->display($back);
 
             }
         }

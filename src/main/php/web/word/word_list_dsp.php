@@ -32,6 +32,23 @@
 class word_list_dsp extends word_list
 {
 
+    function display(string $back = ''): string
+    {
+        $result = dsp_tbl_start_half();
+        $result .= '  <tr>' . "\n";
+        $result .= '    <td>' . "\n";
+        $result .= '    </td>' . "\n";
+        foreach ($this->lst as $wrd) {
+            $result .= '    <td>' . "\n";
+            $result .= $wrd->display();
+            $result .= '    </td>' . "\n";
+        }
+        $result .= '  </tr>' . "\n";
+        $result .= dsp_tbl_end();
+
+        return $result;
+    }
+
     /**
      * @return string one string with all names of the list with the link
      */

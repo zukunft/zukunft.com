@@ -232,6 +232,33 @@ class verb_list extends user_type_list
         return $result;
     }
 
+    /**
+     * get a single verb from this list
+     * a kind of replacement for the user_type_list->get_by_id() function but for the verb object
+     *
+     * @param int $id
+     * @return verb the verb object or null if no match is found
+     */
+    function get_verb_by_id(int $id): verb
+    {
+        $result = null;
+        if ($id > 0) {
+            if ($id > 0) {
+                if (array_key_exists($id, $this->lst)) {
+                    $result = $this->lst[$id];
+                } else {
+                    log_err('Verb with id ' . $id . ' not found in ' . $this->dsp_id());
+                }
+            } else {
+                log_debug('Verb id not set while try to get "' . $id . '"');
+            }
+        } else {
+            log_debug('ID not not set for getting a verb');
+        }
+
+        return $result;
+    }
+
     /*
       GUI interface
       -------------
