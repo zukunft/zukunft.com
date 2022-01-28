@@ -1,12 +1,12 @@
 PREPARE word_link_std_by_id (int) AS
     SELECT word_link_id,
-           name,
            from_phrase_id,
            verb_id,
            to_phrase_id,
            word_type_id,
            word_link_condition_id,
            word_link_condition_type_id,
+           name_given,
            name_generated,
            description,
            values,

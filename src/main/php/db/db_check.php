@@ -82,6 +82,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->add_column(DB_TYPE_USER_PROFILE, 'right_level', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'protect_id', 'smallint');
+    $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_WORD, 'values', 'bigint');
     $result .= $db_con->add_column(DB_TYPE_WORD, 'protect_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'share_type_id', 'smallint');
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'protect_id', 'smallint');
@@ -138,13 +139,13 @@ function db_upgrade_0_0_3(sql_db $db_con): string
     $result .= $db_con->change_column_name(DB_TYPE_FORMULA_VALUE, 'source_time_word_id', 'source_time_id');
     if (!$db_con->has_column($db_con->get_table_name(DB_TYPE_TRIPLE), 'name_generated')) {
         $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'name', 'name_generated');
-        $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'description', 'name');
+        $result .= $db_con->change_column_name(DB_TYPE_TRIPLE, 'description', 'name_given');
         $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'description', 'text');
     }
     $result .= $db_con->add_column(DB_TYPE_TRIPLE, 'values', 'bigint');
     if (!$db_con->has_column($db_con->get_table_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE), 'name_generated')) {
         $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'name', 'name_generated');
-        $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'name');
+        $result .= $db_con->change_column_name(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'name_given');
         $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'description', 'text');
     }
     $result .= $db_con->add_column(DB_TYPE_USER_PREFIX . DB_TYPE_TRIPLE, 'values', 'bigint');

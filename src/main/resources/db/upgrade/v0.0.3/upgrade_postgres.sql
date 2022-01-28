@@ -11,7 +11,7 @@
 CREATE OR REPLACE VIEW phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS name,
+       w.word_name AS name_used,
        w.description,
        w.values,
        w.word_type_id,
@@ -22,7 +22,7 @@ FROM words AS w
 UNION
 SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_generated IS NULL) THEN l.name ELSE l.name_generated END AS name,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
        l.description,
        l.values,
        l.word_type_id,
@@ -38,7 +38,7 @@ FROM word_links AS l;
 CREATE OR REPLACE VIEW user_phrases AS
 SELECT w.word_id   AS phrase_id,
        w.user_id,
-       w.word_name AS name,
+       w.word_name AS name_used,
        w.description,
        w.values,
        w.excluded,
@@ -48,7 +48,7 @@ FROM user_words AS w
 UNION
 SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
        l.user_id,
-       CASE WHEN (l.name_generated IS NULL) THEN l.name ELSE l.name_generated END AS name,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
        l.description,
        l.values,
        l.excluded,

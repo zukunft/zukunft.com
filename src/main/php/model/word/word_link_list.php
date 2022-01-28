@@ -451,9 +451,9 @@ class word_link_list
                        l.verb_id,
                        l.word_type_id,
                        l.to_phrase_id,
-                       l.description,
-                       l.name,
+                       l.name_given,
                        l.name_generated,
+                       l.description,
                        l.values,
                        l.share_type_id,
                        l.protect_id,
@@ -480,7 +480,7 @@ class word_link_list
                    AND " . $sql_wrd2 . " 
                    AND " . $sql_where . "
                        " . $sql_type . " 
-              ORDER BY l.verb_id, name;";  // maybe used word_name_t1 and word_name_t2
+              ORDER BY l.verb_id, name_given;";  // maybe used word_name_t1 and word_name_t2
             // alternative: ORDER BY v.verb_id, t.values DESC, t.word_name;";
         }
         return $sql;

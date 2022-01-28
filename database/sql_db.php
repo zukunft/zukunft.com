@@ -91,8 +91,10 @@ class sql_db
     // extra names for backward compatibility
     const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
-    // tables that do not have a name e.g. DB_TYPE_TRIPLE is a link, but is nevertheless named
+    // tables that do not have a name
+    // e.g. DB_TYPE_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const DB_TYPES_NOT_NAMED = [
+        DB_TYPE_TRIPLE,
         DB_TYPE_VALUE,
         DB_TYPE_VALUE_TIME_SERIES,
         DB_TYPE_FORMULA_LINK,

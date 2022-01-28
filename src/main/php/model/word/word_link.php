@@ -44,7 +44,7 @@ class word_link extends user_sandbox_link_description
     // object specific database and JSON object field names
     const FLD_ID = 'word_link_id';
     const FLD_ID_NEW = 'triple_id';
-    const FLD_NAME = 'name';
+    const FLD_NAME = 'name_given';
     const FLD_NAME_AUTO= 'name_generated';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
@@ -67,6 +67,7 @@ class word_link extends user_sandbox_link_description
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
+        self::FLD_NAME,
         self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION
     );
@@ -462,7 +463,8 @@ class word_link extends user_sandbox_link_description
             $qp->sql = $db_con->select_by_id();
         } elseif ($this->name != '') {
             $db_con->add_par(sql_db::PAR_TEXT, $this->name);
-            $qp->sql = $db_con->select_by_name();
+            //$qp->sql = $db_con->select_by_name();
+            $qp->sql = $db_con->select_by_field(self::FLD_NAME);
         } elseif ($this->has_objects()) {
             $db_con->add_par(sql_db::PAR_INT, $this->from->id);
             $db_con->add_par(sql_db::PAR_INT, $this->to->id);
@@ -1036,7 +1038,7 @@ class word_link extends user_sandbox_link_description
             log_err('cannot delete user sandbox if id is missing');
         } else {
             $sql = "SELECT word_link_id,
-                     name,
+                     name_given,
                      description,
                      excluded
                 FROM user_word_links

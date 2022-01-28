@@ -78,9 +78,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -123,7 +123,7 @@ class word_link_list_unit_tests
                       AND l.from_phrase_id = t1.word_id
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.word_link_id  IN (1,2,3)                        
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by IDs', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -144,9 +144,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -177,7 +177,7 @@ class word_link_list_unit_tests
                     WHERE l.verb_id        = v.verb_id 
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id = 1                        
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by word and up', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -198,9 +198,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -231,7 +231,7 @@ class word_link_list_unit_tests
                     WHERE l.verb_id        = v.verb_id 
                       AND l.from_phrase_id   = t2.word_id 
                       AND l.to_phrase_id = 2                        
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by word and down', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -257,9 +257,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -302,7 +302,7 @@ class word_link_list_unit_tests
                       AND l.from_phrase_id = t1.word_id
                       AND l.to_phrase_id   = t2.word_id 
                       AND l.from_phrase_id IN (1,2)
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by word list and up', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -328,9 +328,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -373,7 +373,7 @@ class word_link_list_unit_tests
                       AND l.to_phrase_id   = t1.word_id
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by word list and down', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -402,9 +402,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -448,7 +448,7 @@ class word_link_list_unit_tests
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id = 2 
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by word list and down filtered by a verb', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
@@ -477,9 +477,9 @@ class word_link_list_unit_tests
                           l.verb_id,
                           l.word_type_id,
                           l.to_phrase_id,
-                          l.description,
-                          l.name,
+                          l.name_given,
                           l.name_generated,
+                          l.description,
                           l.values,
                           l.share_type_id,
                           l.protect_id,
@@ -523,7 +523,7 @@ class word_link_list_unit_tests
                       AND l.from_phrase_id = t2.word_id 
                       AND l.to_phrase_id   IN (2,3)
                       AND l.verb_id IN (1,2) 
-                 ORDER BY l.verb_id, name;"; // order adjusted based on the number of usage
+                 ORDER BY l.verb_id, name_given;"; // order adjusted based on the number of usage
         $t->dsp('word_link_list->load_sql by word list and down filtered by a verb list', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique

@@ -9,7 +9,7 @@ PREPARE word_link_by_name (int, text) AS
                 s.word_type_id,
                 s.word_link_condition_id,
                 s.word_link_condition_type_id,
-                CASE WHEN (u.name           <> '' IS NOT TRUE) THEN s.name           ELSE u.name           END AS name,
+                CASE WHEN (u.name_given     <> '' IS NOT TRUE) THEN s.name_given     ELSE u.name_given     END AS name_given,
                 CASE WHEN (u.name_generated <> '' IS NOT TRUE) THEN s.name_generated ELSE u.name_generated END AS name_generated,
                 CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
                 CASE WHEN (u.values               IS     NULL) THEN s.values         ELSE u.values         END AS values,
@@ -19,4 +19,4 @@ PREPARE word_link_by_name (int, text) AS
            FROM word_links s
       LEFT JOIN user_word_links u ON s.word_link_id = u.word_link_id
             AND u.user_id = $1
-          WHERE s.name = $2;
+          WHERE s.name_given = $2;

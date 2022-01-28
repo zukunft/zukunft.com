@@ -9,7 +9,7 @@ PREPARE word_link_by_link_ids FROM
                 s.word_type_id,
                 s.word_link_condition_id,
                 s.word_link_condition_type_id,
-                IF(u.name           IS NULL, s.name,           u.name)           AS name,
+                IF(u.name_given     IS NULL, s.name_given,     u.name_given)     AS name_given,
                 IF(u.name_generated IS NULL, s.name_generated, u.name_generated) AS name_generated,
                 IF(u.description    IS NULL, s.description,    u.description)    AS description,
                 IF(u.`values`       IS NULL, s.`values`,       u.`values`)       AS `values`,

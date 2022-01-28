@@ -53,6 +53,7 @@ class phrase
 {
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
     const FLD_ID = 'phrase_id';
+    const FLD_NAME = 'name_used';
     const FLD_VALUES = 'values';
 
     // the common phrase database field names excluding the id and excluding the user specific fields
@@ -61,7 +62,7 @@ class phrase
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR = array(
-        user_sandbox_named::FLD_NAME,
+        self::FLD_NAME,
         sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific numeric database field names of phrases
@@ -133,7 +134,7 @@ class phrase
                 $trp->id = $db_row[$id_fld] * -1;
                 //$trp->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];
                 $trp->excluded = $db_row[user_sandbox::FLD_EXCLUDED . $fld_ext];
-                $trp->name = $db_row[word::FLD_NAME . $fld_ext];
+                //$trp->name = $db_row[word::FLD_NAME . $fld_ext];
                 $trp->name = $db_row[word_link::FLD_NAME . $fld_ext];
                 $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $trp->type_id = $db_row[word_link::FLD_TYPE . $fld_ext];
@@ -642,7 +643,7 @@ class phrase
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
                                          AND u.user_id = ' . $this->usr->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                               ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
@@ -695,7 +696,7 @@ class phrase
                 $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
                         SELECT DISTINCT
                                l.word_link_id * -1 AS id, 
-                               ' . $db_con->get_usr_field("name", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                               ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM word_links l
                      LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 

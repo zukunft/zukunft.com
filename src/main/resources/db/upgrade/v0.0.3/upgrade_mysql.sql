@@ -9,11 +9,10 @@
 --
 DROP TABLE IF EXISTS `phrases`;
 
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `phrases` AS
+CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost` SQL SECURITY DEFINER VIEW `phrases` AS
 select `words`.`word_id`            AS `phrase_id`,
        `words`.`user_id`            AS `user_id`,
-       `words`.`word_name`          AS `name`,
+       `words`.`word_name`          AS `name_used`,
        `words`.`description`        AS `description`,
        `words`.`values`             AS `values`,
        `words`.`word_type_id`       AS `word_type_id`,
@@ -24,8 +23,8 @@ from `words`
 union
 select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
        `word_links`.`user_id`               AS `user_id`,
-       if(`word_links`.`name_generated` is null, `word_links`.`name`,
-          `word_links`.`name_generated`)    AS `name`,
+       if(`word_links`.`name_given` is null, `word_links`.`name_generated`,
+          `word_links`.`name_given`)    AS `name_used`,
        `word_links`.`description`           AS `description`,
        `word_links`.`values`                AS `values`,
        `word_links`.`word_type_id`          AS `word_type_id`,
@@ -39,11 +38,10 @@ from `word_links`;
 --
 DROP TABLE IF EXISTS `user_phrases`;
 
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-SECURITY DEFINER VIEW `phrases` AS
+CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost` SQL SECURITY DEFINER VIEW `user_phrases` AS
 select `user_words`.`word_id`            AS `phrase_id`,
        `user_words`.`user_id`            AS `user_id`,
-       `user_words`.`word_name`          AS `name`,
+       `user_words`.`word_name`          AS `name_used`,
        `user_words`.`description`        AS `description`,
        `user_words`.`values`             AS `values`,
        `user_words`.`excluded`           AS `excluded`,
@@ -53,8 +51,8 @@ from `user_words`
 union
 select (`user_word_links`.`word_link_id` * -(1)) AS `phrase_id`,
         `user_word_links`.`user_id`              AS `user_id`,
-       if(`user_word_links`.`name_generated` is null, `word_links`.`name`,
-          `user_word_links`.`name_generated`)    AS `name`,
+       if(`user_word_links`.`name_given` is null, `user_word_links`.`name_generated`,
+          `user_word_links`.`name_given`)    AS `name_used`,
        `user_word_links`.`description`           AS `description`,
        `user_word_links`.`values`                AS `values`,
        `user_word_links`.`excluded`              AS `excluded`,
@@ -99,7 +97,7 @@ ALTER TABLE `user_value_time_series`
     ADD CONSTRAINT `user_value_time_series_fk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
     ADD CONSTRAINT `user_value_time_series_fk_2` FOREIGN KEY (`source_id`) REFERENCES `sources` (`source_id`),
     ADD CONSTRAINT `user_value_time_series_fk_3` FOREIGN KEY (`share_type_id`) REFERENCES `share_types` (`share_type_id`),
-    ADD CONSTRAINT `user_value_time_series_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
+    ADD CONSTRAINT `user_value_time_series_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protection_type_id`);
 
 --
 -- database corrections
@@ -108,4 +106,4 @@ ALTER TABLE `user_value_time_series`
 -- Constraints for table`user_values`
 --
 ALTER TABLE `user_values`
-    ADD CONSTRAINT `user_values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protect_id`);
+    ADD CONSTRAINT `user_values_fk_4` FOREIGN KEY (`protect_id`) REFERENCES `protection_types` (`protection_type_id`);
