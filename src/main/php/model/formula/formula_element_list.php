@@ -2,7 +2,7 @@
 
 /*
 
-  formula_element_list.php - simply a list of formula elements to place the name function
+  formula_element_list.php - a list of formula elements to place the name function
   ------------------------
   
   This file is part of zukunft.com - calc with words
@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
+  Copyright (c) 1995-2022 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -32,12 +32,87 @@
 class formula_element_list
 {
 
-    public ?array $lst = null; // the list of formula elements
-    public ?user $usr = null;  // the person who has requested the formula elements
+    public array $lst; // the list of formula elements
+    public user $usr;  // the person who has requested the formula elements
+
+    /**
+     * always set the user because a formula element list is always user specific
+     * @param user $usr the user who requested to see the formula with the formula elements
+     */
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
 
     /*
-    display functions
-    */
+     * load functions
+     */
+
+    /**
+     * set the SQL query parameters to load a list of formula elements
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_fields(formula_element::FLD_NAMES);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formula elements by the formula id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $frm_id the id of the formula which elements should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_id(sql_db $db_con, int $frm_id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($frm_id > 0) {
+            $qp->name .= 'frm_id';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $frm_id);
+            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, user_sandbox::FLD_USER));
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formula elements by the formula id and filter by the element type
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $frm_id the id of the formula which elements should be loaded
+     * @param int $elm_type_id the id of the formula element type used to filter the elements
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_and_type_id(sql_db $db_con, int $frm_id, int $elm_type_id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($frm_id > 0) {
+            $qp->name .= 'frm_and_type_id';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $frm_id);
+            $db_con->add_par(sql_db::PAR_INT, $elm_type_id);
+            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID, formula_element::FLD_TYPE, user_sandbox::FLD_USER));
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /*
+     * display functions
+     */
 
     // return best possible identification for this element list mainly used for debugging
     function dsp_id(): string
@@ -93,7 +168,8 @@ class formula_element_type extends BasicEnum
     const FORMULA = 3;
     const TRIPLE = 4;
 
-    protected static function get_description($value): string {
+    protected static function get_description($value): string
+    {
         $result = 'formula element type "' . $value . '" not yet defined';
 
         switch ($value) {

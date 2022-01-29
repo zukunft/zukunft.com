@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,9 +32,25 @@
 class formula_element
 {
 
-    const TYPE_WORD = 'word';        //
-    const TYPE_VERB = 'verb';        //
-    const TYPE_FORMULA = 'formula';  //
+    // the allowed objects types for a formula element
+    const TYPE_WORD = word::class;        // a word is used for an AND selection of values
+    const TYPE_VERB = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
+    const TYPE_FORMULA = formula::class;  // a formula is used to include formula results of another formula
+
+    // means: database fields only used for words
+    const FLD_ORDER = 'order_nbr';
+    const FLD_TYPE = 'formula_element_type_id';
+    const FLD_REF_ID = 'ref_id';
+    // TODO: is resolved text needed?
+
+    // all database field names excluding the id, standard name and user specific fields
+    const FLD_NAMES = array(
+        formula::FLD_ID,
+        user_sandbox::FLD_USER,
+        self::FLD_ORDER,
+        self::FLD_TYPE,
+        self::FLD_REF_ID
+    );
 
     public ?int $id = null;          // the database id of the word, verb or formula
     public ?user $usr = null;        // the person who has requested the formula element
@@ -44,7 +60,6 @@ class formula_element
     public ?string $back = null;     // link to what should be display after this action is finished
     public ?string $symbol = null;   // the database reference symbol for formula expressions
     public ?object $obj = null;      // the word, verb or formula object
-    public ?int $wrd_id = null;      // in case of a formula the corresponding word id (maybe a duplicate of the wrd_obj of the formula)
     public ?word $wrd_obj = null;    // in case of a formula the corresponding word object
     public ?string $frm_type = null; // in case of a special formula the predefined formula type
 
@@ -83,7 +98,6 @@ class formula_element
                 $wrd = new word_dsp($this->usr);
                 $wrd->name = $frm->name;
                 $wrd->load();
-                $this->wrd_id = $wrd->id;
                 $this->wrd_obj = $wrd;
                 //
                 if ($frm->is_special()) {
@@ -95,10 +109,12 @@ class formula_element
     }
 
     /*
-    display functions
-    */
+     * display functions
+     */
 
-    // return best possible id for this element mainly used for debugging
+    /**
+     * return best possible id for this element mainly used for debugging
+     */
     function dsp_id(): string
     {
         $result = '';
@@ -117,7 +133,9 @@ class formula_element
         return $result;
     }
 
-    // to show the element name to the user in the most simple form (without any ids)
+    /**
+     * to show the element name to the user in the most simple form (without any ids)
+     */
     function name(): string
     {
         $result = '';

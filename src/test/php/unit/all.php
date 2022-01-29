@@ -25,7 +25,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -298,6 +298,7 @@ function run_unit_tests(testing $t)
     (new formula_unit_tests)->run($t);
     (new formula_link_unit_tests)->run($t);
     (new formula_value_unit_tests)->run($t);
+    (new formula_element_unit_tests)->run($t);
     (new figure_unit_tests)->run($t);
     (new user_sandbox_unit_tests)->run($t);
     (new ref_unit_tests)->run($t);

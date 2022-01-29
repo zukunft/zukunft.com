@@ -42,7 +42,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -118,7 +118,7 @@ class phrase
                 // map a word
                 $wrd = new word($this->usr);
                 $wrd->id = $db_row[$id_fld];
-                $wrd->name = $db_row[user_sandbox_named::FLD_NAME . $fld_ext];
+                $wrd->name = $db_row[phrase::FLD_NAME . $fld_ext];
                 $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 $wrd->type_id = $db_row[word::FLD_TYPE . $fld_ext];
                 //$wrd->owner_id = $db_row[user_sandbox::FLD_USER . $fld_ext];

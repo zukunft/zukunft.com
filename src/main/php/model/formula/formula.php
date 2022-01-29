@@ -22,7 +22,7 @@
   To contact the authors write to:
   Timon Zielonka <timon@zukunft.com>
   
-  Copyright (c) 1995-2021 zukunft.com AG, Zurich
+  Copyright (c) 1995-2022 zukunft.com AG, Zurich
   Heang Lor <heang@zukunft.com>
   
   http://zukunft.com
@@ -1351,14 +1351,9 @@ class formula extends user_sandbox_description
         log_debug(self::class . '->element_refresh_type -> got (' . dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
-        if ($frm_usr_id > 0) {
-            $sql = "SELECT ref_id FROM formula_elements WHERE formula_id = " . $this->id . " AND formula_element_type_id = " . $elm_type_id . " AND user_id = " . $frm_usr_id . ";";
-        } else {
-            $sql = "SELECT ref_id FROM formula_elements WHERE formula_id = " . $this->id . " AND formula_element_type_id = " . $elm_type_id . ";";
-        }
-        $db_con->usr_id = $this->usr->id;
-        $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
-        $db_lst = $db_con->get_old($sql);
+        $frm_elm_lst = new formula_element_list($this->usr);
+        $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con, $this->id, $elm_type_id);
+        $db_lst = $db_con->get($qp);
 
         $elm_db_ids = array();
         if ($db_lst != null) {

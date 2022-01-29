@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2021 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -232,7 +232,7 @@ class expression
             $elm_grp = new formula_element_group;
             $elm_grp->usr = $this->usr;
         } else {
-            $result = new formula_element_list;
+            $result = new formula_element_list($this->usr);
         }
         $result->usr = $this->usr;
         $work = $this->r_part();
