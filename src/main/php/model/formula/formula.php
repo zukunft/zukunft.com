@@ -365,6 +365,27 @@ class formula extends user_sandbox_description
     }
 
     /**
+     * create an SQL statement to retrieve all user specific changes of this formula
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_user_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_FORMULA, true);
+        $db_con->set_usr($this->usr->id);
+        $qp->name = self::class . '_user_sandbox';
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(array_merge(array(user_sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
+        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $qp->sql = $db_con->select_by_field(self::FLD_ID);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
      * load the corresponding name word for the formula name
      */
     function load_wrd(bool $with_automatic_error_fixing = true): bool
@@ -1438,10 +1459,8 @@ class formula extends user_sandbox_description
         }
 
         // refresh the links for the user specific formula
-        $sql = "SELECT user_id FROM user_formulas WHERE formula_id = " . $this->id . ";";
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_user_sql($db_con);
+        $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula

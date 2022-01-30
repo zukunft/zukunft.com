@@ -61,6 +61,19 @@ class formula_unit_tests
         $t->assert_load_standard_sql($db_con, $frm);
 
 
+        $t->subheader('SQL user sandbox statement tests');
+
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm->load_user_sql($db_con);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm->load_user_sql($db_con);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new formula($usr), $json_file);
