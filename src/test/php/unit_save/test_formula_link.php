@@ -216,10 +216,8 @@ function run_formula_link_list_test(testing $t)
     $t->header('Test the formula link list class (classes/formula_link_list.php)');
 
     $frm = $t->load_formula(formula::TN_INCREASE);
-    $frm_lnk_lst = new formula_link_list;
-    $frm_lnk_lst->frm = $frm;
-    $frm_lnk_lst->usr = $t->usr1;
-    $frm_lnk_lst->load();
+    $frm_lnk_lst = new formula_link_list($t->usr1);
+    $frm_lnk_lst->load_by_frm_id($frm->id);
     $phr_ids = $frm_lnk_lst->phrase_ids(false);
     $phr_lst = new phrase_list($t->usr1);
     $phr_lst->load_by_ids($phr_ids);

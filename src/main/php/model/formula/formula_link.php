@@ -41,9 +41,11 @@ class formula_link extends user_sandbox_link
     const FLD_TYPE = 'link_type_id';
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        self::FLD_EXCLUDED
+        user_sandbox::FLD_EXCLUDED,
+        user_sandbox::FLD_SHARE,
+        user_sandbox::FLD_PROTECT
     );
 
     // database fields additional to the user sandbox fields
@@ -98,6 +100,34 @@ class formula_link extends user_sandbox_link
             $this->fob->id = $db_row[formula::FLD_ID];
             $this->tob->id = $db_row[phrase::FLD_ID];
             $this->link_type_id = $db_row[self::FLD_TYPE];
+        }
+        return $result;
+    }
+
+    /*
+     * load functions
+     */
+
+    /**
+     * create an SQL statement to retrieve the user specific formula link from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_user_sql(sql_db $db_con, bool $get_name = false): string
+    {
+        $sql_name = self::class . '_user_sandbox';
+        $db_con->set_type(DB_TYPE_FORMULA_LINK, true);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(formula_link::FLD_NAMES_NUM_USR);
+        $db_con->set_where($this->id);
+        $sql = $db_con->select_by_id();
+
+        if ($get_name) {
+            $result = $sql_name;
+        } else {
+            $result = $sql;
         }
         return $result;
     }
@@ -470,30 +500,6 @@ class formula_link extends user_sandbox_link
     }
 
     /**
-     * create an SQL statement to retrieve the user specific formula link from the database
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
-     */
-    function load_user_sql(sql_db $db_con, bool $get_name = false): string
-    {
-        $sql_name = self::class . '_user_sandbox';
-        $db_con->set_type(DB_TYPE_FORMULA_LINK, true);
-        $db_con->set_fields(array(formula_link::FLD_TYPE, self::FLD_EXCLUDED));
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_where($this->id);
-        $sql = $db_con->select_by_id();
-
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
-    }
-
-    /**
      * create a database record to save user specific settings for this formula_link
      * @return bool true if adding the new formula link has been successful
      */
@@ -540,7 +546,7 @@ class formula_link extends user_sandbox_link
         if ($db_row) {
             if ($db_row[formula_link::FLD_ID] > 0) {
                 // check if all fields are null
-                if (!$this->is_usr_cfg_used($db_row, self::FLD_NAMES)) {
+                if (!$this->is_usr_cfg_used($db_row, array_merge(self::FLD_NAMES_NUM_USR))) {
                     // actually delete the entry in the user sandbox
                     $result = $this->del_usr_cfg_exe($db_con);
                 }

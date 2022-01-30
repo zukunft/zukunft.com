@@ -32,73 +32,137 @@
 class formula_link_list
 {
 
-    public ?array $lst = null; // the list of formula word link objects
-    public ?user $usr = null;  // the user who wants to see or modify the list
+    public array $lst; // the list of formula word link objects
+    public user $usr;  // the user who wants to see or modify the list
 
-    // search fields
+    // search fields (to be deprecated)
     public ?formula $frm = null; // to select all links for this formula
 
-    // fill the formula link list based on a database records
-    // $db_rows is an array of an array with the database values
-    private function rows_mapper($db_rows)
+    /**
+     * always set the user because a formula link list is always user specific
+     * @param user $usr the user who requested to see the formula links
+     */
+    function __construct(user $usr)
     {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
+
+    /**
+     * fill the formula link list based on a database records
+     * @param array $db_rows is an array of an array with the database values
+     * @return bool true if at least one word found
+     */
+    private function rows_mapper(array $db_rows): bool
+    {
+        $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 if ($db_row[formula_link::FLD_ID] > 0) {
                     $frm_lnk = new formula_link($this->usr);
                     $frm_lnk->row_mapper($db_row);
                     $this->lst[] = $frm_lnk;
+                    $result = true;
                 }
-            }
-        }
-    }
-
-    // load the missing formula parameters from the database
-    function load(): bool
-    {
-
-        global $db_con;
-
-        $result = false;
-        // check the all minimal input parameters are set
-        if (!isset($this->usr)) {
-            log_err("The user id must be set to load a list of formula links.", "formula_link_list->load");
-        } else {
-
-            // set the where clause depending on the values given
-            $sql_where = '';
-            if (isset($this->frm)) {
-                if ($this->frm->id > 0) {
-                    $sql_where = "l.formula_id = " . $this->frm->id;
-                }
-            }
-
-            if ($sql_where == '') {
-                log_err("The words assigned to a formula cannot be loaded because the formula is not defined.", "formula_link_list->load");
-            } else {
-                $sql = "SELECT DISTINCT 
-                       l.formula_link_id,
-                       u.formula_link_id AS user_formula_link_id,
-                       l.user_id,
-                       l.formula_id, 
-                       l.phrase_id,
-                    " . $db_con->get_usr_field(formula_link::FLD_TYPE, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_SHARE, 'l', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_PROTECT, 'l', 'u', sql_db::FLD_FORMAT_VAL) . "
-                  FROM formula_link_types t, formula_links l
-             LEFT JOIN user_formula_links u ON u.formula_link_id = l.formula_link_id 
-                                                AND u.user_id = " . $this->usr->id . " 
-                  WHERE " . $sql_where . ";";
-                //$db_con = new mysql;
-                $db_con->usr_id = $this->usr->id;
-                $db_lst = $db_con->get_old($sql);
-                $this->rows_mapper($db_lst);
-                $result = true;
-                log_debug('formula_link_list->load -> ' . dsp_count($this->lst) . ' links loaded');
             }
         }
         return $result;
+    }
+
+    /*
+     * load functions
+     */
+
+    /**
+     * set the SQL query parameters to load a list of formula links
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
+        // also load the linked user specific phrase with the same SQL statement
+        $db_con->set_join_fields(
+            phrase::FLD_NAMES,
+            DB_TYPE_PHRASE,
+            phrase::FLD_ID,
+            phrase::FLD_ID
+        );
+        $db_con->set_join_usr_fields(
+            phrase::FLD_NAMES_USR,
+            DB_TYPE_PHRASE,
+            phrase::FLD_ID,
+            phrase::FLD_ID
+        );
+        $db_con->set_join_usr_num_fields(
+            array_merge(
+                phrase::FLD_NAMES_NUM_USR,
+                user_sandbox::FLD_NAMES_NUM_USR),
+            DB_TYPE_PHRASE,
+            phrase::FLD_ID,
+            phrase::FLD_ID,
+            true
+        );
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formula links by the formula id
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $frm_id the id of the formula which links should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_id(sql_db $db_con, int $frm_id): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($frm_id > 0) {
+            $qp->name .= 'frm_id';
+            $db_con->set_name($qp->name);
+            $db_con->add_par(sql_db::PAR_INT, $frm_id);
+            $qp->sql = $db_con->select_by_field(formula::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of formula links with the direct linked phrases
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if at least one word found
+     */
+    private function load(sql_par $qp): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        // check the all minimal input parameters are set
+        if ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_lst = $db_con->get($qp);
+            $result = $this->rows_mapper($db_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * load a list of formula links with the direct linked phrases related to the given formula id
+     * @param int $frm_id the id of the formula which links should be loaded
+     * @return bool true if at least one word found
+     */
+    function load_by_frm_id(int $frm_id): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_frm_id($db_con, $frm_id);
+        return $this->load($qp);
     }
 
     /**

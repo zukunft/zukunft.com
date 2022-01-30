@@ -586,10 +586,8 @@ class formula extends user_sandbox_description
 
         if ($this->id > 0 and isset($this->usr)) {
             log_debug(self::class . '->assign_phr_glst_direct for formula ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
-            $frm_lnk_lst = new formula_link_list;
-            $frm_lnk_lst->usr = $this->usr;
-            $frm_lnk_lst->frm = $this;
-            $frm_lnk_lst->load();
+            $frm_lnk_lst = new formula_link_list($this->usr);
+            $frm_lnk_lst->load_by_frm_id($this->id);
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids->lst) > 0) {
@@ -1330,6 +1328,7 @@ class formula extends user_sandbox_description
     /**
      * update formula links
      * part of element_refresh for one element type and one user
+     * TODO move this to the formula element list object
      */
     function element_refresh_type($frm_text, $element_type, $frm_usr_id, $db_usr_id): bool
     {
@@ -2214,10 +2213,9 @@ class formula extends user_sandbox_description
     function del_links(): user_message
     {
         $result = new user_message();
-        $frm_lnk_lst = new formula_link_list;
-        $frm_lnk_lst->usr = $this->usr;
+        $frm_lnk_lst = new formula_link_list($this->usr);
         $frm_lnk_lst->frm = $this;
-        if ($frm_lnk_lst->load()) {
+        if ($frm_lnk_lst->load_by_frm_id($this->id)) {
             $msg = $frm_lnk_lst->del_without_log();
             $result->add_message($msg);
         }

@@ -36,13 +36,16 @@ class formula_link_unit_tests
     {
 
         global $usr;
-        global $sql_names;
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'formula_link->';
+        $t->resource_path = 'db/formula/';
+        $usr->id = 1;
 
         $t->header('Unit tests of the formula link class (src/main/php/model/formula/formula_link.php)');
 
         $t->subheader('SQL statement tests');
-
-        $db_con = new sql_db();
 
         // sql to load the formula link by id
         $lnk = new formula_link($usr);
@@ -107,6 +110,23 @@ class formula_link_unit_tests
         $target = true;
         $t->dsp('formula_link->import check name', $target, $result);
         */
+
+        $t->name = 'formula_link_list->';
+
+        $t->header('Unit tests of the formula link list class (src/main/php/model/formula/formula_link_list.php)');
+
+        $t->subheader('SQL statement tests');
+
+        // sql to load the formula link list by formula id
+        $frm_lnk_lst = new formula_link_list($usr);
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lnk_lst->load_sql_by_frm_id($db_con, 7);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... and for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lnk_lst->load_sql_by_frm_id($db_con, 7);
+        $t->assert_qp($qp, sql_db::MYSQL);
 
     }
 
