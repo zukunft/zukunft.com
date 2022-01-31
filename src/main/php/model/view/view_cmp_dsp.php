@@ -111,9 +111,8 @@ class view_cmp_dsp extends view_cmp
 
     private function formula_list($wrd): formula_list
     {
-        $frm_lst = new formula_list;
+        $frm_lst = new formula_list($this->usr);
         $frm_lst->wrd = $wrd;
-        $frm_lst->usr = $this->usr;
         $frm_lst->back = $wrd->id;
         $frm_lst->load();
         return $frm_lst;

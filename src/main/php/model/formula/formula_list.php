@@ -32,8 +32,8 @@
 class formula_list
 {
 
-    public ?array $lst = null;           // the list of the loaded formula objects
-    public ?user $usr = null;            // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    public array $lst;           // the list of the loaded formula objects
+    public user $usr;            // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
     // fields to select the formulas
     public ?word $wrd = null;            // show the formulas related to this word
@@ -44,11 +44,23 @@ class formula_list
     public ?string $back = null;         // the calling stack
 
     /**
-     * fill the formula list based on a database records
-     * $db_rows is an array of an array with the database values
+     * always set the user because a formula list is always user specific
+     * @param user $usr the user who requested to see the formulas
      */
-    private function rows_mapper($db_rows)
+    function __construct(user $usr)
     {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
+
+    /**
+     * fill the formula list based on a database records
+     * @param array $db_rows is an array of an array with the database values
+     * @return bool true if at least one formula has been loaded
+     */
+    private function rows_mapper(array $db_rows): bool
+    {
+        $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
@@ -62,10 +74,86 @@ class formula_list
                             $frm->name_wrd = $name_wrd;
                         }
                         $this->lst[] = $frm;
+                        $result = true;
                     }
                 }
             }
         }
+        return $result;
+    }
+
+    /*
+     * load functions
+     */
+
+    /**
+     * set the SQL query parameters to load a list of formulas
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of formulas by an array of formula ids
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param array $frm_ids an array of formula ids which should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_frm_ids(sql_db $db_con, array $frm_ids): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if (count($frm_ids) > 0) {
+            $qp->name .= 'frm_ids';
+            $db_con->set_name($qp->name);
+            $db_con->add_par_in_int($frm_ids);
+            $qp->sql = $db_con->select_by_field(formula::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * load a list of formulas
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @return bool true if at least one formula has been loaded
+     */
+    private function load_int(sql_par $qp): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        // check the all minimal input parameters are set
+        if ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_lst = $db_con->get($qp);
+            $result = $this->rows_mapper($db_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * load a list of formula links with the direct linked phrases related to the given formula id
+     * @param array $frm_ids an array of formula ids which should be loaded
+     * @return bool true if at least one word found
+     */
+    function load_by_frm_ids(array $frm_ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_frm_ids($db_con, $frm_ids);
+        return $this->load_int($qp);
     }
 
     /**

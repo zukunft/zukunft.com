@@ -2233,7 +2233,6 @@ class formula extends user_sandbox_description
     {
         $result = new user_message();
         $frm_lnk_lst = new formula_link_list($this->usr);
-        $frm_lnk_lst->frm = $this;
         if ($frm_lnk_lst->load_by_frm_id($this->id)) {
             $msg = $frm_lnk_lst->del_without_log();
             $result->add_message($msg);

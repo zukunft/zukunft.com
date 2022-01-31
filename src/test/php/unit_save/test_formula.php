@@ -501,9 +501,8 @@ function run_formula_list_test(testing $t)
     $wrd = new word($t->usr1);
     $wrd->id = $wrd_share->id;
     $wrd->load();
-    $frm_lst = new formula_list;
+    $frm_lst = new formula_list($t->usr1);
     $frm_lst->wrd = $wrd;
-    $frm_lst->usr = $t->usr1;
     $frm_lst->back = $wrd->id;
     $frm_lst->load();
     $result = $frm_lst->display();

@@ -54,8 +54,7 @@ if ($session_usr->id > 0) {
     load_usr_data();
 
     // show the header even if all parameters are wrong
-    $dsp = new view_dsp;
-    $dsp->usr = $session_usr;
+    $dsp = new view_dsp($session_usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_TEST);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     echo $dsp->dsp_navbar($back);
@@ -85,10 +84,8 @@ if ($session_usr->id > 0) {
         $debug_next_level = $debug + 1;
 
         // load the formulas to calculate
-        $frm_lst = new formula_list;
-        $frm_lst->ids = explode(",", $frm_id);
-        $frm_lst->usr = $usr;
-        $frm_lst->load();
+        $frm_lst = new formula_list($usr);
+        $frm_lst->load_by_frm_ids(explode(",", $frm_id));
 
         // display the first formula name as a sample
         $frm1 = $frm_lst->lst[0]; // just as a sample to display some info to the user

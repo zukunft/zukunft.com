@@ -74,6 +74,22 @@ class formula_unit_tests
         $t->assert_qp($qp, sql_db::MYSQL);
 
 
+        $t->name = 'formula_list->';
+
+        $t->subheader('SQL list statement tests');
+
+        // check the PostgreSQL query syntax
+        $frm_lst = new formula_list($usr);
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_frm_ids($db_con, array(3, 4));
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lst->load_sql_by_frm_ids($db_con, array(3, 4));
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+
         $t->subheader('Im- and Export tests');
 
         $t->assert_json(new formula($usr), $json_file);

@@ -474,10 +474,9 @@ class expression
      */
     function element_special_following_frm(string $back = ''): formula_list
     {
-        $frm_lst = new formula_list;
+        $frm_lst = new formula_list($this->usr);
         $elm_lst = $this->element_lst_all(expression::SELECT_ALL, FALSE, $back);
         if (!empty($elm_lst->lst)) {
-            $frm_lst->usr = $this->usr;
             foreach ($elm_lst->lst as $elm) {
                 if ($elm->frm_type == formula::THIS
                     or $elm->frm_type == formula::NEXT

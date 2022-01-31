@@ -1516,9 +1516,8 @@ class phrase_list
      */
     function frm_lst(): formula_list
     {
-        $frm_lst = new formula_list;
+        $frm_lst = new formula_list($this->usr);
         $frm_lst->phr_lst = $this;
-        $frm_lst->usr = $this->usr;
         $frm_lst->load();
 
         return $frm_lst;

@@ -2,30 +2,30 @@
 
 /*
 
-  formula_link_list.php - a list of formula word links
-  ---------------------
-  
-  This file is part of zukunft.com - calc with words
+    formula_link_list.php - a list of formula word links
+    ---------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -34,9 +34,6 @@ class formula_link_list
 
     public array $lst; // the list of formula word link objects
     public user $usr;  // the user who wants to see or modify the list
-
-    // search fields (to be deprecated)
-    public ?formula $frm = null; // to select all links for this formula
 
     /**
      * always set the user because a formula link list is always user specific
@@ -135,7 +132,7 @@ class formula_link_list
     /**
      * load a list of formula links with the direct linked phrases
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
-     * @return bool true if at least one word found
+     * @return bool true if at least one formula link has been loaded
      */
     private function load(sql_par $qp): bool
     {
