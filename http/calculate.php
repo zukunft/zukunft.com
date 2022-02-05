@@ -57,6 +57,7 @@ if ($usr->id > 0) {
     log_debug("create the calculation queue ... ");
 
     // load the formulas to calculate
+    // TODO load the formulas in blocks
     $frm_lst = new formula_list($usr);
     $frm_lst->load();
     echo "Calculate " . dsp_count($frm_lst->lst) . " formulas<br>";

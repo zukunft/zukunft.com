@@ -1161,10 +1161,10 @@ class test_base
         }
         $file_name = $this->resource_path . $qp->name . $file_name_ext . self::FILE_EXT;
         $expected_sql = $this->file($file_name);
-        $result = $this->assert(
+        $result = $this->assert_sql(
             $this->name . $qp->name . '_' . $dialect,
-            $this->trim($qp->sql),
-            $this->trim($expected_sql)
+            $qp->sql,
+            $expected_sql
         );
 
         // check if the prepared sql name is unique always based on the  PostgreSQL query parameter creation
@@ -1173,6 +1173,18 @@ class test_base
         }
 
         return $result;
+    }
+
+    /**
+     * test am SQL statement
+     *
+     * @param string $created the created SQL statement that should be checked
+     * @param string $expected the fixed SQL statement that is supposed to be correct
+     * @return void
+     */
+    function assert_sql(string $name, string $created, string $expected): bool
+    {
+        return $this->assert($name, $this->trim($created), $this->trim($expected));
     }
 
     /**

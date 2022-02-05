@@ -123,9 +123,6 @@ class sql_db
 
     const STD_TBL = "s";                          // prefix used for the standard table where data for all users are stored
     const USR_TBL = "u";                          // prefix used for the standard table where the user sandbox data is stored
-    const USR2_TBL = "u2";                        // prefix used for the standard table where the second user sandbox data is stored
-    const USR3_TBL = "u3";                        // prefix used for the standard table where the third user sandbox data is stored
-    const USR4_TBL = "u4";                        // prefix used for the standard table where the fourth user sandbox data is stored
     const LNK_TBL = "l";                          // prefix used for the table which should be joined in the result
     const LNK2_TBL = "l2";                        // prefix used for the second table which should be joined in the result
     const LNK3_TBL = "l3";                        // prefix used for the third table which should be joined in the result
@@ -151,6 +148,7 @@ class sql_db
      */
 
     public ?string $db_type = null;               // the database type which should be used for this connection e.g. postgreSQL or MYSQL
+    // TODO change type to PgSql\Connection with php 8.1
     public $postgres_link;                        // the link object to the database
     public mysqli $mysql;                         // the MySQL object to the database
     public ?int $usr_id = null;                   // the user id of the person who request the database changes
@@ -245,7 +243,6 @@ class sql_db
         $this->id_link_field = '';
         $this->name_field = '';
         $this->query_name = '';
-        $this->par_pos = 1;
         $this->par_types = [];
         $this->par_values = [];
         $this->par_use_link = [];
@@ -336,15 +333,13 @@ class sql_db
     function close()
     {
         if ($this->db_type == sql_db::POSTGRES) {
+            // TODO null check can be removed once the type declaration is set to PgSql\Connection using php 8.1
             if ($this->postgres_link != null) {
                 pg_close($this->postgres_link);
                 $this->postgres_link = null;
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            if ($this->mysql != null) {
-                mysqli_close($this->mysql);
-                //$this->mysql = null;
-            }
+            mysqli_close($this->mysql);
         } else {
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
@@ -364,9 +359,7 @@ class sql_db
                 $result = true;
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            if ($this->mysql != null) {
-                $result = true;
-            }
+            $result = true;
         } else {
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
@@ -869,7 +862,7 @@ class sql_db
             $this->fields .= ' ' . sql_db::LNK2_TBL . '.' . $field_esc;
             if ($this->join2_force_rename) {
                 $this->fields .= ' AS ' . $this->name_sql_esc($field . '2');
-            }elseif ($this->usr_query and $this->join2_usr_query) {
+            } elseif ($this->usr_query and $this->join2_usr_query) {
                 if ($this->fields != '') {
                     $this->fields .= ', ';
                 }
@@ -1201,8 +1194,8 @@ class sql_db
         $result = '';
         try {
             $sql_result = $this->exe($sql, $sql_name, $sql_array, $log_level);
-            if ($sql_result === false) {
-                $result .= $msg . log::MSG_ERR . $sql_result;
+            if ($sql_result == false) {
+                $result .= $msg . log::MSG_ERR;
             }
         } catch (Exception $e) {
             $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -1219,7 +1212,7 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return bool|resource the message that should be shown to the user if something went wrong or an empty string
+     * @return object the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO add the writing of potential sql errors to the sys log table to the sql execution
@@ -1230,104 +1223,160 @@ class sql_db
     {
         log_debug("sql_db->exe (" . $sql . " named " . $sql_name . " for  user " . $this->usr_id . ")");
 
-        $result = null;
-
-        // validate the parameters
-        if ($sql_name == '') {
-            // TODO switch to error when all SQL statements are named
-            //log_warning('Name for SQL statement ' . $sql . ' is missing');
-            log_debug('Name for SQL statement ' . $sql . ' is missing');
-        }
-
         // PostgreSQL part
         if ($this->db_type == sql_db::POSTGRES) {
-            // check database connection
-            if ($this->postgres_link == null) {
-                $msg = 'database connection lost';
-                log_fatal($msg, 'sql_db->exe: ' . $sql_name);
-                // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
-                throw new Exception($msg);
-            } else {
-                // remove query formatting
-                $sql = str_replace("\n", " ", $sql);
-                if ($sql_name == '') {
-                    // simply execute old queries (to be deprecated)
-                    $result = pg_query($this->postgres_link, $sql);
-                } else {
-                    // prepare the query if needed
-                    if (!$this->has_query($sql_name)) {
-                        if (str_starts_with($sql, 'PREPARE')) {
-                            $result = pg_query($this->postgres_link, $sql);
-                        } else {
-                            $result = pg_prepare($this->postgres_link, $sql_name, $sql);
-                        }
-                        if ($result === false) {
-                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
-                        } else {
-                            $this->prepared_sql_names[] = $sql_name;
-                        }
-                    }
-                    // execute the query
-                    /*
-                    $pg_array = array();
-                    $pg_array[] = '{';
-                    foreach ($sql_array as $item) {
-                        $pg_array[] = $item;
-                    }
-                    $pg_array[] = '}';
-                    */
-                    $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
-                }
-                if ($result === false) {
-                    throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
-                }
-            }
+            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $log_level);            // check database connection
         } elseif ($this->db_type == sql_db::MYSQL) {
-            if ($this->mysql == null) {
-                $msg = 'database connection lost';
-                log_fatal($msg, 'sql_db->exe->' . $sql_name);
-                // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
-                throw new Exception($msg);
-            } else {
-                if ($sql_name == '') {
-                    $result = mysqli_query($this->mysql, $sql);
-                } else {
-                    if ($this->has_query($sql_name)) {
-                        $stmt = $this->prepared_stmt[$sql_name];
-                    } else {
-                        $stmt = mysqli_prepare($this->mysql, $sql);
-                        $this->prepared_sql_names[] = $sql_name;
-                        $this->prepared_stmt[$sql_name] = $stmt;
-                    }
-                    if ($stmt == null) {
-                        throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when executing ' . $sql);
-                    } else {
-                        // TODO review to use a generic transformation for $sql_array
-                        if (count($sql_array) == 1) {
-                            $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
-                        } elseif (count($sql_array) == 2) {
-                            $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0], $sql_array[1]);
-                        } else {
-                            throw new Exception('Unexpected number of parameters in ' . $sql);
-                        }
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                    }
-                }
-                if ($result === false) {
-                    $msg_text = mysqli_error($this->mysql);
-                    $sql = str_replace("'", "", $sql);
-                    $sql = str_replace("\"", "", $sql);
-                    $msg_text .= " (" . $sql . ")";
-                    // check and improve the given parameters
-                    $function_trace = (new Exception)->getTraceAsString();
-                    // set the global db connection to be able to report error also on db restart
-                    $msg = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $this->usr_id);
-                    throw new Exception("sql_db->exe -> error (" . $msg . ")");
-                }
-            }
+            $result = $this->exe_mysql($sql, $sql_name, $sql_array, $log_level);            // check database connection
         } else {
             throw new Exception('Unknown database type "' . $this->db_type . '"');
+        }
+
+        return $result;
+    }
+
+    /**
+     * execute an change SQL statement on a PostgreSQL database
+     * similar to exe, but database specific because the return object differs depending on the database
+     *
+     * @param string $sql the sql statement that should be executed
+     * @param string $sql_name the unique name of the sql statement
+     * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
+     * @return resource the message that should be shown to the user if something went wrong or an empty string
+     * @throws Exception the message that should be shown to the system admin for debugging
+     *
+     * TODO switch return type to bool|resource with PHP 8.0
+     * TODO add the writing of potential sql errors to the sys log table to the sql execution
+     * TODO includes the user to be able to ask the user for details how the error has been created
+     * TODO with php 8 switch to the union return type resource|false
+     */
+    private function exe_postgres(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR)
+    {
+        $result = null;
+
+        // check database connection
+        if ($this->postgres_link == null) {
+            $msg = 'database connection lost';
+            log_fatal($msg, 'sql_db->exe: ' . $sql_name);
+            // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
+            throw new Exception($msg);
+        } else {
+            // validate the parameters
+            if ($sql_name == '') {
+                // TODO switch to error when all SQL statements are named
+                //log_warning('Name for SQL statement ' . $sql . ' is missing');
+                log_debug('Name for SQL statement ' . $sql . ' is missing');
+            }
+
+            // remove query formatting
+            $sql = str_replace("\n", " ", $sql);
+            if ($sql_name == '') {
+                // simply execute old queries (to be deprecated)
+                $result = pg_query($this->postgres_link, $sql);
+            } else {
+                // prepare the query if needed
+                if (!$this->has_query($sql_name)) {
+                    if (str_starts_with($sql, 'PREPARE')) {
+                        $result = pg_query($this->postgres_link, $sql);
+                    } else {
+                        $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                    }
+                    if ($result === false) {
+                        throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
+                    } else {
+                        $this->prepared_sql_names[] = $sql_name;
+                    }
+                }
+                // execute the query
+                /*
+                $pg_array = array();
+                $pg_array[] = '{';
+                foreach ($sql_array as $item) {
+                    $pg_array[] = $item;
+                }
+                $pg_array[] = '}';
+                */
+                $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+            }
+            if ($result === false) {
+                throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * execute an change SQL statement on a MySQL database
+     * similar to exe, but database specific because the return object differs depending on the database
+     *
+     * @param string $sql the sql statement that should be executed
+     * @param string $sql_name the unique name of the sql statement
+     * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
+     * @return mysqli_result the message that should be shown to the system admin for debugging
+     * @throws Exception
+     *
+     * TODO switch return type to bool|resource with PHP 8.0
+     * TODO add the writing of potential sql errors to the sys log table to the sql execution
+     * TODO includes the user to be able to ask the user for details how the error has been created
+     * TODO with php 8 switch to the union return type resource|false
+     */
+    private function exe_mysql(string $sql, string $sql_name = '', array $sql_array = array(), int $log_level = sys_log_level::ERROR): mysqli_result
+    {
+        $result = null;
+
+        // check database connection
+        if ($this->mysql == null) {
+            $msg = 'database connection lost';
+            log_fatal($msg, 'sql_db->exe->' . $sql_name);
+            // TODO try auto reconnect in 1, 2 4, 8, 16 ... and max 3600 sec
+            throw new Exception($msg);
+        } else {
+            // validate the parameters
+            if ($sql_name == '') {
+                // TODO switch to error when all SQL statements are named
+                //log_warning('Name for SQL statement ' . $sql . ' is missing');
+                log_debug('Name for SQL statement ' . $sql . ' is missing');
+            }
+
+            if ($sql_name == '') {
+                $result = mysqli_query($this->mysql, $sql);
+            } else {
+                if ($this->has_query($sql_name)) {
+                    $stmt = $this->prepared_stmt[$sql_name];
+                } else {
+                    $stmt = mysqli_prepare($this->mysql, $sql);
+                    $this->prepared_sql_names[] = $sql_name;
+                    $this->prepared_stmt[$sql_name] = $stmt;
+                }
+                if ($stmt == null) {
+                    throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when executing ' . $sql);
+                } else {
+                    // TODO review to use a generic transformation for $sql_array
+                    if (count($sql_array) == 1) {
+                        $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0]);
+                    } elseif (count($sql_array) == 2) {
+                        $stmt->bind_param($this->mysql_array_to_types($sql_array), $sql_array[0], $sql_array[1]);
+                    } else {
+                        throw new Exception('Unexpected number of parameters in ' . $sql);
+                    }
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                }
+            }
+            if ($result === false) {
+                $msg_text = mysqli_error($this->mysql);
+                $sql = str_replace("'", "", $sql);
+                $sql = str_replace("\"", "", $sql);
+                $msg_text .= " (" . $sql . ")";
+                // check and improve the given parameters
+                $function_trace = (new Exception)->getTraceAsString();
+                // set the global db connection to be able to report error also on db restart
+                $msg = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $this->usr_id);
+                throw new Exception("sql_db->exe -> error (" . $msg . ")");
+            }
         }
 
         return $result;
@@ -2318,6 +2367,23 @@ class sql_db
     function select_by_field_list(array $id_fields, bool $has_id = true): string
     {
         return $this->select_by($id_fields, $has_id);
+    }
+
+    /**
+     * create a SQL select statement to count the number of rows related to a database table type
+     * the table type includes the table for the standard parameters and the user sandbox exceptions
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function count_sql(string $id_fld = ''): string
+    {
+        if ($id_fld == '') {
+            $id_fld = $this->type . self::FLD_EXT_ID;
+        }
+        $sql = 'PREPARE ' . $this->type . '_count AS
+                    SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
+                      FROM ' . $this->table . ' ' . self::STD_TBL . '
+                 LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';
+        return $sql;
     }
 
     /**

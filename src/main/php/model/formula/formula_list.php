@@ -124,6 +124,27 @@ class formula_list
     }
 
     /**
+     * set the SQL query parameters to load a set of all formulas
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $limit the number of formulas that should be loaded
+     * @param int $page the offset
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($limit > 0) {
+            $qp->name .= 'all';
+            $db_con->set_order(formula::FLD_ID);
+            $qp->sql = $db_con->select_by_field(formula::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * load a list of formulas
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one formula has been loaded
@@ -153,6 +174,19 @@ class formula_list
     {
         global $db_con;
         $qp = $this->load_sql_by_frm_ids($db_con, $frm_ids);
+        return $this->load_int($qp);
+    }
+
+    /**
+     * load a snap of all formulas
+     * @param int $limit the number of formulas that should be loaded
+     * @param int $page the offset
+     * @return bool true if at least one word found
+     */
+    function load_all(int $limit, int $page): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_all($db_con, $limit, $page);
         return $this->load_int($qp);
     }
 
@@ -227,7 +261,9 @@ class formula_list
         }
     }
 
-    // rename the name function to be inline with the other classes
+    /**
+     * return the loaded formula names for debugging
+     */
     function dsp_id(): string
     {
         $result = $this->name();
@@ -242,7 +278,9 @@ class formula_list
         return dsp_array($this->names());
     }
 
-    // this function is called from dsp_id, so no other call is allowed
+    /**
+     * this function is called from dsp_id, so no other call is allowed
+     */
     function names(): array
     {
         $result = array();
@@ -254,7 +292,9 @@ class formula_list
         return $result;
     }
 
-    // lists all formulas with results related to a word
+    /**
+     * lists all formulas with results related to a word
+     */
     function display($type = 'short'): string
     {
         log_debug('formula_list->display ' . $this->dsp_id());

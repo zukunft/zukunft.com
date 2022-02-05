@@ -225,6 +225,20 @@ class system_unit_tests
         $created = $log_lst_dsp->get_html_page($usr, '');
         $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log_list_page.html');
         $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
+
+
+        /*
+         * SQL database link unit tests
+         */
+
+        $t->subheader('SQL database link tests');
+
+        $db_con = new sql_db();
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $created = $db_con->count_sql();
+        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/formula/formula_count.sql');
+        $t->assert_sql('sql_db->count', $created, $expected);
+
     }
 
 }

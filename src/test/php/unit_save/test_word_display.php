@@ -87,9 +87,9 @@ function run_word_display_test(testing $t)
     <td>
     </td>
     <td>
-<a href="/http/view.php?words=468">System Test Time Word e.g. 2021</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2021->id . '">System Test Time Word e.g. 2021</a>    </td>
     <td>
-<a href="/http/view.php?words=467">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
   </tr>
 </table>
 ';
@@ -133,9 +133,9 @@ function run_word_display_test(testing $t)
     <td>
     </td>
     <td>
-<a href="/http/view.php?words=467">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
     <td>
-<a href="/http/view.php?words=454">System Test Time Word Category e.g. Year</a>    </td>
+<a href="/http/view.php?words=' . $wrd_year->id . '">System Test Time Word Category e.g. Year</a>    </td>
   </tr>
 </table>
 <table class="table col-sm-5 table-borderless">
@@ -143,17 +143,17 @@ function run_word_display_test(testing $t)
     <td>
     </td>
     <td>
-<a href="/http/view.php?words=467">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
     <td>
-<a href="/http/view.php?words=466">System Test Another Time Word e.g. 2019</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2019->id . '">System Test Another Time Word e.g. 2019</a>    </td>
   </tr>
 </table>
 ';
     $result = $wrd_2020->dsp_graph($direction, 0);
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $target = $result;
         log_err('Unexpected diff ' . $diff);
+        $target = $result;
     }
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 
