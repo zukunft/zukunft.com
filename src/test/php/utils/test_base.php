@@ -1180,11 +1180,26 @@ class test_base
      *
      * @param string $created the created SQL statement that should be checked
      * @param string $expected the fixed SQL statement that is supposed to be correct
-     * @return void
+     * @return bool true if the created SQL statement matches the expected SQL statement if the formatting is removed
      */
     function assert_sql(string $name, string $created, string $expected): bool
     {
         return $this->assert($name, $this->trim($created), $this->trim($expected));
+    }
+
+    /**
+     * test am SQL statement
+     *
+     * @param int $received an integer value that is expected to be greater zero
+     * @return bool true if the value is actually greater zero
+     */
+    function assert_greater_zero(string $name, int $received): bool
+    {
+        $expected = null;
+        if ($received > 0) {
+            $expected = $received;
+        }
+        return $this->assert($name, $received, $expected);
     }
 
     /**

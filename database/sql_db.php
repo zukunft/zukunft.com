@@ -1570,6 +1570,21 @@ class sql_db
     }
 
     /**
+     * get only the first numeric value from the database
+     * @param sql_par $qp the query parameters (sql statement, query name and parameters) that is expected to return just one number
+     * @return int the integer number received from the database
+     */
+    function get1_int(sql_par $qp): ?int
+    {
+        $result = null;
+        $db_array = $this->get1($qp);
+        if (count($db_array) > 0) {
+            $result = $db_array[0];
+        }
+        return $result;
+    }
+
+    /**
      * returns first value of a simple SQL query
      */
     function get_value($field_name, $id_name, $id)
@@ -2370,16 +2385,46 @@ class sql_db
     }
 
     /**
+     * create the SQL parameters to count the number of rows related to a database table type
+     * @return ?int the number of rows or null if something went wrong
+     */
+    function count(string $type_name = '', string $id_fld = ''): ?int
+    {
+        if ($type_name != '') {
+            $this->set_type($type_name);
+        }
+        return $this->get1_int($this->count_qp());
+    }
+
+    /**
+     * create the SQL parameters to count the number of rows related to a database table type
+     * @return sql_par the created SQL statement and the query name
+     */
+    function count_qp(string $class_name = '', string $id_fld = ''): sql_par
+    {
+        if ($class_name == '') {
+            $class_name = $this->type;
+        }
+        $qp = new sql_par($class_name);
+        $qp->name = $this->type . '_count';
+        $qp->sql = $this->count_sql($qp->name, $id_fld);
+        return $qp;
+    }
+
+    /**
      * create a SQL select statement to count the number of rows related to a database table type
      * the table type includes the table for the standard parameters and the user sandbox exceptions
      * @return string the created SQL statement in the previous set dialect
      */
-    function count_sql(string $id_fld = ''): string
+    function count_sql(string $sql_name = '', string $id_fld = ''): string
     {
         if ($id_fld == '') {
             $id_fld = $this->type . self::FLD_EXT_ID;
         }
-        $sql = 'PREPARE ' . $this->type . '_count AS
+        if ($sql_name == '') {
+            $sql_name = $this->type . '_count';
+        }
+        $sql = 'PREPARE ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
                       FROM ' . $this->table . ' ' . self::STD_TBL . '
                  LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';

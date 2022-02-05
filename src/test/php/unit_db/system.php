@@ -63,5 +63,13 @@ function run_system_unit_db_tests(testing $t)
     $target = 1;
     $t->dsp('unit_db_sys_job_type->check ' . job_type_list::VALUE_UPDATE, $result, $target);
 
+    /*
+     * SQL database read unit tests
+     */
+
+    $t->subheader('SQL database read tests');
+
+    $t->assert_greater_zero('sql_db->count', $db_con->count(DB_TYPE_FORMULA));
+
 }
 
