@@ -61,7 +61,7 @@ class value_list_unit_tests
         $wrd->id = 1;
         $val_lst = new value_list($usr);
         $val_lst->phr = $wrd->phrase();
-        $created_sql = $val_lst->load_sql($db_con);
+        $created_sql = $val_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/value/value_list_by_word_id.sql');
         $t->assert('value_list->load_sql by phrase id', $t->trim($created_sql), $t->trim($expected_sql));
 

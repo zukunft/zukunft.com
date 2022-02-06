@@ -30,6 +30,7 @@ function run_formula_unit_db_tests(testing $t)
 {
 
     global $db_con;
+    global $usr;
 
     $t->header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
 
@@ -45,6 +46,10 @@ function run_formula_unit_db_tests(testing $t)
     $result = cl(db_cl::FORMULA_TYPE, formula::CALC);
     $target = 1;
     $t->dsp('unit_db_formula->check ' . formula::CALC, $result, $target);
+
+    // check the estimates for the calculation blocks
+    $calc_blocks = (new formula_list($usr))->calc_blocks($db_con);
+    $t->assert_greater_zero('unit_db_formula->calc_blocks', $calc_blocks);
 
     $t->subheader('Frontend API tests');
 

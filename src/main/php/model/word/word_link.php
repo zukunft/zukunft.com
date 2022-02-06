@@ -1002,7 +1002,7 @@ class word_link extends user_sandbox_link_description
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_TRIPLE, true);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {

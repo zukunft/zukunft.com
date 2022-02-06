@@ -121,7 +121,7 @@ class formula_link extends user_sandbox_link
         $db_con->set_type(DB_TYPE_FORMULA_LINK, true);
         $db_con->set_usr($this->usr->id);
         $db_con->set_fields(formula_link::FLD_NAMES_NUM_USR);
-        $db_con->set_where($this->id);
+        $db_con->set_where_std($this->id);
         $sql = $db_con->select_by_id();
 
         if ($get_name) {

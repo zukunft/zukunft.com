@@ -34,6 +34,12 @@ use formula\formula_min;
 class formula extends user_sandbox_description
 {
     /*
+     * default startup values
+     */
+
+    const AVG_CALC_TIME = 1000; // the default time in milliseconds for updating all results of on formula
+
+    /*
      * database link
      */
 
@@ -1478,7 +1484,6 @@ class formula extends user_sandbox_description
         return $result;
     }
 
-
     /*
      * link functions - add or remove a link to a word (this is user specific, so use the user sandbox)
      */
@@ -1649,7 +1654,7 @@ class formula extends user_sandbox_description
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_FORMULA, true);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {

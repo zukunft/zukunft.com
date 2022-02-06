@@ -259,7 +259,7 @@ class view extends user_sandbox_named
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_usr_fields(self::FLD_NAMES_USR);
         $db_con->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $db_con->set_where($this->id, $this->name, $this->code_id);
+        $db_con->set_where_std($this->id, $this->name, $this->code_id);
         $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
@@ -719,7 +719,7 @@ class view extends user_sandbox_named
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_VIEW, true);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {

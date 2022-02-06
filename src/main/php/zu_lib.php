@@ -398,7 +398,7 @@ The beta test is expected to start with version 0.7
 // global code settings
 // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
 const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
-const UI_MIN_RESPONSE_TIME = 2; // minimal time after that the user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
+const UI_MIN_RESPONSE_TIME = 2; // minimal time in seconds after that the user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
 const UI_MAX_NAMES = 10;        // default number of names shown of a long list
 const UI_TIMEOUT_START = 200;   // the max number of milliseconds after which the program should react to a user action
 const UI_TIMEOUT_TARGET = 1000; // the target number of milliseconds between a screen update during a long process
@@ -430,6 +430,7 @@ const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 const CFG_SITE_NAME = 'site_name';                           // the name of the pod
 const CFG_VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed
 const CFG_LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
+const CFG_AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
 
 // data retrieval settings
 const SQL_ROW_LIMIT = 20; // default number of rows per page/query if not defined

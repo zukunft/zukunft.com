@@ -170,7 +170,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
-        $db_con->set_where(null, 'Test User');
+        $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
         $t->dsp('PostgreSQL select max', $t->trim($expected_sql), $t->trim($created_sql));
@@ -179,7 +179,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
-        $db_con->set_where(null, 'Test User');
+        $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT user_id, user_name FROM users WHERE user_name = 'Test User';";
         $t->dsp('MySQL select max', $t->trim($expected_sql), $t->trim($created_sql));
@@ -222,7 +222,7 @@ class user_sandbox_unit_tests
         // test a simple SQL select creation for PostgreSQL with the standard id and name identification
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_SOURCE_TYPE);
-        $db_con->set_where(2);
+        $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT source_type_id, source_type_name
                 FROM source_types
@@ -232,7 +232,7 @@ class user_sandbox_unit_tests
         // ... same for MySQL
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_SOURCE_TYPE);
-        $db_con->set_where(2);
+        $db_con->set_where_std(2);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT source_type_id, source_type_name
                 FROM source_types
@@ -244,7 +244,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_WORD, true);
         $db_con->set_usr(1);
         $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id'));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = 'SELECT word_id,
                      word_name,
@@ -262,7 +262,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_WORD, true);
         $db_con->set_usr(1);
         $db_con->set_fields(array('plural', sql_db::FLD_DESCRIPTION, 'word_type_id', 'view_id'));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = 'SELECT word_id,
                      word_name,
@@ -279,7 +279,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_type(DB_TYPE_WORD, true);
         $db_con->set_usr(1);
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = 'SELECT word_id,
                      word_name
@@ -292,7 +292,7 @@ class user_sandbox_unit_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_type(DB_TYPE_WORD, true);
         $db_con->set_usr(1);
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = 'SELECT word_id,
                      word_name
@@ -362,7 +362,7 @@ class user_sandbox_unit_tests
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', 'comment'));
         $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT 
                         s.source_id,
@@ -384,7 +384,7 @@ class user_sandbox_unit_tests
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', 'comment'));
         $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where(0, 'wikidata');
+        $db_con->set_where_std(0, 'wikidata');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT
                         s.source_id,
@@ -407,7 +407,7 @@ class user_sandbox_unit_tests
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', 'comment'));
         $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where(0, '', 'wikidata');
+        $db_con->set_where_std(0, '', 'wikidata');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT " . "
                         s.source_id,
@@ -427,7 +427,7 @@ class user_sandbox_unit_tests
         // ... same for all users by id
         $db_con->set_type(DB_TYPE_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', 'comment', 'source_type_id'));
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT
                         source_id,
@@ -444,7 +444,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT s.formula_id,
                      s.formula_name,
@@ -467,7 +467,7 @@ class user_sandbox_unit_tests
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update'));
         $db_con->set_usr_bool_fields(array(user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT s.formula_id,
                        u.formula_id AS user_formula_id,
@@ -537,7 +537,7 @@ class user_sandbox_unit_tests
         // test the view load_standard SQL creation
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_fields(array('comment', view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT view_id,
                      view_name,
@@ -552,7 +552,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_VIEW);
         $db_con->set_usr_fields(array('comment'));
         $db_con->set_usr_num_fields(array(view::FLD_TYPE, user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT 
                         s.view_id, 
@@ -659,7 +659,7 @@ class user_sandbox_unit_tests
         // test the view_component load_standard SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT view_component_id,
                      view_component_name,
@@ -679,7 +679,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_usr_fields(array('comment'));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT 
                         s.view_component_id,
@@ -782,7 +782,7 @@ class user_sandbox_unit_tests
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', 'comment'));
         $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . " 
@@ -805,7 +805,7 @@ class user_sandbox_unit_tests
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', 'comment'));
         $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where(0, 'wikidata');
+        $db_con->set_where_std(0, 'wikidata');
         $created_sql = $db_con->select_by_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . "
@@ -829,7 +829,7 @@ class user_sandbox_unit_tests
         $db_con->set_fields(array(sql_db::FLD_CODE_ID));
         $db_con->set_usr_fields(array('url', 'comment'));
         $db_con->set_usr_num_fields(array('source_type_id'));
-        $db_con->set_where(0, '', 'wikidata');
+        $db_con->set_where_std(0, '', 'wikidata');
         $created_sql = $db_con->select_by_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . "
@@ -850,7 +850,7 @@ class user_sandbox_unit_tests
         // ... same for all users by id
         $db_con->set_type(DB_TYPE_SOURCE);
         $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'url', 'comment', 'source_type_id'));
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT
                         source_id,
@@ -867,7 +867,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->set_fields(array(sql_db::FLD_USER_ID, 'formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION, 'formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
         $db_con->set_join_fields(array(sql_db::FLD_CODE_ID), 'formula_type');
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT s.formula_id,
                      s.formula_name,
@@ -889,7 +889,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->set_usr_fields(array('formula_text', 'resolved_text', sql_db::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('formula_type_id', 'all_values_needed', 'last_update', user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1, '');
+        $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . " 
@@ -1035,7 +1035,7 @@ class user_sandbox_unit_tests
         // test the view_component load_standard SQL creation
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_fields(array('comment', 'view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $expected_sql = "SELECT view_component_id,
                      view_component_name,
@@ -1055,7 +1055,7 @@ class user_sandbox_unit_tests
         $db_con->set_type(DB_TYPE_VIEW_COMPONENT);
         $db_con->set_usr_fields(array('comment'));
         $db_con->set_usr_num_fields(array('view_component_type_id', 'word_id_row', 'link_type_id', formula::FLD_ID, 'word_id_col', 'word_id_col2', user_sandbox::FLD_EXCLUDED));
-        $db_con->set_where(1);
+        $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_id();
         $sql_avoid_code_check_prefix = "SELECT";
         $expected_sql = $sql_avoid_code_check_prefix . " s.view_component_id,

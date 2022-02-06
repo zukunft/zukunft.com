@@ -41,8 +41,8 @@ class system_error_log_list
     public ?array $lst = null;      // a list of system error objects
     public ?user $usr = null;       // the user who wants to see the errors
     public ?string $dsp_type = '';  //
-    public ?int $page = null;       //
-    public ?int $size = null;       //
+    public int $page = 0;       //
+    public int $size = 0;       //
     public ?string $back = '';      //
 
     /**
@@ -90,7 +90,7 @@ class system_error_log_list
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . system_error_log::FLD_SOLVER_NAME), DB_TYPE_USER, system_error_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
             $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
-            $db_con->set_page($this->page, $this->size);
+            $db_con->set_page($this->size, $this->page);
             $sql = $db_con->select_by_id();
 
             if ($get_name) {

@@ -53,9 +53,9 @@ class value_list
     }
 
     // TODO review the VAR and LIMIT definitions
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con): sql_par
     {
-        $result = '';
+        $qp = new sql_par(self::class);
         $sql_name = self::class . '_by_';
         $sql_name_ext = '';
         $sql_where = '';
@@ -100,17 +100,14 @@ class value_list
                 }
             }
             $db_con->set_where_text($sql_where);
-            $db_con->set_page_par();
-            $sql = $db_con->select_by_id();
+            //$db_con->set_page_par();
+            $qp->name = $sql_name;
+            $qp->sql = $db_con->select_by_id();
+            $qp->par = $db_con->get_par();
 
-            if ($get_name) {
-                $result = $sql_name;
-            } else {
-                $result = $sql;
-            }
         }
 
-        return $result;
+        return $qp;
     }
 
     /**
@@ -130,14 +127,13 @@ class value_list
         if (!isset($this->usr)) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
-            $sql = $this->load_sql($db_con);
-            $sql_name = $this->load_sql($db_con, true);
+            $qp = $this->load_sql($db_con);
 
             if ($db_con->get_where() == '') {
                 log_err('The phrase must be set to load ' . self::class, self::class . '->load');
             } else {
                 $db_con->usr_id = $this->usr->id;
-                $db_val_lst = $db_con->get_old($sql, $sql_name, array($this->usr->id, $this->phr->id, $size));
+                $db_val_lst = $db_con->get($qp);
                 foreach ($db_val_lst as $db_val) {
                     if (is_null($db_val[user_sandbox::FLD_EXCLUDED]) or $db_val[user_sandbox::FLD_EXCLUDED] == 0) {
                         $val = new value($this->usr);

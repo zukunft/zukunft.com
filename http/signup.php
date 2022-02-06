@@ -100,7 +100,7 @@ if (isset($_POST['submit'])) {
         // get user id
         $db_con->set_type(DB_TYPE_USER);
         $db_con->set_usr(SYSTEM_USER_ID);
-        $db_con->set_where(null,$usr_name);
+        $db_con->set_where_std(null,$usr_name);
         $sql = $db_con->select_by_id();
         $db_row = $db_con->get1_old($sql);
         $usr_id = $db_row[user_sandbox::FLD_USER];

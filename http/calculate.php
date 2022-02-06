@@ -56,40 +56,46 @@ if ($usr->id > 0) {
     ob_end_flush();
     log_debug("create the calculation queue ... ");
 
-    // load the formulas to calculate
-    // TODO load the formulas in blocks
-    $frm_lst = new formula_list($usr);
-    $frm_lst->load();
-    echo "Calculate " . dsp_count($frm_lst->lst) . " formulas<br>";
+    // estimate the block size for useful UI updates
+    $total_formulas = $db_con->count(DB_TYPE_FORMULA);
+    $calc_blocks = (new formula_list($usr))->calc_blocks($db_con, $total_formulas);
+    $block_size = max(1, round($total_formulas / $calc_blocks, 0));
 
-    foreach ($frm_lst as $frm_request) {
+    for ($page = 0; $page <= $calc_blocks; $page++) {
+        // load the formulas to calculate
+        $frm_lst = new formula_list($usr);
+        $frm_lst->load_all($block_size, $page);
+        echo "Calculate " . dsp_count($frm_lst->lst) . " formulas<br>";
 
-        // build the calculation queue
-        $calc_fv_lst = new formula_value_list($usr);
-        $calc_fv_lst->frm = $frm_request;
-        $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
-        log_debug("calculate queue is build (number of values to check: " . dsp_count($calc_lst->lst) . ")");
+        foreach ($frm_lst as $frm_request) {
 
-        // execute the queue
-        foreach ($calc_lst->lst as $r) {
+            // build the calculation queue
+            $calc_fv_lst = new formula_value_list($usr);
+            $calc_fv_lst->frm = $frm_request;
+            $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
+            log_debug("calculate queue is build (number of values to check: " . dsp_count($calc_lst->lst) . ")");
 
-            // calculate one formula result
-            $frm = clone $r->frm;
-            $fv_lst = $frm->calc($r->wrd_lst);
+            // execute the queue
+            foreach ($calc_lst->lst as $r) {
 
-            // show the user the progress every two seconds
-            if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
-                $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
-                echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names() . ")<br>";
-                ob_flush();
-                flush();
-                $last_msg_time = time();
+                // calculate one formula result
+                $frm = clone $r->frm;
+                $fv_lst = $frm->calc($r->wrd_lst);
+
+                // show the user the progress every two seconds
+                if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
+                    $calc_pct = ($calc_pos / sizeof($calc_lst->lst)) * 100;
+                    echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $fv_lst->names() . ")<br>";
+                    ob_flush();
+                    flush();
+                    $last_msg_time = time();
+                }
+
+                $calc_pos++;
             }
-
-            $calc_pos++;
         }
+        ob_end_flush();
     }
-    ob_end_flush();
 
     // display the finish message
     echo "<br>";

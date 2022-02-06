@@ -566,7 +566,7 @@ class view_cmp_link extends user_sandbox_link
             // check again if there is not yet a record
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK, true);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {

@@ -269,7 +269,7 @@ class source extends user_sandbox_named
         if ($this->type_id > 0) {
             $db_con->set_type(DB_TYPE_SOURCE_TYPE);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->type_id);
+            $db_con->set_where_std($this->type_id);
             $sql = $db_con->select_by_id();
             $db_type = $db_con->get1_old($sql);
             $this->type_name = $db_type['source_type_name'];
@@ -541,7 +541,7 @@ class source extends user_sandbox_named
             // check again if there ist not yet a record
             $db_con->set_type(DB_TYPE_SOURCE, true);
             $db_con->set_usr($this->usr->id);
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {

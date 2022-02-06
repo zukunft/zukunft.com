@@ -204,6 +204,10 @@ function cfg_default_value(string $code_id): string
     switch ($code_id) {
         case CFG_VERSION_DB:
             $result = FIRST_VERSION;
+            break;
+        case CFG_AVG_CALC_TIME:
+            $result = formula::AVG_CALC_TIME;
+            break;
     }
 
     return $result;

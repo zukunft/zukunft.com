@@ -132,11 +132,18 @@ class formula_list
      */
     function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
     {
-        $qp = $this->load_sql($db_con);
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_all();
+        $qp->name = formula_list::class . '_all';
+        $db_con->set_name($qp->name);
+        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
         if ($limit > 0) {
-            $qp->name .= 'all';
             $db_con->set_order(formula::FLD_ID);
-            $qp->sql = $db_con->select_by_field(formula::FLD_ID);
+            $db_con->set_page_par($limit, $page);
+            $qp->sql = $db_con->select_all();
         } else {
             $qp->name = '';
         }
@@ -333,6 +340,18 @@ class formula_list
 
         log_debug("formula_list->display ... done (" . $result . ")");
         return $result;
+    }
+
+    /**
+     * @return int the number of suggested calculation blocks to update all formulas
+     */
+    function calc_blocks(sql_db $db_con, int $total_formulas = 0): int {
+        if ($total_formulas == 0) {
+            $total_formulas = $db_con->count(DB_TYPE_FORMULA);
+        }
+        $avg_calc_time = cfg_get(CFG_AVG_CALC_TIME, $db_con);
+        $total_expected_time = $total_formulas * $avg_calc_time;
+        return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000), 0));
     }
 
 }

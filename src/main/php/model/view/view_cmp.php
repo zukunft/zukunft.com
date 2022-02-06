@@ -676,7 +676,7 @@ class view_cmp extends user_sandbox_named
             $db_con->set_type(DB_TYPE_VIEW_COMPONENT, true);
             $db_con->set_usr($this->usr->id);
             $db_con->set_fields(array('view_component_id'));
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
             $db_row = $db_con->get1_old($sql);
             if ($db_row != null) {

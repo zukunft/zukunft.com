@@ -208,6 +208,7 @@ class sql_db
     private ?string $join2_type = '';             // the type name of the second table to join (maybe later switch to join n tables)
     private ?string $join3_type = '';             // the type name of the third table to join (maybe later switch to join n tables)
     private ?string $join4_type = '';             // the type name of the fourth table to join (maybe later switch to join n tables)
+    private bool $all_query = false;              // true, if the query is expected to retrieve the standard and the user specific data
     private bool $usr_query = false;              // true, if the query is expected to retrieve user specific data
     private bool $join_usr_query = false;         // true, if the joined query is also expected to retrieve user specific data
     private bool $join2_usr_query = false;        // same as $usr_join_query but for the second join
@@ -294,6 +295,7 @@ class sql_db
         $this->join3_usr_query = false;
         $this->join4_usr_query = false;
         $this->join_usr_added = false;
+        $this->all_query = false;
         $this->usr_query = false;
         $this->usr_only_query = false;
         $this->fields = '';
@@ -667,6 +669,14 @@ class sql_db
     }
 
     /**
+     * define that the SQL statement should return the standard value and the user specific changes of all users
+     */
+    function set_all()
+    {
+        $this->all_query = true;
+    }
+
+    /**
      * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user specific
      */
     function set_usr_fields($usr_field_lst)
@@ -786,7 +796,9 @@ class sql_db
                 if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
                     $usr_field_lst[] = $this->name_field;
                 }
-                $field_lst[] = sql_db::FLD_USER_ID;
+                if (!$this->all_query) {
+                    $field_lst[] = sql_db::FLD_USER_ID;
+                }
             } else {
                 if (!in_array($this->type, sql_db::DB_TYPES_NOT_NAMED)) {
                     $field_lst[] = $this->name_field;
@@ -827,17 +839,31 @@ class sql_db
                 $this->fields .= ' ' . sql_db::STD_TBL . '.' . $field;
                 if ($field == $this->id_field) {
                     // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
-                    if ($this->usr_query) {
+                    if ($this->all_query) {
                         if ($this->fields != '') {
                             $this->fields .= ', ';
                         }
-                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID;
+                    } else {
+                        if ($this->usr_query) {
+                            if ($this->fields != '') {
+                                $this->fields .= ', ';
+                            }
+                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                        }
                     }
                 }
             } else {
                 $this->fields .= ' ' . $field;
-
             }
+        }
+
+        // select the owner of the standard values in case of an overview query
+        if ($this->all_query) {
+            if ($this->fields != '') {
+                $this->fields .= ', ';
+            }
+            $this->fields .= ' ' . sql_db::STD_TBL . '.' . sql_db::FLD_USER_ID . ' AS owner_id';
         }
 
         // add join fields
@@ -1914,7 +1940,7 @@ class sql_db
      * TODO check why the request user must be set to search by code_id ?
      * TODO check if test for positive and negative id values is needed; because phrases can have a negative id ?
      */
-    function set_where($id, $name = '', $code_id = ''): string
+    function set_where_std($id, $name = '', $code_id = ''): string
     {
         $result = '';
 
@@ -1956,7 +1982,9 @@ class sql_db
             }
         }
         if ($this->usr_only_query) {
-            $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->usr_view_id;
+            if (!$this->all_query) {
+                $result .= ' AND ' . sql_db::FLD_USER_ID . ' = ' . $this->usr_view_id;
+            }
         }
 
         if ($result == '') {
@@ -1966,6 +1994,58 @@ class sql_db
         }
 
         return $result;
+    }
+
+    /**
+     * set the where statement based on the parameter set until now
+     * @param array $id_fields the name of the primary id field that should be used or the list of link fields
+     * @return void
+     */
+    private function set_where(array $id_fields)
+    {
+        // if nothing is defined assume to load the row by the main if
+        if ($this->where == '') {
+            if (count($this->par_types) > 0) {
+                if (count($this->par_types) <> count($this->par_named)) {
+                    log_err('Number of parameter types does not match the number of name parameter indicators');
+                }
+                if (count($this->par_types) <> count($this->par_use_link)) {
+                    log_err('Number of parameter types does not match the number of link usage indicators');
+                }
+                $i = 0; // the position in the SQL parameter array
+                $used_fields = 0; // the position of the fields used in the where statement
+                foreach ($this->par_types as $par_type) {
+                    if ($this->par_named[$i] == false) {
+                        if ($this->where == '') {
+                            $this->where = ' WHERE ';
+                        } else {
+                            $this->where .= ' AND ';
+                        }
+                        if ($this->usr_query
+                            or $this->join <> ''
+                            or $this->join_type <> ''
+                            or $this->join2_type <> '') {
+                            if ($this->par_use_link[$i]) {
+                                $this->where .= sql_db::LNK_TBL . '.';
+                            } else {
+                                $this->where .= sql_db::STD_TBL . '.';
+                            }
+                        }
+                        if ($par_type == self::PAR_INT_LIST or $par_type == self::PAR_TEXT_LIST) {
+                            if ($this->db_type == sql_db::POSTGRES) {
+                                $this->where .= $id_fields[$used_fields] . ' = ANY (' . $this->par_name($i + 1) . ')';
+                            } else {
+                                $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
+                            }
+                        } else {
+                            $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                        }
+                        $used_fields++;
+                    }
+                    $i++;
+                }
+            }
+        }
     }
 
     /**
@@ -2080,6 +2160,9 @@ class sql_db
             $direction = '';
         }
         $this->set_order_text(trim(self::STD_TBL . '.' . $order_field . ' ' . $direction));
+        if ($this->all_query) {
+            $this->order .= ', ' . self::STD_TBL . '.' . sql_db::FLD_USER_ID;
+        }
     }
 
     /**
@@ -2093,43 +2176,50 @@ class sql_db
     /**
      * set the limit and offset SQL statement for pagination
      */
-    function set_page(?int $page, ?int $size)
+    function set_page(int $limit = 0, int $page = 0)
     {
         // set default values
-        if ($page == null) {
+        if ($page == 0) {
             $page = 1;
         }
-        if ($size == null) {
-            $size = SQL_ROW_LIMIT;
+        if ($limit == 0) {
+            $limit = SQL_ROW_LIMIT;
         } else {
-            if ($size <= 0) {
-                $size = SQL_ROW_LIMIT;
+            if ($limit <= 0) {
+                $limit = SQL_ROW_LIMIT;
             }
         }
 
-        $this->page = ' LIMIT ' . $size;
+        $this->page = ' LIMIT ' . $limit;
     }
 
     /**
      * set the parameter for paged results
      * @return void
      */
-    function set_page_par(?int $page = null, ?int $size = null)
+    function set_page_par(int $limit = 0, int $page = 0)
     {
         // set default values
-        if ($page == null) {
+        if ($page == 0) {
             $page = 1;
         }
-        if ($size == null) {
-            $size = SQL_ROW_LIMIT;
+        if ($limit == 0) {
+            $limit = SQL_ROW_LIMIT;
         } else {
-            if ($size <= 0) {
-                $size = SQL_ROW_LIMIT;
+            if ($limit <= 0) {
+                $limit = SQL_ROW_LIMIT;
             }
         }
 
-        $this->add_par(sql_db::PAR_INT, $size);
+        $this->add_par(sql_db::PAR_INT, $limit);
         $this->page = ' LIMIT ' . $this->par_name();
+        if ($page > 0) {
+            $this->add_par(sql_db::PAR_INT, $page * $limit);
+            $this->page .= ' OFFSET ' . $this->par_name();
+            if ($this->query_name != '') {
+                $this->query_name .= '_paged';
+            }
+        }
     }
 
     /**
@@ -2149,13 +2239,15 @@ class sql_db
                 $usr_table_name = $this->name_sql_esc(sql_db::USER_PREFIX . $this->table);
                 $this->join .= ' LEFT JOIN ' . $usr_table_name . ' ' . sql_db::USR_TBL;
                 $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
-                $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-                if ($this->query_name == '') {
-                    $this->join .= $this->usr_view_id;
-                } else {
-                    $this->add_par(self::PAR_INT, $this->usr_id);
-                    $this->join_usr_par_name = $this->par_name();
-                    $this->join .= $this->join_usr_par_name;
+                if (!$this->all_query) {
+                    $this->join .= ' AND ' . sql_db::USR_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    if ($this->query_name == '') {
+                        $this->join .= $this->usr_view_id;
+                    } else {
+                        $this->add_par(self::PAR_INT, $this->usr_id);
+                        $this->join_usr_par_name = $this->par_name();
+                        $this->join .= $this->join_usr_par_name;
+                    }
                 }
                 $this->join_usr_added = true;
             }
@@ -2183,15 +2275,17 @@ class sql_db
             if ($this->usr_query and $this->join_usr_query) {
                 $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                 $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
-                $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-                if ($this->query_name == '') {
-                    $this->join .= $this->usr_view_id;
-                } else {
-                    // for MySQL the parameter needs to be repeated
-                    if ($this->db_type == self::MYSQL) {
-                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                if (!$this->all_query) {
+                    $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    if ($this->query_name == '') {
+                        $this->join .= $this->usr_view_id;
+                    } else {
+                        // for MySQL the parameter needs to be repeated
+                        if ($this->db_type == self::MYSQL) {
+                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                        }
+                        $this->join .= $this->join_usr_par_name;
                     }
-                    $this->join .= $this->join_usr_par_name;
                 }
             }
             if ($this->join_select_field != '') {
@@ -2220,15 +2314,17 @@ class sql_db
             if ($this->usr_query and $this->join2_usr_query) {
                 $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
-                $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-                if ($this->query_name == '') {
-                    $this->join .= $this->usr_view_id;
-                } else {
-                    // for MySQL the parameter needs to be repeated
-                    if ($this->db_type == self::MYSQL) {
-                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                if (!$this->all_query) {
+                    $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    if ($this->query_name == '') {
+                        $this->join .= $this->usr_view_id;
+                    } else {
+                        // for MySQL the parameter needs to be repeated
+                        if ($this->db_type == self::MYSQL) {
+                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                        }
+                        $this->join .= $this->join_usr_par_name;
                     }
-                    $this->join .= $this->join_usr_par_name;
                 }
             }
             if ($this->join2_select_field != '') {
@@ -2257,15 +2353,17 @@ class sql_db
             if ($this->usr_query and $this->join3_usr_query) {
                 $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
-                $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-                if ($this->query_name == '') {
-                    $this->join .= $this->usr_view_id;
-                } else {
-                    // for MySQL the parameter needs to be repeated
-                    if ($this->db_type == self::MYSQL) {
-                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                if (!$this->all_query) {
+                    $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    if ($this->query_name == '') {
+                        $this->join .= $this->usr_view_id;
+                    } else {
+                        // for MySQL the parameter needs to be repeated
+                        if ($this->db_type == self::MYSQL) {
+                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                        }
+                        $this->join .= $this->join_usr_par_name;
                     }
-                    $this->join .= $this->join_usr_par_name;
                 }
             }
             if ($this->join3_select_field != '') {
@@ -2294,15 +2392,17 @@ class sql_db
             if ($this->usr_query and $this->join4_usr_query) {
                 $this->join .= ' LEFT JOIN ' . DB_TYPE_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
-                $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
-                if ($this->query_name == '') {
-                    $this->join .= $this->usr_view_id;
-                } else {
-                    // for MySQL the parameter needs to be repeated
-                    if ($this->db_type == self::MYSQL) {
-                        $this->add_par(self::PAR_INT, $this->usr_id, true);
+                if (!$this->all_query) {
+                    $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . sql_db::FLD_USER_ID . ' = ';
+                    if ($this->query_name == '') {
+                        $this->join .= $this->usr_view_id;
+                    } else {
+                        // for MySQL the parameter needs to be repeated
+                        if ($this->db_type == self::MYSQL) {
+                            $this->add_par(self::PAR_INT, $this->usr_id, true);
+                        }
+                        $this->join .= $this->join_usr_par_name;
                     }
-                    $this->join .= $this->join_usr_par_name;
                 }
             }
             if ($this->join4_select_field != '') {
@@ -2327,6 +2427,16 @@ class sql_db
     function get_par(): array
     {
         return $this->par_values;
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * and select the standard and the user sandbox rows
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function select_all(): string
+    {
+        return $this->select_by(array($this->id_field));
     }
 
     /**
@@ -2466,50 +2576,7 @@ class sql_db
 
         $this->set_field_statement($has_id);
         $this->set_from();
-
-        // if nothing is defined assume to load the row by the main if
-        if ($this->where == '') {
-            if (count($this->par_types) > 0) {
-                if (count($this->par_types) <> count($this->par_named)) {
-                    log_err('Number of parameter types does not match the number of name parameter indicators');
-                }
-                if (count($this->par_types) <> count($this->par_use_link)) {
-                    log_err('Number of parameter types does not match the number of link usage indicators');
-                }
-                $i = 0; // the position in the SQL parameter array
-                $used_fields = 0; // the position of the fields used in the where statement
-                foreach ($this->par_types as $par_type) {
-                    if ($this->par_named[$i] == false) {
-                        if ($this->where == '') {
-                            $this->where = ' WHERE ';
-                        } else {
-                            $this->where .= ' AND ';
-                        }
-                        if ($this->usr_query
-                            or $this->join <> ''
-                            or $this->join_type <> ''
-                            or $this->join2_type <> '') {
-                            if ($this->par_use_link[$i]) {
-                                $this->where .= sql_db::LNK_TBL . '.';
-                            } else {
-                                $this->where .= sql_db::STD_TBL . '.';
-                            }
-                        }
-                        if ($par_type == self::PAR_INT_LIST or $par_type == self::PAR_TEXT_LIST) {
-                            if ($this->db_type == sql_db::POSTGRES) {
-                                $this->where .= $id_fields[$used_fields] . ' = ANY (' . $this->par_name($i + 1) . ')';
-                            } else {
-                                $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
-                            }
-                        } else {
-                            $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
-                        }
-                        $used_fields++;
-                    }
-                    $i++;
-                }
-            }
-        }
+        $this->set_where($id_fields);
 
         // create a prepare SQL statement if possible
         if ($this->query_name != '') {
@@ -2532,11 +2599,18 @@ class sql_db
         }
 
         $sql .= $this->fields . $this->from . $this->join . $this->where . $this->order . $this->page . $sql_end;
+
+        if (substr($sql, -1) != ";") {
+            $sql .= $sql_end;
+        }
+
         return $sql;
     }
 
-    // return all database ids, where the owner is not yet set
-    function missing_owner()
+    /**
+     * @return array all database ids, where the owner is not yet set
+     */
+    function missing_owner(): array
     {
         log_debug("sql_db->missing_owner (" . $this->type . ")");
         $result = null;

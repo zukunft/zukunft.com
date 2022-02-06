@@ -138,7 +138,7 @@ class system_error_log
             $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . self::FLD_SOLVER_NAME), DB_TYPE_USER, self::FLD_SOLVER);
-            $db_con->set_where($this->id);
+            $db_con->set_where_std($this->id);
             $sql = $db_con->select_by_id();
 
             if ($get_name) {

@@ -98,7 +98,7 @@ if (isset($_POST['submit'])) {
 
             $db_con->set_type(DB_TYPE_USER);
             $db_con->set_usr(SYSTEM_USER_ID);
-            $db_con->set_where($usr_id);
+            $db_con->set_where_std($usr_id);
             $sql = $db_con->select_by_id();
 
             $db_row = $db_con->get1_old($sql);
