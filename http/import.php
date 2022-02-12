@@ -51,9 +51,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::IMPORT);
-    $dsp->usr = $usr;
     $dsp->load();
 
     // get the filepath of the data that are supposed to be imported
@@ -121,7 +120,10 @@ if ($usr->id > 0) {
                         . $import->formulas_done . ' formulas, '
                         . $import->sources_done . ' sources, '
                         . $import->values_done . ' values, '
-                        . $import->views_done . ' views loaded)';
+                        . $import->list_values_done . ' simple values, '
+                        . $import->views_done . ' views loaded, '
+                        . $import->calc_validations_done . ' results validated, '
+                        . $import->view_validations_done . ' views validated)';
                     if ($import->users_done > 0) {
                         $msg .= ' ... and ' . $import->users_done . ' $users';
                     }

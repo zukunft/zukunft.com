@@ -54,9 +54,12 @@ function import_json_file(string $filename, user $usr): string
                     . $import->verbs_done . ' verbs, '
                     . $import->triples_done . ' triples, '
                     . $import->formulas_done . ' formulas, '
-                    . $import->values_done . ' sources, '
-                    . $import->sources_done . ' values, '
-                    . $import->views_done . ' views loaded)';
+                    . $import->values_done . ' values, '
+                    . $import->list_values_done . ' simple values, '
+                    . $import->sources_done . ' sources, '
+                    . $import->views_done . ' views loaded, '
+                    . $import->calc_validations_done . ' results validated, '
+                    . $import->view_validations_done . ' views validated)';
                 if ($import->users_done > 0) {
                     $msg .= ' ... and ' . $import->users_done . ' $users';
                 }

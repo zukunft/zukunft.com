@@ -56,8 +56,14 @@ class file_import
     public ?int $sources_failed = 0;
     public ?int $values_done = 0;
     public ?int $values_failed = 0;
+    public ?int $list_values_done = 0;
+    public ?int $list_values_failed = 0;
     public ?int $views_done = 0;
     public ?int $views_failed = 0;
+    public ?int $calc_validations_done = 0;
+    public ?int $calc_validations_failed = 0;
+    public ?int $view_validations_done = 0;
+    public ?int $view_validations_failed = 0;
     public ?int $system_done = 0;
     public ?int $system_failed = 0;
 
@@ -163,6 +169,19 @@ class file_import
                         }
                         $result .= $import_result;
                     }
+                } elseif ($key == 'value-list') {
+                    // TODO switch to simple value list object
+                    // TODO add a unit test
+                    foreach ($json_obj as $value) {
+                        $val = new value($this->usr);
+                        $import_result = $val->import_obj($value);
+                        if ($import_result == '') {
+                            $this->list_values_done++;
+                        } else {
+                            $this->list_values_failed++;
+                        }
+                        $result .= $import_result;
+                    }
                 } elseif ($key == 'views') {
                     foreach ($json_obj as $view) {
                         $view_obj = new view($this->usr);
@@ -180,9 +199,22 @@ class file_import
                         $fv = new formula_value($this->usr);
                         $import_result = $fv->import_obj($value);
                         if ($import_result == '') {
-                            $this->values_done++;
+                            $this->calc_validations_done++;
                         } else {
-                            $this->values_failed++;
+                            $this->calc_validations_failed++;
+                        }
+                        $result .= $import_result;
+                    }
+                } elseif ($key == 'view-validation') {
+                    // TODO switch to view result
+                    // TODO add a unit test
+                    foreach ($json_obj as $value) {
+                        $fv = new view($this->usr);
+                        $import_result = $fv->import_obj($value);
+                        if ($import_result == '') {
+                            $this->view_validations_done++;
+                        } else {
+                            $this->view_validations_failed++;
                         }
                         $result .= $import_result;
                     }
