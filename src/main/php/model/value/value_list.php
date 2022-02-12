@@ -375,8 +375,167 @@ class value_list
     }
 
     /*
-    data retrieval functions
-    */
+     * im- and export functions
+     */
+
+    /**
+     * import a value from an external object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): string
+    {
+        global $share_types;
+        global $protection_types;
+
+        log_debug('value_list->import_obj');
+        $result = '';
+
+        $val = new value($this->usr);
+        $phr_lst = new phrase_list($this->usr);
+
+        foreach ($json_obj as $key => $value) {
+
+            if ($key == 'context') {
+                $phr_lst = new phrase_list($this->usr);
+                $result .= $phr_lst->import_lst($value, $do_save);
+                $val->phr_lst = clone $phr_lst;
+            }
+
+            if ($key == 'timestamp') {
+                if (strtotime($value)) {
+                    $val->time_stamp = get_datetime($value, $val->dsp_id(), 'JSON import');
+                } else {
+                    log_err('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id(), 'value_list->import_obj');
+                }
+            }
+
+            if ($key == 'time') {
+                $phr = new phrase($this->usr);
+                if (!$phr->import_obj($value, $do_save)) {
+                    $result = 'Failed to import time ' . $value;
+                }
+                $val->time_phr = $phr;
+            }
+
+            if ($key == 'share') {
+                $val->share_id = $share_types->id($value);
+            }
+
+            if ($key == 'protection') {
+                $val->protection_id = $protection_types->id($value);
+            }
+
+            if ($key == 'source') {
+                $src = new source($this->usr);
+                $src->name = $value;
+                if ($do_save) {
+                    $src->load();
+                    if ($src->id == 0) {
+                        $src->save();
+                    }
+                }
+                $val->source = $src;
+            }
+
+            if ($key == 'values') {
+                foreach ($value as $val_entry) {
+                    foreach ($val_entry as $val_key => $val_number) {
+                        $val_to_add = clone $val;
+                        $val_to_add->phr_lst = clone $phr_lst;
+                        $val_phr = new phrase($this->usr);
+                        $val_phr->name = $val_key;
+                        $val_phr->load();
+                        $val_to_add->phr_lst->add($val_phr);
+                        $val_to_add->number = $val_number;
+                        $this->lst[] = $val_to_add;
+                        if ($do_save) {
+                            $val_to_add->save();
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return $result;
+    }
+
+    /**
+     * create a value list object for the JSON export
+     */
+    function export_obj(bool $do_load = true): user_sandbox_exp
+    {
+        log_debug('value_list->export_obj');
+        $result = new value_list_exp();
+
+        // reload the value parameters
+        if ($do_load) {
+            log_debug('value_list->export_obj load');
+            $this->load();
+        }
+
+        if (count($this->lst) > 1) {
+
+            // use the first value to get the context parameter
+            $val0 = $this->lst[0];
+            // use the second value to detect the context phrases
+            $val1 = $this->lst[1];
+
+            // get phrase names of the first value
+            $phr_lst1 = $val0->phr_lst->names();
+            // get phrase names of the second value
+            $phr_lst2 = $val1->phr_lst->names();
+            // add common phrase of the first and second value
+            $phr_lst = array();
+            if (count($phr_lst1) > 0 and count($phr_lst2) > 0) {
+                $phr_lst = array_intersect($phr_lst1, $phr_lst2);
+                $result->context = $phr_lst;
+            }
+
+            // add the time
+            if (isset($val0->time_phr)) {
+                $result->time = $val0->time_phr->name;
+            }
+
+            // add the share type
+            log_debug('value->export_obj get share');
+            if ($val0->share_id > 0 and $val0->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
+                $result->share = $val0->share_type_code_id();
+            }
+
+            // add the protection type
+            log_debug('value->export_obj get protection');
+            if ($val0->protection_id > 0 and $val0->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO)) {
+                $result->protection = $val0->protection_type_code_id();
+            }
+
+            // add the source
+            if ($val0->source != null) {
+                $result->source = $val0->source->name;
+            }
+
+            foreach ($this->lst as $val) {
+                $phr_name = array_diff($val->phr_lst->names(), $phr_lst);
+                if (count($phr_name) > 0) {
+                    $val_entry = array();
+                    $key_name = array_values($phr_name)[0];
+                    $val_entry[$key_name] = $val->number;
+                    $result->values[] = $val_entry;
+                }
+            }
+        }
+
+        log_debug('value_list->export_obj -> ' . json_encode($result));
+        return $result;
+    }
+
+
+    /*
+     * data retrieval functions
+     */
 
     // get a list with all time phrase used in the complete value list
     function time_lst(): phrase_list
@@ -389,7 +548,7 @@ class value_list
         }
         $phr_lst = new phrase_list($this->usr);
         if (count($all_ids) > 0) {
-            $phr_lst->load_by_ids(new phr_ids( $all_ids));
+            $phr_lst->load_by_ids(new phr_ids($all_ids));
         }
         log_debug('value_list->time_lst (' . dsp_count($phr_lst->lst) . ')');
         return $phr_lst;

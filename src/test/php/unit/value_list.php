@@ -46,13 +46,19 @@ class value_list_unit_tests
 
         global $usr;
 
+        // init
+        $db_con = new sql_db();
+        $t->name = 'value_list->';
+        $t->resource_path = 'db/value/';
+        $json_file = 'unit/value/travel_scoring_value_list.json';
+        $usr->id = 1;
+
         $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
          */
 
-        $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
         $this->test = $t;
 
@@ -88,6 +94,13 @@ class value_list_unit_tests
         $qp = $this->assert_by_phr_sql($phr, sql_db::POSTGRES);
         $this->assert_by_phr_sql($phr, sql_db::MYSQL);
         $this->test->assert_sql_name_unique($qp->name);
+
+
+        $t->subheader('Im- and Export tests');
+
+        $t->assert_json(new value_list($usr), $json_file);
+
+
     }
 
     /**

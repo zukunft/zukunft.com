@@ -170,10 +170,9 @@ class file_import
                         $result .= $import_result;
                     }
                 } elseif ($key == 'value-list') {
-                    // TODO switch to simple value list object
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $val = new value($this->usr);
+                        $val = new value_list($this->usr);
                         $import_result = $val->import_obj($value);
                         if ($import_result == '') {
                             $this->list_values_done++;

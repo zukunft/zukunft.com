@@ -299,6 +299,7 @@ include_once $path_php . 'model/value/value.php';
 include_once $path_php . 'model/value/value_dsp.php';
 include_once $path_php . 'model/value/value_exp.php';
 include_once $path_php . 'model/value/value_list.php';
+include_once $path_php . 'model/value/value_list_exp.php';
 include_once $path_php . 'web/value_list_display.php';
 include_once $path_php . 'model/value/value_phrase_link.php';
 include_once $path_php . 'model/value/value_phrase_link_list.php';

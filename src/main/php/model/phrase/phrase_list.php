@@ -851,7 +851,7 @@ class phrase_list
     function names(): array
     {
         $name_lst = array();
-        if (isset($this->lst)) {
+        if ($this->lst != null) {
             foreach ($this->lst as $phr) {
                 $name_lst[] = $phr->name;
             }
