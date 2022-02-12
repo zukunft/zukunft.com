@@ -612,6 +612,112 @@ class formula_value
     }
 
     /*
+     * im- and export
+     */
+
+    /**
+     * validate a formulas value by comparing the external object result with the calculated result
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param bool $do_save can be set to false for unit testing
+     * @return bool true if the import has been successfully saved to the database
+     */
+    function import_obj(array $json_obj, bool $do_save = true): bool
+    {
+        log_debug(formula_value::class . '->import_obj');
+        $result = false;
+
+        foreach ($json_obj as $key => $fv) {
+
+            if ($key == 'words') {
+                $phr_lst = new phrase_list($this->usr);
+                $result .= $phr_lst->import_lst($fv, $do_save);
+                if ($do_save) {
+                    $phr_grp = $phr_lst->get_grp();
+                    log_debug(formula_value::class . '->import_obj got word group ' . $phr_grp->dsp_id());
+                    $this->grp = $phr_grp;
+                    log_debug(formula_value::class . '->import_obj set grp id to ' . $this->grp->id);
+                }
+                $this->phr_lst = $phr_lst;
+            }
+
+            /*
+            if ($key == 'timestamp') {
+                if (strtotime($fv)) {
+                    $this->time_stamp = get_datetime($fv, $this->dsp_id(), 'JSON import');
+                } else {
+                    log_err('Cannot add timestamp "' . $fv . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                }
+            }
+            */
+
+            if ($key == 'time') {
+                $phr = new phrase($this->usr);
+                if (!$phr->import_obj($fv, $do_save)) {
+                    $result = 'Failed to import time ' . $fv;
+                }
+                $this->time_phr = $phr;
+            }
+
+            if ($key == 'number') {
+                $this->value = $fv;
+            }
+
+        }
+
+        if ($result == true and $do_save) {
+            $this->save();
+            log_debug(formula_value::class . '->import_obj -> ' . $this->dsp_id());
+        } else {
+            log_debug(formula_value::class . '->import_obj -> ' . $result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an JSON formula value object for the export
+     * to enable the validation of the results during import
+     *
+     * @param bool $do_load true if the formula value should be validated again before export
+     *                      use false for a faster export
+     * @return user_sandbox_exp the filled formula validation object used for JSON creation
+     */
+    function export_obj(bool $do_load = true): user_sandbox_exp
+    {
+        log_debug(formula_value::class . '->export_obj');
+        $result = new formula_value_exp();
+
+        // reload the value parameters
+        if ($do_load) {
+            $this->load();
+            log_debug(formula_value::class . '->export_obj load phrases');
+            $this->load_phrases();
+        }
+
+        // add the phrases
+        log_debug(formula_value::class . '->export_obj get phrases');
+        $phr_lst = array();
+        // TODO use either word and triple export_obj function or phrase
+        if ($this->phr_lst != null) {
+            if (count($this->phr_lst->lst) > 0) {
+                foreach ($this->phr_lst->lst as $phr) {
+                    $phr_lst[] = $phr->name;
+                }
+                if (count($phr_lst) > 0) {
+                    $result->words = $phr_lst;
+                }
+            }
+        }
+
+        // add the value itself
+        $result->number = $this->value;
+
+        log_debug(formula_value::class . '->export_obj -> ' . json_encode($result));
+        return $result;
+    }
+
+    /*
        methods to prepare the words for saving into the database
        ---------------------------------------------------------
     */

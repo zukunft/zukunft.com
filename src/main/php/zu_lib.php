@@ -16,6 +16,11 @@
     TODO fix syntax suggestions in existing code
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO add simple value list import example
+    TODO add simple value list table with the hashed phrase list as key and the value
+    TODO add a calculation validation section to the import
+    TODO add a text based view validation section to the import
+    TODO add a simple UI API JSON to text frontend for the view validation
     TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
     TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
@@ -313,6 +318,7 @@ include_once $path_php . 'model/formula/formula_link.php';
 include_once $path_php . 'model/formula/formula_link_list.php';
 include_once $path_php . 'model/formula/formula_link_type_list.php';
 include_once $path_php . 'model/formula/formula_value.php';
+include_once $path_php . 'model/formula/formula_value_exp.php';
 include_once $path_php . 'model/formula/formula_value_list.php';
 include_once $path_php . 'model/formula/formula_element.php';
 include_once $path_php . 'model/formula/formula_element_type_list.php';

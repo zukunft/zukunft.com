@@ -174,6 +174,18 @@ class file_import
                         }
                         $result .= $import_result;
                     }
+                } elseif ($key == 'calc-validation') {
+                    // TODO add a unit test
+                    foreach ($json_obj as $value) {
+                        $fv = new formula_value($this->usr);
+                        $import_result = $fv->import_obj($value);
+                        if ($import_result == '') {
+                            $this->values_done++;
+                        } else {
+                            $this->values_failed++;
+                        }
+                        $result .= $import_result;
+                    }
                 } elseif ($key == 'ip-blacklist') {
                     foreach ($json_obj as $ip_range) {
                         $ip_obj = new ip_range;
