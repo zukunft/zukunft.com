@@ -67,15 +67,36 @@ class file_import
     public ?int $system_done = 0;
     public ?int $system_failed = 0;
 
-    // import zukunft.com data as object for creating e.g. a json message
+    public float $last_display_time;
+
+    function display_progress(int $pos, int $total)
+    {
+        $check_time = microtime(true);
+        $time_since_last_display = $check_time - $this->last_display_time;
+        if ($time_since_last_display > UI_MIN_RESPONSE_TIME) {
+            $progress = round($pos / $total * 100) . '%';
+            echo '<br><br>import' . $progress . ' done<br>';
+            log_debug('import->put ' . $progress);
+            $this->last_display_time = microtime(true);
+        }
+    }
+
+    /**
+     * import zukunft.com data as object for creating e.g. a json message
+     */
     function put(): string
     {
         log_debug('import->put');
         $result = '';
+        $this->last_display_time = microtime(true);
 
         $json_array = json_decode($this->json_str, true);
         if ($json_array != null) {
+            $total = count_recursive($json_array, 1);
+            $pos = 0;
+            $this->display_progress($pos, $total);
             foreach ($json_array as $key => $json_obj) {
+                $pos++;
                 if ($key == 'version') {
                     if (prg_version_is_newer($json_obj)) {
                         $result .= 'Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION . ' ';

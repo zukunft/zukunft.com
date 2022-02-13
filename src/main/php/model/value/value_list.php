@@ -450,10 +450,11 @@ class value_list
                         $val_phr->load();
                         $val_to_add->phr_lst->add($val_phr);
                         $val_to_add->number = $val_number;
-                        $this->lst[] = $val_to_add;
                         if ($do_save) {
+                            $val_to_add->grp = $phr_lst->get_grp();
                             $val_to_add->save();
                         }
+                        $this->lst[] = $val_to_add;
                     }
                 }
             }

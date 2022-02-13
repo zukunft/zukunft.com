@@ -178,6 +178,16 @@ class string_unit_tests
         $result = $json_clean == json_decode($json_check, true);
         $t->dsp(", json_clean - false test", false, $result);
 
+        // recursive count
+        $result = count_recursive($json_array, 0);
+        $t->dsp(", count_recursive - count level 0", 0, $result);
+        $result = count_recursive($json_array, 1);
+        $t->dsp(", count_recursive - count level 0", 4, $result);
+        $result = count_recursive($json_array, 2);
+        $t->dsp(", count_recursive - count level 0", 8, $result);
+        $result = count_recursive($json_array, 20);
+        $t->dsp(", count_recursive - count level 0", 8, $result);
+
 
         $t->subheader('user message tests');
 

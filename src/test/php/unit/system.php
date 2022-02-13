@@ -110,7 +110,7 @@ class system_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
         $ip_range->usr = $usr;
         $ip_range->import_obj($json_in, false);
@@ -191,11 +191,11 @@ class system_unit_tests
         $log->status_name =  cl(db_cl::LOG_STATUS, sys_log_status::NEW);
         $log_dsp = $log->get_dsp_obj();
         $created = $log_dsp->get_json();
-        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'api/system/error_log.json');
+        $expected = file_get_contents(PATH_TEST_FILES . 'api/system/error_log.json');
         $t->assert('system_error_log_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
 
         $created = $log_dsp->get_html($usr, '');
-        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log.html');
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log.html');
         $t->assert('system_error_log_dsp->get_json', $t->trim_html($created), $t->trim_html($expected));
 
         // create a second system log entry to create a list
@@ -215,15 +215,15 @@ class system_unit_tests
 
         $log_lst_dsp = $log_lst->get_dsp_obj();
         $created = $log_lst_dsp->get_json();
-        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'api/system/error_log_list.json');
+        $expected = file_get_contents(PATH_TEST_FILES . 'api/system/error_log_list.json');
         $t->assert('system_error_log_list_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr, '');
-        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log_list.html');
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log_list.html');
         $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page($usr, '');
-        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'web/system/error_log_list_page.html');
+        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log_list_page.html');
         $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
 
 
@@ -236,7 +236,7 @@ class system_unit_tests
         $db_con = new sql_db();
         $db_con->set_type(DB_TYPE_FORMULA);
         $created = $db_con->count_sql();
-        $expected = file_get_contents(PATH_TEST_IMPORT_FILES . 'db/formula/formula_count.sql');
+        $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
         $t->assert_sql('sql_db->count', $created, $expected);
 
     }

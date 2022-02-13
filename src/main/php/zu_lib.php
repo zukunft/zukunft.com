@@ -218,7 +218,6 @@ if ($root_path == '') {
 */
 
 
-
 // set the paths of the program code
 $path_php = ROOT_PATH . 'src/main/php/'; // path of the main php source code
 
@@ -543,7 +542,8 @@ define("BASE_CONFIG_FILES", serialize(array(
 )));
 
 # list of all static import files for testing the system consistency
-define("PATH_TEST_IMPORT_FILES", ROOT_PATH . 'src/test/resources/');
+define("PATH_TEST_FILES", ROOT_PATH . 'src/test/resources/');
+define("PATH_TEST_IMPORT_FILES", ROOT_PATH . 'src/test/resources/import/');
 define("TEST_IMPORT_FILE_LIST", serialize(array(
     'companies.json',
     'ABB_2013.json',
@@ -552,6 +552,8 @@ define("TEST_IMPORT_FILE_LIST", serialize(array(
     'NESN_2019.json',
     'countries.json',
     'real_estate.json',
+    'travel_scoring.json',
+    'travel_scoring_value_list.json',
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',
@@ -708,7 +710,7 @@ function log_info(string $msg_text,
                   string $function_name = '',
                   string $msg_description = '',
                   string $function_trace = '',
-                  ?user $calling_usr = null): string
+                  ?user  $calling_usr = null): string
 {
     return log_msg($msg_text,
         $msg_description,
@@ -721,7 +723,7 @@ function log_warning(string $msg_text,
                      string $function_name = '',
                      string $msg_description = '',
                      string $function_trace = '',
-                     ?user $calling_usr = null): string
+                     ?user  $calling_usr = null): string
 {
     return log_msg($msg_text,
         $msg_description,
@@ -735,7 +737,7 @@ function log_err(string $msg_text,
                  string $function_name = '',
                  string $msg_description = '',
                  string $function_trace = '',
-                 ?user $calling_usr = null): string
+                 ?user  $calling_usr = null): string
 {
     return log_msg($msg_text,
         $msg_description,
@@ -749,7 +751,7 @@ function log_fatal(string $msg_text,
                    string $function_name,
                    string $msg_description = '',
                    string $function_trace = '',
-                   ?user $calling_usr = null): string
+                   ?user  $calling_usr = null): string
 {
     echo 'FATAL ERROR! ' . $msg_text;
     // TODO write first to the most secure system log because if the database connection is lost no writing to the database is possible
@@ -1121,7 +1123,7 @@ function zu_str_right($text, $pos)
 }
 
 // TODO rename to the php 8.0 function str_starts_with
-function zu_str_is_left(string $text, string $maker):string
+function zu_str_is_left(string $text, string $maker): string
 {
     $result = false;
     if (substr($text, 0, strlen($maker)) == $maker) {
@@ -1271,7 +1273,6 @@ function array_trim(?array $in_array): array
     }
     return $result;
 }
-
 
 
 /**
@@ -1624,6 +1625,29 @@ function str_contains(string $haystack, string $needle): bool
     $pos = strpos($haystack, $needle);
     if ($pos == false) {
         $result = false;
+    }
+    return $result;
+}
+
+/**
+ * recursive count of the number of elements in an array but limited to a given level
+ * @param array $json_array the array that should be analysed
+ * @param int $levels the number of levels that should be taken into account
+ * @param int $level used for the recursive
+ * @return int the number of elements
+ */
+function count_recursive(array $json_array, int $levels, int $level = 1): int
+{
+    $result = 0;
+    if ($json_array != null) {
+        if ($level <= $levels) {
+            foreach ($json_array as $sub_array) {
+                $result++;
+                if (is_array($sub_array)) {
+                    $result = $result + count_recursive($sub_array, $levels, $level++);
+                }
+            }
+        }
     }
     return $result;
 }

@@ -483,7 +483,7 @@ class value extends user_sandbox_display
      * load the source object
      * what happens if a source is updated
      */
-    function load_source(): source
+    function load_source(): ?source
     {
         $src = null;
         log_debug('value->load_source for ' . $this->dsp_id());
@@ -491,6 +491,7 @@ class value extends user_sandbox_display
         if ($this->get_source_id() > 0) {
             $this->source->usr = $this->usr;
             $this->source->load();
+            $src = $this->source;
         } else {
             $this->source = null;
         }
@@ -925,7 +926,11 @@ class value extends user_sandbox_display
             }
 
             if ($key == 'number') {
-                $this->number = $value;
+                if (is_numeric($value)) {
+                    $this->number = $value;
+                } else {
+                    log_warning('Import value: "' . $value . '" is expected to be a number (' . $this->phr_lst->dsp_id() .')');
+                }
             }
 
             if ($key == 'share') {

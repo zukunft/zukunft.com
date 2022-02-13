@@ -115,7 +115,7 @@ class user_type_list
             if (array_key_exists($code_id, $this->hash)) {
                 $result = $this->hash[$code_id];
             } else {
-                log_err('Type id not found for ' . $code_id . ' in ' . dsp_array_keys($this->hash));
+                log_err('Type id not found for "' . $code_id . '" in ' . dsp_array_keys($this->hash));
             }
         } else {
             log_debug('Type code id not not set');

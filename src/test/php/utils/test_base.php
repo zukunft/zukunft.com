@@ -1016,7 +1016,7 @@ class test_base
      */
     function file(string $test_resource_path): string
     {
-        return file_get_contents(PATH_TEST_IMPORT_FILES . $test_resource_path);
+        return file_get_contents(PATH_TEST_FILES . $test_resource_path);
     }
 
     /**
@@ -1064,7 +1064,7 @@ class test_base
      */
     function assert_json(object $usr_obj, string $json_file_name): bool
     {
-        $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . $json_file_name), true);
+        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . $json_file_name), true);
         $usr_obj->import_obj($json_in, false);
         $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $result = json_is_similar($json_in, $json_ex);
