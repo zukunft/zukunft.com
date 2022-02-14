@@ -89,6 +89,20 @@ class formula_unit_tests
         $qp = $frm_lst->load_sql_by_frm_ids($db_con, array(3, 4));
         $t->assert_qp($qp, sql_db::MYSQL);
 
+        // check the PostgreSQL query syntax to load a list of formulas by phrase
+        $wrd = new word($usr);
+        $wrd->id = 1;
+        $wrd->name = word::TN_ADD;
+        $phr = $wrd->phrase();
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... same for MySQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $frm_lst->load_sql_by_phr($db_con, $phr);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
         // check the PostgreSQL query syntax to load a list of formulas by phrase list
         $phr_lst = (new phrase_list_unit_tests)->get_phrase_list();
         $db_con->db_type = sql_db::POSTGRES;

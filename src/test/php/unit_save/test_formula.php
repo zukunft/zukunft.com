@@ -502,9 +502,8 @@ function run_formula_list_test(testing $t)
     $wrd->id = $wrd_share->id;
     $wrd->load();
     $frm_lst = new formula_list($t->usr1);
-    $frm_lst->wrd = $wrd;
     $frm_lst->back = $wrd->id;
-    $frm_lst->load();
+    $frm_lst->load_by_phr($wrd->phrase());
     $result = $frm_lst->display();
     $target = formula::TN_RATIO;
     $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, TIMEOUT_LIMIT_PAGE);

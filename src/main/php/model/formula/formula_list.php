@@ -124,26 +124,25 @@ class formula_list
     }
 
     /**
-     * set the SQL query parameters to load a set of all formulas
+     * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param int $limit the number of formulas that should be loaded
-     * @param int $page the offset
+     * @param phrase $phr a phrase used to select the formulas
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
+    function load_sql_by_phr(sql_db $db_con, phrase $phr): sql_par
     {
-        $qp = new sql_par(self::class);
-        $db_con->set_type(DB_TYPE_FORMULA);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_all();
-        $qp->name = formula_list::class . '_all';
-        $db_con->set_name($qp->name);
-        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
-        if ($limit > 0) {
-            $db_con->set_order(formula::FLD_ID);
-            $db_con->set_page_par($limit, $page);
-            $qp->sql = $db_con->select_all();
+        $qp = $this->load_sql($db_con);
+        if ($phr->id <> 0) {
+            $qp->name .= 'phr';
+            $db_con->set_name($qp->name);
+            $db_con->set_join_fields(
+                array(phrase::FLD_ID),
+                DB_TYPE_FORMULA_LINK,
+                formula::FLD_ID,
+                formula::FLD_ID
+            );
+            $db_con->add_par(sql_db::PAR_INT, $phr->id, false, true);
+            $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
         } else {
             $qp->name = '';
         }
@@ -171,6 +170,34 @@ class formula_list
             );
             $db_con->add_par_in_int($phr_lst->id_lst(), false, true);
             $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a set of all formulas
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param int $limit the number of formulas that should be loaded
+     * @param int $page the offset
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_all();
+        $qp->name = formula_list::class . '_all';
+        $db_con->set_name($qp->name);
+        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        if ($limit > 0) {
+            $db_con->set_order(formula::FLD_ID);
+            $db_con->set_page_par($limit, $page);
+            $qp->sql = $db_con->select_all();
         } else {
             $qp->name = '';
         }
@@ -212,15 +239,14 @@ class formula_list
     }
 
     /**
-     * load a snap of all formulas
-     * @param int $limit the number of formulas that should be loaded
-     * @param int $page the offset
+     * load a list of formulas with are linked to one of the gives phrases
+     * @param phrase $phr a phrase used to select the formulas
      * @return bool true if at least one word found
      */
-    function load_all(int $limit, int $page): bool
+    function load_by_phr(phrase $phr): bool
     {
         global $db_con;
-        $qp = $this->load_sql_all($db_con, $limit, $page);
+        $qp = $this->load_sql_by_phr($db_con, $phr);
         return $this->load_int($qp);
     }
 
@@ -237,75 +263,21 @@ class formula_list
     }
 
     /**
-     * load the missing formula parameters from the database
-     * TODO: if this list contains already some formula, don't add them again!
+     * load a snap of all formulas
+     * @param int $limit the number of formulas that should be loaded
+     * @param int $page the offset
+     * @return bool true if at least one word found
      */
-    function load()
+    function load_all(int $limit, int $page): bool
     {
-
         global $db_con;
-
-        // check the all minimal input parameters
-        if (!isset($this->usr)) {
-            log_err("The user id must be set to load a list of formulas.", "formula_list->load");
-        } else {
-
-            // set the where clause depending on the given selection parameters
-            // default is to load all formulas to check all formula results
-            $sql_from = '';
-            $sql_where = 'f.formula_id > 0';
-            if (count($this->ids) > 0) {
-                $sql_from = 'formulas f';
-                $sql_where = 'f.formula_id IN (' . sql_array($this->ids) . ')';
-            } elseif (isset($this->wrd)) {
-                $sql_from = 'formula_links l, formulas f';
-                $sql_where = 'l.phrase_id = ' . $this->wrd->id . ' AND l.formula_id = f.formula_id';
-            } elseif (isset($this->phr_lst)) {
-                $phr_lst_dsp = $this->phr_lst->dsp_obj();
-                if ($phr_lst_dsp->ids_txt() <> '') {
-                    $sql_from = 'formula_links l, formulas f';
-                    $sql_where = 'l.phrase_id IN (' . $phr_lst_dsp->ids_txt() . ') AND l.formula_id = f.formula_id';
-                } else {
-                    log_err("A phrase list is set (" . $this->phr_lst->dsp_id() . "), but the id list is " . $phr_lst_dsp->ids_txt() . ".", "formula_list->load");
-
-                    $sql_from = 'formula_links l, formulas f';
-                    $sql_where = 'l.formula_id = f.formula_id';
-                }
-            }
-
-            if ($sql_where == '') {
-                // activate this error message for page loading of the complete formula list
-                log_err("Either the word or the ID list must be set for loading.", "formula_list->load");
-            } else {
-                log_debug('formula_list->load by (' . $sql_where . ')');
-                // the formula name is excluded from the user sandbox to avoid confusion
-                $sql = "SELECT f.formula_id,
-                          u.formula_id AS user_formula_id,
-                       f.formula_name,
-                       f.user_id,
-                    " . $db_con->get_usr_field('formula_text', 'f', 'u') . ",
-                    " . $db_con->get_usr_field('resolved_text', 'f', 'u') . ",
-                    " . $db_con->get_usr_field(sql_db::FLD_DESCRIPTION, 'f', 'u') . ",
-                    " . $db_con->get_usr_field('formula_type_id', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
-                    " . $db_con->get_usr_field('all_values_needed', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('last_update', 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_SHARE, 'f', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(user_sandbox::FLD_PROTECT, 'f', 'u', sql_db::FLD_FORMAT_VAL) . "
-                  FROM " . $sql_from . " 
-             LEFT JOIN user_formulas u ON u.formula_id = f.formula_id 
-                                      AND u.user_id = " . $this->usr->id . " 
-             LEFT JOIN formula_types t ON f.formula_type_id = t.formula_type_id
-             LEFT JOIN formula_types c ON u.formula_type_id = c.formula_type_id
-                 WHERE " . $sql_where . ";";
-                // GROUP BY f.formula_id;";
-                $db_con->usr_id = $this->usr->id;
-                $db_lst = $db_con->get_old($sql);
-                $this->rows_mapper($db_lst);
-            }
-        }
+        $qp = $this->load_sql_all($db_con, $limit, $page);
+        return $this->load_int($qp);
     }
+
+    /*
+     * display functions
+     */
 
     /**
      * return the loaded formula names for debugging
@@ -346,32 +318,32 @@ class formula_list
         log_debug('formula_list->display ' . $this->dsp_id());
         $result = '';
 
-        if (isset($this->wrd)) {
-            // list all related formula results
+        // list all related formula results
+        if ($this->lst != null) {
+            usort($this->lst, array("formula", "cmp"));
             if ($this->lst != null) {
-                usort($this->lst, array("formula", "cmp"));
-                if ($this->lst != null) {
-                    foreach ($this->lst as $frm) {
-                        // formatting should be moved
-                        //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-                        //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
-                        $frm_dsp = $frm->dsp_obj();
-                        $formula_value = $frm_dsp->dsp_result($this->wrd, $this->back);
-                        // if the formula value is empty use the id to be able to select the formula
-                        if ($formula_value == '') {
-                            $result .= $frm_dsp->id;
-                        } else {
-                            $result .= ' value ' . $formula_value;
-                        }
-                        $result .= ' ' . $frm_dsp->name_linked($this->back);
-                        if ($type == 'short') {
-                            $result .= ' ' . $frm_dsp->btn_del($this->back);
-                            $result .= ', ';
-                        } else {
-                            $result .= ' (' . $frm_dsp->dsp_text($this->back) . ')';
-                            $result .= ' ' . $frm_dsp->btn_del($this->back);
-                            $result .= ' <br> ';
-                        }
+                foreach ($this->lst as $frm) {
+                    // formatting should be moved
+                    //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
+                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
+                    $frm_dsp = $frm->dsp_obj();
+                    if ($frm->name_wrd != null) {
+                        $formula_value = $frm_dsp->dsp_result($frm->name_wrd, $this->back);
+                    }
+                    // if the formula value is empty use the id to be able to select the formula
+                    if ($formula_value == '') {
+                        $result .= $frm_dsp->id;
+                    } else {
+                        $result .= ' value ' . $formula_value;
+                    }
+                    $result .= ' ' . $frm_dsp->name_linked($this->back);
+                    if ($type == 'short') {
+                        $result .= ' ' . $frm_dsp->btn_del($this->back);
+                        $result .= ', ';
+                    } else {
+                        $result .= ' (' . $frm_dsp->dsp_text($this->back) . ')';
+                        $result .= ' ' . $frm_dsp->btn_del($this->back);
+                        $result .= ' <br> ';
                     }
                 }
             }
@@ -384,7 +356,8 @@ class formula_list
     /**
      * @return int the number of suggested calculation blocks to update all formulas
      */
-    function calc_blocks(sql_db $db_con, int $total_formulas = 0): int {
+    function calc_blocks(sql_db $db_con, int $total_formulas = 0): int
+    {
         if ($total_formulas == 0) {
             $total_formulas = $db_con->count(DB_TYPE_FORMULA);
         }
