@@ -1517,8 +1517,7 @@ class phrase_list
     function frm_lst(): formula_list
     {
         $frm_lst = new formula_list($this->usr);
-        $frm_lst->phr_lst = $this;
-        $frm_lst->load();
+        $frm_lst->load_by_phr_lst($this);
 
         return $frm_lst;
     }
@@ -1602,5 +1601,10 @@ class phr_ids
     function __construct(array $ids)
     {
         $this->lst = $ids;
+    }
+
+    function count(): int
+    {
+        return (count($this->lst));
     }
 }

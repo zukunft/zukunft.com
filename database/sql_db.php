@@ -439,9 +439,9 @@ class sql_db
      * interface function to add a "IN" parameter for a prepared query
      * @param array $ids with the int id values for the WHERE IN SQL statement part
      */
-    function add_par_in_int(array $ids)
+    function add_par_in_int(array $ids, bool $named = false, bool $use_link = false)
     {
-        $this->add_par(sql_db::PAR_INT_LIST, "{" . implode(",", $ids) . "}");
+        $this->add_par(sql_db::PAR_INT_LIST, "{" . implode(",", $ids) . "}", $named, $use_link);
     }
 
     /**
@@ -2610,7 +2610,6 @@ class sql_db
     function missing_owner(): array
     {
         log_debug("sql_db->missing_owner (" . $this->type . ")");
-        $result = null;
 
         $this->set_table();
         $this->set_id_field();
@@ -2621,7 +2620,9 @@ class sql_db
         return $this->get_old($sql);
     }
 
-// return all database ids, where the owner is not yet set
+    /**
+     * return all database ids, where the owner is not yet set
+     */
     function set_default_owner()
     {
         log_debug("sql_db->set_default_owner (" . $this->type . ")");

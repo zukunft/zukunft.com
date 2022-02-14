@@ -152,6 +152,33 @@ class formula_list
     }
 
     /**
+     * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_list $phr_lst a phrase list used to select the formulas
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($phr_lst->count() > 0) {
+            $qp->name .= 'phr_lst';
+            $db_con->set_name($qp->name);
+            $db_con->set_join_fields(
+                array(phrase::FLD_ID),
+                DB_TYPE_FORMULA_LINK,
+                formula::FLD_ID,
+                formula::FLD_ID
+            );
+            $db_con->add_par_in_int($phr_lst->id_lst(), false, true);
+            $qp->sql = $db_con->select_by_field(phrase::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * load a list of formulas
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one formula has been loaded
@@ -194,6 +221,18 @@ class formula_list
     {
         global $db_con;
         $qp = $this->load_sql_all($db_con, $limit, $page);
+        return $this->load_int($qp);
+    }
+
+    /**
+     * load a list of formulas with are linked to one of the gives phrases
+     * @param phrase_list $phr_lst a phrase list used to select the formulas
+     * @return bool true if at least one word found
+     */
+    function load_by_phr_lst(phrase_list $phr_lst): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr_lst($db_con, $phr_lst);
         return $this->load_int($qp);
     }
 
