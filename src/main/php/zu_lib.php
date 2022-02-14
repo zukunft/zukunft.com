@@ -542,9 +542,21 @@ define("BASE_CONFIG_FILES", serialize(array(
 )));
 
 # list of all static import files for testing the system consistency
-define("PATH_TEST_FILES", ROOT_PATH . 'src/test/resources/');
-define("PATH_TEST_IMPORT_FILES", ROOT_PATH . 'src/test/resources/import/');
+const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
+const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 define("TEST_IMPORT_FILE_LIST", serialize(array(
+    'companies.json',
+    'ABB_2013.json',
+    'ABB_2017.json',
+    'ABB_2019.json',
+    'NESN_2019.json',
+    'countries.json',
+    'real_estate.json',
+    'Ultimatum_game.json',
+    'COVID-19.json',
+    'personal_climate_gas_emissions_timon.json',
+    'THOMY_test.json')));
+define("TEST_IMPORT_FILE_LIST_ALL", serialize(array(
     'companies.json',
     'ABB_2013.json',
     'ABB_2017.json',

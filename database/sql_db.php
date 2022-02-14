@@ -2200,8 +2200,8 @@ class sql_db
     function set_page_par(int $limit = 0, int $page = 0)
     {
         // set default values
-        if ($page == 0) {
-            $page = 1;
+        if ($page < 0) {
+            $page = 0;
         }
         if ($limit == 0) {
             $limit = SQL_ROW_LIMIT;
@@ -2216,9 +2216,6 @@ class sql_db
         if ($page > 0) {
             $this->add_par(sql_db::PAR_INT, $page * $limit);
             $this->page .= ' OFFSET ' . $this->par_name();
-            if ($this->query_name != '') {
-                $this->query_name .= '_paged';
-            }
         }
     }
 

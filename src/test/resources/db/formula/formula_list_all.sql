@@ -1,4 +1,4 @@
-PREPARE formula_list_all_paged (int, int) AS
+PREPARE formula_list_all (int, int) AS
     SELECT s.formula_id,
            u.user_id,
            s.user_id AS owner_id,

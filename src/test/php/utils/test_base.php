@@ -1075,20 +1075,25 @@ class test_base
      * check the object load SQL statements for all allowed SQL database dialects
      *
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param user_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param string $db_type to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_load_sql(sql_db $db_con, object $usr_obj): bool
+    function assert_load_sql(sql_db $db_con, object $usr_obj, string $db_type = ''): bool
     {
+        if ($db_type == '') {
+            $db_type = get_class($usr_obj);
+        }
+
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql($db_con, get_class($usr_obj));
+        $qp = $usr_obj->load_sql($db_con, $db_type);
         $result = $this->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql($db_con, get_class($usr_obj));
+            $qp = $usr_obj->load_sql($db_con, $db_type);
             $result = $this->assert_qp($qp, $db_con->db_type);
         }
         return $result;

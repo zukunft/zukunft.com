@@ -34,31 +34,56 @@ global $ref_types;
 class ref_type_list extends user_type_list
 {
 
+    /*
+     * database link
+     */
+
+    // object specific database and JSON object field names
+    const FLD_ID = 'ref_type_id';
+    const FLD_URL = 'base_url';
+
+    /**
+     * overwrite the user_type_list function to create the SQL to load the ref types
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type the database name e.g. the table name without s
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $db_type): sql_par
+    {
+        $qp = new sql_par($db_type);
+        $qp->name = $db_type;
+        $db_con->set_type($db_type);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, self::FLD_URL));
+        $db_con->set_page_par(SQL_ROW_MAX);
+        $qp->sql = $db_con->select_all();
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
     /**
      * overwrite the user_type_list function to include the specific fields like the url
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param string $db_type the database name e.g. the table name without s
-     * @return array the list of reference types
+     * @return void the list of reference types
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    private function load_list(sql_db $db_con, string $db_type): void
     {
         $this->lst = array();
-        $db_con->set_type($db_type);
-        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, 'base_url'));
-        $sql = $db_con->select_by_id();
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_sql($db_con, $db_type);
+        $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_obj = new ref_type();
-                $type_obj->id = $db_entry['ref_type_id'];
+                $type_obj->id = $db_entry[self::FLD_ID];
                 $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
                 $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
                 $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
-                $type_obj->url = $db_entry['base_url'];
+                $type_obj->url = $db_entry[self::FLD_URL];
                 $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
             }
         }
-        return $this->lst;
     }
 
     /**
@@ -70,7 +95,6 @@ class ref_type_list extends user_type_list
     function load(sql_db $db_con, string $db_type = DB_TYPE_REF_TYPE): bool
     {
         $result = false;
-        global $ref_types;
         $this->load_list($db_con, $db_type);
         $this->hash = parent::get_hash($this->lst);
         if (count($this->hash) > 0) {

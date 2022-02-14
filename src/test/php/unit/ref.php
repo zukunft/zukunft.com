@@ -57,22 +57,26 @@ class ref_unit_tests
 
         $t->subheader('SQL statement tests');
 
-        // sql to load the word by id
+        // sql to load a source by id
         $src = new source($usr);
         $src->id = 4;
         $t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
 
-        // sql to load the word by code id
+        // sql to load a source by code id
         $src = new source($usr);
         $src->code_id = source::TN_READ;
         $t->assert_load_sql($db_con, $src);
 
-        // sql to load the word by name
+        // sql to load a source by name
         $src = new source($usr);
         $src->name = source::TN_READ;
         $t->assert_load_sql($db_con, $src);
         $t->assert_load_standard_sql($db_con, $src);
+
+        // sql to load the ref types
+        $ref_type_list = new ref_type_list();
+        $t->assert_load_sql($db_con, $ref_type_list, DB_TYPE_REF_TYPE);
 
     }
 
