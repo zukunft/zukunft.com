@@ -57,9 +57,12 @@ class user
      * predefined user linked to the program code
      */
 
-    // list of the system users that have a coded functionality
-    const SYSTEM = "system";
-    const SYSTEM_TEST = "test";
+    // list of the system users that have a coded functionality as defined in src/main/resources/users.json
+    const SYSTEM = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
+    const NAME_SYSTEM_TEST = "zukunft.com system test";          // to perform the system tests
+    const NAME_SYSTEM_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
+    const SYSTEM_OLD = "system";
+    const SYSTEM_TEST_OLD = "test";
 
     /*
      * object vars

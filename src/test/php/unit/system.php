@@ -40,7 +40,7 @@ class system_unit_tests
         $db_con = new sql_db();
         // TODO move to __construct of unit test
         if ($usr->name == null) {
-            $usr->name = user::SYSTEM_TEST;
+            $usr->name = user::SYSTEM_TEST_OLD;
         }
         if ($usr->profile_id == null) {
             $usr->profile_id = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
@@ -117,6 +117,32 @@ class system_unit_tests
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
         $result = json_is_similar($json_in, $json_ex);
         $t->assert('ip_range->import check', $result, true);
+
+        /*
+         * system consistency SQL creation tests
+         */
+
+        $t->subheader('System consistency tests');
+
+        // sql to load by id
+        $db_con->set_type(DB_TYPE_FORMULA);
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $db_con->missing_owner_sql();
+        $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
+        $t->assert('system_consistency->missing_owner_sql by formula', $t->trim($qp->sql), $t->trim($expected_sql));
+
+        // ... and check if the prepared sql name is unique
+        if (!in_array($qp->name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $t->assert('system_consistency->missing_owner_sql by formula', $result, true);
+
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $db_con->missing_owner_sql();
+        $expected_sql = $t->file('db/system/missing_owner_by_formula_mysql.sql');
+        $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($qp->sql), $t->trim($expected_sql));
 
         /*
          * system log SQL creation tests

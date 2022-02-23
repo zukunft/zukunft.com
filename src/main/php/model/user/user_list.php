@@ -185,15 +185,15 @@ class user_list
         $this->lst = array();
         $this->code_id_hash = array();
         $type = new user();
-        $type->name = user::SYSTEM;
-        $type->code_id = user::SYSTEM;
+        $type->name = user::SYSTEM_OLD;
+        $type->code_id = user::SYSTEM_OLD;
         $this->lst[1] = $type;
-        $this->code_id_hash[user::SYSTEM] = 1;
+        $this->code_id_hash[user::SYSTEM_OLD] = 1;
         $type = new user();
-        $type->name = user::SYSTEM_TEST;
-        $type->code_id = user::SYSTEM_TEST;
+        $type->name = user::SYSTEM_TEST_OLD;
+        $type->code_id = user::SYSTEM_TEST_OLD;
         $this->lst[2] = $type;
-        $this->code_id_hash[user::SYSTEM_TEST] = 2;
+        $this->code_id_hash[user::SYSTEM_TEST_OLD] = 2;
 
     }
 

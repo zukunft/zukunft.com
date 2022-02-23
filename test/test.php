@@ -167,12 +167,12 @@ if ($start_usr->id > 0) {
 
         // switch to the test user
         $usr = new user;
-        $usr->load_user_by_profile(user::SYSTEM_TEST, $db_con);
+        $usr->load_user_by_profile(user::SYSTEM_TEST_OLD, $db_con);
         if ($usr->id <= 0) {
             // create the system user before the local user and admin to get the desired database id
             import_system_users();
 
-            $usr->load_user_by_profile(user::SYSTEM_TEST, $db_con);
+            $usr->load_user_by_profile(user::SYSTEM_TEST_OLD, $db_con);
         }
         if ($usr->id > 0) {
 

@@ -76,7 +76,7 @@ function run_system_test(testing $t)
     // load by name
     $usr_test->reset();
     $usr_test = new user;
-    $usr_test->name = testing::USER_NAME;
+    $usr_test->name = user::NAME_SYSTEM_TEST;
 
     $usr_test->load_test_user();
     $target = '<a href="/http/user.php?id=' . $usr_test->id . '">zukunft.com system test</a>';

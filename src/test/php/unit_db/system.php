@@ -71,5 +71,14 @@ function run_system_unit_db_tests(testing $t)
 
     $t->assert_greater_zero('sql_db->count', $db_con->count(DB_TYPE_FORMULA));
 
+    /*
+     * SQL database consistency tests
+     */
+
+    $t->subheader('SQL database consistency tests');
+
+    $result = db_check_missing_owner($db_con);
+    $t->dsp('db_consistency->check ', $result, true);
+
 }
 

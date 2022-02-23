@@ -288,10 +288,6 @@ class test_base
     // the url which should be used for testing (maybe later https://test.zukunft.com/)
     const URL = 'https://zukunft.com/';
 
-    // the fixed system user used for testing
-    const USER_NAME = "zukunft.com system test";
-    const USER_PARTNER_NAME = "zukunft.com system test partner";
-
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
 
@@ -332,11 +328,11 @@ class test_base
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user_dsp;
-        $this->usr1->name = self::USER_NAME;
+        $this->usr1->name = user::NAME_SYSTEM_TEST;
         $this->usr1->load_test_user();
 
         $this->usr2 = new user_dsp;
-        $this->usr2->name = self::USER_PARTNER_NAME;
+        $this->usr2->name = user::NAME_SYSTEM_TEST_PARTNER;
         $this->usr2->load_test_user();
 
     }

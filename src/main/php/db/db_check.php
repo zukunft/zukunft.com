@@ -30,8 +30,10 @@
 
 */
 
-// read the version number from the database and compare it with the backend version
-// if the database has a lower version than the backend program start the upgrade process
+/**
+ * read the version number from the database and compare it with the backend version
+ * if the database has a lower version than the backend program start the upgrade process
+ */
 function db_check($db_con): string
 {
 
@@ -65,11 +67,30 @@ function db_check($db_con): string
     // run a database consistency check now and remember the time
     if ($do_consistency_check) {
         db_fill_code_links($db_con);
+        db_check_missing_owner($db_con);
         cfg_set(CFG_LAST_CONSISTENCY_CHECK, strtotime("now"), $db_con);
     }
 
     return $result;
 
+}
+
+/**
+ * @return bool true if all user sandbox objects have an owner
+ */
+function db_check_missing_owner(sql_db $db_con): bool
+{
+    $result = true;
+
+    foreach (user_sandbox::DB_TYPES as $db_type) {
+        $db_con->set_type($db_type);
+        $db_lst = $db_con->missing_owner();
+        if ($db_lst != null) {
+            $result = $db_con->set_default_owner();
+        }
+    }
+
+    return $result;
 }
 
 // upgrade the database from any version prior of 0.0.3
@@ -205,7 +226,7 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         // add missing system users if needed
         $sys_usr = new user();
         if (!$sys_usr->has_any_user_this_profile(user_profile::SYSTEM, $db_con)) {
-            $sys_usr->name = 'zukunft.com system';
+            $sys_usr->name = user::SYSTEM;
             $sys_usr->load($db_con);
             $sys_usr->set_profile(user_profile::SYSTEM);
             $sys_usr->save($db_con);
@@ -214,12 +235,12 @@ function db_upgrade_0_0_3(sql_db $db_con): string
         // add missing system test users if needed
         $test_usr = new user();
         if (!$test_usr->has_any_user_this_profile(user_profile::TEST, $db_con)) {
-            $test_usr->name = 'zukunft.com system test';
+            $test_usr->name = user::NAME_SYSTEM_TEST;
             $test_usr->load($db_con);
             $test_usr->set_profile(user_profile::TEST);
             $test_usr->save($db_con);
             $test_usr2 = new user();
-            $test_usr2->name = 'zukunft.com system test partner';
+            $test_usr2->name = user::NAME_SYSTEM_TEST_PARTNER;
             $test_usr2->load($db_con);
             $test_usr2->set_profile(user_profile::TEST);
             $test_usr2->save($db_con);

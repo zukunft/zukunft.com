@@ -76,6 +76,17 @@ class user_sandbox
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
+    // list of all user sandbox database types
+    const DB_TYPES = array(
+        DB_TYPE_WORD,
+        DB_TYPE_TRIPLE,
+        DB_TYPE_VALUE,
+        DB_TYPE_FORMULA,
+        DB_TYPE_FORMULA_LINK,
+        DB_TYPE_VIEW,
+        DB_TYPE_VIEW_COMPONENT,
+        DB_TYPE_VIEW_COMPONENT_LINK
+    );
 
     /*
      * object vars

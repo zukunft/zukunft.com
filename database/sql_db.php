@@ -2605,40 +2605,64 @@ class sql_db
     }
 
     /**
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement to find user sandbox objects where the owner is not set
+     */
+    function missing_owner_sql(): sql_par
+    {
+        $qp = new sql_par('missing_owner');
+        $qp->name .= $this->type;
+        $this->set_name($qp->name);
+        $this->set_usr($this->usr_id);
+        $this->set_table();
+        $this->set_id_field();
+        $qp->sql = "SELECT " . $this->id_field . " AS id
+                      FROM " . $this->name_sql_esc($this->table) . "
+                     WHERE user_id IS NULL;";
+
+        return $qp;
+    }
+
+    /**
      * @return array all database ids, where the owner is not yet set
      */
     function missing_owner(): array
     {
         log_debug("sql_db->missing_owner (" . $this->type . ")");
-
-        $this->set_table();
-        $this->set_id_field();
-        $sql = "SELECT " . $this->id_field . " AS id
-              FROM " . $this->name_sql_esc($this->table) . "
-             WHERE user_id IS NULL;";
-
-        return $this->get_old($sql);
+        $qp = $this->missing_owner_sql();
+        return $this->get($qp);
     }
 
     /**
      * return all database ids, where the owner is not yet set
      */
-    function set_default_owner()
+    function set_default_owner(): bool
     {
         log_debug("sql_db->set_default_owner (" . $this->type . ")");
+        $result = true;
 
-        $this->set_table();
-        $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
-               SET user_id = 1
+        // get the system user id
+        $sys_usr = new user();
+        $sys_usr->name = user::SYSTEM;
+        $sys_usr->load($this);
+
+        if ($sys_usr->id <= 0) {
+            log_err('Cannot load system used in set_default_owner');
+            $result = false;
+        } else {
+            $this->set_table();
+            $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
+               SET user_id = " . $sys_usr->id . "
              WHERE user_id IS NULL;";
 
-        //return $this->exe($sql, 'user_default', array());
-        try {
-            $result = $this->exe($sql, '', array());
-        } catch (Exception $e) {
-            $msg = 'Select';
-            $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+            //return $this->exe($sql, 'user_default', array());
+            try {
+                $result = $this->exe($sql, '', array());
+            } catch (Exception $e) {
+                $msg = 'Select';
+                log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
+                $result = false;
+            }
         }
 
         return $result;
