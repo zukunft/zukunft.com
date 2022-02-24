@@ -2958,34 +2958,6 @@ class sql_db
       list functions to finally get data from the MySQL database
     */
 
-    /**
-     * load all types of a type/table at once
-     */
-    function load_types($table, $additional_field_lst): array
-    {
-        log_debug('sql_db->load_types');
-
-        $additional_fields = '';
-        if (count($additional_field_lst) > 0) {
-            foreach ($additional_field_lst as $additional_field) {
-                $additional_fields .= ', ';
-                $additional_fields .= $additional_field;
-            }
-        }
-
-        $sql = 'SELECT ' . $table . '_id,
-                   ' . $table . '_name,
-                   code_id,
-                   description
-                   ' . $additional_fields . '
-              FROM ' . $table . 's 
-          ORDER BY ' . $table . '_id;';
-        $result = $this->get_old($sql);
-
-        log_debug('sql_db->load_types -> got ' . dsp_count($result));
-        return $result;
-    }
-
     /*
      * private supporting functions
      */
@@ -3472,15 +3444,43 @@ class sql_db
         return $result;
     }
 
-    function remove_prefix(string $table_name, string $column_name, string $prefix_name): bool
+    /**
+     * SQL statement to remove a fixed first part of a table column
+     *
+     * @param string $type_name
+     * @param string $column_name the name of the column where the prefix should be removed
+     * @return sql_par the SQL statement and parameter
+     */
+    function remove_prefix_sql(string $type_name, string $column_name): sql_par
+    {
+        // adjust the parameters to the used database name
+        $table_name = $this->get_table_name($type_name);
+
+        $qp = new sql_par('remove_prefix');
+        $qp->name .= $table_name . '_' . $column_name;
+        $this->set_name($qp->name);
+        $qp->sql = "SELECT " . $this->name_sql_esc($column_name) .
+            " FROM " . $this->name_sql_esc($table_name) . ";";
+        return $qp;
+    }
+
+    /**
+     * remove a fixed first part of a table column
+     *
+     * @param string $type_name
+     * @param string $column_name the name of the column where the prefix should be removed
+     * @param string $prefix_name the prefix that should be removed
+     * @return bool true if removing of the prefix has been successful
+     */
+    function remove_prefix(string $type_name, string $column_name, string $prefix_name): bool
     {
         $result = false;
 
         // adjust the parameters to the used database name
-        $table_name = $this->get_table_name($table_name);
+        $table_name = $this->get_table_name($type_name);
 
-        $sql_select = "SELECT " . $this->name_sql_esc($column_name) . " FROM " . $this->name_sql_esc($table_name) . ";";
-        $db_row_lst = $this->get_old($sql_select);
+        $qp = $this->remove_prefix_sql($type_name, $column_name);
+        $db_row_lst = $this->get($qp);
         foreach ($db_row_lst as $db_row) {
             $db_row_name = $db_row[$column_name];
             $new_name = zu_str_right_of($db_row_name, $prefix_name);
@@ -3510,18 +3510,23 @@ class sql_db
     function get_column_names(string $table_name): array
     {
         $result = array();
-        $sql = 'SELECT' . ' column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE ';
+        $qp = new sql_par('get_column_names');
+        $qp->sql = 'SELECT' . ' column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE ';
         if ($this->db_type == sql_db::POSTGRES) {
-            $sql .= " table_name = '" . $table_name . "';";
+            $qp->sql .= " table_name = '" . $table_name . "';";
+            $qp->name .= $table_name;
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql .= " TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+            $qp->sql .= " TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+            $qp->name .= $table_name;
         } else {
+            $qp->sql = '';
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
             $result .= $msg;
         }
-        if ($sql != '') {
-            $col_rows = $this->get_old($sql);
+        $this->set_name($qp->name);
+        if ($qp->sql != '') {
+            $col_rows = $this->get($qp);
             if ($col_rows != null) {
                 foreach ($col_rows as $col_row) {
                     if ($this->db_type == sql_db::POSTGRES) {

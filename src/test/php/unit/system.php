@@ -124,7 +124,7 @@ class system_unit_tests
 
         $t->subheader('System consistency tests');
 
-        // sql to load by id
+        // sql to check the system consistency
         $db_con->set_type(DB_TYPE_FORMULA);
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $db_con->missing_owner_sql();
@@ -143,6 +143,31 @@ class system_unit_tests
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula_mysql.sql');
         $t->assert('system_error_log->load_sql by id for MySQL', $t->trim($qp->sql), $t->trim($expected_sql));
+
+        /*
+         * database upgrade SQL creation tests
+         */
+
+        $t->subheader('Database upgrade tests');
+
+        // sql to load by id
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $db_con->remove_prefix_sql(DB_TYPE_VERB, 'code_id');
+        $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id.sql');
+        $t->assert('database_upgrade->remove_prefix of verb code_id', $t->trim($qp->sql), $t->trim($expected_sql));
+
+        // ... and check if the prepared sql name is unique
+        if (!in_array($qp->name, $sql_names)) {
+            $result = true;
+            $sql_names[] = $sql_name;
+        }
+        $t->assert('database_upgrade->remove_prefix of verb code_id name', $result, true);
+
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $db_con->remove_prefix_sql(DB_TYPE_VERB, 'code_id');
+        $expected_sql = $t->file('db/system/remove_prefix_by_verb_code_id_mysql.sql');
+        $t->assert('database_upgrade->remove_prefix of verb code_id for MySQL', $t->trim($qp->sql), $t->trim($expected_sql));
 
         /*
          * system log SQL creation tests
