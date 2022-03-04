@@ -47,8 +47,7 @@ if ($session_usr->id > 0) {
     load_usr_data();
 
     // show the header
-    $dsp = new view_dsp;
-    $dsp->usr = $session_usr;
+    $dsp = new view_dsp($session_usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_EXPLAIN);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     $result .= $dsp->dsp_navbar($back);
@@ -63,8 +62,7 @@ if ($session_usr->id > 0) {
     // explain the result
     if ($frm_val_id > 0 or $frm_id > 0) {
         $fv = new formula_value($session_usr);
-        $fv->id = $frm_val_id;
-        $fv->load_by_vars();
+        $fv->load_by_id($frm_val_id);
         if ($fv->id > 0) {
             $result .= $fv->explain($phr_id, $back);
         } else {

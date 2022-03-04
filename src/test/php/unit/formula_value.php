@@ -47,10 +47,29 @@ class formula_value_unit_tests
 
         $t->subheader('SQL creation tests');
 
-        // sql to load a formula value by the id
+        // check the sql to load a formula value by the id
         $fv = new formula_value($usr);
         $fv->id = 1;
-        $t->assert_load_sql($db_con, $fv);
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $fv->load_by_id_sql($db_con);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... and the same for MySQL databases instead of PostgreSQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $fv->load_by_id_sql($db_con);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
+        // check the sql to load a formula value by the phrase group
+        $fv->reset($usr);
+        $fv->phr_grp_id = 1;
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $fv->load_by_grp_sql($db_con);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... and the same for MySQL databases instead of PostgreSQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $fv->load_by_grp_sql($db_con);
+        $t->assert_qp($qp, sql_db::MYSQL);
 
 
         $t->header('Unit tests of the formula value list class (src/main/php/model/formula/formula_value_list.php)');

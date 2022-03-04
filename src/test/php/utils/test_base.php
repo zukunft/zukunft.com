@@ -1162,6 +1162,9 @@ class test_base
         }
         $file_name = $this->resource_path . $qp->name . $file_name_ext . self::FILE_EXT;
         $expected_sql = $this->file($file_name);
+        if ($expected_sql == '') {
+            $expected_sql = 'File ' . $file_name . ' with the expected SQL statement is missing.';
+        }
         $result = $this->assert_sql(
             $this->name . $qp->name . '_' . $dialect,
             $qp->sql,

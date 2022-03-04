@@ -77,7 +77,7 @@ class formula_value
      */
 
     // database fields
-    public ?int $id = null;                    // the unique id for each formula result
+    public int $id;                            // the unique id for each formula result
     //                                            (the second unique key is frm_id, src_phr_grp_id, src_time_id, phr_grp_id, time_id, usr_id)
     public ?int $frm_id = null;                // the formula database id used to calculate this result
     public user $usr;                          // the user who wants to see the result because the formula and values can differ for each user; this is
@@ -115,6 +115,12 @@ class formula_value
 
     function __construct(user $usr)
     {
+        $this->reset($usr);
+    }
+
+    function reset(user $usr)
+    {
+        $this->id = 0;
         $this->usr = $usr;
     }
 
@@ -165,7 +171,7 @@ class formula_value
      */
 
     /**
-     * create the SQL to load a formula values by the id
+     * create the SQL to load a formula values
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -174,18 +180,56 @@ class formula_value
     {
         $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA_VALUE);
-        if ($this->id > 0) {
-            $qp->name .= 'id';
-            $db_con->add_par(sql_db::PAR_INT, $this->id);
-        } else {
-            log_err('The formula value id and the user must be set ' .
-                'to load a ' . self::class, self::class . '->load_sql');
-
-        }
-        $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load a formula values by the id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_id_sql(sql_db $db_con): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        $qp->name .= 'id';
+        $db_con->set_name($qp->name);
+        $db_con->add_par(sql_db::PAR_INT, $this->id);
         $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the SQL to load a formula values by phrase group id and time phrase
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_grp_sql(sql_db $db_con): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        $qp->name .= 'grp';
+        $db_con->set_name($qp->name);
+        // select the result based on the phrase group e.g. a more complex word list
+        $db_con->add_par(sql_db::PAR_INT, $this->phr_grp_id);
+        $fld_lst = [];
+        $fld_lst[] = self::FLD_GRP;
+        // and include the result words in the search, because one source word list can result to two result word
+        // e.g. one time specific and one general
+        if ($this->time_id > 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->time_id);
+            $fld_lst[] = self::FLD_TIME;
+        } else {
+            // TODO add null $sql_time = " (time_word_id = 0 OR time_word_id IS NULL) ";
+            $db_con->add_par(sql_db::PAR_INT, 0);
+            $fld_lst[] = self::FLD_TIME;
+        }
+        $qp->sql = $db_con->select_by_field_list($fld_lst);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -196,12 +240,49 @@ class formula_value
      *
      * @return bool true if formula value has been loaded
      */
-    function load(): bool
+    function load_by_id(int $id): bool
     {
         global $db_con;
         $result = false;
 
-        $qp = $this->load_sql($db_con);
+        if ($id > 0) {
+            $this->reset($this->usr);
+            $this->id = $id;
+        } else {
+            log_err('The formula value id and the user must be set ' .
+                'to load a ' . self::class, self::class . '->load_by_id');
+        }
+        $qp = $this->load_by_id_sql($db_con);
+        if ($qp->name != '') {
+            $db_row = $db_con->get1($qp);
+            $this->row_mapper($db_row);
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * load all a formula value by the phrase group id and time phrase
+     *
+     * @return bool true if formula value has been loaded
+     */
+    function load_by_grp(int $grp_id, ?int $time_phr_id = null): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($grp_id > 0) {
+            $this->reset($this->usr);
+            $this->phr_grp_id = $grp_id;
+            if ($time_phr_id != null) {
+                $this->time_id = $time_phr_id;
+            }
+        } else {
+            log_err('The formula value phrase group id and the user must be set ' .
+                'to load a ' . self::class, self::class . '->load_by_grp');
+        }
+        $qp = $this->load_by_grp_sql($db_con);
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp);
             $this->row_mapper($db_row);
@@ -690,7 +771,7 @@ class formula_value
 
         // reload the value parameters
         if ($do_load) {
-            $this->load();
+            $this->load_by_id();
             log_debug(formula_value::class . '->export_obj load phrases');
             $this->load_phrases();
         }
