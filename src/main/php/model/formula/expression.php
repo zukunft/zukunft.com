@@ -254,16 +254,17 @@ class expression
                 // $pos is the position von the next element
                 // to list the elements from left to right, set it to the right most position at the beginning of each replacement
                 $pos = strlen($work);
-                $elm = new formula_element;
-                $elm->usr = $this->usr;
+                $elm = new formula_element($this->usr);
 
                 // find the next word reference
                 if ($type == expression::SELECT_ALL or $type == expression::SELECT_PHRASE or $type == expression::SELECT_VERB_WORD) {
-                    $elm_id = zu_str_between($work, self::MAKER_WORD_START, self::MAKER_WORD_END);
-                    if (is_numeric($elm_id)) {
-                        if ($elm_id > 0) {
+                    $obj_id = zu_str_between($work, self::MAKER_WORD_START, self::MAKER_WORD_END);
+                    if (is_numeric($obj_id)) {
+                        if ($obj_id > 0) {
                             $elm->type = formula_element::TYPE_WORD;
-                            $elm->id = $elm_id;
+                            $wrd = new word($this->usr);
+                            $wrd->id = $obj_id;
+                            $elm->obj = $wrd;
                             $pos = strpos($work, self::MAKER_WORD_START);
                             log_debug('expression->element_lst_all -> wrd pos ' . $pos);
                         }
@@ -275,11 +276,13 @@ class expression
                     $new_pos = strpos($work, self::MAKER_TRIPLE_START);
                     log_debug('expression->element_lst_all -> verb pos ' . $new_pos);
                     if ($new_pos < $pos) {
-                        $elm_id = zu_str_between($work, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
-                        if (is_numeric($elm_id)) {
-                            if ($elm_id > 0) {
+                        $obj_id = zu_str_between($work, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
+                        if (is_numeric($obj_id)) {
+                            if ($obj_id > 0) {
                                 $elm->type = formula_element::TYPE_VERB;
-                                $elm->id = $elm_id;
+                                $vrb = new verb();
+                                $vrb->id = $obj_id;
+                                $elm->obj = $vrb;
                                 $pos = $new_pos;
                             }
                         }
@@ -291,11 +294,13 @@ class expression
                     $new_pos = strpos($work, self::MAKER_FORMULA_START);
                     log_debug('expression->element_lst_all -> frm pos ' . $new_pos);
                     if ($new_pos < $pos) {
-                        $elm_id = zu_str_between($work, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
-                        if (is_numeric($elm_id)) {
-                            if ($elm_id > 0) {
+                        $obj_id = zu_str_between($work, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
+                        if (is_numeric($obj_id)) {
+                            if ($obj_id > 0) {
                                 $elm->type = formula_element::TYPE_FORMULA;
-                                $elm->id = $elm_id;
+                                $frm = new verb();
+                                $frm->id = $obj_id;
+                                $elm->obj = $frm;
                                 $pos = $new_pos;
                             }
                         }
@@ -303,11 +308,11 @@ class expression
                 }
 
                 // add reference to result
-                if (is_numeric($elm->id)) {
-                    if ($elm->id > 0) {
+                if ($elm->obj != null) {
+                    if ($elm->obj->id > 0) {
                         $elm->usr = $this->usr;
                         $elm->back = $back;
-                        $elm->load();
+                        $elm->load($elm->obj->id);
 
                         // update work text
                         $changed = str_replace($elm->symbol, $elm->name, $work);
@@ -331,9 +336,9 @@ class expression
                                 log_debug('expression->element_lst_all -> next_pos ' . $next_pos);
                                 $new_pos = strpos($work, self::MAKER_WORD_START);
                                 if ($new_pos < $next_pos) {
-                                    $elm_id = zu_str_between($work, self::MAKER_WORD_START, self::MAKER_WORD_END);
-                                    if (is_numeric($elm_id)) {
-                                        if ($elm_id > 0) {
+                                    $obj_id = zu_str_between($work, self::MAKER_WORD_START, self::MAKER_WORD_END);
+                                    if (is_numeric($obj_id)) {
+                                        if ($obj_id > 0) {
                                             $next_pos = $new_pos;
                                             log_debug('expression->element_lst_all -> next_pos shorter by word ' . $next_pos);
                                         }
@@ -341,9 +346,9 @@ class expression
                                 }
                                 $new_pos = strpos($work, self::MAKER_TRIPLE_START);
                                 if ($new_pos < $next_pos) {
-                                    $elm_id = zu_str_between($work, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
-                                    if (is_numeric($elm_id)) {
-                                        if ($elm_id > 0) {
+                                    $obj_id = zu_str_between($work, self::MAKER_TRIPLE_START, self::MAKER_TRIPLE_END);
+                                    if (is_numeric($obj_id)) {
+                                        if ($obj_id > 0) {
                                             $next_pos = $new_pos;
                                             log_debug('expression->element_lst_all -> next_pos shorter by verb ' . $next_pos);
                                         }
@@ -351,9 +356,9 @@ class expression
                                 }
                                 $new_pos = strpos($work, self::MAKER_FORMULA_START);
                                 if ($new_pos < $next_pos) {
-                                    $elm_id = zu_str_between($work, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
-                                    if (is_numeric($elm_id)) {
-                                        if ($elm_id > 0) {
+                                    $obj_id = zu_str_between($work, self::MAKER_FORMULA_START, self::MAKER_FORMULA_END);
+                                    if (is_numeric($obj_id)) {
+                                        if ($obj_id > 0) {
                                             $next_pos = $new_pos;
                                             log_debug('expression->element_lst_all -> next_pos shorter by formula  ' . $next_pos);
                                         }

@@ -1168,17 +1168,13 @@ class formula_value
         $result = array();
 
         // get depending formulas
+        $frm_elm_lst = new formula_element_list($this->usr);
+        $frm_elm_lst->load_by_frm_and_type_id($this->frm_id, formula_element_type::FORMULA);
         $frm_ids = array();
-        $frm_elm_type = formula_element_type::FORMULA;
-        $sql = "SELECT formula_id
-              FROM formula_elements 
-             WHERE ref_id = " . $this->frm_id . "
-               AND formula_element_type_id = " . $frm_elm_type . ";";
-        //$db_con = New mysql;
-        $db_con->usr_id = $this->usr->id;
-        $frm_rows = $db_con->get_old($sql);
-        foreach ($frm_rows as $frm_row) {
-            $frm_ids[] = $frm_row[formula::FLD_ID];
+        foreach ($frm_elm_lst as $frm_elm) {
+            if ($frm_elm->obj != null) {
+                $frm_ids[] = $frm_elm->obj->id;
+            }
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
         if (!empty($frm_ids)) {

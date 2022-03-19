@@ -54,7 +54,7 @@ class formula_element_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con): sql_par
+    private function load_sql(sql_db $db_con): sql_par
     {
         $qp = new sql_par(self::class);
         $db_con->set_type(DB_TYPE_FORMULA_ELEMENT);
@@ -108,6 +108,25 @@ class formula_element_list
         }
         $qp->par = $db_con->get_par();
         return $qp;
+    }
+
+    function load_by_frm_and_type_id(int $frm_id, int $elm_type_id): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql_by_frm_and_type_id($db_con, $frm_id, $elm_type_id);
+        $db_rows = $db_con->get($qp);
+        if ($db_rows != null) {
+            foreach ($db_rows as $db_row) {
+                $elm = new formula_element($this->usr);
+                $elm->row_mapper($db_row);
+                $this->lst[] = $elm;
+                $result = true;
+            }
+        }
+
+        return $result;
     }
 
     /*

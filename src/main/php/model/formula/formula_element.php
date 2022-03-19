@@ -5,6 +5,8 @@
     formula_element.php - either a word, verb or formula link
     -------------------
 
+    The formula elements are saved in the database for fast detection of dependencies
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -37,7 +39,8 @@ class formula_element
     const TYPE_VERB = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
     const TYPE_FORMULA = formula::class;  // a formula is used to include formula results of another formula
 
-    // means: database fields only used for words
+    // database fields only used for formula elements
+    const FLD_ID = 'formula_element_id';
     const FLD_ORDER = 'order_nbr';
     const FLD_TYPE = 'formula_element_type_id';
     const FLD_REF_ID = 'ref_id';
@@ -53,23 +56,57 @@ class formula_element
     );
 
     public ?int $id = null;          // the database id of the word, verb or formula
-    public ?user $usr = null;        // the person who has requested the formula element
+    public user $usr;                // the person who has requested the formula element
     public string $type = '';        // either "word", "verb" or "formula" to direct the links
     public ?string $name = null;     // the username of the formula element
     public ?string $dsp_name = null; // the username of the formula element with the HTML link
-    public ?string $back = null;     // link to what should be display after this action is finished
     public ?string $symbol = null;   // the database reference symbol for formula expressions
     public ?object $obj = null;      // the word, verb or formula object
     public ?word $wrd_obj = null;    // in case of a formula the corresponding word object
     public ?string $frm_type = null; // in case of a special formula the predefined formula type
 
-    // get the name and other parameters from the database
-    function load()
+    // TODO move to the display object
+    public ?string $back = null;     // link to what should be display after this action is finished
+
+    /**
+     * always set the user because a formula element is always user specific
+     * @param user $usr the user who requested to use this formula element
+     */
+    function __construct(user $usr)
     {
-        if ($this->id > 0 and isset($this->usr)) {
+        $this->usr = $usr;
+    }
+
+    /**
+     * map the formula element database fields for later load of the object
+     *
+     * @param array $db_row with the data directly from the database
+     * @return bool true if the triple is loaded and valid
+     */
+    function row_mapper(array $db_row): bool
+    {
+        $this->id = 0;
+        $result = false;
+        if ($db_row != null) {
+            if ($db_row[self::FLD_ID] > 0) {
+                $this->id = $db_row[self::FLD_ID];
+                $this->type = $db_row[self::FLD_TYPE];
+                $this->load($db_row[self::FLD_REF_ID]);
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the name and other parameters from the database
+     */
+    function load(int $ref_id)
+    {
+        if ($ref_id != 0 and isset($this->usr)) {
             if ($this->type == self::TYPE_WORD) {
                 $wrd = new word_dsp($this->usr);
-                $wrd->id = $this->id;
+                $wrd->id = $ref_id;
                 $wrd->load();
                 $this->name = $wrd->name;
                 $this->dsp_name = $wrd->display($this->back);
@@ -78,7 +115,7 @@ class formula_element
             }
             if ($this->type == self::TYPE_VERB) {
                 $lnk = new verb;
-                $lnk->id = $this->id;
+                $lnk->id = $ref_id;
                 $lnk->usr = $this->usr;
                 $lnk->load();
                 $this->name = $lnk->name;
@@ -88,7 +125,7 @@ class formula_element
             }
             if ($this->type == self::TYPE_FORMULA) {
                 $frm = new formula($this->usr);
-                $frm->id = $this->id;
+                $frm->id = $ref_id;
                 $frm->load();
                 $this->name = $frm->name;
                 $this->dsp_name = $frm->dsp_obj()->name_linked($this->back);
@@ -125,7 +162,13 @@ class formula_element
         if ($name <> '') {
             $result .= '"' . $name . '" ';
         }
-        $result .= '(' . $this->id . ')';
+        if ($this->id > 0) {
+            $result .= '(' . $this->id . ')';
+        } else {
+            if ($this->obj != null) {
+                $result .= '(' . $this->obj->id . ')';
+            }
+        }
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
         }
@@ -140,20 +183,15 @@ class formula_element
     {
         $result = '';
 
-        if ($this->id > 0 and isset($this->usr)) {
-            if ($this->type == 'word') {
-                if (isset($this->obj)) {
+        if ($this->obj != null) {
+            if ($this->obj->id != 0) {
+                // TODO replace with phrase
+                if ($this->type == 'word') {
                     $result = $this->obj->name();
-                } else {
+                } elseif ($this->type == verb::class) {
                     $result = $this->name;
-                }
-            } elseif ($this->type == 'verb') {
-                $result = $this->name;
-            } elseif ($this->type == 'formula') {
-                if (isset($this->obj)) {
+                } elseif ($this->type == formula::class) {
                     $result = $this->obj->name;
-                } else {
-                    $result = $this->name;
                 }
             }
         }
@@ -171,22 +209,17 @@ class formula_element
     {
         $result = '';
 
-        if ($this->id > 0 and isset($this->usr)) {
-            if ($this->type == 'word') {
-                if (isset($this->obj)) {
+        if ($this->obj != null) {
+            if ($this->obj->id <> 0) {
+                // TODO replace with phrase
+                if ($this->type == 'word') {
                     $result = $this->obj->display($back);
-                } else {
+                }
+                if ($this->type == verb::class) {
                     $result = $this->name;
                 }
-            }
-            if ($this->type == 'verb') {
-                $result = $this->name;
-            }
-            if ($this->type == 'formula') {
-                if (isset($this->obj)) {
+                if ($this->type == formula::class) {
                     $result = $this->obj->dsp_obj()->name_linked($back);
-                } else {
-                    $result = $this->name;
                 }
             }
         }

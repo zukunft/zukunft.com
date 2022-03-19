@@ -111,6 +111,12 @@ class formula_element_group
                 // use only valid ids
                 if ($frm_elm->id <> 0) {
                     $result[] = $frm_elm->id;
+                } else {
+                    if ($frm_elm->obj != null) {
+                        if ($frm_elm->obj->id <> 0) {
+                            $result[] = $frm_elm->obj->id;
+                        }
+                    }
                 }
             }
         }
@@ -125,9 +131,13 @@ class formula_element_group
         foreach ($this->lst as $elm) {
             // build the symbol for the number replacement
             if ($this->symbol == '') {
-                $this->symbol = $elm->symbol;
+                if ($elm->symbol != null) {
+                    $this->symbol = $elm->symbol;
+                }
             } else {
-                $this->symbol .= ' ' . $elm->symbol;
+                if ($elm->symbol != null) {
+                    $this->symbol .= ' ' . $elm->symbol;
+                }
             }
             log_debug('formula_element_group->build_symbol -> symbol "' . $elm->symbol . '" added to "' . $this->symbol . '"');
         }

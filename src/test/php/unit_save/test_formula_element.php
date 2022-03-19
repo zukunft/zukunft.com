@@ -53,7 +53,11 @@ function run_formula_element_test(testing $t)
             $pos = 0;
             $target = '';
             foreach ($elm_lst->lst as $elm) {
-                $elm->load();
+                if ($elm->obj == null) {
+                    log_err('object of formula element ' . $elm->dsp_id() . ' missing');
+                } else {
+                    $elm->load($elm->obj->id);
+                }
 
                 $result = $elm->dsp_id();
                 if ($pos == 0) {

@@ -34,6 +34,8 @@
     TODO create unit tests
     TODO cleanup object by removing duplicates
     TODO call include only if needed
+    TODO use the git concept of merge and rebase for group changes e.g. if some formulas are assinged to a group these formulas can be used by all members of a group
+    TODO additional to the git concept of merge allow also subscribe or auto merge
     TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
     TODO check that all class function follow the setup suggested in user_message
     TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...

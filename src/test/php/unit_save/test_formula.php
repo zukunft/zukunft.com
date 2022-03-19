@@ -147,7 +147,7 @@ function run_formula_test(testing $t)
 
     $frm = $t->load_formula(formula::TN_INCREASE);
     $fv_lst = $frm->to_num($phr_lst, $back);
-    if (isset($fv_lst->lst)) {
+    if ($fv_lst->lst != null) {
         $fv = $fv_lst->lst[0];
         $result = $fv->num_text;
     } else {
@@ -165,7 +165,7 @@ function run_formula_test(testing $t)
     }
 
     $fv_lst = $frm->calc($phr_lst, $back);
-    if (isset($fv_lst)) {
+    if ($fv_lst != null) {
         $result = $fv_lst[0]->value;
     } else {
         $result = '';
@@ -178,7 +178,7 @@ function run_formula_test(testing $t)
     // TODO automatically check the fastest way to scale and avoid double scaling calculations
     $frm_scale_mio_to_one = $t->load_formula(formula::TN_SCALE_MIO);
     $fv_lst = $frm_scale_mio_to_one->calc($phr_lst, $back);
-    if (isset($fv_lst)) {
+    if ($fv_lst != null) {
         $result = $fv_lst[0]->value;
     } else {
         $result = '';
@@ -192,7 +192,7 @@ function run_formula_test(testing $t)
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_2020, word::TN_ONE));
     $frm_scale_one_to_k = $t->load_formula(formula::TN_SCALE_TO_K);
     $fv_lst = $frm_scale_one_to_k->calc($phr_lst, $back);
-    if (isset($fv_lst)) {
+    if ($fv_lst != null) {
         $result = $fv_lst[0]->value;
     } else {
         $result = '';
