@@ -760,7 +760,6 @@ class formula extends user_sandbox_description
         // create a master formula value object to only need to fill it with the numbers in the code below
         $fv_init = new formula_value($this->usr); // maybe move the constructor of formula_value_list?
         $fv_init->frm = $this;
-        $fv_init->frm_id = $this->id;
         $fv_init->ref_text = $this->ref_text_r;
         $fv_init->num_text = $this->ref_text_r;
         $fv_init->src_phr_lst = clone $phr_lst_ex;

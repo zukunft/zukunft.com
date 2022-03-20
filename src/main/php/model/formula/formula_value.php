@@ -79,7 +79,6 @@ class formula_value
     // database fields
     public int $id;                            // the unique id for each formula result
     //                                            (the second unique key is frm_id, src_phr_grp_id, src_time_id, phr_grp_id, time_id, usr_id)
-    public ?int $frm_id = null;                // the formula database id used to calculate this result
     public user $usr;                          // the user who wants to see the result because the formula and values can differ for each user; this is
     public ?int $owner_id = null;              // the user for whom the result has been calculated; if Null the result is the standard result
     public ?bool $is_std = True;               // true as long as no user specific value, formula or assignment is used for this result
@@ -91,11 +90,13 @@ class formula_value
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
     public ?bool $dirty = null;                // true as long as an update is pending
 
+    // objects directly linked to database fields
+    public formula $frm;                       // the formula object used to calculate this result
+
     // in memory only fields (all methods except load and save should use the wrd_lst object not the ids and not the group id)
-    public ?formula $frm = null;               // the formula object used to calculate this result
     public ?phrase_list $src_phr_lst = null;   // the source word list obj (not a list of word objects) based on which the result has been calculated
     public ?phrase $src_time_phr = null;       // the time word object created while loading
-    public ?phrase_list $phr_lst = null;       // the word list obj (not a list of word objects) filled while loading
+    public ?phrase_list $phr_lst = null;       // the phrase list obj (not a list of phrase objects) filled while loading
     public ?phrase $time_phr = null;           // the time word object created while loading
     public ?bool $val_missing = False;         // true if at least one of the formula values is not set which means is NULL (but zero is a value)
     public ?bool $is_updated = False;          // true if the formula value has been calculated, but not yet saved
@@ -122,6 +123,7 @@ class formula_value
     {
         $this->id = 0;
         $this->usr = $usr;
+        $this->frm = new formula($usr);
     }
 
     /**
@@ -148,7 +150,7 @@ class formula_value
         if ($db_row != null) {
             if ($db_row[self::FLD_ID] > 0) {
                 $this->id = $db_row[self::FLD_ID];
-                $this->frm_id = $db_row[formula::FLD_ID];
+                $this->frm->id = $db_row[formula::FLD_ID];
                 $this->owner_id = $db_row[user_sandbox::FLD_USER];
                 $this->src_phr_grp_id = $db_row[self::FLD_SOURCE_GRP];
                 $this->src_time_id = $db_row[self::FLD_SOURCE_TIME];
@@ -236,21 +238,29 @@ class formula_value
     }
 
     /**
-     * load all a formula value by the id
+     * load a formula value by the id
      *
      * @return bool true if formula value has been loaded
      */
-    function load_by_id(int $id): bool
+    function load_by_id(int $id = 0): bool
     {
         global $db_con;
         $result = false;
 
         if ($id > 0) {
+            // if the id is given load the formula value from the database
             $this->reset($this->usr);
             $this->id = $id;
         } else {
-            log_err('The formula value id and the user must be set ' .
-                'to load a ' . self::class, self::class . '->load_by_id');
+            // if the id is not given, refresh the object based pn the database
+            if ($this->id > 0) {
+                $id = $this->id;
+                $this->reset($this->usr);
+                $this->id = $id;
+            } else {
+                log_err('The formula value id and the user must be set ' .
+                    'to load a ' . self::class, self::class . '->load_by_id');
+            }
         }
         $qp = $this->load_by_id_sql($db_con);
         if ($qp->name != '') {
@@ -480,8 +490,8 @@ class formula_value
                     }
                 }
                 // include the formula in the search
-                if ($this->frm_id > 0) {
-                    $sql_frm = " AND formula_id = " . $this->frm_id . " ";
+                if ($this->frm->id > 0) {
+                    $sql_frm = " AND formula_id = " . $this->frm->id . " ";
                 } else {
                     $sql_frm = " ";
                 }
@@ -683,10 +693,10 @@ class formula_value
     // update the formulas objects based on the id
     private function load_formula()
     {
-        if ($this->frm_id > 0) {
+        if ($this->frm->id > 0) {
             log_debug('formula_value->load_formula for user ' . $this->usr->name);
             $frm = new formula($this->usr);
-            $frm->id = $this->frm_id;
+            $frm->id = $this->frm->id;
             $frm->load();
             $this->frm = $frm;
         }
@@ -900,8 +910,10 @@ class formula_value
         log_debug("formula_value->save_prepare_wrds done.");
     }
 
-    // depending on the word list format the numeric value
-    // similar to the corresponding function in the "value" class
+    /**
+     * depending on the phrase list format the numeric value
+     * similar to the corresponding function in the "value" class
+     */
     function val_formatted()
     {
         $result = '';
@@ -1085,7 +1097,7 @@ class formula_value
 
         // display the formula with links
         $frm = new formula($this->usr);
-        $frm->id = $this->frm_id;
+        $frm->id = $this->frm->id;
         $frm->load();
         $result .= ' based on</br>' . $frm->name_linked($back);
         $result .= ' ' . $frm->dsp_text($back) . "\n";
@@ -1162,14 +1174,14 @@ class formula_value
     //      based on the frm id and the word group
     function update_depending()
     {
-        log_debug("formula_value->update_depending (f" . $this->frm_id . ",t" . dsp_array($this->wrd_ids) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->usr->name . ")");
+        log_debug("formula_value->update_depending (f" . $this->frm->id . ",t" . dsp_array($this->wrd_ids) . ",tt" . $this->time_id . ",v" . $this->value . " and user " . $this->usr->name . ")");
 
         global $db_con;
         $result = array();
 
         // get depending formulas
         $frm_elm_lst = new formula_element_list($this->usr);
-        $frm_elm_lst->load_by_frm_and_type_id($this->frm_id, formula_element_type::FORMULA);
+        $frm_elm_lst->load_by_frm_and_type_id($this->frm->id, formula_element_type::FORMULA);
         $frm_ids = array();
         foreach ($frm_elm_lst as $frm_elm) {
             if ($frm_elm->obj != null) {
@@ -1208,7 +1220,7 @@ class formula_value
         // check parameters
         if (!isset($this->phr_lst)) {
             log_err("Phrase list is missing.", "formula_value->update");
-        } elseif ($this->frm_id <= 0) {
+        } elseif ($this->frm->id <= 0) {
             log_err("Formula ID is missing.", "formula_value->update");
         } else {
             // prepare update
@@ -1360,7 +1372,7 @@ class formula_value
         $result = 0;
 
         // check the parameters e.g. a result must always be linked to a formula
-        if ($this->frm_id <= 0) {
+        if ($this->frm->id <= 0) {
             log_err("Formula id missing.", "formula_value->save");
         } elseif (empty($this->phr_lst)) {
             log_err("No words for the result.", "formula_value->save");
@@ -1370,7 +1382,7 @@ class formula_value
             log_err("User missing.", "formula_value->save");
         } else {
             if ($debug > 0) {
-                $debug_txt = 'formula_value->save (' . $this->value . ' for formula ' . $this->frm_id . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
+                $debug_txt = 'formula_value->save (' . $this->value . ' for formula ' . $this->frm->id . ' with ' . $this->phr_lst->dsp_name() . ' based on ' . $this->src_phr_lst->dsp_name();
                 if (!$this->is_std) {
                     $debug_txt .= ' and user ' . $this->usr->id;
                 }
@@ -1411,7 +1423,7 @@ class formula_value
                 $field_names = array();
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
-                $field_values[] = $this->frm_id;
+                $field_values[] = $this->frm->id;
                 $field_names[] = 'formula_value';
                 $field_values[] = $this->value;
                 $field_names[] = 'phrase_group_id';
