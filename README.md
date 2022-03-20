@@ -47,8 +47,9 @@ If you see anything that does not look simple to you, please request a change on
 
 
 General coding principles:
-- one point of change
+- one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
 - capsule: each method should check the consistency of the input parameters at the beginning
+- least possible dependencies because a chain is only as strong as its weakest link
 - best guess: in case of incomplete data best guess assumptions should be used
 - automatic error detection and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
 - init:        each function first collect the global vars, initiate the result variable and create a debug message if requested
