@@ -79,6 +79,7 @@ class user
     public ?string $code_id = null;       // the main id to detect system users
     public ?string $dec_point = null;     // the decimal point char for this user
     public ?string $thousand_sep = null;  // the thousand separator user for this user
+    public ?int $percent_decimals = null; // the number of decimals for this user
     public ?int $profile_id = null;       // id of the user profile
     public ?int $source_id = null;        // id of the last source used by the user
 
@@ -110,7 +111,8 @@ class user
         $this->last_name = null;
         $this->code_id = null;
         $this->dec_point = null;
-        $this->thousand_sep = null;
+        $this->thousand_sep = DEFAULT_THOUSAND_SEP;
+        $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
         $this->profile_id = null;
         $this->source_id = null;
 
@@ -138,6 +140,7 @@ class user
         $dsp_obj->code_id = $this->code_id;
         $dsp_obj->dec_point = $this->dec_point;
         $dsp_obj->thousand_sep = $this->thousand_sep;
+        $dsp_obj->percent_decimals = $this->percent_decimals;
 
         $dsp_obj->profile_id = $this->profile_id;
         $dsp_obj->source_id = $this->source_id;
@@ -171,6 +174,7 @@ class user
                 $this->profile_id = $db_usr['user_profile_id'];
                 $this->dec_point = DEFAULT_DEC_POINT;
                 $this->thousand_sep = DEFAULT_THOUSAND_SEP;
+                $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
                 $result = true;
                 log_debug('user->row_mapper (' . $this->name . ')');
             }

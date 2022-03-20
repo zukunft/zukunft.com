@@ -341,6 +341,7 @@ class test_base
     /*
      * object adding, loading and testing functions
      *
+     *   create_* to create an object mainly used to shorten the code in unit tests
      *   add_* to create an object and save it in the database to prepare the testing (not used for all classes)
      *   load_* just load the object, but does not create the object
      *   test_* additional creates the object if needed and checks if it has been persistent
@@ -349,7 +350,15 @@ class test_base
      *
      */
 
-    function load_word(string $wrd_name, ?user $test_usr = null): word
+    /**
+     * create a new word e.g. for unit testing with a given type
+     *
+     * @param string $wrd_name the name of the word that should be created
+     * @param string|null $wrd_type_code_id the id of the predefined word type which the new word should have
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return word the created word object
+     */
+    function create_word(string $wrd_name, string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         global $usr;
 
@@ -359,6 +368,16 @@ class test_base
 
         $wrd = new word($test_usr);
         $wrd->name = $wrd_name;
+
+        if ($wrd_type_code_id != null) {
+            $wrd->type_id = cl(db_cl::WORD_TYPE, $wrd_type_code_id);
+        }
+        return $wrd;
+    }
+
+    function load_word(string $wrd_name, ?user $test_usr = null): word
+    {
+        $wrd = $this->create_word($wrd_name, null, $test_usr);
         $wrd->load();
         return $wrd;
     }

@@ -160,7 +160,7 @@ class formula_value
                 $this->last_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->last_val_update = get_datetime($db_row[self::FLD_LAST_UPDATE]);
                 $this->dirty = $db_row[self::FLD_DIRTY];
-                $this->load_phrases();
+                $this->load_phrases(true);
                 $result = true;
             }
         }
@@ -238,7 +238,7 @@ class formula_value
     }
 
     /**
-     * load a formula value by the id
+     * load (or force reload from database of) a formula value by the id
      *
      * @return bool true if formula value has been loaded
      */
@@ -587,110 +587,125 @@ class formula_value
     }
 
     /*
-       word loading methods
-       --------------------
-    */
+     * phrase loading methods
+     */
 
-    // update the word list based on the source word group id ($this->phr_lst)
-    private function load_phr_lst_src()
+    /**
+     * update the source phrase list based on the source phrase group id
+     * @param bool $force_reload set to true if a loaded phrase list should refresh with database values
+     */
+    private function load_phr_lst_src(bool $force_reload = false)
     {
         if ($this->src_phr_grp_id > 0) {
-            log_debug('formula_value->load_phr_lst_src for source group "' . $this->src_phr_grp_id . '"');
-            // to review to reduce the number of loads AND check if load is really needed correctly
-            //if (!isset($this->src_phr_lst)) {
-            $phr_grp = new phrase_group($this->usr);
-            $phr_grp->id = $this->src_phr_grp_id;
-            $phr_grp->load();
-            if (isset($phr_grp->phr_lst)) {
-                $this->src_phr_lst = $phr_grp->phr_lst;
-                log_debug('formula_value->load_phr_lst_src source words ' . $this->src_phr_lst->dsp_name() . ' loaded');
-            } else {
-                log_debug('formula_value->load_phr_lst_src no source words found for ' . $this->dsp_id());
+            if ($this->src_phr_lst == null or $force_reload) {
+                log_debug('formula_value->load_phr_lst_src for source group "' . $this->src_phr_grp_id . '"');
+                $phr_grp = new phrase_group($this->usr);
+                $phr_grp->id = $this->src_phr_grp_id;
+                $phr_grp->load();
+                if (!$phr_grp->phr_lst->empty()) {
+                    $this->src_phr_lst = $phr_grp->phr_lst;
+                    log_debug('formula_value->load_phr_lst_src source phrases ' . $this->src_phr_lst->dsp_name() . ' loaded');
+                } else {
+                    log_debug('formula_value->load_phr_lst_src no source words found for ' . $this->dsp_id());
+                }
             }
-            //}
         }
-        if (!isset($this->src_phr_lst)) {
+        if ($this->src_phr_lst->empty()) {
             log_warning("Missing source words for the calculated value " . $this->id . ' (group id ' . $this->src_phr_grp_id . ').', "formula_value->load_phr_lst_src");
         }
     }
 
-    // update the word list based on the word group id ($this->phr_lst)
-    private function load_phr_lst()
+    /**
+     * update the phrase list based on the word group id
+     * @param bool $force_reload set to true if a loaded phrase list should refresh with database values
+     */
+    private function load_phr_lst(bool $force_reload = false)
     {
         if ($this->phr_grp_id > 0) {
-            log_debug('formula_value->load_phr_lst for group "' . $this->phr_grp_id . '"');
-            //if (!isset($this->phr_lst)) {
-            $phr_grp = new phrase_group($this->usr);
-            $phr_grp->id = $this->phr_grp_id;
-            $phr_grp->load();
-            if (isset($phr_grp->phr_lst)) {
-                $this->phr_lst = $phr_grp->phr_lst;
-                log_debug('formula_value->load_phr_lst words ' . $this->phr_lst->dsp_name() . ' loaded');
-                // to be dismissed
-                $this->wrd_ids = $phr_grp->phr_lst->id_lst();
-            } else {
-                log_debug('formula_value->load_phr_lst no result words found for ' . $this->dsp_id());
+            if ($this->phr_lst == null or $force_reload) {
+                log_debug('formula_value->load_phr_lst for group "' . $this->phr_grp_id . '"');
+                $phr_grp = new phrase_group($this->usr);
+                $phr_grp->id = $this->phr_grp_id;
+                $phr_grp->load();
+                if (!$phr_grp->phr_lst->empty()) {
+                    $this->phr_lst = $phr_grp->phr_lst;
+                    log_debug('formula_value->load_phr_lst phrases ' . $this->phr_lst->dsp_name() . ' loaded');
+                    // to be dismissed
+                    $this->wrd_ids = $phr_grp->phr_lst->id_lst();
+                } else {
+                    log_debug('formula_value->load_phr_lst no result phrases found for ' . $this->dsp_id());
+                }
             }
-            //}
         }
-        if (!isset($this->phr_lst)) {
-            log_warning("Missing result words for the calculated value " . $this->id, "formula_value->load_phr_lst");
+        if ($this->phr_lst->empty()) {
+            log_warning("Missing result phrases for the calculated value " . $this->id, "formula_value->load_phr_lst");
         }
     }
 
-    // update the source time word object based on the source time word id ($this->src_time_phr)
-    private function load_time_wrd_src()
+    /**
+     * update the source time word object based on the source time word id
+     * @param bool $force_reload set to true if a loaded source time phrase should be reloaded from database
+     */
+    private function load_time_wrd_src(bool $force_reload = false)
     {
         if ($this->src_time_id <> 0) {
-            log_debug('formula_value->load_time_wrd_src for source time "' . $this->src_time_id . '"');
-            //if (!isset($this->src_time_phr)) {
-            $time_phr = new phrase($this->usr);
-            $time_phr->id = $this->src_time_id;
-            $time_phr->load();
-            if ($time_phr->id <> 0) {
-                $this->src_time_phr = $time_phr;
-                if (isset($this->src_phr_lst)) {
-                    $this->src_phr_lst->add($time_phr);
-                    log_debug('formula_value->load_time_wrd_src source time word "' . $time_phr->name . '" added');
+            if ($this->src_time_phr == null or $force_reload) {
+                log_debug('formula_value->load_time_wrd_src for source time "' . $this->src_time_id . '"');
+                $time_phr = new phrase($this->usr);
+                $time_phr->id = $this->src_time_id;
+                $time_phr->load();
+                if ($time_phr->id <> 0) {
+                    $this->src_time_phr = $time_phr;
+                    if ($this->src_phr_lst != null) {
+                        $this->src_phr_lst->add($time_phr);
+                        log_debug('formula_value->load_time_wrd_src source time word "' . $time_phr->name . '" added');
+                    }
                 }
             }
-            //}
         }
     }
 
-    // update the time word object based on the time word id ($this->time_phr)
-    private function load_time_wrd()
+    /**
+     * update the time word object based on the time word id
+     * @param bool $force_reload set to true if a loaded time phrase should be reloaded from database
+     */
+    private function load_time_wrd(bool $force_reload = false)
     {
         if ($this->time_id <> 0) {
-            log_debug('formula_value->load_phr_lst for time "' . $this->time_id . '"');
-            //if (!isset($this->time_phr)) {
-            $time_phr = new phrase($this->usr);
-            $time_phr->id = $this->time_id;
-            $time_phr->load();
-            if ($time_phr->id <> 0) {
-                $this->time_phr = $time_phr;
-                if (isset($this->phr_lst)) {
-                    $this->phr_lst->add($time_phr);
-                    log_debug('formula_value->load_time_wrd time word "' . $time_phr->name . '" added');
+            if ($this->time_phr == null or $force_reload) {
+                log_debug('formula_value->load_phr_lst for time "' . $this->time_id . '"');
+                $time_phr = new phrase($this->usr);
+                $time_phr->id = $this->time_id;
+                $time_phr->load();
+                if ($time_phr->id <> 0) {
+                    $this->time_phr = $time_phr;
+                    if ($this->phr_lst != null) {
+                        $this->phr_lst->add($time_phr);
+                        log_debug('formula_value->load_time_wrd time word "' . $time_phr->name . '" added');
+                    }
                 }
             }
-            //}
         }
     }
 
-    // update the word objects based on the word ids  (usually done after loading the formula result from the database)
-    function load_phrases()
+    /**
+     * update the phrase objects based on the phrase group ids
+     * (usually done after loading the formula result from the database)
+     */
+    function load_phrases(bool $force_reload = false)
     {
         if ($this->id > 0) {
             log_debug('formula_value->load_phrases for user ' . $this->usr->name);
-            $this->load_phr_lst_src();
-            $this->load_phr_lst();
-            $this->load_time_wrd_src();
-            $this->load_time_wrd();
+            $this->load_phr_lst_src($force_reload);
+            $this->load_phr_lst($force_reload);
+            $this->load_time_wrd_src($force_reload);
+            $this->load_time_wrd($force_reload);
         }
     }
 
-    // update the formulas objects based on the id
+    /**
+     * update the formulas objects based on the id
+     */
     private function load_formula()
     {
         if ($this->frm->id > 0) {
@@ -911,22 +926,25 @@ class formula_value
     }
 
     /**
-     * depending on the phrase list format the numeric value
+     * depending on the phrases format the numeric value
+     * e.g. if the result phrases contains a word of type percent format the value per default as percent
      * similar to the corresponding function in the "value" class
+     *
+     * @returns string with the value in the most useful format for humans
      */
-    function val_formatted()
+    function val_formatted(): string
     {
         $result = '';
 
         if (!is_null($this->value)) {
             log_debug('formula_value->val_formatted');
-            if (!isset($this->phr_lst)) {
-                $this->load_by_vars();
+            if ($this->phr_lst == null) {
+                $this->load_phrases();
                 log_debug('formula_value->val_formatted loaded');
             }
             log_debug('formula_value->val_formatted check ' . $this->dsp_id());
             if ($this->phr_lst->has_percent()) {
-                $result = round($this->value * 100, 2) . ' %';
+                $result = round($this->value * 100, $this->usr->percent_decimals) . ' %';
                 log_debug('formula_value->val_formatted percent of ' . $this->value);
             } else {
                 if ($this->value >= 1000 or $this->value <= -1000) {

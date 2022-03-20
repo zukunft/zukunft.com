@@ -126,7 +126,7 @@ class value_dsp extends value
             }
             if ($this->wrd_lst != null) {
                 if ($this->wrd_lst->has_percent()) {
-                    $result = round($this->number * 100, 2) . "%";
+                    $result = round($this->number * 100, $this->usr->percent_decimals) . "%";
                 } else {
                     if ($this->number >= 1000 or $this->number <= -1000) {
                         $result .= number_format($this->number, 0, $this->usr->dec_point, $this->usr->thousand_sep);

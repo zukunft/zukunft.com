@@ -214,6 +214,8 @@ class phrase
     /**
      * get the main word object
      * e.g. ???
+     * assumes that the phrase has already been loaded
+     *
      * @return object|null
      */
     function main_word(): ?object
@@ -833,11 +835,23 @@ class phrase
         return $wrd->is_scaling();
     }
 
-    // return true if the word has the type "scaling_percent" (e.g. "percent")
-    function is_percent()
+    /**
+     * @returns true if the phrase type is set to "scaling_percent" (e.g. "percent")
+     */
+    function is_percent(): bool
     {
-        $wrd = $this->main_word();
-        return $wrd->is_percent();
+        global $word_types;
+
+        $result = false;
+        if ($this->obj != null) {
+            if ($this->obj->type_id == $word_types->id(word_type_list::DBL_PERCENT)) {
+                $result = true;
+            }
+        } else {
+            $wrd = $this->main_word();
+            $result = $wrd->is_percent();
+        }
+        return $result;
     }
 
     // create a selector that contains the time words

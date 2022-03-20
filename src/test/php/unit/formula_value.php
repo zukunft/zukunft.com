@@ -71,6 +71,29 @@ class formula_value_unit_tests
         $qp = $fv->load_by_grp_sql($db_con);
         $t->assert_qp($qp, sql_db::MYSQL);
 
+        $t->subheader('Display tests');
+
+        // test phrase based default formatter
+        // ... for big values
+        $wrd_const = $t->create_word(word::TN_READ);
+        $phr_lst = new phrase_list($usr);
+        $phr_lst->add($wrd_const->phrase());
+        $fv->phr_lst = $phr_lst;
+        $fv->value = 123456;
+        $t->assert('formula_value->val_formatted test big numbers', $fv->val_formatted(), "123'456");
+
+        // ... for small values 12.35 instead of 12.34 due to rounding
+        $fv->value = 12.3456;
+        $t->assert('formula_value->val_formatted test small numbers', $fv->val_formatted(), "12.35");
+
+        // ... for percent values
+        $fv = new formula_value($usr);
+        $wrd_pct = $t->create_word(word::TN_PCT, word_type_list::DBL_PERCENT);
+        $phr_lst->add($wrd_pct->phrase());
+        $fv->phr_lst = $phr_lst;
+        $fv->value = 0.01234;
+        $t->assert('formula_value->val_formatted test percent formatting', $fv->val_formatted(), '1.23 %');
+
 
         $t->header('Unit tests of the formula value list class (src/main/php/model/formula/formula_value_list.php)');
 

@@ -454,6 +454,7 @@ const DEFAULT_WORD_ID = 1;
 const DEFAULT_WORD_TYPE_ID = 1;
 const DEFAULT_DEC_POINT = ".";
 const DEFAULT_THOUSAND_SEP = "'";
+const DEFAULT_PERCENT_DECIMALS = 2;
 
 // text conversion const (used to convert word, verbs or formula text to a database reference)
 const ZUP_CHAR_WORD = '"';    // or a zukunft verb or a zukunft formula
