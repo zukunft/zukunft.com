@@ -1,4 +1,4 @@
-PREPARE formula_value_by_grp (int, int) AS
+PREPARE formula_value_by_grp (int) AS
     SELECT formula_value_id,
            formula_id,
            user_id,
@@ -10,5 +10,4 @@ PREPARE formula_value_by_grp (int, int) AS
            last_update,
            dirty
       FROM formula_values
-     WHERE phrase_group_id = $1
-       AND time_word_id = $2;
+     WHERE phrase_group_id = $1;

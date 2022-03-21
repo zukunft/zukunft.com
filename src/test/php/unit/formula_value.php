@@ -71,6 +71,17 @@ class formula_value_unit_tests
         $qp = $fv->load_by_grp_sql($db_con);
         $t->assert_qp($qp, sql_db::MYSQL);
 
+        // ... and additional to the phrase group the time
+        $db_con->db_type = sql_db::POSTGRES;
+        $fv->time_id = 2;
+        $qp = $fv->load_by_grp_time_sql($db_con);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // ... and the same for MySQL databases instead of PostgreSQL
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $fv->load_by_grp_time_sql($db_con);
+        $t->assert_qp($qp, sql_db::MYSQL);
+
         $t->subheader('Display tests');
 
         // test phrase based default formatter

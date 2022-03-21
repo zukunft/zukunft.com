@@ -50,8 +50,7 @@ function run_formula_value_test(testing $t)
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id > 0) {
         $ch_increase = new formula_value($usr);
-        $ch_increase->phr_grp_id = $ch_up_grp->id;
-        $ch_increase->load_by_vars();
+        $ch_increase->load_by_grp($ch_up_grp->id);
         $result = $ch_increase->value;
     } else {
         $result = 'no ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;
@@ -102,9 +101,8 @@ function run_formula_value_test(testing $t)
     $result = $mio_val->scale($dest_wrd_lst);
     */
     $k_val = new formula_value($usr);
-    $k_val->phr_grp_id = $ch_k_grp->id;
     //$result = $mio_val->check();
-    $k_val->load_by_vars();
+    $k_val->load_by_grp($ch_k_grp->id);
     $result = $k_val->value;
     $target = 8505.251;
     $t->dsp('value->val_scaling for a tern list ' . $phr_lst->dsp_id() . '', $target, $result, TIMEOUT_LIMIT_PAGE);

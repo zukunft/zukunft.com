@@ -683,9 +683,24 @@ class phrase_list
 
 
     /*
-      extract functions
-      -----------------
-    */
+     * check and information functions
+     */
+
+    /**
+     * @return bool true if this phrase list has at least one entry
+     */
+    function is_valid(): bool
+    {
+        $result = true;
+        if ($this->count() <= 0) {
+            $result = false;
+        }
+        return $result;
+    }
+
+    /*
+     * extract functions
+     */
 
     // return a unique id of the phrase list
     function id(): string

@@ -943,7 +943,7 @@ class formula extends user_sandbox_description
                         if ($this->need_all_val) {
                             log_debug('calculate ' . $this->dsp_id() . ' only if all numbers are given');
                             if ($fv->val_missing) {
-                                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . dsp_array($fv->wrd_ids));
+                                log_debug('got some numbers for ' . $this->dsp_id() . ' and ' . dsp_array($fv->phr_ids()));
                             } else {
                                 if ($fv->is_std) {
                                     log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $fv->name_linked($back) . ': ' . $fv->num_text);

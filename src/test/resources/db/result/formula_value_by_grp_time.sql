@@ -1,5 +1,5 @@
-PREPARE formula_value_by_grp FROM
-   'SELECT formula_value_id,
+PREPARE formula_value_by_grp_time (int, int) AS
+    SELECT formula_value_id,
            formula_id,
            user_id,
            source_phrase_group_id,
@@ -10,4 +10,5 @@ PREPARE formula_value_by_grp FROM
            last_update,
            dirty
       FROM formula_values
-     WHERE phrase_group_id = ?';
+     WHERE phrase_group_id = $1
+       AND time_word_id = $2;
