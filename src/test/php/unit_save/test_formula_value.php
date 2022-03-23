@@ -66,11 +66,7 @@ function run_formula_value_test(testing $t)
     $ch_up_grp = $phr_lst->get_grp();
     if ($ch_up_grp->id > 0) {
         $ch_increase = new formula_value($usr);
-        $ch_increase->phr_grp_id = $ch_up_grp->id;
-        $ch_increase->time_id = $time_phr->id;
-        //$ch_increase->wrd_lst = $phr_lst;
-        $ch_increase->usr->id = $usr->id; // temp solution utils the value is saved automatically for all users
-        $ch_increase->load_by_vars();
+        $ch_increase->load_by_grp($ch_up_grp->id, $time_phr->id);
         $result = $ch_increase->value;
     } else {
         $result = 'no ' . word::TN_2020 . ' ' . word::TN_INHABITANT . ' ' . formula::TN_INCREASE . ' value found for ' . word::TN_CH;

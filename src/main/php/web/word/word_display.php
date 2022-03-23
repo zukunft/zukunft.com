@@ -320,8 +320,7 @@ class word_dsp extends word
                     // temp solution to be reviewed
                     if ($in_value['id'] > 0) {
                         $fv = new formula_value($this->usr);
-                        $fv->id = $in_value['id'];
-                        $fv->load_by_vars();
+                        $fv->load_by_id($in_value['id']);
                         if ($fv->value <> 0) {
                             $fv_text = $fv->val_formatted();
                         } else {
