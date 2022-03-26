@@ -35,7 +35,7 @@ class view_cmp_link_list extends link_list
 {
 
     /**
-     * create an SQL statement to retrieve a list of value phrase links from the database
+     * create an SQL statement to retrieve a list of view component links from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param view|null $dsp if set to get all links for this view

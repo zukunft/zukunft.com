@@ -299,15 +299,49 @@ class view extends user_sandbox_named
 
     /**
      * create an SQL statement to retrieve all view components of a view
+     * TODO check if it can be combined with load_sql from view_cmp_link_list
+     *
+     * @param sql_db $db_con as a function parameter for unit testing
+     * @return string the SQL statement base on the parameters set in $this
+     */
+    function load_components_sql(sql_db $db_con): sql_par
+    {
+        $qp = parent::load_sql($db_con, 'view_components');
+        if ($this->id != 0) {
+            $qp->name .= 'view_id';
+        } elseif ($this->name != '') {
+            $qp->name .= 'name';
+        } else {
+            log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
+        }
+
+        $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(view_cmp_link::FLD_NAMES);
+        $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
+        $db_con->set_join_fields(view_cmp::FLD_NAMES, DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_join_usr_fields(view_cmp::FLD_NAMES_USR, DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_join_usr_num_fields(view_cmp::FLD_NAMES_NUM_USR, DB_TYPE_VIEW_COMPONENT);
+        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $db_con->set_order(view_cmp_link::FLD_ORDER_NBR);
+        $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve all view components of a view
      *
      * @param sql_db $db_con as a function parameter for unit testing
      * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
      * @return string the SQL statement base on the parameters set in $this
      */
-    function load_components_sql(sql_db $db_con, bool $get_name = false): string
+    function load_components_sql_old(sql_db $db_con, bool $get_name = false): string
     {
         // TODO make the order user specific
-        $sql_name = 'view_components_by_view_id';
+        $sql_name = 'view_components_by_view_id_no_prepare';
         $sql = " SELECT e.view_component_id, 
                     u.view_component_id AS user_entry_id,
                     e.user_id, 
@@ -354,7 +388,7 @@ class view extends user_sandbox_named
         $result = true;
 
         $db_con->usr_id = $this->usr->id;
-        $sql = $this->load_components_sql($db_con);
+        $sql = $this->load_components_sql_old($db_con);
         $db_lst = $db_con->get_old($sql);
         $this->cmp_lst = array();
         if ($db_lst != null) {

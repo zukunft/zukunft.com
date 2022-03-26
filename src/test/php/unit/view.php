@@ -70,17 +70,34 @@ class view_unit_tests
         $dsp = new view($usr);
         $dsp->id = 2;
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $dsp->load_components_sql($db_con);
+        $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id.sql');
         $t->dsp('view->load_components_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($dsp->load_components_sql($db_con, true));
+        $t->assert_sql_name_unique($dsp->load_components_sql($db_con)->name);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $dsp->load_components_sql($db_con);
+        $created_sql = $dsp->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/view/view_components_by_view_id_mysql.sql');
+        $t->dsp('view->load_components_sql for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
+
+        // none prepared sql to load the view components
+        $dsp = new view($usr);
+        $dsp->id = 2;
+        $db_con->db_type = sql_db::POSTGRES;
+        $created_sql = $dsp->load_components_sql_old($db_con);
+        $expected_sql = $t->file('db/view/view_components_by_view_id_no_prepare.sql');
+        $t->dsp('view->load_components_sql by view id', $t->trim($expected_sql), $t->trim($created_sql));
+
+        // ... and check if the prepared sql name is unique
+        $t->assert_sql_name_unique($dsp->load_components_sql_old($db_con, true));
+
+        // ... and the same for MySQL by replication the SQL builder statements
+        $db_con->db_type = sql_db::MYSQL;
+        $created_sql = $dsp->load_components_sql_old($db_con);
+        $expected_sql = $t->file('db/view/view_components_by_view_id_no_prepare_mysql.sql');
         $t->dsp('view->load_components_sql for MySQL', $t->trim($expected_sql), $t->trim($created_sql));
 
         /*
