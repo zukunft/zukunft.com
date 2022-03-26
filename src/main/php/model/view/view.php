@@ -300,6 +300,7 @@ class view extends user_sandbox_named
     /**
      * create an SQL statement to retrieve all view components of a view
      * TODO check if it can be combined with load_sql from view_cmp_link_list
+     * TODO make the order user specific
      *
      * @param sql_db $db_con as a function parameter for unit testing
      * @return string the SQL statement base on the parameters set in $this
@@ -335,51 +336,6 @@ class view extends user_sandbox_named
         $qp->par = $db_con->get_par();
 
         return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve all view components of a view
-     *
-     * @param sql_db $db_con as a function parameter for unit testing
-     * @param bool $get_name to create the SQL statement name for the predefined SQL within the same function to avoid duplicating if in case of more than on where type
-     * @return string the SQL statement base on the parameters set in $this
-     */
-    function load_components_sql_old(sql_db $db_con, bool $get_name = false): string
-    {
-        // TODO make the order user specific
-        $sql_name = 'view_components_by_view_id_no_prepare';
-        $sql = " SELECT e.view_component_id, 
-                    u.view_component_id AS user_entry_id,
-                    e.user_id, 
-                    " . $db_con->get_usr_field('order_nbr', 'l', 'y', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(view_cmp::FLD_NAME, 'e', 'u') . ",
-                    " . $db_con->get_usr_field('view_component_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(sql_db::FLD_CODE_ID, 't', 'c') . ",
-                    " . $db_con->get_usr_field('word_id_row', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('link_type_id', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(formula::FLD_ID, 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('word_id_col', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field('word_id_col2', 'e', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(self::FLD_EXCLUDED, 'l', 'y', sql_db::FLD_FORMAT_VAL, 'link_excluded') . ",
-                    " . $db_con->get_usr_field(self::FLD_EXCLUDED, 'e', 'u', sql_db::FLD_FORMAT_VAL) . "
-               FROM view_component_links l            
-          LEFT JOIN user_view_component_links y ON y.view_component_link_id = l.view_component_link_id 
-                                               AND y.user_id = " . $this->usr->id . ", 
-                    view_components e             
-          LEFT JOIN user_view_components u ON u.view_component_id = e.view_component_id 
-                                          AND u.user_id = " . $this->usr->id . " 
-          LEFT JOIN view_component_types t ON e.view_component_type_id = t.view_component_type_id
-          LEFT JOIN view_component_types c ON u.view_component_type_id = c.view_component_type_id
-              WHERE l.view_id = " . $this->id . " 
-                AND l.view_component_id = e.view_component_id 
-           ORDER BY order_nbr;";
-        log_debug("view->load_components_sql ... " . $sql);
-        if ($get_name) {
-            $result = $sql_name;
-        } else {
-            $result = $sql;
-        }
-        return $result;
     }
 
     /**
