@@ -579,8 +579,8 @@ class sql_db
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
         if ($this->join_type == ''
-            or (($this->join_field == $join_field and $join_field != '')
-                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
+            or (($this->join_field == $join_field or $join_field == '')
+                and ($this->join_to_field == $join_to_field or $join_to_field == ''))) {
             $this->join_type = $join_type;
             $this->join_usr_field_lst = $join_field_lst;
             $this->join_field = $join_field;
@@ -588,8 +588,8 @@ class sql_db
             $this->join_force_rename = $force_rename;
             $this->join_usr_query = true;
         } elseif ($this->join2_type == ''
-            or (($this->join2_field == $join_field and $join_field != '')
-                and ($this->join2_to_field == $join_to_field and $join_to_field != ''))) {
+            or (($this->join2_field == $join_field or $join_field == '')
+                and ($this->join2_to_field == $join_to_field or $join_to_field == ''))) {
             $this->join2_type = $join_type;
             $this->join2_usr_field_lst = $join_field_lst;
             $this->join2_field = $join_field;
@@ -597,8 +597,8 @@ class sql_db
             $this->join2_force_rename = $force_rename;
             $this->join2_usr_query = true;
         } elseif ($this->join3_type == ''
-            or (($this->join3_field == $join_field and $join_field != '')
-                and ($this->join3_to_field == $join_to_field and $join_to_field != ''))) {
+            or (($this->join3_field == $join_field or $join_field == '')
+                and ($this->join3_to_field == $join_to_field or $join_to_field == ''))) {
             $this->join3_type = $join_type;
             $this->join3_usr_field_lst = $join_field_lst;
             $this->join3_field = $join_field;
@@ -606,8 +606,8 @@ class sql_db
             $this->join3_force_rename = $force_rename;
             $this->join3_usr_query = true;
         } elseif ($this->join4_type == ''
-            or (($this->join4_field == $join_field and $join_field != '')
-                and ($this->join4_to_field == $join_to_field and $join_to_field != ''))) {
+            or (($this->join4_field == $join_field or $join_field == '')
+                and ($this->join4_to_field == $join_to_field or $join_to_field == ''))) {
             $this->join4_type = $join_type;
             $this->join4_usr_field_lst = $join_field_lst;
             $this->join4_field = $join_field;

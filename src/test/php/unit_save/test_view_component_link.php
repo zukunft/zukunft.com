@@ -229,6 +229,12 @@ function run_view_component_link_test(testing $t)
             } else {
                 $target = view_cmp::TN_ADD;
             }
+            // TODO check probably wrong
+            if ($pos == 1) {
+                $target = view_cmp::TN_ADD;
+            } else {
+                $target = view_cmp::TN_ADD2;
+            }
             $result = $entry->name;
             $t->dsp('view component order for user 2', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
             $pos = $pos + 1;

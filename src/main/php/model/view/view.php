@@ -320,9 +320,15 @@ class view extends user_sandbox_named
         $db_con->set_name($qp->name);
         $db_con->set_fields(view_cmp_link::FLD_NAMES);
         $db_con->set_usr_num_fields(view_cmp_link::FLD_NAMES_NUM_USR);
-        $db_con->set_join_fields(view_cmp::FLD_NAMES, DB_TYPE_VIEW_COMPONENT);
-        $db_con->set_join_usr_fields(view_cmp::FLD_NAMES_USR, DB_TYPE_VIEW_COMPONENT);
-        $db_con->set_join_usr_num_fields(view_cmp::FLD_NAMES_NUM_USR, DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_join_fields(
+            view_cmp::FLD_NAMES,
+            DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_join_usr_fields(
+            array_merge(view_cmp::FLD_NAMES_USR, array(view_cmp::FLD_NAME)),
+            DB_TYPE_VIEW_COMPONENT);
+        $db_con->set_join_usr_num_fields(
+            view_cmp::FLD_NAMES_NUM_USR,
+            DB_TYPE_VIEW_COMPONENT);
         $db_con->add_par(sql_db::PAR_INT, $this->id);
         $db_con->set_order(view_cmp_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
@@ -388,26 +394,25 @@ class view extends user_sandbox_named
         $result = true;
 
         $db_con->usr_id = $this->usr->id;
-        $sql = $this->load_components_sql_old($db_con);
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_components_sql($db_con);
+        $db_lst = $db_con->get($qp);
         $this->cmp_lst = array();
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
-                    and (is_null($db_entry['link_excluded']) or $db_entry['link_excluded'] == 0)) {
+                    and (is_null($db_entry[self::FLD_EXCLUDED.'2']) or $db_entry[self::FLD_EXCLUDED.'2'] == 0)) {
                     $new_entry = new view_cmp_dsp($this->usr);
-                    $new_entry->id = $db_entry['view_component_id'];
+                    $new_entry->id = $db_entry[view_cmp::FLD_ID];
                     $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
-                    $new_entry->order_nbr = $db_entry['order_nbr'];
+                    $new_entry->order_nbr = $db_entry[view_cmp_link::FLD_ORDER_NBR];
                     $new_entry->name = $db_entry[view_cmp::FLD_NAME];
-                    $new_entry->word_id_row = $db_entry['word_id_row'];
-                    $new_entry->link_type_id = $db_entry['link_type_id'];
-                    $new_entry->type_id = $db_entry['view_component_type_id'];
-                    $new_entry->formula_id = $db_entry[formula::FLD_ID];
-                    $new_entry->word_id_col = $db_entry['word_id_col'];
-                    $new_entry->word_id_col2 = $db_entry['word_id_col2'];
-                    $new_entry->code_id = $db_entry[sql_db::FLD_CODE_ID];
+                    $new_entry->word_id_row = $db_entry[view_cmp::FLD_ROW_PHRASE.'2'];
+                    $new_entry->link_type_id = $db_entry[view_cmp::FLD_LINK_TYPE.'2'];
+                    $new_entry->type_id = $db_entry[view_cmp::FLD_TYPE.'2'];
+                    $new_entry->formula_id = $db_entry[formula::FLD_ID.'2'];
+                    $new_entry->word_id_col = $db_entry[view_cmp::FLD_COL_PHRASE.'2'];
+                    $new_entry->word_id_col2 = $db_entry[view_cmp::FLD_COL2_PHRASE.'2'];
                     if (!$new_entry->load_phrases()) {
                         $result = false;
                     }
