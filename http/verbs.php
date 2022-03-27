@@ -50,7 +50,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp($usr);
     $dsp->id = cl(db_cl::VIEW, view::VERBS);
     $dsp->usr = $usr;
     $dsp->load();
@@ -60,10 +60,9 @@ if ($usr->id > 0) {
 
     // display the verb list
     $result .= dsp_text_h2("Word link types");
-    $dsp = new verb_list;
-    $dsp->usr = $usr;
-    $dsp->load($db_con);
-    $result .= $dsp->dsp_list();
+    $vrb_lst = new verb_list($usr);
+    $vrb_lst->load($db_con);
+    $result .= $vrb_lst->dsp_list();
     //$result .= zul_dsp_list ($usr->id);
 }
 

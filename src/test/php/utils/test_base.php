@@ -89,6 +89,7 @@ include_once $path_unit . 'figure.php';
 include_once $path_unit . 'view.php';
 include_once $path_unit . 'view_component.php';
 include_once $path_unit . 'view_component_link.php';
+include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'user_log.php';
 

@@ -120,7 +120,7 @@ function import_verbs(user $usr): bool
         }
     }
 
-    $verbs = new verb_list();
+    $verbs = new verb_list($usr);
     $verbs->load($db_con);
 
     return $result;

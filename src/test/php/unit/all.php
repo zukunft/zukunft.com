@@ -301,6 +301,7 @@ function run_unit_tests(testing $t)
     (new formula_element_unit_tests)->run($t);
     (new figure_unit_tests)->run($t);
     (new user_sandbox_unit_tests)->run($t);
+    (new verb_unit_tests)->run($t);
     (new ref_unit_tests)->run($t);
     (new user_log_unit_tests)->run($t);
 

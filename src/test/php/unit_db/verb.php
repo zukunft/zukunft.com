@@ -41,8 +41,7 @@ function run_verb_unit_db_tests(testing $t)
     $t->subheader('Verb list tests');
 
     // load the verb types
-    $lst = new verb_list();
-    $lst->usr = $usr;
+    $lst = new verb_list($usr);
     $result = $lst->load($db_con);
     $target = true;
     $t->dsp('unit_db_verb_list->load', $target, $result);

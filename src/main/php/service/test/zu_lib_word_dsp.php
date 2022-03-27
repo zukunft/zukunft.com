@@ -17,8 +17,7 @@
   zut_unlink_html   - allow the user to unlick a word
   
   zut_dsp_add       - show the html form to add a new word
-  zut_dsp_edit      - show the html form to adjust a word
-  
+
 
   deprecated functions
   ----------
@@ -595,122 +594,6 @@ function zut_dsp_add($in_word, $in_link, $in_type, $user_id, $back_id)
     $result .= zuh_form_end();
 
     log_debug('zut_dsp_add ... done');
-    return $result;
-}
-
-// show all related word
-// should be moved to a view component
-function zut_dsp_edit($wrd_id, $user_id, $back_link)
-{
-    log_debug('zut_dsp_edit(' . $wrd_id . ',u' . $user_id . ',b' . $back_link . ')');
-    $result = '';
-
-    $wrd_name = zut_name($wrd_id, $user_id);
-    $wrd_plural = zut_plural($wrd_id, $user_id);
-    $wrd_description = zut_description($wrd_id, $user_id);
-    $wrd_type = zut_type($wrd_id, $user_id);
-
-    if ($wrd_id > 0) {
-        //zum_entry_word_name ($wrd_id);
-        $result .= zuh_text_h2('Change word "' . $wrd_name . '"');
-        $result .= zuh_form_start("word_edit");
-        $result .= zuh_form_hidden("id", $wrd_id);
-        $result .= zuh_form_hidden("back", $back_link);
-        if ($wrd_type == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
-            $result .= zuh_form_hidden("name", $wrd_name);
-            $result .= '  to change the name of "' . $wrd_name . '" rename the ';
-            $result .= zuf_dsp(zuf_id($wrd_name, $user_id), "formula", $user_id, $back_link);
-            $result .= '.<br> ';
-        } else {
-            $result .= '  rename to:<input type="text" name="name" value="' . $wrd_name . '">';
-        }
-        $result .= '  plural:<input type="text" name="plural" value="' . $wrd_plural . '">';
-        if ($wrd_type == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
-            $result .= ' type: ' . zut_type_name($wrd_type);
-        } else {
-            $result .= zuh_selector("type", "word_edit", "SELECT word_type_id, type_name FROM word_types;", $wrd_type, "");
-        }
-        $result .= '<br>';
-        $result .= '  description:        <input type="text" name="description" class="resizedTextbox" value="' . $wrd_description . '"><br>';
-        $result .= zuh_form_end();
-        $result .= '<br>';
-        $result .= zut_html_list_related($wrd_id, word_select_direction::UP, $user_id);
-        $result .= zut_html_list_related($wrd_id, word_select_direction::DOWN, $user_id);
-    }
-
-    // display the user changes
-    $changes = zut_dsp_hist($wrd_id, 20, $back_link);
-    if (trim($changes) <> "") {
-        $result .= zuh_text_h3("Latest changes related to this word", "change_hist");
-        $result .= $changes;
-    }
-    $changes = zut_dsp_hist_links($wrd_id, 20, $back_link);
-    if (trim($changes) <> "") {
-        $result .= zuh_text_h3("Latest link changes related to this word", "change_hist");
-        $result .= $changes;
-    }
-
-    log_debug('zut_dsp_edit -> done');
-    return $result;
-}
-
-// display the history of a word
-function zut_dsp_hist($wrd_id, $size, $back_link)
-{
-    log_debug("zut_dsp_hist (" . $wrd_id . ",size" . $size . ",b" . $size . ")");
-    $result = ''; // reset the html code var
-
-    // get word changes by the user that are not standard
-    $sql = "SELECT c.change_time AS time, 
-                 u.user_name AS user, 
-                 a.change_action_name AS type, 
-                 f.description AS type_field, 
-                 f.code_id, 
-                 c.old_value AS old, 
-                 c.new_value AS new
-            FROM changes c,
-                 change_actions a,
-                 change_fields f,
-                 users u
-           WHERE (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ")
-             AND f.change_field_id  = c.change_field_id 
-             AND c.row_id  = " . $wrd_id . " 
-             AND c.change_action_id = a.change_action_id 
-             AND c.user_id = u.user_id 
-        ORDER BY c.change_time DESC
-           LIMIT " . $size . ";";
-    $sql_result = zu_sql_get_all($sql);
-
-    // prepare to show where the user uses different word than a normal viewer
-    $row_nbr = 0;
-    $result .= '<table class="change_hist">';
-    while ($wrd_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        $row_nbr++;
-        $result .= '<tr>';
-        if ($row_nbr == 1) {
-            $result .= '<th>time</th>';
-            $result .= '<th>user</th>';
-            $result .= '<th>from</th>';
-            $result .= '<th>to</th>';
-        }
-        $result .= '</tr><tr>';
-        $result .= '<td>' . $wrd_row["time"] . '</td>';
-        $result .= '<td>' . $wrd_row["user"] . '</td>';
-        if ($wrd_row["old"] == "") {
-            $result .= '<td>' . $wrd_row["type"] . '</td>';
-        } else {
-            $result .= '<td>' . $wrd_row["old"] . '</td>';
-        }
-        if ($wrd_row["new"] == "") {
-            $result .= '<td>' . $wrd_row["type"] . '</td>';
-        } else {
-            $result .= '<td>' . $wrd_row["new"] . '</td>';
-        }
-        $result .= '</tr>';
-    }
-    $result .= '</table>';
-
-    log_debug("zut_dsp_hist -> done");
     return $result;
 }
 

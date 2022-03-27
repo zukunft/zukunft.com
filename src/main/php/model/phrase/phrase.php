@@ -493,6 +493,24 @@ class phrase
         return $val_lst;
     }
 
+    /**
+     * get a list of verbs either pointing to or from this phrase
+     * e.g. for Zurich and direction up the list contains at least the verb "is", because Zurich is a Canton is default triple
+     *
+     * @param string $direction UP or DOWN to select the direction
+     * @returns verb_list with all used verbs in the given direction
+     */
+    function vrb_lst(string $direction): verb_list
+    {
+        global $db_con;
+
+        log_debug('phrase->vrb_lst for ' . $this->dsp_id());
+        $vrb_lst = new verb_list($this->usr);
+        $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
+        log_debug('phrase->val_lst -> got ' . dsp_count($vrb_lst->lst));
+        return $vrb_lst;
+    }
+
     /*
     display functions
     */

@@ -462,7 +462,7 @@ class word_link_list_unit_tests
         $wrd = new word($usr);
         $wrd->id = 3;
         $wrd_lst->add($wrd);
-        $vrb_lst = new verb_list();
+        $vrb_lst = new verb_list($usr);
         $vrb_lst->ids = [1, 2];
         $wrd_lnk_lst = new word_link_list($usr);
         $wrd_lnk_lst->wrd_lst = $wrd_lst;

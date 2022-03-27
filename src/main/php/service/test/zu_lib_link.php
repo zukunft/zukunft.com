@@ -68,7 +68,7 @@ function zul_plural ($id) {
   return zu_sql_get_field ('verb', $id, 'name_plural');
 }
 
-// name including the user id as a parameter to return the verb in the lanuage of the user
+// name including the user id as a parameter to return the verb in the language of the user
 function zul_name ($id) {
   return zu_sql_get_field ('verb', $id, 'verb_name');
 }
@@ -78,69 +78,3 @@ function zul_id ($name) {
   log_debug('zul_id('.$name.')');
   return zu_sql_get_id ('verb', $name);
 }
-
-// return the link type id
-function zul_type ($name) {
-  return zu_sql_get_field ('verb', $name, 'verb_name');
-}
-
-// display all verbs and allow an admin to change it
-function zul_dsp_list ($user_id) {
-  log_debug('zul_dsp_list('.$user_id.')');
-  $result  = "";
-
-  $verb_lst = zu_sql_verbs($user_id);
-  $result .= zuh_list($verb_lst, "verb");
-
-  return $result;
-}
-
-// show the html form to add a new verb 
-function zul_dsp_add ($verb_name, $name_plural, $name_reverse, $name_plural_reverse, $user_id, $back_link) {
-  log_debug('zul_dsp_add ('.$verb_name.','.$name_plural.','.$name_reverse.','.$name_plural_reverse.','.$user_id.','.$back_link.')');
-  $result = '';
-  
-  $result .= zuh_text_h2('Add verb (word link type)');
-  $result .= zuh_form_start("verb_add");
-  $result .= zuh_tbl_start_half();
-  $result .= '  <tr>';
-  $result .= '    <td>';
-  $result .= '      verb name:';
-  $result .= '    </td>';
-  $result .= '    <td>';
-  $result .= '      <input type="text" name="verb_name" value="'.$verb_name.'">';
-  $result .= '    </td>';
-  $result .= '  </tr>';
-  $result .= '  <tr>';
-  $result .= '    <td>';
-  $result .= '      verb plural:';
-  $result .= '    </td>';
-  $result .= '    <td>';
-  $result .= '      <input type="text" name="verb_plural" value="'.$name_plural.'">';
-  $result .= '    </td>';
-  $result .= '  </tr>';
-  $result .= '  <tr>';
-  $result .= '    <td>';
-  $result .= '      reverse:';
-  $result .= '    </td>';
-  $result .= '    <td>';
-  $result .= '      <input type="text" name="verb_reverse" value="'.$name_reverse.'">';
-  $result .= '    </td>';
-  $result .= '  </tr>';
-  $result .= '  <tr>';
-  $result .= '    <td>';
-  $result .= '      plural_reverse:';
-  $result .= '    </td>';
-  $result .= '    <td>';
-  $result .= '      <input type="text" name="verb_plural_reverse" value="'.$name_plural_reverse.'">';
-  $result .= '    </td>';
-  $result .= '  </tr>';
-  $result .= '  <input type="hidden" name="back" value="'.$back_link.'">';
-  $result .= '  <input type="hidden" name="confirm" value="1">';
-  $result .= zuh_tbl_end();
-  $result .= zuh_form_end();
-
-  log_debug('zul_dsp_add ... done');
-  return $result;
-}
-

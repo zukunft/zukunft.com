@@ -39,55 +39,77 @@ class verb_list extends user_type_list
     // search and load fields
     public ?word $wrd = null;  // to load a list related to this word
     public ?array $ids = array(); // list of the verb ids to load a list from the database
-    public ?string $direction = verb::DIRECTION_NO; // "up" or "down" to select the parents or children
+
+    /*
+     * construct and map
+     */
 
     /**
-     * overwrite the user_type_list function to include the specific fields like the name_plural
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
-     * @return array the list of reference types
+     * define the settings for this verb list object
+     * @param user|null $usr the user who requested to see the verb list
      */
-    private function load_work_link_list(sql_db $db_con, string $db_type): array
+    function __construct(?user $usr = null)
     {
-        $this->lst = [];
-        // set the where clause depending on the values given
-        // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
-        $sql_where = " s.to_phrase_id = " . $this->wrd->id;
-        if ($this->direction == word_select_direction::UP) {
-            $sql_where = " s.from_phrase_id = " . $this->wrd->id;
-        }
-        $db_con->set_type($db_type);
-        $db_con->set_usr($this->usr->id);
-        $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
-        $db_con->set_join_fields(array(sql_db::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'), DB_TYPE_VERB);
-        $db_con->set_fields(array(verb::FLD_ID));
-        $db_con->set_where_text($sql_where);
-        $sql = $db_con->select_by_id();
-        $db_vrb_lst = $db_con->get_old($sql);
-        $this->lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
-        if ($db_vrb_lst != null) {
-            $vrb_is_lst = array(); // tmp solution to prevent double entry utils query has nice distinct
-            foreach ($db_vrb_lst as $db_vrb) {
-                if (!in_array($db_vrb[verb::FLD_ID], $vrb_is_lst)) {
-                    $vrb = new verb;
-                    $vrb->row_mapper($db_vrb);
-                    $vrb->usr = $this->usr;
-                    $this->lst[] = $vrb;
-                    $vrb_is_lst[] = $vrb->id;
-                    log_debug('verb_list->load added (' . $vrb->name . ')');
-                }
-            }
-        }
-        log_debug('verb_list->load (' . ".$sql_where." . ')');
-        return $this->lst;
+        $this->usr = $usr;
     }
 
+    /*
+     * loading
+     */
+
+    /**
+     * create the SQL to load a list of verbs by the object vars which means uds or wrb and direction
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
+     * @param string $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, string $direction): sql_par
+    {
+        $qp = new sql_par(self::class);
+        if ($phr->id != 0) {
+            $qp->name .= 'phr_id';
+            if ($direction == word_select_direction::UP) {
+                $qp->name .= '_up';
+            } else {
+                $qp->name .= '_down';
+            }
+        } else {
+            log_err('The phrase id must be set to load a verb list');
+            $qp->name = '';
+        }
+
+        if ($qp->name != '') {
+            $db_con->set_type(DB_TYPE_TRIPLE);
+            $db_con->set_name($qp->name);
+            $db_con->set_usr($this->usr->id);
+            $db_con->set_usr_num_fields(array(user_sandbox::FLD_EXCLUDED));
+            $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), DB_TYPE_VERB);
+            $db_con->set_fields(array(verb::FLD_ID));
+            // set the where clause depending on the values given
+            // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
+            $db_con->add_par(sql_db::PAR_INT, $phr->id);
+            if ($direction == word_select_direction::UP) {
+                $qp->sql = $db_con->select_by_field(word_link::FLD_FROM);
+            } else {
+                $qp->sql = $db_con->select_by_field(word_link::FLD_TO);
+            }
+            $qp->par = $db_con->get_par();
+        }
+
+        return $qp;
+    }
 
     /**
      * load a list of verbs that are used by a given word
      *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
+     * @param string $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
+     * @return bool true if at least one verb is found
      */
-    function load_work_links(sql_db $db_con, string $db_type = DB_TYPE_TRIPLE): bool
+    function load_by_linked_phrases(sql_db $db_con, phrase $phr, string $direction): bool
     {
 
         $result = false;
@@ -99,10 +121,28 @@ class verb_list extends user_type_list
               zu_err("The word id, the direction and the user (".$this->usr->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
-            $this->lst = $this->load_work_link_list($db_con, $db_type);
-            $this->hash = $this->get_hash($this->lst);
-            if (count($this->hash) > 0) {
-                $result = true;
+            $qp = $this->load_by_linked_phrases_sql($db_con, $phr, $direction);
+            if ($qp->name != '') {
+                $vrb_lst = array(); // rebuild also the id list (actually only needed if loaded via word group id)
+                $vrb_id_lst = array(); // tmp solution to prevent double entry utils query has nice distinct
+                $db_vrb_lst = $db_con->get($qp);
+                if ($db_vrb_lst != null) {
+                    foreach ($db_vrb_lst as $db_vrb) {
+                        if (!in_array($db_vrb[verb::FLD_ID], $vrb_id_lst)) {
+                            $vrb = new verb;
+                            $vrb->row_mapper($db_vrb);
+                            $vrb->usr = $this->usr;
+                            $vrb_lst[] = $vrb;
+                            $vrb_id_lst[] = $vrb->id;
+                            log_debug('verb_list->load added (' . $vrb->name . ')');
+                        }
+                    }
+                }
+                $this->lst = $vrb_lst;
+                $this->hash = $this->get_hash($this->lst);
+                if (count($this->hash) > 0) {
+                    $result = true;
+                }
             }
         }
         return $result;
@@ -118,7 +158,7 @@ class verb_list extends user_type_list
     {
         $this->lst = [];
         $db_con->set_type($db_type);
-        $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'));
+        $db_con->set_fields(verb::FLD_NAMES);
         $sql = $db_con->select_by_id();
         $db_lst = $db_con->get_old($sql);
         if ($db_lst != null) {

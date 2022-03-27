@@ -918,8 +918,7 @@ function load_usr_data()
     global $verbs;
     global $system_views;
 
-    $verbs = new verb_list();
-    $verbs->usr = $usr;
+    $verbs = new verb_list($usr);
     $verbs->load($db_con);
 
     $system_views = new view_list($usr);

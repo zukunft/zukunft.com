@@ -1131,11 +1131,10 @@ class word extends user_sandbox_description
 
         global $db_con;
 
-        $vrb_lst = new verb_list;
-        $vrb_lst->wrd = clone $this;
-        $vrb_lst->usr = $this->usr;
-        $vrb_lst->direction = $direction;
-        $vrb_lst->load_work_links($db_con);
+        $vrb_lst = new verb_list($this->usr);
+        $wrd = clone $this;
+        $phr = $wrd->phrase();
+        $vrb_lst->load_by_linked_phrases($db_con, $phr, $direction);
         return $vrb_lst;
     }
 

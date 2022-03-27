@@ -48,6 +48,23 @@ class verb
 
     // object specific database and JSON object field names
     const FLD_ID = 'verb_id';
+    const FLD_NAME = 'verb_name';
+    const FLD_PLURAL = 'name_plural';
+    const FLD_REVERSE = 'name_reverse';
+    const FLD_PLURAL_REVERSE = 'name_plural_reverse';
+    const FLD_FORMULA = 'formula_name';
+    const FLD_WORDS = 'words';
+
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const FLD_NAMES = array(
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_DESCRIPTION,
+        self::FLD_PLURAL,
+        self::FLD_REVERSE,
+        self::FLD_PLURAL_REVERSE,
+        self::FLD_FORMULA,
+        self::FLD_WORDS
+    );
 
     public ?int $id = null;           // the database id of the word link type (verb)
     public ?user $usr = null;         // not used at the moment, because there should not be any user specific verbs
@@ -88,16 +105,16 @@ class verb
             if ($db_row[self::FLD_ID] > 0) {
                 $this->id = $db_row[self::FLD_ID];
                 $this->code_id = $db_row[sql_db::FLD_CODE_ID];
-                $this->name = $db_row['verb_name'];
-                $this->plural = $db_row['name_plural'];
-                $this->reverse = $db_row['name_reverse'];
-                $this->rev_plural = $db_row['name_plural_reverse'];
-                $this->frm_name = $db_row['formula_name'];
+                $this->name = $db_row[self::FLD_NAME];
+                $this->plural = $db_row[self::FLD_PLURAL];
+                $this->reverse = $db_row[self::FLD_REVERSE];
+                $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
+                $this->frm_name = $db_row[self::FLD_FORMULA];
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-                if ($db_row['words'] == null) {
+                if ($db_row[self::FLD_WORDS] == null) {
                     $this->usage = 0;
                 } else {
-                    $this->usage = $db_row['words'];
+                    $this->usage = $db_row[self::FLD_WORDS];
                 }
                 $result = true;
             } else {
@@ -109,39 +126,69 @@ class verb
         return $result;
     }
 
-    // load the missing verb parameters from the database
+    /*
+     * loading
+     */
+
+    /**
+     * create the SQL to load a verb by one of the object vars which means id, name or code_id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    {
+        global $usr;
+
+        $qp = new sql_par($class);
+        if ($this->id != 0) {
+            $qp->name .= 'id';
+        } elseif ($this->code_id != '') {
+            $qp->name .= 'code_id';
+        } elseif ($this->name != '') {
+            $qp->name .= 'name';
+        } else {
+            log_err('Either the id, code_id or name must be set to load a verb');
+            $qp->name = '';
+        }
+
+        $db_con->set_type(DB_TYPE_VERB);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($usr->id);
+        $db_con->set_fields(self::FLD_NAMES);
+        if ($this->id != 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->id);
+            $qp->sql = $db_con->select_by_id();
+        } elseif ($this->code_id != '') {
+            $db_con->add_par(sql_db::PAR_TEXT, $this->code_id);
+            $qp->sql = $db_con->select_by_code_id();
+        } else {
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+            $sql_where = '( ' . self::FLD_NAME . ' = ' . $db_con->par_name();
+            $db_con->add_par(sql_db::PAR_TEXT, $this->name);
+            $sql_where .= ' OR ' . self::FLD_FORMULA . ' = ' . $db_con->par_name() . ')';
+            $db_con->set_where_text($sql_where);
+            $qp->sql = $db_con->select_by_id();
+        }
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * load the missing verb parameters from the database
+     * @returns bool true if the verbs object is successfully filled from database
+     */
     function load(): bool
     {
 
         global $db_con;
         $result = false;
 
-        // set the where clause depending on the values given
-        $sql_where = '';
-        if ($this->code_id > 0) {
-            $sql_where = "code_id = " . $this->code_id;
-        } elseif ($this->id > 0) {
-            $sql_where = "verb_id = " . $this->id;
-        } elseif ($this->name <> '') {
-            $sql_where = "( verb_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT) . " OR formula_name = " . $db_con->sf($this->name, sql_db::FLD_FORMAT_TEXT) . ")";
-        }
+        $qp = $this->load_sql($db_con);
 
-        if ($sql_where == '') {
-            log_err("Either the database ID or the verb name must be set for loading.", "verb->load");
-        } else {
-            log_debug('verb->load by (' . $sql_where . ')');
-            // similar statement used in word_link_list->load, check if changes should be repeated in word_link_list.php
-            $db_con->set_type(DB_TYPE_VERB);
-            $db_con->set_usr($this->usr->id);
-            $db_con->set_fields(array(sql_db::FLD_CODE_ID, 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sql_db::FLD_DESCRIPTION, 'words'));
-            $db_con->set_where_text($sql_where);
-            $sql = $db_con->select_by_id();
-            if (!isset($this->usr)) {
-                log_err("User is missing", "verb->load");
-            } else {
-                $db_con->usr_id = $this->usr->id;
-            }
-            $db_row = $db_con->get1_old($sql);
+        if ($qp->name != '') {
+            $db_row = $db_con->get1($qp);
             $result = $this->row_mapper($db_row);
             log_debug('verb->load (' . $this->dsp_id() . ')');
         }
@@ -402,7 +449,7 @@ class verb
         $log->usr = $this->usr;
         $log->action = 'add';
         $log->table = 'verbs';
-        $log->field = 'verb_name';
+        $log->field = self::FLD_NAME;
         $log->old_value = '';
         $log->new_value = $this->name;
         $log->row_id = 0;
@@ -431,7 +478,7 @@ class verb
         $log->usr = $this->usr;
         $log->action = 'del';
         $log->table = 'verbs';
-        $log->field = 'verb_name';
+        $log->field = self::FLD_NAME;
         $log->old_value = $this->name;
         $log->new_value = '';
         $log->row_id = $this->id;
@@ -492,7 +539,7 @@ class verb
             $log->new_value = $this->name;
             $log->std_value = $db_rec->name;
             $log->row_id = $this->id;
-            $log->field = 'verb_name';
+            $log->field = self::FLD_NAME;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -508,7 +555,7 @@ class verb
             $log->new_value = $this->plural;
             $log->std_value = $db_rec->plural;
             $log->row_id = $this->id;
-            $log->field = 'name_plural';
+            $log->field = self::FLD_PLURAL;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -524,7 +571,7 @@ class verb
             $log->new_value = $this->reverse;
             $log->std_value = $db_rec->reverse;
             $log->row_id = $this->id;
-            $log->field = 'name_reverse';
+            $log->field = self::FLD_REVERSE;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -540,7 +587,7 @@ class verb
             $log->new_value = $this->rev_plural;
             $log->std_value = $db_rec->rev_plural;
             $log->row_id = $this->id;
-            $log->field = 'name_plural_reverse';
+            $log->field = self::FLD_PLURAL_REVERSE;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -572,7 +619,7 @@ class verb
             $log->new_value = $this->frm_name;
             $log->std_value = $db_rec->frm_name;
             $log->row_id = $this->id;
-            $log->field = 'formula_name';
+            $log->field = self::FLD_FORMULA;
             $result .= $this->save_field_do($db_con, $log);
         }
         return $result;
@@ -658,7 +705,7 @@ class verb
         if ($log->id > 0) {
             // insert the new verb
             $db_con->set_type(DB_TYPE_VERB);
-            $this->id = $db_con->insert("verb_name", $this->name);
+            $this->id = $db_con->insert(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id)) {
