@@ -141,6 +141,7 @@ class verb_list extends user_type_list
                 $this->lst = $vrb_lst;
                 $this->hash = $this->get_hash($this->lst);
                 if (count($this->hash) > 0) {
+                    $this->lst = $vrb_lst;
                     $result = true;
                 }
             }
@@ -149,7 +150,31 @@ class verb_list extends user_type_list
     }
 
     /**
+     * create an SQL statement to load all verbs from the database
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $class the class name to be compatible with the user sandbox load_sql functions
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_db $db_con, string $class = ''): sql_par
+    {
+        $qp = new sql_par($class);
+        $qp->name = $class . '_all';
+
+        $db_con->set_type(DB_TYPE_VERB);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(verb::FLD_NAMES);
+        $db_con->set_page_par(SQL_ROW_MAX, 0);
+        $qp->sql = $db_con->select_all();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
+
+    /**
      * force to reload the complete list of verbs from the database
+     *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param string $db_type the database name e.g. the table name without s
      * @return array the list of types
@@ -157,10 +182,8 @@ class verb_list extends user_type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $db_con->set_type($db_type);
-        $db_con->set_fields(verb::FLD_NAMES);
-        $sql = $db_con->select_by_id();
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_sql($db_con, $db_type);
+        $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $vrb = new verb();
@@ -171,6 +194,13 @@ class verb_list extends user_type_list
         return $this->lst;
     }
 
+    /**
+     * force to reload the complete list of verbs from the database
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param string $db_type the database name e.g. the table name without s
+     * @return bool true if at least one verb has been loaded
+     */
     function load(sql_db $db_con, string $db_type = DB_TYPE_VERB): bool
     {
         $result = false;
