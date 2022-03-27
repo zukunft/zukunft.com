@@ -31,7 +31,7 @@
 
 */
 
-class phrase_group_word_link
+class phrase_group_word_link extends phrase_group_link
 {
     // object specific database and JSON object field names
     const FLD_ID = 'phrase_group_word_link_id';
@@ -43,14 +43,11 @@ class phrase_group_word_link
     );
 
     // database fields
-    public int $id;        // the primary database id of the numeric value, which is the same for the standard and the user specific value
-    public int $grp_id;    // the phrase group id and not the object to reduce the memory usage
     public int $wrd_id;    // the word id and not the object to reduce the memory usage
 
     function __construct()
     {
-        $this->id = 0;
-        $this->grp_id = 0;
+        parent::__construct();
         $this->wrd_id = 0;
     }
 
@@ -64,6 +61,34 @@ class phrase_group_word_link
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve the phrase group word links related to a group id
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase_group $grp the phrase group which should be used for the selection
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_group_id_sql(sql_db $db_con, phrase_group $grp): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $db_con->set_type(DB_TYPE_PHRASE_GROUP_WORD_LINK);
+
+        if ($grp->id > 0) {
+            $qp->name .= 'grp_id';
+            $db_con->add_par(sql_db::PAR_INT, $grp->id);
+        } else {
+            log_err('The phrase group id must be set ' .
+                'to load a ' . self::class, self::class . '->load_by_group_id_sql');
+
+        }
+        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_name($qp->name);
+        $qp->sql = $db_con->select_by_field(phrase_group::FLD_ID);
+        $qp->par = $db_con->get_par();
+
+        return $qp;
     }
 
     /**

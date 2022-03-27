@@ -707,23 +707,23 @@ class phrase_group
         $result = '';
 
         // create the db link object for all actions
-        //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
 
         // switch between the word and triple settings
         if ($type == DB_TYPE_WORD) {
+            $lnk = new phrase_group_word_link();
+            $qp = $lnk->load_by_group_id_sql($db_con, $this);
             $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_WORD_LINK);
             $field_name = word::FLD_ID;
         } else {
+            $lnk = new phrase_group_triple_link();
+            $qp = $lnk->load_by_group_id_sql($db_con, $this);
             $table_name = $db_con->get_table_name(DB_TYPE_PHRASE_GROUP_TRIPLE_LINK);
             $field_name = 'triple_id';
         }
 
         // read all existing group links
-        $sql = 'SELECT ' . $field_name . '
-              FROM ' . $table_name . '
-             WHERE phrase_group_id = ' . $this->id . ';';
-        $grp_lnk_rows = $db_con->get_old($sql);
+        $grp_lnk_rows = $db_con->get($qp);
         $db_ids = array();
         if ($grp_lnk_rows != null) {
             foreach ($grp_lnk_rows as $grp_lnk_row) {

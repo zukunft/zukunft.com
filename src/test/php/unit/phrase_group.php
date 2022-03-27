@@ -131,6 +131,45 @@ class phrase_group_unit_tests
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_triple.sql');
         $t->assert('phrase_group_list->load_all_triple_linked', $t->trim($created_sql), $t->trim($expected_sql));
 
+
+        $t->header('Unit tests of the phrase group word link class (src/main/php/model/phrase/phrase_group_word_link.php)');
+
+        $t->subheader('SQL statement tests');
+
+        // sql to load the phrase group word links related to a group
+        $grp_wrd_lnk = new phrase_group_word_link();
+        $phr_grp = new phrase_group($usr);
+        $phr_grp->id = 13;
+        $this->assert_load_by_group_id_sql($t, $db_con, $grp_wrd_lnk, $phr_grp);
+
+        // sql to load the phrase group triple links related to a group
+        $grp_trp_lnk = new phrase_group_triple_link();
+        $phr_grp->id = 14;
+        $this->assert_load_by_group_id_sql($t, $db_con, $grp_trp_lnk, $phr_grp);
+
+    }
+
+    /**
+     * similar to $t->assert_load_sql but calling load_by_group_id_sql instead of load_sql
+     *
+     * @param testing $t the forwarded testing object
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param phrase_group_link $phr_grp_lnk the phrase group triple or word link object used for testing
+     * @param phrase_group $grp the phrase group object to select the links
+     */
+    private function assert_load_by_group_id_sql(testing $t, sql_db $db_con, phrase_group_link $phr_grp_lnk, phrase_group $grp)
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
+        $result = $t->assert_qp($qp, $db_con->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $db_con->db_type = sql_db::MYSQL;
+            $qp = $phr_grp_lnk->load_by_group_id_sql($db_con, $grp);
+            $t->assert_qp($qp, $db_con->db_type);
+        }
     }
 
 }
