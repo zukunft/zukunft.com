@@ -239,6 +239,28 @@ class word_list
     }
 
     /**
+     * set the SQL query parameters to load all changes of one user on words
+     * TODO build a general user change selection
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param user $usr the user for whom the changes should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_user_changes_sql(sql_db $db_con, user $usr): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($usr->id > 0) {
+            $qp->name .= 'user_changes';
+            $db_con->set_name($qp->name);
+            $qp->sql = $db_con->select_by_field(word::FLD_ID);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * load this list of words
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one word found
