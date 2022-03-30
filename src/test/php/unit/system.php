@@ -38,6 +38,14 @@ class system_unit_tests
         global $sql_names;
 
         $db_con = new sql_db();
+
+        // init
+        $db_con = new sql_db();
+        $t->name = 'system->';
+        $t->resource_path = 'db/system/';
+        $usr->id = 1;
+
+
         // TODO move to __construct of unit test
         if ($usr->name == null) {
             $usr->name = user::SYSTEM_TEST_OLD;
@@ -103,6 +111,44 @@ class system_unit_tests
         $created_sql = $ip_range->load_sql($db_con);
         $expected_sql = $t->file('db/system/ip_range_mysql.sql');
         $t->assert('ip_range->load_sql by id for MySQL', $t->trim($created_sql), $t->trim($expected_sql));
+
+
+        $t->subheader('user list loading sql tests');
+
+        // checl if the sql to load the complete list of all .. types is created as expected
+        $sys_log_stati = new sys_log_status();
+        $t->assert_load_sql($db_con, $sys_log_stati);
+
+        /*
+         * these tests are probably not needed because not problem is expected
+         * activate if nevertheless an issue occurs
+        $system_users = new user_list();
+        $t->assert_load_sql($db_con, $system_users);
+        $user_profiles = new user_profile_list();
+        $t->assert_load_sql($db_con, $user_profiles);
+        $word_types = new word_type_list();
+        $t->assert_load_sql($db_con, $word_types);
+        $formula_types = new formula_type_list();
+        $t->assert_load_sql($db_con, $formula_types);
+        $formula_link_types = new formula_link_type_list();
+        $t->assert_load_sql($db_con, $formula_link_types);
+        $formula_element_types = new formula_element_type_list();
+        $t->assert_load_sql($db_con, $formula_element_types);
+        $view_types = new view_type_list();
+        $t->assert_load_sql($db_con, $view_types);
+        $view_component_types = new view_cmp_type_list();
+        $t->assert_load_sql($db_con, $view_component_types);
+        $ref_types = new ref_type_list();
+        $t->assert_load_sql($db_con, $ref_types);
+        $share_types = new share_type_list();
+        $t->assert_load_sql($db_con, $share_types);
+        $protection_types = new protection_type_list();
+        $t->assert_load_sql($db_con, $protection_types);
+        $job_types = new job_type_list();
+        $t->assert_load_sql($db_con, $job_types);
+        $change_log_tables = new change_log_table();
+        $t->assert_load_sql($db_con, $change_log_tables);
+         */
 
         /*
          * im- and export tests

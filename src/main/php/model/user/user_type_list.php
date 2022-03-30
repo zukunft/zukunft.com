@@ -40,6 +40,21 @@ class user_type_list
     public array $lst = []; // a list of type objects
     public array $hash = []; // hash list with the code id for fast selection
 
+    function load_sql(sql_db $db_con, string $db_type): sql_par
+    {
+        $qp = new sql_par($db_type);
+        $qp->name = $db_type . '_all';
+
+        $db_con->set_type($db_type);
+        $db_con->set_name($qp->name);
+        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
+        $db_con->set_page_par(SQL_ROW_MAX, 0);
+        $qp->sql = $db_con->select_all();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     /**
      * force to reload the type names and translations from the database
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
@@ -49,10 +64,8 @@ class user_type_list
     private function load_list(sql_db $db_con, string $db_type): array
     {
         $this->lst = [];
-        $db_con->set_type($db_type);
-        $db_con->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
-        $sql = $db_con->select_by_id();
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_sql($db_con, $db_type);
+        $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
                 $type_obj = new user_type();
