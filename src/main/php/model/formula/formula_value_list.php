@@ -39,14 +39,6 @@ class formula_value_list
     public array $lst;   // list of the formula results
     public user $usr;    // the person who wants to see the results
 
-    // search fields (to deprecate)
-    public ?int $frm_id = null;  // to get the results of this formula
-    public ?int $phr_id = null;  // to get the results linked to a phrase
-    public ?int $grp_id = null;  // to get the results linked to a phrase group
-
-    // private in memory fields to reduce the number of function call parameters within this class
-    public ?formula $frm = null; // the formula object
-
     function __construct(user $usr)
     {
         $this->lst = array();
@@ -162,6 +154,18 @@ class formula_value_list
     }
 
     /**
+     * create the SQL to load a list of formula values link to a formula
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param formula $frm a named object used for selection e.g. a formula
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_frm_sql(sql_db $db_con, formula $frm): sql_par
+    {
+        return $this->load_sql($db_con, $frm);
+    }
+
+    /**
      * load a list of formula values linked to
      * a formula
      * a phrase group
@@ -236,7 +240,9 @@ class formula_value_list
         return $result;
     }
 
-    // return one string with all names of the list
+    /**
+     * return one string with all names of the list
+     */
     function name(): string
     {
         global $debug;
@@ -260,7 +266,9 @@ class formula_value_list
         return $result;
     }
 
-    // return a list of the formula result ids
+    /**
+     * return a list of the formula result ids
+     */
     function ids(): array
     {
         $result = array();
@@ -275,7 +283,9 @@ class formula_value_list
         return $result;
     }
 
-    // return a list of the formula result names
+    /**
+     * return a list of the formula result names
+     */
     function names(): array
     {
         $result = array();
@@ -295,7 +305,9 @@ class formula_value_list
         return $result;
     }
 
-    // create the html code to show the formula results to the user
+    /**
+     * create the html code to show the formula results to the user
+     */
     function display(string $back = ''): string
     {
         log_debug("fv_lst->display (" . dsp_count($this->lst) . ")");
@@ -332,29 +344,30 @@ class formula_value_list
     }
 
     /*
-      create functions - build new formula values
-      ----------------
-    */
+     * create functions - build new formula values
+     */
 
-    // add all formula results to the list for ONE formula based on
-    // - the word assigned to the formula ($phr_id)
-    // - the word that are used in the formula ($frm_phr_ids)
-    // - the formula ($frm_row) to provide parameters, but not for selection
-    // - the user ($this->usr->id) to filter the results
-    // and request on formula result for each word group
-    // e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
-    //      so Sales and Cost are words of the formula
-    //      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
-    //      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
-    //      so the result would be to add 4 formula values to the list:
-    //      1. calculate "operating income" for "ABB", "EUR" and "2016"
-    //      2. calculate "operating income" for "ABB", "CHF" and "2016"
-    //      3. calculate "operating income" for "ABB", "EUR" and "2017"
-    //      4. calculate "operating income" for "ABB", "CHF" and "2017"
-    // TODO: check if a value is used in the formula
-    //       exclude the time word and if needed loop over the time words
-    //       if the value has been update, create a calculation request
-    // ex zuc_upd_lst_val
+    /**
+     * add all formula results to the list for ONE formula based on
+     * - the word assigned to the formula ($phr_id)
+     * - the word that are used in the formula ($frm_phr_ids)
+     * - the formula ($frm_row) to provide parameters, but not for selection
+     * - the user ($this->usr->id) to filter the results
+     * and request on formula result for each word group
+     * e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
+     *      so Sales and Cost are words of the formula
+     *      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
+     *      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
+     *      so the result would be to add 4 formula values to the list:
+     *      1. calculate "operating income" for "ABB", "EUR" and "2016"
+     *      2. calculate "operating income" for "ABB", "CHF" and "2016"
+     *      3. calculate "operating income" for "ABB", "EUR" and "2017"
+     *      4. calculate "operating income" for "ABB", "CHF" and "2017"
+     * TODO: check if a value is used in the formula
+     *       exclude the time word and if needed loop over the time words
+     *       if the value has been update, create a calculation request
+     * ex zuc_upd_lst_val
+     */
     function add_frm_val($phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
         log_debug('fv_lst->add_frm_val(t' . $phr_id . ',' . dsp_array($frm_phr_ids) . ',u' . $this->usr->id . ')');
@@ -406,11 +419,15 @@ class formula_value_list
         return $result;
     }
 
-    // add all formula results to the list that may needs to be updated if a formula is updated for one user
-    // TODO: only request the user specific calculation if needed
-    function frm_upd_lst_usr($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
+    /**
+     * add all formula results to the list that may needs to be updated if a formula is updated for one user
+     * TODO: only request the user specific calculation if needed
+     */
+    function frm_upd_lst_usr(
+        formula $frm,
+        $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
-        log_debug('fv_lst->frm_upd_lst_usr(' . $this->frm->name . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
+        log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
         $result = new batch_job_list;
         $added = 0;
 
@@ -441,11 +458,11 @@ class formula_value_list
 
             if (!empty($phr_lst->lst)) {
                 $calc_request = new batch_job;
-                $calc_request->frm = $this->frm;
+                $calc_request->frm = $frm;
                 $calc_request->usr = $usr;
                 $calc_request->phr_lst = $phr_lst;
                 $result->add($calc_request);
-                log_debug('request "' . $this->frm->name . '" for "' . $phr_lst->name() . '"');
+                log_debug('request "' . $frm->name . '" for "' . $phr_lst->name() . '"');
                 $added++;
             }
         }
@@ -486,7 +503,7 @@ class formula_value_list
             $frm_ids = array();
             foreach ($all_frm_ids as $chk_frm_id) {
               if (zuf_is_special ($chk_frm_id, $this->usr->id)) {
-                $special_frm_phr_ids = $this->frm_upd_lst_frm_special ($chk_frm_id, $frm_row['formula_text'], $this->usr->id, $phr_id);
+                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row['formula_text'], $this->usr->id, $phr_id);
 
                 //get all values related to the words
               } else {
@@ -544,13 +561,15 @@ class formula_value_list
         return $result;
     }
 
-    // get the calculation requests if one formula has been updated
-    // returns a batch_job_list with all formula results that may need to be updated if a formula is updated
-    // $frm - formulas that needs to be checked for update
-    // $usr - to define which user view should be updated
-    function frm_upd_lst($usr, $back)
+    /**
+     * get the formula value that needs to be recalculated if one formula has been updated
+     * TODO should returns a batch_job_list with all formula results that may need to be updated if a formula is updated
+     * @param formula $frm - the formula that has been updated
+     * $usr - to define which user view should be updated
+     */
+    function frm_upd_lst(formula $frm, $back)
     {
-        log_debug('add ' . $this->frm->dsp_id() . ' to queue ...');
+        log_debug('add ' . $frm->dsp_id() . ' to queue ...');
 
         // to inform the user about the progress
         $last_msg_time = time(); // the start time
@@ -562,15 +581,15 @@ class formula_value_list
         // including all child phrases that should also be included in the assignment e.g. for "Year" include "2018"
         // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
-        $phr_lst_frm_assigned = $this->frm->assign_phr_lst();
-        log_debug('formula "' . $this->frm->name . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
+        $phr_lst_frm_assigned = $frm->assign_phr_lst();
+        log_debug('formula "' . $frm->name . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->usr->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
         // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
         // for formulas the formula word is used
-        $exp = $this->frm->expression();
+        $exp = $frm->expression();
         $phr_lst_frm_used = $exp->phr_verb_lst($back);
-        log_debug('formula "' . $this->frm->name . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $this->frm->usr_text . ')');
+        log_debug('formula "' . $frm->name . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
 
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
         $phr_lst_preset_following = $exp->element_special_following($back);
@@ -596,7 +615,7 @@ class formula_value_list
             $phr_lst_preset = $frm_special->special_phr_lst($phr_lst_frm_assigned);
             log_debug('fv_lst->frm_upd_lst -> got phrases ' . $phr_lst_preset->dsp_id());
         }
-        log_debug('the used ' . $phr_lst_frm_used->name_linked() . ' are taken from ' . $this->frm->usr_text);
+        log_debug('the used ' . $phr_lst_frm_used->name_linked() . ' are taken from ' . $frm->usr_text);
         if ($phr_lst_preset->dsp_name() <> '""') {
             log_debug('the used predefined formulas ' . $frm_lst_preset->name() . ' leading to ' . $phr_lst_preset->dsp_name());
         }
@@ -606,17 +625,17 @@ class formula_value_list
         //      because the "increase" of an "increase" is a gradient not an "increase"
 
         // get the phrase name of the formula e.g. "increase"
-        if (!isset($this->frm->name_wrd)) {
-            $this->frm->load_wrd();
+        if (!isset($frm->name_wrd)) {
+            $frm->load_wrd();
         }
-        $phr_frm = $this->frm->name_wrd;
-        log_debug('For ' . $this->frm->usr_text . ' formula results with the name ' . $phr_frm->name() . ' should not be used for calculation to avoid loops');
+        $phr_frm = $frm->name_wrd;
+        log_debug('For ' . $frm->usr_text . ' formula results with the name ' . $phr_frm->name() . ' should not be used for calculation to avoid loops');
 
         // get the phrase name of the formula e.g. "percent"
-        $exp = $this->frm->expression();
+        $exp = $frm->expression();
         $phr_lst_fv = $exp->fv_phr_lst();
         if (isset($phr_lst_fv)) {
-            log_debug('For ' . $this->frm->usr_text . ' formula results with the result phrases ' . $phr_lst_fv->dsp_name() . ' should not be used for calculation to avoid loops');
+            log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_fv->dsp_name() . ' should not be used for calculation to avoid loops');
         }
 
         // depending on the formula setting (all words or at least one word)
@@ -627,7 +646,7 @@ class formula_value_list
         // 3. aggregate the word list for all values
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several formula values for the same word group
-        log_debug('get all values used in the formula ' . $this->frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
+        log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
         $phr_grp_lst_val = new phrase_group_list;
         $phr_grp_lst_val->usr = $this->usr; // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv);
@@ -649,9 +668,9 @@ class formula_value_list
                 $usr_calc_needed = true;
             }
             if ($this->usr->id == 0 or $usr_calc_needed) {
-                log_debug('update values for user: ' . $usr->name . ' and formula ' . $this->frm->name);
+                log_debug('update values for user: ' . $usr->name . ' and formula ' . $frm->name);
 
-                $result = $this->frm_upd_lst_usr($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
+                $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
             }
         }
 
@@ -669,15 +688,21 @@ class formula_value_list
         return $result;
     }
 
-    // create a list of all formula results that needs to be updated if a value is updated
+    /**
+     * create a list of all formula results that needs to be updated if a value is updated
+     */
     function val_upd_lst($val, $usr)
     {
         // check if the default value has been updated and if yes, update the default value
         // get all formula values
     }
 
-    // to review
-    // lists all formula values related to one value
+    /**
+     * TODO review: the table value_formula_links is not yet filled
+     *              split the backend and frontend part
+     *              target is: if a value is changed, what needs to be updated?
+     * lists all formula values related to one value
+     */
     function val_phr_lst($val, $back, $phr_lst, $time_id)
     {
         global $db_con;
@@ -736,10 +761,11 @@ class formula_value_list
         }
     }
 
-    // combine two calculation queues
-    function merge($lst_to_merge)
+    /**
+     * combine two calculation queues
+     */
+    function merge(formula_value_list $lst_to_merge): formula_value_list
     {
-        // TODO remove always $debug from dsp_id
         log_debug('fv_lst->merge ' . $lst_to_merge->dsp_id() . ' to ' . $this->dsp_id());
         if (isset($lst_to_merge->lst)) {
             foreach ($lst_to_merge->lst as $new_fv) {

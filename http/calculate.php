@@ -71,8 +71,7 @@ if ($usr->id > 0) {
 
             // build the calculation queue
             $calc_fv_lst = new formula_value_list($usr);
-            $calc_fv_lst->frm = $frm_request;
-            $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
+            $calc_lst = $calc_fv_lst->frm_upd_lst($frm_request, $back);
             log_debug("calculate queue is build (number of values to check: " . dsp_count($calc_lst->lst) . ")");
 
             // execute the queue

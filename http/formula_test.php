@@ -149,8 +149,7 @@ if ($session_usr->id > 0) {
             // TODO: but only if the user has done some changes
             $calc_fv_lst = new formula_value_list($usr);
             foreach ($frm_lst->lst as $frm) {
-                $calc_fv_lst->frm = $frm;
-                $calc_lst = $calc_fv_lst->frm_upd_lst($usr, $back);
+                $calc_lst = $calc_fv_lst->frm_upd_lst($frm, $back);
             }
 
             log_debug("calculate queue is build (number of values to test: " . dsp_count($calc_lst->lst) . ")");
