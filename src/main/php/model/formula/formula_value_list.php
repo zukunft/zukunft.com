@@ -49,6 +49,24 @@ class formula_value_list
      *  load functions
      */
 
+    function load_by_phr_lst_sql(sql_db $db_con, phrase_list $phr_lstl): sql_par
+    {
+        $qp = new sql_par(self::class);
+
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    function load_by_phr_lst(sql_db $db_con, phrase_list $phr_lst): sql_par
+    {
+        $qp = $this->load_by_phr_lst_sql($db_con, $phr_lst);
+
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+
+
     /**
      * create the SQL to load a list of formula values link to
      * a formula
@@ -425,7 +443,7 @@ class formula_value_list
      */
     function frm_upd_lst_usr(
         formula $frm,
-        $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
+                $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
         $result = new batch_job_list;
@@ -698,18 +716,17 @@ class formula_value_list
     }
 
     /**
+     * load all formula values related to one value
      * TODO review: the table value_formula_links is not yet filled
      *              split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
-     * lists all formula values related to one value
      */
-    function val_phr_lst($val, $back, $phr_lst, $time_id)
+    function load_by_val(value $val)
     {
         global $db_con;
 
-        $time_phr = new phrase($this->usr);
-        $time_phr->id = $time_id;
-        $time_phr->load();
+        $phr_lst = $val->phr_lst;
+
         log_debug("fv_lst->val_phr_lst ... for value " . $val->id);
         $result = '';
 
@@ -724,17 +741,20 @@ class formula_value_list
                 $frm_id = $db_fv[formula::FLD_ID];
                 $formula_text = $db_fv['formula_text'];
                 $phr_lst_used = clone $phr_lst;
-                $phr_lst_used->add($time_phr);
+                if ($val->time_phr != null) {
+                    $phr_lst_used->add($val->time_phr);
+                }
                 $frm = new formula($this->usr);
                 $frm->id = $frm_id;
                 $frm->load();
+                $back = '';
                 $fv_list = $frm->to_num($phr_lst_used, $back);
                 $formula_value = $fv_list->get_first();
                 // if the formula value is empty use the id to be able to select the formula
                 if ($formula_value == '') {
                     $formula_value = $db_fv[formula::FLD_ID];
                 }
-                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv[formula::FLD_ID] . '&back=' . $back . '">' . $formula_value . '</a> ';
+                $formula_links .= ' <a href="/http/formula_edit.php?id=' . $db_fv[formula::FLD_ID] . '">' . $formula_value . '</a> ';
             }
         }
 
@@ -743,6 +763,24 @@ class formula_value_list
         }
 
         log_debug("fv_lst->val_phr_lst ... done.");
+        return $result;
+    }
+
+    /**
+     * create the pure html (5) code for all formula links related to this value list
+     * @param back_trace|null $back list of past url calls of the session user
+     * @return string the html code part with the formula links
+     */
+    function frm_links_html(?back_trace $back = null): string
+    {
+        $result = '';
+        $formula_links = '';
+        foreach ($this->lst as $fv) {
+            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $fv->frm->id . '&back=' . $back->url_encode() . '">' . $fv->number . '</a> ';
+        }
+        if ($formula_links <> '') {
+            $result .= ' (or ' . $formula_links . ')';
+        }
         return $result;
     }
 

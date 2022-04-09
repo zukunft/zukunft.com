@@ -1078,11 +1078,8 @@ class value_list
                     // to review
                     // list the related formula values
                     $fv_lst = new formula_value_list($this->usr);
-                    if ($val->time_phr != null) {
-                        $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, $val->time_phr->id);
-                    } else {
-                        $result .= $fv_lst->val_phr_lst($val, $this->phr->id, $val_phr_lst, 0);
-                    }
+                    $fv_lst->load_by_val($val);
+                    $result .= $fv_lst->frm_links_html();
                     $result .= '    </td>';
                     log_debug('value_list->html -> formula results ' . $val->id . ' loaded');
 

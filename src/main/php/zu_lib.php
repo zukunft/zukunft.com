@@ -253,6 +253,7 @@ include_once $path_php . 'model/user/user_list.php';
 include_once $path_php . 'model/user/user_log.php';
 include_once $path_php . 'model/user/user_log_named.php';
 include_once $path_php . 'model/user/user_log_link.php';
+include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
 include_once $path_php . 'model/sandbox/user_sandbox.php';
