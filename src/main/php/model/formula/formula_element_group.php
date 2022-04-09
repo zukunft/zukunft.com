@@ -236,7 +236,7 @@ class formula_element_group
         log_debug('formula_element_group->figures ' . $this->dsp_id());
 
         // init the resulting figure list
-        $fig_lst = new figure_list;
+        $fig_lst = new figure_list($this->usr);
 
         // add the words of the formula element group to the value selection
         // e.g. 1: for the formula "this" and the phrases "Switzerland" and "inhabitants" the Swiss inhabitants are requested
@@ -297,9 +297,8 @@ class formula_element_group
             $val_phr_lst->ex_time();
 
             // get the word group
-            if ($val_phr_lst->lst != null) {
-                usort($val_phr_lst->lst, array("phrase", "cmp"));
-            }
+            usort($val_phr_lst->lst, array("phrase", "cmp"));
+
             //asort($val_phr_lst);
             $val_phr_grp = $val_phr_lst->get_grp();
             log_debug('formula_element_group->figures -> words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp->id);
@@ -384,25 +383,21 @@ class formula_element_group
         log_debug('formula_element_group->dsp_values -> got figures');
 
         // show the time if adjusted by a special formula element
-        if (isset($fig_lst)) {
-            // build the html code to display the value with the link
-            if ($fig_lst->lst != null) {
-                foreach ($fig_lst->lst as $fig) {
-                    log_debug('formula_element_group->dsp_values -> display figure');
-                    $result .= $fig->display_linked($back);
-                }
-            }
-
-            // TODO: show the time phrase only if it differs from the main time phrase
-            if (isset($fig_lst->time_phr) and isset($time_default)) {
-                if ($fig_lst->time_phr->id <> $time_default->id) {
-                    $result .= ' (' . $fig_lst->time_phr->name . ')';
-                }
-            }
-
-            // display alternative values
-
+        // build the html code to display the value with the link
+        foreach ($fig_lst->lst as $fig) {
+            log_debug('formula_element_group->dsp_values -> display figure');
+            $result .= $fig->display_linked($back);
         }
+
+        // TODO: show the time phrase only if it differs from the main time phrase
+        if (isset($fig_lst->time_phr) and isset($time_default)) {
+            if ($fig_lst->time_phr->id <> $time_default->id) {
+                $result .= ' (' . $fig_lst->time_phr->name . ')';
+            }
+        }
+
+        // display alternative values
+
 
         log_debug('formula_element_group->dsp_values -> result "' . $result . '"');
         return $result;

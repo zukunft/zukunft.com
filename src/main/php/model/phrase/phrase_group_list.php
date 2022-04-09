@@ -32,16 +32,26 @@
 class phrase_group_list
 {
 
-    public ?array $lst = null;          // the list of the phrase group objects
+    public array $lst;                  // the list of the phrase group objects
+    public user $usr;                   // the person for whom the word group list has been created
     public ?array $time_lst = null;     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids
     public ?array $grp_time_ids = null; // the list of the phrase group and time ids
-    public ?user $usr = null;           // the person for whom the word group list has been created
 
     public ?array $phr_lst_lst = null;  // list of a list of phrases
 
     // search fields
     public ?phrase $phr; //
+
+    /**
+     * always set the user because a phrase group list is always user specific
+     * @param user $usr the user who requested to see the phrase groups
+     */
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
 
     /**
      * create an SQL statement to retrieve a list of phrase groups from the database
@@ -66,7 +76,7 @@ class phrase_group_list
                     $sql_where = 'l.word_id = ' . $db_con->par_name();
                 } else {
                     $qp->name .= 'triple_id';
-                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1 );
+                    $db_con->add_par(sql_db::PAR_INT, $this->phr->id * -1);
                     $sql_where = 'l.triple_id = ' . $db_con->par_name();
                 }
             }
@@ -131,10 +141,8 @@ class phrase_group_list
     {
         $result = new user_message();
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $phr_grp) {
-                $result->add($phr_grp->del());
-            }
+        foreach ($this->lst as $phr_grp) {
+            $result->add($phr_grp->del());
         }
         return new user_message();
     }
@@ -500,22 +508,20 @@ class phrase_group_list
         log_debug('phrase_group_list->common_phrases');
         $result = new phrase_list($this->usr);
         $pos = 0;
-        if ($this->lst != null) {
-            foreach ($this->lst as $grp) {
-                $grp->load();
-                if ($pos == 0) {
-                    if (isset($grp->phr_lst)) {
-                        $result = clone $grp->phr_lst;
-                    }
-                } else {
-                    if (isset($grp->phr_lst)) {
-                        //$result = $result->concat_unique($grp->phr_lst);
-                        $result->common($grp->phr_lst);
-                    }
+        foreach ($this->lst as $grp) {
+            $grp->load();
+            if ($pos == 0) {
+                if (isset($grp->phr_lst)) {
+                    $result = clone $grp->phr_lst;
                 }
-                log_debug('phrase_group_list->common_phrases ' . $result->dsp_name());
-                $pos++;
+            } else {
+                if (isset($grp->phr_lst)) {
+                    //$result = $result->concat_unique($grp->phr_lst);
+                    $result->common($grp->phr_lst);
+                }
             }
+            log_debug('phrase_group_list->common_phrases ' . $result->dsp_name());
+            $pos++;
         }
         log_debug('phrase_group_list->common_phrases (' . dsp_count($result->lst) . ')');
         return $result;
@@ -532,30 +538,28 @@ class phrase_group_list
         global $debug;
         $result = '';
         // check the object setup
-        if ($this->lst != null) {
-            if (count($this->lst) <> count($this->time_lst)) {
-                $result .= 'The number of groups (' . dsp_count($this->lst) . ') are not equal the number of times (' . dsp_count($this->time_lst) . ') of this phrase group list';
-            } else {
+        if (count($this->lst) <> count($this->time_lst)) {
+            $result .= 'The number of groups (' . dsp_count($this->lst) . ') are not equal the number of times (' . dsp_count($this->time_lst) . ') of this phrase group list';
+        } else {
 
-                $pos = 0;
-                foreach ($this->lst as $phr_lst) {
-                    if ($debug > $pos) {
-                        if ($result <> '') {
-                            $result .= ' / ';
-                        }
-                        $result .= $phr_lst->name();
-                        $phr_time = $this->time_lst[$pos];
-                        if (!is_null($phr_time)) {
-                            $result .= '@' . $phr_time->name();
-                        }
-                        $pos++;
+            $pos = 0;
+            foreach ($this->lst as $phr_lst) {
+                if ($debug > $pos) {
+                    if ($result <> '') {
+                        $result .= ' / ';
                     }
+                    $result .= $phr_lst->name();
+                    $phr_time = $this->time_lst[$pos];
+                    if (!is_null($phr_time)) {
+                        $result .= '@' . $phr_time->name();
+                    }
+                    $pos++;
                 }
-                if (count($this->lst) > $pos) {
-                    $result .= ' ... total ' . dsp_count($this->lst);
-                }
-
             }
+            if (count($this->lst) > $pos) {
+                $result .= ' ... total ' . dsp_count($this->lst);
+            }
+
         }
         return $result;
     }
@@ -584,10 +588,8 @@ class phrase_group_list
     function names(): array
     {
         $result = array();
-        if ($this->lst != null) {
-            foreach ($this->lst as $phr_lst) {
-                $result[] = $phr_lst->name();
-            }
+        foreach ($this->lst as $phr_lst) {
+            $result[] = $phr_lst->name();
         }
         log_debug('phrase_group_list->names ' . implode(" / ", $result));
         return $result;

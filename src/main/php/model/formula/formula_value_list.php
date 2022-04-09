@@ -446,7 +446,7 @@ class formula_value_list
                 $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
     {
         log_debug('fv_lst->frm_upd_lst_usr(' . $frm->name . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
-        $result = new batch_job_list;
+        $result = new batch_job_list($usr);
         $added = 0;
 
         // TODO: check if the assigned words are different for the user
@@ -665,8 +665,7 @@ class formula_value_list
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several formula values for the same word group
         log_debug('get all values used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
-        $phr_grp_lst_val = new phrase_group_list;
-        $phr_grp_lst_val->usr = $this->usr; // by default the calling user is used, but if needed the value for other users also needs to be updated
+        $phr_grp_lst_val = new phrase_group_list($this->usr); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv);
         $phr_grp_lst_val->get_by_fv_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_fv);
         $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_fv); // for predefined formulas ...

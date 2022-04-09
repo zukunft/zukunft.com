@@ -96,12 +96,10 @@ class export
                 log_debug('export->get triples');
                 $lnk_lst = $this->phr_lst->trp_lst();
                 $exp_triples = array();
-                if ($lnk_lst->lst != null) {
-                    foreach ($lnk_lst->lst as $lnk) {
-                        $exp_lnk = $lnk->export_obj();
-                        if (isset($exp_lnk)) {
-                            $exp_triples[] = $exp_lnk;
-                        }
+                foreach ($lnk_lst->lst as $lnk) {
+                    $exp_lnk = $lnk->export_obj();
+                    if (isset($exp_lnk)) {
+                        $exp_triples[] = $exp_lnk;
                     }
                 }
                 if (count($exp_triples) > 0) {
@@ -144,13 +142,11 @@ class export
                 // 8. add all values to the export object
                 log_debug('export->get values');
                 $exp_values = array();
-                if ($val_lst->lst != null) {
-                    foreach ($val_lst->lst as $val) {
-                        if (isset($val)) {
-                            $exp_val = $val->export_obj();
-                            if (isset($exp_val)) {
-                                $exp_values[] = $exp_val;
-                            }
+                foreach ($val_lst->lst as $val) {
+                    if (isset($val)) {
+                        $exp_val = $val->export_obj();
+                        if (isset($exp_val)) {
+                            $exp_values[] = $exp_val;
                         }
                     }
                 }

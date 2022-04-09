@@ -440,7 +440,7 @@ class word_list
             // load all linked words
             $additional_added = $additional_added->load_linked_words($verb_id, $direction);
             // get the words not added before
-            $additional_added-> diff($added_wrd_lst);
+            $additional_added->diff($added_wrd_lst);
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
@@ -739,17 +739,15 @@ class word_list
             log_err('Phrases to delete are missing.', 'word_list->diff');
         }
 
-        if (isset($this->lst)) {
-            if (!empty($this->lst)) {
-                $result = array();
-                $lst_ids = $del_wrd_lst->ids();
-                foreach ($this->lst as $wrd) {
-                    if (!in_array($wrd->id, $lst_ids)) {
-                        $result[] = $wrd;
-                    }
+        if (count($this->lst) > 0) {
+            $result = array();
+            $lst_ids = $del_wrd_lst->ids();
+            foreach ($this->lst as $wrd) {
+                if (!in_array($wrd->id, $lst_ids)) {
+                    $result[] = $wrd;
                 }
-                $this->lst = $result;
             }
+            $this->lst = $result;
         }
 
         log_debug(self::class . '->diff -> ' . $this->dsp_id());
@@ -872,19 +870,18 @@ class word_list
             log_err(get_class($filter_lst) . ' cannot be used to delete words.', 'word_list->filter');
         }
 
-        if (isset($result->lst)) {
-            if (!empty($result->lst)) {
-                $wrd_lst = array();
-                $lst_ids = $filter_lst->ids();
-                foreach ($result->lst as $wrd) {
-                    if (in_array($wrd->id, $lst_ids)) {
-                        $wrd_lst[] = $wrd;
-                    }
+        if (count($result->lst) > 0) {
+            $wrd_lst = array();
+            $lst_ids = $filter_lst->ids();
+            foreach ($result->lst as $wrd) {
+                if (in_array($wrd->id, $lst_ids)) {
+                    $wrd_lst[] = $wrd;
                 }
-                $result->lst = $wrd_lst;
             }
+            $result->lst = $wrd_lst;
             log_debug(self::class . '->filter -> ' . $result->dsp_id() . ')');
         }
+
         return $result;
     }
 
@@ -1050,11 +1047,9 @@ class word_list
     function ids(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $wrd) {
-                if ($wrd->id > 0) {
-                    $result[] = $wrd->id;
-                }
+        foreach ($this->lst as $wrd) {
+            if ($wrd->id > 0) {
+                $result[] = $wrd->id;
             }
         }
         return $result;
@@ -1107,16 +1102,14 @@ class word_list
         global $debug;
         $result = '';
 
-        if (isset($this->lst)) {
-            if ($debug > 10) {
-                $result .= '"' . implode('","', $this->names()) . '"';
-            } else {
-                $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
-                if (count($this->names()) > 8) {
-                    $result .= ' ... total ' . dsp_count($this->lst);
-                }
-                $result .= '"';
+        if ($debug > 10) {
+            $result .= '"' . implode('","', $this->names()) . '"';
+        } else {
+            $result .= '"' . implode('","', array_slice($this->names(), 0, 7));
+            if (count($this->names()) > 8) {
+                $result .= ' ... total ' . dsp_count($this->lst);
             }
+            $result .= '"';
         }
         return $result;
     }
@@ -1128,11 +1121,9 @@ class word_list
     function names(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $wrd) {
-                if (isset($wrd)) {
-                    $result[] = $wrd->name;
-                }
+        foreach ($this->lst as $wrd) {
+            if (isset($wrd)) {
+                $result[] = $wrd->name;
             }
         }
         return $result;
@@ -1409,16 +1400,14 @@ class word_list
         log_debug(self::class . '->max_val_time ... ' . dsp_count($val_lst->lst) . ' values for ' . $this->dsp_id());
 
         $time_ids = array();
-        if ($val_lst->lst != null) {
-            foreach ($val_lst->lst as $val) {
-                $val->load_phrases();
-                if (isset($val->time_phr)) {
-                    log_debug(self::class . '->max_val_time ... value (' . $val->number . ' @ ' . $val->time_phr->name . ')');
-                    if ($val->time_phr->id > 0) {
-                        if (!in_array($val->time_phr->id, $time_ids)) {
-                            $time_ids[] = $val->time_phr->id;
-                            log_debug(self::class . '->max_val_time ... add word id (' . $val->time_phr->id . ')');
-                        }
+        foreach ($val_lst->lst as $val) {
+            $val->load_phrases();
+            if (isset($val->time_phr)) {
+                log_debug(self::class . '->max_val_time ... value (' . $val->number . ' @ ' . $val->time_phr->name . ')');
+                if ($val->time_phr->id > 0) {
+                    if (!in_array($val->time_phr->id, $time_ids)) {
+                        $time_ids[] = $val->time_phr->id;
+                        log_debug(self::class . '->max_val_time ... add word id (' . $val->time_phr->id . ')');
                     }
                 }
             }

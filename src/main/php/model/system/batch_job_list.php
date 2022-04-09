@@ -37,10 +37,20 @@
 class batch_job_list
 {
 
-    public ?array $lst = null;              // list of the batch jobs e.g. calculation requests
-    public ?user $usr = null;               // the user who has done the request and whose data needs to be updated
+    public array $lst;  // list of the batch jobs e.g. calculation requests
+    public user $usr;   // the user who has done the request and whose data needs to be updated
     public ?DateTime $cut_off_time = null;  //
 
+
+    /**
+     * always set the user because a batch list either user specific or linked to the system user
+     * @param user $usr the user who requested to see the formulas
+     */
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
 
     /**
      * add another job to the list, but only if needed
@@ -61,16 +71,14 @@ class batch_job_list
             $found = false;
             // build the
             $chk_phr_lst_ids = array();
-            if ($this->lst != null) {
-                foreach ($this->lst as $chk_job) {
-                    $chk_phr_lst_ids = $chk_job->phr_lst->id();
-                }
-                foreach ($this->lst as $chk_job) {
-                    if ($chk_job->frm == $job->frm) {
-                        if ($chk_job->usr == $job->usr) {
-                            if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
-                                $found = true;
-                            }
+            foreach ($this->lst as $chk_job) {
+                $chk_phr_lst_ids = $chk_job->phr_lst->id();
+            }
+            foreach ($this->lst as $chk_job) {
+                if ($chk_job->frm == $job->frm) {
+                    if ($chk_job->usr == $job->usr) {
+                        if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
+                            $found = true;
                         }
                     }
                 }

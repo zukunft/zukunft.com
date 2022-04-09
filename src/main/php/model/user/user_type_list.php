@@ -37,7 +37,7 @@ class user_type_list
     const TEST_NAME = 'System Test Type Name';
     const TEST_TYPE = 'System Test Type Code ID';
 
-    public array $lst = []; // a list of type objects
+    public array $lst = [];  // a list of type objects
     public array $hash = []; // hash list with the code id for fast selection
 
     function load_sql(sql_db $db_con, string $db_type): sql_par

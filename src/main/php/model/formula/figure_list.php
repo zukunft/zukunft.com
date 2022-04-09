@@ -32,20 +32,29 @@
 class figure_list
 {
 
-    public ?array $lst = null;         // the list of figures
-    public ?int $usr_id = null;        // the id of the user for whom the list has been created
+    public array $lst;  // the list of figures
+    public user $usr;   // the user for whom the list has been created
     public ?phrase $time_phr = null;     // the time word object, if the figure value time is adjusted by a special formula
     public ?bool $fig_missing = false; // true if at least one of the formula values is not set which means is NULL (but zero is a value)
 
-    function get_first_id(): int {
+    /**
+     * always set the user because a formula element list is always user specific
+     * @param user $usr the user who requested to see the formula with the formula elements
+     */
+    function __construct(user $usr)
+    {
+        $this->lst = array();
+        $this->usr = $usr;
+    }
+
+    function get_first_id(): int
+    {
         $result = 0;
         if ($this != null) {
-            if ($this->lst != null) {
-                if (count($this->lst) > 0) {
-                    $fig = $this->lst[0];
-                    if ($fig != null) {
-                        $result = $fig->id;
-                    }
+            if (count($this->lst) > 0) {
+                $fig = $this->lst[0];
+                if ($fig != null) {
+                    $result = $fig->id;
                 }
             }
         }
@@ -103,12 +112,10 @@ class figure_list
     function ids(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $fig) {
-                // use only valid ids
-                if ($fig->id <> 0) {
-                    $result[] = $fig->id;
-                }
+        foreach ($this->lst as $fig) {
+            // use only valid ids
+            if ($fig->id <> 0) {
+                $result[] = $fig->id;
             }
         }
         return $result;
@@ -123,10 +130,8 @@ class figure_list
     {
         $result = '';
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $fig) {
-                $result .= $fig->display($back) . ' ';
-            }
+        foreach ($this->lst as $fig) {
+            $result .= $fig->display($back) . ' ';
         }
 
         return $result;

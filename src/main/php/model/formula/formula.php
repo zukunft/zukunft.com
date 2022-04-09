@@ -656,23 +656,21 @@ class formula extends user_sandbox_description
         if ($this->id > 0 and isset($this->usr)) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
             if ($direct_phr_lst != null) {
-                if ($direct_phr_lst->lst != null) {
-                    if (count($direct_phr_lst->lst) > 0) {
-                        log_debug(self::class . '->assign_phr_glst -> ' . $this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
+                if (count($direct_phr_lst->lst) > 0) {
+                    log_debug(self::class . '->assign_phr_glst -> ' . $this->dsp_id() . ' direct assigned words and triples ' . $direct_phr_lst->dsp_id());
 
-                        //$indirect_phr_lst = $direct_phr_lst->is();
-                        $indirect_phr_lst = $direct_phr_lst->are();
-                        log_debug(self::class . '->assign_phr_glst -> indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
+                    //$indirect_phr_lst = $direct_phr_lst->is();
+                    $indirect_phr_lst = $direct_phr_lst->are();
+                    log_debug(self::class . '->assign_phr_glst -> indirect assigned words and triples ' . $indirect_phr_lst->dsp_id());
 
-                        // merge direct and indirect assigns (maybe later using phrase_list->merge)
-                        $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
-                        $phr_ids = array_unique($phr_ids);
+                    // merge direct and indirect assigns (maybe later using phrase_list->merge)
+                    $phr_ids = array_merge($direct_phr_lst->id_lst(), $indirect_phr_lst->id_lst());
+                    $phr_ids = array_unique($phr_ids);
 
-                        $phr_lst->load_by_ids((new phr_ids( $phr_ids)));
-                        log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
-                    } else {
-                        log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
-                    }
+                    $phr_lst->load_by_ids((new phr_ids($phr_ids)));
+                    log_debug(self::class . '->assign_phr_glst -> number of words and triples ' . dsp_count($phr_lst->lst));
+                } else {
+                    log_debug(self::class . '->assign_phr_glst -> no words are assigned to ' . $this->dsp_id());
                 }
             }
         } else {

@@ -159,10 +159,8 @@ class formula_element_list
     function name(): string
     {
         $result = '';
-        if (isset($this->lst)) {
-            foreach ($this->lst as $elm) {
-                $result .= $elm->name() . ' ';
-            }
+        foreach ($this->lst as $elm) {
+            $result .= $elm->name() . ' ';
         }
         return $result;
     }
@@ -173,12 +171,10 @@ class formula_element_list
     function ids(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $elm) {
-                // use only valid ids
-                if ($elm->id <> 0) {
-                    $result[] = $elm->id;
-                }
+        foreach ($this->lst as $elm) {
+            // use only valid ids
+            if ($elm->id <> 0) {
+                $result[] = $elm->id;
             }
         }
         return $result;

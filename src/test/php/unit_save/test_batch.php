@@ -83,7 +83,7 @@ function run_batch_job_list_test(testing $t)
     $phr_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
 
     // test adding a batch job via a list
-    $job_lst = new batch_job_list;
+    $job_lst = new batch_job_list($usr);
     $calc_request = new batch_job;
     $calc_request->frm = $frm;
     $calc_request->usr = $usr;

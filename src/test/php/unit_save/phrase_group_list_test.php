@@ -55,8 +55,7 @@ function run_phrase_group_list_test(testing $t)
     $city_grp = $phr_lst->get_grp();
 
     // test add a phrase group to a phrase group list
-    $grp_lst = new phrase_group_list;
-    $grp_lst->usr = $usr;
+    $grp_lst = new phrase_group_list($usr);
     $grp_lst->add($country_grp);
     $grp_lst->add($canton_grp);
     $grp_lst->add($city_grp);
@@ -68,8 +67,7 @@ function run_phrase_group_list_test(testing $t)
 
 
     // test getting the common phrases of several group
-    $grp_lst = new phrase_group_list;
-    $grp_lst->usr = $usr;
+    $grp_lst = new phrase_group_list($usr);
 
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_names(array(word::TN_CH, word::TN_INHABITANT, word::TN_MIO));

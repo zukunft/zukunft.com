@@ -114,8 +114,7 @@ class phrase_group_unit_tests
         $db_con->db_type = sql_db::POSTGRES;
         $wrd = $t->load_word(word::TN_CITY);
         $wrd->id = 1; // dummy number just to test the SQL creation
-        $phr_grp_lst = new phrase_group_list();
-        $phr_grp_lst->usr = $usr;
+        $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $wrd->phrase();
         $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_word.sql');
@@ -124,8 +123,7 @@ class phrase_group_unit_tests
         // sql to load all phrase groups linked to a triple
         $lnk = $t->load_word_link(word::TN_ZH, verb::IS_A, word::TN_CITY);
         $lnk->id = 2; // dummy number just to test the SQL creation
-        $phr_grp_lst = new phrase_group_list();
-        $phr_grp_lst->usr = $usr;
+        $phr_grp_lst = new phrase_group_list($usr);
         $phr_grp_lst->phr = $lnk->phrase();
         $created_sql = $phr_grp_lst->load_sql($db_con)->sql;
         $expected_sql = $t->file('db/phrase/phrase_group_list_by_triple.sql');

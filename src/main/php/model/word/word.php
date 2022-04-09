@@ -1496,8 +1496,7 @@ class word extends user_sandbox_description
         $result = new user_message();
 
         // collect all phrase groups where this word is used
-        $grp_lst = new phrase_group_list();
-        $grp_lst->usr = $this->usr;
+        $grp_lst = new phrase_group_list($this->usr);
         $grp_lst->phr = $this->phrase();
         $grp_lst->load();
 

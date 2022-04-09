@@ -621,11 +621,9 @@ class word_link_list
     function names(): array
     {
         $result = array();
-        if (isset($this->lst)) {
-            foreach ($this->lst as $lnk) {
-                if ($lnk->name <> '') {
-                    $result[] = $lnk->name;
-                }
+        foreach ($this->lst as $lnk) {
+            if ($lnk->name <> '') {
+                $result[] = $lnk->name;
             }
         }
         return $result;
@@ -784,10 +782,8 @@ class word_link_list
     {
         $result = new user_message();
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $trp) {
-                $result->add($trp->del());
-            }
+        foreach ($this->lst as $trp) {
+            $result->add($trp->del());
         }
         return new user_message();
     }

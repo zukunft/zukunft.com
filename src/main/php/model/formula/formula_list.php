@@ -327,6 +327,7 @@ class formula_list
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
                     $frm_dsp = $frm->dsp_obj();
+                    $formula_value = '';
                     if ($frm->name_wrd != null) {
                         $formula_value = $frm_dsp->dsp_result($frm->name_wrd, $this->back);
                     }
@@ -363,7 +364,7 @@ class formula_list
         }
         $avg_calc_time = cfg_get(CFG_AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;
-        return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000), 0));
+        return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000)));
     }
 
 }

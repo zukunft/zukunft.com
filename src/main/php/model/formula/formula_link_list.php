@@ -170,16 +170,14 @@ class formula_link_list
         log_debug('formula_link_list->ids');
         $result = array();
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $frm_lnk) {
-                if ($frm_lnk->phrase_id() <> 0) {
-                    if ($sbx) {
-                        if ($frm_lnk->excluded <= 0) {
-                            $result[] = $frm_lnk->phrase_id();
-                        }
-                    } else {
+        foreach ($this->lst as $frm_lnk) {
+            if ($frm_lnk->phrase_id() <> 0) {
+                if ($sbx) {
+                    if ($frm_lnk->excluded <= 0) {
                         $result[] = $frm_lnk->phrase_id();
                     }
+                } else {
+                    $result[] = $frm_lnk->phrase_id();
                 }
             }
         }
@@ -199,22 +197,20 @@ class formula_link_list
         global $db_con;
         $result = '';
 
-        if ($this->lst != null) {
-            foreach ($this->lst as $frm_lnk) {
-                if ($result == '') {
-                    if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
-                        //$db_con = new mysql;
-                        $db_con->usr_id = $this->usr->id;
-                        // delete first all user configuration that have also been excluded
-                        $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
-                        $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id, '1'));
-                        if ($result == '') {
-                            $db_con->set_type(DB_TYPE_FORMULA_LINK);
-                            $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id);
-                        }
-                    } else {
-                        log_err("Cannot delete a formula word link (id " . $frm_lnk->id . "), which is used or created by another user.", "formula_link_list->del_without_log");
+        foreach ($this->lst as $frm_lnk) {
+            if ($result == '') {
+                if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
+                    //$db_con = new mysql;
+                    $db_con->usr_id = $this->usr->id;
+                    // delete first all user configuration that have also been excluded
+                    $db_con->set_type(DB_TYPE_USER_PREFIX . DB_TYPE_FORMULA_LINK);
+                    $result = $db_con->delete(array(formula_link::FLD_ID, user_sandbox::FLD_EXCLUDED), array($frm_lnk->id, '1'));
+                    if ($result == '') {
+                        $db_con->set_type(DB_TYPE_FORMULA_LINK);
+                        $result = $db_con->delete(formula_link::FLD_ID, $frm_lnk->id);
                     }
+                } else {
+                    log_err("Cannot delete a formula word link (id " . $frm_lnk->id . "), which is used or created by another user.", "formula_link_list->del_without_log");
                 }
             }
         }
