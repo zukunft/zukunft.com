@@ -409,7 +409,7 @@ class source extends user_sandbox_named
         }
 
         log_debug("source->dsp_select -> source id used (" . $this->id . ")");
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = "source";
@@ -429,7 +429,7 @@ class source extends user_sandbox_named
 
         $result = ''; // reset the html code var
 
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = "source_type";

@@ -277,7 +277,6 @@ include_once $path_php . 'api/system/error_log_list.php';
 include_once $path_php . 'web/display_interface.php';
 include_once $path_php . 'web/display_html.php';
 include_once $path_php . 'web/display_button.php';
-include_once $path_php . 'web/display_selector.php';
 include_once $path_php . 'web/display_list.php';
 include_once $path_php . 'model/helper/word_link_object.php';
 include_once $path_php . 'model/word/word.php';
@@ -360,6 +359,8 @@ include_once $path_php . 'api/value/value_min.php';
 include_once $path_php . 'api/formula/formula_min.php';
 include_once $path_php . 'api/formula/formula_value_min.php';
 // HTML frontend classes
+include_once $path_php . 'web/html/html_base.php';
+include_once $path_php . 'web/html/html_selector.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
 
 // include all other libraries that are usually needed

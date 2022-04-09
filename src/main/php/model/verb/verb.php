@@ -283,13 +283,18 @@ class verb
         log_debug('verb->dsp_selector -> for verb id ' . $this->id);
         $result = '';
 
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form;
         $sel->name = 'verb';
         $sel->label = "Verb:";
         $sel->bs_class = $class;
-        $sel->lst = $verbs->selector_list($side);
+        $db_lst = $verbs->selector_list($side);
+        $sel_lst = array();
+        foreach ($db_lst as $db_entry) {
+            $sel_lst[$db_entry['id']] = $db_entry['name'];
+        }
+        $sel->lst = $sel_lst;
         $sel->selected = $this->id;
         $sel->dummy_text = '';
         $result .= $sel->display();

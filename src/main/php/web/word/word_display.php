@@ -193,7 +193,7 @@ class word_dsp extends word
                    GROUP BY name) AS s
             WHERE (excluded <> 1 OR excluded is NULL)                                    
           ORDER BY name;";
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = $field_name;
@@ -401,7 +401,7 @@ class word_dsp extends word
     {
         log_debug('word_dsp->selector_add ... word id ' . $id);
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form;
         $sel->name = 'add';
@@ -426,7 +426,7 @@ class word_dsp extends word
             $id = DEFAULT_WORD_TYPE_ID;
         }
 
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form;
         $sel->name = 'type';
@@ -469,7 +469,7 @@ class word_dsp extends word
              WHERE name_reverse <> '' 
                AND name_reverse <> verb_name) AS links
           ORDER BY words DESC, name;";
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form;
         $sel->name = 'verb';
@@ -498,7 +498,7 @@ class word_dsp extends word
         } else {
             $field_id = "word";
         }
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = $field_id;
@@ -515,7 +515,7 @@ class word_dsp extends word
     private function dsp_type_selector($script, $bs_class): string
     {
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->name = 'type';

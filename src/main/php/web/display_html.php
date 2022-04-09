@@ -2,33 +2,33 @@
 
 /*
 
-  display_html.php - all html code should be in this library
-  ----------------
-  
-  depending on the settings either pure HTML or BOOTSTRAP HTML code is created
-  
-  This file is part of zukunft.com - calc with words
+    display_html.php - all html code should be in this library
+    ----------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    depending on the settings either pure HTML or BOOTSTRAP HTML code is created
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 // the general html header
@@ -58,9 +58,9 @@ function dsp_header($title, $style = ""): string {
     //$result .= '  <script src="https://www.zukunft.com/lib_external/typeahead/bootstrap3-typeahead.js"></script>';
     //$result .= '  <script src="https://www.zukunft.com/lib_external/typeahead/typeahead.bundle.js"></script>';
     // include the bootstrap Tokenfield JavaScript plugins
-    $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>';
+    // $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>';
     // include the bootstrap Tokenfield stylesheets
-    $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"></script>';
+    //$result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"></script>';
     // include the bootstrap JavaScript plugins
     $result .= '  <script src="https://www.zukunft.com/lib_external/bootstrap/4.1.3/js/bootstrap.js"></script>';
     // adjust the styles where needed
@@ -514,36 +514,6 @@ function dsp_form_fld_checkbox ($field, $is_checked, $label): string {
     }
     $result .= '> ';
     $result .= $label;
-  }
-  return $result;
-}
-
-// to start a selector field
-function dsp_form_fld_select ($form, $field, $label, $class, $attribute): string {
-  $result = '';
-  // 06.11.2019: removed, check the calling functions
-  /*
-  if ($label == '') {
-    $label == $field;
-  }
-  */
-  if (UI_USE_BOOTSTRAP) {
-    $result .= '<div class="form-group '.$class.'">';
-    if ($label != "") {
-      $result .= '<label for="'.$field.'">'.$label.'</label>';
-    }
-    $result .= '<select class="form-control" name="'.$field.'" form="'.$form.'" id="'.$field.'" '.$attribute.'>';
-  } else {  
-    $result .= $label.' <select name="'.$field.'" form="'.$form.'">';
-  }
-  return $result;
-}
-
-// to end a selector field
-function dsp_form_fld_select_end (): string {
-  $result = '</select>';
-  if (UI_USE_BOOTSTRAP) {
-    $result .= '</div>';
   }
   return $result;
 }

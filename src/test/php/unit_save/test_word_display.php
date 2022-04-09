@@ -192,12 +192,12 @@ function run_word_display_test(testing $t)
     */
 
 
-    $t->header('Test the display selector class (classes/display_selector.php)');
+    $t->header('Test the display selector class (web/html/selector.php)');
 
     // for testing the selector display a company selector and select ABB
     $phr_corp = $t->load_phrase(word::TN_COMPANY);
     $phr_ZH_INS = $t->load_phrase(phrase::TN_ZH_COMPANY);
-    $sel = new selector;
+    $sel = new html_selector;
     $sel->usr = $usr;
     $sel->form = 'test_form';
     $sel->name = 'select_company';

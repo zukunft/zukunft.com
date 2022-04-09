@@ -304,6 +304,7 @@ function run_unit_tests(testing $t)
     (new verb_unit_tests)->run($t);
     (new ref_unit_tests)->run($t);
     (new user_log_unit_tests)->run($t);
+    (new html_unit_tests)->run($t);
 
     // restore the global vars
     $db_con = $global_db_con;

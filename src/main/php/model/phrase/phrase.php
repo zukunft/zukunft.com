@@ -765,8 +765,8 @@ class phrase
     }
 
     /*
-    display functions
-    */
+     * display functions
+     */
 
     // create a selector that contains the words and triples
     // if one form contains more than one selector, $pos is used for identification
@@ -783,7 +783,7 @@ class phrase
         } else {
             $field_name = "phrase";
         }
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = $field_name;

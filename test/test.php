@@ -48,7 +48,7 @@
     formula_link_list.php
     figure.php
     figure_list.php
-    display_selector.php
+    selector.php
 
 
     class test that does not yet have at least one test case for every function

@@ -496,7 +496,7 @@ class view_dsp extends view
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $result .= btn_add("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&add_entry=-1&back=" . $back . "");
-                $sel = new selector;
+                $sel = new html_selector;
                 $sel->usr = $this->usr;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a view component ...';
@@ -508,7 +508,7 @@ class view_dsp extends view
                 $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: <input type="text" name="entry_name"> ';
-                $sel = new selector;
+                $sel = new html_selector;
                 $sel->usr = $this->usr;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a type ...';
@@ -538,7 +538,7 @@ class view_dsp extends view
     private function dsp_type_selector($script, $class, $attribute): string
     {
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->name = 'type';

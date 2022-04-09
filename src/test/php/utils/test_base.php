@@ -92,6 +92,7 @@ include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'user_log.php';
+include_once $path_unit . 'html.php';
 
 // load the unit testing modules with database read only
 include_once $path_unit_db . 'all.php';
@@ -1004,7 +1005,8 @@ class test_base
         $result = preg_replace('/> <footer/', '><footer', $result);
         $result = preg_replace('/> <\/footer/', '></footer', $result);
         $result = preg_replace('/" \/>/', '"/>', $result);
-        return preg_replace('/"> </', '"><', $result);
+        $result = preg_replace('/ >/', '>', $result);
+        return preg_replace('/> </', '><', $result);
     }
 
     /*

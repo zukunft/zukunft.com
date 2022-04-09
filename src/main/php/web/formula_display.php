@@ -107,7 +107,7 @@ class formula_dsp extends formula
     function dsp_type_selector($script, $class): string
     {
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->name = "type";
@@ -183,7 +183,7 @@ class formula_dsp extends formula
         $result .= '  <tr>';
         $result .= '    <td>';
         if ($add == 1 or $wrd->id > 0) {
-            $sel = new selector;
+            $sel = new html_selector;
             $sel->usr = $this->usr;
             $sel->form = "formula_edit"; // ??? to review
             $sel->name = 'link_phrase';

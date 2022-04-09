@@ -305,7 +305,7 @@ class view_cmp_dsp extends view_cmp
         $result .= '  <tr>';
         $result .= '    <td>';
         if ($add_link == 1) {
-            $sel = new selector;
+            $sel = new html_selector;
             $sel->usr = $this->usr;
             $sel->form = 'view_component_edit';
             $sel->name = 'link_view';
@@ -331,7 +331,7 @@ class view_cmp_dsp extends view_cmp
     private function dsp_type_selector($script, $class)
     {
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
@@ -348,7 +348,7 @@ class view_cmp_dsp extends view_cmp
     private function dsp_word_row_selector($script, $class)
     {
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
@@ -369,7 +369,7 @@ class view_cmp_dsp extends view_cmp
     private function dsp_word_col_selector($script, $class)
     {
         $result = '';
-        $sel = new selector;
+        $sel = new html_selector;
         $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
