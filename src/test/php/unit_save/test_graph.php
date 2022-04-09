@@ -88,7 +88,7 @@ function run_graph_test(testing $t)
     $t->dsp_contains(', word_link_list->load for ' . $phr_lst->dsp_id(), $target, $result, TIMEOUT_LIMIT_PAGE);
 
 
-    // load the words related to ZH in compare with the old function
+    // the other side
     $ZH = new word_dsp($usr);
     $ZH->name = word::TN_ZH;
     $ZH->load();
@@ -99,18 +99,6 @@ function run_graph_test(testing $t)
     $graph = new word_link_list($usr);
     $graph->wrd = $ZH;
     $graph->vrb = $is;
-    $graph->direction = 'down';
-    $graph->load_old();
-    $target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);
-    $result = $graph->display($back);
-    $diff = str_diff($result, $target);
-    if ($diff != '') {
-        $target = $result;
-        log_err('Unexpected diff ' . $diff);
-    }
-    $t->dsp('graph->load for ZH down is', $target, $result);
-
-    // the other side
     $graph->direction = 'up';
     $graph->load_old();
     //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id);
