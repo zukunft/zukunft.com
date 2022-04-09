@@ -2,36 +2,36 @@
 
 /*
 
-  view_component_link.php - link a single display component/element to a view
-  -----------------------
+    view_component_link.php - link a single display component/element to a view
+    -----------------------
 
-  TODO
-  if a link is owned by someone, who has deleted it, it can be changed by anyone else
-  or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
-  
-  force to remove all user settings to be able to delete a link as an admin
-  
-  This file is part of zukunft.com - calc with words
+    TODO
+    if a link is owned by someone, who has deleted it, it can be changed by anyone else
+    or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    force to remove all user settings to be able to delete a link as an admin
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -75,10 +75,10 @@ class view_cmp_link extends user_sandbox_link
     public view $dsp;
     public view_cmp $cmp;
 
-    public ?int $view_id = null;            // the id of the view to which the display item should be linked
-    public ?int $view_component_id = null;  // the id of the linked display item
     public ?int $order_nbr = null;          // to sort the display item
-    public ?int $pos_type_id = null;        // to to position the display item relative the the previous item (1 = below, 2= side, )
+
+    // to deprecate
+    public ?int $pos_type_id = null;        // defines the position of the view component relative to the previous item (1 = below, 2= side, )
     public ?string $pos_code = null;        // side or below or ....
 
     /*
@@ -94,6 +94,8 @@ class view_cmp_link extends user_sandbox_link
         $this->to_name = DB_TYPE_VIEW_COMPONENT;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
+
+        $this->reset_objects($usr);
     }
 
     function reset()
@@ -102,8 +104,6 @@ class view_cmp_link extends user_sandbox_link
 
         $this->reset_objects($this->usr);
 
-        $this->view_id = null;
-        $this->view_component_id = null;
         $this->order_nbr = null;
         $this->pos_type_id = null;
         $this->pos_code = null;
@@ -111,25 +111,18 @@ class view_cmp_link extends user_sandbox_link
 
     /**
      * reset the in memory fields used e.g. if some ids are updated
+     * @param user $usr the user for whom this link is valid
      */
     private function reset_objects(user $usr)
     {
-        $this->fob = new view($usr); // the display (view) object (used to save the correct name in the log)
-        $this->tob = new view_cmp($usr); // the display component (view entry) object (used to save the correct name in the log)
-    }
+        $this->dsp = new view($usr);     // the display (view) object (used to save the correct name in the log)
+        $this->cmp = new view_cmp($usr); // the display component (view entry) object (used to save the correct name in the log)
 
-    // build the sql where string
-    /*
-    private function sql_where() {
-      $sql_where = '';
-      if ($this->id > 0) {
-        $sql_where = "l.view_component_link_id = ".$this->id;
-      } elseif ($this->view_id > 0 AND $this->view_component_id > 0) {
-        $sql_where = "l.view_id = ".$this->view_id." AND l.view_component_id = ".$this->view_component_id;
-      }
-      return $sql_where;
+        // assign the object specific objects to the standard link object
+        // to enable the usage of the standard user sandbox link function for this view component link object
+        $this->fob = $this->dsp;
+        $this->tob = $this->cmp;
     }
-    */
 
     /**
      * map the database fields to the object fields
@@ -143,8 +136,8 @@ class view_cmp_link extends user_sandbox_link
     {
         $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
         if ($result) {
-            $this->view_id = $db_row[view::FLD_ID];
-            $this->view_component_id = $db_row[view_cmp::FLD_ID];
+            $this->dsp->id = $db_row[view::FLD_ID];
+            $this->cmp->id = $db_row[view_cmp::FLD_ID];
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
         }
@@ -170,7 +163,7 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_fields(array(sql_db::FLD_USER_ID));
         $db_con->set_link_fields(view::FLD_ID, view_cmp::FLD_ID);
         $db_con->set_fields(array(self::FLD_ORDER_NBR, self::FLD_POS_TYPE, self::FLD_EXCLUDED, user_sandbox::FLD_USER));
-        $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
+        $db_con->set_where_link($this->id, $this->dsp->id, $this->cmp->id);
         $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 
@@ -191,11 +184,11 @@ class view_cmp_link extends user_sandbox_link
 
         // try to get the search values from the objects
         if ($this->id <= 0) {
-            if (isset($this->fob) and $this->view_id <= 0) {
-                $this->view_id = $this->fob->id;
+            if (isset($this->fob) and $this->dsp->id <= 0) {
+                $this->dsp->id = $this->fob->id;
             }
-            if (isset($this->tob) and $this->view_component_id <= 0) {
-                $this->view_component_id = $this->tob->id;
+            if (isset($this->tob) and $this->cmp->id <= 0) {
+                $this->cmp->id = $this->tob->id;
             }
         }
 
@@ -205,7 +198,7 @@ class view_cmp_link extends user_sandbox_link
         $db_con->set_fields(array_merge(
             self::FLD_NAMES_NUM_USR,
             array(sql_db::FLD_USER_ID)));
-        $db_con->set_where_link($this->id, $this->view_id, $this->view_component_id);
+        $db_con->set_where_link($this->id, $this->dsp->id, $this->cmp->id);
         $sql = $db_con->select_by_id();
 
         if ($db_con->get_where() <> '') {
@@ -230,7 +223,7 @@ class view_cmp_link extends user_sandbox_link
         $qp = parent::load_sql($db_con, self::class);
         if ($this->id > 0) {
             $qp->name .= 'id';
-        } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
+        } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
             $qp->name .= 'view_and_cmp_id';
         } else {
             log_err('Either the view component link id or view id and a component id (and the user= must be set ' .
@@ -245,9 +238,9 @@ class view_cmp_link extends user_sandbox_link
         if ($this->id > 0) {
             $db_con->add_par(sql_db::PAR_INT, $this->id);
             $qp->sql = $db_con->select_by_field_list(array(view_cmp_link::FLD_ID));
-        } elseif ($this->view_id > 0 and $this->view_component_id > 0) {
-            $db_con->add_par(sql_db::PAR_INT, $this->view_id);
-            $db_con->add_par(sql_db::PAR_INT, $this->view_component_id);
+        } elseif ($this->dsp->id > 0 and $this->cmp->id > 0) {
+            $db_con->add_par(sql_db::PAR_INT, $this->dsp->id);
+            $db_con->add_par(sql_db::PAR_INT, $this->cmp->id);
             $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID, view_cmp::FLD_ID));
         }
         $qp->par = $db_con->get_par();
@@ -255,7 +248,10 @@ class view_cmp_link extends user_sandbox_link
         return $qp;
     }
 
-    // load the missing view component parameters from the database for the requesting user
+    /**
+     * load the missing view component parameters from the database for the requesting user
+     * @returns bool true if a link has been loaded
+     */
     function load(): bool
     {
         global $db_con;
@@ -267,12 +263,12 @@ class view_cmp_link extends user_sandbox_link
         } else {
 
             // try to get the search values from the objects
-            if ($this->id <= 0 and ($this->view_id <= 0 or $this->view_component_id <= 0)) {
-                if (isset($this->fob) and $this->view_id <= 0) {
-                    $this->view_id = $this->fob->id;
+            if ($this->id <= 0 and ($this->dsp->id <= 0 or $this->cmp->id <= 0)) {
+                if (isset($this->fob) and $this->dsp->id <= 0) {
+                    $this->dsp->id = $this->fob->id;
                 }
-                if (isset($this->tob) and $this->view_component_id <= 0) {
-                    $this->view_component_id = $this->tob->id;
+                if (isset($this->tob) and $this->cmp->id <= 0) {
+                    $this->cmp->id = $this->tob->id;
                 }
             }
 
@@ -293,22 +289,25 @@ class view_cmp_link extends user_sandbox_link
         return $result;
     }
 
-    // to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
+    /**
+     * to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
+     * @returns bool true if a link has been loaded
+     */
     function load_objects(): bool
     {
         $result = true;
-        if (!isset($this->fob) and $this->view_id > 0) {
+        if (!isset($this->fob) and $this->dsp->id > 0) {
             $dsp = new view_dsp($this->usr);
-            $dsp->id = $this->view_id;
+            $dsp->id = $this->dsp->id;
             if ($dsp->load()) {
                 $this->fob = $dsp;
             } else {
                 $result = false;
             }
         }
-        if (!isset($this->tob) and $this->view_component_id > 0) {
+        if (!isset($this->tob) and $this->cmp->id > 0) {
             $cmp = new view_dsp($this->usr);
-            $cmp->id = $this->view_component_id;
+            $cmp->id = $this->cmp->id;
             if ($cmp->load()) {
                 $this->tob = $cmp;
             } else {
@@ -318,30 +317,15 @@ class view_cmp_link extends user_sandbox_link
         return $result;
     }
 
-    // return the html code to display the link name
-    function name_linked(string $back = ''): string
-    {
-        $result = '';
-
-        $this->load_objects();
-        if (isset($this->fob)
-            and isset($this->tob)) {
-            $result = $this->fob->name_linked(NULL, $back) . ' to ' . $this->tob->name_linked($back);
-        } else {
-            $result .= log_err("The view name or the component name cannot be loaded.", "view_component_link->name");
-        }
-
-        return $result;
-    }
-
     /*
+     * display functions
+     */
 
-    display functions
-
-    */
-
-    // display the unique id fields
-    // NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
+    /**
+     * display the unique id fields
+     * NEVER call any methods from this function because this function is used for debugging and a call can cause an endless loop
+     * @returns string a programmer readable description of the link for unique identification
+     */
     function dsp_id(): string
     {
         $result = '';
@@ -368,21 +352,6 @@ class view_cmp_link extends user_sandbox_link
         }
         if (isset($this->usr)) {
             $result .= ' for user ' . $this->usr->id . ' (' . $this->usr->name . ')';
-        }
-        return $result;
-    }
-
-    function name(): string
-    {
-        $result = '';
-
-        if (isset($this->fob) and isset($this->tob)) {
-            if ($this->fob->name <> '' and $this->tob->name <> '') {
-                $result .= '"' . $this->tob->name . '" in "'; // e.g. Company details
-                $result .= $this->fob->name . '"';     // e.g. cash flow statement
-            }
-        } else {
-            $result .= 'view component objects not set';
         }
         return $result;
     }
@@ -422,7 +391,7 @@ class view_cmp_link extends user_sandbox_link
         $result = false;
 
         // load any missing parameters
-        if (!isset($this->id) or !isset($this->view_id)) {
+        if (!isset($this->id) or !isset($this->dsp->id)) {
             $this->load();
         }
         $this->load_objects();
@@ -430,7 +399,7 @@ class view_cmp_link extends user_sandbox_link
         // check the all minimal input parameters
         if ($this->id <= 0) {
             log_err("Cannot load the view component link.", "view_component_link->move");
-        } elseif ($this->view_id <= 0 or $this->view_component_id <= 0) {
+        } elseif ($this->dsp->id <= 0 or $this->cmp->id <= 0) {
             log_err("The view component id and the view component id must be given to move it.", "view_component_link->move");
         } else {
             log_debug('view_component_link->move ' . $direction . ' ' . $this->dsp_id());
@@ -504,7 +473,7 @@ class view_cmp_link extends user_sandbox_link
                         $result = true;
                         $prev_entry_down = false;
                     }
-                    if ($entry->id == $this->view_component_id) {
+                    if ($entry->id == $this->cmp->id) {
                         if ($direction == 'up') {
                             if ($cmp_lnk->order_nbr > 0) {
                                 log_debug('view_component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());

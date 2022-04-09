@@ -468,8 +468,8 @@ class view extends user_sandbox_named
                 if ($do_save) {
                     $cmp->save();
                     $cmp_lnk = new view_cmp_link($this->usr);
-                    $cmp_lnk->view_id = $this->id;
-                    $cmp_lnk->view_component_id = $cmp->id;
+                    $cmp_lnk->dsp->id = $this->id;
+                    $cmp_lnk->cmp->id = $cmp->id;
                     $cmp_lnk->order_nbr = $cmp->order_nbr;
                     $cmp_lnk->pos_type_id = 0;
                     $cmp_lnk->pos_code = '';

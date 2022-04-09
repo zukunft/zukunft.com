@@ -56,8 +56,8 @@ class view_component_link_unit_tests
 
         // sql to load a list of value by the phrase ids
         $lnk = new view_cmp_link($usr);
-        $lnk->view_id = 1;
-        $lnk->view_component_id = 2;
+        $lnk->dsp->id = 1;
+        $lnk->cmp->id = 2;
         $t->assert_load_sql($db_con, $lnk);
 
 

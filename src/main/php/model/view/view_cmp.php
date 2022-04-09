@@ -390,34 +390,17 @@ class view_cmp extends user_sandbox_named
         return $view_component_types->id($code_id);
     }
 
-    // list of all view ids that are directly assigned to this view component
+    /**
+     * list of all view ids that are directly assigned to this view component
+     */
     function assign_dsp_ids(): array
     {
-
-        global $db_con;
         $result = array();
 
         if ($this->id > 0 and isset($this->usr)) {
-            log_debug('view_component->assign_dsp_ids for view_component "' . $this->id . '" and user "' . $this->usr->name . '"');
-            // this sql is similar to the load statement in view_links.php, maybe combine
-            $db_con->set_type(DB_TYPE_VIEW_COMPONENT_LINK);
-            $db_con->set_usr($this->usr->id);
-            //$db_con->set_join_fields(array('position_type'), 'position_type');
-            $db_con->set_fields(array(view::FLD_ID, 'view_component_id'));
-            $db_con->set_usr_num_fields(array('order_nbr', 'position_type', self::FLD_EXCLUDED));
-            $db_con->set_where_text('view_component_id = ' . $this->id);
-            $sql = $db_con->select_by_id();
-            $db_con->usr_id = $this->usr->id;
-            $db_lst = $db_con->get_old($sql);
-            if ($db_lst != null) {
-                foreach ($db_lst as $db_row) {
-                    log_debug('view_component->assign_dsp_ids -> check exclusion ');
-                    if (is_null($db_row[self::FLD_EXCLUDED]) or $db_row[self::FLD_EXCLUDED] == 0) {
-                        $result[] = $db_row[view::FLD_ID];
-                    }
-                }
-            }
-            log_debug('view_component->assign_dsp_ids -> number of views ' . dsp_count($result));
+            $lst = new view_cmp_link_list($this->usr);
+            $lst->load_by_component($this);
+            $result = $lst->view_ids();
         } else {
             log_err("The user id must be set to list the view_component links.", "view_component->assign_dsp_ids");
         }
@@ -425,7 +408,9 @@ class view_cmp extends user_sandbox_named
         return $result;
     }
 
-// return the html code to display a view name with the link
+    /**
+     * return the html code to display a view name with the link
+     */
     function name_linked(string $back = ''): string
     {
 

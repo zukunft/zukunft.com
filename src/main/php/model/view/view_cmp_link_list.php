@@ -35,6 +35,26 @@ class view_cmp_link_list extends link_list
 {
 
     /**
+     * map only the valid view component links
+     *
+     * @param array $db_rows with the data directly from the database
+     * @return bool true if the view component link is loaded and valid
+     */
+    function row_mapper(array $db_rows): bool
+    {
+        $result = false;
+        foreach ($db_rows as $db_row) {
+            if (is_null($db_row[user_sandbox::FLD_EXCLUDED]) or $db_row[user_sandbox::FLD_EXCLUDED] == 0) {
+                $dsp_cmp_lnk = new view_cmp_link($this->usr);
+                $dsp_cmp_lnk->row_mapper($db_row);
+                $this->lst[] = $dsp_cmp_lnk;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * create an SQL statement to retrieve a list of view component links from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -109,12 +129,7 @@ class view_cmp_link_list extends link_list
             if ($qp->name != '') {
                 $db_rows = $db_con->get($qp);
                 if ($db_rows != null) {
-                    foreach ($db_rows as $db_row) {
-                        $dsp_cmp_lnk = new view_cmp_link($this->usr);
-                        $dsp_cmp_lnk->row_mapper($db_row);
-                        $this->lst[] = $dsp_cmp_lnk;
-                        $result = true;
-                    }
+                    $result = $this->row_mapper($db_rows);
                 }
             }
         }
@@ -171,9 +186,11 @@ class view_cmp_link_list extends link_list
     {
         $result = array();
         foreach ($this->lst as $lnk) {
-            if ($lnk->dsp->id <> 0) {
-                if (in_array($lnk->dsp->id, $result)) {
-                    $result[] = $lnk->dsp->id;
+            if ($lnk->dsp != null) {
+                if ($lnk->dsp->id <> 0) {
+                    if (!in_array($lnk->dsp->id, $result)) {
+                        $result[] = $lnk->dsp->id;
+                    }
                 }
             }
         }

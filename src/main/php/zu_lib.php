@@ -12,8 +12,10 @@
     4. commit
 
     but first this needs to be fixed:
+    TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
+    TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
     TODO add simple value list import example
@@ -25,11 +27,11 @@
     TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
-    TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays
     TODO if a functions failure needs some user action a string the the suggested action is returned e.g. save() and add()
     TODO if a function failure needs only admin or dev action an exception is raised and the function returns true or false
     TODO if an internal failure is expected not to be fixable without user interaction, the user should ge a failure link for the follow up actions
+    TODO review the handling of excluded: suggestion for single object allow the loading of excluded, but for lists do not include it in the list
     TODO capsule in classes
     TODO create unit tests
     TODO cleanup object by removing duplicates
@@ -357,6 +359,8 @@ include_once $path_php . 'api/phrase/phrase_group_min.php';
 include_once $path_php . 'api/value/value_min.php';
 include_once $path_php . 'api/formula/formula_min.php';
 include_once $path_php . 'api/formula/formula_value_min.php';
+// HTML frontend classes
+include_once $path_php . 'web/view/view_cmp_link_dsp.php';
 
 // include all other libraries that are usually needed
 include_once ROOT_PATH . 'db_link/zu_lib_sql_link.php';

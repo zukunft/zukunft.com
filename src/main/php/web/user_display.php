@@ -1078,8 +1078,8 @@ class user_dsp extends user
                 // create the view_component_link objects with the minimal parameter needed
                 $dsp_usr = new view_cmp_link($this);
                 $dsp_usr->id = $sbx_row['id'];
-                $dsp_usr->view_id = $sbx_row[view::FLD_ID];
-                $dsp_usr->view_component_id = $sbx_row['view_component_id'];
+                $dsp_usr->dsp->id = $sbx_row[view::FLD_ID];
+                $dsp_usr->cmp->id = $sbx_row['view_component_id'];
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->excluded = $sbx_row['usr_excluded'];
