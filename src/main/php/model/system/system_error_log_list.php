@@ -60,47 +60,54 @@ class system_error_log_list
     /**
      * create the SQL statement to load a list of system log entries
      * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
-     * @param bool $get_name to receive the unique name to be able to precompile the statement to prevent code injections
-     * @return string the database depending on sql statement to load a system error from the log table
-     *                or the unique name for the query
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, bool $get_name = false): string
+    function load_sql(sql_db $db_con): sql_par
     {
-        $sql_name = self::class . '_';
+        $qp = new sql_par(self::class);
+
         $sql_where = '';
         $sql_status = '(' . sql_db::STD_TBL . '.' . system_error_log::FLD_STATUS . ' <> ' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
         $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . system_error_log::FLD_STATUS . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;
-            $sql_name .= self::DSP_ALL;
+            $qp->name .= self::DSP_ALL;
         } elseif ($this->dsp_type == self::DSP_OTHER) {
-            $sql_where = $sql_status . ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' <> ' . $this->usr->id . ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
+            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $sql_where = $sql_status .
+                ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' <> ' . $db_con->par_name() .
+                ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
+            $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
-            $sql_where = $sql_status . ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' = ' . $this->usr->id . ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
+            $db_con->add_par(sql_db::PAR_INT, $this->usr->id);
+            $sql_where = $sql_status .
+                ' AND (' . sql_db::STD_TBL . '.' . user_sandbox::FLD_USER . ' = ' . $db_con->par_name() .
+                ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
+            $qp->name .= self::DSP_MY;
         } else {
             log_err('Unknown system log selection "' . $this->dsp_type . '"');
         }
 
         if ($sql_where <> '') {
             $db_con->set_type(DB_TYPE_SYS_LOG);
+            $db_con->set_name($qp->name);
+            $db_con->set_usr($this->usr->id);
             $db_con->set_fields(system_error_log::FLD_NAMES);
             $db_con->set_join_fields(array(system_error_log::FLD_FUNCTION_NAME), DB_TYPE_SYS_LOG_FUNCTION);
             $db_con->set_join_fields(array(user_type::FLD_NAME), DB_TYPE_SYS_LOG_STATUS);
             $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME), DB_TYPE_USER);
-            $db_con->set_join_fields(array(user_sandbox::FLD_USER_NAME . ' AS ' . system_error_log::FLD_SOLVER_NAME), DB_TYPE_USER, system_error_log::FLD_SOLVER);
+            $db_con->set_join_fields(array(
+                user_sandbox::FLD_USER_NAME . ' AS ' . system_error_log::FLD_SOLVER_NAME),
+                DB_TYPE_USER, system_error_log::FLD_SOLVER);
             $db_con->set_where_text($sql_where);
             $db_con->set_order(system_error_log::FLD_TIME, sql_db::ORDER_DESC);
-            $db_con->set_page($this->size, $this->page);
+            $db_con->set_page_par($this->size, $this->page);
             $sql = $db_con->select_by_id();
-
-            if ($get_name) {
-                return $sql_name;
-            } else {
-                return $sql;
-            }
-        } else {
-            return '';
+            $qp->sql = $sql;
+            $qp->par = $db_con->get_par();
         }
+
+        return $qp;
     }
 
     /**
@@ -114,9 +121,8 @@ class system_error_log_list
         global $db_con;
         $result = false;
 
-        $sql = $this->load_sql($db_con);
-        $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get_old($sql);
+        $qp = $this->load_sql($db_con);
+        $db_lst = $db_con->get($qp);
 
         if (count($db_lst) > 0) {
             foreach ($db_lst as $db_row) {
