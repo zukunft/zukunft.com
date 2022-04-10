@@ -36,15 +36,21 @@ class html_unit_tests
     {
 
         global $usr;
+        $html = new html_base();
 
         $t->header('Unit tests of the html classes (src/main/php/web/html/*)');
+
+        $t->subheader('Login pages');
+
+        $created_html = $html->about();
+        $expected_html = $t->file('web/html/about.html');
+        $t->dsp('html_selector', $t->trim_html($expected_html), $t->trim_html($created_html));
 
         $t->subheader('Selector tests');
 
         // TODO test the creation of a phrase list API JSON
         // TODO create a selector using a list an with a simple test page header an footer
         //
-        $html = new html_base();
         $sel = new html_selector();
         $sel->label = 'Test:';
         $sel->name = 'test_selector';
@@ -56,9 +62,11 @@ class html_unit_tests
         $sel_lst[4] = 'Fourth';
         $sel->lst = $sel_lst;
         $sel->selected = 3;
-        $created_html = $html->form_start($sel->form);
+        $created_html = $html->header_test('test');
+        $created_html .= $html->form_start($sel->form);
         $created_html .= $sel->display();
         $created_html .= $html->form_end($sel->name, '');
+        $created_html .= $html->footer();
         $expected_html = $t->file('web/html/selector.html');
         $t->dsp('html_selector', $t->trim_html($expected_html), $t->trim_html($created_html));
 

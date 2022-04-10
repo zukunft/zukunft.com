@@ -70,7 +70,7 @@ class value_list_dsp extends value_list
             log_debug('value_list_dsp->dsp_table all head: ' . $phr_row->name);
             $result .= '<br>';
 
-            // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
+            // get all values related to the selecting word, because this is probably the strongest selection and to save time reduce the number of records asap
             $val_lst = $this->phr->val_lst();
             log_debug('value_list_dsp->dsp_table all values: ' . dsp_count($val_lst->lst));
 

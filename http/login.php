@@ -56,7 +56,7 @@ if ($usr->id > 0) {
 
     if (isset($_POST['submit'])) {
 
-        // Lets search the database for the user name and password
+        // Let's search the database for the username and password
         // don't use the sf shortcut here!
         $usr = mysqli_real_escape_string($_POST['username']);
         $pw_hash = hash('sha256', mysqli_real_escape_string($_POST['password']));
@@ -87,8 +87,9 @@ if ($usr->id > 0) {
 }
 
 if (!$_SESSION['logged']) {
+    $html = new html_base();
     $result .= dsp_form_center();
-    $result .= dsp_logo_big();
+    $result .= $html->logo_big();
     $result .= '<br><br>';
     $result .= '<form action="login.php" method="post">';
     $result .= '  User Name:<br> ';

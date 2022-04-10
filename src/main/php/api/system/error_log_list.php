@@ -59,13 +59,14 @@ class system_error_log_list_api extends api_message
     {
         log_debug('system_error_log_list->display for user "' . $usr->name . '"');
 
+        $html = new html_base();
         $result = ''; // reset the html code var
 
         if (count($this->system_errors) > 0) {
             // prepare to show the word link
             $log_dsp = $this->system_errors[0];
             if ($log_dsp->time <> '') {
-                $result .= dsp_tbl_start();
+                $result .= $html->tbl_start();
                 $row_nbr = 0;
                 foreach ($this->system_errors as $log_dsp) {
                     $row_nbr++;
@@ -74,7 +75,7 @@ class system_error_log_list_api extends api_message
                     }
                     $result .= $log_dsp->get_html($usr, $back);
                 }
-                $result .= dsp_tbl_end();
+                $result .= $html->tbl_end();
             }
         }
 

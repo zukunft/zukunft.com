@@ -126,8 +126,9 @@ if (isset($error)) {
     $result .= $error;
     unset($error);
 }
+$html = new html_base();
 $result .= dsp_form_center();
-$result .= dsp_logo_big();
+$result .= $html->logo_big();
 $result .= '<br><br>';
 $result .= '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>';
 $result .= '<p>' . dsp_err('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.') . '</p>';

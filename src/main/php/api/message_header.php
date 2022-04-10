@@ -69,12 +69,14 @@ class api_message
         } elseif ($title == '') {
             $title = 'api message';
         }
-        return dsp_header($title);
+        $html = new html_base();
+        return $html->header($title);
     }
 
     function get_html_footer(): string
     {
-        return dsp_footer();
+        $html = new html_base();
+        return $html->footer();
     }
 
 }

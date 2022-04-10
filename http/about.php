@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 
@@ -31,31 +31,17 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 $debug = $_GET['debug'] ?? 0;
-include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+include_once '../src/main/php/zu_lib.php';
+if ($debug > 0) {
+    echo 'libs loaded<br>';
+}
 
 // open database 
-$db_con = prg_start("about", "center_form");
+$db_con = prg_start("about", "center_form", false);
 
-  $result = ''; // reset the html code var
-
-  $result .= dsp_form_center(); 
-  $result .= dsp_logo_big(); 
-  $result .= '<br><br>'; 
-  $result .= 'is sponsored by <br><br>'; 
-  $result .= 'zukunft.com AG<br>'; 
-  $result .= 'Blumentalstrasse 15<br>'; 
-  $result .= '8707 Uetikon am See<br>'; 
-  $result .= 'Switzerland<br><br>'; 
-  $result .= '<a href="mailto:timon@zukunft.com">timon@zukunft.com</a><br><br>'; 
-  $result .= 'zukunft.com AG also supports the '; 
-  $result .= '<a href="https://github.com/zukunft/tream" title="github.com link">Open Source</a> Portfolio Management System<br><br>'; 
-  $result .= '<a href="https://tream.biz/p4a/applications/tream/" title="TREAM demo">'; 
-  $result .= '<img src="../images/TREAM_logo.jpg" alt="TREAM" style="height: 20%;">'; 
-  $result .= '</a><br><br>'; 
-  $result .= '</div>   ';
-
-  // display the view
-  echo $result;
+// display the view
+$html = new html_base();
+echo $html->about();
 
 // close the database  
-prg_end_about($db_con);
+prg_end_api($db_con);

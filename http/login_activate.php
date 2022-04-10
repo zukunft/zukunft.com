@@ -138,8 +138,9 @@ if (!$_SESSION['logged']) {
         }
     }
     if ($usr_id > 0) {
+        $html = new html_base();
         $result .= dsp_form_center();
-        $result .= dsp_logo_big();
+        $result .= $html->logo_big();
         $result .= '<br><br>';
         $result .= '<form action="login_activate.php" method="post">';
         $result .= '<input type="hidden" name="id" value="' . $usr_id . '">';

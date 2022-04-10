@@ -107,8 +107,9 @@ if ($usr->id > 0) {
 }
 
 if (!$_SESSION['logged']) {
+    $html = new html_base();
     $result .= dsp_form_center();
-    $result .= dsp_logo_big();
+    $result .= $html->logo_big();
     $result .= '<br><br>';
     $result .= '<form action="login_reset.php" method="post">';
     $result .= dsp_text_h2('Reset password<br>');

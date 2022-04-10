@@ -207,11 +207,12 @@ class view_dsp extends view
 
     private function html_navbar_start(): string
     {
+        $html = new html_base();
         $result = dsp_tbl_start();
         $result .= '<tr><td>';
         $result .= '  <tr>';
         $result .= '    <td>';
-        $result .= dsp_logo();
+        $result .= $html->logo();
         $result .= '    </td>';
         return $result;
     }
@@ -277,8 +278,9 @@ class view_dsp extends view
     // same as dsp_navbar_html, but using bootstrap
     private function dsp_navbar_bs($show_view, $back): string
     {
+        $html = new html_base();
         $result = '<nav class="navbar bg-light fixed-top">';
-        $result .= dsp_logo();
+        $result .= $html->logo();
         $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
         $result .= '    <input name="pattern" class="form-control mr-sm-2" type="search" placeholder="word or formula">';
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';

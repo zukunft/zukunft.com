@@ -504,7 +504,6 @@ const ZUH_IMG_UNDO = "../images/button_undo.svg";
 const ZUH_IMG_FIND = ".../images/button_find.svg";
 const ZUH_IMG_UN_FILTER = "../images/button_filter_off.svg";
 const ZUH_IMG_BACK = "../images/button_back.svg";
-const ZUH_IMG_LOGO = "../images/ZUKUNFT_logo.svg";
 
 const ZUH_IMG_ADD_FA = "fa-plus-square";
 const ZUH_IMG_EDIT_FA = "fa-edit";
@@ -788,7 +787,7 @@ function log_fatal(string $msg_text,
  * @param string $style the display style used to show the place
  * @return sql_db the open database connection
  */
-function prg_start(string $code_name, string $style = ""): sql_db
+function prg_start(string $code_name, string $style = "", $echo_header = true): sql_db
 {
     global $sys_time_start, $sys_script;
 
@@ -803,7 +802,10 @@ function prg_start(string $code_name, string $style = ""): sql_db
     log_debug($code_name . ' ... session_start');
 
     // html header
-    echo dsp_header("", $style);
+    if ($echo_header) {
+        $html = new html_base();
+        echo $html->header("", $style);
+    }
 
     return prg_restart($code_name, $style);
 }
@@ -937,7 +939,8 @@ function prg_end($db_con)
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-    echo dsp_footer();
+    $html = new html_base();
+    echo $html->footer();
 
     // write the execution time to the database if it is long
     $sys_time_end = time();
@@ -980,7 +983,8 @@ function prg_end_about($link)
     global $db_con;
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-    echo dsp_footer(true);
+    $html = new html_base();
+    echo $html->footer(true);
 
     // Closing connection
     $db_con->close();

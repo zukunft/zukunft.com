@@ -34,6 +34,8 @@ function run_display_test(testing $t)
 {
 
     global $usr;
+    $html = new html_base();
+
     $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
 
     $t->header('Test the view_display class (classes/view_display.php)');
@@ -101,7 +103,7 @@ function run_display_test(testing $t)
 
     $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../../style/style.css" /> </head> <body class="center_form">'));
     $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
-    $result = htmlspecialchars(trim(dsp_header('Header test', 'center_form')));
+    $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
     $t->dsp_contains(", dsp_header", $target, $result);
 
 

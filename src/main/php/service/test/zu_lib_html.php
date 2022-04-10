@@ -131,11 +131,12 @@ function zuh_footer($no_about, $empty) {
 
 // same as zuh_top_right, but without the view change used for the view editors
 function zuh_top_right_user($view_id, $view_name, $word_id) {
+  $html = new html_base();
   log_debug('zuh_top_right_user('.$view_id.','.$view_name.')');
   $result  = '';
   $result .= '<table style="width:100%">';
   $result .= '<tr><td>';
-  $result .= dsp_logo(); 
+  $result .= $html->logo();
   $result .= '</td><td class="right_ref">';
   //$result  = '<div class="right_ref">';
   if ($_SESSION['logged']) { 
