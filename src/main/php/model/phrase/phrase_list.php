@@ -1207,6 +1207,7 @@ class phrase_list
 
     /**
      * get all words of this phrase list that have at least one time term
+     * TODO use a phrase list instead of a word list because the same word can be of type time and id
      * @return word_list the list object of the time words (not the time phrases!)
      */
     function time_lst(): word_list
@@ -1220,8 +1221,6 @@ class phrase_list
     }
 
     /**
-     * create a useful list of time phrase
-     * TODO: review !!!!
      * @return phrase with the most useful time phrase
      */
     function time_useful(): ?phrase

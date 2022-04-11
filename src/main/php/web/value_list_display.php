@@ -88,7 +88,8 @@ class value_list_dsp extends value_list
             log_debug('value_list_dsp->dsp_table times: ' . $all_time_lst->dsp_name());
 
             // adjust the time words to display
-            $time_lst = $all_time_lst->time_useful();
+            $time_phr = $all_time_lst->time_useful();
+            $time_lst = new phrase_list();
             if ($time_lst != null) {
                 log_debug('value_list_dsp->dsp_table times sorted: ' . $time_lst->name());
             }
