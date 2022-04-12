@@ -147,6 +147,24 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
+     * @return word_link_dsp the triple object with the display interface functions
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new word_link_dsp($this->usr);
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->share_id = $this->share_id;
+        $dsp_obj->protection_id = $this->protection_id;
+
+        $dsp_obj->type_id = $this->type_id;
+        $dsp_obj->values = $this->values;
+
+        return $dsp_obj;
+    }
+
+    /**
      * map the database fields to the object fields
      *
      * @param array $db_row with the data directly from the database
@@ -504,7 +522,7 @@ class word_link extends user_sandbox_link_description
         // add the "from" side
         if (isset($this->from)) {
             if ($this->from->id > 0) {
-                $wrd_lst->add($this->from->get_word());
+                $wrd_lst->add($this->from->obj);
             } elseif ($this->from->id < 0) {
                 $sub_wrd_lst = $this->from->wrd_lst();
                 foreach ($sub_wrd_lst as $wrd) {
@@ -518,7 +536,7 @@ class word_link extends user_sandbox_link_description
         // add the "to" side
         if (isset($this->to)) {
             if ($this->to->id > 0) {
-                $wrd_lst->add($this->to->get_word());
+                $wrd_lst->add($this->to->obj);
             } elseif ($this->to->id < 0) {
                 $sub_wrd_lst = $this->to->wrd_lst();
                 foreach ($sub_wrd_lst as $wrd) {

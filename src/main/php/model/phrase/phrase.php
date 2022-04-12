@@ -341,65 +341,62 @@ class phrase
     function get_word(): word
     {
         $wrd = new word($this->usr);
-        $wrd->id = $this->id;
-        //$wrd->usr_cfg_id = $this->usr_cfg_id;
-        //$wrd->owner_id = $this->owner_id;
-        //$wrd->excluded = $this->excluded;
-        $wrd->name = $this->name;
-        $wrd->description = $this->description;
-        //$wrd->plural = $this->plural;
-        //$wrd->type_id = $this->type_id;
-        //$wrd->view_id = $this->view_id;
-        //$wrd->values = $this->values;
+        if (get_class($this->obj) == word::class) {
+            $wrd->id = $this->obj->id;
+            $wrd->usr_cfg_id = $this->obj->usr_cfg_id;
+            $wrd->owner_id = $this->obj->owner_id;
+            $wrd->share_id = $this->obj->share_id;
+            $wrd->protection_id = $this->obj->protection_id;
+            $wrd->excluded = $this->obj->excluded;
+            $wrd->name = $this->obj->name;
+            $wrd->description = $this->obj->description;
+            $wrd->plural = $this->obj->plural;
+            $wrd->type_id = $this->obj->type_id;
+            $wrd->view_id = $this->obj->view_id;
+            $wrd->values = $this->obj->values;
+        }
         return $wrd;
     }
 
     protected function get_word_dsp(): word_dsp
     {
-        $wrd = new word_dsp($this->usr);
-        $wrd->id = $this->id;
-        //$wrd->usr_cfg_id = $this->usr_cfg_id;
-        //$wrd->owner_id = $this->owner_id;
-        //$wrd->excluded = $this->excluded;
-        $wrd->name = $this->name;
-        $wrd->description = $this->description;
-        //$wrd->plural = $this->plural;
-        //$wrd->type_id = $this->type_id;
-        //$wrd->view_id = $this->view_id;
-        //$wrd->values = $this->values;
-        return $wrd;
+        $wrd_dsp = new word_dsp($this->usr);
+        if (get_class($this->obj) == word_dsp::class) {
+            $wrd_dsp = $this->obj;
+        } elseif (get_class($this->obj) == word::class) {
+            $wrd_dsp = $this->get_word()->dsp_obj();
+        }
+        return $wrd_dsp;
     }
 
     protected function get_triple(): word_link
     {
         $lnk = new word_link($this->usr);
-        $lnk->id = $this->id;
-        //$wrd->usr_cfg_id = $this->usr_cfg_id;
-        //$wrd->owner_id = $this->owner_id;
-        //$wrd->excluded = $this->excluded;
-        $lnk->name = $this->name;
-        $lnk->description = $this->description;
-        //$wrd->plural = $this->plural;
-        //$wrd->type_id = $this->type_id;
-        //$wrd->view_id = $this->view_id;
-        //$wrd->values = $this->values;
+        if (get_class($this->obj) == word_link::class) {
+            $lnk->id = $this->obj->id;
+            $lnk->fob = $this->obj->fob;
+            $lnk->tob = $this->obj->tob;
+            $lnk->usr_cfg_id = $this->obj->usr_cfg_id;
+            $lnk->owner_id = $this->obj->owner_id;
+            $lnk->share_id = $this->obj->share_id;
+            $lnk->protection_id = $this->obj->protection_id;
+            $lnk->excluded = $this->obj->excluded;
+            $lnk->description = $this->obj->description;
+            $lnk->type_id = $this->obj->type_id;
+            $lnk->values = $this->obj->values;
+        }
         return $lnk;
     }
 
     protected function get_triple_dsp(): word_link
     {
-        $lnk = new word_link($this->usr);
-        $lnk->id = $this->id;
-        //$wrd->usr_cfg_id = $this->usr_cfg_id;
-        //$wrd->owner_id = $this->owner_id;
-        //$wrd->excluded = $this->excluded;
-        $lnk->name = $this->name;
-        $lnk->description = $this->description;
-        //$wrd->plural = $this->plural;
-        //$wrd->type_id = $this->type_id;
-        //$wrd->view_id = $this->view_id;
-        //$wrd->values = $this->values;
-        return $lnk;
+        $lnk_dsp = new word_link_dsp($this->usr);
+        if (get_class($this->obj) == word_link_dsp::class) {
+            $lnk_dsp = $this->obj;
+        } elseif (get_class($this->obj) == word_link::class) {
+            $lnk_dsp = $this->get_triple()->dsp_obj();
+        }
+        return $lnk_dsp;
     }
 
     /**
@@ -476,8 +473,8 @@ class phrase
     }
 
     /*
-    data retrieval functions
-    */
+     * data retrieval functions
+     */
 
     /**
      * get a list of all values related to this phrase
@@ -512,8 +509,8 @@ class phrase
     }
 
     /*
-    display functions
-    */
+     * display functions
+     */
 
     /**
      * display the unique id fields
@@ -545,7 +542,7 @@ class phrase
 
     function name_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '">' . $this->name . '</a>';
     }
 
     function dsp_tbl(int $intent = 0): string
@@ -584,13 +581,13 @@ class phrase
      */
     function dsp_link(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '">' . $this->name . '</a>';
     }
 
     // similar to dsp_link
     function dsp_link_style($style): string
     {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '" class="' . $style . '">' . $this->name . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name . '</a>';
     }
 
     // helper function that returns a word list object just with the word object

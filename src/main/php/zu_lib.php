@@ -282,7 +282,6 @@ include_once $path_php . 'model/helper/word_link_object.php';
 include_once $path_php . 'model/word/word.php';
 include_once $path_php . 'model/word/word_exp.php';
 include_once $path_php . 'model/word/word_type_list.php';
-include_once $path_php . 'web/word/word_display.php';
 include_once $path_php . 'model/word/word_list.php';
 include_once $path_php . 'web/word/word_list_dsp.php';
 include_once $path_php . 'model/word/word_link.php';
@@ -361,6 +360,8 @@ include_once $path_php . 'api/formula/formula_value_min.php';
 // HTML frontend classes
 include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/html_selector.php';
+include_once $path_php . 'web/word/word_display.php';
+include_once $path_php . 'web/word/word_link_dsp.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
 
 // include all other libraries that are usually needed
