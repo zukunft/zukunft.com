@@ -32,7 +32,7 @@
 class value_list_dsp extends value_list
 {
 
-    // creates a table of all values related to a word and a related word and all the subwords of the related word
+    // creates a table of all values related to a word and a related word and all the sub words of the related word
     // e.g. for "ABB" ($this->phr) list all values for the cash flow statement ($phr_row)
     function dsp_table($phr_row, $back): string
     {
@@ -89,8 +89,10 @@ class value_list_dsp extends value_list
 
             // adjust the time words to display
             $time_phr = $all_time_lst->time_useful();
-            $time_lst = new phrase_list();
-            if ($time_lst != null) {
+            $time_lst = null;
+            if ($time_phr != null) {
+                $time_lst = new phrase_list($time_phr->usr);
+                $time_lst->add($time_phr);
                 log_debug('value_list_dsp->dsp_table times sorted: ' . $time_lst->name());
             }
 
@@ -118,19 +120,17 @@ class value_list_dsp extends value_list
             log_debug('value_list_dsp->dsp_table common: ' . $common_lst->dsp_name());
 
             // get all words not yet part of the table rows, columns or common words
-            $xtra_phrases = clone $phr_lst_all;
-            if (isset($word_incl_differentiator_lst)) {
-                $xtra_phrases->not_in($word_incl_differentiator_lst);
-            }
-            $xtra_phrases->not_in($common_lst);
+            $extra_phrases = clone $phr_lst_all;
+            $extra_phrases->not_in($word_incl_differentiator_lst);
+            $extra_phrases->not_in($common_lst);
             if ($time_lst != null) {
-                $xtra_phrases->not_in($time_lst->phrase_lst());
+                $extra_phrases->not_in($time_lst);
             }
-            log_debug('value_list_dsp->dsp_table xtra phrase, that might need to be added to each table cell: ' . $xtra_phrases->dsp_name());
+            log_debug('value_list_dsp->dsp_table extra phrase, that might need to be added to each table cell: ' . $extra_phrases->dsp_name());
 
             // display the common words
-            // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millios
-            if (count($common_lst) > 0) {
+            // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millions
+            if (count($common_lst->lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
                     if ($common_word->id <> $this->phr->id) {
@@ -165,16 +165,16 @@ class value_list_dsp extends value_list
                 $wrd_ids = array();
                 $wrd_ids[] = $this->phr->id;
                 $wrd_ids[] = $sub_wrd->id;
-                foreach ($common_lst->id_lst() as $xtra_id) {
-                    if (!in_array($xtra_id, $wrd_ids)) {
-                        $wrd_ids[] = $xtra_id;
+                foreach ($common_lst->id_lst() as $extra_id) {
+                    if (!in_array($extra_id, $wrd_ids)) {
+                        $wrd_ids[] = $extra_id;
                     }
                 }
 
                 // check if row is empty
                 $row_has_value = false;
                 $grp = new phrase_group($this->usr);
-                $grp->load_by_ids($wrd_ids);
+                $grp->load_by_ids(new phr_ids($wrd_ids));
                 foreach ($time_lst->lst as $time_wrd) {
                     $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                     if ($tbl_value->number <> "") {
@@ -198,7 +198,7 @@ class value_list_dsp extends value_list
                         // get the phrase group for the value row
                         // to be done for the list at once
                         $grp = new phrase_group($this->usr);
-                        $grp->load_by_ids($val_wrd_ids);
+                        $grp->load_by_ids(new phr_ids($val_wrd_ids));
                         log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -218,7 +218,7 @@ class value_list_dsp extends value_list
                                 $add_phr_ids[] = $sub_wrd->id;
                                 $type_ids[] = $sub_wrd->id; // TODO check if it should not be $type_word_id
                             }
-                            // if values for just one column are added, the column head word id is already in the commen id list and due to that does not need to be added
+                            // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                             if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id > 0) {
                                 $add_phr_lst->add($time_wrd->phrase());
                                 $add_phr_ids[] = $time_wrd->id;
@@ -248,8 +248,8 @@ class value_list_dsp extends value_list
                 $differentiator_phrases = $differentiator_words->phrase_lst();
                 log_debug("value_list_dsp->dsp_table ... show differentiator of " . $differentiator_phrases->name() . ".");
                 // select only the differentiator words that have a value for the main word
-                //$differentiator_phrases = zu_lst_in($differentiator_phrases, $xtra_phrases);
-                $differentiator_phrases = $differentiator_phrases->filter($xtra_phrases);
+                //$differentiator_phrases = zu_lst_in($differentiator_phrases, $extra_phrases);
+                $differentiator_phrases = $differentiator_phrases->filter($extra_phrases);
 
                 // find direct differentiator words
                 //$differentiator_type = cl(SQL_LINK_TYPE_DIFFERENTIATOR);
@@ -284,9 +284,9 @@ class value_list_dsp extends value_list
                             if (!in_array($diff_phrase->id, $wrd_ids)) {
                                 $wrd_ids[] = $diff_phrase->id;
                             }
-                            foreach ($common_lst->id_lst() as $xtra_id) {
-                                if (!in_array($xtra_id, $wrd_ids)) {
-                                    $wrd_ids[] = $xtra_id;
+                            foreach ($common_lst->id_lst() as $extra_id) {
+                                if (!in_array($extra_id, $wrd_ids)) {
+                                    $wrd_ids[] = $extra_id;
                                 }
                             }
 
@@ -299,7 +299,7 @@ class value_list_dsp extends value_list
                                 // get the phrase group for the value row
                                 // to be done for the list at once
                                 $grp = new phrase_group($this->usr);
-                                $grp->load_by_ids($val_wrd_ids);
+                                $grp->load_by_ids(new phr_ids($val_wrd_ids));
                                 log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
@@ -324,7 +324,7 @@ class value_list_dsp extends value_list
                                         $add_phr_ids[] = $diff_phrase->id;
                                         $type_ids[] = 0;
                                     }
-                                    // if values for just one column are added, the column head word id is already in the commen id list and due to that does not need to be added
+                                    // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                                     if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id > 0) {
                                         $add_phr_lst->add($time_wrd->phrase());
                                         $add_phr_ids[] = $time_wrd->id;
@@ -382,15 +382,15 @@ class value_list_dsp extends value_list
             $result .= '      <td>' . "\n";
 
             // offer the user to add a new row related word
-            $result .= $phr_row->btn_add($back, debug - 1);
+            $result .= $phr_row->btn_add($back);
             $result .= '&nbsp;&nbsp;';
 
             // offer the user to add a new value e.g. to add a value for a new year
-            // this extra add value button is needed for the case that all values are filled and due to that there is no other plus sign on the table
+            // this extra adds value button is needed for the case that all values are filled and due to that there is no other plus sign on the table
             if (isset($val_main)) {
                 foreach ($time_lst->lst as $time_wrd) {
                     $result .= '      <td class="right_ref">' . "\n";
-                    $result .= $val_main->btn_add($back, debug - 1);
+                    $result .= $val_main->btn_add($back);
                     $result .= '      </td>' . "\n";
                 }
             }
@@ -411,5 +411,3 @@ class value_list_dsp extends value_list
 
 
 }
-
-?>

@@ -1035,8 +1035,10 @@ class phrase_list
         log_debug('phrase_list->diff -> ' . $this->dsp_id());
     }
 
-    // same as diff but sometimes this name looks better
-    function not_in($del_phr_lst)
+    /**
+     * same as diff but sometimes this name looks better
+     */
+    function not_in(phrase_list $del_phr_lst)
     {
         log_debug('phrase_list->not_in get out of ' . $this->dsp_name() . ' not in ' . $del_phr_lst->name() . ')');
         $this->diff($del_phr_lst);
