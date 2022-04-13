@@ -76,6 +76,7 @@ include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link.php';
 include_once $path_unit . 'word_link_list.php';
+include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
 include_once $path_unit . 'value.php';

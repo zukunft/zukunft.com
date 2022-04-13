@@ -231,6 +231,80 @@ class phrase_list
     }
 
     /**
+     * create an SQL statement to retrieve a list of "related" phrases from the database
+     * see load_related for a more detailed description
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param phrase $phr the base phrase which should be used for the selection
+     * @param phrase $grp_phr to define the preferred phrase for the selection
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_related_sql(sql_db $db_con, phrase $phr, ?phrase $grp_phr = null): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= 'related';
+        if ($grp_phr != null) {
+            $qp->name .= '_and_group';
+        }
+
+        /*
+        // select the related words
+        $db_con->set_type(DB_TYPE_WORD);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_fields(word_link::FLD_NAMES);
+        $db_con->set_usr_fields(word_link::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(word_link::FLD_NAMES_NUM_USR);
+        $db_con->set_where_id_in(word_link::FLD_ID, $ids);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+
+        // select the related triple
+        $db_con->set_type(DB_TYPE_TRIPLE);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->usr->id);
+        $db_con->set_link_fields(word_link::FLD_FROM, word_link::FLD_TO, verb::FLD_ID);
+        $db_con->set_fields(word_link::FLD_NAMES);
+        $db_con->set_usr_fields(word_link::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(word_link::FLD_NAMES_NUM_USR);
+        $db_con->set_where_id_in(word_link::FLD_ID, $ids);
+        $qp->sql = $db_con->select_by_id();
+        $qp->par = $db_con->get_par();
+
+        // union
+        */
+
+        return $qp;
+    }
+
+    /**
+     * load all phrases similar to the given phrase
+     * e.g. if the phrase is Zurich (Canton) a list of all Cantons of Switzerland is returned
+     * this is used to selecting related phrases
+     *
+     * @param phrase $phr the base phrase which should be used for the selection
+     *                    e.g. if Zurich (Canton) if the base phrase, a list of all cantons of Switzerland should be returnedd
+     * @param phrase $grp_phr to define the preferred phrase for the selection
+     *                        e.g. if Zurich is the base phrase (the word Zurich in this case) it is not clear, if City or Canton should be used
+     *                             for the selection of the related phrases, so the $grp-phr Canton can be used as a selection
+     *
+     * if only the word Zurich is given as base $phr, the selection should include City and Canton as optional preselection
+     * by selection the preselection e.g. Canton the selection should be modified so that the 20 most often used Cantons are on the top
+     * with "more Canton" the user can increase to list of cantons
+     * at the end of the preselection list alternative groups such as City should be shown
+     *
+     * @return bool true if at least one phrase is found
+     */
+    function load_related(phrase $phr, ?phrase $grp_phr = null): bool
+    {
+        $result = false;
+
+        return $result;
+    }
+
+
+    /**
      * add the given phrase ids to the list without loading the phrases from the database
      *
      * @param string|null $wrd_ids_txt with comma seperated word ids
