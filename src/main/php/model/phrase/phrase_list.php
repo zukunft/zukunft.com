@@ -247,6 +247,117 @@ class phrase_list
             $qp->name .= '_and_group';
         }
 
+        // if no phrase type is define, list all words and triples
+        // TODO: but if word has several types don't offer to the user to select the simple word
+        $usr_par = $db_con->get_par();
+        $sql_words = 'SELECT DISTINCT w.' . word::FLD_ID . ' AS id, 
+                             ' . $db_con->get_usr_field(word::FLD_NAME, "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                             ' . $db_con->get_usr_field(user_sandbox::FLD_EXCLUDED, "w", "u", sql_db::FLD_FORMAT_BOOL) . '
+                        FROM ' . $db_con->get_table_name(DB_TYPE_WORD) . ' w   
+                   LEFT JOIN user_' . $db_con->get_table_name(DB_TYPE_WORD) . ' u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
+                                         AND u.user_id = ' . $this->usr->id . ' ';
+        $sql_triples = 'SELECT DISTINCT l.word_link_id * -1 AS id, 
+                               ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
+                          FROM word_links l
+                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                                                AND u.user_id = ' . $this->usr->id . ' ';
+
+        if (isset($type)) {
+            if ($type->id > 0) {
+
+                // select all phrase ids of the given type e.g. ABB, DANONE, Zurich
+                $sql_where_exclude = 'excluded = 0';
+                $sql_field_names = 'id, name, excluded';
+                $sql_wrd_all = 'SELECT from_phrase_id AS id FROM (
+                                        SELECT DISTINCT
+                                               l.from_phrase_id,    
+                                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
+                                          FROM word_links l
+                                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                                                                AND u.user_id = ' . $this->usr->id . '
+                                         WHERE l.to_phrase_id = ' . $type->id . ' 
+                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . ' ) AS a 
+                                         WHERE ' . $sql_where_exclude . ' ';
+
+                // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
+                $sql_wrd_other = 'SELECT from_phrase_id FROM (
+                                        SELECT DISTINCT
+                                               l.from_phrase_id,    
+                                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
+                                          FROM word_links l
+                                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                                                                AND u.user_id = ' . $this->usr->id . '
+                                         WHERE l.to_phrase_id <> ' . $type->id . ' 
+                                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
+                                           AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
+                                         WHERE ' . $sql_where_exclude . ' ';
+
+                // if a word has no other type, use the word
+                $sql_words = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
+                      SELECT DISTINCT
+                             w.' . word::FLD_ID . ' AS id, 
+                             ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                             ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
+                        FROM ( ' . $sql_wrd_all . ' ) a, words w
+                   LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . ' 
+                                         AND u.user_id = ' . $this->usr->id . '
+                       WHERE w.' . word::FLD_ID . ' NOT IN ( ' . $sql_wrd_other . ' )                                        
+                         AND w.' . word::FLD_ID . ' = a.id ) AS w 
+                       WHERE ' . $sql_where_exclude . ' ';
+
+                // if a word has another type, use the triple
+                $sql_triples = 'SELECT DISTINCT ' . $sql_field_names . ' FROM (
+                        SELECT DISTINCT
+                               l.word_link_id * -1 AS id, 
+                               ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
+                               ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
+                          FROM word_links l
+                     LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id 
+                                                AND u.user_id = ' . $this->usr->id . '
+                         WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
+                           AND l.verb_id = ' . cl(db_cl::VERB, verb::IS_A) . '
+                           AND l.to_phrase_id = ' . $type->id . ' ) AS t 
+                         WHERE ' . $sql_where_exclude . ' ';
+                /*
+                $sql_type_from = ', word_links t LEFT JOIN user_word_links ut ON ut.word_link_id = t.word_link_id
+                                                                             AND ut.user_id = '.$this->usr->id.'';
+                $sql_type_where_words   = 'WHERE w.' . word::FLD_ID . ' = t.from_phrase_id
+                                             AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
+                                             AND t.to_phrase_id = '.$type->id.' ';
+                $sql_type_where_triples = 'WHERE l.to_phrase_id = t.from_phrase_id
+                                             AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
+                                             AND t.to_phrase_id = '.$type->id.' ';
+                $sql_words   = 'SELECT w.' . word::FLD_ID . ' AS id,
+                                      IF(u.word_name IS NULL, w.word_name, u.word_name) AS name,
+                                      IF(u.excluded IS NULL, COALESCE(w.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
+                                  FROM words w
+                            LEFT JOIN user_words u ON u.' . word::FLD_ID . ' = w.' . word::FLD_ID . '
+                                                  AND u.user_id = '.$this->usr->id.'
+                                      '.$sql_type_from.'
+                                      '.$sql_type_where_words.'
+                              GROUP BY name';
+                $sql_triples = 'SELECT l.word_link_id * -1 AS id,
+                                      IF(u.name IS NULL, l.name, u.name) AS name,
+                                      IF(u.excluded IS NULL, COALESCE(l.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
+                                  FROM word_links l
+                            LEFT JOIN user_word_links u ON u.word_link_id = l.word_link_id
+                                                        AND u.user_id = '.$this->usr->id.'
+                                      '.$sql_type_from.'
+                                      '.$sql_type_where_triples.'
+                              GROUP BY name';
+                              */
+            }
+        }
+        $sql_avoid_code_check_prefix = "SELECT";
+        $sql = $sql_avoid_code_check_prefix . ' DISTINCT id, name
+              FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
+             WHERE excluded = 0
+          ORDER BY p.name;';
+        log_debug('phrase->sql_list -> ' . $sql);
+
+        $qp->sql = $sql
+        ;
         /*
         // select the related words
         $db_con->set_type(DB_TYPE_WORD);
@@ -300,9 +411,42 @@ class phrase_list
     {
         $result = false;
 
+        // get group phrase if needed
+        if ($grp_phr == null) {
+            $grp_lst = new phrase_list($this->usr);
+
+        }
+
         return $result;
     }
 
+    /**
+     * load a list of phrases by a given phrase, verb and direction
+     * e.g. for "Zurich" "is a" and "UP" the result is "Canton", "City" and "Company"
+     *
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param string $direction to select either the parents, children or all related words ana triples
+     * @return bool true if at least one triple found
+     */
+    function load_by_phr(phrase $phr, ?verb $vrb = null, string $direction = word_link_list::DIRECTION_BOTH): bool
+    {
+        $this->lst = array();
+
+        $wrd_lst = new word_list($this->usr);
+        $wrd_lst->load_linked_words($vrb, $direction);
+        $wrd_added =  $this->add_wrd_lst($wrd_lst);
+
+        $trp_lst = new word_link_list($this->usr);
+        $trp_lst->load_by_phr($phr, $vrb, $direction);
+        $trp_added =  $this->add_trp_lst($trp_lst);
+
+        if ($wrd_added or $trp_added) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * add the given phrase ids to the list without loading the phrases from the database
@@ -946,9 +1090,11 @@ class phrase_list
 
     /**
      * add one phrase to the phrase list, but only if it is not yet part of the phrase list
+     * @returns bool true the phrase has been added
      */
-    function add(?phrase $phr_to_add)
+    function add(?phrase $phr_to_add): bool
     {
+        $result = false;
         // check parameters
         if ($phr_to_add != null) {
             log_debug('phrase_list->add ' . $phr_to_add->dsp_id());
@@ -959,13 +1105,60 @@ class phrase_list
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($phr_to_add->id, $this->id_lst())) {
                             $this->lst[] = $phr_to_add;
+                            $result = true;
                         }
                     } else {
                         $this->lst[] = $phr_to_add;
+                        $result = true;
                     }
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * add a list of words to the phrase list, but only if it is not yet part of the phrase list
+     *
+     * @param word_list|null $wrd_lst_to_add the list of words to add as a word list object
+     * @returns bool true is at least one word has been added
+     */
+    function add_wrd_lst(?word_list $wrd_lst_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($wrd_lst_to_add != null) {
+            if ($wrd_lst_to_add->lst != null) {
+                foreach ($wrd_lst_to_add->lst as $wrd) {
+                    if ($this->add($wrd->phrase())) {
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add a list of triples to the phrase list, but only if it is not yet part of the phrase list
+     *
+     * @param word_list|null $trp_lst_to_add the list of words to add as a word list object
+     * @returns bool true is at least one word has been added
+     */
+    function add_trp_lst(?word_link_list $trp_lst_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($trp_lst_to_add != null) {
+            if ($trp_lst_to_add->lst != null) {
+                foreach ($trp_lst_to_add->lst as $trp) {
+                    if ($this->add($trp->phrase())) {
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**
