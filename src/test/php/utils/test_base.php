@@ -969,7 +969,18 @@ class test_base
      */
     function trim_lines(string $string_with_new_lines): string
     {
-        return $this->trim(preg_replace('/[\n\r]/', '', $string_with_new_lines));
+        return $this->trim(preg_replace('/[\n\r]/', ' ', $string_with_new_lines));
+    }
+
+    /**
+     * @return string text with just single spaces and all spaces removed not needed in a SQL
+     */
+    function trim_sql(string $sql_string): string
+    {
+        $result = $this->trim_lines($sql_string);
+        $result = preg_replace('/\( /', '(', $result);
+        $result = preg_replace('/ \)/', ')', $result);
+        return preg_replace('/, /', ',', $result);
     }
 
     /**
@@ -1211,7 +1222,7 @@ class test_base
      */
     function assert_sql(string $name, string $created, string $expected): bool
     {
-        return $this->assert($name, $this->trim($created), $this->trim($expected));
+        return $this->assert($name, $this->trim_sql($created), $this->trim_sql($expected));
     }
 
     /**
