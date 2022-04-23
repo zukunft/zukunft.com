@@ -348,4 +348,34 @@ class html_base
         return "<small>".$line_text."</small><br>";
     }
 
+    /**
+     * display a list that can be sorted using the fixed field "order_nbr"
+     * $sql_result - list of the query results
+     */
+    function list_sort ($sql_result, $id_field, $text_field, $script_name, $script_parameter) {
+        $result  = '';
+
+        $row_nbr = 0;
+        $num_rows = mysqli_num_rows($sql_result);
+        while ($entry = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
+            // list of all possible view entries
+            $row_nbr = $row_nbr + 1;
+            $edit_script = zu_id_to_edit($id_field);
+            $result .=  '<a href="/http/'.$edit_script.'?id='.$entry[$id_field].'&back='.$script_parameter.'">'.$entry[$text_field].'</a> ';
+            if ($row_nbr > 1) {
+                $result .= '<a href="/http/'.$script_name.'?id='.$script_parameter.'&move_up='.$entry[$id_field].'">up</a>';
+            }
+            if ($row_nbr > 1 and $row_nbr < $num_rows) {
+                $result .= '/';
+            }
+            if ($row_nbr < $num_rows) {
+                $result .= '<a href="/http/'.$script_name.'?id='.$script_parameter.'&move_down='.$entry[$id_field].'">down</a>';
+            }
+            $result .= ' ';
+            $result .= btn_del ('Delete '.$text_field, $script_name.'?id='.$script_parameter.'&del='.$entry[$id_field]);
+            $result .= '<br>';
+        }
+
+        return $result;
+    }
 }

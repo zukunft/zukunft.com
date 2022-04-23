@@ -60,7 +60,7 @@
 
 // lists all words related to a given value except the given word
 // and offer to add a formula to the value as an alternative
-// $wrd_add is onöy optional to display the last added word at the end
+// $wrd_add is only optional to display the last added word at the end
 // TODO: take user unlink of words into account
 // save data to the database only if "save" is pressed add and remove the word links "on the fly", which means that after the first call the edit view is more or less the same as the add view
 function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $back_link, $user_id) {
@@ -180,8 +180,8 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
             $word_pos = $word_pos + 1;
             
             $result .= '    </td>';
-            $result .= '    <td>'.zuh_btn_del  ("Remove ".zut_name($wrd_ids[$pos], $user_id), $used_url).'</td>';
-            $result .= '    <td>'.zuh_btn_edit ("Rename ".zut_name($wrd_ids[$pos], $user_id), $word_url).'</td>';
+            $result .= '    <td>'.btn_del  ("Remove ".zut_name($wrd_ids[$pos], $user_id), $used_url).'</td>';
+            $result .= '    <td>'.btn_edit ("Rename ".zut_name($wrd_ids[$pos], $user_id), $word_url).'</td>';
           }
         }  
 
@@ -201,8 +201,8 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
             $word_pos = $word_pos + 1;
             
             $result .= '    </td>';
-            $result .= '    <td>'.zuh_btn_del  ("Remove ".zut_name($wrd_ids[$pos], $user_id), $used_url).'</td>';
-            $result .= '    <td>'.zuh_btn_edit ("Rename ".zut_name($wrd_ids[$pos], $user_id), $word_url).'</td>';
+            $result .= '    <td>'.btn_del  ("Remove ".zut_name($wrd_ids[$pos], $user_id), $used_url).'</td>';
+            $result .= '    <td>'.btn_edit ("Rename ".zut_name($wrd_ids[$pos], $user_id), $word_url).'</td>';
           }
         }
 
@@ -214,7 +214,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
             $word_pos = $word_pos + 1;
             
             $result .= '    </td>';
-            $result .= '    <td>'.zuh_btn_del  ("Remove ".zut_name($wrd_ids[$pos], $user_id), $used_url).'</td>';
+            $result .= '    <td>'.btn_del  ("Remove ".zut_name($wrd_ids[$pos], $user_id), $used_url).'</td>';
           }
         }  
 
@@ -235,7 +235,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
   $used_url = $this_url.zu_ids_to_url($wrd_ids_new, "word").
                         zu_ids_to_url($type_ids_new,"type").
                         zu_ids_to_url($db_ids_new,  "db",   );
-  $result .= '  '.zuh_btn_add ("Add another word", $used_url);
+  $result .= '  '.btn_add ("Add another word", $used_url);
   $result .= '  <br><br>';
   $result .= '  <input type="hidden" name="back" value="'.$back_link.'">';
   if ($val_id > 0) {   
@@ -247,7 +247,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
   $result .= '<br><br>';
   $result .= zuv_dsp_source($src_id, $script, $back_link, $user_id);
   $result .= '<br><br>';
-  $result .= zuh_btn_back($back_link);
+  $result .= btn_back($back_link);
   
   // display the user changes 
   if ($val_id > 0) { 
@@ -291,34 +291,8 @@ function zuv_dsp_source($src_id, $php_script, $back_link, $user_id) {
 
   log_debug("zuv_dsp_source -> source id used (".$src_id.")");
   $result .= '      taken from '.zuh_selector ("source", $php_script, zu_sql_std_lst ("source"), $src_id, "please define the source" ).' ';
-  $result .= '    <td>'.zuh_btn_edit ("Rename ".zus_name($src_id), '/http/source_edit.php?id='.$src_id.'&back='.$back_link).'</td>';
-  $result .= '    <td>'.zuh_btn_add  ("Add new source", '/http/source_add.php?back='.$back_link).'</td>';
-  return $result;
-}
-
-// button to add an related value to $words but mainly to the word $id
-// $fixed_words - words that the user is not suggested to change this time
-// $select_word - suggested words which the user can change
-// $type_word   - word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word
-// $back_id     - id of the calling word to define what should be displayed after the adding of the value
-function zuv_btn_add_value ($wrd_ids, $type_ids, $back_id) {
-  log_debug("zuv_btn_add_value (".implode(",",$wrd_ids).",t".implode(",",$type_ids).",b".$back_id.")");
-  $url = '/http/value_add.php?back='.$back_id.zu_ids_to_url($wrd_ids,"word").zu_ids_to_url($type_ids,"type");
-  $result = zuh_btn_add ('add new value', $url);
-  log_debug("zuv_btn_add_value -> (".$result.")");
-  return $result;
-}
-
-// button to allow the user to change a single value
-function zuv_btn_edit_value ($value_id, $back_id) {
-  $result = zuh_btn_edit ('change this value', '/http/value_edit.php?id='.$value_id.'&back='.$back_id.'');
-  return $result;
-}
-
-// button to allow the user to exclude a single value from calulation and display
-function zuv_btn_del_value ($value_id, $back_id) {
-  //zu_debug("zuv_btn_del_value ... ");
-  $result = zuh_btn_del ('delete this value', '/http/value_del.php?id='.$value_id.'&back='.$back_id.'');
+  $result .= '    <td>'.btn_edit ("Rename ".zus_name($src_id), '/http/source_edit.php?id='.$src_id.'&back='.$back_link).'</td>';
+  $result .= '    <td>'.btn_add  ("Add new source", '/http/source_add.php?back='.$back_link).'</td>';
   return $result;
 }
 
@@ -353,7 +327,7 @@ function zuv_table ($word_id, $related_word_id, $user_id) {
   $result .= zut_html($related_word_id, $related_word_name);
   $result .= '<br>';
 
-  // get all values related to the selectiong word, because this is probably strongest selection and to save time reduce the number of records asap
+  // get all values related to the selecting word, because this is probably strongest selection and to save time reduce the number of records asap
   $value_lst = zu_sql_val_lst_wrd($word_id, $user_id);
 
   // get all words related to the value list to be able to define the column and the row names

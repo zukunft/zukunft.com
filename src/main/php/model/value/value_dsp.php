@@ -88,8 +88,18 @@ class value_dsp extends value
         return $result;
     }
 
-    // offer the user to add a new value similar to this value
-    function btn_add($back)
+    /**
+     * offer the user to add a new value similar to this value
+     *
+     * possible future parameters:
+     * $fixed_words - words that the user is not suggested to change this time
+     * $select_word - suggested words which the user can change
+     * $type_word   - word to preselect the suggested words e.g. "Country" to list all ther countries first for the suggested word
+     *
+     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_add(string $back): string
     {
         $result = '';
 

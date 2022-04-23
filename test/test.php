@@ -81,7 +81,7 @@
     view_component.php (ex view_component)
     view_component_dsp.php
     view_component_link.php
-    display_button.php
+    web/html/button.php
     display_html.php
     json.php
     xml.php

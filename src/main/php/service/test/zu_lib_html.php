@@ -158,34 +158,7 @@ function zuh_top_right_logout() {
 }
  
 
-// show the standard top right corner, where the user can login or change the settings
-function zuh_top_right($view_id, $view_name, $word_id, $user_id) {
-  log_debug('zuh_top_right('.$view_id.','.$view_name.')');
-  $result  = zuh_top_right_user($view_id, $view_name, $word_id) ;
-  $result .= ' - ';
-  $result .= zuh_btn_find ('find a word or formula', '/http/find.php?word='.$word_id).' - ';
-  if (zum_is_system($view_id) AND !zuu_is_admin($user_id)) {
-    $result .= ''.$view_name.' ';
-  } else {
-    $result .= 'view <a href="/http/view_select.php?id='.$view_id.'&word='.$word_id.'">'.$view_name.'</a> ';
-    $result .= zuh_btn_edit ('adjust the view '.$view_name, '/http/view_edit.php?id='.$view_id.'&word='.$word_id).' ';
-    $result .= zuh_btn_add ('create a new view', '/http/view_add.php?word='.$word_id);
-  }
-  $result .= zuh_top_right_logout();
-  $result .= '</td></tr></table>';
-  //$result .= '</div><br>';
-  return $result;
-}
 
-// same as zuh_top_right, but without the view change used for the view editors
-function zuh_top_right_no_view($view_id, $view_name, $word_id) {
-  log_debug('zuh_top_right('.$view_id.','.$view_name.')');
-  $result  = zuh_top_right_user($view_id, $view_name, $word_id) ;
-  $result .= zuh_top_right_logout();
-  $result .= '</td></tr></table>';
-  //$result .= '</div><br>';
-  return $result;
-}
 
 // after a word, value or formula has been added or changed go back to the calling page
 function zuh_go_back($back, $user_id) {
@@ -270,21 +243,9 @@ function zuh_btn_fa ($icon, $title, $call) {
 }
 
 // button function to keep the image call on one place
-function zuh_btn_add      ($title, $call) { return zuh_btn_fa(ZUH_IMG_ADD_FA,      $title, $call); } // an add button to create a new entry
-function zuh_btn_edit     ($title, $call) { return zuh_btn_fa(ZUH_IMG_EDIT_FA,     $title, $call); } // an edit button to adjust an entry
-function zuh_btn_del      ($title, $call) { return zuh_btn_fa(ZUH_IMG_DEL_FA,      $title, $call); } // an delete button to remove an entry
 function zuh_btn_undo     ($title, $call) { return zuh_btn   (ZUH_IMG_UNDO,        $title, $call); } // an undo button to undo an change (not only the last)
-function zuh_btn_find     ($title, $call) { return zuh_btn   (ZUH_IMG_FIND,        $title, $call); } // a find button to search for a word
-function zuh_btn_unfilter ($title, $call) { return zuh_btn   (ZUH_IMG_UN_FILTER,    $title, $call); } // button to remove a filter
 
 
-function zuh_btn_back ($back_link) {
-  if ($back_link == "") {
-    $back_link = 1; // temp solution
-  }
-  $result = '<a href="/http/view.php?words='.$back_link.'"><img src="'.ZUH_IMG_BACK.'" alt="back"></a>';
-  return $result;
-}
 
 // ask a yes/no question with the defaut calls
 function zuh_btn_confirm ($title, $description, $call) {
@@ -417,49 +378,4 @@ function zuh_selector_lst ($name, $form, $word_lst, $selected) {
   return $result;
 }
 
-// display a list that can be sorted using the fixed field "order_nbr"
-// $sql_result - list of the query results
-function zuh_list_sort ($sql_result, $id_field, $text_field, $script_name, $script_parameter) {
-  $result  = '';
-
-  $row_nbr = 0;
-  $num_rows = mysqli_num_rows($sql_result);
-  while ($entry = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-    // list of all possible view entries
-    $row_nbr = $row_nbr + 1;
-    $edit_script = zu_id_to_edit($id_field);
-    $result .=  '<a href="/http/'.$edit_script.'?id='.$entry[$id_field].'&back='.$script_parameter.'">'.$entry[$text_field].'</a> ';
-    if ($row_nbr > 1) {
-      $result .= '<a href="/http/'.$script_name.'?id='.$script_parameter.'&move_up='.$entry[$id_field].'">up</a>';
-    }
-    if ($row_nbr > 1 and $row_nbr < $num_rows) {
-      $result .= '/';
-    }
-    if ($row_nbr < $num_rows) {
-      $result .= '<a href="/http/'.$script_name.'?id='.$script_parameter.'&move_down='.$entry[$id_field].'">down</a>';
-    }
-    $result .= ' ';
-    $result .= zuh_btn_del ('Delete '.$text_field, $script_name.'?id='.$script_parameter.'&del='.$entry[$id_field]);
-    $result .= '<br>';
-  }
-
-  return $result;
-}
-
-// display a list of elements
-function zuh_list ($item_lst, $item_type) {
-  $result  = "";
-
-  foreach (array_keys($item_lst) as $item_nbr) {
-    $edit_script = $item_type."_edit.php";
-    $add_script  = $item_type."_add.php";
-    $result .=  '<a href="/http/'.$edit_script.'?id='.$item_nbr.'">'.$item_lst[$item_nbr].'</a><br> ';
-  }
-  $result .= zuh_btn_add ('Add '.$item_type, $add_script);
-  $result .= '<br>';
-
-  return $result;
-}
-
-?>
 

@@ -228,7 +228,9 @@ class view_dsp extends view
     }
 
     /**
-     * show the standard top right corner, where the user can login or change the settings
+     * show the standard top right corner, where the user can log in or change the settings
+     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @returns string the HTML code to display the navigation bar on top of the page
      */
     private function dsp_navbar_html(string $back = ''): string
     {

@@ -276,7 +276,7 @@ include_once $path_php . 'model/system/system_error_log_list.php';
 include_once $path_php . 'api/system/error_log_list.php';
 include_once $path_php . 'web/display_interface.php';
 include_once $path_php . 'web/display_html.php';
-include_once $path_php . 'web/display_button.php';
+include_once $path_php . 'web/html/button.php';
 include_once $path_php . 'web/display_list.php';
 include_once $path_php . 'model/helper/word_link_object.php';
 include_once $path_php . 'model/word/word.php';
@@ -502,13 +502,6 @@ const ZUH_IMG_ADD = "../images/button_add.svg";
 const ZUH_IMG_EDIT = ".../images/button_edit.svg";
 const ZUH_IMG_DEL = "../images/button_del.svg";
 const ZUH_IMG_UNDO = "../images/button_undo.svg";
-const ZUH_IMG_FIND = ".../images/button_find.svg";
-const ZUH_IMG_UN_FILTER = "../images/button_filter_off.svg";
-const ZUH_IMG_BACK = "../images/button_back.svg";
-
-const ZUH_IMG_ADD_FA = "fa-plus-square";
-const ZUH_IMG_EDIT_FA = "fa-edit";
-const ZUH_IMG_DEL_FA = "fa-times-circle";
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');

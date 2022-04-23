@@ -61,7 +61,7 @@ function run_display_test(testing $t)
     $t->dsp('view_component_dsp->text', $target, $result);
 
 
-    $t->header('Test the display button class (classes/display_button.php )');
+    $t->header('Test the display button class (src/main/php/web/html/button.php )');
 
     $target = '<a href="/http/view.php" title="Add test"><img src="../../../../images/button_add.svg" alt="Add test"></a>';
     $target = '<a href="/http/view.php" title="Add test">';
