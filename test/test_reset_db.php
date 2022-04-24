@@ -161,7 +161,7 @@ function run_table_truncate(string $table_name)
 
 function run_db_seq_reset()
 {
-    // the sequence names of the reseted tables
+    // the sequence names of the tables to reset
     $seq_names = array(
         'value_phrase_links_value_phrase_link_id_seq',
         'values_value_id_seq',

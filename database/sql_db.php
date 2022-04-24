@@ -1480,7 +1480,7 @@ class sql_db
                     } catch (Exception $e) {
                         $msg = 'Select';
                         $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+                        $result = null;
                     }
                 }
             } elseif ($this->db_type == sql_db::MYSQL) {
@@ -2721,7 +2721,10 @@ class sql_db
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
+                    if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA
+                        and $this->type != DB_TYPE_LANGUAGE_FORM
+                        and $this->type != DB_TYPE_USER_OFFICIAL_TYPE
+                        and $this->type != DB_TYPE_USER_TYPE) {
                         $sql = $sql . ' RETURNING ' . $this->id_field . ';';
                     }
 
@@ -2750,7 +2753,11 @@ class sql_db
                             }
                         } else {
                             if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
-                                $result = pg_fetch_array($sql_result)[0];
+                                if (is_resource($sql_result)) {
+                                    $result = pg_fetch_array($sql_result)[0];
+                                } else {
+                                    $result = 1;
+                                }
                             } else {
                                 $result = 1;
                             }
@@ -2795,6 +2802,11 @@ class sql_db
         } else {
             $result = -1;
             log_debug('sql_db->insert -> failed (' . $sql . ')');
+        }
+
+        if ($result == null) {
+            log_err('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+            $result = 0;
         }
 
         return $result;
