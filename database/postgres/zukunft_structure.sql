@@ -224,6 +224,19 @@ CREATE TABLE IF NOT EXISTS formula_elements
 COMMENT ON TABLE formula_elements is 'cache for fast update of formula resolved text';
 COMMENT ON COLUMN formula_elements.ref_id is 'either a term, verb or formula id';
 
+--
+-- Table structure for table formula_element_types
+--
+
+CREATE TABLE IF NOT EXISTS formula_element_types
+(
+    formula_element_type_id BIGSERIAL     PRIMARY KEY,
+    type_name               varchar(200)  NOT NULL,
+    code_id                 varchar(100)  DEFAULT NULL,
+    description             text
+);
+
+
 -- --------------------------------------------------------
 
 --
@@ -880,7 +893,7 @@ COMMENT ON COLUMN user_values.last_update is 'for fast calculation of the update
 
 CREATE TABLE IF NOT EXISTS user_value_time_series
 (
-    value_time_series_id BIGSERIAL PRIMARY KEY,
+    value_time_series_id BIGSERIAL NOT NULL,
     user_id              bigint    NOT NULL,
     source_id            bigint         DEFAULT NULL,
     excluded             smallint       DEFAULT NULL,
@@ -1814,7 +1827,8 @@ ALTER TABLE formulas
 -- Constraints for table formula_elements
 --
 ALTER TABLE formula_elements
-    ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
+    ADD CONSTRAINT formula_elements_fk_1 FOREIGN KEY (formula_element_type_id) REFERENCES formula_element_types (formula_element_type_id),
+    ADD CONSTRAINT formula_elements_fk_2 FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
 -- Constraints for table formula_links
