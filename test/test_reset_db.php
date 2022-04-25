@@ -213,11 +213,11 @@ function run_db_seq_reset()
 
 }
 
-function run_seq_reset(string $seq_name)
+function run_seq_reset(string $seq_name, int $start_id = 1)
 {
     global $db_con;
 
-    $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART 1;';
+    $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
     try {
         $db_con->exe($sql);
     } catch (Exception $e) {

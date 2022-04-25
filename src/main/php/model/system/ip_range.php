@@ -342,8 +342,8 @@ class ip_range
             $db_con->set_usr($this->usr->id);
 
             $this->id = $db_con->insert(
-                array(self::FLD_FROM, self::FLD_TO),
-                array($this->from, $this->to));
+                array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
+                array($this->from, $this->to, $this->reason, $this->active));
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id)) {
