@@ -1468,23 +1468,28 @@ CREATE TABLE IF NOT EXISTS `word_types`
 --
 DROP TABLE IF EXISTS `phrases`;
 
-CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
-    SECURITY DEFINER VIEW `phrases` AS
-select `words`.`word_id`       AS `phrase_id`,
-       `words`.`user_id`       AS `user_id`,
-       `words`.`word_name`     AS `phrase_name`,
-       `words`.`excluded`      AS `excluded`,
-       `words`.`share_type_id` AS `share_type_id`,
-       `words`.`protect_id`    AS `protect_id`
+CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost` SQL SECURITY DEFINER VIEW `phrases` AS
+select `words`.`word_id`            AS `phrase_id`,
+       `words`.`user_id`            AS `user_id`,
+       `words`.`word_name`          AS `name_used`,
+       `words`.`description`        AS `description`,
+       `words`.`values`             AS `values`,
+       `words`.`word_type_id`       AS `word_type_id`,
+       `words`.`excluded`           AS `excluded`,
+       `words`.`share_type_id`      AS `share_type_id`,
+       `words`.`protect_id` AS `protect_id`
 from `words`
 union
 select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
        `word_links`.`user_id`               AS `user_id`,
-       if(`word_links`.`description` is null, `word_links`.`word_link_name`,
-          `word_links`.`description`)       AS `phrase_name`,
+       if(`word_links`.`name_given` is null, `word_links`.`name_generated`,
+          `word_links`.`name_given`)    AS `name_used`,
+       `word_links`.`description`           AS `description`,
+       `word_links`.`values`                AS `values`,
+       `word_links`.`word_type_id`          AS `word_type_id`,
        `word_links`.`excluded`              AS `excluded`,
        `word_links`.`share_type_id`         AS `share_type_id`,
-       `word_links`.`protect_id`            AS `protect_id`
+       `word_links`.`protect_id`    AS `protect_id`
 from `word_links`;
 
 --
