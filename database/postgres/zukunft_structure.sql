@@ -250,7 +250,7 @@ CREATE TABLE IF NOT EXISTS formula_links
     formula_id      bigint NOT NULL,
     phrase_id       bigint NOT NULL,
     link_type_id    bigint   DEFAULT NULL,
-    order_nbr       bigint NOT NULL,
+    order_nbr       bigint DEFAULT NULL,
     excluded        smallint DEFAULT NULL
 );
 
@@ -1476,6 +1476,31 @@ SELECT (l.word_link_id * -(1))                                                  
        l.share_type_id,
        l.protect_id
 FROM word_links AS l;
+
+--
+-- Structure for the user_phrases view
+--
+
+CREATE OR REPLACE VIEW user_phrases AS
+SELECT w.word_id   AS phrase_id,
+       w.user_id,
+       w.word_name AS name_used,
+       w.description,
+       w.values,
+       w.excluded,
+       w.share_type_id,
+       w.protect_id
+FROM user_words AS w
+UNION
+SELECT (l.word_link_id * -(1))                                                    AS phrase_id,
+       l.user_id,
+       CASE WHEN (l.name_given IS NULL) THEN l.name_generated ELSE l.name_given END AS name_used,
+       l.description,
+       l.values,
+       l.excluded,
+       l.share_type_id,
+       l.protect_id
+FROM user_word_links AS l;
 
 -- --------------------------------------------------------
 

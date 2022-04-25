@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `formula_links`
     `formula_id`      int(11) NOT NULL,
     `phrase_id`       int(11) NOT NULL,
     `link_type_id`    int(11)    DEFAULT NULL,
-    `order_nbr`       int(11) NOT NULL,
+    `order_nbr`       int(11)    DEFAULT NULL,
     `excluded`        tinyint(4) DEFAULT NULL
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
@@ -1482,6 +1482,34 @@ select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
        `word_links`.`user_id`               AS `user_id`,
        if(`word_links`.`description` is null, `word_links`.`word_link_name`,
           `word_links`.`description`)       AS `phrase_name`,
+       `word_links`.`excluded`              AS `excluded`,
+       `word_links`.`share_type_id`         AS `share_type_id`,
+       `word_links`.`protect_id`            AS `protect_id`
+from `word_links`;
+
+--
+-- Structure for view`phrases`
+--
+DROP TABLE IF EXISTS `user_phrases`;
+
+CREATE ALGORITHM = UNDEFINED DEFINER =`root`@`localhost`SQL
+    SECURITY DEFINER VIEW `user_phrases` AS
+select `words`.`word_id`       AS `phrase_id`,
+       `words`.`user_id`       AS `user_id`,
+       `words`.`word_name`     AS `name_used`,
+       `words`.`description`   AS `description`,
+       `words`.`values`        AS `values`,
+       `words`.`excluded`      AS `excluded`,
+       `words`.`share_type_id` AS `share_type_id`,
+       `words`.`protect_id`    AS `protect_id`
+from `user_words`
+union
+select (`word_links`.`word_link_id` * -(1)) AS `phrase_id`,
+       `word_links`.`user_id`               AS `user_id`,
+       if(`word_links`.`name_given` is null, `word_links`.`name_generated`,
+          `word_links`.`name_given`)        AS `name_used`,
+       `word_links`.`description`           AS `description`,
+       `word_links`.`values`                AS `values`,
        `word_links`.`excluded`              AS `excluded`,
        `word_links`.`share_type_id`         AS `share_type_id`,
        `word_links`.`protect_id`            AS `protect_id`
