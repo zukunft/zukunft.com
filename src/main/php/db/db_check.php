@@ -365,6 +365,10 @@ function db_fill_code_links(sql_db $db_con)
             fclose($handle);
             log_debug('Refresh of code links done');
         }
+
     }
 
+    // set the seq number if needed
+    $db_con->seq_reset(DB_TYPE_CHANGE_TABLE);
+    $db_con->seq_reset(DB_TYPE_CHANGE_ACTION);
 }
