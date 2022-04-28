@@ -1109,7 +1109,9 @@ class sql_db
     public function get_id_field_name($type): string
     {
         // exceptions for user overwrite tables
-        if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)) {
+        // but not for the user type table, because this is not part of the sandbox tables
+        if (zu_str_is_left($type, DB_TYPE_USER_PREFIX)
+        and $type != DB_TYPE_USER_TYPE) {
             $type = zu_str_right_of($type, DB_TYPE_USER_PREFIX);
         }
         $result = $type . '_id';
@@ -2876,7 +2878,7 @@ class sql_db
         $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
         if (substr($this->type, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->type <> 'user' and $this->type <> 'user_profile') {
+            if ($this->type <> 'user' and $this->type <> 'user_profile' and $this->type <> DB_TYPE_USER_TYPE) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
