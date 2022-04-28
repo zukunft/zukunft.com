@@ -165,6 +165,22 @@ class export
 
                 // 10. just for validating the import: add all formula results to the export
                 log_debug('export->get formula results');
+                $exp_formula_values = array();
+                $frm_lst = $this->phr_lst->frm_lst();
+                if ($frm_lst->lst != null) {
+                    foreach ($frm_lst->lst as $frm) {
+                        $fv_lst = $frm->get_fv_lst();
+                        if ($fv_lst->lst != null) {
+                            foreach ($fv_lst->lst as $fv) {
+                                $exp_fv = $fv->export_obj();
+                                if (isset($exp_fv)) {
+                                    $exp_formula_values[] = $exp_fv;
+                                }
+                            }
+                        }
+                    }
+                }
+                $export_obj->formula_values = $exp_formula_values;
 
                 // 11. just for validating the import: add "screenshots" of the views to the export
                 log_debug('export->get screenshots');

@@ -1130,6 +1130,16 @@ class formula extends user_sandbox_description
     }
 
     /**
+     * @return formula_value_list a list of all formula results linked to this formula
+     */
+    function get_fv_lst(): formula_value_list
+    {
+        $fv_lst = new formula_value_list($this->usr);
+        $fv_lst->load_by_frm($this);
+        return $fv_lst;
+    }
+
+    /**
      * import a formula from a JSON object
      *
      * @param array $json_obj an array with the data of the json object

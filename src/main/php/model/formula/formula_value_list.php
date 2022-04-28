@@ -184,6 +184,34 @@ class formula_value_list
     }
 
     /**
+     * load a list of formula values linked to a formula
+     *
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param formula $frm a named object used for selection e.g. a formula
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_by_frm(formula $frm): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_by_frm_sql($db_con, $frm);
+        if ($qp->name != '') {
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $fv = new formula_value($this->usr);
+                    $fv->row_mapper($db_row);
+                    $this->lst[] = $fv;
+                    $result = true;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * load a list of formula values linked to
      * a formula
      * a phrase group
