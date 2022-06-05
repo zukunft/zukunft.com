@@ -64,10 +64,9 @@ class user_dsp extends user
         $result = ''; // reset the html code var
 
         // get value changes by the user that are not standard
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this);
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this;
-        $log_dsp->type = 'user';
+        $log_dsp->type = user::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

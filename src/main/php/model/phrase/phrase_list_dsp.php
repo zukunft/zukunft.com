@@ -129,4 +129,30 @@ class phrase_list_dsp extends phrase_list
         return '';
     }
 
+    /**
+     * shows all phrases that are part of a list
+     * e.g. used to display all phrases linked to a word
+     * @returns string the html code to edit a linked word
+     */
+    function dsp_graph(phrase $root_phr, string $back = ''): string
+    {
+        log_debug('phrase_list_dsp->dsp_graph');
+        $result = '';
+
+        // loop over the link types
+        if ($this->lst == null) {
+            $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
+        } else {
+            $wrd_lst = $this->wrd_lst_all();
+            $wrd_lst_dsp = $wrd_lst->dsp_obj();
+            $result .= $wrd_lst_dsp->display($back);
+            foreach ($this->lst as $phr) {
+                // show the RDF graph for this verb
+                $phr->name();
+            }
+        }
+
+        return $result;
+    }
+
 }

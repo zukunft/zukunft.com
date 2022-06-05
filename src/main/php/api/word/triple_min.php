@@ -30,9 +30,9 @@
 
 */
 
-namespace word;
+namespace api;
 
-use sandbox\user_sandbox_named_min;
+use api\user_sandbox_named_min;
 
 class triple_min extends user_sandbox_named_min
 {

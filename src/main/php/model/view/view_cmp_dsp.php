@@ -33,12 +33,13 @@ class view_cmp_dsp extends view_cmp
 {
 
 
-    // just to display a simple text
+    /**
+     * just to display a simple text
+     */
     function text(): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT)) {
-            log_debug('view_component_dsp->text (' . $this->dsp_id() . ')');
             $result .= " " . $this->name;
         }
         return $result;
@@ -55,7 +56,7 @@ class view_cmp_dsp extends view_cmp
                 log_debug('view_component_dsp->word_name in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
                 $wrd_dsp = new word_dsp($wrd->usr);
                 $wrd_dsp->id = $wrd->id;
-                $result .= $wrd_dsp->dsp_header();
+                $result .= $wrd_dsp->dsp_header($wrd->is_mainly());
             }
         }
 
@@ -82,8 +83,10 @@ class view_cmp_dsp extends view_cmp
         return $result;
     }
 
-    // show a list of words and some values related to the words e.g. all companies with the main ratios
-    function num_list($wrd, $back)
+    /**
+     * show a list of words and some values related to the words e.g. all companies with the main ratios
+     */
+    function num_list($wrd, $back): string
     {
         $result = '';
 
@@ -101,7 +104,7 @@ class view_cmp_dsp extends view_cmp
 
             $this->load_phrases(); // to make sure that the column word object is loaded
             if (isset($this->wrd_col)) {
-                $result .= $wrd->dsp_val_list($this->wrd_col, $back);
+                $result .= $wrd->dsp_val_list($this->wrd_col, $this->wrd_col->is_mainly(), $back);
             } else {
                 $result .= log_err('Column definition is missing for ' . $this->dsp_id() . '.', "view_component_dsp->num_list");
             }
@@ -222,8 +225,13 @@ class view_cmp_dsp extends view_cmp
         return $result;
     }
 
-    // shows all: all words that link to the given word and all values related to the given word
-    function all($phr, $back)
+    /**
+     * shows all: all words that link to the given word and all values related to the given word
+     * @param phrase $phr the phrase used as a base to select the related phrases
+     * @param string $back
+     * @return string with the HTML code to display all related phrases
+     */
+    function all(phrase $phr, string $back = ''): string
     {
         log_debug('view_component_dsp->all for word ' . $phr->name);
         $result = '';
@@ -241,11 +249,7 @@ class view_cmp_dsp extends view_cmp
             }
             $result .= '<br><br>values<br>';
             $val_lst = new value_list($this->usr);;
-            if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
-                $val_lst->phr = $phr->phrase();
-            } else {
-                $val_lst->phr = $phr;
-            }
+            $val_lst->phr = $phr;
             log_debug('view_component_dsp->all load values for word "' . $phr->name . '" and user "' . $this->usr->name . '"');
             $val_lst->load();
             $result .= $val_lst->html($back);
@@ -306,7 +310,6 @@ class view_cmp_dsp extends view_cmp
         $result .= '    <td>';
         if ($add_link == 1) {
             $sel = new html_selector;
-            $sel->usr = $this->usr;
             $sel->form = 'view_component_edit';
             $sel->name = 'link_view';
             $sel->sql = sql_lst_usr("view", $this->usr);
@@ -332,7 +335,6 @@ class view_cmp_dsp extends view_cmp
     {
         $result = '';
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
         $sel->name = 'type';
@@ -349,7 +351,6 @@ class view_cmp_dsp extends view_cmp
     {
         $result = '';
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
         $sel->name = 'word_row';
@@ -370,7 +371,6 @@ class view_cmp_dsp extends view_cmp
     {
         $result = '';
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->dummy_text = 'not set';
         $sel->name = 'word_col';
@@ -392,10 +392,10 @@ class view_cmp_dsp extends view_cmp
         log_debug("view_component_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
         $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'view_cmp';
+        $log_dsp->type = view_cmp::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -412,10 +412,9 @@ class view_cmp_dsp extends view_cmp
         log_debug("view_component_dsp->dsp_hist_links for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'view_cmp';
+        $log_dsp->type = view_cmp::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

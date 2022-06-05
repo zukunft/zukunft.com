@@ -423,7 +423,7 @@ class formula_value_list
         $result = array();
 
         // temp utils the call is reviewed
-        $wrd = new word_dsp($this->usr);
+        $wrd = new word($this->usr);
         $wrd->id = $phr_id;
         $wrd->load();
 
@@ -436,7 +436,7 @@ class formula_value_list
                 $debug_txt = "";
                 $debug_phr_ids = $value_lst[$val_id][1];
                 foreach ($debug_phr_ids as $debug_phr_id) {
-                    $debug_wrd = new word_dsp($this->usr);
+                    $debug_wrd = new word($this->usr);
                     $debug_wrd->id = $debug_phr_id;
                     $debug_wrd->load();
                     $debug_txt .= ", " . $debug_wrd->name;

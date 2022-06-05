@@ -2,11 +2,8 @@
 
 /*
 
-    phrase_display.php - the extension of the phrase object to create API json messages or HTML code to display a word or triple
-    ------------------
-
-    mainly links to the word and triple display functions
-
+    phrase_min.php - the minimal phrase object for the frontend API
+    --------------
 
     This file is part of zukunft.com - calc with words
 
@@ -32,21 +29,12 @@
 
 */
 
-class phrase_dsp extends phrase
+namespace api;
+
+use api\user_sandbox_named_min;
+
+class phrase_min extends user_sandbox_named_min
 {
-
-    /**
-     * simply to display a single word in a table cell
-     */
-    function dsp_tbl_cell($intent): string
-    {
-        $result = '';
-        if ($this->is_word()) {
-            $wrd = $this->get_word_dsp();
-            $result .= $wrd->dsp_tbl_cell($intent);
-        }
-        return $result;
-    }
-
-
+    // the mouse over tooltip for the word
+    public ?string $description = null;
 }

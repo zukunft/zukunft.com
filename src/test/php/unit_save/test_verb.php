@@ -51,7 +51,7 @@ function run_verb_test(testing $t)
 
     // check the loading of the "is a" verb
     $wrd_ZH = $t->load_word(word::TN_ZH);
-    $vrb_lst = $wrd_ZH->link_types('up');
+    $vrb_lst = $wrd_ZH->link_types(word_select_direction::UP);
     $target = 'is a';
     $result = '';
     // select the first verb

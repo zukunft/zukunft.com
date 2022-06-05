@@ -47,13 +47,16 @@ class button {
     public string $call  = ''; // url to call if the user clicks
     public string $back  = ''; // word id, word name or url that should be called after the action is completed
 
-    // the common HTML code to display a simple button
-    private function html ($icon): string {
+    /**
+     * @param string $icon the path of the icon that should be shown
+     * @returns string the HTML code to display a button
+     */
+    private function html (string $icon): string {
         return '<a href="'.$this->call.'" title="'.$this->title.'"><img src="'.$icon.'" alt="'.$this->title.'"></a>';
     }
 
     // same as html but the bootstrap version
-    private function html_fa ($icon): string {
+    private function html_fa (string $icon): string {
         return '<a href="'.$this->call.'" title="'.$this->title.'"><i class="far '.$icon.'"></i></a>';
     }
 

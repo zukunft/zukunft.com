@@ -197,11 +197,10 @@ class value_dsp extends value
         log_debug("value->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
         $log_dsp->obj = $this;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'value';
+        $log_dsp->type = value::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -218,10 +217,9 @@ class value_dsp extends value
         log_debug("value->dsp_hist_links (" . $this->id . ",size" . $size . ",b" . $size . ")");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'value';
+        $log_dsp->type = value::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

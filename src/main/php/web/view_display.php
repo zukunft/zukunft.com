@@ -92,7 +92,7 @@ class view_dsp extends view
             $result .= $cmp->json_export($wrd, $back); // offer to configure and create an JSON file
             $result .= $cmp->xml_export($wrd, $back); // offer to configure and create an XML file
             $result .= $cmp->csv_export($wrd, $back); // offer to configure and create an CSV file
-            $result .= $cmp->all($wrd, $back); // shows all: all words that link to the given word and all values related to the given word
+            $result .= $cmp->all($wrd->phrase(), $back); // shows all: all words that link to the given word and all values related to the given word
         }
 
         log_debug('view->dsp_entries ... done');
@@ -415,10 +415,9 @@ class view_dsp extends view
         log_debug("view_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'view';
+        $log_dsp->type = view::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -437,10 +436,9 @@ class view_dsp extends view
         log_debug("view_dsp->dsp_hist_links for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'view';
+        $log_dsp->type = view::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -501,7 +499,6 @@ class view_dsp extends view
                 $result .= 'View component to add: ';
                 $result .= btn_add("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&add_entry=-1&back=" . $back . "");
                 $sel = new html_selector;
-                $sel->usr = $this->usr;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a view component ...';
                 $sel->name = 'add_view_component';
@@ -513,7 +510,6 @@ class view_dsp extends view
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: <input type="text" name="entry_name"> ';
                 $sel = new html_selector;
-                $sel->usr = $this->usr;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a type ...';
                 $sel->name = 'new_entry_type';
@@ -543,7 +539,6 @@ class view_dsp extends view
     {
         $result = '';
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->name = 'type';
         $sel->label = "View type:";

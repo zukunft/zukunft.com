@@ -434,7 +434,7 @@ class phrase_list
         $this->lst = array();
 
         $wrd_lst = new word_list($this->usr);
-        $wrd_lst->load_linked_words($vrb, $direction);
+        $wrd_lst->load_linked_words($vrb->id, $direction);
         $wrd_added =  $this->add_wrd_lst($wrd_lst);
 
         $trp_lst = new word_link_list($this->usr);
@@ -446,6 +446,64 @@ class phrase_list
         } else {
             return false;
         }
+    }
+
+    /**
+     * load the related phrases of a given type
+     *
+     * used to create a selector that contains the time words
+     * @param phrase $phr the base phrase used for the selection
+     *         e.g. "year" to show the years first
+     *         or "next years" to show the future years
+     *         or "past years" to show the last years
+     */
+    function load_by_phr_vrb_and_type(
+        phrase $phr,
+        ?verb $vrb = null,
+        word_type_list $wrd_types,
+        string $direction = word_link_list::DIRECTION_BOTH): phrase_list
+    {
+        $result = new phrase_list($this->usr);
+        /*
+         * if ($pos > 0) {
+            $field_name = "phrase" . $pos;
+            //$field_name = "time".$pos;
+        } else {
+            $field_name = "phrase";
+            //$field_name = "time";
+        }
+        //
+        if ($type->id > 0) {
+            $sql_from = "word_links l, words w";
+            $sql_where_and = "AND w.word_id = l.from_phrase_id
+                        AND l.verb_id = " . cl(db_cl::VERB, verb::IS_A) . "
+                        AND l.to_phrase_id = " . $type->id;
+        } else {
+            $sql_from = "words w";
+            $sql_where_and = "";
+        }
+        $sql_avoid_code_check_prefix = "SELECT";
+        $sql = $sql_avoid_code_check_prefix . " id, name
+              FROM ( SELECT w.word_id AS id,
+                            " . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ",
+                            " . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . "
+                       FROM " . $sql_from . "
+                  LEFT JOIN user_words u ON u.word_id = w.word_id
+                                        AND u.user_id = " . $this->usr->id . "
+                      WHERE w.word_type_id = " . cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME) . "
+                        " . $sql_where_and . "
+                   GROUP BY name) AS s
+            WHERE (excluded <> 1 OR excluded is NULL)
+          ORDER BY name;";
+        $sel = new html_selector;
+        $sel->form = $form_name;
+        $sel->name = $field_name;
+        $sel->sql = $sql;
+        $sel->selected = $this->id;
+        $sel->dummy_text = '... please select';
+        $result .= $sel->display();
+         */
+        return $result;
     }
 
     /**
@@ -1504,7 +1562,7 @@ class phrase_list
         log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids()));
         foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
-                $time_wrd = new word_dsp($this->usr);
+                $time_wrd = new word($this->usr);
                 $time_wrd->id = $time_id;
                 $time_wrd->load();
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned

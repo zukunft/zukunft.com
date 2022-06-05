@@ -32,7 +32,7 @@
 
 */
 
-use word\triple_min;
+use api\triple_min;
 
 class word_link extends user_sandbox_link_description
 {
@@ -361,7 +361,7 @@ class word_link extends user_sandbox_link_description
         } else {
             if ($this->from->id <> 0 and !is_null($this->usr->id)) {
                 if ($this->from->id > 0) {
-                    $wrd = new word_dsp($this->usr);
+                    $wrd = new word($this->usr);
                     $wrd->id = $this->from->id;
                     $wrd->load();
                     if ($wrd->name <> '') {
@@ -410,13 +410,13 @@ class word_link extends user_sandbox_link_description
         if (!isset($this->to)) {
             if ($this->to->id == 0) {
                 // set a dummy word
-                $wrd_to = new word_dsp($this->usr);
+                $wrd_to = new word($this->usr);
                 $this->to = $wrd_to->phrase();
             }
         } else {
             if ($this->to->id <> 0 and !is_null($this->usr->id)) {
                 if ($this->to->id > 0) {
-                    $wrd_to = new word_dsp($this->usr);
+                    $wrd_to = new word($this->usr);
                     $wrd_to->id = $this->to->id;
                     $wrd_to->load();
                     if ($wrd_to->name <> '') {

@@ -79,7 +79,7 @@ if ($usr->id > 0) {
     }
 
     // get the word to which the new formula should be linked to
-    $wrd = new word_dsp($usr);
+    $wrd = new word($usr);
     if (isset($_GET['word'])) {
         $wrd->id = $_GET['word'];
         $wrd->load();

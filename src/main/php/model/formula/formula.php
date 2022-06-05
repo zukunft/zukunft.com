@@ -29,7 +29,7 @@
   
 */
 
-use formula\formula_min;
+use api\formula_min;
 
 class formula extends user_sandbox_description
 {
@@ -406,7 +406,7 @@ class formula extends user_sandbox_description
         }
         if ($do_load) {
             log_debug(self::class . '->load_wrd load ' . $this->dsp_id());
-            $name_wrd = new word_dsp($this->usr);
+            $name_wrd = new word($this->usr);
             $name_wrd->name = $this->name;
             $name_wrd->load();
             if ($name_wrd->id > 0) {
@@ -440,7 +440,7 @@ class formula extends user_sandbox_description
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word_dsp($this->usr);
+        $name_wrd = new word($this->usr);
         $name_wrd->name = $this->name;
         $name_wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
         $name_wrd->add();
@@ -463,7 +463,7 @@ class formula extends user_sandbox_description
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word_dsp($this->usr);
+        $name_wrd = new word($this->usr);
         $name_wrd->name = $this->name;
         $name_wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
         $name_wrd->save();
@@ -1950,7 +1950,7 @@ class formula extends user_sandbox_description
                 $log->field = self::FLD_NAME;
                 $result .= $this->save_field_do($db_con, $log);
                 // in case a word link exist, change also the name of the word
-                $wrd = new word_dsp($this->usr);
+                $wrd = new word($this->usr);
                 $wrd->name = $db_rec->name;
                 $wrd->load();
                 $wrd->name = $this->name;
@@ -1976,7 +1976,7 @@ class formula extends user_sandbox_description
         if ($db_rec->name <> $this->name) {
             log_debug(self::class . '->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
-            $wrd = new word_dsp($this->usr);
+            $wrd = new word($this->usr);
             $wrd->name = $db_rec->name;
             $wrd->load();
             $wrd->name = $this->name;

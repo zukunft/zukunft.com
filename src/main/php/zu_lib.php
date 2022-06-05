@@ -94,6 +94,9 @@
     TODO allow admin users to change IP blacklist
     TODO include IP blacklist by default for admin users
     TODO add log_info on all database actions to detect the costly code parts
+    TODO move the environment variables to a setting YAML like application.yaml, application-dev.yaml, application-int.yaml or application-prod.yaml in springboot
+    TODO create a sanity API for monitor tools like checkmk or platforms like openshift
+    TODO create an "always on" thread for the backend
 
 
     TODO create a table startup page with a
@@ -104,6 +107,14 @@
          Typing in the lower right cell starts the formula selection and an = is added as first char.
          Typing = in any cell starts the formula selection
          Typing an operator sign after a space starts the formula creation and a formula name is suggested
+
+
+    TODO split the frontend from the backend
+         the namespaced should be
+         - api: for the frontend to backend api objects that e.g. does not contain data of other users and the access rights
+         - html: for the pure html frontend
+         - vue: for the vue.js based frontend, which can cache api objects for read only. This implies that the backend has an api to reload single objects
+         - db: for the persistence layer
 
 
     This file is part of zukunft.com - calc with words
@@ -355,6 +366,7 @@ include_once $path_php . 'api/sandbox/user_sandbox_min.php';
 include_once $path_php . 'api/sandbox/user_sandbox_named_min.php';
 include_once $path_php . 'api/word/word_min.php';
 include_once $path_php . 'api/word/triple_min.php';
+include_once $path_php . 'api/phrase/phrase_min.php';
 include_once $path_php . 'api/phrase/phrase_group_min.php';
 include_once $path_php . 'api/value/value_min.php';
 include_once $path_php . 'api/formula/formula_min.php';
@@ -364,7 +376,9 @@ include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/html_selector.php';
 include_once $path_php . 'web/word/word_display.php';
 include_once $path_php . 'web/word/word_link_dsp.php';
+include_once $path_php . 'web/phrase/phrase_display.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
+include_once $path_php . 'web/hist/hist_log_dsp.php';
 
 // include all other libraries that are usually needed
 include_once ROOT_PATH . 'db_link/zu_lib_sql_link.php';

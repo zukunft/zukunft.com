@@ -515,7 +515,7 @@ class expression
         $id = zu_str_between($result, self::MAKER_WORD_START, self::MAKER_WORD_END);
         while ($id > 0) {
             $db_sym = self::MAKER_WORD_START . $id . self::MAKER_WORD_END;
-            $wrd = new word_dsp($this->usr);
+            $wrd = new word($this->usr);
             $wrd->id = $id;
             $wrd->load();
             $result = str_replace($db_sym, ZUP_CHAR_WORD . $wrd->name . ZUP_CHAR_WORD, $result);
@@ -607,7 +607,7 @@ class expression
 
                 // check for words
                 if ($db_sym == '') {
-                    $wrd = new word_dsp($this->usr);
+                    $wrd = new word($this->usr);
                     $wrd->name = $name;
                     $wrd->load();
                     if ($wrd->id > 0) {

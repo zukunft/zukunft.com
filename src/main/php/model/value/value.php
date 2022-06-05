@@ -49,7 +49,7 @@
 
 */
 
-use value\value_min;
+use api\value_min;
 
 class value extends user_sandbox_display
 {

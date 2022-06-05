@@ -62,16 +62,16 @@ class html_unit_tests
         $sel_lst[4] = 'Fourth';
         $sel->lst = $sel_lst;
         $sel->selected = 3;
-        $created_html = $html->header_test('test');
-        $created_html .= $html->form_start($sel->form);
-        $created_html .= $sel->display();
-        $created_html .= $html->form_end($sel->name, '');
-        $created_html .= $html->footer();
-        $expected_html = $t->file('web/html/selector.html');
-        $t->dsp('html_selector', $t->trim_html($expected_html), $t->trim_html($created_html));
+        $body = $html->form_start($sel->form);
+        $body .= $sel->display();
+        $body .= $html->form_end($sel->name, '');
+        $t->html_test($body, 'selector', $t);
 
         // ... and check if the prepared sql name is unique
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
+
+        // button add
+        $t->html_test(btn_add('Test', 'http'), 'button_add', $t);
 
     }
 

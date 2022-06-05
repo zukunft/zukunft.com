@@ -83,7 +83,7 @@ class term
     private function load_word(): bool
     {
         $result = false;
-        $wrd = new word_dsp($this->usr);
+        $wrd = new word($this->usr);
         $wrd->name = $this->name;
         if ($wrd->load()) {
             log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK));

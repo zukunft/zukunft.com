@@ -30,9 +30,10 @@
 
 */
 
-namespace formula;
-use phrase\phrase_group_min;
-use sandbox\user_sandbox_min;
+namespace api;
+
+use api\phrase_group_min;
+use api\user_sandbox_min;
 
 class formula_value_min extends user_sandbox_min
 {

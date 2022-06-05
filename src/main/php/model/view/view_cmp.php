@@ -323,7 +323,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = false;
         if ($this->word_id_row > 0) {
-            $wrd_row = new word_dsp($this->usr);
+            $wrd_row = new word($this->usr);
             $wrd_row->id = $this->word_id_row;
             $wrd_row->load();
             $this->wrd_row = $wrd_row;
@@ -342,7 +342,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_col > 0) {
-            $wrd_col = new word_dsp($this->usr);
+            $wrd_col = new word($this->usr);
             $wrd_col->id = $this->word_id_col;
             $wrd_col->load();
             $this->wrd_col = $wrd_col;
@@ -356,7 +356,7 @@ class view_cmp extends user_sandbox_named
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
-            $wrd_col2 = new word_dsp($this->usr);
+            $wrd_col2 = new word($this->usr);
             $wrd_col2->id = $this->word_id_col2;
             $wrd_col2->load();
             $this->wrd_col2 = $wrd_col2;

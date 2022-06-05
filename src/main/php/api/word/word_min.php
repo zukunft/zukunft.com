@@ -2,7 +2,7 @@
 
 /*
 
-    word_min.php - the minimal word object
+    word_min.php - the minimal word object for the frontend API
     ------------
 
 
@@ -30,11 +30,13 @@
 
 */
 
-namespace word;
+namespace api;
 
-use sandbox\user_sandbox_named_min;
+use api\user_sandbox_named_min;
 
 class word_min extends user_sandbox_named_min
 {
-
+    // the mouse over tooltip for the word
+    public ?string $description = null;
+    public ?string $plural = null;
 }

@@ -57,7 +57,7 @@ function run_view_test(testing $t)
     $t->dsp('view->load of "' . $dsp->name . '"', $target, $result);
 
     // test the complete view for one word
-    $wrd = new word_dsp($t->usr1);
+    $wrd = new word($t->usr1);
     $wrd->name = word::TN_CH;
     $wrd->load();
     $result = $dsp->display($wrd, $back);

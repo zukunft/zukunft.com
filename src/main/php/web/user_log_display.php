@@ -33,18 +33,29 @@
 class user_log_display
 {
 
-    public $id = null; // the database id of the word, phrase, value or formula object
-    public $obj = null; // the calling object
-    public $usr = null; // the user of the person for whom the value is loaded, so to say the viewer
-    public $type = '';   // either "word", "phrase", "value" or "formula" to select the object to display
-    public $page = null; // the page to display
-    public $condensed = True; // display the changes in a few columns with reduced details
-    public $size = null; // the page size
-    public $call = '';   // the html page which has call the hist display object
-    public $back = '';   //
+    public int $id;                // the database id of the word, phrase, value or formula object
+    public ?object $obj = null;    // the calling object
+    public user $usr;              // the user of the person for whom the value is loaded, so to say the viewer
+    public string $type;           // either "word", "phrase", "value" or "formula" to select the object to display
+    public int $page;              // the page to display
+    public bool $condensed = True; // display the changes in a few columns with reduced details
+    public int $size;              // the page size
+    public string $call = '';      // the html page which has call the hist display object
+    public string $back = '';      //
 
-    // display the history of a word, phrase, value or formula
-    function dsp_hist()
+    /**
+     * define the settings for this log object
+     * @param user $usr the user who requested to see this log
+     */
+    function __construct(user $usr)
+    {
+        $this->usr = $usr;
+    }
+
+    /**
+     * display the history of a word, phrase, value or formula
+     */
+    function dsp_hist(): string
     {
         log_debug('user_log_display->dsp_hist ' . $this->type . ' id ' . $this->id . ' size ' . $this->size . ' page ' . $this->page . ' call from ' . $this->call . ' original call from ' . $this->back);
 
@@ -64,37 +75,31 @@ class user_log_display
         $sql_where = '';
         $sql_row = '';
         $sql_user = '';
-        if ($this->type == 'user') {
+        // the setting for most cases
+        $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
+        $sql_user = 'c.user_id = u.user_id';
+        // the class specific settings
+        if ($this->type == user::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
                    OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
                 AND c.user_id = ' . $this->usr->id . ' ';
-        } elseif ($this->type == 'word') {
+        } elseif ($this->type == word::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . ") AND ";
-            $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
-            $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'value') {
+        } elseif ($this->type == value::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VALUE_USR) . ") AND ";
-            $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
-            $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'formula') {
+        } elseif ($this->type == formula::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::FORMULA_USR) . ") AND ";
-            $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
-            $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'view') {
+        } elseif ($this->type == view::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_USR) . ") AND ";
-            $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
-            $sql_user = 'c.user_id = u.user_id';
-        } elseif ($this->type == 'view_cmp') {
+        } elseif ($this->type == view_cmp::class) {
             $sql_where = " (f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT) . " 
                      OR f.table_id = " . cl(db_cl::LOG_TABLE, change_log_table::VIEW_COMPONENT_USR) . ") AND ";
-            $sql_row = 'AND c.row_id  = ' . $this->id . ' ';
-            $sql_user = 'c.user_id = u.user_id';
         }
 
         if ($sql_where == '') {

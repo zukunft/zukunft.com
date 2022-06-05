@@ -231,7 +231,7 @@ function run_formula_test(testing $t)
 
     // ... the formula result selected by the word and in percent
     // TODO defined the criteria for selecting the formula value
-    $wrd = new word_dsp($t->usr1);
+    $wrd = new word($t->usr1);
     $wrd->name = word::TN_CH;
     $wrd->load();
     /*

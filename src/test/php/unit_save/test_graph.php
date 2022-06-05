@@ -89,7 +89,7 @@ function run_graph_test(testing $t)
 
 
     // the other side
-    $ZH = new word_dsp($usr);
+    $ZH = new word($usr);
     $ZH->name = word::TN_ZH;
     $ZH->load();
     $is = new verb;

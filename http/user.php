@@ -79,7 +79,7 @@ if ($usr->id > 0) {
 
     // undo user changes for words
     if ($undo_wrd > 0) {
-        $wrd = new word_dsp($usr);
+        $wrd = new word($usr);
         $wrd->id = $undo_wrd;
         $wrd->del_usr_cfg();
     }

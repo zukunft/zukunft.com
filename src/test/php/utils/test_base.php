@@ -76,6 +76,7 @@ include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link.php';
 include_once $path_unit . 'word_link_list.php';
+include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
@@ -1453,7 +1454,11 @@ class test_base
         echo '<h2>';
         echo $this->total_tests . ' test cases<br>';
         echo $this->timeout_counter . ' timeouts<br>';
-        echo $this->error_counter . ' errors<br>';
+        if ($this->error_counter == 1) {
+            echo $this->error_counter . ' error<br>';
+        } else {
+            echo $this->error_counter . ' errors<br>';
+        }
         echo "<br>";
         $since_start = microtime(true) - $this->start_time;
         echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';

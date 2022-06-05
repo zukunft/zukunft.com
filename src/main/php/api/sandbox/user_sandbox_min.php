@@ -32,17 +32,17 @@
 
 */
 
-namespace sandbox;
+namespace api;
 
 use formula;
-use formula\formula_min;
+use api\formula_min;
 use user;
 use user_sandbox;
 use value;
-use value\value_min;
+use api\value_min;
 use word;
-use word\triple_min;
-use word\word_min;
+use api\triple_min;
+use api\word_min;
 use word_link;
 use function log_err;
 

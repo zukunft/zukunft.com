@@ -169,7 +169,7 @@ class phrase
             $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('phrase->loaded triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
-            $wrd = new word_dsp($this->usr);
+            $wrd = new word($this->usr);
             $wrd->id = $this->id;
             $result = $wrd->load();
             $this->obj = $wrd;
@@ -192,7 +192,7 @@ class phrase
             } elseif ($trm->type == formula::class) {
                 // for the phrase load the related word instead of the formula
                 // TODO integrate this into the term loading by load both object a once
-                $wrd = new word_dsp($this->usr);
+                $wrd = new word($this->usr);
                 $wrd->name = $this->name;
                 $result = $wrd->load();
                 $this->obj = $wrd;
@@ -360,7 +360,7 @@ class phrase
 
     protected function get_word_dsp(): word_dsp
     {
-        $wrd_dsp = new word_dsp($this->usr);
+        $wrd_dsp = new word($this->usr);
         if (get_class($this->obj) == word_dsp::class) {
             $wrd_dsp = $this->obj;
         } elseif (get_class($this->obj) == word::class) {
@@ -548,10 +548,16 @@ class phrase
     function dsp_tbl(int $intent = 0): string
     {
         $result = '';
-        if ($this->obj != null) {
+        if ($this != null) {
             $this->load();
-            // the function dsp_tbl should exist for words and triples
-            $result = $this->obj->dsp_tbl($intent);
+            if ($this->obj != null) {
+                // the function dsp_tbl should exist for words and triples
+                if (get_class($this->obj) == word::class) {
+                    $result = $this->obj->dsp_obj()->dsp_tbl($intent);
+                } else {
+                    $result = $this->obj->dsp_tbl($intent);
+                }
+            }
         }
         log_debug('phrase->dsp_tbl for ' . $this->dsp_id());
         return $result;
@@ -566,6 +572,23 @@ class phrase
             log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "formula_value->load");
         }
         return $result;
+    }
+
+    function dsp_graph(string $direction, ?verb_list $link_types = null, string $back = ''): string
+    {
+        $phr_lst = new phrase_list($this->usr);
+        if ($link_types == null) {
+            $link_types = $this->vrb_lst($direction);
+        }
+        if ($link_types != null) {
+            foreach ($link_types->lst as $vrb) {
+                $add_lst = new phrase_list($this->usr);
+                $add_lst->load_by_phr($this, $vrb, $direction);
+                $phr_lst->merge($add_lst);
+            }
+        }
+        $phr_lst_dsp = $phr_lst->dsp_obj();
+        return $phr_lst_dsp->dsp_graph($this, $back);
     }
 
     /**
@@ -781,7 +804,6 @@ class phrase
             $field_name = "phrase";
         }
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = $field_name;
         if ($form_name == "value_add" or $form_name == "value_edit") {

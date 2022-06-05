@@ -30,7 +30,7 @@
 
 */
 
-namespace sandbox;
+namespace api;
 
 class user_sandbox_named_min extends user_sandbox_min
 {

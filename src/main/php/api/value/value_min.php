@@ -30,10 +30,10 @@
 
 */
 
-namespace value;
+namespace api;
 
-use phrase\phrase_group_min;
-use sandbox\user_sandbox_min;
+use api\phrase_group_min;
+use api\user_sandbox_min;
 
 class value_min extends user_sandbox_min
 {

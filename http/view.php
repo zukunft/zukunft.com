@@ -55,7 +55,7 @@ if ($usr->id > 0) {
 
     // get the word(s) to display
     // TODO replace it with phrase
-    $wrd = new word_dsp($usr);
+    $wrd = new word($usr);
     if (isset($_GET['words'])) {
         $wrd->main_wrd_from_txt($_GET['words']);
     } else {

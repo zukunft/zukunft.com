@@ -435,4 +435,17 @@ class testing extends test_base
         return $result;
     }
 
+    public function html_test(string $body, string $filename, testing $t)
+    {
+        $created_html = $this->html_page($body);
+        $expected_html = $t->file('web/html/' . $filename . '.html');
+        $t->dsp($filename, $t->trim_html($expected_html), $t->trim_html($created_html));
+    }
+
+    private function html_page(string $body): string
+    {
+        $html = new html_base();
+        return $html->header_test('test') . $body . $html->footer();
+    }
+
 }

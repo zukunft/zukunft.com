@@ -2,8 +2,10 @@
 
 /*
 
-    formula_min.php - the minimal formula object
-    ---------------
+    phrase_display.php - the extension of the phrase object to create API json messages or HTML code to display a word or triple
+    ------------------
+
+    mainly links to the word and triple display functions
 
 
     This file is part of zukunft.com - calc with words
@@ -30,20 +32,26 @@
 
 */
 
-namespace api;
-
-use api\user_sandbox_named_min;
-
-class formula_min extends user_sandbox_named_min
+class phrase_dsp extends phrase
 {
 
-    // the formula expression as shown to the user
-    public string $usr_text;
-
-    function __construct()
+    /**
+     * simply to display a single word in a table cell
+     */
+    function dsp_tbl_cell($intent): string
     {
-        parent::__construct();
-        $this->usr_text = '';
+        $result = '';
+        if ($this->is_word()) {
+            $wrd = $this->get_word_dsp();
+            $result .= $wrd->dsp_tbl_cell($intent);
+        }
+        return $result;
+    }
+
+    //
+    function dsp_selector($type, $form_name, $pos, $class, $back): string
+    {
+        return $this->dsp_selector($type, $form_name, $pos, $class, $back);
     }
 
 }

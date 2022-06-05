@@ -287,6 +287,7 @@ function run_unit_tests(testing $t)
     (new word_link_unit_tests)->run($t);
     (new word_list_unit_tests)->run($t);
     (new word_link_list_unit_tests)->run($t);
+    (new word_display_unit_tests)->run($t);
     (new phrase_unit_tests)->run($t);
     (new phrase_list_unit_tests)->run($t);
     (new phrase_group_unit_tests)->run($t);

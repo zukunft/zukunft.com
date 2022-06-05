@@ -108,7 +108,6 @@ class formula_dsp extends formula
     {
         $result = '';
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $script;
         $sel->name = "type";
         $sel->label = "Formula type:";
@@ -123,10 +122,10 @@ class formula_dsp extends formula
     // display the history of a formula
     private function dsp_hist_log($page, $size, $call, $back): user_log_display
     {
-        $log_dsp = new user_log_display;
+        $log_dsp = new user_log_display($this->usr);
         $log_dsp->id = $this->id;
         $log_dsp->usr = $this->usr;
-        $log_dsp->type = 'formula';
+        $log_dsp->type = formula::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -184,7 +183,6 @@ class formula_dsp extends formula
         $result .= '    <td>';
         if ($add == 1 or $wrd->id > 0) {
             $sel = new html_selector;
-            $sel->usr = $this->usr;
             $sel->form = "formula_edit"; // ??? to review
             $sel->name = 'link_phrase';
             $sel->dummy_text = 'select a word where the formula should also be used';

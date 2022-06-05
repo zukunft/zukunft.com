@@ -30,8 +30,9 @@
 
 */
 
-namespace phrase;
-use sandbox\user_sandbox_named_min;
+namespace api;
+
+use api\user_sandbox_named_min;
 
 class phrase_group_min extends user_sandbox_named_min
 {

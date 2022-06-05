@@ -187,7 +187,7 @@ class phrase_group_list
             $grp->load();
             log_debug('phrase_group_list->add_grp_time_id -> found ' . $grp->name());
         }
-        $time = new word_dsp($this->usr);
+        $time = new word($this->usr);
         if ($time_id > 0) {
             $time->id = $time_id;
             $time->load();

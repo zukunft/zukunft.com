@@ -527,7 +527,7 @@ class word_link_list
                                 }
                             } else {
                                 if ($db_lnk['word_id1'] > 0) {
-                                    $new_word = new word_dsp($this->usr);
+                                    $new_word = new word($this->usr);
                                     $new_word->id = $db_lnk['word_id1'];
                                     $new_word->owner_id = $db_lnk['user_id1'];
                                     $new_word->name = $db_lnk['word_name1'];
@@ -549,7 +549,7 @@ class word_link_list
                             }
                             // fill the to word
                             if ($db_lnk['word_id2'] > 0) {
-                                $new_word = new word_dsp($this->usr);
+                                $new_word = new word($this->usr);
                                 $new_word->id = $db_lnk['word_id2'];
                                 $new_word->owner_id = $db_lnk['user_id2'];
                                 $new_word->name = $db_lnk['word_name2'];

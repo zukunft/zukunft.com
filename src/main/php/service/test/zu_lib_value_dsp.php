@@ -88,10 +88,10 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
   // convert and validate the parameters
   if (count($wrd_ids) <> count($type_ids) OR count($wrd_ids) <> count($db_ids)) {
     if (count($wrd_ids) <> count($type_ids)) {
-      log_err ("Invalide parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_edit_or_add");
+      log_err ("Invalid parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of types (".implode(",",$type_ids).") given.","zuv_dsp_edit_or_add");
     }
     if (count($wrd_ids) <> count($db_ids)) {
-      log_err ("Invalide parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of db ids (".implode(",",$db_ids). ") given.","zuv_dsp_edit_or_add");
+      log_err ("Invalid parameter size at value edit: number of words (".implode(",",$wrd_ids).") differ from the number of db ids (".implode(",",$db_ids). ") given.","zuv_dsp_edit_or_add");
     }
   } else {
     $word_pos = 1; // the word position (combined number for fixed, type and free words)

@@ -40,7 +40,7 @@
 
 */
 
-use word\word_min;
+use api\word_min;
 
 class word extends user_sandbox_description
 {
@@ -450,8 +450,8 @@ class word extends user_sandbox_description
     }
 
     /*
-    data retrieval functions
-    */
+     * data retrieval functions
+     */
 
     /**
      * get a list of values related to this word
@@ -714,8 +714,8 @@ class word extends user_sandbox_description
 
 
     /*
-    display functions
-    */
+     * display functions
+     */
 
     /**
      * return the name (just because all objects should have a name function)
@@ -729,7 +729,9 @@ class word extends user_sandbox_description
         }
     }
 
-    // return the html code to display a word
+    /**
+     * return the html code to display a word
+     */
     function display(string $back = ''): string
     {
         if ($back != '') {
@@ -738,6 +740,316 @@ class word extends user_sandbox_description
             $result = '<a href="/http/view.php?words=' . $this->id . '">' . $this->name . '</a>';
         }
         return $result;
+    }
+
+    /*
+     * TODO display functions to review
+     */
+
+    /**
+     * list of related words and values filtered by a link type
+     */
+    function dsp_val_list(word $col_wrd, phrase $is_part_of, string $back): string
+    {
+        log_debug('word_dsp->dsp_val_list for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
+
+        $result = $this->dsp_obj()->dsp_header($is_part_of);
+
+        //$result .= $this->name."<br>";
+        //$result .= $col_wrd->name."<br>";
+
+        $row_lst = $this->children();    // not $this->are(), because e.g. for "Company" the word "Company" itself should not be included in the list
+        $col_lst = $col_wrd->children();
+        log_debug('word_dsp->dsp_val_list -> columns ' . $col_lst->dsp_id());
+
+        $row_lst->name_sort();
+        $col_lst->name_sort();
+
+        // TODO use this for fast loading
+        $val_matrix = $row_lst->val_matrix($col_lst);
+        $row_lst_dsp = $row_lst->dsp_obj();
+        $result .= $row_lst_dsp->dsp_val_matrix($val_matrix);
+
+        log_debug('word_dsp->dsp_val_list -> table');
+
+        // display the words
+        $row_nbr = 0;
+        $result .= dsp_tbl_start();
+        foreach ($row_lst->lst as $row_phr) {
+            // display the column headers
+            // not needed any more if wrd lst is created based on word_display elements
+            // to review
+            $row_phr_dsp = new word($this->usr);
+            $row_phr_dsp->id = $row_phr->id;
+            $row_phr_dsp->load();
+            if ($row_nbr == 0) {
+                $result .= '  <tr>' . "\n";
+                $result .= '    <th>' . "\n";
+                $result .= '    </th>' . "\n";
+                foreach ($col_lst->lst as $col_lst_wrd) {
+                    log_debug('word_dsp->dsp_val_list -> column ' . $col_lst_wrd->name);
+                    $result .= $col_lst_wrd->dsp_tbl_head_right();
+                }
+                $result .= '  </tr>' . "\n";
+            }
+
+            // display the rows
+            log_debug('word_dsp->dsp_val_list -> row');
+            $result .= '  <tr>' . "\n";
+            $result .= '      ' . $row_phr_dsp->dsp_obj()->dsp_tbl(0) . '' . "\n";
+            foreach ($col_lst->lst as $col_lst_wrd) {
+                $result .= '    <td>' . "\n";
+                $val_wrd_ids = array();
+                $val_wrd_ids[] = $row_phr->id;
+                $val_wrd_ids[] = $col_lst_wrd->id;
+                asort($val_wrd_ids);
+                $val_wrd_lst = new word_list($this->usr);
+                $val_wrd_lst->load_by_ids($val_wrd_ids);
+                log_debug('word_dsp->dsp_val_list -> get group ' . dsp_array($val_wrd_ids));
+                $wrd_grp = $val_wrd_lst->get_grp();
+                if ($wrd_grp->id > 0) {
+                    log_debug('word_dsp->dsp_val_list -> got group ' . $wrd_grp->id);
+                    $in_value = $wrd_grp->result(0);
+                    $fv_text = '';
+                    // temp solution to be reviewed
+                    if ($in_value['id'] > 0) {
+                        $fv = new formula_value($this->usr);
+                        $fv->load_by_id($in_value['id']);
+                        if ($fv->value <> 0) {
+                            $fv_text = $fv->val_formatted();
+                        } else {
+                            $fv_text = '';
+                        }
+                    }
+                    if ($fv_text <> '') {
+                        //$back = $row_phr->id;
+                        if (!isset($back)) {
+                            $back = $this->id;
+                        }
+                        if ($in_value['usr'] > 0) {
+                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '" class="user_specific">' . $fv_text . '</a></p>' . "\n";
+                        } else {
+                            $result .= '      <p class="right_ref"><a href="/http/formula_result.php?id=' . $in_value['id'] . '&phrase=' . $row_phr->id . '&group=' . $wrd_grp->id . '&back=' . $back . '">' . $fv_text . '</a></p>' . "\n";
+                        }
+                    }
+                }
+                $result .= '    </td>' . "\n";
+            }
+            $result .= '  </tr>' . "\n";
+            $row_nbr++;
+        }
+
+        // display an add button to offer the user to add one row
+        $result .= '<tr><td>' . $this->btn_add($back) . '</td></tr>';
+
+        $result .= dsp_tbl_end();
+
+        return $result;
+    }
+
+    /**
+     * returns the html code to select a word link type
+     * database link must be open
+     * TODO: similar to verb->dsp_selector maybe combine???
+     */
+    function selector_link($id, $form, $back): string
+    {
+        log_debug('word_dsp->selector_link ... verb id ' . $id);
+        global $db_con;
+
+        $result = '';
+
+        $sql_name = "";
+        if ($db_con->get_type() == sql_db::POSTGRES) {
+            $sql_name = "CASE WHEN (name_reverse  <> '' IS NOT TRUE AND name_reverse <> verb_name) THEN CONCAT(verb_name, ' (', name_reverse, ')') ELSE verb_name END AS name";
+        } elseif ($db_con->get_type() == sql_db::MYSQL) {
+            $sql_name = "IF (name_reverse <> '' AND name_reverse <> verb_name, CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name";
+        } else {
+            log_err('Unknown db type ' . $db_con->get_type());
+        }
+        $sql_avoid_code_check_prefix = "SELECT";
+        $sql = $sql_avoid_code_check_prefix . " * FROM (
+            SELECT verb_id AS id, 
+                   " . $sql_name . ",
+                   words
+              FROM verbs 
+      UNION SELECT verb_id * -1 AS id, 
+                   CONCAT(name_reverse, ' (', verb_name, ')') AS name,
+                   words
+              FROM verbs 
+             WHERE name_reverse <> '' 
+               AND name_reverse <> verb_name) AS links
+          ORDER BY words DESC, name;";
+        $sel = new html_selector;
+        $sel->form = $form;
+        $sel->name = 'verb';
+        $sel->sql = $sql;
+        $sel->selected = $id;
+        $sel->dummy_text = '';
+        $result .= $sel->display();
+
+        if ($this->usr->is_admin()) {
+            // admin users should always have the possibility to create a new link type
+            $result .= btn_add('add new link type', '/http/verb_add.php?back=' . $back);
+        }
+
+        return $result;
+    }
+
+    // to select an existing word to be added
+    private function selector_add($id, $form, $bs_class): string
+    {
+        log_debug('word_dsp->selector_add ... word id ' . $id);
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $form;
+        $sel->name = 'add';
+        $sel->label = "Word:";
+        $sel->bs_class = $bs_class;
+        $sel->sql = sql_lst_usr("word", $this->usr);
+        $sel->selected = $id;
+        $sel->dummy_text = '... or select an existing word to link it';
+        $result .= $sel->display();
+
+        return $result;
+    }
+
+    // returns the html code to select a word
+    // database link must be open
+    function selector_word($id, $pos, $form_name): string
+    {
+        log_debug('word_dsp->selector_word ... word id ' . $id);
+        $result = '';
+
+        if ($pos > 0) {
+            $field_id = "word" . $pos;
+        } else {
+            $field_id = "word";
+        }
+        $sel = new html_selector;
+        $sel->form = $form_name;
+        $sel->name = $field_id;
+        $sel->sql = sql_lst_usr("word", $this->usr);
+        $sel->selected = $id;
+        $sel->dummy_text = '';
+        $result .= $sel->display();
+
+        log_debug('word_dsp->selector_word ... done ' . $id);
+        return $result;
+    }
+
+    //
+    private function type_selector($script, $bs_class): string
+    {
+        $result = '';
+        $sel = new html_selector;
+        $sel->form = $script;
+        $sel->name = 'type';
+        $sel->label = "Word type:";
+        $sel->bs_class = $bs_class;
+        $sel->sql = sql_lst("word_type");
+        $sel->selected = $this->type_id;
+        $sel->dummy_text = '';
+        $result .= $sel->display();
+        return $result;
+    }
+
+    // HTML code to edit all word fields
+    function dsp_add($wrd_id, $wrd_to, $vrb_id, $back): string
+    {
+        log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' for user ' . $this->usr->name . ' (called by ' . $back . ')');
+        $result = '';
+
+        $form = "word_add";
+        $result .= dsp_text_h2('Add a new word');
+        $result .= dsp_form_start($form);
+        $result .= dsp_form_hidden("back", $back);
+        $result .= dsp_form_hidden("confirm", '1');
+        $result .= '<div class="form-row">';
+        $result .= dsp_form_text("word_name", $this->name, "Name:", "col-sm-4");
+        $result .= $this->dsp_type_selector($form, "col-sm-4");
+        $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
+        $result .= '</div>';
+        $result .= 'which ';
+        $result .= '<div class="form-row">';
+        $result .= $this->selector_link($vrb_id, $form, $back);
+        $result .= $this->selector_word($wrd_to, 0, $form);
+        $result .= '</div>';
+        $result .= dsp_form_end('', $back);
+
+        log_debug('word_dsp->dsp_add ... done');
+        return $result;
+    }
+
+    function dsp_formula(string $back = ''): string
+    {
+        $result = '';
+        if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+            $result .= dsp_form_hidden("name", $this->name);
+            $result .= '  to change the name of "' . $this->name . '" rename the ';
+            $frm = $this->formula();
+            $result .= $frm->dsp_obj()->name_linked($back);
+            $result .= '.<br> ';
+        } else {
+            $result .= dsp_form_text("name", $this->name, "Name:", "col-sm-4");
+        }
+        return $result;
+    }
+
+    function dsp_type_selector(string $back = ''): string
+    {
+        $result = '';
+        if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+            $result .= ' type: ' . $this->type_name();
+        } else {
+            $result .= $this->type_selector('word_edit', "col-sm-4");
+        }
+        return $result;
+    }
+
+    function dsp_graph(string $direction, verb_list $link_types, string $back = ''): string
+    {
+        return $this->phrase()->dsp_graph($direction, $link_types, $back);
+    }
+
+
+    /**
+     * HTML code to edit all word fields
+     */
+    function dsp_edit(string $back = ''): string
+    {
+        $vrb_lst_up = $this->verb_list_up();
+        $vrb_lst_down = $this->verb_list_down();
+        $phr_lst_up = new phrase_list($this->usr);
+        $phr_lst_down = new phrase_list($this->usr);
+        $phr_lst_up_dsp = $phr_lst_up->dsp_obj();
+        $phr_lst_down_dsp = $phr_lst_down->dsp_obj();
+        $dsp_graph = $phr_lst_up_dsp->dsp_graph(word_select_direction::UP, $vrb_lst_up, $back);
+        $dsp_graph .= $phr_lst_down_dsp->dsp_graph(word_select_direction::DOWN, $vrb_lst_down, $back);
+        $wrd_dsp = $this->dsp_obj();
+        // collect the display code for the user changes
+        $dsp_log = '';
+        $changes = $this->dsp_hist(1, SQL_ROW_LIMIT, '', $back);
+        if (trim($changes) <> "") {
+            $dsp_log .= dsp_text_h3("Latest changes related to this word", "change_hist");
+            $dsp_log .= $changes;
+        }
+        $changes = $this->dsp_hist_links(0, SQL_ROW_LIMIT, '', $back);
+        if (trim($changes) <> "") {
+            $dsp_log .= dsp_text_h3("Latest link changes related to this word", "change_hist");
+            $dsp_log .= $changes;
+        }
+        return $wrd_dsp->dsp_edit(
+            $dsp_graph,
+            $dsp_log,
+            $this->dsp_formula($back),
+            $this->dsp_type_selector($back),
+            $back);
+    }
+
+    function view(): ?view
+    {
+        return $this->load_view();
     }
 
     /*
@@ -1045,12 +1357,12 @@ class word extends user_sandbox_description
     /**
      * return the follow word id based on the predefined verb following
      */
-    function next(): word_dsp
+    function next(): word
     {
         log_debug('word->next ' . $this->dsp_id() . ' and user ' . $this->usr->name);
 
         global $db_con;
-        $result = new word_dsp($this->usr);
+        $result = new word($this->usr);
 
         $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
         //$db_con = new mysql;
@@ -1069,12 +1381,12 @@ class word extends user_sandbox_description
     /**
      * return the follow word id based on the predefined verb following
      */
-    function prior(): word_dsp
+    function prior(): word
     {
         log_debug('word->prior(' . $this->dsp_id() . ',u' . $this->usr->id . ')');
 
         global $db_con;
-        $result = new word_dsp($this->usr);
+        $result = new word($this->usr);
 
         $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
         //$db_con = new mysql;
@@ -1122,10 +1434,15 @@ class word extends user_sandbox_description
         return $is_phr_lst;
     }
 
+
+    /*
+     * functions that create and fill related objects
+     */
+
     /**
      * returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
      */
-    function link_types($direction): verb_list
+    function link_types(string $direction): verb_list
     {
         log_debug('word->link_types ' . $this->dsp_id() . ' and user ' . $this->usr->id);
 
@@ -1137,6 +1454,91 @@ class word extends user_sandbox_description
         $vrb_lst->load_by_linked_phrases($db_con, $phr, $direction);
         return $vrb_lst;
     }
+
+    /**
+     * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a City
+     */
+    private function verb_list_up(): verb_list
+    {
+        return $this->link_types(word_select_direction::UP);
+    }
+
+    /**
+     * return a list of downward related verbs e.g. 'contains' for Mathematical constant because Mathematical constant contains Pi
+     */
+    private function verb_list_down(): verb_list
+    {
+        return $this->link_types(word_select_direction::DOWN);
+    }
+
+    /*
+     * display functions
+     */
+
+    /**
+     * display the history of a word
+     * maybe move this to a new object user_log_display
+     * because this is very similar to a value linked function
+     */
+    public function dsp_hist($page, $size, $call, $back): string
+    {
+        log_debug("word_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($this->usr);
+        $log_dsp->id = $this->id;
+        $log_dsp->type = word::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist();
+
+        log_debug('word_dsp->dsp_hist -> done');
+        return $result;
+    }
+
+    /**
+     * display the history of a word
+     */
+    function dsp_hist_links($page, $size, $call, $back): string
+    {
+        log_debug("word_dsp->dsp_hist_links (" . $this->id . ",size" . $size . ",b" . $size . ")");
+        $result = ''; // reset the html code var
+
+        $log_dsp = new user_log_display($this->usr);
+        $log_dsp->id = $this->id;
+        $log_dsp->type = word::class;
+        $log_dsp->page = $page;
+        $log_dsp->size = $size;
+        $log_dsp->call = $call;
+        $log_dsp->back = $back;
+        $result .= $log_dsp->dsp_hist_links();
+
+        log_debug('word_dsp->dsp_hist_links -> done');
+        return $result;
+    }
+
+    /*
+     * convert functions
+     */
+
+    /**
+     * convert the word object into a phrase object
+     */
+    function phrase(): phrase
+    {
+        $phr = new phrase($this->usr);
+        $phr->id = $this->id;
+        $phr->name = $this->name;
+        $phr->obj = $this;
+        log_debug('word->phrase of ' . $this->dsp_id());
+        return $phr;
+    }
+
+    /*
+     * save functions
+     */
 
     /**
      * true if the word has any none default settings such as a special type
@@ -1168,27 +1570,6 @@ class word extends user_sandbox_description
         }
         return $has_cfg;
     }
-
-    /*
-    convert functions
-    */
-
-    /**
-     * convert the word object into a phrase object
-     */
-    function phrase(): phrase
-    {
-        $phr = new phrase($this->usr);
-        $phr->id = $this->id;
-        $phr->name = $this->name;
-        $phr->obj = $this;
-        log_debug('word->phrase of ' . $this->dsp_id());
-        return $phr;
-    }
-
-    /*
-    save functions
-    */
 
     function not_used(): bool
     {

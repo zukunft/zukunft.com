@@ -363,7 +363,7 @@ class word_list
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
-                            $new_word = new word_dsp($this->usr);
+                            $new_word = new word($this->usr);
                             $new_word->row_mapper($db_wrd);
                             $additional_added->add($new_word);
                             log_debug(self::class . '->add_by_type -> added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
@@ -1342,7 +1342,8 @@ class word_list
 
         foreach ($this->lst as $wrd) {
             $wrd_dsp = $wrd->dsp_obj();
-            $view = $wrd_dsp->view();
+            // TODO review $view = $wrd_dsp->view();
+            $view = $wrd->view();
             if (isset($view)) {
                 $is_in_list = false;
                 foreach ($result as $check_view) {

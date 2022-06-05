@@ -284,7 +284,6 @@ class verb
         $result = '';
 
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $form;
         $sel->name = 'verb';
         $sel->label = "Verb:";

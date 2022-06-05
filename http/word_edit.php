@@ -55,7 +55,7 @@ if ($usr->id > 0) {
     $back = $_GET['back']; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have an place to update the parameters
-    $wrd = new word_dsp($usr);
+    $wrd = new word($usr);
     $wrd->id = $_GET['id'];
     $wrd->load();
 

@@ -2,7 +2,7 @@
 
 /*
 
-  zu_lib_word_dsp.php - old functions to display words (just just for regression code testing)
+  zu_lib_word_dsp.php - old functions to display words (just for regression code testing)
   -------------------
 
   prefix: zut_dsp_* 
@@ -64,14 +64,6 @@
 
 */
 
-
-// simply to display a single word and also get the name
-function zut_html_id($id, $user_id)
-{
-    log_debug('zut_html_id(' . $id . ')');
-    $result = zut_html($id, zut_name($id, $user_id));
-    return $result;
-}
 
 // simply to display a single word
 function zut_html($id, $name)

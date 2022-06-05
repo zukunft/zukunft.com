@@ -410,7 +410,6 @@ class source extends user_sandbox_named
 
         log_debug("source->dsp_select -> source id used (" . $this->id . ")");
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = "source";
         $sel->sql = sql_lst_usr("source", $this->usr);
@@ -430,7 +429,6 @@ class source extends user_sandbox_named
         $result = ''; // reset the html code var
 
         $sel = new html_selector;
-        $sel->usr = $this->usr;
         $sel->form = $form_name;
         $sel->name = "source_type";
         $sel->sql = sql_lst("source_type");

@@ -2,9 +2,9 @@
 
 /*
 
-    formula_min.php - the minimal formula object
-    ---------------
-
+  test/unit/word_display.php - TESTing of the WORD DISPLAY functions
+  --------------------------
+  
 
     This file is part of zukunft.com - calc with words
 
@@ -30,20 +30,20 @@
 
 */
 
-namespace api;
-
-use api\user_sandbox_named_min;
-
-class formula_min extends user_sandbox_named_min
+class word_display_unit_tests
 {
-
-    // the formula expression as shown to the user
-    public string $usr_text;
-
-    function __construct()
+    function run(testing $t)
     {
-        parent::__construct();
-        $this->usr_text = '';
+        global $usr;
+
+        $t->subheader('Word tests');
+
+        $wrd = new word_dsp($usr);
+        $wrd->id = 1;
+        $wrd->name = word::TN_READ;
+        $t->html_test($wrd->dsp_link(), 'word', $t);
+
+        $t->html_test($wrd->dsp_header(), 'word_header', $t);
     }
 
 }

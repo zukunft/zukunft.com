@@ -105,7 +105,7 @@ class formula_element
     {
         if ($ref_id != 0 and isset($this->usr)) {
             if ($this->type == self::TYPE_WORD) {
-                $wrd = new word_dsp($this->usr);
+                $wrd = new word($this->usr);
                 $wrd->id = $ref_id;
                 $wrd->load();
                 $this->name = $wrd->name;
@@ -132,7 +132,7 @@ class formula_element
                 $this->symbol = expression::MAKER_FORMULA_START . $frm->id . expression::MAKER_FORMULA_END;
                 $this->obj = $frm;
                 // in case of a formula load also the corresponding word
-                $wrd = new word_dsp($this->usr);
+                $wrd = new word($this->usr);
                 $wrd->name = $frm->name;
                 $wrd->load();
                 $this->wrd_obj = $wrd;

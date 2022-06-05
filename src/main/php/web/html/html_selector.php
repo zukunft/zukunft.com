@@ -3,7 +3,7 @@
 /*
 
     selector.php - to select a word (or formula or verb)
-    --------------------
+    ------------
 
     this should be as easy as possible that's why it got its own class
 
@@ -35,7 +35,6 @@ class html_selector
 {
 
     // the parameters
-    public ?user $usr = null;       // if 0 (not NULL) for standard values, otherwise for a user specific values
     public string $name = '';       // the HTML form field name
     public string $form = '';       // the name of the HTML form
     public string $label = '';      // the label of the HTML form
@@ -66,7 +65,6 @@ class html_selector
 
         // check if list needs to be reloaded
         if ($this->sql != '') {
-            $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get_old($this->sql);
             foreach ($db_lst as $db_entry) {
                 $this->lst[$db_entry['id']] = $db_entry['name'];

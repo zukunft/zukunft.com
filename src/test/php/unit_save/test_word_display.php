@@ -44,29 +44,32 @@ function run_word_display_test(testing $t)
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
     // correct test would be using a "fixed HTML text contains"
-    $wrd_ZH = new word_dsp($usr);
+    $wrd_ZH = new word($usr);
     $wrd_ZH->name = word::TN_ZH;
     $wrd_ZH->load();
     $direction = 'up';
     $target = TEST_WORD;
-    $result = $wrd_ZH->dsp_graph($direction, 0);
+    // get the link types related to the word
+    $link_types = $wrd_ZH->link_types($direction);
+    $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
     $t->dsp_contains('word_dsp->dsp_graph ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the other side
-    $wrd_ZH = new word_dsp($usr);
+    $wrd_ZH = new word($usr);
     $wrd_ZH->name = word::TN_ZH;
     $wrd_ZH->load();
     $direction = 'down';
-    $target = '';
-    $result = $wrd_ZH->dsp_graph($direction, 0);
+    $target = 'Nothing linked to "System Test Word Member e.g. Zurich" until now. Click here to link it.';
+    $link_types = $wrd_ZH->link_types($direction);
+    $result = $wrd_ZH->dsp_graph($direction, $link_types, 0);
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_ZH->name, $target, $result);
 
     // ... and the graph display for 2019
-    $wrd_2020 = new word_dsp($usr);
+    $wrd_2020 = new word($usr);
     $wrd_2020->name = word::TN_2020;
     $wrd_2020->load();
     $direction = 'down';
-    $wrd_2021 = new word_dsp($usr);
+    $wrd_2021 = new word($usr);
     $wrd_2021->name = word::TN_2021;
     $wrd_2021->load();
     $lnk_20_to_21 = $t->load_word_link(word::TN_2021, verb::DBL_FOLLOW, word::TN_2020);
@@ -93,7 +96,8 @@ function run_word_display_test(testing $t)
   </tr>
 </table>
 ';
-    $result = $wrd_2020->dsp_graph($direction, 0);
+    $link_types = $wrd_2020->link_types($direction);
+    $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
@@ -149,7 +153,8 @@ function run_word_display_test(testing $t)
   </tr>
 </table>
 ';
-    $result = $wrd_2020->dsp_graph($direction, 0);
+    $link_types = $wrd_2020->link_types($direction);
+    $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
@@ -158,10 +163,10 @@ function run_word_display_test(testing $t)
     $t->dsp('word_dsp->dsp_graph compare to old ' . $direction . ' for ' . $wrd_2020->name, $target, $result);
 
     // the value table for ABB
-    $wrd_ZH = new word_dsp($usr);
+    $wrd_ZH = new word($usr);
     $wrd_ZH->name = word::TN_ZH;
     $wrd_ZH->load();
-    $wrd_year = new word_dsp($usr);
+    $wrd_year = new word($usr);
     $wrd_year->name = word::TN_YEAR;
     $wrd_year->load();
     /*
@@ -170,7 +175,7 @@ function run_word_display_test(testing $t)
     */
     $target = word::TN_2020;
     $target = word::TN_ZH;
-    $result = $wrd_ZH->dsp_val_list($wrd_year, 0);
+    $result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
     //$t->dsp('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
     $t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name, $target, $result, TIMEOUT_LIMIT_PAGE);
 
@@ -198,7 +203,6 @@ function run_word_display_test(testing $t)
     $phr_corp = $t->load_phrase(word::TN_COMPANY);
     $phr_ZH_INS = $t->load_phrase(phrase::TN_ZH_COMPANY);
     $sel = new html_selector;
-    $sel->usr = $usr;
     $sel->form = 'test_form';
     $sel->name = 'select_company';
     $sel->sql = $phr_corp->sql_list($phr_corp);

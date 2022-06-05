@@ -134,11 +134,11 @@ function run_phrase_test(testing $t)
     $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' . phrase::TN_ZH_COMPANY . ' selected contains ' . phrase::TN_ZH_COMPANY . '', $target, $result, TIMEOUT_LIMIT_PAGE);
 
     // test the phrase selector of type company
-    $wrd_ABB = new word_dsp($usr);
+    $wrd_ABB = new word($usr);
     $wrd_ABB->name = TW_ABB;
     $wrd_ABB->load();
     $phr = $wrd_ABB->phrase();
-    $wrd_company = new word_dsp($usr);
+    $wrd_company = new word($usr);
     $wrd_company->name = TEST_WORD;
     $wrd_company->load();
     $result = $phr->dsp_selector($wrd_company, $form_name, $pos, '', $back);

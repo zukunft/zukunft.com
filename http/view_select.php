@@ -65,7 +65,7 @@ if ($usr->id > 0) {
     }
 
     // show the word name
-    $wrd = new word_dsp($usr);
+    $wrd = new word($usr);
     if ($word_id > 0) {
         $wrd->id = $word_id;
         $wrd->load();

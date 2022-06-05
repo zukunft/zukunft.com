@@ -2,46 +2,30 @@
 
 /*
 
-  word_add.php - to add a new word
-  ------------
+    phrase_list.php - return a phrase list API object
+    ---------------
 
-  
-  This file is part of zukunft.com - calc with words
+    This file is part of the frontend of zukunft.com - calc with words
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
-*/
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-/*
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
-------------------------
-commit and cancel button
-select a related word, because no word should be added without relation to an existing word
-select the relation type
-------------------------
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-TODO
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
 
-Split word into two words and create a group for the combined word
-Delete a word (check if nothing is depending on the word to delete)
+    http://zukunft.com
 
 */
 
@@ -51,9 +35,9 @@ $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
 
 /* open database */
-$db_con = prg_start("word_add");
+$db_con = prg_start("phrase_list");
 
-$result = ''; // reset the html code var
+$result = new phrase_list_dsp(); // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters

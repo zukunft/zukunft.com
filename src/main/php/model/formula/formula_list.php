@@ -68,7 +68,7 @@ class formula_list
                         $frm = new formula($this->usr);
                         $frm->row_mapper($db_row);
                         if ($frm->name <> '') {
-                            $name_wrd = new word_dsp($this->usr);
+                            $name_wrd = new word($this->usr);
                             $name_wrd->name = $frm->name;
                             $name_wrd->load();
                             $frm->name_wrd = $name_wrd;
