@@ -32,9 +32,24 @@
 class view_cmp_dsp extends view_cmp
 {
 
+    /**
+     * @returns string the html code to display this view component
+     */
+    function html(): string
+    {
+        $result = '';
+        switch ($this->type_id) {
+            case cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT):
+                $result .= $this->text();
+                break;
+            default:
+                $result .= 'ERROR: unknown type id ' . $this->type_id;
+        }
+        return $result;
+    }
 
     /**
-     * just to display a simple text
+     * @returns string html code to display a simple text
      */
     function text(): string
     {
@@ -45,7 +60,9 @@ class view_cmp_dsp extends view_cmp
         return $result;
     }
 
-    // show the word name and give the user the possibility to change the word name
+    /**
+     * show the word name and give the user the possibility to change the word name
+     */
     function word_name($wrd): string
     {
         $result = '';

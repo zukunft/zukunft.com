@@ -40,11 +40,13 @@ class html_unit_tests
 
         $t->header('Unit tests of the html classes (src/main/php/web/html/*)');
 
+
         $t->subheader('Login pages');
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
         $t->dsp('html_selector', $t->trim_html($expected_html), $t->trim_html($created_html));
+
 
         $t->subheader('Selector tests');
 
@@ -72,6 +74,14 @@ class html_unit_tests
 
         // button add
         $t->html_test(btn_add('Test', 'http'), 'button_add', $t);
+
+
+        $t->subheader('View component tests');
+
+        $cmp = new view_cmp($usr);
+        $cmp->set_type(view_cmp_type::TEXT);
+        $cmp->name = 'View component text';
+        $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
     }
 

@@ -56,7 +56,7 @@ function run_display_test(testing $t)
     $cmp = new view_cmp_dsp($usr);
     $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
     $cmp->name = TS_NESN_2016_NAME;
-    $result = $cmp->text();
+    $result = $cmp->dsp_obj()->html();
     $target = ' ' . TS_NESN_2016_NAME;
     $t->dsp('view_component_dsp->text', $target, $result);
 

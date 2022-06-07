@@ -29,6 +29,8 @@
   
 */
 
+use api\view_cmp_api;
+
 class view_cmp extends user_sandbox_named
 {
 
@@ -168,6 +170,42 @@ class view_cmp extends user_sandbox_named
         $this->back = null;
     }
 
+    /*
+     * api and display object mapper
+     */
+
+    /**
+     * @return view_cmp_api the view component frontend api object
+     */
+    function api_obj(): object
+    {
+        $min_obj = new view_cmp_api();
+        return parent::fill_min_obj($min_obj);
+    }
+
+    /**
+     * @return view_cmp_dsp the view component object with the html creation functions
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new view_cmp_dsp($this->usr);
+
+        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->type_id = $this->type_id;
+
+        $dsp_obj->link_type_id = $this->link_type_id;
+
+        $dsp_obj->share_id = $this->share_id;
+        $dsp_obj->protection_id = $this->protection_id;
+
+        return $dsp_obj;
+    }
+
+    /*
+     * database mapper
+     */
+
     /**
      * map the database fields to the object fields
      *
@@ -190,6 +228,19 @@ class view_cmp extends user_sandbox_named
             $this->word_id_col2 = $db_row[self::FLD_COL2_PHRASE];
         }
         return $result;
+    }
+
+    /*
+     * get and set functions
+     */
+
+    /**
+     * set the view component type
+     * @return void
+     */
+    function set_type(string $type_code_id)
+    {
+        $this->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
     }
 
     /*
@@ -417,7 +468,7 @@ class view_cmp extends user_sandbox_named
         return '<a href="/http/view_component_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
-//
+    //
     function type_name()
     {
         log_debug('view_component->type_name do');
@@ -438,8 +489,8 @@ class view_cmp extends user_sandbox_named
     }
 
     /*
-    import & export functions
-    */
+     * import & export functions
+     */
 
     /**
      *  */
