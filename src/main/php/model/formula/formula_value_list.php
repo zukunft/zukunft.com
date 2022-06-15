@@ -353,6 +353,7 @@ class formula_value_list
 
     /**
      * create the html code to show the formula results to the user
+     * TODO move to formula_value_list_min_display
      */
     function display(string $back = ''): string
     {

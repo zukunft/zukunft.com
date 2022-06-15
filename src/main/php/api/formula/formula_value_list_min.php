@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_group_min.php - the minimal phrase group object used for the back- to frontend api
-    --------------------
+    formula_value_List_min.php - the minimal result value list object
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,37 +32,36 @@
 
 namespace api;
 
-use api\user_sandbox_named_min;
+use api\user_sandbox_min;
+use html\formula_value_list_min_display;
 
-class phrase_group_min extends user_sandbox_named_min
+class formula_value_list_min
 {
-
-    // list of word_min and triple_min objects
+    // the protected main var
     private array $lst;
 
     // memory vs speed optimize vars
     private array $id_lst;
     private bool $lst_dirty;
 
-    function __construct(array $phr_lst = array())
+    function __construct()
     {
-        parent::__construct();
-        $this->lst = [];
+        $this->lst = array();
 
         $this->id_lst = array();
         $this->lst_dirty = false;
     }
 
     /**
-     * @returns array with all unique phrase ids og this list
+     * @returns array with all unique result ids og this list
      */
     private function id_lst(): array
     {
         $result = array();
         if ($this->lst_dirty) {
-            foreach ($this->lst as $phr) {
-                if (!in_array($phr->id, $result)) {
-                    $result[] = $phr->id;
+            foreach ($this->lst as $fv) {
+                if (!in_array($fv->id, $result)) {
+                    $result[] = $fv->id;
                 }
             }
             $this->lst_dirty = false;
@@ -73,14 +72,14 @@ class phrase_group_min extends user_sandbox_named_min
     }
 
     /**
-     * add a phrase to the list
-     * @returns bool true if the phrase has been added
+     * add a formula result to the list
+     * @returns bool true if the formula result has been added
      */
-    function add(phrase_min $phr): bool
+    function add(formula_value_min $fv): bool
     {
         $result = false;
-        if (!in_array($phr->id, $this->id_lst())) {
-            $result[] = $phr->id;
+        if (!in_array($fv->id, $this->id_lst())) {
+            $result[] = $fv->id;
             $this->lst_dirty = true;
             $result = true;
         }
@@ -88,16 +87,26 @@ class phrase_group_min extends user_sandbox_named_min
     }
 
     /**
-     * @returns array the protected list of phrases
+     * @returns array the protected list of formula results
      */
     function lst(): array
     {
         return $this->lst;
     }
 
-    function load_phrases(): bool
+    /**
+     * @returns formula_value_list_min_display the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): formula_value_list_min_display
     {
-        return $this->load_phrases();
+        $dsp_obj = new formula_value_list_min_display();
+
+        $dsp_obj->lst = $this->lst;
+
+        $dsp_obj->id_lst = $this->id_lst;
+        $dsp_obj->lst_dirty = $this->lst_dirty;
+
+        return $dsp_obj;
     }
 
 }

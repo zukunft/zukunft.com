@@ -153,6 +153,19 @@ function run_word_display_test(testing $t)
   </tr>
 </table>
 ';
+    $target = '<table class="table col-sm-5 table-borderless">
+  <tr>
+    <td>
+    </td>
+    <td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
+    <td>
+<a href="/http/view.php?words=' . $wrd_year->id . '">System Test Time Word Category e.g. Year</a>    </td>
+    <td>
+<a href="/http/view.php?words=' . $wrd_2019->id . '">System Test Another Time Word e.g. 2019</a>    </td>
+  </tr>
+</table>
+';
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
     $diff = str_diff($result, $target);

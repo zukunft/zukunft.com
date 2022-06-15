@@ -540,6 +540,33 @@ COMMENT ON TABLE source_values is 'one user can add different value, which shoul
 -- --------------------------------------------------------
 
 --
+-- Table structure for table source_api
+--
+
+CREATE TABLE IF NOT EXISTS source_api
+(
+    source_api_id       BIGSERIAL PRIMARY KEY,
+    source_api_name     varchar(200) NOT NULL,
+    open_api_definition text DEFAULT NULL
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table source_api_user
+--
+
+CREATE TABLE IF NOT EXISTS source_api_user
+(
+    source_api_id BIGSERIAL,
+    user_id       BIGSERIAL,
+    source_api_     varchar(200) NOT NULL,
+    open_api_definition text DEFAULT NULL
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table sys_log
 --
 

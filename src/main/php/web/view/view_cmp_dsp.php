@@ -2,9 +2,8 @@
 
 /*
 
-    word_min.php - the minimal word object for the frontend API
-    ------------
-
+    view_cmp_min_dsp.php - the display extension of the api view component object
+    --------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,18 +29,7 @@
 
 */
 
-namespace api;
-
-use api\user_sandbox_named_min;
-
-class word_min extends user_sandbox_named_min
+class view_cmp_min_dsp extends \api\view_cmp_api
 {
-    // the mouse over tooltip for the word
-    public ?string $description = null;
 
-    // the language specific forms
-    public ?string $plural = null;
-
-    // the main parent phrase
-    public ?\phrase_min_dsp $parent;
 }

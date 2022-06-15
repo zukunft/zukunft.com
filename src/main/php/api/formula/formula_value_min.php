@@ -48,4 +48,9 @@ class formula_value_min extends user_sandbox_min
         $this->val = 0;
     }
 
+    function load_phrases(): bool
+    {
+        return $this->grp->load_phrases();
+    }
+
 }

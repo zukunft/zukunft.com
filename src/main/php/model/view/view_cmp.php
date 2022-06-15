@@ -119,6 +119,7 @@ class view_cmp extends user_sandbox_named
     public ?int $pos_type = null;           // the position in the linked view
 
     // linked fields
+    public ?object $obj = null;             // the object that should be shown to the user
     public ?word $wrd_row = null;           // the word object for $word_id_row
     public ?word $wrd_col = null;           // the word object for $word_id_col
     public ?word $wrd_col2 = null;          // the word object for $word_id_col2

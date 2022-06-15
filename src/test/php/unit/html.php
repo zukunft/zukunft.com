@@ -76,12 +76,27 @@ class html_unit_tests
         $t->html_test(btn_add('Test', 'http'), 'button_add', $t);
 
 
+        $t->subheader('HTML table tests');
+
+        $fv_lst = new \api\formula_value_list_min();
+        $fv = new \api\formula_value_min();
+        $fv->id = 1;
+        $fv->grp = new \api\phrase_group_min();
+        $fv->val = 123;
+        $fv_lst->add($fv);
+        $t->html_test($fv_lst->dsp_obj()->table(), 'formula_values_table', $t);
+
+
         $t->subheader('View component tests');
 
         $cmp = new view_cmp($usr);
         $cmp->set_type(view_cmp_type::TEXT);
         $cmp->name = 'View component text';
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
+
+        $wrd = new \api\word_min();
+        $wrd->name = 'View component word name';
+        $cmp->obj = $wrd;
 
     }
 

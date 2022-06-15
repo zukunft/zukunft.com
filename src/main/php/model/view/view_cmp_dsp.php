@@ -63,17 +63,20 @@ class view_cmp_dsp extends view_cmp
     /**
      * show the word name and give the user the possibility to change the word name
      */
-    function word_name($wrd): string
+    function word_name(word $wrd): string
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORD_NAME)) {
             if (!isset($wrd)) {
                 $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
             } else {
-                log_debug('view_component_dsp->word_name in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
                 $wrd_dsp = new word_dsp($wrd->usr);
                 $wrd_dsp->id = $wrd->id;
-                $result .= $wrd_dsp->dsp_header($wrd->is_mainly());
+                $wrd_dsp->name = $wrd->name;
+                $parent = $wrd->is_mainly();
+                if ($parent != null) {
+                    $result .= $wrd_dsp->dsp_header($parent);
+                }
             }
         }
 

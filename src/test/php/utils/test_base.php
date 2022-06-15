@@ -1087,6 +1087,27 @@ class test_base
     }
 
     /**
+     * check if the REST curl calls are possible
+     *
+     * @param object $usr_obj the object to ehich which REST curl calls should be tested
+     * @return bool true if the reloaded backend object has no relevant differences
+     */
+    function assert_rest(object $usr_obj): bool
+    {
+        $obj_name = get_class($usr_obj);
+        $url_read = 'api/' . $obj_name . '/read.php';
+        $original_json = json_decode(json_encode($usr_obj->$usr_obj()), true);
+        $recreated_json = '';
+        $api_obj = $usr_obj->min_obj();
+        if ($api_obj->id == $usr_obj->id) {
+            $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
+            $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
+        }
+        $result = json_is_similar($original_json, $recreated_json);
+        return $this->assert($this->name . 'REST check', $result, true);
+    }
+
+    /**
      * check if an object json file can be recreated by importing the object and recreating the json with the export function
      *
      * @param object $usr_obj the object which json im- and export functions should be tested

@@ -116,7 +116,8 @@ a view object or a function that return HTML code that can be displayed
 object extensions
 - _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user
 - _exp (EXPort)            - the export object that does not have any internal database references
-
+- _dsp (DiSPlay)           - to create the HTML code to display the object
+- _min_dsp                 - the display object based on the API object instead of the backend object
 
 database change setup
 ---------------------
