@@ -64,6 +64,10 @@ class phrase_group
         self::FLD_ORDER
     );
 
+    // persevered phrase group names for unit and integration tests
+    const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
+    const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';
+
     /*
      * for system testing
      */

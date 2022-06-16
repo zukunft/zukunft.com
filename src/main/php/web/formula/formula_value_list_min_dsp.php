@@ -57,8 +57,8 @@ class formula_value_list_min_display extends \api\formula_value_list_min
                 if ($row_nbr == 1) {
                     $result .= $tbl->header('words');
                     $result .= $tbl->header('value');
+                    $result .= $tbl->row();
                 }
-                $result .= $tbl->row();
                 $result .= $tbl->cell($fv->name_linked());
                 $result .= $tbl->cell($fv->value_linked($back));
                 $result .= $tbl->row_end();

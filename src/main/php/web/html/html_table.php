@@ -79,7 +79,7 @@ class html_table
 
     function row(): string
     {
-        return $this->row_start() . $this->row_end();
+        return $this->row_end() . $this->row_start();
     }
 
     function cell(string $cell_text): string

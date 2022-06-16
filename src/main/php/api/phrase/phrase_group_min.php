@@ -118,11 +118,15 @@ class phrase_group_min extends user_sandbox_named_min
     {
         $result = '';
         if ($this->name_dirty) {
-            foreach ($this->lst as $phr) {
-                if ($result <> '') {
-                    $result .= ', ';
+            if ($this->name <> '') {
+                $result .= $this->name;
+            } else {
+                foreach ($this->lst as $phr) {
+                    if ($result <> '') {
+                        $result .= ', ';
+                    }
+                    $result .= $phr->name_linked();
                 }
-                $result .= $phr->name_linked();
             }
             $this->lst_dirty = false;
         } else {

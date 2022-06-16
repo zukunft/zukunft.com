@@ -80,11 +80,11 @@ class html_unit_tests
 
         $fv_lst = new \api\formula_value_list_min();
         $fv_zh = new \api\formula_value_min(1);
-        $fv_zh->grp = new \api\phrase_group_min(1, array(word::TN_ZH, word::TN_CITY, word::TN_INHABITANT, word::TN_2019));
+        $fv_zh->grp = new \api\phrase_group_min(1, array(word::TN_ZH, word::TN_CITY, word::TN_INHABITANT, word::TN_2019), phrase_group::TN_ZH_2019);
         $fv_zh->val = value::TV_CITY_ZH_INHABITANTS_2019;
         $fv_lst->add($fv_zh);
         $fv_ch = new \api\formula_value_min(2);
-        $fv_ch->grp = new \api\phrase_group_min(2, array(word::TN_CH, word::TN_MIO, word::TN_INHABITANT, word::TN_2019));
+        $fv_ch->grp = new \api\phrase_group_min(2, array(word::TN_CH, word::TN_MIO, word::TN_INHABITANT, word::TN_2019), phrase_group::TN_CH_2019);
         $fv_ch->val = value::TV_CH_INHABITANTS_2019_IN_MIO;
         $fv_lst->add($fv_ch);
         $t->html_test($fv_lst->dsp_obj()->table(), 'formula_values_table', $t);
