@@ -43,14 +43,29 @@ class phrase_group_min extends user_sandbox_named_min
     // memory vs speed optimize vars
     private array $id_lst;
     private bool $lst_dirty;
+    private string $name_linked;
+    private bool $name_dirty;
 
-    function __construct(array $phr_lst = array())
+    function __construct(int $id = 0, array $phr_lst = array(), string $name = '')
     {
-        parent::__construct();
+        parent::__construct($id, $name);
         $this->lst = [];
 
         $this->id_lst = array();
         $this->lst_dirty = false;
+        $this->name_linked = '';
+        $this->name_dirty = true;
+
+
+        // fill the phrase group based on the parameters included in new call
+        $phr_id = 1; // if now id is given, create a dummy id for testing
+        if (count($phr_lst) > 0) {
+            foreach ($phr_lst as $phr_str) {
+                $phr = new phrase_min($phr_id, $phr_str);
+                $this->add($phr);
+                $phr_id++;
+            }
+        }
     }
 
     /**
@@ -80,8 +95,9 @@ class phrase_group_min extends user_sandbox_named_min
     {
         $result = false;
         if (!in_array($phr->id, $this->id_lst())) {
-            $result[] = $phr->id;
+            $this->lst[] = $phr;
             $this->lst_dirty = true;
+            $this->name_dirty = true;
             $result = true;
         }
         return $result;
@@ -93,6 +109,26 @@ class phrase_group_min extends user_sandbox_named_min
     function lst(): array
     {
         return $this->lst;
+    }
+
+    /**
+     * @returns string the html code to display the phrase group with reference links
+     */
+    function name_linked(): string
+    {
+        $result = '';
+        if ($this->name_dirty) {
+            foreach ($this->lst as $phr) {
+                if ($result <> '') {
+                    $result .= ', ';
+                }
+                $result .= $phr->name_linked();
+            }
+            $this->lst_dirty = false;
+        } else {
+            $result = $this->name_linked;
+        }
+        return $result;
     }
 
     function load_phrases(): bool

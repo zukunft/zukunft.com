@@ -70,7 +70,7 @@ class view_cmp_dsp extends view_cmp
             if (!isset($wrd)) {
                 $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
             } else {
-                $wrd_dsp = new word_dsp($wrd->usr);
+                $wrd_dsp = new word_dsp();
                 $wrd_dsp->id = $wrd->id;
                 $wrd_dsp->name = $wrd->name;
                 $parent = $wrd->is_mainly();

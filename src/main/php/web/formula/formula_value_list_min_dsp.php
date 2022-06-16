@@ -58,15 +58,9 @@ class formula_value_list_min_display extends \api\formula_value_list_min
                     $result .= $tbl->header('words');
                     $result .= $tbl->header('value');
                 }
-                $fv->load_phrases(); // load any missing objects if needed
-                $phr_lst = clone $fv->phr_lst;
-                if (isset($fv->time_phr)) {
-                    $phr_lst->add($fv->time_phr);
-                }
-                $phr_lst_dsp = $phr_lst->dsp_obj();
                 $result .= $tbl->row();
-                $result .= $tbl->cell($phr_lst_dsp->name_linked());
-                $result .= $tbl->cell($fv->display_linked($back));
+                $result .= $tbl->cell($fv->name_linked());
+                $result .= $tbl->cell($fv->value_linked($back));
                 $result .= $tbl->row_end();
             }
         }

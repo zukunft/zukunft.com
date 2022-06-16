@@ -79,7 +79,7 @@ class formula_value_list_min
     {
         $result = false;
         if (!in_array($fv->id, $this->id_lst())) {
-            $result[] = $fv->id;
+            $this->lst[] = $fv;
             $this->lst_dirty = true;
             $result = true;
         }

@@ -277,7 +277,7 @@ class word extends user_sandbox_description
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new word_dsp($this->usr);
+        $dsp_obj = new word_dsp();
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 

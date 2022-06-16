@@ -558,6 +558,12 @@ class test_base
         return $phr_grp;
     }
 
+    /**
+     * add a phrase group to the database
+     * @param array $array_of_phrase_str the phrase names
+     * @param string $phrase_group_name the name that should be shown to the user
+     * @return phrase_group the phrase group object including the database is
+     */
     function add_phrase_group(array $array_of_phrase_str, string $phrase_group_name): phrase_group
     {
         global $usr;

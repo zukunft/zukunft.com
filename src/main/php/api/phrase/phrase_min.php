@@ -37,4 +37,23 @@ class phrase_min extends user_sandbox_named_min
 {
     // the mouse over tooltip for the word
     public ?string $description = null;
+
+    function __construct(int $id = 0, string $name = '')
+    {
+        parent::__construct($id, $name);
+        $this->lst = [];
+
+        $this->id_lst = array();
+        $this->lst_dirty = false;
+    }
+
+    /**
+     * @returns string the html code to display the phrase with reference links
+     */
+    function name_linked(): string
+    {
+        $result = $this->name;
+        return $result;
+    }
+
 }

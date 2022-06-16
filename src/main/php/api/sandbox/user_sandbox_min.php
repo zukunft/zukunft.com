@@ -52,9 +52,14 @@ class user_sandbox_min
     // fields for the backend link
     public int $id; // the database id of the object, which is the same as the related database object in the backend
 
-    function __construct()
+    function __construct(int $id = 0)
     {
         $this->id = 0;
+
+        // set the id if included in new call
+        if ($id <> 0) {
+            $this->id = $id;
+        }
     }
 
     function db_obj(user $usr, string $class): user_sandbox

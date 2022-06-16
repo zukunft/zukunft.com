@@ -38,9 +38,7 @@ class word_display_unit_tests
 
         $t->subheader('Word tests');
 
-        $wrd = new word_dsp($usr);
-        $wrd->id = 1;
-        $wrd->name = word::TN_READ;
+        $wrd = new word_dsp(1, word::TN_READ);
         $t->html_test($wrd->dsp_link(), 'word', $t);
 
         $t->html_test($wrd->dsp_header(), 'word_header', $t);

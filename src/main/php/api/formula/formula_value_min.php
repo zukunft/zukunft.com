@@ -41,11 +41,28 @@ class formula_value_min extends user_sandbox_min
     public phrase_group_min $grp; // the phrase group with the list of words and triples (not the source words and triples)
     public float $val; // if the calculated number
 
-    function __construct()
+    function __construct(int $id = 0)
     {
-        parent::__construct();
+        parent::__construct($id);
         $this->grp = new phrase_group_min();
         $this->val = 0;
+    }
+
+    /**
+     * @returns string the html code to display the phrase group with reference links
+     */
+    function name_linked(): string
+    {
+        return $this->grp->name_linked();
+    }
+
+    /**
+     * @returns string the html code to display the value with reference links
+     * TODO create a popup with the details e.g. the values of other users
+     */
+    function value_linked(): string
+    {
+        return $this->val;
     }
 
     function load_phrases(): bool

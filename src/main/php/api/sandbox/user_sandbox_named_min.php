@@ -38,10 +38,16 @@ class user_sandbox_named_min extends user_sandbox_min
     // the unique name of the object that is shown to the user
     public string $name; // the name must always be set
 
-    function __construct()
+    function __construct(int $id = 0, string $name = '')
     {
-        parent::__construct();
+        parent::__construct($id);
         $this->name = '';
+
+        // set also the name if included in new call
+        if ($name <> '') {
+            $this->name = $name;
+        }
+
     }
 
 }
