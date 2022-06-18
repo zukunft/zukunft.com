@@ -65,6 +65,15 @@ class formula_value_min extends user_sandbox_min
         return $this->val;
     }
 
+    /**
+     * @returns phrase_list_min the list of phrases of this phrase group
+     */
+    function phr_lst(): phrase_list_min
+    {
+        $result = new phrase_list_min();
+        return $result;
+    }
+
     function load_phrases(): bool
     {
         return $this->grp->load_phrases();

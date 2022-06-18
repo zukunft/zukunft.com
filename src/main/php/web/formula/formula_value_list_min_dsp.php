@@ -50,19 +50,23 @@ class formula_value_list_min_display extends \api\formula_value_list_min
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
         $result .= $tbl->start(html_table::SIZE_HALF);
-        if ($this->lst() != null) {
-            foreach ($this->lst() as $fv) {
-                $row_nbr++;
-                $result .= $tbl->row_start();
-                if ($row_nbr == 1) {
-                    $result .= $tbl->header('words');
-                    $result .= $tbl->header('value');
-                    $result .= $tbl->row();
-                }
-                $result .= $tbl->cell($fv->name_linked());
-                $result .= $tbl->cell($fv->value_linked($back));
-                $result .= $tbl->row_end();
+        $common_phrases = $this->common_phrases();
+        if ($common_phrases->count() <= 0) {
+            $head_text = 'words';
+        } else {
+            $head_text = $common_phrases->dsp_obj()->name_linked();
+        }
+        foreach ($this->lst() as $fv) {
+            $row_nbr++;
+            $result .= $tbl->row_start();
+            if ($row_nbr == 1) {
+                $result .= $tbl->header($head_text);
+                $result .= $tbl->header('value');
+                $result .= $tbl->row();
             }
+            $result .= $tbl->cell($fv->name_linked());
+            $result .= $tbl->cell($fv->value_linked($back));
+            $result .= $tbl->row_end();
         }
         $result .= dsp_tbl_end();
 

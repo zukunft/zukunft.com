@@ -2,8 +2,8 @@
 
 /*
 
-    formula_value_List_min.php - the minimal result value list object
-    --------------------------
+    value_List_min.php - the minimal value list object
+    ------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,10 +32,9 @@
 
 namespace api;
 
-use api\list_min;
-use html\formula_value_list_min_display;
+use html\value_list_min_display;
 
-class formula_value_list_min extends list_min
+class value_list_min extends list_min
 {
 
     function __construct()
@@ -44,14 +43,14 @@ class formula_value_list_min extends list_min
     }
 
     /**
-     * add a formula result to the list
-     * @returns bool true if the formula result has been added
+     * add a value to the list
+     * @returns bool true if the value has been added
      */
-    function add(formula_value_min $fv): bool
+    function add(value_min $val): bool
     {
         $result = false;
-        if (!in_array($fv->id, $this->id_lst())) {
-            $this->lst[] = $fv;
+        if (!in_array($val->id, $this->id_lst())) {
+            $this->lst[] = $val;
             $this->lst_dirty = true;
             $result = true;
         }
@@ -59,32 +58,16 @@ class formula_value_list_min extends list_min
     }
 
     /**
-     * @returns formula_value_list_min_display the cast object with the HTML code generating functions
+     * @returns value_list_min_display the cast object with the HTML code generating functions
      */
-    function dsp_obj(): formula_value_list_min_display
+    function dsp_obj(): value_list_min_display
     {
-        $dsp_obj = new formula_value_list_min_display();
+        $dsp_obj = new value_list_min_display();
 
         $dsp_obj->lst = $this->lst;
         $dsp_obj->lst_dirty = true;
 
         return $dsp_obj;
-    }
-
-    /**
-     * @returns phrase_list_min with the phrases that are used in all values of the list
-     */
-    protected function common_phrases(): phrase_list_min
-    {
-        // get common words
-        $common_phr_lst = new phrase_list_min();
-        foreach ($this->lst as $fv) {
-            $val_phr_lst = $fv->phr_lst();
-            if ($val_phr_lst->lst != null) {
-                $common_phr_lst = $common_phr_lst->intersect($val_phr_lst);
-            }
-        }
-        return $common_phr_lst;
     }
 
 }
