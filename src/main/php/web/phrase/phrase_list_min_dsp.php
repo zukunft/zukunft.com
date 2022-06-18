@@ -41,10 +41,10 @@ class phrase_list_min_dsp extends \api\phrase_list_min
     {
         $result = '';
         foreach ($this->lst as $phr) {
-            if ($result != '' and $phr->name_lined() != '') {
+            if ($result != '' and $phr->name_linked() != '') {
                 $result .= ', ';
             }
-            $result .= $phr->name_lined();
+            $result .= $phr->name_linked();
         }
         return $result;
     }

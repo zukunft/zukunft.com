@@ -41,10 +41,6 @@ class phrase_min extends user_sandbox_named_min
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
-        $this->lst = [];
-
-        $this->id_lst = array();
-        $this->lst_dirty = false;
     }
 
     /**

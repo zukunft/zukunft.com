@@ -44,4 +44,16 @@ class word_min extends user_sandbox_named_min
 
     // the main parent phrase
     public ?\phrase_min_dsp $parent;
+
+    function __construct(int $id = 0, string $name = '')
+    {
+        parent::__construct($id, $name);
+        $this->description = '';
+    }
+
+    function phrase(): phrase_min
+    {
+        return new phrase_min($this->id, $this->name);
+    }
+
 }

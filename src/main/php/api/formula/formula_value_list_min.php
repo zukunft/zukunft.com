@@ -81,7 +81,7 @@ class formula_value_list_min extends list_min
         foreach ($this->lst as $fv) {
             $val_phr_lst = $fv->phr_lst();
             if ($val_phr_lst->lst != null) {
-                $common_phr_lst = $common_phr_lst->intersect($val_phr_lst);
+                $common_phr_lst->intersect($val_phr_lst);
             }
         }
         return $common_phr_lst;

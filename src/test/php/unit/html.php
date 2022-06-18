@@ -78,14 +78,35 @@ class html_unit_tests
 
         $t->subheader('HTML table tests');
 
-        $fv_lst = new \api\formula_value_list_min();
+        // create a test set of phrase
+        $phr_zh = new \api\phrase_min(1, word::TN_ZH);
+        $phr_city = new \api\phrase_min(2, word::TN_CITY);
+        $phr_ch = new \api\phrase_min(3, word::TN_CH);
+        $phr_inhabitant = new \api\phrase_min(4, word::TN_INHABITANT);
+        $phr_2019 = new \api\phrase_min(5, word::TN_2019);
+        $phr_mio = new \api\phrase_min(6, word::TN_MIO);
+
+        // create the formula result for the inhabitants of the city of zurich
         $fv_zh = new \api\formula_value_min(1);
-        $fv_zh->grp = new \api\phrase_group_min(1, array(word::TN_ZH, word::TN_CITY, word::TN_INHABITANT, word::TN_2019), phrase_group::TN_ZH_2019);
+        $fv_zh->grp = new \api\phrase_group_min(1);
+        $fv_zh->grp->add($phr_zh);
+        $fv_zh->grp->add($phr_city);
+        $fv_zh->grp->add($phr_inhabitant);
+        $fv_zh->grp->add($phr_2019);
         $fv_zh->val = value::TV_CITY_ZH_INHABITANTS_2019;
-        $fv_lst->add($fv_zh);
+
+        // create the formula result for the inhabitants of Switzerland
         $fv_ch = new \api\formula_value_min(2);
-        $fv_ch->grp = new \api\phrase_group_min(2, array(word::TN_CH, word::TN_MIO, word::TN_INHABITANT, word::TN_2019), phrase_group::TN_CH_2019);
+        $fv_ch->grp = new \api\phrase_group_min(2);
+        $fv_ch->grp->add($phr_ch);
+        $fv_ch->grp->add($phr_mio);
+        $fv_ch->grp->add($phr_inhabitant);
+        $fv_ch->grp->add($phr_2019);
         $fv_ch->val = value::TV_CH_INHABITANTS_2019_IN_MIO;
+
+        // create the formula list and the table to display the resuls
+        $fv_lst = new \api\formula_value_list_min();
+        $fv_lst->add($fv_zh);
         $fv_lst->add($fv_ch);
         $t->html_test($fv_lst->dsp_obj()->table(), 'formula_values_table', $t);
 

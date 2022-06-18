@@ -62,6 +62,7 @@ class list_min
                     $result[] = $fv->id;
                 }
             }
+            $this->id_lst = $result;
             $this->lst_dirty = false;
         } else {
             $result = $this->id_lst;
@@ -75,6 +76,16 @@ class list_min
     public function lst(): array
     {
         return $this->lst;
+    }
+
+    /**
+     * @returns true if the list has been replaced
+     */
+    public function set_lst(array $lst): bool
+    {
+        $this->lst = $lst;
+        $this->lst_dirty = true;
+        return true;
     }
 
 }

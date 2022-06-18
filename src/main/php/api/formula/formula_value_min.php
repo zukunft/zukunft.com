@@ -49,11 +49,12 @@ class formula_value_min extends user_sandbox_min
     }
 
     /**
+     * @param phrase_group_min $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(): string
+    function name_linked(phrase_list_min $phr_lst_header = null): string
     {
-        return $this->grp->name_linked();
+        return $this->grp->name_linked($phr_lst_header);
     }
 
     /**
@@ -71,6 +72,9 @@ class formula_value_min extends user_sandbox_min
     function phr_lst(): phrase_list_min
     {
         $result = new phrase_list_min();
+        if ($this->grp != null) {
+            $result->set_lst($this->grp->lst());
+        }
         return $result;
     }
 

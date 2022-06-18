@@ -64,7 +64,7 @@ class formula_value_list_min_display extends \api\formula_value_list_min
                 $result .= $tbl->header('value');
                 $result .= $tbl->row();
             }
-            $result .= $tbl->cell($fv->name_linked());
+            $result .= $tbl->cell($fv->name_linked($common_phrases));
             $result .= $tbl->cell($fv->value_linked($back));
             $result .= $tbl->row_end();
         }
@@ -73,6 +73,5 @@ class formula_value_list_min_display extends \api\formula_value_list_min
         log_debug("fv_lst->display -> done");
         return $result;
     }
-
 
 }

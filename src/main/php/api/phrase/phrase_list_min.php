@@ -78,14 +78,41 @@ class phrase_list_min extends list_min
         }
     }
 
+    /**
+     * @returns phrase_list_min with the phrases of this list and the new list
+     */
     function intersect(phrase_list_min $new_lst): phrase_list_min
     {
         if (!$new_lst->is_empty()) {
             if ($this->is_empty()) {
-                $this->lst = $new_lst->lst;
+                $this->set_lst($new_lst->lst);
             } else {
-                $this->lst = array_intersect($this->lst, $new_lst->lst);
+                // next line would work if array_intersect could handle objects
+                // $this->lst = array_intersect($this->lst, $new_lst->lst());
+                $found_lst = new phrase_list_min();
+                foreach ($new_lst->lst() as $phr) {
+                    if (in_array($phr->id, $this->id_lst())) {
+                        $found_lst->add($phr);
+                    }
+                }
+                $this->set_lst($found_lst->lst);
             }
+        }
+        return $this;
+    }
+
+    function remove(phrase_list_min $del_lst): phrase_list_min
+    {
+        if (!$del_lst->is_empty()) {
+            // next line would work if array_intersect could handle objects
+            // $this->lst = array_intersect($this->lst, $new_lst->lst());
+            $remain_lst = new phrase_list_min();
+            foreach ($this->lst() as $phr) {
+                if (!in_array($phr->id, $del_lst->id_lst())) {
+                    $remain_lst->add($phr);
+                }
+            }
+            $this->set_lst($remain_lst->lst);
         }
         return $this;
     }

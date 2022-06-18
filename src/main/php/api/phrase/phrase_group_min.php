@@ -112,16 +112,32 @@ class phrase_group_min extends user_sandbox_named_min
     }
 
     /**
+     * @returns phrase_list_min the list of phrases as an object
+     */
+    function phr_lst(): phrase_list_min
+    {
+        $result = new phrase_list_min();
+        $result->set_lst($this->lst());
+        return $result;
+    }
+
+    /**
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(): string
+    function name_linked(phrase_list_min $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_dirty) {
             if ($this->name <> '') {
                 $result .= $this->name;
             } else {
-                foreach ($this->lst as $phr) {
+                $lst_to_show = $this->phr_lst();
+                if ($phr_lst_header != null) {
+                    if (!$phr_lst_header->is_empty()) {
+                        $lst_to_show->remove($phr_lst_header);
+                    }
+                }
+                foreach ($lst_to_show->lst() as $phr) {
                     if ($result <> '') {
                         $result .= ', ';
                     }
