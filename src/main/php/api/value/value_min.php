@@ -32,20 +32,14 @@
 
 namespace api;
 
-use api\phrase_group_min;
-use api\user_sandbox_min;
+use api\user_sandbox_value_min;
 
-class value_min extends user_sandbox_min
+class value_min extends user_sandbox_value_min
 {
-
-    public phrase_group_min $grp; // the phrase group with the list of words and triples
-    public float $val; // if the number for the phrase group is not set the object is not created, so null is not needed
 
     function __construct()
     {
         parent::__construct();
-        $this->grp = new phrase_group_min();
-        $this->val = 0;
     }
 
 }

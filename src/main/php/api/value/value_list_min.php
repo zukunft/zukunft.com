@@ -32,9 +32,10 @@
 
 namespace api;
 
+use api\list_value_min;
 use html\value_list_min_display;
 
-class value_list_min extends list_min
+class value_list_min extends list_value_min
 {
 
     function __construct()

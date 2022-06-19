@@ -136,7 +136,7 @@ class value extends user_sandbox_display
     function min_obj(): object
     {
         $min_obj = new value_min();
-        $min_obj->val = $this->number;
+        $min_obj->set_val($this->number);
         return parent::fill_min_obj($min_obj);
     }
 

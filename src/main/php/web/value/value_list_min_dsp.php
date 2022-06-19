@@ -41,12 +41,48 @@ class value_list_min_display extends \api\value_list_min
 {
 
     /**
+     * @return string the html code to show the values as a table to the user
+     */
+    function table(string $back = ''): string
+    {
+        $result = ''; // reset the html code var
+
+        $tbl = new html_table();
+
+        // prepare to show where the user uses different word than a normal viewer
+        $row_nbr = 0;
+        $result .= $tbl->start(html_table::SIZE_HALF);
+        $common_phrases = $this->common_phrases();
+        if ($common_phrases->count() <= 0) {
+            $head_text = 'words';
+        } else {
+            $head_text = $common_phrases->dsp_obj()->name_linked();
+        }
+        foreach ($this->lst() as $fv) {
+            $row_nbr++;
+            $result .= $tbl->row_start();
+            if ($row_nbr == 1) {
+                $result .= $tbl->header($head_text);
+                $result .= $tbl->header('value');
+                $result .= $tbl->row();
+            }
+            $result .= $tbl->cell($fv->name_linked($common_phrases));
+            $result .= $tbl->cell($fv->value_linked($back));
+            $result .= $tbl->row_end();
+        }
+        $result .= dsp_tbl_end();
+
+        log_debug("fv_lst->display -> done");
+        return $result;
+    }
+
+    /**
      * return the html code to display all values related to a given word
      * $phr->id is the related word that should not be included in the display
      * $this->usr->id is a parameter, because the viewer must not be the owner of the value
      * TODO add back
      */
-    function table(string $back): string
+    function table_old(string $back): string
     {
         $result = '';
 
@@ -191,23 +227,6 @@ class value_list_min_display extends \api\value_list_min
         log_debug("value_list->html ... done");
 
         return $result;
-    }
-
-    /**
-     * @returns phrase_list_min with the phrases that are used in all values of the list
-     */
-    private function common_phrases(): phrase_list_min
-    {
-        // get common phrases
-        $common_phr_lst = new phrase_list_min();
-        foreach ($this->lst as $val) {
-            if ($val != null) {
-                if ($val->phr_lst != null) {
-                    $common_phr_lst = $common_phr_lst->intersect($val->phr_lst);
-                }
-            }
-        }
-        return $common_phr_lst;
     }
 
 }

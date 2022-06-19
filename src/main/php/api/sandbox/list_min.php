@@ -2,10 +2,10 @@
 
 /*
 
-    List_min.php - the minimal list object
+    List_min.php - the list object used for the api
     ------------
 
-    used for the value and formula result api object
+    e.g. used for the value and formula result api object
 
     This file is part of zukunft.com - calc with words
 
@@ -51,6 +51,24 @@ class list_min
     }
 
     /**
+     * @returns true if the list has been replaced
+     */
+    public function set_lst(array $lst): bool
+    {
+        $this->lst = $lst;
+        $this->lst_dirty = true;
+        return true;
+    }
+
+    /**
+     * @returns array the protected list of value or formula results
+     */
+    public function lst(): array
+    {
+        return $this->lst;
+    }
+
+    /**
      * @returns array with all unique ids of this list
      */
     protected function id_lst(): array
@@ -68,24 +86,6 @@ class list_min
             $result = $this->id_lst;
         }
         return $result;
-    }
-
-    /**
-     * @returns array the protected list of value or formula results
-     */
-    public function lst(): array
-    {
-        return $this->lst;
-    }
-
-    /**
-     * @returns true if the list has been replaced
-     */
-    public function set_lst(array $lst): bool
-    {
-        $this->lst = $lst;
-        $this->lst_dirty = true;
-        return true;
     }
 
 }

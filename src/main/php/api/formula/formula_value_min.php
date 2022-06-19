@@ -32,55 +32,14 @@
 
 namespace api;
 
-use api\phrase_group_min;
-use api\user_sandbox_min;
+use api\user_sandbox_value_min;
 
-class formula_value_min extends user_sandbox_min
+class formula_value_min extends user_sandbox_value_min
 {
-
-    public phrase_group_min $grp; // the phrase group with the list of words and triples (not the source words and triples)
-    public float $val; // if the calculated number
 
     function __construct(int $id = 0)
     {
         parent::__construct($id);
-        $this->grp = new phrase_group_min();
-        $this->val = 0;
-    }
-
-    /**
-     * @param phrase_group_min $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
-     * @returns string the html code to display the phrase group with reference links
-     */
-    function name_linked(phrase_list_min $phr_lst_header = null): string
-    {
-        return $this->grp->name_linked($phr_lst_header);
-    }
-
-    /**
-     * @returns string the html code to display the value with reference links
-     * TODO create a popup with the details e.g. the values of other users
-     */
-    function value_linked(): string
-    {
-        return $this->val;
-    }
-
-    /**
-     * @returns phrase_list_min the list of phrases of this phrase group
-     */
-    function phr_lst(): phrase_list_min
-    {
-        $result = new phrase_list_min();
-        if ($this->grp != null) {
-            $result->set_lst($this->grp->lst());
-        }
-        return $result;
-    }
-
-    function load_phrases(): bool
-    {
-        return $this->grp->load_phrases();
     }
 
 }
