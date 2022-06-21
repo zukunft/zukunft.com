@@ -49,13 +49,7 @@ class phrase_list_min extends list_min
      */
     function add(phrase_min $phr): bool
     {
-        $result = false;
-        if (!in_array($phr->id, $this->id_lst())) {
-            $this->lst[] = $phr;
-            $this->lst_dirty = true;
-            $result = true;
-        }
-        return $result;
+        return parent::add_obj($phr);
     }
 
     /**
@@ -124,8 +118,8 @@ class phrase_list_min extends list_min
     {
         $dsp_obj = new phrase_list_min_dsp();
 
-        $dsp_obj->lst = $this->lst;
-        $dsp_obj->lst_dirty = true;
+        $dsp_obj->set_lst($this->lst);
+        $dsp_obj->set_lst_dirty();
 
         return $dsp_obj;
     }

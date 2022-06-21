@@ -36,6 +36,17 @@ use api\user_sandbox_named_min;
 
 class word_min extends user_sandbox_named_min
 {
+    // word names for stand-alone unit tests
+    // for database based test words see model/word/word.php
+    const TN_ZH = 'Zurich';
+    const TN_CITY = 'City';
+    const TN_CANTON = 'Canton';
+    const TN_CH = 'Switzerland';
+    const TN_INHABITANT = 'inhabitant';
+    const TN_2019 = '2019';
+    const TN_MIO = 'mio';
+    const TN_PCT = 'percent';
+
     // the mouse over tooltip for the word
     public ?string $description = null;
 

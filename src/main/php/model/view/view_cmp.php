@@ -573,7 +573,7 @@ class view_cmp extends user_sandbox_named
 
     function name(): string
     {
-        return '"' . $this->name . '"';
+        return $this->name;
     }
 
 // not used at the moment

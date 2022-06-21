@@ -249,6 +249,17 @@ class formula extends user_sandbox_description
         return $result;
     }
 
+
+    /*
+     * set and get
+     */
+
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+
     /*
      * loading
      */

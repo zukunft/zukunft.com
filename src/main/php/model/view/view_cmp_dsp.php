@@ -55,7 +55,7 @@ class view_cmp_dsp extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT)) {
-            $result .= " " . $this->name;
+            $result .= " " . $this->name();
         }
         return $result;
     }
@@ -72,7 +72,7 @@ class view_cmp_dsp extends view_cmp
             } else {
                 $wrd_dsp = new word_dsp();
                 $wrd_dsp->id = $wrd->id;
-                $wrd_dsp->name = $wrd->name;
+                $wrd_dsp->set_name($wrd->name());
                 $parent = $wrd->is_mainly();
                 if ($parent != null) {
                     $result .= $wrd_dsp->dsp_header($parent);
@@ -523,6 +523,12 @@ class view_cmp_dsp extends view_cmp
 
         return $result;
     }
+
+    public function set_name(string $name)
+    {
+        $this->name = $name;
+    }
+
 
 }
 

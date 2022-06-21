@@ -38,6 +38,11 @@ class formula_dsp extends formula
         return $this->name;
     }
 
+    public function set_name(string $name)
+    {
+        $this->name = $name;
+    }
+
     // create the HTML code to display the formula name with the HTML link
     function name_linked(string $back = ''): string
     {

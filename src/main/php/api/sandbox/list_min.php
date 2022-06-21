@@ -61,12 +61,37 @@ class list_min
     }
 
     /**
+     * @returns true if the list has been replaced
+     */
+    public function set_lst_dirty(): bool
+    {
+        $this->lst_dirty = true;
+        return true;
+    }
+
+    /**
      * @returns array the protected list of value or formula results
      */
     public function lst(): array
     {
         return $this->lst;
     }
+
+    /**
+     * add a phrase or ... to the list
+     * @returns bool true if the object has been added
+     */
+    protected function add_obj(object $obj): bool
+    {
+        $result = false;
+        if (!in_array($obj->id, $this->id_lst())) {
+            $this->lst[] = $obj;
+            $this->lst_dirty = true;
+            $result = true;
+        }
+        return $result;
+    }
+
 
     /**
      * @returns array with all unique ids of this list

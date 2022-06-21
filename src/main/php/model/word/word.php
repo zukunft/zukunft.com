@@ -91,7 +91,8 @@ class word extends user_sandbox_description
     // persevered word names for system settings
     const DB_SETTINGS = 'System database settings';
 
-    // persevered word names for unit and integration tests
+    // persevered word names for unit and integration tests based on the database
+    // for stand-alone unit test words see api/word/word_min.php
     const TN_READ = 'Mathematical constant';
     const TN_READ_SCALE = 'million';
     const TN_READ_PERCENT = 'percent';

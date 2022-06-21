@@ -18,6 +18,7 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO add a text export format to the display objects and use it for JSON import validation e.g. for the travel list
     TODO add simple value list import example
     TODO add simple value list table with the hashed phrase list as key and the value
     TODO add a calculation validation section to the import

@@ -110,7 +110,7 @@ class user_sandbox_named extends user_sandbox
     {
         parent::fill_min_obj($min_obj);
 
-        $min_obj->name = $this->name;
+        $min_obj->set_name($this->name);
 
         return $min_obj;
     }
@@ -124,7 +124,7 @@ class user_sandbox_named extends user_sandbox
     {
         parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->name = $this->name;
+        $dsp_obj->set_name($this->name());
 
         return $dsp_obj;
     }

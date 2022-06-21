@@ -34,6 +34,7 @@
 
 namespace html;
 
+use api\phrase_list_min;
 use html_table;
 
 class formula_value_list_min_display extends \api\formula_value_list_min
@@ -41,7 +42,7 @@ class formula_value_list_min_display extends \api\formula_value_list_min
     /**
      * @return string the html code to show the formula results as a table to the user
      */
-    function table(string $back = ''): string
+    function table(phrase_list_min $context_phr_lst = null, string $back = ''): string
     {
         $result = ''; // reset the html code var
 
@@ -51,10 +52,18 @@ class formula_value_list_min_display extends \api\formula_value_list_min
         $row_nbr = 0;
         $result .= $tbl->start(html_table::SIZE_HALF);
         $common_phrases = $this->common_phrases();
-        if ($common_phrases->count() <= 0) {
-            $head_text = 'words';
+
+        // remove the context phrases from the header e.g. inhabitants for a text just about inhabitants
+        $header_phrases = clone $common_phrases;
+        if ($context_phr_lst != null) {
+            $header_phrases->remove($context_phr_lst);
+        }
+
+        // if no phrase is left for the header, show 'description' as a dummy replacement
+        if ($header_phrases->count() <= 0) {
+            $head_text = 'description';
         } else {
-            $head_text = $common_phrases->dsp_obj()->name_linked();
+            $head_text = $header_phrases->dsp_obj()->name_linked();
         }
         foreach ($this->lst() as $fv) {
             $row_nbr++;

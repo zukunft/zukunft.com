@@ -30,6 +30,9 @@
 
 */
 
+use api\phrase_list_min;
+use api\word_min;
+
 class html_unit_tests
 {
     function run(testing $t)
@@ -80,14 +83,14 @@ class html_unit_tests
 
         // create a test set of phrase
         $phr_id = 1;
-        $phr_zh = new \api\phrase_min($phr_id, word::TN_ZH); $phr_id++;
-        $phr_city = new \api\phrase_min($phr_id, word::TN_CITY); $phr_id++;
-        $phr_canton = new \api\phrase_min($phr_id, word::TN_CANTON); $phr_id++;
-        $phr_ch = new \api\phrase_min($phr_id, word::TN_CH); $phr_id++;
-        $phr_inhabitant = new \api\phrase_min($phr_id, word::TN_INHABITANT); $phr_id++;
-        $phr_2019 = new \api\phrase_min($phr_id, word::TN_2019); $phr_id++;
-        $phr_mio = new \api\phrase_min($phr_id, word::TN_MIO);
-        $phr_pct = new \api\phrase_min($phr_id, word::TN_PCT);
+        $phr_zh = new \api\phrase_min($phr_id, word_min::TN_ZH); $phr_id++;
+        $phr_city = new \api\phrase_min($phr_id, word_min::TN_CITY); $phr_id++;
+        $phr_canton = new \api\phrase_min($phr_id, word_min::TN_CANTON); $phr_id++;
+        $phr_ch = new \api\phrase_min($phr_id, word_min::TN_CH); $phr_id++;
+        $phr_inhabitant = new \api\phrase_min($phr_id, word_min::TN_INHABITANT); $phr_id++;
+        $phr_2019 = new \api\phrase_min($phr_id, word_min::TN_2019); $phr_id++;
+        $phr_mio = new \api\phrase_min($phr_id, word_min::TN_MIO);
+        $phr_pct = new \api\phrase_min($phr_id, word_min::TN_PCT);
 
         // create a test set of phrase groups
         $grp_id = 1;
@@ -119,6 +122,8 @@ class html_unit_tests
         $phr_grp_canton_pct->add($phr_inhabitant);
         $phr_grp_canton_pct->add($phr_2019);
         $phr_grp_canton_pct->add($phr_pct);
+        $phr_lst_context = new \api\phrase_list_min($grp_id);
+        $phr_lst_context->add($phr_inhabitant);
 
         // create the value for the inhabitants of the city of zurich
         $val_id = 1;
@@ -136,12 +141,21 @@ class html_unit_tests
         $val_ch->set_grp($phr_grp_ch);
         $val_ch->set_val(value::TV_CH_INHABITANTS_2019_IN_MIO);
 
-        // create the value list and the table to display the resuls
+        // create the value list and the table to display the results
+        // TODO link phrases
+        // TODO format numbers
+        // TODO use one phrase for City of Zurich
+        // TODO optional "(in mio)" formatting for scale words
+        // TODO move time words to column headline
+        // TODO use laguage based plural for inhabitant
         $val_lst = new \api\value_list_min();
         $val_lst->add($val_city);
         $val_lst->add($val_canton);
         $val_lst->add($val_ch);
-        $t->html_test($val_lst->dsp_obj()->table(), 'value_table', $t);
+        $t->html_test($val_lst->dsp_obj()->table(), 'table_value', $t);
+
+        // create the same table as above, but within a context
+        $t->html_test($val_lst->dsp_obj()->table($phr_lst_context), 'table_value_context', $t);
 
         // create the formula result for the inhabitants of the city of zurich
         $fv_id = 1;
@@ -159,7 +173,10 @@ class html_unit_tests
         $fv_lst = new \api\formula_value_list_min();
         $fv_lst->add($fv_city);
         $fv_lst->add($fv_canton);
-        $t->html_test($fv_lst->dsp_obj()->table(), 'formula_value_table', $t);
+        $t->html_test($fv_lst->dsp_obj()->table(), 'table_formula_value', $t);
+
+        // create the same table as above, but within a context
+        $t->html_test($fv_lst->dsp_obj()->table($phr_lst_context), 'table_formula_value_context', $t);
 
 
         $t->subheader('View component tests');
@@ -170,7 +187,7 @@ class html_unit_tests
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
         $wrd = new \api\word_min();
-        $wrd->name = 'View component word name';
+        $wrd->set_name('View component word name');
         $cmp->obj = $wrd;
 
     }

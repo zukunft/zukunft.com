@@ -36,7 +36,13 @@ class user_sandbox_named_min extends user_sandbox_min
 {
 
     // the unique name of the object that is shown to the user
-    public string $name; // the name must always be set
+    // the name must always be set
+    protected string $name;
+
+    // all named objects can have a type that links predefineed functionality to it
+    // e.g. all value assinged with the percent word are per default shown as percent with two decimals
+    protected string $type;
+
 
     function __construct(int $id = 0, string $name = '')
     {
@@ -48,6 +54,16 @@ class user_sandbox_named_min extends user_sandbox_min
             $this->name = $name;
         }
 
+    }
+
+    public function set_name(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
     }
 
 }

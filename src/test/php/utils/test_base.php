@@ -1024,7 +1024,9 @@ class test_base
         $result = preg_replace('/> <footer/', '><footer', $result);
         $result = preg_replace('/> <\/footer/', '></footer', $result);
         $result = preg_replace('/" \/>/', '"/>', $result);
+        $result = preg_replace('/" </', '"<', $result);
         $result = preg_replace('/ >/', '>', $result);
+        $result = preg_replace('/ </', '<', $result);
         return preg_replace('/> </', '><', $result);
     }
 

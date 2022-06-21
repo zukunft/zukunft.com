@@ -41,9 +41,10 @@ class value_list_min_display extends \api\value_list_min
 {
 
     /**
+     * @param phrase_list_min $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
      * @return string the html code to show the values as a table to the user
      */
-    function table(string $back = ''): string
+    function table(phrase_list_min $context_phr_lst = null, string $back = ''): string
     {
         $result = ''; // reset the html code var
 
@@ -52,12 +53,25 @@ class value_list_min_display extends \api\value_list_min
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
         $result .= $tbl->start(html_table::SIZE_HALF);
+
+        // get the common phrases of the value list e.g. inhabitants, 2019
         $common_phrases = $this->common_phrases();
-        if ($common_phrases->count() <= 0) {
-            $head_text = 'words';
-        } else {
-            $head_text = $common_phrases->dsp_obj()->name_linked();
+
+        // remove the context phrases from the header e.g. inhabitants for a text just about inhabitants
+        $header_phrases = clone $common_phrases;
+        if ($context_phr_lst != null) {
+            $header_phrases->remove($context_phr_lst);
         }
+
+        // if no phrase is left for the header, show 'description' as a dummy replacement
+        // TODO make the replacement language and user specific
+        if ($header_phrases->count() <= 0) {
+            $head_text = 'description';
+        } else {
+            $head_text = $header_phrases->dsp_obj()->name_linked();
+        }
+
+        // display the single values
         foreach ($this->lst() as $fv) {
             $row_nbr++;
             $result .= $tbl->row_start();
@@ -86,30 +100,8 @@ class value_list_min_display extends \api\value_list_min
     {
         $result = '';
 
-        // get common words
-        $common_phr_ids = array();
-        foreach ($this->lst as $val) {
-            if ($val->check() > 0) {
-                log_warning('The group id for value ' . $val->id . ' has not been updated, but should now be correct.', "value_list->html");
-            }
-            $val->load_phrases();
-            log_debug('value_list->html loaded');
-            $val_phr_lst = $val->phr_lst;
-            if ($val_phr_lst->lst != null) {
-                if (count($val_phr_lst->lst) > 0) {
-                    log_debug('value_list->html -> get words ' . $val->phr_lst->dsp_id() . ' for "' . $val->number . '" (' . $val->id . ')');
-                    if (empty($common_phr_ids)) {
-                        $common_phr_ids = $val_phr_lst->id_lst();
-                    } else {
-                        $common_phr_ids = array_intersect($common_phr_ids, $val_phr_lst->id_lst());
-                    }
-                }
-            }
-        }
-
         log_debug('value_list->html common ');
-        $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id));  // exclude the list word
-        $common_phr_ids = array_values($common_phr_ids);            // cleanup the array
+        $common_phr_ids = array();
 
         // display the common words
         log_debug('value_list->html common dsp');
@@ -120,7 +112,6 @@ class value_list_min_display extends \api\value_list_min
         }
 
         // instead of the saved result maybe display the calculated result based on formulas that matches the word pattern
-        log_debug('value_list->html tbl_start');
         $result .= dsp_tbl_start();
 
         // the reused button object
