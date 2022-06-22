@@ -155,7 +155,10 @@ class html_unit_tests
         $t->html_test($val_lst->dsp_obj()->table(), 'table_value', $t);
 
         // create the same table as above, but within a context
-        $t->html_test($val_lst->dsp_obj()->table($phr_lst_context), 'table_value_context', $t);
+        $t->html_test(
+            $phr_lst_context->dsp_obj()->headline()
+            . $val_lst->dsp_obj()->table($phr_lst_context),
+            'table_value_context', $t);
 
         // create the formula result for the inhabitants of the city of zurich
         $fv_id = 1;

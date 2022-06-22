@@ -171,6 +171,24 @@ class html_base
     }
 
     /*
+     * text formatting
+     */
+
+    function text_h2 (string $title, string $style = ''): string {
+        $result = '';
+        if (UI_USE_BOOTSTRAP) {
+            $result .= "<h4>".$title."</h4>";
+        } else {
+            if ($style <> "") {
+                $result .= '<h2 class="'.$style.'">'.$title.'</h2>';
+            } else {
+                $result .= "<h2>".$title."</h2>";
+            }
+        }
+        return $result;
+    }
+
+    /*
      * images
      */
 
@@ -378,4 +396,6 @@ class html_base
 
         return $result;
     }
+
+
 }

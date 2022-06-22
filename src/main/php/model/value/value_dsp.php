@@ -277,9 +277,9 @@ class value_dsp extends value
             }
 
             $new_value_id = $db_row["value_id"];
-            $wrd = new word_dsp($this->usr);
+            $wrd = new word_dsp();
             $wrd->id = $db_row["word_id"];
-            $wrd->name = $db_row["word_name"];
+            $wrd->set_name($db_row["word_name"]);
             if ($value_id <> $new_value_id) {
                 if ($word_names <> "") {
                     // display a row if the value has changed and
@@ -395,7 +395,7 @@ class value_dsp extends value
                 foreach (array_keys($this->ids) as $pos) {
                     if ($phr->id == $this->ids[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
-                        $is_wrd = new word_dsp($this->usr);
+                        $is_wrd = new word_dsp();
                         $is_wrd->id = $phr->is_wrd_id;
                         $phr->is_wrd = $is_wrd;
                         $phr->dsp_pos = $pos;

@@ -32,14 +32,6 @@
 
 function run_legacy_test (testing $t) {
 
-  /*
-  echo "<h2>check word groups</h2><br>";
-
-  echo zut_group_review(1);
-
-  echo "<h2>done</h2><br>";
-  */
-
     $t->header('Test calc functions');
 
 
@@ -185,18 +177,6 @@ function run_legacy_test (testing $t) {
 
 
   $t->header('Old test functions');
-
-  /*
-
-
-
-  echo "<h2>finish all open database batch and consistency check batch jobs</h2><br>";
-  $result = zut_calc_usage(); echo "word usage updated ... ".$result."<br>";
-  $result = zul_calc_usage(); echo "verb usage updated ... ".$result."<br>";
-
-  echo "refresh formula references ... ";
-  echo "done<br>";
-  */
 
   // load the database records used for testing
   $t->header('check database records');

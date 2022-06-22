@@ -34,6 +34,7 @@
 
 class phrase_list_min_dsp extends \api\phrase_list_min
 {
+
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
@@ -48,4 +49,32 @@ class phrase_list_min_dsp extends \api\phrase_list_min
         }
         return $result;
     }
+
+    /**
+     * @returns string the html code to display the plural of the phrases with the most useful link
+     * TODO replace adding the s with a language specific functions that can include exceptiones
+     */
+    private function plural(): string
+    {
+        return $this->name_linked() . 's';
+    }
+
+    /**
+     * @returns string the html code to display the phrases for a sentence start
+     * TODO replace adding the s with a language specific functions that can include exceptiones
+     */
+    private function InitCap(): string
+    {
+        return strtoupper(substr($this->plural(), 0, 1)) . substr($this->plural(), 1);
+    }
+
+    /**
+     * @returns string the html code to display the phrases as a headline
+     */
+    public function headline(): string
+    {
+        $html = new html_base();
+        return $html->text_h2($this->InitCap());
+    }
+
 }

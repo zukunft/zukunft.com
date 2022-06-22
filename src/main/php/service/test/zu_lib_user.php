@@ -168,33 +168,6 @@ function zuu_last_source($user_id)
     return zu_sql_get_field('user', $user_id, 'source_id');
 }
 
-// display a form with the user parameters such as name or email
-function zuu_dsp_par($user_id)
-{
-    log_debug('zuu_dsp_par(u' . $user_id . ')');
-    $result = ''; // reset the html code var
-
-    $sql = "SELECT user_name, email, first_name, last_name FROM users WHERE user_id = " . $user_id . ";";
-    $usr_row = zu_sql_get($sql);
-    $result .= ''; // reset the html code var
-
-    // display the user fields using a table and not using px in css to be independent from any screen solution
-    $result .= zuh_text_h2('User "' . $usr_row[0] . '"');
-    $result .= zuh_form_start("user");
-    $result .= '<table>';
-    $result .= '<input type="hidden" name="id"    value="' . $user_id . '">';
-    $result .= '<tr><td>username  </td><td> <input type="text"   name="name"  value="' . $usr_row[0] . '"></td></tr>';
-    $result .= '<tr><td>email     </td><td> <input type="text"   name="email" value="' . $usr_row[1] . '"></td></tr>';
-    $result .= '<tr><td>first name</td><td> <input type="text"   name="fname" value="' . $usr_row[2] . '"></td></tr>';
-    $result .= '<tr><td>last name </td><td> <input type="text"   name="lname" value="' . $usr_row[3] . '"></td></tr>';
-    $result .= '</table>';
-    $result .= zuh_form_end();
-
-    log_debug('zuu_dsp_par -> done');
-    return $result;
-}
-
-
 
 
 // check and update a single user parameter

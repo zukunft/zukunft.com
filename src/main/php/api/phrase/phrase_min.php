@@ -35,12 +35,25 @@ use api\user_sandbox_named_min;
 
 class phrase_min extends user_sandbox_named_min
 {
+
     // the mouse over tooltip for the word
     public ?string $description = null;
 
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
+    }
+
+    /**
+     * @returns true if th phrase is a triple (a combination of two words
+     */
+    public function is_triple(): bool
+    {
+        if ($this->id < 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

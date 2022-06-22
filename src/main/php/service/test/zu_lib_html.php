@@ -182,21 +182,6 @@ function zuh_go_back($back, $user_id) {
 // single element functions
 // ------------------------
 
-// simply to display headline text
-function zuh_text_h1 ($title, $style) {
-  if ($style <> "") {
-    return '<h2 class="'.$style.'">'.$title.'</h2>';
-  } else {  
-    return "<h1>".$title."</h1>";
-  }  
-}
-function zuh_text_h2 ($title, $style) {
-  if ($style <> "") {
-    return '<h2 class="'.$style.'">'.$title.'</h2>';
-  } else {  
-    return "<h2>".$title."</h2>";
-  }  
-}
 function zuh_text_h3 ($title, $style = '') {
   if ($style <> "") {
     return '<h3 class="'.$style.'">'.$title.'</h3>';
@@ -247,26 +232,6 @@ function zuh_btn_undo     ($title, $call) { return zuh_btn   (ZUH_IMG_UNDO,     
 
 
 
-// ask a yes/no question with the defaut calls
-function zuh_btn_confirm ($title, $description, $call) {
-  $result = zuh_text_h3($title);
-  $result .= $description.'<br><br>';
-  $result .= '<a href="/http/'.$call.'&confirm=1" title="Yes">Yes</a> / <a href="/http/'.$call.'&confirm=-1" title="No">No</a>';
-  //$result = $title.'<a href="/http/'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="/http/'.$call.'&confirm=-1" title="No">No</a>';
-  //$result = '<a href="/http/'.$call.'" onclick="return confirm(\''.$title.'\')">'.$title.'</a>';
-  //$result = "<a onClick=\"javascript: return confirm('".$title."');\" href='".$call."'>x</a>"; 
-  return $result;
-}
-
-// the old zuh_btn_confirm without description, replace with zuh_btn_confirm
-function zuh_btn_yesno ($title, $call) {
-  $result = zuh_text_h3($title);
-  $result .= '<a href="/http/'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="/http/'.$call.'&confirm=-1" title="No">No</a>';
-  //$result = $title.'<a href="/http/'.$call.'&confirm=1" title="Yes">Yes</a>/<a href="/http/'.$call.'&confirm=-1" title="No">No</a>';
-  //$result = '<a href="/http/'.$call.'" onclick="return confirm(\''.$title.'\')">'.$title.'</a>';
-  //$result = "<a onClick=\"javascript: return confirm('".$title."');\" href='".$call."'>x</a>"; 
-  return $result;
-}
 
 // start a html form; the form name must be identical with the php script name
 function zuh_form_start ($form_name) {

@@ -311,33 +311,6 @@ function zut_dsp($id, $user_id)
     return $result;
 }
 
-// show the html form to add a new word
-// add a word with a link type to a word list
-// e.g. add time_pos:2013 to the word list if the word list contains "year" and "now" 
-// maybe allow to enter the plural and the description in the same view
-function zut_dsp_add($in_word, $in_link, $in_type, $user_id, $back_id)
-{
-    log_debug('zut_dsp_add (' . $in_word . ',' . $in_link . ',' . $in_link . ',' . $user_id . ',' . $back_id . ')');
-    $result = '';
-
-    $result .= zuh_text_h2('Add ');
-    $result .= zuh_form_start("word_add");
-    $result .= 'Enter the new word name <input type="text" name="word_name">';
-    $result .= zut_html_selector_add($in_link) . ' ';
-    $result .= ' (as a ' . zut_html_selector_type($in_type) . ')';
-    $result .= '<br><br>';
-    $result .= 'which ';
-    $result .= zut_dsp_selector_link($in_link, $user_id, $back_id);
-    $result .= zut_html_selector_word($in_word, 0, "word_add");
-    if (trim($back_id) > 0) {
-        $result .= '  <input type="hidden" name="back" value="' . $back_id . '">';
-    }
-    $result .= zuh_form_end();
-
-    log_debug('zut_dsp_add ... done');
-    return $result;
-}
-
 // display the history of a word
 function zut_dsp_hist_links($wrd_id, $size, $back_link)
 {
