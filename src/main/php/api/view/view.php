@@ -2,8 +2,8 @@
 
 /*
 
-    api\view_api.php - the view object for the frontend API
-    ----------------
+    api\view.php - the view object for the frontend API
+    ------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,9 +32,7 @@
 
 namespace api;
 
-use api\user_sandbox_named_min;
-
-class view_api extends user_sandbox_named_min
+class view_api extends user_sandbox_named_api
 {
     // the mouse over tooltip for the word
     public ?string $description = null;

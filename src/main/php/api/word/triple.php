@@ -2,8 +2,8 @@
 
 /*
 
-    formula_value_min.php - the minimal result value object
-    ---------------------
+    api\triple.php - the minimal triple (word_link) object
+    --------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,14 +32,7 @@
 
 namespace api;
 
-use api\user_sandbox_value_min;
-
-class formula_value_min extends user_sandbox_value_min
+class triple_api extends user_sandbox_named_api
 {
-
-    function __construct(int $id = 0)
-    {
-        parent::__construct($id);
-    }
 
 }

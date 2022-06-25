@@ -32,7 +32,7 @@
 
 */
 
-use api\triple_min;
+use api\triple_api;
 
 class word_link extends user_sandbox_link_description
 {
@@ -138,11 +138,11 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
-     * @return triple_min the triple frontend api object
+     * @return triple_api the triple frontend api object
      */
-    function min_obj(): object
+    function api_obj(): object
     {
-        $min_obj = new triple_min();
+        $min_obj = new triple_api();
         return parent::fill_min_obj($min_obj);
     }
 

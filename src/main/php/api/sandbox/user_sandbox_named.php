@@ -2,8 +2,8 @@
 
 /*
 
-    value_min.php - the minimal value object
-    -------------
+    api\user_sandbox_named.php - extends the minimal superclass for named objects such as formulas
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,14 +32,40 @@
 
 namespace api;
 
-use api\user_sandbox_value_min;
-
-class value_min extends user_sandbox_value_min
+class user_sandbox_named_api extends user_sandbox_api
 {
 
-    function __construct()
+    // the unique name of the object that is shown to the user
+    // the name must always be set
+    protected string $name;
+
+    // all named objects can have a type that links predefineed functionality to it
+    // e.g. all value assinged with the percent word are per default shown as percent with two decimals
+    protected string $type;
+
+
+    function __construct(int $id = 0, string $name = '')
     {
-        parent::__construct();
+        parent::__construct($id);
+        $this->name = '';
+
+        // set also the name if included in new call
+        if ($name <> '') {
+            $this->name = $name;
+        }
+
+    }
+
+    public function set_name(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
     }
 
 }
+
+

@@ -127,7 +127,7 @@ class formula_value
     /**
      * @return formula_value_min the formula result frontend api object
      */
-    function min_obj(): object
+    function api_obj(): object
     {
         $min_obj = new formula_value_min();
         $min_obj->val = $this->value;

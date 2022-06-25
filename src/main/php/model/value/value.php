@@ -49,7 +49,7 @@
 
 */
 
-use api\value_min;
+use api\value_api;
 
 class value extends user_sandbox_display
 {
@@ -131,13 +131,13 @@ class value extends user_sandbox_display
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
 
     /**
-     * @return value_min the value frontend api object
+     * @return value_api the value frontend api object
      */
-    function min_obj(): object
+    function api_obj(): object
     {
-        $min_obj = new value_min();
-        $min_obj->set_val($this->number);
-        return parent::fill_min_obj($min_obj);
+        $api_obj = new value_api();
+        $api_obj->set_val($this->number);
+        return parent::fill_min_obj($api_obj);
     }
 
     /*

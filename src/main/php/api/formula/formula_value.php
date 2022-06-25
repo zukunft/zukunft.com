@@ -2,11 +2,8 @@
 
 /*
 
-    list_value_min.php - the minimal list object for values
-    ------------------
-
-    unlike value_list_min this is the parent object for all lists that have values
-    e.g. used for the value and formula result api object
+    api\formula_value.php - the minimal result value object
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -35,31 +32,12 @@
 
 namespace api;
 
-class list_value_min extends list_min
+class formula_value_api extends user_sandbox_value_api
 {
 
-    function __construct()
+    function __construct(int $id = 0)
     {
-        parent::__construct();
-    }
-
-    /**
-     * @returns phrase_list_min with the phrases that are used in all values of the list
-     */
-    protected function common_phrases(): phrase_list_min
-    {
-        // get common words
-        $common_phr_lst = new phrase_list_min();
-        foreach ($this->lst as $val) {
-            if ($val != null) {
-                if ($val->phr_lst() != null) {
-                    if ($val->phr_lst()->lst != null) {
-                        $common_phr_lst->intersect($val->phr_lst());
-                    }
-                }
-            }
-        }
-        return $common_phr_lst;
+        parent::__construct($id);
     }
 
 }

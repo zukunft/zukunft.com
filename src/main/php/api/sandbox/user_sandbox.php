@@ -2,7 +2,7 @@
 
 /*
 
-    user_sandbox_min.php - the minimal superclass for the frontend API
+    api\user_sandbox.php - the minimal superclass for the frontend API
     --------------------
 
     This superclass should be used by the classes word_min, formula_min, ... to enable user specific values and links
@@ -35,18 +35,14 @@
 namespace api;
 
 use formula;
-use api\formula_min;
 use user;
 use user_sandbox;
 use value;
-use api\value_min;
 use word;
-use api\triple_min;
-use api\word_min;
 use word_link;
 use function log_err;
 
-class user_sandbox_min
+class user_sandbox_api
 {
 
     // fields for the backend link
@@ -65,13 +61,13 @@ class user_sandbox_min
     function db_obj(user $usr, string $class): user_sandbox
     {
         $db_obj = null;
-        if ($class == word_min::class) {
+        if ($class == word_api::class) {
             $db_obj = new word($usr);
-        } elseif ($class == triple_min::class) {
+        } elseif ($class == triple_api::class) {
             $db_obj = new word_link($usr);
-        } elseif ($class == value_min::class) {
+        } elseif ($class == value_api::class) {
             $db_obj = new value($usr);
-        } elseif ($class == formula_min::class) {
+        } elseif ($class == formula_api::class) {
             $db_obj = new formula($usr);
         } else {
             log_err('API class "' . $class . '" not yet implemented');

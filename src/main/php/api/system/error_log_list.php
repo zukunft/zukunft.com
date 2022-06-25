@@ -2,7 +2,7 @@
 
 /*
 
-    api/system/error_log_list.php - the simple export object to create a json for the frontend API
+    api\error_log_list.php - the simple export object to create a json for the frontend API
     -----------------------------
 
     This file is part of zukunft.com - calc with words

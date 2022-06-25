@@ -2,10 +2,8 @@
 
 /*
 
-    phrase_min_display.php - the display extension of the api phrase object
-    ----------------------
-
-    mainly links to the word and triple display functions
+    api\value.php - the minimal value object
+    -------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +30,14 @@
 
 */
 
-class phrase_min_dsp extends \api\phrase_min
+namespace api;
+
+class value_api extends user_sandbox_value_api
 {
+
+    function __construct(int $id = 0)
+    {
+        parent::__construct($id);
+    }
 
 }

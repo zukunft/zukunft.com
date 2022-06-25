@@ -2,7 +2,7 @@
 
 /*
 
-    phrase_list_min.php - a list object of minimal/api phrase objects
+    api\phrase_list.php - a list object of minimal/api phrase objects
     -------------------
 
 
@@ -32,10 +32,9 @@
 
 namespace api;
 
-use api\list_min;
 use phrase_list_min_dsp;
 
-class phrase_list_min extends list_min
+class phrase_list_api extends list_api
 {
 
     function __construct()
@@ -47,7 +46,7 @@ class phrase_list_min extends list_min
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add(phrase_min $phr): bool
+    function add(phrase_api $phr): bool
     {
         return parent::add_obj($phr);
     }
@@ -73,9 +72,9 @@ class phrase_list_min extends list_min
     }
 
     /**
-     * @returns phrase_list_min with the phrases of this list and the new list
+     * @returns phrase_list_api with the phrases of this list and the new list
      */
-    function intersect(phrase_list_min $new_lst): phrase_list_min
+    function intersect(phrase_list_api $new_lst): phrase_list_api
     {
         if (!$new_lst->is_empty()) {
             if ($this->is_empty()) {
@@ -83,7 +82,7 @@ class phrase_list_min extends list_min
             } else {
                 // next line would work if array_intersect could handle objects
                 // $this->lst = array_intersect($this->lst, $new_lst->lst());
-                $found_lst = new phrase_list_min();
+                $found_lst = new phrase_list_api();
                 foreach ($new_lst->lst() as $phr) {
                     if (in_array($phr->id, $this->id_lst())) {
                         $found_lst->add($phr);
@@ -95,12 +94,12 @@ class phrase_list_min extends list_min
         return $this;
     }
 
-    function remove(phrase_list_min $del_lst): phrase_list_min
+    function remove(phrase_list_api $del_lst): phrase_list_api
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst = array_intersect($this->lst, $new_lst->lst());
-            $remain_lst = new phrase_list_min();
+            $remain_lst = new phrase_list_api();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id, $del_lst->id_lst())) {
                     $remain_lst->add($phr);

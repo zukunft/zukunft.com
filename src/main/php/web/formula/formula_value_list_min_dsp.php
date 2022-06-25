@@ -34,15 +34,15 @@
 
 namespace html;
 
-use api\phrase_list_min;
+use api\phrase_list_api;
 use html_table;
 
-class formula_value_list_min_display extends \api\formula_value_list_min
+class formula_value_list_api_display extends \api\formula_value_list_api
 {
     /**
      * @return string the html code to show the formula results as a table to the user
      */
-    function table(phrase_list_min $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list_api $context_phr_lst = null, string $back = ''): string
     {
         $result = ''; // reset the html code var
 

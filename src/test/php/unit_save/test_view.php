@@ -53,8 +53,7 @@ function run_view_test(testing $t)
     $dsp = new view_dsp($t->usr1);
     $dsp->name = view::TN_COMPLETE;
     $result = $dsp->load();
-    $target = true;
-    $t->dsp('view->load of "' . $dsp->name . '"', $target, $result);
+    $t->dsp('view->load of "' . $dsp->name . '"', true, $result);
 
     // test the complete view for one word
     $wrd = new word($t->usr1);

@@ -353,21 +353,21 @@ include_once $path_php . 'model/view/view_cmp_link_types.php';
 include_once $path_php . 'api/message_header.php';
 include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'api/system/error_log_list.php';
-include_once $path_php . 'api/sandbox/user_sandbox_min.php';
-include_once $path_php . 'api/sandbox/user_sandbox_named_min.php';
-include_once $path_php . 'api/sandbox/user_sandbox_value_min.php';
-include_once $path_php . 'api/sandbox/list_min.php';
-include_once $path_php . 'api/sandbox/list_value_min.php';
-include_once $path_php . 'api/word/word_min.php';
-include_once $path_php . 'api/word/triple_min.php';
-include_once $path_php . 'api/phrase/phrase_min.php';
-include_once $path_php . 'api/phrase/phrase_list_min.php';
-include_once $path_php . 'api/phrase/phrase_group_min.php';
-include_once $path_php . 'api/value/value_min.php';
-include_once $path_php . 'api/value/value_list_min.php';
-include_once $path_php . 'api/formula/formula_min.php';
-include_once $path_php . 'api/formula/formula_value_min.php';
-include_once $path_php . 'api/formula/formula_value_list_min.php';
+include_once $path_php . 'api/sandbox/user_sandbox.php';
+include_once $path_php . 'api/sandbox/user_sandbox_named.php';
+include_once $path_php . 'api/sandbox/user_sandbox_value.php';
+include_once $path_php . 'api/sandbox/list.php';
+include_once $path_php . 'api/sandbox/list_value.php';
+include_once $path_php . 'api/word/word.php';
+include_once $path_php . 'api/word/triple.php';
+include_once $path_php . 'api/phrase/phrase.php';
+include_once $path_php . 'api/phrase/phrase_list.php';
+include_once $path_php . 'api/phrase/phrase_group.php';
+include_once $path_php . 'api/value/value.php';
+include_once $path_php . 'api/value/value_list.php';
+include_once $path_php . 'api/formula/formula.php';
+include_once $path_php . 'api/formula/formula_value.php';
+include_once $path_php . 'api/formula/formula_value_list.php';
 // HTML frontend classes
 include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display.php';
@@ -379,7 +379,7 @@ include_once $path_php . 'web/html/html_table.php';
 include_once $path_php . 'web/word/word_display.php';
 include_once $path_php . 'web/word/word_list_dsp.php';
 include_once $path_php . 'web/word/word_link_dsp.php';
-include_once $path_php . 'web/phrase/phrase_min_dsp.php';
+include_once $path_php . 'web/phrase/phrase_api_dsp.php';
 include_once $path_php . 'web/phrase/phrase_list_min_dsp.php';
 include_once $path_php . 'web/value/value_list_min_dsp.php';
 include_once $path_php . 'web/formula/formula_value_list_min_dsp.php';
@@ -1648,6 +1648,7 @@ function dsp_var($var_to_format): string
 }
 
 // port php 8 function to 7.4
+/*
 function str_starts_with(string $long_string, string $prefix): bool
 {
     $result = false;
@@ -1656,8 +1657,10 @@ function str_starts_with(string $long_string, string $prefix): bool
     }
     return $result;
 }
+*/
 
 // port php 8 function to 7.4
+/*
 function str_ends_with(string $long_string, string $postfix): bool
 {
     $result = false;
@@ -1666,8 +1669,10 @@ function str_ends_with(string $long_string, string $postfix): bool
     }
     return $result;
 }
+*/
 
 // port php 8 function to 7.4
+/*
 function str_contains(string $haystack, string $needle): bool
 {
     $result = true;
@@ -1677,6 +1682,7 @@ function str_contains(string $haystack, string $needle): bool
     }
     return $result;
 }
+*/
 
 /**
  * recursive count of the number of elements in an array but limited to a given level

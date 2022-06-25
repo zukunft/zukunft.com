@@ -2,7 +2,7 @@
 
 /*
 
-    List_min.php - the list object used for the api
+    api\List.php - the minimal list object used for the api
     ------------
 
     e.g. used for the value and formula result api object
@@ -33,7 +33,7 @@
 
 namespace api;
 
-class list_min
+class list_api
 {
     // the protected main var
     protected array $lst;
@@ -56,16 +56,7 @@ class list_min
     public function set_lst(array $lst): bool
     {
         $this->lst = $lst;
-        $this->lst_dirty = true;
-        return true;
-    }
-
-    /**
-     * @returns true if the list has been replaced
-     */
-    public function set_lst_dirty(): bool
-    {
-        $this->lst_dirty = true;
+        $this->set_lst_dirty();
         return true;
     }
 
@@ -75,6 +66,15 @@ class list_min
     public function lst(): array
     {
         return $this->lst;
+    }
+
+    /**
+     * @returns true if the list has been replaced
+     */
+    protected function set_lst_dirty(): bool
+    {
+        $this->lst_dirty = true;
+        return true;
     }
 
     /**

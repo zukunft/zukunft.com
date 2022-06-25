@@ -34,17 +34,17 @@
 
 namespace html;
 
-use api\phrase_list_min;
+use api\phrase_list_api;
 use html_table;
 
-class value_list_min_display extends \api\value_list_min
+class value_list_api_display extends \api\value_list_api
 {
 
     /**
-     * @param phrase_list_min $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
+     * @param phrase_list_api $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
      * @return string the html code to show the values as a table to the user
      */
-    function table(phrase_list_min $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list_api $context_phr_lst = null, string $back = ''): string
     {
         $result = ''; // reset the html code var
 
@@ -94,6 +94,7 @@ class value_list_min_display extends \api\value_list_min
      * return the html code to display all values related to a given word
      * $phr->id is the related word that should not be included in the display
      * $this->usr->id is a parameter, because the viewer must not be the owner of the value
+     * TODO move remaining parts to the table() function
      * TODO add back
      */
     function table_old(string $back): string

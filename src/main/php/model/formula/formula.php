@@ -29,7 +29,7 @@
   
 */
 
-use api\formula_min;
+use api\formula_api;
 
 class formula extends user_sandbox_description
 {
@@ -186,11 +186,11 @@ class formula extends user_sandbox_description
     }
 
     /**
-     * @return formula_min the formula frontend api object
+     * @return formula_api the formula frontend api object
      */
-    function min_obj(): object
+    function api_obj(): object
     {
-        $min_obj = new formula_min();
+        $min_obj = new formula_api();
         $min_obj->usr_text = $this->usr_text;
         return parent::fill_min_obj($min_obj);
     }

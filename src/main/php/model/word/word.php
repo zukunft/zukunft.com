@@ -40,7 +40,7 @@
 
 */
 
-use api\word_min;
+use api\word_api;
 
 class word extends user_sandbox_description
 {
@@ -265,11 +265,11 @@ class word extends user_sandbox_description
     }
 
     /**
-     * @return word_min the word frontend api object
+     * @return word_api the word frontend api object
      */
-    function min_obj(): object
+    function api_obj(): object
     {
-        $min_obj = new word_min();
+        $min_obj = new word_api();
         return parent::fill_min_obj($min_obj);
     }
 

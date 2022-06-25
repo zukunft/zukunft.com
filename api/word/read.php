@@ -40,7 +40,7 @@ $db_con = prg_start("api/word");
 $wrd_id = $_GET['id'] ?? 0;
 
 $msg = '';
-$result = new \api\word_min(); // reset the html code var
+$result = new \api\word_api(); // reset the html code var
 
 // load the session user parameters
 $usr = new user;
@@ -53,7 +53,7 @@ if ($usr->id > 0) {
         $wrd = new word($usr);
         $wrd->id = $wrd_id;
         $wrd->load();
-        $result = $wrd->min_obj();
+        $result = $wrd->api_obj();
     } else {
         $msg = 'word id is missing';
     }

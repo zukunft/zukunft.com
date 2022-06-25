@@ -32,7 +32,7 @@
 
 */
 
-class phrase_list_min_dsp extends \api\phrase_list_min
+class phrase_list_min_dsp extends \api\phrase_list_api
 {
 
     /**

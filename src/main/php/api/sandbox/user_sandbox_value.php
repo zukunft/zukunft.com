@@ -2,7 +2,7 @@
 
 /*
 
-    user_sandbox_value_min.php - the minimal superclass for the frontend API
+    api\user_sandbox_value.php - the minimal superclass for the frontend API
     --------------------------
 
     This superclass should be used by the classes word_min, formula_min, ... to enable user specific values and links
@@ -34,23 +34,21 @@
 
 namespace api;
 
-use api\user_sandbox_min;
-
-class user_sandbox_value_min extends user_sandbox_min
+class user_sandbox_value_api extends user_sandbox_api
 {
 
-    protected phrase_group_min $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    protected phrase_group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
     protected float $val; // the number calculated by the system
 
     function __construct(int $id = 0)
     {
         parent::__construct($id);
 
-        $this->grp = new phrase_group_min();
+        $this->grp = new phrase_group_api();
         $this->val = 0;
     }
 
-    public function set_grp(phrase_group_min $grp)
+    public function set_grp(phrase_group_api $grp)
     {
         $this->grp = $grp;
     }
@@ -66,18 +64,18 @@ class user_sandbox_value_min extends user_sandbox_min
     }
 
     /**
-     * @returns phrase_list_min the list of phrases as an object
+     * @returns phrase_list_api the list of phrases as an object
      */
-    function phr_lst(): phrase_list_min
+    function phr_lst(): phrase_list_api
     {
         return $this->grp->phr_lst();
     }
 
     /**
-     * @param phrase_group_min $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @param phrase_list_api|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    public function name_linked(phrase_list_min $phr_lst_header = null): string
+    public function name_linked(phrase_list_api $phr_lst_header = null): string
     {
         return $this->grp->name_linked($phr_lst_header);
     }

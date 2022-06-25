@@ -1085,7 +1085,7 @@ class test_base
     {
         $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
         $recreated_json = '';
-        $api_obj = $usr_obj->min_obj();
+        $api_obj = $usr_obj->api_obj();
         if ($api_obj->id == $usr_obj->id) {
             $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
@@ -1106,7 +1106,7 @@ class test_base
         $url_read = 'api/' . $obj_name . '/read.php';
         $original_json = json_decode(json_encode($usr_obj->$usr_obj()), true);
         $recreated_json = '';
-        $api_obj = $usr_obj->min_obj();
+        $api_obj = $usr_obj->api_obj();
         if ($api_obj->id == $usr_obj->id) {
             $db_obj = $api_obj->db_obj($usr_obj->usr, get_class($api_obj));
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);

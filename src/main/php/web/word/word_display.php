@@ -29,9 +29,9 @@
   
 */
 
-use api\word_min;
+use api\word_api;
 
-class word_dsp extends word_min
+class word_dsp extends word_api
 {
 
     // default view settings

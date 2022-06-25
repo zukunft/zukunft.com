@@ -2,8 +2,8 @@
 
 /*
 
-    user_sandbox_named_min.php - extends the minimal superclass for named objects such as formulas
-    --------------------------
+    value_List_min.php - the minimal value list object
+    ------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,40 +32,42 @@
 
 namespace api;
 
-class user_sandbox_named_min extends user_sandbox_min
+use html\value_list_api_display;
+
+class value_list_api extends list_value_api
 {
 
-    // the unique name of the object that is shown to the user
-    // the name must always be set
-    protected string $name;
-
-    // all named objects can have a type that links predefineed functionality to it
-    // e.g. all value assinged with the percent word are per default shown as percent with two decimals
-    protected string $type;
-
-
-    function __construct(int $id = 0, string $name = '')
+    function __construct()
     {
-        parent::__construct($id);
-        $this->name = '';
+        parent::__construct();
+    }
 
-        // set also the name if included in new call
-        if ($name <> '') {
-            $this->name = $name;
+    /**
+     * add a value to the list
+     * @returns bool true if the value has been added
+     */
+    function add(value_api $val): bool
+    {
+        $result = false;
+        if (!in_array($val->id, $this->id_lst())) {
+            $this->lst[] = $val;
+            $this->set_lst_dirty();
+            $result = true;
         }
-
+        return $result;
     }
 
-    public function set_name(string $name)
+    /**
+     * @returns value_list_api_display the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): value_list_api_display
     {
-        $this->name = $name;
-    }
+        $dsp_obj = new value_list_api_display();
 
-    public function name(): string
-    {
-        return $this->name;
+        $dsp_obj->lst = $this->lst;
+        $dsp_obj->set_lst_dirty();
+
+        return $dsp_obj;
     }
 
 }
-
-

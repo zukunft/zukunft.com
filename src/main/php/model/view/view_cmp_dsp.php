@@ -272,7 +272,8 @@ class view_cmp_dsp extends view_cmp
             $val_lst->phr = $phr;
             log_debug('view_component_dsp->all load values for word "' . $phr->name . '" and user "' . $this->usr->name . '"');
             $val_lst->load();
-            $result .= $val_lst->html($back);
+            $val_lst_dsp = $val_lst->api_obj()->dsp_obj();
+            $result .= $val_lst_dsp->table(null, $back);
         }
         return $result;
     }

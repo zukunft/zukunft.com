@@ -2,8 +2,10 @@
 
 /*
 
-    triple_min.php - the minimal triple (word_link) object
-    --------------
+    phrase_min_display.php - the display extension of the api phrase object
+    ----------------------
+
+    mainly links to the word and triple display functions
 
 
     This file is part of zukunft.com - calc with words
@@ -30,11 +32,7 @@
 
 */
 
-namespace api;
-
-use api\user_sandbox_named_min;
-
-class triple_min extends user_sandbox_named_min
+class phrase_api_dsp extends \api\phrase_api
 {
 
 }

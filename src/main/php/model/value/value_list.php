@@ -29,6 +29,8 @@
   
 */
 
+use api\value_list_api;
+
 class value_list
 {
 
@@ -52,6 +54,42 @@ class value_list
         $this->lst = array();
         $this->usr = $usr;
     }
+
+    /*
+     * set and get functions
+     */
+
+    /**
+     * @return value_list_api frontend API object filled with the relevant data of this object
+     */
+    function api_obj(): value_list_api
+    {
+        $api_obj = new value_list_api();
+        $api_obj->set_lst($this->api_lst());
+        return $api_obj;
+    }
+
+    /*
+     * cast functions
+     */
+
+    /**
+     * @return array with the API object of the values
+     */
+    function api_lst(): array
+    {
+        $api_lst = array();
+        foreach ($this->lst as $val) {
+            $api_lst[] = $val->api_obj();
+        }
+
+        return $api_lst;
+    }
+
+
+    /*
+     * load functions
+     */
 
     // TODO review the VAR and LIMIT definitions
     function load_sql(sql_db $db_con): sql_par

@@ -2,8 +2,8 @@
 
 /*
 
-    formula_value_List_min.php - the minimal result value list object
-    --------------------------
+    api\formula.php - the minimal formula object
+    ---------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,43 +32,16 @@
 
 namespace api;
 
-use api\list_value_min;
-use html\formula_value_list_min_display;
-
-class formula_value_list_min extends list_value_min
+class formula_api extends user_sandbox_named_api
 {
+
+    // the formula expression as shown to the user
+    public string $usr_text;
 
     function __construct()
     {
         parent::__construct();
-    }
-
-    /**
-     * add a formula result to the list
-     * @returns bool true if the formula result has been added
-     */
-    function add(formula_value_min $fv): bool
-    {
-        $result = false;
-        if (!in_array($fv->id, $this->id_lst())) {
-            $this->lst[] = $fv;
-            $this->lst_dirty = true;
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * @returns formula_value_list_min_display the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): formula_value_list_min_display
-    {
-        $dsp_obj = new formula_value_list_min_display();
-
-        $dsp_obj->lst = $this->lst;
-        $dsp_obj->lst_dirty = true;
-
-        return $dsp_obj;
+        $this->usr_text = '';
     }
 
 }

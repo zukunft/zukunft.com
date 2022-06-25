@@ -2,7 +2,7 @@
 
 /*
 
-    phrase_group_min.php - the minimal phrase group object used for the back- to frontend api
+    api\phrase_group.php - the minimal phrase group object used for the back- to frontend api
     --------------------
 
 
@@ -32,9 +32,7 @@
 
 namespace api;
 
-use api\user_sandbox_named_min;
-
-class phrase_group_min extends user_sandbox_named_min
+class phrase_group_api extends user_sandbox_named_api
 {
 
     // list of word_min and triple_min objects
@@ -61,7 +59,7 @@ class phrase_group_min extends user_sandbox_named_min
         $phr_id = 1; // if now id is given, create a dummy id for testing
         if (count($phr_lst) > 0) {
             foreach ($phr_lst as $phr_str) {
-                $phr = new phrase_min($phr_id, $phr_str);
+                $phr = new phrase_api($phr_id, $phr_str);
                 $this->add($phr);
                 $phr_id++;
             }
@@ -91,7 +89,7 @@ class phrase_group_min extends user_sandbox_named_min
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add(phrase_min $phr): bool
+    function add(phrase_api $phr): bool
     {
         $result = false;
         if (!in_array($phr->id, $this->id_lst())) {
@@ -112,11 +110,11 @@ class phrase_group_min extends user_sandbox_named_min
     }
 
     /**
-     * @returns phrase_list_min the list of phrases as an object
+     * @returns phrase_list_api the list of phrases as an object
      */
-    function phr_lst(): phrase_list_min
+    function phr_lst(): phrase_list_api
     {
-        $result = new phrase_list_min();
+        $result = new phrase_list_api();
         $result->set_lst($this->lst());
         return $result;
     }
@@ -124,7 +122,7 @@ class phrase_group_min extends user_sandbox_named_min
     /**
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(phrase_list_min $phr_lst_header = null): string
+    function name_linked(phrase_list_api $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_dirty) {

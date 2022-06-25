@@ -30,8 +30,8 @@
 
 */
 
-use api\phrase_list_min;
-use api\word_min;
+use api\phrase_list_api;
+use api\word_api;
 
 class html_unit_tests
 {
@@ -83,61 +83,61 @@ class html_unit_tests
 
         // create a test set of phrase
         $phr_id = 1;
-        $phr_zh = new \api\phrase_min($phr_id, word_min::TN_ZH); $phr_id++;
-        $phr_city = new \api\phrase_min($phr_id, word_min::TN_CITY); $phr_id++;
-        $phr_canton = new \api\phrase_min($phr_id, word_min::TN_CANTON); $phr_id++;
-        $phr_ch = new \api\phrase_min($phr_id, word_min::TN_CH); $phr_id++;
-        $phr_inhabitant = new \api\phrase_min($phr_id, word_min::TN_INHABITANT); $phr_id++;
-        $phr_2019 = new \api\phrase_min($phr_id, word_min::TN_2019); $phr_id++;
-        $phr_mio = new \api\phrase_min($phr_id, word_min::TN_MIO);
-        $phr_pct = new \api\phrase_min($phr_id, word_min::TN_PCT);
+        $phr_zh = new \api\phrase_api($phr_id, word_api::TN_ZH); $phr_id++;
+        $phr_city = new \api\phrase_api($phr_id, word_api::TN_CITY); $phr_id++;
+        $phr_canton = new \api\phrase_api($phr_id, word_api::TN_CANTON); $phr_id++;
+        $phr_ch = new \api\phrase_api($phr_id, word_api::TN_CH); $phr_id++;
+        $phr_inhabitant = new \api\phrase_api($phr_id, word_api::TN_INHABITANT); $phr_id++;
+        $phr_2019 = new \api\phrase_api($phr_id, word_api::TN_2019); $phr_id++;
+        $phr_mio = new \api\phrase_api($phr_id, word_api::TN_MIO);
+        $phr_pct = new \api\phrase_api($phr_id, word_api::TN_PCT);
 
         // create a test set of phrase groups
         $grp_id = 1;
-        $phr_grp_city = new \api\phrase_group_min($grp_id); $grp_id++;
+        $phr_grp_city = new \api\phrase_group_api($grp_id); $grp_id++;
         $phr_grp_city->add($phr_zh);
         $phr_grp_city->add($phr_city);
         $phr_grp_city->add($phr_inhabitant);
         $phr_grp_city->add($phr_2019);
-        $phr_grp_canton = new \api\phrase_group_min($grp_id); $grp_id++;
+        $phr_grp_canton = new \api\phrase_group_api($grp_id); $grp_id++;
         $phr_grp_canton->add($phr_zh);
         $phr_grp_canton->add($phr_canton);
         $phr_grp_canton->add($phr_inhabitant);
         $phr_grp_canton->add($phr_mio);
         $phr_grp_canton->add($phr_2019);
-        $phr_grp_ch = new \api\phrase_group_min($grp_id);
+        $phr_grp_ch = new \api\phrase_group_api($grp_id);
         $phr_grp_ch->add($phr_ch);
         $phr_grp_ch->add($phr_mio);
         $phr_grp_ch->add($phr_inhabitant);
         $phr_grp_ch->add($phr_2019);
-        $phr_grp_city_pct = new \api\phrase_group_min($grp_id); $grp_id++;
+        $phr_grp_city_pct = new \api\phrase_group_api($grp_id); $grp_id++;
         $phr_grp_city_pct->add($phr_zh);
         $phr_grp_city_pct->add($phr_city);
         $phr_grp_city_pct->add($phr_inhabitant);
         $phr_grp_city_pct->add($phr_2019);
         $phr_grp_city_pct->add($phr_pct);
-        $phr_grp_canton_pct = new \api\phrase_group_min($grp_id); $grp_id++;
+        $phr_grp_canton_pct = new \api\phrase_group_api($grp_id); $grp_id++;
         $phr_grp_canton_pct->add($phr_zh);
         $phr_grp_canton_pct->add($phr_canton);
         $phr_grp_canton_pct->add($phr_inhabitant);
         $phr_grp_canton_pct->add($phr_2019);
         $phr_grp_canton_pct->add($phr_pct);
-        $phr_lst_context = new \api\phrase_list_min($grp_id);
+        $phr_lst_context = new \api\phrase_list_api($grp_id);
         $phr_lst_context->add($phr_inhabitant);
 
         // create the value for the inhabitants of the city of zurich
         $val_id = 1;
-        $val_city = new \api\value_min($val_id); $val_id++;
+        $val_city = new \api\value_api($val_id); $val_id++;
         $val_city->set_grp($phr_grp_city);
         $val_city->set_val(value::TV_CITY_ZH_INHABITANTS_2019);
 
         // create the value for the inhabitants of the city of zurich
-        $val_canton = new \api\value_min($val_id); $val_id++;
+        $val_canton = new \api\value_api($val_id); $val_id++;
         $val_canton->set_grp($phr_grp_canton);
         $val_canton->set_val(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // create the value for the inhabitants of Switzerland
-        $val_ch = new \api\value_min($val_id);
+        $val_ch = new \api\value_api($val_id);
         $val_ch->set_grp($phr_grp_ch);
         $val_ch->set_val(value::TV_CH_INHABITANTS_2019_IN_MIO);
 
@@ -147,8 +147,8 @@ class html_unit_tests
         // TODO use one phrase for City of Zurich
         // TODO optional "(in mio)" formatting for scale words
         // TODO move time words to column headline
-        // TODO use laguage based plural for inhabitant
-        $val_lst = new \api\value_list_min();
+        // TODO use language based plural for inhabitant
+        $val_lst = new \api\value_list_api();
         $val_lst->add($val_city);
         $val_lst->add($val_canton);
         $val_lst->add($val_ch);
@@ -162,18 +162,18 @@ class html_unit_tests
 
         // create the formula result for the inhabitants of the city of zurich
         $fv_id = 1;
-        $fv_city = new \api\formula_value_min($fv_id); $fv_id++;
+        $fv_city = new \api\formula_value_api($fv_id); $fv_id++;
         $fv_city->set_grp($phr_grp_city_pct);
         $ch_val_scaled = value::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
         $fv_city->set_val(value::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
 
         // create the formula result for the inhabitants of the city of zurich
-        $fv_canton = new \api\formula_value_min($fv_id); $fv_id++;
+        $fv_canton = new \api\formula_value_api($fv_id); $fv_id++;
         $fv_canton->set_grp($phr_grp_canton_pct);
         $fv_canton->set_val(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // create the formula result list and the table to display the resuls
-        $fv_lst = new \api\formula_value_list_min();
+        $fv_lst = new \api\formula_value_list_api();
         $fv_lst->add($fv_city);
         $fv_lst->add($fv_canton);
         $t->html_test($fv_lst->dsp_obj()->table(), 'table_formula_value', $t);
@@ -189,7 +189,7 @@ class html_unit_tests
         $cmp->name = 'View component text';
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 
-        $wrd = new \api\word_min();
+        $wrd = new \api\word_api();
         $wrd->set_name('View component word name');
         $cmp->obj = $wrd;
 

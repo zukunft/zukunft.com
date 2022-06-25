@@ -2,9 +2,8 @@
 
 /*
 
-    word_min.php - the minimal word object for the frontend API
-    ------------
-
+    api\phrase.php - the minimal phrase object for the frontend API
+    --------------
 
     This file is part of zukunft.com - calc with words
 
@@ -32,39 +31,35 @@
 
 namespace api;
 
-use api\user_sandbox_named_min;
-
-class word_min extends user_sandbox_named_min
+class phrase_api extends user_sandbox_named_api
 {
-    // word names for stand-alone unit tests
-    // for database based test words see model/word/word.php
-    const TN_ZH = 'Zurich';
-    const TN_CITY = 'City';
-    const TN_CANTON = 'Canton';
-    const TN_CH = 'Switzerland';
-    const TN_INHABITANT = 'inhabitant';
-    const TN_2019 = '2019';
-    const TN_MIO = 'mio';
-    const TN_PCT = 'percent';
 
     // the mouse over tooltip for the word
     public ?string $description = null;
 
-    // the language specific forms
-    public ?string $plural = null;
-
-    // the main parent phrase
-    public ?\phrase_min_dsp $parent;
-
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
-        $this->description = '';
     }
 
-    function phrase(): phrase_min
+    /**
+     * @returns true if th phrase is a triple (a combination of two words
+     */
+    public function is_triple(): bool
     {
-        return new phrase_min($this->id, $this->name);
+        if ($this->id < 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @returns string the html code to display the phrase with reference links
+     */
+    function name_linked(): string
+    {
+        return $this->name;
     }
 
 }
