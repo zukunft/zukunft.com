@@ -32,14 +32,18 @@
 
 namespace api;
 
-use html\formula_value_list_api_display;
+use html\formula_value_list_dsp;
 
 class formula_value_list_api extends list_value_api
 {
 
-    function __construct()
+    /*
+     * construct and map
+     */
+
+    function __construct(array $lst = array())
     {
-        parent::__construct();
+        parent::__construct($lst);
     }
 
     /**
@@ -57,17 +61,16 @@ class formula_value_list_api extends list_value_api
         return $result;
     }
 
-    /**
-     * @returns formula_value_list_api_display the cast object with the HTML code generating functions
+    /*
+     * casting objects
      */
-    function dsp_obj(): formula_value_list_api_display
+
+    /**
+     * @returns formula_value_list_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): formula_value_list_dsp
     {
-        $dsp_obj = new formula_value_list_api_display();
-
-        $dsp_obj->lst = $this->lst;
-        $dsp_obj->set_lst_dirty();
-
-        return $dsp_obj;
+        return new formula_value_list_dsp($this->lst);
     }
 
 }

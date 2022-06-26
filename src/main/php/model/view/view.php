@@ -29,6 +29,8 @@
   
 */
 
+use api\view_api;
+
 class view extends user_sandbox_named
 {
     /*
@@ -189,6 +191,20 @@ class view extends user_sandbox_named
             $this->code_id = $db_row[self::FLD_CODE_ID];
         }
         return $result;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return view_api frontend API object filled with the relevant data of this object
+     */
+    function api_obj(): view_api
+    {
+        $api_obj = new view_api();
+        parent::fill_api_obj($api_obj);
+        return $api_obj;
     }
 
     /*

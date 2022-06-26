@@ -138,6 +138,33 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
+     * map the database fields to the object fields
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default triple used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the triple is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
+    {
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->from->id = $db_row[self::FLD_FROM];
+            $this->to->id = $db_row[self::FLD_TO];
+            $this->verb->id = $db_row[verb::FLD_ID];
+            $this->name = $db_row[self::FLD_NAME];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->type_id = $db_row[self::FLD_TYPE];
+            $this->values = $db_row[self::FLD_VALUES];
+        }
+        return $result;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
      * @return triple_api the triple frontend api object
      */
     function api_obj(): object
@@ -162,29 +189,6 @@ class word_link extends user_sandbox_link_description
         $dsp_obj->values = $this->values;
 
         return $dsp_obj;
-    }
-
-    /**
-     * map the database fields to the object fields
-     *
-     * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default triple used for all users
-     * @param string $id_fld the name of the id field as defined in this child and given to the parent
-     * @return bool true if the triple is loaded and valid
-     */
-    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
-    {
-        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
-        if ($result) {
-            $this->from->id = $db_row[self::FLD_FROM];
-            $this->to->id = $db_row[self::FLD_TO];
-            $this->verb->id = $db_row[verb::FLD_ID];
-            $this->name = $db_row[self::FLD_NAME];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-            $this->type_id = $db_row[self::FLD_TYPE];
-            $this->values = $db_row[self::FLD_VALUES];
-        }
-        return $result;
     }
 
     /*

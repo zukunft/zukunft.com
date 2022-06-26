@@ -382,7 +382,8 @@ include_once $path_php . 'web/word/word_link_dsp.php';
 include_once $path_php . 'web/phrase/phrase_api_dsp.php';
 include_once $path_php . 'web/phrase/phrase_list_min_dsp.php';
 include_once $path_php . 'web/value/value_list_min_dsp.php';
-include_once $path_php . 'web/formula/formula_value_list_min_dsp.php';
+include_once $path_php . 'web/formula/formula.php';
+include_once $path_php . 'web/formula/formula_value_list.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
 include_once $path_php . 'web/hist/hist_log_dsp.php';
 

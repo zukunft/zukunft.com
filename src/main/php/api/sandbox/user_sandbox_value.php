@@ -37,16 +37,24 @@ namespace api;
 class user_sandbox_value_api extends user_sandbox_api
 {
 
-    protected phrase_group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
-    protected float $val; // the number calculated by the system
+    private phrase_group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    private ?float $val; // the number calculated by the system
+
+    /*
+     * construct and map
+     */
 
     function __construct(int $id = 0)
     {
         parent::__construct($id);
 
         $this->grp = new phrase_group_api();
-        $this->val = 0;
+        $this->val = null;
     }
+
+    /*
+     * set and get
+     */
 
     public function set_grp(phrase_group_api $grp)
     {
@@ -56,6 +64,11 @@ class user_sandbox_value_api extends user_sandbox_api
     public function set_val(float $val)
     {
         $this->val = $val;
+    }
+
+    public function grp(): phrase_group_api
+    {
+        return $this->grp;
     }
 
     public function val(): float

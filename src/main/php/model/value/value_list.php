@@ -45,6 +45,10 @@ class value_list
     public int $page_size = SQL_ROW_LIMIT;   // if not defined, use the default page size
     public int $page = 0;                    // start to display with this page
 
+    /*
+     * construct and map
+     */
+
     /**
      * always set the user because a value list is always user specific
      * @param user $usr the user who requested to see this value list
@@ -56,7 +60,7 @@ class value_list
     }
 
     /*
-     * set and get functions
+     * casting objects
      */
 
     /**
@@ -68,10 +72,6 @@ class value_list
         $api_obj->set_lst($this->api_lst());
         return $api_obj;
     }
-
-    /*
-     * cast functions
-     */
 
     /**
      * @return array with the API object of the values
@@ -88,7 +88,7 @@ class value_list
 
 
     /*
-     * load functions
+     * db loading
      */
 
     // TODO review the VAR and LIMIT definitions

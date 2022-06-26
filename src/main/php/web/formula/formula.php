@@ -2,8 +2,10 @@
 
 /*
 
-    api\formula_value.php - the minimal result value object
-    ---------------------
+    web\formula_dsp.php - the display extension of the api formula object
+    -------------------
+
+    to creat the HTML code to display a formula
 
 
     This file is part of zukunft.com - calc with words
@@ -30,31 +32,11 @@
 
 */
 
-namespace api;
+namespace html;
 
-use html\formula_value_dsp;
+use api\formula_api;
 
-class formula_value_api extends user_sandbox_value_api
+class formula_dsp extends formula_api
 {
-
-    function __construct(int $id = 0)
-    {
-        parent::__construct($id);
-    }
-
-    /*
-     * casting objects
-     */
-
-    /**
-     * @returns formula_value_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): formula_value_dsp
-    {
-        $dsp_obj = new formula_value_dsp($this->id);
-        $dsp_obj->set_grp($this->grp());
-        $dsp_obj->set_val($this->val());
-        return $dsp_obj;
-    }
 
 }

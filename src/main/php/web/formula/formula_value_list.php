@@ -34,10 +34,11 @@
 
 namespace html;
 
+use api\formula_value_list_api;
 use api\phrase_list_api;
 use html_table;
 
-class formula_value_list_api_display extends \api\formula_value_list_api
+class formula_value_list_dsp extends formula_value_list_api
 {
     /**
      * @return string the html code to show the formula results as a table to the user

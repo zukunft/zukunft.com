@@ -247,7 +247,7 @@ class word extends user_sandbox_description
      * clear the object values
      * @return void
      */
-    function reset()
+    function reset(): void
     {
         parent::reset();
         $this->plural = null;
@@ -265,12 +265,40 @@ class word extends user_sandbox_description
     }
 
     /**
+     * map the database fields to the object fields
+     *
+     * TODO check if "if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {" should be added
+     *
+     * @param array $db_row with the data directly from the database
+     * @param bool $map_usr_fields false for using the standard protection settings for the default word used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the word is loaded and valid
+     */
+    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
+    {
+        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
+        if ($result) {
+            $this->name = $db_row[self::FLD_NAME];
+            $this->plural = $db_row[self::FLD_PLURAL];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->type_id = $db_row[self::FLD_TYPE];
+            $this->view_id = $db_row[self::FLD_VIEW];
+        }
+        return $result;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
      * @return word_api the word frontend api object
      */
     function api_obj(): object
     {
-        $min_obj = new word_api();
-        return parent::fill_min_obj($min_obj);
+        $api_obj = new word_api();
+        parent::fill_api_obj($api_obj);
+        return $api_obj;
     }
 
     /**
@@ -298,31 +326,8 @@ class word extends user_sandbox_description
         return $dsp_obj;
     }
 
-    /**
-     * map the database fields to the object fields
-     *
-     * TODO check if "if (is_null($db_wrd[user_sandbox::FLD_EXCLUDED]) or $db_wrd[user_sandbox::FLD_EXCLUDED] == 0) {" should be added
-     *
-     * @param array $db_row with the data directly from the database
-     * @param bool $map_usr_fields false for using the standard protection settings for the default word used for all users
-     * @param string $id_fld the name of the id field as defined in this child and given to the parent
-     * @return bool true if the word is loaded and valid
-     */
-    function row_mapper(array $db_row, bool $map_usr_fields = true, string $id_fld = self::FLD_ID): bool
-    {
-        $result = parent::row_mapper($db_row, $map_usr_fields, self::FLD_ID);
-        if ($result) {
-            $this->name = $db_row[self::FLD_NAME];
-            $this->plural = $db_row[self::FLD_PLURAL];
-            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-            $this->type_id = $db_row[self::FLD_TYPE];
-            $this->view_id = $db_row[self::FLD_VIEW];
-        }
-        return $result;
-    }
-
     /*
-     * loading
+     * db loading
      */
 
     /**

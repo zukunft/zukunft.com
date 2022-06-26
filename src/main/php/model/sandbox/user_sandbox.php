@@ -176,6 +176,15 @@ class user_sandbox
     }
 
     /**
+     * @param object $api_obj frontend API object filled with the database id
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        $api_obj->id = $this->id;
+    }
+
+    /**
+     * TODO deprecate
      * @return object frontend API object filled with the database id
      */
     function fill_min_obj(object $min_obj): object

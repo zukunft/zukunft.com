@@ -86,7 +86,7 @@ class formula_value_list
         $qp = new sql_par(self::class);
         $sql_by = '';
         if ($obj->id > 0) {
-            if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
+            if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == phrase_group::class) {
                 if ($by_source) {
@@ -121,7 +121,7 @@ class formula_value_list
             $db_con->set_fields(formula_value::FLD_NAMES);
             $db_con->set_usr($this->usr->id);
             if ($obj->id > 0) {
-                if (get_class($obj) == formula::class or get_class($obj) == formula_dsp::class) {
+                if (get_class($obj) == formula::class or get_class($obj) == formula_dsp_old::class) {
                     $db_con->add_par(sql_db::PAR_INT, $obj->id);
                     $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
                 } elseif (get_class($obj) == phrase_group::class) {

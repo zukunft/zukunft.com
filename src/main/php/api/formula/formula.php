@@ -2,7 +2,7 @@
 
 /*
 
-    api\formula.php - the minimal formula object
+    api\formula.php - the minimal formula object for the frontend API
     ---------------
 
 
@@ -32,16 +32,50 @@
 
 namespace api;
 
+use html\formula_dsp;
+
 class formula_api extends user_sandbox_named_api
 {
 
     // the formula expression as shown to the user
-    public string $usr_text;
+    private string $usr_text;
 
-    function __construct()
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, string $name = '')
     {
-        parent::__construct();
+        parent::__construct($id, $name);
         $this->usr_text = '';
+    }
+
+    /*
+     * set and get
+     */
+
+    public function set_usr_text(string $usr_text)
+    {
+        $this->usr_text = $usr_text;
+    }
+
+    public function usr_text(): string
+    {
+        return $this->usr_text;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @returns formula_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): formula_dsp
+    {
+        $dsp_obj = new formula_dsp($this->id, $this->name);
+        $dsp_obj->set_usr_text($this->usr_text());
+        return $dsp_obj;
     }
 
 }

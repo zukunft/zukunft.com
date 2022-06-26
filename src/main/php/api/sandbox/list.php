@@ -42,12 +42,20 @@ class list_api
     private array $id_lst;
     private bool $lst_dirty;
 
-    function __construct()
+    /*
+     * construct and map
+     */
+
+    function __construct(array $lst = array())
     {
         $this->lst = array();
 
         $this->id_lst = array();
         $this->lst_dirty = false;
+
+        if (count($lst) > 0) {
+            $this->set_lst($lst);
+        }
     }
 
     /**

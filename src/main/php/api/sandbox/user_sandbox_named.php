@@ -39,10 +39,14 @@ class user_sandbox_named_api extends user_sandbox_api
     // the name must always be set
     protected string $name;
 
-    // all named objects can have a type that links predefineed functionality to it
-    // e.g. all value assinged with the percent word are per default shown as percent with two decimals
+    // all named objects can have a type that links predefined functionality to it
+    // e.g. all value assigned with the percent word are per default shown as percent with two decimals
     protected string $type;
 
+
+    /*
+     * construct and map
+     */
 
     function __construct(int $id = 0, string $name = '')
     {
@@ -55,6 +59,10 @@ class user_sandbox_named_api extends user_sandbox_api
         }
 
     }
+
+    /*
+     * set and get
+     */
 
     public function set_name(string $name)
     {

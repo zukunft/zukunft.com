@@ -54,11 +54,19 @@ class word_api extends user_sandbox_named_api
     // the main parent phrase
     public ?\phrase_api_dsp $parent;
 
+    /*
+     * construct and map
+     */
+
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
         $this->description = '';
     }
+
+    /*
+     * casting objects
+     */
 
     function phrase(): phrase_api
     {

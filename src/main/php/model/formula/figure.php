@@ -77,7 +77,7 @@ class figure
             if ($this->obj == null) {
                 return false;
             } else {
-                if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp::class) {
+                if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp_old::class) {
                     return $this->obj->is_std();
                 } else {
                     return false;

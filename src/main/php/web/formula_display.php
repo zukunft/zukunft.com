@@ -29,7 +29,7 @@
   
 */
 
-class formula_dsp extends formula
+class formula_dsp_old extends formula
 {
 
     // show the formula name to the user in the most simple form (without any ids)

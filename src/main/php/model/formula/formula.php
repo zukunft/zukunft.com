@@ -185,22 +185,27 @@ class formula extends user_sandbox_description
         $this->ref_text_r = '';
     }
 
+    /*
+     * casting objects
+     */
+
     /**
      * @return formula_api the formula frontend api object
      */
     function api_obj(): object
     {
-        $min_obj = new formula_api();
-        $min_obj->usr_text = $this->usr_text;
-        return parent::fill_min_obj($min_obj);
+        $api_obj = new formula_api();
+        $api_obj->set_usr_text($this->usr_text);
+        parent::fill_api_obj($api_obj);
+        return $api_obj;
     }
 
     /**
-     * @return formula_dsp the formula object with the display interface functions
+     * @return formula_dsp_old the formula object with the display interface functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new formula_dsp($this->usr);
+        $dsp_obj = new formula_dsp_old($this->usr);
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 

@@ -443,7 +443,7 @@ class test_base
     function load_formula(string $frm_name): formula
     {
         global $usr;
-        $frm = new formula_dsp($usr);
+        $frm = new formula_dsp_old($usr);
         $frm->name = $frm_name;
         $frm->load();
         return $frm;

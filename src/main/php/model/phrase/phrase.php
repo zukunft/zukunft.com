@@ -323,7 +323,7 @@ class phrase
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp::class) {
+            if (get_class($this->obj) == formula::class or get_class($this->obj) == formula_dsp_old::class) {
                 $result = true;
             }
         } else {

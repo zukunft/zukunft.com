@@ -40,7 +40,7 @@
   
 */
 
-use formula\formula_value_min;
+use api\formula_value_api;
 
 class formula_value
 {
@@ -117,22 +117,11 @@ class formula_value
         $this->reset($usr);
     }
 
-    function reset(user $usr)
+    function reset(user $usr): void
     {
         $this->id = 0;
         $this->usr = $usr;
         $this->frm = new formula($usr);
-    }
-
-    /**
-     * @return formula_value_min the formula result frontend api object
-     */
-    function api_obj(): object
-    {
-        $min_obj = new formula_value_min();
-        $min_obj->val = $this->value;
-        $min_obj->id = $this->id;
-        return $min_obj;
     }
 
     /**
@@ -164,6 +153,20 @@ class formula_value
         }
 
         return $result;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return formula_value_api the formula result frontend api object
+     */
+    function api_obj(): object
+    {
+        $api_obj = new formula_value_api($this->id);
+        $api_obj->set_val($this->value);
+        return $api_obj;
     }
 
     /*

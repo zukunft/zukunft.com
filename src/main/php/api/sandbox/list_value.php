@@ -38,9 +38,9 @@ namespace api;
 class list_value_api extends list_api
 {
 
-    function __construct()
+    function __construct(array $lst = array())
     {
-        parent::__construct();
+        parent::__construct($lst);
     }
 
     /**

@@ -52,6 +52,48 @@ class user_sandbox_named extends user_sandbox
         $this->name = '';
     }
 
+    /*
+     * casting objects
+     */
+
+    /**
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        $api_obj->set_name($this->name);
+    }
+
+    /**
+     * TODO deprecate
+     * @return object frontend API object filled with unique object name
+     */
+    function fill_min_obj(object $min_obj): object
+    {
+        parent::fill_min_obj($min_obj);
+
+        $min_obj->set_name($this->name);
+
+        return $min_obj;
+    }
+
+    /**
+     * fill a similar object that is extended with display interface functions
+     * TODO base on the api object and deprecate
+     *
+     * @return object the object fill with all user sandbox value
+     */
+    function fill_dsp_obj(object $dsp_obj): object
+    {
+        parent::fill_dsp_obj($dsp_obj);
+
+        $dsp_obj->set_name($this->name());
+
+        return $dsp_obj;
+    }
+
     /**
      * create the SQL to load the single default value always by the id or name
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -101,32 +143,6 @@ class user_sandbox_named extends user_sandbox
             $result = $this->row_mapper($db_row, false);
         }
         return $result;
-    }
-
-    /**
-     * @return object frontend API object filled with unique object name
-     */
-    function fill_min_obj(object $min_obj): object
-    {
-        parent::fill_min_obj($min_obj);
-
-        $min_obj->set_name($this->name);
-
-        return $min_obj;
-    }
-
-    /**
-     * fill a similar object that is extended with display interface functions
-     *
-     * @return object the object fill with all user sandbox value
-     */
-    function fill_dsp_obj(object $dsp_obj): object
-    {
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->set_name($this->name());
-
-        return $dsp_obj;
     }
 
     /**
