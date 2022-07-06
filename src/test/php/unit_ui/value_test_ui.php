@@ -187,7 +187,7 @@ function run_value_ui_test(testing $t)
     $wrd_col = new word_dsp($usr);
     $wrd_col->name = TW_CF;
     $wrd_col->load();
-    $val_lst = new value_list_dsp($usr);
+    $val_lst = new value_list_dsp_old($usr);
     $val_lst->phr = $wrd->phrase();
     $result = $val_lst->dsp_table($wrd_col, $wrd->id);
     $target = TV_NESN_SALES_2016_FORMATTED;

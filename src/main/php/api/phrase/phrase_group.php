@@ -32,6 +32,9 @@
 
 namespace api;
 
+use html\phrase_group_dsp;
+use phrase_list_dsp;
+
 class phrase_group_api extends user_sandbox_named_api
 {
 
@@ -43,6 +46,10 @@ class phrase_group_api extends user_sandbox_named_api
     private bool $lst_dirty;
     private string $name_linked;
     private bool $name_dirty;
+
+    /*
+     * construct and map
+     */
 
     function __construct(int $id = 0, array $phr_lst = array(), string $name = '')
     {
@@ -64,6 +71,45 @@ class phrase_group_api extends user_sandbox_named_api
                 $phr_id++;
             }
         }
+    }
+
+    /*
+     * set and get
+     */
+
+    function set_lst($lst): void
+    {
+        $this->lst = $lst;
+        $this->set_lst_dirty();
+        $this->set_name_dirty();
+    }
+
+    function set_lst_dirty(): void
+    {
+        $this->lst_dirty = true;
+    }
+
+    function set_name_dirty(): void
+    {
+        $this->name_dirty = true;
+    }
+
+    function unset_name_dirty(): void
+    {
+        $this->name_dirty = false;
+    }
+
+    /**
+     * @returns array the protected list of phrases
+     */
+    function lst(): array
+    {
+        return $this->lst;
+    }
+
+    function name_dirty(): bool
+    {
+        return $this->name_dirty;
     }
 
     /**
@@ -94,19 +140,11 @@ class phrase_group_api extends user_sandbox_named_api
         $result = false;
         if (!in_array($phr->id, $this->id_lst())) {
             $this->lst[] = $phr;
-            $this->lst_dirty = true;
-            $this->name_dirty = true;
+            $this->set_lst_dirty();
+            $this->set_name_dirty();
             $result = true;
         }
         return $result;
-    }
-
-    /**
-     * @returns array the protected list of phrases
-     */
-    function lst(): array
-    {
-        return $this->lst;
     }
 
     /**
@@ -119,33 +157,27 @@ class phrase_group_api extends user_sandbox_named_api
         return $result;
     }
 
-    /**
-     * @returns string the html code to display the phrase group with reference links
+    /*
+     * casting objects
      */
-    function name_linked(phrase_list_api $phr_lst_header = null): string
+
+    /**
+     * @returns phrase_group_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): phrase_group_dsp
     {
-        $result = '';
-        if ($this->name_dirty) {
-            if ($this->name <> '') {
-                $result .= $this->name;
-            } else {
-                $lst_to_show = $this->phr_lst();
-                if ($phr_lst_header != null) {
-                    if (!$phr_lst_header->is_empty()) {
-                        $lst_to_show->remove($phr_lst_header);
-                    }
-                }
-                foreach ($lst_to_show->lst() as $phr) {
-                    if ($result <> '') {
-                        $result .= ', ';
-                    }
-                    $result .= $phr->name_linked();
-                }
-            }
-            $this->lst_dirty = false;
-        } else {
-            $result = $this->name_linked;
-        }
+        $result = new phrase_group_dsp($this->id);
+        $result->set_lst_dsp($this->lst());
+        return $result;
+    }
+
+    /**
+     * @returns phrase_list_dsp the list of phrases as an object
+     */
+    function phr_lst_dsp(): phrase_list_dsp
+    {
+        $result = new phrase_list_dsp();
+        $result->set_lst($this->lst());
         return $result;
     }
 

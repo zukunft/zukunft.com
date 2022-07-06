@@ -34,6 +34,9 @@
 
 namespace api;
 
+use html\phrase_group_dsp;
+use html\value_dsp;
+
 class user_sandbox_value_api extends user_sandbox_api
 {
 
@@ -76,21 +79,21 @@ class user_sandbox_value_api extends user_sandbox_api
         return $this->val;
     }
 
+    /*
+     * casting objects
+     */
+
+    public function grp_dsp(): phrase_group_dsp
+    {
+        return $this->grp()->dsp_obj();
+    }
+
     /**
      * @returns phrase_list_api the list of phrases as an object
      */
     function phr_lst(): phrase_list_api
     {
         return $this->grp->phr_lst();
-    }
-
-    /**
-     * @param phrase_list_api|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
-     * @returns string the html code to display the phrase group with reference links
-     */
-    public function name_linked(phrase_list_api $phr_lst_header = null): string
-    {
-        return $this->grp->name_linked($phr_lst_header);
     }
 
     /**

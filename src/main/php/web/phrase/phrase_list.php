@@ -2,8 +2,8 @@
 
 /*
 
-    phrase_list_min_display.php - the display extension of the api phrase list object
-    ---------------------------
+    web\phrase_list_dsp.php - the display extension of the api phrase list object
+    -----------------------
 
     mainly links to the word and triple display functions
 
@@ -32,7 +32,7 @@
 
 */
 
-class phrase_list_min_dsp extends \api\phrase_list_api
+class phrase_list_dsp extends \api\phrase_list_api
 {
 
     /**
@@ -52,7 +52,7 @@ class phrase_list_min_dsp extends \api\phrase_list_api
 
     /**
      * @returns string the html code to display the plural of the phrases with the most useful link
-     * TODO replace adding the s with a language specific functions that can include exceptiones
+     * TODO replace adding the s with a language specific functions that can include exceptions
      */
     private function plural(): string
     {
@@ -61,7 +61,7 @@ class phrase_list_min_dsp extends \api\phrase_list_api
 
     /**
      * @returns string the html code to display the phrases for a sentence start
-     * TODO replace adding the s with a language specific functions that can include exceptiones
+     * TODO replace adding the s with a language specific functions that can include exceptions
      */
     private function InitCap(): string
     {

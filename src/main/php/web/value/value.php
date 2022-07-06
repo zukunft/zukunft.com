@@ -2,10 +2,10 @@
 
 /*
 
-    phrase_min_display.php - the display extension of the api phrase object
-    ----------------------
+    web\value_dsp.php - the display extension of the api value object
+    -----------------
 
-    mainly links to the word and triple display functions
+    to creat the HTML code to display a formula
 
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +32,20 @@
 
 */
 
-class phrase_api_dsp extends \api\phrase_api
+namespace html;
+
+use api\phrase_list_api;
+use api\value_api;
+
+class value_dsp extends value_api
 {
+    /**
+     * @param phrase_list_api $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_linked(phrase_list_api $phr_lst_exclude): string
+    {
+        return $this->grp_dsp()->name_linked($phr_lst_exclude);
+    }
 
 }

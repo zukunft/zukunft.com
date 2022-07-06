@@ -5,7 +5,7 @@
     phrase_display.php - the extension of the phrase object to create API json messages or HTML code to display a word or triple
     ------------------
 
-    depricatedd - to be replaced by phrase_min_dsp
+    deprecated - to be replaced by phrase_min_dsp
 
     mainly links to the word and triple display functions
 
@@ -34,7 +34,7 @@
 
 */
 
-class phrase_dsp extends phrase
+class phrase_dsp_old extends phrase
 {
 
     /**

@@ -31,16 +31,61 @@
 
 namespace api;
 
+use html\phrase_dsp;
+use html\word_dsp;
+
 class phrase_api extends user_sandbox_named_api
 {
 
     // the mouse over tooltip for the word
-    public ?string $description = null;
+    private ?string $description = null;
+
+    /*
+     * construct and map
+     */
 
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
     }
+
+    /*
+     * set and get
+     */
+
+    public function set_description(?string $description)
+    {
+        $this->description = $description;
+    }
+
+    public function description(): ?string
+    {
+        return $this->description;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @returns phrase_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): phrase_dsp
+    {
+        $dsp_obj = new phrase_dsp($this->id, $this->name);
+        $dsp_obj->set_description($this->description());
+        return $dsp_obj;
+    }
+
+    protected function get_word_dsp(): word_dsp
+    {
+        $wrd = new word_api($this->id, $this->name);
+        return $wrd->dsp_obj();
+    }
+
+    /*
+     * classifications
+     */
 
     /**
      * @returns true if th phrase is a triple (a combination of two words
@@ -55,11 +100,15 @@ class phrase_api extends user_sandbox_named_api
     }
 
     /**
-     * @returns string the html code to display the phrase with reference links
+     * @return bool true if this phrase is a word or supposed to be a word
      */
-    function name_linked(): string
+    function is_word(): bool
     {
-        return $this->name;
+        if ($this->id > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

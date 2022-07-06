@@ -29,7 +29,10 @@
   
 */
 
+namespace html;
+
 use api\word_api;
+use api\phrase_api;
 
 class word_dsp extends word_api
 {
@@ -40,12 +43,12 @@ class word_dsp extends word_api
 
     /**
      * display a word as the view header
-     * @param phrase $is_part_of the word group as a hint to the user
+     * @param phrase_api|null $is_part_of the word group as a hint to the user
      *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
      *             that the Zurich (City) is the phrase to select
      * @returns string the HTML code to display a word
      */
-    function dsp_header(?phrase $is_part_of = null): string
+    function dsp_header(?phrase_api $is_part_of = null): string
     {
         $result = '';
 
@@ -107,7 +110,7 @@ class word_dsp extends word_api
     /**
      * simply to display a single word in a table cell
      */
-    function dsp_tbl_cell($intent): string
+    function dsp_tbl_cell(int $intent): string
     {
         log_debug('word_dsp->dsp_tbl_cell');
         $result = '    <td>' . "\n";

@@ -185,11 +185,11 @@ class value extends user_sandbox_display
     }
 
     /**
-     * @return value_dsp the value object with the display interface functions
+     * @return value_dsp_old the value object with the display interface functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new value_dsp($this->usr);
+        $dsp_obj = new value_dsp_old($this->usr);
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 

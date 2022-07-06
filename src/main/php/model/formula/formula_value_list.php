@@ -92,14 +92,14 @@ class formula_value_list
                 if ($by_source) {
                     $sql_by .= formula_value::FLD_SOURCE_GRP;
                     if ($obj2 != null) {
-                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
                             $sql_by .= '_' . formula_value::FLD_SOURCE_TIME;
                         }
                     }
                 } else {
                     $sql_by .= phrase_group::FLD_ID;
                     if ($obj2 != null) {
-                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                        if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
                             $sql_by .= '_' . formula_value::FLD_TIME;
                         }
                     }
@@ -130,7 +130,7 @@ class formula_value_list
                     if ($by_source) {
                         $link_fields[] = formula_value::FLD_SOURCE_GRP;
                         if ($obj2 != null) {
-                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
                                 $db_con->add_par(sql_db::PAR_INT, $obj2->id);
                                 $link_fields[] = formula_value::FLD_SOURCE_TIME;
                             }
@@ -138,7 +138,7 @@ class formula_value_list
                     } else {
                         $link_fields[] = phrase_group::FLD_ID;
                         if ($obj2 != null) {
-                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp::class) {
+                            if (get_class($obj2) == phrase::class or get_class($obj2) == phrase_dsp_old::class) {
                                 $db_con->add_par(sql_db::PAR_INT, $obj2->id);
                                 $link_fields[] = formula_value::FLD_TIME;
                             }

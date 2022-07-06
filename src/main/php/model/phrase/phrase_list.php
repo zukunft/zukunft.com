@@ -51,11 +51,11 @@ class phrase_list
     }
 
     /**
-     * @return phrase_list_dsp the word object with the display interface functions
+     * @return phrase_list_dsp_old the word object with the display interface functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new phrase_list_dsp($this->usr);
+        $dsp_obj = new phrase_list_dsp_old($this->usr);
         $dsp_obj->lst = $this->lst;
         return $dsp_obj;
     }

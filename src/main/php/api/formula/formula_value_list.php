@@ -70,7 +70,15 @@ class formula_value_list_api extends list_value_api
      */
     function dsp_obj(): formula_value_list_dsp
     {
-        return new formula_value_list_dsp($this->lst);
+        // cast the single list objects
+        $lst_dsp = array();
+        foreach ($this->lst as $fv) {
+            if ($fv != null) {
+                $fv_dsp = $fv->dsp_obj();
+                $lst_dsp[] = $fv_dsp;
+            }
+        }
+        return new formula_value_list_dsp($lst_dsp);
     }
 
 }

@@ -29,6 +29,8 @@
 
 */
 
+use html\word_dsp;
+
 class word_list_dsp extends word_list
 {
 
@@ -144,9 +146,7 @@ class word_list_dsp extends word_list
         $result = '';
 
         // this is how it should be replaced in the calling function
-        $wrd = new word_dsp($this->usr);
-        $wrd->id = $word_id;
-        $wrd->load();
+        $wrd = new word_dsp($word_id);
         $vrb = new verb;
         $vrb->id = $verb_id;
         $vrb->load();
@@ -238,9 +238,7 @@ class word_list_dsp extends word_list
         foreach ($db_lst as $db_row) {
             //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             if ($db_row['type'] == "word") {
-                $wrd = new word_dsp($this->usr);
-                $wrd->id = $db_row['id'];
-                $wrd->name = $db_row['name'];
+                $wrd = new word_dsp($db_row['id'], $db_row['name']);
                 $result .= $wrd->dsp_tbl_row();
             }
             if ($db_row['type'] == "formula") {

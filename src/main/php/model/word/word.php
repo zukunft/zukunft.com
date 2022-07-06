@@ -41,6 +41,7 @@
 */
 
 use api\word_api;
+use html\word_dsp;
 
 class word extends user_sandbox_description
 {
@@ -327,7 +328,7 @@ class word extends user_sandbox_description
     }
 
     /*
-     * db loading
+     * loading / database access object (DAO) functions
      */
 
     /**
@@ -759,7 +760,8 @@ class word extends user_sandbox_description
     {
         log_debug('word_dsp->dsp_val_list for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
 
-        $result = $this->dsp_obj()->dsp_header($is_part_of);
+        $is_part_of_dsp = $is_part_of->get_dsp_obj();
+        $result = $this->dsp_obj()->dsp_header($is_part_of_dsp);
 
         //$result .= $this->name."<br>";
         //$result .= $col_wrd->name."<br>";
@@ -1543,7 +1545,7 @@ class word extends user_sandbox_description
     }
 
     /*
-     * save functions
+     * save / database transfer object functions
      */
 
     /**

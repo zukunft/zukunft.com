@@ -37,7 +37,7 @@ include_once '../src/main/php/zu_lib.php';
 /* open database */
 $db_con = prg_start("phrase_list");
 
-$result = new phrase_list_dsp(); // reset the html code var
+$result = new phrase_list_dsp_old(); // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters

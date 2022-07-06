@@ -49,6 +49,10 @@
 
 */
 
+use api\phrase_api;
+use html\phrase_dsp;
+use html\word_dsp;
+
 class phrase
 {
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
@@ -420,13 +424,15 @@ class phrase
      * so either the word display object
      * or the triple display object
      */
-    function get_dsp_obj(): ?object
+    function get_dsp_obj(): ?phrase_dsp
     {
-        $obj = '';
+        $obj = new phrase_dsp();
         if ($this->is_word()) {
-            $obj = $this->get_word_dsp();
+            $wrd = $this->get_word_dsp();
+            $obj = $wrd->phrase()->dsp_obj();
         } elseif ($this->is_triple()) {
-            $obj = $this->get_triple_dsp();
+            $trp = $this->get_triple_dsp();
+            $obj = $trp->phrase()->get_dsp_obj();
         }
         return $obj;
     }

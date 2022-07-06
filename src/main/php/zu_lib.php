@@ -259,7 +259,7 @@ include_once $path_php . 'service/import/import.php';
 include_once $path_php . 'service/export/export.php';
 include_once $path_php . 'service/export/json.php';
 include_once $path_php . 'service/export/xml.php';
-// classes
+// user sandbox classes
 include_once $path_php . 'model/user/user.php';
 include_once $path_php . 'model/user/user_message.php';
 include_once $path_php . 'model/user/user_type.php';
@@ -281,9 +281,14 @@ include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
 include_once $path_php . 'model/sandbox/share_type_list.php';
 include_once $path_php . 'model/sandbox/protection_type_list.php';
 include_once $path_php . 'web/user_sandbox_display.php';
+// system classes
 include_once $path_php . 'model/system/system_error_log.php';
 include_once $path_php . 'model/system/system_error_log_list.php';
+include_once $path_php . 'model/system/batch_job.php';
+include_once $path_php . 'model/system/batch_job_list.php';
+include_once $path_php . 'model/system/batch_job_type_list.php';
 include_once $path_php . 'model/helper/word_link_object.php';
+// model classes
 include_once $path_php . 'model/word/word.php';
 include_once $path_php . 'model/word/word_exp.php';
 include_once $path_php . 'model/word/word_type_list.php';
@@ -334,9 +339,6 @@ include_once $path_php . 'model/formula/formula_element_group.php';
 include_once $path_php . 'model/formula/formula_element_group_list.php';
 include_once $path_php . 'model/formula/figure.php';
 include_once $path_php . 'model/formula/figure_list.php';
-include_once $path_php . 'model/system/batch_job.php';
-include_once $path_php . 'model/system/batch_job_list.php';
-include_once $path_php . 'model/system/batch_job_type_list.php';
 include_once $path_php . 'model/view/view.php';
 include_once $path_php . 'model/view/view_exp.php';
 include_once $path_php . 'model/view/view_list.php';
@@ -349,7 +351,7 @@ include_once $path_php . 'model/view/view_cmp_type_list.php';
 include_once $path_php . 'model/view/view_cmp_link.php';
 include_once $path_php . 'model/view/view_cmp_link_list.php';
 include_once $path_php . 'model/view/view_cmp_link_types.php';
-// frontend API classes
+// general frontend API classes
 include_once $path_php . 'api/message_header.php';
 include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'api/system/error_log_list.php';
@@ -358,6 +360,7 @@ include_once $path_php . 'api/sandbox/user_sandbox_named.php';
 include_once $path_php . 'api/sandbox/user_sandbox_value.php';
 include_once $path_php . 'api/sandbox/list.php';
 include_once $path_php . 'api/sandbox/list_value.php';
+// model frontend API classes
 include_once $path_php . 'api/word/word.php';
 include_once $path_php . 'api/word/triple.php';
 include_once $path_php . 'api/phrase/phrase.php';
@@ -368,7 +371,7 @@ include_once $path_php . 'api/value/value_list.php';
 include_once $path_php . 'api/formula/formula.php';
 include_once $path_php . 'api/formula/formula_value.php';
 include_once $path_php . 'api/formula/formula_value_list.php';
-// HTML frontend classes
+// general HTML frontend classes
 include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
@@ -376,17 +379,22 @@ include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/button.php';
 include_once $path_php . 'web/html/html_selector.php';
 include_once $path_php . 'web/html/html_table.php';
-include_once $path_php . 'web/word/word_display.php';
-include_once $path_php . 'web/word/word_list_dsp.php';
-include_once $path_php . 'web/word/word_link_dsp.php';
-include_once $path_php . 'web/phrase/phrase_api_dsp.php';
-include_once $path_php . 'web/phrase/phrase_list_min_dsp.php';
-include_once $path_php . 'web/value/value_list_min_dsp.php';
+include_once $path_php . 'web/hist/hist_log_dsp.php';
+// model HTML frontend classes
+include_once $path_php . 'web/word/word.php';
+include_once $path_php . 'web/word/word_list.php';
+include_once $path_php . 'web/word/word_link.php';
+include_once $path_php . 'web/phrase/phrase.php';
+include_once $path_php . 'web/phrase/phrase_list.php';
+include_once $path_php . 'web/phrase/phrase_group.php';
+include_once $path_php . 'web/value/value.php';
+include_once $path_php . 'web/value/value_list.php';
 include_once $path_php . 'web/formula/formula.php';
+include_once $path_php . 'web/formula/formula_value.php';
 include_once $path_php . 'web/formula/formula_value_list.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
-include_once $path_php . 'web/hist/hist_log_dsp.php';
 
+// deprecated HTML frontend classes
 include_once $path_php . 'web/phrase/phrase_display.php';
 include_once $path_php . 'web/display_list.php';
 include_once $path_php . 'web/value_list_display.php';

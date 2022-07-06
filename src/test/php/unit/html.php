@@ -122,7 +122,7 @@ class html_unit_tests
         $phr_grp_canton_pct->add($phr_inhabitant);
         $phr_grp_canton_pct->add($phr_2019);
         $phr_grp_canton_pct->add($phr_pct);
-        $phr_lst_context = new \api\phrase_list_api($grp_id);
+        $phr_lst_context = new \api\phrase_list_api();
         $phr_lst_context->add($phr_inhabitant);
 
         // create the value for the inhabitants of the city of zurich

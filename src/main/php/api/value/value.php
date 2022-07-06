@@ -32,12 +32,33 @@
 
 namespace api;
 
+use html\value_dsp;
+
 class value_api extends user_sandbox_value_api
 {
+
+    /*
+     * construct and map
+     */
 
     function __construct(int $id = 0)
     {
         parent::__construct($id);
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @returns value_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): value_dsp
+    {
+        $dsp_obj = new value_dsp($this->id);
+        $dsp_obj->set_grp($this->grp());
+        $dsp_obj->set_val($this->val());
+        return $dsp_obj;
     }
 
 }

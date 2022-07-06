@@ -195,7 +195,7 @@ function run_value_test(testing $t)
     $phr_lst = $t->load_phrase_list(array(word::TN_CANTON, word::TN_ZH, word::TN_INHABITANT, word::TN_MIO, word::TN_2020));
     $time_phr = $phr_lst->time_useful();
     $phr_lst->ex_time();
-    $mio_val = new value_dsp($t->usr1);
+    $mio_val = new value_dsp_old($t->usr1);
     $mio_val->time_phr = $time_phr;
     $mio_val->grp = $phr_lst->get_grp();
     $mio_val->load();

@@ -2,8 +2,10 @@
 
 /*
 
-    value_List_min.php - the minimal value list object
-    ------------------
+    web\phrase.php - the display extension of the api phrase object
+    --------------
+
+    mainly links to the word and triple display functions
 
 
     This file is part of zukunft.com - calc with words
@@ -30,48 +32,44 @@
 
 */
 
-namespace api;
+namespace html;
 
-use html\value_list_dsp;
+use api\phrase_api;
 
-class value_list_api extends list_value_api
+class phrase_dsp extends phrase_api
 {
 
-    function __construct(array $lst = array())
+    /**
+     * @returns string the html code to display the phrase with reference links
+     */
+    function name_linked(): string
     {
-        parent::__construct($lst);
+        return $this->name;
     }
 
     /**
-     * add a value to the list
-     * @returns bool true if the value has been added
+     * simply to display a single word in a table cell
      */
-    function add(value_api $val): bool
+    function dsp_tbl_cell(int $intent): string
     {
-        $result = false;
-        if (!in_array($val->id, $this->id_lst())) {
-            $this->lst[] = $val;
-            $this->set_lst_dirty();
-            $result = true;
+        $result = '';
+        if ($this->is_word()) {
+            $wrd = $this->get_word_dsp();
+            $result .= $wrd->dsp_tbl_cell($intent);
         }
         return $result;
     }
 
     /**
-     * @returns value_list_dsp the cast object with the HTML code generating functions
+     * @returns string the html code that allows the user to unlink this phrase
      */
-    function dsp_obj(): value_list_dsp
+    function dsp_unlink(int $link_id): string
     {
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst as $val) {
-            if ($val != null) {
-                $val_dsp = $val->dsp_obj();
-                $lst_dsp[] = $val_dsp;
-            }
-        }
+        $result = '    <td>' . "\n";
+        $result .= btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
+        $result .= '    </td>' . "\n";
 
-        return new value_list_dsp($lst_dsp);
+        return $result;
     }
 
 }

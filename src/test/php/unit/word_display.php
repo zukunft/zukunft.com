@@ -30,6 +30,8 @@
 
 */
 
+use html\word_dsp;
+
 class word_display_unit_tests
 {
     function run(testing $t)

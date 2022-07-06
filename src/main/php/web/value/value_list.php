@@ -35,9 +35,10 @@
 namespace html;
 
 use api\phrase_list_api;
+use api\value_list_api;
 use html_table;
 
-class value_list_api_display extends \api\value_list_api
+class value_list_dsp extends value_list_api
 {
 
     /**
@@ -72,7 +73,7 @@ class value_list_api_display extends \api\value_list_api
         }
 
         // display the single values
-        foreach ($this->lst() as $fv) {
+        foreach ($this->lst() as $val) {
             $row_nbr++;
             $result .= $tbl->row_start();
             if ($row_nbr == 1) {
@@ -80,8 +81,8 @@ class value_list_api_display extends \api\value_list_api
                 $result .= $tbl->header('value');
                 $result .= $tbl->row();
             }
-            $result .= $tbl->cell($fv->name_linked($common_phrases));
-            $result .= $tbl->cell($fv->value_linked($back));
+            $result .= $tbl->cell($val->name_linked($common_phrases));
+            $result .= $tbl->cell($val->value_linked($back));
             $result .= $tbl->row_end();
         }
         $result .= dsp_tbl_end();

@@ -29,7 +29,9 @@
   
 */
 
-class value_list_dsp extends value_list
+use html\word_dsp;
+
+class value_list_dsp_old extends value_list
 {
 
     // creates a table of all values related to a word and a related word and all the sub words of the related word

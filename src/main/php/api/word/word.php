@@ -32,6 +32,8 @@
 
 namespace api;
 
+use html\word_dsp;
+
 class word_api extends user_sandbox_named_api
 {
     // word names for stand-alone unit tests
@@ -52,7 +54,7 @@ class word_api extends user_sandbox_named_api
     public ?string $plural = null;
 
     // the main parent phrase
-    public ?\phrase_api_dsp $parent;
+    public phrase_api $parent;
 
     /*
      * construct and map
@@ -67,6 +69,14 @@ class word_api extends user_sandbox_named_api
     /*
      * casting objects
      */
+
+    /**
+     * @returns word_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): word_dsp
+    {
+        return new word_dsp($this->id, $this->name);
+    }
 
     function phrase(): phrase_api
     {

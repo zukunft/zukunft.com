@@ -32,14 +32,18 @@
 
 namespace api;
 
-use phrase_list_min_dsp;
+use phrase_list_dsp;
 
 class phrase_list_api extends list_api
 {
 
-    function __construct()
+    /*
+     * construct and map
+     */
+
+    function __construct(array $lst = array())
     {
-        parent::__construct();
+        parent::__construct($lst);
     }
 
     /**
@@ -50,6 +54,36 @@ class phrase_list_api extends list_api
     {
         return parent::add_obj($phr);
     }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @returns phrase_list_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): phrase_list_dsp
+    {
+        $dsp_obj = new phrase_list_dsp();
+
+        // cast the single list objects
+        $lst_dsp = array();
+        foreach ($this->lst as $phr) {
+            if ($phr != null) {
+                $phr_dsp = $phr->dsp_obj();
+                $lst_dsp[] = $phr_dsp;
+            }
+        }
+
+        $dsp_obj->set_lst($lst_dsp);
+        $dsp_obj->set_lst_dirty();
+
+        return $dsp_obj;
+    }
+
+    /*
+     * information functions
+     */
 
     /**
      * @returns int the number of phrases of the protected list
@@ -70,6 +104,10 @@ class phrase_list_api extends list_api
             return false;
         }
     }
+
+    /*
+     * modification functions
+     */
 
     /**
      * @returns phrase_list_api with the phrases of this list and the new list
@@ -109,19 +147,5 @@ class phrase_list_api extends list_api
         }
         return $this;
     }
-
-    /**
-     * @returns phrase_list_min_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): phrase_list_min_dsp
-    {
-        $dsp_obj = new phrase_list_min_dsp();
-
-        $dsp_obj->set_lst($this->lst);
-        $dsp_obj->set_lst_dirty();
-
-        return $dsp_obj;
-    }
-
 
 }
