@@ -20,7 +20,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with zukunft.com. If not, see <http://www.gnu.org/licenses/gpl.html>.
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
 
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
@@ -159,7 +159,7 @@ class html_base
         }
         $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ';
         $result .= 'All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License';
-        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a href="https://www.gnu.org/licenses/gpl.html" title="GPL3">GPL3</a> License';
+        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a href="https://www.gnu.org/licenses/gpl.html" title="AGPL3">AGPL3</a> License';
         // for the about page this does not make sense
         $result .= '</small>';
         $result .= '</div>';
