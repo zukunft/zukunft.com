@@ -155,11 +155,11 @@ class html_base
         }
         $result .= '<small>';
         if (!$no_about) {
-            $result .= '<a href="/http/about.php" title="About">About</a> &middot; ';
+            $result .= $this->ref($this->url("about"), "About") . ' &middot; ';
         }
         $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ';
         $result .= 'All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License';
-        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a href="https://www.gnu.org/licenses/gpl.html" title="AGPL3">AGPL3</a> License';
+        $result .= ' and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License';
         // for the about page this does not make sense
         $result .= '</small>';
         $result .= '</div>';
@@ -171,18 +171,62 @@ class html_base
     }
 
     /*
+     * wrapper for the basic html elements used
+     */
+
+    function ref(string $url, string $name, string $title = ''): string
+    {
+        $result = '<a href="' . $url . '"';
+        if ($title != '') {
+            $result .= ' title="' . $title . '"';
+        } else {
+            $result .= ' title="' . $name . '"';
+        }
+        $result .= '>';
+        $result .= $name;
+        $result .= '</a>';
+        return $result;
+    }
+
+    /*
+     * wrapper for internal references used in the html code
+     */
+
+    /**
+     * build an url for link a zukunft.com element
+     *
+     * @param string $obj_name the object that is requested e.g. a view
+     * @param string $par_name the parameter objects e.g. a phrase
+     * @param int $id the id of the parameter e.g. 1 for math const
+     * @param string $back the back trace calls to return to the original url and for undo
+     * @return string the created url
+     */
+    function url(string $obj_name, string $par_name = '', int $id = 0, string $back = ''): string
+    {
+        $result = '/http/' . $obj_name . '.php';
+        if ($par_name != '') {
+            $result .= '?' . $par_name . '=' . $id;
+        }
+        if ($back != '') {
+            $result .= '&back=' . $back;
+        }
+        return $result;
+    }
+
+    /*
      * text formatting
      */
 
-    function text_h2 (string $title, string $style = ''): string {
+    function text_h2(string $title, string $style = ''): string
+    {
         $result = '';
         if (UI_USE_BOOTSTRAP) {
-            $result .= "<h4>".$title."</h4>";
+            $result .= "<h4>" . $title . "</h4>";
         } else {
             if ($style <> "") {
-                $result .= '<h2 class="'.$style.'">'.$title.'</h2>';
+                $result .= '<h2 class="' . $style . '">' . $title . '</h2>';
             } else {
-                $result .= "<h2>".$title."</h2>";
+                $result .= "<h2>" . $title . "</h2>";
             }
         }
         return $result;
@@ -225,29 +269,32 @@ class html_base
      * HTML elements like tables, forms
      */
 
-    function tbl_start (): string {
+    function tbl_start(): string
+    {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-striped table-bordered">'."\n";
+            $result = '<table class="table table-striped table-bordered">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->tbl_width().'">'."\n";
+            $result = '<table style="width:' . $this->tbl_width() . '">' . "\n";
         }
         return $result;
     }
 
-    function tbl_start_half (): string {
+    function tbl_start_half(): string
+    {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-5 table-borderless">'."\n";
+            $result = '<table class="table col-sm-5 table-borderless">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->tbl_width_half() . '">'."\n";
+            $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
         }
         return $result;
     }
 
-    function tbl_start_hist (): string {
+    function tbl_start_hist(): string
+    {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-borderless text-muted">'."\n";
+            $result = '<table class="table table-borderless text-muted">' . "\n";
         } else {
-            $result = '<table class="change_hist"'."\n";
+            $result = '<table class="change_hist"' . "\n";
         }
         return $result;
     }
@@ -255,17 +302,19 @@ class html_base
     /**
      * a table for a list of selectors
      */
-    function tbl_start_select (): string {
+    function tbl_start_select(): string
+    {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-10 table-borderless">'."\n";
+            $result = '<table class="table col-sm-10 table-borderless">' . "\n";
         } else {
-            $result = '<table style="width:' . $this->tbl_width_half() . '">'."\n";
+            $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
         }
         return $result;
     }
 
-    function tbl_end(): string {
-        return '</table>'."\n";
+    function tbl_end(): string
+    {
+        return '</table>' . "\n";
     }
 
     /**
@@ -322,7 +371,8 @@ class html_base
     /**
      * @return string the HTML code of the about page
      */
-    function about(): string {
+    function about(): string
+    {
         $result = $this->header("", "center_form"); // reset the html code var
 
         $result .= dsp_form_center();
@@ -335,7 +385,7 @@ class html_base
         $result .= 'Switzerland<br><br>';
         $result .= '<a href="mailto:timon@zukunft.com">timon@zukunft.com</a><br><br>';
         $result .= 'zukunft.com AG also supports the ';
-        $result .= '<a href="https://github.com/zukunft/tream" title="github.com link">Open Source</a> Portfolio Management System<br><br>';
+        $result .= $this->ref("https://github.com/zukunft/tream", "Open Source", "github.com link") . ' Portfolio Management System<br><br>';
         $result .= '<a href="https://tream.biz/p4a/applications/tream/" title="TREAM demo">';
         $result .= '<img src="https://www.zukunft.com/images/TREAM_logo.jpg" alt="TREAM" style="height: 20%;">';
         $result .= '</a><br><br>';
@@ -352,26 +402,31 @@ class html_base
     /**
      * @return string get the normal table width (should be based on the display size)
      */
-    private function tbl_width(): string {
+    private function tbl_width(): string
+    {
         return '800px';
     }
-    private function tbl_width_half(): string {
+
+    private function tbl_width_half(): string
+    {
         return '400px';
     }
 
     /**
      * @return string display an explaining sub line e.g. (in mio CHF)
      */
-    private function line_small($line_text): string {
-        return "<small>".$line_text."</small><br>";
+    private function line_small($line_text): string
+    {
+        return "<small>" . $line_text . "</small><br>";
     }
 
     /**
      * display a list that can be sorted using the fixed field "order_nbr"
      * $sql_result - list of the query results
      */
-    function list_sort ($sql_result, $id_field, $text_field, $script_name, $script_parameter) {
-        $result  = '';
+    function list_sort($sql_result, $id_field, $text_field, $script_name, $script_parameter)
+    {
+        $result = '';
 
         $row_nbr = 0;
         $num_rows = mysqli_num_rows($sql_result);
@@ -379,18 +434,18 @@ class html_base
             // list of all possible view entries
             $row_nbr = $row_nbr + 1;
             $edit_script = zu_id_to_edit($id_field);
-            $result .=  '<a href="/http/'.$edit_script.'?id='.$entry[$id_field].'&back='.$script_parameter.'">'.$entry[$text_field].'</a> ';
+            $result .= '<a href="/http/' . $edit_script . '?id=' . $entry[$id_field] . '&back=' . $script_parameter . '">' . $entry[$text_field] . '</a> ';
             if ($row_nbr > 1) {
-                $result .= '<a href="/http/'.$script_name.'?id='.$script_parameter.'&move_up='.$entry[$id_field].'">up</a>';
+                $result .= '<a href="/http/' . $script_name . '?id=' . $script_parameter . '&move_up=' . $entry[$id_field] . '">up</a>';
             }
             if ($row_nbr > 1 and $row_nbr < $num_rows) {
                 $result .= '/';
             }
             if ($row_nbr < $num_rows) {
-                $result .= '<a href="/http/'.$script_name.'?id='.$script_parameter.'&move_down='.$entry[$id_field].'">down</a>';
+                $result .= '<a href="/http/' . $script_name . '?id=' . $script_parameter . '&move_down=' . $entry[$id_field] . '">down</a>';
             }
             $result .= ' ';
-            $result .= btn_del ('Delete '.$text_field, $script_name.'?id='.$script_parameter.'&del='.$entry[$id_field]);
+            $result .= btn_del('Delete ' . $text_field, $script_name . '?id=' . $script_parameter . '&del=' . $entry[$id_field]);
             $result .= '<br>';
         }
 
