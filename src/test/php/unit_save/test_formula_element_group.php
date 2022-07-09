@@ -94,7 +94,7 @@ function run_formula_element_group_test(testing $t)
         $time_phr = $phr_lst->assume_time();
         $result = $elm_grp->dsp_values($time_phr);
         $fig_lst = $elm_grp->figures();
-        $target = '<a href="/http/value_edit.php?id='.$fig_lst->get_first_id().'&back="  >8.51</a>';
+        $target = '<a href="/http/value_edit.php?id='.$fig_lst->get_first_id().'" title="8.51">8.51</a>';
         $t->dsp('formula_element_group->dsp_values', $target, $result);
 
         // remember the figure list for the figure and figure list class test
@@ -119,7 +119,7 @@ function run_formula_element_group_test(testing $t)
 
                 $result = $fig->display_linked();
                 //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
-                $target = '<a href="/http/value_edit.php?id='.$fig->id.'&back="  >8.51</a>';
+                $target = '<a href="/http/value_edit.php?id='.$fig->id.'" title="8.51">8.51</a>';
                 $t->dsp('figure->display_linked', $target, $result);
             }
         } else {

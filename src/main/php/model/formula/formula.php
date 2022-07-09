@@ -30,6 +30,7 @@
 */
 
 use api\formula_api;
+use cfg\phrase_type;
 
 class formula extends user_sandbox_description
 {
@@ -458,7 +459,7 @@ class formula extends user_sandbox_description
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->usr);
         $name_wrd->name = $this->name;
-        $name_wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+        $name_wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         $name_wrd->add();
         if ($name_wrd->id > 0) {
             //zu_info('Word with the formula name "'.$this->name.'" has been missing for id '.$this->id.'.','formula->calc');
@@ -481,7 +482,7 @@ class formula extends user_sandbox_description
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->usr);
         $name_wrd->name = $this->name;
-        $name_wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+        $name_wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         $name_wrd->save();
         if ($name_wrd->id > 0) {
             //zu_info('Word with the formula name "'.$this->name.'" has been missing for id '.$this->id.'.','formula->calc');
@@ -2033,7 +2034,7 @@ class formula extends user_sandbox_description
             if ($trm->obj == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
-                if ($trm->obj->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+                if ($trm->obj->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                     //$result = $trm;
                     $result = true;
                 }

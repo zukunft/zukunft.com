@@ -63,6 +63,8 @@
 // $wrd_add is only optional to display the last added word at the end
 // TODO: take user unlink of words into account
 // save data to the database only if "save" is pressed add and remove the word links "on the fly", which means that after the first call the edit view is more or less the same as the add view
+use cfg\phrase_type;
+
 function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $back_link, $user_id) {
   log_debug("zuv_dsp_edit_or_add (".$val_id.",t".implode(",",$wrd_ids).",type".implode(",",$type_ids).",db".implode(",",$db_ids)."b".$back_link.",u".$user_id.")");
 
@@ -148,7 +150,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
         } else {
           // if no word group is found, use the word type time if the word is a time word
           if (zut_is_time($wrd_ids[$pos])) {
-            $wrd_lst = zut_type_lst(cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME));
+            $wrd_lst = zut_type_lst(cl(db_cl::WORD_TYPE, phrase_type::TIME));
           }
         }
 
@@ -308,7 +310,7 @@ function zuv_dsp ($num_value, $format_word_id) {
   log_debug('zuv_dsp ('.$num_value.','.$format_word_id.')');
   $result = $num_value;
   if (is_numeric($num_value)) {
-    if ($format_word_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT)) {
+    if ($format_word_id == cl(db_cl::WORD_TYPE, phrase_type::PERCENT)) {
       $result = round($num_value*100,2)."%";
     }
   }

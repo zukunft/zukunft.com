@@ -50,6 +50,8 @@
 */
 
 use api\value_api;
+use cfg\phrase_type;
+use html\value_dsp;
 
 class value extends user_sandbox_display
 {
@@ -140,6 +142,15 @@ class value extends user_sandbox_display
         return parent::fill_min_obj($api_obj);
     }
 
+    /**
+     * just to shorten the code
+     * @return value_dsp the value frontend object
+     */
+    function dsp_obj(): value_dsp
+    {
+        return $this->api_obj()->dsp_obj();
+    }
+
     /*
      * construct and map
      */
@@ -187,7 +198,7 @@ class value extends user_sandbox_display
     /**
      * @return value_dsp_old the value object with the display interface functions
      */
-    function dsp_obj(): object
+    function dsp_obj_old(): object
     {
         $dsp_obj = new value_dsp_old($this->usr);
 
@@ -847,8 +858,8 @@ class value extends user_sandbox_display
                                             $r_wrd = $wrd_lst->lst[0];
 
                                             // test if it is a valid scale formula
-                                            if ($fv_wrd->is_type(word_type_list::DBL_SCALING_HIDDEN)
-                                                and $r_wrd->is_type(word_type_list::DBL_SCALING)) {
+                                            if ($fv_wrd->is_type(phrase_type::SCALING_HIDDEN)
+                                                and $r_wrd->is_type(phrase_type::SCALING)) {
                                                 $wrd_symbol = expression::MAKER_WORD_START . $r_wrd->id . expression::MAKER_WORD_END;
                                                 log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);

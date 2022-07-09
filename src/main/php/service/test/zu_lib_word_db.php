@@ -467,7 +467,7 @@ function zut_db_add ($wrd_name, $wrd_to, $type_id, $add_id, $link_id, $user_id) 
       if (substr($id_txt, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
         // maybe ask for confirmation
         // change the link type to "formula link"
-        $type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+        $type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
         log_debug('word_add -> changed type to ('.$type_id.')');
         $id_txt = ""; // reset the id_txt, because this case would be fine
       }  

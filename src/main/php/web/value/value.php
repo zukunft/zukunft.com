@@ -2,8 +2,8 @@
 
 /*
 
-    web\value_dsp.php - the display extension of the api value object
-    -----------------
+    web\value.php - the display extension of the api value object
+    -------------
 
     to creat the HTML code to display a formula
 
@@ -36,6 +36,7 @@ namespace html;
 
 use api\phrase_list_api;
 use api\value_api;
+use html_base;
 
 class value_dsp extends value_api
 {
@@ -46,6 +47,83 @@ class value_dsp extends value_api
     function name_linked(phrase_list_api $phr_lst_exclude): string
     {
         return $this->grp_dsp()->name_linked($phr_lst_exclude);
+    }
+
+    /**
+     * @return string the formatted value with a link to change this value
+     */
+    function ref_edit(string $back): string
+    {
+        $html = new html_base();
+        return $html->ref($html->url(api::VALUE_EDIT, $this->id, $back), $this->val_formatted());
+    }
+
+    /**
+     * depending on the word list format the numeric value
+     * format the value for on screen display
+     * similar to the corresponding function in the "formula_value" class
+     * @returns string the html text with the formatted value
+     */
+    function val_formatted(): string
+    {
+        $result = '';
+
+        // TODO check that the phrases are set
+
+        if (!$this->is_null()) {
+            if ($this->is_percent()) {
+                $result = round($this->val() * 100, $this->usr->percent_decimals) . "%";
+            } else {
+                if ($this->val() >= 1000 or $this->val() <= -1000) {
+                    $result .= number_format($this->val(), 0, $this->usr->dec_point, $this->usr->thousand_sep);
+                } else {
+                    $result = round($this->val(), 2);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if one of the phrases that classify this value is of type percent
+     */
+    function is_percent(): bool
+    {
+        if ($this->grp()->has_percent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the value is not available
+     */
+    function is_null(): bool
+    {
+        if ($this->val() == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
+     * deprecated function names
+     */
+
+    function display_linked(string $back): string
+    {
+        return $this->ref_edit($back);
+    }
+
+    function display(string $back): string
+    {
+        return $this->val_formatted();
     }
 
 }

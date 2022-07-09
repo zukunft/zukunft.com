@@ -56,6 +56,25 @@ class phrase_list_api extends list_api
     }
 
     /*
+     * info
+     */
+
+    /**
+     * @return bool true if one of the phrases is of type percent
+     */
+    function has_percent(): bool
+    {
+        $result = false;
+        foreach ($this->lst as $phr) {
+            if ($phr->is_percent()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * casting objects
      */
 

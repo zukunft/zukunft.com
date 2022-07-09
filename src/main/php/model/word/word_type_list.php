@@ -31,42 +31,27 @@
 
 global $word_types;
 
+use cfg\phrase_type;
+
 class word_type_list extends user_type_list
 {
-    // list of the word types that have a coded functionality
-    // TODO add the missing functionality and unit tests
-    const DBL_NORMAL = "default";
-    const DBL_MATH_CONST = "constant"; // TODO add usage sample
-    const DBL_TIME = "time";
-    const DBL_TIME_JUMP = "time_jump";
-    const DBL_LATEST = "latest"; // TODO add usage sample
-    const DBL_PERCENT = "percent";
-    const DBL_MEASURE = "measure";
-    const DBL_SCALING = "scaling";
-    const DBL_SCALING_HIDDEN = "scaling_hidden";
-    const DBL_SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
-    const DBL_SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
-    const DBL_FORMULA_LINK = "formula_link";
-    const DBL_CALC = "calc"; // TODO add usage sample
-    const DBL_LAYER = "view"; // TODO add usage sample
-    const DBL_OTHER = "type_other";
 
     const TYPES = array(
-        self::DBL_NORMAL,
-        self::DBL_MATH_CONST,
-        self::DBL_TIME,
-        self::DBL_TIME_JUMP,
-        self::DBL_LATEST,
-        self::DBL_PERCENT,
-        self::DBL_MEASURE,
-        self::DBL_SCALING,
-        self::DBL_SCALING_HIDDEN,
-        self::DBL_SCALING_PCT,
-        self::DBL_SCALED_MEASURE,
-        self::DBL_FORMULA_LINK,
-        self::DBL_CALC,
-        self::DBL_LAYER,
-        self::DBL_OTHER
+        phrase_type::NORMAL,
+        phrase_type::MATH_CONST,
+        phrase_type::TIME,
+        phrase_type::TIME_JUMP,
+        phrase_type::LATEST,
+        phrase_type::PERCENT,
+        phrase_type::MEASURE,
+        phrase_type::SCALING,
+        phrase_type::SCALING_HIDDEN,
+        phrase_type::SCALING_PCT,
+        phrase_type::SCALED_MEASURE,
+        phrase_type::FORMULA_LINK,
+        phrase_type::CALC,
+        phrase_type::LAYER,
+        phrase_type::OTHER
     );
 
     /**
@@ -102,7 +87,7 @@ class word_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(word_type_list::DBL_NORMAL);
+        return parent::id(phrase_type::NORMAL);
     }
 
 }

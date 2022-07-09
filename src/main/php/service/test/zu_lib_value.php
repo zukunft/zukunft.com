@@ -91,6 +91,8 @@
 // ??? never used ????
 // selects from a val_lst_wrd the best matching value
 // best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
+use cfg\phrase_type;
+
 function zuv_lst_get($val_lst_wrd, $word_ids)
 {
     log_debug("zuv_lst_get (" . zu_lst_dsp($val_lst_wrd) . ",t" . implode(",", $word_ids) . ")");
@@ -209,8 +211,8 @@ function zuv_scale($user_value, $value_words, $user_id)
                     $r_part_wrd_id = zuf_2num_get_word($r_part);
 
                     // test if it is a valid scale formula
-                    if (zut_is_type($l_part_wrd_id, word_type_list::DBL_SCALING_HIDDEN)
-                        and zut_is_type($r_part_wrd_id, word_type_list::DBL_SCALING)) {
+                    if (zut_is_type($l_part_wrd_id, phrase_type::SCALING_HIDDEN)
+                        and zut_is_type($r_part_wrd_id, phrase_type::SCALING)) {
                         $wrd_symbol = expression::MAKER_WORD_START . $r_part_wrd_id . expression::MAKER_WORD_END;
                         log_debug('zuv_scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $user_value . ')');
                         $r_part = str_replace($wrd_symbol, $user_value, $r_part);

@@ -678,8 +678,10 @@ class value_list
     filter and select functions
     */
 
-    // return a value list object that contains only values that match the time word list
-    function filter_by_time($time_lst)
+    /**
+     * @returns value_list that contains only values that match the time word list
+     */
+    function filter_by_time($time_lst): value_list
     {
         log_debug('value_list->filter_by_time');
         $val_lst = array();
@@ -832,9 +834,8 @@ class value_list
 
 
     /*
-      convert functions
-      -----------------
-    */
+     * convert functions
+     */
 
     /**
      * return a list of phrase groups for all values of this list
@@ -1015,6 +1016,8 @@ class value_list
         log_debug('value_list->html (' . dsp_count($this->lst) . ')');
         $result = '';
 
+        $html = new html_base();
+
         // get common words
         $common_phr_ids = array();
         foreach ($this->lst as $val) {
@@ -1099,7 +1102,8 @@ class value_list
                 $result .= '  <tr>';
                 $result .= '    <td>';
                 log_debug('value_list->html -> linked words ' . $val->id);
-                $result .= '      ' . $dsp_phr_lst->name_linked() . ' <a href="/http/value_edit.php?id=' . $val->id . '&back=' . $this->phr->id . '">' . $val->dsp_obj()->val_formatted() . '</a>';
+                $ref_edit = $val->dsp_obj()->ref_edit();
+                $result .= '      ' . $dsp_phr_lst->name_linked() . $ref_edit;
                 log_debug('value_list->html -> linked words ' . $val->id . ' done');
                 // to review
                 // list the related formula values

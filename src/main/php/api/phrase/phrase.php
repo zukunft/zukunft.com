@@ -31,6 +31,7 @@
 
 namespace api;
 
+use cfg\phrase_type;
 use html\phrase_dsp;
 use html\word_dsp;
 
@@ -40,6 +41,9 @@ class phrase_api extends user_sandbox_named_api
     // the mouse over tooltip for the word
     private ?string $description = null;
 
+    // the type of this phrase
+    private phrase_type $type;
+
     /*
      * construct and map
      */
@@ -47,6 +51,8 @@ class phrase_api extends user_sandbox_named_api
     function __construct(int $id = 0, string $name = '')
     {
         parent::__construct($id, $name);
+        // TODO set type
+        // $this->type = phrase_type::NORMAL;
     }
 
     /*

@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/ref.php - database unit testing of reference types
-  --------------------
+    api_const.php - constants used for the backend to frontend api of zukunft.com
+    -------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,27 +30,19 @@
 
 */
 
-use cfg\phrase_type;
+namespace html;
 
-function run_ref_unit_db_tests(testing $t)
+class api
 {
 
-    global $db_con;
+    // url path to the api functions
+    const PATH = '/http/';
 
-    $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
+    // url extension of the api functions
+    const EXT = '.php';
 
-    $t->subheader('Reference types tests');
-
-    // load the ref types
-    $lst = new ref_type_list();
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_ref->load_types', $target, $result);
-
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::WORD_TYPE, phrase_type::NORMAL);
-    $target = 1;
-    $t->dsp('unit_db_ref->check ' . phrase_type::NORMAL, $result, $target);
+    // url of all possible the api calls
+    const LOGIN_RESET = 'login_reset';
+    const VALUE_EDIT = 'value_edit';
 
 }
-

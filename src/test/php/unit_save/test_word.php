@@ -30,6 +30,8 @@
 
 */
 
+use cfg\phrase_type;
+
 function create_test_words(testing $t)
 {
 
@@ -39,21 +41,21 @@ function create_test_words(testing $t)
         $t->test_word($word_name);
     }
     foreach (word::TEST_WORDS_MEASURE as $word_name) {
-        $t->test_word($word_name, word_type_list::DBL_MEASURE);
+        $t->test_word($word_name, phrase_type::MEASURE);
     }
     foreach (word::TEST_WORDS_SCALING as $word_name) {
-        $t->test_word($word_name, word_type_list::DBL_SCALING);
+        $t->test_word($word_name, phrase_type::SCALING);
     }
     foreach (word::TEST_WORDS_SCALING_HIDDEN as $word_name) {
-        $t->test_word($word_name, word_type_list::DBL_SCALING_HIDDEN);
+        $t->test_word($word_name, phrase_type::SCALING_HIDDEN);
     }
     foreach (word::TEST_WORDS_PERCENT as $word_name) {
-        $t->test_word($word_name, word_type_list::DBL_PERCENT);
+        $t->test_word($word_name, phrase_type::PERCENT);
     }
     $prev_word_name = null;
     foreach (word::TEST_WORDS_TIME as $word_name) {
         $t->test_word_link($word_name, verb::IS_A, word::TN_YEAR);
-        $t->test_word($word_name, word_type_list::DBL_TIME);
+        $t->test_word($word_name, phrase_type::TIME);
         if ($prev_word_name != null) {
             $t->test_word_link($word_name, verb::DBL_FOLLOW, $prev_word_name);
         }
@@ -80,10 +82,10 @@ function run_word_tests(testing $t)
     $t->dsp('word->load of ' . $wrd_read->id . ' by id ' . $wrd_by_name->id, $target, $result);
 
     // word type
-    $wrd_time = $t->test_word(word::TN_2021, word_type_list::DBL_TIME);
+    $wrd_time = $t->test_word(word::TN_2021, phrase_type::TIME);
     $target = True;
-    $result = $wrd_time->is_type(word_type_list::DBL_TIME);
-    $t->dsp('word->is_type for ' . word::TN_2021 . ' and "' . word_type_list::DBL_TIME . '"', $target, $result);
+    $result = $wrd_time->is_type(phrase_type::TIME);
+    $t->dsp('word->is_type for ' . word::TN_2021 . ' and "' . phrase_type::TIME . '"', $target, $result);
 
     // is time
     $target = True;
@@ -96,7 +98,7 @@ function run_word_tests(testing $t)
     $t->dsp('word->is_measure for ' . word::TN_2021, $target, $result);
 
     // is measure
-    $wrd_measure = $t->test_word(word::TN_CHF, word_type_list::DBL_MEASURE);
+    $wrd_measure = $t->test_word(word::TN_CHF, phrase_type::MEASURE);
     $target = True;
     $result = $wrd_measure->is_measure();
     $t->dsp('word->is_measure for ' . word::TN_CHF, $target, $result);
@@ -107,7 +109,7 @@ function run_word_tests(testing $t)
     $t->dsp('word->is_scaling for ' . word::TN_CHF, $target, $result);
 
     // is scaling
-    $wrd_scaling = $t->test_word(word::TN_MIO, word_type_list::DBL_SCALING);
+    $wrd_scaling = $t->test_word(word::TN_MIO, phrase_type::SCALING);
     $target = True;
     $result = $wrd_scaling->is_scaling();
     $t->dsp('word->is_scaling for ' . word::TN_MIO, $target, $result);
@@ -118,13 +120,13 @@ function run_word_tests(testing $t)
     $t->dsp('word->is_percent for ' . word::TN_MIO, $target, $result);
 
     // is percent
-    $wrd_pct = $t->test_word(word::TN_PCT, word_type_list::DBL_PERCENT);
+    $wrd_pct = $t->test_word(word::TN_PCT, phrase_type::PERCENT);
     $target = True;
     $result = $wrd_pct->is_percent();
     $t->dsp('word->is_percent for ' . word::TN_PCT, $target, $result);
 
     // next word
-    $wrd_time_next = $t->test_word(word::TN_2022, word_type_list::DBL_TIME);
+    $wrd_time_next = $t->test_word(word::TN_2022, phrase_type::TIME);
     $t->test_word_link(word::TN_2022, verb::DBL_FOLLOW, word::TN_2021);
     $target = $wrd_time_next->name;
     $wrd_next = $wrd_time->next();
@@ -347,7 +349,7 @@ function run_word_tests(testing $t)
     // check if the word parameters can be added
     $wrd_renamed->plural = word::TN_RENAMED . 's';
     $wrd_renamed->description = word::TN_RENAMED . ' description';
-    $wrd_renamed->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
+    $wrd_renamed->type_id = cl(db_cl::WORD_TYPE, phrase_type::OTHER);
     $result = $wrd_renamed->save();
     $target = '';
     $t->dsp('word->save all word fields beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -361,7 +363,7 @@ function run_word_tests(testing $t)
     $target = word::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word::TN_RENAMED . '"', $target, $result);
     $result = $wrd_reloaded->type_id;
-    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
+    $target = cl(db_cl::WORD_TYPE, phrase_type::OTHER);
     $t->dsp('word->load type_id for "' . word::TN_RENAMED . '"', $target, $result);
 
     // check if the word parameter adding have been logged
@@ -389,7 +391,7 @@ function run_word_tests(testing $t)
     $wrd_usr2->load();
     $wrd_usr2->plural = word::TN_RENAMED . 's2';
     $wrd_usr2->description = word::TN_RENAMED . ' description2';
-    $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+    $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
     $result = $wrd_usr2->save();
     $target = '';
     $t->dsp('word->save all word fields for user 2 beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -405,7 +407,7 @@ function run_word_tests(testing $t)
     $target = word::TN_RENAMED . ' description2';
     $t->dsp('word->load description for "' . word::TN_RENAMED . '"', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
-    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+    $target = cl(db_cl::WORD_TYPE, phrase_type::TIME);
     $t->dsp('word->load type_id for "' . word::TN_RENAMED . '"', $target, $result);
 
     // check the word for the original user remains unchanged
@@ -417,7 +419,7 @@ function run_word_tests(testing $t)
     $target = word::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word::TN_RENAMED . '" unchanged for user 1', $target, $result);
     $result = $wrd_reloaded->type_id;
-    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
+    $target = cl(db_cl::WORD_TYPE, phrase_type::OTHER);
     $t->dsp('word->load type_id for "' . word::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
     // check if undo all specific changes removes the user word
@@ -426,7 +428,7 @@ function run_word_tests(testing $t)
     $wrd_usr2->load();
     $wrd_usr2->plural = word::TN_RENAMED . 's';
     $wrd_usr2->description = word::TN_RENAMED . ' description';
-    $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
+    $wrd_usr2->type_id = cl(db_cl::WORD_TYPE, phrase_type::OTHER);
     $result = $wrd_usr2->save();
     $target = '';
     $t->dsp('word->save undo the user word fields beside the name for "' . word::TN_RENAMED . '"', $target, $result, TIMEOUT_LIMIT_DB_MULTI);
@@ -442,7 +444,7 @@ function run_word_tests(testing $t)
     $target = word::TN_RENAMED . ' description';
     $t->dsp('word->load description for "' . word::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
     $result = $wrd_usr2_reloaded->type_id;
-    $target = cl(db_cl::WORD_TYPE, word_type_list::DBL_OTHER);
+    $target = cl(db_cl::WORD_TYPE, phrase_type::OTHER);
     $t->dsp('word->load type_id for "' . word::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
     // display

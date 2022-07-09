@@ -26,6 +26,8 @@
 
 */
 
+use cfg\phrase_type;
+
 class phrase_list_unit_tests
 {
     const TEST_NAME = 'phrase_list->';
@@ -116,7 +118,7 @@ class phrase_list_unit_tests
         $wrd = new word($usr);
         $wrd->id = 2;
         $wrd->name = word::TN_RENAMED;
-        $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+        $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
         return $wrd->phrase();
     }
 

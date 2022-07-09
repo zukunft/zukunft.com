@@ -173,7 +173,7 @@ function run_value_test(testing $t)
 
     // test the formatting of a value (percent)
     $pct_val = $t->load_value(array(word::TN_CANTON, word::TN_ZH, word::TN_CH, word::TN_INHABITANT, word::TN_PCT, word::TN_2020));
-    $result = $pct_val->dsp_obj()->display(0);
+    $result = $pct_val->dsp_obj_old()->display(0);
     $target = number_format(round(value::TEST_PCT * 100, 2), 2) . '%';
     $t->dsp(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
@@ -201,7 +201,7 @@ function run_value_test(testing $t)
     $mio_val->load();
     $fig = $mio_val->figure();
     $result = $fig->display_linked('1');
-    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
+    $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1" title="1.55">1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
         $target = $result;
@@ -220,8 +220,8 @@ function run_value_test(testing $t)
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >1.55</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $target = $result;
         log_err('Unexpected diff ' . $diff);
+        $target = $result;
     }
     $t->dsp(', value->display_linked', $target, $result);
 
@@ -232,8 +232,8 @@ function run_value_test(testing $t)
     $target = '<a href="/http/value_edit.php?id=' . $mio_val->id . '&back=1"  >123\'456</a>';
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $target = $result;
         log_err('Unexpected diff ' . $diff);
+        $target = $result;
     }
     $t->dsp(', value->display_linked', $target, $result);
 

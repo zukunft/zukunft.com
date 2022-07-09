@@ -38,6 +38,8 @@
 // TODO check if handling of negative ids is correct
 // TODO split into a link and a named user sandbox object to always use the smallest possible object
 
+use cfg\phrase_type;
+
 class user_sandbox
 {
     /*
@@ -1471,13 +1473,13 @@ class user_sandbox
                     if ($this->type_id == $obj_to_check->type_id) {
                         $result = true;
                     } else {
-                        if ($this->type_id == DB_TYPE_FORMULA and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+                        if ($this->type_id == DB_TYPE_FORMULA and $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($obj_to_check->type_id == DB_TYPE_FORMULA and $this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+                        } elseif ($obj_to_check->type_id == DB_TYPE_FORMULA and $this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // like above, but the other way round
                             $result = true;
-                        } elseif ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK) or $obj_to_check->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+                        } elseif ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK) or $obj_to_check->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                             // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             $result = false;
                         } else {
@@ -1778,7 +1780,7 @@ class user_sandbox
                 if ($result->is_ok()) {
                     $wrd = new word($this->usr);
                     $wrd->name = $this->name;
-                    $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+                    $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
                     $msg = $wrd->del();
                     $result->add($msg);
                 }

@@ -29,6 +29,7 @@
 
 */
 
+use cfg\phrase_type;
 use html\word_dsp;
 
 class word_list_dsp extends word_list
@@ -225,7 +226,7 @@ class word_list_dsp extends word_list
         $sql = " ( SELECT t.word_id AS id, t.word_name AS name, 'word' AS type
                  FROM words t 
                 WHERE t.word_name like '" . $word_pattern . "%' 
-                  AND t.word_type_id <> " . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK) . ")
+                  AND t.word_type_id <> " . cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK) . ")
        UNION ( SELECT f.formula_id AS id, f.formula_name AS name, 'formula' AS type
                  FROM formulas f 
                 WHERE f.formula_name like '" . $word_pattern . "%' )

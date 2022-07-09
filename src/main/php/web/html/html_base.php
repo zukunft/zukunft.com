@@ -32,6 +32,8 @@
 
 */
 
+use html\api;
+
 class html_base
 {
 
@@ -196,16 +198,20 @@ class html_base
      * build an url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
-     * @param string $par_name the parameter objects e.g. a phrase
      * @param int $id the id of the parameter e.g. 1 for math const
      * @param string $back the back trace calls to return to the original url and for undo
+     * @param string $par_name the parameter objects e.g. a phrase
      * @return string the created url
      */
-    function url(string $obj_name, string $par_name = '', int $id = 0, string $back = ''): string
+    function url(string $obj_name, int $id = 0, string $back = '', string $par_name = ''): string
     {
-        $result = '/http/' . $obj_name . '.php';
-        if ($par_name != '') {
-            $result .= '?' . $par_name . '=' . $id;
+        $result = api::PATH . $obj_name . api::EXT;
+        if ($id <> 0) {
+            if ($par_name != '') {
+                $result .= '?' . $par_name . '=' . $id;
+            } else {
+                $result .= '?id=' . $id;
+            }
         }
         if ($back != '') {
             $result .= '&back=' . $back;

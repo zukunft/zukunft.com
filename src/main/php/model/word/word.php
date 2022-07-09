@@ -41,6 +41,7 @@
 */
 
 use api\word_api;
+use cfg\phrase_type;
 use html\word_dsp;
 
 class word extends user_sandbox_description
@@ -992,7 +993,7 @@ class word extends user_sandbox_description
     function dsp_formula(string $back = ''): string
     {
         $result = '';
-        if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+        if ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
             $result .= dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = $this->formula();
@@ -1007,7 +1008,7 @@ class word extends user_sandbox_description
     function dsp_type_selector(string $back = ''): string
     {
         $result = '';
-        if ($this->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+        if ($this->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
             $result .= ' type: ' . $this->type_name();
         } else {
             $result .= $this->type_selector('word_edit', "col-sm-4");
@@ -1149,7 +1150,7 @@ class word extends user_sandbox_description
      */
     function is_time(): bool
     {
-        return $this->is_type(word_type_list::DBL_TIME);
+        return $this->is_type(phrase_type::TIME);
     }
 
     /**
@@ -1157,7 +1158,7 @@ class word extends user_sandbox_description
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(word_type_list::DBL_TIME_JUMP);
+        return $this->is_type(phrase_type::TIME_JUMP);
     }
 
     /**
@@ -1167,7 +1168,7 @@ class word extends user_sandbox_description
      */
     function is_measure(): bool
     {
-        return $this->is_type(word_type_list::DBL_MEASURE);
+        return $this->is_type(phrase_type::MEASURE);
     }
 
     /**
@@ -1176,8 +1177,8 @@ class word extends user_sandbox_description
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(word_type_list::DBL_SCALING)
-            or $this->is_type(word_type_list::DBL_SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type::SCALING)
+            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -1188,7 +1189,7 @@ class word extends user_sandbox_description
      */
     function is_percent(): bool
     {
-        return $this->is_type(word_type_list::DBL_PERCENT);
+        return $this->is_type(phrase_type::PERCENT);
     }
 
     /**

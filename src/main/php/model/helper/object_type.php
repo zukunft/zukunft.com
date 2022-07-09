@@ -2,8 +2,10 @@
 
 /*
 
-  test/unit_db/ref.php - database unit testing of reference types
-  --------------------
+    object_type.php - a base type object that can be used to link program code to single objects
+    ---------------
+
+    e.g. if a value is classified by a phrase of type percent the value by default is formatted in percent
 
 
     This file is part of zukunft.com - calc with words
@@ -30,27 +32,13 @@
 
 */
 
-use cfg\phrase_type;
+namespace cfg;
 
-function run_ref_unit_db_tests(testing $t)
+class object_type
 {
 
-    global $db_con;
-
-    $t->header('Unit database tests of the ref class (src/main/php/model/ref/ref.php)');
-
-    $t->subheader('Reference types tests');
-
-    // load the ref types
-    $lst = new ref_type_list();
-    $result = $lst->load($db_con);
-    $target = true;
-    $t->dsp('unit_db_ref->load_types', $target, $result);
-
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::WORD_TYPE, phrase_type::NORMAL);
-    $target = 1;
-    $t->dsp('unit_db_ref->check ' . phrase_type::NORMAL, $result, $target);
+    public int $id;
+    public string $name;
+    public int $code_id;
 
 }
-

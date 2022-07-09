@@ -56,6 +56,8 @@ if ($usr->id > 0) {
 
     if (isset($_POST['submit'])) {
 
+        $html = new html_base();
+
         // Let's search the database for the username and password
         // don't use the sf shortcut here!
         $usr = mysqli_real_escape_string($_POST['username']);
@@ -81,7 +83,7 @@ if ($usr->id > 0) {
             //header("Location: ../view.php?sid=".SID."");
             exit;
         } else {
-            $msg .= dsp_err('Login failed. <a href="/http/login_reset.php" title="Send a new password via email.">Forgot password?</a>');
+            $msg .= dsp_err('Login failed. ' .  $html->ref($html->url(api::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
         }
     }
 }

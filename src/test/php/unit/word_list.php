@@ -30,6 +30,8 @@
 
 */
 
+use cfg\phrase_type;
+
 class word_list_unit_tests
 {
     function run(testing $t)
@@ -116,23 +118,23 @@ class word_list_unit_tests
         $wrd_time = new word($usr);
         $wrd_time->id = 4;
         $wrd_time->name = 'time_word';
-        $wrd_time->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+        $wrd_time->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->id = 5;
         $wrd_time2->name = 'time_word2';
-        $wrd_time2->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+        $wrd_time2->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->id = 6;
         $wrd_scale->name = 'scale_word';
-        $wrd_scale->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
+        $wrd_scale->type_id = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->id = 7;
         $wrd_percent->name = 'percent_word';
-        $wrd_percent->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT);
+        $wrd_percent->type_id = cl(db_cl::WORD_TYPE, phrase_type::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->id = 8;
         $wrd_measure->name = 'measure_word';
-        $wrd_measure->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_MEASURE);
+        $wrd_measure->type_id = cl(db_cl::WORD_TYPE, phrase_type::MEASURE);
 
         // merge two lists
         $wrd_lst = new word_list($usr);

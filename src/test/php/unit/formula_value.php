@@ -30,6 +30,8 @@
 
 */
 
+use cfg\phrase_type;
+
 class formula_value_unit_tests
 {
     function run(testing $t)
@@ -99,7 +101,7 @@ class formula_value_unit_tests
 
         // ... for percent values
         $fv = new formula_value($usr);
-        $wrd_pct = $t->create_word(word::TN_PCT, word_type_list::DBL_PERCENT);
+        $wrd_pct = $t->create_word(word::TN_PCT, phrase_type::PERCENT);
         $phr_lst->add($wrd_pct->phrase());
         $fv->phr_lst = $phr_lst;
         $fv->value = 0.01234;

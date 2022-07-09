@@ -9,6 +9,8 @@
 */
 
 // standard start for all php code that can be called
+use cfg\phrase_type;
+
 if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
 include_once '../src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
 
@@ -56,7 +58,7 @@ if ($usr->id > 0) {
         sql_code_link(view::EDIT, "view Edit", $db_con);
         sql_code_link(view::IMPORT, "Import", $db_con);
 
-        sql_code_link(word_type_list::DBL_TIME, "Time Word", $db_con);
+        sql_code_link(phrase_type::TIME, "Time Word", $db_con);
         //sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
 
         // create test records

@@ -43,6 +43,8 @@
 
 */
 
+use cfg\phrase_type;
+
 class term
 {
 
@@ -86,8 +88,8 @@ class term
         $wrd = new word($this->usr);
         $wrd->name = $this->name;
         if ($wrd->load()) {
-            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK));
-            if ($wrd->type_id == cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK)) {
+            log_debug('term->load word type is "' . $wrd->type_id . '" and the formula type is ' . cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK));
+            if ($wrd->type_id == cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula();
             } else {
                 $this->id = $wrd->id;

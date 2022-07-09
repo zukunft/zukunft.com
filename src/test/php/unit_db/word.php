@@ -30,6 +30,8 @@
 
 */
 
+use cfg\phrase_type;
+
 function run_word_unit_db_tests(testing $t)
 {
 
@@ -51,9 +53,9 @@ function run_word_unit_db_tests(testing $t)
     $t->dsp('unit_db_word->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::WORD_TYPE, word_type_list::DBL_NORMAL);
+    $result = cl(db_cl::WORD_TYPE, phrase_type::NORMAL);
     $target = 1;
-    $t->dsp('unit_db_word->check ' . word_type_list::DBL_NORMAL, $result, $target);
+    $t->dsp('unit_db_word->check ' . phrase_type::NORMAL, $result, $target);
 
     $t->subheader('Frontend API tests');
 
@@ -105,7 +107,7 @@ function run_word_unit_db_tests(testing $t)
 
     // load a word list by type
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_type(cl(db_cl::WORD_TYPE, word_type_list::DBL_PERCENT));
+    $wrd_lst->load_by_type(cl(db_cl::WORD_TYPE, phrase_type::PERCENT));
     $t->assert('load_by_type', $wrd_lst->name(), '"' . word::TN_READ_PERCENT . '"');
 
     // add a word to a list by the word id

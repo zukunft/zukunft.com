@@ -30,6 +30,8 @@
 
 */
 
+use cfg\phrase_type;
+
 function run_user_sandbox_test(testing $t)
 {
 
@@ -42,7 +44,7 @@ function run_user_sandbox_test(testing $t)
 
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($usr1);
-    $wrd1->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_FORMULA_LINK);
+    $wrd1->type_id = cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK);
     $wrd1->name = TW_MIO;
     $wrd2 = new word($usr1);
     $wrd2->type_id = $word_types->default_id();

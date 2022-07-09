@@ -50,6 +50,7 @@
 */
 
 use api\phrase_api;
+use cfg\phrase_type;
 use html\phrase_dsp;
 use html\word_dsp;
 
@@ -460,7 +461,7 @@ class phrase
                 $result = $wrd->load();
                 if ($wrd->id == 0) {
                     $wrd->name = $json_value;
-                    $wrd->type_id = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+                    $wrd->type_id = cl(db_cl::WORD_TYPE, phrase_type::TIME);
                     if ($wrd->save() == '') {
                         $result = true;
                     }
@@ -887,7 +888,7 @@ class phrase
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $word_types->id(word_type_list::DBL_PERCENT)) {
+            if ($this->obj->type_id == $word_types->id(phrase_type::PERCENT)) {
                 $result = true;
             }
         } else {

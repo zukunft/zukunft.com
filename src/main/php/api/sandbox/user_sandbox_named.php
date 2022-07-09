@@ -32,6 +32,8 @@
 
 namespace api;
 
+use cfg\object_type;
+
 class user_sandbox_named_api extends user_sandbox_api
 {
 
@@ -41,7 +43,7 @@ class user_sandbox_named_api extends user_sandbox_api
 
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
-    protected string $type;
+    //protected object_type $type;
 
 
     /*

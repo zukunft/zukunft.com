@@ -83,6 +83,8 @@
 */
 
 // default settings that each user can adjust for himself (with the option to reset to default or reset all th default or show the default overwrites
+use cfg\phrase_type;
+
 define("TIME_MIN_COLS", 3); // minimun number of same time type word to display in a table e.g. if at leat 3 years exist use a table to dislay
 define("TIME_MAX_COLS", 10); // maximun number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
 define("TIME_FUT_PCT", 20); // the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
@@ -283,7 +285,7 @@ function zut_is_type($word_id, $type)
 // return true if the word has the type "time"
 function zut_is_time($word_id)
 {
-    $result = zut_is_type($word_id, word_type_list::DBL_TIME);
+    $result = zut_is_type($word_id, phrase_type::TIME);
     return $result;
 }
 
@@ -293,7 +295,7 @@ function zut_time_lst($word_lst)
     log_debug('zut_time_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $time_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_TIME);
+    $time_type = cl(db_cl::WORD_TYPE, phrase_type::TIME);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];
@@ -478,8 +480,8 @@ function zut_has_scaling($word_ids)
     // loop over the word ids and add only the time ids to the result array
     foreach ($word_ids as $word_id) {
         if ($result == false) {
-            if (zut_is_type($word_id, word_type_list::DBL_SCALING, $debug - 1)
-                or zut_is_type($word_id, word_type_list::DBL_SCALING_HIDDEN)) {
+            if (zut_is_type($word_id, phrase_type::SCALING, $debug - 1)
+                or zut_is_type($word_id, phrase_type::SCALING_HIDDEN)) {
                 $result = true;
             }
         }
@@ -494,8 +496,8 @@ function zut_scale_lst($word_lst)
     log_debug('zut_scale_lst(' . zu_lst_dsp($word_lst) . ')');
 
     $result = array();
-    $scale_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
-    $scale_type_hidden = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_HIDDEN);
+    $scale_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
+    $scale_type_hidden = cl(db_cl::WORD_TYPE, phrase_type::SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach (array_keys($word_lst) as $word_id) {
         $word_type = $word_lst[$word_id][1];
@@ -513,8 +515,8 @@ function zut_scale_id($wrd_ids, $user_id)
     log_debug('zut_scale_id (' . implode(",", $wrd_ids) . ',u' . $user_id . ')');
 
     $result = -1;
-    $scale_type = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING);
-    $scale_type_hidden = cl(db_cl::WORD_TYPE, word_type_list::DBL_SCALING_HIDDEN);
+    $scale_type = cl(db_cl::WORD_TYPE, phrase_type::SCALING);
+    $scale_type_hidden = cl(db_cl::WORD_TYPE, phrase_type::SCALING_HIDDEN);
     // loop over the word ids and add only the time ids to the result array
     foreach ($wrd_ids as $word_id) {
         $word_type = zut_type($word_id, $user_id);
