@@ -33,7 +33,7 @@
 // this can always be in memory because this will change almost never and if it changes it it still shows the old display name it is fine
 $share_types = array();
 
-class share_type {
+class share_type_old {
 
   // database fields
   public $id          = null; // the database id of the state type

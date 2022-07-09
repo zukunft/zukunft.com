@@ -32,13 +32,10 @@
 
 global $share_types;
 
+use cfg\share_type;
+
 class share_type_list extends user_type_list
 {
-    // list of the ref types that have a coded functionality
-    const DBL_PUBLIC = "public";
-    const DBL_PERSONAL = "personal";
-    const DBL_GROUP = "group";
-    const DBL_PRIVATE = "private";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -58,15 +55,15 @@ class share_type_list extends user_type_list
         $this->lst = array();
         $this->hash = array();
         $type = new user_type();
-        $type->name = share_type_list::DBL_PUBLIC;
-        $type->code_id = share_type_list::DBL_PUBLIC;
+        $type->name = share_type::PUBLIC;
+        $type->code_id = share_type::PUBLIC;
         $this->lst[2] = $type;
-        $this->hash[share_type_list::DBL_PUBLIC] = 2;
+        $this->hash[share_type::PUBLIC] = 2;
         $type = new user_type();
-        $type->name = share_type_list::DBL_PERSONAL;
-        $type->code_id = share_type_list::DBL_PERSONAL;
+        $type->name = share_type::PERSONAL;
+        $type->code_id = share_type::PERSONAL;
         $this->lst[3] = $type;
-        $this->hash[share_type_list::DBL_PERSONAL] = 3;
+        $this->hash[share_type::PERSONAL] = 3;
 
     }
 
@@ -75,7 +72,7 @@ class share_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(share_type_list::DBL_PUBLIC);
+        return parent::id(share_type::PUBLIC);
     }
 
 }

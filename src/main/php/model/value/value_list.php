@@ -30,6 +30,7 @@
 */
 
 use api\value_list_api;
+use cfg\share_type;
 
 class value_list
 {
@@ -542,7 +543,7 @@ class value_list
 
             // add the share type
             log_debug('value->export_obj get share');
-            if ($val0->share_id > 0 and $val0->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
+            if ($val0->share_id > 0 and $val0->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
                 $result->share = $val0->share_type_code_id();
             }
 

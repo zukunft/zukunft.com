@@ -39,6 +39,7 @@
 // TODO split into a link and a named user sandbox object to always use the smallest possible object
 
 use cfg\phrase_type;
+use cfg\share_type;
 
 class user_sandbox
 {
@@ -271,7 +272,7 @@ class user_sandbox
      */
     public function row_mapper_std()
     {
-        $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
+        $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
         $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
     }
 
@@ -475,7 +476,7 @@ class user_sandbox
 
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC);
+            $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
         }
 
         $sql = "SELECT type_name 

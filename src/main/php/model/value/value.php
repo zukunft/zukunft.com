@@ -51,6 +51,7 @@
 
 use api\value_api;
 use cfg\phrase_type;
+use cfg\share_type;
 use html\value_dsp;
 
 class value extends user_sandbox_display
@@ -1055,7 +1056,7 @@ class value extends user_sandbox_display
 
         // add the share type
         log_debug('value->export_obj get share');
-        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

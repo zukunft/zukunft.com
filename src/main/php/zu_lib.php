@@ -279,6 +279,7 @@ include_once $path_php . 'model/sandbox/user_sandbox_description.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_named.php';
 include_once $path_php . 'model/sandbox/user_sandbox_exp_link.php';
+include_once $path_php . 'model/sandbox/share_type.php';
 include_once $path_php . 'model/sandbox/share_type_list.php';
 include_once $path_php . 'model/sandbox/protection_type_list.php';
 include_once $path_php . 'web/user_sandbox_display.php';
@@ -360,6 +361,7 @@ include_once $path_php . 'api/system/error_log_list.php';
 include_once $path_php . 'api/sandbox/user_sandbox.php';
 include_once $path_php . 'api/sandbox/user_sandbox_named.php';
 include_once $path_php . 'api/sandbox/user_sandbox_value.php';
+include_once $path_php . 'api/sandbox/user_config.php';
 include_once $path_php . 'api/sandbox/list.php';
 include_once $path_php . 'api/sandbox/list_value.php';
 // model frontend API classes

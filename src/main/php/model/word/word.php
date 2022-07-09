@@ -42,6 +42,7 @@
 
 use api\word_api;
 use cfg\phrase_type;
+use cfg\share_type;
 use html\word_dsp;
 
 class word extends user_sandbox_description
@@ -692,7 +693,7 @@ class word extends user_sandbox_description
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type_list::DBL_PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 

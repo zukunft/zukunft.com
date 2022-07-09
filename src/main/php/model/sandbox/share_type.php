@@ -2,9 +2,8 @@
 
 /*
 
-  test/unit_db/share.php - database unit testing of the share handling
-  ---------------------
-
+    share_type.php - to define if an object can be shared between the users
+    --------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,26 +29,15 @@
 
 */
 
-use cfg\share_type;
+namespace cfg;
 
-function run_share_unit_db_tests(testing $t): void
+class share_type extends object_type
 {
 
-    global $db_con;
-
-    $t->header('Unit database tests of the share handling');
-
-    $t->subheader('Protection types tests');
-
-    // load the share types
-    $lst = new share_type_list();
-    $result = $lst->load($db_con);
-    $t->dsp('unit_db_share->load_types', true, $result);
-
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
-    $target = 1;
-    $t->dsp('unit_db_share->check ' . share_type::PUBLIC, $result, $target);
+    // list of the ref types that have a coded functionality
+    const PUBLIC = "public";
+    const PERSONAL = "personal";
+    const GROUP = "group";
+    const PRIVATE = "private";
 
 }
-

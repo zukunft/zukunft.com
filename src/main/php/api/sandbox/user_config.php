@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit_db/share.php - database unit testing of the share handling
-  ---------------------
+    api\user_config.php - the minimal user configuration for the frontend API
+    -------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,26 +30,12 @@
 
 */
 
-use cfg\share_type;
+namespace api;
 
-function run_share_unit_db_tests(testing $t): void
+class user_config
 {
 
-    global $db_con;
-
-    $t->header('Unit database tests of the share handling');
-
-    $t->subheader('Protection types tests');
-
-    // load the share types
-    $lst = new share_type_list();
-    $result = $lst->load($db_con);
-    $t->dsp('unit_db_share->load_types', true, $result);
-
-    // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
-    $target = 1;
-    $t->dsp('unit_db_share->check ' . share_type::PUBLIC, $result, $target);
 
 }
+
 
