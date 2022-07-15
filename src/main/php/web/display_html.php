@@ -149,7 +149,7 @@ function dsp_err($err_text): string
     return $result;
 }
 
-// display a list of elements
+// display a list of elements: replaced b html->list
 function dsp_list($item_lst, $item_type): string
 {
     $result = "";

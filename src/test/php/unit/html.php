@@ -79,6 +79,13 @@ class html_unit_tests
         $t->html_test(btn_add('Test', 'http'), 'button_add', $t);
 
 
+        $t->subheader('HTML list tests');
+
+        $lst = new verb_list($usr);
+        $vrb_is = new verb();
+        $lst->add_verb($vrb_is);
+        $t->html_test($lst->dsp_obj()->list(verb::class), 'list_verbs', $t);
+
         $t->subheader('HTML table tests');
 
         // create a test set of phrase

@@ -18,6 +18,7 @@
     TODO add the view result at least as simple text to the JSON export
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO capsule (change from public to private or protected) class vars that have dependencies e.g lst of user_tpe_list
     TODO add a text export format to the display objects and use it for JSON import validation e.g. for the travel list
     TODO add simple value list import example
     TODO add simple value list table with the hashed phrase list as key and the value
@@ -364,6 +365,7 @@ include_once $path_php . 'api/sandbox/user_sandbox_value.php';
 include_once $path_php . 'api/sandbox/user_config.php';
 include_once $path_php . 'api/sandbox/list.php';
 include_once $path_php . 'api/sandbox/list_value.php';
+include_once $path_php . 'api/user/user_type_list.php';
 // model frontend API classes
 include_once $path_php . 'api/word/word.php';
 include_once $path_php . 'api/word/triple.php';
@@ -379,6 +381,7 @@ include_once $path_php . 'api/formula/formula_value_list.php';
 include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
+include_once $path_php . 'web/user/user_type_list.php';
 include_once $path_php . 'web/html/api_const.php';
 include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/button.php';
@@ -1662,7 +1665,7 @@ function dsp_var($var_to_format): string
 }
 
 // port php 8 function to 7.4
-/*
+
 function str_starts_with(string $long_string, string $prefix): bool
 {
     $result = false;
@@ -1671,10 +1674,10 @@ function str_starts_with(string $long_string, string $prefix): bool
     }
     return $result;
 }
-*/
+
 
 // port php 8 function to 7.4
-/*
+
 function str_ends_with(string $long_string, string $postfix): bool
 {
     $result = false;
@@ -1683,10 +1686,10 @@ function str_ends_with(string $long_string, string $postfix): bool
     }
     return $result;
 }
-*/
+
 
 // port php 8 function to 7.4
-/*
+
 function str_contains(string $haystack, string $needle): bool
 {
     $result = true;
@@ -1696,7 +1699,7 @@ function str_contains(string $haystack, string $needle): bool
     }
     return $result;
 }
-*/
+
 
 /**
  * recursive count of the number of elements in an array but limited to a given level

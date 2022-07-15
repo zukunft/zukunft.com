@@ -30,6 +30,9 @@
   
 */
 
+use api\user_type_list_api;
+use html\user_type_list_dsp;
+
 class user_type_list
 {
 
@@ -39,6 +42,55 @@ class user_type_list
 
     public array $lst = [];  // a list of type objects
     public array $hash = []; // hash list with the code id for fast selection
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return user_type_list_api the object type list frontend api object
+     */
+    function api_obj(): object
+    {
+        $api_obj = new user_type_list_api($this->lst);
+        return $api_obj;
+    }
+
+    /**
+     * @return user_type_list_dsp the word frontend api object
+     */
+    function dsp_obj(): object
+    {
+        $dsp_obj = new user_type_list_dsp($this->lst);
+        return $dsp_obj;
+    }
+
+    /*
+     * interface get and set functions
+     */
+
+    function add(user_type $item): void
+    {
+        $this->lst[] = $item;
+    }
+
+    /**
+     * like add, but cast a verb
+     * @param verb $vrb
+     * @return bool
+     */
+    function add_verb(verb $vrb): void
+    {
+        $type_obj = new user_type();
+        $type_obj->id = $vrb->id;
+        $type_obj->name = $vrb->name;
+        $type_obj->code_id = $vrb->code_id;
+        $this->add($type_obj);
+    }
+
+    /*
+     * database (dao) functions
+     */
 
     function load_sql(sql_db $db_con, string $db_type): sql_par
     {

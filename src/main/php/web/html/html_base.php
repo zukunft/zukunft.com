@@ -458,5 +458,31 @@ class html_base
         return $result;
     }
 
+    /**
+     * display a list of elements
+     * the list should be paged and the items should be edible
+     *
+     * e,g, to display a list of verbs
+     * similar to the table function, which is used for values and formula results
+     *
+     * @param array $item_lst a list of objects that have at least an id and a name
+     * @param string the class name of the array entries
+     * @returns string with the html code to display the list
+     */
+    function list(array $item_lst, string $item_type): string
+    {
+        $result = "";
+
+        $edit_script = $item_type . "_edit.php";
+        $add_script = $item_type . "_add.php";
+        foreach ($item_lst as $item) {
+            $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
+        }
+        $result .= btn_add('Add ' . $item_type, $add_script);
+        $result .= '<br>';
+
+        return $result;
+    }
+
 
 }
