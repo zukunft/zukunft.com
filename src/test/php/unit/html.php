@@ -32,6 +32,7 @@
 
 use api\phrase_list_api;
 use api\word_api;
+use html\button;
 
 class html_unit_tests
 {
@@ -76,7 +77,7 @@ class html_unit_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $t->html_test(btn_add('Test', 'http'), 'button_add', $t);
+        $t->html_test((new button('Test', 'http'))->add(), 'button_add', $t);
 
 
         $t->subheader('HTML list tests');

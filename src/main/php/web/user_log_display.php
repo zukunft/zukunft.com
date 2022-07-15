@@ -30,6 +30,9 @@
 */
 
 
+use html\api;
+use html\button;
+
 class user_log_display
 {
 
@@ -61,6 +64,8 @@ class user_log_display
 
         global $db_con;
         $result = ''; // reset the html code var
+
+        $html = new html_base();
 
         // set default values
         if (!isset($this->size)) {
@@ -238,9 +243,8 @@ class user_log_display
                     $undo_btn = '';
                     if ($this->type == 'word') {
                         if ($db_row['type'] == 'add') {
-                            $undo_text = 'delete this value';
-                            $undo_call = '/http/value_del.php?id=' . $this->id . '&back=' . $this->back . '';
-                            $undo_btn = btn_undo($undo_text, $undo_call);
+                            $undo_call = $html->url('value' . api::REMOVE, $this->id, $this->back);
+                            $undo_btn = (new button('delete this value', $undo_call))->undo();
                         }
                     } elseif ($this->type == 'value') {
                         if ($db_row['type'] == 'add') {
@@ -248,15 +252,14 @@ class user_log_display
                         }
                     } elseif ($this->type == 'formula') {
                         if ($db_row['type'] == 'update') {
-                            $undo_text = 'revert this change';
-                            $undo_call = '/http/formula_edit.php?id=' . $db_row["row_id"] . '&back=' . $this->back . '&undo_change=' . $db_row["change_id"];
-                            $undo_btn = btn_undo($undo_text, $undo_call);
+                            $undo_call = $html->url(formula::class . api::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
+                            $undo_btn = (new button('revert this change', $undo_call))->undo();
                         }
                     }
                     // display the undo button
                     if ($this->condensed) {
                         if ($undo_call <> '') {
-                            $result .= ' ' . $undo_btn . '';
+                            $result .= ' ' . $undo_btn;
                         } else {
                             $result .= '';
                         }
@@ -379,6 +382,8 @@ class user_log_display
         global $db_con;
         $result = ''; // reset the html code var
 
+        $html = new html_base();
+
         $sql = $this->dsp_hist_links_sql($db_con);
         $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get_old($sql);
@@ -412,10 +417,9 @@ class user_log_display
                 // create the undo button if needed
                 $undo_call = '';
                 $undo_btn = '';
-                if ($this->type == 'formula') {
-                    $undo_text = 'revert this change';
-                    $undo_call = '/http/formula_edit.php?id=' . $db_row["row_id"] . '&back=' . $this->back . '&undo_change=' . $db_row["change_link_id"];
-                    $undo_btn = btn_undo($undo_text, $undo_call);
+                if ($this->type == formula::class) {
+                    $undo_call = $html->url(formula::class . api::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_link_id"]);
+                    $undo_btn = (new button('revert this change', $undo_call))->undo();
                 }
                 // display the undo button
                 if ($undo_call <> '') {

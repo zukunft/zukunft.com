@@ -50,7 +50,7 @@ function run_view_test(testing $t)
     // test the creation and changing of a view
 
     // test loading of one view
-    $dsp = new view_dsp($t->usr1);
+    $dsp = new view_dsp_old($t->usr1);
     $dsp->name = view::TN_COMPLETE;
     $result = $dsp->load();
     $t->dsp('view->load of "' . $dsp->name . '"', true, $result);

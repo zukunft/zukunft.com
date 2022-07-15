@@ -2,8 +2,8 @@
 
 /*
 
-    view_cmp_min_dsp.php - the display extension of the api view component object
-    --------------------
+    web\view\view.php - the display extension of the api view object
+    -----------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,7 +29,11 @@
 
 */
 
-class view_cmp_min_dsp extends \api\view_cmp_api
+namespace html;
+
+use api\view_api;
+
+class view_dsp extends view_api
 {
 
 }

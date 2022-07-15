@@ -33,6 +33,7 @@ namespace html;
 
 use api\word_api;
 use api\phrase_api;
+use html_base;
 
 class word_dsp extends word_api
 {
@@ -48,8 +49,10 @@ class word_dsp extends word_api
      *             that the Zurich (City) is the phrase to select
      * @returns string the HTML code to display a word
      */
-    function dsp_header(?phrase_api $is_part_of = null): string
+    function header(?phrase_api $is_part_of = null): string
     {
+        $html = new html_base();
+
         $result = '';
 
         if ($this->id <= 0) {
@@ -65,13 +68,13 @@ class word_dsp extends word_api
             //$title .= '<a href="/http/view.php?words='.$this->id.'&view='.$default_view_id.'" title="'.$this->description.'">'.$this->name.'</a>';
             if ($is_part_of != null) {
                 if ($is_part_of->name <> '' and $is_part_of->name <> 'not set') {
-                    $title .= ' (<a href="/http/view.php?words=' . $is_part_of->id . '">' . $is_part_of->name . '</a>)';
+                    $url = $html->url(api::VIEW, 0, '', api::PAR_VIEW_WORDS . $is_part_of->id);
+                    $title .= ' (' . $html->ref($url, $is_part_of->name) . ')';
                 }
             }
             /*      $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>'; */
-            $title .= ' <a href="/http/word_edit.php?id=' . $this->id . '&back=' . $this->id . '" title="Rename word"><span class="glyphicon glyphicon-pencil">';
-            $title .= $this->name;
-            $title .= '</span></a>';
+            $url = $html->url(api::WORD . api::UPDATE, $this->id, $this->id);
+            $title .= $html->ref($url, '<span class="glyphicon glyphicon-pencil">' . $this->name . '</span>', 'Rename word');
             $result .= dsp_text_h1($title);
         }
 

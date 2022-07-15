@@ -33,6 +33,7 @@
 */
 
 use html\api;
+use html\button;
 
 class html_base
 {
@@ -201,9 +202,14 @@ class html_base
      * @param int $id the id of the parameter e.g. 1 for math const
      * @param string $back the back trace calls to return to the original url and for undo
      * @param string $par_name the parameter objects e.g. a phrase
+     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url(string $obj_name, int $id = 0, string $back = '', string $par_name = ''): string
+    function url(string $obj_name,
+                 int $id = 0,
+                 string $back = '',
+                 string $par_name = '',
+                 string $id_ext = ''): string
     {
         $result = api::PATH . $obj_name . api::EXT;
         if ($id <> 0) {
@@ -211,6 +217,9 @@ class html_base
                 $result .= '?' . $par_name . '=' . $id;
             } else {
                 $result .= '?id=' . $id;
+            }
+            if ($id_ext != '') {
+                $result .= '&' . $id_ext;
             }
         }
         if ($back != '') {
@@ -469,16 +478,17 @@ class html_base
      * @param string the class name of the array entries
      * @returns string with the html code to display the list
      */
-    function list(array $item_lst, string $item_type): string
+    function list(array $item_lst, string $item_type, string $back = ''): string
     {
         $result = "";
 
-        $edit_script = $item_type . "_edit.php";
-        $add_script = $item_type . "_add.php";
         foreach ($item_lst as $item) {
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
+            if ($item->id != null) {
+                $url = $this->url(api::PATH . $item_type . api::UPDATE . api::EXT, $item->id, $back);
+                $result .= $this->ref($url, $item->name);
+            }
         }
-        $result .= btn_add('Add ' . $item_type, $add_script);
+        $result .= (new button('Add ' . $item_type, $item_type . api::CREATE . api::EXT))->add();
         $result .= '<br>';
 
         return $result;

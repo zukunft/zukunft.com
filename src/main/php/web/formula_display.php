@@ -29,6 +29,9 @@
   
 */
 
+use html\api;
+use html\button;
+
 class formula_dsp_old extends formula
 {
 
@@ -86,16 +89,26 @@ class formula_dsp_old extends formula
         return $fv->display($back);
     }
 
-    // create the HTML code for a button to change the formula
+    /**
+     * create the HTML code for a button to change the formula
+     * @param string $back the stack trace for the undo functionality
+     * @return string html code to change to formula
+     */
     function btn_edit(string $back = ''): string
     {
-        return btn_edit('Change formula ' . $this->name, '/http/formula_edit.php?id=' . $this->id . '&back=' . $back);
+        $url = (new html_base())->url(self::class . api::UPDATE, $this->id, $back);
+        return (new button('Change ' . self::class . $this->name, $url))->edit();
     }
 
-    // create the HTML code for a button to change the formula
+    /**
+     * create the HTML code for a button to delete or exclude the formula
+     * @param string $back the stack trace for the undo functionality
+     * @return string html code to delete or exclude to formula
+     */
     function btn_del(string $back = ''): string
     {
-        return btn_del('Delete formula ' . $this->name, '/http/formula_del.php?id=' . $this->id . '&back=' . $back);
+        $url = (new html_base())->url(self::class . api::REMOVE, $this->id, $back);
+        return (new button('Delete ' . self::class . $this->name, $url))->del();
     }
 
     // allow the user to unlink a word
@@ -103,7 +116,8 @@ class formula_dsp_old extends formula
     {
         log_debug('formula->dsp_unlink_phr(' . $phr_id . ')');
         $result = '    <td>' . "\n";
-        $result .= btn_del("unlink word", "/http/formula_edit.php?id=" . $this->id . "&unlink_phrase=" . $phr_id . "&back=" . $back);
+        $url = api::PATH . self::class . api::UPDATE . api::EXT .'?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $result .=  (new button("unlink word", $url))->del();
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -170,6 +184,8 @@ class formula_dsp_old extends formula
         log_debug("formula->dsp_used4words " . $this->ref_text . " for " . $wrd->name . ",back:" . $back . " and user " . $this->usr->name . ".");
         $result = '';
 
+        $html = new html_base();
+
         $phr_lst = $this->assign_phr_ulst_direct();
         log_debug("formula->dsp_used4words words linked loaded");
 
@@ -200,7 +216,8 @@ class formula_dsp_old extends formula
             $result .= $sel->display();
         } else {
             if ($this->id > 0) {
-                $result .= '      ' . btn_add('add new', '/http/formula_edit.php?id=' . $this->id . '&add_link=1&back=' . $back);
+                $url = $html->url(formula::class . api::UPDATE, $this->id, $back, '', 'add_link=1');
+                $result .= '      ' . (new button('add new', $url))->add();
             }
         }
         $result .= '    </td>';

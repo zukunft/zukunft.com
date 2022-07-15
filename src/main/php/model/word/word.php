@@ -43,6 +43,7 @@
 use api\word_api;
 use cfg\phrase_type;
 use cfg\share_type;
+use html\button;
 use html\word_dsp;
 
 class word extends user_sandbox_description
@@ -763,7 +764,7 @@ class word extends user_sandbox_description
         log_debug('word_dsp->dsp_val_list for ' . $this->dsp_id() . ' with "' . $col_wrd->name . '"');
 
         $is_part_of_dsp = $is_part_of->get_dsp_obj();
-        $result = $this->dsp_obj()->dsp_header($is_part_of_dsp);
+        $result = $this->dsp_obj()->header($is_part_of_dsp);
 
         //$result .= $this->name."<br>";
         //$result .= $col_wrd->name."<br>";
@@ -1096,7 +1097,7 @@ class word extends user_sandbox_description
         $wrd_type = $word_types->default_id(); // maybe base it on the other linked words
         $wrd_add_title = "add a new " . $this->name;
         $wrd_add_call = "/http/word_add.php?verb=" . $vrb_is . "&word=" . $this->id . "&type=" . $wrd_type . "&back=" . $back . "";
-        return btn_add($wrd_add_title, $wrd_add_call);
+        return (new button($wrd_add_title, $wrd_add_call))->add();
     }
 
     /**
@@ -1752,7 +1753,7 @@ class word extends user_sandbox_description
     function log_upd_view($view_id): user_log_named
     {
         log_debug('word->log_upd ' . $this->dsp_id() . ' for user ' . $this->usr->name);
-        $dsp_new = new view_dsp($this->usr);
+        $dsp_new = new view_dsp_old($this->usr);
         $dsp_new->id = $view_id;
         $dsp_new->load();
 
@@ -1762,7 +1763,7 @@ class word extends user_sandbox_description
         $log->table = 'words';
         $log->field = self::FLD_VIEW;
         if ($this->view_id > 0) {
-            $dsp_old = new view_dsp($this->usr);
+            $dsp_old = new view_dsp_old($this->usr);
             $dsp_old->id = $this->view_id;
             $dsp_old->load();
             $log->old_value = $dsp_old->name;

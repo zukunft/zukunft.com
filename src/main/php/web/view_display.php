@@ -29,7 +29,10 @@
   
 */
 
-class view_dsp extends view
+use html\api;
+use html\button;
+
+class view_dsp_old extends view
 {
 
     /*
@@ -235,17 +238,18 @@ class view_dsp extends view
      */
     private function dsp_navbar_html(string $back = ''): string
     {
+        $html = new html_base();
 
         $result = $this->html_navbar_start();
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$this->usr->is_admin()) {
-            $result .= btn_find('find a word or formula', '/find.php') . ' - ';
+            $result .= (new button('find a word or formula', $html->url(api::SEARCH)))->find() . ' - ';
             $result .= '' . $this->name . ' ';
         } else {
-            $result .= btn_find('find a word or formula', '/http/find.php?word=' . $back) . ' - ';
+            $result .= (new button('find a word or formula', '/http/find.php?word=' . $back))->find() . ' - ';
             $result .= $this->dsp_view_name($back);
-            $result .= btn_edit('adjust the view ' . $this->name, '/http/view_edit.php?id=' . $this->id . '&word=' . $back . '&back=' . $back) . ' ';
-            $result .= btn_add('create a new view', '/http/view_add.php?word=' . $back . '&back=' . $back);
+            $result .= (new button('adjust the view ' . $this->name, '/http/view_edit.php?id=' . $this->id . '&word=' . $back . '&back=' . $back))->edit() . ' ';
+            $result .= (new button('create a new view', '/http/view_add.php?word=' . $back . '&back=' . $back))->add();
         }
         $result .= ' - ';
         log_debug('view_dsp->dsp_navbar ' . $this->dsp_id() . ' (' . $this->id . ')');
@@ -299,8 +303,10 @@ class view_dsp extends view
         if ($show_view) {
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($back);
-            $result .= btn_edit('adjust the view ' . $this->name, '/http/view_edit.php?id=' . $this->id . '&word=' . $back . '&back=' . $back) . ' ';
-            $result .= btn_add('create a new view', '/http/view_add.php?word=' . $back . '&back=' . $back);
+            $url_edit = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $back);
+            $result .= (new button('adjust the view ' . $url_edit))->edit();
+            $url_add = $html->url(view::class . api::CREATE, 0, $back, '', word::class . '=' . $back);
+            $result .= (new button('create a new view', $url_add))->add();
             $result .= '      </li>';
         }
         $result .= '    </ul>';
@@ -472,6 +478,8 @@ class view_dsp extends view
      */
     private function linked_components($add_cmp, $wrd, $back): string
     {
+        $html = new html_base();
+
         $result = '';
 
         if (UI_USE_BOOTSTRAP) {
@@ -498,7 +506,8 @@ class view_dsp extends view
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $result .= btn_add("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&add_entry=-1&back=" . $back . "");
+                $url = $html->url(view::class . api::UPDATE, $this->id, $back, '', word::class . '=' . $wrd->id . '&add_entry=-1&');
+                $result .= (new button("add view component", $url))->add();
                 $sel = new html_selector;
                 $sel->form = 'view_edit';
                 $sel->dummy_text = 'Select a view component ...';
@@ -519,7 +528,7 @@ class view_dsp extends view
                 $result .= $sel->display();
                 $result .= dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&back=" . $back);
             } else {
-                $result .= btn_add("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&add_entry=1&back=" . $back . "");
+                $result .= (new button("add view component", "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id . "&add_entry=1&back=" . $back))->add();
             }
         }
         if (UI_USE_BOOTSTRAP) {

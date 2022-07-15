@@ -2,9 +2,8 @@
 
 /*
 
-    api_const.php - constants used for the backend to frontend api of zukunft.com
-    -------------
-
+    web\view\view_cmp.php - the display extension of the api view component object
+    ---------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -32,33 +31,9 @@
 
 namespace html;
 
-class api
+use api\view_cmp_api;
+
+class view_cmp_dsp extends view_cmp_api
 {
-
-    // url path to the api functions
-    const PATH = '/http/';
-
-    // url extension of the api functions
-    const EXT = '.php';
-
-    // url of all possible the api calls
-    const CREATE = '_add';
-    const UPDATE = '_edit';
-    const REMOVE = '_del';
-    const LIST = '';
-    const SEARCH = 'find';
-
-    // classes used to allow renaming independent of the class name
-    const WORD = 'word';
-    const VIEW = 'view';
-
-    // special api function independent of a class
-    const LOGIN_RESET = 'login_reset';
-
-    // view parameter names
-    const PAR_VIEW_WORDS = 'words=';
-
-    // to be reviewed
-    const VALUE_EDIT = 'value_edit';
 
 }

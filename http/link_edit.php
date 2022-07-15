@@ -48,7 +48,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp;
+    $dsp = new view_dsp_old;
     $dsp->id = cl(db_cl::VIEW, view::LINK_EDIT);
     $dsp->usr = $usr;
     $dsp->load();

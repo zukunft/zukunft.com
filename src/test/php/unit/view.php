@@ -89,7 +89,7 @@ class view_unit_tests
 
         $t->subheader('Im- and Export tests');
 
-        $t->assert_json(new view_dsp($usr), $json_file);
+        $t->assert_json(new view_dsp_old($usr), $json_file);
 
         /*
          * Display tests

@@ -32,6 +32,11 @@
 
 */
 
+namespace html;
+
+use phrase_list;
+use phrase_list_dsp_old;
+
 class button {
 
     const IMG_ADD_FA = "fa-plus-square";
@@ -46,6 +51,21 @@ class button {
     public string $title = ''; // title to display on mouse over
     public string $call  = ''; // url to call if the user clicks
     public string $back  = ''; // word id, word name or url that should be called after the action is completed
+
+    /*
+     * construct and capsule
+     */
+
+    function __construct(string $title = '', string $url = '', string $back = '')
+    {
+        $this->title = $title;
+        $this->call = $url;
+        $this->back = $back;
+    }
+
+    /*
+     * HTML code
+     */
 
     /**
      * @param string $icon the path of the icon that should be shown
@@ -67,13 +87,13 @@ class button {
     function undo     (): string { return $this->html   (self::IMG_UNDO      ); } // an undo button to undo a change (not only the last)
     function find     (): string { return $this->html   (self::IMG_FIND      ); } // a find button to search for a word
     function unfilter (): string { return $this->html   (self::IMG_UN_FILTER ); } // button to remove a filter
-    function back     (): string { return $this->html   (self::IMG_BACK      ); } // button to go back to the original calling page
+    function back_img (): string { return $this->html   (self::IMG_BACK      ); } // button to go back to the original calling page
 
     /**
     * display a button to go back to the main calling page (several pages have been show to adjust the view of a word, go back to the word not to the view edit pages)
     * $back can be either the id of the last used word or the url path
     */
-    function go_back (string $back = ''): string {
+    function back (string $back = ''): string {
         if ($back == '') {
             $back = 1; // temp solution
         }
@@ -83,7 +103,7 @@ class button {
         } else {
             $this->call = $back;
         }
-        return $this->back();
+        return $this->back_img();
     }
 
     /**
@@ -249,14 +269,14 @@ class button {
 
 // only to shorten the code the basic buttons as a function without object
 // this way only one code line is needed 
-function btn_add      ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->add(); }      // an add button to create a new entry
-function btn_edit     ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->edit(); }     // an edit button to adjust an entry
-function btn_del      ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->del(); }      // an delete button to remove an entry
-function btn_undo     ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->undo(); }     // an undo button to undo a change (not only the last)
-function btn_find     ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->find(); }     // a find button to search for a word
-function btn_unfilter ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->unfilter(); } // button to remove a filter
-function btn_yesno    ($t, $c): string { $b = New button; $b->title = $t; $b->call = $c; return $b->yesno(); }    // button to get the user confirmation
-function btn_back     ($bl): string    { $b = New button;                                return $b->go_back($bl); } // button to remove a filter
+function btn_add      ($t, $c): string { $b = New button($t,$c); return $b->add(); }      // an add button to create a new entry
+function btn_edit     ($t, $c): string { $b = New button($t,$c); return $b->edit(); }     // an edit button to adjust an entry
+function btn_del      ($t, $c): string { $b = New button($t,$c); return $b->del(); }      // an delete button to remove an entry
+function btn_undo     ($t, $c): string { $b = New button($t,$c); return $b->undo(); }     // an undo button to undo a change (not only the last)
+function btn_find     ($t, $c): string { $b = New button($t,$c); return $b->find(); }     // a find button to search for a word
+function btn_unfilter ($t, $c): string { $b = New button($t,$c); return $b->unfilter(); } // button to remove a filter
+function btn_yesno    ($t, $c): string { $b = New button($t,$c); return $b->yesno(); }    // button to get the user confirmation
+function btn_back     ($bl): string    { $b = New button();                                return $b->back($bl); } // button to remove a filter
 
 
 // button to add a new value related to some phrases

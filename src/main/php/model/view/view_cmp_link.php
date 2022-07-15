@@ -297,7 +297,7 @@ class view_cmp_link extends user_sandbox_link
     {
         $result = true;
         if (!isset($this->fob) and $this->dsp->id > 0) {
-            $dsp = new view_dsp($this->usr);
+            $dsp = new view_dsp_old($this->usr);
             $dsp->id = $this->dsp->id;
             if ($dsp->load()) {
                 $this->fob = $dsp;
@@ -306,7 +306,7 @@ class view_cmp_link extends user_sandbox_link
             }
         }
         if (!isset($this->tob) and $this->cmp->id > 0) {
-            $cmp = new view_dsp($this->usr);
+            $cmp = new view_dsp_old($this->usr);
             $cmp->id = $this->cmp->id;
             if ($cmp->load()) {
                 $this->tob = $cmp;

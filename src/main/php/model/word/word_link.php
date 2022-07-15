@@ -33,6 +33,8 @@
 */
 
 use api\triple_api;
+use html\api;
+use html\button;
 
 class word_link extends user_sandbox_link_description
 {
@@ -784,7 +786,9 @@ class word_link extends user_sandbox_link_description
 
         // get the link from the database
         $result .= '    <td>' . "\n";
-        $result .= btn_edit("edit word link", "/http/link_edit.php?id=" . $this->id . "&back=" . $wrd->id);
+        $html = new html_base();
+        $url = $html->url(api::PATH . 'link' . api::UPDATE . api::EXT, $this->id, $wrd->id);
+        $result .= (new button("edit word link", $url))->edit();
         $result .= '    </td>' . "\n";
 
         return $result;

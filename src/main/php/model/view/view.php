@@ -374,7 +374,7 @@ class view extends user_sandbox_named
                 // this is only for the view of the active user, so a direct exclude can be done
                 if ((is_null($db_entry[self::FLD_EXCLUDED]) or $db_entry[self::FLD_EXCLUDED] == 0)
                     and (is_null($db_entry[self::FLD_EXCLUDED.'2']) or $db_entry[self::FLD_EXCLUDED.'2'] == 0)) {
-                    $new_entry = new view_cmp_dsp($this->usr);
+                    $new_entry = new view_cmp_dsp_old($this->usr);
                     $new_entry->id = $db_entry[view_cmp::FLD_ID];
                     $new_entry->owner_id = $db_entry[user_sandbox::FLD_USER];
                     $new_entry->order_nbr = $db_entry[view_cmp_link::FLD_ORDER_NBR];
@@ -510,7 +510,7 @@ class view extends user_sandbox_named
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new view_cmp_dsp($this->usr);
+            $cmp = new view_cmp_dsp_old($this->usr);
             $cmp->id = $view_component_id;
             $cmp->load();
             $cmp_lnk = new view_cmp_link($this->usr);
@@ -532,7 +532,7 @@ class view extends user_sandbox_named
         if ($view_component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new view_cmp_dsp($this->usr);
+            $cmp = new view_cmp_dsp_old($this->usr);
             $cmp->id = $view_component_id;
             $cmp->load();
             $cmp_lnk = new view_cmp_link($this->usr);

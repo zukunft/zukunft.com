@@ -62,7 +62,7 @@ if ($usr->id > 0) {
     if ($word_id <= 0) {
         $result .= dsp_err('word not found');
     } else {
-        $dsp = new view_dsp;
+        $dsp = new view_dsp_old;
         //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
         $dsp->usr = $usr;
         $back = $word_id;

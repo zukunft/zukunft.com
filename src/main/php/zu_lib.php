@@ -377,6 +377,8 @@ include_once $path_php . 'api/value/value_list.php';
 include_once $path_php . 'api/formula/formula.php';
 include_once $path_php . 'api/formula/formula_value.php';
 include_once $path_php . 'api/formula/formula_value_list.php';
+include_once $path_php . 'api/view/view.php';
+include_once $path_php . 'api/view/view_cmp.php';
 // general HTML frontend classes
 include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display.php';
@@ -400,6 +402,8 @@ include_once $path_php . 'web/value/value_list.php';
 include_once $path_php . 'web/formula/formula.php';
 include_once $path_php . 'web/formula/formula_value.php';
 include_once $path_php . 'web/formula/formula_value_list.php';
+include_once $path_php . 'web/view/view.php';
+include_once $path_php . 'web/view/view_cmp.php';
 include_once $path_php . 'web/view/view_cmp_link_dsp.php';
 
 // deprecated HTML frontend classes
@@ -744,7 +748,7 @@ function log_msg(string $msg_text,
                     $usr = new user();
                     $usr->id = $user_id;
                     $usr->load($db_con);
-                    $dsp = new view_dsp($usr);
+                    $dsp = new view_dsp_old($usr);
                     $result .= $dsp->dsp_navbar_simple();
                     $result .= $msg_text . " (by " . $function_name . ").<br><br>";
                 }
@@ -1665,7 +1669,7 @@ function dsp_var($var_to_format): string
 }
 
 // port php 8 function to 7.4
-
+/*
 function str_starts_with(string $long_string, string $prefix): bool
 {
     $result = false;
@@ -1674,10 +1678,11 @@ function str_starts_with(string $long_string, string $prefix): bool
     }
     return $result;
 }
+*/
 
 
 // port php 8 function to 7.4
-
+/*
 function str_ends_with(string $long_string, string $postfix): bool
 {
     $result = false;
@@ -1686,10 +1691,11 @@ function str_ends_with(string $long_string, string $postfix): bool
     }
     return $result;
 }
+*/
 
 
 // port php 8 function to 7.4
-
+/*
 function str_contains(string $haystack, string $needle): bool
 {
     $result = true;
@@ -1699,6 +1705,7 @@ function str_contains(string $haystack, string $needle): bool
     }
     return $result;
 }
+*/
 
 
 /**

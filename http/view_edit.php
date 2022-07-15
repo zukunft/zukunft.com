@@ -50,14 +50,14 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display to edit the view
-    $dsp = new view_dsp;
+    $dsp = new view_dsp_old;
     $dsp->id = cl(db_cl::VIEW, view::ADD);
     $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];
 
     // create the view object that the user can change
-    $dsp_edit = new view_dsp;
+    $dsp_edit = new view_dsp_old;
     $dsp_edit->id = $_GET['id'];
     $dsp_edit->usr = $usr;
     $result .= $dsp_edit->load();

@@ -43,7 +43,7 @@ class word_display_unit_tests
         $wrd = new word_dsp(1, word::TN_READ);
         $t->html_test($wrd->dsp_link(), 'word', $t);
 
-        $t->html_test($wrd->dsp_header(), 'word_header', $t);
+        $t->html_test($wrd->header(), 'word_header', $t);
     }
 
 }

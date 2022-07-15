@@ -51,7 +51,7 @@ if ($usr->id > 0) {
 
     load_usr_data();
 
-    $dsp = new view_dsp;
+    $dsp = new view_dsp_old;
     $dsp->usr = $usr;
     $dsp->id = cl(db_cl::VIEW, view::ERR_UPD);
     $result .= $dsp->dsp_navbar($back);

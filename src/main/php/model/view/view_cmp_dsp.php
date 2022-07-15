@@ -31,7 +31,7 @@
 
 use html\word_dsp;
 
-class view_cmp_dsp extends view_cmp
+class view_cmp_dsp_old extends view_cmp
 {
 
     /**
@@ -77,7 +77,7 @@ class view_cmp_dsp extends view_cmp
                 $wrd_dsp->set_name($wrd->name());
                 $parent = $wrd->is_mainly()->get_dsp_obj();
                 if ($parent != null) {
-                    $result .= $wrd_dsp->dsp_header($parent);
+                    $result .= $wrd_dsp->header($parent);
                 }
             }
         }
@@ -317,7 +317,7 @@ class view_cmp_dsp extends view_cmp
         foreach ($view_lst as $view) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
-            $dsp = new view_dsp($this->usr);
+            $dsp = new view_dsp_old($this->usr);
             $dsp->id = $view[view::FLD_ID];
             $dsp->name = $view[view::FLD_NAME];
             $result .= '      ' . $dsp->name_linked($wrd, $back) . '' . "\n";

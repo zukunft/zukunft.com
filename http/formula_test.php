@@ -54,7 +54,7 @@ if ($session_usr->id > 0) {
     load_usr_data();
 
     // show the header even if all parameters are wrong
-    $dsp = new view_dsp($session_usr);
+    $dsp = new view_dsp_old($session_usr);
     $dsp->id = cl(db_cl::VIEW, view::FORMULA_TEST);
     $back = $_GET['back']; // the page (or phrase id) from which formula testing has been called
     echo $dsp->dsp_navbar($back);

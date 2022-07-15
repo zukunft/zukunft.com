@@ -185,11 +185,11 @@ class view_cmp extends user_sandbox_named
     }
 
     /**
-     * @return view_cmp_dsp the view component object with the html creation functions
+     * @return view_cmp_dsp_old the view component object with the html creation functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new view_cmp_dsp($this->usr);
+        $dsp_obj = new view_cmp_dsp_old($this->usr);
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 

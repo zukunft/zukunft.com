@@ -739,7 +739,7 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp;
+                $dsp_usr = new view_dsp_old;
                 $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->name = $sbx_row['usr_name'];
                 $dsp_usr->comment = $sbx_row['usr_comment'];
@@ -906,7 +906,7 @@ class user_dsp extends user
                 $row_nbr++;
 
                 // create the view_component object with the minimal parameter needed
-                $dsp_usr = new view_cmp_dsp($this);
+                $dsp_usr = new view_cmp_dsp_old($this);
                 $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->name = $sbx_row['usr_name'];
                 $dsp_usr->comment = $sbx_row['usr_comment'];

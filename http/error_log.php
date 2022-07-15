@@ -96,7 +96,7 @@ if ($usr->id > 0) {
         load_usr_data();
 
         // prepare the display to edit the view
-        $dsp = new view_dsp;
+        $dsp = new view_dsp_old;
         $dsp->usr = $usr;
         $dsp->id = cl(db_cl::VIEW, view::ERR_LOG);
         $result .= $dsp->dsp_navbar($back);

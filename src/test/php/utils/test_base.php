@@ -703,7 +703,7 @@ class test_base
             $test_usr = $usr;
         }
 
-        $dsp = new view_dsp($test_usr);
+        $dsp = new view_dsp_old($test_usr);
         $dsp->name = $dsp_name;
         $dsp->load();
         return $dsp;

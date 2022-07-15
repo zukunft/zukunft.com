@@ -50,14 +50,14 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // init the display object to show the standard elements such as the header
-    $dsp = new view_dsp($usr);
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::COMPONENT_ADD);
     $dsp->load();
     // the calling stack to move back to page where the user has come from after adding the view component is done
     $back = $_GET['back'];
 
     // create the view component object to apply the user changes to it
-    $cmp = new view_cmp_dsp($usr);
+    $cmp = new view_cmp_dsp_old($usr);
     $cmp->id = $_GET['id'];
     $result .= $cmp->load();
 
@@ -74,7 +74,7 @@ if ($usr->id > 0) {
     // link or unlink a view
     $dsp_link_id = $_GET['link_view'];    // to link the view component to another view
     if ($dsp_link_id > 0) {
-        $dsp_link = new view_dsp($usr);
+        $dsp_link = new view_dsp_old($usr);
         $dsp_link->id = $dsp_link_id;
         $result .= $dsp_link->load();
         $order_nbr = $cmp->next_nbr($dsp_link_id);
@@ -83,7 +83,7 @@ if ($usr->id > 0) {
 
     $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view 
     if ($dsp_unlink_id > 0) {
-        $dsp_unlink = new view_dsp($usr);
+        $dsp_unlink = new view_dsp_old($usr);
         $dsp_unlink->id = $dsp_unlink_id;
         $result .= $dsp_unlink->load();
         $upd_result .= $cmp->unlink($dsp_unlink);

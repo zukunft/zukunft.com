@@ -49,7 +49,7 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // in view edit views the view cannot be changed
-    $dsp = new view_dsp($usr);
+    $dsp = new view_dsp_old($usr);
     //$dsp->id = cl(SQL_VIEW_FORMULA_EXPLAIN);
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
     $result .= $dsp->dsp_navbar_no_view($back);

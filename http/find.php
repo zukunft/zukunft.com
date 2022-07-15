@@ -56,7 +56,7 @@ if ($db_con == null) {
         load_usr_data();
 
         // show view header
-        $dsp = new view_dsp;
+        $dsp = new view_dsp_old;
         $dsp->usr = $usr;
         $dsp->id = cl(db_cl::VIEW, view::WORD_FIND);
         $result .= $dsp->dsp_navbar($back);
