@@ -73,7 +73,7 @@ class view_cmp_dsp_old extends view_cmp
                 $result .= log_err('No word selected for "' . $this->name . '".', "view_component_dsp->word_name");
             } else {
                 $wrd_dsp = new word_dsp();
-                $wrd_dsp->id = $wrd->id;
+                $wrd_dsp->set_id($wrd->id());
                 $wrd_dsp->set_name($wrd->name());
                 $parent = $wrd->is_mainly()->get_dsp_obj();
                 if ($parent != null) {
@@ -160,7 +160,7 @@ class view_cmp_dsp_old extends view_cmp
                 // adding formulas direct to a parent word may not be intuitive
                 //$result .= btn_add ('Add formulas', "/http/formula_add.php?word=".$parent_id."");
             }
-            $result .= btn_add('Add formula', "/http/formula_add.php?word=" . $wrd->id . "&back=" . $wrd->id . "");
+            $result .= \html\btn_add('Add formula', "/http/formula_add.php?word=" . $wrd->id . "&back=" . $wrd->id . "");
             $result .= '<br>';
         }
         return $result;
@@ -265,7 +265,7 @@ class view_cmp_dsp_old extends view_cmp
             } else {
                 $result .= "The type of " . $phr->name . " is not jet defined. Please define what it is: ";
                 $type_is = cl(db_cl::VERB, verb::IS_A);
-                $result .= btn_add("Please link " . $phr->name . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
+                $result .= \html\btn_add("Please link " . $phr->name . " to an existing word to include it in the lists", '/http/link_add.php?from=' . $phr->id . '&verb=' . $type_is . '&back=' . $phr->id);
             }
             $result .= '<br><br>values<br>';
             $val_lst = new value_list($this->usr);;
@@ -288,7 +288,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         log_debug('view_component_dsp->btn_unlink(me' . $this->id . ',m' . $view_id . ',t' . $wrd->id . ')');
         $result = '    <td>' . "\n";
-        $result .= btn_del("unlink view", "/http/view_component_edit.php?id=" . $this->id . "&unlink_view=" . $view_id . "&word=" . $wrd->id . "&back=" . $back);
+        $result .= \html\btn_del("unlink view", "/http/view_component_edit.php?id=" . $this->id . "&unlink_view=" . $view_id . "&word=" . $wrd->id . "&back=" . $back);
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -340,7 +340,7 @@ class view_cmp_dsp_old extends view_cmp
 
             $result .= dsp_form_end('', $back);
         } else {
-            $result .= '      ' . btn_add('add new', '/http/view_component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+            $result .= '      ' . \html\btn_add('add new', '/http/view_component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }
         $result .= '    </td>';
         $result .= '  </tr>';

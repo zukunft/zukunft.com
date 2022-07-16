@@ -576,9 +576,9 @@ class view extends user_sandbox_named
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= btn_edit('design the view', $call_edit) . ' ';
+            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
             $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= btn_del('delete the view', $call_del) . ' ';
+            $result .= \html\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }
 

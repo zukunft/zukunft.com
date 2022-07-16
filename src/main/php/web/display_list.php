@@ -75,7 +75,7 @@ class dsp_list {
       }
       if (UI_USE_BOOTSTRAP) { $result .= '</td><td>'; }    
       $result .= ' ';
-      $result .= btn_del ('Delete '.zu_str_left_of($this->id_field, "_id"), $this->script_name.'?id='.$this->script_parameter.'&del='.$entry->id);
+      $result .= \html\btn_del ('Delete '.zu_str_left_of($this->id_field, "_id"), $this->script_name.'?id='.$this->script_parameter.'&del='.$entry->id);
       if (UI_USE_BOOTSTRAP) { $result .= '</td></tr>'; }    
       $result .= '<br>';
     }

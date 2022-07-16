@@ -92,7 +92,7 @@ class list_api
     protected function add_obj(object $obj): bool
     {
         $result = false;
-        if (!in_array($obj->id, $this->id_lst())) {
+        if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
             $this->lst_dirty = true;
             $result = true;
@@ -109,8 +109,8 @@ class list_api
         $result = array();
         if ($this->lst_dirty) {
             foreach ($this->lst as $fv) {
-                if (!in_array($fv->id, $result)) {
-                    $result[] = $fv->id;
+                if (!in_array($fv->id(), $result)) {
+                    $result[] = $fv->id();
                 }
             }
             $this->id_lst = $result;

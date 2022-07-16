@@ -2,8 +2,8 @@
 
 /*
 
-    word_dsp.php - the extension of the word API objects to create word base html code
-    ------------
+    \web\word\word.php - the extension of the word API objects to create word base html code
+    ------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -34,6 +34,7 @@ namespace html;
 use api\word_api;
 use api\phrase_api;
 use html_base;
+use html_selector;
 
 class word_dsp extends word_api
 {
@@ -41,6 +42,34 @@ class word_dsp extends word_api
     // default view settings
     const TIME_MIN_COLS = 3; // minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display
     const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
+
+    /**
+     * @returns string the word name
+     */
+    function dsp(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * display a word with a link to the main page for the word
+     * @param string $style the CSS style that should be used
+     * @returns string the html code
+     */
+    function dsp_link(string $style = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api::VIEW, $this->id, '', api::PAR_VIEW_WORDS);
+        return $html->ref($url, $this->name(), $this->description, $style);
+    }
+
+    /**
+     * @returns string the word as a table cell
+     */
+    function dsp_td(): string
+    {
+        return (new html_base)->tbl_cell($this->dsp_link());
+    }
 
     /**
      * display a word as the view header
@@ -65,38 +94,21 @@ class word_dsp extends word_api
 
             //$default_view_id = cl(DBL_VIEW_WORD);
             $title = '';
-            //$title .= '<a href="/http/view.php?words='.$this->id.'&view='.$default_view_id.'" title="'.$this->description.'">'.$this->name.'</a>';
             if ($is_part_of != null) {
                 if ($is_part_of->name <> '' and $is_part_of->name <> 'not set') {
-                    $url = $html->url(api::VIEW, 0, '', api::PAR_VIEW_WORDS . $is_part_of->id);
+                    $url = $html->url(api::VIEW, $is_part_of->id, '', api::PAR_VIEW_WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name) . ')';
                 }
             }
             /*      $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>'; */
             $url = $html->url(api::WORD . api::UPDATE, $this->id, $this->id);
-            $title .= $html->ref($url, '<span class="glyphicon glyphicon-pencil">' . $this->name . '</span>', 'Rename word');
+            $title .= $html->ref($url, $html->span($this->name(), api::STYLE_GLYPH), 'Rename word');
             $result .= dsp_text_h1($title);
         }
 
         return $result;
     }
 
-
-    /**
-     * display a word with a link to the main page for the word
-     */
-    function dsp_link(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '">' . $this->name . '</a>';
-    }
-
-    /**
-     * similar to dsp_link, but using s CSS style; used by ??? to ???
-     */
-    function dsp_link_style($style): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id . '" title="' . $this->description . '" class="' . $style . '">' . $this->name . '</a>';
-    }
 
     /**
      * simply to display a single word in a table as a header
@@ -161,7 +173,7 @@ class word_dsp extends word_api
         $result = '  <tr>' . "\n";
         $result .= $this->dsp_tbl_cell(0);
         $result .= '    <td>' . "\n";
-        $result .= '      ' . btn_del("delete", $del_call) . '<br> ';
+        $result .= '      ' . \html\btn_del("delete", $del_call) . '<br> ';
         $result .= '    </td>' . "\n";
         $result .= '  </tr>' . "\n";
         return $result;
@@ -172,7 +184,7 @@ class word_dsp extends word_api
     {
         log_debug('word_dsp->dsp_unlink(' . $link_id . ')');
         $result = '    <td>' . "\n";
-        $result .= btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
+        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
         $result .= '    </td>' . "\n";
 
         return $result;

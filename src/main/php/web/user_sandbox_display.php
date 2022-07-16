@@ -106,7 +106,7 @@ class user_sandbox_display extends user_sandbox_value
             $result .= '<td>' . $wrd_row[0] . '</td><td>' . $wrd_row[1] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$id.'"><img src="/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = "/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$back_link.'";
-            $result .= '<td>' . btn_del("Undo your change and use the standard word " . $wrd_row[1], $url) . '</td>';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row[1], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= '</table>';
@@ -151,7 +151,7 @@ class user_sandbox_display extends user_sandbox_value
             $result .= '<td>' . $wrd_row[2] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$id.'"><img src="/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = "/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$back_link.'";
-            $result .= '<td>' . btn_del("Undo your change and use the standard formula " . $wrd_row[2], $url) . '</td>';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $wrd_row[2], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= '</table>';

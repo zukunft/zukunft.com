@@ -66,7 +66,7 @@ class phrase_dsp extends phrase_api
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
+        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
         $result .= '    </td>' . "\n";
 
         return $result;

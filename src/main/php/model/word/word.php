@@ -901,7 +901,7 @@ class word extends user_sandbox_description
 
         if ($this->usr->is_admin()) {
             // admin users should always have the possibility to create a new link type
-            $result .= btn_add('add new link type', '/http/verb_add.php?back=' . $back);
+            $result .= \html\btn_add('add new link type', '/http/verb_add.php?back=' . $back);
         }
 
         return $result;
@@ -1491,7 +1491,7 @@ class word extends user_sandbox_description
      * maybe move this to a new object user_log_display
      * because this is very similar to a value linked function
      */
-    public function dsp_hist($page, $size, $call, $back): string
+    public function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
         log_debug("word_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var

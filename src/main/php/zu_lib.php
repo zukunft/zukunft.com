@@ -99,7 +99,9 @@
     TODO move the environment variables to a setting YAML like application.yaml, application-dev.yaml, application-int.yaml or application-prod.yaml in springboot
     TODO create a sanity API for monitor tools like checkmk or platforms like openshift
     TODO create an "always on" thread for the backend
-    TODO create a LaTeX extension for charts and values, so that studies can be recreaed based on the LaTeX document
+    TODO create a LaTeX extension for charts and values, so that studies can be recreated based on the LaTeX document
+    TODO for fail over in the underlying technologies, create a another backend in python and java  and allow the user to select or auto select the backend technology
+    TODO for fail over in the underlying database technologies, auto sync the casandra, hadoop, postgreSQL and mariaDB databases
 
 
     TODO create a table startup page with a
@@ -384,6 +386,7 @@ include_once $path_php . 'web/back_trace.php';
 include_once $path_php . 'web/user_display.php';
 include_once $path_php . 'web/user_log_display.php';
 include_once $path_php . 'web/user/user_type_list.php';
+include_once $path_php . 'web/system/error_log_list.php';
 include_once $path_php . 'web/html/api_const.php';
 include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/button.php';

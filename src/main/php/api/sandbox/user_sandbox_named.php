@@ -66,7 +66,7 @@ class user_sandbox_named_api extends user_sandbox_api
      * set and get
      */
 
-    public function set_name(string $name)
+    public function set_name(string $name): void
     {
         $this->name = $name;
     }

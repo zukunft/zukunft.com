@@ -416,8 +416,8 @@ class source extends user_sandbox_named
         $sel->selected = $this->id;
         $sel->dummy_text = 'please define the source';
         $result .= '      taken from ' . $sel->display() . ' ';
-        $result .= '    <td>' . btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
-        $result .= '    <td>' . btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
+        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
+        $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
     }
 

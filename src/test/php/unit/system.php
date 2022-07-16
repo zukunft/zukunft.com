@@ -311,16 +311,16 @@ class system_unit_tests
         $log_lst->add($log);
         $log_lst->add($log2);
 
-        $log_lst_dsp = $log_lst->get_dsp_obj();
+        $log_lst_dsp = $log_lst->dsp_obj();
         $created = $log_lst_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/error_log_list.json');
         $t->assert('system_error_log_list_dsp->get_json', $t->trim_json($created), $t->trim_json($expected));
 
-        $created = $log_lst_dsp->get_html($usr, '');
+        $created = $log_lst_dsp->get_html();
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log_list.html');
         $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
 
-        $created = $log_lst_dsp->get_html_page($usr, '');
+        $created = $log_lst_dsp->get_html_page();
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/error_log_list_page.html');
         $t->assert('system_error_log_list_dsp->display', $t->trim_html($created), $t->trim_html($expected));
 

@@ -777,24 +777,6 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
-     * display a bottom to edit the word link in a table cell
-     */
-    function dsp_btn_edit($wrd): string
-    {
-        log_debug("word_link->dsp_btn_edit (" . $this->id . ",b" . $wrd->id . ")");
-        $result = ''; // reset the html code var
-
-        // get the link from the database
-        $result .= '    <td>' . "\n";
-        $html = new html_base();
-        $url = $html->url(api::PATH . 'link' . api::UPDATE . api::EXT, $this->id, $wrd->id);
-        $result .= (new button("edit word link", $url))->edit();
-        $result .= '    </td>' . "\n";
-
-        return $result;
-    }
-
-    /**
      * display a form to create a triple
      */
     function dsp_add(string $back = ''): string
@@ -875,7 +857,7 @@ class word_link extends user_sandbox_link_description
         log_debug("word_link->dsp_del " . $this->id . ".");
         $result = ''; // reset the html code var
 
-        $result .= btn_yesno('Is "' . $this->dsp() . '" wrong?', '/http/link_del.php?id=' . $this->id . '&back=' . $back);
+        $result .= \html\btn_yesno('Is "' . $this->dsp() . '" wrong?', '/http/link_del.php?id=' . $this->id . '&back=' . $back);
         $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
 
         return $result;

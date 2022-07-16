@@ -2,7 +2,7 @@
 
 /*
 
-    api\error_log_list.php - the simple export object to create a json for the frontend API
+    api\system\error_log_list.php - the simple export object to create a json for the frontend API
     -----------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,6 +29,10 @@
 
 */
 
+namespace api;
+
+use api_message;
+
 class system_error_log_list_api extends api_message
 {
 
@@ -43,68 +47,11 @@ class system_error_log_list_api extends api_message
     }
 
     /**
-     * @return false|string the frontend API JSON string
+     * @return string the frontend API JSON string
      */
     function get_json(): string
     {
         return json_encode($this);
-    }
-
-    /**
-     * display the error that are related to the user, so that he can track when they are closed
-     * or display the error that are related to the user, so that he can track when they are closed
-     * called also from user_display.php/dsp_errors
-     */
-    function get_html(user $usr, string $back): string
-    {
-        log_debug('system_error_log_list->display for user "' . $usr->name . '"');
-
-        $html = new html_base();
-        $result = ''; // reset the html code var
-
-        if (count($this->system_errors) > 0) {
-            // prepare to show the word link
-            $log_dsp = $this->system_errors[0];
-            if ($log_dsp->time <> '') {
-                $result .= $html->tbl_start();
-                $row_nbr = 0;
-                foreach ($this->system_errors as $log_dsp) {
-                    $row_nbr++;
-                    if ($row_nbr == 1) {
-                        $result .= $this->headline_html();
-                    }
-                    $result .= $log_dsp->get_html($usr, $back);
-                }
-                $result .= $html->tbl_end();
-            }
-        }
-
-        log_debug('system_error_log_list->display -> done');
-        return $result;
-    }
-
-
-    function get_html_page(user $usr, string $back): string
-    {
-        return parent::get_html_header('System log') . $this->get_html($usr, $back) . parent::get_html_footer();
-    }
-
-    /**
-     * @return string the HTML code for the table headline
-     * should be corresponding to system_error_log_dsp::get_html
-     */
-    private function headline_html(): string
-    {
-        $result = '<tr>';
-        $result .= '<th> creation time     </th>';
-        $result .= '<th> user              </th>';
-        $result .= '<th> issue description </th>';
-        $result .= '<th> trace             </th>';
-        $result .= '<th> program part      </th>';
-        $result .= '<th> owner             </th>';
-        $result .= '<th> status            </th>';
-        $result .= '</tr>';
-        return $result;
     }
 
 }

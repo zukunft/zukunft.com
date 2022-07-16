@@ -44,7 +44,7 @@ function err_dsp($err_id, $user_id)
     global $db_con;
     $result = "";
 
-    $sql = "SELECT l.sys_log_text, l.sys_log_description, s.sys_log_status_name, l.sys_log_trace
+    $sql = "SELECT l.sys_log_text, l.sys_log_description, s.type_name AS sys_log_status_name, l.sys_log_trace
               FROM sys_log l 
          LEFT JOIN sys_log_status s ON l.sys_log_status_id = s.sys_log_status_id
              WHERE l.sys_log_id = " . $err_id . ";";
@@ -96,8 +96,7 @@ if ($usr->id > 0) {
         load_usr_data();
 
         // prepare the display to edit the view
-        $dsp = new view_dsp_old;
-        $dsp->usr = $usr;
+        $dsp = new view_dsp_old($usr);
         $dsp->id = cl(db_cl::VIEW, view::ERR_LOG);
         $result .= $dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";

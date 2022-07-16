@@ -75,7 +75,7 @@ if ($usr->id > 0) {
 
             // TODO: display how the views would be changed
 
-            $result .= btn_yesno('Delete the view element "' . $cmp_del->name . '"? ', '/http/view_component_del.php?id=' . $cmp_del_id . '&back=' . $back);
+            $result .= \html\btn_yesno('Delete the view element "' . $cmp_del->name . '"? ', '/http/view_component_del.php?id=' . $cmp_del_id . '&back=' . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

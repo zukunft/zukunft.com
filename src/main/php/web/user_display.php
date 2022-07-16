@@ -91,7 +91,7 @@ class user_dsp extends user
         $err_lst->dsp_type = $dsp_type;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $result = $err_lst->display();
+            $result = $err_lst->dsp_obj()->get_html();
         }
 
         log_debug('user_dsp->dsp_errors -> done');
@@ -131,7 +131,7 @@ class user_dsp extends user
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
-            $result .= '<td>' . btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= dsp_tbl_end();
@@ -270,7 +270,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard word_link " . $sbx_row['std_word_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard word_link " . $sbx_row['std_word_link'], $url) . '</td>';
 
                     // display the word_link changes by the user
                     $result .= '<tr>';
@@ -341,7 +341,7 @@ class user_dsp extends user
             $result .= '<td>' . $frm_row['formula_text'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="../images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . btn_del("Undo your change and use the standard formula " . $frm_row['formula_text'], $url) . '</td>';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row['formula_text'], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= dsp_tbl_end();
@@ -479,7 +479,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
 
                     // display the formula_link changes by the user
                     $result .= '<tr>';
@@ -651,7 +651,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_value=' . $val_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
 
                     // display the value changes by the user
                     $result .= '<tr>';
@@ -819,7 +819,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
 
                     // display the view changes by the user
                     $result .= '<tr>';
@@ -985,7 +985,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_view_component=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard view_component " . $sbx_row['std_view_component'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view_component " . $sbx_row['std_view_component'], $url) . '</td>';
 
                     // display the view_component changes by the user
                     $result .= '<tr>';
@@ -1154,7 +1154,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_view_component_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard view_component_link " . $sbx_row['std_view_component_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view_component_link " . $sbx_row['std_view_component_link'], $url) . '</td>';
 
                     // display the view_component_link changes by the user
                     $result .= '<tr>';
@@ -1333,7 +1333,7 @@ class user_dsp extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
 
                     // display the source changes by the user
                     $result .= '<tr>';

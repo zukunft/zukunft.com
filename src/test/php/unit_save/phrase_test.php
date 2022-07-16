@@ -87,7 +87,7 @@ function run_phrase_test(testing $t)
     $t->dsp('phrase->load word by id ' . $wrd_company->id, $target, $result);
 
     $result = str_replace("  ", " ", str_replace("\n", "", $phr->dsp_tbl()));
-    $target = ' <td> <a href="/http/view.php?words=' . $wrd_company->id . '" title="">' . word::TN_COMPANY . '</a></td> ';
+    $target = ' <td> <a href="/http/view.php?words=' . $wrd_company->id . '" title="System Test Word Group e.g. Company">' . word::TN_COMPANY . '</a></td> ';
     $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
     $target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
     $result = trim_all($result);
@@ -95,8 +95,8 @@ function run_phrase_test(testing $t)
     // to overwrite any special char
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $target = $result;
         log_err('Unexpected diff ' . $diff);
+        $target = $result;
     }
     $t->dsp('phrase->dsp_tbl word for ' . TEST_WORD, $target, $result);
 
@@ -117,8 +117,8 @@ function run_phrase_test(testing $t)
     // to overwrite any special char
     $diff = str_diff($result, $target);
     if ($diff != '') {
-        $target = $result;
         log_err('Unexpected diff ' . $diff);
+        $target = $result;
     }
     $t->dsp('phrase->dsp_tbl triple for ' . $zh_company_id, $target, $result);
 

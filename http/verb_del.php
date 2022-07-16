@@ -49,9 +49,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VERB_DEL);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // the original calling page that should be shown after the change if finished
 
@@ -75,7 +74,7 @@ if ($usr->id > 0) {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
 
-            $result .= btn_yesno("Delete " . $vrb->name . "? ", "/http/verb_del.php?id=" . $vrb_id . "&back=" . $back);
+            $result .= \html\btn_yesno("Delete " . $vrb->name . "? ", "/http/verb_del.php?id=" . $vrb_id . "&back=" . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

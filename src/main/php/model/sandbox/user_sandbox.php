@@ -129,6 +129,10 @@ class user_sandbox
     public ?string $type_name = ''; // the name of the word type, word link type, view type, view component type or formula type
 
 
+    /*
+     * construct and map
+     */
+
     /**
      * all user sandbox object are user specific, that's why the user is always set
      * and most user sandbox objects are named object
@@ -153,6 +157,20 @@ class user_sandbox
         $this->owner_id = null;
         $this->excluded = null;
 
+    }
+
+    /*
+     * set and get
+     */
+
+    public function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function id(): int
+    {
+        return $this->id;
     }
 
     /*
@@ -183,7 +201,7 @@ class user_sandbox
      */
     function fill_api_obj(object $api_obj): void
     {
-        $api_obj->id = $this->id;
+        $api_obj->set_id($this->id());
     }
 
     /**
@@ -192,7 +210,7 @@ class user_sandbox
      */
     function fill_min_obj(object $min_obj): object
     {
-        $min_obj->id = $this->id;
+        $min_obj->set_id($this->id());
         return $min_obj;
     }
 
@@ -203,7 +221,7 @@ class user_sandbox
      */
     function fill_dsp_obj(object $dsp_obj): object
     {
-        $dsp_obj->id = $this->id;
+        $dsp_obj->set_id($this->id());
         $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
         $dsp_obj->usr = $this->usr;
         $dsp_obj->owner_id = $this->owner_id;

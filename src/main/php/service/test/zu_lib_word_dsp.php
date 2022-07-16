@@ -65,16 +65,6 @@
 */
 
 
-// simply to display a single word
-function zut_html($id, $name)
-{
-    log_debug('zut_html');
-    $result = '  <tr>' . "\n";
-    $result .= zut_html_tbl($id, $name);
-    $result .= '  </tr>' . "\n";
-    return $result;
-}
-
 // simply to display a single word and allow to delete it
 // used by zuv_dsp_add
 function zut_html_del($id, $name, $del_call)
@@ -83,7 +73,7 @@ function zut_html_del($id, $name, $del_call)
     $result = '  <tr>' . "\n";
     $result .= zut_html_tbl($id, $name);
     $result .= '    <td>' . "\n";
-    $result .= '      ' . btn_del("delete", $del_call) . '<br> ';
+    $result .= '      ' . \html\btn_del("delete", $del_call) . '<br> ';
     $result .= '    </td>' . "\n";
     $result .= '  </tr>' . "\n";
     return $result;
@@ -107,7 +97,7 @@ function zut_link_style($id, $name, $style)
 }
 
 // simply to display a single word in a table
-function zut_html_tbl($id, $name, $intent)
+function zut_html_tbl($id, $name, int $intent = 0)
 {
     log_debug('zut_tbl_html');
     $result = '    <td>' . "\n";
@@ -145,7 +135,7 @@ function zut_unlink_html($link_id, $word_id)
 {
     log_debug('zut_unlink_html(' . $link_id . ')');
     $result = '    <td>' . "\n";
-    $result .= btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $word_id);
+    $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $word_id);
     $result .= '    </td>' . "\n";
     return $result;
 }
@@ -231,56 +221,6 @@ function zut_html_selector_add($id)
 
 // returns the html code to select a word link type
 // database link must be open
-function zut_dsp_selector_link($id, $user_id, $back_link)
-{
-    log_debug('zut_dsp_selector_link ... word id ' . $id);
-    $result = '';
-
-    $sql = "SELECT * FROM (
-          SELECT verb_id, 
-                 IF (name_reverse <> '', CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name,
-                 words
-            FROM verbs 
-    UNION SELECT verb_id*-1, 
-                 CONCAT(name_reverse, ' (', verb_name, ')') AS name,
-                 words
-            FROM verbs 
-           WHERE name_reverse <> '' ) AS links
-        ORDER BY words DESC, name;";
-    $result = zuh_selector("verb", "word_add", $sql, $id, "");
-
-    if (zuu_is_admin($user_id)) {
-        // admin users should always have the possibility to create a new link type
-        $result .= btn_add('add new link type', '/http/verb_add.php?back=' . $back_link);
-    }
-
-    return $result;
-}
-
-// similar to zut_dsp_selector_link, but displays only the "forward" links, means not the reverse
-function zut_dsp_selector_link_fwd($id, $back_link, $user_id)
-{
-    log_debug('zut_dsp_selector_link ... word id ' . $id);
-    $result = '';
-
-    $sql = "SELECT * FROM (
-          SELECT verb_id, 
-                 IF (name_reverse <> '', CONCAT(verb_name, ' (', name_reverse, ')'), verb_name) AS name,
-                 words
-            FROM verbs ) AS links
-        ORDER BY words DESC, name;";
-    $result = zuh_selector("verb", "link_edit", $sql, $id, "");
-
-    if (zuu_is_admin($user_id)) {
-        // admin users should always have the possibility to create a new link type
-        $result .= btn_add('add new link type', '/http/verb_add.php?back=' . $back_link);
-    }
-
-    return $result;
-}
-
-// returns the html code to select a word link type
-// database link must be open
 function zut_html_selector_type($id)
 {
     log_debug('zut_html_selector_type ... word id ' . $id);
@@ -289,105 +229,6 @@ function zut_html_selector_type($id)
     return $result;
 }
 
-
-// show a word with its the default view
-function zut_dsp($id, $user_id)
-{
-    log_debug('zut_dsp(' . $id . ')');
-    $result = '';
-
-    // check input and set default if needed
-    if ($id <= 0) {
-        $id = 1;
-    }
-    if ($user_id <= 0) {
-        $user_id = zuu_id();
-    }
-
-    $view_id = zum_default_id($user_id, $id);
-    $result .= zum_html($view_id, $id, 0);
-
-    log_debug('zut_dsp ... done');
-    return $result;
-}
-
-// display the history of a word
-function zut_dsp_hist_links($wrd_id, $size, $back_link)
-{
-    log_debug("zut_dsp_hist_links (" . $wrd_id . ",size" . $size . ",b" . $size . ")");
-    $result = ''; // reset the html code var
-
-    // get changed links related to one word
-    $sql = "SELECT c.change_time AS time, 
-                 u.user_name AS user, 
-                 a.change_action_name AS type, 
-                 c.old_text_from, 
-                 c.old_text_link, 
-                 c.old_text_to, 
-                 c.new_text_from, 
-                 c.new_text_link, 
-                 c.new_text_to
-            FROM change_links c,
-                 change_actions a,
-                 users u
-           WHERE (c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD) . "      OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_USR) . " 
-               OR c.change_table_id = " . cl(db_cl::LOG_TABLE, change_log_table::WORD_LINK) . " )
-             AND (c.old_from_id = " . $wrd_id . " OR c.new_from_id = " . $wrd_id . " OR c.old_to_id = " . $wrd_id . " OR c.new_to_id = " . $wrd_id . ")
-             AND c.change_action_id = a.change_action_id 
-             AND c.user_id = u.user_id 
-        ORDER BY c.change_time DESC
-           LIMIT " . $size . ";";
-    $sql_result = zu_sql_get_all($sql);
-
-    // display the changes
-    $row_nbr = 0;
-    $result .= '<table class="change_hist">';
-    while ($wrd_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        $row_nbr++;
-        $result .= '<tr>';
-        if ($row_nbr == 1) {
-            $result .= '<th>time</th>';
-            $result .= '<th>user</th>';
-            $result .= '<th>from</th>';
-            $result .= '<th>to</th>';
-        }
-        $result .= '</tr><tr>';
-        $result .= '<td>' . $wrd_row["time"] . '</td>';
-        $result .= '<td>' . $wrd_row["user"] . '</td>';
-        $old_text = trim($wrd_row["old_text_from"] . " " . $wrd_row["old_text_link"] . " " . $wrd_row["old_text_to"]);
-        $new_text = trim($wrd_row["new_text_from"] . " " . $wrd_row["new_text_link"] . " " . $wrd_row["new_text_to"]);
-        if ($old_text == "") {
-            $result .= '<td>' . $wrd_row["type"] . '</td>';
-        } else {
-            $result .= '<td>' . $old_text . '</td>';
-        }
-        if ($new_text == "") {
-            $result .= '<td>' . $wrd_row["type"] . '</td>';
-        } else {
-            $result .= '<td>' . $new_text . '</td>';
-        }
-        $result .= '</tr>';
-    }
-    $result .= '</table>';
-
-    log_debug("zut_dsp_hist_links -> done");
-    return $result;
-}
-
-// display a botton to edit the word link in a table cell
-function zutl_btn_edit($link_id, $word_id)
-{
-    log_debug("zutl_btn_edit (" . $link_id . ",b" . $word_id . ")");
-    $result = ''; // reset the html code var
-
-    // get the link from the database
-    $result .= '    <td>' . "\n";
-    $result .= btn_edit("edit word link", "/http/link_edit.php?id=" . $link_id . "&back=" . $word_id);
-    $result .= '    </td>' . "\n";
-
-    log_debug("zutl_btn_edit done");
-    return $result;
-}
 
 // return the word name for more than one
 function zut_plural($wrd_id, $user_id)

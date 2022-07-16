@@ -89,9 +89,8 @@ if ($usr->id > 0) {
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {
-            $dsp = new view_dsp_old;
+            $dsp = new view_dsp_old($usr);
             $dsp->id = $view_id;
-            $dsp->usr = $usr;
             $dsp->load();
             $dsp_text = $dsp->display($wrd, $back);
 

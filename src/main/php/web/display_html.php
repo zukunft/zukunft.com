@@ -159,7 +159,7 @@ function dsp_list($item_lst, $item_type): string
     foreach ($item_lst as $item) {
         $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
     }
-    $result .= btn_add('Add ' . $item_type, $add_script);
+    $result .= \html\btn_add('Add ' . $item_type, $add_script);
     $result .= '<br>';
 
     return $result;
@@ -334,10 +334,10 @@ function dsp_form_end($submit_name, $back, $del_call = ''): string
             $result .= '<input type="submit" value="' . $submit_name . '">';
         }
         if ($back <> "") {
-            $result .= btn_back($back);
+            $result .= \html\btn_back($back);
         }
         if ($del_call <> "") {
-            $result .= btn_del('delete', $del_call);
+            $result .= \html\btn_del('delete', $del_call);
         }
     }
     $result .= '</form>';

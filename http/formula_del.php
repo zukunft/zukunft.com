@@ -72,9 +72,9 @@ if ($usr->id > 0) {
             $result .= $dsp->dsp_navbar($back);
 
             if ($frm->is_used()) {
-                $result .= btn_yesno("Exclude \"" . $frm->name . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
+                $result .= \html\btn_yesno("Exclude \"" . $frm->name . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
             } else {
-                $result .= btn_yesno("Delete \"" . $frm->name . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
+                $result .= \html\btn_yesno("Delete \"" . $frm->name . "\" ", "/http/formula_del.php?id=" . $formula_id . "&back=" . $back);
             }
         }
     } else {

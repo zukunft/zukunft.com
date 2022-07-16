@@ -53,7 +53,7 @@ class formula_value_list_api extends list_value_api
     function add(formula_value_api $fv): bool
     {
         $result = false;
-        if (!in_array($fv->id, $this->id_lst())) {
+        if (!in_array($fv->id(), $this->id_lst())) {
             $this->lst[] = $fv;
             $this->set_lst_dirty();
             $result = true;

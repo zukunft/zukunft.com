@@ -73,7 +73,7 @@ if ($usr->id > 0) {
             // display the view header
             $result .= $dsp->dsp_navbar($back);
 
-            $result .= btn_yesno("Delete " . $src->name . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
+            $result .= \html\btn_yesno("Delete " . $src->name . "? ", "/http/source_del.php?id=" . $src_id . "&back=" . $back);
         }
     } else {
         $result .= dsp_go_back($back, $usr);

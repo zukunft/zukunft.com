@@ -29,8 +29,27 @@
 
 */
 
+use html\api;
+use html\button;
+
 class word_link_dsp extends word_link
 {
 
+    /**
+     * @returns string the html code to display a bottom to edit the word link in a table cell
+     */
+    function btn_edit(phrase $wrd): string
+    {
+        $result = ''; // reset the html code var
+
+        // get the link from the database
+        $result .= '    <td>' . "\n";
+        $html = new html_base();
+        $url = $html->url(api::PATH . 'link' . api::UPDATE . api::EXT, $this->id, $wrd->id);
+        $result .= (new button("edit word link", $url))->edit();
+        $result .= '    </td>' . "\n";
+
+        return $result;
+    }
 
 }

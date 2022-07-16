@@ -29,6 +29,14 @@
 
 */
 
+namespace api;
+
+use db_cl;
+use html\api;
+use html_base;
+use sys_log_status;
+use user;
+
 class system_error_log_api
 {
 
@@ -56,31 +64,32 @@ class system_error_log_api
 
     /**
      * just used for unit testing
-     * @return false|string the frontend API JSON string
+     * @return string the frontend API JSON string
      */
     function get_json(): string
     {
         return json_encode($this);
     }
 
-    function get_html(user $usr, string $back): string
+    function get_html(user $usr = null, string $back = ''): string
     {
-        $result = '<tr>';
-        $result .= '<td>' . $this->time . '</td>';
-        $result .= '<td>' . $this->user . '</td>';
-        $result .= '<td>' . $this->text . '</td>';
-        $result .= '<td>' . $this->trace . '</td>';
-        $result .= '<td>' . $this->prg_part . '</td>';
-        $result .= '<td>' . $this->owner . '</td>';
-        $result .= '<td>' . $this->status . '</td>';
-        if ($usr->is_admin()) {
-            $result .= '<td><a href="/http/error_update.php?id=' . $this->id .
-                '&status=' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED) .
-                '&back=' . $back . '">close</a></td>';
+        $html = new html_base();
+        $row_text = $html->tbl_cell($this->time);
+        $row_text .= $html->tbl_cell($this->user);
+        $row_text .= $html->tbl_cell($this->text);
+        $row_text .= $html->tbl_cell($this->trace);
+        $row_text .= $html->tbl_cell($this->prg_part);
+        $row_text .= $html->tbl_cell($this->owner);
+        $row_text .= $html->tbl_cell($this->status);
+        if ($usr != null) {
+            if ($usr->is_admin()) {
+                $par_status = api::PAR_LOG_STATUS. '=' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
+                $url = $html->url(api::ERROR_UPDATE, $this->id, $back, '', $par_status);
+                $row_text .= $html->tbl_cell($html->ref($url, 'close'));
+            }
         }
 
-        $result .= '</tr>';
-        return $result;
+        return $html->tbl_row($row_text);
     }
 
 }

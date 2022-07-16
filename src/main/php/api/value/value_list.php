@@ -49,7 +49,7 @@ class value_list_api extends list_value_api
     function add(value_api $val): bool
     {
         $result = false;
-        if (!in_array($val->id, $this->id_lst())) {
+        if (!in_array($val->id(), $this->id_lst())) {
             $this->lst[] = $val;
             $this->set_lst_dirty();
             $result = true;

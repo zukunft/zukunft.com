@@ -180,7 +180,7 @@ class html_unit_tests
         $fv_canton->set_grp($phr_grp_canton_pct);
         $fv_canton->set_val(value::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value::TV_CH_INHABITANTS_2019_IN_MIO);
 
-        // create the formula result list and the table to display the resuls
+        // create the formula result list and the table to display the results
         $fv_lst = new \api\formula_value_list_api();
         $fv_lst->add($fv_city);
         $fv_lst->add($fv_canton);
@@ -194,6 +194,7 @@ class html_unit_tests
 
         $cmp = new view_cmp($usr);
         $cmp->set_type(view_cmp_type::TEXT);
+        $cmp->set_id(1);
         $cmp->name = 'View component text';
         $t->html_test($cmp->dsp_obj()->html(), 'view_cmp_text', $t);
 

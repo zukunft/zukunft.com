@@ -51,8 +51,7 @@ if ($usr->id > 0) {
 
     load_usr_data();
 
-    $dsp = new view_dsp_old;
-    $dsp->usr = $usr;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::ERR_UPD);
     $result .= $dsp->dsp_navbar($back);
 
@@ -75,7 +74,7 @@ if ($usr->id > 0) {
         $err_lst->size = 20;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $errors_all = $err_lst->display();
+            $errors_all = $err_lst->dsp_obj()->get_html();
         }
         //$errors_all .= zuu_dsp_errors  ($usr->id, $usr->profile_id, "all", $back);
         if ($errors_all <> "") {
@@ -94,7 +93,7 @@ if ($usr->id > 0) {
 }
 
 $result .= '<br><br>';
-$result .= btn_back($back);
+$result .= \html\btn_back($back);
 
 echo $result;
 

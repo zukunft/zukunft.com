@@ -302,7 +302,7 @@ class verb
         if (isset($this->usr)) {
             if ($this->usr->is_admin()) {
                 // admin users should always have the possibility to create a new verb / link type
-                $result .= btn_add('add new verb', '/http/verb_add.php?back=' . $back);
+                $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
             }
         }
 

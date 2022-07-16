@@ -46,7 +46,11 @@ class user_sandbox_api
 {
 
     // fields for the backend link
-    public int $id; // the database id of the object, which is the same as the related database object in the backend
+    protected int $id; // the database id of the object, which is the same as the related database object in the backend
+
+    /*
+     * construct and map
+     */
 
     function __construct(int $id = 0)
     {
@@ -57,6 +61,24 @@ class user_sandbox_api
             $this->id = $id;
         }
     }
+
+    /*
+     * set and get
+     */
+
+    public function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function id(): int
+    {
+        return $this->id;
+    }
+
+    /*
+     * casting
+     */
 
     function db_obj(user $usr, string $class): user_sandbox
     {

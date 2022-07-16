@@ -228,7 +228,7 @@ class value_list_dsp_old extends value_list
                             }
 
                             //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back);
-                            $result .= '      ' . btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
+                            $result .= '      ' . \html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
                             $modal_nbr++;
                             //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back);
                             $result .= '      </td>' . "\n";
@@ -333,7 +333,7 @@ class value_list_dsp_old extends value_list
                                         $type_ids[] = 0;
                                     }
 
-                                    $result .= '      ' . btn_add_value($add_phr_lst, $type_ids, $back);
+                                    $result .= '      ' . \html\btn_add_value($add_phr_lst, $type_ids, $back);
                                     $result .= '      </td>' . "\n";
                                 } else {
                                     $result .= $tbl_value->dsp_tbl($back);
@@ -366,7 +366,7 @@ class value_list_dsp_old extends value_list
                         $type_ids[] = $type_phr->id;
                         $type_ids[] = $type_phr->id;
 
-                        $result .= '      &nbsp;&nbsp;' . btn_add_value($add_phr_ids, $type_ids, $back);
+                        $result .= '      &nbsp;&nbsp;' . \html\btn_add_value($add_phr_ids, $type_ids, $back);
                         $result .= '      </td>' . "\n";
                         $result .= '  </tr>' . "\n";
                     }

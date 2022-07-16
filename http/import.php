@@ -167,7 +167,7 @@ if ($usr->id > 0) {
 }
 
 $result .= '<br><br>';
-$result .= btn_back($back);
+$result .= \html\btn_back($back);
 
 echo $result;
 

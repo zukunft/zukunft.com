@@ -30,8 +30,14 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use html\api;
+use html\button;
+
 $debug = $_GET['debug'] ?? 0;
 include_once '../src/main/php/zu_lib.php';
+
+// to create the code for the html frontend
+$html = new html_base();
 
 // open database
 $db_con = prg_start("value_del");
@@ -48,9 +54,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VALUE_DEL);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];  // the page from which the value deletion has been called
 
@@ -75,7 +80,8 @@ if ($usr->id > 0) {
             $result .= $dsp->dsp_navbar($back);
 
             $val->load_phrases();
-            $result .= btn_yesno('Delete ' . $val->number . ' for ' . $val->phr_lst->dsp_name() . '? ', '/http/value_del.php?id=' . $val_id . '&back=' . $back);
+            $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);
+            $result .= (new button('Delete ' . $val->number . ' for ' . $val->phr_lst->dsp_name() . '? ', $url))->yesno();
         }
     } else {
         $result .= dsp_go_back($back, $usr);

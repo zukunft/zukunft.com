@@ -2,8 +2,8 @@
 
 /*
 
-    api\word.php - the minimal word object for the frontend API
-    ------------
+    api\word\word.php - the minimal word object for the backend to frontend API transfer
+    -----------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,6 +32,7 @@
 
 namespace api;
 
+use html\phrase_dsp;
 use html\word_dsp;
 
 class word_api extends user_sandbox_named_api
@@ -48,22 +49,37 @@ class word_api extends user_sandbox_named_api
     const TN_PCT = 'percent';
 
     // the mouse over tooltip for the word
-    public ?string $description = null;
+    protected ?string $description = null;
 
     // the language specific forms
     public ?string $plural = null;
 
     // the main parent phrase
-    public phrase_api $parent;
+    public ?phrase_api $parent;
 
     /*
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '')
+    function __construct(int $id = 0, string $name = '', string $description = '')
     {
         parent::__construct($id, $name);
-        $this->description = '';
+        $this->description = $description;
+        $this->parent = null;
+    }
+
+    /*
+     * get and set
+     */
+
+    public function set_description(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    function description(): string
+    {
+        return $this->description;
     }
 
     /*
@@ -75,7 +91,12 @@ class word_api extends user_sandbox_named_api
      */
     function dsp_obj(): word_dsp
     {
-        return new word_dsp($this->id, $this->name);
+        $wrd_dsp = new word_dsp($this->id, $this->name, $this->description);
+        $wrd_dsp->plural = $this->plural;
+        if ($this->parent != null) {
+            $wrd_dsp->parent = $this->parent->dsp_obj();
+        }
+        return $wrd_dsp;
     }
 
     function phrase(): phrase_api

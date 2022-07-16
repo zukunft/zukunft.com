@@ -249,7 +249,7 @@ function zuv_dsp_edit_or_add($val_id, $wrd_ids, $type_ids, $db_ids, $src_id, $ba
   $result .= '<br><br>';
   $result .= zuv_dsp_source($src_id, $script, $back_link, $user_id);
   $result .= '<br><br>';
-  $result .= btn_back($back_link);
+  $result .= \html\btn_back($back_link);
   
   // display the user changes 
   if ($val_id > 0) { 

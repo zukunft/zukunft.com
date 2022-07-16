@@ -102,7 +102,7 @@ class phrase_list_dsp_old extends phrase_list
     // similar to value.php/btn_add
     function btn_add_value($back)
     {
-        $result = btn_add_value($this, Null, $back);
+        $result = \html\btn_add_value($this, Null, $back);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';
@@ -115,7 +115,7 @@ class phrase_list_dsp_old extends phrase_list
         $url_phr = $this->id_url_long();
 
         $val_btn_call  = '/http/value_add.php?back='.$back.$url_phr;
-        $result .= btn_add ($val_btn_title, $val_btn_call);
+        $result .= \html\btn_add ($val_btn_title, $val_btn_call);
         zu_debug('phrase_list->btn_add_value -> done');
         */
         return $result;

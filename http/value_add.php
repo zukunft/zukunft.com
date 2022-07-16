@@ -49,9 +49,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::VALUE_ADD);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back'];     // the word id from which this value change has been called (maybe later any page)
 

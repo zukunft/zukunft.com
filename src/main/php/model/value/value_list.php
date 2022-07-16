@@ -1117,7 +1117,7 @@ class value_list
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $result .= btn_add_value($val_phr_lst, Null, $this->phr->id);
+                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id);
 
                     $result .= '    </td>';
                 }

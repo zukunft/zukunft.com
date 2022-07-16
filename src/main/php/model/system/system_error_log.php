@@ -30,6 +30,8 @@
 */
 
 
+use api\system_error_log_api;
+
 class system_error_log
 {
 

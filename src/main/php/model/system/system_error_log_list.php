@@ -30,6 +30,9 @@
 */
 
 
+use api\system_error_log_list_api;
+use html\system_error_log_list_dsp;
+
 class system_error_log_list
 {
 
@@ -45,17 +48,37 @@ class system_error_log_list
     public int $size = 0;       //
     public ?string $back = '';      //
 
+    /*
+     * casting objects
+     */
+
     /**
      * @return system_error_log_list_api a filled frontend api object
      */
-    function get_dsp_obj(): system_error_log_list_api
+    function api_obj(): system_error_log_list_api
     {
-        $dsp_obj = new system_error_log_list_api();
-        foreach ($this->lst AS $log) {
-            $dsp_obj->system_errors[] = $log->get_dsp_obj();
+        $api_obj = new system_error_log_list_api();
+        foreach ($this->lst as $log) {
+            $api_obj->system_errors[] = $log->get_dsp_obj();
         }
-        return $dsp_obj;
+        return $api_obj;
     }
+
+    /**
+     * @return system_error_log_list_dsp a filled frontend display object
+     */
+    function dsp_obj(): system_error_log_list_dsp
+    {
+        $api_obj = new system_error_log_list_dsp();
+        foreach ($this->lst as $log) {
+            $api_obj->system_errors[] = $log->get_dsp_obj();
+        }
+        return $api_obj;
+    }
+
+    /*
+     * loading / database access object (DAO) functions
+     */
 
     /**
      * create the SQL statement to load a list of system log entries
@@ -139,7 +162,8 @@ class system_error_log_list
     /**
      * simple add another system log entry to the list
      */
-    function add(system_error_log $log) {
+    function add(system_error_log $log): void
+    {
         $this->lst[] = $log;
     }
 

@@ -36,7 +36,11 @@ namespace html;
 
 use api\phrase_list_api;
 use api\value_list_api;
+use formula_value_list;
 use html_table;
+use phrase;
+use word_list;
+use word_list_dsp;
 
 class value_list_dsp extends value_list_api
 {
@@ -176,7 +180,7 @@ class value_list_dsp extends value_list_api
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $result .= btn_add_value($val_phr_lst, Null, $this->phr->id);
+                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id);
 
                     $result .= '    </td>';
                 }

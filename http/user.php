@@ -62,9 +62,8 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::USER);
-    $dsp->usr = $usr;
     $dsp->load();
 
     // do user changes
@@ -185,7 +184,7 @@ if ($usr->id > 0) {
 }
 
 $result .= '<br><br>';
-$result .= btn_back($back);
+$result .= \html\btn_back($back);
 
 echo $result;
 

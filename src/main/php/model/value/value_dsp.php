@@ -30,6 +30,8 @@
   
 */
 
+use html\api;
+
 class value_dsp_old extends value
 {
 
@@ -116,7 +118,7 @@ class value_dsp_old extends value
         }
 
         $val_btn_call = '/http/value_add.php?back=' . $back . $url_phr;
-        $result .= btn_add($val_btn_title, $val_btn_call);
+        $result .= \html\btn_add($val_btn_title, $val_btn_call);
 
         return $result;
     }
@@ -149,7 +151,7 @@ class value_dsp_old extends value
         return $result;
     }
 
-    // the same as btn_del_value, but with another icon
+    // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back)
     {
         $result = btn_undo('delete this value', '/http/value_del.php?id=' . $this->id . '&back=' . $back . '');
@@ -291,10 +293,10 @@ class value_dsp_old extends value
                 }
                 // prepare a new value display
                 $row_value = $db_row["word_value"];
-                $word_names = $wrd->dsp_link_style("grey");
+                $word_names = $wrd->dsp_obj()->dsp_link(api::STYLE_GREY);
                 $value_id = $new_value_id;
             } else {
-                $word_names .= ", " . $wrd->dsp_link_style("grey");
+                $word_names .= ", " . $wrd->dsp_obj()->dsp_link(api::STYLE_GREY);
             }
         }
         // display the last row if there has been at least one word
@@ -489,8 +491,8 @@ class value_dsp_old extends value
                             $url_pos++;
 
                             $result .= '    </td>';
-                            $result .= '    <td>' . btn_del("Remove " . $phr->name, $used_url) . '</td>';
-                            $result .= '    <td>' . btn_edit("Rename " . $phr->name, $phrase_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name, $used_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name, $phrase_url) . '</td>';
                         }
                     }
 
@@ -507,8 +509,8 @@ class value_dsp_old extends value
                             $url_pos++;
 
                             $result .= '    </td>';
-                            $result .= '    <td>' . btn_del("Remove " . $phr->name, $used_url) . '</td>';
-                            $result .= '    <td>' . btn_edit("Rename " . $phr->name, $phrase_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name, $used_url) . '</td>';
+                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name, $phrase_url) . '</td>';
                         }
                     }
 
@@ -530,7 +532,7 @@ class value_dsp_old extends value
                         $url_pos++;
 
                         $result .= '    </td>';
-                        $result .= '    <td>' . btn_del("Remove " . $this->time_phr->name, $used_url) . '</td>';
+                        $result .= '    <td>' . \html\btn_del("Remove " . $this->time_phr->name, $used_url) . '</td>';
                     }
                     $result .= '  </tr>';
                 }
@@ -548,7 +550,7 @@ class value_dsp_old extends value
                     $url_pos++;
 
                     $result .= '    </td>';
-                    $result .= '    <td>' . btn_del("Remove new", $used_url) . '</td>';
+                    $result .= '    <td>' . \html\btn_del("Remove new", $used_url) . '</td>';
                 }
                 $result .= '  </tr>';
             }
@@ -564,7 +566,7 @@ class value_dsp_old extends value
         $type_ids_new[] = 0;
         $used_url = $this_url . zu_ids_to_url($phr_ids_new, "phrase") .
             zu_ids_to_url($type_ids_new, "type");
-        $result .= '  ' . btn_add("Add another phrase", $used_url);
+        $result .= '  ' . \html\btn_add("Add another phrase", $used_url);
         $result .= '  <br><br>';
         $result .= '  <input type="hidden" name="back" value="' . $back . '">';
         if ($this->id > 0) {
@@ -588,7 +590,7 @@ class value_dsp_old extends value
         $result .= $this->dsp_protection($script, $back);
 
         $result .= '<br>';
-        $result .= btn_back($back);
+        $result .= \html\btn_back($back);
 
         // display the user changes
         log_debug('value->dsp_edit -> user changes');
@@ -610,7 +612,7 @@ class value_dsp_old extends value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids, 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_link_style("grey") . '" values as an indication', 'change_hist');
+                    $result .= dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->dsp_link(api::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
             }

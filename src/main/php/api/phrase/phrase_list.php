@@ -141,7 +141,7 @@ class phrase_list_api extends list_api
                 // $this->lst = array_intersect($this->lst, $new_lst->lst());
                 $found_lst = new phrase_list_api();
                 foreach ($new_lst->lst() as $phr) {
-                    if (in_array($phr->id, $this->id_lst())) {
+                    if (in_array($phr->id(), $this->id_lst())) {
                         $found_lst->add($phr);
                     }
                 }
@@ -158,7 +158,7 @@ class phrase_list_api extends list_api
             // $this->lst = array_intersect($this->lst, $new_lst->lst());
             $remain_lst = new phrase_list_api();
             foreach ($this->lst() as $phr) {
-                if (!in_array($phr->id, $del_lst->id_lst())) {
+                if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add($phr);
                 }
             }

@@ -37,11 +37,12 @@ include_once '../src/main/php/zu_lib.php';
 /* open database */
 $db_con = prg_start("phrase_list");
 
-$result = new phrase_list_dsp_old(); // reset the html code var
+$result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
+$phr_lst = new phrase_list_dsp_old($usr);
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)

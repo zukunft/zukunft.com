@@ -57,6 +57,7 @@ function run_display_test(testing $t)
     // test if a simple text component can be created
     $cmp = new view_cmp_dsp_old($usr);
     $cmp->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::TEXT);
+    $cmp->set_id(1);
     $cmp->name = TS_NESN_2016_NAME;
     $result = $cmp->dsp_obj()->html();
     $target = ' ' . TS_NESN_2016_NAME;

@@ -50,13 +50,21 @@ class api
 
     // classes used to allow renaming independent of the class name
     const WORD = 'word';
+    const VALUE = 'value';
     const VIEW = 'view';
 
     // special api function independent of a class
     const LOGIN_RESET = 'login_reset';
+    const ERROR_UPDATE = 'error_update';
 
     // view parameter names
-    const PAR_VIEW_WORDS = 'words=';
+    const PAR_VIEW_WORDS = 'words';  // to select the phrases that should be display
+    const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
+
+    // styles used
+    const STYLE_GREY = 'grey';
+    const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
+    const STYLE_USER = 'user_specific';
 
     // to be reviewed
     const VALUE_EDIT = 'value_edit';

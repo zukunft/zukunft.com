@@ -177,7 +177,7 @@ class html_base
      * wrapper for the basic html elements used
      */
 
-    function ref(string $url, string $name, string $title = ''): string
+    function ref(string $url, string $name, string $title = '', string $style = ''): string
     {
         $result = '<a href="' . $url . '"';
         if ($title != '') {
@@ -185,10 +185,23 @@ class html_base
         } else {
             $result .= ' title="' . $name . '"';
         }
+        if ($style != '') {
+            $result .= ' class="' . $style . '"';
+        }
         $result .= '>';
         $result .= $name;
         $result .= '</a>';
         return $result;
+    }
+
+    /**
+     * @param string $text the text that should be formatted
+     * @param string $style the CSS class names
+     * @return string the html code
+     */
+    function span(string $text, string $style = ''): string
+    {
+        return '<span class="' . $style . '">' . $text . '</span>';
     }
 
     /*
@@ -327,6 +340,16 @@ class html_base
         return $result;
     }
 
+    function tbl_row(string $row_text): string
+    {
+        return '<tr>' . $row_text . '</tr>';
+    }
+
+    function tbl_cell(string $cell_text): string
+    {
+        return '<td>' . $cell_text . '</td>';
+    }
+
     function tbl_end(): string
     {
         return '</table>' . "\n";
@@ -373,10 +396,10 @@ class html_base
                 $result .= '<input type="submit" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= btn_back($back);
+                $result .= \html\btn_back($back);
             }
             if ($del_call <> "") {
-                $result .= btn_del('delete', $del_call);
+                $result .= \html\btn_del('delete', $del_call);
             }
         }
         $result .= '</form>';
@@ -460,7 +483,7 @@ class html_base
                 $result .= '<a href="/http/' . $script_name . '?id=' . $script_parameter . '&move_down=' . $entry[$id_field] . '">down</a>';
             }
             $result .= ' ';
-            $result .= btn_del('Delete ' . $text_field, $script_name . '?id=' . $script_parameter . '&del=' . $entry[$id_field]);
+            $result .= \html\btn_del('Delete ' . $text_field, $script_name . '?id=' . $script_parameter . '&del=' . $entry[$id_field]);
             $result .= '<br>';
         }
 

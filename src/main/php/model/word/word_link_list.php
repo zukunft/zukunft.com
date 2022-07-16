@@ -702,7 +702,7 @@ class word_link_list
                             $dsp_obj = $lnk->to->get_dsp_obj();
                             $result .= $dsp_obj->dsp_tbl_cell(0);
                         }
-                        $result .= $lnk->dsp_btn_edit($lnk->from);
+                        $result .= $lnk->dsp_obj()->btn_edit($lnk->from);
                         if ($lnk->from != null) {
                             $dsp_obj = $lnk->from->get_dsp_obj();
                             $result .= $dsp_obj->dsp_unlink($lnk->id);
@@ -741,7 +741,7 @@ class word_link_list
                         // give the user the possibility to add a similar word
                         $result .= '  <tr>';
                         $result .= '    <td>';
-                        $result .= '      ' . btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->to->type_id . '&back=' . $start_id);
+                        $result .= '      ' . \html\btn_add("Add similar word", '/http/word_add.php?verb=' . $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->to->type_id . '&back=' . $start_id);
                         $result .= '    </td>';
                         $result .= '  </tr>';
 

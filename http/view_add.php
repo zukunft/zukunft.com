@@ -49,15 +49,13 @@ if ($usr->id > 0) {
     load_usr_data();
 
     // prepare the display
-    $dsp = new view_dsp_old;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::ADD);
-    $dsp->usr = $usr;
     $dsp->load();
     $back = $_GET['back']; // 
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
-    $dsp_add = new view_dsp_old;
-    $dsp_add->usr = $usr;
+    $dsp_add = new view_dsp_old($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
     if (isset($_GET['name'])) {

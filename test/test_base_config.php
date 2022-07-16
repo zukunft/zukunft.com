@@ -50,9 +50,8 @@ $back = $_GET['back'];     // the word id from which this value change has been 
 if ($usr->id > 0) {
 
     // prepare the display
-    $dsp = new view_dsp_old;
+    $dsp = new view_dsp_old($usr);
     $dsp->id = cl(db_cl::VIEW, view::IMPORT);
-    $dsp->usr = $usr;
     $dsp->load();
 
     if ($usr->is_admin()) {
