@@ -44,7 +44,7 @@ class word_dsp extends word_api
     const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
 
     /**
-     * @returns string the word name
+     * @returns string simply the word name, but later with mouse over that shows the description
      */
     function dsp(): string
     {
@@ -53,22 +53,49 @@ class word_dsp extends word_api
 
     /**
      * display a word with a link to the main page for the word
+     * @param string $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function dsp_link(string $style = ''): string
+    function dsp_link(string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::VIEW, $this->id, '', api::PAR_VIEW_WORDS);
+        $url = $html->url(api::VIEW, $this->id, $back, api::PAR_VIEW_WORDS);
         return $html->ref($url, $this->name(), $this->description, $style);
     }
 
     /**
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function dsp_td(): string
+    function dsp_td(string $back = '', string $style = '', int $intent = 0): string
     {
-        return (new html_base)->tbl_cell($this->dsp_link());
+        $cell_text = '';
+        while ($intent > 0) {
+            $cell_text .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        $cell_text .= $this->dsp_link($back, $style);
+        return (new html_base)->tbl_cell($cell_text);
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the word as a table cell
+     */
+    function dsp_th(string $back = '', string $style = ''): string
+    {
+        return (new html_base)->tbl_header($this->dsp_link($back, $style));
+    }
+
+    function dsp_tbl_row(): string
+    {
+        $result = '  <tr>' . "\n";
+        $result .= $this->dsp_td('', '', 0);
+        $result .= '  </tr>' . "\n";
+        return $result;
     }
 
     /**
@@ -111,59 +138,6 @@ class word_dsp extends word_api
 
 
     /**
-     * simply to display a single word in a table as a header
-     */
-    function dsp_tbl_head_right(): string
-    {
-        log_debug('word_dsp->dsp_tbl_head_right');
-        $result = '    <th class="right_ref">' . "\n";
-        $result .= '      ' . $this->dsp_link() . "\n";
-        $result .= '    </th>' . "\n";
-        return $result;
-    }
-
-    /**
-     * simply to display a single word in a table cell
-     */
-    function dsp_tbl_cell(int $intent): string
-    {
-        log_debug('word_dsp->dsp_tbl_cell');
-        $result = '    <td>' . "\n";
-        while ($intent > 0) {
-            $result .= '&nbsp;';
-            $intent = $intent - 1;
-        }
-        $result .= '      ' . $this->dsp_link() . "\n";
-        $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-    /**
-     * simply to display a single word in a table
-     * rename and join to dsp_tbl_cell to have a more specific name
-     */
-    function dsp_tbl(int $intent): string
-    {
-        log_debug('word_dsp->dsp_tbl');
-        $result = '    <td>' . "\n";
-        while ($intent > 0) {
-            $result .= '&nbsp;';
-            $intent = $intent - 1;
-        }
-        $result .= '      ' . $this->dsp_link() . "\n";
-        $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-    function dsp_tbl_row(): string
-    {
-        $result = '  <tr>' . "\n";
-        $result .= $this->dsp_tbl(0);
-        $result .= '  </tr>' . "\n";
-        return $result;
-    }
-
-    /**
      * simply to display a single word and allow to delete it
      * used by value->dsp_edit
      */
@@ -171,7 +145,7 @@ class word_dsp extends word_api
     {
         log_debug('word_dsp->dsp_name_del');
         $result = '  <tr>' . "\n";
-        $result .= $this->dsp_tbl_cell(0);
+        $result .= $this->dsp_td('', '', 0);
         $result .= '    <td>' . "\n";
         $result .= '      ' . \html\btn_del("delete", $del_call) . '<br> ';
         $result .= '    </td>' . "\n";

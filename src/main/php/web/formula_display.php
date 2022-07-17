@@ -248,7 +248,7 @@ class formula_dsp_old extends formula
         $sample_val = $fv_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
-                $result .= dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->dsp_link(), "change_hist");
+                $result .= dsp_text_h3("Results for " . $this->name_wrd->dsp_obj()->dsp_link($back), "change_hist");
             }
             $result .= $sample_val;
         }

@@ -29,6 +29,7 @@
   
 */
 
+use html\api;
 use html\word_dsp;
 
 class value_list_dsp_old extends value_list
@@ -156,7 +157,7 @@ class value_list_dsp_old extends value_list
             $result .= '  <tr>' . "\n";
             $result .= '    <th></th>' . "\n";
             foreach ($time_lst->lst as $time_word) {
-                $result .= dsp_tbl_head_right($time_word->display($back));
+                $result .= $time_word->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
             }
             $result .= '  </tr>' . "\n";
 

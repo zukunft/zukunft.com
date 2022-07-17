@@ -1097,7 +1097,7 @@ class test_base
     /**
      * check if the REST curl calls are possible
      *
-     * @param object $usr_obj the object to ehich which REST curl calls should be tested
+     * @param object $usr_obj the object to enrich which REST curl calls should be tested
      * @return bool true if the reloaded backend object has no relevant differences
      */
     function assert_rest(object $usr_obj): bool

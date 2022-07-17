@@ -65,6 +65,7 @@ class api
     const STYLE_GREY = 'grey';
     const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
     const STYLE_USER = 'user_specific';
+    const STYLE_RIGHT = 'right_ref';
 
     // to be reviewed
     const VALUE_EDIT = 'value_edit';

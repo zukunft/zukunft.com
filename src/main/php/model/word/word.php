@@ -43,6 +43,7 @@
 use api\word_api;
 use cfg\phrase_type;
 use cfg\share_type;
+use html\api;
 use html\button;
 use html\word_dsp;
 
@@ -799,7 +800,7 @@ class word extends user_sandbox_description
                 $result .= '    </th>' . "\n";
                 foreach ($col_lst->lst as $col_lst_wrd) {
                     log_debug('word_dsp->dsp_val_list -> column ' . $col_lst_wrd->name);
-                    $result .= $col_lst_wrd->dsp_tbl_head_right();
+                    $result .= $col_lst_wrd->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
                 }
                 $result .= '  </tr>' . "\n";
             }
@@ -807,7 +808,7 @@ class word extends user_sandbox_description
             // display the rows
             log_debug('word_dsp->dsp_val_list -> row');
             $result .= '  <tr>' . "\n";
-            $result .= '      ' . $row_phr_dsp->dsp_obj()->dsp_tbl(0) . '' . "\n";
+            $result .= '      ' . $row_phr_dsp->dsp_obj()->dsp_td($back);
             foreach ($col_lst->lst as $col_lst_wrd) {
                 $result .= '    <td>' . "\n";
                 $val_wrd_ids = array();

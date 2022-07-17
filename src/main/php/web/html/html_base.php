@@ -345,6 +345,11 @@ class html_base
         return '<tr>' . $row_text . '</tr>';
     }
 
+    function tbl_header(string $header_text): string
+    {
+        return '<th>' . $header_text . '</th>';
+    }
+
     function tbl_cell(string $cell_text): string
     {
         return '<td>' . $cell_text . '</td>';
