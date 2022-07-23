@@ -37,9 +37,9 @@ class verb
     // predefined word link types or verbs
     const IS_A = "is";
     const IS_PART_OF = "contains";
-    const DBL_FOLLOW = "follow";
-    const DBL_CAN_CONTAIN = "can_contain";
-    const DBL_CAN_BE = "can_be";
+    const FOLLOW = "follow";
+    const CAN_CONTAIN = "can_contain";
+    const CAN_BE = "can_be";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
@@ -82,7 +82,24 @@ class verb
     public ?string $description = ''; // for the mouse over explain
     public int $usage = 0; // how often this current used has used the verb (until now just the usage of all users)
 
-    function reset()
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, string $name = '', string $code_id = '')
+    {
+        if ($id > 0) {
+            $this->id = $id;
+        }
+        if ($name != '') {
+            $this->name = $name;
+        }
+        if ($code_id != '') {
+            $this->code_id = $code_id;
+        }
+    }
+
+    function reset(): void
     {
         $this->id = null;
         $this->usr = null;
@@ -125,6 +142,10 @@ class verb
         }
         return $result;
     }
+
+    /*
+     * set and get
+     */
 
     /*
      * loading

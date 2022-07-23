@@ -83,9 +83,9 @@ class html_unit_tests
         $t->subheader('HTML list tests');
 
         $lst = new verb_list($usr);
-        $vrb_is = new verb();
-        $lst->add_verb($vrb_is);
-        $t->html_test($lst->dsp_obj()->list(verb::class), 'list_verbs', $t);
+        $lst->add_verb(new verb(1, verb::IS_A));
+        $lst->add_verb(new verb(2, verb::IS_PART_OF));
+        $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), 'list_verbs', $t);
 
         $t->subheader('HTML table tests');
 

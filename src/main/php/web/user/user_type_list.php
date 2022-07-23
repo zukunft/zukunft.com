@@ -35,14 +35,18 @@
 namespace html;
 
 use api\user_type_list_api;
+use html_base;
 
 class user_type_list_dsp extends user_type_list_api
 {
 
-    function list(string $item_type): string
+    function list(string $item_type, string $title = ''): string
     {
-        $html = new \html_base();
-        return $html->list($this->lst(), $item_type);
+        $html = new html_base();
+        if ($title != '') {
+            $title = $html->text_h2($title);
+        }
+        return $title . $html->list($this->lst(), $item_type);
     }
 
 }

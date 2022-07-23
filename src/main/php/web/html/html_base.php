@@ -512,11 +512,13 @@ class html_base
 
         foreach ($item_lst as $item) {
             if ($item->id != null) {
-                $url = $this->url(api::PATH . $item_type . api::UPDATE . api::EXT, $item->id, $back);
+                $url = $this->url($item_type . api::UPDATE, $item->id, $back);
                 $result .= $this->ref($url, $item->name);
+                $result .= '<br>';
             }
         }
-        $result .= (new button('Add ' . $item_type, $item_type . api::CREATE . api::EXT))->add();
+        $url_add = $this->url($item_type . api::CREATE, 0, $back);
+        $result .= (new button('Add ' . $item_type, $url_add))->add();
         $result .= '<br>';
 
         return $result;

@@ -72,7 +72,7 @@ function run_word_display_test(testing $t)
     $wrd_2021 = new word($usr);
     $wrd_2021->name = word::TN_2021;
     $wrd_2021->load();
-    $lnk_20_to_21 = $t->load_word_link(word::TN_2021, verb::DBL_FOLLOW, word::TN_2020);
+    $lnk_20_to_21 = $t->load_word_link(word::TN_2021, verb::FOLLOW, word::TN_2020);
     // TODO change direction?
     $target = ' is followed by<table class="table col-sm-5 table-borderless">
   <tr>
@@ -110,7 +110,7 @@ function run_word_display_test(testing $t)
     $wrd_2019 = $t->load_word(word::TN_2019);
     $wrd_year = $t->load_word(word::TN_YEAR);
     $lnk_20_is_year = $t->load_word_link(word::TN_2020, verb::IS_A, word::TN_YEAR);
-    $lnk_19_to_20 = $t->load_word_link(word::TN_2020, verb::DBL_FOLLOW, word::TN_2019);
+    $lnk_19_to_20 = $t->load_word_link(word::TN_2020, verb::FOLLOW, word::TN_2019);
     $target = ' are<table class="table col-sm-5 table-borderless">
   <tr>
     <td>

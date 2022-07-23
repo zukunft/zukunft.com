@@ -1376,7 +1376,7 @@ class word extends user_sandbox_description
         global $db_con;
         $result = new word($this->usr);
 
-        $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
+        $link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_TRIPLE);
@@ -1400,7 +1400,7 @@ class word extends user_sandbox_description
         global $db_con;
         $result = new word($this->usr);
 
-        $link_id = cl(db_cl::VERB, verb::DBL_FOLLOW);
+        $link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->usr->id;
         $db_con->set_type(DB_TYPE_TRIPLE);

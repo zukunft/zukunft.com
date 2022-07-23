@@ -607,7 +607,7 @@ class word_list
      */
     function differentiators(): word_list
     {
-        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -621,7 +621,7 @@ class word_list
     {
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents(cl(db_cl::VERB, verb::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 

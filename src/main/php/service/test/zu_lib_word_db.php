@@ -357,7 +357,7 @@ function zut_db_differentiator_words($word_id) {
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
-  $differentiator_type = cl(db_cl::VERB, verb::DBL_CAN_CONTAIN);
+  $differentiator_type = cl(db_cl::VERB, verb::CAN_CONTAIN);
 
   // find direct differentiator words
   $word_lst = zu_sql_get_lst(zu_sql_words_linked($word_id, $differentiator_type, word_select_direction::UP));
@@ -391,7 +391,7 @@ function zut_db_differentiator_words_filtered($word_id, $filter_ids, $user_id) {
   //echo '+diffa: '.$word_id.'<br>';
 
   $word_lst = array();
-  $differentiator_type = cl(db_cl::VERB, verb::DBL_CAN_CONTAIN);
+  $differentiator_type = cl(db_cl::VERB, verb::CAN_CONTAIN);
   log_debug('zut_db_differentiator_words_filtered ... type ('.$differentiator_type.')');
 
   // find direct differentiator words

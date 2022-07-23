@@ -834,7 +834,7 @@ class phrase_list
     function differentiators()
     {
         log_debug('phrase_list->differentiators for ' . $this->dsp_id());
-        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
         log_debug('phrase_list->differentiators merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug('phrase_list->differentiators -> ' . $phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -846,7 +846,7 @@ class phrase_list
     {
         log_debug('phrase_list->differentiators_all for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
+        $phr_lst = $this->foaf_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -855,7 +855,7 @@ class phrase_list
             $loops = 0;
             log_debug('phrase_list->differentiators -> added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->foaf_children(cl(db_cl::VERB, verb::DBL_CAN_CONTAIN));
+                $next_lst = $added_lst->foaf_children(cl(db_cl::VERB, verb::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);

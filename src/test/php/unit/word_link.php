@@ -65,7 +65,7 @@ class word_link_unit_tests
         $trp = new word_link($usr);
         $wrd_from = new word($usr);
         $wrd_from->id = 2;
-        $vrb = new verb($usr);
+        $vrb = new verb();
         $vrb->id = 3;
         $wrd_to = new word($usr);
         $wrd_to->id = 4;

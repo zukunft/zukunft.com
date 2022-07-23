@@ -1538,7 +1538,7 @@ function zu_test_time_setup(testing $t): string
             $wrd_lnk = $t->test_word_link(TW_YEAR, verb::IS_A, $this_year);
             $result = $wrd_lnk->name;
             if ($prev_year <> '') {
-                $t->test_word_link($prev_year, verb::DBL_FOLLOW, $this_year);
+                $t->test_word_link($prev_year, verb::FOLLOW, $this_year);
             }
             $prev_year = $this_year;
         }

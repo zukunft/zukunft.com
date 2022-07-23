@@ -55,12 +55,12 @@ class verb_unit_tests
 
         // sql to load a verb by code id
         $vrb = new verb();
-        $vrb->code_id = verb::DBL_FOLLOW;
+        $vrb->code_id = verb::FOLLOW;
         $t->assert_load_sql($db_con, $vrb);
 
         // sql to load a source by name
         $vrb = new verb();
-        $vrb->name = verb::DBL_FOLLOW;
+        $vrb->name = verb::FOLLOW;
         $t->assert_load_sql($db_con, $vrb);
 
 

@@ -40,7 +40,7 @@ function create_test_phrases(testing $t)
 
     $t->test_word_link(TW_ABB, verb::IS_A, TEST_WORD, TP_ABB);
     $t->test_word_link(TW_VESTAS, verb::IS_A, TEST_WORD, TW_VESTAS, TW_VESTAS);
-    $t->test_word_link(TW_2014, verb::DBL_FOLLOW, TW_2013, TP_FOLLOW);
+    $t->test_word_link(TW_2014, verb::FOLLOW, TW_2013, TP_FOLLOW);
     // TODO check direction
     $t->test_word_link(TW_TAX, verb::IS_PART_OF, TW_CF, TP_TAXES);
 

@@ -57,7 +57,7 @@ function create_test_words(testing $t)
         $t->test_word_link($word_name, verb::IS_A, word::TN_YEAR);
         $t->test_word($word_name, phrase_type::TIME);
         if ($prev_word_name != null) {
-            $t->test_word_link($word_name, verb::DBL_FOLLOW, $prev_word_name);
+            $t->test_word_link($word_name, verb::FOLLOW, $prev_word_name);
         }
         $prev_word_name = $word_name;
     }
@@ -127,7 +127,7 @@ function run_word_tests(testing $t)
 
     // next word
     $wrd_time_next = $t->test_word(word::TN_2022, phrase_type::TIME);
-    $t->test_word_link(word::TN_2022, verb::DBL_FOLLOW, word::TN_2021);
+    $t->test_word_link(word::TN_2022, verb::FOLLOW, word::TN_2021);
     $target = $wrd_time_next->name;
     $wrd_next = $wrd_time->next();
     $result = $wrd_next->name;
@@ -267,8 +267,8 @@ function run_word_tests(testing $t)
     $t->test_word(word::TN_SECTOR);
     $t->test_word(word::TN_ENERGY);
     $t->test_word(word::TN_WIND_ENERGY);
-    $t->test_word_link(word::TN_SECTOR, verb::DBL_CAN_CONTAIN, word::TN_ENERGY);
-    $t->test_word_link(word::TN_ENERGY, verb::DBL_CAN_CONTAIN, word::TN_WIND_ENERGY);
+    $t->test_word_link(word::TN_SECTOR, verb::CAN_CONTAIN, word::TN_ENERGY);
+    $t->test_word_link(word::TN_ENERGY, verb::CAN_CONTAIN, word::TN_WIND_ENERGY);
 
     // word is part
     $target = $wrd_cf->name;
