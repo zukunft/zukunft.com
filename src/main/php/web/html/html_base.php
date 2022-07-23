@@ -32,8 +32,7 @@
 
 */
 
-use html\api;
-use html\button;
+namespace html;
 
 class html_base
 {

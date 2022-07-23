@@ -30,6 +30,8 @@
 
 */
 
+use html\html_base;
+
 class testing extends test_base
 {
     // queries to check if removing of the test rows is complete

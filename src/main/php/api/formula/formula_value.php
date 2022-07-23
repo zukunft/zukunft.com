@@ -33,7 +33,6 @@
 namespace api;
 
 use html\formula_value_dsp;
-use html\phrase_group_dsp;
 
 class formula_value_api extends user_sandbox_value_api
 {

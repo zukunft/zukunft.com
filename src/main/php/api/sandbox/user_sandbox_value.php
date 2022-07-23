@@ -35,7 +35,6 @@
 namespace api;
 
 use html\phrase_group_dsp;
-use html\value_dsp;
 
 class user_sandbox_value_api extends user_sandbox_api
 {

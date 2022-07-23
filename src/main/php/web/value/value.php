@@ -36,7 +36,6 @@ namespace html;
 
 use api\phrase_list_api;
 use api\value_api;
-use html_base;
 
 class value_dsp extends value_api
 {

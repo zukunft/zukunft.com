@@ -33,7 +33,6 @@
 namespace html;
 
 use api\system_error_log_list_api;
-use html_base;
 use user;
 
 class system_error_log_list_dsp extends system_error_log_list_api

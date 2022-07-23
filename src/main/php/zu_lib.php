@@ -150,6 +150,8 @@
 // a list of all object names used
 // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
 // TODO use const for all object names
+use html\html_base;
+
 const DB_TYPE_USER = 'user';
 const DB_TYPE_USER_TYPE = 'user_type';
 const DB_TYPE_USER_PROFILE = 'user_profile';

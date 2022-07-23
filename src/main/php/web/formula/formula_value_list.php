@@ -36,7 +36,6 @@ namespace html;
 
 use api\formula_value_list_api;
 use api\phrase_list_api;
-use html_table;
 
 class formula_value_list_dsp extends formula_value_list_api
 {

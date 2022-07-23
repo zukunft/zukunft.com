@@ -33,6 +33,8 @@
 use api\phrase_list_api;
 use api\word_api;
 use html\button;
+use html\html_base;
+use html\html_selector;
 
 class html_unit_tests
 {

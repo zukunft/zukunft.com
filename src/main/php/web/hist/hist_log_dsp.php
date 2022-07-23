@@ -29,6 +29,10 @@
   
 */
 
+namespace html;
+
+use word;
+
 class hist_log_dsp
 {
 

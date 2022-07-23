@@ -29,6 +29,8 @@
 
 */
 
+namespace html;
+
 class html_table
 {
 

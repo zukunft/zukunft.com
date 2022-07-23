@@ -29,8 +29,10 @@
 
 */
 
+namespace html;
+
 use cfg\phrase_type;
-use html\word_dsp;
+use word_list;
 
 class word_list_dsp extends word_list
 {

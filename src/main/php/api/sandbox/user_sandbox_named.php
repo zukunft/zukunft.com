@@ -32,8 +32,6 @@
 
 namespace api;
 
-use cfg\object_type;
-
 class user_sandbox_named_api extends user_sandbox_api
 {
 

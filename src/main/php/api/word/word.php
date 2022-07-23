@@ -32,7 +32,6 @@
 
 namespace api;
 
-use html\phrase_dsp;
 use html\word_dsp;
 
 class word_api extends user_sandbox_named_api

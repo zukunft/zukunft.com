@@ -31,6 +31,8 @@
 
 */
 
+namespace html;
+
 class html_selector
 {
 

@@ -32,7 +32,11 @@
 
 */
 
-class phrase_list_dsp extends \api\phrase_list_api
+namespace html;
+
+use api\phrase_list_api;
+
+class phrase_list_dsp extends phrase_list_api
 {
 
     /**

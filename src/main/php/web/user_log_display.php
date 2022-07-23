@@ -32,6 +32,7 @@
 
 use html\api;
 use html\button;
+use html\html_base;
 
 class user_log_display
 {

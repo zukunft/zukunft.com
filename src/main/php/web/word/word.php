@@ -33,8 +33,6 @@ namespace html;
 
 use api\word_api;
 use api\phrase_api;
-use html_base;
-use html_selector;
 
 class word_dsp extends word_api
 {

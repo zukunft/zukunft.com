@@ -34,6 +34,8 @@
 // start testing the system functionality 
 // --------------------------------------
 
+use html\html_selector;
+
 function run_word_display_test(testing $t)
 {
 

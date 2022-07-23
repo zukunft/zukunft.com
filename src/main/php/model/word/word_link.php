@@ -35,6 +35,7 @@
 use api\triple_api;
 use html\api;
 use html\button;
+use html\word_link_dsp;
 
 class word_link extends user_sandbox_link_description
 {

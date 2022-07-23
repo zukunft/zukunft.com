@@ -72,4 +72,43 @@ class phrase_dsp extends phrase_api
         return $result;
     }
 
+    // create a selector that contains the words and triples
+    // if one form contains more than one selector, $pos is used for identification
+    // $type is a word to preselect the list to only those phrases matching this type
+    function dsp_selector($type, $form_name, $pos, $class, $back): string
+    {
+        if ($type != null) {
+            log_debug('phrase->dsp_selector -> type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);
+        }
+        $result = '';
+
+        if ($pos > 0) {
+            $field_name = "phrase" . $pos;
+        } else {
+            $field_name = "phrase";
+        }
+        $sel = new html_selector;
+        $sel->form = $form_name;
+        $sel->name = $field_name;
+        if ($form_name == "value_add" or $form_name == "value_edit") {
+            $sel->label = "";
+        } else {
+            if ($pos == 1) {
+                $sel->label = "From:";
+            } elseif ($pos == 2) {
+                $sel->label = "To:";
+            } else {
+                $sel->label = "Word:";
+            }
+        }
+        $sel->bs_class = $class;
+        $sel->sql = $this->sql_list($type);
+        $sel->selected = $this->id;
+        $sel->dummy_text = '... please select';
+        $result .= $sel->display();
+
+        log_debug('phrase->dsp_selector -> done ');
+        return $result;
+    }
+
 }

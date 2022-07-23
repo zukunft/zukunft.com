@@ -31,6 +31,7 @@
 
 use html\api;
 use html\button;
+use html\html_base;
 
 class view_dsp_old extends view
 {

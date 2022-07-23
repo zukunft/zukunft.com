@@ -35,7 +35,6 @@
 namespace html;
 
 use api\user_type_list_api;
-use html_base;
 
 class user_type_list_dsp extends user_type_list_api
 {

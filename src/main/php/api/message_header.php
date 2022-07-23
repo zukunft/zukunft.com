@@ -29,6 +29,8 @@
 
 */
 
+use html\html_base;
+
 class api_message
 {
     // the message types for fast format detection

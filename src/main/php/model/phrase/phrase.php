@@ -51,6 +51,7 @@
 
 use api\phrase_api;
 use cfg\phrase_type;
+use html\html_selector;
 use html\phrase_dsp;
 use html\word_dsp;
 

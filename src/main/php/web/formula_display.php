@@ -31,6 +31,8 @@
 
 use html\api;
 use html\button;
+use html\html_base;
+use html\html_selector;
 
 class formula_dsp_old extends formula
 {

@@ -37,7 +37,6 @@ namespace html;
 use api\phrase_list_api;
 use api\value_list_api;
 use formula_value_list;
-use html_table;
 use phrase;
 use word_list;
 use word_list_dsp;

@@ -36,6 +36,7 @@
 */
 
 use cfg\phrase_type;
+use html\word_list_dsp;
 
 class word_list
 {

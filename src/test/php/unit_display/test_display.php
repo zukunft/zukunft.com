@@ -31,6 +31,7 @@
 */
 
 use html\button;
+use html\html_base;
 
 function run_display_test(testing $t)
 {

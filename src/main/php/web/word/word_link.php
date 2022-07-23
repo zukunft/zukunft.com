@@ -29,8 +29,10 @@
 
 */
 
-use html\api;
-use html\button;
+namespace html;
+
+use phrase;
+use word_link;
 
 class word_link_dsp extends word_link
 {
