@@ -40,9 +40,21 @@ class phrase_dsp extends phrase_api
 {
 
     /**
+     * @returns string the html code to display with mouse over that shows the description
+     */
+    function dsp(): string
+    {
+        if ($this->is_word()) {
+            return $this->wrd_dsp()->dsp();
+        } else {
+            return $this->trp_dsp()->dsp();
+        }
+    }
+
+    /**
      * @returns string the html code to display the phrase with reference links
      */
-    function name_linked(): string
+    function dsp_link(): string
     {
         return $this->name;
     }
@@ -54,8 +66,8 @@ class phrase_dsp extends phrase_api
     {
         $result = '';
         if ($this->is_word()) {
-            $wrd = $this->get_word_dsp();
-            $result .= $wrd->dsp_td('', '', $intent);
+            $wrd = $this->wrd_dsp();
+            $result .= $wrd->td('', '', $intent);
         }
         return $result;
     }
@@ -72,14 +84,22 @@ class phrase_dsp extends phrase_api
         return $result;
     }
 
-    // create a selector that contains the words and triples
-    // if one form contains more than one selector, $pos is used for identification
-    // $type is a word to preselect the list to only those phrases matching this type
-    function dsp_selector($type, $form_name, $pos, $class, $back): string
+    //
+    //
+    // $type
+    /**
+     * create a selector that contains the words and triples
+     * if one form contains more than one selector, $pos is used for identification
+     *
+     * @param phrase_api $type is a word to preselect the list to only those phrases matching this type
+     * @param string $form_name
+     * @param int $pos
+     * @param string $class
+     * @param string $back
+     * @return string
+     */
+    function dsp_selector(phrase_api $type, string $form_name, int $pos, string $class, string $back = ''): string
     {
-        if ($type != null) {
-            log_debug('phrase->dsp_selector -> type "' . $type->dsp_id() . ' selected for form ' . $form_name . $pos);
-        }
         $result = '';
 
         if ($pos > 0) {
@@ -107,7 +127,6 @@ class phrase_dsp extends phrase_api
         $sel->dummy_text = '... please select';
         $result .= $sel->display();
 
-        log_debug('phrase->dsp_selector -> done ');
         return $result;
     }
 

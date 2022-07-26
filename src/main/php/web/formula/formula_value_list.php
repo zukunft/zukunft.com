@@ -63,7 +63,7 @@ class formula_value_list_dsp extends formula_value_list_api
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->dsp_obj()->name_linked();
+            $head_text = $header_phrases->dsp_obj()->dsp_link();
         }
         foreach ($this->lst() as $fv) {
             $row_nbr++;

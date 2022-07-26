@@ -561,7 +561,7 @@ class phrase
             if ($this->obj != null) {
                 // the function dsp_tbl should exist for words and triples
                 if (get_class($this->obj) == word::class) {
-                    $result = $this->obj->dsp_obj()->dsp_td('', '', $intent);
+                    $result = $this->obj->dsp_obj()->td('', '', $intent);
                 } else {
                     $result = $this->obj->dsp_tbl($intent);
                 }

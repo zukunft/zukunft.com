@@ -59,12 +59,12 @@ class phrase_group_dsp extends phrase_group_api
                     if ($result <> '') {
                         $result .= ', ';
                     }
-                    $result .= $phr->name_linked();
+                    $result .= $phr->dsp_link();
                 }
             }
             $this->unset_name_dirty();
         } else {
-            $result = $this->name_linked();
+            $result = $this->name();
         }
         return $result;
     }

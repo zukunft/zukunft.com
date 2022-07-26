@@ -42,14 +42,14 @@ class phrase_list_dsp extends phrase_list_api
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    public function name_linked(): string
+    public function dsp_link(): string
     {
         $result = '';
         foreach ($this->lst as $phr) {
-            if ($result != '' and $phr->name_linked() != '') {
+            if ($result != '' and $phr->dsp_link() != '') {
                 $result .= ', ';
             }
-            $result .= $phr->name_linked();
+            $result .= $phr->dsp_link();
         }
         return $result;
     }
@@ -60,7 +60,7 @@ class phrase_list_dsp extends phrase_list_api
      */
     private function plural(): string
     {
-        return $this->name_linked() . 's';
+        return $this->dsp_link() . 's';
     }
 
     /**

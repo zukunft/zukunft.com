@@ -242,7 +242,7 @@ class word_list_dsp extends word_list
             //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
             if ($db_row['type'] == "word") {
                 $wrd = new word_dsp($db_row['id'], $db_row['name']);
-                $result .= $wrd->dsp_tbl_row();
+                $result .= $wrd->tr();
             }
             if ($db_row['type'] == "formula") {
                 $frm = new formula($this->usr);

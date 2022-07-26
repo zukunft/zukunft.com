@@ -35,7 +35,7 @@
 use api\triple_api;
 use html\api;
 use html\button;
-use html\word_link_dsp;
+use html\triple_dsp;
 
 class word_link extends user_sandbox_link_description
 {
@@ -177,11 +177,11 @@ class word_link extends user_sandbox_link_description
     }
 
     /**
-     * @return word_link_dsp the triple object with the display interface functions
+     * @return triple_dsp the triple object with the display interface functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new word_link_dsp($this->usr);
+        $dsp_obj = new triple_dsp();
 
         $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 

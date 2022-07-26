@@ -399,7 +399,7 @@ include_once $path_php . 'web/hist/hist_log_dsp.php';
 // model HTML frontend classes
 include_once $path_php . 'web/word/word.php';
 include_once $path_php . 'web/word/word_list.php';
-include_once $path_php . 'web/word/word_link.php';
+include_once $path_php . 'web/word/triple.php';
 include_once $path_php . 'web/phrase/phrase.php';
 include_once $path_php . 'web/phrase/phrase_list.php';
 include_once $path_php . 'web/phrase/phrase_group.php';

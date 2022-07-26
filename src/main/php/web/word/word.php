@@ -67,7 +67,7 @@ class word_dsp extends word_api
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function dsp_td(string $back = '', string $style = '', int $intent = 0): string
+    function td(string $back = '', string $style = '', int $intent = 0): string
     {
         $cell_text = '';
         while ($intent > 0) {
@@ -75,7 +75,7 @@ class word_dsp extends word_api
             $intent = $intent - 1;
         }
         $cell_text .= $this->dsp_link($back, $style);
-        return (new html_base)->tbl_cell($cell_text);
+        return (new html_base)->td($cell_text);
     }
 
     /**
@@ -83,17 +83,17 @@ class word_dsp extends word_api
      * @param string $style the CSS style that should be used
      * @returns string the word as a table cell
      */
-    function dsp_th(string $back = '', string $style = ''): string
+    function th(string $back = '', string $style = ''): string
     {
-        return (new html_base)->tbl_header($this->dsp_link($back, $style));
+        return (new html_base)->th($this->dsp_link($back, $style));
     }
 
-    function dsp_tbl_row(): string
+    /**
+     * @return string the html code for a table row with the word
+     */
+    function tr(): string
     {
-        $result = '  <tr>' . "\n";
-        $result .= $this->dsp_td('', '', 0);
-        $result .= '  </tr>' . "\n";
-        return $result;
+        return (new html_base())->tr($this->td());
     }
 
     /**
@@ -125,7 +125,6 @@ class word_dsp extends word_api
                     $title .= ' (' . $html->ref($url, $is_part_of->name) . ')';
                 }
             }
-            /*      $title .= '  '.'<a href="/http/word_edit.php?id='.$this->id.'&back='.$this->id.'" title="Rename word"><img src="'.ZUH_IMG_EDIT.'" alt="Rename word" style="height: 0.65em;"></a>'; */
             $url = $html->url(api::WORD . api::UPDATE, $this->id, $this->id);
             $title .= $html->ref($url, $html->span($this->name(), api::STYLE_GLYPH), 'Rename word');
             $result .= dsp_text_h1($title);
@@ -139,22 +138,16 @@ class word_dsp extends word_api
      * simply to display a single word and allow to delete it
      * used by value->dsp_edit
      */
-    function dsp_name_del($del_call): string
+    function dsp_del(): string
     {
-        log_debug('word_dsp->dsp_name_del');
-        $result = '  <tr>' . "\n";
-        $result .= $this->dsp_td('', '', 0);
-        $result .= '    <td>' . "\n";
-        $result .= '      ' . \html\btn_del("delete", $del_call) . '<br> ';
-        $result .= '    </td>' . "\n";
-        $result .= '  </tr>' . "\n";
-        return $result;
+        $name = $this->td('', '', 0);
+        $btn = $this->td($this->btn_del());
+        return (new html_base())->tr($name . $btn);
     }
 
     // allow the user to unlink a word
     function dsp_unlink($link_id): string
     {
-        log_debug('word_dsp->dsp_unlink(' . $link_id . ')');
         $result = '    <td>' . "\n";
         $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
         $result .= '    </td>' . "\n";
@@ -223,26 +216,17 @@ class word_dsp extends word_api
         return $result;
     }
 
-    /**
-     * return best possible identification for this object mainly used for debugging
+    /*
+     * buttons
      */
-    function dsp_id(): string
-    {
-        $result = '';
-        if ($this->name <> '') {
-            $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
-            }
-        } else {
-            $result .= $this->id;
-        }
-        return $result;
-    }
 
-    function name(): string
+    /**
+     * @returns string the html code to display a bottom to edit the word link in a table cell
+     */
+    function btn_del(): string
     {
-        return $this->name;
+        $url = (new html_base())->url(api::WORD . api::REMOVE, $this->id, $this->id);
+        return (new button("Delete word", $url))->del();
     }
 
 }

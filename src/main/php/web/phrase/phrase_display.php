@@ -45,7 +45,7 @@ class phrase_dsp_old extends phrase
         $result = '';
         if ($this->is_word()) {
             $wrd = $this->get_word_dsp();
-            $result .= $wrd->dsp_td('','', $intent);
+            $result .= $wrd->td('','', $intent);
         }
         return $result;
     }

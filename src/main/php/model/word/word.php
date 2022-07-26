@@ -808,7 +808,7 @@ class word extends user_sandbox_description
             // display the rows
             log_debug('word_dsp->dsp_val_list -> row');
             $result .= '  <tr>' . "\n";
-            $result .= '      ' . $row_phr_dsp->dsp_obj()->dsp_td($back);
+            $result .= '      ' . $row_phr_dsp->dsp_obj()->td($back);
             foreach ($col_lst->lst as $col_lst_wrd) {
                 $result .= '    <td>' . "\n";
                 $val_wrd_ids = array();

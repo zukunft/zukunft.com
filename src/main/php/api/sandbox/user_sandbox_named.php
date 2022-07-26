@@ -74,6 +74,28 @@ class user_sandbox_named_api extends user_sandbox_api
         return $this->name;
     }
 
+    /*
+     * logging
+     */
+
+    /**
+     * @return string best possible identification for this object mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $result = '';
+        if ($this->name <> '') {
+            $result .= '"' . $this->name . '"';
+            if ($this->id > 0) {
+                $result .= ' (' . $this->id . ')';
+            }
+        } else {
+            $result .= $this->id;
+        }
+        $result .= '';
+        return $result;
+    }
+
 }
 
 

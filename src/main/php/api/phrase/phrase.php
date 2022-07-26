@@ -33,6 +33,7 @@ namespace api;
 
 use cfg\phrase_type;
 use html\phrase_dsp;
+use html\triple_dsp;
 use html\word_dsp;
 
 class phrase_api extends user_sandbox_named_api
@@ -83,27 +84,19 @@ class phrase_api extends user_sandbox_named_api
         return $dsp_obj;
     }
 
-    protected function get_word_dsp(): word_dsp
+    protected function wrd_dsp(): word_dsp
     {
-        $wrd = new word_api($this->id, $this->name);
-        return $wrd->dsp_obj();
+        return new word_dsp($this->id, $this->name);
+    }
+
+    protected function trp_dsp(): triple_dsp
+    {
+        return new triple_dsp($this->id, $this->name);
     }
 
     /*
      * classifications
      */
-
-    /**
-     * @returns true if th phrase is a triple (a combination of two words
-     */
-    public function is_triple(): bool
-    {
-        if ($this->id < 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * @return bool true if this phrase is a word or supposed to be a word

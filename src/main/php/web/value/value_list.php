@@ -72,7 +72,7 @@ class value_list_dsp extends value_list_api
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->dsp_obj()->name_linked();
+            $head_text = $header_phrases->dsp_obj()->dsp_link();
         }
 
         // display the single values

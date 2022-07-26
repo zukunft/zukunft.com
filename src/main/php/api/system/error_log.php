@@ -74,22 +74,22 @@ class system_error_log_api
     function get_html(user $usr = null, string $back = ''): string
     {
         $html = new html_base();
-        $row_text = $html->tbl_cell($this->time);
-        $row_text .= $html->tbl_cell($this->user);
-        $row_text .= $html->tbl_cell($this->text);
-        $row_text .= $html->tbl_cell($this->trace);
-        $row_text .= $html->tbl_cell($this->prg_part);
-        $row_text .= $html->tbl_cell($this->owner);
-        $row_text .= $html->tbl_cell($this->status);
+        $row_text = $html->td($this->time);
+        $row_text .= $html->td($this->user);
+        $row_text .= $html->td($this->text);
+        $row_text .= $html->td($this->trace);
+        $row_text .= $html->td($this->prg_part);
+        $row_text .= $html->td($this->owner);
+        $row_text .= $html->td($this->status);
         if ($usr != null) {
             if ($usr->is_admin()) {
                 $par_status = api::PAR_LOG_STATUS. '=' . cl(db_cl::LOG_STATUS, sys_log_status::CLOSED);
                 $url = $html->url(api::ERROR_UPDATE, $this->id, $back, '', $par_status);
-                $row_text .= $html->tbl_cell($html->ref($url, 'close'));
+                $row_text .= $html->td($html->ref($url, 'close'));
             }
         }
 
-        return $html->tbl_row($row_text);
+        return $html->tr($row_text);
     }
 
 }
