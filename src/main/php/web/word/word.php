@@ -69,13 +69,8 @@ class word_dsp extends word_api
      */
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
-        $cell_text = '';
-        while ($intent > 0) {
-            $cell_text .= '&nbsp;';
-            $intent = $intent - 1;
-        }
-        $cell_text .= $this->dsp_link($back, $style);
-        return (new html_base)->td($cell_text);
+        $cell_text = $this->dsp_link($back, $style);
+        return (new html_base)->td($cell_text, $intent);
     }
 
     /**
@@ -135,28 +130,30 @@ class word_dsp extends word_api
 
 
     /**
-     * simply to display a single word and allow to delete it
-     * used by value->dsp_edit
+     * @returns string html code to display a single word in a column and allow to delete it
      */
     function dsp_del(): string
     {
-        $name = $this->td('', '', 0);
-        $btn = $this->td($this->btn_del());
-        return (new html_base())->tr($name . $btn);
+        $html = new html_base();
+        $name = $this->td();
+        $btn = $html->td($this->btn_del());
+        return $html->tr($name . $btn);
     }
 
-    // allow the user to unlink a word
-    function dsp_unlink($link_id): string
+    /**
+     * allow the user to unlink a word
+     */
+    function dsp_unlink(int $link_id): string
     {
-        $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id);
-        $result .= '    </td>' . "\n";
-
-        return $result;
+        $html = new html_base();
+        $name = $this->td();
+        $btn = $html->td($this->btn_unlink($link_id));
+        return $html->tr($name . $btn);
     }
 
-    // returns the html code to select a word link type
-    // database link must be open
+    /**
+     * @returns string the html code to select a word link type
+     */
     private function selector_type($id, $form): string
     {
         log_debug('word_dsp->selector_type ... word id ' . $id);
@@ -188,7 +185,6 @@ class word_dsp extends word_api
      */
     function dsp_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
     {
-        log_debug('word_dsp->dsp_edit ' . $this->dsp_id());
         $result = '';
 
         if ($this->id > 0) {
@@ -212,7 +208,6 @@ class word_dsp extends word_api
 
         $result .= $dsp_log;
 
-        log_debug('word_dsp->dsp_edit -> done');
         return $result;
     }
 
@@ -221,12 +216,22 @@ class word_dsp extends word_api
      */
 
     /**
-     * @returns string the html code to display a bottom to edit the word link in a table cell
+     * @returns string the html code to display a bottom to exclude the word for the current user
+     *                 or if no one uses the word delete the complete word
      */
     function btn_del(): string
     {
         $url = (new html_base())->url(api::WORD . api::REMOVE, $this->id, $this->id);
-        return (new button("Delete word", $url))->del();
+        return (new button((new msg())->txt(msg::WORD_DELETE), $url))->del();
+    }
+
+    /**
+     * @returns string the html code to display a bottom to edit the word link in a table cell
+     */
+    function btn_unlink(int $link_id): string
+    {
+        $url = (new html_base())->url(api::LINK . api::REMOVE, $link_id, $this->id);
+        return (new button((new msg())->txt(msg::WORD_UNLINK), $url))->del();
     }
 
 }

@@ -52,6 +52,7 @@ class api
     const WORD = 'word';
     const VALUE = 'value';
     const VIEW = 'view';
+    const LINK = 'link';
 
     // special api function independent of a class
     const LOGIN_RESET = 'login_reset';

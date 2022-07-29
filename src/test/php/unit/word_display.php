@@ -30,18 +30,31 @@
 
 */
 
+use html\html_base;
 use html\word_dsp;
 
 class word_display_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
         global $usr;
+        $html = new html_base();
 
         $t->subheader('Word tests');
 
         $wrd = new word_dsp(1, word::TN_READ);
-        $t->html_test($wrd->dsp_link(), 'word', $t);
+        $wrd_pi = new word_dsp(2, word::TN_CONST_DSP);
+        $test_page = $html->text_h2('Word display test');
+        $test_page .= 'with tooltip: ' . $wrd->dsp() . '<br>';
+        $test_page .= 'with link: ' . $wrd->dsp_link() . '<br>';
+        $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
+        $test_page .= 'table<br>';
+        $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
+        $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
+        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
+        $test_page .= 'view header<br>';
+        $test_page .= $wrd->header() . '<br>';
+        $t->html_test($test_page, 'word', $t);
 
         $t->html_test($wrd->header(), 'word_header', $t);
     }

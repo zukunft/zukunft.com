@@ -140,6 +140,7 @@ class word extends user_sandbox_description
     const TN_PRIOR = 'System Test Word Prior';
     const TN_INHABITANT = 'System Test Word Unit e.g. inhabitant';
     const TN_CONST = 'System Test Word Math Const e.g. Pi';
+    const TN_CONST_DSP = 'Pi';
     const TN_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
     const TN_LATEST = 'System Test Word Latest';
     const TN_SCALING_PCT = 'System Test Word Scaling Percent';

@@ -1457,7 +1457,7 @@ class test_base
     /**
      * @param string $msg the message to display to the person who executes the system
      */
-    function dsp_warning(string $msg)
+    function dsp_warning(string $msg): void
     {
         echo $msg;
         echo '<br>';
@@ -1477,7 +1477,7 @@ class test_base
     /**
      * display the test results in HTML format
      */
-    function dsp_result_html()
+    function dsp_result_html(): void
     {
         echo '<br>';
         echo '<h2>';

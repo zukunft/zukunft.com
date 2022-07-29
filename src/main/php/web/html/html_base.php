@@ -296,6 +296,16 @@ class html_base
      * HTML elements like tables, forms
      */
 
+    /**
+     * create the html code to display a table
+     * @param string $tbl_rows the html code of all rows inlcuding the header rows
+     * @return string the table html code
+     */
+    function tbl(string $tbl_rows): string
+    {
+        return $this->tbl_start() . $tbl_rows . $this->tbl_end();
+    }
+
     function tbl_start(): string
     {
         if (UI_USE_BOOTSTRAP) {
@@ -349,8 +359,18 @@ class html_base
         return '<th>' . $header_text . '</th>';
     }
 
-    function td(string $cell_text): string
+    /**
+     * show a text of link within a table cell
+     * @param string $cell_text the text or link that should be shown
+     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @return string the html code of the table cell
+     */
+    function td(string $cell_text, int $intent = 0): string
     {
+        while ($intent > 0) {
+            $cell_text .= '&nbsp;';
+            $intent = $intent - 1;
+        }
         return '<td>' . $cell_text . '</td>';
     }
 
