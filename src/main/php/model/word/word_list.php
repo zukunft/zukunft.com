@@ -36,7 +36,7 @@
 */
 
 use cfg\phrase_type;
-use html\word_list_dsp;
+use html\word_list_dsp_old;
 
 class word_list
 {
@@ -57,11 +57,11 @@ class word_list
     }
 
     /**
-     * @return word_list_dsp the word list object with the display interface functions
+     * @return word_list_dsp_old the word list object with the display interface functions
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new word_list_dsp($this->usr);
+        $dsp_obj = new word_list_dsp_old($this->usr);
 
         $dsp_obj->lst = $this->lst;
 

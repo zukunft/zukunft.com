@@ -373,6 +373,7 @@ include_once $path_php . 'api/sandbox/list_value.php';
 include_once $path_php . 'api/user/user_type_list.php';
 // model frontend API classes
 include_once $path_php . 'api/word/word.php';
+include_once $path_php . 'api/word/word_list.php';
 include_once $path_php . 'api/word/triple.php';
 include_once $path_php . 'api/phrase/phrase.php';
 include_once $path_php . 'api/phrase/phrase_list.php';
@@ -395,11 +396,11 @@ include_once $path_php . 'web/html/api_const.php';
 include_once $path_php . 'web/html/html_base.php';
 include_once $path_php . 'web/html/button.php';
 include_once $path_php . 'web/html/html_selector.php';
-include_once $path_php . 'web/html/html_table.php';
 include_once $path_php . 'web/hist/hist_log_dsp.php';
 // model HTML frontend classes
 include_once $path_php . 'web/word/word.php';
 include_once $path_php . 'web/word/word_list.php';
+include_once $path_php . 'web/word/word_list_old.php';
 include_once $path_php . 'web/word/triple.php';
 include_once $path_php . 'web/phrase/phrase.php';
 include_once $path_php . 'web/phrase/phrase_list.php';

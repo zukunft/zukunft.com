@@ -31,23 +31,22 @@
 
 namespace html;
 
-use api\word_list_api;
 use cfg\phrase_type;
+use word_list;
 
-class word_list_dsp extends word_list_api
+class word_list_dsp_old extends word_list
 {
 
-    function dsp(string $back = ''): string
+    function display(string $back = ''): string
     {
-        $html = new html_base();
         $result = dsp_tbl_start_half();
         $result .= '  <tr>' . "\n";
         $result .= '    <td>' . "\n";
         $result .= '    </td>' . "\n";
-        $rows = '';
         foreach ($this->lst as $wrd) {
-            $lnk = $wrd->dsp_obj()->dsp_link();
-            $rows .= $html->td($lnk);
+            $result .= '    <td>' . "\n";
+            $result .= $wrd->dsp_obj()->dsp_link();
+            $result .= '    </td>' . "\n";
         }
         $result .= '  </tr>' . "\n";
         $result .= dsp_tbl_end();

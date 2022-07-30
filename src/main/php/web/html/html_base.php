@@ -39,6 +39,12 @@ class html_base
 
     const IMG_LOGO = "https://www.zukunft.com/images/ZUKUNFT_logo.svg";
 
+    const SIZE_FULL = 'full';
+    const SIZE_HALF = 'half';
+
+    const WIDTH_FULL = '800px';
+    const WIDTH_HALF = '400px';
+
     /*
      * header & footer
      */
@@ -293,14 +299,24 @@ class html_base
 
 
     /*
-     * table HTML functions used
+     * the HTML table functions used in zukunft.com
      */
 
+    /**
+     * show a text of link within a table header cell
+     * @param string $header_text the text or link that should be shown
+     * @return string the html code of the table header cell
+     */
     function th(string $header_text): string
     {
         return '<th>' . $header_text . '</th>';
     }
 
+    /**
+     * show the html code as a table row
+     * @param string $row_text the text or link that should be shown
+     * @return string the html code of the table row
+     */
     function tr(string $row_text): string
     {
         return '<tr>' . $row_text . '</tr>';
@@ -323,20 +339,25 @@ class html_base
 
     /**
      * create the html code to display a table
-     * @param string $tbl_rows the html code of all rows inlcuding the header rows
+     * @param string $tbl_rows the html code of all rows including the header rows
+     * @param string $size_type the size type for the table
      * @return string the table html code
      */
-    function tbl(string $tbl_rows): string
+    function tbl(string $tbl_rows, string $size_type = self::SIZE_FULL): string
     {
-        return $this->tbl_start() . $tbl_rows . $this->tbl_end();
+        if ($size_type = self::SIZE_FULL) {
+            return $this->tbl_start() . $tbl_rows . $this->tbl_end();
+        } else {
+            return $this->tbl_start_half() . $tbl_rows . $this->tbl_end();
+        }
     }
 
     private function tbl_start(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-striped table-bordered">' . "\n";
+            $result = '<table class="table table-striped table-bordered">';
         } else {
-            $result = '<table style="width:' . $this->tbl_width() . '">' . "\n";
+            $result = '<table style="width:' . $this->tbl_width() . '">';
         }
         return $result;
     }
@@ -344,9 +365,9 @@ class html_base
     function tbl_start_half(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-5 table-borderless">' . "\n";
+            $result = '<table class="table col-sm-5 table-borderless">';
         } else {
-            $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
+            $result = '<table style="width:' . $this->tbl_width_half() . '">';
         }
         return $result;
     }
@@ -354,9 +375,9 @@ class html_base
     function tbl_start_hist(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table table-borderless text-muted">' . "\n";
+            $result = '<table class="table table-borderless text-muted">';
         } else {
-            $result = '<table class="change_hist"' . "\n";
+            $result = '<table class="change_hist"';
         }
         return $result;
     }
@@ -380,7 +401,7 @@ class html_base
     }
 
     /*
-     * HTML elements like forms
+     * the form HTML elements used in zukunft.com
      */
 
     /**
@@ -524,12 +545,12 @@ class html_base
      */
     private function tbl_width(): string
     {
-        return '800px';
+        return self::WIDTH_FULL;
     }
 
     private function tbl_width_half(): string
     {
-        return '400px';
+        return self::WIDTH_HALF;
     }
 
     /**

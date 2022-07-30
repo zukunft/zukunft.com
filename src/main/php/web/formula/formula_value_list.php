@@ -44,13 +44,10 @@ class formula_value_list_dsp extends formula_value_list_api
      */
     function table(phrase_list_api $context_phr_lst = null, string $back = ''): string
     {
-        $result = ''; // reset the html code var
-
-        $tbl = new html_table();
+        $html = new html_base();
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
-        $result .= $tbl->start(html_table::SIZE_HALF);
         $common_phrases = $this->common_phrases();
 
         // remove the context phrases from the header e.g. inhabitants for a text just about inhabitants
@@ -65,22 +62,21 @@ class formula_value_list_dsp extends formula_value_list_api
         } else {
             $head_text = $header_phrases->dsp_obj()->dsp_link();
         }
+        $header_rows = '';
+        $rows = '';
         foreach ($this->lst() as $fv) {
             $row_nbr++;
-            $result .= $tbl->row_start();
             if ($row_nbr == 1) {
-                $result .= $tbl->header($head_text);
-                $result .= $tbl->header('value');
-                $result .= $tbl->row();
+                $header = $html->th($head_text);
+                $header .= $html->th('value');
+                $header_rows = $html->tr($header);
             }
-            $result .= $tbl->cell($fv->name_linked($common_phrases));
-            $result .= $tbl->cell($fv->value_linked($back));
-            $result .= $tbl->row_end();
+            $row = $html->td($fv->name_linked($common_phrases));
+            $row .= $html->td($fv->value_linked($back));
+            $rows .= $html->tr($row);
         }
-        $result .= dsp_tbl_end();
 
-        log_debug("fv_lst->display -> done");
-        return $result;
+        return $html->tbl($header_rows . $rows, $html::SIZE_HALF);
     }
 
 }

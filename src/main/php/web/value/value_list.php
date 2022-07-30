@@ -50,13 +50,10 @@ class value_list_dsp extends value_list_api
      */
     function table(phrase_list_api $context_phr_lst = null, string $back = ''): string
     {
-        $result = ''; // reset the html code var
-
-        $tbl = new html_table();
+        $html = new html_base();
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;
-        $result .= $tbl->start(html_table::SIZE_HALF);
 
         // get the common phrases of the value list e.g. inhabitants, 2019
         $common_phrases = $this->common_phrases();
@@ -76,22 +73,21 @@ class value_list_dsp extends value_list_api
         }
 
         // display the single values
+        $header_rows = '';
+        $rows = '';
         foreach ($this->lst() as $val) {
             $row_nbr++;
-            $result .= $tbl->row_start();
             if ($row_nbr == 1) {
-                $result .= $tbl->header($head_text);
-                $result .= $tbl->header('value');
-                $result .= $tbl->row();
+                $header = $html->th($head_text);
+                $header .= $html->th('value');
+                $header_rows = $html->tr($header);
             }
-            $result .= $tbl->cell($val->name_linked($common_phrases));
-            $result .= $tbl->cell($val->value_linked($back));
-            $result .= $tbl->row_end();
+            $row = $html->td($val->name_linked($common_phrases));
+            $row .= $html->td($val->value_linked($back));
+            $rows .= $html->tr($row);
         }
-        $result .= dsp_tbl_end();
 
-        log_debug("fv_lst->display -> done");
-        return $result;
+        return $html->tbl($header_rows . $rows, $html::SIZE_HALF);
     }
 
     /**

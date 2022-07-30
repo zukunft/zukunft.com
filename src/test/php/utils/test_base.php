@@ -93,9 +93,14 @@ include_once $path_unit . 'view_component_link.php';
 include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'user_log.php';
+
+// load the testing functions for creating HTML code
 include_once $path_unit . 'html.php';
 include_once $path_unit . 'word_display.php';
+include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
+include_once $path_unit_dsp . 'test_display.php';
+
 
 // load the unit testing modules with database read only
 include_once $path_unit_db . 'all.php';
@@ -111,8 +116,6 @@ include_once $path_unit_db . 'ref.php';
 include_once $path_unit_db . 'share.php';
 include_once $path_unit_db . 'protection.php';
 
-// load the testing functions for creating HTML code
-include_once $path_unit_dsp . 'test_display.php';
 
 // load the testing functions for creating JSON messages for the frontend code
 include_once $path_unit_ui . 'test_formula_ui.php';
