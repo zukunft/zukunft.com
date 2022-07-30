@@ -49,8 +49,9 @@ class word_list_display_unit_tests
         $lst->add($wrd_pi);
 
         $test_page = $html->text_h2('Word list display test');
-        $test_page .= 'table<br>';
-        $test_page .= $lst->dsp();
+        $test_page .= 'names with links: ' . $lst->dsp() . '<br>';
+        $test_page .= 'table cells<br>';
+        $test_page .= $lst->tbl();
         $t->html_test($test_page, 'word_list', $t);
     }
 

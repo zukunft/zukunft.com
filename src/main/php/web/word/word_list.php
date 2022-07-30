@@ -37,44 +37,45 @@ use cfg\phrase_type;
 class word_list_dsp extends word_list_api
 {
 
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the word names with html links
+     * ex. names_linked
+     */
     function dsp(string $back = ''): string
     {
-        $html = new html_base();
-        $result = dsp_tbl_start_half();
-        $result .= '  <tr>' . "\n";
-        $result .= '    <td>' . "\n";
-        $result .= '    </td>' . "\n";
-        $rows = '';
-        foreach ($this->lst as $wrd) {
-            $lnk = $wrd->dsp_obj()->dsp_link();
-            $rows .= $html->td($lnk);
-        }
-        $result .= '  </tr>' . "\n";
-        $result .= dsp_tbl_end();
-
-        return $result;
+        return implode('', $this->names_linked($back));
     }
 
     /**
-     * @return string one string with all names of the list with the link
-     */
-    function name_linked(): string
-    {
-        return dsp_array($this->names_linked());
-    }
-
-    /**
+     * @param string $back the back trace url for the undo functionality
      * @return array with a list of the word names with html links
      */
-    function names_linked(): array
+    function names_linked(string $back = ''): array
     {
-        log_debug('word_list->names_linked (' . dsp_count($this->lst) . ')');
         $result = array();
         foreach ($this->lst as $wrd) {
-            $result[] = $wrd->display();
+            $result[] = $wrd->dsp_obj()->dsp_link($back);
         }
-        log_debug('word_list->names_linked (' . dsp_array($result) . ')');
         return $result;
+    }
+
+    /**
+     * show all words of the list as table row (ex display)
+     * @param string $back the back trace url for the undo functionality
+     * @return string the html code with all words of the list
+     */
+    function tbl(string $back = ''): string
+    {
+        $html = new html_base();
+        $cols = '';
+        // TODO check if and why the next line makes sense
+        // $cols = $html->td('');
+        foreach ($this->lst as $wrd) {
+            $lnk = $wrd->dsp_obj()->dsp_link($back);
+            $cols .= $html->td($lnk);
+        }
+        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
     }
 
     /**

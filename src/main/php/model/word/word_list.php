@@ -36,7 +36,8 @@
 */
 
 use cfg\phrase_type;
-use html\word_list_dsp_old;
+use api\word_list_api;
+use html\word_list_dsp;
 
 class word_list
 {
@@ -57,14 +58,26 @@ class word_list
     }
 
     /**
-     * @return word_list_dsp_old the word list object with the display interface functions
+     * @return word_list_api the word list object with the display interface functions
      */
-    function dsp_obj(): object
+    function api_obj(): word_list_api
     {
-        $dsp_obj = new word_list_dsp_old($this->usr);
+        $api_obj = new word_list_api();
+        foreach ($this->lst as $wrd) {
+            $api_obj->add($wrd->api_obj());
+        }
+        return $api_obj;
+    }
 
-        $dsp_obj->lst = $this->lst;
-
+    /**
+     * @return word_list_dsp the word list object with the display interface functions
+     */
+    function dsp_obj(): word_list_dsp
+    {
+        $dsp_obj = new word_list_dsp();
+        foreach ($this->lst as $wrd) {
+            $dsp_obj->add($wrd->dsp_obj());
+        }
         return $dsp_obj;
     }
 

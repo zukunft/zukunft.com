@@ -87,19 +87,21 @@ function run_word_display_test(testing $t)
 <a href="/http/link_del.php?id=' . $lnk_20_to_21->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
-    $target = '<table class="table col-sm-5 table-borderless">
+    $target = '<table class="table table-borderless text-muted">
   <tr>
     <td>
+      <a href="/http/view.php?words=' . $wrd_2021->id . '&back=0" title="System Test Time Word e.g. 2021">System Test Time Word e.g. 2021</a>
     </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2021->id . '" title="System Test Time Word e.g. 2021">System Test Time Word e.g. 2021</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
+      <a href="/http/view.php?words=' . $wrd_2020->id . '&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>
+    </td>
   </tr>
 </table>
 ';
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
+    $result = $t->trim_html($result);
+    $target = $t->trim_html($target);
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);
@@ -134,42 +136,23 @@ function run_word_display_test(testing $t)
 <a href="/http/link_del.php?id=' . $lnk_19_to_20->id . '&back=' . $wrd_2020->id . '" title="unlink word"><i class="far fa-times-circle"></i></a>    </td>
   </tr>
 ';
-    $target = '<table class="table col-sm-5 table-borderless">
-  <tr>
-    <td>
-    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_year->id . '">System Test Time Word Category e.g. Year</a>    </td>
-  </tr>
-</table>
-<table class="table col-sm-5 table-borderless">
-  <tr>
-    <td>
-    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2019->id . '">System Test Another Time Word e.g. 2019</a>    </td>
-  </tr>
-</table>
+    $target = '<table class="table table-borderless text-muted"><tr><td><a href="/http/view.php?words=208&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a></td><td><a href="/http/view.php?words=195&back=0" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a></td><td><a href="/http/view.php?words=207&back=0" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a></td></tr></table>
 ';
-    $target = '<table class="table col-sm-5 table-borderless">
+    $target = '<table class="table table-borderless text-muted">
   <tr>
     <td>
-    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '&back=0" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_year->id . '&back=0" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_year->id . '" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a>    </td>
-    <td>
-<a href="/http/view.php?words=' . $wrd_2019->id . '" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2019->id . '&back=0" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a>    </td>
   </tr>
 </table>
 ';
     $link_types = $wrd_2020->link_types($direction);
     $result = $wrd_2020->dsp_graph($direction, $link_types, 0);
+    $result = $t->trim_html($result);
+    $target = $t->trim_html($target);
     $diff = str_diff($result, $target);
     if ($diff != '') {
         log_err('Unexpected diff ' . $diff);

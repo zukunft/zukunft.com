@@ -41,6 +41,7 @@ class html_base
 
     const SIZE_FULL = 'full';
     const SIZE_HALF = 'half';
+    const STYLE_BORDERLESS = 'borderless';
 
     const WIDTH_FULL = '800px';
     const WIDTH_HALF = '400px';
@@ -340,15 +341,18 @@ class html_base
     /**
      * create the html code to display a table
      * @param string $tbl_rows the html code of all rows including the header rows
-     * @param string $size_type the size type for the table
+     * @param string $tbl_style the size and style of the table
      * @return string the table html code
      */
-    function tbl(string $tbl_rows, string $size_type = self::SIZE_FULL): string
+    function tbl(string $tbl_rows, string $tbl_style = self::SIZE_FULL): string
     {
-        if ($size_type = self::SIZE_FULL) {
-            return $this->tbl_start() . $tbl_rows . $this->tbl_end();
-        } else {
-            return $this->tbl_start_half() . $tbl_rows . $this->tbl_end();
+        switch ($tbl_style) {
+            case self::SIZE_FULL:
+                return $this->tbl_start() . $tbl_rows . $this->tbl_end();
+            case self::SIZE_HALF:
+                return $this->tbl_start_half() . $tbl_rows . $this->tbl_end();
+            case self::STYLE_BORDERLESS:
+                return $this->tbl_start_hist() . $tbl_rows . $this->tbl_end();
         }
     }
 
@@ -365,7 +369,7 @@ class html_base
     function tbl_start_half(): string
     {
         if (UI_USE_BOOTSTRAP) {
-            $result = '<table class="table col-sm-5 table-borderless">';
+            $result = '<table class="table col-sm-5 table-striped table-bordered">';
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">';
         }

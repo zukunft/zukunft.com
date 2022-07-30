@@ -145,7 +145,7 @@ class phrase_list_dsp_old extends phrase_list
         } else {
             $wrd_lst = $this->wrd_lst_all();
             $wrd_lst_dsp = $wrd_lst->dsp_obj();
-            $result .= $wrd_lst_dsp->display($back);
+            $result .= $wrd_lst_dsp->tbl($back);
             foreach ($this->lst as $phr) {
                 // show the RDF graph for this verb
                 $phr->name();
