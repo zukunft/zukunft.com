@@ -76,7 +76,6 @@ include_once $path_unit . 'word.php';
 include_once $path_unit . 'word_list.php';
 include_once $path_unit . 'word_link.php';
 include_once $path_unit . 'word_link_list.php';
-include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'phrase.php';
 include_once $path_unit . 'phrase_list.php';
 include_once $path_unit . 'phrase_group.php';
@@ -95,6 +94,8 @@ include_once $path_unit . 'verb.php';
 include_once $path_unit . 'ref.php';
 include_once $path_unit . 'user_log.php';
 include_once $path_unit . 'html.php';
+include_once $path_unit . 'word_display.php';
+include_once $path_unit . 'triple_display.php';
 
 // load the unit testing modules with database read only
 include_once $path_unit_db . 'all.php';

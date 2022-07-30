@@ -31,8 +31,8 @@
 
 namespace html;
 
+use api\phrase_api;
 use api\triple_api;
-use phrase;
 
 class triple_dsp extends triple_api
 {
@@ -48,7 +48,7 @@ class triple_dsp extends triple_api
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
      */
-    function btn_edit(phrase $wrd): string
+    function btn_edit(phrase_api $wrd): string
     {
 
         $html = new html_base();

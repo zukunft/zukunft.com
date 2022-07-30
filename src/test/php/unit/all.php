@@ -239,7 +239,7 @@ function unit_test_init_log_tables()
 /**
  * run all unit test in a useful order
  */
-function run_unit_tests(testing $t)
+function run_unit_tests(testing $t): void
 {
     $t->header('Start the zukunft.com unit tests');
 
@@ -287,7 +287,6 @@ function run_unit_tests(testing $t)
     (new word_link_unit_tests)->run($t);
     (new word_list_unit_tests)->run($t);
     (new word_link_list_unit_tests)->run($t);
-    (new word_display_unit_tests)->run($t);
     (new phrase_unit_tests)->run($t);
     (new phrase_list_unit_tests)->run($t);
     (new phrase_group_unit_tests)->run($t);
@@ -306,7 +305,11 @@ function run_unit_tests(testing $t)
     (new verb_unit_tests)->run($t);
     (new ref_unit_tests)->run($t);
     (new user_log_unit_tests)->run($t);
+
+    // do the UI unit tests
     (new html_unit_tests)->run($t);
+    (new word_display_unit_tests)->run($t);
+    (new triple_display_unit_tests)->run($t);
 
     // restore the global vars
     $db_con = $global_db_con;

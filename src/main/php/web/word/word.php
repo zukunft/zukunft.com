@@ -33,6 +33,7 @@ namespace html;
 
 use api\word_api;
 use api\phrase_api;
+use html\phrase_dsp;
 
 class word_dsp extends word_api
 {
@@ -173,8 +174,8 @@ class word_dsp extends word_api
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text("plural", $this->plural);
-            $detail_fields .= $html->form_text("description", $this->description);
+            $detail_fields .= $html->form_text("plural", $this->plural());
+            $detail_fields .= $html->form_text("description", $this->description());
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
@@ -208,6 +209,18 @@ class word_dsp extends word_api
     {
         $url = (new html_base())->url(api::LINK . api::REMOVE, $link_id, $this->id);
         return (new button((new msg())->txt(msg::WORD_UNLINK), $url))->del();
+    }
+
+    /*
+     * casting
+     */
+
+    /**
+     * @returns phrase_dsp the phrase display object base on this word object
+     */
+    function phrase_dsp(): phrase_dsp
+    {
+        return new phrase_dsp($this->id(), $this->name());
     }
 
 }

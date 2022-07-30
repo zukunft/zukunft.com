@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/word_display.php - TESTing of the WORD DISPLAY functions
-    --------------------------
+    test/unit/triple_display.php - TESTing of the TRIPLE DISPLAY functions
+    ----------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -31,32 +31,24 @@
 */
 
 use html\html_base;
+use html\triple_dsp;
 use html\word_dsp;
 
-class word_display_unit_tests
+class triple_display_unit_tests
 {
     function run(testing $t): void
     {
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Word tests');
+        $t->subheader('Triple tests');
 
+        $trp = new triple_dsp(-1, word::TN_READ);
         $wrd = new word_dsp(1, word::TN_READ);
-        $wrd_pi = new word_dsp(2, word::TN_CONST_DSP);
-        $test_page = $html->text_h2('Word display test');
-        $test_page .= 'with tooltip: ' . $wrd->dsp() . '<br>';
-        $test_page .= 'with link: ' . $wrd->dsp_link() . '<br>';
-        $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
-        $test_page .= 'table<br>';
-        $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
-        $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
-        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
-        $test_page .= 'view header<br>';
-        $test_page .= $wrd->header() . '<br>';
-        $test_page .= 'edit mask<br>';
-        $test_page .= $wrd->dsp_edit('', '', '', '') . '<br>';
-        $t->html_test($test_page, 'word', $t);
+        $test_page = $html->text_h2('Triple display test');
+        $test_page .= 'with tooltip: ' . $trp->dsp() . '<br>';
+        $test_page .= 'edit button: ' . $trp->btn_edit($wrd->phrase()) . '<br>';
+        $t->html_test($test_page, 'triple', $t);
     }
 
 }

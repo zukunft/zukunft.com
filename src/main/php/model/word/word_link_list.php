@@ -702,7 +702,7 @@ class word_link_list
                             $dsp_obj = $lnk->to->get_dsp_obj();
                             $result .= $dsp_obj->dsp_tbl_cell(0);
                         }
-                        $result .= $lnk->dsp_obj()->btn_edit($lnk->from);
+                        $result .= $lnk->dsp_obj()->btn_edit($lnk->from->api_obj());
                         if ($lnk->from != null) {
                             $dsp_obj = $lnk->from->get_dsp_obj();
                             $result .= $dsp_obj->dsp_unlink($lnk->id);

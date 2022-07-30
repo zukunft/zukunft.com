@@ -51,10 +51,10 @@ class word_api extends user_sandbox_named_api
     protected ?string $description = null;
 
     // the language specific forms
-    public ?string $plural = null;
+    private ?string $plural = null;
 
     // the main parent phrase
-    public ?phrase_api $parent;
+    private ?phrase_api $parent;
 
     /*
      * construct and map
@@ -79,6 +79,26 @@ class word_api extends user_sandbox_named_api
     function description(): string
     {
         return $this->description;
+    }
+
+    public function set_plural(string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
+    }
+
+    public function set_parent(?phrase_api $parent): void
+    {
+        $this->parent = $parent;
+    }
+
+    function parent(): ?phrase_api
+    {
+        return $this->parent;
     }
 
     /*

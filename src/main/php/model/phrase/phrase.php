@@ -157,6 +157,38 @@ class phrase
         return $result;
     }
 
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return phrase_api the phrase frontend api object
+     */
+    function api_obj(): phrase_api
+    {
+        if ($this->is_word()) {
+            return $this->get_word()->api_obj()->phrase();
+        } else {
+            return $this->get_triple()->api_obj()->phrase();
+        }
+    }
+
+    /**
+     * @return phrase_dsp the phrase object with the display interface functions
+     */
+    function dsp_obj(): phrase_dsp
+    {
+        if ($this->is_word()) {
+            return $this->get_word()->dsp_obj()->phrase_dsp();
+        } else {
+            return $this->get_triple()->dsp_obj()->phrase_dsp();
+        }
+    }
+
+    /*
+     * loading / database access object (DAO) functions
+     */
+
     /**
      * load either a word or triple
      * @return true if loading has been successful
