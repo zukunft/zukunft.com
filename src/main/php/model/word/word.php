@@ -303,7 +303,9 @@ class word extends user_sandbox_description
     function api_obj(): object
     {
         $api_obj = new word_api();
-        parent::fill_api_obj($api_obj);
+        if (!$this->excluded) {
+            parent::fill_api_obj($api_obj);
+        }
         return $api_obj;
     }
 
@@ -314,20 +316,22 @@ class word extends user_sandbox_description
     {
         $dsp_obj = new word_dsp();
 
-        $dsp_obj = parent::fill_dsp_obj($dsp_obj);
+        if (!$this->excluded) {
+            $dsp_obj = parent::fill_dsp_obj($dsp_obj);
 
-        $dsp_obj->plural = $this->plural;
-        $dsp_obj->type_id = $this->type_id;
-        $dsp_obj->view_id = $this->view_id;
-        $dsp_obj->values = $this->values;
+            $dsp_obj->plural = $this->plural;
+            $dsp_obj->type_id = $this->type_id;
+            $dsp_obj->view_id = $this->view_id;
+            $dsp_obj->values = $this->values;
 
-        $dsp_obj->link_type_id = $this->link_type_id;
+            $dsp_obj->link_type_id = $this->link_type_id;
 
-        $dsp_obj->share_id = $this->share_id;
-        $dsp_obj->protection_id = $this->protection_id;
+            $dsp_obj->share_id = $this->share_id;
+            $dsp_obj->protection_id = $this->protection_id;
 
-        $dsp_obj->view = $this->view;
-        $dsp_obj->ref_lst = $this->ref_lst;
+            $dsp_obj->view = $this->view;
+            $dsp_obj->ref_lst = $this->ref_lst;
+        }
 
         return $dsp_obj;
     }
@@ -739,19 +743,6 @@ class word extends user_sandbox_description
         } else {
             return $this->name;
         }
-    }
-
-    /**
-     * return the html code to display a word
-     */
-    function display(string $back = ''): string
-    {
-        if ($back != '') {
-            $result = '<a href="/http/view.php?words=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
-        } else {
-            $result = '<a href="/http/view.php?words=' . $this->id . '">' . $this->name . '</a>';
-        }
-        return $result;
     }
 
     /*

@@ -45,7 +45,7 @@ class word_list_dsp extends word_list
         $result .= '    </td>' . "\n";
         foreach ($this->lst as $wrd) {
             $result .= '    <td>' . "\n";
-            $result .= $wrd->display();
+            $result .= $wrd->dsp_obj()->dsp_link();
             $result .= '    </td>' . "\n";
         }
         $result .= '  </tr>' . "\n";

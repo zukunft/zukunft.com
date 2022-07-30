@@ -109,7 +109,7 @@ class formula_element
                 $wrd->id = $ref_id;
                 $wrd->load();
                 $this->name = $wrd->name;
-                $this->dsp_name = $wrd->display($this->back);
+                $this->dsp_name = $wrd->dsp_obj()->dsp_link($this->back);
                 $this->symbol = expression::MAKER_WORD_START . $wrd->id . expression::MAKER_WORD_END;
                 $this->obj = $wrd;
             }
@@ -212,8 +212,8 @@ class formula_element
         if ($this->obj != null) {
             if ($this->obj->id <> 0) {
                 // TODO replace with phrase
-                if ($this->type == 'word') {
-                    $result = $this->obj->display($back);
+                if ($this->type == word::class) {
+                    $result = $this->obj->dsp_obj()->dsp_link($back);
                 }
                 if ($this->type == verb::class) {
                     $result = $this->name;

@@ -41,6 +41,8 @@ class word_dsp extends word_api
     const TIME_MIN_COLS = 3; // minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display
     const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
 
+    const FORM_EDIT = 'word_edit';
+
     /**
      * @returns string simply the word name, but later with mouse over that shows the description
      */
@@ -152,29 +154,6 @@ class word_dsp extends word_api
     }
 
     /**
-     * @returns string the html code to select a word link type
-     */
-    private function selector_type($id, $form): string
-    {
-        log_debug('word_dsp->selector_type ... word id ' . $id);
-        $result = '';
-
-        if ($id <= 0) {
-            $id = DEFAULT_WORD_TYPE_ID;
-        }
-
-        $sel = new html_selector;
-        $sel->form = $form;
-        $sel->name = 'type';
-        $sel->sql = sql_lst("word_type");
-        $sel->selected = $id;
-        $sel->dummy_text = '';
-        $result .= $sel->display();
-
-        return $result;
-    }
-
-    /**
      * HTML code to edit all word fields
      * @param string $dsp_graph the html code of the related phrases
      * @param string $dsp_log the html code of the change log
@@ -185,25 +164,22 @@ class word_dsp extends word_api
      */
     function dsp_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
     {
+        $html = new html_base();
         $result = '';
 
         if ($this->id > 0) {
-            $form = "word_edit";
-            $result .= dsp_text_h2('Change "' . $this->name . '"');
-            $result .= dsp_form_start($form);
-            $result .= dsp_form_hidden("id", $this->id);
-            $result .= dsp_form_hidden("back", $back);
-            $result .= dsp_form_hidden("confirm", '1');
-            $result .= '<div class="form-row">';
-            $result .= $dsp_frm;
-            $result .= dsp_form_text("plural", $this->plural, "Plural:", "col-sm-4");
-            $result .= $dsp_type;
-            $result .= '</div>';
-            $result .= '<br>';
-            $result .= dsp_form_text("description", $this->description, "Description:");
-            $result .= dsp_form_end('', $back);
-            $result .= '<br>';
-            $result .= $dsp_graph;
+            $header = $html->text_h2('Change "' . $this->name . '"');
+            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields .= $html->form_hidden("back", $back);
+            $hidden_fields .= $html->form_hidden("confirm", '1');
+            $detail_fields = $dsp_frm;
+            $detail_fields .= $html->form_text("plural", $this->plural);
+            $detail_fields .= $html->form_text("description", $this->description);
+            $detail_fields .= $dsp_type;
+            $detail_row = $html->fr($detail_fields) . '<br>';
+            $result = $header
+                . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row)
+                . '<br>' . $dsp_graph;
         }
 
         $result .= $dsp_log;

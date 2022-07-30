@@ -54,6 +54,8 @@ class word_display_unit_tests
         $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
+        $test_page .= 'edit mask<br>';
+        $test_page .= $wrd->dsp_edit('', '', '', '') . '<br>';
         $t->html_test($test_page, 'word', $t);
 
         $t->html_test($wrd->header(), 'word_header', $t);

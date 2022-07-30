@@ -293,8 +293,33 @@ class html_base
 
 
     /*
-     * HTML elements like tables, forms
+     * table HTML functions used
      */
+
+    function th(string $header_text): string
+    {
+        return '<th>' . $header_text . '</th>';
+    }
+
+    function tr(string $row_text): string
+    {
+        return '<tr>' . $row_text . '</tr>';
+    }
+
+    /**
+     * show a text of link within a table cell
+     * @param string $cell_text the text or link that should be shown
+     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @return string the html code of the table cell
+     */
+    function td(string $cell_text, int $intent = 0): string
+    {
+        while ($intent > 0) {
+            $cell_text .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        return '<td>' . $cell_text . '</td>';
+    }
 
     /**
      * create the html code to display a table
@@ -306,7 +331,7 @@ class html_base
         return $this->tbl_start() . $tbl_rows . $this->tbl_end();
     }
 
-    function tbl_start(): string
+    private function tbl_start(): string
     {
         if (UI_USE_BOOTSTRAP) {
             $result = '<table class="table table-striped table-bordered">' . "\n";
@@ -349,34 +374,56 @@ class html_base
         return $result;
     }
 
-    function tr(string $row_text): string
+    private function tbl_end(): string
     {
-        return '<tr>' . $row_text . '</tr>';
+        return '</table>' . "\n";
     }
 
-    function th(string $header_text): string
+    /*
+     * HTML elements like forms
+     */
+
+    /**
+     * create the html code to display a table
+     * @param string $tbl_rows the html code of all rows including the header rows
+     * @return string the table html code
+     */
+    function form(string $form_name, string $tbl_rows, string $submit_name = '', string $back = '', string $del_call = ''): string
     {
-        return '<th>' . $header_text . '</th>';
+        return $this->form_start($form_name) . $tbl_rows . $this->form_end($submit_name, $back, $del_call);
     }
 
     /**
-     * show a text of link within a table cell
-     * @param string $cell_text the text or link that should be shown
-     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
-     * @return string the html code of the table cell
+     * @param string $row_text the html code that should be wrapped into a form row
+     * @return string the html code of the form row
      */
-    function td(string $cell_text, int $intent = 0): string
+    function fr(string $row_text): string
     {
-        while ($intent > 0) {
-            $cell_text .= '&nbsp;';
-            $intent = $intent - 1;
-        }
-        return '<td>' . $cell_text . '</td>';
+        return '<div class="' . api::CLASS_FORM_ROW . '">' . $row_text . '</div>';
     }
 
-    function tbl_end(): string
+    /**
+     * @param string $field the name of the form field
+     * @param string $txt_value the expected value of the form field
+     * @param string $label the expected value of the form field
+     * @return string the html code of the form field
+     */
+    function form_text(string $field,
+                       ?string $txt_value = '',
+                       string $label = '',
+                       string $class = api::CLASS_COL_4,
+                       string $attribute = ''): string
     {
-        return '</table>' . "\n";
+        $result = '';
+        if ($label == '') {
+            $label = strtoupper($field[0]) . substr($field, 1) . ':';
+        }
+        if (UI_USE_BOOTSTRAP) {
+            $result .= dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+        } else {
+            $result .= $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+        }
+        return $result;
     }
 
     /**
@@ -389,6 +436,17 @@ class html_base
         // switch on post forms for private values
         // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
         return '<form action="' . $form_name . '.php" id="' . $form_name . '">';
+    }
+
+    /**
+     * add the hidden field
+     * @param string $name the internal name of the field
+     * @param string $value the value that should be returned
+     * @@returns string the html code to add a hidden field
+     */
+    function form_hidden(string $name, string $value): string
+    {
+        return '<input type="hidden" name="' . $name . '" value="' . $value . '">';
     }
 
     /**

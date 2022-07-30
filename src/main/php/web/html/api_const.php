@@ -68,6 +68,10 @@ class api
     const STYLE_USER = 'user_specific';
     const STYLE_RIGHT = 'right_ref';
 
+    // classes used
+    const CLASS_FORM_ROW = 'form-row';
+    const CLASS_COL_4 = 'col-sm-4';
+
     // to be reviewed
     const VALUE_EDIT = 'value_edit';
 

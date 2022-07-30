@@ -35,6 +35,7 @@
 namespace html;
 
 use api\phrase_list_api;
+use word_type;
 
 class phrase_list_dsp extends phrase_list_api
 {
@@ -79,6 +80,28 @@ class phrase_list_dsp extends phrase_list_api
     {
         $html = new html_base();
         return $html->text_h2($this->InitCap());
+    }
+
+    /**
+     * @returns string the html code to select a word link type
+     */
+    private function selector(int $selected_id, string $form): string
+    {
+        $result = '';
+
+        if ($selected_id <= 0) {
+            $selected_id = word_type::DEFAULT;
+        }
+
+        $sel = new html_selector;
+        $sel->form = $form;
+        $sel->name = 'type';
+        $sel->sql = sql_lst("word_type");
+        $sel->selected = $selected_id;
+        $sel->dummy_text = '';
+        $result .= $sel->display();
+
+        return $result;
     }
 
 }

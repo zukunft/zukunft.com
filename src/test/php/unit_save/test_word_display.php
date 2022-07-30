@@ -92,9 +92,9 @@ function run_word_display_test(testing $t)
     <td>
     </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2021->id . '">System Test Time Word e.g. 2021</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2021->id . '" title="System Test Time Word e.g. 2021">System Test Time Word e.g. 2021</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
   </tr>
 </table>
 ';
@@ -160,11 +160,11 @@ function run_word_display_test(testing $t)
     <td>
     </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2020->id . '">System Test Another Time Word e.g. 2020</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2020->id . '" title="System Test Another Time Word e.g. 2020">System Test Another Time Word e.g. 2020</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_year->id . '">System Test Time Word Category e.g. Year</a>    </td>
+<a href="/http/view.php?words=' . $wrd_year->id . '" title="System Test Time Word Category e.g. Year">System Test Time Word Category e.g. Year</a>    </td>
     <td>
-<a href="/http/view.php?words=' . $wrd_2019->id . '">System Test Another Time Word e.g. 2019</a>    </td>
+<a href="/http/view.php?words=' . $wrd_2019->id . '" title="System Test Another Time Word e.g. 2019">System Test Another Time Word e.g. 2019</a>    </td>
   </tr>
 </table>
 ';

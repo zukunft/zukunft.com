@@ -50,21 +50,21 @@ class system_error_log_list_dsp extends system_error_log_list_api
     {
         $html = new html_base();
         $result = ''; // reset the html code var
+        $rows = '';   // the html code of the rows
 
         if (count($this->system_errors) > 0) {
             // prepare to show the word link
             $log_dsp = $this->system_errors[0];
             if ($log_dsp->time <> '') {
-                $result .= $html->tbl_start();
                 $row_nbr = 0;
                 foreach ($this->system_errors as $log_dsp) {
                     $row_nbr++;
                     if ($row_nbr == 1) {
-                        $result .= $this->headline_html();
+                        $rows .= $this->headline_html();
                     }
-                    $result .= $log_dsp->get_html($usr, $back);
+                    $rows .= $log_dsp->get_html($usr, $back);
                 }
-                $result .= $html->tbl_end();
+                $result = $html->tbl($rows);
             }
         }
 
