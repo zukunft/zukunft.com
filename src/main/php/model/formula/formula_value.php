@@ -1175,7 +1175,7 @@ class formula_value
         $val_phr_lst->add($this->time_phr);
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $title .= dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
-        $time_phr = dsp_array($val_wrd_lst->dsp_obj()->names_linked_time());
+        $time_phr = dsp_array($val_wrd_lst->dsp_obj()->time_lst()->dsp_obj()->names_linked());
         if ($time_phr <> '') {
             $title .= ' (' . $time_phr . ')';
         }

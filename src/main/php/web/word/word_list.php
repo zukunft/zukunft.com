@@ -56,7 +56,9 @@ class word_list_dsp extends word_list_api
     {
         $result = array();
         foreach ($this->lst as $wrd) {
-            $result[] = $wrd->dsp_obj()->dsp_link($back);
+            if (!$wrd->is_hidden()) {
+                $result[] = $wrd->dsp_obj()->dsp_link($back);
+            }
         }
         return $result;
     }
@@ -77,16 +79,6 @@ class word_list_dsp extends word_list_api
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
-    }
-
-    // like names_linked, but only the time words
-    function names_linked_time(): array
-    {
-        log_debug('word_list->names_linked_time (' . dsp_count($this->lst) . ')');
-        $wrd_lst_time = $this->time_lst();
-        $result = $wrd_lst_time->names_linked();
-        log_debug('word_list->names_linked_time (' . dsp_array($result) . ')');
-        return $result;
     }
 
     // similar to zuh_selector but using a list not a query

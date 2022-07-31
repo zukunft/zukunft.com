@@ -138,6 +138,7 @@ class word_api extends user_sandbox_named_api
     {
         $wrd_dsp = new word_dsp($this->id, $this->name, $this->description);
         $wrd_dsp->plural = $this->plural;
+        $wrd_dsp->type = $this->type;
         if ($this->parent != null) {
             $wrd_dsp->parent = $this->parent->dsp_obj();
         }
@@ -218,6 +219,18 @@ class word_api extends user_sandbox_named_api
     function is_percent(): bool
     {
         return $this->is_type(phrase_type::PERCENT);
+    }
+
+    /**
+     * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
+     */
+    function is_hidden(): bool
+    {
+        $result = false;
+        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
+            $result = true;
+        }
+        return $result;
     }
 
 }
