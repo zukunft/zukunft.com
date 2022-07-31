@@ -33,6 +33,7 @@ namespace html;
 
 use api\word_list_api;
 use cfg\phrase_type;
+use formula;
 
 class word_list_dsp extends word_list_api
 {
@@ -44,7 +45,7 @@ class word_list_dsp extends word_list_api
      */
     function dsp(string $back = ''): string
     {
-        return implode('', $this->names_linked($back));
+        return implode(', ', $this->names_linked($back));
     }
 
     /**
@@ -76,37 +77,6 @@ class word_list_dsp extends word_list_api
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
-    }
-
-    /**
-     * like names_linked, but without measure and time words
-     * because measure words are usually shown after the number
-     * @return array with the names of the list with the link
-     */
-    function names_linked_ex_measure_and_time(): array
-    {
-        log_debug('word_list->names_linked_ex_measure_and_time (' . dsp_count($this->lst) . ')');
-        $wrd_lst_ex = clone $this;
-        $wrd_lst_ex->ex_time();
-        $wrd_lst_ex->ex_measure();
-        $wrd_lst_ex->ex_scaling();
-        $wrd_lst_ex->ex_percent(); // the percent sign is normally added to the value
-        $result = $wrd_lst_ex->names_linked();
-        log_debug('word_list->names_linked_ex_measure_and_time (' . dsp_array($result) . ')');
-        return $result;
-    }
-
-    // like names_linked, but only the measure words
-    // because measure words are usually shown after the number
-    function names_linked_measure(): array
-    {
-        log_debug('word_list->names_linked_measure (' . dsp_count($this->lst) . ')');
-        $wrd_lst_scale = $this->scaling_lst();
-        $wrd_lst_measure = $this->measure_lst();
-        $wrd_lst_measure->merge($wrd_lst_scale);
-        $result = $wrd_lst_measure->names_linked();
-        log_debug('word_list->names_linked_measure (' . dsp_array($result) . ')');
-        return $result;
     }
 
     // like names_linked, but only the time words

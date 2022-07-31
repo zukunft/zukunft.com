@@ -1666,7 +1666,7 @@ class phrase_list
     /**
      * Exclude all time phrases out of the list of phrases
      */
-    function ex_time()
+    function ex_time(): void
     {
         log_debug('phrase_list->ex_time ' . $this->dsp_id());
         $del_wrd_lst = $this->time_lst();
@@ -1679,7 +1679,7 @@ class phrase_list
     /**
      * Exclude all measure phrases out of the list of phrases
      */
-    function ex_measure()
+    function ex_measure(): void
     {
         $del_phr_lst = $this->measure_lst();
         $this->diff($del_phr_lst);
@@ -1689,7 +1689,7 @@ class phrase_list
     /**
      * Exclude all scaling phrases out of the list of phrases
      */
-    function ex_scaling()
+    function ex_scaling(): void
     {
         $del_phr_lst = $this->scaling_lst();
         $this->diff($del_phr_lst);

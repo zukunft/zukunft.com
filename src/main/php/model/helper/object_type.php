@@ -39,6 +39,16 @@ class object_type
 
     public int $id;
     public string $name;
-    public int $code_id;
+    public string $code_id;
+
+    function is_type(string $type_to_check): bool
+    {
+        if ($this->code_id == $type_to_check){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }

@@ -45,6 +45,7 @@ use cfg\phrase_type;
 use cfg\share_type;
 use html\api;
 use html\button;
+use html\html_selector;
 use html\word_dsp;
 
 class word extends user_sandbox_description
@@ -511,9 +512,9 @@ class word extends user_sandbox_description
 
     /**
      * get the suggested view
-     * @return int|mixed
+     * @return int the view of the most often used view
      */
-    function view_id()
+    function view_id(): int
     {
         log_debug('word->view_id for ' . $this->dsp_id());
 
@@ -1124,9 +1125,10 @@ class word extends user_sandbox_description
     }
 
     /**
-     * return true if the word has the given type
+     * @param string $type the ENUM string of the fixed type
+     * @returns bool true if the word has the given type
      */
-    function is_type($type): bool
+    function is_type(string $type): bool
     {
         global $word_types;
 
@@ -1141,7 +1143,7 @@ class word extends user_sandbox_description
     }
 
     /**
-     * return true if the word has the type "time"
+     * @returns bool true if the word has the type "time"
      */
     function is_time(): bool
     {
@@ -1149,7 +1151,7 @@ class word extends user_sandbox_description
     }
 
     /**
-     * return true if the word is just to define the default period
+     * @return bool true if the word is just to define the default period
      */
     function is_time_jump(): bool
     {
@@ -1157,7 +1159,7 @@ class word extends user_sandbox_description
     }
 
     /**
-     * return true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * @returns bool true if the word has the type "measure" (e.g. "meter" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1167,7 +1169,7 @@ class word extends user_sandbox_description
     }
 
     /**
-     * return true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
+     * @returns bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool
     {
@@ -1180,7 +1182,7 @@ class word extends user_sandbox_description
     }
 
     /**
-     * return true if the word has the type "scaling_percent" (e.g. "percent")
+     * @returns bool true if the word has the type "scaling_percent" (e.g. "percent")
      */
     function is_percent(): bool
     {

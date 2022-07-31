@@ -30,6 +30,8 @@
 
 */
 
+use api\word_api;
+use cfg\phrase_type;
 use html\html_base;
 use html\word_dsp;
 use html\word_list_dsp;
@@ -42,16 +44,36 @@ class word_list_display_unit_tests
 
         $t->subheader('Word list tests');
 
+        // create the word list test set
         $lst = new word_list_dsp();
+        $lst_long = new word_list_dsp();
         $wrd = new word_dsp(1, word::TN_READ);
         $wrd_pi = new word_dsp(2, word::TN_CONST_DSP);
+        $wrd_time = new word_dsp(3, word_api::TN_2019);
+        $wrd_one = new word_dsp(4, word_api::TN_ONE);
+        $wrd_mio = new word_dsp(5, word_api::TN_MIO);
+        $wrd_pct = new word_dsp(6, word_api::TN_PCT);
+        $wrd_time->set_type(phrase_type::TIME);
+        $wrd_one->set_type(phrase_type::SCALING_HIDDEN);
+        $wrd_mio->set_type(phrase_type::SCALING);
+        $wrd_pct->set_type(phrase_type::PERCENT);
         $lst->add($wrd);
         $lst->add($wrd_pi);
+        $lst_long->add($wrd);
+        $lst_long->add($wrd_pi);
+        $lst_long->add($wrd_time);
+        $lst_long->add($wrd_one);
+        $lst_long->add($wrd_mio);
+        $lst_long->add($wrd_pct);
 
+        // test the word list display functions
         $test_page = $html->text_h2('Word list display test');
         $test_page .= 'names with links: ' . $lst->dsp() . '<br>';
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
+        $test_page .= 'all word types: ' . '<br>' . $lst_long->dsp() . '<br>';
+        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->dsp_obj()->dsp() . '<br>';
+        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->dsp_obj()->dsp() . '<br>';
         $t->html_test($test_page, 'word_list', $t);
     }
 

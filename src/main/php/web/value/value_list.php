@@ -45,7 +45,8 @@ class value_list_dsp extends value_list_api
 {
 
     /**
-     * @param phrase_list_api $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
+     * @param phrase_list_api|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
+     * @param string $back
      * @return string the html code to show the values as a table to the user
      */
     function table(phrase_list_api $context_phr_lst = null, string $back = ''): string

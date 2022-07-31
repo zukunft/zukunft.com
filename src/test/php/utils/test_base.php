@@ -82,6 +82,7 @@ include_once $path_unit . 'phrase_group.php';
 include_once $path_unit . 'value.php';
 include_once $path_unit . 'value_phrase_link.php';
 include_once $path_unit . 'value_list.php';
+include_once $path_unit . 'value_list_display.php';
 include_once $path_unit . 'formula.php';
 include_once $path_unit . 'formula_link.php';
 include_once $path_unit . 'formula_value.php';

@@ -299,6 +299,7 @@ include_once $path_php . 'model/helper/word_link_object.php';
 // model classes
 include_once $path_php . 'model/word/word.php';
 include_once $path_php . 'model/word/word_exp.php';
+include_once $path_php . 'model/word/word_type.php';
 include_once $path_php . 'model/word/word_type_list.php';
 include_once $path_php . 'model/word/word_list.php';
 include_once $path_php . 'model/word/word_link.php';

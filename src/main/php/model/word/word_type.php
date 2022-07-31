@@ -43,4 +43,19 @@ class word_type extends object_type
 
     const DEFAULT = phrase_type::NORMAL;
 
+    /*
+     * construct and map
+     */
+
+    function __construct(string $code_id, int $id = 0, string $name = '')
+    {
+        $this->code_id = $code_id;
+        $this->id = $id;
+        $this->name = $name;
+    }
+
+    function code_id(): string
+    {
+        return $this->code_id;
+    }
 }

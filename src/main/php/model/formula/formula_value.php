@@ -1174,8 +1174,8 @@ class formula_value
         $val_phr_lst = clone $this->phr_lst;
         $val_phr_lst->add($this->time_phr);
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
-        $title .= dsp_array($val_wrd_lst->names_linked_ex_measure_and_time());
-        $time_phr = dsp_array($val_wrd_lst->names_linked_time());
+        $title .= dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
+        $time_phr = dsp_array($val_wrd_lst->dsp_obj()->names_linked_time());
         if ($time_phr <> '') {
             $title .= ' (' . $time_phr . ')';
         }
@@ -1187,9 +1187,9 @@ class formula_value
 
         // display the measure and scaling of the value
         if ($val_wrd_lst->has_percent()) {
-            $result .= 'from ' . dsp_array($val_wrd_lst->names_linked_measure());
+            $result .= 'from ' . $val_wrd_lst->api_obj()->measure_scale_lst()->dsp_obj()->dsp();
         } else {
-            $result .= 'in ' . dsp_array($val_wrd_lst->names_linked_measure());
+            $result .= 'in ' . $val_wrd_lst->api_obj()->measure_scale_lst()->dsp_obj()->dsp();
         }
         $result .= '</br></br>' . "\n";
 

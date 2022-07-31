@@ -31,6 +31,7 @@
 
 use api\value_list_api;
 use cfg\share_type;
+use html\html_base;
 
 class value_list
 {
@@ -1007,6 +1008,13 @@ class value_list
         log_debug("value_list->load_frm_related_grp_phrs -> (" . zu_lst_dsp($result) . ")");
         return $result;
     }
+
+    /*
+    private function common_phrases(): phrase_list
+    {
+
+    }
+    */
 
     // return the html code to display all values related to a given word
     // $phr->id is the related word that should not be included in the display

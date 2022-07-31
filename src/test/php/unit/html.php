@@ -151,25 +151,6 @@ class html_unit_tests
         $val_ch->set_grp($phr_grp_ch);
         $val_ch->set_val(value::TV_CH_INHABITANTS_2019_IN_MIO);
 
-        // create the value list and the table to display the results
-        // TODO link phrases
-        // TODO format numbers
-        // TODO use one phrase for City of Zurich
-        // TODO optional "(in mio)" formatting for scale words
-        // TODO move time words to column headline
-        // TODO use language based plural for inhabitant
-        $val_lst = new \api\value_list_api();
-        $val_lst->add($val_city);
-        $val_lst->add($val_canton);
-        $val_lst->add($val_ch);
-        $t->html_test($val_lst->dsp_obj()->table(), 'table_value', $t);
-
-        // create the same table as above, but within a context
-        $t->html_test(
-            $phr_lst_context->dsp_obj()->headline()
-            . $val_lst->dsp_obj()->table($phr_lst_context),
-            'table_value_context', $t);
-
         // create the formula result for the inhabitants of the city of zurich
         $fv_id = 1;
         $fv_city = new \api\formula_value_api($fv_id); $fv_id++;

@@ -32,6 +32,7 @@
 
 namespace api;
 
+use cfg\phrase_type;
 use html\word_list_dsp;
 
 class word_list_api extends list_api
@@ -103,6 +104,157 @@ class word_list_api extends list_api
         } else {
             return false;
         }
+    }
+
+    /*
+     * selection functions
+     */
+
+    /**
+     * diff as a function, because the array_diff does not seem to work for an object list
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param word_list_api $del_lst is the list of phrases that should be removed from this list object
+     */
+    private function diff(word_list_api $del_lst): void
+    {
+        if (!$this->is_empty()) {
+            $result = array();
+            $lst_ids = $del_lst->id_lst();
+            foreach ($this->lst as $wrd) {
+                if (!in_array($wrd->id(), $lst_ids)) {
+                    $result[] = $wrd;
+                }
+            }
+            $this->lst = $result;
+        }
+    }
+
+    /**
+     * merge as a function, because the array_merge does not create an object
+     * @param word_list_api $new_wrd_lst with the words that should be added
+     */
+    function merge(word_list_api $new_wrd_lst)
+    {
+        foreach ($new_wrd_lst->lst as $new_wrd) {
+            $this->add($new_wrd);
+        }
+    }
+
+    /**
+     * @param string $type the ENUM string of the fixed type
+     * @return word_list_api with the all words of the give type
+     */
+    private function filter(string $type): word_list_api
+    {
+        $result = new word_list_api();
+        foreach ($this->lst as $wrd) {
+            if ($wrd->is_type($type)) {
+                $result->add($wrd);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get all time words from this list of words
+     */
+    function time_lst(): word_list_api
+    {
+        return $this->filter(phrase_type::TIME);
+    }
+
+    /**
+     * get all measure words from this list of words
+     */
+    function measure_lst(): word_list_api
+    {
+        return $this->filter(phrase_type::MEASURE);
+    }
+
+    /**
+     * get all scaling words from this list of words
+     */
+    function scaling_lst(): word_list_api
+    {
+        $result = new word_list_api();
+        foreach ($this->lst as $wrd) {
+            if ($wrd->is_scaling()) {
+                $result->add($wrd);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get all measure and scaling words from this list of words
+     * @returns word_list_api words that are usually shown after a number
+     */
+    function measure_scale_lst(): word_list_api
+    {
+        $scale_lst = $this->scaling_lst();
+        $measure_lst = $this->measure_lst();
+        $measure_lst->merge($scale_lst);
+        return $measure_lst;
+    }
+
+    /**
+     * get all measure words from this list of words
+     */
+    function percent_lst(): word_list_api
+    {
+        return $this->filter(phrase_type::PERCENT);
+    }
+
+    /**
+     * like names_linked, but without measure and time words
+     * because measure words are usually shown after the number
+     * TODO call this from the display object t o avoid casting again
+     * @returns word_list_api a word
+     */
+    function ex_measure_and_time_lst(): word_list_api
+    {
+        $wrd_lst_ex = clone $this;
+        $wrd_lst_ex->ex_time();
+        $wrd_lst_ex->ex_measure();
+        $wrd_lst_ex->ex_scaling();
+        $wrd_lst_ex->ex_percent(); // the percent sign is normally added to the value
+        return $wrd_lst_ex;
+    }
+
+    /**
+     * Exclude all time words from this word list
+     */
+    function ex_time(): void
+    {
+        $this->diff($this->time_lst());
+    }
+
+    /**
+     * Exclude all measure words from this word list
+     */
+    function ex_measure(): void
+    {
+        $this->diff($this->measure_lst());
+    }
+
+    /**
+     * Exclude all measure words from this word list
+     */
+    function ex_scaling(): void
+    {
+        $this->diff($this->scaling_lst());
+    }
+
+    /**
+     * Exclude all measure words from this word list
+     */
+    function ex_percent(): void
+    {
+        $this->diff($this->percent_lst());
     }
 
 }
