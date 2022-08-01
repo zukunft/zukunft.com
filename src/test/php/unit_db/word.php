@@ -110,6 +110,11 @@ function run_word_unit_db_tests(testing $t)
     $wrd_lst->load_by_type(cl(db_cl::WORD_TYPE, phrase_type::PERCENT));
     $t->assert('load_by_type', $wrd_lst->name(), '"' . word::TN_READ_PERCENT . '"');
 
+    // load a word list by name pattern
+    $wrd_lst = new word_list($usr);
+    $wrd_lst->load_by_pattern('S');
+    $t->assert('load_by_pattern', $wrd_lst->name(), '"S","September","Share","Share Price","SI base unit","Sv"');
+
     // add a word to a list by the word id
     $wrd_lst = new word_list($usr);
     $wrd_lst->load_by_ids(array($wrd->id));

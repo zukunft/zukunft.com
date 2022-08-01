@@ -47,6 +47,36 @@ class html_selector
     public ?int $selected = null;   // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
 
+    function dsp(): string
+    {
+        $result = $this->start_selector($this->form, $this->name, $this->label, $this->bs_class, $this->attribute);
+
+        if ($this->dummy_text == '') {
+            $this->dummy_text = (new msg())->txt(msg::PLEASE_SELECT);
+        }
+
+        if ($this->selected == 0) {
+            $result .= '<option value="0" selected>' . $this->dummy_text . '</option>';
+        }
+
+        if (count($this->lst) > 0) {
+            foreach ($this->lst as $key => $value) {
+                $row_option = '';
+                if ($key == $this->selected and $this->selected <> 0) {
+                    $row_option = ' selected';
+                }
+                $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $value . '</option>';
+            }
+        }
+
+        $result .= $this->end_selector();
+
+        return $result;
+    }
+
+    /**
+     * TODO deprecate because it is base on an sql query, but should always be based on a list
+     */
     function display(): string
     {
         log_debug('selector->display (' . $this->name . ',' . $this->form . ',' . $this->sql . ',s' . $this->selected . ',' . $this->dummy_text . ')');

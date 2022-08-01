@@ -402,7 +402,7 @@ class formula extends user_sandbox_description
         $qp->name = self::class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_fields(array_merge(array(user_sandbox::FLD_USER), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
-        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
         $qp->par = $db_con->get_par();
 

@@ -83,7 +83,7 @@ class phrase_list_dsp extends phrase_list_api
     }
 
     /**
-     * @returns string the html code to select a word link type
+     * @returns string the html code to select a phrase out of this list
      */
     private function selector(int $selected_id, string $form): string
     {
@@ -96,10 +96,11 @@ class phrase_list_dsp extends phrase_list_api
         $sel = new html_selector;
         $sel->form = $form;
         $sel->name = 'type';
-        $sel->sql = sql_lst("word_type");
+        $sel->lst = $this->lst_key();
+        //$sel->sql = sql_lst("word_type");
         $sel->selected = $selected_id;
         $sel->dummy_text = '';
-        $result .= $sel->display();
+        $result .= $sel->dsp();
 
         return $result;
     }

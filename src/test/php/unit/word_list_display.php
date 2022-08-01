@@ -33,6 +33,7 @@
 use api\word_api;
 use cfg\phrase_type;
 use html\html_base;
+use html\html_selector;
 use html\word_dsp;
 use html\word_list_dsp;
 
@@ -74,6 +75,10 @@ class word_list_display_unit_tests
         $test_page .= 'all word types: ' . '<br>' . $lst_long->dsp() . '<br>';
         $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->dsp_obj()->dsp() . '<br>';
         $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->dsp_obj()->dsp() . '<br>';
+
+        $test_page .= 'selector: ' . '<br>';
+        $test_page .= $lst_long->selector() . '<br>';
+
         $t->html_test($test_page, 'word_list', $t);
     }
 

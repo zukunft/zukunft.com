@@ -34,7 +34,7 @@ use cfg\phrase_type;
 
 class word_list_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -68,6 +68,11 @@ class word_list_unit_tests
         $wrd_lst = new word_list($usr);
         $type_id = 1;
         $this->assert_sql_by_type_id($t, $db_con, $wrd_lst, $type_id);
+
+        // load by pattern
+        $wrd_lst = new word_list($usr);
+        $name_pattern = 'M';
+        $this->assert_sql_by_pattern($t, $db_con, $wrd_lst, $name_pattern);
 
         // the parent words
         $wrd_lst = new word_list($usr);
@@ -263,10 +268,8 @@ class word_list_unit_tests
      * @param array $ids filled with a list of word ids to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids)
+    private function assert_sql_by_ids(testing $t, sql_db $db_con, word_list $lst, array $ids): void
     {
-        global $usr;
-
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $lst->load_sql_by_ids($db_con, $ids);
@@ -287,7 +290,7 @@ class word_list_unit_tests
      * @param array $words filled with a list of word names to be used for the query creation
      * @return void
      */
-    private function assert_sql_by_names(testing $t, sql_db $db_con, word_list $lst, array $words)
+    private function assert_sql_by_names(testing $t, sql_db $db_con, word_list $lst, array $words): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -309,7 +312,7 @@ class word_list_unit_tests
      * @param int $grp_id the phrase group id that should be used for selecting the words
      * @return void
      */
-    private function assert_sql_by_group_id(testing $t, sql_db $db_con, word_list $lst, int $grp_id)
+    private function assert_sql_by_group_id(testing $t, sql_db $db_con, word_list $lst, int $grp_id): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -331,7 +334,7 @@ class word_list_unit_tests
      * @param int $type_id the phrase group id that should be used for selecting the words
      * @return void
      */
-    private function assert_sql_by_type_id(testing $t, sql_db $db_con, word_list $lst, int $type_id)
+    private function assert_sql_by_type_id(testing $t, sql_db $db_con, word_list $lst, int $type_id): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -345,6 +348,28 @@ class word_list_unit_tests
     }
 
     /**
+     * similar to assert_sql_by_ids, but for a type
+     *
+     * @param testing $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param word_list $lst the empty word list object
+     * @param string $pattern the text pattern to select the words
+     * @return void
+     */
+    private function assert_sql_by_pattern(testing $t, sql_db $db_con, word_list $lst, string $pattern): void
+    {
+        // check the PostgreSQL query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_like($db_con, $pattern);
+        $t->assert_qp($qp, sql_db::POSTGRES);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_like($db_con, $pattern);
+        $t->assert_qp($qp, sql_db::MYSQL);
+    }
+
+    /**
      * similar to assert_sql_by_ids, but for a linked words
      *
      * @param testing $t the test environment
@@ -354,7 +379,7 @@ class word_list_unit_tests
      * @param string $direction to define the link direction
      * @return void
      */
-    private function assert_sql_by_linked_words(testing $t, sql_db $db_con, word_list $lst, int $verb_id, string $direction)
+    private function assert_sql_by_linked_words(testing $t, sql_db $db_con, word_list $lst, int $verb_id, string $direction): void
     {
         // check the PostgreSQL query syntax
         $db_con->db_type = sql_db::POSTGRES;

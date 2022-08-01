@@ -78,6 +78,7 @@ class sql_db
     const PAR_INT_LIST = 'int_list';
     const PAR_TEXT = 'text';
     const PAR_TEXT_LIST = 'text_list';
+    const PAR_LIKE = 'like';
 
     // reserved words that are automatically escaped
 
@@ -234,7 +235,7 @@ class sql_db
     /**
      * reset the previous settings
      */
-    private function reset()
+    private function reset(): void
     {
         $this->usr_view_id = null;
         $this->table = '';
@@ -332,7 +333,7 @@ class sql_db
     /**
      * just to have all sql in one library
      */
-    function close()
+    function close(): void
     {
         if ($this->db_type == sql_db::POSTGRES) {
             // TODO null check can be removed once the type declaration is set to PgSql\Connection using php 8.1
@@ -407,7 +408,7 @@ class sql_db
      * set the user id of the user who has requested the database access
      * by default the user also should see his/her/its data
      */
-    function set_usr(int $usr_id)
+    function set_usr(int $usr_id): void
     {
         $this->usr_id = $usr_id;
         $this->usr_view_id = $usr_id;
@@ -416,7 +417,7 @@ class sql_db
     /**
      * to change the user view independent of the session user (can only be called by admin users)
      */
-    function set_view_usr($usr_id)
+    function set_view_usr($usr_id): void
     {
         $this->usr_view_id = $usr_id;
     }
@@ -424,10 +425,10 @@ class sql_db
     /**
      * add a parameter for a prepared query
      * @param string $par_type the SQL parameter type used e.g. for PostgreSQL as int or text
-     * @param mixed $value the int, float value or text value that is used for the concrete execution of the query
+     * @param string $value the int, float value or text value that is used for the concrete execution of the query
      * @param bool $named true if the parameter name is already used
      */
-    function add_par(string $par_type, $value, bool $named = false, bool $use_link = false)
+    function add_par(string $par_type, string $value, bool $named = false, bool $use_link = false): void
     {
         $this->par_types[] = $par_type;
         $this->par_values[] = $value;
@@ -439,7 +440,7 @@ class sql_db
      * interface function to add a "IN" parameter for a prepared query
      * @param array $ids with the int id values for the WHERE IN SQL statement part
      */
-    function add_par_in_int(array $ids, bool $named = false, bool $use_link = false)
+    function add_par_in_int(array $ids, bool $named = false, bool $use_link = false): void
     {
         $this->add_par(sql_db::PAR_INT_LIST, "{" . implode(",", $ids) . "}", $named, $use_link);
     }
@@ -448,11 +449,20 @@ class sql_db
      * interface function to add a "IN" parameter for a prepared query
      * @param array $names with the strings for the WHERE IN SQL statement part
      */
-    function add_par_in_txt(array $names)
+    function add_par_in_txt(array $names): void
     {
         // TODO check how to escape ","
         //$this->add_par(sql_db::PAR_TEXT_LIST, "{'" . implode("','", $names) . "'}");
         $this->add_par(sql_db::PAR_TEXT_LIST, "{" . implode(",", $names) . "}");
+    }
+
+    /**
+     * select
+     * @param string $name_pattern the pattern that should be used to search for names
+     */
+    function add_name_pattern(string $name_pattern): void
+    {
+        $this->add_par(sql_db::PAR_LIKE, $name_pattern . '%');
     }
 
     /**
@@ -481,7 +491,7 @@ class sql_db
         }
     }
 
-    function set_name(string $query_name)
+    function set_name(string $query_name): void
     {
         // the query name cannot be longer than 62 chars
         $this->query_name = substr($query_name, 0, 62);
@@ -490,7 +500,7 @@ class sql_db
     /**
      * define the fields that should be returned in a select query
      */
-    function set_fields($field_lst)
+    function set_fields($field_lst): void
     {
         $this->field_lst = $field_lst;
     }
@@ -499,7 +509,7 @@ class sql_db
      * define the fields that are used to link two objects
      * the id_link_field is the type e.g. the verb for a word link
      */
-    function set_link_fields($id_from_field, $id_to_field, $id_link_field = '')
+    function set_link_fields($id_from_field, $id_to_field, $id_link_field = ''): void
     {
         $this->id_from_field = $id_from_field;
         $this->id_to_field = $id_to_field;
@@ -519,7 +529,7 @@ class sql_db
                              string $join_field = '',
                              string $join_to_field = '',
                              string $join_select_field = '',
-                             int    $join_select_id = 0)
+                             int    $join_select_id = 0): void
     {
         // fill up the join field places or add settings to a matching join link
         if ($this->join_type == '' and !$this->join_force_rename
@@ -574,7 +584,7 @@ class sql_db
                                  string $join_type,
                                  string $join_field = '',
                                  string $join_to_field = '',
-                                 bool   $force_rename = false)
+                                 bool   $force_rename = false): void
     {
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
@@ -623,7 +633,7 @@ class sql_db
                                      string $join_type,
                                      string $join_field = '',
                                      string $join_to_field = '',
-                                     bool   $force_rename = false)
+                                     bool   $force_rename = false): void
     {
         // fill up the join field places or add settings to a matching join link
         // e.g. add the user fields to an existing not user specific join
@@ -671,7 +681,7 @@ class sql_db
     /**
      * define that the SQL statement should return the standard value and the user specific changes of all users
      */
-    function set_all()
+    function set_all(): void
     {
         $this->all_query = true;
     }
@@ -679,7 +689,7 @@ class sql_db
     /**
      * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user specific
      */
-    function set_usr_fields($usr_field_lst)
+    function set_usr_fields($usr_field_lst): void
     {
         $this->usr_query = true;
         $this->join_usr_query = true;
@@ -687,7 +697,7 @@ class sql_db
         $this->set_user_join();
     }
 
-    function set_usr_num_fields($usr_field_lst)
+    function set_usr_num_fields($usr_field_lst): void
     {
         $this->usr_query = true;
         $this->join_usr_query = true;
@@ -695,7 +705,7 @@ class sql_db
         $this->set_user_join();
     }
 
-    function set_usr_bool_fields($usr_field_lst)
+    function set_usr_bool_fields($usr_field_lst): void
     {
         $this->usr_query = true;
         $this->join_usr_query = true;
@@ -703,7 +713,7 @@ class sql_db
         $this->set_user_join();
     }
 
-    function set_usr_only_fields($field_lst)
+    function set_usr_only_fields($field_lst): void
     {
         $this->usr_query = true;
         $this->join_usr_query = true;
@@ -711,7 +721,7 @@ class sql_db
         $this->set_user_join();
     }
 
-    private function set_field_sep()
+    private function set_field_sep(): void
     {
         if ($this->fields != '') {
             $this->fields .= ', ';
@@ -729,7 +739,7 @@ class sql_db
     /**
      * internal interface function for sql_usr_field using the class db type settings and text fields
      */
-    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = '')
+    private function set_field_usr_text($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = ''): void
     {
         $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_TEXT, $stb_tbl, $usr_tbl, $as);
     }
@@ -737,7 +747,7 @@ class sql_db
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
      */
-    private function set_field_usr_num($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = '')
+    private function set_field_usr_num($field, $stb_tbl = sql_db::STD_TBL, $usr_tbl = sql_db::USR_TBL, $as = ''): void
     {
         $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, $stb_tbl, $usr_tbl, $as);
     }
@@ -745,7 +755,7 @@ class sql_db
     /**
      * internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
      */
-    private function set_field_usr_bool($field, $as = '')
+    private function set_field_usr_bool($field, string $as = ''): void
     {
         $this->fields .= $this->sql_usr_field($field, sql_db::FLD_FORMAT_BOOL, sql_db::STD_TBL, sql_db::USR_TBL, $as);
     }
@@ -784,7 +794,7 @@ class sql_db
         return $result;
     }
 
-    private function set_field_statement($has_id)
+    private function set_field_statement($has_id): void
     {
         if ($has_id) {
             // add the fields that part of all standard tables so id and name on top of the field list
@@ -1095,7 +1105,7 @@ class sql_db
     }
 
     //
-    private function set_table($usr_table = false)
+    private function set_table($usr_table = false): void
     {
         if ($usr_table) {
             $this->table = sql_db::USER_PREFIX . $this->get_table_name($this->type);
@@ -1128,7 +1138,7 @@ class sql_db
         return $result;
     }
 
-    private function set_id_field(string $given_name = '')
+    private function set_id_field(string $given_name = ''): void
     {
         if ($given_name != '') {
             $this->id_field = $given_name;
@@ -1142,7 +1152,7 @@ class sql_db
         return $this->id_field;
     }
 
-    private function set_name_field()
+    private function set_name_field(): void
     {
         $type = $this->type;
         // exceptions for user overwrite tables
@@ -1222,7 +1232,7 @@ class sql_db
         $result = '';
         try {
             $sql_result = $this->exe($sql, $sql_name, $sql_array, $log_level);
-            if ($sql_result == false) {
+            if (!$sql_result) {
                 $result .= $msg . log::MSG_ERR;
             }
         } catch (Exception $e) {
@@ -1529,7 +1539,7 @@ class sql_db
         return $this->fetch($sql, $sql_name, $sql_array, true);
     }
 
-    private function debug_msg($sql, $type)
+    private function debug_msg($sql, $type): void
     {
         global $debug;
         if ($debug > 20) {
@@ -1586,8 +1596,8 @@ class sql_db
 
         // optimise the sql statement
         $sql = trim($qp->sql);
-        if (strpos($sql, "LIMIT") === FALSE) {
-            if (substr($sql, -1) == ";") {
+        if (!str_contains($sql, "LIMIT")) {
+            if (str_ends_with($sql, ";")) {
                 $sql = substr($sql, 0, -1) . " LIMIT 1;";
             } else {
                 $sql = $sql . " LIMIT 1;";
@@ -1600,7 +1610,7 @@ class sql_db
     /**
      * get only the first numeric value from the database
      * @param sql_par $qp the query parameters (sql statement, query name and parameters) that is expected to return just one number
-     * @return int the integer number received from the database
+     * @return int|null the integer number received from the database
      */
     function get1_int(sql_par $qp): ?int
     {
@@ -2040,7 +2050,11 @@ class sql_db
                                 $this->where .= $id_fields[$used_fields] . ' IN (' . $this->par_name($i + 1) . ')';
                             }
                         } else {
-                            $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                            if ($par_type == self::PAR_LIKE) {
+                                $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
+                            } else {
+                                $this->where .= $id_fields[$used_fields] . ' = ' . $this->par_name($i + 1);
+                            }
                         }
                         $used_fields++;
                     }
@@ -2556,6 +2570,9 @@ class sql_db
                 case self::PAR_TEXT_LIST:
                     $this->par_types[] = 'text[]';
                     break;
+                case self::PAR_LIKE:
+                    $this->par_types[] = 'text';
+                    break;
                 default:
                     $this->par_types[] = $type;
             }
@@ -2818,7 +2835,7 @@ class sql_db
     /**
      * add a new unique text to the database and return the id (similar to get_id)
      */
-    function add_id($name)
+    function add_id($name): int
     {
         log_debug('sql_db->add_id ' . $name . ' to ' . $this->type);
 
@@ -2833,7 +2850,7 @@ class sql_db
     /**
      * similar to zu_sql_add_id, but using a second ID field
      */
-    function add_id_2key($name, $field2_name, $field2_value)
+    function add_id_2key($name, $field2_name, $field2_value): int
     {
         log_debug('sql_db->add_id_2key ' . $name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->type);
 
@@ -3034,7 +3051,7 @@ class sql_db
             $result = self::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
-                if (substr($result, 0, 1) == "'" and substr($result, -1, 1) == "'") {
+                if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
                     $result = substr($result, 1, -1);
                 }
             } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
@@ -3067,7 +3084,7 @@ class sql_db
             $result = self::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
-                if (substr($result, 0, 1) == "'" and substr($result, -1, 1) == "'") {
+                if (str_starts_with($result, "'") and str_ends_with($result, "'")) {
                     $result = substr($result, 1, -1);
                 }
             } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
@@ -3536,7 +3553,6 @@ class sql_db
             $qp->sql = '';
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
-            $result .= $msg;
         }
         $this->set_name($qp->name);
         if ($qp->sql != '') {

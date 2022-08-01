@@ -193,6 +193,27 @@ class word_list
     }
 
     /**
+     * set the SQL query parameters to load a list of words by a word pattern
+     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param string $word_pattern the id of the word type
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_like(sql_db $db_con, string $word_pattern): sql_par
+    {
+        $qp = $this->load_sql($db_con);
+        if ($word_pattern !=  '') {
+            $qp->name .= 'pattern';
+            $db_con->set_name($qp->name);
+            $db_con->add_name_pattern($word_pattern);
+            $qp->sql = $db_con->select_by_field(word::FLD_NAME);
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $db_con->get_par();
+        return $qp;
+    }
+
+    /**
      * create the sql statement to select the related words
      * the relation can be narrowed with a verb id
      *
@@ -351,6 +372,19 @@ class word_list
     {
         global $db_con;
         $qp = $this->load_sql_by_type($db_con, $type_id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of words by a part of the word name
+     *
+     * @param string $pattern the text part that should be used to select the words
+     * @return bool true if at least one word found
+     */
+    function load_by_pattern(string $pattern): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_like($db_con, $pattern);
         return $this->load($qp);
     }
 

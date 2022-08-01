@@ -307,7 +307,7 @@ class user_sandbox
 
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->usr->id);
-        $db_con->add_par(sql_db::PAR_INT, $this->id);
+        $db_con->add_par(sql_db::PAR_INT, strval($this->id));
         $qp->sql = $db_con->select_by_id();
         $qp->par = $db_con->get_par();
 

@@ -38,6 +38,7 @@ class msg
     const WORD_RENAME = 'rename_word';
     const WORD_DELETE = 'delete_word';
     const WORD_UNLINK = 'unlink_word';
+    const PLEASE_SELECT = 'please_select';
 
     public function txt(string $message_id): string
     {
@@ -45,14 +46,22 @@ class msg
         // to be replaced with a get_cfg function
         $user_language = 'en';
         // $msg_file = yaml_parse_file('/resources/translation/en.yaml');
-        if ($message_id == self::WORD_RENAME) {
-            $msg_text = 'rename word';
-        }
-        if ($message_id == self::WORD_DELETE) {
-            $msg_text = 'Delete word';
-        }
-        if ($message_id == self::WORD_UNLINK) {
-            $msg_text = 'Unlink word';
+        switch ($message_id) {
+            case self::WORD_RENAME:
+                $msg_text = 'rename word';
+                break;
+            case self::WORD_DELETE:
+                $msg_text = 'Delete word';
+                break;
+            case self::WORD_UNLINK:
+                $msg_text = 'Unlink word';
+                break;
+            case self::PLEASE_SELECT:
+                $msg_text = 'please select ...';
+                break;
+            default:
+                $msg_text = $message_id . ' (translation missing)';
+                log_warning('translation missing for '.  $message_id);
         }
         return $msg_text;
     }

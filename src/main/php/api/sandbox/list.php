@@ -77,6 +77,18 @@ class list_api
     }
 
     /**
+     * @returns array with the names on the db keys
+     */
+    public function lst_key(): array
+    {
+        $result = array();
+        foreach ($this->lst as $val) {
+            $result[$val->id()] = $val->name();
+        }
+        return $result;
+    }
+
+    /**
      * @returns true if the list has been replaced
      */
     protected function set_lst_dirty(): bool
@@ -108,9 +120,9 @@ class list_api
     {
         $result = array();
         if ($this->lst_dirty) {
-            foreach ($this->lst as $fv) {
-                if (!in_array($fv->id(), $result)) {
-                    $result[] = $fv->id();
+            foreach ($this->lst as $val) {
+                if (!in_array($val->id(), $result)) {
+                    $result[] = $val->id();
                 }
             }
             $this->id_lst = $result;
