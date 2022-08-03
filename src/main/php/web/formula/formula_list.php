@@ -2,10 +2,10 @@
 
 /*
 
-    word_list_dsp.php - a list function to create the HTML code to display a word list
+    formula_list_dsp.php - a list function to create the HTML code to display a formula list
     -----------------
 
-    This file is part of zukunft.com - calc with words
+    This file is part of zukunft.com - calc with formulas
 
     zukunft.com is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as
@@ -31,17 +31,14 @@
 
 namespace html;
 
-use api\word_list_api;
-use cfg\phrase_type;
-use db_cl;
-use formula;
+use api\formula_list_api;
 
-class word_list_dsp extends word_list_api
+class formula_list_dsp extends formula_list_api
 {
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return string with a list of the word names with html links
+     * @return string with a list of the formula names with html links
      * ex. names_linked
      */
     function dsp(string $back = ''): string
@@ -51,7 +48,7 @@ class word_list_dsp extends word_list_api
 
     /**
      * @param string $back the back trace url for the undo functionality
-     * @return array with a list of the word names with html links
+     * @return array with a list of the formula names with html links
      */
     function names_linked(string $back = ''): array
     {
@@ -65,9 +62,9 @@ class word_list_dsp extends word_list_api
     }
 
     /**
-     * show all words of the list as table row (ex display)
+     * show all formulas of the list as table row (ex display)
      * @param string $back the back trace url for the undo functionality
-     * @return string the html code with all words of the list
+     * @return string the html code with all formulas of the list
      */
     function tbl(string $back = ''): string
     {
@@ -83,7 +80,7 @@ class word_list_dsp extends word_list_api
     }
 
     /**
-     * @returns string the html code to select a word from this list
+     * @returns string the html code to select a formula from this list
      */
     function selector(string $name = '', string $form = '', int $selected = 0): string
     {
@@ -93,52 +90,6 @@ class word_list_dsp extends word_list_api
         $sel->lst = $this->lst_key();
         $sel->selected = $selected;
         return $sel->dsp();
-    }
-
-    // display a list of words that match to the given pattern
-    function dsp_like($word_pattern, $user_id): string
-    {
-        log_debug('word_dsp->dsp_like (' . $word_pattern . ',u' . $user_id . ')');
-
-        global $db_con;
-        $result = '';
-
-        $back = 1;
-        // get the link types related to the word
-        $sql = " ( SELECT t.word_id AS id, t.word_name AS name, 'word' AS type
-                 FROM words t 
-                WHERE t.word_name like '" . $word_pattern . "%' 
-                  AND t.word_type_id <> " . cl(db_cl::WORD_TYPE, phrase_type::FORMULA_LINK) . ")
-       UNION ( SELECT f.formula_id AS id, f.formula_name AS name, 'formula' AS type
-                 FROM formulas f 
-                WHERE f.formula_name like '" . $word_pattern . "%' )
-             ORDER BY name
-                LIMIT 200;";
-        $db_con->usr_id = $this->usr->id;
-        $db_lst = $db_con->get_old($sql);
-
-        // loop over the words and display it with the link
-        foreach ($db_lst as $db_row) {
-            //while ($entry = mysqli_fetch_array($sql_result, MySQLi_NUM)) {
-            if ($db_row['type'] == "word") {
-                $wrd = new word_dsp($db_row['id'], $db_row['name']);
-                $result .= $wrd->tr();
-            }
-            if ($db_row['type'] == "formula") {
-                $frm = new formula($this->usr);
-                $frm->id = $db_row['id'];
-                $frm->name = $db_row['name'];
-                $result .= $frm->name_linked($back);
-            }
-        }
-
-        return $result;
-    }
-
-    // return an url with the word ids
-    function id_url_long(): string
-    {
-        return zu_ids_to_url($this->ids(), "word");
     }
 
 }

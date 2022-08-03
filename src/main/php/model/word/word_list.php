@@ -47,6 +47,10 @@ class word_list
     public array $lst;
     public user $usr;    // the user object of the person for whom the word list is loaded, so to say the viewer
 
+    /*
+     * construct and map
+     */
+
     /**
      * always set the user because a word list is always user specific
      * @param user $usr the user who requested to see this word list
@@ -56,6 +60,10 @@ class word_list
         $this->lst = array();
         $this->usr = $usr;
     }
+
+    /*
+     * casting objects
+     */
 
     /**
      * @return word_list_api the word list object with the display interface functions
@@ -198,7 +206,7 @@ class word_list
      * @param string $word_pattern the id of the word type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql_db $db_con, string $word_pattern): sql_par
+    function load_sql_pattern(sql_db $db_con, string $word_pattern): sql_par
     {
         $qp = $this->load_sql($db_con);
         if ($word_pattern !=  '') {
@@ -380,11 +388,12 @@ class word_list
      *
      * @param string $pattern the text part that should be used to select the words
      * @return bool true if at least one word found
+     * TODO filter by type while loading e.g. to exclude formula words
      */
     function load_by_pattern(string $pattern): bool
     {
         global $db_con;
-        $qp = $this->load_sql_like($db_con, $pattern);
+        $qp = $this->load_sql_pattern($db_con, $pattern);
         return $this->load($qp);
     }
 

@@ -58,6 +58,10 @@ class list_api
         }
     }
 
+    /*
+     * get and set
+     */
+
     /**
      * @returns true if the list has been replaced
      */
@@ -97,6 +101,10 @@ class list_api
         return true;
     }
 
+    /*
+     * modify functions
+     */
+
     /**
      * add a phrase or ... to the list
      * @returns bool true if the object has been added
@@ -111,7 +119,6 @@ class list_api
         }
         return $result;
     }
-
 
     /**
      * @returns array with all unique ids of this list

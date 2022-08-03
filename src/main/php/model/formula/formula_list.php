@@ -31,17 +31,21 @@
 
 class formula_list
 {
-
-    public array $lst;           // the list of the loaded formula objects
+    // array of the loaded formula objects
+    public array $lst;
     public user $usr;            // if 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
-    // fields to select the formulas
+    // TODO deprecate: fields to select the formulas
     public ?word $wrd = null;            // show the formulas related to this word
     public ?phrase_list $phr_lst = null; // show the formulas related to this phrase list
     public ?array $ids = array();        // a list of formula ids to load all formulas at once
 
-    // in memory only fields
+    // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
+
+    /*
+     * construct and map
+     */
 
     /**
      * always set the user because a formula list is always user specific
@@ -80,6 +84,34 @@ class formula_list
             }
         }
         return $result;
+    }
+
+    /*
+     * casting objects
+     */
+
+    /**
+     * @return formula_list_api the formula list object with the display interface functions
+     */
+    function api_obj(): formula_list_api
+    {
+        $api_obj = new formula_list_api();
+        foreach ($this->lst as $wrd) {
+            $api_obj->add($wrd->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @return formula_list_dsp the formula list object with the display interface functions
+     */
+    function dsp_obj(): formula_list_dsp
+    {
+        $dsp_obj = new formula_list_dsp();
+        foreach ($this->lst as $wrd) {
+            $dsp_obj->add($wrd->dsp_obj());
+        }
+        return $dsp_obj;
     }
 
     /*
