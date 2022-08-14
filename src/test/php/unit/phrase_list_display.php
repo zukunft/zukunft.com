@@ -33,6 +33,7 @@
 use api\phrase_api;
 use api\word_api;
 use html\html_base;
+use html\phrase_dsp;
 use html\phrase_list_dsp;
 use html\word_dsp;
 
@@ -40,7 +41,6 @@ class phrase_list_display_unit_tests
 {
     function run(testing $t): void
     {
-        $usr = new user; // dummy user, maybe remove if possible
 
         $html = new html_base();
 
@@ -48,11 +48,11 @@ class phrase_list_display_unit_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = (new phrase($usr,
-            word_api::TN_ZH, verb::IS_A, word_api::TN_CITY,  phrase_api::TN_ZH_CITY))->dsp_obj();
-        $phr_canton = (new phrase($usr,
-            word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON,  phrase_api::TN_ZH_CANTON))->dsp_obj();
-        $phr_ch = (new word_dsp(1, word_api::TN_CH))->phrase();
+        $phr_city = new phrase_dsp(-1,  phrase_api::TN_ZH_CITY,
+            word_api::TN_ZH, verb::IS_A, word_api::TN_CITY);
+        $phr_canton = new phrase_dsp(-2,  phrase_api::TN_ZH_CANTON,
+            word_api::TN_ZH, verb::IS_A, word_api::TN_CANTON);
+        $phr_ch = new phrase_dsp(1, word_api::TN_CH);
         $lst->add($phr_city);
         $lst->add($phr_canton);
         $lst->add($phr_ch);

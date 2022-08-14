@@ -2,8 +2,8 @@
 
 /*
 
-    api\triple.php - the minimal triple (word_link) object
-    --------------
+    api\verb.php - the verb object for the frontend API
+    ------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,32 +32,6 @@
 
 namespace api;
 
-use html\phrase_dsp;
-
-class triple_api extends user_sandbox_named_api
+class verb_api extends user_sandbox_named_api
 {
-
-    // the triple components
-    private phrase_api $from;
-    private verb_api $verb;
-    private phrase_api $to;
-
-    /*
-     * construct and map
-     */
-
-    function __construct(
-        int $id = 0,
-        string $name = '',
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    )
-    {
-        parent::__construct($id, $name);
-        $this->from = new phrase_api(0, $from);
-        $this->verb= new verb_api(0, $verb);
-        $this->to = new phrase_api(0, $to);
-    }
-
 }

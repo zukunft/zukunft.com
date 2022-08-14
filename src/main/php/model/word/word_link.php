@@ -109,20 +109,22 @@ class word_link extends user_sandbox_link_description
      */
     function __construct(
         user   $usr,
+        string $name = '',
         string $from = '',
         string $verb = '',
-        string $to = '',
-        string $name = '')
+        string $to = ''
+    )
     {
         parent::__construct($usr);
         $this->reset();
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_TRIPLE;
 
+        $this->name = $name;
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
 
         // also create the link objects because there is now case where they are supposed to be null
-        $this->create_objects($from, $verb, $to, $name);
+        $this->create_objects($from, $verb, $to);
     }
 
     /**
@@ -142,13 +144,12 @@ class word_link extends user_sandbox_link_description
     private function create_objects(
         string $from = '',
         string $verb = '',
-        string $to = '',
-        string $name = '')
+        string $to = ''
+    )
     {
         $this->from = new phrase($this->usr, $from);
         $this->verb = new verb(0, $verb);
         $this->to = new phrase($this->usr, $to);
-        $this->name = $name;
     }
 
     /**

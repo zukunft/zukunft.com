@@ -34,6 +34,7 @@ namespace api;
 use cfg\phrase_type;
 use html\phrase_dsp;
 use html\triple_dsp;
+use html\verb_dsp;
 use html\word_dsp;
 
 class phrase_api extends user_sandbox_named_api
@@ -47,6 +48,9 @@ class phrase_api extends user_sandbox_named_api
     // the mouse over tooltip for the word
     private ?string $description = null;
 
+    // used only if the phrase is a triple
+    private ?triple_api $triple;
+
     // the type of this phrase
     private phrase_type $type;
 
@@ -54,11 +58,28 @@ class phrase_api extends user_sandbox_named_api
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '')
+    function __construct(
+        int    $id = 0,
+        string $name = '',
+        string $from = '',
+        string $verb = '',
+        string $to = '')
     {
         parent::__construct($id, $name);
+        if ($from != '' and $to != '') {
+            $this->triple = new triple_api($id, $name, $from, $verb, $to);
+        }
         // TODO set type
         // $this->type = phrase_type::NORMAL;
+    }
+
+    /**
+     * reset the in memory fields used e.g. if some ids are updated
+     */
+    function reset(): void
+    {
+        $this->description = null;
+        $this->triple = null;
     }
 
     /*
