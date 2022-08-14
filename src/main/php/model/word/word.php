@@ -223,15 +223,15 @@ class word extends user_sandbox_description
      */
 
     // database fields additional to the user sandbox fields
-    public ?string $plural = null;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
-    public ?int $view_id = null;      // defines the default view for this word
-    public ?int $values = null;       // the total number of values linked to this word as an indication how common the word is and to sort the words
+    public ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    public ?int $view_id;      // defines the default view for this word
+    public ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
-    public ?int $link_type_id = null; // used in the word list to know based on which relation the word was added to the list
+    public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
 
     // only used for the export object
-    private ?view $view = null; // name of the default view for this word
+    private ?view $view; // name of the default view for this word
     private ?array $ref_lst = [];
 
     /*
@@ -242,12 +242,15 @@ class word extends user_sandbox_description
      * define the settings for this word object
      * @param user $usr the user who requested to see this word
      */
-    function __construct(user $usr)
+    function __construct(user $usr, string $name = '')
     {
         parent::__construct($usr);
+        $this->reset();
         $this->obj_name = DB_TYPE_WORD;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
+
+        $this->name = $name;
     }
 
     /**
@@ -268,7 +271,7 @@ class word extends user_sandbox_description
         $this->protection_id = null;
 
         $this->view = null;
-        $this->ref_lst = null;
+        $this->ref_lst = [];
     }
 
     /**

@@ -33,7 +33,6 @@
 use api\word_api;
 use cfg\phrase_type;
 use html\html_base;
-use html\html_selector;
 use html\word_dsp;
 use html\word_list_dsp;
 

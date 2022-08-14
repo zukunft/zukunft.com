@@ -66,7 +66,7 @@ class formula_link extends user_sandbox_link
         $this->reset();
     }
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

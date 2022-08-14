@@ -85,24 +85,15 @@ class phrase_list_dsp extends phrase_list_api
     /**
      * @returns string the html code to select a phrase out of this list
      */
-    private function selector(int $selected_id, string $form): string
+    public function selector(string $name = '', string $form = '', int $selected = 0): string
     {
-        $result = '';
-
-        if ($selected_id <= 0) {
-            $selected_id = word_type::DEFAULT;
-        }
-
         $sel = new html_selector;
+        $sel->name = $name;
         $sel->form = $form;
-        $sel->name = 'type';
         $sel->lst = $this->lst_key();
-        //$sel->sql = sql_lst("word_type");
-        $sel->selected = $selected_id;
-        $sel->dummy_text = '';
-        $result .= $sel->dsp();
+        $sel->selected = $selected;
 
-        return $result;
+        return $sel->dsp();
     }
 
 }

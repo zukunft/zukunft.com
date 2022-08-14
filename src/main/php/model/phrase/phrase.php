@@ -102,9 +102,25 @@ class phrase
      * always set the user because a phrase is always user specific
      * @param user $usr the user who requested to see this phrase
      */
-    function __construct(user $usr)
+    function __construct(
+        user   $usr,
+        string $from = '',
+        string $verb = '',
+        string $to = '',
+        string $name = '')
     {
         $this->usr = $usr;
+
+        // create the automatically related objects if requested
+        if ($from != ''
+            AND $verb != ''
+            AND $to != '') {
+                $this->obj = new word_link($usr, $from, $verb, $to, $name);
+        } else {
+            if ($from != '') {
+                $this->obj = new word($usr, $from);
+            }
+        }
     }
 
     /**

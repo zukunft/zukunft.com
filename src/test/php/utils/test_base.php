@@ -100,6 +100,7 @@ include_once $path_unit . 'html.php';
 include_once $path_unit . 'word_display.php';
 include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
+include_once $path_unit . 'phrase_list_display.php';
 include_once $path_unit_dsp . 'test_display.php';
 
 

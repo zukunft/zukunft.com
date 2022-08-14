@@ -41,7 +41,7 @@ class value_dsp_old extends value
         parent::__construct($usr);
     }
 
-    function reset(?user $usr = null)
+    function reset(?user $usr = null): void
     {
         parent::reset($usr);
     }

@@ -48,7 +48,7 @@ class word_link extends user_sandbox_link_description
     const FLD_ID = 'word_link_id';
     const FLD_ID_NEW = 'triple_id';
     const FLD_NAME = 'name_given';
-    const FLD_NAME_AUTO= 'name_generated';
+    const FLD_NAME_AUTO = 'name_generated';
     const FLD_FROM = 'from_phrase_id';
     const FLD_TO = 'to_phrase_id';
     const FLD_TYPE = 'word_type_id';
@@ -107,22 +107,28 @@ class word_link extends user_sandbox_link_description
      * define the settings for this triple object
      * @param user $usr the user who requested to see this triple
      */
-    function __construct(user $usr)
+    function __construct(
+        user   $usr,
+        string $from = '',
+        string $verb = '',
+        string $to = '',
+        string $name = '')
     {
         parent::__construct($usr);
+        $this->reset();
         $this->obj_type = user_sandbox::TYPE_LINK;
         $this->obj_name = DB_TYPE_TRIPLE;
 
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_LINK_NAME;
 
         // also create the link objects because there is now case where they are supposed to be null
-        $this->create_objects();
+        $this->create_objects($from, $verb, $to, $name);
     }
 
     /**
      * reset the in memory fields used e.g. if some ids are updated
      */
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->usr_cfg_id = null;
@@ -133,11 +139,16 @@ class word_link extends user_sandbox_link_description
         $this->create_objects();
     }
 
-    private function create_objects()
+    private function create_objects(
+        string $from = '',
+        string $verb = '',
+        string $to = '',
+        string $name = '')
     {
-        $this->from = new phrase($this->usr);
-        $this->verb = new verb();
-        $this->to = new phrase($this->usr);
+        $this->from = new phrase($this->usr, $from);
+        $this->verb = new verb(0, $verb);
+        $this->to = new phrase($this->usr, $to);
+        $this->name = $name;
     }
 
     /**

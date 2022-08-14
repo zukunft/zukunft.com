@@ -311,6 +311,7 @@ function run_unit_tests(testing $t): void
     (new word_display_unit_tests)->run($t);
     (new word_list_display_unit_tests)->run($t);
     (new triple_display_unit_tests)->run($t);
+    (new phrase_list_display_unit_tests)->run($t);
 
     // restore the global vars
     $db_con = $global_db_con;

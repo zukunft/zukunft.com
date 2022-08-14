@@ -171,7 +171,7 @@ class value extends user_sandbox_display
         $this->reset();
     }
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

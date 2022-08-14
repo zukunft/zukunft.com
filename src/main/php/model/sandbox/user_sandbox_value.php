@@ -39,7 +39,7 @@ class user_sandbox_value extends user_sandbox
      * reset the search values of this object
      * needed to search for the standard object, because the search is work, value, formula or ... specific
      */
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

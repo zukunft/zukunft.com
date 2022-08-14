@@ -163,7 +163,7 @@ class formula extends user_sandbox_description
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
     }
 
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->usr_cfg_id = null;

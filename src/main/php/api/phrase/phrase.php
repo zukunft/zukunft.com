@@ -39,6 +39,11 @@ use html\word_dsp;
 class phrase_api extends user_sandbox_named_api
 {
 
+    // phrase names for stand-alone unit tests
+    // for database based test words see model/phrase/phrase.php
+    const TN_ZH_CITY = 'City of Zurich';
+    const TN_ZH_CANTON = 'Canton Zurich';
+
     // the mouse over tooltip for the word
     private ?string $description = null;
 

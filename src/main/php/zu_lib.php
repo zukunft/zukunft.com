@@ -22,6 +22,9 @@
     TODO split frontend and backend an connect them using api objects
     TODO add a text export format to the display objects and use it for JSON import validation e.g. for the travel list
     TODO add simple value list import example
+    TODO add environment variables e.g. for the database connection
+    TODO add a key store for secure saving of the passwords
+    TODO add a trust store for the base url certificates to avoid man in the middle attacks
     TODO add simple value list table with the hashed phrase list as key and the value
     TODO add a calculation validation section to the import
     TODO add a text based view validation section to the import

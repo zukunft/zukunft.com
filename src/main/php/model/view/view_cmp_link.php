@@ -98,7 +98,7 @@ class view_cmp_link extends user_sandbox_link
         $this->reset_objects($usr);
     }
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

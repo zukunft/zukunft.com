@@ -106,7 +106,7 @@ class source extends user_sandbox_named
         $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
     }
 
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->usr_cfg_id = null;

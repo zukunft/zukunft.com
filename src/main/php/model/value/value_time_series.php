@@ -93,7 +93,7 @@ class value_time_series extends user_sandbox_display
         $this->reset($usr);
     }
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
 

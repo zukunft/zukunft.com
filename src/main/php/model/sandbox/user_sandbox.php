@@ -150,7 +150,7 @@ class user_sandbox
      * reset the search values of this object
      * needed to search for the standard object, because the search is work, value, formula or ... specific
      */
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->usr_cfg_id = null;
@@ -168,9 +168,17 @@ class user_sandbox
         $this->id = $id;
     }
 
+    /**
+     * @return int the database id which is not 0 if the object has been saved
+     * the internal null value is used to detect if database saving has been tried
+     */
     public function id(): int
     {
-        return $this->id;
+        if ($this->id == Null) {
+            return 0;
+        } else {
+            return $this->id;
+        }
     }
 
     /*

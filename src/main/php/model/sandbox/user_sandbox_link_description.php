@@ -39,7 +39,7 @@ class user_sandbox_link_description extends user_sandbox_link
     // if the description is empty the generic created name is used
     public ?string $description = null;
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
         $this->description = null;

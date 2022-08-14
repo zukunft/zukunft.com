@@ -58,4 +58,16 @@ class triple_dsp extends triple_api
         return $html->td($btn);
     }
 
+    /*
+     * casting
+     */
+
+    /**
+     * @returns phrase_dsp the phrase display object base on this triple object
+     */
+    function phrase_dsp(): phrase_dsp
+    {
+        return new phrase_dsp($this->id(), $this->name());
+    }
+
 }

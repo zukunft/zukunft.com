@@ -35,7 +35,7 @@ class user_sandbox_description extends user_sandbox_named
 
     public ?string $description = null; // the word description that is shown as a mouseover explain to the user; if description is NULL the database value should not be updated
 
-    function reset()
+    function reset(): void
     {
         parent::reset();
         $this->description = null;

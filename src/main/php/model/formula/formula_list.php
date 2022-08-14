@@ -29,6 +29,8 @@
 
 */
 
+use api\formula_list_api;
+
 class formula_list
 {
     // array of the loaded formula objects
