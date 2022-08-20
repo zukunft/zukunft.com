@@ -58,11 +58,10 @@ class job_type_list extends user_type_list
     /**
      * adding the job type used for unit tests to a dummy list
      */
-    function load_dummy() {
+    function load_dummy(): void
+    {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = job_type_list::VALUE_UPDATE;
-        $type->code_id = job_type_list::VALUE_UPDATE;
+        $type = new user_type(job_type_list::VALUE_UPDATE, job_type_list::VALUE_UPDATE);
         $this->lst[2] = $type;
         $this->hash[job_type_list::VALUE_UPDATE] = 2;
     }

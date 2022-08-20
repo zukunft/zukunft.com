@@ -67,16 +67,13 @@ class change_log_table extends user_type_list
     /**
      * adding the system log stati used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy(): void
+    {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = change_log_table::VALUE;
-        $type->code_id = change_log_table::VALUE;
+        $type = new user_type(change_log_table::VALUE, change_log_table::VALUE);
         $this->lst[2] = $type;
         $this->hash[change_log_table::VALUE] = 2;
-        $type = new user_type();
-        $type->name = change_log_table::USR;
-        $type->code_id = change_log_table::USR;
+        $type = new user_type(change_log_table::USR, change_log_table::USR);
         $this->lst[3] = $type;
         $this->hash[change_log_table::USR] = 3;
     }

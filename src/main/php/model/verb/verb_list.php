@@ -216,7 +216,7 @@ class verb_list extends user_type_list
     /**
      * adding the verbs used for unit tests to the dummy list
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         parent::load_dummy();
         $type = new verb();

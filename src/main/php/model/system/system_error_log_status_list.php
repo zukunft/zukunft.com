@@ -52,16 +52,13 @@ class sys_log_status extends user_type_list
     /**
      * adding the system log stati used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy(): void
+    {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = sys_log_status::NEW;
-        $type->code_id = sys_log_status::NEW;
+        $type = new user_type(sys_log_status::NEW, sys_log_status::NEW);
         $this->lst[2] = $type;
         $this->hash[sys_log_status::NEW] = 2;
-        $type = new user_type();
-        $type->name = sys_log_status::CLOSED;
-        $type->code_id = sys_log_status::CLOSED;
+        $type = new user_type(sys_log_status::CLOSED, sys_log_status::CLOSED);
         $this->lst[3] = $type;
         $this->hash[sys_log_status::CLOSED] = 3;
     }

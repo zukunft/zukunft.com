@@ -102,6 +102,7 @@ include_once $path_unit . 'word_list_display.php';
 include_once $path_unit . 'triple_display.php';
 include_once $path_unit . 'phrase_list_display.php';
 include_once $path_unit_dsp . 'test_display.php';
+include_once $path_unit_dsp . 'type_lists.php';
 
 
 // load the unit testing modules with database read only

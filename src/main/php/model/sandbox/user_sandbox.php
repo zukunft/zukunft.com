@@ -156,7 +156,6 @@ class user_sandbox
         $this->usr_cfg_id = null;
         $this->owner_id = null;
         $this->excluded = null;
-
     }
 
     /*

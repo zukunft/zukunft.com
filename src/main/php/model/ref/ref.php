@@ -53,7 +53,7 @@ class ref
         $this->create_objects($usr);
     }
 
-    function reset()
+    function reset(): void
     {
         $this->id = null;
         $this->external_key = '';
@@ -61,10 +61,11 @@ class ref
         $this->create_objects($this->usr);
     }
 
-    private function create_objects(user $usr)
+    private function create_objects(user $usr):void
     {
         $this->phr = new phrase($usr);
-        $this->ref_type = new ref_type();
+        // TODO set a proper default value
+        $this->ref_type = new ref_type(ref_type::WIKIDATA, ref_type::WIKIDATA);
     }
 
     // test if the name is used already

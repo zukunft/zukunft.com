@@ -75,11 +75,11 @@ class ref_type_list extends user_type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_obj = new ref_type();
+                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
+                $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
                 $type_obj->id = $db_entry[self::FLD_ID];
-                $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
-                $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
-                $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
                 $type_obj->url = $db_entry[self::FLD_URL];
                 $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
             }
@@ -106,13 +106,11 @@ class ref_type_list extends user_type_list
     /**
      * adding the ref types used for unit tests to the dummy list
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new ref_type();
+        $type = new ref_type(ref_type::WIKIPEDIA, ref_type::WIKIPEDIA);
         $type->id = 2;
-        $type->name = ref_type::WIKIPEDIA;
-        $type->code_id = ref_type::WIKIPEDIA;
         $this->lst[2] = $type;
         $this->hash[ref_type::WIKIPEDIA] = 2;
     }

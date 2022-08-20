@@ -53,18 +53,14 @@ class protection_type_list extends user_type_list
     /**
      * create dummy type list for the unit tests without database connection
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type();
-        $type->name = protection_type_list::DBL_NO;
-        $type->code_id = protection_type_list::DBL_NO;
+        $type = new user_type(protection_type_list::DBL_NO, protection_type_list::DBL_NO);
         $this->lst[2] = $type;
         $this->hash[protection_type_list::DBL_NO] = 2;
-        $type = new user_type();
-        $type->name = protection_type_list::DBL_ADMIN;
-        $type->code_id = protection_type_list::DBL_ADMIN;
+        $type = new user_type(protection_type_list::DBL_ADMIN, protection_type_list::DBL_ADMIN);
         $this->lst[3] = $type;
         $this->hash[protection_type_list::DBL_ADMIN] = 3;
 

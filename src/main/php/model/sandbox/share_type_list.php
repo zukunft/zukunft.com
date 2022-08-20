@@ -50,18 +50,14 @@ class share_type_list extends user_type_list
     /**
      * create dummy type list for the unit tests without database connection
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type();
-        $type->name = share_type::PUBLIC;
-        $type->code_id = share_type::PUBLIC;
+        $type = new user_type(share_type::PUBLIC, share_type::PUBLIC);
         $this->lst[2] = $type;
         $this->hash[share_type::PUBLIC] = 2;
-        $type = new user_type();
-        $type->name = share_type::PERSONAL;
-        $type->code_id = share_type::PERSONAL;
+        $type = new user_type(share_type::PERSONAL, share_type::PERSONAL);
         $this->lst[3] = $type;
         $this->hash[share_type::PERSONAL] = 3;
 

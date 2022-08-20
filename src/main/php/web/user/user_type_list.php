@@ -48,4 +48,17 @@ class user_type_list_dsp extends user_type_list_api
         return $title . $html->list($this->lst(), $item_type);
     }
 
+    /**
+     * @returns string the html code to select a type from this list
+     */
+    function selector(string $name = '', string $form = '', int $selected = 0): string
+    {
+        $sel = new html_selector();
+        $sel->name = $name;
+        $sel->form = $form;
+        $sel->lst = $this->lst_key();
+        $sel->selected = $selected;
+        return $sel->dsp();
+    }
+
 }

@@ -81,10 +81,8 @@ class user_type_list
      */
     function add_verb(verb $vrb): void
     {
-        $type_obj = new user_type();
+        $type_obj = new user_type($vrb->code_id, $vrb->name);
         $type_obj->id = $vrb->id;
-        $type_obj->name = $vrb->name;
-        $type_obj->code_id = $vrb->code_id;
         $this->add($type_obj);
     }
 
@@ -120,14 +118,15 @@ class user_type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_obj = new user_type();
+                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+                $type_name = '';
                 if ($db_type == db_cl::LOG_TABLE) {
-                    $type_obj->name = $db_entry['change_table_name'];
+                    $type_name = strval($db_entry['change_table_name']);
                 } else {
-                    $type_obj->name = $db_entry[sql_db::FLD_TYPE_NAME];
+                    $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 }
-                $type_obj->comment = $db_entry[sql_db::FLD_DESCRIPTION];
-                $type_obj->code_id = $db_entry[sql_db::FLD_CODE_ID];
+                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
+                $type_obj = new user_type($type_code_id, $type_name, $type_comment);
                 $this->lst[$db_entry[$db_con->get_id_field_name($db_type)]] = $type_obj;
             }
         }
@@ -297,13 +296,11 @@ class user_type_list
     /**
      * create dummy type list for the unit tests without database connection
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type();
-        $type->name = user_type_list::TEST_NAME;
-        $type->code_id = user_type_list::TEST_TYPE;
+        $type = new user_type(user_type_list::TEST_TYPE, user_type_list::TEST_NAME);
         $this->lst[1] = $type;
         $this->hash[user_type_list::TEST_TYPE] = 1;
     }

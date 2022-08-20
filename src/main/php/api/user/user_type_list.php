@@ -33,26 +33,67 @@
 namespace api;
 
 use html\user_type_list_dsp;
+use user_type;
 
 class user_type_list_api extends list_api
 {
+
+    // memory vs speed optimize vars
+    private array $code_id_lst;
+    private bool $code_lst_dirty;
+
+    /*
+     * construct and map
+     */
 
     function __construct(array $lst = array())
     {
         parent::__construct($lst);
     }
 
+    /*
+     * get and set overwrite
+     */
+
+    /**
+     * @returns true if the list has been replaced
+     */
+    public function set_lst(array $lst): bool
+    {
+        parent::set_lst($lst);
+        $this->set_lst_dirty();
+        return true;
+    }
+
+    /**
+     * @returns true if the list has been replaced
+     */
+    protected function set_lst_dirty(): bool
+    {
+        parent::set_lst_dirty();
+        $this->code_lst_dirty = true;
+        return true;
+    }
+
     /**
      * add a value to the list
      * @returns bool true if the value has been added
      */
-    function add(value_api $val): bool
+    function add(user_type $type, int $id): bool
     {
         $result = false;
-        if (!in_array($val->id(), $this->id_lst())) {
-            $this->lst[] = $val;
-            $this->set_lst_dirty();
-            $result = true;
+        if ($id == 0) {
+            if (!in_array($type->code_id(), $this->code_id_lst())) {
+                $this->lst[] = $type;
+                $this->set_lst_dirty();
+                $result = true;
+            }
+        } else {
+            if (!in_array($id, $this->id_lst())) {
+                $this->lst[$id] = $type;
+                $this->set_lst_dirty();
+                $result = true;
+            }
         }
         return $result;
     }
@@ -72,6 +113,26 @@ class user_type_list_api extends list_api
         }
 
         return new user_type_list_dsp($lst_dsp);
+    }
+
+    /**
+     * @returns array with all unique code ids of this list
+     */
+    protected function code_id_lst(): array
+    {
+        $result = array();
+        if ($this->code_lst_dirty) {
+            foreach ($this->lst as $type) {
+                if (!in_array($type->code_id(), $result)) {
+                    $result[] = $type->code_id();
+                }
+            }
+            $this->code_id_lst = $result;
+            $this->code_lst_dirty = false;
+        } else {
+            $result = $this->code_id_lst;
+        }
+        return $result;
     }
 
 }

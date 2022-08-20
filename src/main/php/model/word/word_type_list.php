@@ -67,15 +67,13 @@ class word_type_list extends user_type_list
     /**
      * adding the word types used for unit tests to the dummy list
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         parent::load_dummy();
         $i = 2;
         foreach (self::TYPES as $type_name)
         {
-            $type = new user_type();
-            $type->name = $type_name;
-            $type->code_id = $type_name;
+            $type = new user_type($type_name, $type_name);
             $this->lst[$i] = $type;
             $this->hash[$type_name] = $i;
             $i++;

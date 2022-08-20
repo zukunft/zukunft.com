@@ -46,11 +46,10 @@ class view_type_list extends user_type_list
     /**
      * adding the view types used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy(): void
+    {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = view_type::DEFAULT;
-        $type->code_id = view_type::DEFAULT;
+        $type = new user_type(view_type::DEFAULT, view_type::DEFAULT);
         $this->lst[2] = $type;
         $this->hash[view_type::DEFAULT] = 2;
     }
@@ -68,7 +67,8 @@ class view_type_list extends user_type_list
 /**
  * ENUM for the view types
  */
-class view_type {
+class view_type
+{
     // list of the view types that have a coded functionality
     const DEFAULT = "default";
     const ENTRY = "entry";

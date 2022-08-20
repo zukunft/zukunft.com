@@ -47,11 +47,9 @@ class view_cmp_type_list extends user_type_list
     /**
      * adding the view component types used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy(): void {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = view_cmp_type::TEXT;
-        $type->code_id = view_cmp_type::TEXT;
+        $type = new user_type(view_cmp_type::TEXT, view_cmp_type::TEXT);
         $this->lst[2] = $type;
         $this->hash[view_cmp_type::TEXT] = 2;
     }

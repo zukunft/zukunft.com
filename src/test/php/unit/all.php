@@ -308,6 +308,7 @@ function run_unit_tests(testing $t): void
 
     // do the UI unit tests
     (new html_unit_tests)->run($t);
+    (new type_list_display_unit_tests)->run($t);
     (new word_display_unit_tests)->run($t);
     (new word_list_display_unit_tests)->run($t);
     (new triple_display_unit_tests)->run($t);

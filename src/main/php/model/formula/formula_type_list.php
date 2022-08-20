@@ -47,17 +47,13 @@ class formula_type_list extends user_type_list
     /**
      * adding the formula types used for unit tests to the dummy list
      */
-    function load_dummy()
+    function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new user_type();
-        $type->name = formula::CALC;
-        $type->code_id = formula::CALC;
+        $type = new user_type(formula::CALC, formula::CALC);
         $this->lst[2] = $type;
         $this->hash[formula::CALC] = 2;
-        $type = new user_type();
-        $type->name = formula::REV;
-        $type->code_id = formula::REV;
+        $type = new user_type(formula::REV, formula::REV);
         $this->lst[3] = $type;
         $this->hash[formula::REV] = 3;
     }

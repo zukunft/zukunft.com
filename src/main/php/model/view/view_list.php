@@ -87,7 +87,7 @@ class view_list extends user_type_list
     /**
      * adding the system views used for unit tests to the dummy list
      */
-    function load_dummy() {
+    function load_dummy(): void {
         parent::load_dummy();
         $dsp = new view($this->usr);
         $dsp->name = view::WORD;
