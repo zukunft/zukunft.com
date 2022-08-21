@@ -32,13 +32,10 @@
 
 global $protection_types;
 
+use cfg\protection_type;
+
 class protection_type_list extends user_type_list
 {
-    // list of the ref types that have a coded functionality
-    const DBL_NO = "no_protection";
-    const DBL_USER = "user_protection";
-    const DBL_ADMIN = "admin_protection";
-    const DBL_NO_CHANGE = "no_change";
 
     /**
      * overwrite the general user type list load function to keep the link to the table type capsuled
@@ -57,12 +54,12 @@ class protection_type_list extends user_type_list
     {
         $this->lst = array();
         $this->hash = array();
-        $type = new user_type(protection_type_list::DBL_NO, protection_type_list::DBL_NO);
+        $type = new user_type(protection_type::NO_PROTECT, protection_type::NO_PROTECT);
         $this->lst[2] = $type;
-        $this->hash[protection_type_list::DBL_NO] = 2;
-        $type = new user_type(protection_type_list::DBL_ADMIN, protection_type_list::DBL_ADMIN);
+        $this->hash[protection_type::NO_PROTECT] = 2;
+        $type = new user_type(protection_type::ADMIN, protection_type::ADMIN);
         $this->lst[3] = $type;
-        $this->hash[protection_type_list::DBL_ADMIN] = 3;
+        $this->hash[protection_type::ADMIN] = 3;
 
     }
 
@@ -71,7 +68,7 @@ class protection_type_list extends user_type_list
      */
     function default_id(): int
     {
-        return parent::id(protection_type_list::DBL_NO);
+        return parent::id(protection_type::NO_PROTECT);
     }
 
 }

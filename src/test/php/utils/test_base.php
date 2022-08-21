@@ -1004,6 +1004,8 @@ class test_base
     {
         $result = $this->trim_lines($json_string);
         $result = preg_replace('/\[ {/', '[{', $result);
+        $result = preg_replace('/] }/', ']}', $result);
+        $result = preg_replace('/{ \[/', '{[', $result);
         $result = preg_replace('/} ]/', '}]', $result);
         $result = preg_replace('/" }/', '"}', $result);
         $result = preg_replace('/": /', '":', $result);

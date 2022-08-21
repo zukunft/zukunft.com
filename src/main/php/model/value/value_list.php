@@ -30,6 +30,7 @@
 */
 
 use api\value_list_api;
+use cfg\protection_type;
 use cfg\share_type;
 use html\html_base;
 
@@ -461,11 +462,11 @@ class value_list
                 $val->time_phr = $phr;
             }
 
-            if ($key == 'share') {
+            if ($key == share_type::JSON_FLD) {
                 $val->share_id = $share_types->id($value);
             }
 
-            if ($key == 'protection') {
+            if ($key == protection_type::JSON_FLD) {
                 $val->protection_id = $protection_types->id($value);
             }
 
@@ -550,7 +551,7 @@ class value_list
 
             // add the protection type
             log_debug('value->export_obj get protection');
-            if ($val0->protection_id > 0 and $val0->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO)) {
+            if ($val0->protection_id > 0 and $val0->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
                 $result->protection = $val0->protection_type_code_id();
             }
 

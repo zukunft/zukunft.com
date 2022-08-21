@@ -2,8 +2,11 @@
 
 /*
 
-    model/user/user_type.php - the superclass for word, formula and view types
-    ------------------------
+    api/user/user_type.php - the api superclass for word, formula and view types
+    ----------------------
+
+    similar to model/user/user_type.php, but with the additional database id
+
 
     types are used to assign coded functionality to a word, formula or view
     a user can create a new type to group words, formulas or views and request new functionality for the group
@@ -35,14 +38,13 @@
 
 */
 
-class user_type
+namespace api;
+
+class user_type_api
 {
 
-    // database and JSON object field names
-    const FLD_NAME = 'type_name';
-
     // the standard fields of a type
-    // the database id is used as the array pointer
+    public int $id;                // the database id that is added in th api object
     public string $code_id;        // this id text is unique for all code links and is used for system im- and export
     public string $name;           // simply the type name as shown to the user
     public ?string $comment = '';  // to explain the type to the user as a tooltip
@@ -51,8 +53,9 @@ class user_type
      * construct and map
      */
 
-    function __construct(string $code_id, string $name, string $comment = '')
+    function __construct(int $id, string $code_id, string $name, string $comment = '')
     {
+        $this->set_id($id);
         $this->set_code_id($code_id);
         $this->set_name($name);
         if ($comment != '') {
@@ -62,6 +65,7 @@ class user_type
 
     function reset(): void
     {
+        $this->id = 0;
         $this->code_id = '';
         $this->name = '';
         $this->comment = null;
@@ -70,6 +74,16 @@ class user_type
     /*
      * set and get
      */
+
+    public function set_id(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function id(): int
+    {
+        return $this->id;
+    }
 
     public function set_code_id(string $code_id): void
     {

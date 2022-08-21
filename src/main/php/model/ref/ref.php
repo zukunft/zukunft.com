@@ -47,6 +47,18 @@ class ref
     public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
     public ?ref_type $ref_type = null;    // the ref type object incl. the database id of the ref type
 
+    /*
+     * im- and export link
+     */
+
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_EX_NAME = 'name';
+    const FLD_EX_TYPE = 'type';
+
+    /*
+     * construct and map
+     */
+
     function __construct(user $usr)
     {
         $this->usr = $usr;
@@ -142,10 +154,10 @@ class ref
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
-            if ($key == 'name') {
+            if ($key == self::FLD_EX_NAME) {
                 $this->external_key = $value;
             }
-            if ($key == 'type') {
+            if ($key == self::FLD_EX_TYPE) {
                 $this->ref_type = get_ref_type($value);
 
                 if (!isset($this->ref_type)) {

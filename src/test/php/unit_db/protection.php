@@ -30,6 +30,8 @@
 
 */
 
+use cfg\protection_type;
+
 function run_protection_unit_db_tests(testing $t)
 {
 
@@ -46,9 +48,9 @@ function run_protection_unit_db_tests(testing $t)
     $t->dsp('unit_db_protection->load_types', $target, $result);
 
     // ... and check if at least the most critical is loaded
-    $result = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
+    $result = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
     $target = 1;
-    $t->dsp('unit_db_protection->check ' . protection_type_list::DBL_NO, $result, $target);
+    $t->dsp('unit_db_protection->check ' . protection_type::NO_PROTECT, $result, $target);
 
 }
 

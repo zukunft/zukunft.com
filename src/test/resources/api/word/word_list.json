@@ -1,0 +1,32 @@
+[
+  {
+    "name": "time_word",
+    "share": "",
+    "protection": "",
+    "plural": "",
+    "description": "",
+    "type": "time",
+    "view": "",
+    "refs": []
+  },
+  {
+    "name": "measure_word",
+    "share": "",
+    "protection": "",
+    "plural": "",
+    "description": "",
+    "type": "measure",
+    "view": "",
+    "refs": []
+  },
+  {
+    "name": "scale_word",
+    "share": "",
+    "protection": "",
+    "plural": "",
+    "description": "",
+    "type": "scaling",
+    "view": "",
+    "refs": []
+  }
+]

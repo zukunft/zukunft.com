@@ -52,8 +52,7 @@ class user_type_list
      */
     function api_obj(): object
     {
-        $api_obj = new user_type_list_api($this->lst);
-        return $api_obj;
+        return new user_type_list_api($this->lst);
     }
 
     /**
@@ -61,8 +60,7 @@ class user_type_list
      */
     function dsp_obj(): object
     {
-        $dsp_obj = new user_type_list_dsp($this->lst);
-        return $dsp_obj;
+        return new user_type_list_dsp($this->lst);
     }
 
     /*

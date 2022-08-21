@@ -39,6 +39,7 @@
 // TODO split into a link and a named user sandbox object to always use the smallest possible object
 
 use cfg\phrase_type;
+use cfg\protection_type;
 use cfg\share_type;
 
 class user_sandbox
@@ -168,16 +169,12 @@ class user_sandbox
     }
 
     /**
-     * @return int the database id which is not 0 if the object has been saved
+     * @return int|null the database id which is not 0 if the object has been saved
      * the internal null value is used to detect if database saving has been tried
      */
-    public function id(): int
+    public function id(): ?int
     {
-        if ($this->id == Null) {
-            return 0;
-        } else {
-            return $this->id;
-        }
+        return $this->id;
     }
 
     /*
@@ -298,7 +295,7 @@ class user_sandbox
     public function row_mapper_std()
     {
         $this->share_id = cl(db_cl::SHARE_TYPE, share_type::PUBLIC);
-        $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
+        $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
     }
 
     /**
@@ -537,7 +534,7 @@ class user_sandbox
 
         // use the default share type if not set
         if ($this->protection_id <= 0) {
-            $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO);
+            $this->protection_id = cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT);
         }
 
         $sql = "SELECT type_name

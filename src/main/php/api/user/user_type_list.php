@@ -33,7 +33,6 @@
 namespace api;
 
 use html\user_type_list_dsp;
-use user_type;
 
 class user_type_list_api extends list_api
 {
@@ -60,7 +59,25 @@ class user_type_list_api extends list_api
      */
     public function set_lst(array $lst): bool
     {
-        parent::set_lst($lst);
+        if ($this->lst_has_api_items()) {
+            parent::set_lst($lst);
+        } else {
+            $result = array();
+            foreach ($lst as $key => $obj) {
+                $id = $key;
+                if (property_exists($obj, "id")) {
+                    $id = $obj->id;
+                }
+                $api_obj = new user_type_api(
+                    $id,
+                    $obj->code_id(),
+                    $obj->name(),
+                    $obj->comment()
+                );
+                $result[$id] = $api_obj;
+            }
+            $this->lst = $result;
+        }
         $this->set_lst_dirty();
         return true;
     }
@@ -79,18 +96,18 @@ class user_type_list_api extends list_api
      * add a value to the list
      * @returns bool true if the value has been added
      */
-    function add(user_type $type, int $id): bool
+    function add(user_type_api $type): bool
     {
         $result = false;
-        if ($id == 0) {
+        if ($type->id() == 0) {
             if (!in_array($type->code_id(), $this->code_id_lst())) {
                 $this->lst[] = $type;
                 $this->set_lst_dirty();
                 $result = true;
             }
         } else {
-            if (!in_array($id, $this->id_lst())) {
-                $this->lst[$id] = $type;
+            if (!in_array($type->id(), $this->id_lst())) {
+                $this->lst[$type->id()] = $type;
                 $this->set_lst_dirty();
                 $result = true;
             }
@@ -131,6 +148,20 @@ class user_type_list_api extends list_api
             $this->code_lst_dirty = false;
         } else {
             $result = $this->code_id_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * @returns bool true if the list contains elements of type user_type_api (and not user_type)
+     */
+    private function lst_has_api_items(): bool
+    {
+        $result = false;
+        if (count($this->lst) > 0) {
+            if ($this->lst[0]::class == user_type_api::class) {
+                $result = true;
+            }
         }
         return $result;
     }

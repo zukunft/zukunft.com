@@ -51,6 +51,7 @@
 
 use api\value_api;
 use cfg\phrase_type;
+use cfg\protection_type;
 use cfg\share_type;
 use html\value_dsp;
 
@@ -945,13 +946,13 @@ class value extends user_sandbox_display
                 }
             }
 
-            if ($key == 'share') {
+            if ($key == share_type::JSON_FLD) {
                 $this->share_id = $share_types->id($value);
             }
 
-            if ($key == 'protection') {
+            if ($key == protection_type::JSON_FLD) {
                 $this->protection_id = $protection_types->id($value);
-                if ($value <> protection_type_list::DBL_NO) {
+                if ($value <> protection_type::NO_PROTECT) {
                     $get_ownership = true;
                 }
             }
@@ -1062,7 +1063,7 @@ class value extends user_sandbox_display
 
         // add the protection type
         log_debug('value->export_obj get protection');
-        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type_list::DBL_NO)) {
+        if ($this->protection_id > 0 and $this->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 

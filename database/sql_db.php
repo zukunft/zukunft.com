@@ -2772,10 +2772,11 @@ class sql_db
                             }
                         } else {
                             if ($this->type != DB_TYPE_VALUE_TIME_SERIES_DATA) {
-                                if (is_resource($sql_result)) {
+                                if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {
-                                    $result = 1;
+                                    // TODO get the correct db number
+                                    $result = 0;
                                 }
                             } else {
                                 $result = 1;

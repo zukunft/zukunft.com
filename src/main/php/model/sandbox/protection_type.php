@@ -2,8 +2,8 @@
 
 /*
 
-    share_type.php - to define if an object can be shared between the users
-    --------------
+    protection_type.php - to define if and how an object can changed
+    -------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,15 +31,15 @@
 
 namespace cfg;
 
-class share_type extends object_type
+class protection_type extends object_type
 {
     // the field name used for the JSON im- and export
-    const JSON_FLD = 'share';
+    const JSON_FLD = 'protection';
 
-    // list of the ref types that have a coded functionality
-    const PUBLIC = "public";
-    const PERSONAL = "personal";
-    const GROUP = "group";
-    const PRIVATE = "private";
+    // list of the protection types that have a coded functionality
+    const NO_PROTECT = "no_protection";
+    const USER = "user_protection";
+    const ADMIN = "admin_protection";
+    const NO_CHANGE = "no_change";
 
 }

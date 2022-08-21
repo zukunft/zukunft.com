@@ -253,8 +253,10 @@ class word_list_unit_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = json_encode($wrd_lst->export_obj());
-        $t->assert($t->name . '->measure list', $json, '[{"plural":"","description":"","type":"time","view":"","refs":[],"name":"time_word","share":"","protection":""},{"plural":"","description":"","type":"measure","view":"","refs":[],"name":"measure_word","share":"","protection":""},{"plural":"","description":"","type":"scaling","view":"","refs":[],"name":"scale_word","share":"","protection":""}]');
+        $json = json_decode(json_encode($wrd_lst->export_obj()));
+        $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'api/word/word_list.json'));
+        $result = json_is_similar($json, $json_expected);
+        $t->assert('JSON export word list', $result, true);
 
     }
 

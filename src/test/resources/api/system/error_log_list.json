@@ -1,4 +1,8 @@
 {
+  "type": "sys_log",
+  "user_id": 1,
+  "user": "test",
+  "version": "0.0.3",
   "system_errors": [
     {
       "id": 1,
@@ -20,9 +24,5 @@
       "owner": "test",
       "status": "3"
     }
-  ],
-  "type": "sys_log",
-  "user_id": 1,
-  "user": "test",
-  "version": "0.0.3"
+  ]
 }
