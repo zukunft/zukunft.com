@@ -30,7 +30,9 @@
 
 */
 
-class user_sandbox_exp_link extends user_sandbox_exp
+namespace export;
+
+class user_sandbox_exp_link extends exp_obj
 {
     // field names used for JSON creation
     public ?string $name = '';   // the target (to) object name, which cannot be empty; the source (from) object is defined by the placement in the JSON

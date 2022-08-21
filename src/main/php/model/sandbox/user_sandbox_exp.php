@@ -2,8 +2,8 @@
 
 /*
 
-    user_sandbox_exp.php - the superclass for the export objects
-    --------------------
+    exp_obj.php - the superclass for the export objects
+    -----------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,7 +30,15 @@
 
 */
 
-class user_sandbox_exp
+namespace export;
+
+class exp_obj
 {
+
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_NAME = 'name';
+    const FLD_TYPE = 'type';
+    const FLD_DESCRIPTION = 'description';
+    const FLD_VIEW = 'view';
 
 }

@@ -41,6 +41,7 @@
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use export\exp_obj;
 
 class user_sandbox
 {
@@ -650,11 +651,11 @@ class user_sandbox
      * to be overwritten by the child object
      *
      * @param bool $do_load can be set to false for unit testing
-     * @return user_sandbox_exp a reduced export object that can be used to create a JSON message
+     * @return exp_obj a reduced export object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
-        return (new user_sandbox_exp());
+        return (new exp_obj());
     }
 
 

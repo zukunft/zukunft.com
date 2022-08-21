@@ -30,6 +30,8 @@
 */
 
 use api\view_api;
+use export\view_exp;
+use export\exp_obj;
 
 class view extends user_sandbox_named
 {
@@ -666,7 +668,7 @@ class view extends user_sandbox_named
     /**
      * export mapper: create an object for the export
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('view->export_obj ' . $this->dsp_id());
         $result = new view_exp();

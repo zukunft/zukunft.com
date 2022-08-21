@@ -53,6 +53,9 @@ use api\value_api;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use export\source_exp;
+use export\exp_obj;
+use export\value_exp;
 use html\value_dsp;
 
 class value extends user_sandbox_display
@@ -957,7 +960,7 @@ class value extends user_sandbox_display
                 }
             }
 
-            if ($key == 'source') {
+            if ($key == source_exp::FLD_REF) {
                 $src = new source($this->usr);
                 $src->name = $value;
                 if ($do_save) {
@@ -990,7 +993,7 @@ class value extends user_sandbox_display
     /**
      * create an object for the export
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('value->export_obj');
         $result = new value_exp();

@@ -30,6 +30,8 @@
 */
 
 use api\view_cmp_api;
+use export\view_cmp_exp;
+use export\exp_obj;
 
 class view_cmp extends user_sandbox_named
 {
@@ -536,7 +538,7 @@ class view_cmp extends user_sandbox_named
     }
 
 // create an object for the export
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('view_component->export_obj ' . $this->dsp_id());
         $result = new view_cmp_exp();

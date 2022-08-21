@@ -29,6 +29,9 @@
 
 */
 
+use export\source_exp;
+use export\exp_obj;
+
 class source extends user_sandbox_named
 {
 
@@ -312,7 +315,7 @@ class source extends user_sandbox_named
     }
 
     // create an object for the export
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('source->export_obj');
         $result = new source_exp();

@@ -32,7 +32,13 @@
 
 */
 
+global $word_types;
+
 use api\triple_api;
+use cfg\share_type;
+use cfg\protection_type;
+use export\exp_obj;
+use export\word_link_exp;
 use html\api;
 use html\button;
 use html\triple_dsp;
@@ -81,6 +87,18 @@ class word_link extends user_sandbox_link_description
         user_sandbox::FLD_SHARE,
         user_sandbox::FLD_PROTECT
     );
+
+    /*
+     * im- and export link
+     */
+
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_EX_NAME = 'triple_name';
+    const FLD_EX_DESCRIPTION = 'description';
+    const FLD_EX_TYPE = 'type';
+    const FLD_EX_FROM = 'from';
+    const FLD_EX_TO = 'to';
+    const FLD_EX_VERB = 'verb';
 
     /*
      * for system testing
@@ -610,23 +628,30 @@ class word_link extends user_sandbox_link_description
      */
     function import_obj(array $json_obj, bool $do_save = true): string
     {
+        global $word_types;
+        global $share_types;
+        global $protection_types;
+
         log_debug('word_link->import_obj');
         $result = '';
 
         foreach ($json_obj as $key => $value) {
-            if ($key == 'word_link_name') {
+            if ($key == self::FLD_EX_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'description') {
+            if ($key == self::FLD_EX_DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == 'from') {
+            if ($key == self::FLD_EX_TYPE) {
+                $this->type_id = $word_types->id($value);
+            }
+            if ($key == self::FLD_EX_FROM) {
                 $this->from = $this->import_phrase($value, $do_save);
             }
-            if ($key == 'to') {
+            if ($key == self::FLD_EX_TO) {
                 $this->to = $this->import_phrase($value, $do_save);
             }
-            if ($key == 'verb') {
+            if ($key == self::FLD_EX_VERB) {
                 $vrb = new verb;
                 $vrb->name = $value;
                 $vrb->usr = $this->usr;
@@ -641,6 +666,12 @@ class word_link extends user_sandbox_link_description
                     }
                 }
                 $this->verb = $vrb;
+            }
+            if ($key == share_type::JSON_FLD) {
+                $this->share_id = $share_types->id($value);
+            }
+            if ($key == protection_type::JSON_FLD) {
+                $this->protection_id = $protection_types->id($value);
             }
         }
         if ($result == '' and $do_save) {
@@ -657,7 +688,7 @@ class word_link extends user_sandbox_link_description
      * create a triple object for the export
      * @return word_link_exp a reduced triple object that can be used to create a JSON message
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('word_link->export_obj');
         $result = new word_link_exp();

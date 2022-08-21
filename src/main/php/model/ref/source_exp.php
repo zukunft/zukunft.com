@@ -29,8 +29,13 @@
   
 */
 
+namespace export;
+
 class source_exp extends user_sandbox_exp_named
 {
+
+    // object specific database and JSON object field names
+    const FLD_REF = 'source';
 
     // field names used for JSON creation
     public ?string $url = null;

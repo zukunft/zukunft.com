@@ -33,6 +33,8 @@ use api\formula_api;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use export\formula_exp;
+use export\exp_obj;
 
 class formula extends user_sandbox_description
 {
@@ -1241,7 +1243,7 @@ class formula extends user_sandbox_description
     /**
      * create an object for the export
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         global $formula_types;
 

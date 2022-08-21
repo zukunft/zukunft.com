@@ -1204,7 +1204,7 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
-        if ($result == 'word_link_name') {
+        if ($result == 'triple_name') {
             $result = 'name';
         }
         log_debug("sql_db->set_name_field to (" . $result . ")");

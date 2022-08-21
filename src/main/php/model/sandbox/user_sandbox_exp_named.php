@@ -30,7 +30,9 @@
 
 */
 
-class user_sandbox_exp_named extends user_sandbox_exp
+namespace export;
+
+class user_sandbox_exp_named extends exp_obj
 {
 
     // field names used for JSON creation

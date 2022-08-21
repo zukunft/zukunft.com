@@ -29,6 +29,8 @@
   
 */
 
+namespace export;
+
 class ref_exp extends user_sandbox_exp_link
 {
 

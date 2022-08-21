@@ -32,6 +32,9 @@
 use api\value_list_api;
 use cfg\protection_type;
 use cfg\share_type;
+use export\source_exp;
+use export\exp_obj;
+use export\value_list_exp;
 use html\html_base;
 
 class value_list
@@ -470,7 +473,7 @@ class value_list
                 $val->protection_id = $protection_types->id($value);
             }
 
-            if ($key == 'source') {
+            if ($key == source_exp::FLD_REF) {
                 $src = new source($this->usr);
                 $src->name = $value;
                 if ($do_save) {
@@ -509,7 +512,7 @@ class value_list
     /**
      * create a value list object for the JSON export
      */
-    function export_obj(bool $do_load = true): user_sandbox_exp
+    function export_obj(bool $do_load = true): exp_obj
     {
         log_debug('value_list->export_obj');
         $result = new value_list_exp();

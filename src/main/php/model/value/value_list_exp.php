@@ -29,7 +29,9 @@
   
 */
 
-class value_list_exp extends user_sandbox_exp
+namespace export;
+
+class value_list_exp extends exp_obj
 {
 
     // field names used for JSON creation

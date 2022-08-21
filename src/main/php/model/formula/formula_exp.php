@@ -29,6 +29,8 @@
   
 */
 
+namespace export;
+
 class formula_exp extends user_sandbox_exp_named
 {
 

@@ -44,6 +44,9 @@ use api\word_api;
 use cfg\phrase_type;
 use cfg\protection_type;
 use cfg\share_type;
+use export\exp_obj;
+use export\user_sandbox_exp_named;
+use export\word_exp;
 use html\api;
 use html\button;
 use html\html_selector;
@@ -63,6 +66,8 @@ class word extends user_sandbox_description
     const FLD_TYPE = 'word_type_id';
     const FLD_VIEW = 'view_id';
     const FLD_VALUES = 'values';
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_REFS = 'refs';
 
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
@@ -91,16 +96,6 @@ class word extends user_sandbox_description
         self::FLD_EXCLUDED
     );
 
-    /*
-     * im- and export link
-     */
-
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_EX_NAME = 'name';
-    const FLD_EX_DESCRIPTION = 'description';
-    const FLD_EX_TYPE = 'type';
-    const FLD_EX_VIEW = 'view';
-    const FLD_EX_REFS = 'refs';
 
     /*
      * for system testing
@@ -617,10 +612,10 @@ class word extends user_sandbox_description
         $this->reset();
         $this->usr = $usr;
         foreach ($json_obj as $key => $value) {
-            if ($key == self::FLD_EX_NAME) {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == self::FLD_EX_TYPE) {
+            if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $word_types->id($value);
             }
             if ($key == self::FLD_PLURAL) {
@@ -628,7 +623,7 @@ class word extends user_sandbox_description
                     $this->plural = $value;
                 }
             }
-            if ($key == self::FLD_EX_DESCRIPTION) {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -639,7 +634,7 @@ class word extends user_sandbox_description
             if ($key == protection_type::JSON_FLD) {
                 $this->protection_id = $protection_types->id($value);
             }
-            if ($key == self::FLD_EX_VIEW) {
+            if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->usr);
                 $wrd_view->name = $value;
                 if ($do_save) {
@@ -673,7 +668,7 @@ class word extends user_sandbox_description
             } else {
                 foreach ($json_obj as $key => $value) {
                     if ($result or !$do_save) {
-                        if ($key == self::FLD_EX_REFS) {
+                        if ($key == self::FLD_REFS) {
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref($this->usr);
                                 $ref_obj->phr = $this->phrase();
