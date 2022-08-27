@@ -604,7 +604,7 @@ class word extends user_sandbox_description
         global $share_types;
         global $protection_types;
 
-        log_debug('word->import_obj');
+        log_debug();
         $result = '';
 
         // reset all parameters for the word object but keep the user

@@ -40,6 +40,7 @@ class user_type
 
     // database and JSON object field names
     const FLD_NAME = 'type_name';
+    const FLD_CODE_ID = 'code_id';
 
     // the standard fields of a type
     // the database id is used as the array pointer

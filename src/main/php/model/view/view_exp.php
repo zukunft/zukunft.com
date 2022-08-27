@@ -35,7 +35,7 @@ class view_exp extends user_sandbox_exp_named
 {
 
     // field names used for JSON creation
-    public ?string $comment = '';
+    public ?string $description = '';
     public ?string $type = '';
     public ?array $view_components = null;
 
@@ -43,7 +43,7 @@ class view_exp extends user_sandbox_exp_named
     {
         parent::reset();
 
-        $this->comment = '';
+        $this->description = '';
         $this->type = '';
 
         $this->view_components = null;

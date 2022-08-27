@@ -211,7 +211,7 @@ class phrase
      */
     function load(): bool
     {
-        log_debug('phrase->load ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = false;
 
         // direct load if the type is known
@@ -221,14 +221,14 @@ class phrase
             $result = $lnk->load();
             $this->obj = $lnk;
             $this->name = $lnk->name; // is this really useful? better save execution time and have longer code using ->obj->name
-            log_debug('phrase->loaded triple ' . $this->dsp_id());
+            log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->usr);
             $wrd->id = $this->id;
             $result = $wrd->load();
             $this->obj = $wrd;
             $this->name = $wrd->name;
-            log_debug('phrase->loaded word ' . $this->dsp_id());
+            log_debug('word ' . $this->dsp_id());
         } elseif ($this->name <> '') {
             // load via term if the type is not yet known
             $trm = new term;
@@ -238,11 +238,11 @@ class phrase
             if ($trm->type == word::class) {
                 $this->obj = $trm->obj;
                 $this->id = $trm->id;
-                log_debug('phrase->loaded word ' . $this->dsp_id() . ' by name');
+                log_debug('word ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type == 'triple') {
                 $this->obj = $trm->obj;
                 $this->id = $trm->id * -1;
-                log_debug('phrase->loaded triple ' . $this->dsp_id() . ' by name');
+                log_debug('triple ' . $this->dsp_id() . ' by name');
             } elseif ($trm->type == formula::class) {
                 // for the phrase load the related word instead of the formula
                 // TODO integrate this into the term loading by load both object a once
@@ -251,7 +251,7 @@ class phrase
                 $result = $wrd->load();
                 $this->obj = $wrd;
                 $this->id = $wrd->id;
-                log_debug('phrase->loaded formula word ' . $this->dsp_id());
+                log_debug('formula word ' . $this->dsp_id());
             } else {
                 if ($this->type_name == '') {
                     // TODO check that this ($phrase->load) is never used for an error detection
@@ -261,7 +261,7 @@ class phrase
                 }
             }
         }
-        log_debug('phrase->load done ' . $this->dsp_id());
+        log_debug('done ' . $this->dsp_id());
         return $result;
     }
 
@@ -274,7 +274,7 @@ class phrase
      */
     function main_word(): ?object
     {
-        log_debug('phrase->main_word ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = null;
 
         if ($this->id == 0 or $this->name == '') {
@@ -289,7 +289,7 @@ class phrase
         } else {
             log_err('"' . $this->name . '" has the type ' . $this->type_name . ' which is not expected for a phrase.', "phrase->main_word");
         }
-        log_debug('phrase->main_word done ' . $result->dsp_id());
+        log_debug('done ' . $result->dsp_id());
         return $result;
     }
 
@@ -326,7 +326,7 @@ class phrase
             $result = $wrd->type_id;
         }
 
-        log_debug('phrase->type_id for ' . $this->dsp_id() . ' is ' . $result);
+        log_debug('for ' . $this->dsp_id() . ' is ' . $result);
         return $result;
     }
 
@@ -537,12 +537,12 @@ class phrase
      */
     function val_lst(): value_list
     {
-        log_debug('phrase->val_lst for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->usr->name . '"');
         $val_lst = new value_list($this->usr);
         $val_lst->phr = $this;
         $val_lst->page_size = SQL_ROW_MAX;
         $val_lst->load();
-        log_debug('phrase->val_lst -> got ' . dsp_count($val_lst->lst));
+        log_debug('got ' . dsp_count($val_lst->lst));
         return $val_lst;
     }
 
@@ -557,10 +557,10 @@ class phrase
     {
         global $db_con;
 
-        log_debug('phrase->vrb_lst for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
         $vrb_lst = new verb_list($this->usr);
         $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
-        log_debug('phrase->val_lst -> got ' . dsp_count($vrb_lst->lst));
+        log_debug('got ' . dsp_count($vrb_lst->lst));
         return $vrb_lst;
     }
 
@@ -615,7 +615,7 @@ class phrase
                 }
             }
         }
-        log_debug('phrase->dsp_tbl for ' . $this->dsp_id());
+        log_debug('for ' . $this->dsp_id());
         return $result;
     }
 
@@ -674,7 +674,7 @@ class phrase
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_lst->add($this);
-        log_debug('phrase->lst -> ' . $phr_lst->dsp_name());
+        log_debug($phr_lst->dsp_name());
         return $phr_lst;
     }
 
@@ -684,7 +684,7 @@ class phrase
         $this_lst = $this->lst();
         $phr_lst = $this_lst->is();
         //$phr_lst->add($this,);
-        log_debug('phrase->is -> ' . $this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
+        log_debug($this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
 
@@ -708,7 +708,7 @@ class phrase
     // e.g.for the given word string
     function is_a($related_phrase): bool
     {
-        log_debug('phrase->is_a (' . $this->dsp_id() . ',' . $related_phrase->name . ')');
+        log_debug($this->dsp_id() . ',' . $related_phrase->name);
 
         $result = false;
         $is_phrases = $this->is(); // should be taken from the original array to increase speed
@@ -716,14 +716,14 @@ class phrase
             $result = true;
         }
 
-        log_debug('phrase->is_a -> ' . zu_dsp_bool($result) . $this->id);
+        log_debug(zu_dsp_bool($result) . $this->id);
         return $result;
     }
 
     // SQL to list the user phrases (related to a type if needed)
     function sql_list($type): string
     {
-        log_debug('phrase->sql_list');
+        log_debug();
         global $db_con;
 
         $sql_type_from = '';

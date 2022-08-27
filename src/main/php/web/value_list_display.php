@@ -61,21 +61,21 @@ class value_list_dsp_old extends value_list
 
         // if parameters are fine display the table
         if ($result == '') {
-            log_debug('value_list_dsp->dsp_table "' . $phr_row->name . '" for "' . $this->phr->name . '" and user "' . $this->usr->name . '"');
+            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name . '" and user "' . $this->usr->name . '"');
 
             // init the display vars
             $val_main = null; // the "main" value used as a sample for a new value
             $modal_nbr = 1;   // to create a unique id for each modal form; the total number of modal boxes will not get too high, because the user will only see a limited number of values at once
 
             // create the table headline e.g. cash flow statement
-            log_debug('value_list_dsp->dsp_table all pre head: ' . $phr_row->name);
+            log_debug('all pre head: ' . $phr_row->name);
             $result .= $phr_row->dsp_tbl_row();
-            log_debug('value_list_dsp->dsp_table all head: ' . $phr_row->name);
+            log_debug('all head: ' . $phr_row->name);
             $result .= '<br>';
 
             // get all values related to the selecting word, because this is probably the strongest selection and to save time reduce the number of records asap
             $val_lst = $this->phr->val_lst();
-            log_debug('value_list_dsp->dsp_table all values: ' . dsp_count($val_lst->lst));
+            log_debug('all values: ' . dsp_count($val_lst->lst));
 
             //$val_lst->load_phrases();
             /*foreach ($val_lst->lst AS $val) {
@@ -84,11 +84,11 @@ class value_list_dsp_old extends value_list
 
             // get all words related to the value list to be able to define the column and the row names
             $phr_lst_all = $val_lst->phr_lst();
-            log_debug('value_list_dsp->dsp_table all words: ' . $phr_lst_all->dsp_name());
+            log_debug('all words: ' . $phr_lst_all->dsp_name());
 
             // get the time words for the column heads
             $all_time_lst = $val_lst->time_lst();
-            log_debug('value_list_dsp->dsp_table times: ' . $all_time_lst->dsp_name());
+            log_debug('times ' . $all_time_lst->dsp_name());
 
             // adjust the time words to display
             $time_phr = $all_time_lst->time_useful();
@@ -96,31 +96,31 @@ class value_list_dsp_old extends value_list
             if ($time_phr != null) {
                 $time_lst = new phrase_list($time_phr->usr);
                 $time_lst->add($time_phr);
-                log_debug('value_list_dsp->dsp_table times sorted: ' . $time_lst->name());
+                log_debug('times sorted ' . $time_lst->name());
             }
 
             // filter the value list by the time words used
             $used_value_lst = $val_lst->filter_by_time($time_lst);
-            log_debug('value_list_dsp->dsp_table values in the time period: ' . dsp_count($used_value_lst->lst));
+            log_debug('values in the time period: ' . dsp_count($used_value_lst->lst));
 
             // get the word tree for the left side of the table
             $row_wrd_lst = $phr_row->are_and_contains();
-            log_debug('value_list_dsp->dsp_table row words: ' . $row_wrd_lst->name());
+            log_debug('row words: ' . $row_wrd_lst->name());
 
             // add potential differentiators to the word tree
             $word_incl_differentiator_lst = $row_wrd_lst->differentiators_filtered($phr_lst_all);
-            log_debug('value_list_dsp->dsp_table differentiator words: ' . $word_incl_differentiator_lst->name());
-            log_debug('value_list_dsp->dsp_table row words after differentiators added: ' . $row_wrd_lst->name());
+            log_debug('differentiator words: ' . $word_incl_differentiator_lst->name());
+            log_debug('row words after differentiators added: ' . $row_wrd_lst->name());
 
             // filter the value list by the row words used
             $row_phr_lst_incl = clone $row_wrd_lst;
-            log_debug('value_list_dsp->dsp_table row phrase list: ' . $row_phr_lst_incl->name());
+            log_debug('row phrase list: ' . $row_phr_lst_incl->name());
             $used_value_lst = $used_value_lst->filter_by_phrase_lst($row_phr_lst_incl);
-            log_debug('value_list_dsp->dsp_table used values for all rows: ' . dsp_count($used_value_lst->lst));
+            log_debug('used values for all rows: ' . dsp_count($used_value_lst->lst));
 
             // get the common words
             $common_lst = $used_value_lst->common_phrases();
-            log_debug('value_list_dsp->dsp_table common: ' . $common_lst->dsp_name());
+            log_debug('common: ' . $common_lst->dsp_name());
 
             // get all words not yet part of the table rows, columns or common words
             $extra_phrases = clone $phr_lst_all;
@@ -129,7 +129,7 @@ class value_list_dsp_old extends value_list
             if ($time_lst != null) {
                 $extra_phrases->not_in($time_lst);
             }
-            log_debug('value_list_dsp->dsp_table extra phrase, that might need to be added to each table cell: ' . $extra_phrases->dsp_name());
+            log_debug('extra phrase, that might need to be added to each table cell: ' . $extra_phrases->dsp_name());
 
             // display the common words
             // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millions
@@ -187,7 +187,7 @@ class value_list_dsp_old extends value_list
                 }
 
                 if (!$row_has_value) {
-                    log_debug('value_list_dsp->dsp_table no value found for ' . $grp->name() . ' skip row');
+                    log_debug('no value found for ' . $grp->name() . ' skip row');
                 } else {
                     $result .= '  <tr>' . "\n";
                     $result .= $sub_wrd->dsp_tbl(0);
@@ -202,7 +202,7 @@ class value_list_dsp_old extends value_list
                         // to be done for the list at once
                         $grp = new phrase_group($this->usr);
                         $grp->load_by_ids(new phr_ids($val_wrd_ids));
-                        log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
+                        log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number == "") {
@@ -243,20 +243,20 @@ class value_list_dsp_old extends value_list
 
                 // display the row differentiators
                 $sub_wrd->usr = $this->usr; // to be fixed in the lines before
-                log_debug("value_list_dsp->dsp_table ... get differentiator for " . $sub_wrd->id . " and user " . $sub_wrd->usr->name . ".");
+                log_debug("... get differentiator for " . $sub_wrd->id . " and user " . $sub_wrd->usr->name . ".");
                 // get all potential differentiator words
                 $sub_wrd_lst = $sub_wrd->lst();
                 $differentiator_words = $sub_wrd_lst->differentiators_filtered($phr_lst_all);
                 $sub_phr_lst = $sub_wrd_lst->phrase_lst();
                 $differentiator_phrases = $differentiator_words->phrase_lst();
-                log_debug("value_list_dsp->dsp_table ... show differentiator of " . $differentiator_phrases->name() . ".");
+                log_debug("... show differentiator of " . $differentiator_phrases->name() . ".");
                 // select only the differentiator words that have a value for the main word
                 //$differentiator_phrases = zu_lst_in($differentiator_phrases, $extra_phrases);
                 $differentiator_phrases = $differentiator_phrases->filter($extra_phrases);
 
                 // find direct differentiator words
                 //$differentiator_type = cl(SQL_LINK_TYPE_DIFFERENTIATOR);
-                log_debug("value_list_dsp->dsp_table ... get differentiator type " . $differentiator_phrases->name() . ".");
+                log_debug("... get differentiator type " . $differentiator_phrases->name() . ".");
                 $type_phrases = $sub_phr_lst->differentiators();
 
                 // if there is more than one type of differentiator group the differentiators by type
@@ -303,7 +303,7 @@ class value_list_dsp_old extends value_list
                                 // to be done for the list at once
                                 $grp = new phrase_group($this->usr);
                                 $grp->load_by_ids(new phr_ids($val_wrd_ids));
-                                log_debug("value_list_dsp->dsp_table val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
+                                log_debug("val ids " . dsp_array($val_wrd_ids) . " = " . $grp->id . ".");
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number == "") {
@@ -407,7 +407,7 @@ class value_list_dsp_old extends value_list
             $result .= '<br><br>';
 
         }
-        log_debug("value_list_dsp->dsp_table ... done");
+        log_debug("... done");
 
         return $result;
     }

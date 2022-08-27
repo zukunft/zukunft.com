@@ -31,7 +31,7 @@
 
 class system_unit_tests
 {
-    function run(testing $t)
+    function run(testing $t): void
     {
 
         global $usr;
@@ -55,6 +55,11 @@ class system_unit_tests
         }
 
         $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
+
+        $t->subheader('System function tests');
+        $t->assert('default log message', log_debug(), 'system_unit_tests->run');
+        $t->assert('debug log message', log_debug('additional info'), 'system_unit_tests->run: additional info');
+
 
         $t->subheader('IP filter tests');
 

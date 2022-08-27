@@ -288,17 +288,17 @@ class source extends user_sandbox_named
 
         foreach ($json_obj as $key => $value) {
 
-            if ($key == 'name') {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
             if ($key == 'url') {
                 $this->url = $value;
             }
-            if ($key == 'comment') {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->comment = $value;
             }
             /* TODO
-            if ($key == 'type')    { $this->type_id = cl($value); }
+            if ($key == exp_obj::FLD_TYPE)    { $this->type_id = cl($value); }
             if ($key == sql_db::FLD_CODE_ID) {
             }
             */

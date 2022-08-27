@@ -1,6 +1,6 @@
 {
   "name": "car cost agreement",
-  "comment": "view the cost agreement of car usage",
+  "description": "view the cost agreement of car usage",
   "type": "default",
   "share": "",
   "protection": "",

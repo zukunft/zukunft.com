@@ -171,7 +171,7 @@ class view_cmp_dsp_old extends view_cmp
     {
         $result = '';
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::FORMULA_RESULTS)) {
-            log_debug('view_component_dsp->formula_values in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= "<br><br>calculated values<br>";
             $frm_val_lst = new formula_value_list($this->usr);
             $frm_val_lst->load($wrd);
@@ -188,7 +188,7 @@ class view_cmp_dsp_old extends view_cmp
         $result = '';
 
         if ($this->type_id == cl(db_cl::VIEW_COMPONENT_TYPE, view_cmp_type::WORDS_DOWN)) {
-            log_debug('view_component_dsp->word_children in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
+            log_debug('in view ' . $this->dsp_id() . ' for word ' . $wrd->name . ' and user ' . $this->usr->name);
             $result .= $wrd->dsp_graph(word_select_direction::DOWN);
         }
 

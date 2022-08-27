@@ -231,7 +231,7 @@ function dsp_link_hist_box($comp_name, $comp_html,
 // simply to display a single word in a table as a header
 function dsp_tbl_head($link_name): string
 {
-    log_debug('dsp_tbl_head');
+    log_debug();
     $result = '    <th>' . "\n";
     $result .= '      ' . $link_name . "\n";
     $result .= '    </th>' . "\n";

@@ -509,18 +509,18 @@ class view_cmp extends user_sandbox_named
 
         foreach ($json_obj as $key => $value) {
 
-            if ($key == 'name') {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
             if ($key == 'position' or $key == 'pos') {
                 $this->order_nbr = $value;
             }
-            if ($key == 'type') {
+            if ($key == exp_obj::FLD_TYPE) {
                 if ($value != '') {
                     $this->type_id = $this->type_id_by_code_id($value);
                 }
             }
-            if ($key == 'comment') {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->comment = $value;
             }
         }

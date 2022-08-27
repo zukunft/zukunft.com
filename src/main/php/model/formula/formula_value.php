@@ -426,7 +426,7 @@ class formula_value
                 $sql_where = "formula_value_id = " . $this->id;
             } else {
                 // prepare the search by getting the word group based on the word list
-                log_debug('formula_value->load not by id');
+                log_debug('not by id');
 
                 // assume the source time if the source list is set, but not the source time
                 if ($this->src_time_id <= 0 and is_null($this->src_time_phr) and !empty($this->src_phr_lst)) {
@@ -435,7 +435,7 @@ class formula_value
                     if (count($src_time_phr_lst->lst) > 0) {
                         $src_time_phr = $src_time_phr_lst->lst[0];
                         $this->src_time_id = $src_time_phr->id;
-                        log_debug('formula_value->load -> source time ' . $this->src_time_id . ' found for ' . $src_time_phr_lst->name());
+                        log_debug('source time ' . $this->src_time_id . ' found for ' . $src_time_phr_lst->name());
                     }
                 } elseif ($this->src_time_id <= 0 and !is_null($this->src_time_phr)) {
                     $this->src_time_id = $this->src_time_phr->id;
@@ -460,7 +460,7 @@ class formula_value
                             $this->src_phr_grp_id = $phr_grp->id;
                         }
                     }
-                    log_debug('formula_value->load -> source group ' . $this->src_phr_grp_id . ' found for ' . $work_phr_lst->dsp_name());
+                    log_debug('source group ' . $this->src_phr_grp_id . ' found for ' . $work_phr_lst->dsp_name());
                 }
 
                 // assume the result time if the result phrase list is set, but not the result time
@@ -470,7 +470,7 @@ class formula_value
                     if (count($time_phr_lst->lst) > 0) {
                         $time_wrd = $time_phr_lst->lst[0];
                         $this->time_id = $time_wrd->id;
-                        log_debug('formula_value->load -> time ' . $this->time_id . ' found for ' . $time_phr_lst->name());
+                        log_debug('time ' . $this->time_id . ' found for ' . $time_phr_lst->name());
                     }
                 } elseif ($this->time_id <= 0 and !is_null($this->time_phr)) {
                     $this->time_id = $this->time_phr->id;

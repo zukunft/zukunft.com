@@ -195,7 +195,7 @@ class value_list
                         $result = true;
                     }
                 }
-                log_debug('value_list->load (' . dsp_count($this->lst) . ')');
+                log_debug(dsp_count($this->lst));
             }
         }
 
@@ -254,7 +254,7 @@ class value_list
                 $val = new value($this->usr);
                 $val->row_mapper($db_val);
                 $this->lst[] = $val;
-                log_debug('value_list->load_by_phr (' . dsp_count($this->lst) . ')');
+                log_debug(dsp_count($this->lst));
                 $result = true;
             }
         }
@@ -295,7 +295,7 @@ class value_list
         // the id and the user must be set
         if (isset($this->phr_lst)) {
             if (count($this->phr_lst->id_lst()) > 0 and !is_null($this->usr->id)) {
-                log_debug('value_list->load_all for ' . $this->phr_lst->dsp_id());
+                log_debug('for ' . $this->phr_lst->dsp_id());
                 $sql = $this->load_all_sql();
                 $db_con->usr_id = $this->usr->id;
                 $db_val_lst = $db_con->get_old($sql);
@@ -308,10 +308,10 @@ class value_list
                         }
                     }
                 }
-                log_debug('value_list->load_all (' . dsp_count($this->lst) . ')');
+                log_debug(dsp_count($this->lst));
             }
         }
-        log_debug('value_list->load_all -> done');
+        log_debug('done');
     }
 
     /**
@@ -405,7 +405,7 @@ class value_list
                     }
                 }
             }
-            log_debug('value_list->load_by_phr_lst (' . dsp_count($this->lst) . ')');
+            log_debug(dsp_count($this->lst));
         }
     }
 
@@ -435,7 +435,7 @@ class value_list
         global $share_types;
         global $protection_types;
 
-        log_debug('value_list->import_obj');
+        log_debug();
         $result = '';
 
         $val = new value($this->usr);
@@ -514,12 +514,12 @@ class value_list
      */
     function export_obj(bool $do_load = true): exp_obj
     {
-        log_debug('value_list->export_obj');
+        log_debug();
         $result = new value_list_exp();
 
         // reload the value parameters
         if ($do_load) {
-            log_debug('value_list->export_obj load');
+            log_debug();
             $this->load();
         }
 
@@ -547,13 +547,13 @@ class value_list
             }
 
             // add the share type
-            log_debug('value->export_obj get share');
+            log_debug('get share');
             if ($val0->share_id > 0 and $val0->share_id <> cl(db_cl::SHARE_TYPE, share_type::PUBLIC)) {
                 $result->share = $val0->share_type_code_id();
             }
 
             // add the protection type
-            log_debug('value->export_obj get protection');
+            log_debug('get protection');
             if ($val0->protection_id > 0 and $val0->protection_id <> cl(db_cl::PROTECTION_TYPE, protection_type::NO_PROTECT)) {
                 $result->protection = $val0->protection_type_code_id();
             }
@@ -574,7 +574,7 @@ class value_list
             }
         }
 
-        log_debug('value_list->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -594,7 +594,7 @@ class value_list
         if (count($all_ids) > 0) {
             $phr_lst->load_by_ids(new phr_ids($all_ids));
         }
-        log_debug('value_list->time_lst (' . dsp_count($phr_lst->lst) . ')');
+        log_debug(dsp_count($phr_lst->lst));
         return $phr_lst;
     }
 
@@ -603,7 +603,7 @@ class value_list
      */
     function phr_lst(): phrase_list
     {
-        log_debug('value_list->phr_lst by ids (needs review)');
+        log_debug('by ids (needs review)');
         $phr_lst = new phrase_list($this->usr);
 
         foreach ($this->lst as $val) {
@@ -655,28 +655,28 @@ class value_list
 
         foreach ($this->lst as $val) {
             if ($val->source_id > 0) {
-                log_debug('value_list->source_lst test id ' . $val->source_id);
+                log_debug('test id ' . $val->source_id);
                 if (!in_array($val->source_id, $src_ids)) {
-                    log_debug('value_list->source_lst add id ' . $val->source_id);
+                    log_debug('add id ' . $val->source_id);
                     if (!isset($val->source)) {
-                        log_debug('value_list->source_lst load id ' . $val->source_id);
+                        log_debug('load id ' . $val->source_id);
                         $val->load_source();
-                        log_debug('value_list->source_lst loaded ' . $val->source->name);
+                        log_debug('loaded ' . $val->source->name);
                     } else {
                         if ($val->source_id <> $val->source->id) {
-                            log_debug('value_list->source_lst load id ' . $val->source_id);
+                            log_debug('load id ' . $val->source_id);
                             $val->load_source();
-                            log_debug('value_list->source_lst loaded ' . $val->source->name);
+                            log_debug('loaded ' . $val->source->name);
                         }
                     }
                     $result[] = $val->source;
                     $src_ids[] = $val->source_id;
-                    log_debug('value_list->source_lst added ' . $val->source->name);
+                    log_debug('added ' . $val->source->name);
                 }
             }
         }
 
-        log_debug('value_list->source_lst -> done');
+        log_debug('done');
         return $result;
     }
 

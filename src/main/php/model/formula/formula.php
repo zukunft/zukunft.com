@@ -59,6 +59,9 @@ class formula extends user_sandbox_description
     const FLD_FORMULA_TYPE = 'formula_type_id';    // the id of the formula type
     const FLD_ALL_NEEDED = 'all_values_needed';    // the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"
     const FLD_LAST_UPDATE = 'last_update';
+    // the field names used for the im- and export in the json or yaml format
+    const FLD_EXPRESSION = 'expression';
+    const FLD_ASSIGN = 'assigned_word';
 
     // all database field names excluding the id
     // TODO check if last_update must be user specific
@@ -1181,18 +1184,18 @@ class formula extends user_sandbox_description
         $this->reset();
         $this->usr = $usr;
         foreach ($json_obj as $key => $value) {
-            if ($key == 'name') {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'type') {
+            if ($key == exp_obj::FLD_TYPE) {
                 $this->type_id = $formula_types->id($value);
             }
-            if ($key == 'expression') {
+            if ($key == self::FLD_EXPRESSION) {
                 if ($value <> '') {
                     $this->usr_text = $value;
                 }
             }
-            if ($key == 'description') {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -1217,10 +1220,10 @@ class formula extends user_sandbox_description
 
         // assign the formula to the words and triple
         if ($result == '' or !$do_save) {
-            log_debug('word->import_obj -> saved ' . $this->dsp_id());
+            log_debug('formula->import_obj -> saved ' . $this->dsp_id());
             foreach ($json_obj as $key => $value) {
                 if ($result or !$do_save) {
-                    if ($key == 'assigned_word') {
+                    if ($key == self::FLD_ASSIGN) {
                         foreach ($value as $lnk_phr_name) {
                             $phr = new phrase($usr);
                             $phr->name = $lnk_phr_name;

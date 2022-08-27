@@ -613,18 +613,18 @@ class view extends user_sandbox_named
         // first save the parameters of the view itself
         foreach ($json_obj as $key => $value) {
 
-            if ($key == 'name') {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'type') {
+            if ($key == exp_obj::FLD_TYPE) {
                 if ($value != '') {
                     $this->type_id = $this->type_id_by_code_id($value);
                 }
             }
-            if ($key == 'comment') {
+            if ($key == exp_obj::FLD_DESCRIPTION) {
                 $this->comment = $value;
             }
-            if ($key == 'code_id') {
+            if ($key == user_type::FLD_CODE_ID) {
                 if ($this->usr->is_admin()) {
                     $this->code_id = $value;
                 }
@@ -675,7 +675,7 @@ class view extends user_sandbox_named
 
         // add the view parameters
         $result->name = $this->name;
-        $result->comment = $this->comment;
+        $result->description = $this->comment;
         $result->type = $this->type_code_id();
 
         // add the view components used

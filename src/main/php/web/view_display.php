@@ -499,7 +499,7 @@ class view_dsp_old extends view
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;
             $result .= $dsp_list->display($back);
-            log_debug('view_dsp->linked_components displayed');
+            log_debug('displayed');
             if (UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
             }

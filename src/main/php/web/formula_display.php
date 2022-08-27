@@ -61,7 +61,7 @@ class formula_dsp_old extends formula
     // create the HTML code to display the formula text in the human-readable format including links to the formula elements
     function dsp_text(string $back = ''): string
     {
-        log_debug('formula->dsp_text');
+        log_debug();
         $result = $this->usr_text;
 
         $exp = $this->expression();
@@ -71,7 +71,7 @@ class formula_dsp_old extends formula
             $result = str_replace('"' . $elm->name . '"', $elm->name_linked($back), $result);
         }
 
-        log_debug('formula->dsp_text -> ' . $result);
+        log_debug($result);
         return $result;
     }
 
@@ -81,13 +81,13 @@ class formula_dsp_old extends formula
      */
     function dsp_result($wrd, $back): string
     {
-        log_debug('formula->dsp_result for "' . $wrd->name . '" and formula ' . $this->dsp_id());
+        log_debug('for "' . $wrd->name . '" and formula ' . $this->dsp_id());
         $fv = new formula_value($this->usr);
         $fv->frm = $this;
         $fv->wrd = $wrd;
-        log_debug('formula->dsp_result load fv');
+        log_debug('load fv');
         $fv->load_by_vars();
-        log_debug('formula->dsp_result display');
+        log_debug('display');
         return $fv->display($back);
     }
 
@@ -116,7 +116,7 @@ class formula_dsp_old extends formula
     // allow the user to unlink a word
     function dsp_unlink_phr($phr_id, $back): string
     {
-        log_debug('formula->dsp_unlink_phr(' . $phr_id . ')');
+        log_debug($phr_id);
         $result = '    <td>' . "\n";
         $url = api::PATH . self::class . api::UPDATE . api::EXT .'?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
         $result .=  (new button("unlink word", $url))->del();

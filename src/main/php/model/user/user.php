@@ -43,6 +43,8 @@
   
 */
 
+use export\exp_obj;
+
 class user
 {
 
@@ -403,7 +405,7 @@ class user
         // reset all parameters of this user object
         $this->reset();
         foreach ($json_obj as $key => $value) {
-            if ($key == 'name') {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
             if ($key == 'description') {

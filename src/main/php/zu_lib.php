@@ -652,10 +652,16 @@ define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('ABB_2013.json','work.j
 */
 define("TEST_IMPORT_FILE_LIST_QUICK", serialize(array('car_costs.json')));
 
-// for internal functions debugging
-// each complex function should call this at the beginning with the parameters and with -1 at the end with the result
-// called function should use $debug-1
-function log_debug($msg_text, $debug_overwrite = null)
+/**
+ * for internal functions debugging
+ * each complex function should call this at the beginning with the parameters and with -1 at the end with the result
+ * called function should use $debug-1
+ *
+ * @param string $msg_text debug information additional to the class and function
+ * @param int|null $debug_overwrite used to force the output
+ * @return string the final output text
+ */
+function log_debug(string $msg_text = '', int $debug_overwrite = null): string
 {
     global $debug;
 
@@ -665,11 +671,23 @@ function log_debug($msg_text, $debug_overwrite = null)
         $debug_used = $debug_overwrite;
     }
 
+    // add the standard prefix
+    if ($msg_text != '') {
+        $msg_text = ': ' . $msg_text;
+    }
+    if (array_key_exists('class', debug_backtrace()[1])) {
+        $msg_text = debug_backtrace()[1]['class'] . '->' . debug_backtrace()[1]['function'] . $msg_text;
+    } else {
+        $msg_text = debug_backtrace()[1]['function'] . $msg_text;
+    }
+
     if ($debug_used > 0) {
         echo $msg_text . '.<br>';
         //ob_flush();
         //flush();
     }
+
+    return $msg_text;
 }
 
 // for system messages no debug calls to avoid loops

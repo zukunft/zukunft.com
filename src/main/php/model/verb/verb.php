@@ -31,6 +31,8 @@
   
 */
 
+use export\exp_obj;
+
 class verb
 {
 
@@ -228,7 +230,7 @@ class verb
         $this->reset();
         $this->usr = $usr;
         foreach ($json_obj as $key => $value) {
-            if ($key == 'name') {
+            if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
             if ($key == 'code_id') {
