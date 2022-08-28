@@ -49,6 +49,9 @@ class view_cmp extends user_sandbox_named
     const FLD_COL2_PHRASE = 'word_id_col2';
     const FLD_LINK_TYPE = 'link_type_id';
     const FLD_COMMENT = 'comment';
+    // the JSON object field names
+    const FLD_POSITION = 'position';
+    const FLD_POSITION_OLD = 'pos';
 
     // all database field names excluding the id
     const FLD_NAMES = array();
@@ -241,7 +244,7 @@ class view_cmp extends user_sandbox_named
      * set the view component type
      * @return void
      */
-    function set_type(string $type_code_id)
+    function set_type(string $type_code_id): void
     {
         $this->type_id = cl(db_cl::VIEW_COMPONENT_TYPE, $type_code_id);
     }
@@ -512,7 +515,7 @@ class view_cmp extends user_sandbox_named
             if ($key == exp_obj::FLD_NAME) {
                 $this->name = $value;
             }
-            if ($key == 'position' or $key == 'pos') {
+            if ($key == self::FLD_POSITION or $key == self::FLD_POSITION_OLD) {
                 $this->order_nbr = $value;
             }
             if ($key == exp_obj::FLD_TYPE) {

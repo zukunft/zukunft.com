@@ -39,12 +39,14 @@ class view extends user_sandbox_named
      * database link
      */
 
-    // the database and JSON object field names used only for formula links
+    // the database and JSON object field names used only for views
     const FLD_ID = 'view_id';
     const FLD_NAME = 'view_name';
     const FLD_TYPE = 'view_type_id';
     const FLD_CODE_ID = 'code_id';
     const FLD_COMMENT = 'comment';
+    // the JSON object field names
+    const FLD_COMPONENT = 'view_components';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
@@ -307,7 +309,7 @@ class view extends user_sandbox_named
                 $db_view = $db_con->get1_old($sql);
                 $this->row_mapper($db_view);
                 if ($this->id > 0) {
-                    log_debug('view->load ' . $this->dsp_id());
+                    log_debug($this->dsp_id());
                     $result = true;
                 }
             }
@@ -362,7 +364,7 @@ class view extends user_sandbox_named
      */
     function load_components(): bool
     {
-        log_debug('view->load_components for ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
         $result = true;
@@ -394,7 +396,7 @@ class view extends user_sandbox_named
                 }
             }
         }
-        log_debug('view->load_components ' . dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
+        log_debug(dsp_count($this->cmp_lst) . ' loaded for ' . $this->dsp_id());
 
         return $result;
     }
@@ -551,7 +553,7 @@ class view extends user_sandbox_named
      */
     function selector_page($wrd_id, $back): string
     {
-        log_debug('view->selector_page (' . $this->id . ',' . $wrd_id . ')');
+        log_debug($this->id . ',' . $wrd_id);
 
         global $db_con;
         $result = '';
@@ -584,7 +586,7 @@ class view extends user_sandbox_named
             $result .= '<br>';
         }
 
-        log_debug('view->selector_page ... done');
+        log_debug('done');
         return $result;
     }
 
@@ -602,7 +604,7 @@ class view extends user_sandbox_named
      */
     function import_obj(array $json_obj, bool $do_save = true): string
     {
-        log_debug('view->import_obj');
+        log_debug();
         $result = '';
 
         // reset the all parameters for the word object but keep the user
@@ -640,16 +642,16 @@ class view extends user_sandbox_named
                 if ($result == '') {
                     // TODO save also the links
                     //$dsp_lnk = new view_component_link();
-                    log_debug('view->import_obj -> ' . $this->dsp_id());
+                    log_debug($this->dsp_id());
                 }
             }
         } else {
-            log_debug('view->import_obj -> ' . $result);
+            log_debug($result);
         }
 
         // after saving (or remembering) add the view components
         foreach ($json_obj as $key => $value) {
-            if ($key == 'view_components') {
+            if ($key == self::FLD_COMPONENT) {
                 $json_lst = $value;
                 $cmp_pos = 1;
                 foreach ($json_lst as $json_cmp) {
@@ -670,7 +672,7 @@ class view extends user_sandbox_named
      */
     function export_obj(bool $do_load = true): exp_obj
     {
-        log_debug('view->export_obj ' . $this->dsp_id());
+        log_debug($this->dsp_id());
         $result = new view_exp();
 
         // add the view parameters
@@ -688,7 +690,7 @@ class view extends user_sandbox_named
             }
         }
 
-        log_debug('view->export_obj -> ' . json_encode($result));
+        log_debug(json_encode($result));
         return $result;
     }
 
@@ -704,7 +706,7 @@ class view extends user_sandbox_named
         $result = false;
 
         foreach ($dsp_lst as $dsp_id) {
-            log_debug('view->is_in_list ' . $dsp_id . ' = ' . $this->id . '?');
+            log_debug($dsp_id . ' = ' . $this->id . '?');
             if ($dsp_id == $this->id) {
                 $result = true;
             }
@@ -725,7 +727,7 @@ class view extends user_sandbox_named
         global $db_con;
         $result = true;
 
-        log_debug('view->add_usr_cfg ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         if (!$this->has_usr_cfg()) {
 
@@ -758,7 +760,7 @@ class view extends user_sandbox_named
      */
     function del_usr_cfg_if_not_needed(): bool
     {
-        log_debug('view->del_usr_cfg_if_not_needed pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+        log_debug('pre check for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
 
         global $db_con;
         $result = true;
@@ -777,13 +779,13 @@ class view extends user_sandbox_named
         //$db_con = New mysql;
         $db_con->usr_id = $this->usr->id;
         $usr_cfg = $db_con->get1_old($sql);
-        log_debug('view->del_usr_cfg_if_not_needed check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
+        log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->usr->name . ' with (' . $sql . ')');
         if ($usr_cfg[self::FLD_ID] > 0) {
             if ($usr_cfg[self::FLD_COMMENT] == ''
                 and $usr_cfg[self::FLD_TYPE] == Null
                 and $usr_cfg[self::FLD_EXCLUDED] == Null) {
                 // delete the entry in the user sandbox
-                log_debug('view->del_usr_cfg_if_not_needed any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
+                log_debug('any more for "' . $this->dsp_id() . ' und user ' . $this->usr->name);
                 $result = $this->del_usr_cfg_exe($db_con);
             }
         }
@@ -860,7 +862,7 @@ class view extends user_sandbox_named
         $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_code_id($db_con, $db_rec, $std_rec);
-        log_debug('view->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
+        log_debug($this->dsp_id() . ' has been saved');
         return $result;
     }
 

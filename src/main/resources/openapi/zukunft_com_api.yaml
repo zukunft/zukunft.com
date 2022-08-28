@@ -1,0 +1,2109 @@
+openapi: 3.0.3
+info:
+  title: zukunft.com - OpenAPI 3.0
+  description: |-
+    the open API for zukunft.com that includes the user AND admin interface
+    WARNING: this API is a alpha release and is not yet fully implemented and will change overtime
+  version: "0.0.2"
+  contact:
+    name: Timon Zielonka
+    email: timon@zukunft.com
+    url: https://zukunft.com
+  termsOfService: https://zukunft.com/terms/
+  license:
+    name: AGPL 3
+    url: https://www.gnu.org/licenses/agpl-3.0
+externalDocs:
+  description: The main Idea of zukunft.com "calc with words"
+  url: https://gitlab.com/zukunft.com/zukunft-com/-/wikis/home
+servers:
+  - url: https://zukunft.com/
+tags:
+  - name: word
+    description: the base element select values or create triples
+  - name: value
+    description: all numeric values are defined by a phrase group
+  - name: formula
+    description: the selection of values in formulas is done with an and selection of phrases
+  - name: verb
+    description: the triple predicates
+  - name: triple
+    description: RDF triples
+  - name: view
+    description: to define the display format of a phrase and the linked values and formula results
+  - name: component
+    description: the single components of a display mask
+  - name: source
+    description: the original data sources for the values
+  - name: reference
+    description: a data link with scheduled updates
+  - name: import
+    description: to import data using json or yaml
+  - name: export
+    description: to export data
+  - name: batch
+    description: to trigger and monitor batch jobs e.g. calculations, setup or test tasks
+  - name: user
+    description: maintain the user setup 
+  - name: error
+    description: to trace the fixing of a setup error and for admins to confirm the fixing
+  - name: wordType
+    description: only word types without code link can be added to request new word types e.g. time
+  - name: wordForm
+    description: only word forms without code link can be added to request new word forms e.g. plural
+
+paths:
+  /word:
+    put:
+      tags:
+        - word
+      summary: Update an existing word
+      description: Update an existing word by Id
+      operationId: updateWord
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Word'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Word'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Word'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - word
+      summary: Add a new word
+      description: Add a new word or activate it for the requesting user
+      operationId: addWord
+      requestBody:
+        description: Word to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Word'
+      responses:
+        '200':
+          description: word response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Word'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /word/{id}:
+    get:
+      tags:
+        - word
+      summary: get word by id
+      description: Returns a user based on a single ID, if the user does not have access to the word
+      operationId: find word by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of word to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: word response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Word'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - word
+      summary: exclude or delete word for the requesting user
+      description: deletes a single word based on the ID supplied
+      operationId: deleteWord
+      parameters:
+        - name: id
+          in: path
+          description: ID of word to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: word deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /value:
+    put:
+      tags:
+        - value
+      summary: Update an existing value
+      description: Update an existing value by Id
+      operationId: updateValue
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Value'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Value'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Value'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Value not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - value
+      summary: Add a new value
+      description: Add a new value or activate it for the requesting user
+      operationId: addValue
+      requestBody:
+        description: Value to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Value'
+      responses:
+        '200':
+          description: value response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Value'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /value/{id}:
+    get:
+      tags:
+        - value
+      summary: get value by id
+      description: Returns a user based on a single ID, if the user does not have access to the value
+      operationId: find value by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of value to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: value response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Value'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - value
+      summary: exclude or delete value for the requesting user
+      description: deletes a single value based on the ID supplied
+      operationId: deleteValue
+      parameters:
+        - name: id
+          in: path
+          description: ID of value to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: value deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /formula:
+    put:
+      tags:
+        - formula
+      summary: Update an existing formula
+      description: Update an existing formula by Id
+      operationId: updateFormula
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Formula'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formula'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Formula'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Formula not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - formula
+      summary: Add a new formula
+      description: Add a new formula or activate it for the requesting user
+      operationId: addFormula
+      requestBody:
+        description: Formula to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Formula'
+      responses:
+        '200':
+          description: formula response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formula'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /formula/{id}:
+    get:
+      tags:
+        - formula
+      summary: get formula by id
+      description: Returns a user based on a single ID, if the user does not have access to the formula
+      operationId: find formula by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of formula to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: formula response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formula'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - formula
+      summary: exclude or delete formula for the requesting user
+      description: deletes a single formula based on the ID supplied
+      operationId: deleteFormula
+      parameters:
+        - name: id
+          in: path
+          description: ID of formula to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: formula deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /verb:
+    put:
+      tags:
+        - verb
+      summary: Update an existing verb
+      description: Update an existing verb by Id
+      operationId: updateVerb
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Verb'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verb'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Verb'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Verb not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - verb
+      summary: Add a new verb
+      description: Add a new verb or activate it for the requesting user
+      operationId: addVerb
+      requestBody:
+        description: Verb to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Verb'
+      responses:
+        '200':
+          description: verb response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verb'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /verb/{id}:
+    get:
+      tags:
+        - verb
+      summary: get verb by id
+      description: Returns a user based on a single ID, if the user does not have access to the verb
+      operationId: find verb by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of verb to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: verb response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verb'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - verb
+      summary: exclude or delete verb for the requesting user
+      description: deletes a single verb based on the ID supplied
+      operationId: deleteVerb
+      parameters:
+        - name: id
+          in: path
+          description: ID of verb to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: verb deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /triple:
+    put:
+      tags:
+        - triple
+      summary: Update an existing triple
+      description: Update an existing triple by Id
+      operationId: updateTriple
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Triple'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Triple'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Triple'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Triple not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - triple
+      summary: Add a new triple
+      description: Add a new triple or activate it for the requesting user
+      operationId: addTriple
+      requestBody:
+        description: Triple to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Triple'
+      responses:
+        '200':
+          description: triple response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Triple'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /triple/{id}:
+    get:
+      tags:
+        - triple
+      summary: get triple by id
+      description: Returns a user based on a single ID, if the user does not have access to the triple
+      operationId: find triple by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of triple to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: triple response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Triple'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - triple
+      summary: exclude or delete triple for the requesting user
+      description: deletes a single triple based on the ID supplied
+      operationId: deleteTriple
+      parameters:
+        - name: id
+          in: path
+          description: ID of triple to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: triple deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /view:
+    put:
+      tags:
+        - view
+      summary: Update an existing view
+      description: Update an existing view by Id
+      operationId: updateView
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/View'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/View'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/View'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: View not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - view
+      summary: Add a new view
+      description: Add a new view or activate it for the requesting user
+      operationId: addView
+      requestBody:
+        description: View to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/View'
+      responses:
+        '200':
+          description: view response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/View'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /view/{id}:
+    get:
+      tags:
+        - view
+      summary: get view by id
+      description: Returns a user based on a single ID, if the user does not have access to the view
+      operationId: find view by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of view to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: view response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/View'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - view
+      summary: exclude or delete view for the requesting user
+      description: deletes a single view based on the ID supplied
+      operationId: deleteView
+      parameters:
+        - name: id
+          in: path
+          description: ID of view to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: view deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /component:
+    put:
+      tags:
+        - component
+      summary: Update an existing component
+      description: Update an existing component by Id
+      operationId: updateComponent
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ViewComponent'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewComponent'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ViewComponent'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Component not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - component
+      summary: Add a new component
+      description: Add a new component or activate it for the requesting user
+      operationId: addComponent
+      requestBody:
+        description: Component to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ViewComponent'
+      responses:
+        '200':
+          description: component response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewComponent'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /component/{id}:
+    get:
+      tags:
+        - component
+      summary: get component by id
+      description: Returns a user based on a single ID, if the user does not have access to the component
+      operationId: find component by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of component to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: component response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewComponent'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - component
+      summary: exclude or delete component for the requesting user
+      description: deletes a single component based on the ID supplied
+      operationId: deleteComponent
+      parameters:
+        - name: id
+          in: path
+          description: ID of component to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: component deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /source:
+    put:
+      tags:
+        - source
+      summary: Update an existing source
+      description: Update an existing source by Id
+      operationId: updateSource
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Source'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Source'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Source not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - source
+      summary: Add a new source
+      description: Add a new source or activate it for the requesting user
+      operationId: addSource
+      requestBody:
+        description: Source to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Source'
+      responses:
+        '200':
+          description: source response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /source/{id}:
+    get:
+      tags:
+        - source
+      summary: get source by id
+      description: Returns a user based on a single ID, if the user does not have access to the source
+      operationId: find source by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of source to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: source response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - source
+      summary: exclude or delete source for the requesting user
+      description: deletes a single source based on the ID supplied
+      operationId: deleteSource
+      parameters:
+        - name: id
+          in: path
+          description: ID of source to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: source deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /reference:
+    put:
+      tags:
+        - reference
+      summary: Update an existing reference
+      description: Update an existing reference by Id
+      operationId: updateReference
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reference'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Reference not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - reference
+      summary: Add a new reference
+      description: Add a new reference or activate it for the requesting user
+      operationId: addReference
+      requestBody:
+        description: Reference to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reference'
+      responses:
+        '200':
+          description: reference response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /reference/{id}:
+    get:
+      tags:
+        - reference
+      summary: get reference by id
+      description: Returns a user based on a single ID, if the user does not have access to the reference
+      operationId: find reference by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of reference to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: reference response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - reference
+      summary: exclude or delete reference for the requesting user
+      description: deletes a single reference based on the ID supplied
+      operationId: deleteReference
+      parameters:
+        - name: id
+          in: path
+          description: ID of reference to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: reference deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /json:
+    put:
+      tags:
+        - import
+      description: for the json based import to a zukunft.com pod
+      operationId: importJson
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+      requestBody:
+        description: |-
+          a json with words, triples, value, formulas and view that should be added to the zukunft.com pod
+          the json contains formula results and view result to verify the correct import
+          the json contains the complete business logic of on business case including the self consistency check
+          but everything just for one user, so the import should not change data of other user 
+          if not explicitly requested
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Json'
+    get:
+      tags:
+        - export
+      description: for the json based import to a zukunft.com pod
+      operationId: exportJson
+      responses:
+        "200":
+          description: |-
+            a json with words, triples, value, formulas and view that should be exported
+            the json contains formula results and view result to verify a reimport into other zukunft.com pods
+            the json contains the complete business logic of on business case including the self consistency check
+            but everything just for one user, if not explicitly requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Json'
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+  /batch:
+    put:
+      tags:
+        - batch
+      description: request to start a batch process
+      operationId: batchJobAdd
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+      requestBody:
+        description: the batch job that should be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchJob'
+  /batch/{id}:
+    get:
+      tags:
+        - batch
+      description: get the status of a batch job
+      operationId: batchJobGet
+      parameters:
+        - name: id
+          in: path
+          description: ID of reference to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: the status and the times of a given batch job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchJob'
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+  /error:
+    post:
+      tags:
+        - error
+      description: update an error log entry
+      operationId: errorLogAdd
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+                example: ""
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+      requestBody:
+        description: the error job that should be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorLog'
+  /error/{id}:
+    get:
+      tags:
+        - error
+      description: get the status of a error log entry
+      operationId: errorLog
+      parameters:
+        - name: id
+          in: path
+          description: ID of reference to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: the status and the times of a given error job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorLog'
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Error message
+  /user:
+    put:
+      tags:
+        - user
+      summary: Update an existing word type
+      description: Update an existing word type by Id
+      operationId: updateUser
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - user
+      summary: Add a new word type
+      description: Add a new word type or activate it for the requesting user
+      operationId: addUser
+      requestBody:
+        description: Word to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: word type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/{id}:
+    get:
+      tags:
+        - user
+      summary: get word type by id
+      description: Returns a user based on a single ID, if the user does not have access to the word type
+      operationId: findUserById
+      parameters:
+        - name: id
+          in: path
+          description: ID of word type to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: word type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - user
+      summary: exclude or delete word type for the requesting user
+      description: deletes a single word type based on the ID supplied
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of word type to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: word type deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordType:
+    put:
+      tags:
+        - wordType
+      summary: Update an existing word type
+      description: Update an existing word type by Id
+      operationId: updateWordType
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordType'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordType'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WordType'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - wordType
+      summary: Add a new word type
+      description: Add a new word type or activate it for the requesting user
+      operationId: addWordType
+      requestBody:
+        description: Word to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordType'
+      responses:
+        '200':
+          description: word type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordType'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordType/{id}:
+    get:
+      tags:
+        - wordType
+      summary: get word type by id
+      description: Returns a user based on a single ID, if the user does not have access to the word type
+      operationId: find word type by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of word type to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: word type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordType'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - wordType
+      summary: exclude or delete word type for the requesting user
+      description: deletes a single word type based on the ID supplied
+      operationId: deleteWordType
+      parameters:
+        - name: id
+          in: path
+          description: ID of word type to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: word type deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordForm:
+    put:
+      tags:
+        - wordForm
+      summary: Update an existing word form
+      description: Update an existing word form by Id
+      operationId: updateWordForm
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordForm'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordForm'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WordForm'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
+    post:
+      tags:
+        - wordForm
+      summary: Add a new word form
+      description: Add a new word form or activate it for the requesting user
+      operationId: addWordForm
+      requestBody:
+        description: Word to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordForm'
+      responses:
+        '200':
+          description: word form response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordForm'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordForm/{id}:
+    get:
+      tags:
+        - wordForm
+      summary: get word form by id
+      description: Returns a user based on a single ID, if the user does not have access to the word form
+      operationId: find word form by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of word form to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: word form response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordForm'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - wordForm
+      summary: exclude or delete word form for the requesting user
+      description: deletes a single word form based on the ID supplied
+      operationId: deleteWordForm
+      parameters:
+        - name: id
+          in: path
+          description: ID of word form to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: word form deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    WordList:
+      type: array
+      description: list of sources
+      items:
+        $ref: '#/components/schemas/Word'
+    Word:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the unique word name; there should also be no triple or verb with the same name; if a formula has the same name it is linked to this word
+          example: Zurich
+        description:
+          type: string
+          description: a more detailed description of the word that is shown to the user on mouseover
+          example: the city or canton of Zurich or the insurance company
+        type:
+          type: string
+          description: reference to the word type that is used to assign a predefined behavior to the word
+          example: time
+          enum:
+            - default
+            - time
+            - time_jump
+            - latest
+            - this
+            - next
+            - previous
+            - constant
+            - measure
+            - measure_divisor
+            - percent
+            - scaling
+            - scaling_hidden
+            - scaling_percent
+            - scaled_measure
+            - calc
+            - view
+            - formula_link
+            - type_other
+        share:
+          $ref: '#/components/schemas/Share'
+        protection:
+          $ref: '#/components/schemas/Protection'
+        view:
+          $ref: '#/components/schemas/ViewRef'
+        refs:
+          $ref: '#/components/schemas/RefList'
+    Verb:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the unique name used for the verb
+          example: is a
+        description:
+          type: string
+          description: a more detailed description of the verb that is shown to the user on mouseover
+          example: |-
+            with the predicate "is a" a word can be assign to several words e.g. 
+            - Zurich is a City
+            - Zurich is a Canton
+            - Zurich is a Company
+    TripleList:
+      type: array
+      description: list of words
+      items:
+        $ref: '#/components/schemas/Triple'
+    Triple:
+      type: object
+      required:
+        - from
+        - verb
+        - to
+      properties:
+        triple_name:
+          type: string
+          description: the unique name used for the triple; if not set the automatic created name based on the verb settings is used
+          example: Canton of Zurich
+        description:
+          type: string
+          description: a more detailed description of the triple that is shown to the user on mouseover
+          example: the canton of Zurich, which contains the city of zurich but also other villages
+        type:
+          type: string
+          description: reference to the word type that is used to assign a predefined behavior to the word
+          example: time
+        from:
+          type: string
+          description: the unique from phrase name
+          example: Zurich
+        verb:
+          type: string
+          description: the unique predicate name
+          example: is a
+        to:
+          type: string
+          description: the unique phrase name
+          example: Canton
+        share:
+          $ref: '#/components/schemas/Share'
+        protection:
+          $ref: '#/components/schemas/Protection'
+    PhraseList:
+      type: array
+      description: in most cases a list of words, but it can also contain triples
+      example: Global Peace Index, Switzerland, 2019
+      items:
+        $ref: '#/components/schemas/Phrase'
+    Phrase:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the unique name of a word or triple
+          example: Canton of Zurich
+    ValueList:
+      type: array
+      description: a list of value that can be grouped by a context
+      example:
+      items:
+        $ref: '#/components/schemas/Value'
+    Value:
+      type: object
+      required:
+        - number
+      properties:
+        words:
+          $ref: '#/components/schemas/PhraseList'
+        number:
+          type: number
+          description: the numeric value
+          example: 1.375
+        timestamp:
+          type: string
+          description: a point in time
+          example: "2018-11-23 15:35:00"
+        time:
+          type: string
+          description: in most cases just a word of type time
+          example: "2019"
+        share:
+          $ref: '#/components/schemas/Share'
+        protection:
+          $ref: '#/components/schemas/Protection'
+        source:
+          $ref: '#/components/schemas/Source'
+    FormulaList:
+      type: array
+      description: a list of formulas
+      example:
+      items:
+        $ref: '#/components/schemas/Formula'
+    Formula:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the unique formula name; there should also be no word, triple or verb with the same name
+          example: yearly increase
+        description:
+          type: string
+          description: a more detailed description of the formula that is shown to the user on mouseover
+          example: calculate the increase in percent over a time period
+        expression:
+          type: string
+          description: following the syntax of r-project, but using words and the "and" condition to select the value
+          example: percent = ( "is a" "Year" - "prior" "Year" ) / "prior" "Year"
+        type:
+          type: string
+          description: reference to the formula type that is used to assign a predefined behavior to the formula
+          example:
+        share:
+          $ref: '#/components/schemas/Share'
+        protection:
+          $ref: '#/components/schemas/Protection'
+        assigned_word:
+          $ref: '#/components/schemas/PhraseList'
+    SourceList:
+      type: array
+      description: a link to an external data source
+      example:
+      items:
+        $ref: '#/components/schemas/Source'
+    Source:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the name of the source that must be unique within a pod
+          example: Global Peace Index 2019
+        url:
+          type: string
+          description: url to the original data source
+          example: https://visionofhumanity.org/app/uploads/2019/06/GPI-2019-web003.pdf
+        comment:
+          type: string
+          description: the name of the source that must be unique within a pod
+          example:
+    Reference:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the name of the source that must be unique within a pod
+          example: wikidata
+        description:
+          type: string
+          description: a more detailed description of the reference that is shown to the user on mouseover
+          example:
+        type:
+          type: string
+          description: one of the reference types available in the current system
+          example: presentation
+        url:
+          type: string
+          description: url to the original data source
+          example: wikidata.org
+    ViewRef:
+      type: object
+      required:
+        - name
+        - url
+      properties:
+        name:
+          type: string
+          description: the unique of a view
+          example: complete
+    View:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the name of the view that must be unique within a pod
+          example: complete
+        description:
+          type: string
+          description: a more detailed description of the view that is shown to the user on mouseover
+          example: Show a word, all related words to edit the word tree and the linked formulas with some results
+        type:
+          type: string
+          description: system predefined groups of view e.g. for fast selection of view for the presentation mode
+          example: presentation
+        code_id:
+          type: string
+          description: reference to the view type used for views used by the system e.g. formula_edit
+          example: formula_edit
+        view_components:
+          $ref: '#/components/schemas/ViewComponentList'
+    ViewComponentList:
+      type: array
+      description: a list of view components including the positions an placement
+      example:
+      items:
+        $ref: '#/components/schemas/ViewComponentPlaced'
+    ViewComponentPlaced:
+      type: object
+      required:
+        - position
+      properties:
+        position:
+          type: integer
+          description: the order position of the view component
+          example: 2
+        name:
+          type: string
+          description: the name of the view component that must be unique within a pod
+          example: name
+        description:
+          type: string
+          description: a more detailed description of the view component that is shown to the user on mouseover
+          example: Show all related words
+        type:
+          type: string
+          description: system predefined groups of view component e.g.
+          example: presentation
+    ViewComponent:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the name of the view component that must be unique within a pod
+          example: name
+        description:
+          type: string
+          description: a more detailed description of the view component that is shown to the user on mouseover
+          example: Show all related words
+        type:
+          type: string
+          description: system predefined groups of view component e.g.
+          example: presentation
+    ResultList:
+      type: array
+      description: a list of expected calculation result and result displays to validate the import
+      example:
+      items:
+        $ref: '#/components/schemas/Result'
+    Result:
+      type: object
+      required:
+        - name
+      properties:
+        words:
+          $ref: '#/components/schemas/PhraseList'
+        number:
+          type: number
+          description: the numeric value
+          example: 123.456
+        timestamp:
+          type: string
+          description: a point in time
+          example: "2022-08-21 23:00:00"
+    Json:
+      type: object
+      required:
+        - version
+      properties:
+        url:
+          type: string
+          description: the source url, which has created this json
+          example: zukunft.com/export
+        version:
+          type: string
+          description: the version of the zukunft.com pod that has created the json message
+          example: zukunft.com 0.0.2
+        time:
+          type: string
+          description: the time when the json has been created used to detect new versions for synchronisation
+          example: 2021-01-01 14:00:39
+        user:
+          $ref: '#/components/schemas/UserRef'
+        selection:
+          type: array
+          description: the phrase list used to create the json message; if empty a complete export has been created
+          items:
+            $ref: '#/components/schemas/Phrase'
+        words:
+          $ref: '#/components/schemas/WordList'
+        triples:
+          $ref: '#/components/schemas/TripleList'
+        sources:
+          $ref: '#/components/schemas/SourceList'
+        values:
+          $ref: '#/components/schemas/ValueList'
+        value-list:
+          $ref: '#/components/schemas/ValueList'
+        formulas:
+          $ref: '#/components/schemas/FormulaList'
+        views:
+          $ref: '#/components/schemas/FormulaList'
+        results:
+          $ref: '#/components/schemas/ResultList'
+        share:
+          $ref: '#/components/schemas/Share'
+    BatchJob:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: the internal id of the batch job for
+        request_time:
+          type: string
+          format: date-time
+          description: the time when the batch process has been requested
+          example: 2022-08-28T13:22:59Z
+        start_time:
+          type: string
+          format: date-time
+          description: start time of the job execution
+          example: 2022-08-28T13:23:59Z
+        end_time:
+          type: string
+          format: date-time
+          description: end time of the job execution
+          example: 2022-08-28T13:52:59Z
+        user:
+          $ref: '#/components/schemas/UserId'
+        type:
+          type: string
+          description: the type of batch job that should be done
+          example: calculate
+        status:
+          type: string
+          description: the type of batch job that should be done
+          example: finished
+          enum:
+            - pending
+            - started
+            - running
+            - waiting
+            - cancelRequested
+            - canceled
+            - failed
+            - finished
+        priority:
+          type: integer
+          description: the priority of the job
+    UserId:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: the internal id of a user account
+    UserRef:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the unique user name within the zukunft.com pod used ti reference a user for im- or export
+          example: julian@zukunft.com
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+          description: the unique user name within the zukunft.com pod
+          example: julian@zukunft.com
+        description:
+          type: string
+          description: for internal system users the tooltip that is shown on mouseover
+          example: User to log internal tasks not directly initiated by an user like system testing and cleanup
+        profile:
+          type: string
+          description: the profile of the user to assign the user rights
+          example: finished
+          enum:
+            - normal
+            - admin
+            - dev
+            - test
+            - system
+    ErrorLog:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: the internal id of the error log entry for
+        time:
+          type: string
+          format: date-time
+          description: the time when the error has occurred
+          example: 2022-08-28T15:19:59Z
+        user:
+          $ref: '#/components/schemas/UserId'
+        owner:
+          $ref: '#/components/schemas/UserId'
+        text:
+          type: string
+          description: the human readable description of the error
+          example:
+        status:
+          type: string
+          description: the solving status of the error
+          example: finished
+          enum:
+            - new
+            - assigned
+            - resolved
+            - closed
+    WordType:
+      type: object
+      required:
+        - typeName
+      properties:
+        typeName:
+          type: string
+          description: to group words and link code functionality to words
+          example: time
+        description:
+          type: string
+          description: the tooltip text for the word type
+          example: A time word defines the time period for which a value is valid and values with a time can be used to display time series.
+        codeId:
+          type: string
+          description: word types with a code id have a predefined functionality
+          example: time
+    WordForm:
+      type: object
+      required:
+        - formName
+      properties:
+        formName:
+          type: string
+          description: to display the word in correct the human readable form
+          example: plural
+        description:
+          type: string
+          description: the tooltip text for the word form
+          example: if the number is greater one this form should be used
+        codeId:
+          type: string
+          description: to link the predefined display rules
+          example: plural
+
+    RefList:
+      type: array
+      description: a list of external references to
+      example: wikipedia, conceptnet
+      items:
+        $ref: '#/components/schemas/Ref'
+    Ref:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          description: the unique name used in the external system
+          example: Canton of Zürich
+        type:
+          type: string
+          description: the internal key of a connected system
+          example: wikipedia
+          enum:
+            - wikipedia
+            - wikidata
+            - conceptnet
+        description:
+          type: string
+          description: the description of the external system that is shown to the user as a tooltip
+          example: wikipedia
+
+    Share:
+      type: string
+      description: defines the visibility
+      default: public
+      enum:
+        - public
+        - personal
+        - group
+        - private
+    Protection:
+      type: string
+      description: defines the change permissions and the change process
+      default: no_protection
+      enum:
+        - no_protection
+        - user_protection
+        - admin_protection
+        - no_change
+
+    Error:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: "the error test"
+          example: "not found"

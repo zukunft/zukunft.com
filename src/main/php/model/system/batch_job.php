@@ -63,7 +63,7 @@ A user updates a formula
       -> get all depending formulas
       -> based on the formula
       -> exclude / delete formula results????
-    -> create all depending calculation requests
+    -> create all calculation depending on requests
     -> sort the calculation request by dependency and priority
     -> execute the calculation requests
 

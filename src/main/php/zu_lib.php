@@ -369,12 +369,14 @@ include_once $path_php . 'model/view/view_cmp_link_types.php';
 include_once $path_php . 'api/message_header.php';
 include_once $path_php . 'api/system/error_log.php';
 include_once $path_php . 'api/system/error_log_list.php';
+include_once $path_php . 'api/system/batch_job.php';
 include_once $path_php . 'api/sandbox/user_sandbox.php';
 include_once $path_php . 'api/sandbox/user_sandbox_named.php';
 include_once $path_php . 'api/sandbox/user_sandbox_value.php';
 include_once $path_php . 'api/sandbox/user_config.php';
 include_once $path_php . 'api/sandbox/list.php';
 include_once $path_php . 'api/sandbox/list_value.php';
+include_once $path_php . 'api/user/user.php';
 include_once $path_php . 'api/user/user_type.php';
 include_once $path_php . 'api/user/user_type_list.php';
 // model frontend API classes

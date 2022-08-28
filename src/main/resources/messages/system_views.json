@@ -8,7 +8,7 @@
   "views": [
     {
       "name": "Word",
-      "comment": "the default view for words",
+      "description": "the default view for words",
       "code_id": "word"
     },
     {
@@ -21,12 +21,12 @@
     },
     {
       "name": "Delete Word",
-      "comment": "Exclude or delete a word",
+      "description": "Exclude or delete a word",
       "code_id": "word_del"
     },
     {
       "name": "Search",
-      "comment": "The search page for all words and formulas",
+      "description": "The search page for all words and formulas",
       "code_id": "word_find"
     },
     {
@@ -55,17 +55,17 @@
     },
     {
       "name": "Delete Formula",
-      "comment": "To confirm the exclusion or deleting of a formula",
+      "description": "To confirm the exclusion or deleting of a formula",
       "code_id": "formula_del"
     },
     {
       "name": "Explain Formula Result",
-      "comment": "Explain the formula result",
+      "description": "Explain the formula result",
       "code_id": "formula_explain"
     },
     {
       "name": "Formula test",
-      "comment": "To debug the formula",
+      "description": "To debug the formula",
       "code_id": "formula_test"
     },
     {
@@ -78,12 +78,12 @@
     },
     {
       "name": "Delete Source",
-      "comment": "Delete an external data source",
+      "description": "Delete an external data source",
       "code_id": "source_del"
     },
     {
       "name": "Verb List",
-      "comment": "List all available ways how to link two words",
+      "description": "List all available ways how to link two words",
       "code_id": "verbs"
     },
     {
@@ -92,12 +92,12 @@
     },
     {
       "name": "Change Verb",
-      "comment": "Rename a tern link type",
+      "description": "Rename a tern link type",
       "code_id": "verb_edit"
     },
     {
       "name": "Delete verb",
-      "comment": "Exclude or delete a verb",
+      "description": "Exclude or delete a verb",
       "code_id": "verb_del"
     },
     {
@@ -106,32 +106,32 @@
     },
     {
       "name": "Change Triple",
-      "comment": "Rename a triple",
+      "description": "Rename a triple",
       "code_id": "triple_edit"
     },
     {
       "name": "Delete triple",
-      "comment": "Exclude or delete a triple",
+      "description": "Exclude or delete a triple",
       "code_id": "triple_del"
     },
     {
       "name": "User Settings",
-      "comment": "to change the user settings",
+      "description": "to change the user settings",
       "code_id": "user"
     },
     {
       "name": "Error Log",
-      "comment": "simple confirm page for a new error that has been logged in the database",
+      "description": "simple confirm page for a new error that has been logged in the database",
       "code_id": "error_log"
     },
     {
       "name": "System Error List",
-      "comment": "List the system errors and allow the user to change the status",
+      "description": "List the system errors and allow the user to change the status",
       "code_id": "error_update"
     },
     {
       "name": "Import",
-      "comment": "Select a file to import data",
+      "description": "Select a file to import data",
       "code_id": "import"
     },
     {
@@ -140,12 +140,12 @@
     },
     {
       "name": "Change View",
-      "comment": "Rename a view",
+      "description": "Rename a view",
       "code_id": "view_edit"
     },
     {
       "name": "Delete View",
-      "comment": "Exclude or delete a view",
+      "description": "Exclude or delete a view",
       "code_id": "view_del"
     },
     {
@@ -154,17 +154,17 @@
     },
     {
       "name": "Change View Component",
-      "comment": "Adjust a view component",
+      "description": "Adjust a view component",
       "code_id": "view_entry_edit"
     },
     {
       "name": "Delete View Component",
-      "comment": "Exclude or delete a view component",
+      "description": "Exclude or delete a view component",
       "code_id": "view_entry_del"
     },
     {
       "name": "Start view",
-      "comment": "A dynamic start mask that shows a interesting fact",
+      "description": "A dynamic start mask that shows a interesting fact",
       "type": "entry",
       "code_id": "entry_view",
       "view_components": [
@@ -177,7 +177,7 @@
     },
     {
       "name": "complete",
-      "comment": "Show a word, all related words to edit the word tree and the linked formulas with some results",
+      "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
       "view_components": [
         {
           "pos": "1",
