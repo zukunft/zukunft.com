@@ -4,6 +4,12 @@ info:
   description: |-
     the open API for zukunft.com that includes the user AND admin interface
     WARNING: this API is a alpha release and is not yet fully implemented and will change overtime
+    TODO: add the missing find APIs e.g. get Word by Name
+    TODO: combine external (without id) and internal objects (with id)
+    TODO: add multi defence layer security levels (valueList for normal user but user only for admin)
+    TODO: add the missing types
+    TODO: add the missing lists e.g. PhraseList
+    TODO: add list saving functions
   version: "0.0.2"
   contact:
     name: Timon Zielonka
@@ -21,14 +27,18 @@ servers:
 tags:
   - name: word
     description: the base element select values or create triples
-  - name: value
-    description: all numeric values are defined by a phrase group
-  - name: formula
-    description: the selection of values in formulas is done with an and selection of phrases
   - name: verb
     description: the triple predicates
   - name: triple
     description: RDF triples
+  - name: phraseList
+    description: get a list of words or triples by id or related phrase or phrase list
+  - name: value
+    description: all numeric values are defined by a phrase group
+  - name: formula
+    description: the selection of values in formulas is done with an and selection of phrases
+  - name: formulaList
+    description: get a list of formulas by ids, phrase or phrase list
   - name: view
     description: to define the display format of a phrase and the linked values and formula results
   - name: component
@@ -47,42 +57,19 @@ tags:
     description: maintain the user setup 
   - name: error
     description: to trace the fixing of a setup error and for admins to confirm the fixing
-  - name: wordType
+  - name: typeLists
+    description: |-
+      get all code linked types with one request
+      is called by the frontend once at startup 
+      and once every 24 hours to check any version updates
+      or upon request or version update trigger
+  - name: phraseType
     description: only word types without code link can be added to request new word types e.g. time
   - name: wordForm
     description: only word forms without code link can be added to request new word forms e.g. plural
 
 paths:
   /word:
-    put:
-      tags:
-        - word
-      summary: Update an existing word
-      description: Update an existing word by Id
-      operationId: updateWord
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Word'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Word'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Word'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Word not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - word
@@ -102,7 +89,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Word'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -139,6 +126,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - word
+      summary: Update an existing word
+      description: Update an existing word by Id
+      operationId: updateWord
+      parameters:
+        - name: id
+          in: path
+          description: ID of word to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent word in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Word'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Word'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Word'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - word
@@ -162,254 +186,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /value:
-    put:
-      tags:
-        - value
-      summary: Update an existing value
-      description: Update an existing value by Id
-      operationId: updateValue
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Value'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Value'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Value'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Value not found
-        '405':
-          description: Validation exception
-    post:
-      tags:
-        - value
-      summary: Add a new value
-      description: Add a new value or activate it for the requesting user
-      operationId: addValue
-      requestBody:
-        description: Value to add to the store
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Value'
-      responses:
-        '200':
-          description: value response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Value'
-        '405':
-          description: Invalid input
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /value/{id}:
-    get:
-      tags:
-        - value
-      summary: get value by id
-      description: Returns a user based on a single ID, if the user does not have access to the value
-      operationId: find value by id
-      parameters:
-        - name: id
-          in: path
-          description: ID of value to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: value response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Value'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    delete:
-      tags:
-        - value
-      summary: exclude or delete value for the requesting user
-      description: deletes a single value based on the ID supplied
-      operationId: deleteValue
-      parameters:
-        - name: id
-          in: path
-          description: ID of value to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: value deleted
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /formula:
-    put:
-      tags:
-        - formula
-      summary: Update an existing formula
-      description: Update an existing formula by Id
-      operationId: updateFormula
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Formula'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Formula'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Formula'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Formula not found
-        '405':
-          description: Validation exception
-    post:
-      tags:
-        - formula
-      summary: Add a new formula
-      description: Add a new formula or activate it for the requesting user
-      operationId: addFormula
-      requestBody:
-        description: Formula to add to the store
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Formula'
-      responses:
-        '200':
-          description: formula response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Formula'
-        '405':
-          description: Invalid input
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /formula/{id}:
-    get:
-      tags:
-        - formula
-      summary: get formula by id
-      description: Returns a user based on a single ID, if the user does not have access to the formula
-      operationId: find formula by id
-      parameters:
-        - name: id
-          in: path
-          description: ID of formula to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: formula response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Formula'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    delete:
-      tags:
-        - formula
-      summary: exclude or delete formula for the requesting user
-      description: deletes a single formula based on the ID supplied
-      operationId: deleteFormula
-      parameters:
-        - name: id
-          in: path
-          description: ID of formula to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: formula deleted
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /verb:
-    put:
-      tags:
-        - verb
-      summary: Update an existing verb
-      description: Update an existing verb by Id
-      operationId: updateVerb
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Verb'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Verb'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Verb'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Verb not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - verb
@@ -429,7 +206,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Verb'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -466,6 +243,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - verb
+      summary: Update an existing verb
+      description: Update an existing verb by Id
+      operationId: updateVerb
+      parameters:
+        - name: id
+          in: path
+          description: ID of verb to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent verb in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Verb'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Verb'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Verb'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Verb not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - verb
@@ -490,35 +304,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /triple:
-    put:
-      tags:
-        - triple
-      summary: Update an existing triple
-      description: Update an existing triple by Id
-      operationId: updateTriple
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Triple'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Triple'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Triple'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Triple not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - triple
@@ -538,7 +323,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Triple'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -575,6 +360,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - triple
+      summary: Update an existing triple
+      description: Update an existing triple by Id
+      operationId: updateTriple
+      parameters:
+        - name: id
+          in: path
+          description: ID of triple to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent triple in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Triple'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Triple'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Triple'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Triple not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - triple
@@ -598,19 +420,109 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /view:
-    put:
+  /phraseList:
+    post:
       tags:
-        - view
-      summary: Update an existing view
-      description: Update an existing view by Id
-      operationId: updateView
+        - phraseList
+      summary: get a list of phrases by the ids
+      description: get a list of phrases by the ids
       requestBody:
-        description: Update an existent pet in the store
+        description: id list of phrase to fetch
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/View'
+              $ref: '#/components/schemas/IdList'
+      responses:
+        '200':
+          description: phrases requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhraseList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /value:
+    post:
+      tags:
+        - value
+      summary: Add a new value
+      description: Add a new value or activate it for the requesting user
+      operationId: addValue
+      requestBody:
+        description: Value to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Value'
+      responses:
+        '200':
+          description: value response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Id'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /value/{id}:
+    get:
+      tags:
+        - value
+      summary: get value by id
+      description: Returns a user based on a single ID, if the user does not have access to the value
+      operationId: find value by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of value to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: value response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Value'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - value
+      summary: Update an existing value
+      description: Update an existing value by Id
+      operationId: updateValue
+      parameters:
+        - name: id
+          in: path
+          description: ID of value to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent value in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Value'
         required: true
       responses:
         '200':
@@ -618,16 +530,183 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/View'
+                $ref: '#/components/schemas/Value'
             application/xml:
               schema:
-                $ref: '#/components/schemas/View'
+                $ref: '#/components/schemas/Value'
         '400':
           description: Invalid ID supplied
         '404':
-          description: View not found
+          description: Value not found
         '405':
           description: Validation exception
+    delete:
+      tags:
+        - value
+      summary: exclude or delete value for the requesting user
+      description: deletes a single value based on the ID supplied
+      operationId: deleteValue
+      parameters:
+        - name: id
+          in: path
+          description: ID of value to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: value deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /formula:
+    post:
+      tags:
+        - formula
+      summary: Add a new formula
+      description: Add a new formula or activate it for the requesting user
+      operationId: addFormula
+      requestBody:
+        description: Formula to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Formula'
+      responses:
+        '200':
+          description: formula response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Id'
+        '405':
+          description: Invalid input
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /formula/{id}:
+    get:
+      tags:
+        - formula
+      summary: get formula by id
+      description: Returns a user based on a single ID, if the user does not have access to the formula
+      operationId: find formula by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of formula to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: formula response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formula'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - formula
+      summary: Update an existing formula
+      description: Update an existing formula by Id
+      operationId: updateFormula
+      parameters:
+        - name: id
+          in: path
+          description: ID of formula to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent formula in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Formula'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formula'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Formula'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Formula not found
+        '405':
+          description: Validation exception
+    delete:
+      tags:
+        - formula
+      summary: exclude or delete formula for the requesting user
+      description: deletes a single formula based on the ID supplied
+      operationId: deleteFormula
+      parameters:
+        - name: id
+          in: path
+          description: ID of formula to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: formula deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /formulaList:
+    post:
+      tags:
+        - formulaList
+      summary: get formula by id
+      description: Returns a user based on a single ID, if the user does not have access to the formula
+      requestBody:
+        description: id list of formulas to fetch
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdList'
+      responses:
+        '200':
+          description: formulas requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormulaList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /view:
     post:
       tags:
         - view
@@ -647,7 +726,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/View'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -684,6 +763,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - view
+      summary: Update an existing view
+      description: Update an existing view by Id
+      operationId: updateView
+      parameters:
+        - name: id
+          in: path
+          description: ID of view to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent view in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/View'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/View'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/View'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: View not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - view
@@ -708,35 +824,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /component:
-    put:
-      tags:
-        - component
-      summary: Update an existing component
-      description: Update an existing component by Id
-      operationId: updateComponent
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ViewComponent'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ViewComponent'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ViewComponent'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Component not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - component
@@ -756,7 +843,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ViewComponent'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -793,6 +880,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - component
+      summary: Update an existing component
+      description: Update an existing component by Id
+      operationId: updateComponent
+      parameters:
+        - name: id
+          in: path
+          description: ID of component to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent component in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ViewComponent'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewComponent'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ViewComponent'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Component not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - component
@@ -817,35 +941,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /source:
-    put:
-      tags:
-        - source
-      summary: Update an existing source
-      description: Update an existing source by Id
-      operationId: updateSource
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Source'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Source'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Source'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Source not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - source
@@ -865,7 +960,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Source'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -902,6 +997,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - source
+      summary: Update an existing source
+      description: Update an existing source by Id
+      operationId: updateSource
+      parameters:
+        - name: id
+          in: path
+          description: ID of source to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent source in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Source'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Source'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Source not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - source
@@ -926,35 +1058,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /reference:
-    put:
-      tags:
-        - reference
-      summary: Update an existing reference
-      description: Update an existing reference by Id
-      operationId: updateReference
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Reference'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Reference'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Reference'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Reference not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - reference
@@ -974,7 +1077,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Reference'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -1011,6 +1114,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - reference
+      summary: Update an existing reference
+      description: Update an existing reference by Id
+      operationId: updateReference
+      parameters:
+        - name: id
+          in: path
+          description: ID of reference to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent reference in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reference'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Reference not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - reference
@@ -1091,7 +1231,7 @@ paths:
                 type: string
                 description: Error message
   /batch:
-    put:
+    post:
       tags:
         - batch
       description: request to start a batch process
@@ -1203,35 +1343,6 @@ paths:
                 type: string
                 description: Error message
   /user:
-    put:
-      tags:
-        - user
-      summary: Update an existing word type
-      description: Update an existing word type by Id
-      operationId: updateUser
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        required: true
-      responses:
-        '200':
-          description: Successful updates
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Word not found
-        '405':
-          description: Validation exception
     post:
       tags:
         - user
@@ -1251,7 +1362,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -1264,20 +1375,20 @@ paths:
     get:
       tags:
         - user
-      summary: get word type by id
-      description: Returns a user based on a single ID, if the user does not have access to the word type
+      summary: get user by id
+      description: Returns a user based on a single ID, if the user does not have access to the user
       operationId: findUserById
       parameters:
         - name: id
           in: path
-          description: ID of word type to fetch
+          description: ID of user to fetch
           required: true
           schema:
             type: integer
             format: int64
       responses:
         '200':
-          description: word type response
+          description: user response
           content:
             application/json:
               schema:
@@ -1288,42 +1399,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    delete:
+    put:
       tags:
         - user
-      summary: exclude or delete word type for the requesting user
-      description: deletes a single word type based on the ID supplied
-      operationId: deleteUser
+      summary: Update an existing user
+      description: Update an existing user by Id
+      operationId: updateUser
       parameters:
         - name: id
           in: path
-          description: ID of word type to delete
+          description: ID of user to update
           required: true
           schema:
             type: integer
             format: int64
-      responses:
-        '204':
-          description: word type deleted
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /wordType:
-    put:
-      tags:
-        - wordType
-      summary: Update an existing word type
-      description: Update an existing word type by Id
-      operationId: updateWordType
       requestBody:
-        description: Update an existent pet in the store
+        description: Update an existent user in the database
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WordType'
+              $ref: '#/components/schemas/User'
         required: true
       responses:
         '200':
@@ -1331,36 +1426,60 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordType'
+                $ref: '#/components/schemas/User'
             application/xml:
               schema:
-                $ref: '#/components/schemas/WordType'
+                $ref: '#/components/schemas/User'
         '400':
           description: Invalid ID supplied
         '404':
           description: Word not found
         '405':
           description: Validation exception
+    delete:
+      tags:
+        - user
+      summary: exclude or delete user for the requesting user
+      description: deletes a single user based on the ID supplied
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: user deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /phraseType:
     post:
       tags:
-        - wordType
-      summary: Add a new word type
-      description: Add a new word type or activate it for the requesting user
-      operationId: addWordType
+        - phraseType
+      summary: Add a new phrase type
+      description: Add a new phrase type or activate it for the requesting user
+      operationId: addPhraseType
       requestBody:
         description: Word to add to the store
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WordType'
+              $ref: '#/components/schemas/PhraseType'
       responses:
         '200':
-          description: word type response
+          description: phrase type response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordType'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -1369,70 +1488,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /wordType/{id}:
+  /phraseType/{id}:
     get:
       tags:
-        - wordType
-      summary: get word type by id
-      description: Returns a user based on a single ID, if the user does not have access to the word type
-      operationId: find word type by id
+        - phraseType
+      summary: get phrase type by id
+      description: Returns a user based on a single ID, if the user does not have access to the phrase type
+      operationId: find phrase type by id
       parameters:
         - name: id
           in: path
-          description: ID of word type to fetch
+          description: ID of phrase type to fetch
           required: true
           schema:
             type: integer
             format: int64
       responses:
         '200':
-          description: word type response
+          description: phrase type response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordType'
+                $ref: '#/components/schemas/PhraseType'
         default:
           description: unexpected error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    delete:
+    put:
       tags:
-        - wordType
-      summary: exclude or delete word type for the requesting user
-      description: deletes a single word type based on the ID supplied
-      operationId: deleteWordType
+        - phraseType
+      summary: Update an existing phrase type
+      description: Update an existing phrase type by Id
+      operationId: updatePhraseType
       parameters:
         - name: id
           in: path
-          description: ID of word type to delete
+          description: ID of phrase type to update
           required: true
           schema:
             type: integer
             format: int64
-      responses:
-        '204':
-          description: word type deleted
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /wordForm:
-    put:
-      tags:
-        - wordForm
-      summary: Update an existing word form
-      description: Update an existing word form by Id
-      operationId: updateWordForm
       requestBody:
-        description: Update an existent pet in the store
+        description: Update an existent phrase type in the database
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WordForm'
+              $ref: '#/components/schemas/PhraseType'
         required: true
       responses:
         '200':
@@ -1440,16 +1543,40 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordForm'
+                $ref: '#/components/schemas/PhraseType'
             application/xml:
               schema:
-                $ref: '#/components/schemas/WordForm'
+                $ref: '#/components/schemas/PhraseType'
         '400':
           description: Invalid ID supplied
         '404':
           description: Word not found
         '405':
           description: Validation exception
+    delete:
+      tags:
+        - phraseType
+      summary: exclude or delete phrase type for the requesting user
+      description: deletes a single phrase type based on the ID supplied
+      operationId: deletePhraseType
+      parameters:
+        - name: id
+          in: path
+          description: ID of phrase type to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: phrase type deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /wordForm:
     post:
       tags:
         - wordForm
@@ -1469,7 +1596,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WordForm'
+                $ref: '#/components/schemas/Id'
         '405':
           description: Invalid input
         default:
@@ -1506,6 +1633,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - wordForm
+      summary: Update an existing word form
+      description: Update an existing word form by Id
+      operationId: updateWordForm
+      parameters:
+        - name: id
+          in: path
+          description: ID of word form to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent word form in the database
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordForm'
+        required: true
+      responses:
+        '200':
+          description: Successful updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordForm'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WordForm'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Word not found
+        '405':
+          description: Validation exception
     delete:
       tags:
         - wordForm
@@ -1523,6 +1687,28 @@ paths:
       responses:
         '204':
           description: word form deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /typeLists:
+    get:
+      tags:
+        - typeLists
+      summary: get all code linked object types
+      description: |-
+        a object type is used to assign a coded behavior to an object 
+        e.g. word, triple, formula, view or component
+      operationId: allTypeLists
+      responses:
+        '200':
+          description: all code linked object types
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeLists'
         default:
           description: unexpected error
           content:
@@ -1552,7 +1738,7 @@ components:
           example: the city or canton of Zurich or the insurance company
         type:
           type: string
-          description: reference to the word type that is used to assign a predefined behavior to the word
+          description: reference to the phrase type that is used to assign a predefined behavior to the word
           example: time
           enum:
             - default
@@ -1621,7 +1807,7 @@ components:
           example: the canton of Zurich, which contains the city of zurich but also other villages
         type:
           type: string
-          description: reference to the word type that is used to assign a predefined behavior to the word
+          description: reference to the phrase type that is used to assign a predefined behavior to the word
           example: time
         from:
           type: string
@@ -2015,7 +2201,7 @@ components:
             - assigned
             - resolved
             - closed
-    WordType:
+    PhraseType:
       type: object
       required:
         - typeName
@@ -2026,11 +2212,11 @@ components:
           example: time
         description:
           type: string
-          description: the tooltip text for the word type
+          description: the tooltip text for the phrase type
           example: A time word defines the time period for which a value is valid and values with a time can be used to display time series.
         codeId:
           type: string
-          description: word types with a code id have a predefined functionality
+          description: phrase types with a code id have a predefined functionality
           example: time
     WordForm:
       type: object
@@ -2098,6 +2284,87 @@ components:
         - admin_protection
         - no_change
 
+    TypeLists:
+      type: object
+      description: the list of all types e.g. phrase types, formula types, ...
+      example: |-
+        { "phraseTypeList":  
+          [
+            {"typeName": "time", "codeId": "time"}, 
+            {"typeName": "percent", "codeId": "percent"}
+          ] 
+        }
+      properties:
+        phraseTypes:
+          $ref: '#/components/schemas/TypeList'
+        formulaTypes:
+          $ref: '#/components/schemas/TypeList'
+        formulaLinkTypes:
+          $ref: '#/components/schemas/TypeList'
+        viewTypes:
+          $ref: '#/components/schemas/TypeList'
+        componentTypes:
+          $ref: '#/components/schemas/TypeList'
+        componentLinkTypes:
+          $ref: '#/components/schemas/TypeList'
+        languages:
+          $ref: '#/components/schemas/TypeList'
+        refTypes:
+          $ref: '#/components/schemas/TypeList'
+        sourceTypes:
+          $ref: '#/components/schemas/TypeList'
+        protectionTypes:
+          $ref: '#/components/schemas/TypeList'
+        shareTypes:
+          $ref: '#/components/schemas/TypeList'
+        userTypes:
+          $ref: '#/components/schemas/TypeList'
+    TypeList:
+      type: array
+      description: the list of all types e.g. phrase types, formula types, ...
+      example: [{"typeName": "time", "codeId": "time"}, {"typeName": "percent", "codeId": "percent"}]
+      items:
+        $ref: '#/components/schemas/ObjectType'
+    ObjectType:
+      type: object
+      required:
+        - typeName
+        - codeId
+      properties:
+        typeName:
+          type: string
+          description: |-
+            a object type is used to assign a coded behavior to an object 
+            e.g. word, triple, formula, view or component
+          example: time
+        description:
+          type: string
+          description: the tooltip text that is shown to the user in case of mouseover
+          example: A time word defines the time period for which a value is valid
+        codeId:
+          type: string
+          description: the code id that used to link the predefined functionality in the program code
+          example: time
+
+    Id:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: the internal database id of an object e.g. word, verb, triple, value or formula
+    IdList:
+      type: array
+      description: a list of internal database ids used to select
+      example: [1, 3, 5]
+      items:
+        properties:
+          id:
+            type: integer
+            description: the internal id of a word, value, formula or any other database object
+            example: 1
+
     Error:
       type: object
       required:
@@ -2105,5 +2372,5 @@ components:
       properties:
         name:
           type: string
-          description: "the error test"
-          example: "not found"
+          description: the error text
+          example: formula for 42 not found
