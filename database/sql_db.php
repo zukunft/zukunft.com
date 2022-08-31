@@ -3140,7 +3140,7 @@ class sql_db
         // $sql_max = $db_con->select();
         $max_row = $this->get1_old($sql_max);
         if ($max_row == null) {
-            log_warning('Cannot get the max of values', 'test_cleanup->value_reset');
+            log_warning('Cannot get the max of values', 'sql_db->seq_reset');
         } else {
             if ($max_row['max_id'] > 0) {
                 $next_id = $max_row['max_id'] + 1;

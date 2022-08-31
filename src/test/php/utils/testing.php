@@ -2,8 +2,8 @@
 
 /*
 
-    test_cleanup.php - add TESTing CLEANUP functions to remove any remaining test records to the test_base class
-    ---------------
+    testing.php - add the TESTING cleanup functions to remove any remaining test records to the test_base class
+    -----------
 
 
     This file is part of zukunft.com - calc with words

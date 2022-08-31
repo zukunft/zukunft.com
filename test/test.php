@@ -155,11 +155,11 @@ if ($start_usr->id > 0) {
 
         // prepare testing
         $usr = $start_usr;
-        $t = new testing();
+        $t = new test_unit();
         init_unit_db_tests($t);
 
         // run the unit tests without database connection
-        run_unit_tests($t);
+        $t->run_unit();
 
         // reload the setting lists after using dummy list for the unit tests
         $db_con->close();

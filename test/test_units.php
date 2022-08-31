@@ -44,13 +44,13 @@ include_once '../src/test/php/utils/test_base.php';
 // prepare testing
 // ---------------
 
-$t = new testing();
+$t = new test_unit();
 
 // ------------------
 // start unit testing
 // ------------------
 
-run_unit_tests($t);
+$t->run_unit();
 
 // display the test results
 $t->dsp_result_html();

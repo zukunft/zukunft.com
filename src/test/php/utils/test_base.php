@@ -50,25 +50,27 @@ if ($root_path == '') {
 }
 
 // set the paths of the program code
-$path_test = $root_path . 'src/test/php/utils/';            // for the general tests and test setup
-$path_unit = $root_path . 'src/test/php/unit/';             // for unit tests
-$path_unit_db = $root_path . 'src/test/php/unit_db/';       // for the unit tests with database real only
-$path_unit_dsp = $root_path . 'src/test/php/unit_display/'; // for the unit tests that create HTML code
-$path_unit_ui = $root_path . 'src/test/php/unit_ui/';       // for the unit tests that create JSON messages for the frontend
-$path_unit_save = $root_path . 'src/test/php/unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
-$path_it = $root_path . 'src/test/php/integration/';        // for integration tests
-$path_dev = $root_path . 'src/test/php/dev/';               // for test still in development
+$path_test = $root_path . 'src/test/php/';     // the test base path
+$path_utils = $path_test . 'utils/';           // for the general tests and test setup
+$path_unit = $path_test . 'unit/';             // for unit tests
+$path_unit_db = $path_test . 'unit_db/';       // for the unit tests with database real only
+$path_unit_dsp = $path_test . 'unit_display/'; // for the unit tests that create HTML code
+$path_unit_ui = $path_test . 'unit_ui/';       // for the unit tests that create JSON messages for the frontend
+$path_unit_save = $path_test . 'unit_save/';   // for the unit tests that save to database (and cleanup the test data after completion)
+$path_it = $path_test . 'integration/';        // for integration tests
+$path_dev = $path_test . 'dev/';               // for test still in development
 
 include_once $root_path . 'src/main/php/service/config.php';
 
 // load the other test utility modules (beside this base configuration module)
-include_once $path_test . 'test_system.php';
-include_once $path_test . 'test_db_link.php';
-include_once $path_test . 'test_user.php';
-include_once $path_test . 'test_user_sandbox.php';
+include_once $path_utils . 'test_system.php';
+include_once $path_utils . 'test_db_link.php';
+include_once $path_utils . 'test_user.php';
+include_once $path_utils . 'test_user_sandbox.php';
+include_once $path_utils . 'testing.php';
 
 // load the unit testing modules
-include_once $path_unit . 'all.php';
+include_once $path_unit . 'test_unit.php';
 include_once $path_unit . 'test_lib.php';
 include_once $path_unit . 'system.php';
 include_once $path_unit . 'user_sandbox.php';
@@ -153,7 +155,6 @@ include_once $path_unit_save . 'test_view.php';
 include_once $path_unit_save . 'test_view_component.php';
 include_once $path_unit_save . 'test_view_component_link.php';
 include_once $path_unit_save . 'test_value.php';
-include_once $path_unit_save . 'test_cleanup.php';
 
 // load the integration test functions
 include_once $path_it . 'test_import.php';
