@@ -865,7 +865,7 @@ class value extends user_sandbox_display
                                             // test if it is a valid scale formula
                                             if ($fv_wrd->is_type(phrase_type::SCALING_HIDDEN)
                                                 and $r_wrd->is_type(phrase_type::SCALING)) {
-                                                $wrd_symbol = expression::MAKER_WORD_START . $r_wrd->id . expression::MAKER_WORD_END;
+                                                $wrd_symbol = expression::WORD_START . $r_wrd->id . expression::WORD_END;
                                                 log_debug('value->scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);
                                                 log_debug('value->scale -> replace done (' . $r_part . ')');

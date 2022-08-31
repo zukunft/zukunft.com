@@ -194,8 +194,8 @@ function zuc_pos_word($formula): int
 
     $calc = new math();
 
-    $pos = $calc->pos_separator($formula, expression::MAKER_WORD_START, 0,);
-    $end = $calc->pos_separator($formula, expression::MAKER_WORD_END, $pos);
+    $pos = $calc->pos_separator($formula, expression::WORD_START, 0,);
+    $end = $calc->pos_separator($formula, expression::WORD_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -212,8 +212,8 @@ function zuc_pos_link($formula): int
 
     $calc = new math();
 
-    $pos = $calc->pos_separator($formula, expression::MAKER_TRIPLE_START, 0,);
-    $end = $calc->pos_separator($formula, expression::MAKER_TRIPLE_END, $pos);
+    $pos = $calc->pos_separator($formula, expression::TRIPLE_START, 0,);
+    $end = $calc->pos_separator($formula, expression::TRIPLE_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -230,8 +230,8 @@ function zuc_pos_formula($formula)
 
     $calc = new math();
 
-    $pos = $calc->pos_separator($formula, expression::MAKER_FORMULA_START, 0,);
-    $end = $calc->pos_separator($formula, expression::MAKER_FORMULA_END, $pos);
+    $pos = $calc->pos_separator($formula, expression::FORMULA_START, 0,);
+    $end = $calc->pos_separator($formula, expression::FORMULA_END, $pos);
     if ($pos >= 0 and $end > $pos) {
         $result = $pos;
     }
@@ -333,7 +333,7 @@ function zuc_has_formula($formula)
     $result = False;
 
     // zu_debug(" -> ".substr($formula, 0, strlen(expression::MAKER_FORMULA_START))." = ".expression::MAKER_FORMULA_START."?");
-    if (substr($formula, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
+    if (substr($formula, 0, strlen(expression::FORMULA_START)) == expression::FORMULA_START) {
         log_debug("zuc_has_formula -> found");
         $result = True;
     }

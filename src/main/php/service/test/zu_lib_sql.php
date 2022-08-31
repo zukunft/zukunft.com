@@ -1417,23 +1417,23 @@ function zu_sql_id($name, $user_id)
     $result = "";
     $wrd_id = zut_id($name, $user_id);
     if ($wrd_id > 0) {
-        $result = expression::MAKER_WORD_START . $wrd_id . expression::MAKER_WORD_END;
+        $result = expression::WORD_START . $wrd_id . expression::WORD_END;
     }
     if ($result == '') {
         $lnk_id = zul_id($name);
         if ($lnk_id > 0) {
-            $result = expression::MAKER_TRIPLE_START . $lnk_id . expression::MAKER_TRIPLE_END;
+            $result = expression::TRIPLE_START . $lnk_id . expression::TRIPLE_END;
         } else {
             $lnk_id = zu_sql_get_value('verbs', 'link_type_id', 'formula_name', $name);
         }
         if ($lnk_id > 0) {
-            $result = expression::MAKER_TRIPLE_START . $lnk_id . expression::MAKER_TRIPLE_END;
+            $result = expression::TRIPLE_START . $lnk_id . expression::TRIPLE_END;
         }
     }
     if ($result == '') {
         $frm_id = zuf_id($name, $user_id);
         if ($frm_id > 0) {
-            $result = expression::MAKER_FORMULA_START . $frm_id . expression::MAKER_FORMULA_END;
+            $result = expression::FORMULA_START . $frm_id . expression::FORMULA_END;
         }
     }
     return $result;
@@ -1445,22 +1445,22 @@ function zu_sql_id_msg($id_txt, $id_name, $user_id)
     log_debug("zu_sql_id_msg (" . $id_txt . "," . $id_name . ",u" . $user_id . ")");
 
     $result = "";
-    if (zu_str_is_left($id_txt, expression::MAKER_WORD_START)) {
-        $wrd_id = zu_str_between($id_txt, expression::MAKER_WORD_START, expression::MAKER_WORD_END);
+    if (zu_str_is_left($id_txt, expression::WORD_START)) {
+        $wrd_id = zu_str_between($id_txt, expression::WORD_START, expression::WORD_END);
         if ($wrd_id > 0) {
             $result = zuh_err('A word with the name "' . $id_name . '" already exists. Please use another name.');
         }
     }
     // check if verb exists
-    if (zu_str_is_left($id_txt, expression::MAKER_TRIPLE_START)) {
-        $lnk_id = zu_str_between($id_txt, expression::MAKER_TRIPLE_START, expression::MAKER_TRIPLE_END);
+    if (zu_str_is_left($id_txt, expression::TRIPLE_START)) {
+        $lnk_id = zu_str_between($id_txt, expression::TRIPLE_START, expression::TRIPLE_END);
         if ($lnk_id > 0) {
             $result = zuh_err('A verb with the name "' . $id_name . '" already exists. Please use another name.');
         }
     }
     // check if word exists
-    if (zu_str_is_left($id_txt, expression::MAKER_FORMULA_START)) {
-        $frm_id = zu_str_between($id_txt, expression::MAKER_FORMULA_START, expression::MAKER_FORMULA_END);
+    if (zu_str_is_left($id_txt, expression::FORMULA_START)) {
+        $frm_id = zu_str_between($id_txt, expression::FORMULA_START, expression::FORMULA_END);
         if ($frm_id > 0) {
             $result = zuh_err('A formula with name "' . $id_name . '" already exists. Please use another name.');
         }

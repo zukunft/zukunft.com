@@ -534,14 +534,6 @@ const DEFAULT_DEC_POINT = ".";
 const DEFAULT_THOUSAND_SEP = "'";
 const DEFAULT_PERCENT_DECIMALS = 2;
 
-// text conversion const (used to convert word, verbs or formula text to a database reference)
-const ZUP_CHAR_WORD = '"';    // or a zukunft verb or a zukunft formula
-const ZUP_CHAR_WORDS_START = '[';    //
-const ZUP_CHAR_WORDS_END = ']';    //
-const ZUP_CHAR_SEPERATOR = ',';    //
-const ZUP_CHAR_RANGE = ':';    //
-const ZUP_CHAR_TEXT_CONCAT = '&';    //
-
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
 // math calc (probably not needed any more if r-project.org is used)

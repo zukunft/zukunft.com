@@ -1302,12 +1302,12 @@ class formula extends user_sandbox_description
         log_debug("formula->get_word (" . $formula . ")");
         $result = 0;
 
-        $pos_start = strpos($formula, expression::MAKER_WORD_START);
+        $pos_start = strpos($formula, expression::WORD_START);
         if ($pos_start === false) {
             $result = 0;
         } else {
-            $r_part = zu_str_right_of($formula, expression::MAKER_WORD_START);
-            $l_part = zu_str_left_of($r_part, expression::MAKER_WORD_END);
+            $r_part = zu_str_right_of($formula, expression::WORD_START);
+            $l_part = zu_str_left_of($r_part, expression::WORD_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug("formula->get_word -> " . $result);
@@ -1323,12 +1323,12 @@ class formula extends user_sandbox_description
         log_debug("formula->get_formula (" . $formula . ")");
         $result = 0;
 
-        $pos_start = strpos($formula, expression::MAKER_FORMULA_START);
+        $pos_start = strpos($formula, expression::FORMULA_START);
         if ($pos_start === false) {
             $result = 0;
         } else {
-            $r_part = zu_str_right_of($formula, expression::MAKER_FORMULA_START);
-            $l_part = zu_str_left_of($r_part, expression::MAKER_FORMULA_END);
+            $r_part = zu_str_right_of($formula, expression::FORMULA_START);
+            $l_part = zu_str_left_of($r_part, expression::FORMULA_END);
             if (is_numeric($l_part)) {
                 $result = $l_part;
                 log_debug("formula->get_formula -> " . $result);
@@ -1353,7 +1353,7 @@ class formula extends user_sandbox_description
             if (!in_array($new_wrd_id, $result)) {
                 $result[] = $new_wrd_id;
             }
-            $frm_text = zu_str_right_of($frm_text, expression::MAKER_WORD_START . $new_wrd_id . expression::MAKER_WORD_END);
+            $frm_text = zu_str_right_of($frm_text, expression::WORD_START . $new_wrd_id . expression::WORD_END);
             $new_wrd_id = $this->get_word($frm_text);
         }
 
@@ -1375,7 +1375,7 @@ class formula extends user_sandbox_description
             if (!in_array($new_frm_id, $result)) {
                 $result[] = $new_frm_id;
             }
-            $frm_text = zu_str_right_of($frm_text, expression::MAKER_FORMULA_START . $new_frm_id . expression::MAKER_FORMULA_END);
+            $frm_text = zu_str_right_of($frm_text, expression::FORMULA_START . $new_frm_id . expression::FORMULA_END);
             $new_frm_id = $this->get_formula($frm_text);
         }
 

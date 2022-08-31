@@ -110,7 +110,7 @@ class formula_element
                 $wrd->load();
                 $this->name = $wrd->name;
                 $this->dsp_name = $wrd->dsp_obj()->dsp_link($this->back);
-                $this->symbol = expression::MAKER_WORD_START . $wrd->id . expression::MAKER_WORD_END;
+                $this->symbol = expression::WORD_START . $wrd->id . expression::WORD_END;
                 $this->obj = $wrd;
             }
             if ($this->type == self::TYPE_VERB) {
@@ -120,7 +120,7 @@ class formula_element
                 $lnk->load();
                 $this->name = $lnk->name;
                 $this->dsp_name = $lnk->display($this->back);
-                $this->symbol = expression::MAKER_TRIPLE_START . $lnk->id . expression::MAKER_TRIPLE_END;
+                $this->symbol = expression::TRIPLE_START . $lnk->id . expression::TRIPLE_END;
                 $this->obj = $lnk;
             }
             if ($this->type == self::TYPE_FORMULA) {
@@ -129,7 +129,7 @@ class formula_element
                 $frm->load();
                 $this->name = $frm->name;
                 $this->dsp_name = $frm->dsp_obj()->name_linked($this->back);
-                $this->symbol = expression::MAKER_FORMULA_START . $frm->id . expression::MAKER_FORMULA_END;
+                $this->symbol = expression::FORMULA_START . $frm->id . expression::FORMULA_END;
                 $this->obj = $frm;
                 // in case of a formula load also the corresponding word
                 $wrd = new word($this->usr);

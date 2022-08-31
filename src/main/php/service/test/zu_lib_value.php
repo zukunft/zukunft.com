@@ -213,7 +213,7 @@ function zuv_scale($user_value, $value_words, $user_id)
                     // test if it is a valid scale formula
                     if (zut_is_type($l_part_wrd_id, phrase_type::SCALING_HIDDEN)
                         and zut_is_type($r_part_wrd_id, phrase_type::SCALING)) {
-                        $wrd_symbol = expression::MAKER_WORD_START . $r_part_wrd_id . expression::MAKER_WORD_END;
+                        $wrd_symbol = expression::WORD_START . $r_part_wrd_id . expression::WORD_END;
                         log_debug('zuv_scale -> replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $user_value . ')');
                         $r_part = str_replace($wrd_symbol, $user_value, $r_part);
                         log_debug('zuv_scale -> replace done (' . $r_part . ')');
