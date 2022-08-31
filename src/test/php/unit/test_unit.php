@@ -101,6 +101,7 @@ class test_unit extends testing
         (new formula_value_unit_tests)->run($this);
         (new formula_element_unit_tests)->run($this);
         (new figure_unit_tests)->run($this);
+        (new expression_unit_tests)->run($this);
         (new user_sandbox_unit_tests)->run($this);
         (new verb_unit_tests)->run($this);
         (new ref_unit_tests)->run($this);

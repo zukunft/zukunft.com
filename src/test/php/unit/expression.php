@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit/figure.php - unit testing of the figure functions
-  --------------------
+    test/unit/expression.php - unit testing of the expression functions
+    --------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -30,22 +30,22 @@
 
 */
 
-class figure_unit_tests
+class expression_unit_tests
 {
     function run(testing $t): void
     {
 
         global $usr;
 
-        $t->header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
+        $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
-        // if the user has changed the formula, that related figure is not standard anymore
         $frm = new formula($usr);
-        $frm->usr_cfg_id = 1;
-        $fig = new figure($usr);
-        $fig->obj = $frm;
-        $result = $fig->is_std();
-        $t->assert('figure->is_std if formula is changed by the user', $result, false);
+        $frm->name = formula::TN_SECTOR;
+        $frm->usr_text = formula::TF_SECTOR;
+        $frm->set_ref_text();
+        $result = $frm->usr_text;
+        $target = '= "' . word::TN_COUNTRY . '" "differentiator" "' . word::TN_CANTON . '" / "' . word::TN_TOTAL . '"';
+        $t->assert('expression->is_std if formula is changed by the user', $result, $target);
 
     }
 

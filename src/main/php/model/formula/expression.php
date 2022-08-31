@@ -62,7 +62,7 @@ class expression
     const CONCAT = '&';    //
 
     /*
-     *  object vars
+     * object vars
      */
 
     public ?string $usr_text = null;   // the formula expression in the human-readable format
@@ -76,6 +76,36 @@ class expression
     {
         $this->usr = $usr;
     }
+
+    /*
+     * the main interface functions
+     */
+
+    /**
+     * convert the user text to the database reference format
+     * @returns string the expression in the database reference format
+     */
+    function get_ref_text(): string
+    {
+        $result = '';
+
+        // check the formula indicator "=" and convert the left and right part separately
+        $pos = strpos($this->usr_text, ZUP_CHAR_CALC);
+        if ($pos >= 0) {
+            $left_part = $this->fv_part_usr();
+            $right_part = $this->r_part_usr();
+            $left_part = $this->get_ref_part($left_part);
+            $right_part = $this->get_ref_part($right_part);
+            $result = $left_part . ZUP_CHAR_CALC . $right_part;
+        }
+
+        // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
+        return str_replace(" ", "", $result);
+    }
+
+    /*
+     * internal functions
+     */
 
     /**
      * returns a positive reference (word, verb or formula) id if the formula string in the database format contains a database reference link
@@ -662,32 +692,6 @@ class expression
 
             log_debug('expression->get_ref_part -> done "' . $result . '"');
         }
-        return $result;
-    }
-
-    /**
-     * convert the user text to the database reference format
-     */
-    function get_ref_text(): string
-    {
-        log_debug('expression->get_ref_text ' . $this->dsp_id());
-        $result = '';
-
-        // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->usr_text, ZUP_CHAR_CALC);
-        if ($pos >= 0) {
-            $left_part = $this->fv_part_usr();
-            $right_part = $this->r_part_usr();
-            log_debug('expression->get_ref_text -> (l:' . $left_part . ',r:' . $right_part . '"');
-            $left_part = $this->get_ref_part($left_part);
-            $right_part = $this->get_ref_part($right_part);
-            $result = $left_part . ZUP_CHAR_CALC . $right_part;
-        }
-
-        // remove all spaces because they are not relevant for calculation and to avoid too much recalculation
-        $result = str_replace(" ", "", $result);
-
-        log_debug('expression->get_ref_text -> done "' . $result . '"');
         return $result;
     }
 
